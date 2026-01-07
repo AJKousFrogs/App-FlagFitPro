@@ -287,6 +287,80 @@ const getGameDetails = async (userId, gameId) => {
   }
 };
 
+// Trigger game day recovery protocol
+async function triggerGameDayRecovery(playerId, gameDate) {
+  try {
+    // Import game day recovery service logic
+    // Since this is backend, we'll create recovery protocol directly
+    const day1 = new Date(gameDate);
+    day1.setDate(day1.getDate() + 1);
+    day1.setHours(0, 0, 0, 0);
+
+    const day2 = new Date(gameDate);
+    day2.setDate(day2.getDate() + 2);
+    day2.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(day2);
+    endDate.setHours(23, 59, 59, 999);
+
+    // Check if recovery protocol already exists
+    const { data: existing } = await supabaseAdmin
+      .from("recovery_protocols")
+      .select("id")
+      .eq("player_id", playerId)
+      .eq("protocol_type", "game_day_recovery")
+      .eq("start_date", day1.toISOString().split("T")[0])
+      .maybeSingle();
+
+    if (existing) {
+      return; // Already exists
+    }
+
+    // Create recovery protocol
+    await supabaseAdmin.from("recovery_protocols").insert({
+      player_id: playerId,
+      protocol_type: "game_day_recovery",
+      start_date: day1.toISOString().split("T")[0],
+      end_date: endDate.toISOString().split("T")[0],
+      max_load_percent: 50,
+      restrictions: [
+        "no_intense_work",
+        "hydration_focus",
+        "light_movement_only",
+        "no_contact",
+      ],
+      focus: "sleep_and_recovery",
+      created_at: new Date().toISOString(),
+    });
+
+    // Create recovery blocks
+    await Promise.all([
+      supabaseAdmin.from("recovery_blocks").insert({
+        player_id: playerId,
+        block_date: day1.toISOString().split("T")[0],
+        max_load_percent: 30,
+        focus: "sleep",
+        restrictions: ["no_intense_work", "hydration_focus"],
+        protocol_type: "game_day_recovery",
+        created_at: new Date().toISOString(),
+      }),
+      supabaseAdmin.from("recovery_blocks").insert({
+        player_id: playerId,
+        block_date: day2.toISOString().split("T")[0],
+        max_load_percent: 50,
+        focus: "active_recovery",
+        restrictions: ["light_movement_only", "no_contact"],
+        protocol_type: "game_day_recovery",
+        created_at: new Date().toISOString(),
+      }),
+    ]);
+
+    console.log(`[GameDayRecovery] Created 48h recovery protocol for player ${playerId}`);
+  } catch (error) {
+    console.error("[GameDayRecovery] Error creating recovery protocol:", error);
+  }
+}
+
 // Update game with authorization check
 const updateGame = async (userId, gameId, updates) => {
   try {
@@ -355,20 +429,46 @@ const updateGame = async (userId, gameId, updates) => {
       };
     }
 
-    const { data, error } = await supabaseAdmin
+    const { data: updatedGame, error: updateError } = await supabaseAdmin
       .from("games")
       .update(updateObj)
       .eq("id", gameId)
       .select()
       .single();
 
-    if (error) {
-      throw error;
+    if (updateError) {
+      throw updateError;
+    }
+
+    // If game was just completed (status changed to completed or scores were added), trigger recovery
+    const wasCompleted = 
+      (updateObj.status === "completed" && game.status !== "completed") ||
+      ((updateObj.our_score !== undefined || updateObj.opponent_score !== undefined) && 
+       (game.status === "completed" || updateObj.status === "completed"));
+
+    if (wasCompleted && updatedGame.game_date) {
+      // Get all players on the team
+      const { data: teamMembers } = await supabaseAdmin
+        .from("team_members")
+        .select("user_id")
+        .eq("team_id", updatedGame.team_id)
+        .eq("role", "player");
+
+      if (teamMembers && teamMembers.length > 0) {
+        const gameDate = new Date(updatedGame.game_date);
+        // Trigger recovery for each player
+        for (const member of teamMembers) {
+          await triggerGameDayRecovery(member.user_id, gameDate);
+        }
+      }
     }
 
     return {
-      ...data,
-      game_id: data.id,
+      ...updatedGame,
+      game_id: updatedGame.id,
+      opponent_team_name: updatedGame.opponent_name,
+      team_score: updatedGame.our_score,
+      is_home_game: updatedGame.home_away === "home",
     };
   } catch (error) {
     console.error("Error updating game:", error);

@@ -202,18 +202,7 @@ kbd {
 }
 
 /* Dialog Styling Override */
+// PrimeNG dialog overrides moved to _exceptions.scss (DS-EXC-039)
 .shortcuts-modal {
-  .p-dialog-header {
-    padding: var(--space-5);
-    border-bottom: 1px solid var(--color-border-secondary);
-  }
-
-  .p-dialog-content {
-    padding: var(--space-5);
-  }
-
-  .p-dialog-footer {
-    padding: var(--space-4) var(--space-5);
-    border-top: 1px solid var(--color-border-secondary);
-  }
+  // Component-specific styles remain here
 }

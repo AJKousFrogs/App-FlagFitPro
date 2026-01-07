@@ -256,12 +256,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
 
-  .p-field {
-    label {
-      display: block;
-      font-size: var(--font-size-h4);
-      font-weight: var(--font-weight-medium);
-      color: var(--color-text-secondary);
+  // PrimeNG field override moved to _exceptions.scss (DS-EXC-048)
       margin-bottom: var(--space-1);
     }
   }

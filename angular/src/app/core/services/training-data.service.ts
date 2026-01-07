@@ -174,8 +174,75 @@ export class TrainingDataService {
   }
 
   /**
+   * Detect late logging and conflicts
+   */
+  private detectLateLoggingAndConflicts(session: any): {
+    logStatus: "on_time" | "late" | "retroactive";
+    requiresApproval: boolean;
+    hoursDelayed: number | null;
+    conflicts: any[];
+  } {
+    const sessionDate = session.session_date
+      ? new Date(session.session_date)
+      : new Date();
+    const now = new Date();
+    const hoursDiff =
+      (now.getTime() - sessionDate.getTime()) / (1000 * 60 * 60);
+
+    let logStatus: "on_time" | "late" | "retroactive" = "on_time";
+    let requiresApproval = false;
+
+    if (hoursDiff > 48) {
+      logStatus = "retroactive";
+      requiresApproval = true;
+    } else if (hoursDiff > 24) {
+      logStatus = "late";
+    }
+
+    // Detect conflicts: RPE vs session type
+    const conflicts: any[] = [];
+    if (session.rpe && session.session_type) {
+      const sessionTypeIntensity: Record<string, { max?: number; min?: number }> =
+        {
+          recovery: { max: 4 },
+          light: { max: 5 },
+          moderate: { max: 7 },
+          intense: { min: 7 },
+        };
+
+      const typeRules = sessionTypeIntensity[session.session_type];
+      if (typeRules) {
+        if (typeRules.max && session.rpe > typeRules.max) {
+          conflicts.push({
+            type: "rpe_vs_session_type",
+            message: `Player logged RPE ${session.rpe} but session marked as ${session.session_type}`,
+            playerValue: session.rpe,
+            coachValue: session.session_type,
+          });
+        }
+        if (typeRules.min && session.rpe < typeRules.min) {
+          conflicts.push({
+            type: "rpe_vs_session_type",
+            message: `Player logged RPE ${session.rpe} but session marked as ${session.session_type}`,
+            playerValue: session.rpe,
+            coachValue: session.session_type,
+          });
+        }
+      }
+    }
+
+    return {
+      logStatus,
+      requiresApproval,
+      hoursDelayed: hoursDiff > 24 ? Math.floor(hoursDiff) : null,
+      conflicts,
+    };
+  }
+
+  /**
    * Create a new training session
    * Uses direct Supabase insert with RLS
+   * Includes late logging detection and conflict detection
    */
   createTrainingSession(
     session: Omit<TrainingSession, "id" | "created_at" | "updated_at">,
@@ -187,8 +254,18 @@ export class TrainingDataService {
       return of(null);
     }
 
+    // Detect late logging and conflicts
+    const detection = this.detectLateLoggingAndConflicts(session);
+
     // Ensure user_id is set
-    const sessionData = { ...session, user_id: userId };
+    const sessionData = {
+      ...session,
+      user_id: userId,
+      log_status: detection.logStatus,
+      requires_coach_approval: detection.requiresApproval,
+      hours_delayed: detection.hoursDelayed,
+      conflicts: detection.conflicts,
+    };
 
     return from(
       this.supabaseService.client
@@ -203,6 +280,26 @@ export class TrainingDataService {
           throw error;
         }
         this.logger.info("Training session created successfully:", data.id);
+
+        // Log warning if late or retroactive
+        if (detection.logStatus === "late") {
+          this.logger.warn(
+            `[TrainingLog] Session logged ${detection.hoursDelayed} hours late`
+          );
+        } else if (detection.logStatus === "retroactive") {
+          this.logger.warn(
+            `[TrainingLog] Session logged retroactively (${detection.hoursDelayed} hours late) - requires coach approval`
+          );
+        }
+
+        // Log conflicts if any
+        if (detection.conflicts.length > 0) {
+          this.logger.warn(
+            `[TrainingLog] Conflicts detected:`,
+            detection.conflicts
+          );
+        }
+
         return data;
       }),
       catchError((error) => {

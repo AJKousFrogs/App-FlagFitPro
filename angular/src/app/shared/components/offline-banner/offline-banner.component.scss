@@ -104,12 +104,9 @@
   gap: var(--space-2);
 }
 
-.banner-actions .p-button {
-  color: white;
-}
-
-.banner-actions .p-button:hover {
-  background: rgba(255, 255, 255, 0.1);
+// PrimeNG button overrides moved to _exceptions.scss (DS-EXC-037)
+.banner-actions {
+  // Component-specific styles remain here
 }
 
 @media (max-width: 768px) {

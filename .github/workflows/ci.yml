@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for changed files detection
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -34,6 +36,46 @@ jobs:
 
       - name: Run ESLint
         run: npm run lint
+
+  design-system-enforcement:
+    name: Design System Enforcement (Changed Files)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for changed files detection
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: angular/package-lock.json
+
+      - name: Install dependencies
+        run: cd angular && npm ci --legacy-peer-deps
+
+      - name: Check changed files
+        id: changed-files
+        run: |
+          CHANGED=$(bash scripts/get-changed-files.sh)
+          echo "changed=$CHANGED" >> $GITHUB_OUTPUT
+          if [ -n "$CHANGED" ]; then
+            echo "Files changed:"
+            echo "$CHANGED" | tr ' ' '\n'
+          else
+            echo "No SCSS/CSS files changed"
+          fi
+
+      - name: Lint changed files (strict enforcement)
+        if: steps.changed-files.outputs.changed != ''
+        run: npm run lint:css:changed
+        continue-on-error: false
 
   type-check:
     name: TypeScript Type Check

@@ -185,21 +185,7 @@
 
   // Input field styling - moved to @layer overrides
 
-  // Error messages
-  .p-error {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-    margin-top: var(--space-2);
-    font-size: var(--font-size-badge);
-    color: var(--color-status-error);
-    animation: shake 0.3s ease-in-out;
-
-    &::before {
-      content: "⚠";
-      font-size: var(--font-size-h4);
-    }
-  }
+  // PrimeNG error override moved to _exceptions.scss (DS-EXC-049)
 
   @keyframes shake {
     0%,
@@ -449,9 +435,7 @@
       animation: none;
     }
 
-    .p-error {
-      animation: none;
-    }
+    // PrimeNG error reduced motion override moved to _exceptions.scss (DS-EXC-049)
   }
 } // End @layer features
 
@@ -465,34 +449,10 @@
  * Reason: Custom padding and text alignment for login card
  * Scope: login component only
  */
-.login-card {
-  .p-card {
-    background: transparent;
-    box-shadow: none;
-    border: none;
-  }
-
-  // p-card padding overrides REMOVED
-  // Login card is an EXCEPTION: uses larger padding for auth flow UX
-  // @see docs/CARD_SHELL_CONTRACT.md Section 11 Exceptions
-  .p-card-header {
-    text-align: center;
-  }
-}
-
-/*
- * Form controls - Layout only (styling handled by global system)
- */
-.p-inputtext {
-  width: 100%;
-}
-
-/*
- * Submit button - Layout only (styling handled by global system)
- */
-.login-submit-btn.p-button {
-  width: 100%;
-  justify-content: center;
+// PrimeNG card, input, and button overrides moved to _exceptions.scss (DS-EXC-049)
+.login-card,
+.login-submit-btn {
+  // Component-specific styles remain here
 }
 
 // Mobile responsive - padding overrides REMOVED

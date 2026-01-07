@@ -52,6 +52,7 @@ import {
 import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { AcwrSpikeDetectionService } from "./acwr-spike-detection.service";
 import {
   RealtimeChannel,
   REALTIME_LISTEN_TYPES,
@@ -87,6 +88,7 @@ export class AcwrService {
   private evidenceConfigService = inject(EvidenceConfigService);
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
+  private acwrSpikeDetection = inject(AcwrSpikeDetectionService);
 
   // Realtime subscription channel
   private realtimeChannel: RealtimeChannel | null = null;
@@ -687,6 +689,24 @@ export class AcwrService {
       // Keep last 30 days of history
       const historyCutoff = new Date();
       historyCutoff.setDate(historyCutoff.getDate() - 30);
+
+      // Check for ACWR spike and create load cap if needed
+      if (currentData.ratio > 1.5 && session.playerId) {
+        this.acwrSpikeDetection.checkAndCapLoad(session.playerId, currentData.ratio).catch(
+          (error) => {
+            this.logger.error("[ACWR] Error checking spike:", error);
+          }
+        );
+      }
+
+      // Decrement load cap if session was logged
+      if (session.playerId && session.completed) {
+        this.acwrSpikeDetection.decrementLoadCap(session.playerId).catch(
+          (error) => {
+            this.logger.error("[ACWR] Error decrementing load cap:", error);
+          }
+        );
+      }
       const filteredHistory = history.filter((h) => h.date >= historyCutoff);
 
       this.historicalACWR.set(filteredHistory);
@@ -1247,6 +1267,11 @@ export class AcwrService {
         this.logger.error("[ACWR] Error saving to database:", error);
       } else {
         this.logger.debug("[ACWR] Saved to database successfully");
+        
+        // Check for ACWR spike and create load cap if needed
+        if (acwrData.ratio > 1.5) {
+          await this.acwrSpikeDetection.checkAndCapLoad(userId, acwrData.ratio);
+        }
       }
     } catch (error) {
       this.logger.error("[ACWR] Failed to save ACWR data:", error);

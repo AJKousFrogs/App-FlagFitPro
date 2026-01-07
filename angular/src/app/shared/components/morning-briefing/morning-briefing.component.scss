@@ -966,122 +966,23 @@
   width: 100%;
   margin-top: var(--space-2);
 
-  .p-button {
-    width: 100%;
-    justify-content: center;
-    padding: var(--space-3) var(--space-5);
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
-    border-radius: var(--radius-xl);
-  }
+  // PrimeNG button override moved to _exceptions.scss (DS-EXC-028)
 }
 
-/*
- * EXCEPTION: PrimeNG Slider styling
- * Ticket: DS-COMP-002
- * Owner: @design-system
- * Scope: morning-briefing component only
- * Remove by: N/A - Permanent PrimeNG limitation
- * Reason: PrimeNG slider requires deep styling for brand consistency
- */
+// PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-028)
 .feeling-slider-input {
   flex: 1;
   width: 100%;
   display: block;
-
-  &.p-slider,
-  .p-slider {
-    background: var(--color-border-default);
-    height: 10px;
-    border-radius: var(--radius-md);
-    border: none;
-  }
-
-  .p-slider-range {
-    background: linear-gradient(
-      90deg,
-      var(--ds-primary-green) 0%,
-      var(--ds-primary-green-light) 100%
-    );
-    border-radius: var(--radius-md);
-  }
-
-  .p-slider-handle {
-    width: 26px;
-    height: 26px;
-    background: var(--surface-primary);
-    border: 3px solid var(--ds-primary-green);
-    border-radius: var(--radius-full);
-    box-shadow: var(--shadow-md);
-    margin-top: -8px;
-    top: 50%;
-    transform: translateY(-50%);
-
-    &:hover {
-      background: var(--ds-primary-green);
-      border-color: var(--ds-primary-green);
-    }
-
-    &:focus {
-      box-shadow: var(--shadow-focus);
-    }
-  }
 }
 
 .sleep-number-input {
   width: 140px;
 
-  .p-inputnumber-input,
-  .p-inputtext {
-    width: 100px;
-    text-align: center;
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-body);
-    padding: var(--space-3);
-    border-radius: var(--radius-lg);
-    border: var(--border-1) solid var(--color-border-default);
-  }
-
-  .p-inputnumber-button,
-  .p-button {
-    background: var(--surface-tertiary);
-    border: var(--border-1) solid var(--color-border-default);
-    color: var(--color-text-secondary);
-
-    &:hover {
-      background: var(--ds-primary-green);
-      border-color: var(--ds-primary-green);
-      color: var(--color-text-on-primary);
-    }
-  }
-
-  .p-inputnumber-button-up {
-    border-radius: 0 var(--radius-lg) 0 0;
-  }
-
-  .p-inputnumber-button-down {
-    border-radius: 0 0 var(--radius-lg) 0;
-  }
+  // PrimeNG inputnumber overrides moved to _exceptions.scss (DS-EXC-028)
 }
 
-.p-checkbox {
-  .p-checkbox-box {
-    width: 22px;
-    height: 22px;
-    border-radius: var(--radius-md);
-    border: var(--border-2) solid var(--color-border-strong);
-    background: var(--surface-primary);
-
-    &.p-highlight {
-      background: var(--ds-primary-green);
-      border-color: var(--ds-primary-green);
-    }
-  }
-
-  &:not(.p-disabled):has(.p-checkbox-box.p-highlight):hover .p-checkbox-box {
-    background: var(--ds-primary-green-hover);
-    border-color: var(--ds-primary-green-hover);
-  }
+// PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-028)
 }
 
 .submit-btn,

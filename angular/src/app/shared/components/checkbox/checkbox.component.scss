@@ -52,7 +52,7 @@
   height: 20px;
   min-width: 20px;
   min-height: 20px;
-  border: 2px solid var(--color-border-default, #d1d5db);
+  border: 2px solid var(--color-border-default);
   border-radius: var(--radius-md); /* 6px */
   background-color: var(--color-surface-primary, white);
   transition:
@@ -65,14 +65,14 @@
 // Hover state (only on capable devices)
 @media (hover: hover) and (pointer: fine) {
   .checkbox-label:hover:not(.disabled) .checkbox-custom {
-    border-color: var(--ds-primary-green, #089949);
+    border-color: var(--ds-primary-green);
   }
 }
 
 // Checked state - green background with white check
 .checkbox-label.checked .checkbox-custom {
-  background-color: var(--ds-primary-green, #089949);
-  border-color: var(--ds-primary-green, #089949);
+  background-color: var(--ds-primary-green);
+  border-color: var(--ds-primary-green);
 }
 
 // Checkmark
@@ -88,24 +88,24 @@
 
 // Focus state - consistent focus ring
 .checkbox-input:focus-visible + .checkbox-custom {
-  box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
   outline: none;
 }
 
 // Legacy focus support
 .checkbox-input:focus + .checkbox-custom {
-  box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
 }
 
 // Error state
 .checkbox-input.is-invalid + .checkbox-custom {
-  border-color: var(--color-status-error, #ef4444);
+  border-color: var(--color-status-error);
 }
 
 // Disabled state
 .checkbox-label.disabled .checkbox-custom {
-  background-color: var(--color-surface-secondary, #f3f4f6);
-  border-color: var(--color-border-secondary, #e5e7eb);
+  background-color: var(--color-surface-secondary);
+  border-color: var(--color-border-secondary);
   cursor: not-allowed;
 }
 
@@ -121,6 +121,6 @@
 
 .form-error {
   font-size: var(--font-size-badge, 0.75rem);
-  color: var(--color-status-error, #ef4444);
+  color: var(--color-status-error);
   margin-left: calc(20px + var(--space-3, 0.75rem));
 }

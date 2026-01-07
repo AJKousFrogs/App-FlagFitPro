@@ -13,13 +13,7 @@
   gap: 0.5rem;
 }
 
-.p-datepicker {
-  width: 100%;
-}
-
-.p-datepicker-input {
-  width: 100%;
-}
+// PrimeNG datepicker overrides moved to _exceptions.scss (DS-EXC-041)
 
 .form-help {
   font-size: var(--font-size-badge);

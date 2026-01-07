@@ -24,6 +24,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { SharedInsightFeedService, SharedInsight } from "../../../core/services/shared-insight-feed.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
@@ -798,6 +799,7 @@ interface TournamentNutritionBrief {
 export class NutritionistDashboardComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
+  private insightFeedService = inject(SharedInsightFeedService);
 
   // State
   loading = signal(true);

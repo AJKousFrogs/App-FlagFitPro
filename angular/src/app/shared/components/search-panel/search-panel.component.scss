@@ -10,50 +10,9 @@
    DIALOG CONTAINER
    ================================================================ */
 
-.command-palette-dialog.p-dialog {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  width: 700px;
-  max-width: 95vw;
-  top: 10%;
-  z-index: 1100;
-}
-
-.command-palette-dialog .p-dialog-content {
-  padding: 0;
-  border-radius: var(--radius-2xl);
-  background: var(--surface-card);
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.08),
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 12px 24px -8px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-}
-
-/* Ensure the mask covers everything - must override global styles */
-.p-component-overlay-enter,
-.p-dialog-mask:has(.command-palette-dialog),
-.command-palette-dialog + .p-dialog-mask,
-body > .p-dialog-mask:has(.command-palette-dialog) {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1099;
-  position: fixed;
-  inset: 0;
-}
-
-/* Also target the mask by sibling relationship in PrimeNG v21 structure */
-.p-dialog-mask.p-component-overlay {
-  &:has(.command-palette-dialog) {
-    z-index: 1099;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    background-color: rgba(0, 0, 0, 0.5);
-  }
+// PrimeNG dialog overrides moved to _exceptions.scss (DS-EXC-013)
+.command-palette-dialog {
+  // Component-specific styles remain here
 }
 
 /* ================================================================
@@ -88,27 +47,9 @@ body > .p-dialog-mask:has(.command-palette-dialog) {
   flex-shrink: 0;
 }
 
-.search-input.p-inputtext {
-  flex: 1;
-  border: none;
-  background: transparent;
-  font-size: var(--font-body-lg);
-  font-weight: var(--font-weight-regular);
-  padding: 0;
-  color: var(--text-color);
-  box-shadow: none;
-  height: var(--space-8);
-  line-height: var(--space-8);
-}
-
-.search-input.p-inputtext::placeholder {
-  color: var(--text-color-secondary);
-  opacity: 0.7;
-}
-
-.search-input.p-inputtext:focus {
-  outline: none;
-  box-shadow: none;
+// PrimeNG input overrides moved to _exceptions.scss (DS-EXC-013)
+.search-input {
+  // Component-specific styles remain here
 }
 
 .input-actions {
@@ -128,18 +69,9 @@ body > .p-dialog-mask:has(.command-palette-dialog) {
   letter-spacing: 0.02em;
 }
 
-.clear-btn.p-button {
-  width: var(--space-8);
-  height: var(--space-8);
-  min-width: var(--space-8);
-  padding: 0;
-  background: transparent;
-  border: none;
-}
-
-.clear-btn .p-button-icon {
-  font-size: var(--font-size-h4);
-  color: var(--text-color-secondary);
+// PrimeNG button override moved to _exceptions.scss (DS-EXC-013)
+.clear-btn {
+  // Component-specific styles remain here
 }
 
 /* ================================================================
@@ -862,16 +794,8 @@ body > .p-dialog-mask:has(.command-palette-dialog) {
    ================================================================ */
 
 @media (max-width: 640px) {
-  .command-palette-dialog.p-dialog {
-    max-width: 100%;
-    width: 100%;
-    margin: 0;
-  }
-
-  .command-palette-dialog .p-dialog-content {
-    border-radius: 0;
-    max-height: 100vh;
-  }
+  // PrimeNG dialog responsive overrides moved to _exceptions.scss (DS-EXC-013)
+}
 
   .search-panel {
     max-height: 100vh;

@@ -9,23 +9,23 @@
 @use "styles/mixins" as *;
 
 .dashboard-content {
-  padding: space(4);
+  padding: var(--space-4);
   background: var(--surface-ground);
   min-height: 100vh;
 
   // Tablet
   @include respond-to(lg) {
-    padding: space(4);
+    padding: var(--space-4);
   }
 
   // Mobile
   @include respond-to(md) {
-    padding: space(3);
+    padding: var(--space-3);
   }
 
   // Small mobile
   @include respond-to(xs) {
-    padding: space(2);
+    padding: var(--space-2);
   }
 
   /* ============================================
@@ -33,28 +33,25 @@
    ============================================ */
 
   .priority-command-center {
-    margin-bottom: space(6);
+    margin-bottom: var(--space-8); /* space(6) = 32px */
     display: flex;
     flex-direction: column;
-    gap: space(4);
+    gap: var(--space-4);
   }
 
   .merlin-coach-card {
-    background: var(
-      --ds-primary-green-gradient,
-      linear-gradient(135deg, #089949 0%, #036d35 100%)
-    );
-    color: white;
-    padding: space(5);
+    background: var(--ds-primary-green-gradient);
+    color: var(--color-text-on-primary);
+    padding: var(--space-6); /* space(5) = 24px, closest token */
     border-radius: var(--radius-xl);
     display: flex;
-    gap: space(4);
+    gap: var(--space-4);
     box-shadow: var(--shadow-md);
 
     .merlin-avatar {
-      width: 48px;
-      height: 48px;
-      background: rgba(255, 255, 255, 0.2);
+      width: var(--avatar-lg); /* 48px */
+      height: var(--avatar-lg); /* 48px */
+      background: var(--state-layer-on-primary);
       border-radius: var(--radius-full);
       display: flex;
       align-items: center;
@@ -66,12 +63,12 @@
     .merlin-content {
       flex: 1;
       h3 {
-        margin: 0 0 space(1) 0;
+        margin: 0 0 var(--space-1) 0;
         font-size: var(--font-size-h2);
         font-weight: var(--font-weight-semibold);
       }
       p {
-        margin: 0 0 space(3) 0;
+        margin: 0 0 var(--space-3) 0;
         font-size: var(--font-size-h4);
         line-height: var(--line-height-base);
         opacity: 0.95;
@@ -80,23 +77,23 @@
 
     .merlin-actions {
       display: flex;
-      gap: space(2);
-      margin-top: space(3);
+      gap: var(--space-2);
+      margin-top: var(--space-3);
     }
   }
 
   .priority-athletes-strip {
     background: var(--surface-card);
     border-radius: var(--radius-xl);
-    padding: space(4);
-    border: 1px solid var(--surface-border);
+    padding: var(--space-4);
+    border: var(--border-1) solid var(--surface-border);
     box-shadow: var(--shadow-sm);
 
     .strip-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: space(3);
+      margin-bottom: var(--space-3);
 
       .strip-title {
         font-size: var(--font-size-caption);
@@ -104,7 +101,7 @@
         color: var(--color-text-secondary);
         display: flex;
         align-items: center;
-        gap: space(2);
+        gap: var(--space-2);
         text-transform: uppercase;
         letter-spacing: var(--letter-spacing-wide);
 
@@ -116,12 +113,12 @@
 
     .athlete-scroll {
       display: flex;
-      gap: space(3);
+      gap: var(--space-3);
       overflow-x: auto;
-      padding-bottom: space(2);
+      padding-bottom: var(--space-2);
 
       &::-webkit-scrollbar {
-        height: 4px;
+        height: var(--space-1); /* 4px */
       }
       &::-webkit-scrollbar-thumb {
         background: var(--surface-300);
@@ -131,17 +128,17 @@
   }
 
   .priority-athlete-card {
-    flex: 0 0 240px;
+    flex: 0 0 calc(var(--space-24) * 2.5); /* 240px - using spacing tokens */
     background: var(--surface-ground);
-    padding: space(3);
+    padding: var(--space-3);
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
-    gap: space(3);
+    gap: var(--space-3);
     // Hover behavior REMOVED - use app-card-shell with state="interactive"
     // @see docs/CARD_SHELL_CONTRACT.md §2.8
     cursor: pointer;
-    border: 1px solid transparent;
+    border: var(--border-1) solid transparent;
 
     .pa-info {
       flex: 1;
@@ -178,15 +175,15 @@
   .dashboard-header {
     @include flex-between;
 
-    margin-bottom: space(5);
-    padding: space(3) space(4); // Reduced from 4
+    margin-bottom: var(--space-6); /* space(5) = 24px, closest token */
+    padding: var(--space-3) var(--space-4); // Reduced from 4
     background: var(--surface-card);
     border-radius: var(--radius-xl); // Use XL radius for consistency
-    border: 1px solid var(--surface-border);
+    border: var(--border-1) solid var(--surface-border);
     box-shadow: var(--shadow-sm);
 
     &.compact-header {
-      margin-bottom: space(4);
+      margin-bottom: var(--space-4);
     }
 
     // Tablet landscape - start stacking
@@ -198,7 +195,7 @@
     @include respond-to(md) {
       flex-direction: column;
       text-align: center;
-      gap: space(3);
+      gap: var(--space-3);
     }
   }
 
@@ -214,7 +211,7 @@
     margin: 0;
     display: flex;
     align-items: center;
-    gap: space(3);
+    gap: var(--space-3);
 
     // Mobile
     @include respond-to(md) {
@@ -230,10 +227,10 @@
   // Decision 8: Use semantic token names
   .header-subtitle {
     color: var(--color-text-secondary);
-    margin: space(1) 0 0;
+    margin: var(--space-1) 0 0;
     display: flex;
     align-items: center;
-    gap: space(2);
+    gap: var(--space-2);
 
     // Tablet - center align
     @include respond-to(lg) {
@@ -265,7 +262,7 @@
 
   .header-actions {
     display: flex;
-    gap: space(2);
+    gap: var(--space-2);
 
     // Tablet - full width and center
     @include respond-to(lg) {
@@ -276,7 +273,7 @@
     // Mobile - stack vertically
     @include respond-to(md) {
       flex-direction: column;
-      gap: space(2);
+      gap: var(--space-2);
     }
   }
 
@@ -286,17 +283,17 @@
 
   .partial-data-notice {
     display: flex;
-    gap: space(3);
-    padding: space(4);
+    gap: var(--space-3);
+    padding: var(--space-4);
     background: var(--color-status-info-bg);
-    border: 1px solid var(--color-status-info);
+    border: var(--border-1) solid var(--color-status-info);
     border-radius: var(--radius-lg);
-    margin-bottom: space(5);
+    margin-bottom: var(--space-6); /* space(5) = 24px, closest token */
 
     .notice-icon {
       flex-shrink: 0;
-      width: 40px;
-      height: 40px;
+      width: var(--icon-container-md); /* 40px */
+      height: var(--icon-container-md); /* 40px */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -310,7 +307,7 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: space(2);
+      gap: var(--space-2);
 
       h4 {
         margin: 0;
@@ -330,12 +327,12 @@
     .notice-link {
       display: inline-flex;
       align-items: center;
-      gap: space(1);
+      gap: var(--space-1);
       color: var(--color-status-info);
       text-decoration: none;
       font-size: var(--font-size-body);
       font-weight: var(--font-weight-medium);
-      margin-top: space(1);
+      margin-top: var(--space-1);
 
       &:hover {
         text-decoration: underline;
@@ -351,10 +348,10 @@
     display: flex;
     align-items: center;
     background: var(--surface-card);
-    padding: space(3) space(5);
+    padding: var(--space-3) var(--space-6); /* space(5) = 24px, closest token */
     border-radius: var(--radius-xl);
-    border: 1px solid var(--surface-border);
-    margin-bottom: space(5);
+    border: var(--border-1) solid var(--surface-border);
+    margin-bottom: var(--space-6); /* space(5) = 24px, closest token */
     box-shadow: var(--shadow-sm);
     overflow-x: auto;
 
@@ -364,7 +361,7 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      min-width: 100px;
+      min-width: calc(var(--space-24) * 1.042); /* 100px - using spacing tokens */
 
       .sc-label {
         font-size: var(--font-size-badge);
@@ -395,19 +392,19 @@
     }
 
     .sc-divider {
-      width: 1px;
-      height: 32px;
+      width: var(--border-1);
+      height: var(--space-8); /* 32px */
       background: var(--surface-border);
-      margin: 0 space(4);
+      margin: 0 var(--space-4);
     }
 
     @include respond-to(md) {
-      padding: space(3);
+      padding: var(--space-3);
       .sc-item {
-        min-width: 80px;
+        min-width: calc(var(--space-24) * 0.833); /* 80px - using spacing tokens */
       }
       .sc-divider {
-        margin: 0 space(2);
+        margin: 0 var(--space-2);
       }
     }
   }
@@ -418,8 +415,8 @@
 
   .dashboard-workspace {
     display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: space(5);
+    grid-template-columns: 1fr calc(var(--space-24) * 3.333); /* 320px - using spacing tokens */
+    gap: var(--space-6); /* space(5) = 24px, closest token */
     align-items: start;
 
     @include respond-to(lg) {
@@ -434,40 +431,40 @@
   .workspace-side {
     display: flex;
     flex-direction: column;
-    gap: space(4);
+    gap: var(--space-4);
   }
 
   .workspace-tabs-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: space(2) space(4);
+    padding: var(--space-2) var(--space-4);
     background: var(--surface-100);
-    border-bottom: 1px solid var(--surface-border);
+    border-bottom: var(--border-1) solid var(--surface-border);
 
     .tab-triggers {
       display: flex;
-      gap: space(1);
+      gap: var(--space-1);
     }
 
     .tab-actions {
       display: flex;
-      gap: space(2);
+      gap: var(--space-2);
       align-items: center;
     }
 
     .tab-trigger {
-      padding: space(2) space(4);
+      padding: var(--space-2) var(--space-4);
       background: transparent;
       border: none;
-      border-bottom: 2px solid transparent;
+      border-bottom: var(--border-2) solid transparent;
       color: var(--color-text-secondary);
       font-weight: var(--font-weight-medium);
       font-size: var(--font-size-h4);
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: space(2);
+      gap: var(--space-2);
       transition: background-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
 
       &:hover {
@@ -483,13 +480,13 @@
 
     .tab-actions {
       display: flex;
-      gap: space(2);
+      gap: var(--space-2);
       align-items: center;
     }
   }
 
   .tab-content {
-    padding: space(4);
+    padding: var(--space-4);
   }
 
   .roster-workspace {
@@ -498,10 +495,10 @@
   }
 
   .workspace-filters {
-    padding: space(3) space(4);
+    padding: var(--space-3) var(--space-4);
     display: flex;
-    gap: space(2);
-    border-bottom: 1px solid var(--surface-border);
+    gap: var(--space-2);
+    border-bottom: var(--border-1) solid var(--surface-border);
   }
 
   .clickable-row {
@@ -514,14 +511,14 @@
   .readiness-compact {
     display: flex;
     align-items: center;
-    gap: space(2);
+    gap: var(--space-2);
     font-size: var(--font-size-h4);
     font-weight: var(--font-weight-semibold);
 
     .r-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
+      width: var(--space-2); /* 8px */
+      height: var(--space-2); /* 8px */
+      border-radius: var(--radius-full);
 
       &.readiness-high {
         background: var(--color-status-success);
@@ -538,17 +535,17 @@
   .schedule-mini {
     display: flex;
     flex-direction: column;
-    gap: space(2);
-    padding: space(3);
+    gap: var(--space-2);
+    padding: var(--space-3);
   }
 
   .mini-event {
     display: flex;
-    gap: space(3);
-    padding: space(2);
+    gap: var(--space-3);
+    padding: var(--space-2);
     border-radius: var(--radius-md);
     background: var(--surface-ground);
-    border-left: 3px solid var(--surface-border);
+    border-left: var(--space-1) solid var(--surface-border); /* 4px - closest token */
 
     &.game {
       border-left-color: var(--color-status-warning);
@@ -561,7 +558,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 32px;
+      min-width: var(--space-8); /* 32px */
 
       .d {
         font-weight: var(--font-weight-bold);
@@ -594,7 +591,7 @@
   .quick-command-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: space(2);
+    gap: var(--space-2);
   }
 
   /* ============================================
@@ -604,8 +601,8 @@
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: space(3);
-    margin-bottom: space(5);
+    gap: var(--space-3);
+    margin-bottom: var(--space-6); /* space(5) = 24px, closest token */
 
     // Large desktop (> 1536px) - keep 6 columns
 
@@ -627,7 +624,7 @@
     // Small tablet / Mobile landscape (640px-768px) - 2 columns
     @include respond-to(md) {
       grid-template-columns: repeat(2, 1fr);
-      gap: space(2);
+      gap: var(--space-2);
     }
 
     // Mobile (< 640px) - 1 column
@@ -670,7 +667,7 @@
   .main-grid {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr; // left, center, right
-    gap: space(4);
+    gap: var(--space-4);
 
     // Desktop (1280px+) - 3 columns
 
@@ -697,7 +694,7 @@
         grid-column: span 2;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: space(4);
+        gap: var(--space-4);
       }
     }
 
@@ -719,7 +716,7 @@
   .right-column {
     display: flex;
     flex-direction: column;
-    gap: space(4);
+    gap: var(--space-4);
   }
 
   /* ============================================
@@ -739,7 +736,7 @@
     @include flex-between;
 
     padding: var(--space-3) 0;
-    border-top: 1px solid var(--color-border-subtle);
+    border-top: var(--border-1) solid var(--color-border-subtle);
     margin-top: var(--space-3);
 
     // Mobile - wrap
@@ -755,7 +752,7 @@
     // Mobile - grow to fill space
     @include respond-to(md) {
       flex: 1;
-      min-width: 80px;
+      min-width: calc(var(--space-24) * 0.833); /* 80px - using spacing tokens */
     }
   }
 
@@ -930,5 +927,85 @@
       font-size: var(--text-xs);
       color: var(--text-secondary);
     }
+  }
+
+  /* ============================================
+   ACTIVE PROTOCOLS SECTION
+   ============================================ */
+
+  .active-protocols-section {
+    margin-top: var(--space-8); /* space(6) = 32px */
+    margin-bottom: var(--space-8); /* space(6) = 32px */
+
+    .section-title {
+      font-size: var(--font-size-h3);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+
+      i {
+        opacity: 0.7;
+      }
+    }
+
+      .protocol-group {
+        margin-bottom: var(--space-3);
+        padding: var(--space-4);
+
+        .protocol-header {
+          display: flex;
+          align-items: center;
+          gap: var(--space-2);
+          margin-bottom: var(--space-3);
+
+        .protocol-icon {
+          font-size: var(--font-size-h3);
+          flex-shrink: 0;
+        }
+
+        .protocol-title {
+          font-size: var(--font-size-h4);
+          font-weight: var(--font-weight-semibold);
+          color: var(--color-text-primary);
+        }
+      }
+
+        .protocol-players {
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-2);
+        }
+
+        .protocol-player-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: var(--space-2);
+        background: var(--surface-ground);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: background-color var(--transition-fast);
+
+        &:hover {
+          background: var(--surface-hover);
+        }
+
+        .player-name {
+          font-weight: var(--font-weight-medium);
+          color: var(--color-text-primary);
+        }
+
+        .protocol-tag {
+          margin-left: auto;
+        }
+      }
+    }
+  }
+
+  .missing-data-strip {
+    border-left: var(--space-1) solid var(--color-status-warning); /* 4px */
   }
 } // End of @layer features

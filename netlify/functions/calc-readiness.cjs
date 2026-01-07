@@ -8,6 +8,9 @@ const {
   createErrorResponse,
   handleValidationError,
 } = require("./utils/error-handler.cjs");
+const {
+  detectACWRTrigger,
+} = require("./utils/safety-override.cjs");
 // Note: authenticateRequest, applyRateLimit are handled by baseHandler
 
 /**
@@ -431,6 +434,11 @@ exports.handler = async (event, context) => {
           500,
           `Failed to save readiness score: ${upsertErr.message}`,
         );
+      }
+
+      // Safety override: Check ACWR danger zone
+      if (acwr > 1.5 || acwr < 0.8) {
+        await detectACWRTrigger(athleteId);
       }
 
       // Calibration note for teams

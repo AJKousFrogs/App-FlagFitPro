@@ -1,3 +1,22 @@
+/**
+ * Training Schedule Component
+ *
+ * ⭐ CANONICAL PAGE — Design System Exemplar (Pending Cleanup)
+ * ============================================================
+ * This page is marked as canonical but requires cleanup before freeze.
+ * 
+ * RULES:
+ * - Future refactors copy FROM this page, never INTO it
+ * - Changes require design system curator approval
+ * - Must be cleaned to full compliance before canonical freeze
+ * 
+ * See docs/CANONICAL_PAGES.md for full documentation.
+ *
+ * CLEANUP REQUIRED:
+ * - Replace raw spacing values with tokens
+ * - Replace raw colors with tokens
+ */
+
 import {
   Component,
   inject,

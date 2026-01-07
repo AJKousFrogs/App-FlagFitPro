@@ -139,6 +139,7 @@ export class RosterService {
       "coach",
       "physiotherapist",
       "nutritionist",
+      "psychologist",
       "strength_conditioning_coach",
     ];
     return healthDataRoles.includes(role);

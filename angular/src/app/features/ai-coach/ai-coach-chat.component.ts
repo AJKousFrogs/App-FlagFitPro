@@ -150,6 +150,7 @@ interface AutocompleteSuggestion {
     MainLayoutComponent,
     DailyReadinessComponent,
     MicroSessionComponent,
+    AIModeExplanationComponent,
   ],
   template: `
     <app-main-layout>
@@ -243,6 +244,13 @@ interface AutocompleteSuggestion {
             </button>
           </div>
         </header>
+
+        <!-- Phase 2.3: AI Mode Explanation -->
+        @if (aiModeStatus() && aiModeStatus()!.isConservative) {
+          <div class="ai-mode-section">
+            <app-ai-mode-explanation [modeStatus]="aiModeStatus()!"></app-ai-mode-explanation>
+          </div>
+        }
 
         <!-- Search Bar (conditionally shown) -->
         @if (searchMode()) {
@@ -812,6 +820,8 @@ export class AiCoachChatComponent implements AfterViewChecked {
   private readonly destroyRef = inject(DestroyRef);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly route = inject(ActivatedRoute);
+  private readonly dataConfidenceService = inject(DataConfidenceService);
+  private readonly missingDataService = inject(MissingDataDetectionService);
 
   // Design system tokens
   protected readonly dialogStyles = DIALOG_STYLES;
@@ -831,6 +841,9 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
   // Daily readiness
   todayReadinessScore = signal<number | null>(null);
+
+  // Phase 2.3: AI Mode Status
+  aiModeStatus = signal<AIModeStatus | null>(null);
 
   // Micro-session state
   microSessionDialogVisible = false;
@@ -1105,6 +1118,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
   constructor() {
     // Initialize on construction (Angular 21 pattern)
     this.loadTodayReadiness();
+    this.loadAIModeStatus();
     this.initializeSpeechRecognition();
     this.handleRouteParams();
   }
@@ -1199,6 +1213,65 @@ export class AiCoachChatComponent implements AfterViewChecked {
     const score = this.trainingService.readinessScore();
     if (score > 0) {
       this.todayReadinessScore.set(score);
+    }
+  }
+
+  /**
+   * Phase 2.3: Load AI mode status to detect conservative mode
+   */
+  async loadAIModeStatus(): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) return;
+
+      // Check data confidence
+      const wellnessStatus = await this.missingDataService.checkMissingWellness(user.id);
+      const trainingDays = this.trainingService.acwrData().dataQuality.daysWithData || 0;
+      
+      // Calculate confidence similar to backend
+      let confidence = 1.0;
+      const missingData: string[] = [];
+      const staleData: string[] = [];
+
+      if (wellnessStatus.missing) {
+        missingData.push("wellness_checkin");
+        confidence *= 0.7;
+      }
+
+      if (trainingDays < 10) {
+        missingData.push(`${10 - trainingDays} training_sessions`);
+        confidence *= Math.min(trainingDays / 10, 1.0);
+      }
+
+      if (wellnessStatus.daysMissing > 2) {
+        staleData.push("wellness");
+        confidence *= 0.8;
+      }
+
+      const isConservative = confidence < 0.7;
+
+      if (isConservative) {
+        let reason = "Incomplete data reduces recommendation accuracy.";
+        if (wellnessStatus.missing) {
+          reason = "Missing wellness check-ins reduce recommendation accuracy.";
+        } else if (trainingDays < 10) {
+          reason = "Insufficient training data reduces recommendation accuracy.";
+        } else if (staleData.length > 0) {
+          reason = "Stale wellness data reduces recommendation accuracy.";
+        }
+
+        this.aiModeStatus.set({
+          isConservative: true,
+          confidence: Math.max(0, Math.min(1, confidence)),
+          reason,
+          missingData,
+          staleData,
+        });
+      } else {
+        this.aiModeStatus.set(null);
+      }
+    } catch (error) {
+      this.logger.error("[AI Chat] Error loading AI mode status:", error);
     }
   }
 

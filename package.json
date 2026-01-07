@@ -53,6 +53,8 @@
     "lint:fix": "eslint . --fix && prettier --write .",
     "lint:css": "stylelint \"angular/src/**/*.{css,scss}\"",
     "lint:css:fix": "stylelint \"angular/src/**/*.{css,scss}\" --fix",
+    "lint:css:changed": "bash scripts/lint-changed-files.sh",
+    "lint:css:all": "bash scripts/lint-all-files.sh",
     "lint:all": "npm run lint && npm run lint:css",
     "lint:ds": "bash scripts/design-system-check.sh",
     "lint:ds:ci": "bash scripts/design-system-check.sh",

@@ -4,8 +4,8 @@
 // ============================================================================
 
 .session-log-form {
-  background: var(--surface-primary, #ffffff);
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  background: var(--surface-primary);
+  border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-xl, 12px);
   padding: var(--space-5, 20px);
   margin-top: var(--space-4, 16px);
@@ -19,13 +19,13 @@
   margin: 0 0 var(--space-1, 4px) 0;
   font-size: var(--font-body-lg, 18px);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
 }
 
 .form-header p {
   margin: 0;
   font-size: var(--font-body-sm, 14px);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 /* Form Fields */
@@ -45,7 +45,7 @@
 .form-field label {
   font-size: var(--font-body-sm, 14px);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,20 +54,20 @@
 
 /* Info icon for tooltips (UX Audit Fix #7) */
 .info-icon {
-  color: var(--color-text-tertiary, #a3a3a3);
+  color: var(--color-text-tertiary);
   font-size: var(--font-body-xs, 12px);
   cursor: help;
   transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
   margin-left: var(--space-1, 4px);
   
   &:hover {
-    color: var(--ds-primary-green, #16a34a);
+    color: var(--ds-primary-green);
   }
 }
 
 .rpe-description {
   font-weight: var(--font-weight-normal, 400);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 /* RPE Slider */
@@ -76,7 +76,7 @@
   align-items: center;
   gap: var(--space-3, 12px);
   padding: var(--space-4, 16px);
-  background: var(--primitive-neutral-50, #fafafa);
+  background: var(--primitive-neutral-50);
   border-radius: var(--radius-lg, 8px);
 }
 
@@ -86,39 +86,15 @@
 
 .rpe-slider {
   flex: 1;
-
-  .p-slider {
-    background: var(--primitive-neutral-200, #e5e5e5);
-    height: 10px;
-    border-radius: var(--radius-sm);
-  }
-
-  .p-slider-range {
-    background: linear-gradient(
-      90deg,
-      var(--ds-primary-green) 0%,
-      var(--primitive-warning-500) 50%,
-      var(--primitive-error-500) 100%
-    );
-    border-radius: var(--radius-sm);
-  }
-
-  .p-slider-handle {
-    width: 24px;
-    height: 24px;
-    background: white;
-    border: 3px solid var(--ds-primary-green);
-    border-radius: 50%;
-    box-shadow: var(--shadow-1);
-    margin-top: -7px;
-  }
+  // PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-008)
+}
 }
 
 .rpe-value {
   text-align: center;
   font-size: var(--font-heading-sm, 20px);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
   margin-top: var(--space-2, 8px);
 }
 
@@ -135,22 +111,22 @@
 
 .expected-duration {
   font-size: var(--font-body-sm, 14px);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .expected-duration .over {
-  color: var(--primitive-warning-600, #d97706);
+  color: var(--primitive-warning-600);
 }
 
 .expected-duration .under {
-  color: var(--primitive-success-600, #16a34a);
+  color: var(--primitive-success-600);
 }
 
 /* Notes */
 .notes-textarea {
   width: 100%;
   padding: var(--space-3, 12px);
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-lg, 8px);
   font-size: var(--font-body-sm, 14px);
   resize: vertical;
@@ -165,7 +141,7 @@
 
 /* Load Preview */
 .load-preview {
-  background: var(--ds-primary-green-light, #e6f4ec);
+  background: var(--ds-primary-green-subtle);
   border-radius: var(--radius-lg, 8px);
   padding: var(--space-4, 16px);
   margin-bottom: var(--space-5, 20px);
@@ -181,18 +157,18 @@
 .load-label {
   font-size: var(--font-body-sm, 14px);
   font-weight: var(--font-weight-medium, 500);
-  color: var(--ds-primary-green-dark, #065f35);
+  color: var(--ds-primary-green-hover);
 }
 
 .load-value {
   font-size: var(--font-heading-md, 24px);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
 }
 
 .load-formula {
   font-size: var(--font-body-xs, 12px);
-  color: var(--ds-primary-green-dark, #065f35);
+  color: var(--ds-primary-green-hover);
   opacity: 0.8;
 }
 

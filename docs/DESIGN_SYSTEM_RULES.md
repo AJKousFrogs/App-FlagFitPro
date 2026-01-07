@@ -2,8 +2,15 @@
 
 **Status:** ✅ **APPROVED**  
 **Effective Date:** January 2, 2026  
+**Enforcement Date:** January 2026 (Phase 4.1 — Incremental Enforcement)  
 **Scope:** Web App (Angular + PrimeNG)  
 **Applies To:** All new code and all refactors starting Phase 1
+
+> **⚠️ Enforcement Policy:** As of January 2026, we use **incremental enforcement**:
+> - **Legacy files** (existing before enforcement date): Tolerated (warnings only)
+> - **Changed files** (modified after enforcement date): Strict enforcement (errors block merge)
+> 
+> See [Design System Enforcement](./DESIGN_SYSTEM_ENFORCEMENT.md) for details.
 
 ---
 

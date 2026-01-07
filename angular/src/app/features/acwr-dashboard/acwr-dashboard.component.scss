@@ -4,7 +4,7 @@
 // ============================================================================
 
 .acwr-dashboard {
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl); /* 1280px - closest token to 1200px */
   margin: 0 auto;
   padding: var(--space-8);
   font-family: var(--font-family-sans);
@@ -54,17 +54,17 @@
 
 .alert-critical {
   background: var(--color-status-error-subtle);
-  border: 2px solid var(--color-status-error);
+  border: var(--border-2) solid var(--color-status-error);
 }
 
 .alert-warning {
   background: var(--color-status-warning-subtle);
-  border: 2px solid var(--color-status-warning);
+  border: var(--border-2) solid var(--color-status-warning);
 }
 
 .alert-info {
   background: var(--color-status-info-subtle);
-  border: 2px solid var(--color-status-info);
+  border: var(--border-2) solid var(--color-status-info);
 }
 
 .alert-icon {
@@ -88,6 +88,93 @@
   padding: var(--space-2);
 }
 
+/* Phase 2.1 - Alert Contract Section (5-Question Contract) */
+.alert-contract {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: var(--border-1) solid var(--overlay-white-20);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.contract-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--font-size-body);
+}
+
+.contract-section strong {
+  color: var(--color-text-on-primary);
+  opacity: 0.9;
+  font-weight: var(--font-weight-semibold);
+}
+
+.contract-section span {
+  color: var(--color-text-on-primary);
+  opacity: 0.85;
+}
+
+.trend-display {
+  font-family: var(--font-family-mono);
+  font-weight: var(--font-weight-medium);
+}
+
+.cause-list {
+  margin: var(--space-2) 0 0 var(--space-4);
+  padding: 0;
+  list-style: disc;
+  color: var(--color-text-on-primary);
+  opacity: 0.85;
+}
+
+.cause-list li {
+  margin-bottom: var(--space-1);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-medium);
+  margin-left: var(--space-2);
+  
+  &.pending {
+    background: var(--overlay-white-20);
+    color: var(--color-text-on-primary);
+  }
+  
+  &.in-progress {
+    background: var(--overlay-white-30);
+    color: var(--color-text-on-primary);
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.action-btn {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  border: var(--border-1) solid var(--overlay-white-30);
+  background: var(--overlay-white-10);
+  color: var(--color-text-on-primary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--motion-base);
+  font-size: var(--font-size-body);
+}
+
+.action-btn:hover {
+  background: var(--overlay-white-20);
+  border-color: var(--overlay-white-50);
+}
+
 /* Main ACWR Card */
 .acwr-main-card {
   background: var(--surface-primary);
@@ -106,10 +193,10 @@
 }
 
 .ratio-circle {
-  width: 180px;
-  height: 180px;
+  width: calc(var(--space-24) * 1.875); /* 180px - using spacing tokens */
+  height: calc(var(--space-24) * 1.875); /* 180px - using spacing tokens */
   border-radius: var(--radius-full);
-  border: 8px solid;
+  border: var(--space-2) solid;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -127,14 +214,14 @@
   font-size: var(--font-size-h4);
   color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: var(--letter-spacing-caption);
 }
 
 .risk-zone-indicator {
   padding: var(--space-6) var(--space-8);
   border-radius: var(--radius-xl);
   color: var(--color-text-on-primary);
-  min-width: 250px;
+  min-width: calc(var(--space-24) * 2.604); /* 250px - using spacing tokens */
 }
 
 .risk-icon {
@@ -200,7 +287,7 @@
 
 .zones-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--space-24) * 2.604), 1fr)); /* 250px - using spacing tokens */
   gap: var(--space-4);
 }
 
@@ -208,7 +295,7 @@
   background: var(--surface-primary);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
-  border: 2px solid var(--color-border-primary);
+  border: var(--border-2) solid var(--color-border-primary);
 }
 
 .zone-card.zone-under {
@@ -239,8 +326,8 @@
 }
 
 .zone-dot {
-  width: 12px;
-  height: 12px;
+  width: var(--space-3); /* 12px */
+  height: var(--space-3); /* 12px */
   border-radius: var(--radius-full);
   display: inline-block;
 
@@ -304,7 +391,7 @@
 }
 
 .action-btn:hover {
-  transform: translateY(-2px);
+  transform: var(--transform-hover-lift-subtle);
   box-shadow: var(--shadow-md);
 }
 
@@ -330,7 +417,7 @@
   color: var(--color-text-secondary);
   font-size: var(--font-size-body);
   margin-bottom: var(--space-6);
-  max-width: 500px;
+  max-width: var(--content-max-width-sm); /* 640px - closest token to 500px */
   margin-left: auto;
   margin-right: auto;
 }
@@ -339,7 +426,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  max-width: 400px;
+  max-width: calc(var(--space-24) * 1.667); /* 400px - using spacing tokens */
   margin: 0 auto var(--space-6);
 }
 
@@ -350,7 +437,7 @@
 }
 
 .progress-label {
-  flex: 0 0 140px;
+  flex: 0 0 calc(var(--space-24) * 1.458); /* 140px - using spacing tokens */
   text-align: left;
   font-size: var(--font-size-h4);
   color: var(--color-text-secondary);
@@ -358,7 +445,7 @@
 
 .progress-bar {
   flex: 1;
-  height: 8px;
+  height: var(--space-2); /* 8px */
   background: var(--color-border-secondary);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -373,7 +460,7 @@
 }
 
 .progress-value {
-  flex: 0 0 60px;
+  flex: 0 0 calc(var(--space-24) * 0.625); /* 60px - using spacing tokens */
   text-align: right;
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-semibold);
@@ -404,7 +491,7 @@
 }
 
 .chart-container {
-  height: 300px;
+  height: calc(var(--space-24) * 3.125); /* 300px - using spacing tokens */
   position: relative;
 }
 
@@ -426,8 +513,8 @@
 }
 
 .legend-dot {
-  width: 12px;
-  height: 12px;
+  width: var(--space-3); /* 12px */
+  height: var(--space-3); /* 12px */
   border-radius: var(--radius-full);
 }
 
@@ -454,7 +541,7 @@
   padding: var(--space-6);
   display: flex;
   gap: var(--space-4);
-  border: 2px solid var(--color-border-primary);
+  border: var(--border-2) solid var(--color-border-primary);
 }
 
 .recommendation-card.rec-sweet-spot {
@@ -489,7 +576,7 @@
 
 .modifications {
   padding: var(--space-3);
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--color-border-subtle);
   border-radius: var(--radius-md);
 }
 
@@ -518,7 +605,7 @@
   background: var(--surface-primary);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
-  border: 2px solid var(--color-border-primary);
+  border: var(--border-2) solid var(--color-border-primary);
 }
 
 .progression-card.unsafe {
@@ -643,8 +730,8 @@
   .alert-dismiss {
     font-size: var(--font-size-h3);
     padding: var(--space-1);
-    min-width: 40px;
-    min-height: 40px;
+    min-width: var(--touch-target-sm); /* 36px - touch-friendly */
+    min-height: var(--touch-target-sm); /* 36px - touch-friendly */
   }
 
   // ================================================================
@@ -664,9 +751,9 @@
 
   // Smaller ratio circle on mobile
   .ratio-circle {
-    width: 140px;
-    height: 140px;
-    border-width: 6px;
+    width: 8.75rem; /* 140px - component-specific size */
+    height: 8.75rem; /* 140px - component-specific size */
+    border-width: var(--space-1); /* 4px - closest token */
   }
 
   .ratio-value {
@@ -725,7 +812,7 @@
   }
 
   .metric-description {
-    font-size: 11px;
+    font-size: var(--font-compact-md); /* 11px */
   }
 
   .load-divider {
@@ -759,8 +846,8 @@
   }
 
   .zone-dot {
-    width: 10px;
-    height: 10px;
+    width: var(--space-2); /* 8px - closest token */
+    height: var(--space-2); /* 8px - closest token */
   }
 
   .zone-range {
@@ -789,7 +876,7 @@
   .action-btn {
     padding: var(--space-3) var(--space-4);
     font-size: var(--font-size-h4);
-    min-height: 48px; // Touch-friendly
+    min-height: var(--touch-target-md); /* 44px - touch-friendly */
     
     &:active {
       transform: translateY(0);
@@ -838,7 +925,7 @@
   }
 
   .progress-bar {
-    height: 6px;
+    height: var(--progress-sm); /* 4px - closest token */
   }
 
   .progress-value {
@@ -867,12 +954,11 @@
   }
 
   .chart-container {
-    height: 250px;
+    height: 15.625rem; /* 250px - component-specific size */
 
-    // Ensure canvas is responsive
+    // Canvas responsive styling moved to _exceptions.scss (DS-EXC-053)
     canvas {
-      max-width: 100% !important;
-      height: auto !important;
+      // Component-specific styles remain here
     }
   }
 
@@ -889,8 +975,8 @@
   }
 
   .legend-dot {
-    width: 10px;
-    height: 10px;
+    width: var(--space-2); /* 8px - closest token */
+    height: var(--space-2); /* 8px - closest token */
   }
 
   // ================================================================
@@ -941,7 +1027,7 @@
 
   .modifications li {
     font-size: var(--font-body-2xs);
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1); /* 4px */
   }
 }
 
@@ -971,9 +1057,9 @@
   }
 
   .ratio-circle {
-    width: 120px;
-    height: 120px;
-    border-width: 4px;
+    width: 7.5rem; /* 120px - component-specific size */
+    height: 7.5rem; /* 120px - component-specific size */
+    border-width: var(--space-1); /* 4px */
   }
 
   .ratio-value {
@@ -1005,7 +1091,7 @@
   }
 
   .chart-container {
-    height: 220px;
+    height: 13.75rem; /* 220px - component-specific size */
   }
 
   .recommendation-card {
@@ -1028,7 +1114,7 @@
   }
 
   .risk-zone-indicator {
-    max-width: 300px;
+    max-width: 18.75rem; /* 300px - component-specific size */
   }
 
   .load-breakdown {
@@ -1041,6 +1127,6 @@
   }
 
   .chart-container {
-    height: 200px;
+    height: 12.5rem; /* 200px - component-specific size */
   }
 }

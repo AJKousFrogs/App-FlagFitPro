@@ -62,6 +62,9 @@ const {
 const {
   isEmbeddingServiceAvailable,
 } = require("./utils/embedding-service.cjs");
+const {
+  guardMerlinRequest,
+} = require("./utils/merlin-guard.cjs");
 
 // =====================================================
 // CONSTANTS
@@ -380,6 +383,112 @@ async function getUserContext(userId) {
       .single();
 
     context.latestWellness = wellness;
+
+    // 6a. Get yesterday's wellness for recovery context
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split("T")[0];
+    
+    const { data: yesterdayWellness } = await supabaseAdmin
+      .from("athlete_daily_state")
+      .select("readiness_score")
+      .eq("user_id", userId)
+      .eq("state_date", yesterdayStr)
+      .maybeSingle();
+
+    if (yesterdayWellness && yesterdayWellness.readiness_score < 40) {
+      context.yesterdayWellness = yesterdayWellness;
+    }
+
+    // 6b. Get recent games (last 7 days) for temporal context
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const { data: recentGames } = await supabaseAdmin
+      .from("games")
+      .select("game_date, our_score, opponent_score")
+      .or(`player_id.eq.${userId},team_id.in.(SELECT team_id FROM team_members WHERE user_id.eq.${userId})`)
+      .gte("game_date", sevenDaysAgo.toISOString().split("T")[0])
+      .order("game_date", { ascending: false })
+      .limit(3);
+
+    context.recentGames = recentGames || [];
+
+    // 6c. Get active recovery protocols
+    const { data: activeRecovery } = await supabaseAdmin
+      .from("recovery_blocks")
+      .select("protocol_type, block_date, max_load_percent, focus")
+      .eq("player_id", userId)
+      .eq("block_date", today)
+      .maybeSingle();
+
+    if (activeRecovery) {
+      context.activeRecovery = {
+        type: activeRecovery.protocol_type,
+        maxLoad: activeRecovery.max_load_percent / 100,
+        focus: activeRecovery.focus,
+      };
+    }
+
+    // 6d. Get active load cap
+    const { data: loadCap } = await supabaseAdmin
+      .from("load_caps")
+      .select("sessions_remaining, max_load_percent, reason")
+      .eq("player_id", userId)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (loadCap) {
+      context.activeRecovery = {
+        type: "load_cap",
+        sessionsRemaining: loadCap.sessions_remaining,
+        maxLoad: loadCap.max_load_percent / 100,
+        reason: loadCap.reason,
+      };
+    }
+
+    // 6e. Calculate data confidence
+    const missingInputs = [];
+    const staleData = [];
+    let confidenceScore = 1.0;
+
+    // Check wellness data completeness
+    if (!wellness) {
+      missingInputs.push("wellness_checkin");
+      confidenceScore *= 0.7;
+    } else {
+      // Check if wellness has all metrics
+      const requiredMetrics = ["sleep_quality", "energy_level", "soreness", "stress_level", "mood"];
+      const missingMetrics = requiredMetrics.filter(metric => !wellness[metric] && wellness[metric] !== 0);
+      if (missingMetrics.length > 0) {
+        missingInputs.push(...missingMetrics.map(m => `wellness_${m}`));
+        confidenceScore *= (1 - missingMetrics.length / requiredMetrics.length);
+      }
+    }
+
+    // Check training data completeness (for ACWR)
+    if (context.recentSessions.length < 10) {
+      missingInputs.push(`${10 - context.recentSessions.length} training_sessions`);
+      confidenceScore *= Math.min(context.recentSessions.length / 10, 1.0);
+    }
+
+    // Check if wellness is stale (older than 2 days)
+    if (wellness && wellness.state_date) {
+      const wellnessDate = new Date(wellness.state_date);
+      const daysSince = (new Date().getTime() - wellnessDate.getTime()) / (1000 * 60 * 60 * 24);
+      if (daysSince > 2) {
+        staleData.push("wellness");
+        confidenceScore *= 0.8;
+      }
+    }
+
+    context.dataConfidence = {
+      score: Math.max(0, Math.min(1, confidenceScore)),
+      missingInputs: [...new Set(missingInputs)],
+      staleData,
+    };
 
     // 7. Get user profile and body comp
     const { data: profile } = await supabaseAdmin
@@ -2941,6 +3050,19 @@ async function checkAiProcessingConsent(userId) {
 }
 
 exports.handler = async (event, context) => {
+  // Apply Merlin guard - AI chat is POST only (mutation)
+  const req = { 
+    method: event.httpMethod, 
+    path: event.path, 
+    headers: event.headers, 
+    body: event.body,
+    user: context.user || {}
+  };
+  const blocked = guardMerlinRequest(req);
+  if (blocked && blocked.statusCode === 403) {
+    return blocked;
+  }
+
   // Extract sub-path to determine which endpoint is being called
   const path = event.path.replace("/.netlify/functions/ai-chat", "");
   const isAnalyzeContext =

@@ -88,16 +88,11 @@
   margin-top: var(--space-2);
 }
 
-.checkin-green .p-progressbar-value {
-  background: var(--ds-primary-green);
-}
-
-.checkin-orange .p-progressbar-value {
-  background: var(--color-status-warning);
-}
-
-.checkin-red .p-progressbar-value {
-  background: var(--color-status-error);
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-032)
+.checkin-green,
+.checkin-orange,
+.checkin-red {
+  // Component-specific styles remain here
 }
 
 .wellness-indicator {

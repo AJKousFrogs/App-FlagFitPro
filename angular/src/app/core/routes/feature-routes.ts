@@ -286,6 +286,7 @@ export const trainingRoutes: Routes = [
   {
     path: "training/ai-companion",
     redirectTo: "training/advanced",
+    pathMatch: "full",
   },
   {
     path: "training/load-analysis",
@@ -741,10 +742,12 @@ export const wellnessRoutes: Routes = [
   {
     path: "load-monitoring",
     redirectTo: "acwr",
+    pathMatch: "full",
   },
   {
     path: "injury-prevention",
     redirectTo: "acwr",
+    pathMatch: "full",
   },
 ];
 
@@ -812,6 +815,24 @@ export const staffRoutes: Routes = [
     loadComponent: () =>
       import("../../features/staff/psychology/psychology-reports.component").then(
         (m) => m.PsychologyReportsComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false },
+  },
+  {
+    path: "staff/decisions",
+    loadComponent: () =>
+      import("../../features/staff/decisions/decision-ledger-dashboard.component").then(
+        (m) => m.DecisionLedgerDashboardComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false },
+  },
+  {
+    path: "staff/decisions/:id",
+    loadComponent: () =>
+      import("../../features/staff/decisions/decision-detail.component").then(
+        (m) => m.DecisionDetailComponent,
       ),
     canActivate: [authGuard],
     data: { preload: false },
@@ -905,50 +926,62 @@ export const helpRoutes: Routes = [
   {
     path: "help/privacy-sharing",
     redirectTo: "/settings/privacy",
+    pathMatch: "full",
   },
   {
     path: "help/team-privacy",
     redirectTo: "/settings/privacy",
+    pathMatch: "full",
   },
   {
     path: "help/data-requirements",
     redirectTo: "/acwr",
+    pathMatch: "full",
   },
   {
     path: "help/acwr",
     redirectTo: "/acwr",
+    pathMatch: "full",
   },
   {
     path: "help/acute-load",
     redirectTo: "/acwr",
+    pathMatch: "full",
   },
   {
     path: "help/chronic-load",
     redirectTo: "/acwr",
+    pathMatch: "full",
   },
   {
     path: "help/monotony",
     redirectTo: "/acwr",
+    pathMatch: "full",
   },
   {
     path: "help/tsb",
     redirectTo: "/acwr",
+    pathMatch: "full",
   },
   {
     path: "help/injury-risk",
     redirectTo: "/acwr",
+    pathMatch: "full",
   },
   {
     path: "help/parental-consent",
     redirectTo: "/settings/privacy",
+    pathMatch: "full",
   },
   {
     path: "help/data-deletion",
     redirectTo: "/settings/privacy",
+    pathMatch: "full",
   },
   {
     path: "help",
     redirectTo: "/",
+    pathMatch: "full",
   },
 ];
 

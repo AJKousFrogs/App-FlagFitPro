@@ -25,6 +25,8 @@ import {} from "@angular/core/rxjs-interop";
 // PrimeNG Components
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { DataConfidenceService } from "../../../core/services/data-confidence.service";
+import { ConfidenceIndicatorComponent } from "../../../shared/components/confidence-indicator/confidence-indicator.component";
 import { SliderModule } from "primeng/slider";
 import { TextareaModule } from "primeng/textarea";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -64,6 +66,7 @@ interface ReadinessMetric {
     TagModule,
 
     ButtonComponent,
+    ConfidenceIndicatorComponent,
   ],
   styleUrl: "./game-day-readiness.component.scss",
   template: `
@@ -124,8 +127,23 @@ interface ReadinessMetric {
           <div class="readiness-preview">
             <div class="score-display" [class]="readinessStatus()">
               <div class="score-circle">
-                <span class="score-value">{{ readinessScore() }}</span>
-                <span class="score-label">/ 100</span>
+                @if (readinessScore() !== null) {
+                  <span class="score-value">{{ readinessScore() }}</span>
+                  <span class="score-label">/ 100</span>
+                } @else {
+                  <span class="score-value">--</span>
+                  <span class="score-label">/ 100</span>
+                }
+                <!-- Data Confidence Indicator -->
+                @if (readinessScore() !== null) {
+                  <div class="confidence-wrapper">
+                    <app-confidence-indicator
+                      [score]="readinessConfidence().score"
+                      [missingInputs]="readinessConfidence().missingInputs"
+                      [showDetails]="false"
+                    ></app-confidence-indicator>
+                  </div>
+                }
               </div>
               <div class="score-info">
                 <h3>{{ readinessLabel() }}</h3>
@@ -133,7 +151,7 @@ interface ReadinessMetric {
               </div>
             </div>
 
-            @if (readinessScore() < 70) {
+            @if (readinessScore() !== null && readinessScore()! < 70) {
               <div class="coach-alert-warning">
                 <i class="pi pi-bell"></i>
                 <div>
@@ -166,10 +184,14 @@ interface ReadinessMetric {
         <!-- Confirmation View -->
         <div class="confirmation-view">
           <div class="confirmation-icon" [class]="readinessStatus()">
-            @if (readinessScore() >= 85) {
-              ✅
-            } @else if (readinessScore() >= 70) {
-              👍
+            @if (readinessScore() !== null) {
+              @if (readinessScore()! >= 85) {
+                ✅
+              } @else if (readinessScore()! >= 70) {
+                👍
+              } @else {
+                ⚠️
+              }
             } @else {
               ⚠️
             }
@@ -178,7 +200,11 @@ interface ReadinessMetric {
           <h2>Check-in Complete</h2>
 
           <div class="final-score" [class]="readinessStatus()">
-            <span class="score">{{ readinessScore() }}</span>
+            @if (readinessScore() !== null) {
+              <span class="score">{{ readinessScore() }}</span>
+            } @else {
+              <span class="score">--</span>
+            }
             <span class="label">Readiness Score</span>
           </div>
 
@@ -191,7 +217,7 @@ interface ReadinessMetric {
             </ul>
           </div>
 
-          @if (readinessScore() < 70) {
+          @if (readinessScore() !== null && readinessScore()! < 70) {
             <div class="coach-notified">
               <i class="pi pi-send"></i>
               <p>
@@ -232,6 +258,7 @@ export class GameDayReadinessComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly confidenceService = inject(DataConfidenceService);
 
   // ACWR from service
   acwrValue = this.trainingService.acwrRatio;
@@ -244,13 +271,13 @@ export class GameDayReadinessComponent implements OnInit {
     return "red";
   });
 
-  // Form state
+  // Form state - CRITICAL: No default values - user must enter their own data
   metrics = signal<ReadinessMetric[]>([
     {
       key: "sleep",
       label: "Sleep Quality",
       icon: "😴",
-      value: 7,
+      value: 0, // Start at 0 - user must set value
       weight: 20,
       description: "How well did you sleep last night?",
       lowWarning: "Poor sleep affects reaction time and decision-making",
@@ -259,7 +286,7 @@ export class GameDayReadinessComponent implements OnInit {
       key: "energy",
       label: "Energy Level",
       icon: "⚡",
-      value: 7,
+      value: 0, // Start at 0 - user must set value
       weight: 15,
       description: "How energized do you feel right now?",
       lowWarning: "Low energy may impact your explosiveness",
@@ -268,7 +295,7 @@ export class GameDayReadinessComponent implements OnInit {
       key: "soreness",
       label: "Muscle Soreness",
       icon: "💪",
-      value: 3,
+      value: 0, // Start at 0 - user must set value
       weight: 20,
       description: "1 = No soreness, 10 = Very sore",
       lowWarning: "High soreness increases injury risk during competition",
@@ -277,7 +304,7 @@ export class GameDayReadinessComponent implements OnInit {
       key: "hydration",
       label: "Hydration",
       icon: "💧",
-      value: 7,
+      value: 0, // Start at 0 - user must set value
       weight: 15,
       description: "How well hydrated do you feel?",
       lowWarning: "Dehydration significantly impacts performance",
@@ -286,7 +313,7 @@ export class GameDayReadinessComponent implements OnInit {
       key: "mental",
       label: "Mental Focus",
       icon: "🧠",
-      value: 7,
+      value: 0, // Start at 0 - user must set value
       weight: 15,
       description: "How focused and mentally prepared are you?",
       lowWarning: "Mental preparation is key for flag football reads",
@@ -295,7 +322,7 @@ export class GameDayReadinessComponent implements OnInit {
       key: "confidence",
       label: "Confidence",
       icon: "🔥",
-      value: 7,
+      value: 0, // Start at 0 - user must set value
       weight: 15,
       description: "How confident do you feel about today's competition?",
       lowWarning: "Confidence affects decision-making under pressure",
@@ -312,6 +339,12 @@ export class GameDayReadinessComponent implements OnInit {
   // Computed readiness score (0-100)
   readinessScore = computed(() => {
     const m = this.metrics();
+    // CRITICAL: Only calculate if all metrics have been set (value > 0)
+    const allMetricsSet = m.every((metric) => metric.value > 0);
+    if (!allMetricsSet) {
+      return null; // No calculation until user enters all values
+    }
+
     let totalWeightedScore = 0;
     let totalWeight = 0;
 
@@ -338,6 +371,7 @@ export class GameDayReadinessComponent implements OnInit {
 
   readinessStatus = computed(() => {
     const score = this.readinessScore();
+    if (score === null) return "info"; // No data yet
     if (score >= 85) return "excellent";
     if (score >= 70) return "good";
     if (score >= 55) return "caution";
@@ -346,6 +380,7 @@ export class GameDayReadinessComponent implements OnInit {
 
   readinessLabel = computed(() => {
     const status = this.readinessStatus();
+    if (status === "info") return "Complete Check-in";
     switch (status) {
       case "excellent":
         return "🟢 Competition Ready";
@@ -355,11 +390,14 @@ export class GameDayReadinessComponent implements OnInit {
         return "🟡 Proceed with Caution";
       case "concern":
         return "🔴 Concerns Identified";
+      default:
+        return "Complete Check-in";
     }
   });
 
   readinessMessage = computed(() => {
     const status = this.readinessStatus();
+    if (status === "info") return "Please complete all metrics below to see your readiness score.";
     switch (status) {
       case "excellent":
         return "You're in great shape for today's competition. Go get it!";
@@ -369,7 +407,36 @@ export class GameDayReadinessComponent implements OnInit {
         return "Some areas need attention. Consider modified warmup and communicate with your coach.";
       case "concern":
         return "Multiple concerns flagged. Your coach will be notified to discuss options.";
+      default:
+        return "Please complete all metrics below to see your readiness score.";
     }
+  });
+
+  // Readiness confidence score
+  readinessConfidence = computed(() => {
+    const m = this.metrics();
+    const allMetricsSet = m.every((metric) => metric.value > 0);
+    
+    if (!allMetricsSet) {
+      const completedMetrics = m.filter((metric) => metric.value > 0).length;
+      const totalMetrics = m.length;
+      const completeness = completedMetrics / totalMetrics;
+      
+      return {
+        score: completeness,
+        missingInputs: m
+          .filter((metric) => metric.value === 0)
+          .map((metric) => metric.label.toLowerCase()),
+        staleData: [],
+      };
+    }
+
+    // All metrics completed - high confidence
+    return {
+      score: 1.0,
+      missingInputs: [],
+      staleData: [],
+    };
   });
 
   recommendations = computed(() => {
@@ -447,6 +514,14 @@ export class GameDayReadinessComponent implements OnInit {
       }
 
       const metrics = this.metrics();
+      // CRITICAL: Only submit if all metrics are set
+      const allMetricsSet = metrics.every((m) => m.value > 0);
+      if (!allMetricsSet) {
+        this.toastService.error("Please complete all metrics before submitting");
+        this.isSubmitting.set(false);
+        return;
+      }
+
       const readinessData = {
         athlete_id: user.id,
         date: new Date().toISOString().split("T")[0],
@@ -457,7 +532,7 @@ export class GameDayReadinessComponent implements OnInit {
         hydration_level: metrics.find((m) => m.key === "hydration")?.value,
         mental_focus: metrics.find((m) => m.key === "mental")?.value,
         confidence_level: metrics.find((m) => m.key === "confidence")?.value,
-        readiness_score: this.readinessScore(),
+        readiness_score: this.readinessScore() ?? 0,
         acwr_at_checkin: this.acwrValue(),
         notes: this.notes || null,
         game_info: this.gameInfo(),
@@ -484,7 +559,8 @@ export class GameDayReadinessComponent implements OnInit {
       }
 
       // Alert coach if readiness is low
-      if (this.readinessScore() < 70) {
+      const score = this.readinessScore();
+      if (score !== null && score < 70) {
         await this.notifyCoach(user.id, readinessData);
       }
 

@@ -30,6 +30,90 @@ const getSupabase = (authHeader) => {
   return createClient(supabaseUrl, supabaseServiceKey);
 };
 
+/**
+ * Compute session override using deterministic priority rules.
+ * SINGLE SOURCE OF TRUTH for override computation.
+ * 
+ * Priority order (highest to lowest):
+ * 1. rehab_protocol - Active injury protocol (safety first)
+ * 2. coach_alert - Coach has flagged something requiring attention
+ * 3. weather_override - Weather conditions prevent normal training
+ * 4. teamActivity (ONLY if participation !== 'excluded') - Practice or film room
+ * 5. taper - Tournament taper period
+ * 6. null - No override, use normal program session
+ * 
+ * @param {Object} params - Override computation parameters
+ * @param {boolean} params.rehabActive - Whether athlete has active injury/rehab
+ * @param {string[]} params.injuries - List of injury areas if rehabActive
+ * @param {boolean} params.coachAlertActive - Whether coach alert is active
+ * @param {boolean} params.weatherOverride - Whether weather override is in effect
+ * @param {Object|null} params.teamActivity - Team activity object with type and participation
+ * @param {boolean} params.taperActive - Whether athlete is in taper period
+ * @param {Object|null} params.taperContext - Taper context with tournament info
+ * @returns {Object|null} Override object or null
+ */
+function computeOverride({ rehabActive, injuries, coachAlertActive, weatherOverride, teamActivity, taperActive, taperContext }) {
+  // Priority 1: Rehab protocol (safety first)
+  if (rehabActive) {
+    return {
+      type: 'rehab_protocol',
+      reason: injuries && injuries.length > 0 
+        ? `Active injury protocol: ${injuries.join(', ')}`
+        : 'Return-to-Play protocol active',
+      replaceSession: true,
+    };
+  }
+
+  // Priority 2: Coach alert (coach has flagged something)
+  if (coachAlertActive) {
+    return {
+      type: 'coach_alert',
+      reason: 'Coach alert active - check coach notes',
+      replaceSession: false,
+    };
+  }
+
+  // Priority 3: Weather override
+  if (weatherOverride) {
+    return {
+      type: 'weather_override',
+      reason: 'Weather conditions prevent normal training',
+      replaceSession: true,
+    };
+  }
+
+  // Priority 4: Team activity (ONLY if NOT excluded)
+  // CRITICAL: Excluded athletes do NOT get flag_practice or film_room overrides
+  if (teamActivity && teamActivity.participation !== 'excluded') {
+    if (teamActivity.type === 'practice') {
+      return {
+        type: 'flag_practice',
+        reason: `Team practice scheduled at ${teamActivity.startTimeLocal || '18:00'}`,
+        replaceSession: teamActivity.replacesSession !== false,
+      };
+    }
+    if (teamActivity.type === 'film_room') {
+      return {
+        type: 'film_room',
+        reason: `Film room scheduled at ${teamActivity.startTimeLocal || '10:00'}`,
+        replaceSession: teamActivity.replacesSession !== false,
+      };
+    }
+  }
+
+  // Priority 5: Taper period
+  if (taperActive && taperContext) {
+    return {
+      type: 'taper',
+      reason: `Taper for ${taperContext.tournament?.name || 'upcoming tournament'} (${taperContext.daysUntil} days)`,
+      replaceSession: false,
+    };
+  }
+
+  // No override - use normal program session
+  return null;
+}
+
 // Block type configuration
 const BLOCK_TYPES = {
   morning_mobility: { category: "mobility", estimatedMinutes: 10 },
@@ -233,40 +317,47 @@ async function getUserTrainingContext(supabase, userId, date) {
     // Continue with sessionTemplate = null
   }
 
-  // 8. Apply team activity override to session resolution (PROMPT 2.10)
-  // Priority: rehab_protocol > team_activity (practice/film) > normal session
+  // 8. Apply team activity override to session resolution (PROMPT 2.10 + PROMPT 2.19)
+  // Use centralized computeOverride for single source of truth
   if (teamActivityResult?.exists && teamActivityResult.activity) {
-    const teamActivity = teamActivityResult.activity;
-    const participation = teamActivityResult.participation;
+    const teamActivity = {
+      type: teamActivityResult.activity.type,
+      startTimeLocal: teamActivityResult.activity.startTimeLocal,
+      participation: teamActivityResult.participation,
+      replacesSession: teamActivityResult.activity.replacesSession,
+    };
     
-    // Only override if participation is NOT excluded (rehab wins)
-    if (participation !== 'excluded') {
-      if (teamActivity.type === 'practice') {
-        // Override to flag_practice
-        if (!sessionResolution) {
-          sessionResolution = { success: true, status: 'resolved', override: null };
-        }
-        sessionResolution.override = {
-          type: 'flag_practice',
-          reason: `Team practice scheduled at ${teamActivity.startTimeLocal || '18:00'}`,
-          replaceSession: teamActivity.replacesSession,
-        };
-      } else if (teamActivity.type === 'film_room') {
-        // Override to film_room
-        if (!sessionResolution) {
-          sessionResolution = { success: true, status: 'resolved', override: null };
-        }
-        sessionResolution.override = {
-          type: 'film_room',
-          reason: `Film room scheduled at ${teamActivity.startTimeLocal || '10:00'}`,
-          replaceSession: teamActivity.replacesSession,
-        };
+    // Check for rehab status from the resolver
+    const rehabActive = teamActivityResult.participation === 'excluded' && 
+                        teamActivityResult.audit?.steps?.some(s => s.step === 'rehab_override');
+    const injuries = teamActivityResult.audit?.steps?.find(s => s.step === 'rehab_check')?.injuries || [];
+    
+    const override = computeOverride({
+      rehabActive,
+      injuries,
+      coachAlertActive: false, // Not available in context yet
+      weatherOverride: teamActivityResult.activity.weatherOverride || false,
+      teamActivity,
+      taperActive: false, // Taper is handled separately below
+      taperContext: null,
+    });
+    
+    if (override) {
+      if (!sessionResolution) {
+        sessionResolution = { success: true, status: 'resolved', override: null };
       }
-    } else {
-      // Participation is excluded (rehab active) - keep rehab override but include team activity context
-      console.log("[daily-protocol] Team activity exists but athlete excluded (rehab):", {
+      sessionResolution.override = override;
+      
+      console.log("[daily-protocol] Override computed via computeOverride:", {
+        overrideType: override.type,
+        participation: teamActivity.participation,
         activityType: teamActivity.type,
-        participation,
+      });
+    } else if (teamActivityResult.participation === 'excluded') {
+      // Participation is excluded but no rehab override - log for debugging
+      console.log("[daily-protocol] Team activity exists but athlete excluded (no override):", {
+        activityType: teamActivity.type,
+        participation: teamActivityResult.participation,
       });
     }
   }
@@ -604,28 +695,30 @@ async function getProtocol(supabase, userId, params, headers) {
         createdByCoachName: teamActivityResult.activity.createdByCoachName,
         updatedAtLocal: teamActivityResult.activity.updatedAt,
         note: teamActivityResult.activity.note,
+        replacesSession: teamActivityResult.activity.replacesSession,
       };
       
-      // Build sessionResolution based on team activity (PROMPT 2.12)
-      if (teamActivity.type === 'practice') {
-        sessionResolution = {
-          success: true,
-          status: 'resolved',
-          override: {
-            type: 'flag_practice',
-            reason: `Team practice scheduled at ${teamActivity.startTimeLocal || '18:00'}`,
-          },
-        };
-      } else if (teamActivity.type === 'film_room') {
-        sessionResolution = {
-          success: true,
-          status: 'resolved',
-          override: {
-            type: 'film_room',
-            reason: `Film room scheduled at ${teamActivity.startTimeLocal || '10:00'}`,
-          },
-        };
-      }
+      // PROMPT 2.19: Use centralized computeOverride for single source of truth
+      // Check for rehab status from the resolver (it already checked wellness checkin)
+      const rehabActive = teamActivityResult.participation === 'excluded' && 
+                          teamActivityResult.audit?.steps?.some(s => s.step === 'rehab_override');
+      const injuries = teamActivityResult.audit?.steps?.find(s => s.step === 'rehab_check')?.injuries || [];
+      
+      const override = computeOverride({
+        rehabActive,
+        injuries,
+        coachAlertActive: protocol?.coach_alert_active || false,
+        weatherOverride: teamActivityResult.activity.weatherOverride || false,
+        teamActivity,
+        taperActive: false, // Would need to resolve taper context if needed
+        taperContext: null,
+      });
+      
+      sessionResolution = {
+        success: true,
+        status: 'resolved',
+        override,
+      };
     }
   } catch (teamActivityError) {
     console.warn("[daily-protocol] Team activity resolution failed:", teamActivityError);
@@ -992,6 +1085,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   
   // Calculate confidence metadata based on what we actually have
   // BREACH FIX #1: Use context.sessionResolution (now returned from getUserTrainingContext)
+  // PROMPT 2.19: Remove duplicate override field - sessionResolution is the single source of truth
   const confidenceMetadata = {
     readiness: {
       hasData: readinessScore !== null,
@@ -1010,7 +1104,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       status: context.sessionResolution?.status || 'unknown',
       hasProgram: !!context.playerProgram,
       hasSessionTemplate: !!context.sessionTemplate,
-      override: context.sessionResolution?.override?.type || null,
+      // REMOVED: override field - use data.sessionResolution.override as single source of truth
     },
   };
   
@@ -1773,6 +1867,54 @@ async function logSession(supabase, userId, payload, headers) {
     throw updateError;
   }
 
+  // Detect late logging
+  const sessionDate = new Date(protocol.protocol_date);
+  const now = new Date();
+  const hoursDiff = (now.getTime() - sessionDate.getTime()) / (1000 * 60 * 60);
+  
+  let logStatus = "on_time";
+  let requiresApproval = false;
+  let hoursDelayed = null;
+  
+  if (hoursDiff > 48) {
+    logStatus = "retroactive";
+    requiresApproval = true;
+    hoursDelayed = Math.floor(hoursDiff);
+  } else if (hoursDiff > 24) {
+    logStatus = "late";
+    hoursDelayed = Math.floor(hoursDiff);
+  }
+
+  // Detect conflicts: RPE vs session type
+  const conflicts = [];
+  const sessionType = protocol.training_focus || "general";
+  const sessionTypeIntensity = {
+    recovery: { max: 4 },
+    light: { max: 5 },
+    moderate: { max: 7 },
+    intense: { min: 7 },
+  };
+  
+  const typeRules = sessionTypeIntensity[sessionType];
+  if (typeRules && actualRpe) {
+    if (typeRules.max && actualRpe > typeRules.max) {
+      conflicts.push({
+        type: "rpe_vs_session_type",
+        message: `Player logged RPE ${actualRpe} but session marked as ${sessionType}`,
+        playerValue: actualRpe,
+        coachValue: sessionType,
+      });
+    }
+    if (typeRules.min && actualRpe < typeRules.min) {
+      conflicts.push({
+        type: "rpe_vs_session_type",
+        message: `Player logged RPE ${actualRpe} but session marked as ${sessionType}`,
+        playerValue: actualRpe,
+        coachValue: sessionType,
+      });
+    }
+  }
+
   // Log to training_sessions table for ACWR calculation
   // Contract: Section 3.3 - Logging APIs (execution logging)
   try {
@@ -1780,7 +1922,7 @@ async function logSession(supabase, userId, payload, headers) {
     await supabase.from("training_sessions").insert({
       user_id: userId,
       session_date: protocol.protocol_date,
-      session_type: protocol.training_focus || "general",
+      session_type: sessionType,
       duration_minutes: actualDurationMinutes,
       rpe: actualRpe,
       load_au: actualLoadAu,
@@ -1788,7 +1930,41 @@ async function logSession(supabase, userId, payload, headers) {
       source: "daily_protocol",
       session_state: "COMPLETED", // Execution logging creates completed session
       coach_locked: false, // Execution logs are not coach-locked
+      log_status: logStatus,
+      requires_coach_approval: requiresApproval,
+      hours_delayed: hoursDelayed,
+      conflicts: conflicts.length > 0 ? conflicts : null,
     });
+    
+    // If retroactive, notify coach for approval
+    if (requiresApproval) {
+      // Get coach for this player
+      const { data: teamMember } = await supabase
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", userId)
+        .eq("role", "player")
+        .single();
+      
+      if (teamMember) {
+        const { data: coaches } = await supabase
+          .from("team_members")
+          .select("user_id")
+          .eq("team_id", teamMember.team_id)
+          .eq("role", "coach")
+          .limit(1);
+        
+        if (coaches && coaches.length > 0) {
+          await supabase.from("notifications").insert({
+            user_id: coaches[0].user_id,
+            notification_type: "training",
+            message: `Player logged training session ${hoursDelayed} hours late - approval required`,
+            priority: "high",
+            metadata: { playerId: userId, sessionDate: protocol.protocol_date },
+          });
+        }
+      }
+    }
   } catch (sessionError) {
     console.warn("Could not log to training_sessions:", sessionError.message);
     // Non-fatal - continue

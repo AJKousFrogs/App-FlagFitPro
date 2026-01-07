@@ -4,119 +4,7 @@
 // ============================================================================
 
 // ===== Modern Tab Navigation =====
-.p-tabs {
-  background: var(--surface-primary);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-
-  .p-tablist {
-    display: flex;
-    gap: var(--space-1);
-    padding: var(--space-2);
-    background: var(--surface-secondary);
-    border-bottom: 1px solid var(--color-border-muted);
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .p-tab {
-    position: relative;
-    padding: var(--space-3) var(--space-5);
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-md);
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-medium);
-    cursor: pointer;
-    transition: all var(--transition-base);
-    white-space: nowrap;
-    outline: none;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    position: relative;
-
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: var(--radius-md);
-      background: transparent;
-      transition: background var(--transition-base);
-    }
-
-    &:hover:not(.p-disabled)::before {
-      background: rgba(var(--ds-primary-green-rgb), 0.08);
-    }
-
-    &:hover:not(.p-disabled) {
-      color: var(--ds-primary-green);
-      transform: translateY(-1px);
-    }
-
-    &:active:not(.p-disabled) {
-      transform: translateY(0);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 2px;
-    }
-
-    &.p-highlight {
-      background: var(--surface-primary);
-      color: var(--ds-primary-green);
-      font-weight: var(--font-weight-semibold);
-      box-shadow: 0 2px 8px rgba(var(--ds-primary-green-rgb), 0.15);
-
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: -2px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60%;
-        height: 3px;
-        background: linear-gradient(
-          90deg,
-          var(--ds-primary-green),
-          var(--ds-primary-green-light)
-        );
-        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-      }
-    }
-
-    &.p-disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    i {
-      font-size: var(--font-size-body);
-      transition: transform var(--transition-base);
-    }
-
-    &:hover:not(.p-disabled) i {
-      transform: scale(1.1);
-    }
-  }
-
-  .p-tabpanels {
-    padding: var(--space-6);
-    background: var(--surface-primary);
-  }
-}
+// PrimeNG tabs styling moved to _brand-overrides.scss
 
 // Modern Horizontal Step Navigation (for multi-step forms/flows)
 .modern-step-nav {
@@ -160,7 +48,7 @@
   border: none;
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all var(--transition-base);
+  transition: background-color var(--transition-base), transform var(--transition-base);
   position: relative;
   min-width: 100px;
   flex-shrink: 0;
@@ -195,7 +83,7 @@
         var(--ds-primary-green-light)
       );
       color: var(--color-text-on-primary);
-      box-shadow: 0 4px 12px rgba(var(--ds-primary-green-rgb), 0.3);
+      box-shadow: var(--hover-shadow-md);
       transform: scale(1.15);
     }
 
@@ -248,7 +136,7 @@
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
-  transition: all var(--transition-base);
+  transition: background-color var(--transition-base), color var(--transition-base), transform var(--transition-base);
   position: relative;
   z-index: 2;
 }
@@ -259,7 +147,7 @@
   color: var(--color-text-secondary);
   text-align: center;
   white-space: nowrap;
-  transition: all var(--transition-base);
+  transition: color var(--transition-base), font-weight var(--transition-base);
   line-height: 1.3;
 }
 
@@ -300,10 +188,9 @@
     margin-bottom: var(--space-4);
   }
 
+  // PrimeNG card body override moved to _exceptions.scss (DS-EXC-052)
   .metric-card {
-    .p-card-body {
-      padding: var(--space-3);
-    }
+    // Component-specific styles remain here
   }
 
   .metric-card-content {
@@ -343,13 +230,7 @@
   .chart-card {
     min-height: 350px; // Smaller on mobile
 
-    ::ng-deep .p-card-header {
-      padding: var(--space-3);
-    }
-
-    ::ng-deep .p-card-body {
-      padding: var(--space-3);
-    }
+    // PrimeNG card header/body overrides moved to _exceptions.scss (DS-EXC-052)
   }
 
   // ================================================================
@@ -397,10 +278,9 @@
       height: 280px;
     }
 
-    // Ensure charts are responsive
+    // Canvas responsive styling moved to _exceptions.scss (DS-EXC-052)
     canvas {
-      max-width: 100% !important;
-      height: auto !important;
+      // Component-specific styles remain here
     }
   }
 
@@ -626,10 +506,10 @@
 
     // Scroll shadow indicators
     background: 
-      linear-gradient(to right, var(--surface-card) 30%, rgba(255,255,255,0)),
-      linear-gradient(to right, rgba(255,255,255,0), var(--surface-card) 70%) 0 100%,
-      radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,.1), transparent),
-      radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.1), transparent) 0 100%;
+      linear-gradient(to right, var(--surface-card) 30%, transparent),
+      linear-gradient(to right, transparent, var(--surface-card) 70%) 0 100%,
+      radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,0.1), transparent),
+      radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,0.1), transparent) 0 100%;
     background-repeat: no-repeat;
     background-color: var(--surface-card);
     background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
@@ -707,26 +587,7 @@
   }
 
   .share-dialog {
-    :global(.p-dialog) {
-      width: 95vw !important;
-      max-width: 95vw !important;
-    }
-
-    .p-dialog-header {
-      padding: var(--space-3);
-    }
-
-    .p-dialog-title {
-      font-size: var(--font-size-body);
-    }
-
-    .p-dialog-content {
-      padding: var(--space-3);
-    }
-
-    .p-dialog-footer {
-      padding: var(--space-3);
-      flex-direction: column;
+    // PrimeNG dialog mobile overrides moved to _exceptions.scss (DS-EXC-052)
 
       app-button {
         width: 100%;
@@ -776,8 +637,8 @@
       font-size: var(--font-body-2xs);
     }
 
+    // Font-size !important moved to _exceptions.scss (DS-EXC-052)
     textarea {
-      font-size: 16px !important; // Prevent iOS zoom
       padding: var(--space-2);
       min-height: 100px;
     }
@@ -882,9 +743,7 @@
     gap: var(--space-2);
   }
 
-  .metric-card .p-card-body {
-    padding: var(--space-2);
-  }
+  // PrimeNG card body override moved to _exceptions.scss (DS-EXC-052)
 
   .charts-grid {
     gap: var(--space-2);
@@ -893,10 +752,7 @@
   .chart-card {
     min-height: 300px;
 
-    ::ng-deep .p-card-header,
-    ::ng-deep .p-card-body {
-      padding: var(--space-2);
-    }
+    // PrimeNG card header/body overrides moved to _exceptions.scss (DS-EXC-052)
   }
 
   .chart-container {
@@ -1032,14 +888,7 @@
     box-shadow: var(--shadow-md);
   }
 
-  // Override PrimeNG card padding - MORE BREATHING ROOM
-  .p-card-body {
-    padding: var(--space-5); // 20px for better spacing
-  }
-
-  .p-card-content {
-    padding: 0;
-  }
+  // PrimeNG card body/content overrides moved to _exceptions.scss (DS-EXC-052)
 }
 
 // Horizontal layout: icon LEFT of text (Design System Rule 6.4)
@@ -1121,15 +970,7 @@
 .chart-card {
   min-height: 400px;
 
-  // Ensure card header has proper padding
-  ::ng-deep .p-card-header {
-    padding: var(--space-5);
-    border-bottom: 1px solid var(--color-border-secondary);
-  }
-
-  ::ng-deep .p-card-body {
-    padding: var(--space-5);
-  }
+  // PrimeNG card header/body overrides moved to _exceptions.scss (DS-EXC-052)
 }
 
 .chart-card.full-width {
@@ -1445,7 +1286,7 @@
     .target-value,
     .days-remaining,
     i {
-      color: var(--color-text-on-primary, #ffffff);
+      color: var(--color-text-on-primary);
     }
 
     .coach-note {
@@ -1664,29 +1505,9 @@
   }
 }
 
-// Share dialog styling
+// PrimeNG share dialog overrides moved to _exceptions.scss (DS-EXC-052)
 .share-dialog {
-  .p-dialog-header {
-    padding: var(--space-5);
-    border-bottom: 1px solid var(--color-border-muted);
-  }
-
-  .p-dialog-title {
-    font-size: var(--font-size-h3);
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .p-dialog-content {
-    padding: var(--space-5);
-  }
-
-  .p-dialog-footer {
-    padding: var(--space-4) var(--space-5);
-    border-top: 1px solid var(--color-border-muted);
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--space-3);
-  }
+  // Component-specific styles remain here
 }
 
 // ============================================================================
@@ -1891,7 +1712,7 @@
   // WHITE TEXT ONLY on green backgrounds - design system rule
   .summary-value,
   .summary-label {
-    color: var(--color-text-on-primary, #ffffff);
+    color: var(--color-text-on-primary);
   }
 }
 

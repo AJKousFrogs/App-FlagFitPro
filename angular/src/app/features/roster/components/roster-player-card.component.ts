@@ -23,6 +23,8 @@ import { CheckboxModule } from "primeng/checkbox";
 import { TooltipModule } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
+import { RiskMeaning } from "../../../core/semantics/semantic-meaning.types";
 import { Player } from "../roster.models";
 import {
   PlayerMetricsService,
@@ -49,6 +51,7 @@ import {
     TitleCasePipe,
     DecimalPipe,
     IconButtonComponent,
+    SemanticMeaningRendererComponent,
   ],
   template: `
     <p-card
@@ -73,15 +76,11 @@ import {
         <div class="status-badge" [class]="'status-' + player().status">
           {{ player().status | titlecase }}
         </div>
-        @if (enrichedPlayer().riskLevel !== "low") {
-          <div
-            class="risk-badge"
-            [class]="'risk-' + enrichedPlayer().riskLevel"
-            [pTooltip]="getRiskTooltip()"
-          >
-            <i class="pi pi-exclamation-triangle"></i>
-            {{ enrichedPlayer().riskLevel | titlecase }}
-          </div>
+        @if (riskMeaning() && enrichedPlayer().riskLevel !== "low") {
+          <app-semantic-meaning-renderer
+            [meaning]="riskMeaning()!"
+            [context]="{ container: 'card', priority: getRiskPriority(), dismissible: false }"
+          ></app-semantic-meaning-renderer>
         }
       </div>
 
@@ -348,5 +347,52 @@ export class RosterPlayerCardComponent {
   getRiskTooltip(): string {
     const assessment = this.metricsService.getRiskAssessment(this.player());
     return assessment.factors.join("\n");
+  }
+
+  // Semantic Meaning: Risk
+  riskMeaning = computed<RiskMeaning | null>(() => {
+    const player = this.enrichedPlayer();
+    if (player.riskLevel === "low") {
+      return null; // Don't show risk badge for low risk
+    }
+
+    const assessment = this.metricsService.getRiskAssessment(this.player());
+    
+    // Map PlayerRiskLevel to RiskMeaning severity
+    const severityMap: Record<string, RiskMeaning["severity"]> = {
+      low: "low",
+      moderate: "moderate",
+      high: "high",
+      critical: "critical",
+    };
+
+    const severity = severityMap[player.riskLevel] || "moderate";
+
+    // Determine source based on risk factors
+    let source = "player-metrics";
+    if (player.acwr > 1.5) {
+      source = "acwr";
+    } else if (player.readiness < 50) {
+      source = "readiness";
+    } else if (this.player().status === "injured" || this.player().status === "returning") {
+      source = "injury-status";
+    }
+
+    return {
+      type: "risk",
+      severity,
+      source,
+      affectedEntity: `player-${this.player().id}`,
+      message: assessment.factors.join("; ") || `${severity} risk detected`,
+      recommendation: assessment.recommendations.join("; ") || undefined,
+    };
+  });
+
+  getRiskPriority(): "low" | "medium" | "high" | "critical" {
+    const level = this.enrichedPlayer().riskLevel;
+    if (level === "critical") return "critical";
+    if (level === "high") return "high";
+    if (level === "moderate") return "medium";
+    return "low";
   }
 }

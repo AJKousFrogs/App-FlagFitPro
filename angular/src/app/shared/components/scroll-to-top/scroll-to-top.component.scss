@@ -14,8 +14,8 @@
   height: 48px;
   border-radius: var(--radius-full, 9999px);
   
-  background: var(--ds-primary-green, #16a34a);
-  color: white;
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
   border: none;
   
   display: flex;
@@ -24,9 +24,7 @@
   
   cursor: pointer;
   
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
   
   transition: 
     transform var(--motion-fast, 150ms) var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)),
@@ -36,11 +34,9 @@
   animation: slideInUp 0.3s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
   
   &:hover {
-    background: var(--ds-primary-green-hover, #15803d);
+    background: var(--ds-primary-green-hover);
     transform: translateY(-4px);
-    box-shadow: 
-      0 6px 20px rgba(0, 0, 0, 0.2),
-      0 0 0 1px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-lg);
   }
   
   &:active {
@@ -48,7 +44,7 @@
   }
   
   &:focus-visible {
-    outline: 3px solid var(--ds-focus-ring, rgba(22, 163, 74, 0.4));
+    outline: 3px solid rgba(var(--ds-primary-green-rgb), 0.4);
     outline-offset: 2px;
   }
   

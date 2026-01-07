@@ -94,9 +94,7 @@
 }
 
 .upload-component {
-  .p-fileupload-content {
-    padding: 0;
-  }
+  // PrimeNG fileupload override moved to _exceptions.scss (DS-EXC-023)
 }
 
 .upload-placeholder {

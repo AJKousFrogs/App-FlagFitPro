@@ -8,9 +8,9 @@
   display: block;
   background: linear-gradient(
     90deg,
-    var(--primitive-neutral-100, #f5f5f5) 25%,
-    var(--primitive-neutral-200, #e5e5e5) 50%,
-    var(--primitive-neutral-100, #f5f5f5) 75%
+    var(--primitive-neutral-100) 25%,
+    var(--primitive-neutral-200) 50%,
+    var(--primitive-neutral-100) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
@@ -26,7 +26,7 @@
 }
 
 .skeleton-circle {
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   aspect-ratio: 1;
 }
 
@@ -51,9 +51,9 @@
 :host-context([data-theme="dark"]) .skeleton {
   background: linear-gradient(
     90deg,
-    var(--primitive-neutral-800, #262626) 25%,
-    var(--primitive-neutral-700, #404040) 50%,
-    var(--primitive-neutral-800, #262626) 75%
+    var(--primitive-neutral-800) 25%,
+    var(--primitive-neutral-700) 50%,
+    var(--primitive-neutral-800) 75%
   );
   background-size: 200% 100%;
 }
@@ -62,10 +62,10 @@
 @media (prefers-reduced-motion: reduce) {
   .skeleton {
     animation: none;
-    background: var(--primitive-neutral-200, #e5e5e5);
+    background: var(--primitive-neutral-200);
   }
   
   :host-context([data-theme="dark"]) .skeleton {
-    background: var(--primitive-neutral-800, #262626);
+    background: var(--primitive-neutral-800);
   }
 }

@@ -213,28 +213,9 @@
   padding: 0 var(--space-2);
 }
 
-.wellness-progress .p-progressbar-value {
-  background: linear-gradient(
-    90deg,
-    var(--brand-primary-700) 0%,
-    var(--status-success-500) 100%
-  );
-}
-
-.wellness-progress.status-excellent .p-progressbar-value {
-  background: var(--status-success-500);
-}
-
-.wellness-progress.status-good .p-progressbar-value {
-  background: var(--brand-primary-700);
-}
-
-.wellness-progress.status-moderate .p-progressbar-value {
-  background: var(--status-warning-500);
-}
-
-.wellness-progress.status-poor .p-progressbar-value {
-  background: var(--status-error-500);
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-025)
+.wellness-progress {
+  // Component-specific styles remain here
 }
 
 .metrics-grid {

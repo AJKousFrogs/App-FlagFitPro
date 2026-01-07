@@ -693,13 +693,12 @@
     }
 
     // Larger form controls for touch
+    // PrimeNG overrides moved to _exceptions.scss (DS-EXC-003)
+    // Font-size !important moved to _exceptions.scss (DS-EXC-003)
     :global(input),
     :global(select),
-    :global(textarea),
-    :global(.p-inputtext),
-    :global(.p-select) {
+    :global(textarea) {
       min-height: 44px;
-      font-size: 16px !important; // Prevent iOS zoom
       padding: var(--space-2) var(--space-3);
     }
   }
@@ -738,10 +737,7 @@
       padding: var(--space-2);
       min-height: 44px; // Touch-friendly
       
-      :global(.p-checkbox) {
-        width: 24px;
-        height: 24px;
-      }
+      // PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-003)
 
       .play-type-label-text {
         font-size: var(--font-size-h4);
@@ -840,21 +836,7 @@
 
   .games-list-card {
     // Horizontal scroll container
-    :global(.p-datatable-wrapper) {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch; // iOS smooth scrolling
-      
-      // Scroll shadow indicators (shows there's more content)
-      background: 
-        linear-gradient(to right, var(--surface-card) 30%, rgba(255,255,255,0)),
-        linear-gradient(to right, rgba(255,255,255,0), var(--surface-card) 70%) 0 100%,
-        radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,.15), transparent),
-        radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.15), transparent) 0 100%;
-      background-repeat: no-repeat;
-      background-color: var(--surface-card);
-      background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
-      background-attachment: local, local, scroll, scroll;
-    }
+    // PrimeNG datatable wrapper override moved to _exceptions.scss (DS-EXC-003)
 
     // Force table to allow horizontal scroll
     :global(table) {
@@ -872,10 +854,9 @@
     }
 
     // Compact table cells
+    // Padding and font-size !important moved to _exceptions.scss (DS-EXC-003)
     :global(th),
     :global(td) {
-      padding: var(--space-2) var(--space-3) !important;
-      font-size: var(--font-size-h4) !important;
       white-space: nowrap;
     }
 
@@ -891,10 +872,7 @@
     }
 
     // Tags - smaller on mobile
-    :global(.p-tag) {
-      font-size: 10px !important;
-      padding: 4px 8px !important;
-    }
+    // PrimeNG tag override moved to _exceptions.scss (DS-EXC-003)
   }
 
   // ================================================================
@@ -957,11 +935,12 @@
     padding: var(--space-3);
     margin-top: var(--space-3);
 
+    // Font-size !important moved to _exceptions.scss (DS-EXC-003)
     .form-field {
       :global(input),
       :global(select),
       :global(textarea) {
-        font-size: 16px !important;
+        // Component-specific styles remain here
       }
     }
   }
@@ -1038,10 +1017,7 @@
   .plays-list-card,
   .games-list-card {
     margin-bottom: var(--space-3);
-    
-    :global(.p-card-body) {
-      padding: var(--space-3) !important;
-    }
+    // PrimeNG card body override moved to _exceptions.scss (DS-EXC-003)
   }
 
   .visibility-info-banner {

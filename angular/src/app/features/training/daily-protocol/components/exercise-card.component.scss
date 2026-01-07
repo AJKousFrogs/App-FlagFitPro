@@ -4,8 +4,8 @@
 // ============================================================================
 
 .exercise-card {
-  background: var(--surface-primary, #ffffff);
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  background: var(--surface-primary);
+  border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-lg, 8px);
   overflow: hidden;
   transition:
@@ -17,12 +17,12 @@
 // @see docs/CARD_SHELL_CONTRACT.md §2.8
 
 .exercise-card.completed {
-  background: var(--primitive-success-50, #f0fdf4);
-  border-color: var(--primitive-success-200, #bbf7d0);
+  background: var(--primitive-success-50);
+  border-color: var(--primitive-success-200);
 }
 
 .exercise-card.expanded {
-  box-shadow: var(--shadow-2, 0 4px 12px rgba(0, 0, 0, 0.08));
+  box-shadow: var(--shadow-2);
 }
 
 /* Header */
@@ -51,18 +51,18 @@
 }
 
 .status-indicator.pending {
-  background: var(--primitive-neutral-100, #f5f5f5);
-  color: var(--color-text-secondary, #737373);
+  background: var(--primitive-neutral-100);
+  color: var(--color-text-secondary);
 }
 
 .status-indicator.complete {
-  background: var(--primitive-success-500, #22c55e);
-  color: white;
+  background: var(--primitive-success-500);
+  color: var(--color-text-on-primary);
 }
 
 .status-indicator.skipped {
-  background: var(--primitive-neutral-300, #d4d4d4);
-  color: white;
+  background: var(--primitive-neutral-300);
+  color: var(--color-text-on-primary);
 }
 
 .status-number {
@@ -78,36 +78,36 @@
   margin: 0 0 var(--space-1, 4px) 0;
   font-size: var(--font-body-md, 16px);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
 }
 
 .prescription-summary {
   font-size: var(--font-body-sm, 14px);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .expand-toggle {
   width: 32px;
   height: 32px;
   border: none;
-  background: var(--primitive-neutral-100, #f5f5f5);
+  background: var(--primitive-neutral-100);
   border-radius: var(--radius-full, 9999px);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
   transition: background-color 150ms ease;
 }
 
 .expand-toggle:hover {
-  background: var(--primitive-neutral-200, #e5e5e5);
+  background: var(--primitive-neutral-200);
 }
 
 /* Body */
 .exercise-body {
   padding: 0 var(--space-4, 16px) var(--space-4, 16px);
-  border-top: 1px solid var(--primitive-neutral-100, #f5f5f5);
+  border-top: 1px solid var(--primitive-neutral-100);
 }
 
 /* Video + Prescription Row */
@@ -133,20 +133,20 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: var(--radius-lg, 8px);
-  background: var(--primitive-neutral-900, #171717);
+  background: var(--primitive-neutral-900);
 }
 
 .video-placeholder {
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: var(--primitive-neutral-100, #f5f5f5);
+  background: var(--primitive-neutral-100);
   border-radius: var(--radius-lg, 8px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--space-2, 8px);
-  color: var(--color-text-muted, #a3a3a3);
+  color: var(--color-text-muted);
 }
 
 .video-placeholder i {
@@ -159,7 +159,7 @@
   gap: var(--space-1, 4px);
   margin-top: var(--space-2, 8px);
   font-size: var(--font-body-xs, 12px);
-  color: var(--primitive-info-600, #2563eb);
+  color: var(--primitive-info-600);
   text-decoration: none;
 }
 
@@ -169,7 +169,7 @@
 
 /* Prescription Panel */
 .prescription-panel {
-  background: var(--primitive-neutral-50, #fafafa);
+  background: var(--primitive-neutral-50);
   border-radius: var(--radius-lg, 8px);
   padding: var(--space-4, 16px);
 }
@@ -178,7 +178,7 @@
   margin: 0 0 var(--space-3, 12px) 0;
   font-size: var(--font-body-sm, 14px);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -194,23 +194,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--surface-primary, #ffffff);
+  background: var(--surface-primary);
   border-radius: var(--radius-lg, 8px);
   padding: var(--space-3, 12px);
   min-width: 60px;
-  box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+  box-shadow: var(--shadow-1);
 }
 
 .badge-value {
   font-size: var(--font-heading-md, 24px);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
   line-height: 1;
 }
 
 .badge-label {
   font-size: var(--font-body-xs, 12px);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
   margin-top: var(--space-1, 4px);
 }
 
@@ -219,20 +219,20 @@
   align-items: center;
   gap: var(--space-2, 8px);
   padding: var(--space-2, 8px);
-  background: var(--primitive-success-50, #f0fdf4);
+  background: var(--primitive-success-50);
   border-radius: var(--radius-md, 6px);
   font-size: var(--font-body-sm, 14px);
-  color: var(--primitive-success-700, #15803d);
+  color: var(--primitive-success-700);
   margin-bottom: var(--space-2, 8px);
 }
 
 .progression-note i {
-  color: var(--primitive-success-500, #22c55e);
+  color: var(--primitive-success-500);
 }
 
 .yesterday-comparison {
   font-size: var(--font-body-xs, 12px);
-  color: var(--color-text-muted, #a3a3a3);
+  color: var(--color-text-muted);
 }
 
 .yesterday-label {
@@ -245,7 +245,7 @@
 }
 
 .instruction-block {
-  background: var(--primitive-neutral-50, #fafafa);
+  background: var(--primitive-neutral-50);
   border-radius: var(--radius-lg, 8px);
   padding: var(--space-3, 12px);
   margin-bottom: var(--space-3, 12px);
@@ -275,21 +275,21 @@
 }
 
 .instruction-block.how .instruction-label {
-  color: var(--primitive-info-600, #2563eb);
+  color: var(--primitive-info-600);
 }
 
 .instruction-block.feel .instruction-label {
-  color: var(--primitive-success-600, #16a34a);
+  color: var(--primitive-success-600);
 }
 
 .instruction-block.compensation .instruction-label {
-  color: var(--primitive-warning-600, #d97706);
+  color: var(--primitive-warning-600);
 }
 
 .instruction-text {
   margin: 0;
   font-size: var(--font-body-sm, 14px);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
   line-height: var(--line-height-base);
 }
 
@@ -299,20 +299,20 @@
   align-items: flex-start;
   gap: var(--space-2, 8px);
   padding: var(--space-3, 12px);
-  background: var(--primitive-info-50, #eff6ff);
-  border-radius: var(--radius-lg, 8px);
-  border-left: 3px solid var(--primitive-info-500, #3b82f6);
+  background: var(--primitive-info-50);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--primitive-info-500);
   margin-bottom: var(--space-4, 16px);
 }
 
 .ai-note i {
-  color: var(--primitive-info-500, #3b82f6);
+  color: var(--primitive-info-500);
   margin-top: var(--space-1);
 }
 
 .ai-note span {
   font-size: var(--font-body-sm, 14px);
-  color: var(--primitive-info-800, #1e40af);
+  color: var(--primitive-info-800);
   line-height: var(--line-height-base);
 }
 
@@ -320,9 +320,9 @@
 .exercise-timer-section {
   margin: var(--space-5, 20px) 0;
   padding: var(--space-4, 16px);
-  background: var(--surface-secondary, #f9fafb);
-  border-radius: var(--radius-lg, 8px);
-  border: 1px solid var(--color-border-muted, #e5e7eb);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-muted);
 }
 
 .timer-section-title {
@@ -331,11 +331,11 @@
   gap: var(--space-2, 8px);
   font-size: var(--font-heading-sm, 16px);
   font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-text-primary, #111827);
+  color: var(--color-text-primary);
   margin: 0 0 var(--space-4, 16px) 0;
 
   i {
-    color: var(--ds-primary-green, #089949);
+    color: var(--ds-primary-green);
   }
 }
 
@@ -359,9 +359,9 @@
   align-items: center;
   gap: var(--space-2, 8px);
   padding: var(--space-3, 12px) var(--space-4, 16px);
-  background: var(--primitive-success-100, #dcfce7);
+  background: var(--primitive-success-100);
   border-radius: var(--radius-lg, 8px);
-  color: var(--primitive-success-700, #15803d);
+  color: var(--primitive-success-700);
   font-weight: var(--font-weight-semibold, 600);
 }
 
@@ -371,7 +371,7 @@
 
 .completed-time {
   font-weight: var(--font-weight-normal, 400);
-  color: var(--primitive-success-600, #16a34a);
+  color: var(--primitive-success-600);
   margin-left: var(--space-1, 4px);
 }
 
@@ -383,6 +383,6 @@
 }
 
 .exercise-card:focus-within {
-  outline: 2px solid var(--ds-primary-green, #089949);
+  outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
 }

@@ -23,26 +23,9 @@
   padding: 0;
 }
 
-.custom-breadcrumb .p-breadcrumb-list {
-  margin: 0;
-  padding: 0;
-  gap: 0.5rem;
-}
-
-.custom-breadcrumb .p-breadcrumb-item {
-  padding: 0;
-}
-
-/* Separator styling */
-.custom-breadcrumb .p-breadcrumb-separator {
-  margin: 0 0.75rem;
-  color: var(--text-tertiary, #64748b);
-  font-size: var(--font-size-badge);
-}
-
-.custom-breadcrumb .p-breadcrumb-separator .p-icon {
-  width: 0.75rem;
-  height: 0.75rem;
+// PrimeNG breadcrumb overrides moved to _exceptions.scss (DS-EXC-033)
+.custom-breadcrumb {
+  // Component-specific styles remain here
 }
 
 .breadcrumb-item {
@@ -66,7 +49,7 @@
 
 .breadcrumb-item.current i {
   opacity: 1;
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
 }
 
 .breadcrumb-link {
@@ -76,7 +59,7 @@
 }
 
 .breadcrumb-link:hover {
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
 }
 
 .breadcrumb-text {

@@ -40,8 +40,8 @@
 }
 
 .stat-card-skeleton {
-  background: var(--surface-card, #ffffff);
-  border: 1px solid var(--surface-border, #e5e5e5);
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg, 12px);
   padding: var(--space-4, 16px);
   display: flex;
@@ -69,8 +69,8 @@
 }
 
 .card-skeleton {
-  background: var(--surface-card, #ffffff);
-  border: 1px solid var(--surface-border, #e5e5e5);
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg, 12px);
   padding: var(--space-5, 20px);
   display: flex;
@@ -80,7 +80,7 @@
 
 .card-header-skeleton {
   padding-bottom: var(--space-2, 8px);
-  border-bottom: 1px solid var(--surface-border, #e5e5e5);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 // Weekly Progress
@@ -98,7 +98,7 @@
   gap: var(--space-3, 12px);
   padding: var(--space-3, 12px);
   border-radius: var(--radius-md, 8px);
-  background: var(--surface-ground, #fafafa);
+  background: var(--surface-ground);
   margin-bottom: var(--space-2, 8px);
 }
 
@@ -119,11 +119,11 @@
 // Dark theme
 :host-context([data-theme="dark"]) {
   .card-skeleton {
-    background: var(--surface-card, #171717);
-    border-color: var(--surface-border, #404040);
+    background: var(--surface-card);
+    border-color: var(--surface-border);
   }
   
   .schedule-item-skeleton {
-    background: var(--surface-ground, #262626);
+    background: var(--surface-ground);
   }
 }

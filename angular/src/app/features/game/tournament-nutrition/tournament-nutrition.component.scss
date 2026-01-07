@@ -1039,30 +1039,11 @@
 // All ::ng-deep and declarations must be documented here
 // ============================================================================
 
-// Hydration progress bar styling
-// Reason: PrimeNG progress bar needs custom brand colors
-.hydration-progress .p-progressbar {
-  background: var(--color-border-secondary);
-  border-radius: var(--radius-full);
-}
-
-.hydration-progress .p-progressbar-value {
-  background: var(--ds-primary-green);
-  border-radius: var(--radius-full);
-}
-
-// Window time tag styling
-// Reason: PrimeNG tag needs smaller sizing for inline display
-.window-time .p-tag {
-  font-size: var(--font-body-2xs);
-  padding: var(--space-0) var(--space-2);
-  font-weight: var(--font-weight-semibold);
-}
-
-// Window footer button sizing
-// Reason: Smaller button size to fit inline with hydration target
-.window-footer .p-button {
-  font-size: var(--font-size-h4);
+// PrimeNG overrides moved to _exceptions.scss (DS-EXC-016)
+.hydration-progress,
+.window-time,
+.window-footer {
+  // Component-specific styles remain here
 }
 
 // Card header/border overrides REMOVED

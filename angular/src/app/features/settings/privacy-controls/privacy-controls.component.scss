@@ -351,9 +351,9 @@
   transform: translateY(-2px);
 }
 
-.category-chips p-chip.selected .p-chip {
-  background: var(--color-brand-primary);
-  color: white;
+// PrimeNG chip override moved to _exceptions.scss (DS-EXC-047)
+.category-chips p-chip.selected {
+  // Component-specific styles remain here
 }
 
 /* Emergency Contacts */
@@ -493,16 +493,7 @@
   gap: var(--space-4);
 }
 
-.p-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.p-field label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
-}
+// PrimeNG field overrides moved to _exceptions.scss (DS-EXC-047)
 
 /* Delete Warning */
 .delete-warning {

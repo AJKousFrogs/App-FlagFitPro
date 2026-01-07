@@ -85,7 +85,7 @@
   align-items: flex-start;
   gap: var(--space-3);
   padding: var(--space-3);
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--color-status-warning-light);
   border-radius: var(--radius-lg);
   font-size: var(--font-size-h4);
   color: var(--color-status-warning);
@@ -97,7 +97,7 @@
 }
 
 .coaching-cues {
-  background: rgba(8, 153, 73, 0.05);
+  background: var(--ds-primary-green-ultra-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-4);
 }
@@ -178,13 +178,9 @@
   color: var(--color-text-secondary);
 }
 
-.overall-bar .p-progressbar {
-  height: 4px;
-  border-radius: var(--radius-sm);
-}
-
-.overall-bar .p-progressbar-value {
-  background: var(--ds-primary-green, #089949);
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-038)
+.overall-bar {
+  // Component-specific styles remain here
 }
 
 .current-step {
@@ -217,7 +213,7 @@
 .timer-circle {
   width: 6.25rem;
   height: 6.25rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -261,17 +257,9 @@
   text-transform: uppercase;
 }
 
-.step-bar .p-progressbar {
-  height: 6px;
-  border-radius: var(--radius-sm);
-}
-
-.step-bar .p-progressbar-value {
-  background: linear-gradient(
-    90deg,
-    var(--ds-primary-green),
-    var(--ds-primary-green-light)
-  );
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-038)
+.step-bar {
+  // Component-specific styles remain here
 }
 
 .session-controls {
@@ -374,16 +362,10 @@
   justify-content: center;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: rgba(8, 153, 73, 0.1);
+  background: var(--ds-primary-green-subtle);
   border-radius: var(--radius-lg);
   color: var(--ds-primary-green);
   margin-bottom: var(--space-4);
 }
 
-.p-slider .p-slider-range {
-  background: var(--ds-primary-green, #089949);
-}
-
-.p-slider .p-slider-handle {
-  border-color: var(--ds-primary-green, #089949);
-}
+// PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-038)

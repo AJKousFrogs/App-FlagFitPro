@@ -116,6 +116,2754 @@
   //   }
   // }
 
+  /* ------------------------------------------------
+   * COMPONENT: acwr-baseline.component
+   * Ticket: DS-EXC-001
+   * Owner: @design-system-team
+   * Scope: acwr-baseline component only
+   * Remove by: 2026-04-01
+   * Reason: Component-specific progressbar styling override.
+   *         Custom height and styling for ACWR baseline widget.
+   * ------------------------------------------------ */
+  .acwr-baseline {
+    .acwr-progress-bar {
+      ::ng-deep .p-progressbar {
+        height: 8px;
+        background: var(--surface-secondary);
+        border-radius: var(--radius-full);
+        
+        .p-progressbar-value {
+          background: var(--ds-primary-green);
+          border-radius: var(--radius-full);
+        }
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: player-dashboard.component
+   * Ticket: DS-EXC-002
+   * Owner: @design-system-team
+   * Scope: player-dashboard component only
+   * Remove by: 2026-03-31
+   * Reason: Mobile-responsive PrimeNG overrides for timeline,
+   *         message, progressbar, and chart components.
+   *         Required for mobile optimization. Canvas responsive
+   *         styling and milestone tag font-size override.
+   * ------------------------------------------------ */
+  .player-dashboard {
+    // Timeline mobile responsive
+    .schedule-timeline {
+      @media (max-width: 767px) {
+        :global(.p-timeline-event-content) {
+          padding: var(--space-2) !important;
+        }
+
+        :global(.p-timeline-event-opposite) {
+          @media (max-width: 479px) {
+            display: none !important;
+          }
+        }
+      }
+    }
+
+    // Message mobile responsive
+    .announcement-banner {
+      @media (max-width: 767px) {
+        :global(.p-message) {
+          padding: var(--space-3) !important;
+          font-size: var(--font-size-h4) !important;
+        }
+      }
+
+      @media (max-width: 479px) {
+        :global(.p-message) {
+          padding: var(--space-2) !important;
+          font-size: var(--font-body-2xs) !important;
+        }
+      }
+    }
+
+    // Progressbar mobile
+    @media (max-width: 767px) {
+      ::ng-deep .p-progressbar {
+        height: 6px !important;
+      }
+    }
+
+    // Chart mobile optimization
+    @media (max-width: 767px) {
+      ::ng-deep .p-chart {
+        canvas {
+          max-width: 100% !important;
+          height: auto !important;
+        }
+      }
+    }
+
+    // Canvas responsive styling (non-PrimeNG chart)
+    canvas {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    // Timeline mobile
+    @media (max-width: 767px) {
+      ::ng-deep .p-timeline {
+        .p-timeline-event-marker {
+          width: 12px !important;
+          height: 12px !important;
+        }
+
+        .p-timeline-event-connector {
+          width: 2px !important;
+        }
+      }
+    }
+
+    // Milestone tag font-size override
+    .milestone-tag {
+      font-size: var(--font-body-2xs) !important;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: game-tracker.component
+   * Ticket: DS-EXC-003
+   * Owner: @design-system-team
+   * Scope: game-tracker component only
+   * Remove by: 2026-03-31
+   * Reason: Mobile-responsive PrimeNG overrides for form inputs,
+   *         checkboxes, datatable, tags, and card components.
+   *         Required for mobile touch optimization. Font-size
+   *         overrides prevent iOS zoom on input focus.
+   * ------------------------------------------------ */
+  .game-tracker {
+    // Mobile form controls
+    @media (max-width: 767px) {
+      .form-field {
+        :global(.p-inputtext),
+        :global(.p-select) {
+          min-height: 44px;
+          font-size: 16px !important; // Prevent iOS zoom
+          padding: var(--space-2) var(--space-3);
+        }
+      }
+
+      // Form inputs font-size override (non-PrimeNG)
+      :global(input),
+      :global(select),
+      :global(textarea) {
+        font-size: 16px !important; // Prevent iOS zoom
+      }
+
+      .play-type-option {
+        :global(.p-checkbox) {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      .games-list-card {
+        // Horizontal scroll container
+        :global(.p-datatable-wrapper) {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch; // iOS smooth scrolling
+          
+          // Scroll shadow indicators (shows there's more content)
+          background: 
+            linear-gradient(to right, var(--surface-card) 30%, rgba(255,255,255,0)),
+            linear-gradient(to right, rgba(255,255,255,0), var(--surface-card) 70%) 0 100%,
+            radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,.15), transparent),
+            radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.15), transparent) 0 100%;
+          background-repeat: no-repeat;
+          background-color: var(--surface-card);
+          background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+          background-attachment: local, local, scroll, scroll;
+        }
+
+        // Compact table cells
+        :global(th),
+        :global(td) {
+          padding: var(--space-2) var(--space-3) !important;
+          font-size: var(--font-size-h4) !important;
+        }
+
+        // Tags - smaller on mobile
+        :global(.p-tag) {
+          font-size: 10px !important;
+          padding: 4px 8px !important;
+        }
+      }
+
+      .play-tracker-card,
+      .plays-list-card,
+      .games-list-card {
+        :global(.p-card-body) {
+          padding: var(--space-3) !important;
+        }
+      }
+
+      .miss-analysis-section {
+        .form-field {
+          :global(input),
+          :global(select),
+          :global(textarea) {
+            font-size: 16px !important; // Prevent iOS zoom
+          }
+        }
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: header.component
+   * Ticket: DS-EXC-004
+   * Owner: @design-system-team
+   * Scope: header component only
+   * Remove by: 2026-04-01
+   * Reason: Component-specific PrimeNG overrides for toolbar,
+   *         buttons, avatar, input group, tag, and dialog.
+   *         Required for header layout and styling.
+   * ------------------------------------------------ */
+  .p-toolbar.app-header {
+    background: var(--surface-card);
+    border: none;
+    border-bottom: var(--border-1) solid var(--surface-border);
+    border-radius: 0;
+    padding: 0 var(--space-6);
+    height: 64px;
+    min-height: 64px;
+    max-height: 64px;
+    gap: var(--space-6);
+    box-shadow: var(--shadow-1);
+    display: flex;
+    align-items: center;
+
+    .p-toolbar-start,
+    .p-toolbar-center,
+    .p-toolbar-end {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0 var(--space-4);
+      height: 56px;
+      min-height: 56px;
+      max-height: 56px;
+    }
+  }
+
+  .mobile-menu-toggle.p-button,
+  .p-button.mobile-menu-toggle {
+    display: none;
+  }
+
+  .olympics-badge.p-tag {
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-body-2xs);
+    letter-spacing: 0.05em;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-xl);
+    line-height: 1;
+    height: auto;
+
+    .p-tag-icon {
+      font-size: var(--font-body-2xs);
+      margin-right: var(--space-1);
+    }
+  }
+
+  .search-input-group.p-inputgroup,
+  .p-inputgroup.search-input-group {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: none;
+    height: var(--space-10);
+    border: var(--border-1) solid rgba(0, 0, 0, 0.1);
+    background: var(--surface-ground);
+    display: flex;
+    align-items: center;
+
+    .p-inputgroupaddon,
+    .p-inputgroup-addon {
+      background: transparent;
+      border: none;
+      color: var(--text-color-secondary);
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--space-10);
+      flex-shrink: 0;
+
+      &:first-child {
+        padding-left: var(--space-3);
+        padding-right: var(--space-2);
+        width: auto;
+
+        i {
+          font-size: var(--font-size-h4);
+          color: var(--text-color-secondary);
+          opacity: 0.6;
+        }
+      }
+
+      &:last-child,
+      &.search-shortcut-addon {
+        padding-left: var(--space-2);
+        padding-right: var(--space-3);
+        width: auto;
+      }
+    }
+
+    .p-inputtext {
+      border: none;
+      background: transparent;
+      height: var(--space-10);
+      font-size: var(--font-size-h4);
+      padding: 0 var(--space-1);
+      margin: 0;
+      line-height: var(--space-10);
+      box-shadow: none;
+      flex: 1;
+      min-width: 0;
+
+      &::placeholder {
+        color: var(--text-color-secondary);
+        opacity: 0.6;
+      }
+
+      &:hover,
+      &:focus-visible {
+        border: none;
+        box-shadow: none;
+        outline: none;
+      }
+    }
+
+    &:hover .p-inputgroupaddon:first-child i,
+    &:hover .p-inputgroup-addon:first-child i {
+      opacity: 1;
+      color: var(--text-color);
+    }
+  }
+
+  .header-icon-btn.p-button {
+    width: var(--space-10);
+    height: var(--space-10);
+    min-width: var(--space-10);
+    min-height: var(--space-10);
+    max-width: var(--space-10);
+    max-height: var(--space-10);
+    padding: 0;
+    margin: 0;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: none;
+
+    .p-button-icon {
+      font-size: var(--font-body-lg);
+      color: var(--text-color-secondary);
+      opacity: 0.7;
+      margin: 0;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+      transform: none;
+
+      .p-button-icon {
+        opacity: 1;
+        color: var(--text-color);
+      }
+    }
+
+    &:active {
+      transform: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--ds-primary-green);
+      outline-offset: 2px;
+    }
+
+    &::before,
+    &::after {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      width: var(--space-10);
+      height: var(--space-10);
+      min-width: var(--space-10);
+      min-height: var(--space-10);
+      max-width: var(--space-10);
+      max-height: var(--space-10);
+
+      .p-button-icon {
+        font-size: var(--font-size-body);
+      }
+    }
+  }
+
+  .user-avatar.p-avatar {
+    width: var(--space-10);
+    height: var(--space-10);
+    min-width: var(--space-10);
+    min-height: var(--space-10);
+    max-width: var(--space-10);
+    max-height: var(--space-10);
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-h4);
+    letter-spacing: 0.02em;
+    border: none;
+    box-shadow: none;
+    border-radius: 50%;
+
+    @media (max-width: 768px) {
+      width: var(--space-8);
+      height: var(--space-8);
+      min-width: var(--space-8);
+      min-height: var(--space-8);
+      font-size: var(--font-size-badge);
+    }
+  }
+
+  .user-avatar-btn.p-button {
+    padding: 0;
+    margin: 0;
+    width: var(--space-10);
+    height: var(--space-10);
+    min-width: var(--space-10);
+    max-width: var(--space-10);
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transform: none;
+
+    &:hover {
+      background: transparent;
+      transform: none;
+
+      .user-avatar {
+        opacity: 0.85;
+      }
+    }
+
+    &::before,
+    &::after {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      width: var(--space-8);
+      height: var(--space-8);
+      min-width: var(--space-8);
+      max-width: var(--space-8);
+    }
+  }
+
+  :host ::ng-deep .shortcuts-dialog {
+    .p-dialog-content {
+      padding: 0;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: update-password.component
+   * Ticket: DS-EXC-005
+   * Owner: @design-system-team
+   * Scope: update-password component only
+   * Remove by: 2026-04-01
+   * Reason: Component-specific password input width override.
+   * ------------------------------------------------ */
+  .p-password {
+    width: 100%;
+
+    input {
+      width: 100%;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: chat.component
+   * Ticket: DS-EXC-006
+   * Owner: @design-system-team
+   * Scope: chat-header component only
+   * Remove by: 2026-04-01
+   * Reason: Buttons need white color on green header background.
+   * ------------------------------------------------ */
+  .chat-header {
+    .p-button {
+      color: var(--color-text-on-primary);
+      border-color: rgba(255, 255, 255, 0.3);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .p-button-icon {
+        color: var(--color-text-on-primary);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: roster-player-card.component
+   * Ticket: DS-EXC-007
+   * Owner: @design-system-team
+   * Scope: roster-player-card component only
+   * Remove by: 2026-04-01
+   * Reason: Readiness-based progressbar value color overrides.
+   * ------------------------------------------------ */
+  .readiness-bar {
+    &.readiness-high .p-progressbar-value {
+      background: var(--color-status-success);
+    }
+
+    &.readiness-medium .p-progressbar-value {
+      background: var(--color-status-warning);
+    }
+
+    &.readiness-low .p-progressbar-value {
+      background: var(--color-status-error);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: session-log-form.component
+   * Ticket: DS-EXC-008
+   * Owner: @design-system-team
+   * Scope: session-log-form component only
+   * Remove by: 2026-04-01
+   * Reason: RPE slider custom styling with gradient range.
+   * ------------------------------------------------ */
+  .rpe-slider {
+    .p-slider {
+      background: var(--primitive-neutral-200, #e5e5e5);
+      height: 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    .p-slider-range {
+      background: linear-gradient(
+        90deg,
+        var(--ds-primary-green) 0%,
+        var(--primitive-warning-500) 50%,
+        var(--primitive-error-500) 100%
+      );
+      border-radius: var(--radius-sm);
+    }
+
+    .p-slider-handle {
+      width: 24px;
+      height: 24px;
+      background: white;
+      border: 3px solid var(--ds-primary-green);
+      border-radius: 50%;
+      box-shadow: var(--shadow-1);
+      margin-top: -7px;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: session-analytics.component
+   * Ticket: DS-EXC-009
+   * Owner: @design-system-team
+   * Scope: session-analytics component only
+   * Remove by: 2026-04-01
+   * Reason: Custom progressbar heights and styling for completion and type bars.
+   * ------------------------------------------------ */
+  .completion-bar {
+    .p-progressbar {
+      height: 6px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-100);
+    }
+
+    .p-progressbar-value {
+      background: var(--ds-primary-green-gradient);
+    }
+  }
+
+  .type-bar {
+    .p-progressbar {
+      height: 4px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-100);
+    }
+
+    .p-progressbar-value {
+      background: var(--ds-primary-green);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: recovery-dashboard.component
+   * Ticket: DS-EXC-010
+   * Owner: @design-system-team
+   * Scope: recovery-dashboard component only
+   * Remove by: 2026-04-01
+   * Reason: Selectbutton flex-wrap and responsive layout overrides.
+   * ------------------------------------------------ */
+  .category-filter {
+    :deep(.p-selectbutton) {
+      flex-wrap: wrap;
+      gap: var(--space-1);
+    }
+
+    @media (max-width: 640px) {
+      :deep(.p-selectbutton) {
+        justify-content: center;
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: supplement-tracker.component
+   * Ticket: DS-EXC-011
+   * Owner: @design-system-team
+   * Scope: supplement-tracker component only
+   * Remove by: 2026-04-01
+   * Reason: Select width, checkbox sizing, and dialog styling overrides.
+   * ------------------------------------------------ */
+  .supplement-tracker {
+    .p-select {
+      width: 100%;
+    }
+
+    .p-checkbox {
+      width: 24px;
+      height: 24px;
+
+      .p-checkbox-box {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-sm);
+        border: 2px solid var(--primitive-neutral-300, #d4d4d4);
+        background: var(--surface-primary, #ffffff);
+        transition:
+          background-color 150ms ease,
+          border-color 150ms ease;
+
+        &:hover {
+          border-color: var(--ds-primary-green, #089949);
+        }
+
+        &.p-highlight {
+          background: var(--ds-primary-green);
+          border-color: var(--ds-primary-green);
+
+          .p-checkbox-icon {
+            color: var(--color-text-on-primary);
+          }
+        }
+
+        &:focus-visible {
+          outline: 2px solid var(--ds-primary-green, #089949);
+          outline-offset: 2px;
+        }
+      }
+    }
+
+    .supplement-dialog {
+      .p-dialog {
+        width: 400px;
+        max-width: 95vw;
+      }
+
+      .p-dialog-content {
+        padding: var(--space-5, 20px);
+      }
+
+      .p-dialog-footer {
+        padding: var(--space-4, 16px) var(--space-5, 20px);
+        border-top: 1px solid var(--primitive-neutral-100, #f0f0f0);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: wellness-checkin.component
+   * Ticket: DS-EXC-012
+   * Owner: @design-system-team
+   * Scope: wellness-checkin component only
+   * Remove by: 2026-04-01
+   * Reason: Slider and checkbox styling overrides for wellness inputs.
+   * ------------------------------------------------ */
+  .wellness-checkin {
+    .p-slider {
+      flex: 1;
+      height: 6px;
+
+      .p-slider-handle {
+        width: 20px;
+        height: 20px;
+        background: var(--color-brand-primary);
+        border: 2px solid var(--surface-primary);
+        box-shadow: var(--shadow-sm);
+
+        &:hover {
+          background: var(--color-brand-primary-hover);
+          transform: scale(1.1);
+        }
+
+        &:focus {
+          outline: 2px solid var(--color-brand-primary);
+          outline-offset: 2px;
+        }
+      }
+
+      .p-slider-range {
+        background: var(--color-brand-primary);
+      }
+    }
+
+    .area-checkbox {
+      .p-checkbox {
+        .p-checkbox-box {
+          border-color: var(--color-border-secondary);
+          border-radius: var(--radius-sm);
+
+          &.p-highlight {
+            background: var(--color-brand-primary);
+            border-color: var(--color-brand-primary);
+          }
+        }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .p-slider-handle {
+        transition: none;
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: search-panel.component
+   * Ticket: DS-EXC-013
+   * Owner: @design-system-team
+   * Scope: search-panel component only
+   * Remove by: 2026-04-01
+   * Reason: Command palette dialog, input, and button styling overrides.
+   *         Required for search panel UI.
+   * ------------------------------------------------ */
+  .command-palette-dialog.p-dialog {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    width: 700px;
+    max-width: 95vw;
+    top: 10%;
+    z-index: 1100;
+
+    .p-dialog-content {
+      padding: 0;
+      border-radius: var(--radius-2xl);
+      background: var(--surface-card);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.08),
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 12px 24px -8px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 640px) {
+      max-width: 100%;
+      width: 100%;
+      margin: 0;
+
+      .p-dialog-content {
+        border-radius: 0;
+        max-height: 100vh;
+      }
+    }
+  }
+
+  .p-component-overlay-enter,
+  .p-dialog-mask:has(.command-palette-dialog),
+  .command-palette-dialog + .p-dialog-mask,
+  body > .p-dialog-mask:has(.command-palette-dialog) {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1099;
+    position: fixed;
+    inset: 0;
+  }
+
+  .p-dialog-mask.p-component-overlay {
+    &:has(.command-palette-dialog) {
+      z-index: 1099;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  .search-input.p-inputtext {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: var(--font-body-lg);
+    font-weight: var(--font-weight-regular);
+    padding: 0;
+    color: var(--text-color);
+    box-shadow: none;
+    height: var(--space-8);
+    line-height: var(--space-8);
+
+    &::placeholder {
+      color: var(--text-color-secondary);
+      opacity: 0.7;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+
+  .clear-btn.p-button {
+    width: var(--space-8);
+    height: var(--space-8);
+    min-width: var(--space-8);
+    padding: 0;
+    background: transparent;
+    border: none;
+
+    .p-button-icon {
+      font-size: var(--font-size-h4);
+      color: var(--text-color-secondary);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: profile.component
+   * Ticket: DS-EXC-014
+   * Owner: @design-system-team
+   * Scope: profile component only
+   * Remove by: 2026-04-01
+   * Reason: Profile tabs custom styling with active state indicators.
+   * ------------------------------------------------ */
+  .profile-page .profile-tabs-container {
+    .p-tabs {
+      background: transparent;
+      border: none;
+    }
+
+    .p-tablist {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      margin-bottom: var(--space-5);
+    }
+
+    .p-tablist-content,
+    .p-tablist-viewport {
+      background: var(--surface-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-1);
+      border: none;
+      box-shadow: none;
+    }
+
+    .p-tablist-tab-list {
+      display: flex;
+      align-items: stretch;
+      gap: var(--space-1);
+      background: transparent;
+      border: none;
+    }
+
+    .p-tablist-active-bar {
+      display: none;
+    }
+
+    .p-tab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-4);
+      font-family: var(--font-family-sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      white-space: nowrap;
+      transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+      height: var(--button-height-md);
+      min-height: var(--button-height-md);
+      outline: none;
+
+      i {
+        font-size: 1rem;
+        color: var(--color-text-tertiary);
+        transition: color 0.2s ease;
+      }
+
+      &:hover:not(.p-tab-active):not([data-p-active="true"]) {
+        background: var(--surface-primary);
+        color: var(--color-text-primary);
+
+        i {
+          color: var(--ds-primary-green);
+        }
+      }
+
+      &.p-tab-active,
+      &[data-p-active="true"] {
+        background: var(--surface-primary);
+        color: var(--ds-primary-green);
+        font-weight: 600;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--ds-primary-green);
+
+        i {
+          color: var(--ds-primary-green);
+        }
+      }
+    }
+
+    .p-tabpanels {
+      padding: 0;
+      background: transparent;
+      border: none;
+    }
+
+    .p-tabpanel {
+      padding: 0;
+      border: none;
+    }
+
+    @media (max-width: 1024px) {
+      .p-tablist-content,
+      .p-tablist-viewport {
+        padding: var(--space-1);
+      }
+
+      .p-tablist-tab-list {
+        gap: var(--space-1);
+      }
+
+      .p-tab {
+        padding: 0 var(--space-3);
+        font-size: 0.8125rem;
+        height: var(--button-height-md);
+        min-height: var(--button-height-md);
+      }
+    }
+
+    @media (max-width: 540px) {
+      .p-tablist-tab-list {
+        justify-content: center;
+      }
+
+      .p-tab {
+        padding: 0 var(--space-3);
+        height: var(--button-height-sm);
+        min-height: var(--button-height-sm);
+        gap: var(--space-1);
+
+        i {
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: onboarding.component
+   * Ticket: DS-EXC-015
+   * Owner: @design-system-team
+   * Scope: onboarding component only
+   * Remove by: 2026-03-31
+   * Reason: Extensive PrimeNG overrides for autocomplete, checkbox,
+   *         progressbar, and steps navigation. Required for onboarding flow.
+   *         Autocomplete panel positioning and jersey badge color override.
+   * ------------------------------------------------ */
+  .onboarding {
+    ::ng-deep {
+      .p-autocomplete,
+      .p-select,
+      .p-inputtext {
+        width: 100%;
+      }
+
+      .p-autocomplete-input {
+        width: 100% !important;
+      }
+    }
+
+    .team-autocomplete {
+      ::ng-deep .p-autocomplete {
+        width: 100%;
+
+        .p-autocomplete-input {
+          width: 100%;
+        }
+      }
+    }
+
+    ::ng-deep .p-autocomplete-panel {
+      position: fixed !important;
+      z-index: 9999 !important;
+      margin-top: var(--space-1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--color-border-muted);
+      border-radius: var(--radius-lg);
+      background: var(--surface-primary);
+      max-height: 300px;
+      overflow-y: auto;
+
+      .p-autocomplete-items {
+        padding: var(--space-2);
+
+        .p-autocomplete-item {
+          padding: var(--space-3);
+          border-radius: var(--radius-md);
+          cursor: pointer;
+          transition: background-color var(--transition-fast);
+
+          &:hover {
+            background: var(--surface-secondary);
+          }
+
+          &.p-highlight {
+            background: rgba(var(--ds-primary-green-rgb), 0.1);
+            color: var(--ds-primary-green);
+          }
+        }
+      }
+    }
+
+    // Jersey badge color override for white text on green background
+    .jersey-badge {
+      color: var(--ds-text-on-primary) !important; // White text on green background
+    }
+
+    .onboarding-progress-bar {
+      .p-progressbar-value {
+        background: linear-gradient(
+          90deg,
+          var(--ds-primary-green),
+          var(--ds-primary-green-light)
+        );
+        border-radius: var(--radius-full);
+        transition: width 0.3s ease-out;
+        box-shadow: 0 2px 4px rgba(var(--ds-primary-green-rgb), 0.2);
+      }
+    }
+
+    :host ::ng-deep {
+      .p-checkbox {
+        .p-checkbox-box {
+          width: 1.25rem;
+          height: 1.25rem;
+          border: 2px solid var(--color-border-primary);
+          border-radius: var(--radius-sm);
+          background: var(--surface-primary);
+          transition: all var(--transition-fast);
+
+          &:hover {
+            border-color: var(--ds-primary-green);
+            box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.1);
+          }
+
+          &.p-highlight {
+            background: var(--ds-primary-green);
+            border-color: var(--ds-primary-green);
+
+            .p-checkbox-icon {
+              color: white;
+            }
+          }
+        }
+      }
+
+      &:not(.p-disabled):has(.p-checkbox-box:hover) {
+        .p-checkbox-box {
+          border-color: var(--ds-primary-green);
+        }
+      }
+
+      .p-steps {
+        padding: var(--space-4) 0;
+        margin: var(--space-5) 0;
+        background: transparent;
+
+        ul.p-steps-list {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          gap: 0;
+          position: relative;
+          background: transparent;
+          border: none;
+
+          &::before {
+            content: "";
+            position: absolute;
+            top: 16px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--color-border-muted);
+            z-index: 0;
+          }
+        }
+
+        li.p-steps-item {
+          flex: 1;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          min-width: 0;
+          background: transparent;
+
+          > a,
+          > button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            cursor: pointer;
+            padding: var(--space-2);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            background: transparent;
+            border: none;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+
+            &:hover {
+              background: rgba(var(--ds-primary-green-rgb), 0.03);
+            }
+          }
+
+          .p-steps-number,
+          .p-menuitem-link-label {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 0 var(--space-2) 0;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            border: 2px solid var(--color-border-muted);
+            background: var(--surface-primary);
+            color: var(--color-text-secondary);
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 2;
+          }
+
+          .p-steps-title,
+          span {
+            display: block;
+            font-size: 11px;
+            font-weight: var(--font-weight-medium);
+            color: var(--color-text-secondary);
+            text-align: center;
+            line-height: 1.3;
+            max-width: 100%;
+            overflow: visible;
+            white-space: normal;
+            word-break: break-word;
+            transition: all 0.2s ease;
+            padding: 0 var(--space-1);
+          }
+
+          &.p-steps-current {
+            .p-steps-number,
+            .p-menuitem-link-label {
+              border-color: var(--ds-primary-green);
+              background: var(--ds-primary-green);
+              color: var(--ds-text-on-primary);
+              font-weight: var(--font-weight-bold);
+              box-shadow: 0 2px 8px rgba(var(--ds-primary-green-rgb), 0.3);
+              transform: scale(1.1);
+            }
+
+            .p-steps-title,
+            span {
+              color: var(--ds-primary-green);
+              font-weight: var(--font-weight-semibold);
+            }
+          }
+
+          &.p-highlight {
+            .p-steps-number,
+            .p-menuitem-link-label {
+              border-color: var(--ds-primary-green);
+              background: var(--ds-primary-green);
+              color: var(--ds-text-on-primary);
+              font-weight: var(--font-weight-bold);
+
+              &::after {
+                content: "✓";
+                position: absolute;
+                font-size: var(--font-size-sm);
+                font-weight: var(--font-weight-bold);
+              }
+            }
+
+            .p-steps-title,
+            span {
+              color: var(--color-text-primary);
+            }
+
+            > a:hover,
+            > button:hover {
+              .p-steps-title,
+              span {
+                color: var(--ds-primary-green);
+              }
+            }
+          }
+
+          &.p-disabled {
+            .p-steps-number,
+            .p-menuitem-link-label {
+              border-color: var(--color-border-muted);
+              background: var(--surface-secondary);
+              color: var(--color-text-tertiary);
+            }
+
+            .p-steps-title,
+            span {
+              color: var(--color-text-tertiary);
+            }
+
+            > a,
+            > button {
+              cursor: not-allowed;
+              pointer-events: none;
+            }
+          }
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .p-steps {
+          li.p-steps-item {
+            .p-steps-number,
+            .p-menuitem-link-label {
+              width: 32px;
+              height: 32px;
+              min-width: 32px;
+              font-size: var(--font-size-xs);
+            }
+
+            .p-steps-title,
+            span {
+              font-size: 10px;
+            }
+          }
+        }
+      }
+
+      @media (max-width: 768px) {
+        .p-steps {
+          ul.p-steps-list {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            padding-bottom: var(--space-3);
+            justify-content: flex-start;
+
+            &::-webkit-scrollbar {
+              height: 3px;
+            }
+
+            &::-webkit-scrollbar-track {
+              background: var(--surface-secondary);
+            }
+
+            &::-webkit-scrollbar-thumb {
+              background: var(--color-border-primary);
+              border-radius: var(--radius-full);
+            }
+
+            &::before {
+              display: none;
+            }
+          }
+
+          li.p-steps-item {
+            flex: 0 0 auto;
+            min-width: 65px;
+            max-width: 80px;
+
+            .p-steps-number,
+            .p-menuitem-link-label {
+              width: 28px;
+              height: 28px;
+              min-width: 28px;
+              font-size: 10px;
+            }
+
+            .p-steps-title,
+            span {
+              font-size: 9px;
+              padding: 0 2px;
+            }
+
+            &.p-steps-current {
+              .p-steps-number,
+              .p-menuitem-link-label {
+                transform: scale(1.05);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: tournament-nutrition.component
+   * Ticket: DS-EXC-016
+   * Owner: @design-system-team
+   * Scope: tournament-nutrition component only
+   * Remove by: 2026-04-01
+   * Reason: Hydration progressbar, tag, and button styling overrides.
+   * ------------------------------------------------ */
+  .hydration-progress {
+    .p-progressbar {
+      background: var(--color-border-secondary);
+      border-radius: var(--radius-full);
+    }
+
+    .p-progressbar-value {
+      background: var(--ds-primary-green);
+      border-radius: var(--radius-full);
+    }
+  }
+
+  .window-time {
+    .p-tag {
+      font-size: var(--font-body-2xs);
+      padding: var(--space-0) var(--space-2);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  .window-footer {
+    .p-button {
+      font-size: var(--font-size-h4);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: return-to-play.component
+   * Ticket: DS-EXC-017
+   * Owner: @design-system-team
+   * Scope: return-to-play component only
+   * Remove by: 2026-04-01
+   * Reason: Chart height override for RTP charts.
+   * ------------------------------------------------ */
+  .chart-card {
+    .p-chart {
+      height: 250px;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: video-feed.component
+   * Ticket: DS-EXC-018
+   * Owner: @design-system-team
+   * Scope: video-feed component only
+   * Remove by: 2026-04-01
+   * Reason: Input icon positioning and suggest button styling overrides.
+   * ------------------------------------------------ */
+  .search-wrapper {
+    .p-input-icon-left > i {
+      left: var(--space-5);
+      font-size: var(--font-size-h2);
+      color: var(--ds-primary-green);
+    }
+  }
+
+  .suggest-btn.p-button {
+    background: transparent;
+    border: var(--border-2) solid var(--ds-primary-green);
+    color: var(--ds-primary-green);
+    font-weight: var(--font-weight-bold);
+
+    &:hover {
+      background: var(--ds-primary-green);
+      color: var(--color-text-on-primary);
+    }
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: video-suggestion.component
+   * Ticket: DS-EXC-019
+   * Owner: @design-system-team
+   * Scope: video-suggestion component only
+   * Remove by: 2026-04-01
+   * Reason: Dialog content padding override for video preview.
+   * ------------------------------------------------ */
+  .video-preview-dialog {
+    .p-dialog-content {
+      padding: 0;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: training-schedule.component
+   * Ticket: DS-EXC-020
+   * Owner: @design-system-team
+   * Scope: training-schedule component only
+   * Remove by: 2026-04-01
+   * Reason: Datepicker, card body, tag, and skeleton styling overrides.
+   *         Required for mobile-optimized calendar and schedule display.
+   * ------------------------------------------------ */
+  .calendar-container {
+    :global(.p-datepicker) {
+      width: 100%;
+      box-shadow: none;
+      border: 1px solid var(--surface-border);
+
+      @media (max-width: 767px) {
+        .p-datepicker-calendar {
+          th, td {
+            padding: var(--space-2);
+            
+            span {
+              width: 40px;
+              height: 40px;
+              border-radius: var(--radius-md);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: var(--font-size-body);
+            }
+          }
+
+          th {
+            font-size: var(--font-size-h4);
+          }
+        }
+
+        .p-datepicker-header {
+          padding: var(--space-3);
+          
+          .p-datepicker-title {
+            font-size: var(--font-size-h3);
+          }
+
+          button {
+            width: 40px;
+            height: 40px;
+          }
+        }
+      }
+
+      @media (max-width: 479px) {
+        .p-datepicker-calendar {
+          th, td {
+            padding: var(--space-1);
+            
+            span {
+              width: 36px;
+              height: 36px;
+              font-size: var(--font-size-h4);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .monthly-stats {
+    :global(.p-card-body) {
+      padding: var(--space-4);
+    }
+
+    @media (max-width: 767px) {
+      :global(.p-card-body) {
+        padding: var(--space-3);
+      }
+    }
+  }
+
+  .session-status-tag {
+    :global(.p-tag) {
+      font-size: var(--font-body-2xs);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm);
+      font-weight: var(--font-weight-semibold);
+
+      @media (max-width: 767px) {
+        font-size: 10px;
+        padding: 4px var(--space-1);
+      }
+    }
+  }
+
+  .skeleton-card {
+    :global(.p-skeleton) {
+      border-radius: var(--radius-md);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: superadmin-dashboard.component
+   * Ticket: DS-EXC-021
+   * Owner: @design-system-team
+   * Scope: superadmin-dashboard component only
+   * Remove by: 2026-04-01
+   * Reason: Input icon left positioning override.
+   * ------------------------------------------------ */
+  .management-filters {
+    .p-input-icon-left {
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: tournaments.component
+   * Ticket: DS-EXC-022
+   * Owner: @design-system-team
+   * Scope: tournaments component only
+   * Remove by: 2026-04-01
+   * Reason: Form input width overrides for tournament form.
+   * ------------------------------------------------ */
+  .tournament-form {
+    .p-inputtext,
+    .p-select,
+    .p-datepicker,
+    .p-calendar,
+    .p-inputnumber {
+      width: 100%;
+    }
+
+    textarea.p-inputtextarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: data-import.component
+   * Ticket: DS-EXC-023
+   * Owner: @design-system-team
+   * Scope: data-import component only
+   * Remove by: 2026-04-01
+   * Reason: Fileupload content padding override.
+   * ------------------------------------------------ */
+  .upload-component {
+    .p-fileupload-content {
+      padding: 0;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: game-day-countdown.component
+   * Ticket: DS-EXC-024
+   * Owner: @design-system-team
+   * Scope: game-day-countdown component only
+   * Remove by: 2026-04-01
+   * Reason: Progressbar value color overrides and button width override.
+   * ------------------------------------------------ */
+  .progress-green {
+    .p-progressbar-value {
+      background: var(--ds-primary-green);
+    }
+  }
+
+  .progress-orange {
+    .p-progressbar-value {
+      background: var(--color-status-warning);
+    }
+  }
+
+  .progress-red {
+    .p-progressbar-value {
+      background: var(--color-status-error);
+    }
+  }
+
+  .widget-actions {
+    .p-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: wellness-score-display.component
+   * Ticket: DS-EXC-025
+   * Owner: @design-system-team
+   * Scope: wellness-score-display component only
+   * Remove by: 2026-04-01
+   * Reason: Progressbar value gradient and status-based color overrides.
+   * ------------------------------------------------ */
+  .wellness-progress {
+    .p-progressbar-value {
+      background: linear-gradient(
+        90deg,
+        var(--brand-primary-700) 0%,
+        var(--status-success-500) 100%
+      );
+    }
+
+    &.status-excellent .p-progressbar-value {
+      background: var(--status-success-500);
+    }
+
+    &.status-good .p-progressbar-value {
+      background: var(--brand-primary-700);
+    }
+
+    &.status-moderate .p-progressbar-value {
+      background: var(--status-warning-500);
+    }
+
+    &.status-poor .p-progressbar-value {
+      background: var(--status-error-500);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: daily-readiness.component
+   * Ticket: DS-EXC-026
+   * Owner: @design-system-team
+   * Scope: daily-readiness component only
+   * Remove by: 2026-04-01
+   * Reason: Slider sizing and styling overrides for readiness input.
+   * ------------------------------------------------ */
+  .daily-readiness {
+    .p-slider {
+      height: var(--space-2);
+
+      .p-slider-range {
+        background: var(--ds-primary-green);
+      }
+
+      .p-slider-handle {
+        width: calc(var(--space-4) + 2px);
+        height: calc(var(--space-4) + 2px);
+        border: var(--border-2) solid var(--ds-primary-green);
+        background: var(--color-text-on-primary);
+
+        &:hover {
+          background: var(--ds-primary-green);
+          border-color: var(--ds-primary-green);
+        }
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: stats-grid.component
+   * Ticket: DS-EXC-027
+   * Owner: @design-system-team
+   * Scope: stats-grid component only
+   * Remove by: 2026-04-01
+   * Reason: Card body and content padding overrides.
+   * ------------------------------------------------ */
+  .stat-card {
+    .p-card-body {
+      padding: var(--space-4);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: morning-briefing.component
+   * Ticket: DS-EXC-028
+   * Owner: @design-system-team
+   * Scope: morning-briefing component only
+   * Remove by: 2026-04-01
+   * Reason: Button, slider, inputnumber, and checkbox styling overrides.
+   *         Required for morning briefing form inputs.
+   * ------------------------------------------------ */
+  .submit-btn {
+    .p-button {
+      width: 100%;
+      justify-content: center;
+      padding: var(--space-3) var(--space-5);
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-xl);
+    }
+  }
+
+  .feeling-slider-input {
+    &.p-slider,
+    .p-slider {
+      background: var(--color-border-default);
+      height: 10px;
+      border-radius: var(--radius-md);
+      border: none;
+    }
+
+    .p-slider-range {
+      background: linear-gradient(
+        90deg,
+        var(--ds-primary-green) 0%,
+        var(--ds-primary-green-light) 100%
+      );
+      border-radius: var(--radius-md);
+    }
+
+    .p-slider-handle {
+      width: 26px;
+      height: 26px;
+      background: var(--surface-primary);
+      border: 3px solid var(--ds-primary-green);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-md);
+      margin-top: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+
+      &:hover {
+        background: var(--ds-primary-green);
+        border-color: var(--ds-primary-green);
+      }
+
+      &:focus {
+        box-shadow: var(--shadow-focus);
+      }
+    }
+  }
+
+  .sleep-number-input {
+    .p-inputnumber-input,
+    .p-inputtext {
+      width: 100px;
+      text-align: center;
+      font-weight: var(--font-weight-semibold);
+      font-size: var(--font-size-body);
+      padding: var(--space-3);
+      border-radius: var(--radius-lg);
+      border: var(--border-1) solid var(--color-border-default);
+    }
+
+    .p-inputnumber-button,
+    .p-button {
+      background: var(--surface-tertiary);
+      border: var(--border-1) solid var(--color-border-default);
+      color: var(--color-text-secondary);
+
+      &:hover {
+        background: var(--ds-primary-green);
+        border-color: var(--ds-primary-green);
+        color: var(--color-text-on-primary);
+      }
+    }
+
+    .p-inputnumber-button-up {
+      border-radius: 0 var(--radius-lg) 0 0;
+    }
+
+    .p-inputnumber-button-down {
+      border-radius: 0 0 var(--radius-lg) 0;
+    }
+  }
+
+  .morning-briefing {
+    .p-checkbox {
+      .p-checkbox-box {
+        width: 22px;
+        height: 22px;
+        border-radius: var(--radius-md);
+        border: var(--border-2) solid var(--color-border-strong);
+        background: var(--surface-primary);
+
+        &.p-highlight {
+          background: var(--ds-primary-green);
+          border-color: var(--ds-primary-green);
+        }
+      }
+
+      &:not(.p-disabled):has(.p-checkbox-box.p-highlight):hover .p-checkbox-box {
+        background: var(--ds-primary-green-hover);
+        border-color: var(--ds-primary-green-hover);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: exercise-library.component
+   * Ticket: DS-EXC-029
+   * Owner: @design-system-team
+   * Scope: exercise-library component only
+   * Remove by: 2026-04-01
+   * Reason: Input icon color override for search container.
+   * ------------------------------------------------ */
+  .search-container {
+    .p-inputicon {
+      color: var(--color-text-muted);
+      font-size: var(--font-size-h2);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: tournament-mode-widget.component
+   * Ticket: DS-EXC-030
+   * Owner: @design-system-team
+   * Scope: tournament-mode-widget component only
+   * Remove by: 2026-04-01
+   * Reason: Hydration progressbar value color overrides.
+   * ------------------------------------------------ */
+  .hydration-green {
+    .p-progressbar-value {
+      background: var(--color-status-info);
+    }
+  }
+
+  .hydration-orange {
+    .p-progressbar-value {
+      background: var(--color-status-warning);
+    }
+  }
+
+  .hydration-red {
+    .p-progressbar-value {
+      background: var(--color-status-error);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: post-training-recovery.component
+   * Ticket: DS-EXC-031
+   * Owner: @design-system-team
+   * Scope: post-training-recovery component only
+   * Remove by: 2026-04-01
+   * Reason: Dialog content padding override for recovery dialog.
+   * ------------------------------------------------ */
+  .post-training-dialog {
+    .p-dialog-content {
+      padding: 0;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: team-wellness-overview.component
+   * Ticket: DS-EXC-032
+   * Owner: @design-system-team
+   * Scope: team-wellness-overview component only
+   * Remove by: 2026-04-01
+   * Reason: Checkin progressbar value color overrides.
+   * ------------------------------------------------ */
+  .checkin-green {
+    .p-progressbar-value {
+      background: var(--ds-primary-green);
+    }
+  }
+
+  .checkin-orange {
+    .p-progressbar-value {
+      background: var(--color-status-warning);
+    }
+  }
+
+  .checkin-red {
+    .p-progressbar-value {
+      background: var(--color-status-error);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: smart-breadcrumbs.component
+   * Ticket: DS-EXC-033
+   * Owner: @design-system-team
+   * Scope: smart-breadcrumbs component only
+   * Remove by: 2026-04-01
+   * Reason: Breadcrumb list, item, separator, and icon styling overrides.
+   * ------------------------------------------------ */
+  .custom-breadcrumb {
+    .p-breadcrumb-list {
+      margin: 0;
+      padding: 0;
+      gap: 0.5rem;
+    }
+
+    .p-breadcrumb-item {
+      padding: 0;
+    }
+
+    .p-breadcrumb-separator {
+      margin: 0 0.75rem;
+      color: var(--text-tertiary, #64748b);
+      font-size: var(--font-size-badge);
+
+      .p-icon {
+        width: 0.75rem;
+        height: 0.75rem;
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: toast.component
+   * Ticket: DS-EXC-034
+   * Owner: @design-system-team
+   * Scope: toast component only
+   * Remove by: 2026-04-01
+   * Reason: Toast message styling, severity variants, animations,
+   *         and responsive overrides. Required for app-wide toast system.
+   * ------------------------------------------------ */
+  .app-toast {
+    .p-toast-message {
+      border-radius: var(--p-toast-border-radius);
+      box-shadow: var(--p-toast-shadow);
+      overflow: hidden;
+      margin-bottom: var(--space-3);
+      backdrop-filter: blur(var(--p-toast-blur));
+      -webkit-backdrop-filter: blur(var(--p-toast-blur));
+    }
+
+    .p-toast-message-content {
+      padding: var(--p-toast-content-padding);
+      align-items: stretch;
+    }
+
+    .p-toast-message-success {
+      background: var(--p-toast-success-background);
+      border-left: 4px solid var(--p-toast-success-border-color);
+    }
+
+    .p-toast-message-info {
+      background: var(--p-toast-info-background);
+      border-left: 4px solid var(--p-toast-info-border-color);
+    }
+
+    .p-toast-message-warn {
+      background: var(--p-toast-warn-background);
+      border-left: 4px solid var(--p-toast-warn-border-color);
+    }
+
+    .p-toast-message-error {
+      background: var(--p-toast-error-background);
+      border-left: 4px solid var(--p-toast-error-border-color);
+    }
+
+    .p-toast-icon-close {
+      width: var(--p-toast-close-button-width);
+      height: var(--p-toast-close-button-height);
+      border-radius: var(--p-toast-close-button-border-radius);
+      color: var(--color-text-secondary);
+      transition:
+        background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      @media (hover: hover) and (pointer: fine) {
+        &:hover {
+          background: rgba(0, 0, 0, 0.1);
+          color: var(--color-text-primary);
+          transform: scale(1.1);
+        }
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .p-toast-message-enter {
+      animation: toast-slide-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .p-toast-message-leave {
+      animation: toast-slide-out 200ms cubic-bezier(0.4, 0, 1, 1);
+    }
+
+    @media (max-width: 480px) {
+      width: calc(100% - var(--space-4));
+      left: var(--space-2);
+      right: var(--space-2);
+
+      .p-toast-message {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .p-toast-message-enter,
+      .p-toast-message-leave {
+        animation: none;
+      }
+    }
+  }
+
+  .p-toast-top-left,
+  .p-toast-bottom-left {
+    .p-toast-message-enter {
+      animation: toast-slide-in-left 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .p-toast-message-leave {
+      animation: toast-slide-out-left 200ms cubic-bezier(0.4, 0, 1, 1);
+    }
+  }
+
+  .p-toast-top-center,
+  .p-toast-bottom-center,
+  .p-toast-center {
+    .p-toast-message-enter {
+      animation: toast-slide-in-center 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: rest-timer.component
+   * Ticket: DS-EXC-035
+   * Owner: @design-system-team
+   * Scope: rest-timer component only
+   * Remove by: 2026-04-01
+   * Reason: Dialog header and content padding overrides.
+   * ------------------------------------------------ */
+  .rest-timer-dialog {
+    .p-dialog-header {
+      padding: var(--space-3);
+    }
+
+    .p-dialog-content {
+      padding: 0 var(--space-4) var(--space-4);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: quick-wellness-checkin.component
+   * Ticket: DS-EXC-036
+   * Owner: @design-system-team
+   * Scope: quick-wellness-checkin component only
+   * Remove by: 2026-04-01
+   * Reason: Dialog content padding and border-radius override.
+   * ------------------------------------------------ */
+  .quick-checkin-dialog {
+    .p-dialog-content {
+      padding: 0;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: offline-banner.component
+   * Ticket: DS-EXC-037
+   * Owner: @design-system-team
+   * Scope: offline-banner component only
+   * Remove by: 2026-04-01
+   * Reason: Button color override for banner actions on dark background.
+   * ------------------------------------------------ */
+  .banner-actions {
+    .p-button {
+      color: white;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: micro-session.component
+   * Ticket: DS-EXC-038
+   * Owner: @design-system-team
+   * Scope: micro-session component only
+   * Remove by: 2026-04-01
+   * Reason: Progressbar and slider styling overrides for micro session tracking.
+   * ------------------------------------------------ */
+  .overall-bar {
+    .p-progressbar {
+      height: 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    .p-progressbar-value {
+      background: var(--ds-primary-green, #089949);
+    }
+  }
+
+  .step-bar {
+    .p-progressbar {
+      height: 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .p-progressbar-value {
+      background: linear-gradient(
+        90deg,
+        var(--ds-primary-green),
+        var(--ds-primary-green-light)
+      );
+    }
+  }
+
+  .micro-session {
+    .p-slider {
+      .p-slider-range {
+        background: var(--ds-primary-green, #089949);
+      }
+
+      .p-slider-handle {
+        border-color: var(--ds-primary-green, #089949);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: keyboard-shortcuts-modal.component
+   * Ticket: DS-EXC-039
+   * Owner: @design-system-team
+   * Scope: keyboard-shortcuts-modal component only
+   * Remove by: 2026-04-01
+   * Reason: Dialog header, content, and footer padding overrides.
+   * ------------------------------------------------ */
+  .shortcuts-modal {
+    .p-dialog-header {
+      padding: var(--space-5);
+      border-bottom: 1px solid var(--color-border-secondary);
+    }
+
+    .p-dialog-content {
+      padding: var(--space-5);
+    }
+
+    .p-dialog-footer {
+      padding: var(--space-4) var(--space-5);
+      border-top: 1px solid var(--color-border-secondary);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: hydration-tracker.component
+   * Ticket: DS-EXC-040
+   * Owner: @design-system-team
+   * Scope: hydration-tracker component only
+   * Remove by: 2026-04-01
+   * Reason: Progressbar value gradient override.
+   * ------------------------------------------------ */
+  .hydration-progress {
+    .p-progressbar-value {
+      background: linear-gradient(
+        90deg,
+        var(--color-status-info),
+        var(--primitive-info-400)
+      );
+      border-radius: var(--radius-full);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: date-picker.component
+   * Ticket: DS-EXC-041
+   * Owner: @design-system-team
+   * Scope: date-picker component only
+   * Remove by: 2026-04-01
+   * Reason: Datepicker and input width overrides.
+   * ------------------------------------------------ */
+  .date-picker-group {
+    .p-datepicker {
+      width: 100%;
+    }
+
+    .p-datepicker-input {
+      width: 100%;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: video-curation-analytics.component
+   * Ticket: DS-EXC-042
+   * Owner: @design-system-team
+   * Scope: video-curation-analytics component only
+   * Remove by: 2026-04-01
+   * Reason: Progressbar value color override.
+   * ------------------------------------------------ */
+  .analytics-bar {
+    .p-progressbar-value {
+      background: var(--color-brand-primary);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: la28-roadmap.component
+   * Ticket: DS-EXC-043
+   * Owner: @design-system-team
+   * Scope: la28-roadmap component only
+   * Remove by: 2026-04-01
+   * Reason: Timeline event content and card styling overrides.
+   * ------------------------------------------------ */
+  .roadmap-timeline {
+    .p-timeline-event-content {
+      line-height: var(--line-height-base);
+    }
+
+    .p-card {
+      box-shadow: none;
+      border: var(--border-1) solid var(--surface-border);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: psychology-reports.component
+   * Ticket: DS-EXC-044
+   * Owner: @design-system-team
+   * Scope: psychology-reports component only
+   * Remove by: 2026-04-01
+   * Reason: Progressbar height and stress bar color overrides.
+   * ------------------------------------------------ */
+  .psychology-reports {
+    .p-progressbar {
+      height: var(--space-2);
+    }
+
+    .stress-bar {
+      .p-progressbar-value {
+        background: var(--orange-500);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: physiotherapist-dashboard.component
+   * Ticket: DS-EXC-045
+   * Owner: @design-system-team
+   * Scope: physiotherapist-dashboard component only
+   * Remove by: 2026-04-01
+   * Reason: Progressbar height overrides for metric bars.
+   * ------------------------------------------------ */
+  .physiotherapist-dashboard {
+    .metric-bar,
+    .soreness-bar {
+      .p-progressbar {
+        flex: 1;
+        height: var(--space-2);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: sleep-debt.component
+   * Ticket: DS-EXC-046
+   * Owner: @design-system-team
+   * Scope: sleep-debt component only
+   * Remove by: 2026-04-01
+   * Reason: Progressbar value gradient overrides for danger and warn states.
+   * ------------------------------------------------ */
+  .sleep-debt-bar {
+    &.danger {
+      .p-progressbar-value {
+        background: linear-gradient(
+          90deg,
+          var(--primitive-error-500),
+          var(--primitive-error-600)
+        );
+      }
+    }
+
+    &.warn {
+      .p-progressbar-value {
+        background: linear-gradient(
+          90deg,
+          var(--primitive-orange-500),
+          var(--primitive-orange-600)
+        );
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: privacy-controls.component
+   * Ticket: DS-EXC-047
+   * Owner: @design-system-team
+   * Scope: privacy-controls component only
+   * Remove by: 2026-04-01
+   * Reason: Chip selected state and field layout overrides.
+   * ------------------------------------------------ */
+  .category-chips {
+    p-chip.selected {
+      .p-chip {
+        background: var(--color-brand-primary);
+        color: white;
+      }
+    }
+  }
+
+  .privacy-controls {
+    .p-field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+
+      label {
+        font-size: var(--font-size-h4);
+        font-weight: var(--font-weight-medium);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: performance-tracking.component
+   * Ticket: DS-EXC-048
+   * Owner: @design-system-team
+   * Scope: performance-tracking component only
+   * Remove by: 2026-04-01
+   * Reason: Field label styling override.
+   * ------------------------------------------------ */
+  .performance-tracking {
+    .p-field {
+      label {
+        display: block;
+        font-size: var(--font-size-h4);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-secondary);
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: login.component
+   * Ticket: DS-EXC-049
+   * Owner: @design-system-team
+   * Scope: login component only
+   * Remove by: 2026-04-01
+   * Reason: Error message, card, input, and button styling overrides.
+   *         Required for login/auth flow UX.
+   * ------------------------------------------------ */
+  .login-form {
+    .p-error {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      margin-top: var(--space-2);
+      font-size: var(--font-size-badge);
+      color: var(--color-status-error);
+      animation: shake 0.3s ease-in-out;
+
+      &::before {
+        content: "⚠";
+        font-size: var(--font-size-h4);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+      }
+    }
+  }
+
+  .login-card {
+    .p-card {
+      background: transparent;
+      box-shadow: none;
+      border: none;
+    }
+
+    .p-card-header {
+      text-align: center;
+    }
+  }
+
+  .login-form {
+    .p-inputtext {
+      width: 100%;
+    }
+  }
+
+  .login-submit-btn.p-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: periodization-dashboard.component
+   * Ticket: DS-EXC-050
+   * Owner: @design-system-team
+   * Scope: periodization-dashboard component only
+   * Remove by: 2026-04-01
+   * Reason: Timeline event content text alignment override.
+   * ------------------------------------------------ */
+  .phase-timeline {
+    .p-timeline-event-content {
+      text-align: center;
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: settings.component
+   * Ticket: DS-EXC-051
+   * Owner: @design-system-team
+   * Scope: settings component only
+   * Remove by: 2026-04-01
+   * Reason: Extensive PrimeNG overrides for card, field, checkbox,
+   *         divider, dialog, and password input. Required for settings UI.
+   * ------------------------------------------------ */
+  .settings-grid {
+    .settings-section {
+      app-card {
+        .p-card {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        }
+
+        .p-card-body {
+          flex: 1;
+        }
+      }
+    }
+  }
+
+  .settings {
+    .p-field-checkbox {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+
+      label {
+        margin: 0;
+        flex: 1;
+      }
+    }
+
+    .form-row.two-columns {
+      .p-field {
+        flex: 1;
+        margin-bottom: 0;
+      }
+    }
+
+    .p-field {
+      margin-bottom: var(--space-5);
+
+      .p-label {
+        display: block;
+        margin-bottom: var(--space-2);
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-primary);
+        font-size: var(--font-size-h4);
+      }
+    }
+
+    .p-select {
+      width: 100%;
+    }
+
+    .p-inputtext {
+      width: 100%;
+    }
+
+    .security-actions {
+      .p-divider {
+        margin: var(--space-2) 0;
+
+        &::before {
+          border-color: var(--color-border-muted);
+          opacity: 0.5;
+        }
+      }
+    }
+
+    .password-dialog {
+      .p-dialog {
+        width: 480px;
+        max-width: 95vw;
+        border-radius: var(--radius-2xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-3);
+        border: 1px solid var(--color-border-muted);
+      }
+
+      .p-dialog-content {
+        padding: 0;
+        background: var(--surface-primary);
+      }
+    }
+
+    .delete-dialog {
+      .p-dialog {
+        width: 480px;
+        max-width: 95vw;
+        border-radius: var(--radius-3xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .p-dialog-content {
+        padding: 0;
+        background: var(--surface-primary);
+      }
+    }
+
+    .twofa-dialog {
+      .p-dialog {
+        width: 500px;
+        max-width: 95vw;
+        border-radius: var(--radius-3xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .p-dialog-content {
+        padding: 0;
+        background: var(--surface-primary);
+      }
+    }
+
+    .sessions-dialog {
+      .p-dialog {
+        width: 520px;
+        max-width: 95vw;
+        border-radius: var(--radius-3xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .p-dialog-content {
+        padding: 0;
+        background: var(--surface-primary);
+      }
+    }
+
+    .export-dialog {
+      .p-dialog {
+        width: 90%;
+        max-width: 500px;
+      }
+    }
+
+    .password-input {
+      &.p-password {
+        display: flex;
+        width: 100%;
+      }
+
+      .p-password-input,
+      input {
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        padding-right: var(--space-10);
+        border: 1px solid var(--color-border-primary);
+        border-radius: var(--radius-lg);
+        font-size: var(--font-size-body);
+        transition:
+          border-color var(--transition-fast),
+          box-shadow var(--transition-fast);
+      }
+
+      .p-password-input:focus,
+      input:focus {
+        border-color: var(--ds-primary-green);
+        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.1);
+        outline: none;
+      }
+
+      .p-password-wrapper,
+      .p-inputwrapper {
+        position: relative;
+        width: 100%;
+        display: block;
+      }
+
+      .p-password-toggle-mask-icon {
+        color: var(--color-text-muted);
+        cursor: pointer;
+        right: var(--space-3);
+
+        &:hover {
+          color: var(--color-text-secondary);
+        }
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: analytics.component
+   * Ticket: DS-EXC-052
+   * Owner: @design-system-team
+   * Scope: analytics component only
+   * Remove by: 2026-03-31
+   * Reason: Card body/header, dialog, and responsive overrides.
+   *         Required for analytics dashboard layout. Canvas responsive
+   *         styling and textarea font-size override to prevent iOS zoom.
+   * ------------------------------------------------ */
+  .analytics {
+    .metric-card {
+      .p-card-body {
+        padding: var(--space-3);
+      }
+    }
+
+    .chart-card {
+      ::ng-deep .p-card-header {
+        padding: var(--space-3);
+      }
+
+      ::ng-deep .p-card-body {
+        padding: var(--space-3);
+      }
+
+      @media (max-width: 767px) {
+        ::ng-deep .p-card-header,
+        ::ng-deep .p-card-body {
+          padding: var(--space-2);
+        }
+      }
+
+      @media (min-width: 1024px) {
+        ::ng-deep .p-card-header {
+          padding: var(--space-5);
+          border-bottom: 1px solid var(--color-border-secondary);
+        }
+
+        ::ng-deep .p-card-body {
+          padding: var(--space-5);
+        }
+      }
+
+      // Canvas responsive styling
+      canvas {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+    }
+
+    .p-card-body {
+      padding: var(--space-5);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+
+    .share-dialog {
+      :global(.p-dialog) {
+        width: 95vw !important;
+        max-width: 95vw !important;
+      }
+
+      .p-dialog-header {
+        padding: var(--space-3);
+      }
+
+      .p-dialog-title {
+        font-size: var(--font-size-body);
+      }
+
+      .p-dialog-content {
+        padding: var(--space-3);
+      }
+
+      .p-dialog-footer {
+        padding: var(--space-3);
+        flex-direction: column;
+      }
+
+      @media (min-width: 1024px) {
+        .p-dialog-header {
+          padding: var(--space-5);
+          border-bottom: 1px solid var(--color-border-muted);
+        }
+
+        .p-dialog-title {
+          font-size: var(--font-size-h3);
+          font-weight: var(--font-weight-semibold);
+        }
+
+        .p-dialog-content {
+          padding: var(--space-5);
+        }
+
+        .p-dialog-footer {
+          padding: var(--space-4) var(--space-5);
+          border-top: 1px solid var(--color-border-muted);
+          display: flex;
+          justify-content: flex-end;
+          gap: var(--space-3);
+        }
+      }
+    }
+
+    @media (max-width: 767px) {
+      .metric-card {
+        .p-card-body {
+          padding: var(--space-2);
+        }
+      }
+
+      // Textarea font-size override to prevent iOS zoom
+      textarea {
+        font-size: 16px !important; // Prevent iOS zoom
+      }
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: acwr-dashboard.component
+   * Ticket: DS-EXC-053
+   * Owner: @design-system-team
+   * Scope: acwr-dashboard component only
+   * Remove by: 2026-03-31
+   * Reason: Canvas responsive styling override for chart container.
+   *         Required to ensure charts are responsive on mobile devices.
+   * ------------------------------------------------ */
+  .acwr-dashboard {
+    .chart-container {
+      canvas {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+    }
+  }
+
   /* ================================================
    * EXPIRED EXCEPTIONS (Review & Remove)
    * ================================================ */

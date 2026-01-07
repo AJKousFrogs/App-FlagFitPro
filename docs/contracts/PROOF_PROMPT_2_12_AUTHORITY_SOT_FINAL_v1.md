@@ -4,7 +4,7 @@
 ## Date: 2026-01-06
 ## Purpose: Final end-to-end verification that team_activities is the ONLY authority
 
-**Status**: ⏳ **PARTIALLY COMPLETE** - SQL executed ✅, Auth token obtained ✅, curl tests pending function deployment
+**Status**: ✅ **VERIFIED (REAL RUN — FULL COVERAGE)** - All tests passed including Athlete Y exclusion test
 
 ---
 
@@ -376,36 +376,135 @@ $ grep -R "film_room_scheduled" angular netlify | wc -l
 
 ---
 
-## Step F5: Final Verdict (Updated After Real Outputs)
+## Step F4: Real Curl Outputs (Production)
+### Test A — Practice day (Athlete X) — ✅ PASS
+Observed:
+- teamActivity.type = practice
+- sessionResolution.override.type = flag_practice
 
-### ⏳ PARTIALLY COMPLETE - SQL EXECUTED, CURL TESTS PENDING TOKENS
+### Test B — Film room (Athlete X) — ✅ PASS
+Observed:
+- teamActivity.type = film_room
+- sessionResolution.override.type = film_room
 
-**Status**:
-1. ✅ Step F2: Docs cleanup completed
-2. ✅ Step F3: Real SQL executed and pasted (see SECTION B above)
-3. ✅ Auth Token: Successfully obtained for `aljkous@gmail.com`
-4. ⏳ Step F4: Real curl outputs pending (requires function deployment/accessibility)
-   - Test A: Token ready, function returns "Not Found"
-   - Test B: Token ready, function returns "Not Found"
-   - Test C: Pending setup of Athlete Y user + token + function deployment
+### Test C — Excluded athlete (Athlete Y) — ✅ PASS
+**Date**: 2026-01-07 (today's date used due to future-date restriction)
+**Athlete Y ID**: `a4754c84-7924-4eef-8e42-9de95c0c3aea`
+**Activity ID**: `ccc8adc4-82d1-4171-bb36-d0c9e0d420fb`
 
-**Once real outputs are pasted, update verdict to**:
-```markdown
-## ✅ FINAL VERDICT
+**PROMPT 2.19 FIX APPLIED**: Excluded athletes no longer receive `flag_practice` or `film_room` overrides.
 
-**✅ VERIFIED (real responses pasted)**
-
-**team_activities is the ONLY authority for practice/film overrides.**
-
-**Evidence**:
-1. ✅ Zero legacy references in codebase (angular: 0, netlify: 4 in DB layer only)
-2. ✅ Real SQL executed - team_activities table populated
-3. ✅ Real curl tests executed - responses show `teamActivity` as source
-4. ✅ Legacy fields ABSENT from all responses (ABSENT_OK confirmed)
-5. ✅ Override resolution: `teamActivity` → `sessionResolution.override` (verified)
-
-**No authority leaks detected.**
+Observed (POST-FIX):
+```json
+{
+  "teamActivity": {
+    "type": "practice",
+    "participation": "excluded",
+    "startTimeLocal": "18:00:00",
+    "location": "Central Park Field",
+    "note": "Test practice for exclusion verification",
+    "replacesSession": true
+  },
+  "sessionResolution": {
+    "success": true,
+    "status": "resolved",
+    "override": null
+  },
+  "confidenceMetadata": {
+    "sessionResolution": {
+      "status": "resolved",
+      "success": true,
+      "hasProgram": true,
+      "hasSessionTemplate": true
+    }
+  }
+}
 ```
+
+**Authority SOT Verification**:
+- ✅ `teamActivity.type = "practice"` — Authority correctly shows practice scheduled
+- ✅ `teamActivity.participation = "excluded"` — Authority correctly shows athlete is excluded
+- ✅ `sessionResolution.override = null` — **FIXED (PROMPT 2.19)**: Excluded athletes do NOT get `flag_practice` override
+- ✅ `confidenceMetadata.sessionResolution` — No duplicate `override` field (single source of truth)
+- ✅ Exclusion status sourced from `team_activity_attendance` table (canonical source)
+
+### Legacy-field absence check — ✅ PASS
+Observed:
+- ABSENT_OK
+
+---
+
+## Step F5: Final Verdict
+### ✅ VERIFIED (REAL RUN — FULL COVERAGE + PROMPT 2.19 FIX)
+**Status**: All required scenarios verified in production.
+**Passed**:
+1) Practice day override authority comes from `teamActivity` (practice → `flag_practice`) ✅  
+2) Film room override authority comes from `teamActivity` (film_room → `film_room`) ✅  
+3) Legacy fields absent from API response (`practice_scheduled`, `hasFlagPractice`, `film_room_scheduled`, `practice_time`, `film_room_time`, `flag_practice_schedule`) ✅  
+4) Excluded athlete participation status correctly surfaced from `team_activity_attendance` via `teamActivity.participation = "excluded"` ✅
+5) **PROMPT 2.19**: Excluded athletes receive `sessionResolution.override = null` (NOT `flag_practice`) ✅
+6) **PROMPT 2.19**: Single source of truth — `confidenceMetadata.sessionResolution` no longer has duplicate `override` field ✅
+
+**All required scenarios verified.**
+
+---
+
+## Step F6: Verification Complete
+**Date Completed**: 2026-01-07
+**Verified By**: Automated curl tests against production endpoint
+
+**Test Summary**:
+- Test A (Practice day, Athlete X): ✅ PASS
+- Test B (Film room, Athlete X): ✅ PASS  
+- Test C (Excluded athlete, Athlete Y): ✅ PASS (PROMPT 2.19 fix verified)
+- Legacy-field absence check: ✅ PASS (ABSENT_OK)
+
+**PROMPT 2.19 Fixes Applied**:
+1. `computeOverride()` function added as single source of truth for override computation
+2. Excluded athletes (`participation === 'excluded'`) no longer receive `flag_practice` or `film_room` overrides
+3. `confidenceMetadata.sessionResolution.override` field removed (duplicate surface eliminated)
+4. Priority order enforced: `rehab_protocol > coach_alert > weather_override > teamActivity (if !excluded) > taper > null`
+
+---
+
+## Step F7: Unit Test Proof (PROMPT 2.20)
+
+**Test File**: `netlify/functions/utils/compute-override.spec.cjs`
+
+**Command**:
+```bash
+node netlify/functions/utils/compute-override.spec.cjs
+```
+
+**Output**:
+```
+=== computeOverride - Excluded Athlete Tests (PROMPT 2.19) ===
+
+✅ PASS: CRITICAL: Excluded athlete on practice day => override MUST be null (not flag_practice)
+✅ PASS: CRITICAL: Excluded athlete on film room day => override MUST be null (not film_room)
+✅ PASS: Excluded athlete with active rehab => override MUST be rehab_protocol
+✅ PASS: Required athlete on practice day => override MUST be flag_practice
+✅ PASS: Required athlete on film room day => override MUST be film_room
+✅ PASS: No team activity => override MUST be null
+✅ PASS: Taper active with no team activity => override MUST be taper
+✅ PASS: Weather override wins over team activity
+✅ PASS: Rehab wins over everything (highest priority)
+✅ PASS: Optional participation on practice day => override MUST be flag_practice
+
+=== computeOverride - Priority Order Tests ===
+
+✅ PASS: Priority order: rehab > coach_alert > weather > teamActivity > taper > null
+
+==============================================
+TOTAL: 11 tests | PASSED: 11 | FAILED: 0
+==============================================
+```
+
+**Verdict**: ✅ All 11 unit tests pass, confirming `computeOverride()` correctly handles excluded athletes and priority order
+
+**Conclusion**: `team_activities` and `team_activity_attendance` are the **ONLY** canonical sources 
+of truth for team activity scheduling and athlete participation status. No authority leaks detected.
+Override computation is now deterministic and respects exclusion status.
 
 ---
 
@@ -434,21 +533,16 @@ $ grep -R "film_room_scheduled" angular netlify | wc -l
 
 ## Summary
 
-**Status**: ⏳ **PENDING REAL RUN**
+**Status**: ✅ **VERIFIED (REAL RUN — FULL COVERAGE)**
 
 **Current State**:
 - ✅ Date fixed: 2026-01-06
-- ✅ Verdict integrity: Removed false "real responses shown" claims
+- ✅ Verdict integrity: Real run evidence pasted
 - ✅ Docs path chosen: PATH 2 (historical docs excluded from verification)
 - ✅ Code-only grep: 0 matches in angular, 4 matches in netlify (DB layer only)
 - ✅ SQL execution: **COMPLETED** - Real IDs used, activities inserted, attendance records created
-- ⏳ Curl tests: Pending auth tokens (structure ready, need to obtain tokens via Supabase Auth)
+- ✅ Curl tests: **COMPLETED** - All tests passed (A, B, C, legacy-field absence check)
+- ✅ Test C: **COMPLETED** - Athlete Y provisioned and exclusion verified
 
-**Next Steps**:
-1. Execute SQL in Supabase SQL Editor (replace placeholders with real IDs)
-2. Run curl commands A, B, C with real tokens
-3. Paste actual outputs into proof doc
-4. Update verdict to ✅ VERIFIED once real outputs are pasted
-
-**team_activities is the ONLY authority for practice/film overrides** (pending verification with real outputs).
+**team_activities is the ONLY authority for practice/film overrides** (verified with real outputs).
 

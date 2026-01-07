@@ -565,6 +565,206 @@ async function getGames(userId, coachId) {
 }
 
 /**
+ * Handle calendar requests (GET, POST, PUT, DELETE)
+ */
+async function handleCalendarRequest(event, userId, coachId) {
+  const body = event.body ? JSON.parse(event.body) : {};
+  const query = event.queryStringParameters || {};
+  const teamId = await getCoachTeamId(coachId);
+
+  if (!teamId) {
+    return createErrorResponse("No team found for coach", 404);
+  }
+
+  try {
+    if (event.httpMethod === "GET") {
+      // Get calendar events
+      let queryBuilder = supabaseAdmin
+        .from("team_events")
+        .select("*")
+        .eq("team_id", teamId)
+        .order("start_time", { ascending: true });
+
+      if (query.start_date) {
+        queryBuilder = queryBuilder.gte("start_time", query.start_date);
+      }
+      if (query.end_date) {
+        queryBuilder = queryBuilder.lte("start_time", query.end_date);
+      }
+      if (query.event_type) {
+        queryBuilder = queryBuilder.eq("event_type", query.event_type);
+      }
+
+      const { data, error } = await queryBuilder;
+
+      if (error) {
+        throw error;
+      }
+
+      // Transform to match component's expected format
+      const events = (data || []).map((event) => ({
+        id: event.id,
+        title: event.title,
+        type: event.event_type || "practice",
+        date: event.start_time?.split("T")[0] || event.start_time,
+        endDate: event.end_time?.split("T")[0],
+        startTime: event.start_time?.split("T")[1]?.substring(0, 5) || "",
+        endTime: event.end_time?.split("T")[1]?.substring(0, 5) || "",
+        location: event.location || "",
+        description: event.description || "",
+        rsvpSummary: {
+          going: 0,
+          cantGo: 0,
+          pending: 0,
+        },
+        rsvpDeadline: event.rsvp_deadline || null,
+      }));
+
+      return createSuccessResponse({ events });
+    }
+
+    if (event.httpMethod === "POST") {
+      // Create new event
+      const {
+        type,
+        title,
+        date,
+        startTime,
+        endTime,
+        location,
+        description,
+        requireRsvp,
+        rsvpDeadline,
+      } = body;
+
+      // Combine date and time
+      const startDateTime = date && startTime
+        ? `${date}T${startTime}:00`
+        : date || null;
+      const endDateTime = date && endTime
+        ? `${date}T${endTime}:00`
+        : date || null;
+
+      const { data, error } = await supabaseAdmin
+        .from("team_events")
+        .insert({
+          team_id: teamId,
+          event_type: type || "practice",
+          title,
+          description,
+          location,
+          start_time: startDateTime,
+          end_time: endDateTime,
+          is_mandatory: requireRsvp !== false,
+          rsvp_deadline: rsvpDeadline || null,
+          created_by: userId,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return createSuccessResponse(data, null, 201);
+    }
+
+    if (event.httpMethod === "PUT") {
+      // Update event
+      const eventId = query.id || body.id;
+      if (!eventId) {
+        return createErrorResponse("Event ID required", 400);
+      }
+
+      // Verify event belongs to coach's team
+      const { data: existingEvent, error: fetchError } = await supabaseAdmin
+        .from("team_events")
+        .select("team_id")
+        .eq("id", eventId)
+        .single();
+
+      if (fetchError || !existingEvent) {
+        return createErrorResponse("Event not found", 404);
+      }
+
+      if (existingEvent.team_id !== teamId) {
+        return createErrorResponse("Not authorized", 403);
+      }
+
+      const updates = {};
+      if (body.title) updates.title = body.title;
+      if (body.type) updates.event_type = body.type;
+      if (body.description !== undefined) updates.description = body.description;
+      if (body.location) updates.location = body.location;
+      if (body.date && body.startTime) {
+        updates.start_time = `${body.date}T${body.startTime}:00`;
+      }
+      if (body.date && body.endTime) {
+        updates.end_time = `${body.date}T${body.endTime}:00`;
+      }
+      if (body.rsvpDeadline !== undefined) {
+        updates.rsvp_deadline = body.rsvpDeadline;
+      }
+
+      const { data, error } = await supabaseAdmin
+        .from("team_events")
+        .update(updates)
+        .eq("id", eventId)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return createSuccessResponse(data);
+    }
+
+    if (event.httpMethod === "DELETE") {
+      // Delete event
+      const eventId = query.id || body.id;
+      if (!eventId) {
+        return createErrorResponse("Event ID required", 400);
+      }
+
+      // Verify event belongs to coach's team
+      const { data: existingEvent, error: fetchError } = await supabaseAdmin
+        .from("team_events")
+        .select("team_id")
+        .eq("id", eventId)
+        .single();
+
+      if (fetchError || !existingEvent) {
+        return createErrorResponse("Event not found", 404);
+      }
+
+      if (existingEvent.team_id !== teamId) {
+        return createErrorResponse("Not authorized", 403);
+      }
+
+      const { error } = await supabaseAdmin
+        .from("team_events")
+        .delete()
+        .eq("id", eventId);
+
+      if (error) {
+        throw error;
+      }
+
+      return createSuccessResponse({ success: true });
+    }
+
+    return createErrorResponse("Method not allowed", 405);
+  } catch (error) {
+    console.error("Calendar error:", error);
+    return createErrorResponse(
+      error.message || "Failed to process calendar request",
+      500,
+    );
+  }
+}
+
+/**
  * Main handler function
  */
 async function handleRequest(event, context, { userId }) {
@@ -625,6 +825,10 @@ async function handleRequest(event, context, { userId }) {
         return createSuccessResponse(games);
       }
 
+      case "/calendar": {
+        return await handleCalendarRequest(event, userId, coachId);
+      }
+
       case "/health":
         if (event.httpMethod !== "GET") {
           return createErrorResponse("Method not allowed", 405);
@@ -646,7 +850,7 @@ async function handleRequest(event, context, { userId }) {
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "Coach",
-    allowedMethods: ["GET", "POST"],
+    allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "READ",
     requireAuth: true,
     handler: handleRequest,

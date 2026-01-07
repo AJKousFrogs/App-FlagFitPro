@@ -72,6 +72,7 @@ interface WellnessMetric {
     BodyCompositionCardComponent,
     SupplementTrackerComponent,
     HydrationTrackerComponent,
+    ConfidenceIndicatorComponent,
   ],
   template: `
     <app-main-layout>
@@ -106,6 +107,23 @@ interface WellnessMetric {
 
           <!-- Wellness Metrics (4 Cards) -->
           <app-stats-grid [stats]="wellnessStats()"></app-stats-grid>
+
+          <!-- Partial Wellness Score Confidence Indicator -->
+          @if (wellnessConfidence().score < 1.0) {
+            <p-card styleClass="confidence-card">
+              <div class="confidence-warning">
+                <app-confidence-indicator
+                  [score]="wellnessConfidence().score"
+                  [missingInputs]="wellnessConfidence().missingInputs"
+                  [showDetails]="true"
+                ></app-confidence-indicator>
+                <p class="confidence-message">
+                  Your wellness score is calculated from {{ completedMetricsCount() }}/{{ totalMetricsCount() }} metrics.
+                  Complete all fields for a more accurate score.
+                </p>
+              </div>
+            </p-card>
+          }
 
           <!-- Wellness Charts - Lazy loaded for performance -->
           <div class="charts-grid">
@@ -226,6 +244,50 @@ interface WellnessMetric {
           } @placeholder {
             <app-card title="Hydration Tracker" [loading]="true">
               <div class="loading-text">Loading hydration data...</div>
+            </app-card>
+          }
+
+          <!-- Menstrual Cycle Tracking (Female Athletes) -->
+          @defer (on viewport) {
+            <app-card
+              title="Cycle Tracking"
+              headerIcon="pi-heart"
+              styleClass="cycle-tracking-card"
+            >
+              <div class="cycle-tracking-content">
+                <p class="cycle-description">
+                  Track your menstrual cycle to receive personalized training,
+                  nutrition, and recovery recommendations based on your cycle phase.
+                </p>
+                <div class="cycle-benefits">
+                  <div class="benefit-item">
+                    <i class="pi pi-check-circle"></i>
+                    <span>Phase-adapted training recommendations</span>
+                  </div>
+                  <div class="benefit-item">
+                    <i class="pi pi-check-circle"></i>
+                    <span>Injury risk awareness by cycle phase</span>
+                  </div>
+                  <div class="benefit-item">
+                    <i class="pi pi-check-circle"></i>
+                    <span>Nutrition guidance for each phase</span>
+                  </div>
+                  <div class="benefit-item">
+                    <i class="pi pi-check-circle"></i>
+                    <span>Private by default - coaches only see recovery recommendations</span>
+                  </div>
+                </div>
+                <app-button
+                  iconLeft="pi-calendar"
+                  [routerLink]="['/cycle-tracking']"
+                  styleClass="w-full mt-3"
+                  >Open Cycle Tracker</app-button
+                >
+              </div>
+            </app-card>
+          } @placeholder {
+            <app-card title="Cycle Tracking" [loading]="true">
+              <div class="loading-text">Loading cycle tracking...</div>
             </app-card>
           }
 
@@ -418,6 +480,8 @@ export class WellnessComponent {
   private readonly logger = inject(LoggerService);
   private readonly toastService = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly confidenceService = inject(DataConfidenceService);
+  private readonly offlineQueue = inject(OfflineQueueService);
 
   // Runtime guard signals - prevent white screen crashes
   readonly isPageLoading = signal<boolean>(true);
@@ -727,7 +791,33 @@ export class WellnessComponent {
       .catch((err) => {
         this.isSubmitting.set(false);
         this.logger.error("Error submitting wellness check-in:", err);
-        this.toastService.error("Failed to save wellness check-in");
+        
+        // Check if we should queue this action for offline sync
+        if (this.offlineQueue.shouldQueue(err)) {
+          const actionId = this.offlineQueue.queueAction(
+            "wellness_checkin",
+            wellnessData,
+            "high"
+          );
+          this.toastService.info(
+            "You're offline. Check-in queued for sync when connection is restored."
+          );
+          // Reset form even if queued
+          this.checkInData = {
+            sleepHours: 7,
+            sleepQuality: 7,
+            energyLevel: 7,
+            soreness: 3,
+            hydration: 8,
+            restingHR: 0,
+            mood: 7,
+            stress: 3,
+            motivation: 7,
+            readiness: 7,
+          };
+        } else {
+          this.toastService.error("Failed to save wellness check-in");
+        }
       });
   }
 

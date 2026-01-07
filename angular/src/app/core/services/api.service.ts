@@ -469,4 +469,23 @@ export const API_ENDPOINTS = {
     shareReport: (reportId: string) =>
       `/api/scouting/reports/${reportId}/share`,
   },
+  // Film Room endpoints
+  filmRoom: {
+    list: "/api/film-room",
+    watched: "/api/film-room/watched",
+    reply: "/api/film-room/reply",
+  },
+  // Playbook endpoints (player side)
+  playbook: {
+    list: "/api/playbook",
+    study: "/api/playbook/study",
+    memorized: "/api/playbook/memorized",
+  },
+  // Coach Calendar endpoints
+  coachCalendar: {
+    list: "/api/coach/calendar",
+    create: "/api/coach/calendar",
+    update: (eventId: string) => `/api/coach/calendar?id=${eventId}`,
+    delete: (eventId: string) => `/api/coach/calendar?id=${eventId}`,
+  },
 };

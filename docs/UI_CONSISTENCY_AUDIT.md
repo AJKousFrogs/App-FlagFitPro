@@ -149,7 +149,6 @@ Based on grep analysis, these files may need attention:
 | `video-curation-playlists.component.ts`   | 3 rounded buttons                      |
 | `video-suggestion.component.ts`           | 2 rounded buttons                      |
 | `superadmin-dashboard.component.scss`     | 7 state classes (check consistency)    |
-| `parent-dashboard.component.html`         | 8 state references (check consistency) |
 | `coach-activity-feed.component.scss`      | 5 state classes                        |
 
 ---

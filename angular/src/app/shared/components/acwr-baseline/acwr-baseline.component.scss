@@ -34,17 +34,6 @@
 
 .acwr-progress-bar {
   margin-bottom: var(--space-2);
-  
-  ::ng-deep .p-progressbar {
-    height: 8px;
-    background: var(--surface-secondary);
-    border-radius: var(--radius-full);
-    
-    .p-progressbar-value {
-      background: var(--ds-primary-green);
-      border-radius: var(--radius-full);
-    }
-  }
 }
 
 .acwr-hint {

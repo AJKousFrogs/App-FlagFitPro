@@ -20,8 +20,8 @@
   top: 0;
   height: 100vh;
   width: 250px;
-  background: var(--surface-primary, #ffffff);
-  border-right: 1px solid var(--color-border-primary, #e0e0e0);
+  background: var(--surface-primary);
+  border-right: 1px solid var(--color-border-primary);
   z-index: 1000;
   transition: transform 0.3s ease;
   overflow-y: auto;
@@ -44,7 +44,7 @@
   height: var(--touch-target-md);
   border: none;
   background: var(--surface-tertiary);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   cursor: pointer;
   color: var(--color-text-secondary);
   transition:
@@ -73,8 +73,8 @@
   align-items: center;
   gap: var(--space-3);
   cursor: pointer;
-  background: var(--surface-primary, #ffffff);
-  border-bottom: 1px solid var(--color-border-primary, #e0e0e0);
+  background: var(--surface-primary);
+  border-bottom: 1px solid var(--color-border-primary);
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast),
@@ -84,7 +84,7 @@
 }
 
 .sidebar-logo:hover {
-  background: var(--surface-secondary, #f8f8f8);
+  background: var(--surface-secondary);
 }
 
 .sidebar-logo:hover .logo-icon-wrapper {
@@ -120,7 +120,7 @@
 .logo-text {
   font-size: var(--font-body-lg);
   font-weight: var(--font-weight-bold);
-  color: var(--text-primary, #1a1a1a);
+  color: var(--color-text-primary);
   letter-spacing: -0.01em;
 }
 
@@ -136,7 +136,7 @@
 .user-avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--color-brand-primary);
   color: white;
   display: flex;
@@ -339,7 +339,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--surface-overlay);
   z-index: 999;
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);

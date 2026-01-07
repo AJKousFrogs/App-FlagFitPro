@@ -16,6 +16,9 @@ const {
   getUserRole,
   logViolation,
 } = require("./utils/authorization-guard.cjs");
+const {
+  guardMerlinRequest,
+} = require("./utils/merlin-guard.cjs");
 // Note: authenticateRequest, applyRateLimit, and CORS are handled by baseHandler
 
 /**
@@ -264,6 +267,21 @@ async function updateTrainingSession(userId, sessionId, updates, requestInfo = {
 const { baseHandler } = require("./utils/base-handler.cjs");
 
 exports.handler = async (event, context) => {
+  // Apply Merlin guard for mutation endpoints
+  if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
+    const req = { 
+      method: event.httpMethod, 
+      path: event.path, 
+      headers: event.headers, 
+      body: event.body,
+      user: context.user || {}
+    };
+    const blocked = guardMerlinRequest(req);
+    if (blocked && blocked.statusCode === 403) {
+      return blocked;
+    }
+  }
+
   return baseHandler(event, context, {
     functionName: "training-sessions",
     allowedMethods: ["GET", "POST", "PUT"],

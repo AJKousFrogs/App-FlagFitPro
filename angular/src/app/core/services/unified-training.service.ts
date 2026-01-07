@@ -299,6 +299,85 @@ export class UnifiedTrainingService {
     return items.sort((a, b) => a.time.localeCompare(b.time));
   });
 
+  /**
+   * Get tomorrow's schedule items (for preview on dashboard)
+   */
+  readonly tomorrowScheduleItems = computed((): TodayScheduleItem[] => {
+    const weekly = this._weeklySchedule();
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    const tomorrowDayOfWeek = tomorrow.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+    // Find tomorrow in weekly schedule (convert Sunday=0 to Monday=0 format)
+    const scheduleDayIndex = tomorrowDayOfWeek === 0 ? 6 : tomorrowDayOfWeek - 1;
+    const tomorrowSchedule = weekly[scheduleDayIndex];
+
+    if (!tomorrowSchedule || !tomorrowSchedule.sessions || tomorrowSchedule.sessions.length === 0) {
+      return [];
+    }
+
+    const sessions = tomorrowSchedule.sessions;
+    const metadata = this.performanceDataService.userMetadata();
+
+    // Get user routine for tomorrow (same routine applies daily)
+    const defaultRoutine: DailyRoutineSlot[] = [
+      { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-refresh" },
+      { id: "breakfast", label: "Breakfast", time: "07:30", icon: "pi-refresh" },
+      { id: "work_start", label: "Work/Study Start", time: "09:00", icon: "pi-briefcase" },
+      { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
+      { id: "work_end", label: "Work/Study End", time: "17:00", icon: "pi-home" },
+      { id: "training", label: "Daily Training", time: "18:00", icon: "pi-bolt" },
+      { id: "shower", label: "Shower (Hot)", time: "20:00", icon: "pi-info-circle" },
+      { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
+    ];
+
+    const userRoutine: DailyRoutineSlot[] = metadata.dailyRoutine || defaultRoutine;
+
+    const getItemType = (slotId: string): TodayScheduleItem["type"] => {
+      if (slotId === "breakfast" || slotId === "lunch") return "nutrition";
+      if (slotId === "wake" || slotId === "sleep") return "wellness";
+      return "recovery";
+    };
+
+    const items: TodayScheduleItem[] = [];
+
+    // Add routine items (excluding training if we have sessions)
+    userRoutine.forEach((slot: DailyRoutineSlot) => {
+      if (slot.id === "training" && sessions.length > 0) return;
+
+      const item: TodayScheduleItem = {
+        id: `routine-${slot.id}`,
+        time: slot.time,
+        title: slot.label,
+        type: getItemType(slot.id),
+        duration: slot.id === "work_start" ? 480 : 30,
+        status: "upcoming", // All tomorrow items are upcoming
+        description: slot.id === "breakfast" ? "Include supplements" : slot.label,
+        icon: slot.icon,
+      };
+
+      items.push(item);
+    });
+
+    // Add training sessions
+    sessions.forEach((s, idx) => {
+      const time = s.time && s.time !== "TBD" ? s.time : "18:00";
+      items.push({
+        id: `session-${idx}`,
+        time: time,
+        title: s.title || "Daily Training",
+        type: s.type === "game" ? "game" : "training",
+        status: "upcoming",
+        duration: s.duration || 90,
+        description: s.description || "Main session of the day",
+      });
+    });
+
+    // Sort all items by time
+    return items.sort((a, b) => a.time.localeCompare(b.time));
+  });
+
   private readonly _workouts = signal<Workout[]>([]);
   readonly workouts = this._workouts.asReadonly();
 

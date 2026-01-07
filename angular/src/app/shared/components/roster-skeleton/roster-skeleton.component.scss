@@ -43,8 +43,8 @@
 
 // Table
 .table-skeleton {
-  background: var(--surface-card, #ffffff);
-  border: 1px solid var(--surface-border, #e5e5e5);
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg, 12px);
   overflow: hidden;
   margin-bottom: var(--space-4, 16px);
@@ -56,8 +56,8 @@
   grid-template-columns: var(--roster-grid-template, 60px 180px 120px 100px 120px 100px);
   gap: var(--space-3, 12px);
   padding: var(--space-4, 16px);
-  background: var(--surface-ground, #fafafa);
-  border-bottom: 2px solid var(--surface-border, #e5e5e5);
+  background: var(--surface-ground);
+  border-bottom: 2px solid var(--surface-border);
   
   @media (max-width: 1024px) {
     grid-template-columns: 60px 1fr 100px 100px;
@@ -79,7 +79,7 @@
   grid-template-columns: var(--roster-grid-template, 60px 180px 120px 100px 120px 100px);
   gap: var(--space-3, 12px);
   padding: var(--space-4, 16px);
-  border-bottom: 1px solid var(--surface-border, #e5e5e5);
+  border-bottom: 1px solid var(--surface-border);
   
   @media (max-width: 1024px) {
     grid-template-columns: 60px 1fr 100px 100px;
@@ -128,16 +128,16 @@
 // Dark theme
 :host-context([data-theme="dark"]) {
   .table-skeleton {
-    background: var(--surface-card, #171717);
-    border-color: var(--surface-border, #404040);
+    background: var(--surface-card);
+    border-color: var(--surface-border);
   }
   
   .table-header-skeleton {
-    background: var(--surface-ground, #262626);
-    border-bottom-color: var(--surface-border, #404040);
+    background: var(--surface-ground);
+    border-bottom-color: var(--surface-border);
   }
   
   .table-row-skeleton {
-    border-bottom-color: var(--surface-border, #404040);
+    border-bottom-color: var(--surface-border);
   }
 }

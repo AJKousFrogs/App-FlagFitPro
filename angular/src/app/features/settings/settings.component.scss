@@ -209,27 +209,9 @@
   flex-direction: column;
 }
 
-.settings-grid .settings-section app-card .p-card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.settings-grid .settings-section app-card .p-card-body {
-  flex: 1;
-}
-
-.p-field-checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.p-field-checkbox label {
-  margin: 0;
-  flex: 1;
+// PrimeNG card and field-checkbox overrides moved to _exceptions.scss (DS-EXC-051)
+.settings-grid .settings-section app-card {
+  // Component-specific styles remain here
 }
 
 /* Notification Settings Layout */
@@ -326,9 +308,9 @@
   margin-bottom: var(--space-4);
 }
 
-.form-row.two-columns .p-field {
-  flex: 1;
-  margin-bottom: 0;
+// PrimeNG field override moved to _exceptions.scss (DS-EXC-051)
+.form-row.two-columns {
+  // Component-specific styles remain here
 }
 
 @media (max-width: 480px) {
@@ -1468,33 +1450,7 @@
  * All toggles now use: 44px width, 24px height, green=ON, neutral=OFF
  */
 
-/*
- * EXCEPTION: PrimeNG Field Overrides
- * Reason: PrimeNG field spacing needs adjustment
- * Scope: settings component only
- * Owner: @design-system
- */
-.p-field {
-  margin-bottom: var(
-    --space-5
-  ); /* Increased from space-4 for better breathing room */
-}
-
-.p-field .p-label {
-  display: block;
-  margin-bottom: var(--space-2);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
-  font-size: var(--font-size-h4);
-}
-
-.p-select {
-  width: 100%;
-}
-
-.p-inputtext {
-  width: 100%;
-}
+// PrimeNG field, select, and inputtext overrides moved to _exceptions.scss (DS-EXC-051)
 
 /*
  * EXCEPTION: Security Section Button Sizing
@@ -1514,66 +1470,17 @@
   justify-content: center;
 }
 
-/*
- * EXCEPTION: Divider in Security Section
- * Reason: PrimeNG divider needs spacing adjustment
- * Scope: security-actions dividers only
- * Owner: @design-system
- */
-.security-actions .p-divider {
-  margin: var(--space-2) 0;
+// PrimeNG divider overrides moved to _exceptions.scss (DS-EXC-051)
+.security-actions {
+  // Component-specific styles remain here
 }
 
-.security-actions .p-divider::before {
-  border-color: var(--color-border-muted); /* Lighter divider */
-  opacity: 0.5; /* Even more subtle */
-}
-
-/*
- * EXCEPTION: Dialog Overrides
- * Reason: PrimeNG dialogs need custom border-radius, width, and content padding
- * Scope: settings dialogs only
- * Owner: @design-system
- */
-.password-dialog .p-dialog {
-  width: 480px;
-  max-width: 95vw;
-  border-radius: var(--radius-2xl); /* 16px */
-  overflow: hidden;
-  box-shadow: var(--shadow-3);
-  border: 1px solid var(--color-border-muted);
-}
-
-.delete-dialog .p-dialog {
-  width: 480px;
-  max-width: 95vw;
-  border-radius: var(--radius-3xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-
-.twofa-dialog .p-dialog {
-  width: 500px;
-  max-width: 95vw;
-  border-radius: var(--radius-3xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-
-.sessions-dialog .p-dialog {
-  width: 520px;
-  max-width: 95vw;
-  border-radius: var(--radius-3xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-
-.password-dialog .p-dialog-content,
-.delete-dialog .p-dialog-content,
-.twofa-dialog .p-dialog-content,
-.sessions-dialog .p-dialog-content {
-  padding: 0;
-  background: var(--surface-primary);
+// PrimeNG dialog overrides moved to _exceptions.scss (DS-EXC-051)
+.password-dialog,
+.delete-dialog,
+.twofa-dialog,
+.sessions-dialog {
+  // Component-specific styles remain here
 }
 
 .dialog-close-btn {
@@ -1985,10 +1892,7 @@
   color: var(--color-text-secondary);
 }
 
-/* Export Dialog Styling */
+// PrimeNG export dialog override moved to _exceptions.scss (DS-EXC-051)
 .export-dialog {
-  .p-dialog {
-    width: 90%;
-    max-width: 500px;
-  }
+  // Component-specific styles remain here
 }

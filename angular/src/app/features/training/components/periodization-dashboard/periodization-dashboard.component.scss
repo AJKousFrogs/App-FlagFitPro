@@ -365,10 +365,9 @@
   overflow-x: auto;
 }
 
+// PrimeNG timeline override moved to _exceptions.scss (DS-EXC-050)
 .phase-timeline {
-  .p-timeline-event-content {
-    text-align: center;
-  }
+  // Component-specific styles remain here
 }
 
 .timeline-marker {

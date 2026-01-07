@@ -242,14 +242,7 @@
   margin-bottom: var(--space-4);
   flex-wrap: wrap;
 
-  .p-input-icon-left {
-    flex: 1;
-    min-width: 200px;
-
-    input {
-      width: 100%;
-    }
-  }
+  // PrimeNG input icon override moved to _exceptions.scss (DS-EXC-021)
 }
 
 // Responsive

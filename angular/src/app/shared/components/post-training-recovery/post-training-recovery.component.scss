@@ -3,10 +3,9 @@
 // Design System Compliant
 // ============================================================================
 
-.post-training-dialog .p-dialog-content {
-  padding: 0;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+// PrimeNG dialog override moved to _exceptions.scss (DS-EXC-031)
+.post-training-dialog {
+  // Component-specific styles remain here
 }
 
 .post-training-content {

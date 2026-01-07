@@ -340,11 +340,64 @@ function buildAthleteContext(userContext) {
     parts.push(`Recent sessions: ${sessions}.`);
   }
 
+  // Cross-day continuity context
+  if (userContext.recentGames && userContext.recentGames.length > 0) {
+    const recentGame = userContext.recentGames[0];
+    const gameDate = new Date(recentGame.game_date);
+    const daysSinceGame = Math.floor(
+      (new Date().getTime() - gameDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    
+    if (daysSinceGame <= 2) {
+      parts.push(
+        `IMPORTANT: They had a game ${daysSinceGame === 0 ? 'today' : daysSinceGame === 1 ? 'yesterday' : `${daysSinceGame} days ago`}. They're in recovery mode - prioritize rest, sleep, and hydration. Training should be light or recovery-focused.`
+      );
+    }
+  }
+
+  // Active recovery protocols
+  if (userContext.activeRecovery) {
+    if (userContext.activeRecovery.type === "game_day_recovery") {
+      parts.push(
+        `They're currently in a game day recovery protocol. Focus on sleep, hydration, and light movement only. Training intensity should be limited.`
+      );
+    } else if (userContext.activeRecovery.type === "load_cap") {
+      parts.push(
+        `They have an active load cap (${userContext.activeRecovery.sessionsRemaining} sessions remaining). Training load is automatically limited to prevent injury risk.`
+      );
+    }
+  }
+
+  // Data confidence context
+  if (userContext.dataConfidence) {
+    const confidence = userContext.dataConfidence;
+    if (confidence.score < 0.7) {
+      parts.push(
+        `IMPORTANT: Data confidence is ${Math.round(confidence.score * 100)}%. Some data may be incomplete or missing. Provide conservative, general advice and encourage completing wellness check-ins.`
+      );
+      if (confidence.missingInputs && confidence.missingInputs.length > 0) {
+        parts.push(
+          `Missing data: ${confidence.missingInputs.slice(0, 3).join(", ")}.`
+        );
+      }
+    }
+  }
+
   // Daily readiness & Wellness
   const wellness = userContext.latestWellness || userContext.dailyState;
   if (wellness) {
     if (wellness.readiness_score) {
-      parts.push(`Today's Readiness Score: ${wellness.readiness_score}/100.`);
+      const confidenceNote = userContext.dataConfidence?.score < 0.7 
+        ? ` (confidence: ${Math.round(userContext.dataConfidence.score * 100)}%)`
+        : "";
+      parts.push(`Today's Readiness Score: ${wellness.readiness_score}/100${confidenceNote}.`);
+      
+      // Add recovery focus if wellness was low yesterday
+      if (userContext.yesterdayWellness && userContext.yesterdayWellness.readiness_score < 40) {
+        parts.push(
+          `IMPORTANT: Their wellness was low yesterday (${userContext.yesterdayWellness.readiness_score}/100). Today should focus on recovery - light movement, sleep, and hydration.`
+        );
+      }
     }
     if (wellness.sleep_quality < 5) {
       parts.push(`Poor sleep reported (${wellness.sleep_quality}/10).`);

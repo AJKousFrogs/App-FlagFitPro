@@ -22,10 +22,10 @@
 // =============================================
 
 .supplement-card {
-  background: var(--surface-primary, #ffffff);
-  border-radius: var(--radius-xl, 12px);
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
-  box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--primitive-neutral-200);
+  box-shadow: var(--shadow-1);
   overflow: hidden;
   height: 100%;
   display: flex;
@@ -40,7 +40,7 @@
     justify-content: space-between;
     align-items: center;
     padding: var(--space-4, 16px) var(--space-5, 20px);
-    border-bottom: 1px solid var(--primitive-neutral-100, #f0f0f0);
+    border-bottom: 1px solid var(--primitive-neutral-100);
   }
 
   .header-title {
@@ -50,14 +50,14 @@
 
     i {
       font-size: var(--font-size-h2);
-      color: var(--primitive-error-500, #ef4444);
+      color: var(--primitive-error-500);
     }
 
     h3 {
       margin: 0;
       font-size: var(--font-body-md, 16px);
       font-weight: var(--font-weight-semibold, 600);
-      color: var(--color-text-primary, #171717);
+      color: var(--color-text-primary);
     }
   }
 
@@ -70,8 +70,8 @@
   .progress-badge {
     font-size: var(--font-body-sm, 14px);
     font-weight: var(--font-weight-semibold, 600);
-    color: var(--color-text-secondary, #737373);
-    background: var(--surface-secondary, #f8faf9);
+    color: var(--color-text-secondary);
+    background: var(--surface-secondary);
     padding: var(--space-1, 4px) var(--space-2, 8px);
     border-radius: var(--radius-md, 8px);
     box-shadow: var(--shadow-1);
@@ -83,12 +83,12 @@
 
   .supplement-progress {
     padding: var(--space-3, 12px) var(--space-5, 20px);
-    background: var(--surface-secondary, #f8faf9);
+    background: var(--surface-secondary);
   }
 
   .progress-bar {
     height: 6px;
-    background: var(--primitive-neutral-200, #e5e5e5);
+    background: var(--primitive-neutral-200);
     border-radius: var(--radius-full, 9999px);
     overflow: hidden;
     margin-bottom: var(--space-2, 8px);
@@ -96,18 +96,18 @@
 
   .progress-fill {
     height: 100%;
-    background: var(--ds-primary-green, #089949);
+    background: var(--ds-primary-green);
     border-radius: var(--radius-full, 9999px);
     transition: width 200ms ease;
 
     &.complete {
-      background: var(--ds-primary-green, #089949);
+      background: var(--ds-primary-green);
     }
   }
 
   .progress-text {
     font-size: var(--font-body-xs, 12px);
-    color: var(--color-text-secondary, #737373);
+    color: var(--color-text-secondary);
   }
 
   // =============================================
@@ -143,7 +143,7 @@
     &:not(:last-child) {
       margin-bottom: var(--space-3, 12px);
       padding-bottom: var(--space-3, 12px);
-      border-bottom: 1px solid var(--primitive-neutral-100, #f0f0f0);
+      border-bottom: 1px solid var(--primitive-neutral-100);
     }
   }
 
@@ -154,13 +154,13 @@
     padding: var(--space-2, 8px) var(--space-5, 20px);
     font-size: var(--font-body-xs, 11px);
     font-weight: var(--font-weight-semibold, 600);
-    color: var(--color-text-secondary, #737373);
+    color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 
     i {
       font-size: var(--font-size-h4);
-      color: var(--color-text-muted, #a3a3a3);
+      color: var(--color-text-muted);
     }
   }
 
@@ -174,17 +174,17 @@
     transition: background-color 150ms ease;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.02);
+      background: var(--color-surface-hover);
     }
 
     &.taken {
       .item-name {
-        color: var(--color-text-muted, #a3a3a3);
+        color: var(--color-text-muted);
         text-decoration: line-through;
       }
 
       .item-dosage {
-        color: var(--color-text-muted, #a3a3a3);
+        color: var(--color-text-muted);
       }
     }
   }
@@ -209,13 +209,13 @@
   .item-name {
     font-size: var(--font-body-sm, 14px);
     font-weight: var(--font-weight-medium, 500);
-    color: var(--color-text-primary, #171717);
+      color: var(--color-text-primary);
     transition: color 150ms ease;
   }
 
   .item-dosage {
     font-size: var(--font-body-xs, 12px);
-    color: var(--color-text-secondary, #737373);
+    color: var(--color-text-secondary);
   }
 
   // =============================================
@@ -233,14 +233,14 @@
 
     i {
       font-size: var(--font-size-metric-lg);
-      color: var(--color-text-muted, #a3a3a3);
+      color: var(--color-text-muted);
       margin-bottom: var(--space-3, 12px);
       display: block;
     }
 
     p {
       margin: 0 0 var(--space-4, 16px) 0;
-      color: var(--color-text-secondary, #737373);
+      color: var(--color-text-secondary);
       font-size: var(--font-body-sm, 14px);
     }
   }
@@ -263,13 +263,13 @@
     label {
       font-size: var(--font-body-sm, 14px);
       font-weight: var(--font-weight-medium, 500);
-      color: var(--color-text-primary, #171717);
+      color: var(--color-text-primary);
     }
 
-    input,
-    .p-select {
+    input {
       width: 100%;
     }
+    // PrimeNG select override moved to _exceptions.scss (DS-EXC-011)
   }
 
   .form-row {
@@ -298,56 +298,7 @@
     padding: var(--space-1, 4px) var(--space-2, 8px);
   }
 
-  // Checkbox - Larger touch target (44x44px minimum per WCAG 2.5.5)
-  .p-checkbox {
-    width: 24px;
-    height: 24px;
-
-    .p-checkbox-box {
-      width: 24px;
-      height: 24px;
-      border-radius: var(--radius-sm);
-      border: 2px solid var(--primitive-neutral-300, #d4d4d4);
-      background: var(--surface-primary, #ffffff);
-      transition:
-        background-color 150ms ease,
-        border-color 150ms ease;
-
-      &:hover {
-        border-color: var(--ds-primary-green, #089949);
-      }
-
-      &.p-highlight {
-        background: var(--ds-primary-green);
-        border-color: var(--ds-primary-green);
-
-        .p-checkbox-icon {
-          color: var(--color-text-on-primary);
-        }
-      }
-
-      &:focus-visible {
-        outline: 2px solid var(--ds-primary-green, #089949);
-        outline-offset: 2px;
-      }
-    }
-  }
-
-  .supplement-dialog {
-    .p-dialog {
-      width: 400px;
-      max-width: 95vw;
-    }
-
-    .p-dialog-content {
-      padding: var(--space-5, 20px);
-    }
-
-    .p-dialog-footer {
-      padding: var(--space-4, 16px) var(--space-5, 20px);
-      border-top: 1px solid var(--primitive-neutral-100, #f0f0f0);
-    }
-  }
+  // PrimeNG checkbox and dialog overrides moved to _exceptions.scss (DS-EXC-011)
 
   // =============================================
   // RESPONSIVE
@@ -393,7 +344,7 @@
 
   .supplement-item {
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green, #089949);
+      outline: 2px solid var(--ds-primary-green);
       outline-offset: 2px;
       border-radius: var(--radius-sm, 4px);
     }

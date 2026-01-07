@@ -601,16 +601,7 @@
    Documented exceptions per DESIGN_SYSTEM_RULES.md Section 2.2
    ================================================================ */
 
-/*
- * EXCEPTION: Search Container Icon
- * Reason: PrimeNG icon field needs color override
- * Scope: .search-container only
- * Owner: @design-system
- */
-.search-container .p-inputicon {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-h2);
-}
+// PrimeNG inputicon override moved to _exceptions.scss (DS-EXC-029)
 
 /*
  * EXCEPTION: Reduced Motion - Instant Transitions

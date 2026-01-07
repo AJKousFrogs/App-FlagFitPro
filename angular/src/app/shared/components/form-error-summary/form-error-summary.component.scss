@@ -5,8 +5,8 @@
 // ============================================================================
 
 .error-summary {
-  background: var(--primitive-error-50, #fef2f2);
-  border: 3px solid var(--primitive-error-500, #ef4444);
+  background: var(--primitive-error-50);
+  border: 3px solid var(--primitive-error-500);
   border-radius: var(--radius-lg, 12px);
   padding: var(--space-5, 20px);
   margin-bottom: var(--space-6, 32px);
@@ -14,7 +14,7 @@
   
   // Focus styles for keyboard navigation
   &:focus {
-    outline: 3px solid var(--ds-focus-ring, rgba(239, 68, 68, 0.4));
+    outline: 3px solid rgba(var(--primitive-error-500-rgb), 0.4);
     outline-offset: 2px;
   }
   
@@ -31,7 +31,7 @@
   margin-bottom: var(--space-4, 16px);
   
   i {
-    color: var(--primitive-error-600, #dc2626);
+    color: var(--primitive-error-600);
     font-size: var(--font-size-h3, 20px);
     flex-shrink: 0;
     margin-top: 2px;
@@ -42,7 +42,7 @@
   margin: 0;
   font-size: var(--font-size-h3, 20px);
   font-weight: var(--font-weight-bold, 700);
-  color: var(--primitive-error-900, #7f1d1d);
+  color: var(--primitive-error-900);
   line-height: var(--line-height-tight, 1.25);
   
   @media (max-width: 640px) {
@@ -70,7 +70,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: var(--primitive-error-700, #b91c1c);
+  color: var(--primitive-error-700);
   font-size: var(--font-size-body, 16px);
   font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
@@ -78,12 +78,12 @@
   transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
   
   &:hover {
-    color: var(--primitive-error-800, #991b1b);
+    color: var(--primitive-error-800);
     text-decoration: none;
   }
   
   &:focus-visible {
-    outline: 2px solid var(--primitive-error-600, #dc2626);
+    outline: 2px solid var(--primitive-error-600);
     outline-offset: 2px;
     border-radius: var(--radius-sm, 4px);
   }
@@ -101,11 +101,11 @@
   background: white;
   border-radius: var(--radius-md, 8px);
   font-size: var(--font-size-h4, 14px);
-  color: var(--color-text-secondary, #737373);
-  border-left: 3px solid var(--primitive-warning-400, #fbbf24);
+  color: var(--color-text-secondary);
+  border-left: 3px solid var(--primitive-warning-400);
   
   i {
-    color: var(--primitive-warning-600, #d97706);
+    color: var(--primitive-warning-600);
     font-size: var(--font-body-sm, 14px);
     flex-shrink: 0;
     margin-top: 2px;
@@ -118,19 +118,19 @@
   right: var(--space-3, 12px);
   background: none;
   border: none;
-  color: var(--primitive-error-600, #dc2626);
+  color: var(--primitive-error-600);
   font-size: var(--font-size-body, 16px);
   cursor: pointer;
   padding: var(--space-2, 8px);
   border-radius: var(--radius-sm, 4px);
-  transition: all var(--motion-fast, 150ms) var(--ease-standard, ease);
+  transition: background-color var(--motion-fast, 150ms) var(--ease-standard, ease);
   
   &:hover {
-    background: var(--primitive-error-100, #fee2e2);
+    background: var(--primitive-error-100);
   }
   
   &:focus-visible {
-    outline: 2px solid var(--primitive-error-600, #dc2626);
+    outline: 2px solid var(--primitive-error-600);
     outline-offset: 2px;
   }
 }
@@ -138,25 +138,25 @@
 // Dark theme support
 :host-context([data-theme="dark"]) {
   .error-summary {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: var(--primitive-error-500, #ef4444);
+    background: var(--color-status-error-light);
+    border-color: var(--primitive-error-500);
   }
   
   .error-summary-title {
-    color: var(--primitive-error-200, #fecaca);
+    color: var(--primitive-error-200);
   }
   
   .error-link {
-    color: var(--primitive-error-300, #fca5a5);
+    color: var(--primitive-error-300);
     
     &:hover {
-      color: var(--primitive-error-200, #fecaca);
+      color: var(--primitive-error-200);
     }
   }
   
   .error-suggestion {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--color-text-secondary, #a3a3a3);
+    background: var(--color-border-subtle);
+    color: var(--color-text-secondary);
   }
 }
 

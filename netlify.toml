@@ -570,6 +570,19 @@
   status = 200
   force = true
 
+# API Routes for Decision Ledger
+[[redirects]]
+  from = "/api/decisions/*"
+  to = "/.netlify/functions/decisions"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/decisions"
+  to = "/.netlify/functions/decisions"
+  status = 200
+  force = true
+
 # API Routes for Scouting
 [[redirects]]
   from = "/api/scouting/*"

@@ -3,12 +3,9 @@
 // Design System Compliant
 // ============================================================================
 
-// Dialog content styling - dialogs render in overlay
-// These styles should be in global styles or use PT API
-.quick-checkin-dialog .p-dialog-content {
-  padding: 0;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+// PrimeNG dialog override moved to _exceptions.scss (DS-EXC-036)
+.quick-checkin-dialog {
+  // Component-specific styles remain here
 }
 
 .quick-checkin {

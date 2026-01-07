@@ -434,16 +434,19 @@ export class TeamStatisticsService {
       const readiness = Number(player["readiness"]) || 75;
 
       let riskLevel: "low" | "medium" | "high" = "low";
-      if (acwr > 1.5 || readiness < 55) {
+      // Enhanced risk calculation: wellness < 40% is high risk (per user flow design)
+      if (acwr > 1.5 || readiness < 40) {
         riskLevel = "high";
-      } else if (acwr > 1.3 || readiness < 70) {
+      } else if (acwr > 1.3 || readiness < 55) {
+        riskLevel = "high";
+      } else if (readiness < 70) {
         riskLevel = "medium";
       }
 
       let status: "active" | "injured" | "inactive" | "at_risk" = "active";
       if (player["status"] === "injured") status = "injured";
       else if (player["status"] === "inactive") status = "inactive";
-      else if (riskLevel === "high") status = "at_risk";
+      else if (riskLevel === "high" || readiness < 40) status = "at_risk";
 
       return {
         playerId: String(player["id"] || player["user_id"] || ""),

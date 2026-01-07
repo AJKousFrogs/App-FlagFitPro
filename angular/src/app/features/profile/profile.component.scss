@@ -336,107 +336,9 @@
 }
 
 /* ========== PrimeNG Tabs Override ========== */
-.profile-page .profile-tabs-container .p-tabs {
-  background: transparent;
-  border: none;
-}
-
-.profile-page .profile-tabs-container .p-tablist {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  margin-bottom: var(--space-5);
-}
-
-.profile-page .profile-tabs-container .p-tablist-content,
-.profile-page .profile-tabs-container .p-tablist-viewport {
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-1);
-  border: none;
-  box-shadow: none;
-}
-
-.profile-page .profile-tabs-container .p-tablist-tab-list {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-1);
-  background: transparent;
-  border: none;
-}
-
-.profile-page .profile-tabs-container .p-tablist-active-bar {
-  display: none;
-}
-
-.profile-page .profile-tabs-container .p-tab {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: 0 var(--space-4);
-  font-family: var(--font-family-sans);
-  font-size: 0.875rem;
-  font-weight: 500; // Medium weight for inactive tabs - reduces visual competition
-  color: var(--color-text-secondary);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  white-space: nowrap;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-  height: var(--button-height-md); /* 44px */
-  min-height: var(--button-height-md);
-  outline: none;
-}
-
-.profile-page .profile-tabs-container .p-tab i {
-  font-size: 1rem;
-  color: var(--color-text-tertiary);
-  transition: color 0.2s ease;
-}
-
-.profile-page
-  .profile-tabs-container
-  .p-tab:hover:not(.p-tab-active):not([data-p-active="true"]) {
-  background: var(--surface-primary);
-  color: var(--color-text-primary);
-}
-
-.profile-page
-  .profile-tabs-container
-  .p-tab:hover:not(.p-tab-active):not([data-p-active="true"])
-  i {
-  color: var(--ds-primary-green);
-}
-
-.profile-page .profile-tabs-container .p-tab.p-tab-active,
-.profile-page .profile-tabs-container .p-tab[data-p-active="true"] {
-  background: var(--surface-primary);
-  color: var(--ds-primary-green);
-  font-weight: 600; // Semibold for active tab - clear hierarchy
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--ds-primary-green);
-}
-
-.profile-page .profile-tabs-container .p-tab.p-tab-active i,
-.profile-page .profile-tabs-container .p-tab[data-p-active="true"] i {
-  color: var(--ds-primary-green);
-}
-
-.profile-page .profile-tabs-container .p-tabpanels {
-  padding: 0;
-  background: transparent;
-  border: none;
-}
-
-.profile-page .profile-tabs-container .p-tabpanel {
-  padding: 0;
-  border: none;
+// PrimeNG tabs overrides moved to _exceptions.scss (DS-EXC-014)
+.profile-page .profile-tabs-container {
+  // Component-specific styles remain here
 }
 
 /* ========== Invitation Badge ========== */
@@ -821,21 +723,7 @@
     border-radius: var(--radius-lg);
   }
 
-  .profile-page .profile-tabs-container .p-tablist-content,
-  .profile-page .profile-tabs-container .p-tablist-viewport {
-    padding: var(--space-1); /* 4px */
-  }
-
-  .profile-page .profile-tabs-container .p-tablist-tab-list {
-    gap: var(--space-1); /* 4px */
-  }
-
-  .profile-page .profile-tabs-container .p-tab {
-    padding: 0 var(--space-3);
-    font-size: 0.8125rem;
-    height: var(--button-height-md); /* 44px */
-    min-height: var(--button-height-md);
-  }
+  // PrimeNG tabs responsive overrides moved to _exceptions.scss (DS-EXC-014)
 
   .profile-page .performance-stats-grid {
     grid-template-columns: 1fr;
@@ -867,20 +755,7 @@
     display: none;
   }
 
-  .profile-page .profile-tabs-container .p-tablist-tab-list {
-    justify-content: center;
-  }
-
-  .profile-page .profile-tabs-container .p-tab {
-    padding: 0 var(--space-3);
-    height: var(--button-height-sm); /* 36px */
-    min-height: var(--button-height-sm);
-    gap: var(--space-1);
-  }
-
-  .profile-page .profile-tabs-container .p-tab i {
-    font-size: 1rem;
-  }
+  // PrimeNG tabs mobile overrides moved to _exceptions.scss (DS-EXC-014)
 
   .profile-page .invitation-badge {
     margin-left: var(--space-1);

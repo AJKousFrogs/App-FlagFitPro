@@ -495,6 +495,58 @@ exports.handler = async (event, context) => {
           return createSuccessResponse(result);
         }
 
+        // Send notification to another user (for ACWR alerts, etc.)
+        // Requires: targetUserId in body, and caller must be authorized (coach, admin, etc.)
+        if (event.httpMethod === "POST" && path === "send-to-user") {
+          const { targetUserId, ...notification } = body;
+
+          if (!targetUserId) {
+            return createErrorResponse(
+              "targetUserId is required",
+              400,
+              "validation_error",
+            );
+          }
+
+          // Verify caller has permission to send to this user
+          // For ACWR alerts, coaches can send to their team members
+          // Check if caller is coach and target is on their team
+          const { data: callerTeam } = await supabaseAdmin
+            .from("team_members")
+            .select("team_id")
+            .eq("user_id", userId)
+            .eq("role", "coach")
+            .limit(1)
+            .single();
+
+          if (callerTeam?.team_id) {
+            const { data: targetTeam } = await supabaseAdmin
+              .from("team_members")
+              .select("team_id")
+              .eq("user_id", targetUserId)
+              .eq("team_id", callerTeam.team_id)
+              .limit(1)
+              .single();
+
+            if (!targetTeam) {
+              return createErrorResponse(
+                "Unauthorized: You can only send notifications to members of your team",
+                403,
+                "unauthorized",
+              );
+            }
+          } else {
+            // For now, allow system/automated calls (ACWR alerts)
+            // In production, add more strict checks (service role, etc.)
+            console.log(
+              `[Push] Sending notification to user ${targetUserId} from ${userId}`,
+            );
+          }
+
+          const result = await sendNotificationToUser(targetUserId, notification);
+          return createSuccessResponse(result);
+        }
+
         // Get VAPID public key for client subscription
         if (event.httpMethod === "GET" && path === "vapid-key") {
           const publicKey = getVapidPublicKey();

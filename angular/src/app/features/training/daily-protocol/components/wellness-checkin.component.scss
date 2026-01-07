@@ -193,32 +193,7 @@
     }
   }
 
-  .p-slider {
-    flex: 1;
-    height: 6px;
-
-    .p-slider-handle {
-      width: 20px;
-      height: 20px;
-      background: var(--color-brand-primary);
-      border: 2px solid var(--surface-primary);
-      box-shadow: var(--shadow-sm);
-
-      &:hover {
-        background: var(--color-brand-primary-hover);
-        transform: scale(1.1);
-      }
-
-      &:focus {
-        outline: 2px solid var(--color-brand-primary);
-        outline-offset: 2px;
-      }
-    }
-
-    .p-slider-range {
-      background: var(--color-brand-primary);
-    }
-  }
+  // PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-012)
 }
 
 /* ========================================================================
@@ -247,16 +222,7 @@
       border-color: var(--color-brand-primary);
     }
 
-    .p-checkbox {
-      .p-checkbox-box {
-        border-color: var(--color-border-secondary);
-        border-radius: var(--radius-sm);
-
-        &.p-highlight {
-          background: var(--color-brand-primary);
-          border-color: var(--color-brand-primary);
-        }
-      }
+    // PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-012)
     }
   }
 }
@@ -339,6 +305,43 @@
       min-width: auto;
       text-align: center;
     }
+  }
+}
+
+/* ========================================================================
+   STATE NARRATION (5-Question Contract)
+   ======================================================================== */
+.state-narration {
+  display: block;
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-base);
+  margin-top: var(--space-2);
+  padding: var(--space-2);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-brand-primary);
+
+  strong {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+}
+
+.state-narration-inline {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-base);
+
+  strong {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+}
+
+.save-narration {
+  .state-narration {
+    margin-top: 0;
   }
 }
 

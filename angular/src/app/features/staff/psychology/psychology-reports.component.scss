@@ -166,13 +166,7 @@
       margin-bottom: var(--ds-spacing-sm);
     }
 
-    .p-progressbar {
-      height: var(--space-2);
-    }
-
-    .stress-bar .p-progressbar-value {
-      background: var(--orange-500);
-    }
+    // PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-044)
   }
 
   p-chart {
@@ -417,10 +411,7 @@
         align-items: center;
         gap: var(--ds-spacing-sm);
 
-        .p-progressbar {
-          flex: 1;
-          height: var(--space-2);
-        }
+        // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-044)
 
         span {
           font-weight: var(--font-weight-semibold);

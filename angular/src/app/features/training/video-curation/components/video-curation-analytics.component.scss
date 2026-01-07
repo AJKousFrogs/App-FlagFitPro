@@ -35,9 +35,7 @@
   height: 8px;
   border-radius: var(--radius-sm);
 
-  .p-progressbar-value {
-    background: var(--color-brand-primary);
-  }
+  // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-042)
 }
 
 .analytics-value {

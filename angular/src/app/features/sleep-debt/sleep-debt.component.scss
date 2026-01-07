@@ -166,21 +166,7 @@
       border-radius: var(--radius-sm);
       margin-bottom: var(--space-2);
 
-      &.danger .p-progressbar-value {
-        background: linear-gradient(
-          90deg,
-          var(--primitive-error-500),
-          var(--primitive-error-600)
-        );
-      }
-
-      &.warn .p-progressbar-value {
-        background: linear-gradient(
-          90deg,
-          var(--primitive-orange-500),
-          var(--primitive-orange-600)
-        );
-      }
+      // PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-046)
     }
 
     .impact-description {

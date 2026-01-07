@@ -74,6 +74,7 @@ const EVENT_TYPES = [
   { label: "Tournament", value: "tournament" },
   { label: "Team Meeting", value: "meeting" },
   { label: "Team Event / Social", value: "social" },
+  { label: "Post-Game Debrief", value: "debrief" },
 ];
 
 const LOCATIONS = [
@@ -830,14 +831,68 @@ export class CalendarCoachComponent implements OnInit {
     this.showCreateDialog = true;
   }
 
-  saveEvent(): void {
-    if (!this.eventForm.title) return;
-    this.messageService.add({
-      severity: "success",
-      summary: this.isEditing() ? "Event Updated" : "Event Created",
-      detail: `${this.eventForm.title} has been saved`,
-    });
-    this.showCreateDialog = false;
+  async saveEvent(): Promise<void> {
+    if (!this.eventForm.title || !this.eventForm.date) {
+      this.messageService.add({
+        severity: "warn",
+        summary: "Validation Error",
+        detail: "Please fill in all required fields",
+      });
+      return;
+    }
+
+    try {
+      const eventData = {
+        type: this.eventForm.type,
+        title: this.eventForm.title,
+        date: this.eventForm.date.toISOString().split("T")[0],
+        startTime: this.eventForm.startTime,
+        endTime: this.eventForm.endTime,
+        location: this.eventForm.location,
+        description: this.eventForm.description,
+        requireRsvp: this.eventForm.requireRsvp,
+        rsvpDeadline: null, // TODO: Add RSVP deadline field
+        recurring: this.eventForm.recurring,
+        notifyPlayers: this.eventForm.notifyPlayers,
+        notifyParents: this.eventForm.notifyParents,
+      };
+
+      if (this.isEditing() && this.selectedEvent()) {
+        // Update existing event
+        const response: any = await firstValueFrom(
+          this.api.put(`/api/coach/calendar?id=${this.selectedEvent()!.id}`, eventData),
+        );
+        if (response?.success) {
+          this.messageService.add({
+            severity: "success",
+            summary: "Event Updated",
+            detail: `${this.eventForm.title} has been updated`,
+          });
+          await this.loadData();
+        }
+      } else {
+        // Create new event
+        const response: any = await firstValueFrom(
+          this.api.post("/api/coach/calendar", eventData),
+        );
+        if (response?.success) {
+          this.messageService.add({
+            severity: "success",
+            summary: "Event Created",
+            detail: `${this.eventForm.title} has been created`,
+          });
+          await this.loadData();
+        }
+      }
+      this.showCreateDialog = false;
+    } catch (err) {
+      this.logger.error("Failed to save event", err);
+      this.messageService.add({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to save event. Please try again.",
+      });
+    }
   }
 
   viewEvent(event: TeamEvent): void {
@@ -849,8 +904,11 @@ export class CalendarCoachComponent implements OnInit {
     });
   }
 
-  viewRsvps(event: TeamEvent): void {
+  async viewRsvps(event: TeamEvent): Promise<void> {
     this.selectedEvent.set(event);
+    // TODO: Load RSVPs from backend
+    // For now, using empty array
+    this.rsvps.set([]);
     this.showRsvpDialog = true;
   }
 
@@ -862,12 +920,31 @@ export class CalendarCoachComponent implements OnInit {
     });
   }
 
-  cancelEvent(event: TeamEvent): void {
-    this.messageService.add({
-      severity: "warn",
-      summary: "Cancel Event",
-      detail: `Are you sure you want to cancel ${event.title}?`,
-    });
+  async cancelEvent(event: TeamEvent): Promise<void> {
+    if (!confirm(`Are you sure you want to cancel ${event.title}?`)) {
+      return;
+    }
+
+    try {
+      const response: any = await firstValueFrom(
+        this.api.delete(`/api/coach/calendar?id=${event.id}`),
+      );
+      if (response?.success) {
+        this.messageService.add({
+          severity: "success",
+          summary: "Event Cancelled",
+          detail: `${event.title} has been cancelled`,
+        });
+        await this.loadData();
+      }
+    } catch (err) {
+      this.logger.error("Failed to cancel event", err);
+      this.messageService.add({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to cancel event. Please try again.",
+      });
+    }
   }
 
   sendRsvpReminder(): void {
@@ -902,6 +979,7 @@ export class CalendarCoachComponent implements OnInit {
       tournament: "🏆",
       meeting: "📋",
       social: "🎉",
+      debrief: "📊",
     };
     return icons[type] || "📅";
   }

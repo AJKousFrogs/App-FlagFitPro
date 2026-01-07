@@ -14,6 +14,11 @@ const {
   calculateDateRange,
 } = require("./utils/db-query-helper.cjs");
 const { successResponse } = require("./utils/response-helper.cjs");
+const {
+  canCoachViewReadiness,
+  filterReadinessForCoach,
+} = require("./utils/consent-guard.cjs");
+const { getUserRole } = require("./utils/authorization-guard.cjs");
 
 /**
  * Get readiness history for an athlete
@@ -34,6 +39,10 @@ exports.handler = async (event, context) => {
       const days = parseIntParam(event, "days", 7, 1, 365);
       const { startDate, endDate } = calculateDateRange(days, false); // Backward-looking
 
+      // Check if coach requesting another athlete's data
+      const role = await getUserRole(userId);
+      const isCoach = ['coach', 'admin'].includes(role);
+      
       // Get readiness scores
       const query = supabaseAdmin
         .from("readiness_scores")
@@ -49,6 +58,17 @@ exports.handler = async (event, context) => {
       );
       if (!result.success) {
         return result.error;
+      }
+
+      // Filter data for coach if consent not granted
+      if (isCoach && athleteId !== userId && result.data) {
+        const consentCheck = await canCoachViewReadiness(userId, athleteId);
+        const filteredData = result.data.map(item => filterReadinessForCoach(
+          item,
+          consentCheck.allowed && consentCheck.reason === 'CONSENT_GRANTED',
+          consentCheck.safetyOverride
+        ));
+        return successResponse(filteredData);
       }
 
       return successResponse(result.data);

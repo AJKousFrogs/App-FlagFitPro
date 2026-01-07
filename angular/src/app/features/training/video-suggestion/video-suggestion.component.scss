@@ -629,12 +629,9 @@
 }
 
 /* Video Preview Dialog */
-// Dialog styling - dialogs render in overlay
-// These styles should be in global styles or use PT API
+// PrimeNG dialog override moved to _exceptions.scss (DS-EXC-019)
 .video-preview-dialog {
-  .p-dialog-content {
-    padding: 0;
-  }
+  // Component-specific styles remain here
 }
 
 .preview-content {

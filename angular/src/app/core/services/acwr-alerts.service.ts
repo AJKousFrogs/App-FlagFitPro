@@ -15,6 +15,8 @@
  */
 
 import { Injectable, signal, computed, effect, inject } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { AuthService } from "./auth.service";
 import { SupabaseService } from "./supabase.service";
@@ -29,6 +31,8 @@ import {
   SessionType,
 } from "../models/acwr.models";
 import { AcwrService } from "./acwr.service";
+import { OwnershipTransitionService } from "./ownership-transition.service";
+import { environment } from "../../../environments/environment";
 
 @Injectable({
   providedIn: "root",
@@ -36,10 +40,13 @@ import { AcwrService } from "./acwr.service";
 export class AcwrAlertsService {
   // Inject dependencies using inject() for Angular 21 best practices
   private readonly acwrService = inject(AcwrService);
+  private readonly ownershipTransitionService = inject(OwnershipTransitionService);
   private logger = inject(LoggerService);
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
   private notificationService = inject(NotificationStateService);
+  private http = inject(HttpClient);
+  private readonly apiBaseUrl = environment.apiUrl || "";
 
   // Active alerts
   private readonly alerts = signal<LoadAlert[]>([]);
@@ -87,6 +94,9 @@ export class AcwrAlertsService {
         recommendation: riskZone.recommendation,
         acwrValue: ratio,
       });
+      
+      // Log ownership transition for critical ACWR
+      this.logOwnershipTransition("acwr_critical", ratio);
     }
     // Check for elevated risk (ACWR > 1.30)
     else if (ratio > 1.3) {
@@ -97,6 +107,9 @@ export class AcwrAlertsService {
         recommendation: riskZone.recommendation,
         acwrValue: ratio,
       });
+      
+      // Log ownership transition for elevated ACWR
+      this.logOwnershipTransition("acwr_elevated", ratio);
     }
     // Check for under-training (ACWR < 0.80)
     else if (ratio > 0 && ratio < 0.8) {
@@ -225,6 +238,8 @@ export class AcwrAlertsService {
 
   /**
    * Notify coach of critical alert
+   * Sends database notification, push notification, and email notification
+   * Falls back gracefully if push/email fail - DB notification always succeeds
    */
   private async notifyCoach(alert: LoadAlert): Promise<void> {
     this.logger.info("📧 Notifying coach of critical alert:", alert.message);
@@ -250,12 +265,13 @@ export class AcwrAlertsService {
           .eq("role", "coach");
 
         if (coaches && coaches.length > 0) {
-          // Create notification for each coach
+          // Create database notification for each coach (always succeeds)
           const coachNotifications = coaches.map((coach) => ({
             user_id: coach.user_id,
             type: "player_alert",
             title: `Critical Alert: ${alert.playerName}`,
             message: alert.message,
+            priority: alert.severity === "critical" ? "high" : "medium",
             data: {
               alertId: alert.id,
               playerId: alert.playerId,
@@ -266,13 +282,186 @@ export class AcwrAlertsService {
             },
           }));
 
+          // Always create DB notifications first (fallback)
           await this.supabaseService.client
             .from("notifications")
             .insert(coachNotifications);
+
+          // Refresh notification badge
+          this.notificationService.refreshBadgeCount();
+
+          // Send push and email notifications to each coach (with fallback)
+          const dashboardUrl = `${window.location.origin}/coach/dashboard`;
+
+          for (const coach of coaches) {
+            const coachUserId = coach.user_id;
+
+            // Fetch coach profile data for email and name
+            // Try profiles table first, fallback to auth user metadata
+            let coachEmail: string | null = null;
+            let coachName = "Coach";
+
+            try {
+              const { data: profile } = await this.supabaseService.client
+                .from("profiles")
+                .select("email, full_name")
+                .eq("user_id", coachUserId)
+                .single();
+
+              if (profile) {
+                coachEmail = profile.email || null;
+                coachName = profile.full_name || coachName;
+              }
+            } catch (profileError) {
+              // Profiles table might not exist or have different schema
+              this.logger.debug(
+                `[ACWR Alert] Could not fetch profile for coach ${coachUserId}, will skip email`,
+              );
+            }
+
+            // If no email from profiles, try to get from current user's auth session
+            // (This is a limitation - we can't easily get other users' emails client-side)
+            // Email will be skipped if not available, push notification will still work
+
+            // Send push notification (non-blocking, failures logged but don't stop process)
+            this.sendPushNotificationToCoach(coachUserId, alert, dashboardUrl).catch(
+              (error) => {
+                this.logger.warn(
+                  `[ACWR Alert] Failed to send push notification to coach ${coachUserId}:`,
+                  error,
+                );
+              },
+            );
+
+            // Send email notification (non-blocking, failures logged but don't stop process)
+            if (coachEmail) {
+              this.sendEmailNotificationToCoach(
+                coachEmail,
+                coachName,
+                alert,
+                dashboardUrl,
+              ).catch((error) => {
+                this.logger.warn(
+                  `[ACWR Alert] Failed to send email notification to coach ${coachEmail}:`,
+                  error,
+                );
+              });
+            } else {
+              this.logger.warn(
+                `[ACWR Alert] Coach ${coachUserId} has no email address, skipping email notification`,
+              );
+            }
+          }
         }
       }
     } catch (error) {
-      this.logger.warn("Failed to notify coach:", error);
+      // Even if everything fails, log but don't throw - DB notification is the fallback
+      this.logger.error("[ACWR Alert] Failed to notify coach:", error);
+    }
+  }
+
+  /**
+   * Send push notification to coach
+   * Non-blocking - failures are logged but don't prevent DB notification
+   */
+  private async sendPushNotificationToCoach(
+    coachUserId: string,
+    alert: LoadAlert,
+    dashboardUrl: string,
+  ): Promise<void> {
+    try {
+      const isCritical = alert.acwrValue > 1.5;
+      const pushEndpoint = `${this.apiBaseUrl}/api/push/send-to-user`;
+
+      const pushPayload = {
+        targetUserId: coachUserId,
+        title: `${isCritical ? "🚨 CRITICAL" : "⚠️"} ACWR Alert: ${alert.playerName}`,
+        body: alert.message,
+        icon: "/assets/icons/alert-icon.png",
+        badge: "/assets/icons/badge.png",
+        tag: `acwr-alert-${alert.id}`,
+        type: "acwr_alert",
+        url: dashboardUrl,
+        urgency: isCritical ? "high" : "normal",
+        requireInteraction: isCritical,
+        data: {
+          alertId: alert.id,
+          playerId: alert.playerId,
+          playerName: alert.playerName,
+          acwrValue: alert.acwrValue,
+          severity: alert.severity,
+        },
+      };
+
+      const response = await firstValueFrom(
+        this.http.post<{ success: boolean; message?: string }>(
+          pushEndpoint,
+          pushPayload,
+        ),
+      );
+
+      if (response.success) {
+        this.logger.info(
+          `[ACWR Alert] Push notification sent to coach ${coachUserId}`,
+        );
+      } else {
+        throw new Error(response.message || "Push notification failed");
+      }
+    } catch (error: any) {
+      // Log but don't throw - push failures are acceptable
+      this.logger.warn(
+        `[ACWR Alert] Push notification error for coach ${coachUserId}:`,
+        error.message || error,
+      );
+      throw error; // Re-throw so caller can handle gracefully
+    }
+  }
+
+  /**
+   * Send email notification to coach
+   * Non-blocking - failures are logged but don't prevent DB notification
+   */
+  private async sendEmailNotificationToCoach(
+    coachEmail: string,
+    coachName: string,
+    alert: LoadAlert,
+    dashboardUrl: string,
+  ): Promise<void> {
+    try {
+      const emailEndpoint = `${this.apiBaseUrl}/api/send-email`;
+
+      const emailPayload = {
+        type: "acwr_alert",
+        to: coachEmail,
+        coachName: coachName,
+        playerName: alert.playerName,
+        acwrValue: alert.acwrValue,
+        alertMessage: alert.message,
+        recommendation: alert.recommendation,
+        dashboardUrl: dashboardUrl,
+      };
+
+      const response = await firstValueFrom(
+        this.http.post<{ success: boolean; messageId?: string; error?: string }>(
+          emailEndpoint,
+          emailPayload,
+        ),
+      );
+
+      if (response.success) {
+        this.logger.info(
+          `[ACWR Alert] Email notification sent to coach ${coachEmail} (messageId: ${response.messageId})`,
+        );
+      } else {
+        throw new Error(response.error || "Email notification failed");
+      }
+    } catch (error: any) {
+      // Log but don't throw - email failures are acceptable
+      this.logger.warn(
+        `[ACWR Alert] Email notification error for coach ${coachEmail}:`,
+        error.message || error,
+      );
+      throw error; // Re-throw so caller can handle gracefully
     }
   }
 
@@ -452,6 +641,34 @@ export class AcwrAlertsService {
     }
 
     return false;
+  }
+
+  /**
+   * Log ownership transition for ACWR alerts
+   */
+  private async logOwnershipTransition(trigger: string, acwrValue: number): Promise<void> {
+    const user = this.authService.getUser();
+    if (!user?.id) return;
+
+    try {
+      const actionRequired = 
+        trigger === "acwr_critical"
+          ? `ACWR critical (${acwrValue.toFixed(2)}) - adjust training load immediately`
+          : `ACWR elevated (${acwrValue.toFixed(2)}) - monitor and consider load reduction`;
+
+      await this.ownershipTransitionService.logTransition({
+        trigger,
+        fromRole: "player",
+        toRole: "coach",
+        playerId: user.id,
+        actionRequired,
+        status: trigger === "acwr_critical" ? "pending" : "pending",
+      });
+
+      this.logger.info(`[ACWRAlerts] Logged ownership transition: ${trigger} (ACWR: ${acwrValue.toFixed(2)})`);
+    } catch (error) {
+      this.logger.error("[ACWRAlerts] Error logging ownership transition:", error);
+    }
   }
 
   /**

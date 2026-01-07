@@ -25,6 +25,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { SharedInsightFeedService, SharedInsight } from "../../../core/services/shared-insight-feed.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
@@ -783,6 +784,77 @@ interface ReportPrivacySettings {
                 }
               </div>
             </p-tabpanel>
+
+            <!-- Shared Insights -->
+            <p-tabpanel [value]="3">
+              <div class="insights-section">
+                <div class="section-header">
+                  <h3>Team Insights & Communication</h3>
+                  <app-button
+                    iconLeft="pi-refresh"
+                    variant="outlined"
+                    size="sm"
+                    (clicked)="loadInsights()"
+                    >Refresh</app-button
+                  >
+                </div>
+
+                @if (insightFeedService.loading()) {
+                  <div class="loading-state">
+                    <i class="pi pi-spin pi-spinner"></i>
+                    <span>Loading insights...</span>
+                  </div>
+                } @else if (insightFeedService.filteredInsights().length === 0) {
+                  <div class="empty-state">
+                    <i class="pi pi-info-circle"></i>
+                    <p>No shared insights available</p>
+                    <small>Insights from coaches, physiotherapists, and nutritionists will appear here</small>
+                  </div>
+                } @else {
+                  <div class="insights-list">
+                    @for (insight of insightFeedService.filteredInsights(); track insight.id) {
+                      <p-card styleClass="insight-card" [class]="'priority-' + insight.priority">
+                        <ng-template #header>
+                          <div class="insight-header">
+                            <div class="insight-meta">
+                              <p-tag
+                                [value]="insight.fromRole"
+                                [severity]="getRoleSeverity(insight.fromRole)"
+                              ></p-tag>
+                              <span class="insight-type">{{ getInsightTypeLabel(insight.insightType) }}</span>
+                              @if (insight.playerName) {
+                                <span class="player-name">{{ insight.playerName }}</span>
+                              }
+                            </div>
+                            <div class="insight-actions">
+                              <p-tag
+                                [value]="insight.priority"
+                                [severity]="getPrioritySeverity(insight.priority)"
+                                styleClass="priority-tag"
+                              ></p-tag>
+                              <span class="insight-date">{{ formatDate(insight.createdAt) }}</span>
+                            </div>
+                          </div>
+                        </ng-template>
+                        <div class="insight-content">
+                          <h4 class="insight-title">{{ insight.title }}</h4>
+                          <p class="insight-text">{{ insight.content }}</p>
+                          @if (insight.metadata && Object.keys(insight.metadata).length > 0) {
+                            <div class="insight-metadata">
+                              @for (entry of getMetadataEntries(insight.metadata); track entry.key) {
+                                <div class="metadata-item">
+                                  <strong>{{ entry.key }}:</strong> {{ entry.value }}
+                                </div>
+                              }
+                            </div>
+                          }
+                        </div>
+                      </p-card>
+                    }
+                  </div>
+                }
+              </div>
+            </p-tabpanel>
           </p-tabpanels>
         </p-tabs>
 
@@ -1000,6 +1072,7 @@ interface ReportPrivacySettings {
 export class PsychologyReportsComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
+  private insightFeedService = inject(SharedInsightFeedService);
 
   // State
   loading = signal(false);
@@ -1118,6 +1191,11 @@ export class PsychologyReportsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+    this.loadInsights();
+  }
+
+  async loadInsights(): Promise<void> {
+    await this.insightFeedService.loadInsights();
   }
 
   loadWellnessData(): void {
@@ -1542,5 +1620,55 @@ export class PsychologyReportsComponent implements OnInit {
       readiness: 7,
       concern: "",
     };
+  }
+
+  getRoleSeverity(role: string): "success" | "info" | "warning" | "danger" {
+    const roleMap: Record<string, "success" | "info" | "warning" | "danger"> = {
+      coach: "info",
+      physiotherapist: "success",
+      nutritionist: "warning",
+      psychologist: "danger",
+    };
+    return roleMap[role] || "info";
+  }
+
+  getInsightTypeLabel(type: string): string {
+    const typeMap: Record<string, string> = {
+      physio_note: "Physio Note",
+      nutrition_compliance: "Nutrition Compliance",
+      psychology_flag: "Psychology Flag",
+      coach_note: "Coach Note",
+    };
+    return typeMap[type] || type;
+  }
+
+  getPrioritySeverity(priority: string): "success" | "info" | "warning" | "danger" {
+    const priorityMap: Record<string, "success" | "info" | "warning" | "danger"> = {
+      low: "info",
+      medium: "warning",
+      high: "danger",
+    };
+    return priorityMap[priority] || "info";
+  }
+
+  formatDate(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+  }
+
+  getMetadataEntries(metadata: Record<string, unknown>): Array<{ key: string; value: string }> {
+    return Object.entries(metadata).map(([key, value]) => ({
+      key: key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+      value: String(value),
+    }));
   }
 }

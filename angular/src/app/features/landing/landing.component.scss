@@ -148,7 +148,7 @@
   justify-content: center;
   background: linear-gradient(
     135deg,
-    var(--ds-primary-green-light, #0ab85a) 0%,
+    var(--ds-primary-green-light) 0%,
     var(--ds-primary-green) 100%
   );
   border-radius: var(--radius-full);
@@ -490,55 +490,55 @@
 .feature-icon-analytics {
   background: linear-gradient(
     135deg,
-    rgba(59, 130, 246, 0.1) 0%,
-    rgba(59, 130, 246, 0.2) 100%
+    var(--color-status-info-light) 0%,
+    var(--color-status-info-surface) 100%
   );
-  color: var(--primitive-blue-500);
+  color: var(--color-status-info);
 }
 
 .feature-icon-tournament {
   background: linear-gradient(
     135deg,
-    rgba(245, 158, 11, 0.1) 0%,
-    rgba(245, 158, 11, 0.2) 100%
+    var(--color-status-warning-light) 0%,
+    var(--color-status-warning-surface) 100%
   );
-  color: var(--primitive-amber-500);
+  color: var(--color-status-warning);
 }
 
 .feature-icon-community {
   background: linear-gradient(
     135deg,
-    rgba(16, 185, 129, 0.1) 0%,
-    rgba(16, 185, 129, 0.2) 100%
+    var(--color-status-success-light) 0%,
+    var(--color-status-success-surface) 100%
   );
-  color: var(--primitive-success-500);
+  color: var(--color-status-success);
 }
 
 .feature-icon-training {
   background: linear-gradient(
     135deg,
-    rgba(139, 92, 246, 0.1) 0%,
-    rgba(139, 92, 246, 0.2) 100%
+    var(--color-status-help-light) 0%,
+    var(--color-status-help-subtle) 100%
   );
-  color: var(--primitive-purple-500);
+  color: var(--color-status-help);
 }
 
 .feature-icon-ai-coach {
   background: linear-gradient(
     135deg,
-    rgba(236, 72, 153, 0.1) 0%,
-    rgba(236, 72, 153, 0.2) 100%
+    var(--color-feature-pink-light) 0%,
+    var(--color-feature-pink-surface) 100%
   );
-  color: var(--primitive-pink-500);
+  color: var(--color-feature-pink);
 }
 
 .feature-icon-progress {
   background: linear-gradient(
     135deg,
-    rgba(6, 182, 212, 0.1) 0%,
-    rgba(6, 182, 212, 0.2) 100%
+    var(--color-feature-cyan-light) 0%,
+    var(--color-feature-cyan-surface) 100%
   );
-  color: var(--primitive-cyan-500);
+  color: var(--color-feature-cyan);
 }
 
 .feature-card-title {
@@ -567,7 +567,7 @@
   border-radius: var(--radius-md);
 
   &:hover {
-    background: rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.1);
+    background: var(--color-status-info-light);
     gap: var(--space-3);
   }
 

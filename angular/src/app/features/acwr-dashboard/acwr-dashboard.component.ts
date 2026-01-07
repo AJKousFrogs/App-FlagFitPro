@@ -1,6 +1,22 @@
 /**
  * ACWR Dashboard Component
  *
+ * ⭐ CANONICAL PAGE — Design System Exemplar (Pending Cleanup)
+ * ============================================================
+ * This page is marked as canonical but requires cleanup before freeze.
+ * 
+ * RULES:
+ * - Future refactors copy FROM this page, never INTO it
+ * - Changes require design system curator approval
+ * - Must be cleaned to full compliance before canonical freeze
+ * 
+ * See docs/CANONICAL_PAGES.md for full documentation.
+ *
+ * CLEANUP REQUIRED:
+ * - Remove `!important` declarations (33 instances)
+ * - Remove PrimeNG overrides from component SCSS
+ * - Replace raw spacing values with tokens
+ *
  * Displays real-time Acute:Chronic Workload Ratio with:
  * - Color-coded risk zones
  * - Load trend charts
@@ -33,6 +49,12 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { DataConfidenceService } from "../../core/services/data-confidence.service";
+import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
+import { OwnershipTransitionService, OwnershipTransition } from "../../core/services/ownership-transition.service";
+import { OwnershipTransitionBadgeComponent } from "../../shared/components/ownership-transition-badge/ownership-transition-badge.component";
+import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
+import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -46,6 +68,9 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
     LazyChartComponent,
     PageErrorStateComponent,
     AppLoadingComponent,
+    ConfidenceIndicatorComponent,
+    OwnershipTransitionBadgeComponent,
+    SemanticMeaningRendererComponent,
   ],
   template: `
     <!-- Loading State -->
@@ -76,8 +101,16 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
           <p class="subtitle">Acute:Chronic Workload Ratio (ACWR) Analysis</p>
         </div>
 
-        <!-- Alert Banner -->
-        @if (alerts().length > 0 && topAlert()) {
+        <!-- Alert Banner - Phase 3: Semantic Meaning Renderer -->
+        @if (alertRiskMeaning()) {
+          <app-semantic-meaning-renderer
+            [meaning]="alertRiskMeaning()!"
+            [context]="{ container: 'banner', priority: alertRiskMeaning()!.severity === 'critical' ? 'critical' : 'high', dismissible: true }"
+          ></app-semantic-meaning-renderer>
+        }
+
+        <!-- Alert Banner - Phase 2.1 Enhanced with 5-Question Contract (Fallback for non-risk alerts) -->
+        @if (alerts().length > 0 && topAlert() && !alertRiskMeaning()) {
           <div class="alert-banner" [class]="'alert-' + topAlert()!.severity">
             <div class="alert-icon">
               @if (topAlert()!.severity === "critical") {
@@ -91,6 +124,75 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
             <div class="alert-content">
               <h3>{{ topAlert()!.message }}</h3>
               <p>{{ topAlert()!.recommendation }}</p>
+              
+              <!-- Phase 2.1: 5-Question Contract Display -->
+              <div class="alert-contract">
+                <!-- 1. What changed - Show trend -->
+                @if (acwrTrend().length > 1) {
+                  <div class="contract-section">
+                    <strong>What changed:</strong>
+                    <span class="trend-display">
+                      ACWR rose from {{ acwrTrend()[0] | number: "1.2-2" }}
+                      @for (value of acwrTrend().slice(1); track $index) {
+                        → {{ value | number: "1.2-2" }}
+                      }
+                      over {{ acwrTrend().length - 1 }} day(s)
+                    </span>
+                  </div>
+                }
+                
+                <!-- 2. Why it changed - Cause attribution -->
+                @if (acwrCauseAttribution().length > 0) {
+                  <div class="contract-section">
+                    <strong>Why it changed:</strong>
+                    <ul class="cause-list">
+                      @for (cause of acwrCauseAttribution(); track cause.sessionId) {
+                        <li>
+                          {{ cause.sessionType }} session on {{ cause.date | date: "MMM d" }}
+                          (Load: {{ cause.load | number: "1.0-0" }} AU)
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                } @else {
+                  <div class="contract-section">
+                    <strong>Why it changed:</strong>
+                    <span>Recent high-intensity training sessions increased your acute load.</span>
+                  </div>
+                }
+                
+                <!-- 3. What this means -->
+                <div class="contract-section">
+                  <strong>What this means:</strong>
+                  <span>{{ riskZone().description }}</span>
+                </div>
+                
+                <!-- 4. Who is responsible now - Ownership transition -->
+                @if (ownershipTransition()) {
+                  <div class="contract-section">
+                    <strong>Who is responsible now:</strong>
+                    <app-ownership-transition-badge
+                      [transition]="ownershipTransition()!"
+                      [showDetails]="true"
+                    ></app-ownership-transition-badge>
+                  </div>
+                }
+                
+                <!-- 5. What happens next -->
+                <div class="contract-section">
+                  <strong>What happens next:</strong>
+                  @if (ownershipTransition()?.toRole === "coach") {
+                    <span>Coach is reviewing — no action needed now. You'll be notified when your plan is adjusted.</span>
+                  } @else {
+                    <span>{{ riskZone().recommendation }}</span>
+                    <div class="action-buttons">
+                      <button class="action-btn" (click)="logSession()">
+                        Modify Today's Session
+                      </button>
+                    </div>
+                  }
+                </div>
+              </div>
             </div>
             <button class="alert-dismiss" (click)="dismissTopAlert()">✕</button>
           </div>
@@ -159,26 +261,54 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
               <div class="ratio-circle" [style.border-color]="riskZone().color">
                 <div class="ratio-value">
                   {{ acwrRatio() | number: "1.2-2" }}
-                </div>
-                <div class="ratio-label">ACWR</div>
-              </div>
-
-              <div
-                class="risk-zone-indicator"
-                [style.background-color]="riskZone().color"
-              >
-                <div class="risk-icon">
-                  @if (riskZone().level === "sweet-spot") {
-                    ✓
-                  } @else if (riskZone().level === "danger-zone") {
-                    ⚠
-                  } @else {
-                    ●
+                  @if (acwrConfidenceRange()) {
+                    <span class="confidence-range">
+                      (est. {{ acwrConfidenceRange()!.min | number: "1.2-2" }}-{{ acwrConfidenceRange()!.max | number: "1.2-2" }})
+                    </span>
                   }
                 </div>
-                <div class="risk-label">{{ riskZone().label }}</div>
-                <div class="risk-description">{{ riskZone().description }}</div>
+                <div class="ratio-label">
+                  ACWR
+                  @if (acwrConfidenceRange()) {
+                    <span class="confidence-percentage">
+                      Confidence: {{ (acwrConfidenceRange()!.confidence * 100) | number: "1.0-0" }}%
+                    </span>
+                  }
+                </div>
+                <!-- Phase 2.2: Prominent Data Confidence Indicator -->
+                <div class="confidence-wrapper">
+                  <app-confidence-indicator
+                    [score]="acwrConfidence().score"
+                    [missingInputs]="acwrConfidence().missingInputs"
+                    [showDetails]="true"
+                    [showActions]="true"
+                  ></app-confidence-indicator>
+                </div>
               </div>
+
+              <!-- Risk Zone Indicator - Phase 3: Semantic Meaning Renderer -->
+              @if (riskZoneMeaning()) {
+                <app-semantic-meaning-renderer
+                  [meaning]="riskZoneMeaning()!"
+                  [context]="{ container: 'inline', priority: riskZoneMeaning()!.severity === 'critical' ? 'critical' : 'high', dismissible: false }"
+                ></app-semantic-meaning-renderer>
+              } @else {
+                <!-- Non-risk zone display (sweet spot, under-training) -->
+                <div
+                  class="risk-zone-indicator"
+                  [style.background-color]="riskZone().color"
+                >
+                  <div class="risk-icon">
+                    @if (riskZone().level === "sweet-spot") {
+                      ✓
+                    } @else {
+                      ●
+                    }
+                  </div>
+                  <div class="risk-label">{{ riskZone().label }}</div>
+                  <div class="risk-description">{{ riskZone().description }}</div>
+                </div>
+              }
             </div>
 
             <!-- Load Breakdown -->
@@ -380,6 +510,8 @@ export class AcwrDashboardComponent implements OnInit {
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly loadService = inject(LoadMonitoringService);
   private readonly alertsService = inject(AcwrAlertsService);
+  private readonly confidenceService = inject(DataConfidenceService);
+  private readonly ownershipTransitionService = inject(OwnershipTransitionService);
   private logger = inject(LoggerService);
 
   // Runtime guard signals - prevent white screen crashes
@@ -419,6 +551,40 @@ export class AcwrDashboardComponent implements OnInit {
     return quality?.level === "insufficient" || quality?.level === "low";
   });
 
+  // ACWR confidence calculation
+  public readonly acwrConfidence = computed(() => {
+    const quality = this.dataQuality();
+    const trainingDays = quality?.daysWithData || 0;
+    return this.confidenceService.calculateACWRConfidence(trainingDays, 21);
+  });
+
+  // ACWR confidence range calculation
+  public readonly acwrConfidenceRange = computed(() => {
+    const ratio = this.acwrRatio();
+    const confidence = this.acwrConfidence();
+    
+    if (!ratio || ratio === null || confidence.score >= 0.9) {
+      // High confidence - no range needed
+      return null;
+    }
+
+    // Calculate range based on confidence score
+    // Lower confidence = wider range
+    // Formula: range = ±(1 - confidence) * 0.15 * ratio
+    // This gives approximately ±15% at 0% confidence, ±7.5% at 50% confidence, ±1.5% at 90% confidence
+    const uncertaintyFactor = (1 - confidence.score) * 0.15;
+    const range = ratio * uncertaintyFactor;
+    
+    const minEstimate = Math.max(0, ratio - range);
+    const maxEstimate = ratio + range;
+
+    return {
+      min: minEstimate,
+      max: maxEstimate,
+      confidence: confidence.score,
+    };
+  });
+
   // Centralized UX copy for insufficient data state
   public readonly insufficientDataMessage = METRIC_INSUFFICIENT_DATA.acwr;
 
@@ -437,6 +603,83 @@ export class AcwrDashboardComponent implements OnInit {
       borderDash?: number[];
     }[];
   } | null>(null);
+
+  // Phase 2.1 - ACWR Trend for 5-Question Contract
+  acwrTrend = computed(() => {
+    const chartData = this.trendChartData();
+    if (!chartData || chartData.datasets.length === 0) {
+      const current = this.acwrRatio();
+      return current ? [current] : [];
+    }
+    // Get last 5 data points to show trend
+    const data = chartData.datasets[0].data;
+    return data.slice(-5).filter((v) => v > 0);
+  });
+
+  // Phase 2.1 - Cause Attribution (loaded from sessions)
+  acwrCauseAttribution = signal<Array<{
+    sessionId: string;
+    date: Date;
+    sessionType: string;
+    load: number;
+  }>>([]);
+
+  // Phase 2.1 - Ownership Transition
+  ownershipTransition = signal<OwnershipTransition | null>(null);
+
+  // Phase 3 - Semantic Meaning: Risk from Alert Banner
+  public readonly alertRiskMeaning = computed<RiskMeaning | null>(() => {
+    const alert = this.topAlert();
+    if (!alert || alert.severity === "info") {
+      return null;
+    }
+
+    // Map alert severity to risk severity
+    const severityMap: Record<string, RiskMeaning["severity"]> = {
+      warning: "moderate",
+      critical: "critical",
+    };
+
+    const severity = severityMap[alert.severity] || "moderate";
+    const zone = this.riskZone();
+
+    return {
+      type: "risk",
+      severity,
+      source: "acwr",
+      affectedEntity: "acwr-dashboard",
+      message: alert.message,
+      recommendation: alert.recommendation || zone.recommendation,
+    };
+  });
+
+  // Phase 3 - Semantic Meaning: Risk from Risk Zone Indicator
+  public readonly riskZoneMeaning = computed<RiskMeaning | null>(() => {
+    const zone = this.riskZone();
+
+    // Only show risk meaning for elevated-risk and danger-zone
+    // Sweet spot and under-training are not risks (they're status indicators)
+    if (zone.level === "sweet-spot" || zone.level === "under-training" || zone.level === "no-data") {
+      return null;
+    }
+
+    // Map zone level to risk severity
+    const severityMap: Record<string, RiskMeaning["severity"]> = {
+      "elevated-risk": "high",
+      "danger-zone": "critical",
+    };
+
+    const severity = severityMap[zone.level] || "moderate";
+
+    return {
+      type: "risk",
+      severity,
+      source: "acwr",
+      affectedEntity: "acwr-ratio",
+      message: zone.description,
+      recommendation: zone.recommendation,
+    };
+  });
 
   // Chart options for trend visualization
   trendChartOptions = {
@@ -481,6 +724,8 @@ export class AcwrDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.initializeDashboard();
     this.loadTrendData();
+    this.loadOwnershipTransition();
+    this.loadCauseAttribution();
   }
 
   /**
@@ -781,6 +1026,92 @@ export class AcwrDashboardComponent implements OnInit {
       });
     } catch (error) {
       this.logger.error("Error loading trend data:", error);
+    }
+  }
+
+  /**
+   * Phase 2.1 - Load ownership transition for ACWR alerts
+   */
+  private async loadOwnershipTransition(): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) return;
+
+      const currentACWR = this.acwrRatio();
+      if (!currentACWR || currentACWR <= 1.3) {
+        return; // No transition needed for low ACWR
+      }
+
+      // Get recent ownership transitions for ACWR alerts
+      const transitions = await this.ownershipTransitionService.getPlayerTransitions(
+        user.id,
+        10
+      );
+
+      // Filter for ACWR-related transitions
+      const acwrTransitions = transitions.filter(
+        (t) => t.trigger === "acwr_critical" || t.trigger === "acwr_elevated"
+      );
+
+      if (acwrTransitions.length > 0) {
+        // Get the most recent one
+        this.ownershipTransition.set(acwrTransitions[0]);
+      }
+    } catch (error) {
+      this.logger.error("[ACWR Dashboard] Error loading ownership transition:", error);
+    }
+  }
+
+  /**
+   * Phase 2.1 - Enhanced cause attribution from recent sessions
+   */
+  private async loadCauseAttribution(): Promise<void> {
+    try {
+      const user = this.authService.getUser();
+      if (!user?.id) return;
+
+      const currentACWR = this.acwrRatio();
+      if (!currentACWR || currentACWR <= 1.3) {
+        this.acwrCauseAttribution.set([]);
+        return;
+      }
+
+      // Get recent high-load sessions (last 7 days)
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+
+      const { data: sessions } = await this.supabaseService.client
+        .from("training_sessions")
+        .select("id, session_date, duration_minutes, rpe, session_type")
+        .eq("user_id", user.id)
+        .gte("session_date", startDate.toISOString().split("T")[0])
+        .lte("session_date", endDate.toISOString().split("T")[0])
+        .eq("status", "completed")
+        .order("session_date", { ascending: false })
+        .limit(10);
+
+      if (!sessions || sessions.length === 0) {
+        this.acwrCauseAttribution.set([]);
+        return;
+      }
+
+      // Calculate load for each session and identify high-load contributors
+      const highLoadSessions = sessions
+        .map((s) => ({
+          sessionId: s.id,
+          date: new Date(s.session_date),
+          sessionType: s.session_type || "Training",
+          load: (s.duration_minutes || 60) * (s.rpe || 5),
+        }))
+        .filter((s) => s.load > 300) // High load threshold
+        .sort((a, b) => b.load - a.load)
+        .slice(0, 3); // Top 3 contributors
+
+      this.acwrCauseAttribution.set(highLoadSessions);
+    } catch (error) {
+      this.logger.error("[ACWR Dashboard] Error loading cause attribution:", error);
+      this.acwrCauseAttribution.set([]);
     }
   }
 

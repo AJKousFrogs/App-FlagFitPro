@@ -264,16 +264,11 @@
   color: var(--primitive-error-700);
 }
 
-.hydration-green .p-progressbar-value {
-  background: var(--color-status-info);
-}
-
-.hydration-orange .p-progressbar-value {
-  background: var(--color-status-warning);
-}
-
-.hydration-red .p-progressbar-value {
-  background: var(--color-status-error);
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-030)
+.hydration-green,
+.hydration-orange,
+.hydration-red {
+  // Component-specific styles remain here
 }
 
 .hydration-details {

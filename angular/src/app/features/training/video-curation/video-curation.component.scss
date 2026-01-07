@@ -38,20 +38,7 @@
 }
 
 /* Tabs */
-.p-tabs {
-  .p-tablist {
-    background: var(--surface-secondary);
-    border-radius: var(--radius-lg);
-    padding: var(--space-2);
-    margin-bottom: var(--space-4);
-  }
-
-  .p-tab {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-}
+// PrimeNG tabs overrides moved to _brand-overrides.scss (global tabs styling)
 
 /* Responsive */
 @media (max-width: 768px) {

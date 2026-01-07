@@ -232,6 +232,13 @@ async function getRTPAthletes(teamId) {
  * Update RTP progress for an athlete
  */
 async function updateRTPProgress(injuryId, updates) {
+  // Get current injury data to check if phase is completing
+  const { data: currentInjury } = await supabaseAdmin
+    .from("athlete_injuries")
+    .select("user_id, current_phase, rtp_progress")
+    .eq("id", injuryId)
+    .single();
+
   const { data, error } = await supabaseAdmin
     .from("athlete_injuries")
     .update({
@@ -247,6 +254,59 @@ async function updateRTPProgress(injuryId, updates) {
   if (error) {
     throw error;
   }
+
+  // Check if RTP phase is completing (progress >= 100% or phase changed significantly)
+  const phaseCompleted = updates.progress >= 100 || 
+    (currentInjury && currentInjury.rtp_progress < 100 && updates.progress >= 100);
+
+  if (phaseCompleted && data.user_id) {
+    // Log ownership transition: Physio → Coach (for approval)
+    try {
+      // Get player's team to find coach
+      const { data: teamMember } = await supabaseAdmin
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", data.user_id)
+        .eq("role", "player")
+        .single();
+
+      if (teamMember) {
+        // Find coach for the team
+        const { data: coaches } = await supabaseAdmin
+          .from("team_members")
+          .select("user_id")
+          .eq("team_id", teamMember.team_id)
+          .eq("role", "coach")
+          .limit(1);
+
+        if (coaches && coaches.length > 0) {
+          // Log transition: Physio → Coach
+          await supabaseAdmin.from("ownership_transitions").insert({
+            trigger: "rtp_phase_complete",
+            from_role: "physiotherapist",
+            to_role: "coach",
+            player_id: data.user_id,
+            action_required: `Review and approve next RTP phase for ${updates.phase || currentInjury?.current_phase || "current phase"}`,
+            status: "pending",
+            created_at: new Date().toISOString(),
+          });
+
+          // Notify coach
+          await supabaseAdmin.from("notifications").insert({
+            user_id: coaches[0].user_id,
+            notification_type: "rtp",
+            message: `RTP phase completed - approval required for next phase`,
+            priority: "medium",
+            metadata: { playerId: data.user_id, injuryId: injuryId, phase: updates.phase },
+          });
+        }
+      }
+    } catch (transitionError) {
+      console.warn("[Physio] Error logging RTP completion transition:", transitionError.message);
+      // Non-fatal - continue with RTP update
+    }
+  }
+
   return data;
 }
 
@@ -301,7 +361,7 @@ async function getTeamInjurySummary(teamId) {
 /**
  * Log a new injury
  */
-async function logInjury(userId, injuryData) {
+async function logInjury(userId, injuryData, createdByRole = "physiotherapist") {
   const { data, error } = await supabaseAdmin
     .from("athlete_injuries")
     .insert({
@@ -327,6 +387,54 @@ async function logInjury(userId, injuryData) {
   if (error) {
     throw error;
   }
+
+  // Log ownership transition: Coach/Physio → Physio (if not already physio)
+  // This ensures accountability for injury management
+  try {
+    // Get player's team to find coach
+    const { data: teamMember } = await supabaseAdmin
+      .from("team_members")
+      .select("team_id")
+      .eq("user_id", userId)
+      .eq("role", "player")
+      .single();
+
+    if (teamMember) {
+      // Find coach for the team
+      const { data: coaches } = await supabaseAdmin
+        .from("team_members")
+        .select("user_id")
+        .eq("team_id", teamMember.team_id)
+        .eq("role", "coach")
+        .limit(1);
+
+      if (coaches && coaches.length > 0 && createdByRole !== "physiotherapist") {
+        // Log transition: Coach → Physio
+        await supabaseAdmin.from("ownership_transitions").insert({
+          trigger: "injury_flag",
+          from_role: createdByRole,
+          to_role: "physiotherapist",
+          player_id: userId,
+          action_required: `Create RTP protocol for ${injuryData.type} injury (${injuryData.location})`,
+          status: "pending",
+          created_at: new Date().toISOString(),
+        });
+
+        // Notify physio
+        await supabaseAdmin.from("notifications").insert({
+          user_id: coaches[0].user_id, // Notify coach, physio will see in their dashboard
+          notification_type: "injury",
+          message: `New injury flagged: ${injuryData.type} (${injuryData.location}) - RTP protocol needed`,
+          priority: "high",
+          metadata: { playerId: userId, injuryId: data.id },
+        });
+      }
+    }
+  } catch (transitionError) {
+    console.warn("[Physio] Error logging ownership transition:", transitionError.message);
+    // Non-fatal - continue with injury logging
+  }
+
   return data;
 }
 
@@ -471,7 +579,10 @@ async function handler(event) {
           "Missing required fields: userId, type, location",
         );
       }
-      const injury = await logInjury(body.userId, body);
+      // Determine role: if called from physio dashboard, role is physiotherapist
+      // Otherwise, assume coach flagged it
+      const createdByRole = access.role === "physiotherapist" ? "physiotherapist" : "coach";
+      const injury = await logInjury(body.userId, body, createdByRole);
       return createSuccessResponse({ injury });
     }
 

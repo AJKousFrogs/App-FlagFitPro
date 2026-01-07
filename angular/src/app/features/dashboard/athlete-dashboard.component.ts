@@ -36,6 +36,7 @@ import { MorningBriefingComponent } from "../../shared/components/morning-briefi
 import { TournamentModeWidgetComponent } from "../../shared/components/tournament-mode-widget/tournament-mode-widget.component";
 import { ActionableInsightsComponent } from "../../shared/components/actionable-insights/actionable-insights.component";
 import { GameDayCountdownComponent } from "../../shared/components/game-day-countdown/game-day-countdown.component";
+import { WeatherWidgetComponent } from "../../shared/components/weather-widget/weather-widget.component";
 import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { AcwrService } from "../../core/services/acwr.service";
@@ -86,6 +87,7 @@ interface TrainingSession {
     TournamentModeWidgetComponent,
     ActionableInsightsComponent,
     GameDayCountdownComponent,
+    WeatherWidgetComponent,
     // Runtime guard components
     PageErrorStateComponent,
     PageLoadingStateComponent,
@@ -258,6 +260,11 @@ interface TrainingSession {
           <app-actionable-insights></app-actionable-insights>
         </div>
 
+        <!-- Weather Widget -->
+        <div class="weather-section">
+          <app-weather-widget></app-weather-widget>
+        </div>
+
         <!-- Trend Cards -->
         <div class="trends-section">
           <h2 class="section-title">Performance Trends</h2>
@@ -357,6 +364,10 @@ interface TrainingSession {
       }
 
       .insights-section {
+        margin-bottom: var(--space-6);
+      }
+
+      .weather-section {
         margin-bottom: var(--space-6);
       }
 

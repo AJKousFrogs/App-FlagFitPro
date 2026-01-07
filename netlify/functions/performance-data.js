@@ -4,6 +4,19 @@
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { createErrorResponse } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
+const {
+  canCoachViewWellness,
+  filterWellnessDataForCoach,
+  canCoachViewReadiness,
+  filterReadinessForCoach,
+} = require("./utils/consent-guard.cjs");
+const {
+  detectPainTrigger,
+} = require("./utils/safety-override.cjs");
+const { getUserRole } = require("./utils/authorization-guard.cjs");
+const {
+  guardMerlinRequest,
+} = require("./utils/merlin-guard.cjs");
 
 // CORS Headers for cross-origin requests
 const CORS_HEADERS = {
@@ -91,6 +104,21 @@ const ENDPOINT_HANDLERS = {
 };
 
 exports.handler = async (event, context) => {
+  // Apply Merlin guard for mutation endpoints
+  if (event.httpMethod !== "GET" && event.httpMethod !== "OPTIONS") {
+    const req = { 
+      method: event.httpMethod, 
+      path: event.path, 
+      headers: event.headers, 
+      body: event.body,
+      user: context.user || {}
+    };
+    const blocked = guardMerlinRequest(req);
+    if (blocked && blocked.statusCode === 403) {
+      return blocked;
+    }
+  }
+
   // Determine rate limit type based on HTTP method
   const rateLimitType = event.httpMethod === "GET" ? "READ" : "CREATE";
 
@@ -116,7 +144,10 @@ exports.handler = async (event, context) => {
         return await handler(userId, queryStringParameters);
       }
 
-      return await handler(httpMethod, userId, body, queryStringParameters);
+      // Extract athleteId from query for coach requests
+      const requestedAthleteId = queryStringParameters?.athleteId || userId;
+
+      return await handler(httpMethod, userId, requestedAthleteId, body, queryStringParameters);
     },
   });
 };
@@ -410,7 +441,11 @@ async function handlePerformanceTests(method, userId, body, query) {
 }
 
 // Wellness Data Handler
-async function handleWellness(method, userId, body, query) {
+async function handleWellness(method, userId, requestedAthleteId, body, query) {
+  const targetAthleteId = requestedAthleteId || userId;
+  const role = await getUserRole(userId);
+  const isCoach = ['coach', 'admin'].includes(role);
+
   switch (method) {
     case "GET": {
       const timeframe = query?.timeframe || "30d";
@@ -420,7 +455,7 @@ async function handleWellness(method, userId, body, query) {
         const { data: wellness, error } = await supabaseAdmin
           .from("wellness_entries")
           .select("*")
-          .eq("athlete_id", userId)
+          .eq("athlete_id", targetAthleteId)
           .gte("date", startDate.toISOString().split("T")[0])
           .order("date", { ascending: false });
 
@@ -428,7 +463,26 @@ async function handleWellness(method, userId, body, query) {
           throw error;
         }
 
-        const wellnessData = (wellness || []).map(dataMappers.wellness);
+        let wellnessData = (wellness || []).map(dataMappers.wellness);
+
+        // Filter data for coach if consent not granted
+        if (isCoach && targetAthleteId !== userId && wellnessData.length > 0) {
+          const consentCheck = await canCoachViewWellness(userId, targetAthleteId);
+          if (!consentCheck.allowed) {
+            // Return compliance-only data
+            wellnessData = wellnessData.map(() => ({
+              check_in_completed: true,
+              // All wellness answers hidden
+            }));
+          } else {
+            // Filter based on consent level
+            wellnessData = wellnessData.map(item => filterWellnessDataForCoach(
+              item,
+              consentCheck.reason === 'CONSENT_GRANTED',
+              consentCheck.safetyOverride
+            ));
+          }
+        }
 
         return {
           statusCode: 200,
@@ -453,6 +507,11 @@ async function handleWellness(method, userId, body, query) {
 
     case "POST": {
       const wellnessData = JSON.parse(body);
+
+      // Safety override: Check for pain triggers (muscle_soreness >3/10)
+      if (wellnessData.soreness !== undefined && wellnessData.soreness !== null && wellnessData.soreness > 3) {
+        await detectPainTrigger(userId, wellnessData.soreness, 'general', null);
+      }
 
       try {
         const { data, error } = await supabaseAdmin
@@ -866,7 +925,8 @@ async function handleInjuries(method, userId, body, query) {
 }
 
 // Trends Analysis Handler
-async function handleTrends(method, userId, query) {
+async function handleTrends(method, userId, requestedAthleteId, body, query) {
+  const targetAthleteId = requestedAthleteId || userId;
   if (method !== "GET") {
     return {
       statusCode: 405,
@@ -894,7 +954,7 @@ async function handleTrends(method, userId, query) {
         supabaseAdmin
           .from("wellness_entries")
           .select("*")
-          .eq("athlete_id", userId)
+          .eq("athlete_id", targetAthleteId)
           .gte("date", startDate.toISOString().split("T")[0]),
       ]);
 

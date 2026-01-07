@@ -25,7 +25,7 @@
 }
 
 .card-header h3 i {
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
 }
 
 .readiness-badge {
@@ -39,7 +39,7 @@
 }
 
 .readiness-badge.excellent {
-  background: rgba(8, 153, 73, 0.1);
+  background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
 }
 
@@ -49,12 +49,12 @@
 }
 
 .readiness-badge.moderate {
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--color-status-warning-light);
   color: var(--color-status-warning);
 }
 
 .readiness-badge.low {
-  background: rgba(239, 68, 68, 0.1);
+  background: var(--color-status-error-light);
   color: var(--color-status-error);
 }
 
@@ -72,7 +72,7 @@
 .score-circle {
   width: 5rem;
   height: 5rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -83,22 +83,22 @@
 
 .score-circle.excellent {
   border-color: var(--ds-primary-green);
-  background: rgba(8, 153, 73, 0.05);
+  background: var(--ds-primary-green-ultra-subtle);
 }
 
 .score-circle.good {
   border-color: var(--color-status-success);
-  background: rgba(34, 197, 94, 0.05);
+  background: var(--primitive-success-50);
 }
 
 .score-circle.moderate {
   border-color: var(--color-status-warning);
-  background: rgba(245, 158, 11, 0.05);
+  background: var(--primitive-warning-50);
 }
 
 .score-circle.low {
   border-color: var(--color-status-error);
-  background: rgba(239, 68, 68, 0.05);
+  background: var(--primitive-error-50);
 }
 
 .score-value {
@@ -178,7 +178,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3);
-  background: rgba(245, 158, 11, 0.1);
+  background: var(--color-status-warning-light);
   border-radius: var(--radius-lg);
   font-size: var(--font-size-h4);
   color: var(--color-status-warning);
@@ -200,30 +200,4 @@
   padding-top: var(--space-3);
 }
 
-/*
- * EXCEPTION: PrimeNG Slider Override
- * Ticket: DESIGN-SYSTEM-PRIMENG-001
- * Reason: PrimeNG slider component requires specific sizing for proper UI/UX
- * Scope: .p-slider within daily-readiness component only
- * Owner: @design-system
- * Remove by: When PrimeNG provides design token support
- */
-.p-slider {
-  height: var(--space-2);
-}
-
-.p-slider .p-slider-range {
-  background: var(--ds-primary-green);
-}
-
-.p-slider .p-slider-handle {
-  width: calc(var(--space-4) + 2px);
-  height: calc(var(--space-4) + 2px);
-  border: var(--border-2) solid var(--ds-primary-green);
-  background: var(--color-text-on-primary);
-}
-
-.p-slider .p-slider-handle:hover {
-  background: var(--ds-primary-green);
-  border-color: var(--ds-primary-green);
-}
+// PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-026)

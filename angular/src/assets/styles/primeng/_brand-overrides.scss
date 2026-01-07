@@ -644,6 +644,162 @@
   }
 
   // ============================================
+  // TABS
+  // ============================================
+
+  .p-tabs {
+    background: var(--surface-primary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .p-tablist {
+      display: flex;
+      gap: var(--space-1);
+      padding: var(--space-2);
+      background: var(--surface-secondary);
+      border-bottom: 1px solid var(--color-border-muted);
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .p-tab {
+      position: relative;
+      padding: var(--space-3) var(--space-5);
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-md);
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-body);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      white-space: nowrap;
+      outline: none;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: var(--radius-md);
+        background: transparent;
+        transition: background var(--transition-base);
+      }
+
+      &:hover:not(.p-disabled)::before {
+        background: rgba(var(--ds-primary-green-rgb), 0.08);
+      }
+
+      &:hover:not(.p-disabled) {
+        color: var(--ds-primary-green);
+        transform: translateY(-1px);
+      }
+
+      &:active:not(.p-disabled) {
+        transform: translateY(0);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--ds-primary-green);
+        outline-offset: 2px;
+      }
+
+      &.p-highlight {
+        background: var(--surface-primary);
+        color: var(--ds-primary-green);
+        font-weight: var(--font-weight-semibold);
+        box-shadow: 0 2px 8px rgba(var(--ds-primary-green-rgb), 0.15);
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -2px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60%;
+          height: 3px;
+          background: linear-gradient(
+            90deg,
+            var(--ds-primary-green),
+            var(--ds-primary-green-light)
+          );
+          border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        }
+      }
+
+      &.p-disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      i {
+        font-size: var(--font-size-body);
+        transition: transform var(--transition-base);
+      }
+
+      &:hover:not(.p-disabled) i {
+        transform: scale(1.1);
+      }
+    }
+
+    .p-tabpanels {
+      padding: var(--space-6);
+      background: var(--surface-primary);
+    }
+
+    // Mobile responsive overrides
+    @media (max-width: 767px) {
+      .p-tablist {
+        padding: var(--space-1);
+        gap: 0;
+      }
+
+      .p-tab {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--font-size-h4);
+        min-height: 40px;
+
+        i {
+          font-size: var(--font-size-h4);
+        }
+      }
+
+      .p-tabpanels {
+        padding: var(--space-3);
+      }
+    }
+  }
+
+  // Video curation tabs specific styling
+  .p-tabs {
+    .p-tablist {
+      background: var(--surface-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .p-tab {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+  }
+
+  // ============================================
   // UNIFIED FOCUS RING (Decision 12/18/50)
   // ============================================
   // All interactive elements share the same focus ring for consistency

@@ -7,14 +7,29 @@ const {
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const {
+  canCoachViewWellness,
+  filterWellnessDataForCoach,
+} = require("./utils/consent-guard.cjs");
+const {
+  detectPainTrigger,
+  detectACWRTrigger,
+} = require("./utils/safety-override.cjs");
+const { getUserRole } = require("./utils/authorization-guard.cjs");
 
 /**
  * Create wellness check-in
  * POST /api/wellness/checkin
+ * Contract: Must check safety overrides for pain >3/10
  */
 async function createWellnessCheckin(userId, checkinData) {
   try {
     const { readiness, sleep, energy, mood, soreness, notes } = checkinData;
+    
+    // Safety override: Check for pain triggers (if soreness >3/10)
+    if (soreness !== undefined && soreness !== null && soreness > 3) {
+      await detectPainTrigger(userId, soreness, notes || 'general', null);
+    }
 
     // Validate required fields
     if (readiness === undefined || readiness === null) {
@@ -82,19 +97,53 @@ async function createWellnessCheckin(userId, checkinData) {
 /**
  * Get wellness check-ins for user
  * GET /api/wellness/checkins
+ * Contract: Must enforce consent for coach requests
  */
-async function getWellnessCheckins(userId, limit = 30) {
+async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
   try {
+    const role = await getUserRole(userId);
+    const isCoach = ['coach', 'admin'].includes(role);
+    const targetAthleteId = requestedAthleteId || userId;
+    
+    // If coach requesting another athlete's data, check consent
+    if (isCoach && targetAthleteId !== userId) {
+      const consentCheck = await canCoachViewWellness(userId, targetAthleteId);
+      if (!consentCheck.allowed) {
+        // Return compliance-only data
+        const { data } = await supabaseAdmin
+          .from("wellness_checkins")
+          .select("id, created_at, user_id")
+          .eq("user_id", targetAthleteId)
+          .order("created_at", { ascending: false })
+          .limit(limit);
+        return (data || []).map(item => ({
+          check_in_completed: true,
+          check_in_date: item.created_at,
+          // All wellness answers hidden
+        }));
+      }
+    }
+    
     const { data, error } = await supabaseAdmin
       .from("wellness_checkins")
       .select("*")
-      .eq("user_id", userId)
+      .eq("user_id", targetAthleteId)
       .order("created_at", { ascending: false })
       .limit(limit);
 
     if (error) {
       console.error("Error fetching wellness check-ins:", error);
       throw error;
+    }
+
+    // Filter data for coach if consent not granted
+    if (isCoach && targetAthleteId !== userId && data) {
+      const consentCheck = await canCoachViewWellness(userId, targetAthleteId);
+      return data.map(item => filterWellnessDataForCoach(
+        item,
+        consentCheck.allowed && consentCheck.reason === 'CONSENT_GRANTED',
+        consentCheck.safetyOverride
+      ));
     }
 
     return data || [];
@@ -176,7 +225,8 @@ exports.handler = async (event, context) => {
 
       if (path.includes("/checkins") || path.endsWith("/checkins")) {
         const limit = parseInt(event.queryStringParameters?.limit) || 30;
-        const result = await getWellnessCheckins(userId, limit);
+        const athleteId = event.queryStringParameters?.athleteId || userId;
+        const result = await getWellnessCheckins(userId, athleteId, limit);
         return createSuccessResponse({ checkins: result });
       }
 

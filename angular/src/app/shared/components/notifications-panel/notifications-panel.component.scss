@@ -14,7 +14,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--surface-overlay);
   z-index: 1000;
   animation: fadeIn 0.2s ease;
 }
@@ -205,7 +205,7 @@
 .empty-icon {
   width: 5rem;
   height: 5rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: var(--surface-tertiary);
   display: flex;
   align-items: center;
@@ -300,8 +300,8 @@
 }
 
 .notification-icon.type-team {
-  background: var(--color-accent-purple-subtle, rgba(168, 85, 247, 0.15));
-  color: var(--color-accent-purple, #c084fc);
+  background: var(--color-status-help-light);
+  color: var(--color-status-help);
 }
 
 .notification-icon.type-wellness {

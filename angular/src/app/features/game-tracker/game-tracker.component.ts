@@ -27,6 +27,8 @@ import { Textarea } from "primeng/textarea";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
+import { OfflineQueueService } from "../../core/services/offline-queue.service";
+import { NetworkStatusService } from "../../core/services/network-status.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -124,6 +126,8 @@ export class GameTrackerComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private toastService = inject(ToastService);
+  private offlineQueue = inject(OfflineQueueService);
+  private networkStatus = inject(NetworkStatusService);
 
   showGameForm = signal(false);
   games = signal<Game[]>([]);
@@ -647,8 +651,23 @@ export class GameTrackerComponent implements OnInit {
           this.startTrackingGame(gameId);
         },
         error: (err) => {
-          console.error("Error creating game:", err);
-          this.toastService.error("Failed to create game. Please try again.");
+          // If network error, queue for retry
+          if (err.status === 0 || err.message?.includes("network")) {
+            this.offlineQueue.queueAction({
+              type: "game_action",
+              payload: {
+                action: "create_game",
+                data: gameData,
+              },
+              priority: "high",
+            });
+            this.toastService.info("Game will be saved when connection is restored");
+            this.showGameForm.set(false);
+            this.gameForm.reset();
+          } else {
+            console.error("Error creating game:", err);
+            this.toastService.error("Failed to create game. Please try again.");
+          }
         },
       });
   }
@@ -709,6 +728,26 @@ export class GameTrackerComponent implements OnInit {
       playData.playType = "run" as any;
     }
 
+    // Check if offline and queue action
+    if (!this.networkStatus.isOnline()()) {
+      this.offlineQueue.queueAction({
+        type: "game_action",
+        payload: {
+          action: "create_play",
+          data: playData,
+        },
+        priority: "high",
+      });
+      this.toastService.info("Play will be saved when connection is restored");
+      this.plays.update((plays) => [...plays, playData as Play]);
+      this.playForm.reset({
+        playType: "",
+        half: this.playForm.get("half")?.value || 1,
+        timeRemaining: null,
+      });
+      return;
+    }
+
     // Save play
     this.apiService
       .post("/api/game-events", playData)
@@ -730,8 +769,25 @@ export class GameTrackerComponent implements OnInit {
             timeRemaining: null,
           });
         },
-        error: () => {
-          // Error handled by error interceptor
+        error: (error) => {
+          // If network error, queue for retry
+          if (error.status === 0 || error.message?.includes("network")) {
+            this.offlineQueue.queueAction({
+              type: "game_action",
+              payload: {
+                action: "create_play",
+                data: playData,
+              },
+              priority: "high",
+            });
+            this.toastService.info("Play will be saved when connection is restored");
+            this.plays.update((plays) => [...plays, playData as Play]);
+            this.playForm.reset({
+              playType: "",
+              half: this.playForm.get("half")?.value || 1,
+              timeRemaining: null,
+            });
+          }
         },
       });
   }

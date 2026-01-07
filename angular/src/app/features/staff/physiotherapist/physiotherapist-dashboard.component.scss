@@ -262,10 +262,7 @@
         align-items: center;
         gap: var(--ds-spacing-xs);
 
-        .p-progressbar {
-          flex: 1;
-          height: var(--space-2);
-        }
+        // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-045)
 
         span {
           font-size: var(--font-size-badge);

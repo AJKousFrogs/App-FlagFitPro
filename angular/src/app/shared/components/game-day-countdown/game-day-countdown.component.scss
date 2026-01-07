@@ -193,16 +193,11 @@
   color: var(--color-text-primary);
 }
 
-.progress-green .p-progressbar-value {
-  background: var(--ds-primary-green);
-}
-
-.progress-orange .p-progressbar-value {
-  background: var(--color-status-warning);
-}
-
-.progress-red .p-progressbar-value {
-  background: var(--color-status-error);
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-024)
+.progress-green,
+.progress-orange,
+.progress-red {
+  // Component-specific styles remain here
 }
 
 /* Checklist */
@@ -270,9 +265,9 @@
   flex: 1;
 }
 
-.widget-actions .p-button {
-  width: 100%;
-  justify-content: center;
+// PrimeNG button override moved to _exceptions.scss (DS-EXC-024)
+.widget-actions {
+  // Component-specific styles remain here
 }
 
 /* Responsive */

@@ -12,7 +12,7 @@
 
 .player-dashboard {
   padding: var(--space-4);
-  max-width: 1400px;
+  max-width: var(--content-max-width-2xl); /* 1440px - closest token to 1400px */
   margin: 0 auto;
 
   // Mobile: Reduce padding
@@ -77,8 +77,8 @@
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--space-12); /* 48px */
+  height: var(--space-12); /* 48px */
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -88,8 +88,8 @@
 
   // Mobile: Smaller icons, no margin
   @media (max-width: 639px) {
-    width: 40px;
-    height: 40px;
+    width: var(--space-10); /* 40px */
+    height: var(--space-10); /* 40px */
     font-size: var(--font-size-h3);
     margin-bottom: 0;
     margin-right: var(--space-3);
@@ -161,9 +161,9 @@
 }
 
 .merlin-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+  width: var(--space-20); /* 80px */
+  height: var(--space-20); /* 80px */
+  border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--ds-primary-green) 0%, var(--ds-primary-green-dark) 100%);
   display: flex;
   align-items: center;
@@ -175,8 +175,8 @@
 
   // Mobile: Smaller avatar
   @media (max-width: 767px) {
-    width: 64px;
-    height: 64px;
+    width: var(--space-16); /* 64px */
+    height: var(--space-16); /* 64px */
     font-size: var(--font-display-sm);
   }
 }
@@ -244,22 +244,22 @@
 
 .chart-container {
   position: relative;
-  height: 300px;
+  height: calc(var(--space-12) * 6.25); /* 300px */
   padding: var(--space-2);
 
   // Mobile: Smaller chart
   @media (max-width: 767px) {
-    height: 250px;
+    height: calc(var(--space-10) * 6.25); /* 250px */
     padding: var(--space-1);
   }
 
   @media (max-width: 479px) {
-    height: 200px;
+    height: calc(var(--space-10) * 5); /* 200px */
   }
 
+  // Canvas responsive styling moved to _exceptions.scss (DS-EXC-002)
   canvas {
-    max-width: 100% !important;
-    height: auto !important;
+    // Component-specific styles remain here
   }
 }
 
@@ -277,25 +277,14 @@
 
 .schedule-timeline {
   // Mobile: Compact timeline
-  @media (max-width: 767px) {
-    :global(.p-timeline-event-content) {
-      padding: var(--space-2) !important;
-    }
-
-    :global(.p-timeline-event-opposite) {
-      // Hide time on very small screens
-      @media (max-width: 479px) {
-        display: none !important;
-      }
-    }
-  }
+  // PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
 }
 
 .schedule-item {
   padding: var(--space-3);
   background: var(--surface-ground);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--ds-primary-green);
+  border-left: var(--space-1) solid var(--ds-primary-green); /* 4px - closest token to 3px */
 
   // Mobile: Compact padding
   @media (max-width: 767px) {
@@ -353,14 +342,18 @@
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    border-color var(--transition-base),
+    background-color var(--transition-base),
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
   display: flex;
   align-items: center;
   gap: var(--space-3);
 
   // Touch-friendly on mobile
   @media (max-width: 767px) {
-    min-height: 72px; // Apple HIG minimum
+    min-height: calc(var(--space-8) * 2.25); /* 72px - Apple HIG minimum */
     padding: var(--space-3);
   }
 
@@ -379,8 +372,8 @@
 }
 
 .action-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--space-12); /* 48px */
+  height: var(--space-12); /* 48px */
   border-radius: var(--radius-md);
   background: var(--ds-primary-green);
   color: white;
@@ -391,8 +384,8 @@
   flex-shrink: 0;
 
   @media (max-width: 767px) {
-    width: 40px;
-    height: 40px;
+    width: var(--space-10); /* 40px */
+    height: var(--space-10); /* 40px */
     font-size: var(--font-size-h3);
   }
 }
@@ -430,19 +423,8 @@
 
   @media (max-width: 767px) {
     margin-bottom: var(--space-3);
-
-    :global(.p-message) {
-      padding: var(--space-3) !important;
-      font-size: var(--font-size-h4) !important;
-    }
   }
-
-  @media (max-width: 479px) {
-    :global(.p-message) {
-      padding: var(--space-2) !important;
-      font-size: var(--font-body-2xs) !important;
-    }
-  }
+  // PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
 }
 
 // ================================================================
@@ -471,9 +453,9 @@
 }
 
 .no-program-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+  width: var(--space-20); /* 80px */
+  height: var(--space-20); /* 80px */
+  border-radius: var(--radius-full);
   background: var(--primitive-error-50);
   color: var(--primitive-error-500);
   display: flex;
@@ -483,8 +465,8 @@
   font-size: var(--font-display-md);
 
   @media (max-width: 767px) {
-    width: 64px;
-    height: 64px;
+    width: var(--space-16); /* 64px */
+    height: var(--space-16); /* 64px */
     font-size: var(--font-display-sm);
   }
 }
@@ -503,7 +485,7 @@
 .no-program-message {
   font-size: var(--font-size-body);
   color: var(--ds-text-secondary);
-  max-width: 600px;
+  max-width: var(--content-max-width-sm); /* 640px - closest token to 600px */
   margin: 0 auto var(--space-4);
   line-height: var(--line-height-relaxed);
 
@@ -522,7 +504,7 @@
   @media (max-width: 639px) {
     flex-direction: column;
     align-items: stretch;
-    max-width: 300px;
+    max-width: calc(var(--space-12) * 6.25); /* 300px */
     margin: 0 auto;
   }
 }
@@ -530,39 +512,7 @@
 // ================================================================
 // PRIMENG OVERRIDES FOR MOBILE
 // ================================================================
-
-:host ::ng-deep {
-  // Progress Bar mobile
-  @media (max-width: 767px) {
-    .p-progressbar {
-      height: 6px !important;
-    }
-  }
-
-  // Chart mobile optimization
-  @media (max-width: 767px) {
-    .p-chart {
-      canvas {
-        max-width: 100% !important;
-        height: auto !important;
-      }
-    }
-  }
-
-  // Timeline mobile
-  @media (max-width: 767px) {
-    .p-timeline {
-      .p-timeline-event-marker {
-        width: 12px !important;
-        height: 12px !important;
-      }
-
-      .p-timeline-event-connector {
-        width: 2px !important;
-      }
-    }
-  }
-}
+// PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
 
 // ================================================================
 // ACWR PROGRESS TRACKING (UX Audit Fix #5)
@@ -576,22 +526,22 @@
 }
 
 .acwr-icon-building {
-  width: 48px;
-  height: 48px;
+  width: var(--space-12); /* 48px */
+  height: var(--space-12); /* 48px */
   border-radius: var(--radius-lg);
   background: linear-gradient(135deg, var(--primitive-info-500) 0%, var(--primitive-info-600) 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: var(--font-size-h2); /* 24px */
   flex-shrink: 0;
   opacity: 0.7; // Dimmed to indicate "building"
 
   @media (max-width: 767px) {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
+    width: var(--space-10); /* 40px */
+    height: var(--space-10); /* 40px */
+    font-size: var(--font-size-h3); /* 20px */
   }
 }
 
@@ -620,7 +570,7 @@
 
 .acwr-progress-bar {
   flex: 1;
-  height: 8px;
+  height: var(--space-2); /* 8px */
   background: var(--surface-border);
   border-radius: var(--radius-full);
   overflow: hidden;
@@ -651,7 +601,7 @@
   font-style: italic;
 }
 
+// Milestone tag font-size override moved to _exceptions.scss (DS-EXC-002)
 .milestone-tag {
   align-self: flex-start;
-  font-size: var(--font-body-2xs) !important;
 }

@@ -230,16 +230,9 @@
 }
 
 // Progress bar override for readiness
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-007)
 .readiness-bar {
-  &.readiness-high .p-progressbar-value {
-    background: var(--color-status-success);
-  }
-  &.readiness-medium .p-progressbar-value {
-    background: var(--color-status-warning);
-  }
-  &.readiness-low .p-progressbar-value {
-    background: var(--color-status-error);
-  }
+  // Component-specific styles remain here
 }
 
 // ACWR colors

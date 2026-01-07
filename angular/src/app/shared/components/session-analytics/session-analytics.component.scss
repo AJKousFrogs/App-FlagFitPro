@@ -75,14 +75,9 @@
   color: var(--color-text-muted);
 }
 
-.completion-bar .p-progressbar {
-  height: 6px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-100);
-}
-
-.completion-bar .p-progressbar-value {
-  background: var(--ds-primary-green-gradient);
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-009)
+.completion-bar {
+  // Component-specific styles remain here
 }
 
 .chart-card {
@@ -157,14 +152,9 @@
   color: var(--color-text-secondary);
 }
 
-.type-bar .p-progressbar {
-  height: 4px;
-  border-radius: var(--radius-sm);
-  background: var(--surface-100);
-}
-
-.type-bar .p-progressbar-value {
-  background: var(--ds-primary-green);
+// PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-009)
+.type-bar {
+  // Component-specific styles remain here
 }
 
 .empty-state {

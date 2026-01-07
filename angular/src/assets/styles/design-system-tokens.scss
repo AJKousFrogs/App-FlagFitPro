@@ -29,6 +29,11 @@
   --ds-primary-green-subtle: rgba(8, 153, 73, 0.1);
   --ds-primary-green-ultra-subtle: rgba(8, 153, 73, 0.05);
 
+  /* Orange for High Risk (Phase 3 - Standardized) */
+  --ds-primary-orange: #f97316; /* Standardized high risk color */
+  --ds-primary-orange-rgb: 249, 115, 22;
+  --ds-primary-orange-subtle: rgba(249, 115, 22, 0.1);
+
   /* ================================
      PRIMITIVE COLOR TOKENS
      Base color values - use semantic tokens instead when possible
@@ -192,6 +197,7 @@
 
   /* Help/Purple: Secondary brand/PrimeNG help color */
   --color-status-help: #8b5cf6;
+  --color-status-help-rgb: 139, 92, 246;
   --color-status-help-light: rgba(139, 92, 246, 0.1);
   --color-status-help-subtle: rgba(139, 92, 246, 0.05);
   --color-status-help-hover: #7c3aed;
@@ -239,6 +245,12 @@
   );
   --state-layer-on-primary: rgba(255, 255, 255, var(--state-hover-opacity));
   --state-layer-error: rgba(239, 68, 68, var(--state-hover-opacity));
+
+  /* White Overlay Tokens (for colored backgrounds) */
+  --overlay-white-10: rgba(255, 255, 255, 0.1);
+  --overlay-white-20: rgba(255, 255, 255, 0.2);
+  --overlay-white-30: rgba(255, 255, 255, 0.3);
+  --overlay-white-50: rgba(255, 255, 255, 0.5);
 
   /* Transform Values for States */
   --transform-hover-lift: translateY(-2px);
@@ -893,6 +905,7 @@
      Used for roster staff cards
      ================================ */
   --color-staff-coaching: #6366f1;
+  --color-staff-coaching-rgb: 99, 102, 241;
   --color-staff-coaching-light: rgba(99, 102, 241, 0.15);
   --color-staff-coaching-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
   --color-staff-medical: #ef4444;
@@ -985,6 +998,19 @@
   --color-icon-privacy: #c084fc;
   --color-icon-bg-preferences: rgba(107, 114, 128, 0.15);
   --color-icon-preferences: #9ca3af;
+
+  /* Achievement Badge Metallic Colors */
+  --color-metallic-bronze: #cd7f32;
+  --color-metallic-bronze-dark: #8b4513;
+  --color-metallic-silver: #c0c0c0;
+  --color-metallic-silver-light: #e8e8e8;
+  --color-metallic-silver-dark: #a8a8a8;
+  --color-metallic-gold: #ffd700;
+  --color-metallic-gold-dark: #daa520;
+  --color-metallic-platinum: #e5e4e2;
+  --color-metallic-platinum-dark: #a0a0a0;
+  --color-metallic-diamond: #b9f2ff;
+  --color-metallic-diamond-dark: #00bfff;
 }
 
 /* ================================================================

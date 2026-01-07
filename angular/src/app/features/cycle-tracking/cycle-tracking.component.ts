@@ -540,36 +540,43 @@ const RETENTION_OPTIONS = [
 
         <!-- ACWR Adjustment -->
         <p-card header="ACWR Adjustment" styleClass="acwr-card">
-          <div class="acwr-content">
-            <div class="acwr-values">
-              <div class="acwr-item">
-                <span class="acwr-label">Your Base ACWR</span>
-                <span class="acwr-value">{{ baseAcwr() }}</span>
+          @if (baseAcwr() !== null && adjustedAcwr() !== null) {
+            <div class="acwr-content">
+              <div class="acwr-values">
+                <div class="acwr-item">
+                  <span class="acwr-label">Your Base ACWR</span>
+                  <span class="acwr-value">{{ baseAcwr() }}</span>
+                </div>
+                <div class="acwr-item">
+                  <span class="acwr-label">Phase-Adjusted ACWR</span>
+                  <span class="acwr-value adjusted">{{ adjustedAcwr() }}</span>
+                </div>
               </div>
-              <div class="acwr-item">
-                <span class="acwr-label">Phase-Adjusted ACWR</span>
-                <span class="acwr-value adjusted">{{ adjustedAcwr() }}</span>
-              </div>
-            </div>
 
-            <div class="sweet-spot-display">
-              <span class="sweet-spot-label">Adjusted Sweet Spot Range:</span>
-              <span class="sweet-spot-value"
-                >{{ getAcwrSweetSpot().min }} -
-                {{ getAcwrSweetSpot().max }}</span
+              <div class="sweet-spot-display">
+                <span class="sweet-spot-label">Adjusted Sweet Spot Range:</span>
+                <span class="sweet-spot-value"
+                  >{{ getAcwrSweetSpot().min }} -
+                  {{ getAcwrSweetSpot().max }}</span
+                >
+                <span class="vs-standard">(vs standard 0.8 - 1.3)</span>
+              </div>
+
+              <p-message
+                [severity]="getAcwrStatus().severity"
+                styleClass="acwr-status"
               >
-              <span class="vs-standard">(vs standard 0.8 - 1.3)</span>
+                <ng-template pTemplate>
+                  <span>{{ getAcwrStatus().message }}</span>
+                </ng-template>
+              </p-message>
             </div>
-
-            <p-message
-              [severity]="getAcwrStatus().severity"
-              styleClass="acwr-status"
-            >
-              <ng-template pTemplate>
-                <span>{{ getAcwrStatus().message }}</span>
-              </ng-template>
-            </p-message>
-          </div>
+          } @else {
+            <div class="empty-state">
+              <i class="pi pi-info-circle"></i>
+              <p>ACWR data not available. Log training sessions to see phase-adjusted training recommendations.</p>
+            </div>
+          }
         </p-card>
 
         <!-- Symptom Tracking -->
@@ -884,7 +891,7 @@ export class CycleTrackingComponent implements OnInit {
     cyclesTracked: 6,
   });
   readonly cycleHistory = signal<CycleEntry[]>([]);
-  readonly baseAcwr = signal(1.15);
+  readonly baseAcwr = signal<number | null>(null); // No default - must load from API
   readonly showLogDialog = signal(false);
   readonly showDeleteDialog = signal(false);
   readonly isSavingPeriod = signal(false);
@@ -905,9 +912,13 @@ export class CycleTrackingComponent implements OnInit {
   privacySettings = { visibility: "private", retention: "12" };
 
   // Computed values
-  readonly adjustedAcwr = computed(() => {
+  readonly adjustedAcwr = computed<number | null>(() => {
     const phase = this.getCurrentPhase();
     const base = this.baseAcwr();
+    // CRITICAL: Only calculate if we have real ACWR data
+    if (base === null) {
+      return null; // No calculations without real data
+    }
     const adjustment = (phase.intensityModifier - 100) / 100;
     return Math.round((base - base * adjustment * 0.1) * 100) / 100;
   });
@@ -956,11 +967,13 @@ export class CycleTrackingComponent implements OnInit {
           this.baseAcwr.set(response.data.acwr);
         }
       }
-    } catch (err) {
-      this.logger.error("Failed to load cycle tracking data", err);
-      // No cycle data - user hasn't logged any cycles yet
-      this.cycleHistory.set([]);
-    }
+      } catch (err) {
+        this.logger.error("Failed to load cycle tracking data", err);
+        // No cycle data - user hasn't logged any cycles yet
+        this.cycleHistory.set([]);
+        // CRITICAL: Do NOT set default ACWR - calculations require real data
+        this.baseAcwr.set(null);
+      }
   }
 
   getCurrentPhase(): CyclePhase {
@@ -990,6 +1003,14 @@ export class CycleTrackingComponent implements OnInit {
     message: string;
   } {
     const adjusted = this.adjustedAcwr();
+    // CRITICAL: No status without real ACWR data
+    if (adjusted === null) {
+      return {
+        severity: "info",
+        message: "ACWR data not available. Log training sessions to see phase-adjusted recommendations.",
+      };
+    }
+    
     const sweetSpot = this.getAcwrSweetSpot();
 
     if (adjusted >= sweetSpot.min && adjusted <= sweetSpot.max) {

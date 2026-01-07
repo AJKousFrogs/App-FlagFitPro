@@ -1000,25 +1000,7 @@
    Documented exceptions per DESIGN_SYSTEM_RULES.md Section 2.2
    ================================================================ */
 
-/*
- * EXCEPTION: Chat Header Button Styling
- * Reason: Buttons need white color on green header background
- * Scope: chat-header buttons only
- * Owner: @design-system
- */
-.chat-header .p-button {
-  color: var(--color-text-on-primary);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.chat-header .p-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-.chat-header .p-button-icon {
-  color: var(--color-text-on-primary);
-}
+// PrimeNG button overrides moved to _exceptions.scss (DS-EXC-006)
 
 /*
  * EXCEPTION: Message Mention Styling

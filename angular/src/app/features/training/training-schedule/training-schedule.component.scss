@@ -153,62 +153,7 @@
 // ================================================================
 
 .calendar-container {
-  :global(.p-datepicker) {
-    width: 100%;
-    box-shadow: none;
-    border: 1px solid var(--surface-border);
-
-    // Mobile: Full width, larger touch targets
-    @media (max-width: 767px) {
-      .p-datepicker-calendar {
-        th, td {
-          padding: var(--space-2);
-          
-          span {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: var(--font-size-body);
-          }
-        }
-
-        th {
-          font-size: var(--font-size-h4);
-        }
-      }
-
-      .p-datepicker-header {
-        padding: var(--space-3);
-        
-        .p-datepicker-title {
-          font-size: var(--font-size-h3);
-        }
-
-        button {
-          width: 40px;
-          height: 40px;
-        }
-      }
-    }
-
-    // Small phones: Even more compact
-    @media (max-width: 479px) {
-      .p-datepicker-calendar {
-        th, td {
-          padding: var(--space-1);
-          
-          span {
-            width: 36px;
-            height: 36px;
-            font-size: var(--font-size-h4);
-          }
-        }
-      }
-    }
-  }
+  // PrimeNG datepicker overrides moved to _exceptions.scss (DS-EXC-020)
 }
 
 // Calendar date markers (dots for scheduled/completed sessions)
@@ -249,20 +194,13 @@
 // ================================================================
 
 .monthly-stats {
-  :global(.p-card-body) {
-    padding: var(--space-4);
-  }
-
+  // PrimeNG card body overrides moved to _exceptions.scss (DS-EXC-020)
   @media (max-width: 767px) {
     // Mobile: Horizontal stats grid
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: var(--space-3);
-    }
-
-    :global(.p-card-body) {
-      padding: var(--space-3);
     }
   }
 
@@ -600,17 +538,7 @@
 }
 
 .session-status-tag {
-  :global(.p-tag) {
-    font-size: var(--font-body-2xs);
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-sm);
-    font-weight: var(--font-weight-semibold);
-
-    @media (max-width: 767px) {
-      font-size: 10px;
-      padding: 4px var(--space-1);
-    }
-  }
+  // PrimeNG tag override moved to _exceptions.scss (DS-EXC-020)
 }
 
 .session-type {
@@ -718,9 +646,7 @@
 }
 
 .skeleton-card {
-  :global(.p-skeleton) {
-    border-radius: var(--radius-md);
-  }
+  // PrimeNG skeleton override moved to _exceptions.scss (DS-EXC-020)
 }
 
 // ================================================================

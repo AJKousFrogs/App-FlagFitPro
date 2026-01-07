@@ -73,14 +73,9 @@
 }
 
 /* Timer Dialog */
+// PrimeNG dialog overrides moved to _exceptions.scss (DS-EXC-035)
 .rest-timer-dialog {
-  .p-dialog-header {
-    padding: var(--space-3);
-  }
-
-  .p-dialog-content {
-    padding: 0 var(--space-4) var(--space-4);
-  }
+  // Component-specific styles remain here
 }
 
 .timer-header {

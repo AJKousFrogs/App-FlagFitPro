@@ -1,5 +1,21 @@
 /**
  * Roster Component (Refactored)
+ *
+ * ⭐ CANONICAL PAGE — Design System Exemplar (Pending Cleanup)
+ * ============================================================
+ * This page is marked as canonical but requires cleanup before freeze.
+ * 
+ * RULES:
+ * - Future refactors copy FROM this page, never INTO it
+ * - Changes require design system curator approval
+ * - Must be cleaned to full compliance before canonical freeze
+ * 
+ * See docs/CANONICAL_PAGES.md for full documentation.
+ *
+ * CLEANUP REQUIRED:
+ * - Remove PrimeNG overrides from component SCSS
+ * - Replace raw colors with tokens
+ *
  * Container component that orchestrates roster sub-components
  *
  * Refactored from 3,360 lines to ~800 lines by extracting:

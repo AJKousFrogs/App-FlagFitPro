@@ -17,30 +17,9 @@
   z-index: 1000;
 }
 
-.p-toolbar.app-header {
-  background: var(--surface-card);
-  border: none;
-  border-bottom: var(--border-1) solid var(--surface-border);
-  border-radius: 0;
-  padding: 0 var(--space-6);
-  height: 64px;
-  min-height: 64px;
-  max-height: 64px;
-  gap: var(--space-6);
-  box-shadow: var(--shadow-1);
-  display: flex;
-  align-items: center;
-}
-
-/* Toolbar sections - force vertical centering */
-.p-toolbar.app-header .p-toolbar-start,
-.p-toolbar.app-header .p-toolbar-center,
-.p-toolbar.app-header .p-toolbar-end {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+// PrimeNG toolbar overrides moved to _exceptions.scss (DS-EXC-004)
+.app-header {
+  // Component-specific styles remain here
 }
 
 /* ================================================================
@@ -81,9 +60,8 @@
    MOBILE MENU TOGGLE (hidden by default on desktop)
    ================================================================ */
 
-.mobile-menu-toggle,
-.mobile-menu-toggle.p-button,
-.p-button.mobile-menu-toggle {
+// PrimeNG button override moved to _exceptions.scss (DS-EXC-004)
+.mobile-menu-toggle {
   display: none;
 }
 
@@ -144,21 +122,9 @@
 }
 
 /* Olympics Badge */
-.olympics-badge.p-tag {
-  background: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-body-2xs);
-  letter-spacing: 0.05em;
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-xl);
-  line-height: 1;
-  height: auto;
-}
-
-.olympics-badge .p-tag-icon {
-  font-size: var(--font-body-2xs);
-  margin-right: var(--space-1);
+// PrimeNG tag override moved to _exceptions.scss (DS-EXC-004)
+.olympics-badge {
+  // Component-specific styles remain here
 }
 
 /* ================================================================
@@ -197,79 +163,9 @@
    SEARCH INPUT GROUP - THE VISUAL ANCHOR
    ================================================================ */
 
-.search-input-group.p-inputgroup,
-.p-inputgroup.search-input-group {
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: none;
-  height: var(--space-10);
-  border: var(--border-1) solid rgba(0, 0, 0, 0.1);
-  background: var(--surface-ground);
-  display: flex;
-  align-items: center;
-}
-
-.search-input-group .p-inputgroupaddon,
-.search-input-group .p-inputgroup-addon {
-  background: transparent;
-  border: none;
-  color: var(--text-color-secondary);
-  padding: 0;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: var(--space-10);
-  flex-shrink: 0;
-}
-
-/* Search icon addon (first) */
-.search-input-group .p-inputgroupaddon:first-child,
-.search-input-group .p-inputgroup-addon:first-child {
-  padding-left: var(--space-3);
-  padding-right: var(--space-2);
-  width: auto;
-}
-
-.search-input-group .p-inputgroupaddon:first-child i,
-.search-input-group .p-inputgroup-addon:first-child i {
-  font-size: var(--font-size-h4);
-  color: var(--text-color-secondary);
-  opacity: 0.6;
-}
-
-/* Shortcut addon (last) */
-.search-input-group .p-inputgroupaddon:last-child,
-.search-input-group .p-inputgroup-addon:last-child,
-.search-input-group .search-shortcut-addon {
-  padding-left: var(--space-2);
-  padding-right: var(--space-3);
-  width: auto;
-}
-
-.search-input-group .p-inputtext {
-  border: none;
-  background: transparent;
-  height: var(--space-10);
-  font-size: var(--font-size-h4);
-  padding: 0 var(--space-1);
-  margin: 0;
-  line-height: var(--space-10);
-  box-shadow: none;
-  flex: 1;
-  min-width: 0;
-}
-
-.search-input-group .p-inputtext::placeholder {
-  color: var(--text-color-secondary);
-  opacity: 0.6;
-}
-
-.search-input-group .p-inputtext:hover,
-.search-input-group .p-inputtext:focus-visible {
-  border: none;
-  box-shadow: none;
-  outline: none;
+// PrimeNG input group overrides moved to _exceptions.scss (DS-EXC-004)
+.search-input-group {
+  // Component-specific styles remain here
 }
 
 .search-input {
@@ -286,7 +182,7 @@
 }
 
 .search-shortcut kbd {
-  background: rgba(0, 0, 0, 0.06);
+  background: var(--color-border-subtle);
   border: none;
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);
@@ -298,12 +194,7 @@
   line-height: 1;
 }
 
-/* Search hover state */
-.search-input-group:hover .p-inputgroupaddon:first-child i,
-.search-input-group:hover .p-inputgroup-addon:first-child i {
-  opacity: 1;
-  color: var(--text-color);
-}
+// PrimeNG input group hover override moved to _exceptions.scss (DS-EXC-004)
 
 /* ================================================================
    THEME TOGGLE (UX Audit Fix #14)
@@ -344,7 +235,7 @@
     transform: translateY(-50%);
     width: 6px;
     height: 6px;
-    border-radius: 50%;
+    border-radius: var(--radius-full);
     transition: background-color var(--motion-fast) var(--ease-standard);
   }
   
@@ -353,8 +244,8 @@
     padding-left: var(--space-3);
     
     &::before {
-      background: linear-gradient(135deg, #FDB813 0%, #F59E0B 100%);
-      box-shadow: 0 0 4px rgba(253, 184, 19, 0.5);
+      background: linear-gradient(135deg, var(--primitive-warning-400) 0%, var(--primitive-warning-500) 100%);
+      box-shadow: 0 0 4px rgba(var(--primitive-warning-500-rgb), 0.5);
     }
   }
   
@@ -363,8 +254,8 @@
     padding-left: var(--space-3);
     
     &::before {
-      background: linear-gradient(135deg, #818CF8 0%, #6366F1 100%);
-      box-shadow: 0 0 4px rgba(129, 140, 248, 0.5);
+      background: linear-gradient(135deg, var(--color-status-help) 0%, var(--color-staff-coaching) 100%);
+      box-shadow: 0 0 4px rgba(var(--color-status-help-rgb), 0.5);
     }
   }
   
@@ -373,8 +264,8 @@
     padding-left: var(--space-3);
     
     &::before {
-      background: linear-gradient(90deg, #FDB813 0%, #FDB813 50%, #818CF8 50%, #818CF8 100%);
-      box-shadow: 0 0 4px rgba(129, 140, 248, 0.3);
+      background: linear-gradient(90deg, var(--primitive-warning-400) 0%, var(--primitive-warning-400) 50%, var(--color-status-help) 50%, var(--color-status-help) 100%);
+      box-shadow: 0 0 4px rgba(var(--color-status-help-rgb), 0.3);
     }
   }
 }
@@ -392,107 +283,19 @@
 
 /* ================================================================
    HEADER ICON BUTTONS - 40px UNIFORM
-   Override PrimeNG button styles within this component
    ================================================================ */
-
-.header-icon-btn.p-button {
-  width: var(--space-10);
-  height: var(--space-10);
-  min-width: var(--space-10);
-  min-height: var(--space-10);
-  max-width: var(--space-10);
-  max-height: var(--space-10);
-  padding: 0;
-  margin: 0;
-  border-radius: var(--radius-lg);
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: none;
-}
-
-.header-icon-btn.p-button .p-button-icon {
-  font-size: var(--font-body-lg);
-  color: var(--text-color-secondary);
-  opacity: 0.7;
-  margin: 0;
-}
-
-.header-icon-btn.p-button:hover {
-  background: rgba(0, 0, 0, 0.04);
-  transform: none;
-}
-
-.header-icon-btn.p-button:hover .p-button-icon {
-  opacity: 1;
-  color: var(--text-color);
-}
-
-.header-icon-btn.p-button:active {
-  transform: none;
-}
-
-.header-icon-btn.p-button:focus-visible {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: 2px;
-}
-
-/* Remove pseudo-elements from header buttons */
-.header-icon-btn.p-button::before,
-.header-icon-btn.p-button::after {
-  display: none;
+// PrimeNG button overrides moved to _exceptions.scss (DS-EXC-004)
+.header-icon-btn {
+  // Component-specific styles remain here
 }
 
 /* ================================================================
    USER AVATAR - EXACTLY 36px, PERFECT CIRCLE
    ================================================================ */
-
-.user-avatar.p-avatar {
-  width: var(--space-10);
-  height: var(--space-10);
-  min-width: var(--space-10);
-  min-height: var(--space-10);
-  max-width: var(--space-10);
-  max-height: var(--space-10);
-  background: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h4);
-  letter-spacing: 0.02em;
-  border: none;
-  box-shadow: none;
-  border-radius: 50%;
-}
-
-.user-avatar-btn.p-button {
-  padding: 0;
-  margin: 0;
-  width: var(--space-10);
-  height: var(--space-10);
-  min-width: var(--space-10);
-  max-width: var(--space-10);
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  transform: none;
-}
-
-.user-avatar-btn.p-button:hover {
-  background: transparent;
-  transform: none;
-}
-
-.user-avatar-btn.p-button:hover .user-avatar {
-  opacity: 0.85;
-}
-
-.user-avatar-btn.p-button::before,
-.user-avatar-btn.p-button::after {
-  display: none;
+// PrimeNG avatar and button overrides moved to _exceptions.scss (DS-EXC-004)
+.user-avatar,
+.user-avatar-btn {
+  // Component-specific styles remain here
 }
 
 /* ================================================================
@@ -529,13 +332,7 @@
    ================================================================ */
 
 @media (max-width: 768px) {
-  .p-toolbar.app-header {
-    padding: 0 var(--space-4);
-    height: 56px;
-    min-height: 56px;
-    max-height: 56px;
-  }
-
+  // PrimeNG responsive overrides moved to _exceptions.scss (DS-EXC-004)
   .header-start,
   .header-center,
   .header-end {
@@ -565,34 +362,6 @@
   .header-end {
     gap: var(--space-2);
   }
-
-  .header-icon-btn.p-button {
-    width: var(--space-10);
-    height: var(--space-10);
-    min-width: var(--space-10);
-    min-height: var(--space-10);
-    max-width: var(--space-10);
-    max-height: var(--space-10);
-  }
-
-  .header-icon-btn.p-button .p-button-icon {
-    font-size: var(--font-size-body);
-  }
-
-  .user-avatar.p-avatar {
-    width: var(--space-8);
-    height: var(--space-8);
-    min-width: var(--space-8);
-    min-height: var(--space-8);
-    font-size: var(--font-size-badge);
-  }
-
-  .user-avatar-btn.p-button {
-    width: var(--space-8);
-    height: var(--space-8);
-    min-width: var(--space-8);
-    max-width: var(--space-8);
-  }
 }
 
 /* ================================================================
@@ -609,10 +378,9 @@
    KEYBOARD SHORTCUTS DIALOG
    ================================================================ */
 
-:host ::ng-deep .shortcuts-dialog {
-  .p-dialog-content {
-    padding: 0;
-  }
+// PrimeNG dialog override moved to _exceptions.scss (DS-EXC-004)
+.shortcuts-dialog {
+  // Component-specific styles remain here
 }
 
 .shortcuts-content {

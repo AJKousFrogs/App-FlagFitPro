@@ -94,6 +94,13 @@ export interface ReadinessResult {
           size="sm"
           ariaLabel="Edit check-in"
         />
+        <small class="state-narration-inline" style="display: block; margin-top: var(--space-2); font-size: var(--font-size-badge); color: var(--color-text-secondary);">
+          <strong>What changed:</strong> Check-in completed. Readiness score: {{ readinessScore() }}.
+          <strong>Why:</strong> You saved your wellness check-in.
+          <strong>What it means:</strong> {{ getRecommendation(readinessScore()) }}
+          <strong>Who:</strong> Your data is saved and visible to your coach.
+          <strong>What next:</strong> Click to edit or view details. This score affects your training recommendations.
+        </small>
       </div>
     }
 
@@ -128,6 +135,13 @@ export interface ReadinessResult {
             />
             <span class="slider-label">Excellent</span>
           </div>
+          <small class="state-narration">
+            <strong>What changed:</strong> Sleep quality set to {{ getSleepLabel(formData().sleepQuality) }}.
+            <strong>Why:</strong> Based on your input.
+            <strong>What it means:</strong> This affects 30% of your readiness score.
+            <strong>Who:</strong> You control this value.
+            <strong>What next:</strong> Your readiness score updates automatically below.
+          </small>
         </div>
 
         <!-- Sleep Hours -->
@@ -149,6 +163,13 @@ export interface ReadinessResult {
             />
             <span class="slider-label">12h</span>
           </div>
+          <small class="state-narration">
+            <strong>What changed:</strong> Sleep hours set to {{ formData().sleepHours }}h.
+            <strong>Why:</strong> Based on your input.
+            <strong>What it means:</strong> This affects 15% of your readiness score. {{ formData().sleepHours >= 8 ? 'Optimal range (8+ hours).' : formData().sleepHours >= 7 ? 'Good range (7-8 hours).' : 'Below optimal range - may impact recovery.' }}
+            <strong>Who:</strong> You control this value.
+            <strong>What next:</strong> Your readiness score updates automatically below.
+          </small>
         </div>
 
         <!-- Energy Level -->
@@ -172,6 +193,13 @@ export interface ReadinessResult {
             />
             <span class="slider-label">Energized</span>
           </div>
+          <small class="state-narration">
+            <strong>What changed:</strong> Energy level set to {{ getEnergyLabel(formData().energyLevel) }}.
+            <strong>Why:</strong> Based on your input.
+            <strong>What it means:</strong> This affects 25% of your readiness score.
+            <strong>Who:</strong> You control this value.
+            <strong>What next:</strong> Your readiness score updates automatically below.
+          </small>
         </div>
 
         <!-- Muscle Soreness -->
@@ -195,6 +223,13 @@ export interface ReadinessResult {
             />
             <span class="slider-label">No Soreness</span>
           </div>
+          <small class="state-narration">
+            <strong>What changed:</strong> Muscle soreness set to {{ getSorenessLabel(formData().muscleSoreness) }}.
+            <strong>Why:</strong> Based on your input.
+            <strong>What it means:</strong> This affects 15% of your readiness score. {{ formData().muscleSoreness < 4 ? 'Since soreness is moderate or higher, you\'ll be asked to specify affected areas below.' : 'Low soreness indicates good recovery.' }}
+            <strong>Who:</strong> You control this value.
+            <strong>What next:</strong> {{ formData().muscleSoreness < 4 ? 'Select affected body areas below, then readiness score updates.' : 'Your readiness score updates automatically below.' }}
+          </small>
         </div>
 
         <!-- Soreness Areas -->
@@ -204,6 +239,13 @@ export interface ReadinessResult {
               <span class="label-icon">📍</span>
               <span>Where are you sore?</span>
             </label>
+            <small class="state-narration" style="display: block; margin-bottom: var(--space-2);">
+              <strong>What changed:</strong> Soreness areas section appeared.
+              <strong>Why:</strong> Your muscle soreness is {{ getSorenessLabel(formData().muscleSoreness) }} (moderate or higher).
+              <strong>What it means:</strong> Tracking specific areas helps identify patterns and recovery needs.
+              <strong>Who:</strong> You select which areas are affected.
+              <strong>What next:</strong> Select all areas that feel sore. This helps your coach understand your recovery status.
+            </small>
             <div class="body-area-grid">
               @for (area of bodyAreas; track area) {
                 <label class="area-checkbox">
@@ -216,6 +258,15 @@ export interface ReadinessResult {
                 </label>
               }
             </div>
+            @if (formData().sorenessAreas.length > 0) {
+              <small class="state-narration">
+                <strong>What changed:</strong> {{ formData().sorenessAreas.length }} area(s) selected: {{ formData().sorenessAreas.join(', ') }}.
+                <strong>Why:</strong> You selected these areas.
+                <strong>What it means:</strong> This information will be saved with your check-in for coach review.
+                <strong>Who:</strong> You control these selections.
+                <strong>What next:</strong> Continue with the rest of the check-in.
+              </small>
+            }
           </div>
         }
 
@@ -240,6 +291,13 @@ export interface ReadinessResult {
             />
             <span class="slider-label">Very Low</span>
           </div>
+          <small class="state-narration">
+            <strong>What changed:</strong> Stress level set to {{ getStressLabel(formData().stressLevel) }}.
+            <strong>Why:</strong> Based on your input.
+            <strong>What it means:</strong> This affects 15% of your readiness score.
+            <strong>Who:</strong> You control this value.
+            <strong>What next:</strong> Your readiness score updates automatically below.
+          </small>
         </div>
 
         <!-- Notes -->
@@ -269,6 +327,13 @@ export interface ReadinessResult {
           <div class="preview-recommendation">
             {{ getRecommendation(previewScore()) }}
           </div>
+          <small class="state-narration" style="margin-top: var(--space-3); display: block; text-align: center;">
+            <strong>What changed:</strong> Readiness score is {{ previewScore() }} ({{ getReadinessClass(previewScore()) === 'high' ? 'high' : getReadinessClass(previewScore()) === 'moderate' ? 'moderate' : 'low' }}).
+            <strong>Why:</strong> Calculated from your sleep quality (30%), sleep hours (15%), energy (25%), soreness (15%), and stress (15%).
+            <strong>What it means:</strong> {{ getRecommendation(previewScore()) }}
+            <strong>Who:</strong> System calculates this automatically based on your inputs.
+            <strong>What next:</strong> {{ previewScore() >= 70 ? 'You\'re ready for training. Save your check-in to record this score.' : previewScore() >= 50 ? 'Consider lighter training today. Save your check-in to record this score.' : 'Rest day recommended. Save your check-in to record this score.' }}
+          </small>
         </div>
       </div>
 
@@ -282,6 +347,17 @@ export interface ReadinessResult {
           (clicked)="saveCheckin()"
           >Save Check-in</app-button
         >
+        @if (isSaving()) {
+          <div class="save-narration" style="width: 100%; margin-top: var(--space-2); padding: var(--space-2); background: var(--surface-secondary); border-radius: var(--radius-md);">
+            <small class="state-narration">
+              <strong>What changed:</strong> Check-in is being saved.
+              <strong>Why:</strong> You clicked "Save Check-in".
+              <strong>What it means:</strong> Your wellness data and readiness score ({{ previewScore() }}) are being recorded.
+              <strong>Who:</strong> System is processing your submission.
+              <strong>What next:</strong> Dialog will close automatically when saved. Your readiness score will appear on your dashboard.
+            </small>
+          </div>
+        }
       </ng-template>
     </p-dialog>
   `,
@@ -303,6 +379,7 @@ export class WellnessCheckinComponent implements OnInit {
   // Local State Signals
   readonly isSaving = signal(false);
   readonly showDialog = signal(false);
+  readonly saveSuccess = signal(false);
   readonly wellnessData = signal<WellnessData>({
     sleepQuality: 3,
     sleepHours: 7,
@@ -393,6 +470,7 @@ export class WellnessCheckinComponent implements OnInit {
 
       if (response?.success) {
         this.wellnessData.set(currentFormData);
+        this.saveSuccess.set(true);
         this.showDialog.set(false);
 
         this.checkinComplete.emit({
@@ -403,6 +481,9 @@ export class WellnessCheckinComponent implements OnInit {
           stressLevel: currentFormData.stressLevel,
           recommendation: this.getRecommendation(readiness),
         });
+        
+        // Reset success state after 5 seconds
+        setTimeout(() => this.saveSuccess.set(false), 5000);
       }
     } catch (err: any) {
       this.logger.error("Failed to save wellness checkin", err);

@@ -97,222 +97,236 @@ const DEBT_THRESHOLDS = {
         ></app-page-header>
 
         <!-- Current Sleep Debt Status -->
-        <p-card styleClass="debt-status-card">
-          <div class="debt-display">
-            <div
-              class="debt-circle"
-              [class]="'debt-' + sleepDebtAnalysis().debtLevel"
-            >
-              <span class="debt-value">{{
-                sleepDebtAnalysis().cumulativeDebt | number: "1.1-1"
-              }}</span>
-              <span class="debt-unit">hrs</span>
-              <span class="debt-label">{{
-                getDebtLevelLabel(sleepDebtAnalysis().debtLevel)
-              }}</span>
+        @if (sleepDebtAnalysis(); as analysis) {
+          <p-card styleClass="debt-status-card">
+            <div class="debt-display">
+              <div
+                class="debt-circle"
+                [class]="'debt-' + analysis.debtLevel"
+              >
+                <span class="debt-value">{{
+                  analysis.cumulativeDebt | number: "1.1-1"
+                }}</span>
+                <span class="debt-unit">hrs</span>
+                <span class="debt-label">{{
+                  getDebtLevelLabel(analysis.debtLevel)
+                }}</span>
+              </div>
+              <p class="debt-description">Accumulated over the past 7 days</p>
             </div>
-            <p class="debt-description">Accumulated over the past 7 days</p>
-          </div>
-        </p-card>
+          </p-card>
+        } @else {
+          <p-card styleClass="debt-status-card">
+            <div class="empty-state">
+              <i class="pi pi-info-circle"></i>
+              <h3>No Sleep Data Yet</h3>
+              <p>
+                @if (userAge() === null) {
+                  Please provide your age and log sleep data in wellness check-ins to see your sleep debt analysis.
+                } @else {
+                  Log sleep data in wellness check-ins to see your sleep debt analysis.
+                }
+              </p>
+            </div>
+          </p-card>
+        }
 
         <!-- Stats Cards -->
-        <div class="stats-grid">
-          <p-card styleClass="stat-card">
-            <div class="stat-content">
-              <i class="pi pi-moon stat-icon"></i>
-              <div class="stat-details">
-                <span class="stat-label">7-Day Avg Sleep</span>
-                <span class="stat-value"
-                  >{{
-                    sleepDebtAnalysis().sevenDayAvg | number: "1.1-1"
-                  }}
-                  hrs</span
-                >
-                <p-tag
-                  [value]="
-                    sleepDebtAnalysis().sevenDayAvg <
-                    sleepDebtAnalysis().optimalTarget
-                      ? 'Below optimal'
-                      : 'On target'
-                  "
-                  [severity]="
-                    sleepDebtAnalysis().sevenDayAvg <
-                    sleepDebtAnalysis().optimalTarget
-                      ? 'danger'
-                      : 'success'
-                  "
-                ></p-tag>
+        @if (sleepDebtAnalysis(); as analysis) {
+          <div class="stats-grid">
+            <p-card styleClass="stat-card">
+              <div class="stat-content">
+                <i class="pi pi-moon stat-icon"></i>
+                <div class="stat-details">
+                  <span class="stat-label">7-Day Avg Sleep</span>
+                  <span class="stat-value"
+                    >{{
+                      analysis.sevenDayAvg | number: "1.1-1"
+                    }}
+                    hrs</span
+                  >
+                  <p-tag
+                    [value]="
+                      analysis.sevenDayAvg < analysis.optimalTarget
+                        ? 'Below optimal'
+                        : 'On target'
+                    "
+                    [severity]="
+                      analysis.sevenDayAvg < analysis.optimalTarget
+                        ? 'danger'
+                        : 'success'
+                    "
+                  ></p-tag>
+                </div>
               </div>
-            </div>
-          </p-card>
+            </p-card>
 
-          <p-card styleClass="stat-card">
-            <div class="stat-content">
-              <i class="pi pi-chart-bar stat-icon"></i>
-              <div class="stat-details">
-                <span class="stat-label">14-Day Avg Sleep</span>
-                <span class="stat-value"
-                  >{{
-                    sleepDebtAnalysis().fourteenDayAvg | number: "1.1-1"
-                  }}
-                  hrs</span
-                >
-                <p-tag
-                  [value]="
-                    sleepDebtAnalysis().fourteenDayAvg >=
-                    sleepDebtAnalysis().optimalTarget - 0.5
-                      ? 'Near target'
-                      : 'Below optimal'
-                  "
-                  [severity]="
-                    sleepDebtAnalysis().fourteenDayAvg >=
-                    sleepDebtAnalysis().optimalTarget - 0.5
-                      ? 'warn'
-                      : 'danger'
-                  "
-                ></p-tag>
+            <p-card styleClass="stat-card">
+              <div class="stat-content">
+                <i class="pi pi-chart-bar stat-icon"></i>
+                <div class="stat-details">
+                  <span class="stat-label">14-Day Avg Sleep</span>
+                  <span class="stat-value"
+                    >{{
+                      analysis.fourteenDayAvg | number: "1.1-1"
+                    }}
+                    hrs</span
+                  >
+                  <p-tag
+                    [value]="
+                      analysis.fourteenDayAvg >= analysis.optimalTarget - 0.5
+                        ? 'Near target'
+                        : 'Below optimal'
+                    "
+                    [severity]="
+                      analysis.fourteenDayAvg >= analysis.optimalTarget - 0.5
+                        ? 'warn'
+                        : 'danger'
+                    "
+                  ></p-tag>
+                </div>
               </div>
-            </div>
-          </p-card>
+            </p-card>
 
-          <p-card styleClass="stat-card">
-            <div class="stat-content">
-              <i class="pi pi-bullseye stat-icon"></i>
-              <div class="stat-details">
-                <span class="stat-label">Optimal Target</span>
-                <span class="stat-value"
-                  >{{ sleepDebtAnalysis().optimalTarget }} hrs</span
-                >
-                <span class="stat-hint">(for age {{ userAge() }})</span>
+            <p-card styleClass="stat-card">
+              <div class="stat-content">
+                <i class="pi pi-bullseye stat-icon"></i>
+                <div class="stat-details">
+                  <span class="stat-label">Optimal Target</span>
+                  <span class="stat-value"
+                    >{{ analysis.optimalTarget }} hrs</span
+                  >
+                  <span class="stat-hint">(for age {{ userAge() }})</span>
+                </div>
               </div>
-            </div>
-          </p-card>
+            </p-card>
 
-          <p-card styleClass="stat-card">
-            <div class="stat-content">
-              <i class="pi pi-clock stat-icon"></i>
-              <div class="stat-details">
-                <span class="stat-label">Recovery Timeline</span>
-                <span class="stat-value"
-                  >{{ sleepDebtAnalysis().recoveryDays }} days</span
-                >
-                <span class="stat-hint">to clear debt</span>
+            <p-card styleClass="stat-card">
+              <div class="stat-content">
+                <i class="pi pi-clock stat-icon"></i>
+                <div class="stat-details">
+                  <span class="stat-label">Recovery Timeline</span>
+                  <span class="stat-value"
+                    >{{ analysis.recoveryDays }} days</span
+                  >
+                  <span class="stat-hint">to clear debt</span>
+                </div>
               </div>
-            </div>
-          </p-card>
-        </div>
+            </p-card>
+          </div>
+        }
 
         <!-- Impact on Performance -->
-        <p-card header="Impact on Performance" styleClass="impact-card">
-          <div class="impact-section">
-            <div class="impact-item">
-              <div class="impact-header">
-                <span class="impact-label">Training Capacity</span>
-                <span class="impact-value"
-                  >{{
-                    impactMultipliers().trainingCapacity * 100
-                      | number: "1.0-0"
-                  }}%</span
-                >
+        @if (impactMultipliers(); as multipliers) {
+          <p-card header="Impact on Performance" styleClass="impact-card">
+            <div class="impact-section">
+              <div class="impact-item">
+                <div class="impact-header">
+                  <span class="impact-label">Training Capacity</span>
+                  <span class="impact-value"
+                    >{{
+                      multipliers.trainingCapacity * 100 | number: "1.0-0"
+                    }}%</span
+                  >
+                </div>
+                <p-progressBar
+                  [value]="multipliers.trainingCapacity * 100"
+                  [showValue]="false"
+                  styleClass="impact-bar"
+                ></p-progressBar>
+                <p class="impact-description">
+                  Your body can only absorb
+                  {{
+                    multipliers.trainingCapacity * 100 | number: "1.0-0"
+                  }}% of planned training load effectively
+                </p>
               </div>
-              <p-progressBar
-                [value]="impactMultipliers().trainingCapacity * 100"
-                [showValue]="false"
-                styleClass="impact-bar"
-              ></p-progressBar>
-              <p class="impact-description">
-                Your body can only absorb
-                {{
-                  impactMultipliers().trainingCapacity * 100 | number: "1.0-0"
-                }}% of planned training load effectively
-              </p>
-            </div>
 
-            <div class="impact-item">
-              <div class="impact-header">
-                <span class="impact-label">Recovery Rate</span>
-                <span class="impact-value"
-                  >{{
-                    impactMultipliers().recoveryRate * 100 | number: "1.0-0"
-                  }}%</span
-                >
+              <div class="impact-item">
+                <div class="impact-header">
+                  <span class="impact-label">Recovery Rate</span>
+                  <span class="impact-value"
+                    >{{
+                      multipliers.recoveryRate * 100 | number: "1.0-0"
+                    }}%</span
+                  >
+                </div>
+                <p-progressBar
+                  [value]="multipliers.recoveryRate * 100"
+                  [showValue]="false"
+                  styleClass="impact-bar"
+                ></p-progressBar>
+                <p class="impact-description">
+                  Recovery between sessions is
+                  {{
+                    100 - multipliers.recoveryRate * 100 | number: "1.0-0"
+                  }}% slower than optimal
+                </p>
               </div>
-              <p-progressBar
-                [value]="impactMultipliers().recoveryRate * 100"
-                [showValue]="false"
-                styleClass="impact-bar"
-              ></p-progressBar>
-              <p class="impact-description">
-                Recovery between sessions is
-                {{
-                  100 - impactMultipliers().recoveryRate * 100
-                    | number: "1.0-0"
-                }}% slower than optimal
-              </p>
-            </div>
 
-            <div class="impact-item warning">
-              <div class="impact-header">
-                <span class="impact-label">Injury Risk</span>
-                <span class="impact-value danger"
-                  >+{{
-                    (impactMultipliers().injuryRiskMultiplier - 1) * 100
+              <div class="impact-item warning">
+                <div class="impact-header">
+                  <span class="impact-label">Injury Risk</span>
+                  <span class="impact-value danger"
+                    >+{{
+                      (multipliers.injuryRiskMultiplier - 1) * 100
+                        | number: "1.0-0"
+                    }}%</span
+                  >
+                </div>
+                <p-progressBar
+                  [value]="
+                    Math.min(
+                      (multipliers.injuryRiskMultiplier - 1) * 100,
+                      100
+                    )
+                  "
+                  [showValue]="false"
+                  styleClass="impact-bar danger"
+                ></p-progressBar>
+                <p class="impact-description">
+                  Injury risk increased by
+                  {{
+                    (multipliers.injuryRiskMultiplier - 1) * 100
                       | number: "1.0-0"
-                  }}%</span
-                >
+                  }}% compared to well-rested state
+                </p>
               </div>
-              <p-progressBar
-                [value]="
-                  Math.min(
-                    (impactMultipliers().injuryRiskMultiplier - 1) * 100,
-                    100
-                  )
-                "
-                [showValue]="false"
-                styleClass="impact-bar danger"
-              ></p-progressBar>
-              <p class="impact-description">
-                Injury risk increased by
-                {{
-                  (impactMultipliers().injuryRiskMultiplier - 1) * 100
-                    | number: "1.0-0"
-                }}% compared to well-rested state
-              </p>
-            </div>
 
-            <div class="impact-item">
-              <div class="impact-header">
-                <span class="impact-label">Reaction Time</span>
-                <span class="impact-value warn"
-                  >+{{
-                    (impactMultipliers().reactionTimeMultiplier - 1) * 100
+              <div class="impact-item">
+                <div class="impact-header">
+                  <span class="impact-label">Reaction Time</span>
+                  <span class="impact-value warn"
+                    >+{{
+                      (multipliers.reactionTimeMultiplier - 1) * 100
+                        | number: "1.0-0"
+                    }}%</span
+                  >
+                </div>
+                <p-progressBar
+                  [value]="
+                    Math.min(
+                      (multipliers.reactionTimeMultiplier - 1) * 100,
+                      100
+                    )
+                  "
+                  [showValue]="false"
+                  styleClass="impact-bar warn"
+                ></p-progressBar>
+                <p class="impact-description">
+                  Reaction time is
+                  {{
+                    (multipliers.reactionTimeMultiplier - 1) * 100
                       | number: "1.0-0"
-                  }}%</span
-                >
+                  }}% slower than baseline
+                </p>
               </div>
-              <p-progressBar
-                [value]="
-                  Math.min(
-                    (impactMultipliers().reactionTimeMultiplier - 1) * 100,
-                    100
-                  )
-                "
-                [showValue]="false"
-                styleClass="impact-bar warn"
-              ></p-progressBar>
-              <p class="impact-description">
-                Reaction time is
-                {{
-                  (impactMultipliers().reactionTimeMultiplier - 1) * 100
-                    | number: "1.0-0"
-                }}% slower than baseline
-              </p>
             </div>
-          </div>
-        </p-card>
+          </p-card>
+        }
 
         <!-- AI Recommendation -->
-        @if (sleepDebtAnalysis().cumulativeDebt > 0) {
+        @if (sleepDebtAnalysis()?.cumulativeDebt && sleepDebtAnalysis()!.cumulativeDebt > 0 && impactMultipliers(); as multipliers) {
           <p-card styleClass="recommendation-card">
             <ng-template pTemplate="header">
               <div class="rec-header">
@@ -330,14 +344,13 @@ const DEBT_THRESHOLDS = {
                 <li>
                   <i class="pi pi-clock"></i>
                   Add 30-60 minutes to your sleep time for the next
-                  {{ sleepDebtAnalysis().recoveryDays }} nights
+                  {{ sleepDebtAnalysis()!.recoveryDays }} nights
                 </li>
                 <li>
                   <i class="pi pi-minus-circle"></i>
                   Reduce training intensity to
                   {{
-                    impactMultipliers().trainingCapacity * 100
-                      | number: "1.0-0"
+                    multipliers.trainingCapacity * 100 | number: "1.0-0"
                   }}% until debt is cleared
                 </li>
                 <li>
@@ -431,28 +444,35 @@ export class SleepDebtComponent implements OnInit {
 
   // State
   readonly sleepHistory = signal<SleepEntry[]>([]);
-  readonly userAge = signal(24);
+  readonly userAge = signal<number | null>(null); // No default - must be provided by user
   readonly isLoading = signal(true);
 
   // Computed values
-  readonly sleepDebtAnalysis = computed<SleepDebtAnalysis>(() => {
+  readonly sleepDebtAnalysis = computed<SleepDebtAnalysis | null>(() => {
     const history = this.sleepHistory();
     const age = this.userAge();
+    
+    // CRITICAL: Only calculate if we have real data
+    if (age === null || history.length === 0) {
+      return null; // No calculations without real data
+    }
+    
     const optimalHours = this.getOptimalSleepHours(age);
-
     return this.calculateSleepDebt(history, optimalHours);
   });
 
-  readonly impactMultipliers = computed<ImpactMultipliers>(() => {
-    const debt = this.sleepDebtAnalysis().cumulativeDebt;
-    return this.calculateImpactMultipliers(debt);
+  readonly impactMultipliers = computed<ImpactMultipliers | null>(() => {
+    const analysis = this.sleepDebtAnalysis();
+    if (!analysis) return null; // No calculations without real data
+    return this.calculateImpactMultipliers(analysis.cumulativeDebt);
   });
 
   readonly sleepHistoryChartData = computed(() => {
     const history = this.sleepHistory().slice(0, 7).reverse();
-    if (history.length === 0) return null;
+    const analysis = this.sleepDebtAnalysis();
+    if (history.length === 0 || !analysis) return null;
 
-    const optimal = this.sleepDebtAnalysis().optimalTarget;
+    const optimal = analysis.optimalTarget;
 
     return {
       labels: history.map((h) =>
@@ -477,9 +497,10 @@ export class SleepDebtComponent implements OnInit {
 
   readonly debtTrendChartData = computed(() => {
     const history = this.sleepHistory().slice(0, 7).reverse();
-    if (history.length < 2) return null;
+    const analysis = this.sleepDebtAnalysis();
+    if (history.length < 2 || !analysis) return null;
 
-    const optimal = this.sleepDebtAnalysis().optimalTarget;
+    const optimal = analysis.optimalTarget;
 
     // Calculate cumulative debt over time
     let cumulativeDebt = 0;
@@ -577,10 +598,10 @@ export class SleepDebtComponent implements OnInit {
       }
     } catch (err) {
       this.logger.error("Failed to load sleep data", err);
-      // Load demo data for development
       // No sleep data available - set empty state
+      // CRITICAL: Do NOT set default age - calculations require real user data
       this.sleepHistory.set([]);
-      this.userAge.set(22); // Default age for calculation
+      this.userAge.set(null); // No default - user must provide age
     } finally {
       this.isLoading.set(false);
     }

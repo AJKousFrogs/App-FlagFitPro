@@ -129,6 +129,7 @@ export type TeamRole =
   | "assistant_coach"
   | "physiotherapist"
   | "nutritionist"
+  | "psychologist"
   | "strength_conditioning_coach"
   | "owner"
   | "admin"
@@ -185,6 +186,7 @@ export const ROLE_OPTIONS = [
   // Medical & Performance Staff
   { label: "Physiotherapist", value: "physiotherapist" },
   { label: "Nutritionist", value: "nutritionist" },
+  { label: "Psychologist", value: "psychologist" },
   {
     label: "Strength & Conditioning Coach",
     value: "strength_conditioning_coach",
@@ -210,6 +212,7 @@ export const GROUPED_ROLE_OPTIONS = [
     items: [
       { label: "Physiotherapist", value: "physiotherapist" },
       { label: "Nutritionist", value: "nutritionist" },
+      { label: "Psychologist", value: "psychologist" },
       {
         label: "Strength & Conditioning Coach",
         value: "strength_conditioning_coach",

@@ -49,11 +49,11 @@ interface ScheduledSession {
 }
 
 interface AthleteMetrics {
-  readiness_score: number;
-  acwr: number;
-  fatigue_level: number;
-  sleep_quality: number;
-  soreness_level: number;
+  readiness_score: number | null;
+  acwr: number | null;
+  fatigue_level: number | null;
+  sleep_quality: number | null;
+  soreness_level: number | null;
 }
 
 @Component({
@@ -104,47 +104,77 @@ interface AthleteMetrics {
         }
 
         <!-- Readiness Overview -->
-        <div class="readiness-overview">
-          <p-card class="readiness-card">
-            <div class="readiness-header">
-              <h3><i class="pi pi-heart-fill"></i> Your Readiness</h3>
-              <span class="readiness-score" [class]="getReadinessClass()">
-                {{ athleteMetrics().readiness_score }}%
-              </span>
-            </div>
-            <div class="metrics-grid">
-              <div class="metric-item">
-                <span class="metric-label">ACWR</span>
-                <span
-                  class="metric-value"
-                  [class.warning]="athleteMetrics().acwr > 1.5"
-                >
-                  {{ athleteMetrics().acwr.toFixed(2) }}
+        @if (athleteMetrics()) {
+          <div class="readiness-overview">
+            <p-card class="readiness-card">
+              <div class="readiness-header">
+                <h3><i class="pi pi-heart-fill"></i> Your Readiness</h3>
+                <span class="readiness-score" [class]="getReadinessClass()">
+                  @if (athleteMetrics()!.readiness_score !== null) {
+                    {{ athleteMetrics()!.readiness_score }}%
+                  } @else {
+                    —
+                  }
                 </span>
               </div>
-              <div class="metric-item">
-                <span class="metric-label">Fatigue</span>
-                <p-progressBar
-                  [value]="athleteMetrics().fatigue_level"
-                  [showValue]="false"
-                  styleClass="fatigue-bar"
-                ></p-progressBar>
+              <div class="metrics-grid">
+                <div class="metric-item">
+                  <span class="metric-label">ACWR</span>
+                  <span
+                    class="metric-value"
+                    [class.warning]="athleteMetrics()!.acwr !== null && athleteMetrics()!.acwr! > 1.5"
+                  >
+                    @if (athleteMetrics()!.acwr !== null) {
+                      {{ athleteMetrics()!.acwr!.toFixed(2) }}
+                    } @else {
+                      —
+                    }
+                  </span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Fatigue</span>
+                  @if (athleteMetrics()!.fatigue_level !== null) {
+                    <p-progressBar
+                      [value]="athleteMetrics()!.fatigue_level!"
+                      [showValue]="false"
+                      styleClass="fatigue-bar"
+                    ></p-progressBar>
+                  } @else {
+                    <span class="metric-value">—</span>
+                  }
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Sleep</span>
+                  <span class="metric-value">
+                    @if (athleteMetrics()!.sleep_quality !== null) {
+                      {{ athleteMetrics()!.sleep_quality }}/10
+                    } @else {
+                      —
+                    }
+                  </span>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-label">Soreness</span>
+                  <span class="metric-value">
+                    @if (athleteMetrics()!.soreness_level !== null) {
+                      {{ athleteMetrics()!.soreness_level }}/10
+                    } @else {
+                      —
+                    }
+                  </span>
+                </div>
               </div>
-              <div class="metric-item">
-                <span class="metric-label">Sleep</span>
-                <span class="metric-value"
-                  >{{ athleteMetrics().sleep_quality }}/10</span
-                >
-              </div>
-              <div class="metric-item">
-                <span class="metric-label">Soreness</span>
-                <span class="metric-value"
-                  >{{ athleteMetrics().soreness_level }}/10</span
-                >
-              </div>
+            </p-card>
+          </div>
+        } @else {
+          <p-card class="readiness-card">
+            <div class="empty-state">
+              <i class="pi pi-info-circle"></i>
+              <h4>No Readiness Data Available</h4>
+              <p>Complete your wellness check-in to see your readiness metrics here.</p>
             </div>
           </p-card>
-        </div>
+        }
 
         <div class="scheduler-content">
           <!-- AI Suggestions -->
@@ -307,13 +337,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
   selectedDate = signal<Date>(new Date());
   suggestions = signal<AISuggestion[]>([]);
   scheduledSessions = signal<ScheduledSession[]>([]);
-  athleteMetrics = signal<AthleteMetrics>({
-    readiness_score: 75,
-    acwr: 1.1,
-    fatigue_level: 40,
-    sleep_quality: 7,
-    soreness_level: 3,
-  });
+  athleteMetrics = signal<AthleteMetrics | null>(null);
 
   isLoading = signal(false);
   isGenerating = signal(false);
@@ -388,16 +412,23 @@ export class AiTrainingSchedulerComponent implements OnInit {
         .limit(1)
         .single();
 
-      this.athleteMetrics.set({
-        readiness_score: readiness?.score || 75,
-        acwr: acwr?.acwr_ratio || 1.0,
-        fatigue_level: wellness?.fatigue || 40,
-        sleep_quality: wellness?.sleep_quality || 7,
-        soreness_level: wellness?.soreness || 3,
-      });
+      // Only set metrics if we have real data - no defaults to avoid wrong calculations
+      if (readiness || acwr || wellness) {
+        this.athleteMetrics.set({
+          readiness_score: readiness?.score ?? null,
+          acwr: acwr?.acwr_ratio ?? null,
+          fatigue_level: wellness?.fatigue ?? null,
+          sleep_quality: wellness?.sleep_quality ?? null,
+          soreness_level: wellness?.soreness ?? null,
+        });
+      } else {
+        // No data available - show empty state
+        this.athleteMetrics.set(null);
+      }
     } catch (error) {
       this.logger.warn("Could not load all athlete metrics:", error);
-      // Use defaults
+      // No defaults - show empty state
+      this.athleteMetrics.set(null);
     }
   }
 
@@ -447,8 +478,13 @@ export class AiTrainingSchedulerComponent implements OnInit {
     const metrics = this.athleteMetrics();
     const suggestions: AISuggestion[] = [];
 
+    // Only generate suggestions if we have real data - no demo suggestions
+    if (!metrics) {
+      return;
+    }
+
     // Generate suggestions based on metrics
-    if (metrics.acwr > 1.5) {
+    if (metrics.acwr !== null && metrics.acwr > 1.5) {
       suggestions.push({
         id: crypto.randomUUID(),
         type: "reduce",
@@ -461,7 +497,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
       });
     }
 
-    if (metrics.readiness_score < 60) {
+    if (metrics.readiness_score !== null && metrics.readiness_score < 60) {
       suggestions.push({
         id: crypto.randomUUID(),
         type: "rest",
@@ -474,7 +510,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
       });
     }
 
-    if (metrics.sleep_quality < 6) {
+    if (metrics.sleep_quality !== null && metrics.sleep_quality < 6) {
       suggestions.push({
         id: crypto.randomUUID(),
         type: "recovery",
@@ -488,7 +524,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
       });
     }
 
-    if (metrics.soreness_level > 7) {
+    if (metrics.soreness_level !== null && metrics.soreness_level > 7) {
       suggestions.push({
         id: crypto.randomUUID(),
         type: "swap",
@@ -502,7 +538,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
       });
     }
 
-    if (metrics.readiness_score > 80 && metrics.acwr < 1.2) {
+    if (metrics.readiness_score !== null && metrics.readiness_score > 80 && metrics.acwr !== null && metrics.acwr < 1.2) {
       suggestions.push({
         id: crypto.randomUUID(),
         type: "increase",
@@ -653,7 +689,9 @@ export class AiTrainingSchedulerComponent implements OnInit {
   }
 
   getReadinessClass(): string {
-    const score = this.athleteMetrics().readiness_score;
+    const metrics = this.athleteMetrics();
+    if (!metrics || metrics.readiness_score === null) return "unknown";
+    const score = metrics.readiness_score;
     if (score >= 80) return "excellent";
     if (score >= 65) return "good";
     if (score >= 50) return "moderate";

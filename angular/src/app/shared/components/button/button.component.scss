@@ -95,12 +95,10 @@ a.btn {
   // DEFAULT APPEARANCE
   // Green background + white text/icons
   // ─────────────────────────────────────────
-  background-color: var(--ds-primary-green, #089949);
-  color: var(--color-text-on-primary, #ffffff);
+  background-color: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
   border: 2px solid transparent;
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.15),
-    0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 
   // Transition
   transition:
@@ -128,13 +126,13 @@ a.btn {
 
 @media (hover: hover) and (pointer: fine) {
   .btn:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-text-on-primary, #ffffff);
-    color: var(--ds-primary-green, #089949);
-    border-color: var(--ds-primary-green, #089949);
+    background-color: var(--color-text-on-primary);
+    color: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
     transform: translateY(-2px);
     box-shadow:
-      0 8px 20px rgba(8, 153, 73, 0.3),
-      0 4px 8px rgba(0, 0, 0, 0.1);
+      0 8px 20px rgba(var(--ds-primary-green-rgb), 0.3),
+      var(--shadow-sm);
   }
 }
 
@@ -144,9 +142,7 @@ a.btn {
 
 .btn:active:not(:disabled):not(.btn-disabled) {
   transform: translateY(0) scale(0.98);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.15),
-    0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 // ============================================
@@ -154,11 +150,11 @@ a.btn {
 // ============================================
 
 .btn:focus-visible {
-  outline: 3px solid rgba(8, 153, 73, 0.5);
+  outline: 3px solid rgba(var(--ds-primary-green-rgb), 0.5);
   outline-offset: 2px;
   box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.15),
-    0 0 0 4px rgba(8, 153, 73, 0.25);
+    var(--shadow-md),
+    0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.25);
 }
 
 .btn:focus:not(:focus-visible) {
@@ -197,34 +193,34 @@ a.btn {
 // PRIMARY - Default (green bg + white text)
 // Explicitly defined for clarity, matches base
 .btn.btn-primary {
-  background-color: var(--ds-primary-green, #089949);
-  color: var(--color-text-on-primary, #ffffff);
+  background-color: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
   border-color: transparent;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-primary:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-text-on-primary, #ffffff);
-    color: var(--ds-primary-green, #089949);
-    border-color: var(--ds-primary-green, #089949);
+    background-color: var(--color-text-on-primary);
+    color: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
   }
 }
 
 // SECONDARY - Light background with border
 // Using to ensure these override base .btn styles
 .btn.btn-secondary {
-  background-color: var(--surface-secondary, #f8faf9);
-  color: var(--color-text-primary, #1a1a1a);
-  border-color: var(--color-border-muted, #e5e5e5);
-  box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+  background-color: var(--surface-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-muted);
+  box-shadow: var(--shadow-1);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-secondary:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--surface-tertiary, #e9ecef);
-    color: var(--ds-primary-green, #089949);
-    border-color: var(--ds-primary-green, #089949);
-    box-shadow: var(--shadow-2, 0 4px 12px rgba(0, 0, 0, 0.12));
+    background-color: var(--surface-tertiary);
+    color: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
+    box-shadow: var(--shadow-2);
   }
 }
 
@@ -232,29 +228,29 @@ a.btn {
 // Using to ensure these override base .btn styles
 .btn.btn-outlined {
   background-color: transparent;
-  color: var(--ds-primary-green, #089949);
-  border-color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
+  border-color: var(--ds-primary-green);
   box-shadow: none;
 
   // Ensure text is visible
   .btn-content,
   .btn-icon,
   i {
-    color: var(--ds-primary-green, #089949);
+    color: var(--ds-primary-green);
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-outlined:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--ds-primary-green, #089949);
-    color: var(--color-text-on-primary, #ffffff);
-    border-color: var(--ds-primary-green, #089949);
-    box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.08));
+    background-color: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+    border-color: var(--ds-primary-green);
+    box-shadow: var(--shadow-1);
 
     .btn-content,
     .btn-icon,
     i {
-      color: var(--color-text-on-primary, #ffffff);
+      color: var(--color-text-on-primary);
     }
   }
 }
@@ -264,64 +260,64 @@ a.btn {
 // Using to ensure these override base .btn styles
 .btn.btn-text {
   background-color: transparent;
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
   border-color: transparent;
   box-shadow: none;
 
   .btn-content,
   .btn-icon,
   i {
-    color: var(--ds-primary-green, #089949);
+    color: var(--ds-primary-green);
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-text:hover:not(:disabled):not(.btn-disabled) {
-    background-color: rgba(8, 153, 73, 0.08);
-    color: var(--ds-primary-green-hover, #036d35);
+    background-color: var(--ds-primary-green-subtle);
+    color: var(--ds-primary-green-hover);
 
     .btn-content,
     .btn-icon,
     i {
-      color: var(--ds-primary-green-hover, #036d35);
+      color: var(--ds-primary-green-hover);
     }
   }
 }
 
 // DANGER - Red for destructive actions
 .btn.btn-danger {
-  background-color: var(--color-status-error, #dc2626);
-  color: var(--color-text-on-primary, #ffffff);
+  background-color: var(--color-status-error);
+  color: var(--color-text-on-primary);
   border-color: transparent;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-danger:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-text-on-primary, #ffffff);
-    color: var(--color-status-error, #dc2626);
-    border-color: var(--color-status-error, #dc2626);
+    background-color: var(--color-text-on-primary);
+    color: var(--color-status-error);
+    border-color: var(--color-status-error);
   }
 }
 
 .btn.btn-danger:focus-visible {
-  outline-color: var(--color-status-error, #dc2626);
+  outline-color: var(--color-status-error);
   box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.15),
-    0 0 0 4px rgba(220, 38, 38, 0.25);
+    var(--shadow-md),
+    0 0 0 4px rgba(var(--primitive-error-500-rgb), 0.25);
 }
 
 // SUCCESS - Same as primary (green)
 .btn.btn-success {
-  background-color: var(--ds-primary-green, #089949);
-  color: var(--color-text-on-primary, #ffffff);
+  background-color: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
   border-color: transparent;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn.btn-success:hover:not(:disabled):not(.btn-disabled) {
-    background-color: var(--color-text-on-primary, #ffffff);
-    color: var(--ds-primary-green, #089949);
-    border-color: var(--ds-primary-green, #089949);
+    background-color: var(--color-text-on-primary);
+    color: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
   }
 }
 

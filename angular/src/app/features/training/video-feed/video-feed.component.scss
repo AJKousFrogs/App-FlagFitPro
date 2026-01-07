@@ -983,17 +983,7 @@
    Using global selectors - dialogs render in overlay outside component
    ================================================================ */
 
-/*
- * EXCEPTION: Search Input Icon Positioning
- * Reason: PrimeNG p-input-icon-left needs custom positioning
- * Scope: .search-wrapper only
- * Owner: @design-system
- */
-.search-wrapper .p-input-icon-left > i {
-  left: var(--space-5);
-  font-size: var(--font-size-h2);
-  color: var(--ds-primary-green);
-}
+// PrimeNG input icon override moved to _exceptions.scss (DS-EXC-018)
 
 /*
  * EXCEPTION: Creator Avatar Styling
@@ -1018,34 +1008,9 @@
   margin-bottom: var(--space-3);
 }
 
-/*
- * EXCEPTION: Suggest Button Override
- * Reason: Need specific styling for suggest CTA button
- * Scope: .suggest-btn class only
- * Owner: @design-system
- */
-.suggest-btn.p-button {
-  background: transparent;
-  border: var(--border-2) solid var(--ds-primary-green);
-  color: var(--ds-primary-green);
-  font-weight: var(--font-weight-bold);
-
-  &:hover {
-    background: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
-  }
-}
-
-/*
- * EXCEPTION: Mobile Full-Width Suggest Button
- * Reason: Button needs full width on mobile
- * Scope: .suggest-btn on mobile only
- * Owner: @design-system
- */
-@media (max-width: 768px) {
-  .suggest-btn.p-button {
-    width: 100%;
-  }
+// PrimeNG button overrides moved to _exceptions.scss (DS-EXC-018)
+.suggest-btn {
+  // Component-specific styles remain here
 }
 
 /*

@@ -271,12 +271,26 @@ interface HydrationLog {
         }
 
         <!-- Timeline View -->
-        <div class="nutrition-timeline">
-          <h3 class="timeline-title">
-            <i class="pi pi-clock"></i> Your Nutrition Timeline
-          </h3>
+        @if (games().length === 0) {
+          <p-card class="empty-state-card">
+            <div class="empty-state">
+              <i class="pi pi-calendar"></i>
+              <h3>No Tournament Schedule</h3>
+              <p>Create your tournament schedule to get personalized nutrition recommendations.</p>
+              <app-button
+                iconLeft="pi-calendar"
+                (clicked)="showScheduleEditor = true"
+                >Create Schedule</app-button
+              >
+            </div>
+          </p-card>
+        } @else {
+          <div class="nutrition-timeline">
+            <h3 class="timeline-title">
+              <i class="pi pi-clock"></i> Your Nutrition Timeline
+            </h3>
 
-          @for (window of nutritionWindows(); track window.id) {
+            @for (window of nutritionWindows(); track window.id) {
             <div
               class="timeline-item"
               [class.completed]="window.completed"
@@ -350,7 +364,8 @@ interface HydrationLog {
               </div>
             </div>
           }
-        </div>
+          </div>
+        }
 
         <!-- Evidence-Based Supplements Section -->
         <div class="section-card supplements-section">
@@ -773,16 +788,8 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
       }
     }
 
-    // If no schedule, show default example
-    if (this.games().length === 0) {
-      this.editGames = [
-        { id: "1", time: "08:00", opponent: "", isReferee: false },
-        { id: "2", time: "11:00", opponent: "", isReferee: false },
-        { id: "3", time: "15:00", opponent: "", isReferee: true },
-        { id: "4", time: "17:00", opponent: "", isReferee: false },
-      ];
-      this.showScheduleEditor = true;
-    }
+    // If no schedule, show empty state - user must create their own schedule
+    // No default example games to avoid misleading calculations
   }
 
   addGame(): void {

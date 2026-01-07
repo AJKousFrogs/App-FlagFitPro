@@ -327,9 +327,9 @@
   justify-content: center;
 }
 
-.category-filter :deep(.p-selectbutton) {
-  flex-wrap: wrap;
-  gap: var(--space-1);
+// PrimeNG selectbutton override moved to _exceptions.scss (DS-EXC-010)
+.category-filter {
+  // Component-specific styles remain here
 }
 
 /* Loading and Empty States */
@@ -654,9 +654,7 @@
     flex-wrap: wrap;
   }
 
-  .category-filter :deep(.p-selectbutton) {
-    justify-content: center;
-  }
+  // PrimeNG selectbutton override moved to _exceptions.scss (DS-EXC-010)
 
   .detail-meta {
     flex-direction: column;

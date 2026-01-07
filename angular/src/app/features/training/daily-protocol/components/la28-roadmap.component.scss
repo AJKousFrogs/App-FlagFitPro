@@ -338,11 +338,7 @@
   }
 }
 
-.roadmap-timeline .p-timeline-event-content {
-  line-height: var(--line-height-base);
-}
-
-.roadmap-timeline .p-card {
-  box-shadow: none;
-  border: var(--border-1) solid var(--surface-border);
+// PrimeNG timeline and card overrides moved to _exceptions.scss (DS-EXC-043)
+.roadmap-timeline {
+  // Component-specific styles remain here
 }

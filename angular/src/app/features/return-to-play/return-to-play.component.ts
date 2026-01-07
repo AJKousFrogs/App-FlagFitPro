@@ -12,6 +12,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { RTPPhaseCelebrationComponent, RTPPhaseInfo } from "../../shared/components/rtp-phase-celebration/rtp-phase-celebration.component";
 import { CardModule } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 // import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
@@ -290,6 +291,7 @@ const SEVERITY_LEVELS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    RTPPhaseCelebrationComponent,
   ],
   providers: [MessageService],
   template: `
@@ -322,6 +324,14 @@ const SEVERITY_LEVELS = [
 
         <!-- Active Protocol Display -->
         @if (activeProtocol(); as protocol) {
+          <!-- Phase 2.3: RTP Phase Celebration -->
+          @if (showPhaseCelebration() && phaseCelebrationInfo()) {
+            <app-rtp-phase-celebration
+              [phaseInfo]="phaseCelebrationInfo()!"
+              [daysInPreviousPhase]="previousPhaseDays()"
+            ></app-rtp-phase-celebration>
+          }
+
           <!-- Protocol Overview Card -->
           <p-card styleClass="protocol-overview-card">
             <div class="protocol-header">
@@ -809,6 +819,11 @@ export class ReturnToPlayComponent implements OnInit {
   readonly isStartingProtocol = signal(false);
   readonly isSavingCheckin = signal(false);
   readonly chartData = signal<object | null>(null);
+  
+  // Phase 2.3: RTP Phase Celebration
+  readonly showPhaseCelebration = signal(false);
+  readonly phaseCelebrationInfo = signal<RTPPhaseInfo | null>(null);
+  readonly previousPhaseDays = signal<number>(0);
 
   // Constants
   readonly protocolStages = PROTOCOL_STAGES;
@@ -926,24 +941,48 @@ export class ReturnToPlayComponent implements OnInit {
         }),
       );
 
+      // Phase 2.3: Store previous phase days for celebration
+      const previousPhaseDays = protocol.daysInCurrentStage;
+      const newStage = protocol.currentStage + 1;
+      const currentStageData = PROTOCOL_STAGES[protocol.currentStage - 1];
+      const nextStageData = PROTOCOL_STAGES[newStage - 1];
+
       // Update local state
       this.activeProtocol.update((p) => {
         if (!p) return p;
         return {
           ...p,
-          currentStage: p.currentStage + 1,
+          currentStage: newStage,
           daysInCurrentStage: 0,
           criteriaCompleted: new Array(
-            PROTOCOL_STAGES[p.currentStage].progressionCriteria.length,
+            PROTOCOL_STAGES[newStage - 1].progressionCriteria.length,
           ).fill(false),
-          progressPercentage: Math.round((p.currentStage / 7) * 100),
+          progressPercentage: Math.round((newStage / 7) * 100),
         };
       });
+
+      // Phase 2.3: Show celebration
+      this.previousPhaseDays.set(previousPhaseDays);
+      this.phaseCelebrationInfo.set({
+        currentPhase: newStage,
+        phaseName: nextStageData.name,
+        daysInPhase: 0,
+        minimumDays: nextStageData.minimumDays,
+        allowedActivities: nextStageData.activities,
+        restrictions: nextStageData.restrictions,
+        progressionCriteria: nextStageData.progressionCriteria,
+        nextPhase: newStage < 7 ? {
+          phase: newStage + 1,
+          name: PROTOCOL_STAGES[newStage]?.name || "",
+          unlockCriteria: PROTOCOL_STAGES[newStage]?.progressionCriteria || [],
+        } : undefined,
+      });
+      this.showPhaseCelebration.set(true);
 
       this.messageService.add({
         severity: "success",
         summary: "Stage Advanced",
-        detail: `Congratulations! You've progressed to Stage ${protocol.currentStage + 1}`,
+        detail: `Congratulations! You've progressed to Stage ${newStage}`,
         life: 4000,
       });
     } catch (err) {

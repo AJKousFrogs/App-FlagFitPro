@@ -14,22 +14,22 @@
   
   // Info (blue)
   &.banner-info {
-    background: var(--color-status-info-light, rgba(59, 130, 246, 0.1));
-    border-left-color: var(--color-status-info, #3b82f6);
+    background: var(--color-status-info-light);
+    border-left-color: var(--color-status-info);
     color: var(--color-text-primary);
   }
   
   // Warning (amber)
   &.banner-warning {
-    background: var(--color-status-warning-light, rgba(245, 158, 11, 0.1));
-    border-left-color: var(--color-status-warning, #f59e0b);
+    background: var(--color-status-warning-light);
+    border-left-color: var(--color-status-warning);
     color: var(--color-text-primary);
   }
   
   // Alert (amber, higher priority)
   &.banner-alert {
-    background: var(--color-status-warning-light, rgba(245, 158, 11, 0.15));
-    border-left-color: var(--color-status-warning, #f59e0b);
+    background: var(--color-status-warning-surface);
+    border-left-color: var(--color-status-warning);
     border-left-width: 4px;
     color: var(--color-text-primary);
     font-weight: var(--font-weight-medium);
@@ -37,8 +37,8 @@
   
   // Error (red)
   &.banner-error {
-    background: var(--color-status-error-light, rgba(239, 68, 68, 0.1));
-    border-left-color: var(--color-status-error, #ef4444);
+    background: var(--color-status-error-light);
+    border-left-color: var(--color-status-error);
     color: var(--color-text-primary);
   }
 }

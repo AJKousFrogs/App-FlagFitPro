@@ -8,6 +8,9 @@ const {
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const {
+  guardMerlinRequest,
+} = require("./utils/merlin-guard.cjs");
 
 /**
  * Award points for completing a training session
@@ -222,6 +225,19 @@ async function handleRequest(event, context, { userId }) {
 }
 
 exports.handler = async (event, context) => {
+  // Apply Merlin guard - POST is mutation
+  const req = { 
+    method: event.httpMethod, 
+    path: event.path, 
+    headers: event.headers, 
+    body: event.body,
+    user: context.user || {}
+  };
+  const blocked = guardMerlinRequest(req);
+  if (blocked && blocked.statusCode === 403) {
+    return blocked;
+  }
+
   return baseHandler(event, context, {
     functionName: "Training-Complete",
     allowedMethods: ["POST"],

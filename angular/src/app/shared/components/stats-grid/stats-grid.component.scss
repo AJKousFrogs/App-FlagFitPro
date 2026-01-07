@@ -24,13 +24,7 @@
     box-shadow: var(--shadow-md);
   }
 
-  .p-card-body {
-    padding: var(--space-4); // 16px for breathing room
-  }
-
-  .p-card-content {
-    padding: 0;
-  }
+  // PrimeNG card overrides moved to _exceptions.scss (DS-EXC-027)
 }
 
 // Content layout - matches Dashboard .stat-card-content

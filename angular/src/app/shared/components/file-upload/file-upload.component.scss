@@ -25,12 +25,12 @@
 }
 
 .upload-dropzone:hover:not(.disabled) {
-  border-color: var(--color-brand-primary, #089949);
+  border-color: var(--color-brand-primary);
   background: var(--surface-secondary);
 }
 
 .upload-dropzone.drag-over {
-  border-color: var(--color-brand-primary, #089949);
+  border-color: var(--color-brand-primary);
   background: var(--surface-tertiary);
 }
 
@@ -57,20 +57,20 @@
 
 .upload-icon {
   font-size: var(--font-display-sm);
-  color: var(--color-brand-primary, #089949);
+  color: var(--color-brand-primary);
   margin-bottom: var(--space-2, 0.5rem);
 }
 
 .upload-label {
   font-size: var(--font-body-lg, 1.125rem);
   font-weight: var(--font-weight-semibold);
-  color: var(--text-primary, #1a1a1a);
+  color: var(--color-text-primary);
   margin: 0;
 }
 
 .upload-hint {
   font-size: var(--font-body-sm, 0.875rem);
-  color: var(--text-secondary, #6b7280);
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
@@ -100,7 +100,7 @@
 
 .file-icon {
   font-size: var(--font-size-h2);
-  color: var(--color-brand-primary, #089949);
+  color: var(--color-brand-primary);
 }
 
 .file-details {
@@ -111,12 +111,12 @@
 
 .file-name {
   font-weight: var(--font-weight-medium);
-  color: var(--text-primary, #1a1a1a);
+  color: var(--color-text-primary);
 }
 
 .file-size {
   font-size: var(--font-body-sm, 0.875rem);
-  color: var(--text-secondary, #6b7280);
+  color: var(--color-text-secondary);
 }
 
 .remove-file-btn {
@@ -142,7 +142,7 @@
   text-align: center;
   margin-top: var(--space-2, 0.5rem);
   font-size: var(--font-body-sm, 0.875rem);
-  color: var(--text-secondary, #6b7280);
+  color: var(--color-text-secondary);
 }
 
 .file-preview {
@@ -155,7 +155,7 @@
 .file-preview h4 {
   margin: 0 0 var(--space-3, 0.75rem) 0;
   font-size: var(--font-heading-md, 1.25rem);
-  color: var(--text-primary, #1a1a1a);
+  color: var(--color-text-primary);
 }
 
 .preview-item {

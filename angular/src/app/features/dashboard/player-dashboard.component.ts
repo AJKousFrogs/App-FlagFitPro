@@ -1,6 +1,17 @@
 /**
  * Player Dashboard Component
  *
+ * ⭐ CANONICAL PAGE — Design System Exemplar
+ * ==========================================
+ * This page is FROZEN as a design system exemplar.
+ * 
+ * RULES:
+ * - Future refactors copy FROM this page, never INTO it
+ * - Changes require design system curator approval
+ * - This page demonstrates correct design system usage
+ * 
+ * See docs/CANONICAL_PAGES.md for full documentation.
+ *
  * The main overview page for athletes showing:
  * - Announcement banner (important team messages)
  * - Today's readiness and wellness status
@@ -35,6 +46,13 @@ import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { WellnessService } from "../../core/services/wellness.service";
+import { SupabaseService } from "../../core/services/supabase.service";
+import { DataConfidenceService } from "../../core/services/data-confidence.service";
+import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
+import { AcwrSpikeDetectionService } from "../../core/services/acwr-spike-detection.service";
+import { PrivacySettingsService, METRIC_CATEGORIES } from "../../core/services/privacy-settings.service";
+import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
@@ -43,6 +61,14 @@ import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
 import { DashboardSkeletonComponent } from "../../shared/components/dashboard-skeleton/dashboard-skeleton.component";
+import { CoachOverrideNotificationComponent } from "../../shared/components/coach-override-notification/coach-override-notification.component";
+import { OverrideLoggingService, CoachOverride } from "../../core/services/override-logging.service";
+import { OwnershipTransitionBadgeComponent } from "../../shared/components/ownership-transition-badge/ownership-transition-badge.component";
+import { OwnershipTransitionService, OwnershipTransition } from "../../core/services/ownership-transition.service";
+import { MissingDataExplanationComponent } from "../../shared/components/missing-data-explanation/missing-data-explanation.component";
+import { MissingDataDetectionService, MissingDataStatus } from "../../core/services/missing-data-detection.service";
+import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
+import { CoachOverrideMeaning, IncompleteDataMeaning, ActionRequiredMeaning } from "../../core/semantics/semantic-meaning.types";
 
 interface QuickAction {
   label: string;
@@ -90,6 +116,11 @@ interface AnnouncementBanner {
     AppLoadingComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
+    ConfidenceIndicatorComponent,
+    CoachOverrideNotificationComponent,
+    OwnershipTransitionBadgeComponent,
+    MissingDataExplanationComponent,
+    SemanticMeaningRendererComponent,
   ],
   template: `
     <app-main-layout>
@@ -136,6 +167,14 @@ interface AnnouncementBanner {
                     </div>
 
                     @if (!hasCompletedOnboarding()) {
+                      <!-- Phase 3: Semantic Action Required Badge -->
+                      @if (getOnboardingActionRequiredMeaning()) {
+                        <app-semantic-meaning-renderer
+                          [meaning]="getOnboardingActionRequiredMeaning()!"
+                          [context]="{ container: 'inline', priority: 'high', dismissible: false }"
+                        ></app-semantic-meaning-renderer>
+                      }
+                      <!-- Fallback checklist item for visual consistency -->
                       <div class="checklist-item checklist-action-needed">
                         <div class="checklist-icon checklist-warning">
                           <i class="pi pi-exclamation-circle"></i>
@@ -259,6 +298,57 @@ interface AnnouncementBanner {
             </section>
           }
 
+          <!-- SECTION 1.5: Coach Override Notifications (Phase 3 - Semantic Meaning) -->
+          @if (recentOverrides().length > 0) {
+            <section class="override-notifications-section">
+              @for (override of recentOverrides(); track override.id) {
+                <!-- Phase 3: Semantic Coach Override Meaning -->
+                @if (getCoachOverrideMeaning(override)) {
+                  <app-semantic-meaning-renderer
+                    [meaning]="getCoachOverrideMeaning(override)!"
+                    [context]="{ container: 'card', priority: 'medium', dismissible: false }"
+                  ></app-semantic-meaning-renderer>
+                }
+                <!-- Fallback: Keep notification component for detailed view -->
+                <app-coach-override-notification
+                  [override]="override"
+                  [coachName]="getCoachName(override.coachId)"
+                  [playerId]="currentUserId()"
+                ></app-coach-override-notification>
+              }
+            </section>
+          }
+
+          <!-- SECTION 1.6: Ownership Transitions (Phase 2.1 - Trust Repair) -->
+          @if (activeTransitions().length > 0) {
+            <section class="ownership-transitions-section">
+              @for (transition of activeTransitions(); track transition.id) {
+                <app-ownership-transition-badge
+                  [transition]="transition"
+                  [showDetails]="true"
+                ></app-ownership-transition-badge>
+              }
+            </section>
+          }
+
+          <!-- SECTION 1.7: Missing Data Explanation (Phase 3 - Semantic Meaning) -->
+          @if (missingWellnessStatus() && missingWellnessStatus()!.missing) {
+            <section class="missing-data-section">
+              <!-- Phase 3: Semantic Incomplete Data Badge -->
+              @if (getIncompleteDataMeaning()) {
+                <app-semantic-meaning-renderer
+                  [meaning]="getIncompleteDataMeaning()!"
+                  [context]="{ container: 'card', priority: missingWellnessStatus()!.severity === 'critical' ? 'critical' : 'medium', dismissible: false }"
+                ></app-semantic-meaning-renderer>
+              }
+              <!-- Detailed explanation component (5-Question Contract style) -->
+              <app-missing-data-explanation
+                [missingStatus]="missingWellnessStatus()!"
+                [showCoachLink]="true"
+              ></app-missing-data-explanation>
+            </section>
+          }
+
           <!-- SECTION 2: Welcome Header with Merlin AI Insight -->
           <section class="welcome-section">
             <p-card styleClass="welcome-card">
@@ -267,9 +357,23 @@ interface AnnouncementBanner {
                   <i class="pi pi-sparkles"></i>
                 </div>
                 <div class="welcome-content">
-                  <h2 class="welcome-greeting">
-                    {{ greeting() }}, {{ userName() }}!
-                  </h2>
+                  <div class="welcome-header-row">
+                    <h2 class="welcome-greeting">
+                      {{ greeting() }}, {{ userName() }}!
+                    </h2>
+                    <!-- Privacy Status Badge -->
+                    @if (privacySharingStatus().totalMetrics > 0) {
+                      <p-tag
+                        [value]="'Sharing: ' + privacySharingStatus().sharedMetrics + '/' + privacySharingStatus().totalMetrics + ' metrics'"
+                        severity="info"
+                        styleClass="privacy-status-badge"
+                        [pTooltip]="'Manage your data sharing preferences in Settings'"
+                        tooltipPosition="bottom"
+                        [routerLink]="['/settings/privacy']"
+                        style="cursor: pointer;"
+                      ></p-tag>
+                    }
+                  </div>
                   <p class="merlin-insight">{{ merlinInsight() }}</p>
                   <div class="welcome-actions">
                     <app-button iconLeft="pi-play" routerLink="/todays-practice"
@@ -298,20 +402,37 @@ interface AnnouncementBanner {
               tooltipPosition="bottom"
               [showDelay]="500"
             >
-              <div class="stat-card-content">
-                <div class="stat-icon readiness-icon">
-                  <i class="pi pi-heart"></i>
+              @if (readinessScore() !== null) {
+                <div class="stat-card-content">
+                  <div class="stat-icon readiness-icon">
+                    <i class="pi pi-heart"></i>
+                  </div>
+                  <div class="stat-details">
+                    <span class="stat-value">{{ readinessScore() }}%</span>
+                    <span class="stat-label">Readiness</span>
+                  </div>
+                  <p-tag
+                    [value]="getReadinessStatus()"
+                    [severity]="getReadinessSeverity()"
+                    styleClass="stat-tag"
+                  ></p-tag>
                 </div>
-                <div class="stat-details">
-                  <span class="stat-value">{{ readinessScore() }}%</span>
-                  <span class="stat-label">Readiness</span>
+              } @else {
+                <div class="stat-card-content">
+                  <div class="stat-icon readiness-icon">
+                    <i class="pi pi-heart"></i>
+                  </div>
+                  <div class="stat-details">
+                    <span class="stat-value">--</span>
+                    <span class="stat-label">Readiness</span>
+                  </div>
+                  <p-tag
+                    value="No data"
+                    severity="info"
+                    styleClass="stat-tag"
+                  ></p-tag>
                 </div>
-                <p-tag
-                  [value]="getReadinessStatus()"
-                  [severity]="getReadinessSeverity()"
-                  styleClass="stat-tag"
-                ></p-tag>
-              </div>
+              }
               
               <!-- Wellness Check-in Status Indicator -->
               <div class="wellness-checkin-status">
@@ -348,7 +469,7 @@ interface AnnouncementBanner {
               tooltipPosition="bottom"
               [showDelay]="500"
             >
-              @if (acwrDataSufficient()) {
+              @if (acwr() !== null && acwrDataSufficient()) {
                 <!-- Full ACWR Display (21+ days of data) -->
                 <div class="stat-card-content">
                   <div class="stat-icon acwr-icon">
@@ -364,7 +485,7 @@ interface AnnouncementBanner {
                     styleClass="stat-tag"
                   ></p-tag>
                 </div>
-              } @else {
+              } @else if (trainingDaysLogged() !== null) {
                 <!-- Progress Tracking (< 21 days) -->
                 <div class="acwr-progress-content">
                   <div class="stat-icon acwr-icon-building">
@@ -376,21 +497,56 @@ interface AnnouncementBanner {
                       <div class="acwr-progress-bar">
                         <div 
                           class="acwr-progress-fill" 
-                          [style.width.%]="(trainingDaysLogged() / 21) * 100"
+                          [style.width.%]="(trainingDaysLogged()! / 21) * 100"
                         ></div>
                       </div>
                       <span class="acwr-progress-text">
                         {{ trainingDaysLogged() }}/21 days
                       </span>
                     </div>
-                    @if (trainingDaysLogged() >= 7 && trainingDaysLogged() < 14) {
+                    @if (trainingDaysLogged()! >= 7 && trainingDaysLogged()! < 14) {
                       <p-tag value="7-day milestone! 🎉" severity="success" styleClass="milestone-tag"></p-tag>
-                    } @else if (trainingDaysLogged() >= 14 && trainingDaysLogged() < 21) {
+                    } @else if (trainingDaysLogged()! >= 14 && trainingDaysLogged()! < 21) {
                       <p-tag value="Halfway there!" severity="info" styleClass="milestone-tag"></p-tag>
-                    } @else if (trainingDaysLogged() < 7) {
+                    } @else if (trainingDaysLogged()! < 7) {
                       <span class="acwr-help-text">Keep logging to unlock insights</span>
                     }
                   </div>
+                </div>
+              } @else {
+                <!-- No data -->
+                <div class="stat-card-content">
+                  <div class="stat-icon acwr-icon">
+                    <i class="pi pi-chart-line"></i>
+                  </div>
+                  <div class="stat-details">
+                    <span class="stat-value">--</span>
+                    <span class="stat-label">ACWR</span>
+                  </div>
+                  <p-tag
+                    value="Log training sessions"
+                    severity="info"
+                    styleClass="stat-tag"
+                  ></p-tag>
+                </div>
+              }
+              
+              <!-- Data Confidence Indicator (Phase 3 - Semantic Meaning) -->
+              @if (acwr() !== null || trainingDaysLogged() !== null) {
+                <div class="confidence-indicator-wrapper">
+                  <!-- Phase 3: Semantic Incomplete Data Badge when confidence is low -->
+                  @if (acwrConfidence().score < 0.9 && getACWRIncompleteDataMeaning()) {
+                    <app-semantic-meaning-renderer
+                      [meaning]="getACWRIncompleteDataMeaning()!"
+                      [context]="{ container: 'inline', priority: acwrConfidence().score < 0.5 ? 'critical' : 'medium', dismissible: false }"
+                    ></app-semantic-meaning-renderer>
+                  }
+                  <!-- Detailed confidence indicator -->
+                  <app-confidence-indicator
+                    [score]="acwrConfidence().score"
+                    [missingInputs]="acwrConfidence().missingInputs"
+                    [showDetails]="false"
+                  ></app-confidence-indicator>
                 </div>
               }
             </p-card>
@@ -625,7 +781,93 @@ interface AnnouncementBanner {
             </p-card>
           </div>
 
-          <!-- SECTION 8: Upcoming Events -->
+          <!-- SECTION 8: What's Next (Continuity Events) -->
+          @if (continuityEvents().length > 0) {
+            <section class="continuity-section" aria-label="What's next">
+              <h3 class="section-title">
+                <i class="pi pi-calendar-clock" aria-hidden="true"></i>
+                What's Next
+              </h3>
+              <div class="continuity-events">
+                @for (event of continuityEvents(); track event.type) {
+                  <p-card styleClass="continuity-event-card">
+                    <div class="continuity-event">
+                      <span class="event-icon">{{ getEventIcon(event.type) }}</span>
+                      <div class="event-details">
+                        <h4>{{ event.title }}</h4>
+                        <p>{{ event.description }}</p>
+                        @if (event.daysRemaining !== undefined && event.daysRemaining > 0) {
+                          <p-tag
+                            [value]="event.daysRemaining + ' day(s) remaining'"
+                            severity="info"
+                            styleClass="event-tag"
+                          ></p-tag>
+                        }
+                        @if (event.sessionsRemaining !== undefined) {
+                          <p-tag
+                            [value]="event.sessionsRemaining + ' sessions remaining'"
+                            severity="warning"
+                            styleClass="event-tag"
+                          ></p-tag>
+                        }
+                      </div>
+                    </div>
+                  </p-card>
+                }
+              </div>
+            </section>
+          }
+
+          <!-- SECTION 9: Tomorrow's Preview -->
+          @if (tomorrowSchedule().length > 0) {
+            <section class="tomorrow-section" aria-label="Tomorrow's schedule">
+              <h3 class="section-title">
+                <i class="pi pi-calendar-plus" aria-hidden="true"></i>
+                Tomorrow's Preview
+              </h3>
+              <p-card styleClass="schedule-card">
+                <p-timeline
+                  [value]="tomorrowSchedule().slice(0, 3)"
+                  styleClass="schedule-timeline"
+                >
+                  <ng-template pTemplate="marker" let-item>
+                    <span
+                      class="timeline-marker upcoming"
+                      [attr.aria-hidden]="true"
+                    >
+                      <i class="pi pi-circle"></i>
+                    </span>
+                  </ng-template>
+                  <ng-template pTemplate="content" let-item>
+                    <div class="schedule-item upcoming">
+                      <div class="item-time">{{ item.time }}</div>
+                      <div class="item-info">
+                        <span class="item-title">{{ item.title }}</span>
+                        <span class="item-duration"
+                          >{{ item.duration }} min</span
+                        >
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-timeline>
+                @if (tomorrowSchedule().length > 3) {
+                  <p class="more-items">
+                    +{{ tomorrowSchedule().length - 3 }} more items
+                  </p>
+                }
+                <div class="card-footer-action">
+                  <app-button
+                    variant="text"
+                    iconRight="pi-arrow-right"
+                    routerLink="/calendar"
+                    >View Full Schedule</app-button
+                  >
+                </div>
+              </p-card>
+            </section>
+          }
+
+          <!-- SECTION 10: Upcoming Events -->
           @if (upcomingEvents().length > 0) {
             <section class="upcoming-section" aria-label="Upcoming events">
               <h3 class="section-title">
@@ -666,11 +908,18 @@ interface AnnouncementBanner {
       /**
      * Player Dashboard Styles
      * =======================
+     * ⭐ CANONICAL PAGE — Design System Exemplar
+     * 
+     * This stylesheet is FROZEN as a design system exemplar.
+     * All future pages should copy patterns FROM this file.
+     * 
      * Design System Compliant - All tokens from design-system-tokens.scss
      * PrimeNG overrides moved to primeng/_brand-overrides.scss
      * 
      * NOTE: ::ng-deep and !important removed per DESIGN_SYSTEM_RULES.md
      * PrimeNG component styling is handled globally via styleClass bindings
+     * 
+     * See docs/CANONICAL_PAGES.md for usage guidelines.
      */
 
       /* ==========================================
@@ -1379,6 +1628,58 @@ interface AnnouncementBanner {
         opacity: 0.7;
       }
 
+      /* ==========================================
+       Continuity Section
+       ========================================== */
+      .continuity-section {
+        margin-top: var(--space-6);
+      }
+
+      .continuity-events {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .continuity-event-card {
+        background: var(--surface-card);
+      }
+
+      .continuity-event {
+        display: flex;
+        gap: var(--space-3);
+        align-items: flex-start;
+      }
+
+      .event-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      .event-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+
+      .event-details h4 {
+        margin: 0;
+        font-size: var(--font-body-md);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+      }
+
+      .event-details p {
+        margin: 0;
+        font-size: var(--font-body-sm);
+        color: var(--color-text-secondary);
+      }
+
+      .event-tag {
+        align-self: flex-start;
+      }
+
       .events-strip {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -1502,6 +1803,15 @@ export class PlayerDashboardComponent {
     TrainingStatsCalculationService,
   );
   private readonly unifiedTrainingService = inject(UnifiedTrainingService);
+  private readonly wellnessService = inject(WellnessService);
+  private readonly dataConfidenceService = inject(DataConfidenceService);
+  private readonly continuityService = inject(ContinuityIndicatorsService);
+  private readonly acwrSpikeDetection = inject(AcwrSpikeDetectionService);
+  private readonly privacySettingsService = inject(PrivacySettingsService);
+  private readonly overrideLoggingService = inject(OverrideLoggingService);
+  private readonly ownershipTransitionService = inject(OwnershipTransitionService);
+  private readonly missingDataDetectionService = inject(MissingDataDetectionService);
+  private readonly supabaseService = inject(SupabaseService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
 
@@ -1512,19 +1822,30 @@ export class PlayerDashboardComponent {
 
   // User info
   userName = signal("Athlete");
+  currentUserId = computed(() => this.authService.getUser()?.id || "");
 
   // Announcement
   announcement = signal<AnnouncementBanner | null>(null);
   announcementDismissed = signal(false);
+
+  // Phase 2.1 - Coach Override Notifications
+  recentOverrides = signal<CoachOverride[]>([]);
+  coachNamesCache = signal<Record<string, string>>({});
+
+  // Phase 2.1 - Ownership Transitions
+  activeTransitions = signal<OwnershipTransition[]>([]);
+
+  // Phase 2.2 - Missing Data Status
+  missingWellnessStatus = signal<MissingDataStatus | null>(null);
 
   // Program assignment state (from UnifiedTrainingService)
   needsProgramAssignment = computed(
     () => this.unifiedTrainingService.needsProgramAssignment(),
   );
 
-  // Stats
-  readinessScore = signal(0);
-  acwr = signal(0);
+  // Stats - CRITICAL: No defaults - only real data
+  readinessScore = signal<number | null>(null); // Load from wellness service
+  acwr = signal<number | null>(null); // Load from training stats - no fallback
   currentStreak = signal(0);
   weeklySessionsCompleted = signal(0);
   weeklySessionsPlanned = signal(7);
@@ -1535,8 +1856,11 @@ export class PlayerDashboardComponent {
   checkinStreak = signal(0);
 
   // ACWR progress tracking (UX Audit Fix #5)
-  trainingDaysLogged = signal(12); // Number of days with training data (for demo: 12/21)
-  acwrDataSufficient = computed(() => this.trainingDaysLogged() >= 21);
+  trainingDaysLogged = signal<number | null>(null); // Calculate from real training sessions
+  acwrDataSufficient = computed(() => {
+    const days = this.trainingDaysLogged();
+    return days !== null && days >= 21;
+  });
 
   // Week days
   weekDays = signal<
@@ -1559,6 +1883,19 @@ export class PlayerDashboardComponent {
       title: item.title,
       duration: item.duration || 60,
       completed: item.status === "completed",
+      icon: item.icon,
+    }));
+  });
+
+  tomorrowSchedule = computed(() => {
+    const items = this.unifiedTrainingService.tomorrowScheduleItems();
+    // Transform TodayScheduleItem to ScheduleItem format for dashboard
+    return items.map((item) => ({
+      id: item.id,
+      time: item.time,
+      title: item.title,
+      duration: item.duration || 60,
+      completed: false, // Tomorrow items are never completed
       icon: item.icon,
     }));
   });
@@ -1642,13 +1979,18 @@ export class PlayerDashboardComponent {
     const readiness = this.readinessScore();
     const acwrVal = this.acwr();
 
-    if (readiness < 50) {
+    // CRITICAL: Only provide insights if we have real data
+    if (readiness === null && acwrVal === null) {
+      return "Complete a wellness check-in and log training sessions to get personalized insights.";
+    }
+
+    if (readiness !== null && readiness < 50) {
       return "Your readiness is low today. Consider a lighter session focused on recovery and mobility.";
     }
-    if (acwrVal > 1.3) {
+    if (acwrVal !== null && acwrVal > 1.3) {
       return "Your training load is elevated. Take it easy today to avoid overtraining and reduce injury risk.";
     }
-    if (readiness >= 80 && acwrVal <= 1.0) {
+    if (readiness !== null && readiness >= 80 && acwrVal !== null && acwrVal <= 1.0) {
       return "You're in great shape! Today is perfect for a high-intensity session. Let's push it!";
     }
     return "Solid day ahead! Stick to your plan and focus on quality over quantity in today's session.";
@@ -1659,6 +2001,81 @@ export class PlayerDashboardComponent {
     const planned = this.weeklySessionsPlanned();
     return planned > 0 ? Math.round((completed / planned) * 100) : 0;
   });
+
+  // Data Confidence Calculations
+  readinessConfidence = computed(() => {
+    const wellnessData = this.wellnessService.wellnessData();
+    if (!wellnessData || wellnessData.length === 0) {
+      return {
+        score: 0,
+        missingInputs: ["wellness_data"],
+        staleData: ["wellness"],
+      };
+    }
+    // Map wellness data to format expected by confidence service
+    const mappedData = wellnessData.map((w) => ({
+      date: w.date,
+      sleep: w.sleep,
+      energy: w.energy,
+      soreness: w.soreness,
+      stress: w.stress,
+      mood: w.mood,
+    }));
+    return this.dataConfidenceService.calculateWellnessConfidence(mappedData);
+  });
+
+  acwrConfidence = computed(() => {
+    const daysLogged = this.trainingDaysLogged();
+    return this.dataConfidenceService.calculateACWRConfidence(daysLogged || 0);
+  });
+
+  // Privacy Sharing Status
+  privacySharingStatus = computed(() => {
+    const teamSettings = this.privacySettingsService.teamSettings();
+    const totalMetrics = METRIC_CATEGORIES.length; // 6 metrics
+    
+    if (teamSettings.length === 0) {
+      return {
+        sharedMetrics: 0,
+        totalMetrics,
+        sharingEnabled: false,
+      };
+    }
+
+    // Count shared metrics across all teams
+    // For simplicity, count metrics shared with at least one team
+    const sharedCategories = new Set<string>();
+    teamSettings.forEach((teamSetting) => {
+      if (teamSetting.performanceSharingEnabled || teamSetting.healthSharingEnabled) {
+        // Add all allowed metric categories
+        teamSetting.allowedMetricCategories?.forEach((category) => {
+          sharedCategories.add(category);
+        });
+        
+        // If performance sharing is enabled, add performance and training_load
+        if (teamSetting.performanceSharingEnabled) {
+          sharedCategories.add("performance");
+          sharedCategories.add("training_load");
+        }
+        
+        // If health sharing is enabled, add wellness, readiness, injury_history
+        if (teamSetting.healthSharingEnabled) {
+          sharedCategories.add("wellness");
+          sharedCategories.add("readiness");
+          sharedCategories.add("injury_history");
+        }
+      }
+    });
+
+    return {
+      sharedMetrics: sharedCategories.size,
+      totalMetrics,
+      sharingEnabled: sharedCategories.size > 0,
+    };
+  });
+
+  // Continuity Events
+  continuityEvents = signal<any[]>([]);
 
   constructor() {
     this.headerService.setDashboardHeader();
@@ -1717,13 +2134,43 @@ export class PlayerDashboardComponent {
         }),
       )
       .subscribe((stats) => {
-        // Use stats if available, otherwise use defaults
-        // TrainingStatsData uses weeklySessions, not weeklyCompleted
-        const acwrValue = stats?.acwr ?? 0.85;
-        this.readinessScore.set(75); // Readiness comes from wellness service, not training stats
-        this.acwr.set(typeof acwrValue === "number" ? acwrValue : 0.85);
+        // CRITICAL: Only set ACWR if we have real data - no fallback defaults
+        if (stats?.acwr !== undefined && typeof stats.acwr === "number") {
+          this.acwr.set(stats.acwr);
+        } else {
+          this.acwr.set(null); // No data - show empty state
+        }
+        
         this.currentStreak.set(stats?.currentStreak ?? 0);
         this.weeklySessionsCompleted.set(stats?.weeklySessions ?? 0);
+
+        // Calculate training days logged from actual sessions
+        // TODO: Get this from training stats service or calculate from sessions
+        // For now, set to null if not available
+        this.trainingDaysLogged.set(stats?.trainingDaysLogged ?? null);
+
+        // Load readiness score from wellness service
+        this.loadReadinessScore();
+
+        // Load continuity events
+        this.loadContinuityEvents();
+        
+        // Load privacy settings
+        this.privacySettingsService.loadTeamSettings().catch((error) => {
+          this.logger.warn("Failed to load privacy settings:", error);
+        });
+
+        // Load ACWR spike detection if ACWR is high
+        this.checkAcwrSpike();
+
+        // Phase 2.1 - Load recent coach override notifications
+        this.loadRecentOverrides();
+        
+        // Phase 2.1 - Load active ownership transitions
+        this.loadActiveTransitions();
+
+        // Phase 2.2 - Load missing wellness data status
+        this.loadMissingWellnessStatus();
 
         // The chart data (weeklyData with label/value) will come from the API
         // this.performanceService.getWeeklyTrend().subscribe(...)
@@ -1739,6 +2186,273 @@ export class PlayerDashboardComponent {
 
         this.isLoading.set(false);
       });
+  }
+
+  private loadReadinessScore(): void {
+    // Load latest wellness entry and calculate readiness score
+    const latestWellness = this.wellnessService.latestWellnessEntry();
+    if (latestWellness) {
+      const score = this.wellnessService.getWellnessScore(latestWellness);
+      this.readinessScore.set(score);
+    } else {
+      // No wellness data - set to null (show empty state)
+      this.readinessScore.set(null);
+    }
+  }
+
+  private async loadContinuityEvents(): Promise<void> {
+    const user = this.authService.getUser();
+    if (!user?.id) return;
+
+    try {
+      const events = await this.continuityService.getPlayerContinuity(user.id);
+      this.continuityEvents.set(events);
+    } catch (error) {
+      this.logger.error("[Dashboard] Error loading continuity events:", error);
+    }
+  }
+
+  private async checkAcwrSpike(): Promise<void> {
+    const user = this.authService.getUser();
+    if (!user?.id) return;
+
+    const acwrValue = this.acwr();
+    if (acwrValue !== null && acwrValue > 1.5) {
+      try {
+        await this.acwrSpikeDetection.checkAndCapLoad(user.id, acwrValue);
+        // Reload continuity events to show the new load cap
+        await this.loadContinuityEvents();
+      } catch (error) {
+        this.logger.error("[Dashboard] Error checking ACWR spike:", error);
+      }
+    }
+  }
+
+  /**
+   * Phase 2.1 - Trust Repair: Load recent coach override notifications
+   */
+  private async loadRecentOverrides(): Promise<void> {
+    const userId = this.currentUserId();
+    if (!userId) return;
+
+    try {
+      const overrides = await this.overrideLoggingService.getRecentUnreadOverrides(
+        userId,
+        5
+      );
+      this.recentOverrides.set(overrides);
+
+      // Load coach names for display
+      if (overrides.length > 0) {
+        await this.loadCoachNames(overrides);
+      }
+    } catch (error) {
+      this.logger.error("[Dashboard] Error loading recent overrides:", error);
+    }
+  }
+
+  /**
+   * Phase 3: Convert MissingDataStatus to semantic IncompleteDataMeaning
+   */
+  getIncompleteDataMeaning(): IncompleteDataMeaning | null {
+    const status = this.missingWellnessStatus();
+    if (!status || !status.missing) {
+      return null;
+    }
+
+    // Calculate confidence impact based on days missing
+    let confidenceImpact = 0.1; // Base impact
+    if (status.daysMissing >= 7) {
+      confidenceImpact = 0.4; // Critical impact
+    } else if (status.daysMissing >= 3) {
+      confidenceImpact = 0.3; // High impact
+    } else if (status.daysMissing >= 2) {
+      confidenceImpact = 0.2; // Moderate impact
+    }
+
+    return {
+      type: "incomplete-data",
+      severity: status.severity === "critical" ? "critical" : "warning",
+      dataType: "wellness",
+      daysMissing: status.daysMissing,
+      affectedMetric: "acwr",
+      confidenceImpact,
+      message: `Missing wellness data for ${status.daysMissing} day${status.daysMissing > 1 ? "s" : ""}. This reduces ACWR calculation accuracy.`,
+    };
+  }
+
+  /**
+   * Phase 3: Convert onboarding requirement to semantic ActionRequiredMeaning
+   */
+  getOnboardingActionRequiredMeaning(): ActionRequiredMeaning | null {
+    if (this.hasCompletedOnboarding()) {
+      return null; // No action required if onboarding is complete
+    }
+
+    return {
+      type: "action-required",
+      urgency: "high",
+      actionType: "complete-profile",
+      message: "Complete your profile to unlock your training program",
+      actionLabel: "Complete Profile (2 min)",
+      actionRoute: "/onboarding",
+      blocking: true,
+      affectedEntity: "training-program",
+    };
+  }
+
+  /**
+   * Phase 3: Convert ACWR confidence to semantic IncompleteDataMeaning
+   */
+  getACWRIncompleteDataMeaning(): IncompleteDataMeaning | null {
+    const confidence = this.acwrConfidence();
+    if (confidence.score >= 0.9) {
+      return null; // No incomplete data if confidence is high
+    }
+
+    // Map confidence score to severity
+    const severity = confidence.score < 0.5 ? "critical" : "warning";
+    const confidenceImpact = 1.0 - confidence.score; // Inverse of confidence
+
+    // Determine data type from missing inputs
+    let dataType: IncompleteDataMeaning["dataType"] = "general";
+    if (confidence.missingInputs.includes("wellness") || confidence.missingInputs.includes("wellness_data")) {
+      dataType = "wellness";
+    } else if (confidence.missingInputs.includes("training") || confidence.missingInputs.includes("training_sessions")) {
+      dataType = "training";
+    }
+
+    return {
+      type: "incomplete-data",
+      severity,
+      dataType,
+      affectedMetric: "acwr",
+      confidenceImpact,
+      message: `ACWR calculation confidence is ${(confidence.score * 100).toFixed(0)}%. Missing: ${confidence.missingInputs.join(", ")}.`,
+    };
+  }
+
+  /**
+   * Phase 3: Convert CoachOverride to semantic CoachOverrideMeaning
+   */
+  getCoachOverrideMeaning(override: CoachOverride): CoachOverrideMeaning | null {
+    if (!override.aiRecommendation || !override.coachDecision) {
+      return null;
+    }
+
+    // Map override type to semantic override type
+    const overrideTypeMap: Record<string, CoachOverrideMeaning["overrideType"]> = {
+      training_load: "load-adjustment",
+      session_modification: "session-modification",
+      acwr_override: "threshold-override",
+      recovery_protocol: "plan-change",
+      other: "general",
+    };
+
+    return {
+      type: "coach-override",
+      overrideType: overrideTypeMap[override.overrideType] || "general",
+      affectedEntity: `player-${override.playerId}`,
+      aiRecommendation: override.aiRecommendation,
+      coachDecision: override.coachDecision,
+      coachId: override.coachId,
+      coachName: this.getCoachName(override.coachId),
+      reason: override.reason,
+      timestamp: override.createdAt ? new Date(override.createdAt) : new Date(),
+    };
+  }
+
+  /**
+   * Load coach names for override notifications
+   */
+  private async loadCoachNames(overrides: CoachOverride[]): Promise<void> {
+    const coachIds = [...new Set(overrides.map((o) => o.coachId))];
+    const cache = { ...this.coachNamesCache() };
+
+    // Only fetch names we don't have cached
+    const missingIds = coachIds.filter((id) => !cache[id]);
+
+    if (missingIds.length === 0) return;
+
+    try {
+      const { data: profiles, error } = await this.supabaseService.client
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", missingIds);
+
+      if (error) {
+        this.logger.error("[Dashboard] Error loading coach names:", error);
+        return;
+      }
+
+      // Update cache
+      profiles?.forEach((profile) => {
+        cache[profile.id] = profile.full_name || "Your coach";
+      });
+
+      this.coachNamesCache.set(cache);
+    } catch (error) {
+      this.logger.error("[Dashboard] Error loading coach names:", error);
+    }
+  }
+
+  /**
+   * Get coach name from cache or return default
+   */
+  getCoachName(coachId: string): string {
+    return this.coachNamesCache()[coachId] || "Your coach";
+  }
+
+  /**
+   * Phase 2.1 - Load active ownership transitions for player
+   */
+  private async loadActiveTransitions(): Promise<void> {
+    const userId = this.currentUserId();
+    if (!userId) return;
+
+    try {
+      const transitions = await this.ownershipTransitionService.getPlayerTransitions(
+        userId,
+        5
+      );
+
+      // Filter for active (pending or in_progress) transitions
+      const active = transitions.filter(
+        (t) => t.status === "pending" || t.status === "in_progress"
+      );
+
+      this.activeTransitions.set(active);
+    } catch (error) {
+      this.logger.error("[Dashboard] Error loading active transitions:", error);
+    }
+  }
+
+  /**
+   * Phase 2.2 - Load missing wellness data status
+   */
+  private async loadMissingWellnessStatus(): Promise<void> {
+    const userId = this.currentUserId();
+    if (!userId) return;
+
+    try {
+      const status = await this.missingDataDetectionService.checkMissingWellness(
+        userId
+      );
+      this.missingWellnessStatus.set(status);
+    } catch (error) {
+      this.logger.error("[Dashboard] Error loading missing wellness status:", error);
+    }
+  }
+
+  getEventIcon(type: string): string {
+    const icons: Record<string, string> = {
+      recovery_protocol: "🏈",
+      load_cap: "⚠️",
+      travel_recovery: "🛫",
+      rtp_protocol: "🏥",
+      wellness_focus: "💚",
+    };
+    return icons[type] || "📋";
   }
 
   private initializeWeekDays(): void {
@@ -1844,6 +2558,7 @@ export class PlayerDashboardComponent {
 
   getReadinessStatus(): string {
     const score = this.readinessScore();
+    if (score === null) return "No data";
     if (score >= 70) return "Good";
     if (score >= 50) return "Moderate";
     return "Low";
@@ -1857,6 +2572,7 @@ export class PlayerDashboardComponent {
     | "secondary"
     | "contrast" {
     const score = this.readinessScore();
+    if (score === null) return "info";
     if (score >= 70) return "success";
     if (score >= 50) return "warn";
     return "danger";
@@ -1864,6 +2580,7 @@ export class PlayerDashboardComponent {
 
   getAcwrStatus(): string {
     const value = this.acwr();
+    if (value === null) return "No data";
     if (value <= 1.0) return "Optimal";
     if (value <= 1.3) return "Elevated";
     return "High";
@@ -1877,6 +2594,7 @@ export class PlayerDashboardComponent {
     | "secondary"
     | "contrast" {
     const value = this.acwr();
+    if (value === null) return "info";
     if (value <= 1.0) return "success";
     if (value <= 1.3) return "warn";
     return "danger";
