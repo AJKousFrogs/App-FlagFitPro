@@ -377,6 +377,53 @@
   }
 
   // ============================================
+  // INPUT HEIGHT UTILITIES
+  // ============================================
+  // Standardized heights for all form inputs
+  // Default: 44px (meets iOS touch target requirement)
+
+  .form-input--sm {
+    min-height: var(--input-height-sm, 36px) !important;
+    height: var(--input-height-sm, 36px);
+  }
+
+  .form-input--md {
+    min-height: var(--input-height-md, 44px) !important;
+    height: var(--input-height-md, 44px);
+  }
+
+  .form-input--lg {
+    min-height: var(--input-height-lg, 52px) !important;
+    height: var(--input-height-lg, 52px);
+  }
+
+  // Apply to PrimeNG components
+  .p-inputtext,
+  .p-select,
+  .p-multiselect,
+  .p-autocomplete-input,
+  .p-datepicker-input,
+  .p-inputnumber-input {
+    min-height: var(--input-height-md, 44px);
+  }
+
+  // Small variant class
+  .p-inputtext-sm,
+  .p-select-sm {
+    min-height: var(--input-height-sm, 36px);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-body-sm);
+  }
+
+  // Large variant class
+  .p-inputtext-lg,
+  .p-select-lg {
+    min-height: var(--input-height-lg, 52px);
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--font-body-lg);
+  }
+
+  // ============================================
   // REDUCED MOTION (Decision 51)
   // ============================================
 

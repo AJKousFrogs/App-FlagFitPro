@@ -40,7 +40,7 @@
     var(--primitive-info-400) 100%
   );
   transition: height 500ms ease-out;
-  border-radius: 0 0 14px 14px;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl); /* 12px - Design System compliant */
 
   &.low {
     background: linear-gradient(
@@ -152,7 +152,7 @@
   font-size: var(--font-size-badge);
   color: var(--color-text-secondary);
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: var(--space-2);
 }
 
 .logs-list {

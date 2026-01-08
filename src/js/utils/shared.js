@@ -261,36 +261,16 @@ export function getFormData(formId) {
 }
 
 // ================================================================
-// LOCAL STORAGE UTILITIES
+// LOCAL STORAGE UTILITIES (Re-exported from storage-service-unified.js)
 // ================================================================
-// NOTE: Storage functions have been moved to storage-service-unified.js
-// These are kept for backward compatibility but will be deprecated
-// Import from '../services/storage-service-unified.js' instead
-
 import { storageService } from "../services/storage-service-unified.js";
 
 import { logger } from "../../logger.js";
 
-/**
- * @deprecated Use storageService.set() from storage-service-unified.js instead
- */
-export function saveToStorage(key, data) {
-  return storageService.set(key, data, { usePrefix: false });
-}
-
-/**
- * @deprecated Use storageService.get() from storage-service-unified.js instead
- */
-export function getFromStorage(key, defaultValue = null) {
-  return storageService.get(key, defaultValue, { usePrefix: false });
-}
-
-/**
- * @deprecated Use storageService.remove() from storage-service-unified.js instead
- */
-export function removeFromStorage(key) {
-  return storageService.remove(key, { usePrefix: false });
-}
+// Re-export storage functions for backward compatibility
+export const saveToStorage = (key, data) => storageService.set(key, data, { usePrefix: false });
+export const getFromStorage = (key, defaultValue = null) => storageService.get(key, defaultValue, { usePrefix: false });
+export const removeFromStorage = (key) => storageService.remove(key, { usePrefix: false });
 
 // ================================================================
 // ARRAY UTILITIES

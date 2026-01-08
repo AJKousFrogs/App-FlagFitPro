@@ -17,6 +17,7 @@
 import { computed, inject, Injectable, OnDestroy, signal } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { TIMEOUTS, UI_LIMITS } from "../constants/app.constants";
 
 export interface SearchResult {
   id: string;
@@ -46,7 +47,7 @@ interface CacheEntry {
   timestamp: number;
 }
 
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache TTL
+const CACHE_TTL_MS = TIMEOUTS.CACHE_TTL_DEFAULT;
 const MAX_CACHE_SIZE = 50; // Maximum number of cached queries
 
 @Injectable({
@@ -197,8 +198,8 @@ export class SearchService implements OnDestroy {
       // Sort by relevance
       results.sort((a, b) => b.relevance - a.relevance);
 
-      // Limit to top 20 results
-      const limitedResults = results.slice(0, 20);
+      // Limit to top results
+      const limitedResults = results.slice(0, UI_LIMITS.SEARCH_RESULTS_MAX);
 
       // Add highlighting to results
       const highlightedResults = limitedResults.map((result) =>
@@ -276,8 +277,8 @@ export class SearchService implements OnDestroy {
     );
     suggestions.push(...matchingCommon);
 
-    // Return unique suggestions, limited to 6
-    const uniqueSuggestions = [...new Set(suggestions)].slice(0, 6);
+    // Return unique suggestions, limited
+    const uniqueSuggestions = [...new Set(suggestions)].slice(0, UI_LIMITS.SEARCH_SUGGESTIONS_MAX);
     this._suggestions.set(uniqueSuggestions);
     return uniqueSuggestions;
   }
@@ -529,7 +530,7 @@ export class SearchService implements OnDestroy {
     const filtered = recent.filter(
       (s) => s.toLowerCase() !== query.toLowerCase(),
     );
-    const updated = [query, ...filtered].slice(0, 10);
+    const updated = [query, ...filtered].slice(0, UI_LIMITS.SEARCH_HISTORY_MAX);
     this._recentSearches.set(updated);
     this.saveRecentSearches();
   }

@@ -1,0 +1,284 @@
+/**
+ * Icon Primitives
+ * ================
+ * 
+ * Standardized icon sizes and styles for the design system.
+ * Uses PrimeIcons as the primary icon set.
+ * 
+ * DESIGN CONTRACT:
+ * - Icon sizes: Use standardized size classes only
+ * - Icon colors: Inherit from parent or use semantic colors
+ * - Interactive icons: 44px minimum touch target
+ * 
+ * USAGE:
+ *   <i class="pi pi-check icon-sm"></i>
+ *   <i class="pi pi-star icon-md icon-primary"></i>
+ *   <button class="icon-button"><i class="pi pi-times"></i></button>
+ */
+
+@layer primitives {
+  // ============================================
+  // ICON SIZE SCALE
+  // ============================================
+
+  // Extra small - inline with body-xs text
+  .icon-2xs {
+    font-size: 10px !important;
+    width: 10px;
+    height: 10px;
+  }
+
+  // Extra small - inline with body-sm text
+  .icon-xs {
+    font-size: 12px !important;
+    width: 12px;
+    height: 12px;
+  }
+
+  // Small - inline with body text
+  .icon-sm {
+    font-size: 14px !important;
+    width: 14px;
+    height: 14px;
+  }
+
+  // Medium - default icon size, buttons, navigation
+  .icon-md {
+    font-size: 16px !important;
+    width: 16px;
+    height: 16px;
+  }
+
+  // Large - section headers, emphasis
+  .icon-lg {
+    font-size: 20px !important;
+    width: 20px;
+    height: 20px;
+  }
+
+  // Extra large - page headers, hero sections
+  .icon-xl {
+    font-size: 24px !important;
+    width: 24px;
+    height: 24px;
+  }
+
+  // 2XL - empty states, feature highlights
+  .icon-2xl {
+    font-size: 32px !important;
+    width: 32px;
+    height: 32px;
+  }
+
+  // 3XL - large empty states
+  .icon-3xl {
+    font-size: 48px !important;
+    width: 48px;
+    height: 48px;
+  }
+
+  // ============================================
+  // ICON COLOR VARIANTS
+  // ============================================
+
+  .icon-primary {
+    color: var(--ds-primary-green);
+  }
+
+  .icon-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .icon-muted {
+    color: var(--color-text-muted);
+  }
+
+  .icon-success {
+    color: var(--color-status-success);
+  }
+
+  .icon-warning {
+    color: var(--color-status-warning);
+  }
+
+  .icon-error {
+    color: var(--color-status-error);
+  }
+
+  .icon-info {
+    color: var(--color-status-info);
+  }
+
+  .icon-on-primary {
+    color: var(--color-text-on-primary);
+  }
+
+  // ============================================
+  // ICON BUTTON (Accessible touch target)
+  // ============================================
+
+  .icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px; // iOS minimum touch target
+    min-height: 44px;
+    padding: var(--space-2);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition:
+      background-color var(--motion-fast) var(--ease-standard),
+      color var(--motion-fast) var(--ease-standard);
+
+    &:hover {
+      background: var(--color-surface-hover);
+      color: var(--color-text-primary);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--color-focus-ring);
+      outline-offset: var(--focus-ring-offset);
+    }
+
+    &:active {
+      background: var(--color-surface-active);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    i,
+    .pi {
+      font-size: 20px;
+    }
+  }
+
+  // Smaller icon button
+  .icon-button--sm {
+    min-width: 36px;
+    min-height: 36px;
+    padding: var(--space-1);
+
+    i,
+    .pi {
+      font-size: 16px;
+    }
+  }
+
+  // Larger icon button
+  .icon-button--lg {
+    min-width: 48px;
+    min-height: 48px;
+    padding: var(--space-3);
+
+    i,
+    .pi {
+      font-size: 24px;
+    }
+  }
+
+  // ============================================
+  // ICON WITH LABEL
+  // ============================================
+
+  .icon-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .icon-label--reverse {
+    flex-direction: row-reverse;
+  }
+
+  // ============================================
+  // ICON BADGE (Notification dot)
+  // ============================================
+
+  .icon-with-badge {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .icon-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    background: var(--color-status-error);
+    color: var(--color-text-on-primary);
+    font-size: 10px;
+    font-weight: var(--font-weight-bold);
+    line-height: 16px;
+    text-align: center;
+    border-radius: var(--radius-full);
+  }
+
+  .icon-badge--dot {
+    min-width: 8px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+  }
+
+  // ============================================
+  // SPINNING ICON (Loading)
+  // ============================================
+
+  .icon-spin {
+    animation: icon-spin 1s linear infinite;
+  }
+
+  @keyframes icon-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  // ============================================
+  // REDUCED MOTION
+  // ============================================
+
+  @media (prefers-reduced-motion: reduce) {
+    .icon-button {
+      transition: none;
+    }
+
+    .icon-spin {
+      animation: none;
+    }
+  }
+
+  // ============================================
+  // ICON TOKEN VARIABLES
+  // ============================================
+
+  :root {
+    --icon-size-2xs: 10px;
+    --icon-size-xs: 12px;
+    --icon-size-sm: 14px;
+    --icon-size-md: 16px;
+    --icon-size-lg: 20px;
+    --icon-size-xl: 24px;
+    --icon-size-2xl: 32px;
+    --icon-size-3xl: 48px;
+
+    // Standardized icon sizes for specific contexts
+    --icon-size-inline: var(--icon-size-sm); // Inline with text
+    --icon-size-button: var(--icon-size-md); // Inside buttons
+    --icon-size-nav: var(--icon-size-lg); // Navigation items
+    --icon-size-header: var(--icon-size-lg); // Section headers (20px)
+    --icon-size-page-header: var(--icon-size-xl); // Page headers
+    --icon-size-empty-state: var(--icon-size-3xl); // Empty states
+  }
+}

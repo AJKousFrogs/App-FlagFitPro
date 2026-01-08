@@ -64,13 +64,33 @@ export default defineConfig({
         viewport: { width: 1920, height: 1080 },
       },
     },
-    // Visual regression tests - Storybook component screenshots
+    // Visual regression tests - Desktop screenshots
     {
       name: "visual-regression",
       testMatch: /visual-regression\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 720 },
+      },
+    },
+    // Mobile visual regression tests - iPhone SE viewport
+    {
+      name: "visual-regression-mobile",
+      testMatch: /visual-regression\.spec\.ts/,
+      grep: /Mobile Viewport/,
+      use: {
+        ...devices["iPhone 12"],
+        viewport: { width: 375, height: 812 },
+      },
+    },
+    // Tablet visual regression tests - iPad viewport
+    {
+      name: "visual-regression-tablet",
+      testMatch: /visual-regression\.spec\.ts/,
+      grep: /Tablet Viewport/,
+      use: {
+        ...devices["iPad (gen 7)"],
+        viewport: { width: 768, height: 1024 },
       },
     },
     // Main E2E tests

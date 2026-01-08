@@ -33,6 +33,7 @@ import type {
   DecisionCategory,
   ReviewTrigger,
 } from "@core/models/decision-ledger.models";
+import { TIME } from "@core/constants/app.constants";
 
 @Component({
   selector: "app-create-decision-dialog",
@@ -676,7 +677,7 @@ export class CreateDecisionDialogComponent {
       }
     }
 
-    return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // Default 7 days
+    return new Date(now.getTime() + TIME.DEFAULT_REVIEW_PERIOD_DAYS * TIME.MS_PER_DAY);
   }
 
   async onConfirm(): Promise<void> {

@@ -6,26 +6,25 @@
     <base href="/" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover"
     />
     <meta
       name="description"
       content="Professional flag football training and performance tracking platform"
     />
+    
     <!-- PWA & Mobile Meta Tags -->
-    <meta name="theme-color" content="#10b981" />
+    <meta name="theme-color" content="#089949" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta
-      name="apple-mobile-web-app-status-bar-style"
-      content="black-translucent"
-    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
-    
-    <!-- Prevent zoom on iOS Safari (already handled in CSS, but belt-and-suspenders) -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
 
-    <!-- Favicon -->
+    <!-- Preconnect to Supabase for faster API calls -->
+    <link rel="preconnect" href="https://lbrljtrnnaomesnoijln.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://lbrljtrnnaomesnoijln.supabase.co" />
+
+    <!-- Favicon - Using data URI to avoid extra request -->
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
@@ -38,18 +37,91 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json" />
 
-    <!-- Preconnect for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://*.supabase.co" />
-    <link rel="dns-prefetch" href="https://*.supabase.co" />
-
-    <!-- Fonts are now hosted locally in assets/fonts/poppins.css -->
-    <!-- CRITICAL FIX: Using local Poppins font to fix missing 's' characters issue -->
-    <!-- The font is imported in styles.scss and will work on both local dev and production (Netlify) -->
+    <!-- ============================================
+         CRITICAL CSS: Inline above-the-fold styles
+         Reduces FCP by eliminating render-blocking CSS
+         ============================================ -->
+    <style>
+      /* Critical CSS - Inline for fastest render */
+      :root {
+        --ds-primary-green: #089949;
+        --surface-primary: #ffffff;
+        --color-text-primary: #1a1a1a;
+        --font-family-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      
+      /* Prevent FOUC (Flash of Unstyled Content) */
+      html {
+        font-family: var(--font-family-sans);
+        background-color: var(--surface-primary);
+        color: var(--color-text-primary);
+      }
+      
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        opacity: 0;
+        animation: fadeIn 0.3s ease-out 0.1s forwards;
+      }
+      
+      @keyframes fadeIn {
+        to { opacity: 1; }
+      }
+      
+      /* Initial loading state - prevents layout shift */
+      app-root:empty::before {
+        content: '';
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100%;
+        background: linear-gradient(135deg, #f8faf9 0%, #ffffff 100%);
+      }
+      
+      /* Loading spinner for app-root */
+      app-root:empty::after {
+        content: '';
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
+        margin: -20px 0 0 -20px;
+        border: 3px solid #e5e7eb;
+        border-top-color: var(--ds-primary-green);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      
+      /* Dark mode critical styles */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --surface-primary: #0a0a0a;
+          --color-text-primary: #fafafa;
+        }
+        app-root:empty::before {
+          background: linear-gradient(135deg, #0a0a0a 0%, #171717 100%);
+        }
+        app-root:empty::after {
+          border-color: #404040;
+          border-top-color: var(--ds-primary-green);
+        }
+      }
+    </style>
   </head>
   <body>
     <app-root></app-root>
-    <noscript>Please enable JavaScript to use FlagFit Pro.</noscript>
+    <noscript>
+      <div style="text-align: center; padding: 40px; font-family: system-ui, sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>Please enable JavaScript to use FlagFit Pro.</p>
+      </div>
+    </noscript>
   </body>
 </html>

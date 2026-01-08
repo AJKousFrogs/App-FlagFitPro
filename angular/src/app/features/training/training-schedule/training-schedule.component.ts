@@ -1,29 +1,30 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { SkeletonModule } from "primeng/skeleton";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
+import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
-import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 
 interface TrainingSession {
   id: string;
@@ -387,7 +388,7 @@ export class TrainingScheduleComponent implements OnInit {
         return sessionDateStr >= tomorrowStr;
       })
       .sort((a, b) => a.date.getTime() - b.date.getTime())
-      .slice(0, 5);
+      .slice(0, UI_LIMITS.UPCOMING_SESSIONS_COUNT);
 
     return upcomingSessions;
   });

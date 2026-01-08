@@ -11,8 +11,6 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -25,7 +23,10 @@ import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 
+import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -178,7 +179,7 @@ const RECURRING_OPTIONS = [
                     <span class="day-number">{{ day.date }}</span>
                     @if (day.events.length > 0) {
                       <div class="day-events">
-                        @for (event of day.events.slice(0, 2); track event.id) {
+                        @for (event of day.events.slice(0, UI_LIMITS.CALENDAR_EVENTS_PER_DAY); track event.id) {
                           <div
                             class="event-dot"
                             [class]="'type-' + event.type"
@@ -624,6 +625,9 @@ export class CalendarCoachComponent implements OnInit {
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
+  // Constants exposed to template
+  protected readonly UI_LIMITS = UI_LIMITS;
+
   // State
   readonly events = signal<TeamEvent[]>([]);
   readonly rsvps = signal<EventRsvp[]>([]);
@@ -717,7 +721,7 @@ export class CalendarCoachComponent implements OnInit {
     this.events()
       .filter((e) => new Date(e.date) >= new Date())
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .slice(0, 5),
+      .slice(0, UI_LIMITS.UPCOMING_SESSIONS_COUNT),
   );
 
   readonly goingRsvps = computed(() =>

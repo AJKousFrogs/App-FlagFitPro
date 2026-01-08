@@ -38,6 +38,7 @@
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: var(--space-6);
   margin-bottom: var(--space-6);
+  align-items: stretch; /* Ensure equal card heights */
 }
 
 .chart-loading {
@@ -84,6 +85,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--space-4);
+  align-items: stretch; /* Ensure equal card heights */
 }
 
 .checkin-item {

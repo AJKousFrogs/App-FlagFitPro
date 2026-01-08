@@ -37,14 +37,28 @@ module.exports = {
     // -----------------------------
     // Decision 19: No transition: all
     // -----------------------------
-    "declaration-property-value-disallowed-list": {
-      // Decision 19: No transition: all
-      transition: ["all", "/^all\\s/", "/\\s+all\\s/", "/\\s+all$/"],
+    "declaration-property-value-disallowed-list": [
+      {
+        // Decision 19: No transition: all
+        transition: ["all", "/^all\\s/", "/\\s+all\\s/", "/\\s+all$/"],
 
-      // Decision 20: Disallow raw z-index values (except 0, 1, -1, auto)
-      // NOTE: This catches numeric z-index; var() usage is allowed
-      "z-index": ["/^[2-9]\\d*$/", "/^\\d{2,}$/"],
-    },
+        // Decision 20: Disallow raw z-index values (except 0, 1, -1, auto)
+        // NOTE: This catches numeric z-index; var() usage is allowed
+        "z-index": ["/^[2-9]\\d*$/", "/^\\d{2,}$/"],
+
+        // Design Token Audit (Jan 8, 2026): Enforce design token usage
+        // Warn on hardcoded font-size px values (should use --font-* tokens)
+        "font-size": ["/^\\d+px$/"],
+
+        // Warn on hardcoded border-radius px values (should use --radius-* tokens)
+        // Allows: var(), %, 0, inherit, initial, unset
+        "border-radius": ["/^\\d+px$/", "/^\\d+\\.\\d+px$/"],
+      },
+      {
+        severity: "warning",
+        message: "⚠️ Design Token Audit: Use CSS variable tokens instead of hardcoded values. See DESIGN-TOKEN-AUDIT-2026-01-08.md",
+      },
+    ],
 
     // -----------------------------
     // Decision 22: ::ng-deep forbidden (warn to allow gradual cleanup)
@@ -60,6 +74,7 @@ module.exports = {
     // Code quality rules (disabled for migration phase)
     // -----------------------------
     "rule-empty-line-before": null,
+    "declaration-empty-line-before": null,
 
     // Property ordering (optional - helps consistency)
     "order/properties-alphabetical-order": null, // Set to true if you want alphabetical
@@ -218,14 +233,8 @@ module.exports = {
             message: "⚠️ Decision 1: Migrate to design token variables.",
           },
         ],
-        "declaration-property-value-disallowed-list": [
-          {
-            transition: ["all", "/all\\s/"],
-          },
-          {
-            severity: "warning",
-          },
-        ],
+        // Relax rules for PrimeNG theme files (they contain many overrides)
+        "declaration-property-value-disallowed-list": null,
       },
     },
 

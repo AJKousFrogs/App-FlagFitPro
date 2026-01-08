@@ -292,46 +292,6 @@ export class SecureStorage {
     }
   }
 
-  /**
-   * Legacy XOR encryption (for backward compatibility during migration)
-   * @deprecated Since v2.0 - Use encrypt() instead. Will be removed in v3.0
-   * @param {string} text - Text to encrypt
-   * @param {string} key - Encryption key
-   * @returns {string} Encrypted text
-   */
-  simpleEncrypt(text, key) {
-    logger.warn("[SecureStorage] simpleEncrypt is deprecated. Use encrypt() instead.");
-    let encrypted = "";
-    for (let i = 0; i < text.length; i++) {
-      const keyChar = key.charCodeAt(i % key.length);
-      const textChar = text.charCodeAt(i);
-      encrypted += String.fromCharCode(textChar ^ keyChar);
-    }
-    return btoa(encrypted);
-  }
-
-  /**
-   * Legacy XOR decryption (for backward compatibility during migration)
-   * @deprecated Since v2.0 - Use decrypt() instead. Will be removed in v3.0
-   * @param {string} encryptedText - Encrypted text
-   * @param {string} key - Decryption key
-   * @returns {string|null} Decrypted text
-   */
-  simpleDecrypt(encryptedText, key) {
-    logger.warn("[SecureStorage] simpleDecrypt is deprecated. Use decrypt() instead.");
-    try {
-      const encrypted = atob(encryptedText);
-      let decrypted = "";
-      for (let i = 0; i < encrypted.length; i++) {
-        const keyChar = key.charCodeAt(i % key.length);
-        const encryptedChar = encrypted.charCodeAt(i);
-        decrypted += String.fromCharCode(encryptedChar ^ keyChar);
-      }
-      return decrypted;
-    } catch (_e) {
-      return null;
-    }
-  }
 
   /**
    * Helper: Convert ArrayBuffer to Base64
@@ -483,9 +443,8 @@ export class SecureStorage {
    *
    * Retrieves the token from secure storage, decrypts it, and verifies integrity:
    * 1. Checks for AES-GCM encrypted token in cookies/localStorage
-   * 2. Auto-migrates from legacy XOR encryption if found
-   * 3. Verifies SHA-256 hash for integrity
-   * 4. Falls back to plain legacy token if migration needed
+   * 2. Verifies SHA-256 hash for integrity
+   * 3. Falls back to plain legacy token if not found
    *
    * @returns {Promise<string|null>} Decrypted authentication token, or null if not found/invalid
    * @example
@@ -497,7 +456,6 @@ export class SecureStorage {
   async getAuthToken() {
     try {
       const method = sessionStorage.getItem("__auth_method");
-      const encryptionVersion = sessionStorage.getItem("__encryption_version");
       let encryptedToken = null;
 
       if (method === "cookie") {
@@ -507,23 +465,8 @@ export class SecureStorage {
       }
 
       if (encryptedToken) {
-        let token = null;
-
-        // Use appropriate decryption method based on version
-        if (encryptionVersion === "aes-gcm") {
-          token = await this.decrypt(encryptedToken);
-        } else {
-          // Legacy XOR encryption - migrate to AES-GCM
-          const legacyKey =
-            this.getBrowserFingerprint() + this.generateSessionId();
-          token = this.simpleDecrypt(encryptedToken, btoa(legacyKey));
-
-          if (token) {
-            logger.debug("Migrating token from XOR to AES-GCM encryption");
-            // Re-encrypt with AES-GCM
-            await this.setAuthToken(token);
-          }
-        }
+        // Decrypt using AES-GCM
+        const token = await this.decrypt(encryptedToken);
 
         // Verify token integrity
         if (token && (await this.verifyTokenHash(token))) {
@@ -611,7 +554,6 @@ export class SecureStorage {
   async getUserData() {
     try {
       const method = sessionStorage.getItem("__auth_method");
-      const encryptionVersion = sessionStorage.getItem("__encryption_version");
       let encryptedUserData = null;
 
       if (method === "cookie") {
@@ -621,21 +563,8 @@ export class SecureStorage {
       }
 
       if (encryptedUserData) {
-        let userDataString = null;
-
-        // Use appropriate decryption method
-        if (encryptionVersion === "aes-gcm") {
-          userDataString = await this.decrypt(encryptedUserData);
-        } else {
-          // Legacy XOR encryption
-          const legacyKey =
-            this.getBrowserFingerprint() + this.generateSessionId();
-          userDataString = this.simpleDecrypt(
-            encryptedUserData,
-            btoa(legacyKey),
-          );
-        }
-
+        // Decrypt using AES-GCM
+        const userDataString = await this.decrypt(encryptedUserData);
         return userDataString ? JSON.parse(userDataString) : null;
       }
 

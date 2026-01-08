@@ -147,7 +147,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 80px;
+  padding-top: var(--header-height-profile, 80px);
   z-index: 1;
 }
 
@@ -677,7 +677,7 @@
   }
 
   .profile-page .profile-avatar-container {
-    padding-top: 60px;
+    padding-top: var(--header-height-profile-mobile, 60px);
   }
 
   .profile-page .avatar-wrapper {

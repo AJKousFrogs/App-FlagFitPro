@@ -16,6 +16,7 @@ import { RealtimeChannel } from "@supabase/supabase-js";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import { TIMEOUTS } from "../constants/app.constants";
 
 // ============================================================================
 // TYPES
@@ -63,7 +64,7 @@ export class PresenceService implements OnDestroy {
 
   // Idle detection
   private idleTimer: ReturnType<typeof setTimeout> | null = null;
-  private readonly IDLE_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+  private readonly IDLE_TIMEOUT_MS = TIMEOUTS.IDLE_TIMEOUT;
 
   // State
   private readonly _myPresence = signal<PresenceState | null>(null);

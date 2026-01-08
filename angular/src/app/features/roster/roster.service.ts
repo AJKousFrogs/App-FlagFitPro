@@ -17,6 +17,7 @@ import {
   StaffByCategory,
   PlayerStatus,
 } from "./roster.models";
+import { TIME } from "../../core/constants/app.constants";
 
 /**
  * Team member record from database
@@ -554,7 +555,7 @@ export class RosterService {
           invited_by: this.authService.currentUser()?.id,
           status: "pending",
           expires_at: new Date(
-            Date.now() + 7 * 24 * 60 * 60 * 1000,
+            Date.now() + TIME.INVITATION_EXPIRY_DAYS * TIME.MS_PER_DAY,
           ).toISOString(),
         });
 
@@ -642,7 +643,7 @@ export class RosterService {
         .update({
           status: "pending",
           expires_at: new Date(
-            Date.now() + 7 * 24 * 60 * 60 * 1000,
+            Date.now() + TIME.INVITATION_EXPIRY_DAYS * TIME.MS_PER_DAY,
           ).toISOString(),
           updated_at: new Date().toISOString(),
         })

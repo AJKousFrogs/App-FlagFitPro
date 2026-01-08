@@ -21,6 +21,8 @@ import { AcwrService } from "../../../core/services/acwr.service";
 import { WellnessService } from "../../../core/services/wellness.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { Player, PlayerRiskLevel, PositionMetrics } from "../roster.models";
+import { TRAINING, UI_LIMITS } from "../../../core/constants/app.constants";
+import { WELLNESS } from "../../../core/constants/wellness.constants";
 
 export interface PlayerWithMetrics extends Player {
   readiness: number;
@@ -159,7 +161,7 @@ export class PlayerMetricsService {
     if (enriched.readiness < 50) {
       factors.push(`Low readiness (${enriched.readiness}%)`);
       recommendations.push("Consider recovery-focused session or rest day");
-    } else if (enriched.readiness < 70) {
+    } else if (enriched.readiness < WELLNESS.READINESS_THRESHOLD_HIGH) {
       factors.push(`Moderate readiness (${enriched.readiness}%)`);
       recommendations.push("Reduce session intensity");
     }
@@ -200,7 +202,7 @@ export class PlayerMetricsService {
 
     const requirements =
       this.athleteProfileService.getPositionRequirements(position);
-    return requirements.trainingPriorities.slice(0, 5);
+    return requirements.trainingPriorities.slice(0, UI_LIMITS.UPCOMING_SESSIONS_COUNT);
   }
 
   /**
@@ -214,7 +216,7 @@ export class PlayerMetricsService {
     if (player.position !== "QB") return null;
 
     const throwsThisWeek = player.positionMetrics?.throwsThisWeek ?? 0;
-    const weeklyLimit = 300; // Based on FlagFootballAthleteProfileService tournament capacity
+    const weeklyLimit = TRAINING.WEEKLY_THROW_LIMIT;
     const armCareCompliance =
       player.positionMetrics?.armCareCompliance ?? false;
 
@@ -270,7 +272,7 @@ export class PlayerMetricsService {
       case "inactive":
         return 40 + Math.floor(Math.random() * 20);
       default:
-        return 70;
+        return WELLNESS.DEFAULT_READINESS_SCORE;
     }
   }
 
@@ -306,7 +308,7 @@ export class PlayerMetricsService {
     requirements: PositionRequirements | null,
   ): number {
     if (player.performanceScore !== undefined) return player.performanceScore;
-    if (!requirements) return 70;
+    if (!requirements) return WELLNESS.DEFAULT_READINESS_SCORE;
 
     // If we have actual metrics, calculate against benchmarks
     const metrics = player.positionMetrics;
@@ -354,7 +356,7 @@ export class PlayerMetricsService {
       metricCount++;
     }
 
-    return metricCount > 0 ? Math.round(totalScore / metricCount) : 70;
+    return metricCount > 0 ? Math.round(totalScore / metricCount) : WELLNESS.DEFAULT_READINESS_SCORE;
   }
 
   /**

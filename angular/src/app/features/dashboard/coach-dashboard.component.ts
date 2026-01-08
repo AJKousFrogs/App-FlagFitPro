@@ -12,7 +12,6 @@ import { Router, RouterModule } from "@angular/router";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { CardModule } from "primeng/card";
-// // import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent // REMOVED: Now using LazyChartComponent
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";

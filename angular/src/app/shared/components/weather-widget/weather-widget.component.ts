@@ -22,6 +22,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { WeatherService, WeatherData } from "../../../core/services/weather.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { CardComponent } from "../card/card.component";
+import { isHeatRisk } from "../../../core/constants/wellness.constants";
 
 @Component({
   selector: "app-weather-widget",
@@ -206,13 +207,11 @@ export class WeatherWidgetComponent implements OnInit {
   isLoading = signal<boolean>(true);
   location = signal<string>("Training Ground");
 
-  isHeatRisk = computed(() => {
+  isHeatRiskFlag = computed(() => {
     const data = this.weatherData();
     if (!data) return false;
-    return (
-      data.temp > 30 ||
-      (data.temp > 25 && data.humidity && data.humidity > 70)
-    );
+    // Severe heat above 30C, or use configurable thresholds
+    return data.temp > 30 || isHeatRisk(data.temp, data.humidity ?? 0);
   });
 
   ngOnInit(): void {

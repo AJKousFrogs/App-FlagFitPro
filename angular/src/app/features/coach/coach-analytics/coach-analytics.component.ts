@@ -19,7 +19,6 @@ import { FormsModule } from "@angular/forms";
 import { ChartOptions } from "chart.js";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { DividerModule } from "primeng/divider";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";

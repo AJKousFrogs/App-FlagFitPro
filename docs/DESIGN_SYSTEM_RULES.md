@@ -136,13 +136,24 @@ Single spacing system for padding, margin, gap, grid:
 --radius-2xl: 16px;
 ```
 
-❌ **`--radius-full` (pill shape) is DEPRECATED** — Do not use for buttons, tags, or badges.
+❌ **`--radius-full` (pill shape) is RESTRICTED** — Limited use only.
+
+**Allowed uses:**
+- Avatars/profile images (circular)
+- Progress bar tracks and fills
+- Toggle switch tracks
+- Dot indicators (status dots)
+
+**Forbidden uses:**
+- ❌ Buttons
+- ❌ Tags/Badges
+- ❌ Cards
+- ❌ Any rectangular UI element
 
 **Migration:**
 
-- 10px → 8px or 12px
-- 14px → 12px or 16px
-- `border-radius: 100px` or `9999px` → `var(--radius-lg)` or `var(--radius-md)`
+- `border-radius: 100px` or `9999px` → `var(--radius-md)` (6px)
+- Pill-shaped buttons → Standard `var(--radius-lg)` (8px)
 
 ### 4.4 Typography Scale (LOCKED — UNIFIED SYSTEM)
 
@@ -274,13 +285,15 @@ The unified typography system enforces predictable hierarchy across all componen
 --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.16);
 ```
 
-**Card policy (border-first):**
+**Card policy (BORDERLESS - Updated Jan 2026):**
 | State | Styling |
 |-------|---------|
-| Default | border + `--shadow-1` |
-| Hover | `--shadow-2` |
-| Active | `--shadow-0` |
+| Default | NO border + `--shadow-sm` |
+| Hover | `--shadow-md` |
+| Active | `--shadow-sm` |
 | Focus | focus ring (never border color) |
+
+> **Note:** Border-first was deprecated in favor of borderless cards for a cleaner, more modern aesthetic. Cards rely on subtle shadows for depth instead of borders.
 
 ---
 
@@ -1313,34 +1326,35 @@ border: var(--border-1) solid var(--color-border-default);
 --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.16); // Modals / dropdowns
 ```
 
-### Card Surface Policy: ✅ Border-first (APPROVED)
+### Card Surface Policy: ✅ BORDERLESS (UPDATED Jan 2026)
 
-**Why Border-first:**
+**Why Borderless (supersedes Border-first):**
 
-- Stable structure in tables, dense dashboards, and light mode
-- More resilient for future dark mode
-- Cards feel calm; interactive cards feel clickable
-- Keyboard focus (green border) stands out clearly
+- Cleaner, more modern aesthetic per user feedback
+- Subtle shadows provide sufficient depth without visual clutter
+- Reduces "boxy" feel especially in dense dashboards
+- Better aligns with contemporary design trends
+- Keyboard focus ring provides clear boundary when needed
 
 ### Hover Policy: ✅ Policy A — Shadow Increase (APPROVED)
 
 **Why Policy A:**
 
 - Shadow increase reads as "this is interactive" without turning UI into sea of green borders
-- `--color-border-focus` reserved for focus/active, not casual hover
+- Focus ring reserved for keyboard focus, not casual hover
 
-### Final Card Rules
+### Final Card Rules (UPDATED)
 
-| State              | Styling                                                                                     |
-| ------------------ | ------------------------------------------------------------------------------------------- |
-| **Default**        | `border: var(--border-1) solid var(--color-border-default)` + `box-shadow: var(--shadow-1)` |
-| **Hover**          | `box-shadow: var(--shadow-2)` (border unchanged)                                            |
-| **Focus-visible**  | Focus ring tokens (Decision 12/18), NOT border highlighting                                 |
-| **Active/Pressed** | `box-shadow: var(--shadow-0)` + optional `translateY(1px)`                                  |
+| State              | Styling                                                                   |
+| ------------------ | ------------------------------------------------------------------------- |
+| **Default**        | `border: none` + `box-shadow: var(--shadow-sm)`                           |
+| **Hover**          | `box-shadow: var(--shadow-md)`                                            |
+| **Focus-visible**  | Focus ring tokens (Decision 12/18), NOT border highlighting               |
+| **Active/Pressed** | `box-shadow: var(--shadow-sm)` + optional `translateY(1px)`               |
 
 ### Your Decision
 
-- [x] **APPROVED** - Border-first + Hover Policy A ⭐ CORE
+- [x] **APPROVED** - ~~Border-first~~ → BORDERLESS + Hover Policy A ⭐ CORE (Updated Jan 8, 2026)
 
 ---
 
@@ -4907,23 +4921,25 @@ Based on the audit above, these PrimeNG CSS variables must map to design tokens:
 --p-button-lg-padding-y: var(--space-4);
 ```
 
-### Card Tokens
+### Card Tokens (UPDATED Jan 2026 - BORDERLESS)
 
 ```scss
 --p-card-background: var(--color-surface-primary);
---p-card-border-radius: var(--radius-xl);
---p-card-shadow: var(--shadow-1);
+--p-card-border-radius: var(--radius-lg); // 8px - Design System standard
+--p-card-shadow: var(--shadow-sm);
 --p-card-padding: var(--space-5);
---p-card-border: var(--border-1) solid var(--color-border-default);
+--p-card-border: none; // BORDERLESS per user preference
+--p-card-header-border-bottom: none; // No separator line
+--p-card-footer-border-top: var(--border-1) solid var(--color-border-muted); // Footer only
 ```
 
 ### Tag Tokens
 
 ```scss
 --p-tag-padding-x: var(--space-3);
---p-tag-padding-y: var(--space-1);
---p-tag-border-radius: var(--radius-full);
---p-tag-font-size: var(--font-body-xs);
+--p-tag-padding-y: var(--space-2);
+--p-tag-border-radius: var(--radius-md); // Standard rounded rectangle (NO PILL)
+--p-tag-font-size: var(--font-body-sm);
 
 // Severity colors (same as buttons)
 --p-tag-danger-background: var(--color-status-error-subtle);

@@ -345,37 +345,10 @@
   backdrop-filter: blur(2px);
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-    width: 280px;
-  }
-
-  .sidebar.sidebar-open {
-    transform: translateX(0);
-  }
-
-  .sidebar-close-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .sidebar-overlay.active {
-    display: block;
-    animation: fadeIn 0.2s ease;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-}
-
+// ============================================
+// TABLET: Collapsed sidebar (icons only)
+// Design System: --bp-tablet: 768px, --bp-laptop: 1024px
+// ============================================
 @media (max-width: 1024px) and (min-width: 769px) {
   .sidebar {
     width: 72px;
@@ -425,5 +398,45 @@
   // Hide "Me" group items when collapsed (icon only mode)
   .me-group-items {
     display: none;
+  }
+  
+  // Close button NOT shown at tablet width
+  .sidebar-close-btn {
+    display: none;
+  }
+}
+
+// ============================================
+// MOBILE: Hidden sidebar with overlay
+// Design System: --bp-tablet: 768px (≤768px is mobile)
+// ============================================
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }

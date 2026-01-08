@@ -6,6 +6,7 @@
  */
 
 import { Injectable, signal } from '@angular/core';
+import { TIMEOUTS } from '../constants/app.constants';
 
 export interface ScreenshotOptions {
   scale?: number;
@@ -20,11 +21,14 @@ export interface ScreenshotOptions {
   allowTaint?: boolean;
 }
 
+// Dynamic import type - html2canvas is loaded lazily
+type Html2CanvasFunction = (element: HTMLElement, options: Record<string, unknown>) => Promise<HTMLCanvasElement>;
+
 @Injectable({
   providedIn: 'root'
 })
 export class LazyScreenshotService {
-  private html2canvas: any = null;
+  private html2canvas: Html2CanvasFunction | null = null;
   private loading = signal(false);
   private loaded = signal(false);
 
@@ -41,7 +45,7 @@ export class LazyScreenshotService {
     if (this.loading()) {
       // Wait for existing load to complete
       while (this.loading()) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, TIMEOUTS.UI_MICRO_DELAY));
       }
       return;
     }

@@ -1,16 +1,16 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    signal,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { CardModule } from "primeng/card";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
+import { AccordionModule } from "primeng/accordion";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
@@ -18,19 +18,18 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { AccordionModule } from "primeng/accordion";
-import { COLORS } from "../../core/constants/app.constants";
+import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatItem, StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
-import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 interface PerformanceMetric {
   name: string;
@@ -872,7 +871,7 @@ export class PerformanceTrackingComponent {
       })
       .filter((g) => g.gapPercentage > 0)
       .sort((a, b) => b.gapPercentage - a.gapPercentage)
-      .slice(0, 3); // Top 3 priorities
+      .slice(0, UI_LIMITS.TOP_PRIORITIES_COUNT); // Top priorities
 
     this.gapAnalysis.set(gaps);
   }

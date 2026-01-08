@@ -50,6 +50,7 @@ import {
   Achievement,
   WeeklyScheduleDay,
 } from "../../core/models/training.models";
+import { UI_LIMITS } from "../../core/constants/app.constants";
 
 @Component({
   selector: "app-training",
@@ -264,7 +265,7 @@ import {
           >
             <div class="workouts-list-compact">
               @for (
-                workout of workouts().slice(0, 4);
+                workout of workouts().slice(0, UI_LIMITS.WORKOUTS_PREVIEW_COUNT);
                 track trackByWorkoutTitle($index, workout)
               ) {
                 <div
@@ -358,6 +359,9 @@ export class TrainingComponent {
   private readonly headerService = inject(HeaderService);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
+
+  // Expose constants to template
+  protected readonly UI_LIMITS = UI_LIMITS;
 
   // Expose state signals to template (readonly references)
   readonly userName = this.trainingService.userName;

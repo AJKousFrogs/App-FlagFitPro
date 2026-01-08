@@ -66,6 +66,13 @@ import { UnifiedTrainingService } from "../../core/services/unified-training.ser
 // Environment
 import { environment } from "../../../environments/environment";
 
+// Constants
+import {
+  WELLNESS,
+  computeQuickReadiness,
+} from "../../core/constants/wellness.constants";
+import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
+
 // Types
 type DayPhase = "morning" | "midday" | "evening";
 type ActiveFocus = "checkin" | "protocol" | "wrapup";
@@ -1309,7 +1316,7 @@ export class TodayComponent {
       completedDays: parseInt(compliance, 10),
       totalTrainingDays: 7,
       weeklyLoadAu: 0,
-      targetLoadAu: 2000,
+      targetLoadAu: TRAINING.TARGET_LOAD_AU,
       currentStreak: parseInt(streak, 10),
     };
   });
@@ -1402,16 +1409,12 @@ export class TodayComponent {
       return 0;
     }
 
-    // Calculate score based on quick inputs
-    const feelingScore = (data.overallFeeling / 5) * 100;
-    const energyScore = (data.energyLevel / 5) * 100;
-    const sorenessScore = data.hasSoreness ? 60 : 100; // Penalty for soreness
-
-    // Weighted average
-    const score = Math.round(
-      feelingScore * 0.4 + energyScore * 0.35 + sorenessScore * 0.25,
+    // Use centralized readiness calculation from wellness constants
+    return computeQuickReadiness(
+      data.overallFeeling,
+      data.energyLevel,
+      data.hasSoreness
     );
-    return score;
   });
 
   readonly isQuickFormValid = computed(() => {
@@ -1432,7 +1435,7 @@ export class TodayComponent {
     this.loadTomorrowProtocol();
 
     // Update time every minute
-    const interval = setInterval(() => this.currentTime.set(new Date()), 60000);
+    const interval = setInterval(() => this.currentTime.set(new Date()), TIMEOUTS.TIME_UPDATE_INTERVAL);
     this.destroyRef.onDestroy(() => clearInterval(interval));
 
     // Watch for protocol completion to trigger celebration
@@ -1838,13 +1841,15 @@ export class TodayComponent {
 
   getQuickReadinessClass(): string {
     const score = this.quickReadinessScore();
-    if (score >= 70) return "high";
-    if (score >= 50) return "moderate";
+    if (score >= WELLNESS.READINESS_THRESHOLD_HIGH) return "high";
+    if (score >= WELLNESS.READINESS_MODERATE) return "moderate";
     return "low";
   }
 
   async submitQuickCheckin(): Promise<void> {
-    if (!this.isQuickFormValid()) return;
+    if (!this.isQuickFormValid()) {
+      return;
+    }
 
     this.isSavingQuickCheckin.set(true);
 

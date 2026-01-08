@@ -13,6 +13,7 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
+import { TIMEOUTS } from "../constants/app.constants";
 
 export interface QueuedAction {
   id: string;
@@ -169,7 +170,7 @@ export class OfflineQueueService {
       }
 
       // Small delay between syncs to avoid overwhelming server
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, TIMEOUTS.UI_MICRO_DELAY));
     }
 
     this._isSyncing.set(false);

@@ -101,6 +101,7 @@
   .grid {
     display: grid;
     gap: var(--space-4);
+    align-items: stretch; /* Ensure equal heights for grid items */
   }
 
   // Gap variants
@@ -374,6 +375,79 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
+  }
+
+  // ============================================
+  // SECTION HEADER PATTERN (Standardized)
+  // ============================================
+  // Use for all section headers within pages
+  // Ensures consistent font-weight, icon size, and spacing
+
+  .section-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .section-header__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--font-size-h2); // 18px
+    font-weight: var(--font-weight-semibold); // 600 - ALWAYS semibold
+    line-height: var(--line-height-tight);
+    color: var(--color-text-primary);
+
+    i,
+    .pi {
+      font-size: 20px; // Standardized icon size
+      color: var(--ds-primary-green);
+      opacity: 0.9;
+    }
+  }
+
+  .section-header__subtitle {
+    margin: 0;
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .section-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  // Compact variant for smaller sections
+  .section-header--compact {
+    margin-bottom: var(--space-3);
+
+    .section-header__title {
+      font-size: var(--font-size-h3);
+
+      i,
+      .pi {
+        font-size: 18px;
+      }
+    }
+  }
+
+  // Large variant for main sections
+  .section-header--large {
+    margin-bottom: var(--space-6);
+
+    .section-header__title {
+      font-size: var(--font-size-h1);
+
+      i,
+      .pi {
+        font-size: 24px;
+      }
+    }
   }
 
   // ============================================

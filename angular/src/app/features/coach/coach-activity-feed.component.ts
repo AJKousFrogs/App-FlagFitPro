@@ -28,6 +28,7 @@ import {
 } from "../../core/services/team-notification.service";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { TIMEOUTS } from "../../core/constants/app.constants";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
@@ -276,7 +277,7 @@ export class CoachActivityFeedComponent implements OnDestroy {
     try {
       // Would implement pagination
       // For now, just simulate
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, TIMEOUTS.UI_TRANSITION_DELAY));
       this._hasMore.set(false);
     } finally {
       this._loadingMore.set(false);

@@ -68,24 +68,24 @@
     --p-button-font-weight: var(--font-weight-semibold);
 
     // ============================================
-    // CARDS (Decision 14: Border-first + Policy A)
+    // CARDS (BORDERLESS - User preference)
+    // Clean, minimal card styling with subtle shadows
     // ============================================
 
     --p-card-background: var(--color-surface-primary);
     --p-card-border-radius: var(--radius-lg); /* 8px - Design System standard */
-    --p-card-shadow: var(--shadow-1);
+    --p-card-shadow: var(--shadow-sm);
     --p-card-padding: var(--space-5);
-    --p-card-border: var(--border-1) solid var(--color-border-default);
+    --p-card-border: none; /* BORDERLESS per user preference */
 
-    // Card header
+    // Card header - no separator line
     --p-card-header-padding: var(--space-4) var(--space-5);
-    --p-card-header-border-bottom: var(--border-1) solid
-      var(--color-border-muted);
+    --p-card-header-border-bottom: none;
 
-    // Card content
+    // Card content - generous padding
     --p-card-content-padding: var(--space-5);
 
-    // Card footer
+    // Card footer - subtle separator only for footer
     --p-card-footer-padding: var(--space-4) var(--space-5);
     --p-card-footer-border-top: var(--border-1) solid var(--color-border-muted);
 
@@ -95,7 +95,7 @@
 
     --p-tag-padding-x: var(--space-3);
     --p-tag-padding-y: var(--space-2);
-    --p-tag-border-radius: var(--radius-md); // RAISED RECTANGULAR (not pill)
+    --p-tag-border-radius: var(--radius-md); // Standard rounded rectangle (NO PILL)
     --p-tag-font-size: var(--font-body-sm);
     --p-tag-font-weight: var(--font-weight-semibold);
 
@@ -150,6 +150,9 @@
     --p-inputtext-padding-y: var(--space-3);
     --p-inputtext-font-size: var(--font-body-md);
     --p-inputtext-font-family: var(--font-family-sans);
+    --p-inputtext-min-height: 44px; // Standard touch target height
+    --p-inputtext-height-sm: 36px;
+    --p-inputtext-height-lg: 52px;
 
     // Input borders
     --p-inputtext-border-color: var(--color-border-default);
@@ -238,15 +241,17 @@
 
     // ============================================
     // TOOLTIP (Decision 31)
+    // Enhanced with better spacing & animations
     // ============================================
 
     --p-tooltip-background: var(--color-surface-inverse);
     --p-tooltip-color: var(--color-text-on-inverse);
-    --p-tooltip-border-radius: var(--radius-md);
-    --p-tooltip-padding: var(--space-2) var(--space-3);
-    --p-tooltip-font-size: var(--font-body-xs);
-    --p-tooltip-max-width: 240px;
-    --p-tooltip-shadow: var(--shadow-2);
+    --p-tooltip-border-radius: var(--radius-lg);
+    --p-tooltip-padding: var(--space-4) var(--space-5);
+    --p-tooltip-font-size: var(--font-body-sm);
+    --p-tooltip-max-width: 320px;
+    --p-tooltip-shadow: var(--shadow-3);
+    --p-tooltip-line-height: 1.5;
 
     // ============================================
     // PROGRESSBAR

@@ -213,7 +213,7 @@
   }
 
   .metric-trend {
-    font-size: 10px;
+    font-size: var(--font-body-2xs); // 10px
     padding: var(--space-1) var(--space-2);
   }
 
@@ -246,7 +246,7 @@
   }
 
   .chart-subtitle {
-    font-size: 11px;
+    font-size: var(--font-body-xs); // ~12px (closest token to 11px)
   }
 
   .chart-actions {
@@ -336,7 +336,7 @@
   }
 
   .step-label {
-    font-size: 11px;
+    font-size: var(--font-body-xs); // ~12px
   }
 
   // ================================================================
@@ -445,7 +445,7 @@
     flex-direction: column;
     text-align: center;
     padding: var(--space-2);
-    font-size: 11px;
+    font-size: var(--font-body-xs); // ~12px
   }
 
   // ================================================================
@@ -468,7 +468,7 @@
     }
 
     .coach-label {
-      font-size: 10px;
+      font-size: var(--font-body-2xs); // 10px
     }
   }
 
@@ -550,7 +550,7 @@
     }
 
     .progress-percent {
-      font-size: 10px;
+      font-size: var(--font-body-2xs); // 10px
     }
   }
 
@@ -558,13 +558,13 @@
     margin-bottom: var(--space-2);
 
     .days-remaining {
-      font-size: 10px;
+      font-size: var(--font-body-2xs); // 10px
     }
   }
 
   .coach-note {
     padding: var(--space-2);
-    font-size: 10px;
+    font-size: var(--font-body-2xs); // 10px
   }
 
   // ================================================================
@@ -678,7 +678,7 @@
   }
 
   .gap-metric-label .gap-value {
-    font-size: 11px;
+    font-size: var(--font-body-xs); // ~12px
   }
 
   .gap-bar-track {
@@ -686,7 +686,7 @@
   }
 
   .gap-bar-values {
-    font-size: 11px;
+    font-size: var(--font-body-xs); // ~12px
   }
 
   // Hide status icons on mobile (too crowded)
@@ -711,7 +711,7 @@
   }
 
   .gap-summary .summary-label {
-    font-size: 10px;
+    font-size: var(--font-body-2xs); // 10px
   }
 }
 
@@ -838,6 +838,12 @@
 
 .analytics-page {
   padding: var(--space-6);
+  min-height: 100vh; /* Ensure page has height for viewport detection */
+  
+  // Mobile fix: ensure content is visible
+  @media (max-width: 480px) {
+    padding: var(--space-3);
+  }
 }
 
 .page-header {
@@ -1013,6 +1019,13 @@
     align-items: center;
     justify-content: center;
     height: 320px;
+  }
+
+  // Doughnut chart needs more height when legend is at bottom (mobile)
+  &.doughnut {
+    @media (max-width: 767px) {
+      height: 380px; // Extra height for bottom legend
+    }
   }
 }
 
@@ -1245,10 +1258,14 @@
   }
 
   p {
-    margin: 0;
+    margin: 0 0 var(--space-4) 0;
     font-size: var(--font-size-h4);
     color: var(--color-text-secondary);
     max-width: 320px;
+  }
+  
+  .empty-state-cta {
+    margin-top: var(--space-2);
   }
 }
 

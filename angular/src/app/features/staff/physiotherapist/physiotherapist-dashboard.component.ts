@@ -1,18 +1,18 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnInit,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { UI_LIMITS } from "@core/constants/app.constants";
+import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { CardModule } from "primeng/card";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -21,12 +21,12 @@ import { TableModule } from "primeng/table";
 import { TabsModule } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
 import { TimelineModule } from "primeng/timeline";
+import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
+import { SharedInsight, SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { SharedInsightFeedService, SharedInsight } from "../../../core/services/shared-insight-feed.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -359,7 +359,7 @@ const RTP_PHASES = [
                           @if (athlete.activeInjuries.length > 0) {
                             <div class="injuries-list">
                               @for (
-                                injury of athlete.activeInjuries.slice(0, 2);
+                                injury of athlete.activeInjuries.slice(0, UI_LIMITS.INJURIES_PREVIEW);
                                 track injury.id
                               ) {
                                 <span
@@ -1097,6 +1097,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
   protected insightFeedService = inject(SharedInsightFeedService);
+
+  // Constants exposed to template
+  protected readonly UI_LIMITS = UI_LIMITS;
 
   // State
   loading = signal(true);

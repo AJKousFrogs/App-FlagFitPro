@@ -86,6 +86,7 @@
         <input
           type="text"
           pInputText
+          id="global-search-input"
           [placeholder]="
             config().searchPlaceholder || 'Search players, exercises, videos...'
           "
@@ -102,6 +103,24 @@
   <!-- Right Section: Actions -->
   <ng-template #end>
     <div class="header-end">
+      <!-- Weather Widget (Compact) -->
+      @if (weatherData()) {
+        <div
+          class="weather-indicator"
+          [class]="getWeatherSeverityClass()"
+          [pTooltip]="weatherTooltip()"
+          tooltipPosition="bottom"
+        >
+          <i [class]="'pi ' + weatherIcon()" aria-hidden="true"></i>
+          <span class="weather-temp">{{ weatherData()!.temp }}°</span>
+          <span class="weather-location">{{ weatherLocation() }}</span>
+        </div>
+      } @else if (weatherLoading()) {
+        <div class="weather-indicator weather-loading" pTooltip="Loading weather...">
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+        </div>
+      }
+
       <!-- Notifications -->
       <p-button
         icon="pi pi-bell"

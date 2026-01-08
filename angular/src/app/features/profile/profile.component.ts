@@ -35,6 +35,7 @@ import {
   getDeletionMessage,
 } from "../../shared/utils/privacy-ux-copy";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
+import { UI_LIMITS } from "../../core/constants/app.constants";
 
 interface PendingInvitation {
   id: string;
@@ -226,7 +227,7 @@ interface PendingInvitation {
                     <span
                       >Complete your profile:
                       {{
-                        profileCompletion().missingFields.slice(0, 2).join(", ")
+                        profileCompletion().missingFields.slice(0, UI_LIMITS.MISSING_FIELDS_PREVIEW).join(", ")
                       }}
                       @if (profileCompletion().missingFields.length > 2) {
                         and
@@ -527,6 +528,9 @@ export class ProfileComponent implements OnInit {
   private profileCompletionService = inject(ProfileCompletionService);
 
   @ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
+
+  // Expose UI_LIMITS for template usage
+  readonly UI_LIMITS = UI_LIMITS;
 
   // Centralized UX copy for deletion state
   readonly deletionMessage = DELETION_MESSAGES.pending;
@@ -854,7 +858,7 @@ export class ProfileComponent implements OnInit {
       ]);
 
       // Load recent activities from training sessions
-      const recentActivities = sortedSessions.slice(0, 5).map((session) => {
+      const recentActivities = sortedSessions.slice(0, UI_LIMITS.RECENT_ACTIVITIES_COUNT).map((session) => {
         const date = new Date(session.completed_at || session.session_date);
         const timeAgo = this.getTimeAgo(date);
         return {

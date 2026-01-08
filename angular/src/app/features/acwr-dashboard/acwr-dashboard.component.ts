@@ -37,7 +37,6 @@ import {
   signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
@@ -944,7 +943,6 @@ export class AcwrDashboardComponent implements OnInit {
       for (let i = 0; i < 28; i++) {
         const currentDate = new Date(startDate);
         currentDate.setDate(startDate.getDate() + i);
-        const _dateStr = currentDate.toISOString().split("T")[0];
 
         // Calculate acute (7-day) and chronic (28-day) loads up to this date
         const acuteStart = new Date(currentDate);

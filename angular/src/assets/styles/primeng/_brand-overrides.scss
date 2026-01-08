@@ -396,12 +396,15 @@
   }
 
   // ============================================
-  // TOOLTIP
+  // TOOLTIP - Enhanced with animations & icons
   // ============================================
 
   .p-tooltip {
     z-index: var(--p-tooltip-z-index);
     max-width: var(--p-tooltip-max-width);
+
+    // Subtle fade-in and slide animation
+    animation: tooltip-fade-in 0.2s ease-out;
 
     .p-tooltip-text {
       background: var(--p-tooltip-background);
@@ -410,6 +413,89 @@
       padding: var(--p-tooltip-padding);
       font-size: var(--p-tooltip-font-size);
       box-shadow: var(--p-tooltip-shadow);
+      line-height: var(--p-tooltip-line-height);
+      letter-spacing: 0.01em;
+      white-space: pre-line; // Preserve line breaks in tooltip text
+
+      // Icon styling within tooltips
+      i,
+      .pi {
+        margin-right: var(--space-2);
+        opacity: 0.9;
+      }
+    }
+  }
+
+  // Tooltip animation keyframes
+  @keyframes tooltip-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Position-specific animations
+  .p-tooltip-top {
+    animation: tooltip-fade-in-up 0.2s ease-out;
+  }
+
+  .p-tooltip-bottom {
+    animation: tooltip-fade-in-down 0.2s ease-out;
+  }
+
+  .p-tooltip-left {
+    animation: tooltip-fade-in-left 0.2s ease-out;
+  }
+
+  .p-tooltip-right {
+    animation: tooltip-fade-in-right 0.2s ease-out;
+  }
+
+  @keyframes tooltip-fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes tooltip-fade-in-down {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes tooltip-fade-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes tooltip-fade-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 

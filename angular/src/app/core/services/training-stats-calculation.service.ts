@@ -1,12 +1,10 @@
 /**
  * Training Statistics Calculation Service
- * Centralized service for calculating training statistics (ACWR, REP, volume, intensity)
+ * Centralized service for calculating training statistics (volume, intensity, weekly stats)
  * Used by Analytics, Performance, and Game Tracker components
  *
- * This service ensures consistent calculations across all views
- *
- * NOTE: ACWR calculations are now delegated to AcwrService (single source of truth)
- * The calculateACWR method here is DEPRECATED - use AcwrService.acwrData() instead
+ * This service ensures consistent calculations across all views.
+ * ACWR calculations are delegated to AcwrService (single source of truth).
  */
 
 import { Injectable, inject } from "@angular/core";
@@ -253,7 +251,6 @@ export class TrainingStatsCalculationService {
   ): WeeklyVolumeData {
     const today =
       referenceDate instanceof Date ? referenceDate : new Date(referenceDate);
-    const _todayStr = today.toISOString().split("T")[0];
 
     // Get ISO week start (Monday)
     const getISOWeekStart = (date: Date): Date => {

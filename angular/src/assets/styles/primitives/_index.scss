@@ -49,6 +49,12 @@
 // Dashboard patterns (stats, grids, events, progress)
 @use "dashboard";
 
+// Chart patterns (containers, legends, loading states)
+@use "charts";
+
+// Icon patterns (sizes, colors, buttons)
+@use "icons";
+
 // TODO: Add more primitives as needed:
 // @use 'buttons';
 // @use 'navigation';

@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import {

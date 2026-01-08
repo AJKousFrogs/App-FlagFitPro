@@ -9,7 +9,6 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { InputNumberModule } from "primeng/inputnumber";
 import { MessageModule } from "primeng/message";
 import { LoggerService } from "../../core/services/logger.service";

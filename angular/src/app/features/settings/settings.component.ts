@@ -42,6 +42,7 @@ import {
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
+import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 
 @Component({
   selector: "app-settings",
@@ -234,14 +235,24 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     this.loadAvailableTeams();
 
     this.notificationForm = this.fb.group({
+      // Delivery channels
       emailNotifications: [true],
       pushNotifications: [true],
+      inAppNotifications: [true],
+      // Notification categories
       trainingReminders: [true],
       wellnessReminders: [true],
       gameAlerts: [true],
       teamAnnouncements: [true],
       coachMessages: [true],
       achievementAlerts: [true],
+      tournamentAlerts: [true],
+      injuryRiskAlerts: [true],
+      // Frequency & timing
+      digestFrequency: ["realtime"], // 'realtime', 'daily', 'weekly'
+      quietHoursEnabled: [false],
+      quietHoursStart: ["22:00"],
+      quietHoursEnd: ["07:00"],
     });
 
     this.privacyForm = this.fb.group({
@@ -286,7 +297,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     // Set up input listener for manual date typing
     setTimeout(() => {
       this.setupBirthdayInputListener();
-    }, 100);
+    }, TIMEOUTS.UI_MICRO_DELAY);
   }
 
   private retryCount = 0;
@@ -301,7 +312,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // Retry after a short delay if element not found
       if (this.retryCount < this.MAX_RETRIES) {
         this.retryCount++;
-        setTimeout(() => this.setupBirthdayInputListener(), 100);
+        setTimeout(() => this.setupBirthdayInputListener(), TIMEOUTS.UI_MICRO_DELAY);
       }
       return;
     }
@@ -321,7 +332,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // Retry after a short delay if input not found
       if (this.retryCount < this.MAX_RETRIES) {
         this.retryCount++;
-        setTimeout(() => this.setupBirthdayInputListener(), 100);
+        setTimeout(() => this.setupBirthdayInputListener(), TIMEOUTS.UI_MICRO_DELAY);
       }
       return;
     }
@@ -357,7 +368,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         // Valid date selected, clear suggestion after a short delay
         setTimeout(() => {
           this.birthdaySuggestion.set(null);
-        }, 300);
+        }, TIMEOUTS.DEBOUNCE_TIME);
       }
     };
 
@@ -1038,7 +1049,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
     try {
       // In production, call Supabase to revoke all other sessions
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, TIMEOUTS.UI_TRANSITION_DELAY));
 
       this.activeSessions.update((sessions) =>
         sessions.filter((s) => s.isCurrent),
@@ -1111,7 +1122,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           .select("*")
           .eq("user_id", user.id)
           .order("session_date", { ascending: false })
-          .limit(500);
+          .limit(UI_LIMITS.EXPORT_SESSIONS_MAX);
         exportData.trainingSessions = sessions || [];
       }
 
@@ -1122,7 +1133,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           .select("*")
           .eq("user_id", user.id)
           .order("checkin_date", { ascending: false })
-          .limit(365);
+          .limit(UI_LIMITS.EXPORT_WELLNESS_MAX);
         exportData.wellnessCheckins = wellness || [];
       }
 

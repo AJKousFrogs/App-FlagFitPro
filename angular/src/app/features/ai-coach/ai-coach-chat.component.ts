@@ -44,6 +44,7 @@ import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
+import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
@@ -1011,7 +1012,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
       });
     }
 
-    return suggestions.slice(0, 4);
+    return suggestions.slice(0, UI_LIMITS.AI_SUGGESTIONS_COUNT);
   });
 
   // Computed context chips based on conversation and state
@@ -1034,7 +1035,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
         if (this.trainingService.readinessScore() < 60)
           chips.push("Why is my readiness low?");
       }
-      return chips.slice(0, 3);
+      return chips.slice(0, UI_LIMITS.AI_CHIPS_COUNT);
     }
 
     const lastAssistantMsg = [...msgs]
@@ -1091,7 +1092,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
       }
     }
 
-    return chips.slice(0, 3);
+    return chips.slice(0, UI_LIMITS.AI_CHIPS_COUNT);
   });
 
   // User's first name for personalized greeting
@@ -1133,7 +1134,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
         if (params["query"]) {
           this.currentMessage = params["query"];
           // Small delay to ensure initialization is complete
-          setTimeout(() => this.sendMessage(), 100);
+          setTimeout(() => this.sendMessage(), TIMEOUTS.UI_MICRO_DELAY);
         }
       });
   }
@@ -1409,7 +1410,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
               timestamp: new Date(),
               riskLevel: response.data.risk_level,
               citations: response.data.citations,
-              suggestedActions: response.data.suggested_actions?.slice(0, 3),
+              suggestedActions: response.data.suggested_actions?.slice(0, UI_LIMITS.SUGGESTED_ACTIONS_COUNT),
               disclaimer: response.data.disclaimer,
               acwrSafety: response.data.acwr_safety
                 ? {
@@ -1728,7 +1729,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
     // Filter suggestions based on input
     const matches = this.autocompleteDatabase
       .filter((s) => s.text.toLowerCase().includes(query))
-      .slice(0, 5);
+      .slice(0, UI_LIMITS.UPCOMING_SESSIONS_COUNT);
 
     this.autocompleteSuggestions.set(matches);
   }

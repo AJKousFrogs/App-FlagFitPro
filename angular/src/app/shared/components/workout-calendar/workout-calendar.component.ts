@@ -1,17 +1,17 @@
-import {
-  Component,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  OnInit,
-  input,
-  output,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    input,
+    output,
+    signal,
+} from "@angular/core";
+import { BadgeModule } from "primeng/badge";
+import { TooltipModule } from "primeng/tooltip";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { TooltipModule } from "primeng/tooltip";
-import { BadgeModule } from "primeng/badge";
 
 export interface WorkoutDay {
   date: Date;
@@ -106,7 +106,7 @@ export interface WorkoutEntry {
               <span class="day-number">{{ day.date.getDate() }}</span>
               @if (day.workouts.length > 0) {
                 <div class="workout-indicators">
-                  @for (workout of day.workouts.slice(0, 3); track workout.id) {
+                  @for (workout of day.workouts.slice(0, UI_LIMITS.GOALS_PREVIEW_COUNT); track workout.id) {
                     <span
                       class="workout-dot"
                       [class]="'type-' + workout.type"
@@ -315,7 +315,6 @@ export class WorkoutCalendarComponent implements OnInit {
     today: Date,
     isCurrentMonth: boolean,
   ): WorkoutDay {
-    const _dateStr = date.toISOString().split("T")[0];
     const workoutsForDay = this.workouts().filter((_w: WorkoutEntry) => {
       // Assuming workouts have a date property or we match by some logic
       return true; // Placeholder - would filter by actual date

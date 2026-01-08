@@ -23,19 +23,19 @@
 .metric-card {
   display: flex;
   flex-direction: column;
-  padding: var(--space-4);
+  padding: var(--space-5); /* Increased padding for breathing room */
   background: var(--color-surface-primary);
   border-radius: var(--radius-xl);
-  border: var(--border-1) solid var(--color-border-default);
-  box-shadow: var(--shadow-1);
+  border: none; /* BORDERLESS per user preference */
+  box-shadow: var(--shadow-sm);
   min-height: var(--space-12);
 
-  // Decision 14: Shadow-only hover (Policy A)
+  // Shadow-only hover
   transition: box-shadow var(--motion-fast) var(--ease-standard);
 
   @include hover-support {
     &:hover {
-      box-shadow: var(--shadow-2);
+      box-shadow: var(--shadow-md);
     }
   }
 
@@ -46,7 +46,7 @@
     @include focus-visible;
 
     &:active {
-      box-shadow: var(--shadow-0);
+      box-shadow: var(--shadow-sm);
     }
   }
 

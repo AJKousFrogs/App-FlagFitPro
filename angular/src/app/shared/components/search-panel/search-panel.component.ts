@@ -28,6 +28,7 @@ import { Router, RouterModule } from "@angular/router";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
+import { TIMEOUTS } from "../../../core/constants/app.constants";
 import { TooltipModule } from "primeng/tooltip";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, tap } from "rxjs/operators";
@@ -162,7 +163,7 @@ export class SearchPanelComponent implements OnDestroy {
       if (isOpen !== this._visible()) {
         this._visible.set(isOpen);
         if (isOpen) {
-          setTimeout(() => this.focusInput(), 100);
+          setTimeout(() => this.focusInput(), TIMEOUTS.UI_MICRO_DELAY);
         }
       }
     });
@@ -185,7 +186,7 @@ export class SearchPanelComponent implements OnDestroy {
     this.searchService.open();
     this.quickActionIndex.set(0);
     this.selectedIndex.set(0);
-    setTimeout(() => this.focusInput(), 100);
+    setTimeout(() => this.focusInput(), TIMEOUTS.UI_MICRO_DELAY);
   }
 
   close(): void {

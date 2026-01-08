@@ -2177,18 +2177,19 @@
   /* Badge severity variants - moved to unified section below */
 
   /* ================================================================
-     TAG/BADGE/CHIP UNIFIED PILL DESIGN SYSTEM
+     TAG/BADGE/CHIP UNIFIED DESIGN SYSTEM
      
      SINGLE SOURCE OF TRUTH for all status indicators
-     Standardized RAISED RECTANGULAR shape
+     Standardized ROUNDED RECTANGLE shape (NO PILL)
      
      Design Rules:
      - Fixed height: 32px
-     - RAISED RECTANGULAR shape: border-radius var(--radius-md)
+     - ROUNDED RECTANGLE shape: border-radius var(--radius-md)
      - Subtle shadow for depth
      - Semibold font weight (600)
      - NO borders, shadows, outlines, or underlines
      - text-transform: none
+     - NO PILL SHAPES ANYWHERE
      ================================================================ */
 
   .p-tag {
@@ -3220,9 +3221,10 @@
   }
 
   /* ================================================================
-     CHIP COMPONENT - UNIFIED PILL DESIGN SYSTEM
+     CHIP COMPONENT - UNIFIED ROUNDED RECTANGLE DESIGN SYSTEM
      NOTE: Main p-chip styles defined earlier in this file.
      This section provides hover enhancements only.
+     NO PILL SHAPES - Uses standard rounded rectangle
      ================================================================ */
 
   .p-chip-remove-icon {

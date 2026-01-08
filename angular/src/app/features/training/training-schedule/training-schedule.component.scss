@@ -124,29 +124,6 @@
   }
 }
 
-// ================================================================
-// CALENDAR GRID - RESPONSIVE (DEPRECATED - kept for reference)
-// ================================================================
-
-.calendar-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
-
-  // Tablet: Smaller sidebar
-  @media (max-width: 1023px) {
-    grid-template-columns: 1fr 250px;
-    gap: var(--space-3);
-  }
-
-  // Mobile: Stack vertically
-  @media (max-width: 767px) {
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-  }
-}
 
 // ================================================================
 // DATE PICKER - MOBILE OPTIMIZED
@@ -260,7 +237,7 @@
   margin-top: var(--space-1);
 
   @media (max-width: 767px) {
-    font-size: 11px;
+    font-size: var(--font-body-xs); // ~12px (closest to 11px)
   }
 }
 
@@ -621,12 +598,12 @@
   margin-top: var(--space-2);
 
   i {
-    font-size: 12px;
+    font-size: var(--font-body-xs); // 12px
   }
 
   @media (max-width: 767px) {
-    font-size: 10px;
-    padding: 4px var(--space-1);
+    font-size: var(--font-body-2xs); // 10px
+    padding: var(--space-1) var(--space-1);
   }
 }
 

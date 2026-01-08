@@ -335,7 +335,7 @@ export class DirectSupabaseApiService {
   /**
    * Generate protocol exercises using real exercises from the database
    */
-  private async generateProtocolExercises(protocolId: string, focus: string, position?: string): Promise<void> {
+  private async generateProtocolExercises(protocolId: string, focus: string, _position?: string): Promise<void> {
     // Fetch exercises by category
     const { data: allExercises } = await this.supabase.client
       .from("exercises")

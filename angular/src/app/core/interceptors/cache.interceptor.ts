@@ -16,6 +16,7 @@
 
 import { HttpInterceptorFn, HttpResponse } from "@angular/common/http";
 import { of, tap } from "rxjs";
+import { TIMEOUTS } from "../constants/app.constants";
 
 interface CacheEntry {
   response: HttpResponse<unknown>;
@@ -24,8 +25,8 @@ interface CacheEntry {
 
 class HttpCacheService {
   private cache = new Map<string, CacheEntry>();
-  private readonly defaultTtl = 5 * 60 * 1000; // 5 minutes
-  private readonly staticTtl = 60 * 60 * 1000; // 1 hour
+  private readonly defaultTtl = TIMEOUTS.CACHE_TTL_DEFAULT;
+  private readonly staticTtl = TIMEOUTS.CACHE_TTL_STATIC;
 
   get(url: string, ttl?: number): HttpResponse<unknown> | null {
     const cached = this.cache.get(url);

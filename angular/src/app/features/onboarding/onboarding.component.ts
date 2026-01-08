@@ -1,21 +1,19 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    OnDestroy,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { AvatarModule } from "primeng/avatar";
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { CardModule } from "primeng/card";
 import { AutoCompleteModule } from "primeng/autocomplete";
+import { AvatarModule } from "primeng/avatar";
+import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { FileUploadModule } from "primeng/fileupload";
@@ -25,15 +23,18 @@ import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
 import { Subject, Subscription, debounceTime } from "rxjs";
+import { UI_LIMITS } from "../../core/constants/app.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-  PlayerProgramService,
-  getProgramIdForPosition,
-  normalizePositionForModifiers,
+    PlayerProgramService,
+    getProgramIdForPosition,
+    normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -3271,7 +3272,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       (day) => !practiceDays.map((d: string) => d.toLowerCase()).includes(day),
     );
     // Return at least 3 days
-    return trainingDays.length >= 3 ? trainingDays.slice(0, 4) : allDays.slice(0, 4);
+    return trainingDays.length >= 3 ? trainingDays.slice(0, UI_LIMITS.ONBOARDING_DAYS_PREVIEW) : allDays.slice(0, UI_LIMITS.ONBOARDING_DAYS_PREVIEW);
   }
 
   /**

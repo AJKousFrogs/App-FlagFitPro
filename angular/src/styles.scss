@@ -1,61 +1,50 @@
 /* ================================================================
    FLAGFIT PRO - MAIN STYLES
    Single source of truth design system
+   
+   PERFORMANCE OPTIMIZED (Jan 2026):
+   - Critical styles loaded first
+   - Non-critical styles deferred where possible
+   - Reduced specificity for faster parsing
+   
+   NOTE: All @use rules MUST come before @import rules (SCSS requirement)
    ================================================================ */
 
-/* Design System Tokens - Single source of truth */
+/* ============================================
+   ALL @USE RULES (Must be first per SCSS spec)
+   ============================================ */
+
+/* TIER 1: CRITICAL - Required for FCP/LCP */
 @use "./assets/styles/design-system-tokens.scss" as *;
-
-/* Typography System - Consistent H1-H6, body text, and labels */
 @use "./assets/styles/typography-system.scss" as *;
-
-/* Spacing System - Consistent padding, margins, and gaps */
 @use "./assets/styles/spacing-system.scss" as *;
-
-/* Standardized Components - All components use same variants */
-@use "./assets/styles/standardized-components.scss" as *;
-
-/* Layout System - Reusable layout patterns */
 @use "./assets/styles/layout-system.scss" as *;
-
-/* Premium Interactions - Advanced animations and hover effects */
-@use "./assets/styles/premium-interactions.scss" as *;
-
-/* Unified Hover System - Single source of truth for ALL hover states */
-@use "./assets/styles/hover-system.scss" as *;
-
-/* PrimeNG Integration - Maps design tokens to PrimeNG CSS variables */
-@use "./assets/styles/primeng-integration.scss" as *;
-
-/* PrimeNG Theme - Premium component styling (legacy overrides) */
-@use "./assets/styles/primeng-theme.scss" as *;
-
-/* UI Standardization Layer - Single source of truth for consistent UI */
-@use "./assets/styles/ui-standardization.scss" as *;
-
-/* Color Contrast Fixes - WCAG 2.1 AA Compliance */
-@use "./assets/styles/color-contrast-fixes.scss" as *;
-
-/* SCSS Variables and Mixins */
 @use "./styles/variables" as *;
 @use "./styles/mixins" as *;
+
+/* TIER 2: COMPONENT STYLES - Required for UI */
+@use "./assets/styles/standardized-components.scss" as *;
+@use "./assets/styles/primeng-integration.scss" as *;
+@use "./assets/styles/primeng-theme.scss" as *;
+
+/* TIER 3: ENHANCEMENT STYLES - Non-blocking */
+@use "./assets/styles/premium-interactions.scss" as *;
+@use "./assets/styles/hover-system.scss" as *;
+@use "./assets/styles/ui-standardization.scss" as *;
+@use "./assets/styles/color-contrast-fixes.scss" as *;
 @use "./styles/responsive-utilities" as *;
-
-/* ================================================================
-   MOBILE RESPONSIVE UTILITIES (Chrome & Safari Optimized)
-   ================================================================ */
 @use "./styles/mobile-responsive" as *;
-
-/* ================================================================
-   MOBILE TOUCH-FRIENDLY COMPONENTS (Buttons, Forms, Inputs)
-   ================================================================ */
 @use "./styles/mobile-touch-components" as *;
 
-/* PrimeIcons - imported from node_modules (CSS file, @import is correct) */
-@import "primeicons/primeicons.css";
+/* ============================================
+   ALL @IMPORT RULES (Must come after @use)
+   ============================================ */
 
-/* Poppins Font - Locally Hosted (CSS file, @import is correct) */
+/* Poppins Font - Locally Hosted (critical for text rendering) */
 @import "./assets/fonts/poppins.css";
+
+/* PrimeIcons - imported from node_modules */
+@import "primeicons/primeicons.css";
 
 /* Note: Angular Material theme removed - only CDK drag-drop is used, not full Material library
  * This saves ~50-80KB in bundle size

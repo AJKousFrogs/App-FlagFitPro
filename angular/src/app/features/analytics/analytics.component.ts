@@ -13,7 +13,6 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -21,7 +20,7 @@ import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { COLORS } from "../../core/constants/app.constants";
+import { COLORS, TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 import { AcwrService } from "../../core/services/acwr.service";
 import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
@@ -164,10 +163,16 @@ interface DevelopmentGoal {
                   Your coach will assign development goals here. Check back soon
                   or ask your coach to set goals for you.
                 </p>
+                <app-button
+                  variant="outlined"
+                  iconLeft="pi-envelope"
+                  routerLink="/team-chat"
+                  class="empty-state-cta"
+                >Request Goals from Coach</app-button>
               </div>
             } @else {
               <div class="goals-grid">
-                @for (goal of developmentGoals().slice(0, 3); track goal.id) {
+                @for (goal of developmentGoals().slice(0, UI_LIMITS.GOALS_PREVIEW_COUNT); track goal.id) {
                   <div
                     class="goal-card"
                     [class.achieved]="goal.status === 'achieved'"
@@ -245,7 +250,7 @@ interface DevelopmentGoal {
           <!-- Charts Grid -->
           <div class="charts-grid">
             <!-- Performance Trends Chart -->
-            @defer (on viewport) {
+            @defer (on idle) {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
                   <div class="chart-header">
@@ -319,7 +324,7 @@ interface DevelopmentGoal {
             }
 
             <!-- Team Chemistry Chart -->
-            @defer (on viewport) {
+            @defer (on idle) {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
                   <div class="chart-header">
@@ -359,7 +364,7 @@ interface DevelopmentGoal {
             }
 
             <!-- Training Distribution Chart -->
-            @defer (on viewport) {
+            @defer (on idle) {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
                   <div class="chart-header">
@@ -397,7 +402,7 @@ interface DevelopmentGoal {
             }
 
             <!-- Position Performance Chart -->
-            @defer (on viewport) {
+            @defer (on idle) {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
                   <div class="chart-header">
@@ -436,7 +441,7 @@ interface DevelopmentGoal {
           </div>
 
           <!-- Gap Analysis Visualization -->
-          @defer (on viewport) {
+          @defer (on idle) {
             <p-card class="chart-card full-width gap-analysis-card">
               <ng-template pTemplate="header">
                 <div class="chart-header">
@@ -1063,6 +1068,9 @@ export class AnalyticsComponent implements AfterViewInit {
   // Centralized UX copy for data states
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
+  // Expose UI_LIMITS for template usage
+  readonly UI_LIMITS = UI_LIMITS;
+
   metrics = signal<Metric[]>([]);
   developmentGoals = signal<DevelopmentGoal[]>([]);
   performanceChartData = signal<Record<string, unknown> | null>(null);
@@ -1138,8 +1146,22 @@ export class AnalyticsComponent implements AfterViewInit {
   // Enhanced chart options with zoom, pan, custom tooltips
   readonly lineChartOptions = ENHANCED_LINE_CHART_OPTIONS;
   readonly BAR_CHART_OPTIONS = ENHANCED_BAR_CHART_OPTIONS;
-  readonly DOUGHNUT_CHART_OPTIONS = ENHANCED_DOUGHNUT_CHART_OPTIONS;
   readonly radarChartOptions = ENHANCED_RADAR_CHART_OPTIONS;
+
+  // Responsive doughnut chart options - legend position based on screen width
+  get DOUGHNUT_CHART_OPTIONS() {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    return {
+      ...ENHANCED_DOUGHNUT_CHART_OPTIONS,
+      plugins: {
+        ...ENHANCED_DOUGHNUT_CHART_OPTIONS.plugins,
+        legend: {
+          ...ENHANCED_DOUGHNUT_CHART_OPTIONS.plugins?.legend,
+          position: isMobile ? 'bottom' : 'right' as const,
+        },
+      },
+    };
+  }
 
   // Chart instances map for export/zoom functionality
   private chartInstances = new Map<string, UIChart>();
@@ -1167,7 +1189,7 @@ export class AnalyticsComponent implements AfterViewInit {
           }
         }
       });
-    }, 500);
+    }, TIMEOUTS.UI_TRANSITION_DELAY);
   }
 
   @HostListener("window:resize")
@@ -1194,7 +1216,7 @@ export class AnalyticsComponent implements AfterViewInit {
       this.loadGapAnalysis();
 
       // Set loading to false after initial data load starts
-      setTimeout(() => this.isPageLoading.set(false), 500);
+      setTimeout(() => this.isPageLoading.set(false), TIMEOUTS.UI_TRANSITION_DELAY);
     } catch (error) {
       this.isPageLoading.set(false);
       this.hasPageError.set(true);
@@ -1249,7 +1271,7 @@ export class AnalyticsComponent implements AfterViewInit {
             datasets: [
               {
                 data: values,
-                backgroundColor: COLORS.CHART.slice(0, 5),
+                backgroundColor: COLORS.CHART.slice(0, UI_LIMITS.CHART_COLORS_COUNT),
                 borderWidth: 0,
                 hoverOffset: 10,
               },
@@ -1436,7 +1458,7 @@ export class AnalyticsComponent implements AfterViewInit {
                   data: (
                     response.data as { labels: string[]; values: number[] }
                   ).values,
-                  backgroundColor: COLORS.CHART.slice(0, 5),
+                  backgroundColor: COLORS.CHART.slice(0, UI_LIMITS.CHART_COLORS_COUNT),
                 },
               ],
             });
@@ -1670,7 +1692,6 @@ export class AnalyticsComponent implements AfterViewInit {
   viewChartDetails(chartType: string): void {
     this.logger.info(`Viewing details for ${chartType}`);
     // Navigate to enhanced analytics with the specific chart focus
-    const _queryParams = { focus: chartType };
     window.location.href = `/analytics/enhanced?focus=${chartType}`;
   }
 
@@ -1906,7 +1927,7 @@ export class AnalyticsComponent implements AfterViewInit {
       printWindow.onload = () => {
         setTimeout(() => {
           printWindow.print();
-        }, 500);
+        }, TIMEOUTS.UI_TRANSITION_DELAY);
       };
 
       this.toastService.success(

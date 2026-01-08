@@ -395,6 +395,159 @@
               ></p-toggleswitch>
             </div>
           </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-star"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title"
+                  >Tournament Alerts</span
+                >
+                <span class="notification-desc control-row__description"
+                  >Bracket updates, schedules, and results</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="tournamentAlerts"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon type-warning">
+                <i class="pi pi-exclamation-triangle"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title"
+                  >Injury Risk Alerts</span
+                >
+                <span class="notification-desc control-row__description"
+                  >Warnings when overtraining is detected</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="injuryRiskAlerts"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-inbox"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title"
+                  >In-App Notifications</span
+                >
+                <span class="notification-desc control-row__description"
+                  >Show notifications in the notification center</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="inAppNotifications"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          <!-- Notification Frequency -->
+          <div class="notification-section-header">
+            <h4>Notification Frequency</h4>
+            <p>Control how often you receive non-urgent notifications</p>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-clock"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title"
+                  >Digest Frequency</span
+                >
+                <span class="notification-desc control-row__description"
+                  >How often to bundle non-urgent notifications</span
+                >
+              </div>
+            </div>
+            <div class="control-row__control digest-select">
+              <p-select
+                formControlName="digestFrequency"
+                [options]="[
+                  { label: 'Real-time (Instant)', value: 'realtime' },
+                  { label: 'Daily Digest', value: 'daily' },
+                  { label: 'Weekly Summary', value: 'weekly' }
+                ]"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select frequency"
+              ></p-select>
+            </div>
+          </div>
+
+          <!-- Quiet Hours -->
+          <div class="notification-section-header">
+            <h4>Do Not Disturb</h4>
+            <p>Pause notifications during specific hours</p>
+          </div>
+
+          <div class="notification-item control-row">
+            <div class="notification-info control-row__label">
+              <div class="notification-icon">
+                <i class="pi pi-moon"></i>
+              </div>
+              <div class="notification-text">
+                <span class="notification-label control-row__title"
+                  >Enable Quiet Hours</span
+                >
+                <span class="notification-desc control-row__description"
+                  >Silence non-urgent notifications at night</span
+                >
+              </div>
+            </div>
+            <div class="toggle-wrapper control-row__control">
+              <p-toggleswitch
+                formControlName="quietHoursEnabled"
+              ></p-toggleswitch>
+            </div>
+          </div>
+
+          @if (notificationForm.get('quietHoursEnabled')?.value) {
+            <div class="quiet-hours-config">
+              <div class="time-range">
+                <div class="time-input">
+                  <label>Start Time</label>
+                  <input
+                    type="time"
+                    formControlName="quietHoursStart"
+                    class="time-picker"
+                  />
+                </div>
+                <span class="time-separator">to</span>
+                <div class="time-input">
+                  <label>End Time</label>
+                  <input
+                    type="time"
+                    formControlName="quietHoursEnd"
+                    class="time-picker"
+                  />
+                </div>
+              </div>
+              <p class="quiet-hours-note">
+                <i class="pi pi-info-circle"></i>
+                High priority alerts (game reminders, injury risks) will still come through
+              </p>
+            </div>
+          }
         </form>
       </app-card>
       </div>

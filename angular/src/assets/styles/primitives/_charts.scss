@@ -1,0 +1,211 @@
+/**
+ * Chart Primitives
+ * ================
+ * 
+ * Standardized chart container and visualization styles.
+ * Ensures consistent backgrounds, padding, and responsive behavior.
+ * 
+ * DESIGN CONTRACT:
+ * - Background: var(--color-surface-secondary) for all chart containers
+ * - Border-radius: var(--radius-lg)
+ * - Padding: var(--space-4) minimum
+ * - No borders (BORDERLESS per design system)
+ * 
+ * USAGE:
+ *   <div class="chart-container">
+ *     <canvas></canvas>
+ *   </div>
+ */
+
+@layer primitives {
+  // ============================================
+  // BASE CHART CONTAINER
+  // ============================================
+
+  .chart-container {
+    background: var(--color-surface-secondary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    border: none; /* BORDERLESS */
+    box-shadow: none;
+    min-height: 200px;
+    position: relative;
+
+    // Ensure canvas fills container
+    canvas {
+      max-width: 100%;
+      height: auto !important;
+    }
+  }
+
+  // Size variants
+  .chart-container--sm {
+    min-height: 150px;
+    padding: var(--space-3);
+  }
+
+  .chart-container--lg {
+    min-height: 300px;
+    padding: var(--space-5);
+  }
+
+  .chart-container--xl {
+    min-height: 400px;
+    padding: var(--space-6);
+  }
+
+  // ============================================
+  // CHART WITH HEADER
+  // ============================================
+
+  .chart-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .chart-title {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0;
+  }
+
+  .chart-subtitle {
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+    margin: var(--space-1) 0 0 0;
+  }
+
+  .chart-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  // ============================================
+  // LEGEND STYLING
+  // ============================================
+
+  .chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+
+  .chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-body-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .chart-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-full); // Dots are circular
+    flex-shrink: 0;
+  }
+
+  // ============================================
+  // LOADING & EMPTY STATES
+  // ============================================
+
+  .chart-loading,
+  .chart-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    text-align: center;
+    padding: var(--space-6);
+    color: var(--color-text-muted);
+  }
+
+  .chart-loading i,
+  .chart-empty i {
+    font-size: 32px;
+    margin-bottom: var(--space-3);
+    opacity: 0.5;
+  }
+
+  .chart-empty-text {
+    font-size: var(--font-body-md);
+    margin: 0;
+  }
+
+  // ============================================
+  // RESPONSIVE BEHAVIOR
+  // ============================================
+
+  @media (max-width: 768px) {
+    .chart-container {
+      padding: var(--space-3);
+      min-height: 180px;
+    }
+
+    .chart-container--lg {
+      min-height: 250px;
+    }
+
+    .chart-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .chart-legend {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .chart-container {
+      padding: var(--space-2);
+      min-height: 150px;
+    }
+
+    .chart-title {
+      font-size: var(--font-size-h4);
+    }
+  }
+
+  // ============================================
+  // CHART COLOR SCHEME
+  // ============================================
+  // Standardized colors for consistent data visualization
+
+  :root {
+    --chart-primary: var(--ds-primary-green);
+    --chart-secondary: var(--ds-primary-blue, #3b82f6);
+    --chart-tertiary: var(--ds-primary-orange, #f97316);
+    --chart-quaternary: var(--ds-primary-purple, #8b5cf6);
+    --chart-success: var(--color-status-success);
+    --chart-warning: var(--color-status-warning);
+    --chart-error: var(--color-status-error);
+    --chart-muted: var(--color-text-muted);
+    --chart-grid: var(--color-border-subtle);
+    --chart-axis: var(--color-text-muted);
+  }
+
+  // ============================================
+  // DARK MODE
+  // ============================================
+
+  [data-theme="dark"],
+  .dark-theme {
+    .chart-container {
+      background: var(--color-surface-secondary);
+    }
+  }
+}

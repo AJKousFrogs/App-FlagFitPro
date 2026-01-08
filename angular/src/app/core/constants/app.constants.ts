@@ -16,12 +16,31 @@ export const PAGINATION = {
  * Timeouts and delays (milliseconds)
  */
 export const TIMEOUTS = {
+  // API & Network
   API_TIMEOUT: 30000, // 30 seconds
-  DEBOUNCE_TIME: 300, // 300ms for search/input
-  TOAST_DURATION: 3000, // 3 seconds
-  AUTO_SAVE_DELAY: 1000, // 1 second
+  RETRY_DELAY: 1000, // 1 second between retries
+
+  // User Input
+  DEBOUNCE_TIME: 300, // 300ms for search/input debouncing
+  AUTO_SAVE_DELAY: 1000, // 1 second after last change
+  AUTO_SAVE_DELAY_LONG: 2000, // 2 seconds for complex forms (onboarding)
+
+  // UI Transitions
+  UI_MICRO_DELAY: 100, // Quick DOM updates, focus management
+  UI_TRANSITION_DELAY: 500, // Animation completion, loading states
+  TOAST_DURATION: 3000, // 3 seconds for info toasts
+  TOAST_DURATION_LONG: 5000, // 5 seconds for important messages
+
+  // Polling & Intervals
   POLLING_INTERVAL: 5000, // 5 seconds
+  TIME_UPDATE_INTERVAL: 60000, // 1 minute for clock updates
+  PRESENCE_HEARTBEAT: 30000, // 30 seconds for presence updates
+
+  // Session & Cache
   SESSION_WARNING: 300000, // 5 minutes before session expires
+  CACHE_TTL_DEFAULT: 5 * 60 * 1000, // 5 minutes
+  CACHE_TTL_STATIC: 60 * 60 * 1000, // 1 hour for static resources
+  IDLE_TIMEOUT: 5 * 60 * 1000, // 5 minutes before marking idle
 } as const;
 
 /**
@@ -114,15 +133,32 @@ export const DATE_FORMATS = {
  * Training thresholds
  */
 export const TRAINING = {
+  // Intensity scale
   MIN_INTENSITY: 1,
   MAX_INTENSITY: 10,
   DEFAULT_INTENSITY: 5,
+
+  // Duration limits
   MIN_DURATION_MINUTES: 5,
   MAX_DURATION_MINUTES: 240,
+
+  // ACWR (Acute:Chronic Workload Ratio)
   ACWR_SAFE_RANGE_MIN: 0.8,
   ACWR_SAFE_RANGE_MAX: 1.3,
+  ACWR_WARNING_THRESHOLD: 1.5,
+  ACWR_DANGER_THRESHOLD: 2.0,
   ACUTE_LOAD_DAYS: 7,
   CHRONIC_LOAD_DAYS: 28,
+  MIN_DAYS_FOR_CHRONIC: 21, // Minimum days needed for ACWR calculation
+
+  // Flag football specifics
+  TARGET_LOAD_AU: 2000, // Target arbitrary units for load
+  WEEKLY_THROW_LIMIT: 300, // QB weekly throw limit
+  SPRINT_CAPACITY_WARNING: 70, // Below this triggers warning
+
+  // Training frequency
+  MAX_SESSIONS_PER_WEEK: 5,
+  MIN_REST_DAYS_PER_WEEK: 2,
 } as const;
 
 /**
@@ -153,6 +189,75 @@ export const ANIMATIONS = {
   NORMAL: 300,
   SLOW: 500,
   VERY_SLOW: 1000,
+} as const;
+
+/**
+ * Time conversion utilities (milliseconds)
+ * Use these instead of hardcoded calculations like `7 * 24 * 60 * 60 * 1000`
+ */
+export const TIME = {
+  MS_PER_SECOND: 1000,
+  MS_PER_MINUTE: 60 * 1000,
+  MS_PER_HOUR: 60 * 60 * 1000,
+  MS_PER_DAY: 24 * 60 * 60 * 1000,
+  MS_PER_WEEK: 7 * 24 * 60 * 60 * 1000,
+
+  // Common durations
+  INVITATION_EXPIRY_DAYS: 7,
+  NOTIFICATION_EXPIRY_DAYS: 30,
+  DEFAULT_REVIEW_PERIOD_DAYS: 7,
+} as const;
+
+/**
+ * UI limits for lists, slices, and pagination
+ * Prevents inconsistent truncation across components
+ */
+export const UI_LIMITS = {
+  // Preview counts (dashboard cards, sidebars)
+  GOALS_PREVIEW_COUNT: 3,
+  SCHEDULE_PREVIEW_COUNT: 3,
+  EVENTS_PREVIEW_COUNT: 4,
+  RECENT_ACTIVITIES_COUNT: 5,
+  TOP_PRIORITIES_COUNT: 3,
+  MISSING_FIELDS_PREVIEW: 2,
+  SIDEBAR_SHORTCUTS_COUNT: 2,
+  WORKOUTS_PREVIEW_COUNT: 4,
+  UPCOMING_GAMES_PREVIEW: 2,
+  TRAINING_SESSIONS_PREVIEW: 2,
+  RECOMMENDATIONS_PREVIEW: 3,
+  RECOMMENDATIONS_EXPANDED: 4,
+  ACTIVITIES_PREVIEW: 4,
+  BENEFITS_PREVIEW: 4,
+  EQUIPMENT_PREVIEW: 2,
+  INJURIES_PREVIEW: 2,
+  COMMUNITY_PREVIEW: 2,
+  ONBOARDING_DAYS_PREVIEW: 4,
+  DECISIONS_PREVIEW: 3,
+  DECISIONS_LIST_COUNT: 6,
+
+  // AI & Search
+  AI_SUGGESTIONS_COUNT: 4,
+  AI_CHIPS_COUNT: 3,
+  SEARCH_RESULTS_MAX: 20,
+  SEARCH_SUGGESTIONS_MAX: 6,
+  SEARCH_HISTORY_MAX: 10,
+  SUGGESTED_ACTIONS_COUNT: 3,
+
+  // Training & Schedule
+  UPCOMING_SESSIONS_COUNT: 5,
+  TRAINING_FOCUS_PREVIEW: 3,
+  POSITIONS_PREVIEW: 2,
+  CHART_COLORS_COUNT: 5,
+
+  // Data fetching limits
+  NOTIFICATIONS_MAX_FETCH: 100,
+  EXPORT_SESSIONS_MAX: 500,
+  EXPORT_WELLNESS_MAX: 365,
+  RECENT_SHORTCUTS_COUNT: 5,
+
+  // Calendar
+  CALENDAR_EVENTS_PER_DAY: 2,
+  CALENDAR_WEEKS_DISPLAY: 6,
 } as const;
 
 /**

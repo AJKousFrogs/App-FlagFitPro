@@ -38,7 +38,7 @@ import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
-import { COLORS } from "../../core/constants/app.constants";
+import { COLORS, TIMEOUTS } from "../../core/constants/app.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
   Channel,
@@ -1107,7 +1107,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.markAsImportant = false;
       this._showMentionSuggestions.set(false);
 
-      setTimeout(() => this.scrollToBottom(), 100);
+      setTimeout(() => this.scrollToBottom(), TIMEOUTS.UI_MICRO_DELAY);
     } catch (_error) {
       this.toastService.error("Failed to send message");
     }

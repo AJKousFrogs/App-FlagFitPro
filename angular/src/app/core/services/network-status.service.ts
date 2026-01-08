@@ -5,7 +5,7 @@
  * Used by offline queue and other services that need network awareness
  */
 
-import { Injectable, inject, signal, effect } from "@angular/core";
+import { Injectable, effect, inject, signal } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { OfflineQueueService } from "./offline-queue.service";
 
@@ -30,9 +30,9 @@ export class NetworkStatusService {
       window.addEventListener("online", () => this.handleOnline());
       window.addEventListener("offline", () => this.handleOffline());
 
-      // Monitor connection type if available
+      // Monitor connection type if available (Network Information API)
       if ("connection" in navigator) {
-        const connection = (navigator as any).connection;
+        const connection = (navigator as Navigator & { connection?: { effectiveType: string; addEventListener: (event: string, listener: () => void) => void } }).connection;
         if (connection) {
           this._connectionType.set(connection.effectiveType || "unknown");
           connection.addEventListener("change", () => {

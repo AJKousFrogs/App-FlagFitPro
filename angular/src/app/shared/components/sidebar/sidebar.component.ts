@@ -13,6 +13,7 @@ import { BadgeModule } from "primeng/badge";
 import { filter, Subscription } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
+import { UI_LIMITS } from "../../../core/constants/app.constants";
 
 interface NavItem {
   label: string;
@@ -517,7 +518,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .map((n) => n[0])
       .join("")
       .toUpperCase()
-      .slice(0, 2);
+      .slice(0, UI_LIMITS.SIDEBAR_SHORTCUTS_COUNT);
   });
 
   userRoleLabel = computed(() => {

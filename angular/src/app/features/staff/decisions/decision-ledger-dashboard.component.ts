@@ -4,33 +4,34 @@
  * Main dashboard for viewing and managing decisions
  */
 
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { TagModule } from "primeng/tag";
-import { Select } from "primeng/select";
-import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
-import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
-import { DecisionCardComponent } from "./decision-card.component";
-import { CreateDecisionDialogComponent } from "./create-decision-dialog.component";
-import { ReviewDecisionDialogComponent } from "./review-decision-dialog.component";
-import { DecisionLedgerService } from "@core/services/decision-ledger.service";
+import { UI_LIMITS } from "@core/constants/app.constants";
 import type {
-  DecisionLedgerEntry,
-  DecisionFilters,
-  CreateDecisionRequest,
-  ReviewDecisionRequest,
+    CreateDecisionRequest,
+    DecisionFilters,
+    DecisionLedgerEntry,
+    ReviewDecisionRequest,
 } from "@core/models/decision-ledger.models";
+import { DecisionLedgerService } from "@core/services/decision-ledger.service";
+import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
+import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { Select } from "primeng/select";
+import { TagModule } from "primeng/tag";
+import { CreateDecisionDialogComponent } from "./create-decision-dialog.component";
+import { DecisionCardComponent } from "./decision-card.component";
+import { ReviewDecisionDialogComponent } from "./review-decision-dialog.component";
 
 @Component({
   selector: "app-decision-ledger-dashboard",
@@ -172,7 +173,7 @@ import type {
               </ng-container>
 
               <div class="decisions-grid">
-                @for (decision of dueForReview().slice(0, 3); track decision.id) {
+                @for (decision of dueForReview().slice(0, UI_LIMITS.DECISIONS_PREVIEW); track decision.id) {
                   <app-decision-card
                     [decision]="decision"
                     [canReview]="true"
@@ -210,7 +211,7 @@ import type {
               </div>
             } @else {
               <div class="decisions-grid">
-                @for (decision of decisions().slice(0, 6); track decision.id) {
+                @for (decision of decisions().slice(0, UI_LIMITS.DECISIONS_LIST_COUNT); track decision.id) {
                   <app-decision-card
                     [decision]="decision"
                     [canReview]="canReviewDecision(decision)"
@@ -337,6 +338,9 @@ export class DecisionLedgerDashboardComponent implements OnInit {
   decisions = computed(() => this.decisionService.decisions());
   stats = computed(() => this.decisionService.stats());
   dueForReview = computed(() => this.decisionService.dueForReview());
+
+  // Constants exposed to template
+  protected readonly UI_LIMITS = UI_LIMITS;
 
   // Filter options
   statusOptions = [

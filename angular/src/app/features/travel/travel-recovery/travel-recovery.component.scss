@@ -781,8 +781,19 @@
 
   &.active {
     border-color: var(--ds-primary-green);
-    background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
+    background: var(--ds-primary-green); /* SOLID green background when active */
     box-shadow: 0 0 0 2px rgba(8, 153, 73, 0.15);
+
+    /* FIX: Black-on-green violation - use white text on green background */
+    span,
+    small {
+      color: var(--color-text-on-primary); /* White text */
+    }
+
+    i {
+      color: var(--color-text-on-primary); /* White icon */
+      background: rgba(255, 255, 255, 0.15); /* Subtle white container */
+    }
   }
 
   i {

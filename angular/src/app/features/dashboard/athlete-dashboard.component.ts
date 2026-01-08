@@ -48,6 +48,7 @@ import { DataSourceService, DATA_REQUIREMENTS } from "../../core/services/data-s
 import { TournamentModeService } from "../../core/services/tournament-mode.service";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
 import { LoggerService } from "../../core/services/logger.service";
+import { TIMEOUTS } from "../../core/constants/app.constants";
 import { SupabaseService } from "../../core/services/supabase.service";
 
 // Type for training session data
@@ -473,7 +474,7 @@ export class AthleteDashboardComponent
       
       // Set loading to false after initial data load attempt
       // Individual data loads handle their own errors gracefully
-      setTimeout(() => this.isLoading.set(false), 500);
+      setTimeout(() => this.isLoading.set(false), TIMEOUTS.UI_TRANSITION_DELAY);
     } catch (error) {
       this.handleInitError(error);
     }

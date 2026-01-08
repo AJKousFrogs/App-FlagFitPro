@@ -442,6 +442,15 @@ export const ENHANCED_BAR_CHART_OPTIONS = {
 };
 
 /**
+ * Get responsive legend position for doughnut charts
+ * On mobile, legend goes to bottom; on desktop, legend goes to right
+ */
+function getDoughnutLegendPosition(): "right" | "bottom" {
+  if (typeof window === "undefined") return "right";
+  return window.innerWidth < 768 ? "bottom" : "right";
+}
+
+/**
  * Doughnut Chart Options with Enhanced Features
  */
 export const ENHANCED_DOUGHNUT_CHART_OPTIONS: ChartOptions<"doughnut"> = {
@@ -451,13 +460,14 @@ export const ENHANCED_DOUGHNUT_CHART_OPTIONS: ChartOptions<"doughnut"> = {
   plugins: {
     legend: {
       display: true,
-      position: "right",
+      position: getDoughnutLegendPosition(),
       align: "center",
       labels: {
         usePointStyle: true,
-        padding: 15,
+        padding: 12,
+        boxWidth: 12,
         font: {
-          size: getResponsiveFontSize(12),
+          size: getResponsiveFontSize(11),
           family: "'Poppins', sans-serif",
           weight: 500,
         },

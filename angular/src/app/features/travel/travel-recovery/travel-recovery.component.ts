@@ -16,47 +16,48 @@
  * @version 2.0.0
  */
 
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    inject,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { UI_LIMITS } from "@core/constants/app.constants";
 
 // PrimeNG Components
+import { AccordionModule } from "primeng/accordion";
+import { BadgeModule } from "primeng/badge";
 import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { Select } from "primeng/select";
+import { CheckboxModule } from "primeng/checkbox";
+import { Chip } from "primeng/chip";
 import { DatePickerModule } from "primeng/datepicker";
+import { DividerModule } from "primeng/divider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
-import { StepperModule } from "primeng/stepper";
-import { TimelineModule } from "primeng/timeline";
-import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
-import { AccordionModule } from "primeng/accordion";
-import { CheckboxModule } from "primeng/checkbox";
+import { Select } from "primeng/select";
+import { StepperModule } from "primeng/stepper";
+import { TagModule } from "primeng/tag";
+import { TimelineModule } from "primeng/timeline";
 import { TooltipModule } from "primeng/tooltip";
-import { DividerModule } from "primeng/divider";
-import { Chip } from "primeng/chip";
-import { BadgeModule } from "primeng/badge";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 // Services
-import {
-  TravelRecoveryService,
-  RecoveryProtocol,
-  TravelChecklist,
-  CarTravelProtocol,
-  CirculationExercise,
-  MassageGunProtocol,
-  BloodCirculationRisk,
-} from "../../../core/services/travel-recovery.service";
-import { ToastService } from "../../../core/services/toast.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { ToastService } from "../../../core/services/toast.service";
+import {
+    BloodCirculationRisk,
+    CarTravelProtocol,
+    CirculationExercise,
+    MassageGunProtocol,
+    RecoveryProtocol,
+    TravelChecklist,
+    TravelRecoveryService,
+} from "../../../core/services/travel-recovery.service";
 
 // Layout
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -681,7 +682,7 @@ interface TimezoneOption {
 
                         <div class="timeline-recommendations">
                           @for (
-                            rec of protocol.recommendations.slice(0, 3);
+                            rec of protocol.recommendations.slice(0, UI_LIMITS.RECOMMENDATIONS_PREVIEW);
                             track rec.action
                           ) {
                             <div class="mini-rec">
@@ -1146,7 +1147,7 @@ interface TimezoneOption {
                             </div>
                             <div class="stop-actions">
                               @for (
-                                rec of protocol.recommendations.slice(0, 4);
+                                rec of protocol.recommendations.slice(0, UI_LIMITS.RECOMMENDATIONS_EXPANDED);
                                 track rec.action
                               ) {
                                 <div
@@ -1288,6 +1289,9 @@ export class TravelRecoveryComponent implements OnInit {
   private travelService = inject(TravelRecoveryService);
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
+
+  // Constants exposed to template
+  protected readonly UI_LIMITS = UI_LIMITS;
 
   // Service signals
   readonly currentPlan = this.travelService.currentPlan;

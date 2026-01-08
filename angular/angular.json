@@ -40,20 +40,19 @@
                 "node_modules"
               ]
             },
-            "outputMode": "static",
-            "prerender": false
+            "outputMode": "static"
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1mb",
+                  "maximumWarning": "800kb",
                   "maximumError": "1.5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "35kb",
+                  "maximumWarning": "30kb",
                   "maximumError": "50kb"
                 },
                 {
@@ -67,7 +66,7 @@
                   "maximumError": "600kb"
                 }
               ],
-              "namedChunks": false,
+              "namedChunks": true,
               "outputHashing": "all",
               "fileReplacements": [
                 {
@@ -79,11 +78,15 @@
                 "scripts": true,
                 "styles": {
                   "minify": true,
-                  "inlineCritical": true
+                  "inlineCritical": true,
+                  "removeSpecialComments": true
                 },
-                "fonts": true
+                "fonts": {
+                  "inline": true
+                }
               },
-              "sourceMap": false
+              "sourceMap": false,
+              "extractLicenses": true
             },
             "development": {
               "optimization": false,
@@ -153,7 +156,12 @@
         "prerender": {
           "builder": "@angular-devkit/build-angular:prerender",
           "options": {
-            "routes": ["/", "/login", "/register"]
+            "routes": [
+              "/",
+              "/login",
+              "/register",
+              "/reset-password"
+            ]
           }
         },
         "server": {

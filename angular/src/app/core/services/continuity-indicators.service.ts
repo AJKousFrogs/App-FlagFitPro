@@ -173,7 +173,7 @@ export class ContinuityIndicatorsService {
         endDate: recoveryEndDate,
         daysRemaining: Math.max(0, daysRemaining),
       };
-    } catch (error) {
+    } catch (_error) {
       // Silently return null - travel recovery is optional
       return null;
     }

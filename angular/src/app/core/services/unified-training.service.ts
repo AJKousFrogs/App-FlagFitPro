@@ -25,6 +25,7 @@ import {
 } from "./player-program.service";
 import { SupabaseService } from "./supabase.service";
 import { COLORS } from "../constants/app.constants";
+import { WELLNESS } from "../constants/wellness.constants";
 import {
   TrainingStatCard,
   WeeklyScheduleDay,
@@ -976,9 +977,9 @@ export class UnifiedTrainingService {
   }
 
   private getReadinessStatus(score: number): ReadinessStatus {
-    if (score >= 80) return "excellent";
-    if (score >= 60) return "good";
-    if (score >= 40) return "caution";
+    if (score >= WELLNESS.READINESS_EXCELLENT) return "excellent";
+    if (score >= WELLNESS.READINESS_GOOD) return "good";
+    if (score >= WELLNESS.READINESS_MODERATE) return "caution";
     return "rest";
   }
 

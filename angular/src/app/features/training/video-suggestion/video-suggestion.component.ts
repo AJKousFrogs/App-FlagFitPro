@@ -30,6 +30,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { UI_LIMITS } from "../../../core/constants/app.constants";
 import {
   FormBuilder,
   FormGroup,
@@ -410,7 +411,7 @@ interface VideoSuggestion {
                       @if (suggestion.training_focus.length > 0) {
                         <div class="suggestion-tags">
                           @for (
-                            focus of suggestion.training_focus.slice(0, 3);
+                            focus of suggestion.training_focus.slice(0, UI_LIMITS.TRAINING_FOCUS_PREVIEW);
                             track focus
                           ) {
                             <p-chip
@@ -486,7 +487,7 @@ interface VideoSuggestion {
                         {{ video.submitted_by_name }}
                       </span>
                       <div class="video-tags">
-                        @for (pos of video.positions.slice(0, 2); track pos) {
+                        @for (pos of video.positions.slice(0, UI_LIMITS.POSITIONS_PREVIEW); track pos) {
                           <span class="mini-tag">{{ pos }}</span>
                         }
                       </div>
@@ -603,6 +604,9 @@ export class VideoSuggestionComponent implements OnInit {
   private hapticService = inject(HapticFeedbackService);
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
+
+  // Expose constants to template
+  protected readonly UI_LIMITS = UI_LIMITS;
 
   // State
   isSubmitting = signal(false);

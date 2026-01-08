@@ -20,14 +20,14 @@
 
 @layer primitives {
   // ============================================
-  // BASE CARD (Decision 14: Border-first)
+  // BASE CARD (BORDERLESS - Clean minimal style)
   // ============================================
 
   .card {
     background: var(--color-surface-primary);
-    border: var(--border-1) solid var(--color-border-default);
+    border: none; /* BORDERLESS per user preference */
     border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-1);
+    box-shadow: var(--shadow-sm);
     padding: var(--space-5);
   }
 

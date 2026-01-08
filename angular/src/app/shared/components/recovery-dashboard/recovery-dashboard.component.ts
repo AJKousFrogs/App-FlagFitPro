@@ -1,35 +1,35 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  signal,
-  inject,
-  ChangeDetectionStrategy,
-  DestroyRef,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
-import { ButtonComponent } from "../button/button.component";
-import { TagModule } from "primeng/tag";
+import { DialogModule } from "primeng/dialog";
 import { KnobModule } from "primeng/knob";
 import { ProgressBarModule } from "primeng/progressbar";
-import { Tabs } from "primeng/tabs";
-import { TimelineModule } from "primeng/timeline";
 import { SelectButton } from "primeng/selectbutton";
-import { DialogModule } from "primeng/dialog";
+import { Tabs } from "primeng/tabs";
+import { TagModule } from "primeng/tag";
+import { TimelineModule } from "primeng/timeline";
 import { TooltipModule } from "primeng/tooltip";
+import { firstValueFrom, Subscription, timer } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
-import {
-  RecoveryService,
-  RecoveryProtocol as ServiceRecoveryProtocol,
-  RecoverySession as ServiceRecoverySession,
-  AthleteRecoveryProfile,
-} from "../../../core/services/recovery.service";
-import { firstValueFrom, timer, Subscription } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+    AthleteRecoveryProfile,
+    RecoveryService,
+    RecoveryProtocol as ServiceRecoveryProtocol,
+    RecoverySession as ServiceRecoverySession,
+} from "../../../core/services/recovery.service";
+import { ButtonComponent } from "../button/button.component";
 import { CountdownTimerComponent } from "../countdown-timer/countdown-timer.component";
 
 interface RecoveryMetric {
@@ -242,7 +242,7 @@ interface ChartOptions {
                     <h5>Expected Benefits:</h5>
                     <ul>
                       @for (
-                        benefit of protocol.benefits.slice(0, 4);
+                        benefit of protocol.benefits.slice(0, UI_LIMITS.BENEFITS_PREVIEW);
                         track benefit
                       ) {
                         <li>{{ benefit }}</li>
@@ -261,7 +261,7 @@ interface ChartOptions {
                   <div class="equipment-info">
                     <i class="pi pi-box"></i>
                     <span
-                      >{{ protocol.equipment.slice(0, 2).join(", ")
+                      >{{ protocol.equipment.slice(0, UI_LIMITS.EQUIPMENT_PREVIEW).join(", ")
                       }}{{ protocol.equipment.length > 2 ? "..." : "" }}</span
                     >
                   </div>

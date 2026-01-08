@@ -7,15 +7,15 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { Component, inject, signal, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { CardModule } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { RTPPhaseCelebrationComponent, RTPPhaseInfo } from "../../shared/components/rtp-phase-celebration/rtp-phase-celebration.component";
-import { CardModule } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
+import { MessageService } from "primeng/api";
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -29,13 +29,13 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
-import { MessageService } from "primeng/api";
 
+import { UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { LazyChartComponent, LazyChartData } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 // ===== Interfaces =====
 interface ProtocolStage {
@@ -578,7 +578,7 @@ const SEVERITY_LEVELS = [
                 <div class="activities-checklist">
                   <label>Activities Completed Today</label>
                   @for (
-                    activity of getCurrentStage().activities.slice(0, 4);
+                    activity of getCurrentStage().activities.slice(0, UI_LIMITS.ACTIVITIES_PREVIEW);
                     track activity;
                     let i = $index
                   ) {
@@ -811,6 +811,9 @@ export class ReturnToPlayComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
+
+  // Constants exposed to template
+  protected readonly UI_LIMITS = UI_LIMITS;
 
   // State
   readonly activeProtocol = signal<ActiveProtocol | null>(null);

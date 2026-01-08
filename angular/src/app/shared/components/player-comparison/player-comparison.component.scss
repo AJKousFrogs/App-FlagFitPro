@@ -220,12 +220,12 @@
 
 .player1-bar {
   background: var(--color-brand-primary);
-  border-radius: var(--radius-sm) 0 0 3px;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm); /* Design System compliant */
 }
 
 .player2-bar {
   background: var(--primitive-purple-500);
-  border-radius: 0 3px 3px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0; /* Design System compliant */
   margin-left: auto;
 }
 

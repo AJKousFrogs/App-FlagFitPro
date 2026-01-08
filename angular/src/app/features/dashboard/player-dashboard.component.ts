@@ -33,7 +33,6 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-// import { ChartModule } from "primeng/chart"; // REMOVED: Using LazyChartComponent
 import { MessageModule } from "primeng/message";
 import { ProgressBar } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
@@ -71,6 +70,8 @@ import { MissingDataDetectionService, MissingDataStatus } from "../../core/servi
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { CoachOverrideMeaning, IncompleteDataMeaning, ActionRequiredMeaning } from "../../core/semantics/semantic-meaning.types";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
+import { TRAINING, TIME, UI_LIMITS } from "../../core/constants/app.constants";
+import { getReadinessLevel } from "../../core/constants/wellness.constants";
 
 interface QuickAction {
   label: string;
@@ -460,12 +461,12 @@ interface AnnouncementBanner {
               styleClass="stat-card stat-acwr"
               [style]="{ cursor: 'pointer' }"
               (click)="navigateToACWR()"
-              [pTooltip]="acwrDataSufficient() ? 'Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (7 days) to long-term fitness (28 days). Optimal range: 0.8-1.3' : 'ACWR requires 21 days of training data to calculate. Keep logging sessions to unlock this injury prevention metric.'"
+              [pTooltip]="acwrDataSufficient() ? '📊 Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (' + TRAINING.ACUTE_LOAD_DAYS + ' days) to long-term fitness (' + TRAINING.CHRONIC_LOAD_DAYS + ' days).\n\n✅ Optimal range: ' + TRAINING.ACWR_SAFE_RANGE_MIN + '–' + TRAINING.ACWR_SAFE_RANGE_MAX : '💡 ACWR requires ' + TRAINING.MIN_DAYS_FOR_CHRONIC + ' days of training data to calculate.\n\nKeep logging sessions to unlock this injury prevention metric!'"
               tooltipPosition="bottom"
               [showDelay]="500"
             >
               @if (acwr() !== null && acwrDataSufficient()) {
-                <!-- Full ACWR Display (21+ days of data) -->
+                <!-- Full ACWR Display (MIN_DAYS_FOR_CHRONIC+ days of data) -->
                 <div class="stat-card-content">
                   <div class="stat-icon acwr-icon">
                     <i class="pi pi-chart-line"></i>
@@ -481,7 +482,7 @@ interface AnnouncementBanner {
                   ></p-tag>
                 </div>
               } @else if (trainingDaysLogged() !== null) {
-                <!-- Progress Tracking (< 21 days) -->
+                <!-- Progress Tracking (< MIN_DAYS_FOR_CHRONIC days) -->
                 <div class="acwr-progress-content">
                   <div class="stat-icon acwr-icon-building">
                     <i class="pi pi-chart-line"></i>
@@ -492,18 +493,18 @@ interface AnnouncementBanner {
                       <div class="acwr-progress-bar">
                         <div 
                           class="acwr-progress-fill" 
-                          [style.width.%]="(trainingDaysLogged()! / 21) * 100"
+                          [style.width.%]="(trainingDaysLogged()! / TRAINING.MIN_DAYS_FOR_CHRONIC) * 100"
                         ></div>
                       </div>
                       <span class="acwr-progress-text">
-                        {{ trainingDaysLogged() }}/21 days
+                        {{ trainingDaysLogged() }}/{{ TRAINING.MIN_DAYS_FOR_CHRONIC }} days
                       </span>
                     </div>
-                    @if (trainingDaysLogged()! >= 7 && trainingDaysLogged()! < 14) {
+                    @if (trainingDaysLogged()! >= TRAINING.ACUTE_LOAD_DAYS && trainingDaysLogged()! < 14) {
                       <p-tag value="7-day milestone! 🎉" severity="success" styleClass="milestone-tag"></p-tag>
-                    } @else if (trainingDaysLogged()! >= 14 && trainingDaysLogged()! < 21) {
+                    } @else if (trainingDaysLogged()! >= 14 && trainingDaysLogged()! < TRAINING.MIN_DAYS_FOR_CHRONIC) {
                       <p-tag value="Halfway there!" severity="info" styleClass="milestone-tag"></p-tag>
-                    } @else if (trainingDaysLogged()! < 7) {
+                    } @else if (trainingDaysLogged()! < TRAINING.ACUTE_LOAD_DAYS) {
                       <span class="acwr-help-text">Keep logging to unlock insights</span>
                     }
                   </div>
@@ -645,7 +646,7 @@ interface AnnouncementBanner {
               </ng-template>
               @if (todaySchedule().length > 0) {
                 <p-timeline
-                  [value]="todaySchedule().slice(0, 3)"
+                  [value]="todaySchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)"
                   styleClass="schedule-timeline"
                 >
                   <ng-template pTemplate="marker" let-item>
@@ -822,7 +823,7 @@ interface AnnouncementBanner {
               </h3>
               <p-card styleClass="schedule-card">
                 <p-timeline
-                  [value]="tomorrowSchedule().slice(0, 3)"
+                  [value]="tomorrowSchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)"
                   styleClass="schedule-timeline"
                 >
                   <ng-template pTemplate="marker" let-item>
@@ -870,7 +871,7 @@ interface AnnouncementBanner {
                 Coming Up
               </h3>
               <div class="events-strip">
-                @for (event of upcomingEvents().slice(0, 4); track event.id) {
+                @for (event of upcomingEvents().slice(0, UI_LIMITS.EVENTS_PREVIEW_COUNT); track event.id) {
                   <p-card
                     styleClass="event-card"
                     [ngClass]="'event-' + event.type"
@@ -1814,6 +1815,9 @@ export class PlayerDashboardComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
 
+  // Expose UI_LIMITS for template usage
+  readonly UI_LIMITS = UI_LIMITS;
+
   // Loading state
   isLoading = signal(true);
   hasError = signal(false);
@@ -1858,8 +1862,11 @@ export class PlayerDashboardComponent {
   trainingDaysLogged = signal<number | null>(null); // Calculate from real training sessions
   acwrDataSufficient = computed(() => {
     const days = this.trainingDaysLogged();
-    return days !== null && days >= 21;
+    return days !== null && days >= TRAINING.MIN_DAYS_FOR_CHRONIC;
   });
+
+  // Expose TRAINING constant for template usage
+  readonly TRAINING = TRAINING;
 
   // Week days
   weekDays = signal<
@@ -2602,7 +2609,7 @@ export class PlayerDashboardComponent {
     if (!date) return "";
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const hours = Math.floor(diff / TIME.MS_PER_HOUR);
     if (hours < 1) return "Just now";
     if (hours === 1) return "1 hour ago";
     if (hours < 24) return `${hours} hours ago`;
@@ -2614,9 +2621,7 @@ export class PlayerDashboardComponent {
   getReadinessStatus(): string {
     const score = this.readinessScore();
     if (score === null) return "No data";
-    if (score >= 70) return "Good";
-    if (score >= 50) return "Moderate";
-    return "Low";
+    return getReadinessLevel(score).label;
   }
 
   getReadinessSeverity():
@@ -2628,9 +2633,7 @@ export class PlayerDashboardComponent {
     | "contrast" {
     const score = this.readinessScore();
     if (score === null) return "info";
-    if (score >= 70) return "success";
-    if (score >= 50) return "warn";
-    return "danger";
+    return getReadinessLevel(score).severity;
   }
 
   getAcwrStatus(): string {

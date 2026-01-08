@@ -556,8 +556,10 @@
   --radius-xl: 0.75rem; /* 12px */
   --radius-2xl: 1rem; /* 16px */
   --radius-3xl: 1.5rem; /* 24px */
-  /* ⚠️ DEPRECATED: radius-full (pill shape) - DO NOT USE for buttons, tags, badges */
-  --radius-full: 9999px; /* Only for avatars/profile images */
+  /* ⚠️ RESTRICTED: radius-full (pill/circle) - LIMITED USE ONLY */
+  /* ALLOWED: avatars, progress bars, toggle switches, dot indicators */
+  /* FORBIDDEN: buttons, tags, badges, cards, any rectangular UI elements */
+  --radius-full: 9999px;
 
   /* ================================
      BUTTON-SPECIFIC RADIUS TOKEN
@@ -651,6 +653,17 @@
   --container-lg: 1024px;
   --container-xl: 1280px;
   --container-max: 1440px;
+
+  /* ================================
+     LAYOUT-SPECIFIC TOKENS
+     Sidebar, header, and profile-specific spacing
+     ================================ */
+  --sidebar-width: 250px;
+  --sidebar-collapsed-width: 64px;
+  --header-height: 64px;
+  --header-height-mobile: 56px;
+  --header-height-profile: 80px;
+  --header-height-profile-mobile: 60px;
 
   /* ================================
      GRADIENT TOKENS

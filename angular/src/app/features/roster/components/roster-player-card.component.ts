@@ -37,6 +37,7 @@ import {
   formatWeight,
   getCountryFlag,
 } from "../roster-utils";
+import { TRAINING } from "../../../core/constants/app.constants";
 
 @Component({
   selector: "app-roster-player-card",
@@ -295,7 +296,7 @@ export class RosterPlayerCardComponent {
         return {
           text: `Sprint Capacity: ${sprintCapacity}%`,
           icon: "pi pi-forward",
-          type: sprintCapacity < 70 ? "warning" : "info",
+          type: sprintCapacity < TRAINING.SPRINT_CAPACITY_WARNING ? "warning" : "info",
         };
       }
     }
@@ -307,7 +308,7 @@ export class RosterPlayerCardComponent {
         return {
           text: `First-Step Explosion: ${firstStep}%`,
           icon: "pi pi-bolt",
-          type: firstStep < 70 ? "warning" : "info",
+          type: firstStep < TRAINING.SPRINT_CAPACITY_WARNING ? "warning" : "info",
         };
       }
     }

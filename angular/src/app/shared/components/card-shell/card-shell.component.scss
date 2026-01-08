@@ -37,9 +37,9 @@
   flex-direction: column;
   background: var(--surface-primary);
 
-  // ✅ LOCKED baseline (Dashboard)
+  // BORDERLESS per user preference
   border-radius: var(--radius-lg);
-  border: var(--border-1) solid var(--color-border-subtle);
+  border: none;
   box-shadow: var(--shadow-sm);
 
   overflow: hidden;

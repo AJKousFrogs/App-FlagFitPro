@@ -1,15 +1,16 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  HostListener,
-  inject,
-  model,
-  OnDestroy,
-  output,
-  signal,
-  ViewChild,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    HostListener,
+    inject,
+    model,
+    OnDestroy,
+    OnInit,
+    output,
+    signal,
+    ViewChild,
 } from "@angular/core";
 
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -19,7 +20,6 @@ import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { IconButtonComponent } from "../button/icon-button.component";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
@@ -35,6 +35,8 @@ import { NotificationStateService } from "../../../core/services/notification-st
 import { SearchService } from "../../../core/services/search.service";
 import { ThemeService } from "../../../core/services/theme.service";
 import { TrainingStatsCalculationService } from "../../../core/services/training-stats-calculation.service";
+import { WeatherData, WeatherService } from "../../../core/services/weather.service";
+import { IconButtonComponent } from "../button/icon-button.component";
 import { NotificationsPanelComponent } from "../notifications-panel/notifications-panel.component";
 import { SearchPanelComponent } from "../search-panel/search-panel.component";
 
@@ -62,7 +64,7 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",
 })
-export class HeaderComponent implements OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
   private headerService = inject(HeaderService);
@@ -71,6 +73,7 @@ export class HeaderComponent implements OnDestroy {
   private router = inject(Router);
   private logger = inject(LoggerService);
   private trainingStatsService = inject(TrainingStatsCalculationService);
+  private weatherService = inject(WeatherService);
 
   @ViewChild("notificationsPanel")
   notificationsPanel!: NotificationsPanelComponent;
@@ -182,6 +185,36 @@ export class HeaderComponent implements OnDestroy {
   private olympicDate = new Date("2028-07-14T20:00:00-07:00"); // Pacific Time
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
+  // Weather data for header widget
+  weatherData = signal<WeatherData | null>(null);
+  weatherLoading = signal(false);
+  weatherLocation = signal("Training Ground");
+
+  // Computed weather icon based on condition
+  weatherIcon = computed(() => {
+    const data = this.weatherData();
+    if (!data) return "pi-cloud";
+
+    const condition = data.condition?.toLowerCase() || "";
+    if (condition.includes("sun") || condition.includes("clear")) return "pi-sun";
+    if (condition.includes("cloud")) return "pi-cloud";
+    if (condition.includes("rain")) return "pi-cloud";
+    if (condition.includes("snow")) return "pi-snowflake";
+    if (condition.includes("storm") || condition.includes("thunder")) return "pi-bolt";
+    return "pi-cloud";
+  });
+
+  // Weather tooltip with more details
+  weatherTooltip = computed(() => {
+    const data = this.weatherData();
+    if (!data) return "Weather data unavailable";
+
+    let tooltip = `${data.condition} - ${data.temp}°F`;
+    if (data.humidity) tooltip += ` | Humidity: ${data.humidity}%`;
+    if (data.description) tooltip += `\n${data.description}`;
+    return tooltip;
+  });
+
   currentSection = signal("");
   currentPage = signal("");
 
@@ -212,6 +245,10 @@ export class HeaderComponent implements OnDestroy {
     });
 
     // Theme is now managed by ThemeService
+  }
+
+  ngOnInit(): void {
+    this.loadWeatherData();
   }
 
   onToggleSidebar(): void {
@@ -434,6 +471,80 @@ export class HeaderComponent implements OnDestroy {
       activeElement?.tagName === "TEXTAREA" ||
       activeElement?.getAttribute("contenteditable") === "true"
     );
+  }
+
+  private loadWeatherData(): void {
+    this.weatherLoading.set(true);
+
+    // Try to get user's geolocation for accurate weather
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Got location, fetch weather with coordinates
+          const coords = {
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          };
+          this.fetchWeatherWithCoords(coords);
+        },
+        () => {
+          // Geolocation denied or failed, use default location
+          this.fetchWeatherByLocation();
+        },
+        { timeout: 5000, enableHighAccuracy: false }
+      );
+    } else {
+      // Geolocation not supported
+      this.fetchWeatherByLocation();
+    }
+  }
+
+  private fetchWeatherWithCoords(coords: { lat: number; lon: number }): void {
+    this.weatherService.getWeatherData(undefined, coords).subscribe({
+      next: (data) => {
+        if (data) {
+          this.weatherData.set(data);
+        }
+        this.weatherLoading.set(false);
+      },
+      error: (err) => {
+        this.logger.error("Failed to load weather data with coords:", err);
+        // Fallback to location-based
+        this.fetchWeatherByLocation();
+      },
+    });
+  }
+
+  private fetchWeatherByLocation(): void {
+    this.weatherService.getWeatherData(this.weatherLocation()).subscribe({
+      next: (data) => {
+        this.weatherData.set(data);
+        this.weatherLoading.set(false);
+      },
+      error: (err) => {
+        this.logger.error("Failed to load weather data:", err);
+        this.weatherData.set(null);
+        this.weatherLoading.set(false);
+      },
+    });
+  }
+
+  getWeatherSeverityClass(): string {
+    const data = this.weatherData();
+    if (!data) return "";
+
+    switch (data.suitability) {
+      case "excellent":
+        return "weather-excellent";
+      case "good":
+        return "weather-good";
+      case "fair":
+        return "weather-fair";
+      case "poor":
+        return "weather-poor";
+      default:
+        return "";
+    }
   }
 
   ngOnDestroy(): void {

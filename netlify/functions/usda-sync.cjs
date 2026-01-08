@@ -12,14 +12,17 @@
 
 const { createClient } = require("@supabase/supabase-js");
 
-// USDA FoodData Central API Key (required)
+// USDA FoodData Central API Key (optional - USDA sync features require this)
 // Get your free API key at: https://fdc.nal.usda.gov/api-key-signup.html
 const { USDA_API_KEY } = process.env;
 const USDA_BASE_URL = "https://api.nal.usda.gov/fdc/v1";
 
-if (!USDA_API_KEY) {
-  throw new Error(
-    "USDA_API_KEY environment variable is required. Get a free key at https://fdc.nal.usda.gov/api-key-signup.html",
+// Check if USDA API key is configured
+const isUSDAConfigured = !!USDA_API_KEY;
+
+if (!isUSDAConfigured) {
+  console.warn(
+    "[USDA Sync] USDA_API_KEY not configured. USDA food sync features will be unavailable. Get a free key at: https://fdc.nal.usda.gov/api-key-signup.html"
   );
 }
 
@@ -544,6 +547,20 @@ exports.handler = async (event, _context) => {
 
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers, body: "" };
+  }
+
+  // Check if USDA API key is configured
+  if (!isUSDAConfigured) {
+    return {
+      statusCode: 503,
+      headers,
+      body: JSON.stringify({
+        success: false,
+        error: "USDA API key not configured",
+        message: "USDA food sync features are unavailable. Set USDA_API_KEY environment variable.",
+        setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
+      }),
+    };
   }
 
   const path = event.path.replace("/.netlify/functions/usda-sync", "");

@@ -20,9 +20,9 @@
   overflow-y: auto;
 }
 .citation-item {
-  padding: 0.5rem;
+  padding: var(--space-2);
   background: var(--surface-secondary);
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm); /* 2px - Design System compliant */
 }
 
 /* Science Info Box - Uses brand primary subtle background */

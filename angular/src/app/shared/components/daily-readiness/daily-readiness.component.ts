@@ -36,6 +36,14 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
 import { InputNumberModule } from "primeng/inputnumber";
 
+// Centralized wellness constants
+import {
+  WELLNESS,
+  computeDailyReadiness,
+  getReadinessLevel,
+  getRiskFlags,
+} from "../../../core/constants/wellness.constants";
+
 interface DailyState {
   pain_level: number;
   fatigue_level: number;
@@ -304,63 +312,42 @@ export class DailyReadinessComponent implements OnInit {
   lastWeight = signal<number | null>(null);
 
   state = signal<DailyState>({
-    pain_level: 0,
-    fatigue_level: 3,
-    sleep_quality: 7,
-    motivation_level: 7,
+    pain_level: WELLNESS.DEFAULT_PAIN_LEVEL,
+    fatigue_level: WELLNESS.DEFAULT_FATIGUE_LEVEL,
+    sleep_quality: WELLNESS.DEFAULT_SLEEP_QUALITY,
+    motivation_level: WELLNESS.DEFAULT_MOTIVATION_LEVEL,
     weight_kg: null,
   });
 
-  // Computed readiness score (0-100)
+  // Computed readiness score (0-100) using centralized calculation
   readinessScore = computed(() => {
     const s = this.state();
-    // Invert pain and fatigue (lower is better)
-    // Keep sleep and motivation as-is (higher is better)
-    const score =
-      ((10 - s.pain_level) * 0.3 +
-        (10 - s.fatigue_level) * 0.25 +
-        s.sleep_quality * 0.25 +
-        s.motivation_level * 0.2) *
-      10;
-    return Math.round(Math.max(0, Math.min(100, score)));
+    return computeDailyReadiness(
+      s.pain_level,
+      s.fatigue_level,
+      s.sleep_quality,
+      s.motivation_level
+    );
   });
 
-  // Readiness class for styling
+  // Readiness class for styling - uses centralized level config
   readinessClass = computed(() => {
-    const score = this.readinessScore();
-    if (score >= 80) return "excellent";
-    if (score >= 60) return "good";
-    if (score >= 40) return "moderate";
-    return "low";
+    return getReadinessLevel(this.readinessScore()).cssClass;
   });
 
-  // Readiness label
+  // Readiness label - uses centralized level config
   readinessLabel = computed(() => {
-    const score = this.readinessScore();
-    if (score >= 80) return "Excellent";
-    if (score >= 60) return "Good";
-    if (score >= 40) return "Moderate";
-    return "Low";
+    return getReadinessLevel(this.readinessScore()).label;
   });
 
-  // Readiness hint text
+  // Readiness hint text - uses centralized level config
   readinessHint = computed(() => {
-    const score = this.readinessScore();
-    if (score >= 80) return "Great condition for training!";
-    if (score >= 60) return "Good to train with some awareness";
-    if (score >= 40) return "Consider lighter activity today";
-    return "Recovery day recommended";
+    return getReadinessLevel(this.readinessScore()).hint;
   });
 
-  // Risk flags
+  // Risk flags - uses centralized thresholds
   riskFlags = computed(() => {
-    const s = this.state();
-    const flags: string[] = [];
-    if (s.pain_level >= 7) flags.push("High pain");
-    if (s.fatigue_level >= 7) flags.push("High fatigue");
-    if (s.sleep_quality <= 3) flags.push("Poor sleep");
-    if (s.motivation_level <= 3) flags.push("Low motivation");
-    return flags;
+    return getRiskFlags(this.state());
   });
 
   ngOnInit(): void {

@@ -6,6 +6,7 @@
  */
 
 import { Injectable, signal } from '@angular/core';
+import { TIMEOUTS } from '../constants/app.constants';
 
 export interface PDFExportOptions {
   filename?: string;
@@ -15,12 +16,20 @@ export interface PDFExportOptions {
   scale?: number;
 }
 
+// Dynamic import types - these libraries are loaded lazily
+type JsPDFConstructor = new (options: { orientation: string; unit: string; format: string }) => {
+  addImage: (data: string, format: string, x: number, y: number, w: number, h: number) => void;
+  addPage: () => void;
+  save: (filename: string) => void;
+};
+type Html2CanvasFunction = (element: HTMLElement, options: Record<string, unknown>) => Promise<HTMLCanvasElement>;
+
 @Injectable({
   providedIn: 'root'
 })
 export class LazyPdfService {
-  private jsPDF: any = null;
-  private html2canvas: any = null;
+  private jsPDF: JsPDFConstructor | null = null;
+  private html2canvas: Html2CanvasFunction | null = null;
   private loading = signal(false);
   private loaded = signal(false);
 
@@ -37,7 +46,7 @@ export class LazyPdfService {
     if (this.loading()) {
       // Wait for existing load to complete
       while (this.loading()) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, TIMEOUTS.UI_MICRO_DELAY));
       }
       return;
     }

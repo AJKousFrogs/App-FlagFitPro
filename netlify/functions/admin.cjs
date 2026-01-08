@@ -135,14 +135,15 @@ async function getHealthMetrics() {
   ];
 }
 
-// USDA FoodData Central API Key (required)
+// USDA FoodData Central API Key (optional - USDA sync features require this)
 // Get your free API key at: https://fdc.nal.usda.gov/api-key-signup.html
 const { USDA_API_KEY } = process.env;
 const USDA_BASE_URL = "https://api.nal.usda.gov/fdc/v1";
 
+// Log warning but don't throw - allows other admin features to work
 if (!USDA_API_KEY) {
-  throw new Error(
-    "USDA_API_KEY environment variable is required. Get a free key at https://fdc.nal.usda.gov/api-key-signup.html",
+  console.warn(
+    "[Admin] USDA_API_KEY not configured. USDA food sync features will be unavailable. Get a free key at: https://fdc.nal.usda.gov/api-key-signup.html"
   );
 }
 
@@ -255,6 +256,16 @@ function transformFood(usdaFood) {
  * API Documentation: https://fdc.nal.usda.gov/api-guide.html
  */
 async function syncUSDAData(options = {}) {
+  // Check if USDA API key is configured
+  if (!USDA_API_KEY) {
+    return {
+      success: false,
+      error: "USDA_API_KEY not configured",
+      message: "USDA food sync is unavailable. Set USDA_API_KEY environment variable.",
+      setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
+    };
+  }
+
   const startTime = Date.now();
   const { pageSize = 200, maxPages = 5, dataType = null } = options;
 
