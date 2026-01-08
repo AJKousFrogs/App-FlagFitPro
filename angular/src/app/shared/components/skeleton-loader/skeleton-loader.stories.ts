@@ -3,7 +3,7 @@ import {
   SkeletonLoaderComponent,
   SkeletonRepeatComponent,
 } from "./skeleton-loader.component";
-import { expect, within } from "storybook/test";
+import { expect, within } from "@storybook/test";
 
 /**
  * # Skeleton Loader Component
