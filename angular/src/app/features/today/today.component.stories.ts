@@ -4,7 +4,7 @@ import { provideAnimations } from "@angular/platform-browser/animations";
 import { provideRouter } from "@angular/router";
 import { TodayComponent } from "./today.component";
 import { MessageService } from "primeng/api";
-import { expect, within } from "@storybook/test";
+import { expect, within } from "storybook/test";
 
 /**
  * Today Component Stories

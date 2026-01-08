@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/angular";
 import { EmptyStateComponent } from "./empty-state.component";
-import { expect, within, userEvent } from "@storybook/test";
+import { expect, within, userEvent } from "storybook/test";
 
 /**
  * # Empty State Component

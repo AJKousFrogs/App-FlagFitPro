@@ -3,7 +3,7 @@ import { moduleMetadata } from "@storybook/angular";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "./button.component";
 import { IconButtonComponent } from "./icon-button.component";
-import { expect, within, userEvent } from "@storybook/test";
+import { expect, within, userEvent } from "storybook/test";
 
 /**
  * # Button Component - Unified Design System

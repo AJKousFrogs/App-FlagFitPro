@@ -5,7 +5,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
 import { CommonModule } from "@angular/common";
-import { expect, within, userEvent } from "@storybook/test";
+import { expect, within, userEvent } from "storybook/test";
 
 /**
  * Design System Showcase
