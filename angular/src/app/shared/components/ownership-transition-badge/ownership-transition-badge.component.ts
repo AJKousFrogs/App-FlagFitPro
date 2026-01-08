@@ -6,7 +6,7 @@
  * Shows who is responsible now and what happens next
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,7 +24,6 @@ import { LoggerService } from "../../../core/services/logger.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    DatePipe,
     TagModule,
     TooltipModule,
   ],

@@ -21,7 +21,6 @@ import { Select } from "primeng/select";
 import { InputTextModule } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
 import { CheckboxModule } from "primeng/checkbox";
-import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { ModalComponent } from "@shared/components/modal/modal.component";
 import { StepperComponent } from "@shared/components/stepper/stepper.component";
@@ -48,7 +47,6 @@ import type {
     InputTextModule,
     Textarea,
     CheckboxModule,
-    DatePicker,
     TagModule,
     ModalComponent,
     StepperComponent,

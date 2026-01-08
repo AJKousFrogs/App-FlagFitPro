@@ -29,7 +29,6 @@ import { ToastService } from "../../../core/services/toast.service";
 import { SharedInsightFeedService, SharedInsight } from "../../../core/services/shared-insight-feed.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
-import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §31
 interface Injury {
@@ -196,8 +195,6 @@ const RTP_PHASES = [
     RouterModule,
     CardModule,
     // ChartModule, // REMOVED: Using LazyChartComponent
-
-    LazyChartComponent,
     DialogModule,
     InputTextModule,
     ProgressBarModule,

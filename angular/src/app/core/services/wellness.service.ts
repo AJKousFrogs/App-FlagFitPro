@@ -368,8 +368,9 @@ export class WellnessService {
 
   /**
    * Get wellness score (average of all metrics)
-   * @deprecated Use ReadinessService.calculateToday() for a full evidence-based readiness score.
-   * This method only provides a simplified average of wellness metrics.
+   * 
+   * For a full evidence-based readiness score, use ReadinessService.calculateToday().
+   * This method provides a quick client-side average suitable for UI display.
    */
   getWellnessScore(data: WellnessData): number {
     const metrics = [

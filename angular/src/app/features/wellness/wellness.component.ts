@@ -21,7 +21,7 @@ import { HydrationTrackerComponent } from "../../shared/components/hydration-tra
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { StatItem, StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
   AppLoadingComponent,
@@ -496,7 +496,7 @@ export class WellnessComponent {
   readonly isSubmitting = signal(false);
 
   readonly metrics = signal<WellnessMetric[]>([]);
-  readonly wellnessStats = signal<Record<string, unknown>[]>([]);
+  readonly wellnessStats = signal<StatItem[]>([]);
   // Chart data - uses Chart.js format
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly sleepChartData = signal<any>(null);

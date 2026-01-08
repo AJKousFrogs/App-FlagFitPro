@@ -45,7 +45,7 @@ const landmarkChecks: LandmarkCheck[] = [
     landmark: '<aside> or role="complementary"',
     required: false,
     found: true,
-    location: "sidebar.component.ts, wellness-widget.component.ts",
+    location: "sidebar.component.ts",
   },
   {
     landmark: "<section> with aria-labelledby",

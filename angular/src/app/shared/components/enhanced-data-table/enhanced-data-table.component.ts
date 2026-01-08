@@ -420,11 +420,18 @@ export class EnhancedDataTableComponent {
     }));
   });
 
+  private lastColumnsHash = '';
+  
   constructor() {
-    // Initialize visible columns
+    // Initialize visible columns when columns input changes
     effect(() => {
       const cols = this.columns();
-      if (cols.length > 0 && this.visibleColumnFields().length === 0) {
+      // Create a hash of column fields to detect actual changes
+      const colsHash = cols.map(c => c.field).join(',');
+      
+      // Only reinitialize when columns actually change
+      if (cols.length > 0 && colsHash !== this.lastColumnsHash) {
+        this.lastColumnsHash = colsHash;
         this.visibleColumnFields.set(
           cols.filter((c) => c.visible !== false).map((c) => c.field),
         );

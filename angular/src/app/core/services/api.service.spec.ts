@@ -374,7 +374,7 @@ describe("ApiService", () => {
     });
 
     it("should have training endpoints", () => {
-      expect(API_ENDPOINTS.training.stats).toBe("/training-stats");
+      expect(API_ENDPOINTS.training.stats).toBe("/api/training/stats");
       expect(API_ENDPOINTS.training.sessions).toBe("/api/training/sessions");
     });
 

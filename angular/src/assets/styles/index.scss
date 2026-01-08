@@ -16,19 +16,20 @@
 
 // ============================================
 // 1. IMPORTS (MUST BE AT TOP)
+// Using @use/@forward for Dart Sass 3.0 compatibility
 // ============================================
 
-@import "design-system-tokens";
-@import "primeng/token-mapping";
-@import "primeng/brand-overrides";
-@import "primitives/typography";
-@import "primitives/layout";
-@import "primitives/cards";
-@import "primitives/forms";
-@import "primitives/tables";
-@import "primitives/feedback";
-@import "primitives/dialogs";
-@import "overrides/exceptions";
+@use "design-system-tokens" as *;
+@use "primeng/token-mapping" as *;
+@use "primeng/brand-overrides" as *;
+@use "primitives/typography" as *;
+@use "primitives/layout" as *;
+@use "primitives/cards" as *;
+@use "primitives/forms" as *;
+@use "primitives/tables" as *;
+@use "primitives/feedback" as *;
+@use "primitives/dialogs" as *;
+@use "overrides/exceptions" as *;
 
 // ============================================
 // 2. LAYER ORDER DECLARATION

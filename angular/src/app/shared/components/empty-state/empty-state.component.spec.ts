@@ -10,6 +10,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";
 import { By } from "@angular/platform-browser";
+import { vi } from "vitest";
 
 import { EmptyStateComponent } from "./empty-state.component";
 
@@ -157,7 +158,7 @@ describe("EmptyStateComponent", () => {
       fixture.detectChanges();
 
       const button = fixture.nativeElement.querySelector(
-        ".empty-actions p-button",
+        ".empty-actions app-button",
       );
       expect(button).toBeTruthy();
     });
@@ -169,7 +170,7 @@ describe("EmptyStateComponent", () => {
       fixture.detectChanges();
 
       const button = fixture.debugElement.query(
-        By.css(".empty-actions p-button"),
+        By.css(".empty-actions app-button"),
       );
       expect(button).toBeTruthy();
     });
@@ -180,13 +181,13 @@ describe("EmptyStateComponent", () => {
       fixture.detectChanges();
 
       const button = fixture.debugElement.query(
-        By.css(".empty-actions p-button"),
+        By.css(".empty-actions app-button"),
       );
       expect(button).toBeTruthy();
     });
 
     it("should call handler when actionHandler is provided", () => {
-      const handlerSpy = jasmine.createSpy("actionHandler");
+      const handlerSpy = vi.fn();
       fixture.componentRef.setInput("actionLabel", "Click Me");
       fixture.componentRef.setInput("actionHandler", handlerSpy);
       fixture.detectChanges();
@@ -200,7 +201,7 @@ describe("EmptyStateComponent", () => {
       fixture.componentRef.setInput("actionHandler", () => {});
       fixture.detectChanges();
 
-      const emitSpy = spyOn(component.onAction, "emit");
+      const emitSpy = vi.spyOn(component.onAction, "emit");
       component.handleAction();
 
       expect(emitSpy).toHaveBeenCalled();
@@ -225,7 +226,7 @@ describe("EmptyStateComponent", () => {
       fixture.detectChanges();
 
       const buttons = fixture.nativeElement.querySelectorAll(
-        ".empty-actions p-button",
+        ".empty-actions app-button",
       );
       expect(buttons.length).toBe(2);
     });
@@ -234,7 +235,7 @@ describe("EmptyStateComponent", () => {
       fixture.componentRef.setInput("secondaryActionLabel", "Cancel");
       fixture.detectChanges();
 
-      const emitSpy = spyOn(component.onSecondaryAction, "emit");
+      const emitSpy = vi.spyOn(component.onSecondaryAction, "emit");
       component.handleSecondaryAction();
 
       expect(emitSpy).toHaveBeenCalled();

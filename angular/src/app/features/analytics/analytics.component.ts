@@ -1498,18 +1498,23 @@ export class AnalyticsComponent implements AfterViewInit {
                 tension?: number;
               }>;
             };
-            this.speedChartData.set({
-              labels: speedData.labels,
-              datasets: speedData.datasets.map((ds) => ({
-                ...ds,
-                borderColor: ds.label.includes("40")
-                  ? "var(--ds-primary-green)"
-                  : COLORS.PRIMARY_LIGHT,
-                backgroundColor: ds.label.includes("40")
-                  ? "var(--ds-primary-green-subtle)"
-                  : "rgba(16, 201, 107, 0.1)",
-              })),
-            });
+            // Guard against undefined datasets
+            if (speedData.labels && speedData.datasets && Array.isArray(speedData.datasets)) {
+              this.speedChartData.set({
+                labels: speedData.labels,
+                datasets: speedData.datasets.map((ds) => ({
+                  ...ds,
+                  borderColor: ds.label.includes("40")
+                    ? "var(--ds-primary-green)"
+                    : COLORS.PRIMARY_LIGHT,
+                  backgroundColor: ds.label.includes("40")
+                    ? "var(--ds-primary-green-subtle)"
+                    : "rgba(16, 201, 107, 0.1)",
+                })),
+              });
+            } else {
+              this.loadFallbackSpeedChart();
+            }
           } else {
             this.loadFallbackSpeedChart();
           }

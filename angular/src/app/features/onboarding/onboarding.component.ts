@@ -2580,25 +2580,26 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   /**
    * Debug method to track checkbox changes
    */
-  onConsentChange(consentType: string, event: { checked: boolean }): void {
-    this.logger.debug(`Consent ${consentType} changed`, { checked: event.checked });
+  onConsentChange(consentType: string, event: { checked?: boolean }): void {
+    const isChecked = event.checked ?? false;
+    this.logger.debug(`Consent ${consentType} changed`, { checked: isChecked });
     
     // Manually update the value to ensure it's set
     switch (consentType) {
       case 'Terms of Service':
-        this.onboardingData.consentTermsOfService = event.checked;
+        this.onboardingData.consentTermsOfService = isChecked;
         break;
       case 'Privacy Policy':
-        this.onboardingData.consentPrivacyPolicy = event.checked;
+        this.onboardingData.consentPrivacyPolicy = isChecked;
         break;
       case 'Data Usage':
-        this.onboardingData.consentDataUsage = event.checked;
+        this.onboardingData.consentDataUsage = isChecked;
         break;
       case 'AI Coach':
-        this.onboardingData.consentAICoach = event.checked;
+        this.onboardingData.consentAICoach = isChecked;
         break;
       case 'Email Updates':
-        this.onboardingData.consentEmailUpdates = event.checked;
+        this.onboardingData.consentEmailUpdates = isChecked;
         break;
     }
     // Signal-based components don't need manual change detection
@@ -2609,8 +2610,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    * Navigate to a specific step when user clicks on a step number
    * Only allows navigation to completed steps or the next step
    */
-  goToStep(event: { index: number }): void {
-    const targetIndex = event.index;
+  goToStep(event: number | undefined): void {
+    if (event === undefined) return;
+    const targetIndex = event;
     const currentIndex = this.currentStep();
 
     // Allow navigation to any previous step or the immediate next step

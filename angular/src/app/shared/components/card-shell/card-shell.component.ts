@@ -141,16 +141,6 @@ export class CardShellComponent {
   /** Leading icon class (e.g., "pi-calendar", "pi-chart-bar") */
   headerIcon = input<string>();
 
-  /**
-   * Icon color variant - DEPRECATED
-   * The canonical pattern uses raw icons with --color-brand-primary.
-   * This input is kept for backwards compatibility but has no effect.
-   * @deprecated Use raw icon styling instead
-   */
-  headerIconVariant = input<
-    "primary" | "success" | "warning" | "error" | "info"
-  >("primary");
-
   /** Whether the card has a footer slot */
   hasFooter = input<boolean>(false);
 

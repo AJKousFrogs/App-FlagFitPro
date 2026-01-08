@@ -192,10 +192,11 @@ export function resolveTodayState(
   const sessionRes = cm.sessionResolution || {};
   
   // ========================================================================
-  // PRIORITY 1: Session Resolution Failure
+  // PRIORITY 1: Session Resolution Failure (excluding external_program and no_program)
   // ========================================================================
-  if (sr.success === false || sessionRes.success === false) {
-    const status = sr.status || sessionRes.status || 'unknown';
+  const status = sr.status || sessionRes.status || 'unknown';
+  if ((sr.success === false || sessionRes.success === false) && 
+      status !== 'external_program' && status !== 'no_program') {
     return {
       trainingAllowed: false,
       errorState: {
@@ -224,9 +225,10 @@ export function resolveTodayState(
   }
   
   // ========================================================================
-  // PRIORITY 2: No Active Program
+  // PRIORITY 2: No Active Program (status = 'no_program')
   // ========================================================================
-  if (cm.hasActiveProgram === false || sessionRes.hasProgram === false) {
+  if (status === 'no_program' || 
+      (cm.hasActiveProgram === false && sessionRes.hasProgram === false && status !== 'external_program')) {
     return {
       trainingAllowed: false,
       errorState: {
@@ -253,6 +255,42 @@ export function resolveTodayState(
   }
   
   // ========================================================================
+  // PRIORITY 2b: External Program (self-managed training)
+  // ========================================================================
+  if (status === 'external_program') {
+    const banners: TodayViewModel['banners'] = [{
+      type: 'info',
+      style: 'blue',
+      text: '📋 External Program Active. You\'re managing your own training. Log workouts to track ACWR.',
+      ctas: [{
+        label: 'Log Workout',
+        action: 'log_workout',
+        variant: 'primary',
+      }],
+    }];
+    
+    // ACWR baseline info
+    const acwrBaseline = acwr.confidence === 'building_baseline' && acwr.trainingDaysLogged !== null && acwr.trainingDaysLogged !== undefined
+      ? {
+          trainingDaysLogged: acwr.trainingDaysLogged,
+          progressPercent: Math.min((acwr.trainingDaysLogged / 21) * 100, 100),
+        }
+      : undefined;
+    
+    return {
+      trainingAllowed: true,
+      banners,
+      blocksDisplayed: ['morning_mobility', 'foam_roll', 'recovery'],
+      primaryCta: {
+        label: 'Log Workout',
+        action: 'log_workout',
+      },
+      merlinPosture: 'explanatory',
+      acwrBaseline,
+    };
+  }
+  
+  // ========================================================================
   // PRIORITY 3: Injury Protocol Active
   // ========================================================================
   if (cm.injuryProtocolActive === true || sr.override?.type === 'rehab_protocol') {
@@ -265,7 +303,7 @@ export function resolveTodayState(
       type: 'alert',
       style: 'amber',
       text: hasTeamActivity
-        ? `🏥 Return-to-Play Protocol Active. Team practice today, but you're following rehab plan. Pain > 3/10? Stop immediately.`
+        ? `🏥 Return-to-Play Protocol Active. Team practice today, but you're excluded for rehab. Pain > 3/10? Stop immediately.`
         : `🏥 Return-to-Play Protocol Active. Pain > 3/10? Stop immediately.`,
       ctas: [
         {
@@ -315,12 +353,14 @@ export function resolveTodayState(
   if (protocolJson.coach_alert_active === true) {
     const requiresAck = protocolJson.coach_alert_requires_acknowledgment === true;
     const acknowledged = protocolJson.coach_acknowledged === true;
+    // Training blocked if acknowledgment required AND not yet acknowledged
+    const trainingBlocked = requiresAck && !acknowledged;
     
     const banners: TodayViewModel['banners'] = [{
       type: 'alert',
       style: 'amber',
-      text: `🔔 Coach Alert: ${protocolJson.coach_alert_message || 'Coach has updated your plan.'}${requiresAck && !acknowledged ? ' Acknowledgment required before training.' : ''}`,
-      ctas: requiresAck && !acknowledged
+      text: `🔔 Coach Alert: ${protocolJson.coach_alert_message || 'Coach has updated your plan.'}${trainingBlocked ? ' Acknowledgment required before training.' : ''}`,
+      ctas: trainingBlocked
         ? [{
             label: 'Read Coach Message',
             action: 'read_coach_alert',
@@ -330,16 +370,16 @@ export function resolveTodayState(
     }];
     
     return {
-      trainingAllowed: requiresAck ? !acknowledged : true,
+      trainingAllowed: !trainingBlocked,
       banners,
       blocksDisplayed: protocolJson.blocks?.map(b => b.type) || [],
-      primaryCta: requiresAck && !acknowledged
+      primaryCta: trainingBlocked
         ? {
             label: 'Acknowledge',
             action: 'acknowledge_coach_alert',
           }
         : undefined,
-      merlinPosture: requiresAck && !acknowledged ? 'silent' : 'explanatory',
+      merlinPosture: trainingBlocked ? 'silent' : 'explanatory',
       headerContext: protocolJson.modified_by_coach_name
         ? {
             coachAttribution: `Updated by Coach ${protocolJson.modified_by_coach_name}`,

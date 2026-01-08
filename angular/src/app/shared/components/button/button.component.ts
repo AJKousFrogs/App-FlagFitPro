@@ -131,13 +131,6 @@ export type ButtonSize = "sm" | "md" | "lg";
           aria-hidden="true"
         ></i>
       }
-      <!-- Legacy icon support (left position) -->
-      @if (icon() && iconPosition() === "left" && !iconLeft() && !loading()) {
-        <i
-          [class]="'btn-icon pi ' + normalizeIcon(icon())"
-          aria-hidden="true"
-        ></i>
-      }
 
       <!-- Button content -->
       @if (!iconOnly()) {
@@ -154,13 +147,6 @@ export type ButtonSize = "sm" | "md" | "lg";
       @if (iconRight() && !loading()) {
         <i
           [class]="'btn-icon pi ' + normalizeIcon(iconRight())"
-          aria-hidden="true"
-        ></i>
-      }
-      <!-- Legacy icon support (right position) -->
-      @if (icon() && iconPosition() === "right" && !iconRight() && !loading()) {
-        <i
-          [class]="'btn-icon pi ' + normalizeIcon(icon())"
           aria-hidden="true"
         ></i>
       }
@@ -249,19 +235,6 @@ export class ButtonComponent {
   /** Data attribute for testing */
   testId = input<string>("");
 
-  // ============================================
-  // LEGACY INPUTS (for backwards compatibility)
-  // ============================================
-
-  /** @deprecated Use iconLeft or iconRight instead */
-  icon = input<string>("");
-
-  /** @deprecated Use iconLeft or iconRight instead */
-  iconPosition = input<"left" | "right">("left");
-
-  /** @deprecated Use fullWidth instead */
-  block = input(false, { transform: booleanAttribute });
-
   /** Icon-only mode (no text content) */
   iconOnly = input(false, { transform: booleanAttribute });
 
@@ -281,12 +254,12 @@ export class ButtonComponent {
 
   @HostBinding("class.btn-full-width")
   get isFullWidth(): boolean {
-    return this.fullWidth() || this.block();
+    return this.fullWidth();
   }
 
   @HostBinding("style.display")
   get hostDisplay(): string {
-    return this.fullWidth() || this.block() ? "block" : "inline-block";
+    return this.fullWidth() ? "block" : "inline-block";
   }
 
   // ============================================
@@ -327,8 +300,8 @@ export class ButtonComponent {
       classes.push("btn-icon-only");
     }
 
-    // Full width (supports both new and legacy prop)
-    if (this.fullWidth() || this.block()) {
+    // Full width
+    if (this.fullWidth()) {
       classes.push("btn-full-width");
     }
 

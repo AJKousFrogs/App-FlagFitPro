@@ -35,7 +35,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { LazyChartComponent, LazyChartData } from "../../shared/components/lazy-chart/lazy-chart.component";
 
 // ===== Interfaces =====
 interface ProtocolStage {
@@ -818,7 +818,7 @@ export class ReturnToPlayComponent implements OnInit {
   readonly showStartDialog = signal(false);
   readonly isStartingProtocol = signal(false);
   readonly isSavingCheckin = signal(false);
-  readonly chartData = signal<object | null>(null);
+  readonly chartData = signal<LazyChartData | null>(null);
   
   // Phase 2.3: RTP Phase Celebration
   readonly showPhaseCelebration = signal(false);

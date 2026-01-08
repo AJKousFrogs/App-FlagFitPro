@@ -10,6 +10,8 @@ export interface StatItem {
   icon?: string;
   /** Icon type for predefined color schemes: 'primary' | 'error' | 'warning' | 'info' */
   iconType?: "primary" | "error" | "warning" | "info";
+  /** Custom color CSS value (CSS variable or hex). Takes precedence over iconType. */
+  color?: string;
   trend?: string;
   trendType?: "positive" | "negative" | "neutral";
   /**

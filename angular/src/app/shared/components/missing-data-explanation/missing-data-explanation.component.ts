@@ -5,7 +5,7 @@
  * Explains why missing wellness data matters, shows impact, and provides clear actions
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +25,6 @@ import { LoggerService } from "../../../core/services/logger.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    DatePipe,
     RouterModule,
     TagModule,
     ButtonModule,

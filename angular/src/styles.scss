@@ -44,17 +44,17 @@
 /* ================================================================
    MOBILE RESPONSIVE UTILITIES (Chrome & Safari Optimized)
    ================================================================ */
-@import "./styles/mobile-responsive";
+@use "./styles/mobile-responsive" as *;
 
 /* ================================================================
    MOBILE TOUCH-FRIENDLY COMPONENTS (Buttons, Forms, Inputs)
    ================================================================ */
-@import "./styles/mobile-touch-components";
+@use "./styles/mobile-touch-components" as *;
 
-/* PrimeIcons - imported from node_modules */
+/* PrimeIcons - imported from node_modules (CSS file, @import is correct) */
 @import "primeicons/primeicons.css";
 
-/* Poppins Font - Locally Hosted (CRITICAL FIX for missing 's' characters) */
+/* Poppins Font - Locally Hosted (CSS file, @import is correct) */
 @import "./assets/fonts/poppins.css";
 
 /* Note: Angular Material theme removed - only CDK drag-drop is used, not full Material library

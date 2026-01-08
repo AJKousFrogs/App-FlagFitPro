@@ -18,7 +18,6 @@ const config: StorybookConfig = {
   },
   typescript: {
     check: false, // Disable TypeScript checking in Storybook
-    reactDocgen: false,
   },
 };
 

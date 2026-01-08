@@ -50,9 +50,15 @@ import { ButtonComponent } from "../button/button.component";
         <!-- Primary action -->
         @if (actionLabel()) {
           @if (actionLink()) {
-            <app-button routerLink="actionLink()!"></app-button>
+            <app-button 
+              [routerLink]="actionLink()!"
+              [iconLeft]="actionIcon() || ''"
+            >{{ actionLabel() }}</app-button>
           } @else if (actionHandler()) {
-            <app-button (clicked)="handleAction()"></app-button>
+            <app-button 
+              (clicked)="handleAction()"
+              [iconLeft]="actionIcon() || ''"
+            >{{ actionLabel() }}</app-button>
           }
         }
 
@@ -61,13 +67,15 @@ import { ButtonComponent } from "../button/button.component";
           @if (secondaryActionLink()) {
             <app-button
               variant="outlined"
-              routerLink="secondaryActionLink()!"
-            ></app-button>
+              [routerLink]="secondaryActionLink()!"
+              [iconLeft]="secondaryActionIcon() || ''"
+            >{{ secondaryActionLabel() }}</app-button>
           } @else {
             <app-button
               variant="outlined"
               (clicked)="handleSecondaryAction()"
-            ></app-button>
+              [iconLeft]="secondaryActionIcon() || ''"
+            >{{ secondaryActionLabel() }}</app-button>
           }
         }
       </div>

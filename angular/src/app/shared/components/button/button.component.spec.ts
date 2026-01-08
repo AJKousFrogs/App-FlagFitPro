@@ -90,12 +90,8 @@ describe("ButtonComponent", () => {
       expect(component.buttonClasses()).toContain("btn-lg");
     });
 
-    it("should apply extra large size", () => {
-      fixture.componentRef.setInput("size", "xl");
-      fixture.detectChanges();
-
-      expect(component.buttonClasses()).toContain("btn-xl");
-    });
+    // Note: xl size is not supported in the current design system
+    // Only sm, md, lg sizes are available
   });
 
   describe("States", () => {
@@ -146,8 +142,8 @@ describe("ButtonComponent", () => {
   });
 
   describe("Icon", () => {
-    it("should display icon when provided", () => {
-      fixture.componentRef.setInput("icon", "pi-plus");
+    it("should display left icon when provided", () => {
+      fixture.componentRef.setInput("iconLeft", "pi-plus");
       fixture.detectChanges();
 
       const icon = fixture.nativeElement.querySelector(".btn-icon");
@@ -155,35 +151,17 @@ describe("ButtonComponent", () => {
       expect(icon.classList.contains("pi-plus")).toBe(true);
     });
 
-    it("should position icon on left by default", () => {
-      fixture.componentRef.setInput("icon", "pi-plus");
+    it("should display right icon when provided", () => {
+      fixture.componentRef.setInput("iconRight", "pi-arrow-right");
       fixture.detectChanges();
 
-      const button = fixture.nativeElement.querySelector("button");
-      const icon = button.querySelector(".btn-icon");
-      const content = button.querySelector(".btn-content");
-
-      // Icon should come before content in DOM
-      const _iconIndex = Array.from(button.children).indexOf(
-        icon.parentElement || icon,
-      );
-      const _contentIndex = Array.from(button.children).indexOf(content);
-
-      // This is a simplified check - actual position depends on DOM structure
-      // _iconIndex and _contentIndex available for future position verification
+      const icon = fixture.nativeElement.querySelector(".btn-icon");
       expect(icon).toBeTruthy();
-    });
-
-    it("should position icon on right when specified", () => {
-      fixture.componentRef.setInput("icon", "pi-arrow-right");
-      fixture.componentRef.setInput("iconPosition", "right");
-      fixture.detectChanges();
-
-      expect(component.iconPosition()).toBe("right");
+      expect(icon.classList.contains("pi-arrow-right")).toBe(true);
     });
 
     it("should not show icon when loading", () => {
-      fixture.componentRef.setInput("icon", "pi-plus");
+      fixture.componentRef.setInput("iconLeft", "pi-plus");
       fixture.componentRef.setInput("loading", true);
       fixture.detectChanges();
 
@@ -209,12 +187,8 @@ describe("ButtonComponent", () => {
       expect(component.buttonClasses()).toContain("btn-full-width");
     });
 
-    it("should apply full-width class when block is true (deprecated)", () => {
-      fixture.componentRef.setInput("block", true);
-      fixture.detectChanges();
-
-      expect(component.buttonClasses()).toContain("btn-full-width");
-    });
+    // Note: 'block' input was deprecated and removed
+    // Use 'fullWidth' instead - tested above
   });
 
   describe("Click Handling", () => {

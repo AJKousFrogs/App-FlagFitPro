@@ -56,7 +56,6 @@ import { ConfidenceIndicatorComponent } from "../../shared/components/confidence
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
-import { AppLoadingComponent } from "../../shared/components/ui-components";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
@@ -113,7 +112,6 @@ interface AnnouncementBanner {
     ProgressBar,
     MessageModule,
     TimelineModule,
-    AppLoadingComponent,
     MainLayoutComponent,
     PageErrorStateComponent,
     ConfidenceIndicatorComponent,

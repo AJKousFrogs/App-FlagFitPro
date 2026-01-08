@@ -57,6 +57,9 @@ describe("AnalyticsComponent", () => {
       getUser: vi
         .fn()
         .mockReturnValue({ id: "user-123", email: "test@example.com" }),
+      // Signal-based properties used by QuickActionsFABComponent
+      isAuthenticated: vi.fn().mockReturnValue(true),
+      currentUser: vi.fn().mockReturnValue({ id: "user-123", email: "test@example.com" }),
     };
 
     mockTrainingStatsService = {
@@ -166,6 +169,8 @@ describe("AnalyticsComponent", () => {
 
   describe("Chart Instance Management", () => {
     it("should store chart instances in Map after view init", async () => {
+      vi.useFakeTimers();
+
       // Create mock chart instances
       const mockChart1 = {
         canvas: document.createElement("canvas"),
@@ -192,14 +197,18 @@ describe("AnalyticsComponent", () => {
       // Trigger ngAfterViewInit
       component.ngAfterViewInit();
 
-      // Wait for setTimeout
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      // Advance timers past the 500ms setTimeout
+      vi.advanceTimersByTime(600);
 
       // Verify chart instances were stored
       expect(mockChartRefs.forEach).toHaveBeenCalled();
+
+      vi.useRealTimers();
     });
 
     it("should map chart types to instances correctly", async () => {
+      vi.useFakeTimers();
+
       const mockCharts = [
         {
           chart: {
@@ -229,10 +238,13 @@ describe("AnalyticsComponent", () => {
       component.chartRefs = mockChartRefs;
       component.ngAfterViewInit();
 
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      // Advance timers past the 500ms setTimeout
+      vi.advanceTimersByTime(600);
 
       // Verify all chart types were processed
       expect(mockChartRefs.forEach).toHaveBeenCalled();
+
+      vi.useRealTimers();
     });
 
     it("should handle missing chart instances gracefully", async () => {

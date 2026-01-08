@@ -15,13 +15,13 @@ import {
   OnInit,
   signal,
 } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { WeatherService, WeatherData } from "../../../core/services/weather.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { CardComponent } from "../card/card.component";
-import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-weather-widget",
@@ -32,7 +32,6 @@ import { ButtonComponent } from "../button/button.component";
     TagModule,
     TooltipModule,
     CardComponent,
-    ButtonComponent,
   ],
   template: `
     @if (weatherData()) {
@@ -223,9 +222,9 @@ export class WeatherWidgetComponent implements OnInit {
   async loadWeather(): Promise<void> {
     this.isLoading.set(true);
     try {
-      const weather = await this.weatherService
-        .getWeatherData(this.location())
-        .toPromise();
+      const weather = await firstValueFrom(
+        this.weatherService.getWeatherData(this.location())
+      );
       this.weatherData.set(weather || null);
     } catch (error) {
       this.logger.error("Failed to load weather data:", error);

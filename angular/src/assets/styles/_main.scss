@@ -30,7 +30,7 @@
 // ============================================
 
 @layer tokens {
-  @import "design-system-tokens";
+  @use "design-system-tokens" as *;
 }
 
 // ============================================

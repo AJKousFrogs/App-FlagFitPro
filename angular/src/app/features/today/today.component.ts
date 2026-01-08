@@ -48,15 +48,11 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acwr-baseline.component";
 import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PostTrainingRecoveryComponent } from "../../shared/components/post-training-recovery/post-training-recovery.component";
-import { TodaysScheduleComponent } from "../../shared/components/todays-schedule/todays-schedule.component";
 import { ProtocolJson, TodayViewModel, resolveTodayState } from "../../today/resolution/today-state.resolver";
 import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import {
     WeekDay,
-    WeekProgressStripComponent,
 } from "../training/daily-protocol/components/week-progress-strip.component";
-import { WellnessCheckinComponent } from "../training/daily-protocol/components/wellness-checkin.component";
 import { DailyProtocol, ProtocolBlock } from "../training/daily-protocol/daily-protocol.models";
 
 // Services
@@ -110,12 +106,8 @@ interface QuickFormData {
     ToastModule,
     TooltipModule,
     MainLayoutComponent,
-    WellnessCheckinComponent,
     ProtocolBlockComponent,
-    PostTrainingRecoveryComponent,
-    WeekProgressStripComponent,
     ButtonComponent,
-    TodaysScheduleComponent,
     AppBannerComponent,
     AcwrBaselineComponent,
   ],

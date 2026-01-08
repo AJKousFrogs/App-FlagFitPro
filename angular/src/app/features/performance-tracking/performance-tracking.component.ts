@@ -27,7 +27,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import { StatItem, StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -622,7 +622,7 @@ export class PerformanceTrackingComponent {
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
   readonly metrics = signal<PerformanceMetric[]>([]);
-  readonly performanceStats = signal<Record<string, unknown>[]>([]);
+  readonly performanceStats = signal<StatItem[]>([]);
   // Chart data - uses Chart.js format
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly performanceChartData = signal<any>(null);

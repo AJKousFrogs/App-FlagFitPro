@@ -48,10 +48,6 @@ import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-overr
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    RiskBadgeComponent,
-    IncompleteDataBadgeComponent,
-    ActionRequiredBadgeComponent,
-    CoachOverrideBadgeComponent,
   ],
   template: `
     <ng-container #renderTarget></ng-container>

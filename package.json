@@ -66,6 +66,7 @@
     "quick-fixes:apply": "node scripts/quick-fixes.js --apply",
     "storybook": "cd angular && npm run storybook",
     "storybook:build": "cd angular && npm run build-storybook",
+    "storybook:test": "cd angular && npx test-storybook",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:format": "npm run lint && npm run format:check",

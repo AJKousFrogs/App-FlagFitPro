@@ -5,7 +5,7 @@
  * Celebrates RTP phase advancement with progress context, clear instructions, and next phase unlock info
  */
 
-import { CommonModule, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -38,7 +38,6 @@ export interface RTPPhaseInfo {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    DatePipe,
     RouterModule,
     CardModule,
     TagModule,
