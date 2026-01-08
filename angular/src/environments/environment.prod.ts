@@ -34,4 +34,6 @@ export const environment = {
     changeDetection: false,
     hydration: false,
   },
+  // Use Netlify Functions API in production (not direct Supabase)
+  useDirectSupabase: false,
 };

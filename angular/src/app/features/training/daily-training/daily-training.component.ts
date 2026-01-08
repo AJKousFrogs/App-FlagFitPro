@@ -436,7 +436,7 @@ interface ScheduleBlock {
       /* Greeting Section */
       .greeting-section {
         background: linear-gradient(135deg, var(--p-primary-600) 0%, var(--p-primary-800) 100%);
-        border-radius: 16px;
+        border-radius: var(--radius-2xl);
         padding: var(--space-8);
         margin-bottom: var(--space-6);
         color: white;
@@ -464,7 +464,7 @@ interface ScheduleBlock {
         background: rgba(255, 255, 255, 0.15);
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
-        border-radius: 12px;
+        border-radius: var(--radius-xl);
         padding: var(--space-4) var(--space-6);
         display: flex;
         align-items: center;
@@ -484,7 +484,7 @@ interface ScheduleBlock {
         align-items: center;
         gap: var(--space-4);
         padding: var(--space-4) var(--space-6);
-        border-radius: 12px;
+        border-radius: var(--radius-xl);
         margin-bottom: var(--space-6);
         flex-wrap: wrap;
       }
@@ -565,7 +565,7 @@ interface ScheduleBlock {
         background: var(--p-blue-100);
         color: var(--p-blue-700);
         padding: var(--space-2) var(--space-4);
-        border-radius: 20px;
+        border-radius: var(--radius-full);
         font-size: 0.85rem;
         font-weight: 500;
       }
@@ -584,7 +584,7 @@ interface ScheduleBlock {
 
       .status-card {
         background: var(--p-surface-card);
-        border-radius: 12px;
+        border-radius: var(--radius-xl);
         padding: var(--space-5);
         display: flex;
         align-items: center;
@@ -601,7 +601,7 @@ interface ScheduleBlock {
       .status-icon {
         width: 48px;
         height: 48px;
-        border-radius: 12px;
+        border-radius: var(--radius-xl);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -664,7 +664,7 @@ interface ScheduleBlock {
       /* Progress Section */
       .progress-section {
         background: var(--p-surface-card);
-        border-radius: 12px;
+        border-radius: var(--radius-xl);
         padding: var(--space-5);
         margin-bottom: var(--space-6);
         border: 1px solid var(--p-surface-200);
@@ -709,7 +709,7 @@ interface ScheduleBlock {
       }
 
       .schedule-block {
-        border-radius: 12px;
+        border-radius: var(--radius-xl);
         overflow: hidden;
         transition: all 0.3s;
       }
@@ -778,7 +778,7 @@ interface ScheduleBlock {
       .exercise-item {
         padding: var(--space-3);
         background: var(--p-surface-50);
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
       }
 
       .exercise-name {
@@ -796,7 +796,7 @@ interface ScheduleBlock {
       .detail-badge {
         background: var(--p-surface-200);
         padding: 2px 8px;
-        border-radius: 4px;
+        border-radius: var(--radius-sm);
         font-size: 0.75rem;
         color: var(--text-secondary);
       }
@@ -805,7 +805,7 @@ interface ScheduleBlock {
         background: var(--p-primary-100);
         color: var(--p-primary-700);
         padding: 2px 8px;
-        border-radius: 4px;
+        border-radius: var(--radius-sm);
         font-size: 0.75rem;
       }
 
@@ -820,7 +820,7 @@ interface ScheduleBlock {
         background: var(--p-blue-50);
         color: var(--p-blue-700);
         padding: 2px 6px;
-        border-radius: 4px;
+        border-radius: var(--radius-sm);
         font-size: 0.7rem;
       }
 
@@ -837,7 +837,7 @@ interface ScheduleBlock {
         margin-bottom: var(--space-4);
         padding: var(--space-3);
         background: var(--p-surface-50);
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
       }
 
       .summary-item {
@@ -882,7 +882,7 @@ interface ScheduleBlock {
         color: var(--text-secondary);
         background: var(--p-surface-100);
         padding: 4px 12px;
-        border-radius: 20px;
+        border-radius: var(--radius-full);
       }
 
       .instructions, .setup, .cues {
@@ -909,7 +909,7 @@ interface ScheduleBlock {
         margin-top: var(--space-4);
         padding: var(--space-4);
         background: var(--p-orange-50);
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
         border-left: 4px solid var(--p-orange-400);
       }
 
@@ -936,7 +936,7 @@ interface ScheduleBlock {
         background: var(--p-primary-50);
         color: var(--p-primary-700);
         padding: 4px 12px;
-        border-radius: 20px;
+        border-radius: var(--radius-full);
         font-size: 0.8rem;
       }
 
@@ -952,7 +952,7 @@ interface ScheduleBlock {
         background: var(--p-purple-100);
         color: var(--p-purple-700);
         padding: var(--space-2) var(--space-4);
-        border-radius: 20px;
+        border-radius: var(--radius-full);
         font-weight: 600;
         margin-bottom: var(--space-4);
       }

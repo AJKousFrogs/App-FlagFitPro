@@ -218,7 +218,7 @@
   /* Shared Form Control Geometry */
   --p-form-control-height: 44px;
   --p-form-control-min-height: 44px;
-  --p-form-control-border-radius: 8px;
+  --p-form-control-border-radius: var(--radius-lg);
   --p-form-control-padding-x: 16px;
   --p-form-control-padding-y: 10px; /* (44px - 24px line-height) / 2 */
   --p-form-control-font-size: 16px;
@@ -292,11 +292,11 @@
   --p-inputnumber-border-radius: var(--p-form-control-border-radius);
 
   /* Dropdown Panel Tokens */
-  --p-dropdown-panel-border-radius: 8px;
+  --p-dropdown-panel-border-radius: var(--radius-lg);
   --p-dropdown-panel-shadow:
     0 10px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
   --p-dropdown-option-padding: 12px 16px;
-  --p-dropdown-option-border-radius: 6px;
+  --p-dropdown-option-border-radius: var(--radius-md);
   --p-dropdown-option-min-height: 40px;
   --p-dropdown-option-font-size: 16px;
 

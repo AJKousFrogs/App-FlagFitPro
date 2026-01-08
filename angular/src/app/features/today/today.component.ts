@@ -53,14 +53,18 @@ import { ProtocolBlockComponent } from "../training/daily-protocol/components/pr
 import {
     WeekDay,
 } from "../training/daily-protocol/components/week-progress-strip.component";
-import { DailyProtocol, ProtocolBlock } from "../training/daily-protocol/daily-protocol.models";
+import { BlockType, DailyProtocol, ExerciseCategory, PrescribedExercise, ProtocolBlock } from "../training/daily-protocol/daily-protocol.models";
 
 // Services
 import { ApiService } from "../../core/services/api.service";
 import { DataSourceService } from "../../core/services/data-source.service";
+import { DirectSupabaseApiService } from "../../core/services/direct-supabase-api.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+
+// Environment
+import { environment } from "../../../environments/environment";
 
 // Types
 type DayPhase = "morning" | "midday" | "evening";
@@ -1158,6 +1162,10 @@ export class TodayComponent {
   private readonly dataSourceService = inject(DataSourceService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(ApiService);
+  private readonly directApi = inject(DirectSupabaseApiService);
+  
+  // Environment flag for API routing
+  private readonly useDirectSupabase = environment.useDirectSupabase;
 
   // ============================================================================
   // STATE SIGNALS
@@ -1165,6 +1173,8 @@ export class TodayComponent {
   readonly protocol = signal<Partial<DailyProtocol> | null>(null);
   readonly protocolJson = signal<ProtocolJson | null>(null); // Raw JSON from API
   readonly todayViewModel = signal<TodayViewModel | null>(null); // Resolved state
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private fullProtocolData: any = null; // Store full API response with blocks for UI rendering
   readonly showRecoveryDialog = signal(false);
   readonly error = signal<string | null>(null);
   readonly currentTime = signal(new Date());
@@ -1449,12 +1459,23 @@ export class TodayComponent {
    * 3. Resolve state using deterministic resolver
    * 4. Do NOT generate multiple times
    * 5. Do NOT fabricate fallback UI if generation fails
+   * 
+   * When useDirectSupabase is true (local dev without Netlify):
+   * - Uses DirectSupabaseApiService to call database directly
+   * - No need for Netlify Dev server running
    */
   private loadTodayData(): void {
     const today = new Date().toISOString().split("T")[0];
     let generationAttempted = false;
     
-    // Step 1: Try GET first
+    // Use direct Supabase API in local development mode
+    if (this.useDirectSupabase) {
+      this.logger.info("[TodayComponent] Using direct Supabase API for protocol data");
+      this.loadTodayDataDirect(today, generationAttempted);
+      return;
+    }
+    
+    // Step 1: Try GET first (via Netlify Functions)
     this.api
       .get<{ success: boolean; data?: ProtocolJson }>(`/api/daily-protocol?date=${today}`)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -1493,6 +1514,113 @@ export class TodayComponent {
           }
         },
       });
+  }
+  
+  /**
+   * Load today data using direct Supabase API (for local development)
+   */
+  private loadTodayDataDirect(date: string, generationAttempted: boolean): void {
+    this.directApi
+      .getDailyProtocol(date)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          if (response?.success && response.data) {
+            // Store full protocol data for UI rendering (includes blocks with exercises)
+            this.fullProtocolData = response.data;
+            
+            // Protocol found, resolve state
+            // Map direct API response to ProtocolJson format
+            const protocolData = this.mapDirectResponseToProtocolJson(response.data);
+            this.protocolJson.set(protocolData);
+            this.resolveAndUpdateViewModel(protocolData);
+            this.error.set(null);
+          } else if (!generationAttempted) {
+            // Protocol not found, generate once
+            this.generateAndLoadProtocolDirect(date);
+          } else {
+            this.error.set(
+              "Unable to generate your training plan. Please contact support.",
+            );
+            this.protocolJson.set(null);
+            this.fullProtocolData = null;
+            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+          }
+        },
+        error: (err) => {
+          this.logger.error("Failed to load today data (direct)", err);
+          if (!generationAttempted) {
+            this.generateAndLoadProtocolDirect(date);
+          } else {
+            this.error.set(
+              "Failed to load your training data. Please try again.",
+            );
+            this.protocolJson.set(null);
+            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+          }
+        },
+      });
+  }
+  
+  /**
+   * Generate protocol using direct Supabase API
+   */
+  private generateAndLoadProtocolDirect(date: string): void {
+    this.isGeneratingProtocol.set(true);
+    
+    this.directApi
+      .generateDailyProtocol(date)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.isGeneratingProtocol.set(false);
+          if (response?.success && response.data) {
+            // Store full protocol data for UI rendering
+            this.fullProtocolData = response.data;
+            
+            // Generation succeeded
+            const protocolData = this.mapDirectResponseToProtocolJson(response.data);
+            this.protocolJson.set(protocolData);
+            this.resolveAndUpdateViewModel(protocolData);
+            this.error.set(null);
+          } else {
+            this.error.set(
+              "Unable to generate your training plan. Please contact support.",
+            );
+            this.protocolJson.set(null);
+            this.fullProtocolData = null;
+            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+          }
+        },
+        error: (err) => {
+          this.logger.error("Failed to generate protocol (direct)", err);
+          this.isGeneratingProtocol.set(false);
+          this.error.set(
+            "Failed to generate your training plan. Please contact support.",
+          );
+          this.protocolJson.set(null);
+          this.fullProtocolData = null;
+          this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+        },
+      });
+  }
+  
+  /**
+   * Map DirectSupabaseApiService response to ProtocolJson format
+   * Only includes fields that exist in the ProtocolJson interface
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private mapDirectResponseToProtocolJson(data: any): ProtocolJson {
+    return {
+      id: data.id,
+      protocol_date: data.date,
+      readiness_score: data.readinessScore,
+      acwr_value: data.acwrValue ?? null,
+      blocks: data.blocks?.map((block: { type: string; title?: string }) => ({
+        type: block.type,
+        title: block.title || block.type,
+      })) || [],
+    };
   }
   
   /**
@@ -1538,11 +1666,12 @@ export class TodayComponent {
     const viewModel = resolveTodayState(protocolJson, this.currentTime());
     this.todayViewModel.set(viewModel);
     
-    // Also update protocol signal for backward compatibility (if needed)
-    // Convert ProtocolJson to DailyProtocol format if needed
-    if (protocolJson.blocks) {
-      // Map protocolJson to DailyProtocol structure
-      // This is a simplified mapping - adjust based on actual API response structure
+    // Also update protocol signal for backward compatibility
+    // We need to keep the full blocks data for UI rendering
+    if (this.fullProtocolData) {
+      this.protocol.set(this.mapToDailyProtocol(this.fullProtocolData));
+    } else if (protocolJson.blocks) {
+      // Fallback: create minimal structure
       this.protocol.set({
         id: protocolJson.id,
         protocolDate: protocolJson.protocol_date,
@@ -1550,6 +1679,103 @@ export class TodayComponent {
         acwrValue: protocolJson.acwr_value ?? undefined,
       } as Partial<DailyProtocol>);
     }
+  }
+  
+  /**
+   * Map API response to DailyProtocol structure with full block data
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private mapToDailyProtocol(data: any): Partial<DailyProtocol> {
+    // Create empty block helper
+    const createEmptyBlock = (type: string, title: string, icon: string): ProtocolBlock => ({
+      type: type as BlockType,
+      title,
+      icon,
+      status: "pending" as const,
+      exercises: [],
+      completedCount: 0,
+      totalCount: 0,
+      progressPercent: 0,
+    });
+    
+    // Map blocks from API to named properties
+    const blockData = data.blocks || [];
+    const getBlock = (blockType: string, title: string, icon: string): ProtocolBlock => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const apiBlock = blockData.find((b: any) => b.type === blockType);
+      if (!apiBlock || !apiBlock.exercises || apiBlock.exercises.length === 0) {
+        return createEmptyBlock(blockType, title, icon);
+      }
+      
+      // Map exercises to PrescribedExercise format
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const exercises: PrescribedExercise[] = apiBlock.exercises.map((ex: any, index: number) => ({
+        id: ex.id || `${blockType}-${index}`,
+        exerciseId: ex.id || `${blockType}-${index}`,
+        // Nested exercise object with video data for UI rendering
+        exercise: {
+          id: ex.id || `${blockType}-${index}`,
+          name: ex.name || "Exercise",
+          slug: ex.name?.toLowerCase().replace(/\s+/g, '-') || 'exercise',
+          category: (ex.category || blockType) as ExerciseCategory,
+          videoUrl: ex.videoUrl,
+          videoId: ex.videoId,
+          howText: ex.notes || '',
+          defaultSets: 1,
+          difficultyLevel: 'intermediate' as const,
+          loadContributionAu: 0,
+          isHighIntensity: false,
+        },
+        blockType: blockType as BlockType,
+        sequenceOrder: index + 1,
+        prescribedSets: 1,
+        status: ex.status === "completed" ? "complete" as const : "pending" as const,
+        loadContributionAu: 0,
+      }));
+      
+      const completedCount = exercises.filter(e => e.status === "complete").length;
+      const totalCount = exercises.length;
+      
+      return {
+        type: blockType as BlockType,
+        title,
+        icon,
+        status: completedCount === totalCount && totalCount > 0 
+          ? "complete" as const 
+          : completedCount > 0 
+            ? "in_progress" as const 
+            : "pending" as const,
+        exercises,
+        completedCount,
+        totalCount,
+        progressPercent: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0,
+        estimatedDurationMinutes: apiBlock.estimatedMinutes,
+      };
+    };
+    
+    const morningMobility = getBlock("morning_mobility", "Morning Mobility", "pi-sun");
+    const foamRoll = getBlock("foam_roll", "Foam Rolling", "pi-circle");
+    const mainSession = getBlock("main_session", "Main Session", "pi-bolt");
+    const eveningRecovery = getBlock("evening_recovery", "Evening Recovery", "pi-moon");
+    
+    const allBlocks = [morningMobility, foamRoll, mainSession, eveningRecovery];
+    const totalExercises = allBlocks.reduce((sum, b) => sum + b.totalCount, 0);
+    const completedExercises = allBlocks.reduce((sum, b) => sum + b.completedCount, 0);
+    
+    return {
+      id: data.id,
+      protocolDate: data.date,
+      readinessScore: data.readinessScore ?? undefined,
+      acwrValue: data.acwrValue ?? undefined,
+      trainingFocus: data.trainingFocus,
+      morningMobility,
+      foamRoll,
+      mainSession,
+      eveningRecovery,
+      overallProgress: totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0,
+      completedExercises,
+      totalExercises,
+    };
   }
 
   refreshProtocol(): void {
@@ -1760,7 +1986,8 @@ export class TodayComponent {
       case 'open_checkin':
       case 'start_checkin':
       case 'update_checkin':
-        this.scrollToWellness();
+        // Open the Quick Check-in dialog (not scroll to wellness section)
+        this.showQuickCheckin.set(true);
         break;
         
       case 'start_training':

@@ -41,10 +41,11 @@ export class MissingDataDetectionService {
     playerId: string
   ): Promise<MissingDataStatus> {
     try {
+      // Try wellness_entries first (primary wellness table)
       const { data, error } = await this.supabaseService.client
-        .from("wellness_checkins")
+        .from("wellness_entries")
         .select("date")
-        .eq("user_id", playerId)
+        .eq("athlete_id", playerId)
         .order("date", { ascending: false })
         .limit(1)
         .maybeSingle();

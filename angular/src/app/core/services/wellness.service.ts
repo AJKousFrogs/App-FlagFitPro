@@ -305,13 +305,13 @@ export class WellnessService {
       return of({ success: false, error: "Not authenticated" });
     }
 
-    // Set user_id
+    // Map to database columns - table uses athlete_id (NOT user_id)
+    // and doesn't have sleep_hours/sleep_score columns
     const wellnessEntry = {
-      user_id: userId,
+      athlete_id: userId,
+      user_id: userId, // Keep for backwards compatibility if column exists
       date: data.date || new Date().toISOString().split("T")[0],
-      sleep_quality: data.sleep,
-      sleep_hours: data.sleepHours,
-      sleep_score: data.sleepScore,
+      sleep_quality: data.sleep, // Map from interface field
       energy_level: data.energy,
       stress_level: data.stress,
       muscle_soreness: data.soreness,
@@ -320,6 +320,8 @@ export class WellnessService {
       hydration_level: data.hydration,
       notes: data.notes,
     };
+
+    this.logger.info("[Wellness] Inserting wellness entry:", JSON.stringify(wellnessEntry));
 
     return from(
       this.supabaseService.client
@@ -330,10 +332,11 @@ export class WellnessService {
     ).pipe(
       map(({ data: insertedData, error }) => {
         if (error) {
-          this.logger.error("[Wellness] Error logging entry:", error);
-          throw error;
+          const errorMessage = error?.message || error?.details || JSON.stringify(error);
+          this.logger.error("[Wellness] Error logging entry:", errorMessage, error);
+          throw new Error(errorMessage);
         }
-        this.logger.success("[Wellness] Entry logged:", insertedData.id);
+        this.logger.success("[Wellness] Entry logged:", insertedData?.id);
         return { success: true, data: insertedData };
       }),
       tap((result) => {
@@ -360,8 +363,9 @@ export class WellnessService {
         }
       }),
       catchError((error) => {
-        this.logger.error("[Wellness] Failed to log entry:", error);
-        return of({ success: false, error: error.message });
+        const errorMessage = error?.message || error?.details || JSON.stringify(error);
+        this.logger.error("[Wellness] Failed to log entry:", errorMessage, error);
+        return of({ success: false, error: errorMessage });
       }),
     );
   }

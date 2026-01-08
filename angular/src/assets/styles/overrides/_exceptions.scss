@@ -339,6 +339,24 @@
     box-shadow: var(--shadow-1);
     display: flex;
     align-items: center;
+    
+    // Safari fix: Ensure proper stacking context and prevent z-index leaking
+    position: relative;
+    z-index: 1000;
+    isolation: isolate; // Creates new stacking context in Safari
+    
+    // Safari fix: Force hardware acceleration to prevent rendering glitches
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    
+    // Safari fix: Ensure text doesn't inherit decorations from ancestors
+    text-decoration: none !important;
+    
+    // Safari fix: Prevent any overflow issues
+    overflow: visible;
+    contain: layout style; // CSS containment for better rendering
 
     .p-toolbar-start,
     .p-toolbar-center,
@@ -348,6 +366,17 @@
       height: 100%;
       margin: 0;
       padding: 0;
+      
+      // Safari fix: Ensure children don't escape bounds
+      position: relative;
+      overflow: visible;
+      
+      // Ensure no text-decoration leaks
+      text-decoration: none !important;
+      
+      * {
+        text-decoration: none !important;
+      }
     }
 
     @media (max-width: 768px) {

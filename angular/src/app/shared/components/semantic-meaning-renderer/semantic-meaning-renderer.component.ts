@@ -40,6 +40,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { RiskBadgeComponent } from "../risk-badge/risk-badge.component";
 import { IncompleteDataBadgeComponent } from "../incomplete-data-badge/incomplete-data-badge.component";
 import { ActionRequiredBadgeComponent } from "../action-required-badge/action-required-badge.component";
+import { ActionPanelComponent } from "../action-panel/action-panel.component";
 import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-override-badge.component";
 
 @Component({
@@ -128,6 +129,9 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
         case "app-action-required-badge":
           componentClass = ActionRequiredBadgeComponent;
           break;
+        case "app-action-panel":
+          componentClass = ActionPanelComponent;
+          break;
         case "app-coach-override-badge":
           componentClass = CoachOverrideBadgeComponent;
           break;
@@ -142,9 +146,9 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
       // Create component instance
       this.componentRef = this.renderTarget.createComponent(componentClass);
 
-      // Set component inputs from render decision props
+      // Set component inputs using setInput() for signal input compatibility
       Object.keys(decision.props).forEach((key) => {
-        (this.componentRef!.instance as any)[key] = decision.props[key];
+        this.componentRef!.setInput(key, decision.props[key]);
       });
 
       // Trigger change detection

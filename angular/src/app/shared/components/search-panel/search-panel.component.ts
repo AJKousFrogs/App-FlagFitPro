@@ -64,7 +64,21 @@ export class SearchPanelComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  visible = false;
+  // Use a signal for visibility to ensure proper change detection
+  private readonly _visible = signal(false);
+  
+  // Getter/setter for two-way binding with p-dialog [(visible)]
+  get visible(): boolean {
+    return this._visible();
+  }
+  set visible(value: boolean) {
+    this._visible.set(value);
+    // Sync back to service if dialog is closed via mask click
+    if (!value && this.searchService.isOpen()) {
+      this.searchService.close();
+    }
+  }
+
   searchQuery = "";
   readonly selectedIndex = signal(0);
 
@@ -145,8 +159,8 @@ export class SearchPanelComponent implements OnDestroy {
     // Sync visibility with service
     effect(() => {
       const isOpen = this.searchService.isOpen();
-      if (isOpen !== this.visible) {
-        this.visible = isOpen;
+      if (isOpen !== this._visible()) {
+        this._visible.set(isOpen);
         if (isOpen) {
           setTimeout(() => this.focusInput(), 100);
         }
@@ -167,7 +181,7 @@ export class SearchPanelComponent implements OnDestroy {
   }
 
   open(): void {
-    this.visible = true;
+    this._visible.set(true);
     this.searchService.open();
     this.quickActionIndex.set(0);
     this.selectedIndex.set(0);
@@ -175,7 +189,7 @@ export class SearchPanelComponent implements OnDestroy {
   }
 
   close(): void {
-    this.visible = false;
+    this._visible.set(false);
     this.searchService.close();
     this.showSuggestions.set(false);
     this.quickActionIndex.set(0);

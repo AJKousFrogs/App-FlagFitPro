@@ -643,13 +643,7 @@
   --color-danger-text: #b91c1c;
   --color-info-text: #0284c7;
 
-  /* Motion Tokens (Decision 19) */
-  --motion-fast: 120ms;
-  --motion-base: 200ms;
-  --motion-slow: 320ms;
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
-  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  /* Motion Tokens (Decision 19) - See TRANSITIONS & MOTION section below */
 
   /* Container Widths (Decision 8.1) */
   --container-sm: 640px;
@@ -681,16 +675,34 @@
 
   /* ================================
      TRANSITIONS & MOTION
+     Standardized timing and easing for ALL components
      ================================ */
 
-  --transition-base: 0.2s ease;
-  --transition-fast: 0.15s ease;
-  --transition-slow: 0.3s ease;
-  --transition-slower: 0.5s ease;
+  /* Duration tokens */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  --transition-slower: 500ms;
 
+  /* Standard easing (Material Design) - use for most transitions */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Decelerate - use for enter animations (elements appearing) */
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  /* Accelerate - use for exit animations (elements leaving) */
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+  /* Micro-bounce - ONLY for checkbox/radio/badge micro-interactions */
+  --ease-micro-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Pre-composed transition values */
+  --transition-colors: var(--transition-fast) var(--ease-standard);
+  --transition-transform: var(--transition-base) var(--ease-standard);
+  --transition-opacity: var(--transition-fast) var(--ease-standard);
+  --transition-all: var(--transition-base) var(--ease-standard);
+
+  /* Legacy compatibility aliases */
   --motion-duration-normal: var(--transition-base);
-  --motion-easing-productive: ease;
-  --motion-easing-expressive: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-productive: var(--ease-standard);
+  --motion-easing-expressive: var(--ease-standard);
 
   /* ================================
      Z-INDEX SYSTEM

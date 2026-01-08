@@ -967,7 +967,7 @@
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
-    animation: dialog-scale-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: dialog-scale-in 250ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
   }
 
   @keyframes dialog-scale-in {
@@ -1276,7 +1276,7 @@
   .p-toast-message {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    animation: toast-slide-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: toast-slide-in 250ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     overflow: hidden;
   }
 
@@ -1388,7 +1388,7 @@
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--color-border-secondary);
     overflow: hidden;
-    animation: menu-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: menu-scale-in 180ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     transform-origin: top left;
   }
 
@@ -1640,7 +1640,7 @@
     background: var(--surface-primary);
     margin-top: 4px;
     overflow: hidden;
-    animation: dropdown-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: dropdown-scale-in 180ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     transform-origin: top center;
   }
 
@@ -1794,7 +1794,7 @@
     background: var(--surface-primary);
     margin-top: 4px;
     overflow: hidden;
-    animation: dropdown-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: dropdown-scale-in 180ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     transform-origin: top center;
   }
 
@@ -2073,7 +2073,7 @@
         border-color: var(--ds-primary-green);
 
         .p-checkbox-icon {
-          animation: checkbox-check 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+          animation: checkbox-check 200ms var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
         }
       }
     }
@@ -2109,7 +2109,7 @@
 
         .p-radiobutton-icon {
           background: var(--ds-primary-green);
-          animation: radio-select 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+          animation: radio-select 200ms var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
         }
       }
     }
@@ -2160,7 +2160,7 @@
     border-radius: var(--radius-md);
     font-weight: var(--font-weight-semibold);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-    animation: badge-pop-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: badge-pop-in 250ms var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
   }
 
   @keyframes badge-pop-in {
@@ -2332,8 +2332,8 @@
     text-decoration: none;
     white-space: nowrap;
 
-    /* Shape: 6px border-radius (rounded, NOT pill) */
-    border-radius: 6px;
+    /* Shape: var(--radius-md) border-radius (rounded, NOT pill) */
+    border-radius: var(--radius-md);
 
     border: none;
     box-shadow: none;
@@ -2403,8 +2403,8 @@
     text-decoration: none;
     white-space: nowrap;
 
-    /* Shape: 6px border-radius (rounded, NOT pill) */
-    border-radius: 6px;
+    /* Shape: var(--radius-md) border-radius (rounded, NOT pill) */
+    border-radius: var(--radius-md);
 
     border: none;
     box-shadow: none;
@@ -2459,15 +2459,15 @@
       background: var(--surface-primary, var(--color-text-on-primary));
       color: var(--color-text-primary, var(--primitive-neutral-900));
       border: 1px solid var(--ds-primary-green);
-      border-radius: var(--radius-lg, 12px);
-      padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+      border-radius: var(--radius-md, 8px);
+      padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
       font-family: var(--font-family-sans);
-      font-size: var(--font-body-sm, 0.875rem);
+      font-size: var(--font-body-xs, 0.8125rem);
       font-weight: var(--font-weight-medium, 500);
       box-shadow:
-        0 8px 24px rgba(8, 153, 73, 0.15),
-        0 4px 12px rgba(0, 0, 0, 0.08);
-      animation: tooltip-scale-in 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        0 4px 12px rgba(8, 153, 73, 0.1),
+        0 2px 6px rgba(0, 0, 0, 0.06);
+      animation: tooltip-scale-in 180ms ease-out;
       max-width: 280px;
     }
 
@@ -2497,11 +2497,11 @@
   @keyframes tooltip-scale-in {
     from {
       opacity: 0;
-      transform: scale(0.9) translateY(4px);
+      transform: translateY(2px);
     }
     to {
       opacity: 1;
-      transform: scale(1) translateY(0);
+      transform: translateY(0);
     }
   }
 
@@ -2735,7 +2735,7 @@
 
   .p-accordion-content {
     padding: var(--space-5);
-    animation: accordion-expand 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: accordion-expand 250ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
   }
 
   @keyframes accordion-expand {
@@ -2950,7 +2950,7 @@
     .p-tabs {
       .p-tablist {
         padding: 3px;
-        border-radius: 8px;
+        border-radius: var(--radius-lg);
         gap: 3px;
       }
 
@@ -2960,7 +2960,7 @@
         gap: 6px;
         height: 36px; /* Slightly smaller on mobile */
         min-height: 36px;
-        border-radius: 6px;
+        border-radius: var(--radius-md);
 
         i,
         .pi {
@@ -3047,13 +3047,13 @@
     .p-tablist {
       padding: 3px;
       gap: 2px;
-      border-radius: 8px;
+      border-radius: var(--radius-lg);
     }
 
     .p-tab {
       padding: 0 12px;
       font-size: 0.8125rem;
-      border-radius: 6px;
+      border-radius: var(--radius-md);
       height: 32px;
       min-height: 32px;
     }
@@ -3107,11 +3107,11 @@
     box-shadow: var(--shadow-xl);
 
     &.p-sidebar-left {
-      animation: sidebar-slide-left 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: sidebar-slide-left 280ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     }
 
     &.p-sidebar-right {
-      animation: sidebar-slide-right 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: sidebar-slide-right 280ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     }
   }
 
@@ -3635,7 +3635,7 @@ p-button .p-button,
 .p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
   z-index: 10000;
   background: var(--surface-primary);
-  border-radius: 12px; /* Slightly larger for calendar panels */
+  border-radius: var(--radius-xl); /* Slightly larger for calendar panels */
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.12),
     0 4px 12px rgba(0, 0, 0, 0.08);
@@ -3679,7 +3679,7 @@ p-button .p-button,
 .p-cascadeselect-panel {
   z-index: 10000;
   background: var(--surface-primary);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   box-shadow:
     0 10px 40px rgba(0, 0, 0, 0.12),
     0 4px 12px rgba(0, 0, 0, 0.08);
@@ -3716,7 +3716,7 @@ p-button .p-button,
 .p-dropdown-item,
 .p-listbox-item {
   padding: 12px 16px;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   min-height: 40px;
   margin: 2px 0;
   font-size: 16px;
@@ -3794,7 +3794,7 @@ p-button .p-button,
   border: none;
   cursor: pointer;
   padding: 0.25rem 0.5rem;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
@@ -3971,7 +3971,7 @@ p-button .p-button,
     width: 2.25rem;
     height: 2.25rem;
     font-size: 0.8125rem;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
   }
 
   .p-datepicker-panel .p-datepicker-header {

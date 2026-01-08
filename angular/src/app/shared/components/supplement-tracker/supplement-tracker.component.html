@@ -71,7 +71,7 @@
                   [ngModel]="supp.taken"
                   [binary]="true"
                   (click)="$event.stopPropagation()"
-                  (onChange)="toggleSupplement(supp)"
+                  (ngModelChange)="toggleSupplement(supp)"
                   [inputId]="'morning-' + supp.id"
                 ></p-checkbox>
               </div>
@@ -119,7 +119,7 @@
                   [ngModel]="supp.taken"
                   [binary]="true"
                   (click)="$event.stopPropagation()"
-                  (onChange)="toggleSupplement(supp)"
+                  (ngModelChange)="toggleSupplement(supp)"
                   [inputId]="'preworkout-' + supp.id"
                 ></p-checkbox>
               </div>
@@ -167,7 +167,7 @@
                   [ngModel]="supp.taken"
                   [binary]="true"
                   (click)="$event.stopPropagation()"
-                  (onChange)="toggleSupplement(supp)"
+                  (ngModelChange)="toggleSupplement(supp)"
                   [inputId]="'postworkout-' + supp.id"
                 ></p-checkbox>
               </div>
@@ -215,7 +215,7 @@
                   [ngModel]="supp.taken"
                   [binary]="true"
                   (click)="$event.stopPropagation()"
-                  (onChange)="toggleSupplement(supp)"
+                  (ngModelChange)="toggleSupplement(supp)"
                   [inputId]="'evening-' + supp.id"
                 ></p-checkbox>
               </div>
@@ -263,7 +263,7 @@
                   [ngModel]="supp.taken"
                   [binary]="true"
                   (click)="$event.stopPropagation()"
-                  (onChange)="toggleSupplement(supp)"
+                  (ngModelChange)="toggleSupplement(supp)"
                   [inputId]="'anytime-' + supp.id"
                 ></p-checkbox>
               </div>

@@ -61,6 +61,15 @@ const DEFAULTS = {
   API_URL: "", // Will be auto-detected
 };
 
+// Detect if running via Netlify Dev (port 8888) vs Angular CLI (port 4200)
+const isNetlifyDev = (): boolean => {
+  if (typeof window !== "undefined") {
+    // Netlify Dev typically runs on port 8888
+    return window.location.port === "8888";
+  }
+  return false;
+};
+
 export const environment = {
   production: false,
   // API URL: Check window._env first, then auto-detect for local dev
@@ -79,4 +88,19 @@ export const environment = {
     changeDetection: true,
     hydration: true,
   },
+  /**
+   * Use direct Supabase calls instead of Netlify Functions API
+   * 
+   * When TRUE (default for ng serve on port 4200):
+   *   - API calls go directly to Supabase
+   *   - No need for Netlify Dev server
+   *   - Faster local development
+   * 
+   * When FALSE (Netlify Dev on port 8888 or production):
+   *   - API calls go through /api/* endpoints
+   *   - Tests full production flow with Netlify Functions
+   * 
+   * Auto-detects based on port: 4200 = direct, 8888 = via API
+   */
+  useDirectSupabase: !isNetlifyDev(),
 };

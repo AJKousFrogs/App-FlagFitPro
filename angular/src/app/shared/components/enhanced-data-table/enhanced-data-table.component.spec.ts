@@ -196,10 +196,10 @@ describe("EnhancedDataTableComponent", () => {
         element: {
           dataset: { field: "name" },
           style: { width: "200px" },
-        },
+        } as unknown as HTMLElement & { dataset: { field: string }; style: { width: string } },
       };
 
-      component.onColumnResize(event);
+      component.onColumnResize(event as any);
 
       expect(component.columnWidths()["name"]).toBe("200px");
       expect(localStorage.setItem).toHaveBeenCalled();

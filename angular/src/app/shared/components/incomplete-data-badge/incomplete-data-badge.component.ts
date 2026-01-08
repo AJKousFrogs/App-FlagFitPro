@@ -83,6 +83,7 @@ export type IncompleteDataPlacement = "top-right" | "top-left" | "inline" | "car
       }
 
       /* Placement Styles */
+      /* NOTE: top-right/top-left placements require parent to have position: relative */
       .incomplete-data-badge.placement-top-right {
         position: absolute;
         top: var(--space-3);
@@ -106,6 +107,17 @@ export type IncompleteDataPlacement = "top-right" | "top-left" | "inline" | "car
         width: 100%;
         padding: var(--space-3) var(--space-4);
         margin-bottom: var(--space-3);
+        position: static; /* Ensure card placement doesn't escape bounds */
+      }
+
+      /* Responsive - ensure badges don't escape on mobile */
+      @media (max-width: 768px) {
+        .incomplete-data-badge.placement-top-right,
+        .incomplete-data-badge.placement-top-left {
+          position: static;
+          margin-bottom: var(--space-2);
+          width: 100%;
+        }
       }
 
       .badge-icon {
@@ -149,6 +161,7 @@ export class IncompleteDataBadgeComponent {
   showTag = input<boolean>(false);
   showDaysCount = input<boolean>(true);
   tooltip = input<string | null>(null);
+  confidenceImpact = input<number>(0); // 0.0 to 1.0 - how much confidence is reduced
 
   // Computed values
   getLabel = computed(() => {

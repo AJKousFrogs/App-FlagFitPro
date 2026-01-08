@@ -264,7 +264,7 @@
 
     --p-checkbox-width: 20px;
     --p-checkbox-height: 20px;
-    --p-checkbox-border-radius: 6px;
+    --p-checkbox-border-radius: var(--radius-md);
     --p-checkbox-border-width: 2px;
     --p-checkbox-border-color: var(--color-border-default);
     --p-checkbox-background: var(--color-surface-primary);

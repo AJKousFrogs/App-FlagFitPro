@@ -1356,7 +1356,7 @@ interface InjuryEntry {
                   <div class="consent-list">
                     <!-- Required Consents -->
                     <!-- Debug: Show current consent values -->
-                    <div style="padding: 1rem; background: #f0f0f0; border-radius: 8px; margin-bottom: 1rem; font-family: monospace; font-size: 12px;">
+                    <div style="padding: 1rem; background: var(--surface-secondary); border-radius: var(--radius-lg); margin-bottom: 1rem; font-family: monospace; font-size: 12px;">
                       <strong>Debug - Consent Values:</strong><br/>
                       Terms: {{ onboardingData.consentTermsOfService }}<br/>
                       Privacy: {{ onboardingData.consentPrivacyPolicy }}<br/>
@@ -2633,7 +2633,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       const { data: teamsData, error } = await this.supabaseService.client
         .from("teams")
         .select("id, name")
-        .eq("is_active", true)
+        .eq("approval_status", "approved")
         .order("name");
 
       if (!error && teamsData && teamsData.length > 0) {
@@ -2643,6 +2643,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           value: team.id,
         }));
         this.teams.set(teamOptions);
+        this.logger.info(`[Onboarding] Loaded ${teamOptions.length} teams from database`);
       } else {
         // Keep predefined teams as fallback
         this.logger.info(
@@ -2888,6 +2889,11 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         throw new Error("Program assignment failed - cannot complete onboarding without a training program");
       }
 
+      // Add player to team roster if they are a player
+      if (this.onboardingData.userType === "player" && this.onboardingData.team) {
+        await this.addPlayerToTeamRoster(user.id);
+      }
+
       // Clear the draft after successful completion
       this.clearDraft();
 
@@ -3106,6 +3112,133 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       }
     } catch (e) {
       this.logger.warn("[Onboarding] Error saving current injuries:", e);
+      // Non-blocking - continue with onboarding
+    }
+  }
+
+  /**
+   * Add player to team roster (team_members and team_players tables)
+   * This ensures the player appears on the Roster page
+   */
+  private async addPlayerToTeamRoster(userId: string): Promise<void> {
+    try {
+      const teamName = this.onboardingData.team;
+      if (!teamName) {
+        this.logger.warn("[Onboarding] No team name provided, skipping roster addition");
+        return;
+      }
+
+      // 1. Find or create the team
+      let teamId: string | null = null;
+
+      // First, try to find existing team by name
+      const { data: existingTeam } = await this.supabaseService.client
+        .from("teams")
+        .select("id")
+        .ilike("name", teamName)
+        .single();
+
+      if (existingTeam) {
+        teamId = existingTeam.id;
+        this.logger.info(`[Onboarding] Found existing team: ${teamName} (${teamId})`);
+      } else {
+        // Create new team
+        const { data: newTeam, error: teamError } = await this.supabaseService.client
+          .from("teams")
+          .insert({
+            name: teamName,
+            created_by: userId,
+          })
+          .select()
+          .single();
+
+        if (teamError) {
+          this.logger.warn("[Onboarding] Failed to create team:", teamError.message);
+          return;
+        }
+        teamId = newTeam.id;
+        this.logger.info(`[Onboarding] Created new team: ${teamName} (${teamId})`);
+      }
+
+      if (!teamId) {
+        this.logger.warn("[Onboarding] Could not determine team ID");
+        return;
+      }
+
+      // 2. Add user to team_members with role='player'
+      // Check if already a member
+      const { data: existingMember } = await this.supabaseService.client
+        .from("team_members")
+        .select("id")
+        .eq("team_id", teamId)
+        .eq("user_id", userId)
+        .single();
+
+      if (!existingMember) {
+        const { error: memberError } = await this.supabaseService.client
+          .from("team_members")
+          .insert({
+            team_id: teamId,
+            user_id: userId,
+            role: "player",
+          });
+
+        if (memberError) {
+          this.logger.warn("[Onboarding] Failed to add team member:", memberError.message);
+        } else {
+          this.logger.info(`[Onboarding] Added user to team_members as player`);
+        }
+      }
+
+      // 3. Add player to team_players table with profile data
+      // Calculate age from date of birth
+      let age = 0;
+      if (this.onboardingData.dateOfBirth) {
+        const birthDate = new Date(this.onboardingData.dateOfBirth);
+        const today = new Date();
+        age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+      }
+
+      const heightCm = this.getHeightInCm();
+      const weightKg = this.getWeightInKg();
+
+      // Check if player already exists in team_players
+      const { data: existingPlayer } = await this.supabaseService.client
+        .from("team_players")
+        .select("id")
+        .eq("team_id", teamId)
+        .eq("user_id", userId)
+        .single();
+
+      if (!existingPlayer) {
+        const { error: playerError } = await this.supabaseService.client
+          .from("team_players")
+          .insert({
+            team_id: teamId,
+            user_id: userId,
+            name: this.onboardingData.name,
+            position: this.onboardingData.position,
+            jersey_number: this.onboardingData.jerseyNumber?.toString() || null,
+            country: this.onboardingData.country,
+            age,
+            height: heightCm ? `${heightCm} cm` : null,
+            weight: weightKg ? `${weightKg} kg` : null,
+            status: "active",
+            created_by: userId,
+          });
+
+        if (playerError) {
+          this.logger.warn("[Onboarding] Failed to add to team_players:", playerError.message);
+        } else {
+          this.logger.info(`[Onboarding] Added player to team_players: ${this.onboardingData.name}`);
+        }
+      }
+    } catch (e) {
+      this.logger.warn("[Onboarding] Error adding player to team roster:", e);
       // Non-blocking - continue with onboarding
     }
   }

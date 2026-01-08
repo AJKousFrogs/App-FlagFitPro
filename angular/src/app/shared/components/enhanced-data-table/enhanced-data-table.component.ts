@@ -108,12 +108,14 @@ export interface TablePreferences {
         <div class="toolbar-left">
           <!-- Bulk selection -->
           @if (selectable()) {
-            <p-checkbox
-              [(ngModel)]="selectAll"
-              [binary]="true"
-              (onChange)="toggleSelectAll()"
-              [label]="selectedRows().length + ' selected'"
-            />
+            <div class="checkbox-with-label">
+              <p-checkbox
+                [(ngModel)]="selectAll"
+                [binary]="true"
+                (onChange)="toggleSelectAll()"
+              />
+              <span class="checkbox-label">{{ selectedRows().length }} selected</span>
+            </div>
           }
 
           <!-- Column visibility -->
@@ -185,8 +187,8 @@ export interface TablePreferences {
           columnResizeMode="expand"
           [scrollable]="true"
           scrollHeight="600px"
-          (onColReorder)="onColumnReorder($event)"
-          (onColResize)="onColumnResize($event)"
+          (onColReorder)="onColumnReorder($any($event))"
+          (onColResize)="onColumnResize($any($event))"
           styleClass="enhanced-table"
         >
           <ng-template pTemplate="header" let-columns>
@@ -202,8 +204,8 @@ export interface TablePreferences {
               }
               @for (col of columns; track col.field) {
                 <th
-                  [pReorderableColumn]="col.reorderable !== false"
-                  [pResizableColumn]="col.resizable !== false"
+                  [attr.pReorderableColumn]="col.reorderable !== false ? '' : null"
+                  [attr.pResizableColumn]="col.resizable !== false ? '' : null"
                   [pSortableColumn]="col.sortable !== false ? col.field : null"
                   [style.width]="getColumnWidth(col)"
                   [style.min-width.px]="col.minWidth || 100"

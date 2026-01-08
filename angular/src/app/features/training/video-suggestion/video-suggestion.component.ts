@@ -680,7 +680,7 @@ export class VideoSuggestionComponent implements OnInit {
           allowtransparency="true"
           allowfullscreen="true"
           loading="lazy"
-          style="max-width: 100%; border-radius: 12px; background: transparent;"
+          style="max-width: 100%; border-radius: var(--radius-xl); background: transparent;"
         ></iframe>
       </div>
     `;

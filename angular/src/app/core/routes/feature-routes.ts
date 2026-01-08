@@ -7,6 +7,7 @@
 
 import { Routes } from "@angular/router";
 import { authGuard } from "../guards/auth.guard";
+import { femaleAthleteGuard } from "../guards/female-athlete.guard";
 import { headerConfigGuard } from "../guards/header-config.guard";
 import { superadminGuard } from "../guards/superadmin.guard";
 import { analyticsPrefetchResolver } from "../resolvers/analytics-prefetch.resolver";
@@ -673,7 +674,7 @@ export const wellnessRoutes: Routes = [
       import("../../features/cycle-tracking/cycle-tracking.component").then(
         (m) => m.CycleTrackingComponent,
       ),
-    canActivate: [authGuard],
+    canActivate: [authGuard, femaleAthleteGuard],
     data: { preload: false }, // Load on demand - female athletes only
   },
   {

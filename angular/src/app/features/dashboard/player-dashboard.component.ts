@@ -48,6 +48,8 @@ import { TrainingStatsCalculationService } from "../../core/services/training-st
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { WellnessService } from "../../core/services/wellness.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { ChannelService } from "../../core/services/channel.service";
+import { ToastService } from "../../core/services/toast.service";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
 import { AcwrSpikeDetectionService } from "../../core/services/acwr-spike-detection.service";
@@ -68,6 +70,7 @@ import { MissingDataExplanationComponent } from "../../shared/components/missing
 import { MissingDataDetectionService, MissingDataStatus } from "../../core/services/missing-data-detection.service";
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { CoachOverrideMeaning, IncompleteDataMeaning, ActionRequiredMeaning } from "../../core/semantics/semantic-meaning.types";
+import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 
 interface QuickAction {
   label: string;
@@ -332,14 +335,8 @@ interface AnnouncementBanner {
           <!-- SECTION 1.7: Missing Data Explanation (Phase 3 - Semantic Meaning) -->
           @if (missingWellnessStatus() && missingWellnessStatus()!.missing) {
             <section class="missing-data-section">
-              <!-- Phase 3: Semantic Incomplete Data Badge -->
-              @if (getIncompleteDataMeaning()) {
-                <app-semantic-meaning-renderer
-                  [meaning]="getIncompleteDataMeaning()!"
-                  [context]="{ container: 'card', priority: missingWellnessStatus()!.severity === 'critical' ? 'critical' : 'medium', dismissible: false }"
-                ></app-semantic-meaning-renderer>
-              }
               <!-- Detailed explanation component (5-Question Contract style) -->
+              <!-- NOTE: Semantic badge removed - MissingDataExplanation already shows severity -->
               <app-missing-data-explanation
                 [missingStatus]="missingWellnessStatus()!"
                 [showCoachLink]="true"
@@ -1000,6 +997,7 @@ interface AnnouncementBanner {
         flex-direction: column;
         gap: var(--space-3);
         margin: var(--space-4) 0;
+        text-align: left;
       }
 
       .checklist-item {
@@ -1810,6 +1808,9 @@ export class PlayerDashboardComponent {
   private readonly ownershipTransitionService = inject(OwnershipTransitionService);
   private readonly missingDataDetectionService = inject(MissingDataDetectionService);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly channelService = inject(ChannelService);
+  private readonly toastService = inject(ToastService);
+  private readonly profileCompletionService = inject(ProfileCompletionService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
 
@@ -2079,6 +2080,10 @@ export class PlayerDashboardComponent {
 
   constructor() {
     this.headerService.setDashboardHeader();
+    
+    // Load profile completion data first (for consistent profile status)
+    this.profileCompletionService.loadProfileData();
+    
     this.loadData();
     
     // Check if we need to refresh program assignment (e.g., after onboarding)
@@ -2374,8 +2379,9 @@ export class PlayerDashboardComponent {
     if (missingIds.length === 0) return;
 
     try {
+      // Use 'users' table instead of 'profiles' (profiles table doesn't exist)
       const { data: profiles, error } = await this.supabaseService.client
-        .from("profiles")
+        .from("users")
         .select("id, full_name")
         .in("id", missingIds);
 
@@ -2484,24 +2490,74 @@ export class PlayerDashboardComponent {
   }
 
   /**
-   * Navigate to contact coach or show contact info
-   * For now, navigates to team chat or shows a message
+   * Open direct message with the player's coach
+   * Creates a 1:1 DM channel if it doesn't exist, then navigates to team chat
    */
-  contactCoach(): void {
-    // Navigate to team chat where user can message coach
-    this.router.navigate(["/chat"]);
+  async contactCoach(): Promise<void> {
+    try {
+      const userId = this.authService.getUser()?.id;
+      if (!userId) {
+        this.toastService.error("Please log in to contact your coach");
+        return;
+      }
+
+      // Get the player's team and coach
+      const { data: teamMembership } = await this.supabaseService.client
+        .from("team_members")
+        .select("team_id")
+        .eq("user_id", userId)
+        .single();
+
+      if (!teamMembership?.team_id) {
+        this.toastService.warn("You need to join a team first to contact a coach");
+        this.router.navigate(["/team-chat"]);
+        return;
+      }
+
+      // Find the coach for this team
+      const { data: coach } = await this.supabaseService.client
+        .from("team_members")
+        .select("user_id, users:user_id(first_name, last_name)")
+        .eq("team_id", teamMembership.team_id)
+        .eq("role", "coach")
+        .single();
+
+      if (!coach?.user_id) {
+        this.toastService.warn("No coach assigned to your team yet");
+        this.router.navigate(["/team-chat"]);
+        return;
+      }
+
+      // Create or find existing DM channel with the coach
+      const dmChannel = await this.channelService.createDirectMessage(
+        coach.user_id,
+        teamMembership.team_id
+      );
+
+      // Navigate to team chat with the DM channel selected
+      this.router.navigate(["/team-chat"], {
+        queryParams: { channel: dmChannel.id }
+      });
+
+    } catch (error) {
+      this.logger.error("Error contacting coach:", error);
+      this.toastService.error("Unable to start chat with coach. Please try again.");
+      // Fallback to team chat
+      this.router.navigate(["/team-chat"]);
+    }
   }
 
   /**
-   * Check if user has completed onboarding
-   * Used for diagnostic guidance in "No Program Assigned" state
+   * Check if user has completed onboarding/profile
+   * Uses centralized ProfileCompletionService for consistency
    * UX Audit Fix #3
    */
   hasCompletedOnboarding(): boolean {
-    const user = this.authService.getUser();
-    const metadata = (user?.user_metadata || {}) as { position?: string; onboarding_completed?: boolean };
-    // Check if user has position set (primary onboarding requirement)
-    return !!(metadata?.position || metadata?.onboarding_completed);
+    // Use ProfileCompletionService for consistent calculation
+    const status = this.profileCompletionService.completionStatus();
+    // Profile is considered "complete" for onboarding if required fields are filled
+    // or if percentage is >= 80% (allowing some optional fields to be missing)
+    return status.missingRequired.length === 0 || status.percentage >= 80;
   }
 
   /**

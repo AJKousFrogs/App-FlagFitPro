@@ -65,6 +65,8 @@ export class PlayerMetricsService {
 
   /**
    * Enrich a player with live performance metrics
+   * Note: This method does NOT update the cache directly to avoid signal writes
+   * inside computed signals. Use enrichPlayerAndCache() if you need caching.
    */
   enrichPlayer(player: Player): PlayerWithMetrics {
     const cached = this._playerMetricsCache().get(player.id);
@@ -106,11 +108,21 @@ export class PlayerMetricsService {
       benchmarkComparison,
     };
 
-    // Update cache
+    return enriched;
+  }
+  
+  /**
+   * Enrich a player and update the cache.
+   * Call this from effects or event handlers, not from computed signals.
+   */
+  enrichPlayerAndCache(player: Player): PlayerWithMetrics {
+    const enriched = this.enrichPlayer(player);
+    
+    // Update cache (safe to do outside of computed)
     const newCache = new Map(this._playerMetricsCache());
     newCache.set(player.id, enriched);
     this._playerMetricsCache.set(newCache);
-
+    
     return enriched;
   }
 

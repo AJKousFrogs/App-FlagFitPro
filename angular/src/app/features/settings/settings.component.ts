@@ -30,6 +30,7 @@ import { ToggleSwitch } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -78,6 +79,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   private toastService = inject(ToastService);
   private themeService = inject(ThemeService);
   private logger = inject(LoggerService);
+  private profileCompletionService = inject(ProfileCompletionService);
 
   @ViewChild("dobDatePicker", { read: ElementRef })
   dobDatePickerRef?: ElementRef<HTMLElement>;
@@ -139,6 +141,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     achievements: true,
     settings: true,
   };
+
+  // Team selection
+  availableTeams = signal<Array<{ label: string; value: string }>>([]);
+  showNewTeamDialog = false;
+  newTeamName = "";
+  newTeamNotes = "";
+  isSubmittingTeamRequest = signal(false);
+  currentTeamMemberId = signal<string | null>(null);
 
   visibilityOptions = [
     {
@@ -213,12 +223,15 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       dateOfBirth: [null as Date | null],
       position: [user?.position || ""],
       jerseyNumber: [""],
-      teamName: [""],
+      heightCm: [null as number | null],
+      weightKg: [null as number | null],
+      teamId: [null as string | null],
       phone: [""],
     });
 
-    // Load existing profile data
+    // Load existing profile data and available teams
     this.loadProfileData();
+    this.loadAvailableTeams();
 
     this.notificationForm = this.fb.group({
       emailNotifications: [true],
@@ -521,9 +534,27 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             ? new Date(profile.date_of_birth)
             : null,
           position: profile.position || "",
-          jerseyNumber: profile.jersey_number || "",
-          teamName: profile.team || "",
+          jerseyNumber: profile.jersey_number?.toString() || "",
+          heightCm: profile.height_cm || null,
+          weightKg: profile.weight_kg || null,
           phone: profile.phone || "",
+        });
+      }
+
+      // Load current team membership
+      const { data: membership } = await this.supabaseService.client
+        .from("team_members")
+        .select("id, team_id, position, jersey_number")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .maybeSingle();
+
+      if (membership) {
+        this.currentTeamMemberId.set(membership.id);
+        this.profileForm.patchValue({
+          teamId: membership.team_id,
+          position: membership.position || this.profileForm.get("position")?.value,
+          jerseyNumber: membership.jersey_number?.toString() || this.profileForm.get("jerseyNumber")?.value,
         });
       }
     } catch (error) {
@@ -590,6 +621,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // Try to update user data in Supabase users table (gracefully handle errors)
       try {
         const nameParts = settings.profile.displayName?.split(" ") || [];
+        
+        // Format date of birth for database (YYYY-MM-DD)
+        let dateOfBirthStr: string | null = null;
+        if (settings.profile.dateOfBirth) {
+          const dob = new Date(settings.profile.dateOfBirth);
+          if (!isNaN(dob.getTime())) {
+            dateOfBirthStr = dob.toISOString().split('T')[0];
+          }
+        }
+        
         const { error: profileError } = await this.supabaseService.client
           .from("users")
           .update({
@@ -597,9 +638,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             first_name: nameParts[0] || null,
             last_name: nameParts.slice(1).join(" ") || null,
             position: settings.profile.position,
-            jersey_number: settings.profile.jerseyNumber || null,
-            team: settings.profile.teamName,
+            jersey_number: settings.profile.jerseyNumber ? parseInt(settings.profile.jerseyNumber, 10) : null,
+            height_cm: settings.profile.heightCm || null,
+            weight_kg: settings.profile.weightKg || null,
             phone: settings.profile.phone,
+            date_of_birth: dateOfBirthStr,
             updated_at: new Date().toISOString(),
           })
           .eq("id", user.id);
@@ -609,6 +652,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             "Could not update user profile:",
             profileError.message,
           );
+        }
+        
+        // Update team membership if team was selected
+        if (settings.profile.teamId) {
+          await this.updateTeamMembership(user.id, settings.profile.teamId, settings.profile.position, settings.profile.jerseyNumber);
         }
       } catch {
         // Table update failed, continue with localStorage save
@@ -671,6 +719,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         }
       }
 
+      // Refresh profile completion data immediately so all views update
+      await this.profileCompletionService.refresh();
+      
       this.toastService.success("Settings saved successfully!");
     } catch (error) {
       const message =
@@ -1214,5 +1265,213 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     }
 
     return age;
+  }
+
+  // ============================================================================
+  // TEAM SELECTION
+  // ============================================================================
+
+  /**
+   * Load available teams from database (only approved teams)
+   */
+  private async loadAvailableTeams(): Promise<void> {
+    try {
+      const { data: teams, error } = await this.supabaseService.client
+        .from("teams")
+        .select("id, name")
+        .eq("approval_status", "approved")
+        .order("name");
+
+      if (error) {
+        this.logger.warn("Could not load teams:", error.message);
+        return;
+      }
+
+      const teamOptions = (teams || []).map((team) => ({
+        label: team.name,
+        value: team.id,
+      }));
+
+      // Add "Request new team" option at the end
+      teamOptions.push({
+        label: "➕ Request to create a new team...",
+        value: "__new_team__",
+      });
+
+      this.availableTeams.set(teamOptions);
+    } catch (error) {
+      this.logger.warn("Failed to load teams:", error);
+    }
+  }
+
+  /**
+   * Handle team selection change
+   */
+  onTeamChange(event: { value: string | null }): void {
+    if (event.value === "__new_team__") {
+      // Reset the dropdown selection and show new team dialog
+      this.profileForm.get("teamId")?.setValue(null);
+      this.showNewTeamDialog = true;
+    }
+  }
+
+  /**
+   * Submit request for a new team
+   */
+  async submitNewTeamRequest(): Promise<void> {
+    if (!this.newTeamName.trim()) {
+      this.toastService.warn("Please enter a team name");
+      return;
+    }
+
+    this.isSubmittingTeamRequest.set(true);
+
+    try {
+      const user = this.supabaseService.getCurrentUser();
+      if (!user) {
+        this.toastService.error("Please log in to request a new team");
+        return;
+      }
+
+      // Create the team with pending_approval status
+      const { data: newTeam, error: teamError } = await this.supabaseService.client
+        .from("teams")
+        .insert({
+          name: this.newTeamName.trim(),
+          approval_status: "pending_approval",
+          application_notes: this.newTeamNotes.trim() || null,
+          coach_id: user.id,
+        })
+        .select("id, name")
+        .single();
+
+      if (teamError) {
+        throw new Error(teamError.message);
+      }
+
+      // Create an approval request record
+      await this.supabaseService.client
+        .from("approval_requests")
+        .insert({
+          request_type: "new_team",
+          team_id: newTeam.id,
+          user_id: user.id,
+          request_reason: this.newTeamNotes.trim() || `User requested to create team: ${this.newTeamName}`,
+          status: "pending",
+        });
+
+      // Send email notification to superadmin
+      await this.sendTeamApprovalNotification(user, this.newTeamName.trim());
+
+      this.toastService.success(
+        "Your team request has been submitted for approval. You will be notified once it's reviewed."
+      );
+      
+      this.showNewTeamDialog = false;
+      this.newTeamName = "";
+      this.newTeamNotes = "";
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to submit team request";
+      this.toastService.error(message);
+      this.logger.error("Error submitting new team request:", error);
+    } finally {
+      this.isSubmittingTeamRequest.set(false);
+    }
+  }
+
+  /**
+   * Send email notification to superadmin about new team request
+   */
+  private async sendTeamApprovalNotification(user: { id: string; email?: string }, teamName: string): Promise<void> {
+    try {
+      // Call edge function to send email
+      const { error } = await this.supabaseService.client.functions.invoke(
+        "send-team-approval-notification",
+        {
+          body: {
+            teamName,
+            requestedBy: user.email || "Unknown user",
+            requestedById: user.id,
+            adminEmail: "merlin@ljubljanafrogs.si",
+          },
+        }
+      );
+
+      if (error) {
+        this.logger.warn("Could not send notification email:", error.message);
+        // Don't throw - the request was still created successfully
+      }
+    } catch (error) {
+      this.logger.warn("Failed to send team approval notification:", error);
+      // Don't throw - the request was still created successfully
+    }
+  }
+
+  /**
+   * Update user's team membership in team_members table
+   */
+  private async updateTeamMembership(
+    userId: string,
+    teamId: string,
+    position?: string,
+    jerseyNumber?: string
+  ): Promise<void> {
+    try {
+      // Check if user already has a membership in this team
+      const { data: existingMembership } = await this.supabaseService.client
+        .from("team_members")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("team_id", teamId)
+        .maybeSingle();
+
+      if (existingMembership) {
+        // Update existing membership
+        await this.supabaseService.client
+          .from("team_members")
+          .update({
+            position: position || null,
+            jersey_number: jerseyNumber ? parseInt(jerseyNumber, 10) : null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingMembership.id);
+      } else {
+        // Check if user has membership in another team
+        const { data: otherMembership } = await this.supabaseService.client
+          .from("team_members")
+          .select("id, team_id")
+          .eq("user_id", userId)
+          .neq("team_id", teamId)
+          .maybeSingle();
+
+        if (otherMembership) {
+          // Update to new team (effectively transfer)
+          await this.supabaseService.client
+            .from("team_members")
+            .update({
+              team_id: teamId,
+              position: position || null,
+              jersey_number: jerseyNumber ? parseInt(jerseyNumber, 10) : null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", otherMembership.id);
+        } else {
+          // Create new membership
+          await this.supabaseService.client
+            .from("team_members")
+            .insert({
+              user_id: userId,
+              team_id: teamId,
+              role: "player",
+              position: position || null,
+              jersey_number: jerseyNumber ? parseInt(jerseyNumber, 10) : null,
+              status: "active",
+            });
+        }
+      }
+    } catch (error) {
+      this.logger.warn("Could not update team membership:", error);
+      // Don't throw - profile update was still successful
+    }
   }
 }

@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    HostListener,
     inject,
     OnDestroy,
     OnInit,
@@ -197,6 +198,16 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private routerSub?: Subscription;
 
   isOpen = signal(false);
+
+  /**
+   * Close sidebar on Escape key press
+   */
+  @HostListener("document:keydown.escape")
+  onEscapePress(): void {
+    if (this.isOpen()) {
+      this.closeSidebar();
+    }
+  }
   
   // State persistence for "Me" group expansion
   meGroupExpanded = signal(this.loadMeGroupState());

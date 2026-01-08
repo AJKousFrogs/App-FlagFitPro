@@ -1896,3 +1896,103 @@
 .export-dialog {
   // Component-specific styles remain here
 }
+
+/* ================================================================
+   NEW TEAM REQUEST DIALOG
+   ================================================================ */
+
+.new-team-dialog {
+  // Component-specific styles
+}
+
+.new-team-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
+}
+
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-info-bg, rgba(59, 130, 246, 0.1));
+  border-left: 4px solid var(--color-info, #3b82f6);
+  border-radius: var(--radius-md);
+}
+
+.info-banner i {
+  color: var(--color-info, #3b82f6);
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.info-banner p {
+  margin: 0;
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-field label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.form-field label i {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.form-field .required {
+  color: var(--color-error, #ef4444);
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--surface-primary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-subtle, rgba(16, 201, 107, 0.15));
+}
+
+.form-field textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.field-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+.field-hint i {
+  font-size: 0.75rem;
+}

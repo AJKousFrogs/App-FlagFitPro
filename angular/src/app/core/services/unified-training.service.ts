@@ -42,6 +42,7 @@ import {
   SupplementEntry,
   TrainingSessionRecord,
   SmartRecommendationsResponse,
+  TrainingRecommendation,
   DailyProtocolResponse,
 } from "../models/api.models";
 // Note: WellnessCheckinData and ApiResponseWrapper are defined locally below
@@ -401,6 +402,8 @@ export class UnifiedTrainingService {
   /**
    * Get everything needed for the "Today" view in one coordinated call
    * This now also populates the internal signals for global consistency
+   * 
+   * Uses direct Supabase for protocol data when API is not available
    */
   getTodayOverview(date?: string) {
     const id = this.userId();
@@ -409,12 +412,11 @@ export class UnifiedTrainingService {
     this._isRefreshing.set(true);
     const targetDate = date || new Date().toISOString().split("T")[0];
 
+    // Use direct Supabase queries instead of API calls for better reliability
     return combineLatest({
-      protocol: this.api.get(`/api/daily-protocol?date=${targetDate}`),
+      protocol: from(this.loadDailyProtocolDirect(id, targetDate)),
       readiness: this.readinessService.calculateToday(id),
-      recommendations: this.api.get(
-        `/api/smart-training-recommendations?athleteId=${id}`,
-      ),
+      recommendations: from(this.loadRecommendationsDirect(id)),
       trainingData: from(this.loadAllTrainingData()),
     }).pipe(
       map((data) => {
@@ -435,6 +437,81 @@ export class UnifiedTrainingService {
       }),
       shareReplay(1),
     );
+  }
+
+  /**
+   * Load daily protocol directly from Supabase
+   */
+  private async loadDailyProtocolDirect(userId: string, date: string): Promise<{ data: DailyProtocolResponse | null }> {
+    try {
+      const { data, error } = await this.supabase.client
+        .from("daily_protocols")
+        .select(`
+          *,
+          protocol_exercises (*)
+        `)
+        .eq("user_id", userId)
+        .eq("protocol_date", date)
+        .maybeSingle();
+
+      if (error) {
+        this.logger.warn("[UnifiedTraining] Error loading daily protocol:", error);
+        return { data: null };
+      }
+
+      return { data: data as DailyProtocolResponse };
+    } catch (err) {
+      this.logger.warn("[UnifiedTraining] Failed to load daily protocol:", err);
+      return { data: null };
+    }
+  }
+
+  /**
+   * Load training recommendations directly from Supabase
+   */
+  private async loadRecommendationsDirect(userId: string): Promise<{ data: SmartRecommendationsResponse | null }> {
+    try {
+      // Get latest training suggestions for user
+      const { data, error } = await this.supabase.client
+        .from("ai_training_suggestions")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (error) {
+        this.logger.warn("[UnifiedTraining] Error loading recommendations:", error);
+        return { data: null };
+      }
+
+      // Transform to expected SmartRecommendationsResponse format
+      // Note: ai_training_suggestions has: id, user_id, suggestion_type, title, description, priority, confidence_score, data_sources, status, expires_at, created_at
+      const recommendations: SmartRecommendationsResponse = {
+        athleteId: userId,
+        date: new Date().toISOString().split("T")[0],
+        overallStatus: "optimal",
+        recommendations: data?.map(s => ({
+          type: (s.suggestion_type as TrainingRecommendation["type"]) || "focus",
+          priority: (s.priority as TrainingRecommendation["priority"]) || "medium",
+          message: s.description || s.title || "Training suggestion",
+          action: undefined, // Column doesn't exist in table
+          reasoning: undefined, // Column doesn't exist in table
+        })) || [],
+        warnings: [],
+        suggestions: data?.map(s => s.title || s.description).filter(Boolean) as string[] || [],
+        metrics: {
+          acwr: 1.0, // Will be overridden by actual ACWR service
+          readiness: 75,
+          fatigue: 3,
+          injuryRisk: 0.1,
+        },
+      };
+
+      return { data: recommendations };
+    } catch (err) {
+      this.logger.warn("[UnifiedTraining] Failed to load recommendations:", err);
+      return { data: null };
+    }
   }
 
   /**
@@ -588,20 +665,21 @@ export class UnifiedTrainingService {
 
   /**
    * Quick update for hydration
+   * @param amountMl Amount in milliliters (converted to glasses, 1 glass = 250ml)
    */
   async addHydration(amountMl: number) {
     const current = this.latestWellness();
     const currentLevel =
       (current as { hydration?: number } | null)?.hydration || 0;
-    // Assuming hydration_level in DB is glasses or ml?
-    // WellnessService.logWellness uses hydration_level.
-    // Let's assume it's glasses/units for now or ml depending on the component logic.
-    // In hydration-tracker.component.ts it was adding fixed amounts like 250ml.
 
-    // We'll just pass through the update
+    // Database stores hydration in glasses (not ml)
+    // Convert ml to glasses: 1 glass ≈ 250ml
+    const glassesToAdd = Math.round(amountMl / 250);
+    const newLevel = currentLevel + glassesToAdd;
+
     return this.submitWellness({
       ...((current as unknown as Record<string, unknown>) ?? {}),
-      hydration: currentLevel + amountMl,
+      hydration: newLevel,
       date: new Date().toISOString().split("T")[0],
     });
   }

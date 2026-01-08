@@ -83,9 +83,9 @@ export class OverrideLoggingService {
     override: Omit<CoachOverride, "id" | "createdAt">
   ): Promise<void> {
     try {
-      // Get coach name for notification
+      // Get coach name for notification (use 'users' table - profiles doesn't exist)
       const { data: coachData } = await this.supabaseService.client
-        .from("profiles")
+        .from("users")
         .select("full_name")
         .eq("id", override.coachId)
         .single();
@@ -109,13 +109,15 @@ export class OverrideLoggingService {
       // Create notification following 5-Question Contract
       const notificationMessage = `${coachName} adjusted your training plan. ${changeDescription}`;
 
+      // Note: notifications table uses 'data' not 'metadata', 'is_read' not 'read'
       await this.supabaseService.client.from("notifications").insert({
         user_id: override.playerId,
         notification_type: "coach_override",
         title: "Training Plan Adjusted",
         message: notificationMessage,
         priority: "high",
-        metadata: {
+        is_read: false,
+        data: {
           overrideId,
           overrideType: override.overrideType,
           coachId: override.coachId,
@@ -273,13 +275,14 @@ export class OverrideLoggingService {
   ): Promise<CoachOverride[]> {
     try {
       // Get recent override notifications
+      // Note: table uses 'is_read' not 'read', and 'data' not 'metadata'
       const { data: notifications, error: notifError } =
         await this.supabaseService.client
           .from("notifications")
-          .select("metadata")
+          .select("data")
           .eq("user_id", playerId)
           .eq("notification_type", "coach_override")
-          .eq("read", false)
+          .eq("is_read", false)
           .order("created_at", { ascending: false })
           .limit(limit);
 
@@ -295,9 +298,9 @@ export class OverrideLoggingService {
         return [];
       }
 
-      // Extract override IDs from notifications
+      // Extract override IDs from notifications (data field stores metadata)
       const overrideIds = notifications
-        .map((n) => n.metadata?.overrideId)
+        .map((n) => (n.data as Record<string, unknown>)?.overrideId)
         .filter((id): id is string => typeof id === "string");
 
       if (overrideIds.length === 0) {

@@ -516,6 +516,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
               });
             }
           }
+          }
         }
       }
     }

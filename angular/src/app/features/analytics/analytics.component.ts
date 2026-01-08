@@ -2085,29 +2085,29 @@ export class AnalyticsComponent implements AfterViewInit {
             gap: 16px;
           }
           .metric-card {
-            background: #f8f9fa;
+            background: var(--surface-secondary);
             padding: 16px;
-            border-radius: 8px;
+            border-radius: var(--radius-lg);
             text-align: center;
           }
           .metric-value {
             font-size: 24px;
             font-weight: bold;
-            color: #10c96b;
+            color: var(--ds-primary-green);
           }
           .metric-label {
-            color: #666;
+            color: var(--color-text-secondary);
             font-size: 14px;
           }
           .goal-item {
-            background: #f8f9fa;
+            background: var(--surface-secondary);
             padding: 12px;
-            border-radius: 8px;
+            border-radius: var(--radius-lg);
             margin-bottom: 8px;
           }
           .goal-name {
             font-weight: bold;
-            color: #1a1a2e;
+            color: var(--color-text-primary);
           }
           .goal-progress {
             color: #666;

@@ -388,7 +388,7 @@ describe("Enhanced Chart Config", () => {
 
       expect(mockUpdate).toHaveBeenCalled();
       expect(
-        mockChart.options.plugins?.legend?.labels?.font?.size,
+        (mockChart.options.plugins?.legend?.labels?.font as any)?.size,
       ).toBeDefined();
     });
 
@@ -415,10 +415,10 @@ describe("Enhanced Chart Config", () => {
       updateChartFontSizes(mockChart);
 
       expect(mockUpdate).toHaveBeenCalled();
-      expect(mockChart.options.plugins?.tooltip?.titleFont?.size).toBeDefined();
-      expect(mockChart.options.plugins?.tooltip?.bodyFont?.size).toBeDefined();
+      expect((mockChart.options.plugins?.tooltip?.titleFont as any)?.size).toBeDefined();
+      expect((mockChart.options.plugins?.tooltip?.bodyFont as any)?.size).toBeDefined();
       expect(
-        mockChart.options.plugins?.tooltip?.footerFont?.size,
+        (mockChart.options.plugins?.tooltip?.footerFont as any)?.size,
       ).toBeDefined();
     });
 
@@ -438,8 +438,8 @@ describe("Enhanced Chart Config", () => {
       updateChartFontSizes(mockChart);
 
       expect(mockUpdate).toHaveBeenCalled();
-      expect(mockChart.options.scales?.x?.ticks?.font?.size).toBeDefined();
-      expect(mockChart.options.scales?.y?.ticks?.font?.size).toBeDefined();
+      expect((mockChart.options.scales?.x?.ticks?.font as any)?.size).toBeDefined();
+      expect((mockChart.options.scales?.y?.ticks?.font as any)?.size).toBeDefined();
     });
 
     it("should handle missing options gracefully", () => {

@@ -20,7 +20,18 @@ export default defineConfig({
   timeout: 60 * 1000, // 60 seconds per test
   expect: {
     timeout: 10000, // 10 seconds for assertions
+    // Visual regression settings
+    toHaveScreenshot: {
+      maxDiffPixels: 100, // Allow small differences for anti-aliasing
+      threshold: 0.1, // 10% pixel difference threshold
+    },
+    toMatchSnapshot: {
+      maxDiffPixelRatio: 0.01, // 1% max difference ratio
+    },
   },
+  // Snapshot output directory
+  snapshotDir: "./e2e/__snapshots__",
+  snapshotPathTemplate: "{snapshotDir}/{testFilePath}/{arg}{ext}",
   reporter: process.env["CI"]
     ? [
         ["html", { outputFolder: "playwright-report" }],
@@ -44,8 +55,28 @@ export default defineConfig({
   },
 
   projects: [
+    // Design system visual regression tests - runs on chromium only for consistent screenshots
+    {
+      name: "design-system",
+      testMatch: /design-system.*\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1920, height: 1080 },
+      },
+    },
+    // Visual regression tests - Storybook component screenshots
+    {
+      name: "visual-regression",
+      testMatch: /visual-regression\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 1280, height: 720 },
+      },
+    },
+    // Main E2E tests
     {
       name: "chromium",
+      testIgnore: /visual-regression\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 1920, height: 1080 },
@@ -57,6 +88,7 @@ export default defineConfig({
       : [
           {
             name: "firefox",
+            testIgnore: [/design-system.*\.spec\.ts/, /visual-regression\.spec\.ts/],
             use: {
               ...devices["Desktop Firefox"],
               viewport: { width: 1920, height: 1080 },
@@ -64,6 +96,7 @@ export default defineConfig({
           },
           {
             name: "webkit",
+            testIgnore: [/design-system.*\.spec\.ts/, /visual-regression\.spec\.ts/],
             use: {
               ...devices["Desktop Safari"],
               viewport: { width: 1920, height: 1080 },
@@ -76,7 +109,7 @@ export default defineConfig({
   webServer: {
     command: process.env["CI"] ? "npm run start" : "npm run start",
     url: "http://localhost:4200",
-    reuseExistingServer: !process.env["CI"],
+    reuseExistingServer: true, // Always reuse to avoid conflicts
     timeout: 120 * 1000,
     stdout: "ignore",
     stderr: "pipe",

@@ -374,10 +374,11 @@ export class PerformanceMonitorService {
   }
 
   private prefetchCriticalResources(): void {
-    // Prefetch critical resources
+    // Prefetch critical resources (fonts are already preloaded in index.html)
     const criticalResources = [
-      "/assets/fonts/main.woff2",
-      "/assets/icons/sprite.svg",
+      "/assets/fonts/Poppins-Regular.ttf",
+      "/assets/fonts/Poppins-SemiBold.ttf",
+      "/assets/fonts/Poppins-Bold.ttf",
     ];
 
     criticalResources.forEach((resource) => {

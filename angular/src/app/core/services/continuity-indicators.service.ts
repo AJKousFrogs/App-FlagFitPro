@@ -118,28 +118,32 @@ export class ContinuityIndicatorsService {
   }
 
   /**
-   * Get active travel recovery
+   * Get active travel recovery from athlete_travel_log
+   * Travel recovery is active if there's a recent travel and adaptation_day < 3
    */
   private async getActiveTravelRecovery(
     playerId: string
   ): Promise<{ endDate: Date; daysRemaining: number } | null> {
     try {
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date();
+      const twoDaysAgo = new Date(today);
+      twoDaysAgo.setDate(today.getDate() - 2);
 
+      // Check for recent travel where adaptation is still needed
       const { data, error } = await this.supabaseService.client
-        .from("recovery_protocols")
-        .select("end_date")
-        .eq("player_id", playerId)
-        .eq("protocol_type", "travel_recovery")
-        .gte("end_date", today)
-        .order("end_date", { ascending: true })
+        .from("athlete_travel_log")
+        .select("arrival_date, adaptation_day, timezone_difference")
+        .eq("user_id", playerId)
+        .gte("arrival_date", twoDaysAgo.toISOString().split("T")[0])
+        .order("arrival_date", { ascending: false })
         .limit(1)
         .maybeSingle();
 
       if (error && error.code !== "PGRST116") {
-        this.logger.error(
-          "[Continuity] Error fetching travel recovery:",
-          error
+        // Log only if it's not a "no rows" error
+        this.logger.warn(
+          "[Continuity] Travel recovery query failed (table may not have data):",
+          error.code
         );
         return null;
       }
@@ -148,21 +152,29 @@ export class ContinuityIndicatorsService {
         return null;
       }
 
-      const endDate = new Date(data.end_date);
-      const todayDate = new Date();
+      // Calculate days remaining in recovery
+      // Typical recovery is 1 day per timezone crossed, max 3 days
+      const timezoneDiff = Math.abs(data.timezone_difference || 0);
+      const recoveryDays = Math.min(timezoneDiff || 1, 3);
+      
+      const arrivalDate = new Date(data.arrival_date);
+      const recoveryEndDate = new Date(arrivalDate);
+      recoveryEndDate.setDate(arrivalDate.getDate() + recoveryDays);
+
       const daysRemaining = Math.ceil(
-        (endDate.getTime() - todayDate.getTime()) / (1000 * 60 * 60 * 24)
+        (recoveryEndDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
       );
 
+      if (daysRemaining <= 0) {
+        return null; // Recovery complete
+      }
+
       return {
-        endDate,
+        endDate: recoveryEndDate,
         daysRemaining: Math.max(0, daysRemaining),
       };
     } catch (error) {
-      this.logger.error(
-        "[Continuity] Error fetching travel recovery:",
-        error
-      );
+      // Silently return null - travel recovery is optional
       return null;
     }
   }

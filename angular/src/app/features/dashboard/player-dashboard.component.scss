@@ -605,3 +605,34 @@
 .milestone-tag {
   align-self: flex-start;
 }
+
+// ================================================================
+// MISSING DATA SECTION
+// ================================================================
+
+.missing-data-section {
+  position: relative; /* Required for absolute positioned badges */
+  margin-bottom: var(--space-4);
+}
+
+// ================================================================
+// OVERRIDE NOTIFICATIONS SECTION  
+// ================================================================
+
+.override-notifications-section {
+  position: relative; /* Required for absolute positioned badges */
+  margin-bottom: var(--space-4);
+}
+
+// ================================================================
+// SECTIONS WITH SEMANTIC BADGES
+// Ensure all sections containing semantic badges have position: relative
+// ================================================================
+
+.confidence-indicator-wrapper {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}

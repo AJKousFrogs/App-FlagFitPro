@@ -35,6 +35,7 @@ import {
   getPlayerStats,
   formatHeight,
   formatWeight,
+  getCountryFlag,
 } from "../roster-utils";
 
 @Component({
@@ -95,8 +96,9 @@ import {
           <h3 class="player-name">{{ player().name }}</h3>
           <div class="player-position">{{ player().position }}</div>
           <div class="player-meta">
+            <span class="country-flag" [attr.title]="player().country">{{ getCountryFlag(player().country) }}</span>
             <span>{{ player().country }}</span>
-            <span class="separator">�</span>
+            <span class="separator">•</span>
             <span>Age {{ player().age }}</span>
           </div>
         </div>
@@ -255,6 +257,7 @@ export class RosterPlayerCardComponent {
   getJerseyColor = getJerseyColor;
   formatHeight = formatHeight;
   formatWeight = formatWeight;
+  getCountryFlag = getCountryFlag;
 
   // Computed: Enriched player with live metrics
   enrichedPlayer = computed<PlayerWithMetrics>(() => {

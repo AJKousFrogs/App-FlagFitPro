@@ -70,7 +70,9 @@
 | Document | Description |
 | -------- | ----------- |
 | [DATABASE_SETUP.md](./DATABASE_SETUP.md) | Database setup guide |
+| [DATABASE_FLOW.md](./DATABASE_FLOW.md) | **Database flow & user action mapping** |
 | [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md) | Row-Level Security policies |
+| [AUDIT_GAPS.md](./AUDIT_GAPS.md) | 🔴 **Gaps & inconsistencies audit** |
 
 ---
 
@@ -108,7 +110,7 @@
 
 ---
 
-## File Structure (28 files)
+## File Structure (29 files)
 
 ```
 /docs/
@@ -141,6 +143,7 @@
 │
 ├── Database
 │   ├── DATABASE_SETUP.md
+│   ├── DATABASE_FLOW.md              ← NEW: User action → DB mapping
 │   └── RLS_POLICY_SPECIFICATION.md
 │
 ├── Security

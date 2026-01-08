@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   ElementRef,
   OnInit,
   ViewChild,
@@ -23,6 +24,7 @@ import { AccountDeletionService } from "../../core/services/account-deletion.ser
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -522,6 +524,7 @@ export class ProfileComponent implements OnInit {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private accountDeletionService = inject(AccountDeletionService);
+  private profileCompletionService = inject(ProfileCompletionService);
 
   @ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
 
@@ -584,12 +587,15 @@ export class ProfileComponent implements OnInit {
   loadingInvitations = signal(false);
   processingInvitation = signal<string | null>(null);
 
-  // Profile Completion
-  profileCompletion = signal<{
-    percentage: number;
-    missingFields: string[];
-    completedFields: string[];
-  }>({ percentage: 0, missingFields: [], completedFields: [] });
+  // Profile Completion - Use computed from centralized service for real-time updates
+  profileCompletion = computed(() => {
+    const status = this.profileCompletionService.completionStatus();
+    return {
+      percentage: status.percentage,
+      completedFields: status.completedFields,
+      missingFields: status.missingFields,
+    };
+  });
 
   ngOnInit(): void {
     this.initializePage();
@@ -598,56 +604,18 @@ export class ProfileComponent implements OnInit {
   /**
    * Initialize page with error handling
    */
-  private initializePage(): void {
+  private async initializePage(): Promise<void> {
     this.isLoading.set(true);
     this.hasError.set(false);
+    
+    // Load centralized profile data first for consistent completion calculation
+    await this.profileCompletionService.loadProfileData();
+    
     this.loadProfileData();
     this.loadPendingInvitations();
     // Check for pending deletion to show banner and restrict actions
     this.accountDeletionService.checkDeletionStatus();
-    // Calculate profile completion
-    this.calculateProfileCompletion();
-  }
-
-  /**
-   * Calculate profile completion percentage
-   */
-  private calculateProfileCompletion(): void {
-    const fields = [
-      { name: "Display Name", value: this.userName(), required: true },
-      { name: "Email", value: this.userEmail(), required: true },
-      { name: "Profile Photo", value: this.avatarUrl(), required: false },
-      { name: "Position", value: this.userPosition(), required: false },
-      { name: "Jersey Number", value: this.jerseyNumber(), required: false },
-      { name: "Team", value: this.teamName(), required: false },
-    ];
-
-    const completedFields: string[] = [];
-    const missingFields: string[] = [];
-
-    fields.forEach((field) => {
-      const hasValue =
-        field.value &&
-        field.value !== "Loading..." &&
-        field.value !== "User" &&
-        field.value !== null;
-
-      if (hasValue) {
-        completedFields.push(field.name);
-      } else {
-        missingFields.push(field.name);
-      }
-    });
-
-    const percentage = Math.round(
-      (completedFields.length / fields.length) * 100,
-    );
-
-    this.profileCompletion.set({
-      percentage,
-      completedFields,
-      missingFields,
-    });
+    // Profile completion is now computed automatically from the service
   }
 
   /**
@@ -686,9 +654,8 @@ export class ProfileComponent implements OnInit {
 
     // Load extended profile data from Supabase
     await this.loadExtendedProfileData(user.id);
-
-    // Recalculate profile completion after extended data loads
-    this.calculateProfileCompletion();
+    
+    // Profile completion is computed automatically from the service
 
     try {
       // Load real training sessions count
@@ -1203,14 +1170,14 @@ export class ProfileComponent implements OnInit {
 
       const avatarUrl = urlData.publicUrl;
 
-      // Update profile in database
+      // Update profile in database (use 'users' table - profiles doesn't exist)
       const { error: updateError } = await this.supabaseService.client
-        .from("profiles")
-        .upsert({
-          id: user.id,
-          avatar_url: avatarUrl,
+        .from("users")
+        .update({
+          profile_photo_url: avatarUrl,
           updated_at: new Date().toISOString(),
-        });
+        })
+        .eq("id", user.id);
 
       if (updateError) {
         this.logger.warn(

@@ -251,15 +251,12 @@ export class ProtocolBlockComponent {
   blockConfig = computed(() => getBlockConfig(this.block().type));
 
   constructor() {
-    // Set initial expanded state based on input or block status
-    if (this.defaultExpanded()) {
-      this.isExpanded.set(true);
-    }
+    // Expanded state will be set in ngOnInit when inputs are available
   }
 
   ngOnInit(): void {
-    // Auto-expand if in progress
-    if (this.block().status === "in_progress") {
+    // Set initial expanded state based on input or block status
+    if (this.defaultExpanded() || this.block().status === "in_progress") {
       this.isExpanded.set(true);
     }
   }

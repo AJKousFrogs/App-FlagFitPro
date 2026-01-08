@@ -135,7 +135,7 @@
 
   ::-webkit-scrollbar-thumb {
     background-color: var(--color-border-default);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
   }
 
   ::-webkit-scrollbar-thumb:hover {

@@ -66,6 +66,32 @@ interface TeamPlayerRecord {
 }
 
 /**
+ * Team member record with player role and user profile data
+ */
+interface PlayerMemberRecord {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: string;
+  position?: string; // From team_members (primary source)
+  jersey_number?: number; // From team_members (primary source)
+  users?: {
+    id: string;
+    email: string;
+    first_name?: string;
+    last_name?: string;
+    full_name?: string;
+    position?: string; // From users (fallback)
+    jersey_number?: number; // From users (fallback)
+    country?: string;
+    height_cm?: number;
+    weight_kg?: number;
+    date_of_birth?: string;
+    onboarding_completed?: boolean;
+  };
+}
+
+/**
  * Invitation record from database
  */
 interface InvitationRecord {
@@ -152,21 +178,30 @@ export class RosterService {
     this.isLoading.set(true);
     this.error.set(null);
     const userId = this.authService.currentUser()?.id;
+    
+    this.logger.warn(`[RosterService] Loading roster for user: ${userId}`);
 
     if (!userId) {
+      this.logger.warn("[RosterService] No user ID found");
       this.isLoading.set(false);
       return;
     }
 
     try {
       // Get user's team and role
-      const { data: teamMember } = await this.supabaseService.client
+      const { data: teamMember, error: teamError } = await this.supabaseService.client
         .from("team_members")
         .select("team_id, role, teams(name)")
         .eq("user_id", userId)
         .single();
+      
+      this.logger.warn(`[RosterService] Team member query result:`, JSON.stringify(teamMember));
+      if (teamError) {
+        this.logger.warn(`[RosterService] Team member query error:`, JSON.stringify(teamError));
+      }
 
       if (!teamMember?.team_id) {
+        this.logger.warn("[RosterService] No team found for user");
         this.teamStats.set([]);
         this.coachingStaff.set([]);
         this.allPlayers.set([]);
@@ -194,6 +229,42 @@ export class RosterService {
         )
         .eq("team_id", teamMember.team_id);
 
+      // Load team members with player role and their user profile data
+      // First get team members with role='player' - include position and jersey_number from team_members
+      const { data: playerMemberIds } = await this.supabaseService.client
+        .from("team_members")
+        .select("id, team_id, user_id, role, position, jersey_number")
+        .eq("team_id", teamMember.team_id)
+        .eq("role", "player");
+      
+      this.logger.warn(`[RosterService] Player member IDs:`, JSON.stringify(playerMemberIds));
+      
+      // Then fetch user data for those members
+      let playerMembers: PlayerMemberRecord[] = [];
+      if (playerMemberIds && playerMemberIds.length > 0) {
+        const userIds = playerMemberIds.map(m => m.user_id).filter(Boolean);
+        const { data: userData } = await this.supabaseService.client
+          .from("users")
+          .select("id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed")
+          .in("id", userIds);
+        
+        this.logger.warn(`[RosterService] User data:`, JSON.stringify(userData));
+        
+        // Combine member and user data - team_members fields take priority
+        const userMap = new Map((userData || []).map(u => [u.id, u]));
+        playerMembers = playerMemberIds.map(m => ({
+          id: m.id,
+          team_id: m.team_id,
+          user_id: m.user_id,
+          role: m.role,
+          position: m.position, // From team_members (primary source)
+          jersey_number: m.jersey_number, // From team_members (primary source)
+          users: userMap.get(m.user_id) || undefined,
+        }));
+      }
+      
+      this.logger.info(`[RosterService] Combined player members:`, JSON.stringify(playerMembers));
+
       // Load players from team_players table
       const { data: players, error: playersError } =
         await this.supabaseService.client
@@ -216,12 +287,38 @@ export class RosterService {
       );
       this.coachingStaff.set(staff);
 
-      // Process players
-      const playerList = this.processPlayers(players);
-      this.allPlayers.set(playerList);
+      // Process players from team_players table
+      const playersFromTable = this.processPlayers(players);
+      
+      // Process players from team_members with role='player'
+      const playersFromMembers = this.processPlayerMembers(
+        playerMembers as PlayerMemberRecord[] | null,
+      );
+
+      // Merge both player lists, avoiding duplicates by user_id
+      const seenUserIds = new Set<string>();
+      const allPlayersList: Player[] = [];
+      
+      // First add players from team_players (these are explicitly added players)
+      for (const player of playersFromTable) {
+        if (player.user_id) {
+          seenUserIds.add(player.user_id);
+        }
+        allPlayersList.push(player);
+      }
+      
+      // Then add players from team_members who don't already exist in team_players
+      for (const player of playersFromMembers) {
+        if (player.user_id && seenUserIds.has(player.user_id)) {
+          continue; // Skip if already in team_players
+        }
+        allPlayersList.push(player);
+      }
+      
+      this.allPlayers.set(allPlayersList);
 
       // Calculate team stats
-      this.calculateTeamStats(playerList, staff);
+      this.calculateTeamStats(allPlayersList, staff);
     } catch (error: unknown) {
       this.logger.error("[RosterService] Error loading roster:", error);
       this.error.set(this.getErrorMessage(error));
@@ -723,6 +820,61 @@ export class RosterService {
         user_id: p.user_id,
       };
     });
+  }
+
+  /**
+   * Process team_members with role='player' into Player objects
+   * Uses user profile data from the users table
+   */
+  private processPlayerMembers(members: PlayerMemberRecord[] | null): Player[] {
+    return (members || [])
+      .filter((m) => m.users?.onboarding_completed) // Only include onboarded users
+      .map((m) => {
+        const user = m.users;
+        
+        // Calculate age from date of birth
+        let age = 0;
+        if (user?.date_of_birth) {
+          const birthDate = new Date(user.date_of_birth);
+          const today = new Date();
+          age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+          }
+        }
+
+        // Format height and weight
+        const height = user?.height_cm ? `${user.height_cm} cm` : "N/A";
+        const weight = user?.weight_kg ? `${user.weight_kg} kg` : "N/A";
+
+        // Build name from first_name + last_name or full_name
+        const name = user?.full_name || 
+          [user?.first_name, user?.last_name].filter(Boolean).join(" ") || 
+          user?.email?.split("@")[0] || 
+          "Unknown";
+
+        // PRIORITY: team_members fields > users fields (team_members is the authoritative source)
+        const position = m.position || user?.position || "Unknown";
+        const jerseyNumber = m.jersey_number ?? user?.jersey_number;
+
+        return {
+          id: m.id, // Use team_member id as the player id
+          name,
+          position,
+          jersey: jerseyNumber?.toString() || "0",
+          country: user?.country || "Unknown",
+          age,
+          height,
+          weight,
+          email: user?.email || "",
+          phone: "",
+          status: "active" as PlayerStatus,
+          stats: {},
+          created_at: new Date().toISOString(),
+          user_id: m.user_id,
+        };
+      });
   }
 
   private calculateTeamStats(players: Player[], staff: StaffMember[]): void {

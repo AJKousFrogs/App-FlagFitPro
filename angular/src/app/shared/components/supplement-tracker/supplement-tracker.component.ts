@@ -317,6 +317,7 @@ export class SupplementTrackerComponent implements OnInit {
   }
 
   toggleSupplement(supplement: Supplement): void {
+    this.logger.info(`[Supplement] Toggling: ${supplement.name}, current: ${supplement.taken}`);
     const updatedSupplements = this.supplements().map((s) => {
       if (s.id === supplement.id) {
         const taken = !s.taken;
@@ -330,32 +331,38 @@ export class SupplementTrackerComponent implements OnInit {
     });
     this.supplements.set(updatedSupplements);
 
-    // Log to API
-    this.apiService
-      .post(API_ENDPOINTS.supplements.log, {
-        supplement: supplement.name,
-        taken: !supplement.taken,
-        date: new Date().toISOString().split("T")[0],
-        dosage: supplement.dosage,
-      })
-      .subscribe({
-        next: () => {
-          const action = !supplement.taken ? "logged" : "unmarked";
-          this.toastService.success(`${supplement.name} ${action}`);
-        },
-        error: (err) => {
-          this.logger.error("Error logging supplement:", err);
-          // Revert the change
-          this.supplements.set(
-            this.supplements().map((s) => {
-              if (s.id === supplement.id) {
-                return { ...s, taken: supplement.taken };
-              }
-              return s;
-            }),
-          );
-        },
-      });
+    // Log to API - only log when marking as taken (not when unmarking)
+    const nowTaken = !supplement.taken;
+    if (nowTaken) {
+      this.apiService
+        .post(API_ENDPOINTS.supplements.log, {
+          supplement: supplement.name,
+          dose: supplement.dosage ? parseFloat(supplement.dosage) || null : null,
+          takenAt: new Date().toISOString(),
+          notes: `Dosage: ${supplement.dosage || "standard"}`,
+        })
+        .subscribe({
+          next: () => {
+            this.toastService.success(`${supplement.name} logged ✓`);
+          },
+          error: (err) => {
+            this.logger.error("Error logging supplement:", err);
+            this.toastService.error(`Failed to log ${supplement.name}`);
+            // Revert the change
+            this.supplements.set(
+              this.supplements().map((s) => {
+                if (s.id === supplement.id) {
+                  return { ...s, taken: false, takenAt: undefined };
+                }
+                return s;
+              }),
+            );
+          },
+        });
+    } else {
+      // Just show toast when unmarking (no API call needed for unmarking)
+      this.toastService.info(`${supplement.name} unmarked`);
+    }
   }
 
   openAddDialog(): void {

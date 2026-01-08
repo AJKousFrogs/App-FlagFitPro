@@ -370,62 +370,26 @@ export class TrainingScheduleComponent implements OnInit {
     "Failed to load training sessions. Please try again.",
   );
 
-  // Sessions filtered by view mode (week or extended)
+  // Sessions filtered to show upcoming sessions starting from tomorrow
   filteredSessions = computed(() => {
     const allSessions = this.sessions();
-    const mode = this.viewMode();
-    const selected = this.selectedDate();
+    
+    // Calculate tomorrow's date (start of day)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-    console.warn("🔍 Filtering sessions:", {
-      totalSessions: allSessions.length,
-      mode,
-      selectedDate: selected.toISOString().split('T')[0],
-      firstSessionDate: allSessions[0]?.date?.toISOString?.() || 'none'
-    });
-
-    if (mode === 'week') {
-      // Show only sessions in the selected week
-      const weekStart = new Date(selected);
-      weekStart.setDate(selected.getDate() - selected.getDay());
-      weekStart.setHours(0, 0, 0, 0);
-
-      const weekEnd = new Date(weekStart);
-      weekEnd.setDate(weekStart.getDate() + 6);
-      weekEnd.setHours(23, 59, 59, 999);
-
-      console.warn("📆 Week range:", {
-        start: weekStart.toISOString().split('T')[0],
-        end: weekEnd.toISOString().split('T')[0],
-        startTime: weekStart.getTime(),
-        endTime: weekEnd.getTime()
-      });
-
-      const filtered = allSessions.filter(session => {
-        // Normalize ALL dates to midnight by comparing just the date strings
+    // Filter to sessions from tomorrow onwards and limit to 5
+    const upcomingSessions = allSessions
+      .filter(session => {
         const sessionDateStr = session.date.toISOString().split('T')[0];
-        const weekStartStr = weekStart.toISOString().split('T')[0];
-        const weekEndStr = weekEnd.toISOString().split('T')[0];
-        
-        const isInRange = sessionDateStr >= weekStartStr && sessionDateStr <= weekEndStr;
-        
-        if (!isInRange) {
-          console.warn(`❌ Session "${session.type}" on ${sessionDateStr} is OUTSIDE week range ${weekStartStr} to ${weekEndStr}`);
-        }
-        return isInRange;
-      });
+        return sessionDateStr >= tomorrowStr;
+      })
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+      .slice(0, 5);
 
-      console.warn(`✅ Filtered to ${filtered.length} sessions for this week`);
-      return filtered;
-    } else {
-      // Month view - show all sessions in the selected month
-      const monthStart = new Date(selected.getFullYear(), selected.getMonth(), 1);
-      const monthEnd = new Date(selected.getFullYear(), selected.getMonth() + 1, 0, 23, 59, 59, 999);
-
-      return allSessions.filter(session => {
-        const sessionDate = new Date(session.date);
-        return sessionDate >= monthStart && sessionDate <= monthEnd;
-      });
-    }
+    return upcomingSessions;
   });
 
   // Computed: Get session type color for calendar markers
@@ -474,27 +438,17 @@ export class TrainingScheduleComponent implements OnInit {
         return;
       }
 
-      // Calculate date range based on view mode
-      const selected = this.selectedDate();
-      let startDate: Date;
-      let endDate: Date;
-
-      if (this.viewMode() === "month") {
-        // Month view: show entire month
-        startDate = new Date(selected.getFullYear(), selected.getMonth(), 1);
-        endDate = new Date(selected.getFullYear(), selected.getMonth() + 1, 0);
-      } else {
-        // Week view: show selected week
-        startDate = new Date(selected);
-        startDate.setDate(selected.getDate() - selected.getDay());
-        startDate.setHours(0, 0, 0, 0);
-        endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + 6);
-      }
+      // Calculate date range: from tomorrow to 2 weeks out (to ensure we have enough sessions)
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      
+      const twoWeeksOut = new Date(tomorrow);
+      twoWeeksOut.setDate(tomorrow.getDate() + 14);
 
       // Alias for backward compatibility
-      const startOfWeek = startDate;
-      const endOfWeek = endDate;
+      const startOfWeek = tomorrow;
+      const endOfWeek = twoWeeksOut;
 
       // 1. Fetch actual training sessions (logged/completed sessions)
       const { data: actualSessions, error: sessionsError } =
@@ -570,27 +524,26 @@ export class TrainingScheduleComponent implements OnInit {
       // Map scheduled templates to sessions (if no template error)
       let mappedScheduledSessions: TrainingSession[] = [];
       if (!templatesError && scheduledTemplates) {
-        console.warn("🔍 TEMPLATES FOUND:", scheduledTemplates.length);
         this.logger.debug("Found scheduled templates", { count: scheduledTemplates.length });
+        
         mappedScheduledSessions = scheduledTemplates
           .filter((template) => {
-            // training_weeks is an array from the join - ensure it has data
-            const weeks = template.training_weeks as Array<{
-              start_date: string;
-              week_number: number;
-            }>;
-            return weeks && weeks.length > 0;
+            // training_weeks can be an array or single object from Supabase join
+            const weeks = template.training_weeks;
+            // Check if it's an array with data OR a single object with start_date
+            const hasWeekData = Array.isArray(weeks) 
+              ? weeks.length > 0 
+              : weeks && typeof weeks === 'object' && 'start_date' in weeks;
+            return hasWeekData;
           })
           .map((template) => {
-            // Get the first (and should be only) week from the join
-            const weeks = template.training_weeks as Array<{
-              start_date: string;
-              week_number: number;
-            }>;
-            const weekData = weeks[0];
+            // Handle both array and single object response from Supabase
+            const weeks = template.training_weeks;
+            const weekData = Array.isArray(weeks) 
+              ? weeks[0] as { start_date: string; week_number: number }
+              : weeks as { start_date: string; week_number: number };
             
             // Parse date string as local date to avoid timezone issues
-            // If start_date is "2026-01-03", parse as local midnight
             const dateStr = weekData.start_date.split('T')[0]; // Get just YYYY-MM-DD
             const [year, month, day] = dateStr.split('-').map(Number);
             const weekStart = new Date(year, month - 1, day, 0, 0, 0, 0);
@@ -608,13 +561,12 @@ export class TrainingScheduleComponent implements OnInit {
               isTemplate: true,
             };
           });
+        
         this.logger.debug("Mapped scheduled sessions", { count: mappedScheduledSessions.length });
       } else if (templatesError) {
-        console.error("❌ TEMPLATE ERROR:", templatesError);
         this.logger.error("Error loading templates", templatesError);
       } else {
-        console.warn("⚠️ NO TEMPLATES FOUND for this week");
-        this.logger.debug("No scheduled templates found for week range");
+        this.logger.debug("No scheduled templates found for date range");
       }
 
       // Combine both sources, but prioritize templates over test data
@@ -629,23 +581,18 @@ export class TrainingScheduleComponent implements OnInit {
           !actualDates.has(`${s.date.toISOString().split("T")[0]}-${s.type}`),
       );
 
-      // If we have scheduled templates, show ONLY those + completed/in-progress actual sessions
-      // This prevents generic test sessions from overriding the 52-week program
+      // Decision point: Use templates if available, otherwise fall back to actual sessions
       let allSessions: TrainingSession[];
       if (mappedScheduledSessions.length > 0) {
-        // Use templates ONLY - don't mix with test data for now
+        // Use templates from 52-week program as the authoritative source
         allSessions = mappedScheduledSessions.sort(
           (a, b) => a.date.getTime() - b.date.getTime(),
         );
-        console.warn("🎯 Using ONLY templates (no test data)", {
+        this.logger.debug("Using scheduled templates as primary source", {
           templateCount: mappedScheduledSessions.length
         });
-        this.logger.debug("Using scheduled templates as primary source", {
-          templateCount: mappedScheduledSessions.length,
-          activeSessionCount: 0
-        });
       } else {
-        // No templates found, fallback to actual sessions
+        // No templates found, fallback to actual sessions from training_sessions table
         allSessions = [...mappedActualSessions, ...uniqueScheduled].sort(
           (a, b) => a.date.getTime() - b.date.getTime(),
         );

@@ -302,12 +302,12 @@ import { ButtonModule } from "primeng/button";
 
       .modal-content-scrollable::-webkit-scrollbar-track {
         background: var(--surface-secondary);
-        border-radius: 3px;
+        border-radius: var(--radius-sm);
       }
 
       .modal-content-scrollable::-webkit-scrollbar-thumb {
         background: var(--color-border-primary);
-        border-radius: 3px;
+        border-radius: var(--radius-sm);
       }
 
       .modal-content-scrollable::-webkit-scrollbar-thumb:hover {

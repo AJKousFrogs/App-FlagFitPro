@@ -26,7 +26,8 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              "src/manifest.json"
             ],
             "serviceWorker": "ngsw-config.json",
             "styles": [
@@ -110,6 +111,13 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "buildTarget": "flagfit-pro:build"
+          }
         },
         "storybook": {
           "builder": "@storybook/angular:start-storybook",

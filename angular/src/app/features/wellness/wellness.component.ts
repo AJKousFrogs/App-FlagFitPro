@@ -33,6 +33,7 @@ import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { OfflineQueueService } from "../../core/services/offline-queue.service";
+import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 
 interface WellnessAlert {
@@ -250,48 +251,50 @@ interface WellnessMetric {
             </app-card>
           }
 
-          <!-- Menstrual Cycle Tracking (Female Athletes) -->
-          @defer (on viewport) {
-            <app-card
-              title="Cycle Tracking"
-              headerIcon="pi-heart"
-              styleClass="cycle-tracking-card"
-            >
-              <div class="cycle-tracking-content">
-                <p class="cycle-description">
-                  Track your menstrual cycle to receive personalized training,
-                  nutrition, and recovery recommendations based on your cycle phase.
-                </p>
-                <div class="cycle-benefits">
-                  <div class="benefit-item">
-                    <i class="pi pi-check-circle"></i>
-                    <span>Phase-adapted training recommendations</span>
+          <!-- Menstrual Cycle Tracking (Female Athletes Only) -->
+          @if (isFemaleAthlete()) {
+            @defer (on viewport) {
+              <app-card
+                title="Cycle Tracking"
+                headerIcon="pi-heart"
+                styleClass="cycle-tracking-card"
+              >
+                <div class="cycle-tracking-content">
+                  <p class="cycle-description">
+                    Track your menstrual cycle to receive personalized training,
+                    nutrition, and recovery recommendations based on your cycle phase.
+                  </p>
+                  <div class="cycle-benefits">
+                    <div class="benefit-item">
+                      <i class="pi pi-check-circle"></i>
+                      <span>Phase-adapted training recommendations</span>
+                    </div>
+                    <div class="benefit-item">
+                      <i class="pi pi-check-circle"></i>
+                      <span>Injury risk awareness by cycle phase</span>
+                    </div>
+                    <div class="benefit-item">
+                      <i class="pi pi-check-circle"></i>
+                      <span>Nutrition guidance for each phase</span>
+                    </div>
+                    <div class="benefit-item">
+                      <i class="pi pi-check-circle"></i>
+                      <span>Private by default - coaches only see recovery recommendations</span>
+                    </div>
                   </div>
-                  <div class="benefit-item">
-                    <i class="pi pi-check-circle"></i>
-                    <span>Injury risk awareness by cycle phase</span>
-                  </div>
-                  <div class="benefit-item">
-                    <i class="pi pi-check-circle"></i>
-                    <span>Nutrition guidance for each phase</span>
-                  </div>
-                  <div class="benefit-item">
-                    <i class="pi pi-check-circle"></i>
-                    <span>Private by default - coaches only see recovery recommendations</span>
-                  </div>
+                  <app-button
+                    iconLeft="pi-calendar"
+                    [routerLink]="['/cycle-tracking']"
+                    styleClass="w-full mt-3"
+                    >Open Cycle Tracker</app-button
+                  >
                 </div>
-                <app-button
-                  iconLeft="pi-calendar"
-                  [routerLink]="['/cycle-tracking']"
-                  styleClass="w-full mt-3"
-                  >Open Cycle Tracker</app-button
-                >
-              </div>
-            </app-card>
-          } @placeholder {
-            <app-card title="Cycle Tracking" [loading]="true">
-              <div class="loading-text">Loading cycle tracking...</div>
-            </app-card>
+              </app-card>
+            } @placeholder {
+              <app-card title="Cycle Tracking" [loading]="true">
+                <div class="loading-text">Loading cycle tracking...</div>
+              </app-card>
+            }
           }
 
           <!-- Daily Check-in - Comprehensive for Olympic Athletes -->
@@ -485,6 +488,10 @@ export class WellnessComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly confidenceService = inject(DataConfidenceService);
   private readonly offlineQueue = inject(OfflineQueueService);
+  private readonly profileService = inject(ProfileCompletionService);
+
+  /** Cycle tracking is only shown to female athletes */
+  readonly isFemaleAthlete = this.profileService.isFemale;
 
   // Runtime guard signals - prevent white screen crashes
   readonly isPageLoading = signal<boolean>(true);
@@ -535,6 +542,8 @@ export class WellnessComponent {
   private initializePage(): void {
     this.isPageLoading.set(true);
     this.hasPageError.set(false);
+    // Load profile data to determine female athlete status (for cycle tracking visibility)
+    this.profileService.loadProfileData();
     this.loadWellnessData();
   }
 
@@ -680,11 +689,12 @@ export class WellnessComponent {
   readonly noDataMessage = DATA_STATE_MESSAGES.NO_DATA;
 
   private loadFallbackData(): void {
-    // Use centralized UX copy for consistent messaging
+    // Use short placeholder for stat cards to fit in responsive layout
+    const noDataValue = "—"; // Em dash for empty state
     this.wellnessStats.set([
       {
         label: "Sleep Quality",
-        value: this.noDataMessage.title,
+        value: noDataValue,
         icon: "pi-moon",
         color: "var(--color-status-info)",
         trend: this.noDataMessage.actionLabel,
@@ -692,7 +702,7 @@ export class WellnessComponent {
       },
       {
         label: "Recovery Score",
-        value: this.noDataMessage.title,
+        value: noDataValue,
         icon: "pi-heart",
         color: "var(--ds-primary-green)",
         trend: this.noDataMessage.actionLabel,
@@ -700,7 +710,7 @@ export class WellnessComponent {
       },
       {
         label: "Energy Level",
-        value: this.noDataMessage.title,
+        value: noDataValue,
         icon: "pi-bolt",
         color: "var(--color-status-warning)",
         trend: this.noDataMessage.actionLabel,
@@ -708,7 +718,7 @@ export class WellnessComponent {
       },
       {
         label: "Stress Level",
-        value: this.noDataMessage.title,
+        value: noDataValue,
         icon: "pi-shield",
         color: "var(--color-status-success)",
         trend: this.noDataMessage.actionLabel,
@@ -758,20 +768,22 @@ export class WellnessComponent {
 
     this.isSubmitting.set(true);
 
-    // Convert form data to comprehensive wellness check-in format
+    // Convert form data to wellness entry format matching WellnessData interface
+    // The service maps 'sleep' -> 'sleep_quality' in the database
     const wellnessData = {
-      sleep: this.checkInData.sleepHours,
-      sleep_quality: this.checkInData.sleepQuality,
-      energy: this.checkInData.energyLevel,
-      soreness: this.checkInData.soreness,
-      hydration: this.checkInData.hydration,
-      resting_hr:
-        this.checkInData.restingHR > 0 ? this.checkInData.restingHR : null,
-      mood: this.checkInData.mood,
-      stress: this.checkInData.stress,
-      motivation: this.checkInData.motivation,
-      readiness: this.checkInData.readiness,
+      sleep: this.checkInData.sleepQuality, // 1-10 rating (service maps to sleep_quality in DB)
+      energy: this.checkInData.energyLevel, // 1-10 rating
+      soreness: this.checkInData.soreness, // 1-10 rating
+      hydration: this.checkInData.hydration, // glasses of water
+      mood: this.checkInData.mood, // 1-10 rating
+      stress: this.checkInData.stress, // 1-10 rating
+      motivation: this.checkInData.motivation, // 1-10 rating
       date: new Date().toISOString().split("T")[0],
+      // Note: sleepHours, restingHR, and readiness are not stored in wellness_entries table
+      // They could be added via notes or a future schema update
+      notes: this.checkInData.sleepHours
+        ? `Sleep: ${this.checkInData.sleepHours}h${this.checkInData.restingHR ? `, RHR: ${this.checkInData.restingHR}bpm` : ""}${this.checkInData.readiness ? `, Readiness: ${this.checkInData.readiness}/10` : ""}`
+        : undefined,
     };
 
     this.trainingService

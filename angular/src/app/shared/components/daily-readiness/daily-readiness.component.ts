@@ -33,12 +33,15 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
+import { InputNumberModule } from "primeng/inputnumber";
 
 interface DailyState {
   pain_level: number;
   fatigue_level: number;
   sleep_quality: number;
   motivation_level: number;
+  weight_kg: number | null;
 }
 
 @Component({
@@ -53,7 +56,7 @@ interface DailyState {
     DialogModule,
     TooltipModule,
     ProgressBarModule,
-
+    InputNumberModule,
     ButtonComponent,
   ],
   template: `
@@ -235,6 +238,40 @@ interface DailyState {
               <span>High</span>
             </div>
           </div>
+
+          <!-- Weight (Optional) -->
+          <div class="slider-item weight-input">
+            <div class="slider-header">
+              <label>
+                <i class="pi pi-chart-line"></i>
+                Today's Weight
+                <span class="optional-label">(optional)</span>
+              </label>
+            </div>
+            <p-inputNumber
+              [(ngModel)]="state().weight_kg"
+              [suffix]="' kg'"
+              [min]="30"
+              [max]="200"
+              [step]="0.1"
+              [showButtons]="true"
+              [buttonLayout]="'horizontal'"
+              inputStyleClass="weight-input-field"
+              incrementButtonClass="weight-btn"
+              decrementButtonClass="weight-btn"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              placeholder="Enter weight"
+              (onInput)="updateState()"
+            ></p-inputNumber>
+            <p class="weight-hint">
+              @if (lastWeight()) {
+                Last: {{ lastWeight() }} kg
+              } @else {
+                Track daily for hydration & recovery insights
+              }
+            </p>
+          </div>
         </div>
 
         <!-- Risk Flags -->
@@ -254,6 +291,7 @@ export class DailyReadinessComponent implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private profileCompletionService = inject(ProfileCompletionService);
 
   readonly mode = input<any>(signal<"modal" | "card">("modal"));
   readonly showOnInit = input<any>(true);
@@ -263,12 +301,14 @@ export class DailyReadinessComponent implements OnInit {
 
   dialogVisible = false;
   saving = signal(false);
+  lastWeight = signal<number | null>(null);
 
   state = signal<DailyState>({
     pain_level: 0,
     fatigue_level: 3,
     sleep_quality: 7,
     motivation_level: 7,
+    weight_kg: null,
   });
 
   // Computed readiness score (0-100)
@@ -324,8 +364,23 @@ export class DailyReadinessComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    // Load last recorded weight for reference
+    this.loadLastWeight();
+    
     if (this.showOnInit() && this.mode() === "modal") {
       this.checkAndShowPrompt();
+    }
+  }
+
+  /**
+   * Load last recorded weight to display as reference
+   */
+  private async loadLastWeight(): Promise<void> {
+    const weight = await this.profileCompletionService.getCurrentWeight();
+    if (weight) {
+      this.lastWeight.set(weight);
+      // Pre-fill with last weight as starting point
+      this.state.update(s => ({ ...s, weight_kg: weight }));
     }
   }
 
@@ -339,18 +394,19 @@ export class DailyReadinessComponent implements OnInit {
 
     try {
       const today = new Date().toISOString().split("T")[0];
-      const { data: existingState } = await this.supabaseService.client
-        .from("athlete_daily_state")
+      // Check wellness_entries table (supports both athlete_id and user_id)
+      const { data: existingEntry } = await this.supabaseService.client
+        .from("wellness_entries")
         .select("id")
-        .eq("user_id", user.id)
-        .eq("state_date", today)
+        .or(`athlete_id.eq.${user.id},user_id.eq.${user.id}`)
+        .eq("date", today)
         .single();
 
-      if (!existingState) {
+      if (!existingEntry) {
         this.dialogVisible = true;
       }
     } catch {
-      // No state for today, show prompt
+      // No entry for today, show prompt
       this.dialogVisible = true;
     }
   }
@@ -371,7 +427,9 @@ export class DailyReadinessComponent implements OnInit {
   }
 
   /**
-   * Save the daily state to database
+   * Save the daily state to wellness_entries table
+   * Maps: pain_level → muscle_soreness, fatigue_level → energy_level (inverted)
+   * Also saves weight to body_measurements and users table
    */
   async saveState(): Promise<void> {
     const user = this.authService.getUser();
@@ -384,30 +442,42 @@ export class DailyReadinessComponent implements OnInit {
 
     try {
       const today = new Date().toISOString().split("T")[0];
-      const stateData = {
+      const state = this.state();
+      
+      // Map daily check-in fields to wellness_entries columns
+      // pain_level (0-10 where 10 is severe) → muscle_soreness (0-10)
+      // fatigue_level (0-10 where 10 is exhausted) → energy_level (inverted: 10 - fatigue)
+      const wellnessData = {
+        athlete_id: user.id,
         user_id: user.id,
-        state_date: today,
-        pain_level: this.state().pain_level,
-        fatigue_level: this.state().fatigue_level,
-        sleep_quality: this.state().sleep_quality,
-        motivation_level: this.state().motivation_level,
-        source: "ai_prompt",
+        date: today,
+        sleep_quality: state.sleep_quality,
+        muscle_soreness: state.pain_level,
+        energy_level: 10 - state.fatigue_level, // Invert: high fatigue = low energy
+        motivation_level: state.motivation_level,
+        notes: `Quick check-in via AI Coach prompt`,
       };
 
-      // Upsert (insert or update if exists)
+      // Upsert (insert or update if exists for same athlete + date)
       const { error } = await this.supabaseService.client
-        .from("athlete_daily_state")
-        .upsert(stateData, {
-          onConflict: "user_id,state_date",
+        .from("wellness_entries")
+        .upsert(wellnessData, {
+          onConflict: "athlete_id,date",
         });
 
       if (error) throw error;
 
-      this.toastService.success("Check-in saved!");
+      // Save weight if provided (updates both body_measurements for history + users for profile)
+      if (state.weight_kg && state.weight_kg > 0) {
+        await this.profileCompletionService.updateWeight(state.weight_kg);
+        this.logger.info(`[DailyReadiness] Weight updated: ${state.weight_kg} kg`);
+      }
+
+      this.toastService.success("Daily check-in saved!");
       this.dialogVisible = false;
       this.completed.emit(this.state());
     } catch (error) {
-      this.logger.error("Error saving daily state:", error);
+      this.logger.error("Error saving wellness entry:", error);
       this.toastService.error("Failed to save check-in. Please try again.");
     } finally {
       this.saving.set(false);

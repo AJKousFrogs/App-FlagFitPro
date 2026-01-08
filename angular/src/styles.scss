@@ -147,7 +147,7 @@ textarea {
   background: var(--surface-primary, #ffffff);
   border: 1px solid var(--color-border-primary, #e5e7eb);
   color: var(--color-text-primary, #1a1a1a);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
 
   /* Transitions */
   transition:
@@ -251,6 +251,45 @@ button {
   min-height: 100vh;
   min-height: -webkit-fill-available;
   min-height: 100dvh;
+}
+
+/* ================================================================
+   SAFARI-SPECIFIC RENDERING FIXES
+   Addresses rendering glitches, z-index issues, and text decoration bugs
+   ================================================================ */
+
+/* Safari: Fix for elements with absolute positioning escaping containers */
+@supports (-webkit-appearance: none) {
+  /* Ensure main layout containers create proper stacking contexts */
+  .dashboard-container,
+  .main-content,
+  .player-dashboard,
+  .coach-dashboard,
+  [class*="-dashboard"],
+  [class*="-section"] {
+    position: relative;
+    isolation: isolate;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Fix for badges with absolute positioning */
+  .incomplete-data-badge,
+  .risk-badge,
+  .action-required-badge,
+  .coach-override-badge {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  
+  /* Ensure text-decoration doesn't leak in Safari */
+  .p-toolbar *,
+  .app-header *,
+  .header-end * {
+    text-decoration: inherit;
+  }
 }
 
 /* Firefox focus-visible polyfill behavior */
@@ -505,7 +544,7 @@ html.no-transitions * {
   .p-inputnumber .p-inputtext {
     height: 44px;
     min-height: 44px;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     padding: 10px 16px;
     font-size: 16px;
   }
@@ -522,7 +561,7 @@ html.no-transitions * {
   .p-select-overlay,
   .p-dropdown-panel,
   .p-multiselect-panel {
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
   }
 
   /* Dropdown options: consistent height */
@@ -531,7 +570,7 @@ html.no-transitions * {
   .p-multiselect-item {
     min-height: 40px;
     padding: 12px 16px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 16px;
   }
 
@@ -623,7 +662,7 @@ html.no-transitions * {
     height: 44px;
     min-height: 44px;
     border: 1px solid var(--color-border-primary);
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     background: var(--surface-primary);
     padding: 0 16px;
     transition:
@@ -681,7 +720,7 @@ html.no-transitions * {
   .p-select-overlay,
   .p-select-overlay.p-component {
     border: 1px solid var(--color-border-primary);
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     background: var(--surface-primary);
     box-shadow:
       0 10px 40px rgba(0, 0, 0, 0.12),
@@ -724,7 +763,7 @@ html.no-transitions * {
   .p-select-overlay .p-listbox-option,
   .p-select-overlay li {
     padding: 12px 16px;
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     min-height: 40px;
     margin: 2px 0;
     cursor: pointer;
@@ -800,7 +839,7 @@ html.no-transitions * {
 
 .p-select-overlay .p-select-list-container::-webkit-scrollbar-thumb {
   background: var(--color-border-primary);
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
 }
 
 .p-select-overlay .p-select-list-container::-webkit-scrollbar-thumb:hover {
@@ -897,7 +936,7 @@ html.no-transitions * {
   .p-toast-message,
   .p-toast .p-toast-message {
     margin-bottom: 0.75rem;
-    border-radius: 16px;
+    border-radius: var(--radius-2xl);
     overflow: hidden;
     box-shadow:
       0 20px 50px rgba(0, 0, 0, 0.15),
@@ -972,7 +1011,7 @@ html.no-transitions * {
   .p-toast .p-toast-icon-close {
     width: 2rem;
     height: 2rem;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1070,7 +1109,7 @@ html.no-transitions * {
 
     .p-toast-message,
     .p-toast .p-toast-message {
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
     }
 
     .p-toast-message-content,
@@ -1113,7 +1152,7 @@ html.no-transitions * {
     color: var(--color-text-primary);
     background: var(--surface-primary);
     border: 1px solid var(--color-border-primary);
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     transition:
       border-color 0.15s ease,
       box-shadow 0.15s ease;
@@ -1181,7 +1220,7 @@ html.no-transitions * {
   .p-password-meter {
     margin-top: 0.75rem;
     height: 6px;
-    border-radius: 3px;
+    border-radius: var(--radius-sm);
     background: var(--surface-secondary);
     overflow: hidden;
   }
@@ -1207,21 +1246,21 @@ html.no-transitions * {
     background: var(--color-text-on-primary);
     color: var(--primitive-neutral-900);
     border: 1px solid var(--ds-primary-green);
-    border-radius: 12px;
-    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md, 8px);
+    padding: 0.5rem 0.75rem;
     font-family:
       "Poppins",
       -apple-system,
       BlinkMacSystemFont,
       sans-serif;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1.4;
     box-shadow:
-      0 8px 24px rgba(8, 153, 73, 0.15),
-      0 4px 12px rgba(0, 0, 0, 0.08);
+      0 4px 12px rgba(8, 153, 73, 0.1),
+      0 2px 6px rgba(0, 0, 0, 0.06);
     max-width: 280px;
-    animation: tooltipEnter 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: tooltipEnter 180ms ease-out;
   }
 
   /* Tooltip Arrows - Position-specific */
@@ -1249,7 +1288,7 @@ html.no-transitions * {
     padding: 1rem;
     background: var(--surface-primary, var(--color-text-on-primary));
     border: 1px solid var(--color-border-primary);
-    border-radius: 12px;
+    border-radius: var(--radius-xl);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   }
 }
@@ -1257,10 +1296,10 @@ html.no-transitions * {
 @keyframes tooltipEnter {
   from {
     opacity: 0;
-    transform: scale(0.9) translateY(4px);
+    transform: translateY(2px);
   }
   to {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 }

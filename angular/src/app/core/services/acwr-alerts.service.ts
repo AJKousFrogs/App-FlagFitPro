@@ -302,10 +302,11 @@ export class AcwrAlertsService {
             let coachName = "Coach";
 
             try {
+              // Use 'users' table instead of 'profiles' (profiles doesn't exist)
               const { data: profile } = await this.supabaseService.client
-                .from("profiles")
+                .from("users")
                 .select("email, full_name")
-                .eq("user_id", coachUserId)
+                .eq("id", coachUserId)
                 .single();
 
               if (profile) {

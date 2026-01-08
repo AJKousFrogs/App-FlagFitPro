@@ -73,6 +73,7 @@ import {
 import {
   formatHeight,
   formatWeight,
+  getCountryFlag,
   getJerseyColor,
   getPlayerStats,
   getPositionFullName,
@@ -492,9 +493,10 @@ import {
               <div class="details-grid">
                 <div class="details-item">
                   <span class="details-label">Country</span>
-                  <span class="details-value">{{
-                    selectedPlayer()!.country
-                  }}</span>
+                  <span class="details-value">
+                    <span class="country-flag">{{ getCountryFlag(selectedPlayer()!.country) }}</span>
+                    {{ selectedPlayer()!.country }}
+                  </span>
                 </div>
                 <div class="details-item">
                   <span class="details-label">Age</span>
@@ -965,6 +967,7 @@ export class RosterComponent implements OnInit {
   getPlayerStats = getPlayerStats;
   formatHeight = formatHeight;
   formatWeight = formatWeight;
+  getCountryFlag = getCountryFlag;
 
   // Phase 1: Enriched player computed signals
   enrichedSelectedPlayer = computed<PlayerWithMetrics | null>(() => {
