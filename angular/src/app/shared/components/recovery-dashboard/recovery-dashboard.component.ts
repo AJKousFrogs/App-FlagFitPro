@@ -155,7 +155,7 @@ interface ChartOptions {
           <p-selectButton
             [options]="categoryOptions"
             [(ngModel)]="selectedCategory"
-            (onChange)="onCategoryChange($event)"
+            (onValueChange)="onCategoryChange($event)"
             optionLabel="label"
             optionValue="value"
           >

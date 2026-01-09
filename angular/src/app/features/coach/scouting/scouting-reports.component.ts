@@ -403,7 +403,7 @@ interface ScoutingReport {
                       [options]="opponentFilterOptions()"
                       [(ngModel)]="selectedTendencyOpponent"
                       placeholder="Select opponent"
-                      (onChange)="onTendencyOpponentChange()"
+                      (onValueChange)="onTendencyOpponentChange()"
                     ></p-select>
                   </div>
 

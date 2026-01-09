@@ -98,7 +98,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                     [(ngModel)]="selectedCertification"
                     placeholder="All Levels"
                     [showClear]="true"
-                    (onChange)="filterOfficials()"
+                    (onValueChange)="filterOfficials()"
                   ></p-select>
                 </div>
               </div>

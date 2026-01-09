@@ -136,7 +136,7 @@ import { FormsModule } from "@angular/forms";
               [min]="10"
               [max]="300"
               [step]="5"
-              (onChange)="onCustomDurationChange()"
+              (onValueChange)="onCustomDurationChange()"
             ></p-slider>
           </div>
         }

@@ -63,7 +63,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
           optionValue="value"
           placeholder="Choose your primary goal"
           class="w-full"
-          (onChange)="onGoalChange()"
+          (onValueChange)="onGoalChange()"
         >
         </p-select>
         <p class="text-xs text-text-secondary mt-2">

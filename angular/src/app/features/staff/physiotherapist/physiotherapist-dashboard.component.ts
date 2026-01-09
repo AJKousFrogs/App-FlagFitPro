@@ -724,7 +724,7 @@ const RTP_PHASES = [
                       [options]="athleteSelectOptions()"
                       [(ngModel)]="selectedHistoryAthlete"
                       placeholder="Select athlete"
-                      (onChange)="loadInjuryHistory()"
+                      (onValueChange)="loadInjuryHistory()"
                     ></p-select>
                   </div>
 

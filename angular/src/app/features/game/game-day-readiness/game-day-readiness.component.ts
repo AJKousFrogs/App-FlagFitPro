@@ -103,7 +103,7 @@ interface ReadinessMetric {
                 [min]="1"
                 [max]="10"
                 [step]="1"
-                (onChange)="updateMetric(metric.key, $event.value || 1)"
+                (onValueChange)="updateMetric(metric.key, $event.value || 1)"
               ></p-slider>
               <p class="metric-description">{{ metric.description }}</p>
               @if (metric.value < 5) {

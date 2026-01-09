@@ -40,7 +40,7 @@ interface HeatmapCell {
         <p-select
           [options]="timeRangeOptions"
           [(ngModel)]="selectedTimeRange"
-          (onChange)="updateHeatmap()"
+          (onValueChange)="updateHeatmap()"
           placeholder="Select time range"
           optionLabel="label"
           optionValue="value"
@@ -51,7 +51,7 @@ interface HeatmapCell {
           [(ngModel)]="showIntensity"
           onLabel="Intensity"
           offLabel="Volume"
-          (onChange)="toggleMetric()"
+          (onValueChange)="toggleMetric()"
         >
         </p-toggleButton>
       </div>

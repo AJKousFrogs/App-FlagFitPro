@@ -250,7 +250,7 @@ interface ScheduleBlock {
                     [(ngModel)]="block.completed"
                     [binary]="true"
                     variant="filled"
-                    (onChange)="markBlockComplete(block.block, block.completed)"
+                    (onValueChange)="markBlockComplete(block.block, block.completed)"
                   ></p-checkbox>
                   @if (block.completed) {
                     <i class="pi pi-check-circle completed-icon"></i>

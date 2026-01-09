@@ -95,7 +95,7 @@ import type {
             [(ngModel)]="formData.reviewOutcome"
             placeholder="Select review outcome"
             styleClass="w-full"
-            (onChange)="onOutcomeChange()"
+            (onValueChange)="onOutcomeChange()"
           ></p-select>
 
           @if (formData.reviewOutcome === "extended") {

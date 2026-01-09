@@ -291,7 +291,7 @@ interface ReportPrivacySettings {
                   <p-select
                     [options]="timePeriods"
                     [(ngModel)]="selectedPeriod"
-                    (onChange)="loadWellnessData()"
+                    (onValueChange)="loadWellnessData()"
                   ></p-select>
                 </div>
 

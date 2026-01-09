@@ -155,7 +155,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                     [(ngModel)]="selectedType"
                     placeholder="All Types"
                     [showClear]="true"
-                    (onChange)="filterEquipment()"
+                    (onValueChange)="filterEquipment()"
                   ></p-select>
                 </div>
               </div>

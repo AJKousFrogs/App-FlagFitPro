@@ -113,7 +113,7 @@ export interface TablePreferences {
                 [(ngModel)]="selectAll"
                 [binary]="true"
                 variant="filled"
-                (onChange)="toggleSelectAll()"
+                (onValueChange)="toggleSelectAll()"
               />
               <span class="checkbox-label"
                 >{{ selectedRows().length }} selected</span
@@ -125,7 +125,7 @@ export interface TablePreferences {
           <p-multiSelect
             [options]="columnOptions()"
             [(ngModel)]="visibleColumnFields"
-            (onChange)="onColumnVisibilityChange()"
+            (onValueChange)="onColumnVisibilityChange()"
             placeholder="Show Columns"
             optionLabel="label"
             optionValue="value"
@@ -202,7 +202,7 @@ export interface TablePreferences {
                     [(ngModel)]="selectAll"
                     [binary]="true"
                     variant="filled"
-                    (onChange)="toggleSelectAll()"
+                    (onValueChange)="toggleSelectAll()"
                   />
                 </th>
               }
@@ -243,7 +243,7 @@ export interface TablePreferences {
                     [(ngModel)]="rowData._selected"
                     [binary]="true"
                     variant="filled"
-                    (onChange)="onRowSelect(rowData)"
+                    (onValueChange)="onRowSelect(rowData)"
                   />
                 </td>
               }
@@ -321,7 +321,7 @@ export interface TablePreferences {
                     [(ngModel)]="row._selected"
                     [binary]="true"
                     variant="filled"
-                    (onChange)="onRowSelect(row)"
+                    (onValueChange)="onRowSelect(row)"
                   />
                 </div>
               }

@@ -103,7 +103,7 @@ import { TIME } from "@core/constants";
               [(ngModel)]="formData.decisionType"
               placeholder="Select decision type"
               styleClass="w-full"
-              (onChange)="onDecisionTypeChange()"
+              (onValueChange)="onDecisionTypeChange()"
             ></p-select>
             @if (formData.decisionType) {
               <div class="info-box">
@@ -207,7 +207,7 @@ import { TIME } from "@core/constants";
               [(ngModel)]="formData.reviewTrigger"
               placeholder="Select review trigger"
               styleClass="w-full"
-              (onChange)="onReviewTriggerChange()"
+              (onValueChange)="onReviewTriggerChange()"
             ></p-select>
             @if (formData.reviewTrigger) {
               <div class="review-info">

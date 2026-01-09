@@ -103,7 +103,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
                 [options]="statusOptions"
                 [(ngModel)]="filters().status"
                 placeholder="All Statuses"
-                (onChange)="applyFilters()"
+                (onValueChange)="applyFilters()"
               ></p-select>
             </div>
 
@@ -113,7 +113,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
                 [options]="categoryOptions"
                 [(ngModel)]="filters().decisionCategory"
                 placeholder="All Categories"
-                (onChange)="applyFilters()"
+                (onValueChange)="applyFilters()"
               ></p-select>
             </div>
 
@@ -123,7 +123,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
                 [options]="priorityOptions"
                 [(ngModel)]="filters().reviewPriority"
                 placeholder="All Priorities"
-                (onChange)="applyFilters()"
+                (onValueChange)="applyFilters()"
               ></p-select>
             </div>
 

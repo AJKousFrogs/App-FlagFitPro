@@ -344,7 +344,7 @@ interface TournamentNutritionBrief {
                       [options]="athleteSelectOptions()"
                       [(ngModel)]="selectedAthleteId"
                       placeholder="Select athlete"
-                      (onChange)="loadAthleteComposition()"
+                      (onValueChange)="loadAthleteComposition()"
                     ></p-select>
                   </div>
 

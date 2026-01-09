@@ -106,7 +106,7 @@ interface EquipmentOption {
               optionLabel="label"
               optionValue="value"
               placeholder="Select session type"
-              (onChange)="onSessionTypeChange($event)"
+              (onValueChange)="onSessionTypeChange($event)"
             >
               <ng-template let-option pTemplate="item">
                 <div class="session-type-option">

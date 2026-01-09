@@ -128,13 +128,13 @@ interface TeamOption {
               [options]="teamOptions"
               [(ngModel)]="selectedTeam"
               placeholder="Select Team"
-              (onChange)="loadAnalytics()"
+              (onValueChange)="loadAnalytics()"
             ></p-select>
             <p-select
               [options]="timeRangeOptions"
               [(ngModel)]="selectedTimeRange"
               placeholder="Select Period"
-              (onChange)="loadAnalytics()"
+              (onValueChange)="loadAnalytics()"
             ></p-select>
             <app-icon-button
               icon="pi-refresh"

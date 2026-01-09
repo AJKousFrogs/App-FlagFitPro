@@ -159,7 +159,7 @@ interface DailyState {
               [min]="0"
               [max]="10"
               [step]="1"
-              (onChange)="updateState()"
+              (onValueChange)="updateState()"
             ></p-slider>
             <div class="slider-labels">
               <span>No pain</span>
@@ -186,7 +186,7 @@ interface DailyState {
               [min]="0"
               [max]="10"
               [step]="1"
-              (onChange)="updateState()"
+              (onValueChange)="updateState()"
             ></p-slider>
             <div class="slider-labels">
               <span>Energized</span>
@@ -213,7 +213,7 @@ interface DailyState {
               [min]="0"
               [max]="10"
               [step]="1"
-              (onChange)="updateState()"
+              (onValueChange)="updateState()"
             ></p-slider>
             <div class="slider-labels">
               <span>Poor</span>
@@ -240,7 +240,7 @@ interface DailyState {
               [min]="0"
               [max]="10"
               [step]="1"
-              (onChange)="updateState()"
+              (onValueChange)="updateState()"
             ></p-slider>
             <div class="slider-labels">
               <span>Low</span>

@@ -228,7 +228,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 <p-select
                   [options]="positionOptions"
                   [(ngModel)]="selectedPositionValue"
-                  (onChange)="onPositionChange($event)"
+                  (onValueChange)="onPositionChange($event)"
                   placeholder="Change Position"
                   styleClass="position-selector"
                 ></p-select>

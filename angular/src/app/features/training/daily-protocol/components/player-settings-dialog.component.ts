@@ -114,7 +114,7 @@ interface DayOption {
               optionValue="value"
               placeholder="Select position"
               [style]="{ width: '100%' }"
-              (onChange)="updatePositionDescription()"
+              (onValueChange)="updatePositionDescription()"
             ></p-select>
             @if (selectedPositionDescription()) {
               <small class="field-hint">{{

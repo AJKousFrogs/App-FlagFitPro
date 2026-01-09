@@ -134,7 +134,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                     [(ngModel)]="selectedEventType"
                     placeholder="All Types"
                     [showClear]="true"
-                    (onChange)="filterEvents()"
+                    (onValueChange)="filterEvents()"
                   ></p-select>
                 </div>
               </div>

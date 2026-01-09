@@ -85,7 +85,7 @@ interface StatComparison {
             placeholder="Select player"
             [filter]="true"
             filterPlaceholder="Search players..."
-            (onChange)="onPlayerChange()"
+            (onValueChange)="onPlayerChange()"
             styleClass="w-full"
           >
             <ng-template pTemplate="selectedItem" let-selected>
@@ -132,7 +132,7 @@ interface StatComparison {
             placeholder="Select player"
             [filter]="true"
             filterPlaceholder="Search players..."
-            (onChange)="onPlayerChange()"
+            (onValueChange)="onPlayerChange()"
             styleClass="w-full"
           >
             <ng-template pTemplate="selectedItem" let-selected>

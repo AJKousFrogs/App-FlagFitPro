@@ -504,7 +504,7 @@ const SEVERITY_LEVELS = [
                       [binary]="true"
                       variant="filled"
                       [inputId]="'criterion-' + i"
-                      (onChange)="updateCriterion(i, $event)"
+                      (onValueChange)="updateCriterion(i, $event)"
                     ></p-checkbox>
                     <label [for]="'criterion-' + i">{{ criterion }}</label>
                   </div>
@@ -732,7 +732,7 @@ const SEVERITY_LEVELS = [
                 optionValue="value"
                 placeholder="Select severity"
                 [style]="{ width: '100%' }"
-                (onChange)="onSeverityChange()"
+                (onValueChange)="onSeverityChange()"
               ></p-select>
             </div>
           </div>

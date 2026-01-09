@@ -152,7 +152,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                         [(ngModel)]="selectedBodyPart"
                         placeholder="All Body Parts"
                         [showClear]="true"
-                        (onChange)="applyFilters()"
+                        (onValueChange)="applyFilters()"
                       ></p-select>
                     </div>
                     <div class="filter-group">
@@ -162,7 +162,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                         [(ngModel)]="selectedEquipment"
                         placeholder="All Equipment"
                         [showClear]="true"
-                        (onChange)="applyFilters()"
+                        (onValueChange)="applyFilters()"
                       ></p-select>
                     </div>
                     <div class="filter-group">
@@ -172,7 +172,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                         [(ngModel)]="selectedPosition"
                         placeholder="All Positions"
                         [showClear]="true"
-                        (onChange)="applyFilters()"
+                        (onValueChange)="applyFilters()"
                       ></p-select>
                     </div>
                     <div class="filter-group">
@@ -182,7 +182,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                         [(ngModel)]="selectedCategory"
                         placeholder="All Categories"
                         [showClear]="true"
-                        (onChange)="applyFilters()"
+                        (onValueChange)="applyFilters()"
                       ></p-select>
                     </div>
                     <div class="filter-group status-filter">
@@ -190,7 +190,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                       <p-select
                         [options]="statusOptions"
                         [(ngModel)]="selectedStatus"
-                        (onChange)="applyFilters()"
+                        (onValueChange)="applyFilters()"
                       ></p-select>
                     </div>
                   </div>

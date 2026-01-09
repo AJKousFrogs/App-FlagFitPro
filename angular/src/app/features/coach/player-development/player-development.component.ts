@@ -159,7 +159,7 @@ const COMPARE_OPTIONS = [
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
-              (onChange)="onPlayerChange()"
+              (onValueChange)="onPlayerChange()"
               styleClass="w-full"
             ></p-select>
           </div>
@@ -352,7 +352,7 @@ const COMPARE_OPTIONS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
-                (onChange)="onMetricChange()"
+                (onValueChange)="onMetricChange()"
               ></p-select>
               <p-select
                 [options]="periodOptions"
@@ -360,7 +360,7 @@ const COMPARE_OPTIONS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Period"
-                (onChange)="onMetricChange()"
+                (onValueChange)="onMetricChange()"
               ></p-select>
             </div>
             <div class="history-chart">

@@ -336,7 +336,7 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select level"
-                    (onChange)="onEmergencyLevelChange($event.value)"
+                    (onValueChange)="onEmergencyLevelChange($event.value)"
                   ></p-select>
                 </div>
               </div>
