@@ -140,7 +140,7 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                 <div class="setting-control">
                   <p-toggleswitch
                     [(ngModel)]="aiProcessingEnabled"
-                    (onChange)="onAiProcessingChange($event.checked)"
+                    (ngModelChange)="onAiProcessingChange($event)"
                   ></p-toggleswitch>
                 </div>
               </div>
@@ -245,11 +245,11 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                             </div>
                             <p-toggleswitch
                               [(ngModel)]="team.performanceSharingEnabled"
-                              (onChange)="
+                              (ngModelChange)="
                                 onTeamSharingChange(
                                   team.teamId,
                                   'performance',
-                                  $event.checked
+                                  $event
                                 )
                               "
                             ></p-toggleswitch>
@@ -262,11 +262,11 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                             </div>
                             <p-toggleswitch
                               [(ngModel)]="team.healthSharingEnabled"
-                              (onChange)="
+                              (ngModelChange)="
                                 onTeamSharingChange(
                                   team.teamId,
                                   'health',
-                                  $event.checked
+                                  $event
                                 )
                               "
                             ></p-toggleswitch>
@@ -404,7 +404,7 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                 <div class="setting-control">
                   <p-toggleswitch
                     [(ngModel)]="researchOptIn"
-                    (onChange)="onResearchOptInChange($event.checked)"
+                    (ngModelChange)="onResearchOptInChange($event)"
                   ></p-toggleswitch>
                 </div>
               </div>
@@ -422,7 +422,7 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                 <div class="setting-control">
                   <p-toggleswitch
                     [(ngModel)]="marketingOptIn"
-                    (onChange)="onMarketingOptInChange($event.checked)"
+                    (ngModelChange)="onMarketingOptInChange($event)"
                   ></p-toggleswitch>
                 </div>
               </div>
