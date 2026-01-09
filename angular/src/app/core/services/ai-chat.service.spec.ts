@@ -4,8 +4,12 @@
  * Tests for the AI coaching chat functionality with safety tiers.
  * Uses async/await pattern compatible with zoneless Angular.
  *
+ * Note: Test files use non-null assertions for test data setup where values are guaranteed.
+ * This is acceptable practice in test files for cleaner test code.
+ *
  * @version 1.0.0
  */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi } from "vitest";

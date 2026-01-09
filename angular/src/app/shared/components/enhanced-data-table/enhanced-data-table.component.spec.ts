@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
 import { TestBed, ComponentFixture } from "@angular/core/testing";
 import {

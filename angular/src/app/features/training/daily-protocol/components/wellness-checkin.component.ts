@@ -424,7 +424,7 @@ export class WellnessCheckinComponent implements OnInit {
   async loadExistingCheckin(): Promise<void> {
     try {
       const targetDate = this.date() || new Date().toISOString().split("T")[0];
-      const response: any = await firstValueFrom(
+      const response: { data?: unknown; error?: string } = await firstValueFrom(
         this.trainingService.getWellnessForDay(targetDate),
       );
 
@@ -462,7 +462,7 @@ export class WellnessCheckinComponent implements OnInit {
       const currentFormData = this.formData();
       const readiness = this.calculateScore(currentFormData);
 
-      const response: any = await this.trainingService.submitWellness({
+      const response: { success?: boolean; data?: unknown; error?: string } = await this.trainingService.submitWellness({
         date: targetDate,
         ...currentFormData,
         readinessScore: readiness,
@@ -485,7 +485,7 @@ export class WellnessCheckinComponent implements OnInit {
         // Reset success state after 5 seconds
         setTimeout(() => this.saveSuccess.set(false), 5000);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.logger.error("Failed to save wellness checkin", err);
     } finally {
       this.isSaving.set(false);

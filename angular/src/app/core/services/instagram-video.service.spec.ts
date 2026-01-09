@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { InstagramVideoService } from "./instagram-video.service";

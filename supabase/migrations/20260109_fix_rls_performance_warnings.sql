@@ -247,7 +247,7 @@ WITH CHECK (user_id = (SELECT auth.uid()));
 DROP POLICY IF EXISTS "Users can create own insights" ON shared_insights;
 CREATE POLICY "Users can create own insights"
 ON shared_insights FOR INSERT
-WITH CHECK (shared_by = (SELECT auth.uid()));
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "Team can view shared insights" ON shared_insights;
 CREATE POLICY "Team can view shared insights"
@@ -339,21 +339,10 @@ WITH CHECK (
 DROP POLICY IF EXISTS "Users can manage own injury tracking" ON long_term_injury_tracking;
 DROP POLICY IF EXISTS "Coaches can view team injury tracking" ON long_term_injury_tracking;
 
-CREATE POLICY "Users and coaches can access injury tracking"
+CREATE POLICY "Users can manage own injury tracking"
 ON long_term_injury_tracking FOR ALL
-USING (
-    user_id = (SELECT auth.uid())
-    OR EXISTS (
-        SELECT 1 FROM team_members
-        WHERE team_id = long_term_injury_tracking.team_id
-        AND user_id = (SELECT auth.uid())
-        AND role IN ('coach', 'head_coach', 'assistant_coach')
-        AND status = 'active'
-    )
-)
-WITH CHECK (
-    user_id = (SELECT auth.uid())
-);
+USING (user_id = (SELECT auth.uid()))
+WITH CHECK (user_id = (SELECT auth.uid()));
 
 -- ============================================================================
 -- PART 9: TEAM-BASED TABLES

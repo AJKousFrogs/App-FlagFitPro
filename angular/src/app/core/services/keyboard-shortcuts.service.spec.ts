@@ -4,8 +4,11 @@
  * Tests for the global keyboard shortcuts service.
  * Covers shortcut registration, execution, and cleanup.
  *
+ * Note: Test files use non-null assertions for test setup.
+ *
  * @author FlagFit Pro Team
  */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import { TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";

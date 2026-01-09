@@ -302,8 +302,8 @@ export class DailyReadinessComponent implements OnInit {
   private logger = inject(LoggerService);
   private profileCompletionService = inject(ProfileCompletionService);
 
-  readonly mode = input<any>(signal<"modal" | "card">("modal"));
-  readonly showOnInit = input<any>(true);
+  readonly mode = input<"modal" | "card">("modal");
+  readonly showOnInit = input<boolean>(true);
 
   readonly completed = output<DailyState>();
   readonly skipped = output<void>();
@@ -464,7 +464,7 @@ export class DailyReadinessComponent implements OnInit {
       this.toastService.success(TOAST.SUCCESS.DAILY_CHECKIN_SAVED);
       this.dialogVisible = false;
       this.completed.emit(this.state());
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.logger.error("Error saving wellness entry:", error);
       
       // Provide user-friendly error messages based on error type

@@ -709,7 +709,7 @@ export class VideoSuggestionComponent implements OnInit {
 
   // Form validation
   private instagramUrlValidator() {
-    return (control: any) => {
+    return (control: { value: string }) => {
       if (!control.value) return null;
       return this.validateInstagramUrl(control.value)
         ? null
