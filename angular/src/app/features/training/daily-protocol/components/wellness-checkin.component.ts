@@ -488,13 +488,13 @@ export class WellnessCheckinComponent implements OnInit {
   async loadExistingCheckin(): Promise<void> {
     try {
       const targetDate = this.date() || new Date().toISOString().split("T")[0];
-      const response: { success?: boolean; data?: WellnessData; error?: string } = await firstValueFrom(
+      const response = await firstValueFrom(
         this.trainingService.getWellnessForDay(targetDate),
       );
 
       if (response?.success && response.data) {
-        this.wellnessData.set(response.data);
-        this.formData.set({ ...response.data });
+        this.wellnessData.set(response.data as WellnessData);
+        this.formData.set({ ...response.data as WellnessData });
       }
     } catch (_err) {
       // No existing checkin - that's ok
