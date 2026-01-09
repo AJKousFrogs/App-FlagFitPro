@@ -76,7 +76,7 @@ export interface SessionLogData {
               [max]="10"
               [step]="1"
               styleClass="rpe-slider"
-              (onChange)="onRpeChange($event)"
+              (onValueChange)="onRpeChange($event)"
             ></p-slider>
             <span class="rpe-emoji">🔥</span>
           </div>
