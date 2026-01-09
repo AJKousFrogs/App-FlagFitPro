@@ -17,7 +17,7 @@
   transition:
     opacity 200ms ease-in-out,
     transform 200ms ease-in-out;
-  z-index: 1000;
+  z-index: var(--z-modal);
   pointer-events: none;
 
   // Mobile positioning

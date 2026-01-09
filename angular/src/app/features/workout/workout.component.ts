@@ -21,7 +21,9 @@ import { ApiService } from "../../core/services/api.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../core/services/logger.service";
+import { formatDate } from "../../shared/utils/date.utils";
 
 interface WorkoutExercise {
   id: string;
@@ -295,7 +297,7 @@ export class WorkoutComponent implements OnInit {
             id: log.id,
             name:
               log.training_sessions?.name || this.inferWorkoutName(log.notes),
-            date: new Date(log.completed_at).toLocaleDateString(),
+            date: formatDate(log.completed_at, 'P'),
             exercises,
             duration: log.duration_minutes,
             completed: true,
@@ -357,7 +359,7 @@ export class WorkoutComponent implements OnInit {
 
     const user = this.authService.getUser();
     if (!user?.id) {
-      this.toastService.error("Please log in to save workouts");
+      this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE_WORKOUTS);
       return;
     }
 
@@ -378,10 +380,10 @@ export class WorkoutComponent implements OnInit {
 
       if (error) throw error;
 
-      this.toastService.success("Workout saved!");
+      this.toastService.success(TOAST.SUCCESS.WORKOUT_SAVED);
     } catch (error) {
       this.logger.error("[Workout] Error saving:", error);
-      this.toastService.error("Failed to save workout");
+      this.toastService.error(TOAST.ERROR.WORKOUT_SAVE_FAILED);
     }
   }
 
@@ -390,7 +392,7 @@ export class WorkoutComponent implements OnInit {
 
     const user = this.authService.getUser();
     if (!user?.id) {
-      this.toastService.error("Please log in to complete workouts");
+      this.toastService.error(TOAST.ERROR.LOGIN_TO_COMPLETE_WORKOUTS);
       return;
     }
 
@@ -415,10 +417,10 @@ export class WorkoutComponent implements OnInit {
       // Update local state
       this.workoutHistory.update((history) => [workout, ...history]);
       this.activeWorkout.set(null);
-      this.toastService.success("Workout completed! 💪");
+      this.toastService.success(TOAST.SUCCESS.WORKOUT_COMPLETED_EMOJI);
     } catch (error) {
       this.logger.error("[Workout] Error completing:", error);
-      this.toastService.error("Failed to complete workout");
+      this.toastService.error(TOAST.ERROR.WORKOUT_COMPLETE_FAILED);
 
       // Still update local state
       this.workoutHistory.update((history) => [workout, ...history]);

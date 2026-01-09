@@ -24,6 +24,7 @@ import { StatsGridComponent } from "../../shared/components/stats-grid/stats-gri
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { ApiService } from "../../core/services/api.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -56,7 +57,6 @@ interface TeamMember {
     CardModule,
     ButtonComponent,
     IconButtonComponent,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     TableModule,
@@ -420,7 +420,7 @@ export class CoachComponent implements OnInit {
 
   async createSession(): Promise<void> {
     if (!this.isSessionValid()) {
-      this.toastService.warn("Please fill in all required fields");
+      this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
 
@@ -429,7 +429,7 @@ export class CoachComponent implements OnInit {
     try {
       const user = this.supabaseService.getCurrentUser();
       if (!user) {
-        this.toastService.error("Please log in to create a session");
+        this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
       }
 
@@ -452,7 +452,7 @@ export class CoachComponent implements OnInit {
         throw new Error(error.message);
       }
 
-      this.toastService.success("Training session created successfully!");
+      this.toastService.success(TOAST.SUCCESS.SESSION_CREATED_SUCCESS);
       this.showCreateSessionDialog = false;
 
       // Update stats

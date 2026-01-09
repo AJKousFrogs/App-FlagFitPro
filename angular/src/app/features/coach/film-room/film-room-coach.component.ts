@@ -8,7 +8,7 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -82,6 +82,7 @@ const TAG_TYPES = [
 @Component({
   selector: "app-film-room-coach",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

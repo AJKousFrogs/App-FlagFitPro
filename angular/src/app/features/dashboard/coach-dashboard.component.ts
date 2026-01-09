@@ -39,6 +39,7 @@ import {
   UpcomingGame,
 } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
   AppLoadingComponent,
@@ -48,11 +49,13 @@ import {
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
+import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
 import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
 import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
 import { DatePipe, DecimalPipe } from "@angular/common";
 import { LINE_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+import { UI_LIMITS } from "../../core/constants";
 
 /**
  * Coach Dashboard Component
@@ -60,12 +63,12 @@ import { CONSENT_BLOCKED_MESSAGES } from "../../shared/utils/privacy-ux-copy";
  * ⭐ CANONICAL PAGE — Design System Exemplar (Pending Cleanup)
  * ============================================================
  * This page is marked as canonical but requires cleanup before freeze.
- * 
+ *
  * RULES:
  * - Future refactors copy FROM this page, never INTO it
  * - Changes require design system curator approval
  * - Must be cleaned to full compliance before canonical freeze
- * 
+ *
  * See docs/CANONICAL_PAGES.md for full documentation.
  *
  * CLEANUP REQUIRED:
@@ -83,8 +86,6 @@ interface ConsentInfo {
 }
 
 type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
-// SortField reserved for future use
-// type SortField = "name" | "position" | "performance" | "acwr" | "readiness";
 
 @Component({
   selector: "app-coach-dashboard",
@@ -95,7 +96,6 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     CardModule,
     TableModule,
     TagModule,
-    // // ChartModule, // REMOVED: Using LazyChartComponent
     LazyChartComponent,
     ChartSkeletonComponent,
     DialogModule,
@@ -191,21 +191,37 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                         <span class="pa-name">{{ alert.playerName }}</span>
                         <span class="pa-reason">{{ alert.message }}</span>
                       </div>
-                      @if (alert.alertType === 'high_acwr' && alert.acwr && alert.acwr > 1.3) {
+                      @if (
+                        alert.alertType === "high_acwr" &&
+                        alert.acwr &&
+                        alert.acwr > 1.3
+                      ) {
                         <!-- Phase 3: Semantic Risk Meaning (not Action Required - this is risk) -->
                         @if (getRiskMeaningForAlert(alert)) {
                           <app-semantic-meaning-renderer
                             [meaning]="getRiskMeaningForAlert(alert)!"
-                            [context]="{ container: 'inline', priority: alert.acwr > 1.5 ? 'critical' : 'high', dismissible: false }"
+                            [context]="{
+                              container: 'inline',
+                              priority: alert.acwr > 1.5 ? 'critical' : 'high',
+                              dismissible: false,
+                            }"
                           ></app-semantic-meaning-renderer>
                         }
                       }
-                      @if (alert.alertType === 'low_readiness' && alert.readiness !== undefined && alert.readiness < 40) {
+                      @if (
+                        alert.alertType === "low_readiness" &&
+                        alert.readiness !== undefined &&
+                        alert.readiness < 40
+                      ) {
                         <p-tag
                           value="Wellness Low"
                           severity="danger"
                           styleClass="wellness-low-tag"
-                          [pTooltip]="'Wellness is ' + alert.readiness + '% - review player status'"
+                          [pTooltip]="
+                            'Wellness is ' +
+                            alert.readiness +
+                            '% - review player status'
+                          "
                         ></p-tag>
                       }
                       <i class="pi pi-chevron-right"></i>
@@ -219,7 +235,8 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               <div class="priority-athletes-strip missing-data-strip">
                 <div class="strip-header">
                   <span class="strip-title"
-                    ><i class="pi pi-exclamation-circle"></i> Data Incomplete</span
+                    ><i class="pi pi-exclamation-circle"></i> Data
+                    Incomplete</span
                   >
                   <p-badge
                     [value]="playersWithMissingData().length.toString()"
@@ -227,7 +244,10 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                   ></p-badge>
                 </div>
                 <div class="athlete-scroll">
-                  @for (player of playersWithMissingData(); track player.playerId) {
+                  @for (
+                    player of playersWithMissingData();
+                    track player.playerId
+                  ) {
                     <div
                       class="priority-athlete-card"
                       (click)="viewPlayer(player.playerId)"
@@ -275,13 +295,15 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                 <i class="pi pi-calendar-clock" aria-hidden="true"></i>
                 Active Protocols
               </h3>
-              
+
               @if (teamContinuity().gameDayRecovery.length > 0) {
                 <app-card [compact]="true" styleClass="protocol-group">
                   <div class="protocol-header">
                     <span class="protocol-icon">🏈</span>
                     <span class="protocol-title"
-                      >Game Day Recovery ({{ teamContinuity().gameDayRecovery.length }}
+                      >Game Day Recovery ({{
+                        teamContinuity().gameDayRecovery.length
+                      }}
                       players)</span
                     >
                   </div>
@@ -311,7 +333,9 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                   <div class="protocol-header">
                     <span class="protocol-icon">⚠️</span>
                     <span class="protocol-title"
-                      >ACWR Load Caps ({{ teamContinuity().loadCaps.length }}
+                      >ACWR Load Caps ({{
+                        teamContinuity().loadCaps.length
+                      }}
                       players)</span
                     >
                   </div>
@@ -326,7 +350,9 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                       >
                         <span class="player-name">{{ player.playerName }}</span>
                         <p-tag
-                          [value]="player.sessionsRemaining + ' sessions remaining'"
+                          [value]="
+                            player.sessionsRemaining + ' sessions remaining'
+                          "
                           severity="warn"
                           styleClass="protocol-tag"
                         ></p-tag>
@@ -341,7 +367,9 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                   <div class="protocol-header">
                     <span class="protocol-icon">🛫</span>
                     <span class="protocol-title"
-                      >Travel Recovery ({{ teamContinuity().travelRecovery.length }}
+                      >Travel Recovery ({{
+                        teamContinuity().travelRecovery.length
+                      }}
                       players)</span
                     >
                   </div>
@@ -388,7 +416,10 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               </p>
             </div>
             <div class="header-actions toolbar-row__end">
-              <app-button iconLeft="pi-plus" size="sm" (clicked)="openCreateSession()"
+              <app-button
+                iconLeft="pi-plus"
+                size="sm"
+                (clicked)="openCreateSession()"
                 >Practice</app-button
               >
               <app-button
@@ -446,7 +477,8 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                 <h4>Limited Data Available</h4>
                 <p>{{ partialDataMessage().reason }}</p>
                 <p class="notice-detail">
-                  Some players have not enabled data sharing. You can request access from individual players in the roster table.
+                  Some players have not enabled data sharing. You can request
+                  access from individual players in the roster table.
                 </p>
                 <a
                   [routerLink]="partialDataMessage().helpLink"
@@ -609,32 +641,44 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                     value="⛔ Not Shared"
                                     severity="danger"
                                     styleClass="data-sharing-tag"
-                                    [pTooltip]="'Player has not enabled data sharing'"
+                                    [pTooltip]="
+                                      'Player has not enabled data sharing'
+                                    "
                                   ></p-tag>
                                   <app-button
                                     variant="text"
                                     size="sm"
                                     iconLeft="pi-send"
-                                    (clicked)="requestDataAccess(player.playerId, $event)"
+                                    (clicked)="
+                                      requestDataAccess(player.playerId, $event)
+                                    "
                                     styleClass="request-access-btn"
                                     [pTooltip]="'Request access to player data'"
                                   ></app-button>
                                 </div>
-                              } @else if (isPlayerDataPartiallyShared(player.playerId)) {
+                              } @else if (
+                                isPlayerDataPartiallyShared(player.playerId)
+                              ) {
                                 <div class="data-sharing-cell">
                                   <p-tag
                                     value="⚠️ Partial"
                                     severity="warn"
                                     styleClass="data-sharing-tag"
-                                    [pTooltip]="'Some metrics are shared, some are not'"
+                                    [pTooltip]="
+                                      'Some metrics are shared, some are not'
+                                    "
                                   ></p-tag>
                                   <app-button
                                     variant="text"
                                     size="sm"
                                     iconLeft="pi-send"
-                                    (clicked)="requestDataAccess(player.playerId, $event)"
+                                    (clicked)="
+                                      requestDataAccess(player.playerId, $event)
+                                    "
                                     styleClass="request-access-btn"
-                                    [pTooltip]="'Request additional data access'"
+                                    [pTooltip]="
+                                      'Request additional data access'
+                                    "
                                   ></app-button>
                                 </div>
                               } @else {
@@ -642,18 +686,31 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                   value="✅ Shared"
                                   severity="success"
                                   styleClass="data-sharing-tag"
-                                  [pTooltip]="'All metrics are shared with coach'"
+                                  [pTooltip]="
+                                    'All metrics are shared with coach'
+                                  "
                                 ></p-tag>
                               }
                             </td>
                             <td>
-                              @if (getPlayerOverrideCount(player.playerId) > 0) {
+                              @if (
+                                getPlayerOverrideCount(player.playerId) > 0
+                              ) {
                                 <p-badge
-                                  [value]="getPlayerOverrideCount(player.playerId).toString()"
+                                  [value]="
+                                    getPlayerOverrideCount(
+                                      player.playerId
+                                    ).toString()
+                                  "
                                   severity="info"
-                                  [pTooltip]="'View override history for ' + player.playerName"
+                                  [pTooltip]="
+                                    'View override history for ' +
+                                    player.playerName
+                                  "
                                   tooltipPosition="top"
-                                  (click)="viewOverrideHistory(player.playerId, $event)"
+                                  (click)="
+                                    viewOverrideHistory(player.playerId, $event)
+                                  "
                                   styleClass="override-badge"
                                 ></p-badge>
                               } @else {
@@ -680,15 +737,9 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                               ></app-lazy-chart>
                             }
                           } @placeholder {
-                            <app-chart-skeleton
-                              type="line"
-                              height="200px"
-                            />
+                            <app-chart-skeleton type="line" height="200px" />
                           } @loading (minimum 500ms) {
-                            <app-chart-skeleton
-                              type="line"
-                              height="200px"
-                            />
+                            <app-chart-skeleton type="line" height="200px" />
                           }
                         </div>
                         <div class="hero-stats">
@@ -723,7 +774,10 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
               >
                 <div class="schedule-mini">
                   @for (
-                    game of upcomingGames().slice(0, 2);
+                    game of upcomingGames().slice(
+                      0,
+                      UI_LIMITS.UPCOMING_GAMES_PREVIEW
+                    );
                     track game.gameId
                   ) {
                     <div class="mini-event game">
@@ -738,7 +792,10 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                     </div>
                   }
                   @for (
-                    session of trainingSessions().slice(0, 2);
+                    session of trainingSessions().slice(
+                      0,
+                      UI_LIMITS.TRAINING_SESSIONS_PREVIEW
+                    );
                     track session.sessionId
                   ) {
                     <div class="mini-event practice">
@@ -928,7 +985,8 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
         >
           <div class="request-access-form">
             <p class="request-intro">
-              Send a non-pushy request to the player to share their wellness and training data.
+              Send a non-pushy request to the player to share their wellness and
+              training data.
             </p>
             <div class="form-field">
               <label for="accessMessage">Message</label>
@@ -958,6 +1016,8 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
   styleUrls: ["./coach-dashboard.component.scss"],
 })
 export class CoachDashboardComponent {
+  // Expose constants for template use
+  readonly UI_LIMITS = UI_LIMITS;
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly headerService = inject(HeaderService);
@@ -966,8 +1026,12 @@ export class CoachDashboardComponent {
   private readonly missingDataService = inject(MissingDataDetectionService);
   private readonly continuityService = inject(ContinuityIndicatorsService);
   private readonly overrideService = inject(OverrideLoggingService);
-  private readonly ownershipTransitionService = inject(OwnershipTransitionService);
-  private readonly accountabilityService = inject(AccountabilityTrackingService);
+  private readonly ownershipTransitionService = inject(
+    OwnershipTransitionService,
+  );
+  private readonly accountabilityService = inject(
+    AccountabilityTrackingService,
+  );
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
 
@@ -1021,15 +1085,27 @@ export class CoachDashboardComponent {
 
   // Missing data tracking
   playersWithMissingData = signal<any[]>([]);
-  
+
   // Ownership transitions tracking
   pendingTransitions = signal<any[]>([]);
 
   // Team continuity tracking
   teamContinuity = signal<{
-    gameDayRecovery: Array<{ playerId: string; playerName: string; dayNumber: number }>;
-    loadCaps: Array<{ playerId: string; playerName: string; sessionsRemaining: number }>;
-    travelRecovery: Array<{ playerId: string; playerName: string; daysRemaining: number }>;
+    gameDayRecovery: Array<{
+      playerId: string;
+      playerName: string;
+      dayNumber: number;
+    }>;
+    loadCaps: Array<{
+      playerId: string;
+      playerName: string;
+      sessionsRemaining: number;
+    }>;
+    travelRecovery: Array<{
+      playerId: string;
+      playerName: string;
+      daysRemaining: number;
+    }>;
   }>({
     gameDayRecovery: [],
     loadCaps: [],
@@ -1090,23 +1166,36 @@ export class CoachDashboardComponent {
 
     // Priority alerts
     if (alerts.length > 0) {
-      const criticalAlerts = alerts.filter(a => a.severity === 'critical').length;
-      const wellnessLow = alerts.filter(a => a.alertType === 'low_readiness' && a.readiness !== undefined && a.readiness < 40).length;
-      
+      const criticalAlerts = alerts.filter(
+        (a) => a.severity === "critical",
+      ).length;
+      const wellnessLow = alerts.filter(
+        (a) =>
+          a.alertType === "low_readiness" &&
+          a.readiness !== undefined &&
+          a.readiness < 40,
+      ).length;
+
       if (criticalAlerts > 0) {
-        sections.push(`🚨 ${criticalAlerts} critical alert(s) requiring immediate attention`);
+        sections.push(
+          `🚨 ${criticalAlerts} critical alert(s) requiring immediate attention`,
+        );
       }
       if (wellnessLow > 0) {
         sections.push(`⚠️ ${wellnessLow} player(s) with wellness below 40%`);
       }
       if (alerts.length > 0) {
-        sections.push(`📊 ${alerts.length} total risk alert(s) across the team`);
+        sections.push(
+          `📊 ${alerts.length} total risk alert(s) across the team`,
+        );
       }
     }
 
     // Missing data
     if (missingData.length > 0) {
-      sections.push(`📋 ${missingData.length} player(s) with incomplete wellness data`);
+      sections.push(
+        `📋 ${missingData.length} player(s) with incomplete wellness data`,
+      );
     }
 
     // Injury status
@@ -1116,7 +1205,9 @@ export class CoachDashboardComponent {
 
     // Team workload
     if (overview.avgTeamWorkload > 1.3) {
-      sections.push(`⚡ Team ACWR trending high (${overview.avgTeamWorkload.toFixed(2)}) - consider deload`);
+      sections.push(
+        `⚡ Team ACWR trending high (${overview.avgTeamWorkload.toFixed(2)}) - consider deload`,
+      );
     }
 
     // Positive status
@@ -1124,7 +1215,7 @@ export class CoachDashboardComponent {
       return "✅ Team Briefing: The squad is looking sharp today! Compliance is high, and readiness scores are optimal. Great day for a high-intensity session.";
     }
 
-    return `📋 Team Briefing: ${sections.join('. ')}. ${atRisk > 0 ? `Recommendation: Review ${atRisk} at-risk player(s) before today's session.` : 'All systems go for today\'s practice.'}`;
+    return `📋 Team Briefing: ${sections.join(". ")}. ${atRisk > 0 ? `Recommendation: Review ${atRisk} at-risk player(s) before today's session.` : "All systems go for today's practice."}`;
   });
 
   filteredPlayers = computed(() => {
@@ -1136,8 +1227,8 @@ export class CoachDashboardComponent {
         return allPlayers.filter((p) => p.status === "injured");
       case "at_risk":
         return allPlayers.filter(
-          (p) => 
-            p.riskLevel === "high" || 
+          (p) =>
+            p.riskLevel === "high" ||
             p.status === "at_risk" ||
             (p.readiness !== undefined && p.readiness < 40) || // Wellness < 40%
             (p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
@@ -1150,8 +1241,8 @@ export class CoachDashboardComponent {
   atRiskCount = computed(
     () =>
       this.players().filter(
-        (p) => 
-          p.riskLevel === "high" || 
+        (p) =>
+          p.riskLevel === "high" ||
           p.status === "at_risk" ||
           (p.readiness !== undefined && p.readiness < 40) || // Wellness < 40%
           (p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
@@ -1281,27 +1372,35 @@ export class CoachDashboardComponent {
 
           // Load missing data detection
           this.loadMissingData(teamId);
-          
+
           // Check and create coach reminders for missing wellness
-          this.missingDataService.checkAndCreateCoachReminders(teamId).catch(
-            (error) => {
-              this.logger.error("[CoachDashboard] Error checking reminders:", error);
-            }
-          );
-          
+          this.missingDataService
+            .checkAndCreateCoachReminders(teamId)
+            .catch((error) => {
+              this.logger.error(
+                "[CoachDashboard] Error checking reminders:",
+                error,
+              );
+            });
+
           // Load team continuity
           this.loadTeamContinuity(teamId);
-          
+
           // Load override counts
           this.loadOverrideCounts();
-          
+
           // Load pending ownership transitions
           this.loadPendingTransitions();
-          
+
           // Load accountability items
-          this.accountabilityService.loadAccountabilityItems("coach").catch((error) => {
-            this.logger.warn("[CoachDashboard] Error loading accountability items:", error);
-          });
+          this.accountabilityService
+            .loadAccountabilityItems("coach")
+            .catch((error) => {
+              this.logger.warn(
+                "[CoachDashboard] Error loading accountability items:",
+                error,
+              );
+            });
         },
         error: (error) => {
           this.isPageLoading.set(false);
@@ -1331,7 +1430,8 @@ export class CoachDashboardComponent {
    */
   private async loadMissingData(teamId: string): Promise<void> {
     try {
-      const playersWithMissing = await this.missingDataService.getPlayersWithMissingWellness(teamId);
+      const playersWithMissing =
+        await this.missingDataService.getPlayersWithMissingWellness(teamId);
       this.playersWithMissingData.set(playersWithMissing);
     } catch (error) {
       this.logger.error("[CoachDashboard] Error loading missing data:", error);
@@ -1346,14 +1446,19 @@ export class CoachDashboardComponent {
       const continuity = await this.continuityService.getTeamContinuity(teamId);
       this.teamContinuity.set(continuity);
     } catch (error) {
-      this.logger.error("[CoachDashboard] Error loading team continuity:", error);
+      this.logger.error(
+        "[CoachDashboard] Error loading team continuity:",
+        error,
+      );
     }
   }
 
   /**
    * Get severity badge for missing data
    */
-  getMissingDataSeverity(severity: string): "success" | "info" | "warn" | "danger" {
+  getMissingDataSeverity(
+    severity: string,
+  ): "success" | "info" | "warn" | "danger" {
     switch (severity) {
       case "critical":
         return "danger";
@@ -1385,7 +1490,9 @@ export class CoachDashboardComponent {
       severity,
       source: "acwr",
       affectedEntity: `player-${alert.playerId}`,
-      message: alert.message || `ACWR is ${alert.acwr.toFixed(2)} - injury risk elevated`,
+      message:
+        alert.message ||
+        `ACWR is ${alert.acwr.toFixed(2)} - injury risk elevated`,
       recommendation: `Review training load for ${alert.playerName}. Consider reducing load by ${severity === "critical" ? "20-30%" : "15-20%"}.`,
     };
   }
@@ -1405,7 +1512,7 @@ export class CoachDashboardComponent {
   }
 
   adjustPlayerLoad(playerId: string): void {
-    this.toastService.info("Opening load adjustment for player...");
+    this.toastService.info(TOAST.INFO.OPENING_LOAD_ADJUSTMENT);
     this.router.navigate(["/training"], {
       queryParams: { player: playerId, action: "adjust-load" },
     });
@@ -1422,7 +1529,7 @@ export class CoachDashboardComponent {
    * Request data sharing from a player with blocked consent
    */
   requestDataSharing(playerId: string): void {
-    this.toastService.info("Sending data sharing request to athlete...");
+    this.toastService.info(TOAST.INFO.SENDING_DATA_REQUEST);
     this.router.navigate(["/settings/privacy"], {
       queryParams: { player: playerId, action: "request" },
     });
@@ -1448,12 +1555,12 @@ export class CoachDashboardComponent {
     // Navigate to calendar with tomorrow's date pre-selected
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const dateStr = tomorrow.toISOString().split('T')[0];
-    this.router.navigate(["/calendar"], { 
-      queryParams: { 
+    const dateStr = tomorrow.toISOString().split("T")[0];
+    this.router.navigate(["/calendar"], {
+      queryParams: {
         date: dateStr,
-        action: 'plan'
-      } 
+        action: "plan",
+      },
     });
   }
 
@@ -1477,7 +1584,7 @@ export class CoachDashboardComponent {
 
   createSession(): void {
     if (!this.newSession.title) {
-      this.toastService.warn("Please enter a session title");
+      this.toastService.warn(TOAST.WARN.ENTER_SESSION_TITLE);
       return;
     }
 
@@ -1495,31 +1602,31 @@ export class CoachDashboardComponent {
 
   sendTeamMessage(): void {
     if (!this.teamMessageContent.trim()) {
-      this.toastService.warn("Please enter a message");
+      this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
       return;
     }
 
-    this.toastService.success("Message sent to team");
+    this.toastService.success(TOAST.SUCCESS.MESSAGE_SENT_TO_TEAM);
     this.showTeamMessageDialog = false;
     // In real implementation, would call API to send message
   }
 
   requestDataAccess(playerId: string, event: Event): void {
     event.stopPropagation(); // Prevent row click
-    const player = this.players().find(p => p.playerId === playerId);
+    const player = this.players().find((p) => p.playerId === playerId);
     this.requestAccessPlayerId = playerId;
-    this.requestAccessMessage = `Hi ${player?.playerName || 'there'}, I'd like to request access to your wellness and training data to better support your performance. This will help me provide personalized training recommendations.`;
+    this.requestAccessMessage = `Hi ${player?.playerName || "there"}, I'd like to request access to your wellness and training data to better support your performance. This will help me provide personalized training recommendations.`;
     this.showRequestAccessDialog = true;
   }
 
   sendAccessRequest(): void {
     if (!this.requestAccessPlayerId || !this.requestAccessMessage.trim()) {
-      this.toastService.warn("Please enter a message");
+      this.toastService.warn(TOAST.WARN.ENTER_MESSAGE);
       return;
     }
 
     // In real implementation, would call API to send access request
-    this.toastService.success("Access request sent to player");
+    this.toastService.success(TOAST.SUCCESS.ACCESS_REQUEST_SENT);
     this.showRequestAccessDialog = false;
     this.requestAccessPlayerId = null;
     this.requestAccessMessage = "";
@@ -1654,16 +1761,16 @@ export class CoachDashboardComponent {
     if (players.length === 0) return;
 
     const counts: Record<string, number> = {};
-    
+
     // Load override counts for each player (last 7 days)
     await Promise.all(
       players.map(async (player) => {
         const count = await this.overrideService.getPlayerOverrideCount(
           player.playerId,
-          7
+          7,
         );
         counts[player.playerId] = count;
-      })
+      }),
     );
 
     this.playerOverrideCounts.set(counts);
@@ -1681,12 +1788,15 @@ export class CoachDashboardComponent {
    */
   async viewOverrideHistory(playerId: string, event: Event): Promise<void> {
     event.stopPropagation(); // Prevent row click
-    
-    const overrides = await this.overrideService.getPlayerOverrides(playerId, 10);
+
+    const overrides = await this.overrideService.getPlayerOverrides(
+      playerId,
+      10,
+    );
     const player = this.players().find((p) => p.playerId === playerId);
-    
+
     if (overrides.length === 0) {
-      this.toastService.info("No overrides found for this player");
+      this.toastService.info(TOAST.INFO.NO_OVERRIDES_FOUND);
       return;
     }
 
@@ -1694,14 +1804,17 @@ export class CoachDashboardComponent {
     const overrideList = overrides
       .map(
         (o) =>
-          `${new Date(o.createdAt || "").toLocaleDateString()}: ${o.overrideType} - ${o.reason || "No reason provided"}`
+          `${formatDate(o.createdAt || "", 'P')}: ${o.overrideType} - ${o.reason || "No reason provided"}`,
       )
       .join("\n");
 
     // For now, show in console/log - could be enhanced with a modal
-    this.logger.info(`Override history for ${player?.playerName}:`, overrideList);
+    this.logger.info(
+      `Override history for ${player?.playerName}:`,
+      overrideList,
+    );
     this.toastService.info(
-      `${overrides.length} override(s) found. Check console for details.`
+      `${overrides.length} override(s) found. Check console for details.`,
     );
   }
 
@@ -1728,10 +1841,17 @@ export class CoachDashboardComponent {
    */
   private async loadPendingTransitions(): Promise<void> {
     try {
-      const transitions = await this.ownershipTransitionService.getPendingTransitions("coach", 10);
+      const transitions =
+        await this.ownershipTransitionService.getPendingTransitions(
+          "coach",
+          10,
+        );
       this.pendingTransitions.set(transitions);
     } catch (error) {
-      this.logger.error("[CoachDashboard] Error loading pending transitions:", error);
+      this.logger.error(
+        "[CoachDashboard] Error loading pending transitions:",
+        error,
+      );
     }
   }
 
@@ -1744,18 +1864,9 @@ export class CoachDashboardComponent {
   }
 
   /**
-   * Get time ago string
+   * Get time ago string using centralized utility
    */
-  getTimeAgo(date: Date | undefined): string {
-    if (!date) return "";
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    if (hours < 1) return "Just now";
-    if (hours === 1) return "1 hour ago";
-    if (hours < 24) return `${hours} hours ago`;
-    const days = Math.floor(hours / 24);
-    if (days === 1) return "1 day ago";
-    return `${days} days ago`;
+  getTimeAgoStr(date: Date | undefined): string {
+    return getTimeAgo(date);
   }
 }

@@ -8,7 +8,7 @@
 }
 
 .empty-icon {
-  font-size: var(--font-display-lg);
+  font-size: var(--font-h1-size);
   color: var(--color-text-secondary);
   opacity: 0.5;
   margin-bottom: var(--space-4);
@@ -214,7 +214,7 @@
   font-weight: var(--font-weight-semibold);
 
   i {
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 }
 
@@ -267,7 +267,7 @@
     margin: 0 0 var(--space-2) 0;
 
     i {
-      font-size: var(--font-body-lg);
+      font-size: var(--font-body-size);
     }
 
     .pi-check-circle {
@@ -580,7 +580,7 @@
     padding: var(--space-2);
 
     .stage-name {
-      font-size: var(--font-body-2xs); /* 10px - compact label */
+      font-size: var(--font-caption-size); /* 10px - compact label */
     }
   }
 

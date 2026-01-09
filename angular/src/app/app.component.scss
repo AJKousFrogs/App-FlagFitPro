@@ -9,7 +9,7 @@
   height: 100%;
 }
 
-main:focus {
+main:focus-visible {
   outline: 2px solid var(--ds-primary-green, #089949);
   outline-offset: -2px;
 }

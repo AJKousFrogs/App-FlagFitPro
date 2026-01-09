@@ -23,56 +23,56 @@
 
   // Extra small - inline with body-xs text
   .icon-2xs {
-    font-size: 10px !important;
+    font-size: var(--font-compact-md) !important;
     width: 10px;
     height: 10px;
   }
 
   // Extra small - inline with body-sm text
   .icon-xs {
-    font-size: 12px !important;
+    font-size: var(--font-caption-size) !important;
     width: 12px;
     height: 12px;
   }
 
   // Small - inline with body text
   .icon-sm {
-    font-size: 14px !important;
+    font-size: var(--font-body-sm-size) !important;
     width: 14px;
     height: 14px;
   }
 
   // Medium - default icon size, buttons, navigation
   .icon-md {
-    font-size: 16px !important;
+    font-size: var(--font-body-size) !important;
     width: 16px;
     height: 16px;
   }
 
   // Large - section headers, emphasis
   .icon-lg {
-    font-size: 20px !important;
+    font-size: var(--font-h3-size) !important;
     width: 20px;
     height: 20px;
   }
 
   // Extra large - page headers, hero sections
   .icon-xl {
-    font-size: 24px !important;
+    font-size: var(--font-h2-size) !important;
     width: 24px;
     height: 24px;
   }
 
   // 2XL - empty states, feature highlights
   .icon-2xl {
-    font-size: 32px !important;
+    font-size: var(--font-h1-size) !important;
     width: 32px;
     height: 32px;
   }
 
   // 3XL - large empty states
   .icon-3xl {
-    font-size: 48px !important;
+    font-size: var(--font-h1-size) !important;
     width: 48px;
     height: 48px;
   }
@@ -154,7 +154,7 @@
 
     i,
     .pi {
-      font-size: 20px;
+      font-size: var(--font-h3-size);
     }
   }
 
@@ -166,7 +166,7 @@
 
     i,
     .pi {
-      font-size: 16px;
+      font-size: var(--font-body-size);
     }
   }
 
@@ -178,7 +178,7 @@
 
     i,
     .pi {
-      font-size: 24px;
+      font-size: var(--font-h2-size);
     }
   }
 
@@ -214,7 +214,7 @@
     padding: 0 4px;
     background: var(--color-status-error);
     color: var(--color-text-on-primary);
-    font-size: 10px;
+    font-size: var(--font-compact-md);
     font-weight: var(--font-weight-bold);
     line-height: 16px;
     text-align: center;

@@ -32,6 +32,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   WeatherData,
   WeatherService,
@@ -445,7 +446,7 @@ export class SmartTrainingFormComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (this.trainingForm.invalid) {
-      this.toastService.error("Please fill in all required fields");
+      this.toastService.error(TOAST.ERROR.REQUIRED_FIELDS);
       return;
     }
 
@@ -454,7 +455,7 @@ export class SmartTrainingFormComponent implements OnInit {
     try {
       const user = this.authService.getUser();
       if (!user?.id) {
-        this.toastService.error("You must be logged in to create a session");
+        this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
       }
 
@@ -482,7 +483,7 @@ export class SmartTrainingFormComponent implements OnInit {
         throw new Error(error.message);
       }
 
-      this.toastService.success("Training session created successfully!");
+      this.toastService.success(TOAST.SUCCESS.SESSION_CREATED_SUCCESS);
 
       // Navigate to training schedule
       setTimeout(() => {
@@ -507,6 +508,6 @@ export class SmartTrainingFormComponent implements OnInit {
 
   onCancel() {
     this.trainingForm.reset();
-    this.toastService.info("Training session creation cancelled");
+    this.toastService.info(TOAST.INFO.SESSION_CANCELLED);
   }
 }

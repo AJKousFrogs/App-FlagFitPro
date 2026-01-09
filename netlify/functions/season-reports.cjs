@@ -43,7 +43,7 @@ exports.handler = createHandler({
           .eq("id", season_id)
           .single();
 
-        if (seasonError) throw seasonError;
+        if (seasonError) {throw seasonError;}
 
         // Get team members
         const { data: teamMembers, error: membersError } = await supabase
@@ -51,7 +51,7 @@ exports.handler = createHandler({
           .select("user_id, role")
           .eq("team_id", season.team_id);
 
-        if (membersError) throw membersError;
+        if (membersError) {throw membersError;}
 
         const players = teamMembers.filter(m => m.role === "player");
         const reports = [];
@@ -79,7 +79,7 @@ exports.handler = createHandler({
           .from("season_summary_reports")
           .insert(reports);
 
-        if (insertError) throw insertError;
+        if (insertError) {throw insertError;}
 
         return {
           statusCode: 200,

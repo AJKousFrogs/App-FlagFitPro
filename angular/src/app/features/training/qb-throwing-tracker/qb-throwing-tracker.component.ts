@@ -7,7 +7,7 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { Component, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
@@ -76,6 +76,8 @@ interface SessionTypeOption {
 
 @Component({
   selector: "app-qb-throwing-tracker",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

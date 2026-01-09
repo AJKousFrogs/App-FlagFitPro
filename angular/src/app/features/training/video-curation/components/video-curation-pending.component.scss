@@ -12,7 +12,7 @@
   padding: var(--space-12);
 
   i {
-    font-size: var(--font-display-md);
+    font-size: var(--font-h1-size);
     color: var(--color-brand-primary);
     opacity: 0.5;
     margin-bottom: var(--space-4);
@@ -55,7 +55,7 @@
   justify-content: center;
 
   i {
-    font-size: var(--font-display-sm);
+    font-size: var(--font-h1-size);
     color: var(--color-brand-primary);
   }
 }
@@ -64,7 +64,7 @@
   padding: var(--space-4);
 
   h4 {
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     margin: 0 0 var(--space-2);
     color: var(--color-text-primary);

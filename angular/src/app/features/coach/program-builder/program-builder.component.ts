@@ -8,7 +8,7 @@
  */
 
 import { CommonModule, DatePipe } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -58,9 +58,6 @@ interface ProgramPhase {
   loadPercentage: number;
   focus: string;
 }
-
-//   sessions: DaySession[];
-// }
 
 interface _DaySession {
   id?: string;
@@ -138,6 +135,7 @@ const PHASE_PRESETS = [
 @Component({
   selector: "app-program-builder",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

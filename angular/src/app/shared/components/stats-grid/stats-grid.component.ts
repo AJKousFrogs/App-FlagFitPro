@@ -1,4 +1,4 @@
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
@@ -28,6 +28,7 @@ export interface StatItem {
 @Component({
   selector: "app-stats-grid",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, CardModule, TagModule],
   template: `
     <section class="stats-overview" aria-label="Statistics">

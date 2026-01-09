@@ -22,6 +22,7 @@ import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -116,7 +117,6 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   imports: [
     FormsModule,
     CardModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     TableModule,
@@ -914,7 +914,7 @@ export class PerformanceTrackingComponent {
       this.newPerformance.deadlift;
 
     if (!hasAnyMetric) {
-      this.toastService.warn("Please enter at least one performance metric");
+      this.toastService.warn(TOAST.WARN.ENTER_PERFORMANCE_METRIC);
       return;
     }
 
@@ -923,7 +923,7 @@ export class PerformanceTrackingComponent {
     try {
       const user = this.supabaseService.getCurrentUser();
       if (!user) {
-        this.toastService.error("Please log in to save performance");
+        this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE_PERFORMANCE);
         return;
       }
 
@@ -992,7 +992,7 @@ export class PerformanceTrackingComponent {
       // Update benchmarks after new record
       this.updatePositionBenchmarks();
 
-      this.toastService.success("Performance logged successfully!");
+      this.toastService.success(TOAST.SUCCESS.PERFORMANCE_LOGGED);
       this.showLogDialog = false;
     } catch (error) {
       const message =

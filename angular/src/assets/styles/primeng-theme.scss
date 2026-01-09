@@ -100,7 +100,7 @@
 
     /* Icon styling within buttons */
     .p-button-icon {
-      font-size: 1.125rem;
+      font-size: var(--font-body-size);
       transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
@@ -1002,14 +1002,14 @@
   }
 
   .p-dialog-header {
-    padding: 1.25rem 1.5rem;
+    padding: var(--space-5) var(--space-6);
     border-bottom: 1px solid
       var(--color-border-secondary, var(--primitive-neutral-300));
     background: var(--surface-primary, var(--color-text-on-primary));
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: var(--space-4);
   }
 
   .p-dialog-title {
@@ -1089,7 +1089,7 @@
     .p-icon,
     svg,
     i {
-      font-size: 0.875rem;
+      font-size: var(--font-body-sm-size);
       width: 0.875rem;
       height: 0.875rem;
       line-height: 1;
@@ -1202,7 +1202,7 @@
     .p-icon,
     svg,
     i {
-      font-size: 0.75rem;
+      font-size: var(--font-caption-size);
       width: 0.75rem;
       height: 0.75rem;
     }
@@ -1219,7 +1219,7 @@
     .p-icon,
     svg,
     i {
-      font-size: 1.125rem;
+      font-size: var(--font-body-size);
       width: 1.125rem;
       height: 1.125rem;
     }
@@ -1354,7 +1354,7 @@
     .pi,
     .p-icon,
     svg {
-      font-size: 0.75rem;
+      font-size: var(--font-caption-size);
       width: 0.75rem;
       height: 0.75rem;
       transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -1477,7 +1477,7 @@
       background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
     /* Hover - subtle border change only */
-    &:hover:not(:disabled):not(:focus):not(.p-invalid) {
+    &:hover:not(:disabled):not(:focus-visible):not(.p-invalid) {
       border-color: var(
         --p-input-hover-border-color,
         var(--primitive-neutral-400)
@@ -1485,7 +1485,7 @@
     }
 
     /* Focus - green border + green ring */
-    &:focus,
+    &:focus-visible,
     &:focus-visible {
       border-color: var(--p-input-focus-border-color, var(--ds-primary-green));
       box-shadow: 0 0 0 3px
@@ -1501,7 +1501,7 @@
         var(--color-status-error)
       );
 
-      &:focus {
+      &:focus-visible {
         box-shadow: 0 0 0 3px
           var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
       }
@@ -1527,7 +1527,7 @@
 
   /* Float Label Enhancement */
   .p-float-label {
-    .p-inputtext:focus ~ label,
+    .p-inputtext:focus-visible ~ label,
     .p-inputtext.p-filled ~ label {
       color: var(--ds-primary-green);
       transform: translateY(-1.5rem) scale(0.85);
@@ -1564,7 +1564,7 @@
 
     /* Focus */
     &.p-focus,
-    &:focus {
+    &:focus-visible {
       border-color: var(
         --p-dropdown-focus-border-color,
         var(--ds-primary-green)
@@ -1656,17 +1656,17 @@
   }
 
   .p-dropdown-items-wrapper {
-    padding: 8px;
+    padding: var(--space-2);
     max-height: 300px;
     overflow-y: auto;
   }
 
   .p-dropdown-item {
-    padding: var(--p-dropdown-option-padding, 12px 16px);
-    border-radius: var(--p-dropdown-option-border-radius, 6px);
+    padding: var(--p-dropdown-option-padding, var(--space-3) var(--space-4));
+    border-radius: var(--p-dropdown-option-border-radius, var(--radius-md));
     min-height: var(--p-dropdown-option-min-height, 40px);
-    margin: 2px 0;
-    font-size: var(--p-dropdown-option-font-size, 16px);
+    margin: var(--space-1) 0;
+    font-size: var(--p-dropdown-option-font-size, var(--font-body-size));
     font-weight: 400;
     color: var(--color-text-primary);
     display: flex;
@@ -1721,7 +1721,7 @@
 
     /* Focus */
     &.p-focus,
-    &:focus {
+    &:focus-visible {
       border-color: var(--p-select-focus-border-color, var(--ds-primary-green));
       box-shadow: 0 0 0 3px
         var(--p-select-focus-ring-color, rgba(8, 153, 73, 0.15));
@@ -1799,17 +1799,17 @@
   }
 
   .p-select-list-container {
-    padding: 8px;
+    padding: var(--space-2);
     max-height: 300px;
     overflow-y: auto;
   }
 
   .p-select-option {
-    padding: var(--p-dropdown-option-padding, 12px 16px);
-    border-radius: var(--p-dropdown-option-border-radius, 6px);
+    padding: var(--p-dropdown-option-padding, var(--space-3) var(--space-4));
+    border-radius: var(--p-dropdown-option-border-radius, var(--radius-md));
     min-height: var(--p-dropdown-option-min-height, 40px);
-    margin: 2px 0;
-    font-size: var(--p-dropdown-option-font-size, 16px);
+    margin: var(--space-1) 0;
+    font-size: var(--p-dropdown-option-font-size, var(--font-body-size));
     font-weight: 400;
     color: var(--color-text-primary);
     display: flex;
@@ -1866,7 +1866,7 @@
 
     /* Focus */
     &.p-focus,
-    &:focus {
+    &:focus-visible {
       border-color: var(
         --p-multiselect-focus-border-color,
         var(--ds-primary-green)
@@ -1940,22 +1940,22 @@
   }
 
   .p-multiselect-items-wrapper {
-    padding: 8px;
+    padding: var(--space-2);
     max-height: 300px;
     overflow-y: auto;
   }
 
   .p-multiselect-item {
-    padding: var(--p-dropdown-option-padding, 12px 16px);
-    border-radius: var(--p-dropdown-option-border-radius, 6px);
+    padding: var(--p-dropdown-option-padding, var(--space-3) var(--space-4));
+    border-radius: var(--p-dropdown-option-border-radius, var(--radius-md));
     min-height: var(--p-dropdown-option-min-height, 40px);
-    margin: 2px 0;
-    font-size: var(--p-dropdown-option-font-size, 16px);
+    margin: var(--space-1) 0;
+    font-size: var(--p-dropdown-option-font-size, var(--font-body-size));
     font-weight: 400;
     color: var(--color-text-primary);
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     cursor: pointer;
     transition:
       background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
@@ -2208,7 +2208,7 @@
 
     /* Typography - Semibold */
     font-family: var(--font-family-sans);
-    font-size: 14px;
+    font-size: var(--font-body-sm-size);
     font-weight: 600;
     line-height: 1;
     text-transform: none;
@@ -2292,7 +2292,7 @@
 
   /* Tag icon styling */
   .p-tag .p-tag-icon {
-    font-size: 12px;
+    font-size: var(--font-caption-size);
     line-height: 1;
     text-decoration: none;
   }
@@ -2397,7 +2397,7 @@
 
     padding: 0 var(--space-4); /* 16px horizontal for breathing room */
     font-family: var(--font-family-sans);
-    font-size: 14px;
+    font-size: var(--font-body-sm-size);
     font-weight: 600;
     line-height: 1;
     text-transform: none;
@@ -2424,7 +2424,7 @@
   }
 
   .p-chip .p-chip-icon {
-    font-size: 12px;
+    font-size: var(--font-caption-size);
     line-height: 1;
     text-decoration: none;
   }
@@ -2629,7 +2629,7 @@
         content: attr(data-label);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-secondary);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         flex-shrink: 0;
         min-width: 100px;
       }
@@ -2658,7 +2658,7 @@
       .p-datatable-thead > tr > th,
       .p-datatable-tbody > tr > td {
         padding: var(--space-2) var(--space-3);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
       }
 
       /* Hide less important columns on mobile */
@@ -2871,7 +2871,7 @@
       /* Icon within tab */
       i,
       .pi {
-        font-size: 1rem;
+        font-size: var(--font-body-size);
         color: var(--color-text-tertiary);
         transition: color 0.2s ease;
       }
@@ -2950,22 +2950,22 @@
   @media (max-width: 767px) {
     .p-tabs {
       .p-tablist {
-        padding: 3px;
+        padding: var(--space-1);
         border-radius: var(--radius-lg);
-        gap: 3px;
+        gap: var(--space-1);
       }
 
       .p-tab {
-        padding: 0 12px;
-        font-size: 0.8125rem; /* 13px */
-        gap: 6px;
+        padding: 0 var(--space-3);
+        font-size: var(--font-compact-lg); /* 13px */
+        gap: var(--space-2);
         height: 36px; /* Slightly smaller on mobile */
         min-height: 36px;
         border-radius: var(--radius-md);
 
         i,
         .pi {
-          font-size: 0.875rem;
+          font-size: var(--font-body-sm-size);
         }
       }
     }
@@ -3046,14 +3046,14 @@
   /* Compact variant for tighter spaces */
   .p-tabs.tabs-compact {
     .p-tablist {
-      padding: 3px;
-      gap: 2px;
+      padding: var(--space-1);
+      gap: 2px; /* Intentionally tight for compact variant */
       border-radius: var(--radius-lg);
     }
 
     .p-tab {
-      padding: 0 12px;
-      font-size: 0.8125rem;
+      padding: 0 var(--space-3);
+      font-size: var(--font-compact-lg);
       border-radius: var(--radius-md);
       height: 32px;
       min-height: 32px;
@@ -3214,7 +3214,7 @@
       @media (hover: hover) and (pointer: fine) {
         &:hover {
           transform: scale(1.15) translateY(-4px);
-          z-index: 10;
+          z-index: var(--z-dropdown);
         }
       }
     }
@@ -3693,12 +3693,12 @@ p-button .p-button,
 /* Ensure overlay container has high z-index */
 .p-overlay,
 .p-component-overlay {
-  z-index: 9999;
+  z-index: var(--z-toast);
 }
 
 /* Dialog should have lower z-index than dropdowns inside it */
 .p-dialog-mask {
-  z-index: 1000;
+  z-index: var(--z-modal);
 }
 
 .p-dialog {
@@ -3709,7 +3709,7 @@ p-button .p-button,
 .p-select-list,
 .p-dropdown-items,
 .p-listbox-list {
-  padding: 8px;
+  padding: var(--space-2);
   margin: 0;
 }
 
@@ -3717,11 +3717,11 @@ p-button .p-button,
 .p-select-item,
 .p-dropdown-item,
 .p-listbox-item {
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   min-height: 40px;
-  margin: 2px 0;
-  font-size: 16px;
+  margin: var(--space-1) 0;
+  font-size: var(--font-body-size);
   font-weight: 400;
   color: var(--color-text-primary);
   display: flex;
@@ -3755,7 +3755,7 @@ p-button .p-button,
 
 /* Calendar Header */
 .p-datepicker-panel .p-datepicker-header {
-  padding: 1rem 1.25rem;
+  padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid
     var(--color-border-secondary, var(--primitive-neutral-300));
   background: linear-gradient(
@@ -3773,7 +3773,7 @@ p-button .p-button,
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
   flex: 1;
 }
 
@@ -3846,7 +3846,7 @@ p-button .p-button,
 
 .p-datepicker-panel .p-datepicker-prev .pi,
 .p-datepicker-panel .p-datepicker-next .pi {
-  font-size: 0.875rem;
+  font-size: var(--font-body-sm-size);
 }
 
 /* Calendar Body */
@@ -3863,14 +3863,14 @@ p-button .p-button,
 
 /* Weekday Headers */
 .p-datepicker-panel .p-datepicker-calendar th {
-  padding: 0.5rem 0;
+  padding: var(--space-2) 0;
   font-family:
     "Poppins",
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;
   font-weight: 600;
-  font-size: 0.6875rem;
+  font-size: var(--font-compact-md);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-text-muted, var(--primitive-neutral-400));
@@ -3879,7 +3879,7 @@ p-button .p-button,
 
 /* Date Cells */
 .p-datepicker-panel .p-datepicker-calendar td {
-  padding: 2px;
+  padding: 2px; /* Intentionally small for compact calendar grid */
   text-align: center;
 }
 
@@ -3893,7 +3893,7 @@ p-button .p-button,
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;
-  font-size: 0.875rem;
+  font-size: var(--font-body-sm-size);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -3972,7 +3972,7 @@ p-button .p-button,
   .p-datepicker-panel .p-datepicker-calendar td > button {
     width: 2.25rem;
     height: 2.25rem;
-    font-size: 0.8125rem;
+    font-size: var(--font-compact-lg);
     border-radius: var(--radius-lg);
   }
 
@@ -3982,7 +3982,7 @@ p-button .p-button,
 
   .p-datepicker-panel .p-datepicker-title span,
   .p-datepicker-panel .p-datepicker-title button {
-    font-size: 0.9375rem;
+    font-size: var(--font-body-sm-size);
   }
 
   .p-datepicker-panel .p-datepicker-prev,
@@ -4125,7 +4125,7 @@ p-button .p-button,
 
     .pi,
     .p-icon {
-      font-size: 0.875rem;
+      font-size: var(--font-body-sm-size);
       transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 

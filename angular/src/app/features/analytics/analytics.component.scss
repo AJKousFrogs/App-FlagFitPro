@@ -209,11 +209,11 @@
   }
 
   .metric-label {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .metric-trend {
-    font-size: var(--font-body-2xs); // 10px
+    font-size: var(--font-caption-size); // 10px
     padding: var(--space-1) var(--space-2);
   }
 
@@ -246,7 +246,7 @@
   }
 
   .chart-subtitle {
-    font-size: var(--font-body-xs); // ~12px (closest token to 11px)
+    font-size: var(--font-caption-size); // ~12px (closest token to 11px)
   }
 
   .chart-actions {
@@ -306,7 +306,7 @@
   }
 
   .insight-label {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .chart-controls {
@@ -336,7 +336,7 @@
   }
 
   .step-label {
-    font-size: var(--font-body-xs); // ~12px
+    font-size: var(--font-caption-size); // ~12px
   }
 
   // ================================================================
@@ -370,7 +370,7 @@
 
   .loading-placeholder {
     padding: var(--space-6);
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .empty-chart-state {
@@ -387,7 +387,7 @@
     }
 
     p {
-      font-size: var(--font-body-2xs);
+      font-size: var(--font-caption-size);
       max-width: 240px;
       margin-bottom: var(--space-4);
     }
@@ -445,7 +445,7 @@
     flex-direction: column;
     text-align: center;
     padding: var(--space-2);
-    font-size: var(--font-body-xs); // ~12px
+    font-size: var(--font-caption-size); // ~12px
   }
 
   // ================================================================
@@ -468,12 +468,12 @@
     }
 
     .coach-label {
-      font-size: var(--font-body-2xs); // 10px
+      font-size: var(--font-caption-size); // 10px
     }
   }
 
   .view-all-link {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .goals-empty-state {
@@ -489,7 +489,7 @@
     }
 
     p {
-      font-size: var(--font-body-2xs);
+      font-size: var(--font-caption-size);
       max-width: 280px;
     }
   }
@@ -539,7 +539,7 @@
   }
 
   .target-row {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .goal-progress {
@@ -550,7 +550,7 @@
     }
 
     .progress-percent {
-      font-size: var(--font-body-2xs); // 10px
+      font-size: var(--font-caption-size); // 10px
     }
   }
 
@@ -558,13 +558,13 @@
     margin-bottom: var(--space-2);
 
     .days-remaining {
-      font-size: var(--font-body-2xs); // 10px
+      font-size: var(--font-caption-size); // 10px
     }
   }
 
   .coach-note {
     padding: var(--space-2);
-    font-size: var(--font-body-2xs); // 10px
+    font-size: var(--font-caption-size); // 10px
   }
 
   // ================================================================
@@ -599,7 +599,7 @@
     margin-bottom: var(--space-3);
 
     h4 {
-      font-size: var(--font-body-2xs);
+      font-size: var(--font-caption-size);
       margin-bottom: var(--space-2);
     }
   }
@@ -623,7 +623,7 @@
     margin-top: var(--space-3);
 
     label {
-      font-size: var(--font-body-2xs);
+      font-size: var(--font-caption-size);
     }
 
     // Font-size !important moved to _exceptions.scss (DS-EXC-052)
@@ -678,7 +678,7 @@
   }
 
   .gap-metric-label .gap-value {
-    font-size: var(--font-body-xs); // ~12px
+    font-size: var(--font-caption-size); // ~12px
   }
 
   .gap-bar-track {
@@ -686,7 +686,7 @@
   }
 
   .gap-bar-values {
-    font-size: var(--font-body-xs); // ~12px
+    font-size: var(--font-caption-size); // ~12px
   }
 
   // Hide status icons on mobile (too crowded)
@@ -711,7 +711,7 @@
   }
 
   .gap-summary .summary-label {
-    font-size: var(--font-body-2xs); // 10px
+    font-size: var(--font-caption-size); // 10px
   }
 }
 
@@ -812,13 +812,13 @@
 }
 
 .empty-chart-state .empty-icon {
-  font-size: var(--font-display-sm);
+  font-size: var(--font-h1-size);
   color: var(--color-border-secondary);
   margin-bottom: var(--space-4);
 }
 
 .empty-chart-state h4 {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-2) 0;
@@ -861,7 +861,7 @@
 }
 
 .page-subtitle {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   color: var(--color-text-secondary);
 }
 
@@ -1133,7 +1133,7 @@
 .stat-card h4,
 .stat-card h5 {
   margin: 0 0 var(--space-4) 0;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
 }
@@ -1208,7 +1208,7 @@
 
   i {
     color: var(--ds-primary-green);
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 
   h3 {
@@ -1245,14 +1245,14 @@
   text-align: center;
 
   .empty-icon {
-    font-size: var(--font-display-sm);
+    font-size: var(--font-h1-size);
     color: var(--color-border-secondary);
     margin-bottom: var(--space-4);
   }
 
   h4 {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
   }
@@ -1310,7 +1310,7 @@
 
   i {
     color: var(--ds-primary-green);
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 
   .goal-name {
@@ -1652,7 +1652,7 @@
 .gap-bar-values {
   display: flex;
   justify-content: space-between;
-  font-size: var(--font-body-xs);
+  font-size: var(--font-caption-size);
   color: var(--color-text-secondary);
 }
 

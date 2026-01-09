@@ -202,6 +202,8 @@ export const A11Y = {
 /**
  * Feature Flags
  * These can be used to toggle features on/off
+ * 
+ * Updated: 2026-01-09 - Fixed flags to match implementation status
  */
 export const FEATURES = {
   ENABLE_DARK_MODE: true,
@@ -209,8 +211,8 @@ export const FEATURES = {
   ENABLE_PUSH_NOTIFICATIONS: true,
   ENABLE_ACHIEVEMENTS: true,
   ENABLE_SOCIAL_FEATURES: true,
-  ENABLE_VIDEO_ANALYSIS: false, // Coming soon
-  ENABLE_AI_COACHING: false, // Coming soon
+  ENABLE_VIDEO_ANALYSIS: true, // ✅ Film Room is fully implemented
+  ENABLE_AI_COACHING: true, // ✅ AI Coach (Merlin) is fully implemented
 };
 
 /**
@@ -243,7 +245,7 @@ export const SUCCESS_MESSAGES = {
  */
 export const VALIDATION = {
   EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  PHONE_REGEX: /^[\d\s\-\+\(\)]+$/,
+  PHONE_REGEX: /^[\d\s\-+()]+$/,
   URL_REGEX: /^https?:\/\/.+/,
 
   // Password strength

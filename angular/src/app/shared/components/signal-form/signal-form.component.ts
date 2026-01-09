@@ -5,7 +5,7 @@
  * Enhanced with accessibility features and improved DX
  */
 
-import { Component, model, computed, output, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, model, computed, output, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
@@ -22,6 +22,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 @Component({
   selector: "app-signal-form",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

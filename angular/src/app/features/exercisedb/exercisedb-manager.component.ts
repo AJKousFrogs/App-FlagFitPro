@@ -36,6 +36,7 @@ import {
 } from "../../core/services/exercisedb.service";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
+import { capitalize } from "../../shared/utils/format.utils";
 
 @Component({
   selector: "app-exercisedb-manager",
@@ -943,7 +944,7 @@ export class ExerciseDBManagerComponent implements OnInit {
     const parts = this.filters()?.bodyParts || [];
     return [
       { label: "All Body Parts", value: null },
-      ...parts.map((p) => ({ label: this.capitalize(p), value: p })),
+      ...parts.map((p) => ({ label: capitalize(p), value: p })),
     ];
   });
 
@@ -951,7 +952,7 @@ export class ExerciseDBManagerComponent implements OnInit {
     const equipment = this.filters()?.equipment || [];
     return [
       { label: "All Equipment", value: null },
-      ...equipment.map((e) => ({ label: this.capitalize(e), value: e })),
+      ...equipment.map((e) => ({ label: capitalize(e), value: e })),
     ];
   });
 
@@ -1176,10 +1177,4 @@ export class ExerciseDBManagerComponent implements OnInit {
     });
   }
 
-  capitalize(str: string): string {
-    return str
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  }
 }

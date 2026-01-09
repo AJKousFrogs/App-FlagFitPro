@@ -28,6 +28,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
+import { getInitials } from "../../../shared/utils/format.utils";
 
 interface OverviewMetrics {
   totalAthletes: number;
@@ -97,7 +98,6 @@ interface TeamOption {
     DecimalPipe,
     FormsModule,
     CardModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     DividerModule,
@@ -552,5 +552,12 @@ export class CoachAnalyticsComponent {
     if (rate >= 70) return "info";
     if (rate >= 50) return "warn";
     return "danger";
+  }
+
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitials(name: string): string {
+    return getInitials(name);
   }
 }

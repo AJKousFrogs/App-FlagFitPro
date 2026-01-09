@@ -23,7 +23,7 @@
 
   .subtitle {
     color: var(--color-text-secondary);
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 }
 
@@ -53,7 +53,7 @@
   }
 
   .phase-date {
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-medium);
   }
 }
@@ -341,7 +341,7 @@
 
   h4 {
     margin-bottom: var(--space-4);
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 
   ul {
@@ -425,7 +425,7 @@
 
       .metric-value {
         display: block;
-        font-size: var(--font-body-lg);
+        font-size: var(--font-body-size);
         font-weight: var(--font-weight-semibold);
         color: var(--primary-color);
         text-transform: capitalize;

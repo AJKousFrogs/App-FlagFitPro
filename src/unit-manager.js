@@ -198,79 +198,13 @@ export class UnitManager {
     return value;
   }
 
-  // Time/Duration conversions
-  convertTime(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) {
-      return value;
-    }
-
-    if (fromUnit === "seconds" && toUnit === "minutes") {
-      return value / 60;
-    } else if (fromUnit === "minutes" && toUnit === "seconds") {
-      return value * 60;
-    }
-    return value;
-  }
-
-  // Distance conversions (enhanced for miles/yards/meters)
-  convertDistance(value, fromUnit, toUnit) {
-    if (fromUnit === toUnit) {
-      return value;
-    }
-
-    // Convert to meters first
-    let meters;
-    switch (fromUnit) {
-      case "yards":
-        meters = value * 0.9144;
-        break;
-      case "feet":
-        meters = value * 0.3048;
-        break;
-      case "inches":
-        meters = value * 0.0254;
-        break;
-      case "miles":
-        meters = value * 1609.34;
-        break;
-      case "cm":
-        meters = value * 0.01;
-        break;
-      case "meters":
-      case "m":
-        meters = value;
-        break;
-      default:
-        meters = value;
-    }
-
-    // Convert from meters to target unit
-    switch (toUnit) {
-      case "yards":
-        return meters / 0.9144;
-      case "feet":
-        return meters / 0.3048;
-      case "inches":
-        return meters / 0.0254;
-      case "miles":
-        return meters / 1609.34;
-      case "cm":
-        return meters / 0.01;
-      case "meters":
-      case "m":
-        return meters;
-      default:
-        return meters;
-    }
-  }
-
   // Height conversions (for jump measurements)
   convertHeight(value, fromUnit, toUnit) {
     return this.convertDistance(value, fromUnit, toUnit);
   }
 
-  // Format display values with units
-  formatDistance(value, preferredUnit = null) {
+  // Format distance display values with units (continued from line 69)
+  formatDistanceWithFeet(value, preferredUnit = null) {
     const unit = preferredUnit || this.units.distance;
 
     if (unit === "metric") {

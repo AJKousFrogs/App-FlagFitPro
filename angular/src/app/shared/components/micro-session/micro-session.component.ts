@@ -36,6 +36,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../button/button.component";
 
 export interface MicroSessionStep {
@@ -605,7 +606,7 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
       }
 
       this.followUpSubmitted.set(true);
-      this.toastService.success("Feedback submitted!");
+      this.toastService.success(TOAST.SUCCESS.FEEDBACK_SUBMITTED);
 
       this.sessionCompleted.emit({
         duration_minutes: Math.round(this.totalElapsedTime() / 60),
@@ -616,7 +617,7 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
       });
     } catch (error) {
       this.logger.error("Error submitting follow-up:", error);
-      this.toastService.error("Failed to submit feedback");
+      this.toastService.error(TOAST.ERROR.FEEDBACK_SUBMIT_FAILED);
     } finally {
       this.submitting.set(false);
     }

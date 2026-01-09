@@ -39,7 +39,7 @@ function shouldRemoveConsoleLog(line) {
 
 function isCommentedCodeBlock(lines, index) {
   // Detect large commented code blocks (3+ lines)
-  if (index + 2 >= lines.length) return false;
+  if (index + 2 >= lines.length) {return false;}
   
   const current = lines[index].trim();
   const next1 = lines[index + 1]?.trim() || '';
@@ -52,7 +52,7 @@ function isCommentedCodeBlock(lines, index) {
     // Check if it looks like code (has common code patterns)
     const codePatterns = [
       /\/\/\s*(import|export|function|const|let|var|class|interface|type|if|for|while|return|=>)/,
-      /\/\/\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*[=:\(]/,
+      /\/\/\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*[=:(]/,
     ];
     
     return codePatterns.some(pattern => 

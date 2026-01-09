@@ -20,7 +20,7 @@ function fixTrailingNewline(filePath) {
   
   // Check if file ends with newline
   if (!content.endsWith('\n') && content.length > 0) {
-    fs.writeFileSync(filePath, content + '\n', 'utf8');
+    fs.writeFileSync(filePath, `${content  }\n`, 'utf8');
     stats.filesFixed++;
     return true;
   }

@@ -5,7 +5,7 @@
  * Improves perceived performance by showing UI structure immediately
  */
 
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
-    <div class="chart-skeleton" [style.height]="height">
+    <div class="chart-skeleton" [style.height]="height()">
       <div class="skeleton-header">
         <div class="skeleton-title"></div>
         <div class="skeleton-legend">
@@ -25,7 +25,7 @@ import { CommonModule } from '@angular/common';
       </div>
       
       <div class="skeleton-chart-area">
-        @if (type === 'line' || type === 'bar') {
+        @if (type() === 'line' || type() === 'bar') {
           <!-- Line/Bar chart skeleton -->
           <div class="skeleton-y-axis">
             @for (tick of [0,1,2,3,4]; track tick) {
@@ -42,7 +42,7 @@ import { CommonModule } from '@angular/common';
               <div class="skeleton-x-label"></div>
             }
           </div>
-        } @else if (type === 'pie' || type === 'doughnut') {
+        } @else if (type() === 'pie' || type() === 'doughnut') {
           <!-- Pie/Doughnut chart skeleton -->
           <div class="skeleton-pie">
             <div class="skeleton-pie-center"></div>
@@ -272,8 +272,9 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class ChartSkeletonComponent {
-  @Input() type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea' = 'line';
-  @Input() height: string = '300px';
+  // Angular 21: Use input() signals instead of @Input()
+  type = input<'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea'>('line');
+  height = input<string>('300px');
 
   // Generate random bar heights for skeleton
   bars = Array.from({ length: 8 }, () => Math.random() * 60 + 20);

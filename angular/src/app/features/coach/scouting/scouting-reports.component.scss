@@ -68,7 +68,7 @@
 
       .opponent-name {
         font-weight: var(--font-weight-semibold);
-        font-size: var(--font-body-lg);
+        font-size: var(--font-body-size);
       }
 
       .game-date {
@@ -405,7 +405,7 @@
     color: var(--text-color-secondary);
 
     i {
-      font-size: var(--font-display-md);
+      font-size: var(--font-h1-size);
       margin-bottom: var(--ds-spacing-md);
       opacity: 0.5;
     }
@@ -564,7 +564,7 @@
   padding: var(--ds-spacing-3xl);
 
   i {
-    font-size: var(--font-display-md);
+    font-size: var(--font-h1-size);
     color: var(--text-color-secondary);
     opacity: 0.5;
     margin-bottom: var(--ds-spacing-md);

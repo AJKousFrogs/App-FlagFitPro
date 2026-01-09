@@ -14,7 +14,7 @@
  */
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:8888';
-const AUTH_TOKEN = process.env.AUTH_TOKEN;
+const {AUTH_TOKEN} = process.env;
 
 if (!AUTH_TOKEN) {
   console.error('❌ AUTH_TOKEN environment variable is required');
@@ -85,7 +85,7 @@ function assert(condition, message, actualValue = null) {
  * Test Case 1: Missing readiness + baseline ACWR
  */
 async function testCase1_MissingReadiness() {
-  console.log('\n' + '='.repeat(80));
+  console.log(`\n${  '='.repeat(80)}`);
   console.log('TEST CASE 1: Missing Readiness + Baseline ACWR');
   console.log('='.repeat(80));
   
@@ -223,7 +223,7 @@ async function testCase1_MissingReadiness() {
  * Test Case 2: GET returns same truth
  */
 async function testCase2_GetReturnsTruth() {
-  console.log('\n' + '='.repeat(80));
+  console.log(`\n${  '='.repeat(80)}`);
   console.log('TEST CASE 2: GET Returns Same Truth');
   console.log('='.repeat(80));
   
@@ -291,7 +291,7 @@ async function testCase2_GetReturnsTruth() {
  * Test Case 3: No active program -> explicit failure (Blocker B)
  */
 async function testCase3_NoProgram() {
-  console.log('\n' + '='.repeat(80));
+  console.log(`\n${  '='.repeat(80)}`);
   console.log('TEST CASE 3: No Active Program → Explicit Failure');
   console.log('='.repeat(80));
   
@@ -364,7 +364,7 @@ async function testCase3_NoProgram() {
  * Test Case 4: Sport-layer override present
  */
 async function testCase4_SportLayerOverride() {
-  console.log('\n' + '='.repeat(80));
+  console.log(`\n${  '='.repeat(80)}`);
   console.log('TEST CASE 4: Sport-Layer Override (Practice Day)');
   console.log('='.repeat(80));
   
@@ -470,7 +470,7 @@ async function main() {
   }
   
   // Print summary
-  console.log('\n' + '='.repeat(80));
+  console.log(`\n${  '='.repeat(80)}`);
   console.log('SUMMARY');
   console.log('='.repeat(80));
   

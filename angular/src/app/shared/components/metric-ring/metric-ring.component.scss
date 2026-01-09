@@ -121,7 +121,7 @@
 }
 
 .size-xl .ring-value {
-  font-size: var(--font-display-sm);
+  font-size: var(--font-h1-size);
 }
 
 .ring-value.status-success {
@@ -137,7 +137,7 @@
 }
 
 .ring-unit {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
   opacity: 0.7;
   margin-left: var(--space-1);

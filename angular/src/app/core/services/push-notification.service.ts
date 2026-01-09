@@ -9,6 +9,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
+import { TOAST } from "../constants/toast-messages.constants";
 
 export interface PushNotificationOptions {
   title: string;
@@ -185,16 +186,16 @@ export class PushNotificationService {
       await this.saveSubscription(subscription);
 
       this.logger.info("Push subscription successful");
-      this.toastService.success("Push notifications enabled!");
+      this.toastService.success(TOAST.SUCCESS.PUSH_ENABLED);
 
       return true;
     } catch (error) {
       this.logger.error("Push subscription failed:", error);
 
       if (error instanceof DOMException && error.name === "NotAllowedError") {
-        this.toastService.error("Notification permission was denied");
+        this.toastService.error(TOAST.ERROR.PUSH_DENIED);
       } else {
-        this.toastService.error("Failed to enable push notifications");
+        this.toastService.error(TOAST.ERROR.PUSH_FAILED);
       }
 
       return false;
@@ -222,12 +223,12 @@ export class PushNotificationService {
       this._isSubscribed.set(false);
 
       this.logger.info("Push subscription cancelled");
-      this.toastService.success("Push notifications disabled");
+      this.toastService.success(TOAST.SUCCESS.PUSH_DISABLED);
 
       return true;
     } catch (error) {
       this.logger.error("Error unsubscribing:", error);
-      this.toastService.error("Failed to disable push notifications");
+      this.toastService.error(TOAST.ERROR.PUSH_FAILED);
       return false;
     }
   }

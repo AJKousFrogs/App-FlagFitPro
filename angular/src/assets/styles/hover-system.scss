@@ -649,7 +649,7 @@
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       transform: scale(1.15) translateY(-4px);
-      z-index: 10;
+      z-index: var(--z-dropdown);
     }
   }
 }
@@ -719,12 +719,12 @@ a:not(.p-button):not(.btn):not([class*="nav"]):not(.no-hover) {
     box-shadow var(--hover-transition-fast);
 
   @media (hover: hover) and (pointer: fine) {
-    &:hover:not(:disabled):not(:focus) {
+    &:hover:not(:disabled):not(:focus-visible) {
       border-color: var(--color-text-secondary);
     }
   }
 
-  &:focus {
+  &:focus-visible {
     border-color: var(--ds-primary-green);
     box-shadow: var(--hover-focus-ring);
     outline: none;

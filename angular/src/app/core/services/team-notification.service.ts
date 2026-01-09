@@ -20,6 +20,8 @@ import {
   Notification as AppNotification,
 } from "./notification-state.service";
 import { ToastService } from "./toast.service";
+import { TOAST } from "../constants/toast-messages.constants";
+import { formatDate } from "../../shared/utils/date.utils";
 import {
   RealtimeChannel,
   RealtimePostgresChangesPayload,
@@ -122,7 +124,7 @@ export class TeamNotificationService {
     const groups: Map<string, CoachActivityItem[]> = new Map();
 
     activities.forEach((activity) => {
-      const date = new Date(activity.created_at).toLocaleDateString();
+      const date = formatDate(activity.created_at, 'P');
       const existing = groups.get(date) || [];
       groups.set(date, [...existing, activity]);
     });
@@ -574,7 +576,7 @@ export class TeamNotificationService {
         })),
       );
 
-      this.toastService.success("All activity marked as read");
+      this.toastService.success(TOAST.SUCCESS.ACTIVITY_MARKED_READ);
     } catch (error) {
       this.logger.error("Error marking all activity read:", error);
     }
@@ -636,10 +638,10 @@ export class TeamNotificationService {
   ): Promise<void> {
     // Database trigger handles coach notifications
     // This shows local confirmation
-    this.toastService.success(
-      `Training completed: ${sessionType} (${duration} min)`,
-      { life: 3000 },
-    );
+      this.toastService.success(
+        TOAST.SUCCESS.TRAINING_COMPLETED.replace("{type}", sessionType).replace("{duration}", duration.toString()),
+        { life: 3000 },
+      );
   }
 
   /**
@@ -669,7 +671,7 @@ export class TeamNotificationService {
       if (error) throw error;
 
       this.toastService.success(
-        isImportant ? "Important announcement sent!" : "Announcement posted",
+        isImportant ? TOAST.SUCCESS.ANNOUNCEMENT_SENT : TOAST.SUCCESS.ANNOUNCEMENT_POSTED,
       );
     } catch (error) {
       this.logger.error("Error sending announcement:", error);
@@ -755,7 +757,7 @@ export class TeamNotificationService {
           .upsert(updates, { onConflict: "user_id,notification_type" });
       }
 
-      this.toastService.success("Preferences updated");
+      this.toastService.success(TOAST.SUCCESS.PREFERENCES_UPDATED);
     } catch (error) {
       this.logger.error("Error updating preferences:", error);
       throw error;
@@ -843,7 +845,7 @@ export class TeamNotificationService {
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
 
-    return date.toLocaleDateString();
+    return formatDate(date, 'P');
   }
 
   /**

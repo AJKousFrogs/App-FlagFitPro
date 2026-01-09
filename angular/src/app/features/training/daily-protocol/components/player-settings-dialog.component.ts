@@ -11,6 +11,7 @@
  */
 
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
   model,
@@ -74,6 +75,8 @@ interface DayOption {
 
 @Component({
   selector: "app-player-settings-dialog",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     DialogModule,
@@ -90,7 +93,7 @@ interface DayOption {
     <p-dialog
       header="Training Settings"
       [modal]="true"
-      [visible]="visible"
+      [visible]="visible()"
       (visibleChange)="onVisibleChange($event)"
       [style]="{ width: '500px' }"
       [breakpoints]="{ '640px': '95vw' }"
@@ -162,7 +165,7 @@ interface DayOption {
           </div>
         </div>
 
-        <!-- Availability Schedule (PROMPT 2.11: Renamed from "Flag Practice Schedule") -->
+        <!-- Availability Schedule -->
         <div class="form-section">
           <h4>Availability</h4>
           <p class="section-description">
@@ -330,7 +333,7 @@ export class PlayerSettingsDialogComponent {
     primaryPosition: "wr_db",
     secondaryPosition: undefined,
     birthDate: undefined,
-    flagPracticeSchedule: [], // PROMPT 2.11: Internal name kept, but API maps to availabilitySchedule
+    flagPracticeSchedule: [], // Internal name - API maps to availabilitySchedule
     preferredTrainingDays: [1, 2, 4, 5, 6], // Mon, Tue, Thu, Fri, Sat
     dailyRoutine: [
       { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-sun" },
@@ -433,7 +436,7 @@ export class PlayerSettingsDialogComponent {
         this.api.get("/api/player-settings"),
       );
       if (response?.success && response.data) {
-        // PROMPT 2.11: Map availabilitySchedule from API to flagPracticeSchedule in component
+        // Map availabilitySchedule from API to flagPracticeSchedule in component
         const availabilitySchedule = response.data.availabilitySchedule || response.data.flagPracticeSchedule || [];
         
         this.settings = {
@@ -541,10 +544,10 @@ export class PlayerSettingsDialogComponent {
     this.isSaving.set(true);
 
     try {
-      // PROMPT 2.11: Map flagPracticeSchedule to availabilitySchedule for API
+      // Map flagPracticeSchedule to availabilitySchedule for API
       const payload = {
         ...this.settings,
-        availabilitySchedule: this.settings.flagPracticeSchedule, // Map component field to API field
+        availabilitySchedule: this.settings.flagPracticeSchedule,
         birthDate: this.settings.birthDate?.toISOString().split("T")[0],
       };
       // Remove flagPracticeSchedule from payload (API expects availabilitySchedule)

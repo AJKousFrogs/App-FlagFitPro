@@ -404,7 +404,7 @@
 
     i,
     .pi {
-      font-size: 20px; // Standardized icon size
+      font-size: var(--font-h3-size); // Standardized icon size
       color: var(--ds-primary-green);
       opacity: 0.9;
     }
@@ -412,7 +412,7 @@
 
   .section-header__subtitle {
     margin: 0;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
     color: var(--color-text-secondary);
   }
 
@@ -431,7 +431,7 @@
 
       i,
       .pi {
-        font-size: 18px;
+        font-size: var(--font-body-size);
       }
     }
   }
@@ -445,7 +445,7 @@
 
       i,
       .pi {
-        font-size: 24px;
+        font-size: var(--font-h2-size);
       }
     }
   }

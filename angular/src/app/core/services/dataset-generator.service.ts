@@ -6,7 +6,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { TRAINING_THRESHOLDS } from "../constants/training-thresholds";
+import { TRAINING } from "../constants/app.constants";
 
 export interface GeneratedDataset {
   data: Array<{ speed_m_s: number; distance_m: number }>;
@@ -34,8 +34,8 @@ export interface DatasetOptions {
   providedIn: "root",
 })
 export class DatasetGeneratorService {
-  private readonly HIGH_SPEED_THRESHOLD = TRAINING_THRESHOLDS.HIGH_SPEED_M_S;
-  private readonly SPRINT_THRESHOLD = TRAINING_THRESHOLDS.SPRINT_M_S;
+  private readonly HIGH_SPEED_THRESHOLD = TRAINING.HIGH_SPEED_M_S;
+  private readonly SPRINT_THRESHOLD = TRAINING.SPRINT_M_S;
 
   /**
    * Generate a realistic training session dataset

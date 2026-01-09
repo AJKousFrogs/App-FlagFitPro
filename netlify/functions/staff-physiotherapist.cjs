@@ -297,7 +297,7 @@ async function updateRTPProgress(injuryId, updates) {
             notification_type: "rtp",
             message: `RTP phase completed - approval required for next phase`,
             priority: "medium",
-            metadata: { playerId: data.user_id, injuryId: injuryId, phase: updates.phase },
+            metadata: { playerId: data.user_id, injuryId, phase: updates.phase },
           });
         }
       }

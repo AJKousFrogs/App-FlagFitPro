@@ -52,6 +52,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
@@ -1131,12 +1132,12 @@ export class RosterComponent implements OnInit {
 
     if (result.success) {
       this.toastService.success(
-        this.editingPlayer() ? "Player updated!" : "Player added!",
+        this.editingPlayer() ? TOAST.SUCCESS.PLAYER_UPDATED : TOAST.SUCCESS.PLAYER_ADDED,
       );
       this.showPlayerDialog.set(false);
       this.editingPlayer.set(null);
     } else {
-      this.toastService.error(result.error || "Failed to save player");
+      this.toastService.error(result.error || TOAST.ERROR.PLAYER_SAVE_FAILED);
     }
 
     this.isSaving.set(false);
@@ -1153,7 +1154,7 @@ export class RosterComponent implements OnInit {
         if (result.success) {
           this.toastService.success(`${player.name} has been removed`);
         } else {
-          this.toastService.error(result.error || "Failed to remove player");
+          this.toastService.error(result.error || TOAST.ERROR.PLAYER_REMOVE_FAILED);
         }
       },
     });
@@ -1194,7 +1195,7 @@ export class RosterComponent implements OnInit {
       this.toastService.success(`${player.name}'s status updated`);
       this.showStatusDialog.set(false);
     } else {
-      this.toastService.error(result.error || "Failed to update status");
+      this.toastService.error(result.error || TOAST.ERROR.STATUS_UPDATE_FAILED);
     }
 
     this.isSaving.set(false);
@@ -1242,7 +1243,7 @@ export class RosterComponent implements OnInit {
       this.showBulkStatusDialog.set(false);
       this.clearSelection();
     } else {
-      this.toastService.error(result.error || "Failed to update status");
+      this.toastService.error(result.error || TOAST.ERROR.STATUS_UPDATE_FAILED);
     }
 
     this.isSaving.set(false);
@@ -1263,7 +1264,7 @@ export class RosterComponent implements OnInit {
           this.toastService.success(`Removed ${count} players`);
           this.clearSelection();
         } else {
-          this.toastService.error(result.error || "Failed to remove players");
+          this.toastService.error(result.error || TOAST.ERROR.PLAYERS_REMOVE_FAILED);
         }
       },
     });
@@ -1280,7 +1281,7 @@ export class RosterComponent implements OnInit {
   exportRoster(): void {
     const csv = this.rosterService.exportRosterToCsv();
     if (!csv) {
-      this.toastService.warn("No players to export");
+      this.toastService.warn(TOAST.WARN.NO_PLAYERS_TO_EXPORT);
       return;
     }
 
@@ -1297,7 +1298,7 @@ export class RosterComponent implements OnInit {
     link.click();
     document.body.removeChild(link);
 
-    this.toastService.success("Roster exported successfully");
+    this.toastService.success(TOAST.SUCCESS.ROSTER_EXPORTED);
   }
 
   // Invitations
@@ -1310,7 +1311,7 @@ export class RosterComponent implements OnInit {
 
   async sendInvitation(): Promise<void> {
     if (!this.inviteEmail) {
-      this.toastService.warn("Please enter an email address");
+      this.toastService.warn(TOAST.WARN.MISSING_EMAIL);
       return;
     }
 
@@ -1325,7 +1326,7 @@ export class RosterComponent implements OnInit {
       this.toastService.success(`Invitation sent to ${this.inviteEmail}`);
       this.showInviteDialog.set(false);
     } else {
-      this.toastService.error(result.error || "Failed to send invitation");
+      this.toastService.error(result.error || TOAST.ERROR.INVITATION_SEND_FAILED);
     }
 
     this.isSaving.set(false);
@@ -1341,7 +1342,7 @@ export class RosterComponent implements OnInit {
     if (result.success) {
       this.toastService.success(`Invitation resent to ${invitation.email}`);
     } else {
-      this.toastService.error(result.error || "Failed to resend invitation");
+      this.toastService.error(result.error || TOAST.ERROR.INVITATION_RESEND_FAILED);
     }
   }
 
@@ -1354,7 +1355,7 @@ export class RosterComponent implements OnInit {
       accept: async () => {
         const result = await this.rosterService.cancelInvitation(invitation.id);
         if (result.success) {
-          this.toastService.success("Invitation cancelled");
+          this.toastService.success(TOAST.SUCCESS.INVITATION_CANCELLED);
         } else {
           this.toastService.error(
             result.error || "Failed to cancel invitation",

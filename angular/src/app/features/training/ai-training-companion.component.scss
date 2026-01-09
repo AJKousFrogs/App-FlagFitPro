@@ -40,7 +40,7 @@
 }
 
 .avatar-image {
-  font-size: var(--text-3xl);
+  font-size: var(--font-h2-size);
   color: var(--color-text-on-primary);
   z-index: 2;
 }
@@ -341,7 +341,7 @@
 }
 
 .ai-disabled-text h4 {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   margin: 0;
   color: var(--color-text-primary);

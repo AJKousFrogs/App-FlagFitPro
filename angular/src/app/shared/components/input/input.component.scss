@@ -47,11 +47,11 @@ label {
   color: var(--color-text-muted, var(--color-text-secondary));
 }
 
-.form-control:hover:not(:disabled):not(:focus) {
+.form-control:hover:not(:disabled):not(:focus-visible) {
   border-color: var(--color-text-secondary, var(--color-border-primary));
 }
 
-.form-control:focus {
+.form-control:focus-visible {
   outline: 2px solid var(--ds-primary-green, var(--ds-primary-green));
   outline-offset: 2px;
   border-color: var(--ds-primary-green, var(--ds-primary-green));
@@ -93,7 +93,7 @@ label {
   }
 }
 
-.form-control.is-invalid:focus {
+.form-control.is-invalid:focus-visible {
   border-color: var(--color-status-error, var(--color-status-error));
   box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.2);
 }
@@ -102,7 +102,7 @@ label {
   border-color: var(--color-status-success, var(--color-status-success));
 }
 
-.form-control.is-valid:focus {
+.form-control.is-valid:focus-visible {
   border-color: var(--color-status-success, var(--color-status-success));
   box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb, 76, 175, 80), 0.2);
 }

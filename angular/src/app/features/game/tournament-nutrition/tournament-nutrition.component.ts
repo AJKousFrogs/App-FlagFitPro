@@ -48,6 +48,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { NutritionService } from "../../../core/services/nutrition.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -1295,6 +1296,6 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     this.nutritionWindows.update((windows) =>
       windows.map((w) => (w.id === window.id ? { ...w, completed: true } : w)),
     );
-    this.toastService.success("Window completed! Keep it up! 💪");
+    this.toastService.success(TOAST.SUCCESS.WINDOW_COMPLETED);
   }
 }

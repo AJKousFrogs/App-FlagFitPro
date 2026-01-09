@@ -32,10 +32,12 @@ import {
 } from "../../core/services/depth-chart.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { getInitials } from "../../shared/utils/format.utils";
 
 interface PositionGroup {
   position: string;
@@ -162,7 +164,7 @@ interface PositionGroup {
                                     @if (entry.player_id) {
                                       <p-avatar
                                         [label]="
-                                          getInitials(entry.player_name || 'U')
+                                          getInitialsStr(entry.player_name || 'U')
                                         "
                                         shape="circle"
                                         size="normal"
@@ -236,7 +238,7 @@ interface PositionGroup {
                   @for (player of unassignedPlayers(); track player.id) {
                     <div class="unassigned-player">
                       <p-avatar
-                        [label]="getInitials(player.name || 'U')"
+                        [label]="getInitialsStr(player.name || 'U')"
                         shape="circle"
                       ></p-avatar>
                       <span>{{ player.name }}</span>
@@ -373,7 +375,7 @@ export class DepthChartComponent implements OnInit {
             this.loadChartDetails(charts[0].id);
           }
         },
-        error: () => this.toastService.error("Failed to load depth charts"),
+        error: () => this.toastService.error(TOAST.ERROR.DEPTH_CHART_LOAD_FAILED),
       });
   }
 
@@ -389,7 +391,7 @@ export class DepthChartComponent implements OnInit {
           }
         },
         error: () =>
-          this.toastService.error("Failed to load depth chart details"),
+          this.toastService.error(TOAST.ERROR.DEPTH_CHART_DETAILS_FAILED),
       });
   }
 
@@ -424,13 +426,11 @@ export class DepthChartComponent implements OnInit {
     return labels[type] || type;
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   initializeDepthCharts(): void {
@@ -446,10 +446,10 @@ export class DepthChartComponent implements OnInit {
           if (charts.length > 0) {
             this.loadChartDetails(charts[0].id);
           }
-          this.toastService.success("Depth charts initialized successfully");
+          this.toastService.success(TOAST.SUCCESS.DEPTH_CHART_INITIALIZED);
         },
         error: () =>
-          this.toastService.error("Failed to initialize depth charts"),
+          this.toastService.error(TOAST.ERROR.DEPTH_CHART_INIT_FAILED),
       });
   }
 
@@ -485,7 +485,7 @@ export class DepthChartComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Player assigned successfully");
+          this.toastService.success(TOAST.SUCCESS.PLAYER_ASSIGNED);
           this.showAssignDialog = false;
           // Reload chart to get updated data
           const chart = this.activeChart();
@@ -493,7 +493,7 @@ export class DepthChartComponent implements OnInit {
             this.loadChartDetails(chart.id);
           }
         },
-        error: () => this.toastService.error("Failed to assign player"),
+        error: () => this.toastService.error(TOAST.ERROR.PLAYER_ASSIGN_FAILED),
       });
   }
 
@@ -505,13 +505,13 @@ export class DepthChartComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Player removed from position");
+          this.toastService.success(TOAST.SUCCESS.PLAYER_REMOVED);
           const chart = this.activeChart();
           if (chart) {
             this.loadChartDetails(chart.id);
           }
         },
-        error: () => this.toastService.error("Failed to remove player"),
+        error: () => this.toastService.error(TOAST.ERROR.PLAYER_REMOVE_FAILED),
       });
   }
 
@@ -530,7 +530,7 @@ export class DepthChartComponent implements OnInit {
             this.loadChartDetails(chart.id);
           }
         },
-        error: () => this.toastService.error("Failed to add backup slot"),
+        error: () => this.toastService.error(TOAST.ERROR.BACKUP_SLOT_ADD_FAILED),
       });
   }
 }

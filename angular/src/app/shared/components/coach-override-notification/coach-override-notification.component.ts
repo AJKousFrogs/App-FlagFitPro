@@ -27,6 +27,7 @@ import { ButtonComponent } from "../button/button.component";
 import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-override-badge.component";
 import { OverrideLoggingService, CoachOverride } from "../../../core/services/override-logging.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { getTimeAgo } from "../../utils/date.utils";
 
 @Component({
   selector: "app-coach-override-notification",
@@ -100,7 +101,7 @@ import { LoggerService } from "../../../core/services/logger.service";
               {{ getCoachName() }} made this adjustment and will monitor your response.
             </p>
             <small class="timestamp">
-              Adjusted {{ getTimeAgo(override()!.createdAt!) }}
+              Adjusted {{ getTimeAgoStr(override()!.createdAt!) }}
             </small>
           </div>
 
@@ -441,18 +442,11 @@ export class CoachOverrideNotificationComponent {
     return this.coachName() || "Your coach";
   }
 
-  getTimeAgo(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffMins < 1) return "just now";
-    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  /**
+   * Get time ago string using centralized utility
+   */
+  getTimeAgoStr(dateString: string): string {
+    return getTimeAgo(dateString);
   }
 
   formatRecommendation(data: Record<string, unknown>): string {

@@ -8,7 +8,7 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -73,9 +73,6 @@ interface DailyCheckin {
   activitiesCompleted: string[];
   notes?: string;
 }
-
-//   functionScores: number[];
-// }
 
 // ===== Constants =====
 const PROTOCOL_STAGES: ProtocolStage[] = [
@@ -267,12 +264,12 @@ const SEVERITY_LEVELS = [
 @Component({
   selector: "app-return-to-play",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
     CardModule,
     Checkbox,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     DatePicker,

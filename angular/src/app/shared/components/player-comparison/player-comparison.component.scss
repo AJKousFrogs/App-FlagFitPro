@@ -78,7 +78,7 @@
 
 .player-info h3 {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -272,7 +272,7 @@
 }
 
 .empty-state i {
-  font-size: var(--font-display-md);
+  font-size: var(--font-h1-size);
   color: var(--color-border-primary);
   margin-bottom: var(--space-4);
 }

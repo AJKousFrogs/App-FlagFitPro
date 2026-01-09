@@ -249,7 +249,7 @@
       box-shadow var(--p-transition-duration)
         var(--p-transition-timing-function);
 
-    &:focus,
+    &:focus-visible,
     &:focus-visible {
       outline: none;
       border-color: var(--p-inputtext-focus-border-color);
@@ -766,7 +766,7 @@
       font-size: var(--font-size-body);
       font-weight: var(--font-weight-medium);
       cursor: pointer;
-      transition: all var(--transition-base);
+      transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
       white-space: nowrap;
       outline: none;
       min-height: 44px;
@@ -1142,7 +1142,7 @@
 
   .p-tag.stat-tag,
   .p-tag.event-type-tag {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-caption-size);
     padding: var(--space-1) var(--space-2);
     line-height: 1.2;
   }

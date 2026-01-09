@@ -10,13 +10,14 @@
  * @version 2.0.0
  */
 
-import { Component, input, computed } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RiskZone } from "../../../core/models/acwr.models";
 
 @Component({
   selector: "app-traffic-light-risk",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   templateUrl: "./traffic-light-risk.component.html",
   styleUrls: ["./traffic-light-risk.component.scss"],

@@ -52,8 +52,8 @@ import { TRAINING } from "../../../core/constants/app.constants";
     FormsModule,
     TitleCasePipe,
     DecimalPipe,
-    IconButtonComponent,
     SemanticMeaningRendererComponent,
+    IconButtonComponent,
   ],
   template: `
     <p-card

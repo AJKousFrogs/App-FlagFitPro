@@ -34,6 +34,7 @@ import { Textarea } from "primeng/textarea";
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { WellnessService } from "../../../core/services/wellness.service";
 
 @Component({
@@ -239,17 +240,17 @@ export class QuickWellnessCheckinComponent {
         next: (response) => {
           if (response.success) {
             this.updateStreak();
-            this.toastService.success("Check-in saved! 💪");
+            this.toastService.success(TOAST.SUCCESS.CHECKIN_SAVED);
             this.submitted.emit();
             this.visible = false;
           } else {
-            this.toastService.error(response.error || "Failed to save");
+            this.toastService.error(response.error || TOAST.ERROR.SAVE_FAILED);
           }
           this.isSubmitting.set(false);
         },
         error: (err) => {
           this.logger.error("Error submitting quick check-in:", err);
-          this.toastService.error("Failed to save check-in");
+          this.toastService.error(TOAST.ERROR.CHECKIN_SAVE_FAILED);
           this.isSubmitting.set(false);
         },
       });

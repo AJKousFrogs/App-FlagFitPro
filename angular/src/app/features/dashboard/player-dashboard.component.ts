@@ -49,6 +49,7 @@ import { WellnessService } from "../../core/services/wellness.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ChannelService } from "../../core/services/channel.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
 import { AcwrSpikeDetectionService } from "../../core/services/acwr-spike-detection.service";
@@ -70,8 +71,10 @@ import { MissingDataDetectionService, MissingDataStatus } from "../../core/servi
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { CoachOverrideMeaning, IncompleteDataMeaning, ActionRequiredMeaning } from "../../core/semantics/semantic-meaning.types";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TRAINING, TIME, UI_LIMITS } from "../../core/constants/app.constants";
 import { getReadinessLevel } from "../../core/constants/wellness.constants";
+import { getTimeAgo } from "../../shared/utils/date.utils";
 
 interface QuickAction {
   label: string;
@@ -107,7 +110,6 @@ interface AnnouncementBanner {
     CardModule,
     TagModule,
     ButtonComponent,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     ChartSkeletonComponent,
@@ -293,7 +295,7 @@ interface AnnouncementBanner {
                   </div>
                   <span class="announcement-meta">
                     — {{ announcement()?.coachName }} ·
-                    {{ getTimeAgo(announcement()?.postedAt) }}
+                    {{ getTimeAgoStr(announcement()?.postedAt) }}
                   </span>
                 </div>
               </p-message>
@@ -1812,6 +1814,7 @@ export class PlayerDashboardComponent {
   private readonly channelService = inject(ChannelService);
   private readonly toastService = inject(ToastService);
   private readonly profileCompletionService = inject(ProfileCompletionService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly logger = inject(LoggerService);
 
@@ -2088,8 +2091,9 @@ export class PlayerDashboardComponent {
   constructor() {
     this.headerService.setDashboardHeader();
     
-    // Load profile completion data first (for consistent profile status)
+    // Load centralized services first (for consistent data across views)
     this.profileCompletionService.loadProfileData();
+    this.teamMembershipService.loadMembership();
     
     this.loadData();
     
@@ -2499,46 +2503,29 @@ export class PlayerDashboardComponent {
   /**
    * Open direct message with the player's coach
    * Creates a 1:1 DM channel if it doesn't exist, then navigates to team chat
+   * Uses TeamMembershipService for centralized team queries
    */
   async contactCoach(): Promise<void> {
     try {
-      const userId = this.authService.getUser()?.id;
-      if (!userId) {
-        this.toastService.error("Please log in to contact your coach");
-        return;
-      }
-
-      // Get the player's team and coach
-      const { data: teamMembership } = await this.supabaseService.client
-        .from("team_members")
-        .select("team_id")
-        .eq("user_id", userId)
-        .single();
-
-      if (!teamMembership?.team_id) {
-        this.toastService.warn("You need to join a team first to contact a coach");
+      const teamId = this.teamMembershipService.teamId();
+      if (!teamId) {
+        this.toastService.warn(TOAST.WARN.NO_TEAM);
         this.router.navigate(["/team-chat"]);
         return;
       }
 
-      // Find the coach for this team
-      const { data: coach } = await this.supabaseService.client
-        .from("team_members")
-        .select("user_id, users:user_id(first_name, last_name)")
-        .eq("team_id", teamMembership.team_id)
-        .eq("role", "coach")
-        .single();
-
-      if (!coach?.user_id) {
-        this.toastService.warn("No coach assigned to your team yet");
+      // Get coach using centralized service
+      const coach = await this.teamMembershipService.getTeamCoach();
+      if (!coach?.userId) {
+        this.toastService.warn(TOAST.WARN.NO_COACH);
         this.router.navigate(["/team-chat"]);
         return;
       }
 
       // Create or find existing DM channel with the coach
       const dmChannel = await this.channelService.createDirectMessage(
-        coach.user_id,
-        teamMembership.team_id
+        coach.userId,
+        teamId
       );
 
       // Navigate to team chat with the DM channel selected
@@ -2548,7 +2535,7 @@ export class PlayerDashboardComponent {
 
     } catch (error) {
       this.logger.error("Error contacting coach:", error);
-      this.toastService.error("Unable to start chat with coach. Please try again.");
+      this.toastService.error(TOAST.ERROR.CHAT_START_FAILED);
       // Fallback to team chat
       this.router.navigate(["/team-chat"]);
     }
@@ -2605,17 +2592,11 @@ export class PlayerDashboardComponent {
     return diffDays;
   }
 
-  getTimeAgo(date: Date | null | undefined): string {
-    if (!date) return "";
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / TIME.MS_PER_HOUR);
-    if (hours < 1) return "Just now";
-    if (hours === 1) return "1 hour ago";
-    if (hours < 24) return `${hours} hours ago`;
-    const days = Math.floor(hours / 24);
-    if (days === 1) return "1 day ago";
-    return `${days} days ago`;
+  /**
+   * Get time ago string using centralized utility
+   */
+  getTimeAgoStr(date: Date | null | undefined): string {
+    return getTimeAgo(date);
   }
 
   getReadinessStatus(): string {

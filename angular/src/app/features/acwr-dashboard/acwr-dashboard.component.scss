@@ -68,7 +68,7 @@
 }
 
 .alert-icon {
-  font-size: var(--text-3xl);
+  font-size: var(--font-h2-size);
 }
 
 .alert-content {
@@ -83,7 +83,7 @@
 .alert-dismiss {
   background: none;
   border: none;
-  font-size: var(--text-2xl);
+  font-size: var(--font-h2-size);
   cursor: pointer;
   padding: var(--space-2);
 }
@@ -166,7 +166,7 @@
   color: var(--color-text-on-primary);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all var(--motion-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
   font-size: var(--font-size-body);
 }
 
@@ -205,7 +205,7 @@
 }
 
 .ratio-value {
-  font-size: var(--font-display-xl);
+  font-size: var(--font-h1-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
 }
@@ -225,12 +225,12 @@
 }
 
 .risk-icon {
-  font-size: var(--text-3xl);
+  font-size: var(--font-h2-size);
   margin-bottom: var(--space-2);
 }
 
 .risk-label {
-  font-size: var(--text-2xl);
+  font-size: var(--font-h2-size);
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-2);
 }
@@ -261,7 +261,7 @@
 }
 
 .metric-value {
-  font-size: var(--text-3xl);
+  font-size: var(--font-h2-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-brand-primary);
 }
@@ -272,7 +272,7 @@
 }
 
 .load-divider {
-  font-size: var(--text-3xl);
+  font-size: var(--font-h2-size);
   color: var(--color-text-muted);
 }
 
@@ -402,12 +402,12 @@
 }
 
 .acwr-empty-state .empty-icon {
-  font-size: var(--font-display-md);
+  font-size: var(--font-h1-size);
   margin-bottom: var(--space-4);
 }
 
 .acwr-empty-state h3 {
-  font-size: var(--text-2xl);
+  font-size: var(--font-h2-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-3);
@@ -561,7 +561,7 @@
 }
 
 .rec-icon {
-  font-size: var(--text-3xl);
+  font-size: var(--font-h2-size);
 }
 
 .rec-content h4 {
@@ -757,11 +757,11 @@
   }
 
   .ratio-value {
-    font-size: var(--font-display-md);
+    font-size: var(--font-h1-size);
   }
 
   .ratio-label {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   // Risk zone indicator - full width on mobile
@@ -783,7 +783,7 @@
   }
 
   .risk-description {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   // ================================================================
@@ -804,7 +804,7 @@
   }
 
   .metric-label {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .metric-value {
@@ -851,7 +851,7 @@
   }
 
   .zone-range {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .zone-label {
@@ -860,7 +860,7 @@
   }
 
   .zone-card p {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   // ================================================================
@@ -892,7 +892,7 @@
   }
 
   .acwr-empty-state .empty-icon {
-    font-size: var(--font-display-sm);
+    font-size: var(--font-h1-size);
     margin-bottom: var(--space-3);
   }
 
@@ -921,7 +921,7 @@
   .progress-label {
     flex: 1 1 100%;
     margin-bottom: 0;
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .progress-bar {
@@ -930,7 +930,7 @@
 
   .progress-value {
     flex: 0 0 auto;
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .empty-tip {
@@ -1026,7 +1026,7 @@
   }
 
   .modifications li {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
     margin-bottom: var(--space-1); /* 4px */
   }
 }
@@ -1063,7 +1063,7 @@
   }
 
   .ratio-value {
-    font-size: var(--font-display-sm);
+    font-size: var(--font-h1-size);
   }
 
   .risk-zone-indicator {

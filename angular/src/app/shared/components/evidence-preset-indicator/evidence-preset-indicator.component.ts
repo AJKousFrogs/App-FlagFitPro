@@ -5,7 +5,7 @@
  * Shows what "model" is being used and allows preset switching.
  */
 
-import { Component, inject, signal, computed } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
@@ -18,6 +18,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
 @Component({
   selector: "app-evidence-preset-indicator",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,

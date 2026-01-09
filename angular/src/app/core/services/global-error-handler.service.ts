@@ -20,6 +20,8 @@
 import { Injectable, inject, NgZone } from "@angular/core";
 import { Router } from "@angular/router";
 import { LoggerService } from "./logger.service";
+import { getErrorMessage, isNetworkError, isAuthError } from "../../shared/utils/error.utils";
+import { ERROR_MESSAGES } from "../constants/error.constants";
 
 export interface RedactedError {
   timestamp: string;
@@ -174,35 +176,15 @@ export class GlobalErrorHandlerService {
 
   /**
    * Get user-friendly error message
+   * Uses centralized error utilities
    */
   getUserFriendlyMessage(error: unknown): string {
-    if (error instanceof Error) {
-      // Network errors
-      if (
-        error.message.includes("NetworkError") ||
-        error.message.includes("fetch")
-      ) {
-        return "Unable to connect to the server. Please check your internet connection.";
-      }
-      // Auth errors
-      if (
-        error.message.includes("401") ||
-        error.message.includes("unauthorized")
-      ) {
-        return "Your session has expired. Please log in again.";
-      }
-      // Not found
-      if (
-        error.message.includes("404") ||
-        error.message.includes("not found")
-      ) {
-        return "The requested data could not be found.";
-      }
-      // Server errors
-      if (error.message.includes("500") || error.message.includes("server")) {
-        return "The server encountered an error. Please try again later.";
-      }
+    if (isNetworkError(error)) {
+      return ERROR_MESSAGES.NETWORK;
     }
-    return "Something went wrong. Please try again.";
+    if (isAuthError(error)) {
+      return ERROR_MESSAGES.UNAUTHORIZED;
+    }
+    return getErrorMessage(error, ERROR_MESSAGES.GENERIC);
   }
 }

@@ -59,7 +59,7 @@
   font-family: inherit;
 }
 
-.inline-edit-input:focus {
+.inline-edit-input:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(var(--color-brand-primary-rgb), 0.2);
 }
@@ -88,7 +88,7 @@ tr.selected {
 }
 
 .empty-message i {
-  font-size: var(--font-display-sm);
+  font-size: var(--font-h1-size);
   margin-bottom: var(--space-3);
   opacity: 0.5;
 }

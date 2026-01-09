@@ -102,7 +102,7 @@
 .injuries-section {
   h3 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
@@ -140,7 +140,7 @@
 
     h4 {
       margin: 0 0 var(--space-1) 0;
-      font-size: var(--font-body-lg);
+      font-size: var(--font-body-size);
       font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
@@ -278,7 +278,7 @@
 .analytics-section {
   h3 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
@@ -363,7 +363,7 @@
     text-align: center;
 
     i {
-      font-size: var(--font-display-md);
+      font-size: var(--font-h1-size);
       color: var(--ds-primary-green);
       margin-bottom: var(--space-3);
     }

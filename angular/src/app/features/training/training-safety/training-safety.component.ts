@@ -46,6 +46,7 @@ import {
   METRIC_INSUFFICIENT_DATA,
   DATA_STATE_MESSAGES,
 } from "../../../shared/utils/privacy-ux-copy";
+import { calculateAge } from "../../../shared/utils/date.utils";
 
 @Component({
   selector: "app-training-safety",
@@ -474,7 +475,7 @@ export class TrainingSafetyComponent implements OnInit {
 
       if (profile?.date_of_birth) {
         const dob = new Date(profile.date_of_birth);
-        const age = this.calculateAge(dob);
+        const age = calculateAge(dob);
 
         // Set age group and recovery parameters
         if (age < 18) {
@@ -504,16 +505,6 @@ export class TrainingSafetyComponent implements OnInit {
         "[TrainingSafety] Could not load age data, using defaults",
       );
     }
-  }
-
-  private calculateAge(dob: Date): number {
-    const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const monthDiff = today.getMonth() - dob.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
-      age--;
-    }
-    return age;
   }
 
   private async loadSleepDebtData(userId: string): Promise<void> {

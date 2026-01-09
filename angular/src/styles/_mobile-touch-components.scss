@@ -68,7 +68,7 @@
       min-height: 40px !important;
       min-width: 40px !important;
       padding: var(--space-1) var(--space-3) !important;
-      font-size: var(--font-body-2xs) !important;
+      font-size: var(--font-caption-size) !important;
     }
 
     // Full-width buttons on mobile (common pattern)
@@ -136,7 +136,7 @@
       transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
 
       // Focus state - clear visual feedback
-      &:focus,
+      &:focus-visible,
       &:focus-visible {
         outline: none !important;
         border-color: var(--ds-primary-green) !important;
@@ -426,7 +426,7 @@
     .p-field-helper,
     .form-helper,
     small.helper-text {
-      font-size: var(--font-body-2xs) !important;
+      font-size: var(--font-caption-size) !important;
       color: var(--text-color-secondary) !important;
       margin-top: var(--space-1) !important;
     }
@@ -435,7 +435,7 @@
     .p-error,
     .form-error,
     small.error-text {
-      font-size: var(--font-body-2xs) !important;
+      font-size: var(--font-caption-size) !important;
       color: var(--primitive-error-500) !important;
       margin-top: var(--space-1) !important;
       display: flex !important;
@@ -491,7 +491,7 @@
     select:invalid {
       border-color: var(--primitive-error-500) !important;
       
-      &:focus {
+      &:focus-visible {
         box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.15) !important;
       }
     }
@@ -504,7 +504,7 @@
     select:valid:not(:placeholder-shown) {
       border-color: var(--primitive-success-500) !important;
 
-      &:focus {
+      &:focus-visible {
         box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb), 0.15) !important;
       }
     }

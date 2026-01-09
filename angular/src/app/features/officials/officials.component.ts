@@ -29,9 +29,12 @@ import {
   OfficialsService,
 } from "../../core/services/officials.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { getInitials } from "../../shared/utils/format.utils";
+import { formatDate } from "../../shared/utils/date.utils";
 
 type CertificationLevel = "youth" | "high_school" | "college" | "professional";
 type OfficialRole =
@@ -123,7 +126,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   <td>
                     <div class="official-cell">
                       <p-avatar
-                        [label]="getInitials(official.name)"
+                        [label]="getInitialsStr(official.name)"
                         shape="circle"
                         size="normal"
                       ></p-avatar>
@@ -546,7 +549,7 @@ export class OfficialsComponent implements OnInit {
         next: (games) => {
           this.upcomingGames.set(
             games.map((g) => ({
-              label: `${new Date(g.date).toLocaleDateString()} vs ${g.opponent}`,
+              label: `${formatDate(g.date, 'P')} vs ${g.opponent}`,
               value: g.value,
             })),
           );
@@ -581,7 +584,7 @@ export class OfficialsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (officials) => this.officials.set(officials),
-        error: () => this.toastService.error("Failed to load officials"),
+        error: () => this.toastService.error(TOAST.ERROR.OFFICIAL_LOAD_FAILED),
       });
   }
 
@@ -599,13 +602,11 @@ export class OfficialsComponent implements OnInit {
     // Computed handles filtering
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   getCertificationLabel(level: string | undefined): string {
@@ -694,11 +695,11 @@ export class OfficialsComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
-            this.toastService.success("Official updated");
+            this.toastService.success(TOAST.SUCCESS.OFFICIAL_UPDATED);
             this.showOfficialDialog = false;
             this.loadOfficials();
           },
-          error: () => this.toastService.error("Failed to update official"),
+          error: () => this.toastService.error(TOAST.ERROR.OFFICIAL_UPDATE_FAILED),
         });
     } else {
       this.officialsService
@@ -706,11 +707,11 @@ export class OfficialsComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
-            this.toastService.success("Official added");
+            this.toastService.success(TOAST.SUCCESS.OFFICIAL_ADDED);
             this.showOfficialDialog = false;
             this.loadOfficials();
           },
-          error: () => this.toastService.error("Failed to add official"),
+          error: () => this.toastService.error(TOAST.ERROR.OFFICIAL_ADD_FAILED),
         });
     }
   }
@@ -740,11 +741,11 @@ export class OfficialsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Official scheduled successfully");
+          this.toastService.success(TOAST.SUCCESS.OFFICIAL_SCHEDULED);
           this.showScheduleDialog = false;
           this.loadPaymentSummary();
         },
-        error: () => this.toastService.error("Failed to schedule official"),
+        error: () => this.toastService.error(TOAST.ERROR.OFFICIAL_SCHEDULE_FAILED),
       });
   }
 
@@ -757,12 +758,12 @@ export class OfficialsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Status updated");
+          this.toastService.success(TOAST.SUCCESS.STATUS_UPDATED);
           this.gameAssignments.update((list) =>
             list.map((a) => (a.id === assignment.id ? { ...a, status } : a)),
           );
         },
-        error: () => this.toastService.error("Failed to update status"),
+        error: () => this.toastService.error(TOAST.ERROR.STATUS_UPDATE_FAILED),
       });
   }
 
@@ -774,13 +775,13 @@ export class OfficialsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Assignment removed");
+          this.toastService.success(TOAST.SUCCESS.ASSIGNMENT_REMOVED);
           this.gameAssignments.update((list) =>
             list.filter((a) => a.id !== assignment.id),
           );
           this.loadPaymentSummary();
         },
-        error: () => this.toastService.error("Failed to remove assignment"),
+        error: () => this.toastService.error(TOAST.ERROR.ASSIGNMENT_REMOVE_FAILED),
       });
   }
 }

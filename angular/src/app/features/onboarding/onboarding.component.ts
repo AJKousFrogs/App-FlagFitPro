@@ -33,6 +33,7 @@ import {
 } from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -2621,7 +2622,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       this.currentStep.set(targetIndex);
       this.saveDraft();
     } else {
-      this.toastService.info("Please complete the current step first");
+      this.toastService.info(TOAST.INFO.COMPLETE_CURRENT_STEP);
     }
   }
 

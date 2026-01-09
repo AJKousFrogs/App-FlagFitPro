@@ -1,7 +1,24 @@
 /**
  * Error Handler Utilities
- * Centralized error handling patterns to avoid duplication
+ * 
+ * DEPRECATED: This class is maintained for backward compatibility.
+ * 
+ * PREFERRED: Use error handling utilities from `shared/utils/error.utils.ts`:
+ * - `getErrorMessage()` instead of `extractErrorMessage()`
+ * - `getHttpErrorMessage()` for HTTP status codes
+ * - `isNetworkError()`, `isAuthError()` for error type checking
+ * 
+ * Error messages should use constants from `core/constants/error.constants.ts`
+ * 
+ * Migration guide:
+ * - Replace `ErrorHandlerUtil.extractErrorMessage(error, fallback)` 
+ *   with `getErrorMessage(error, fallback)`
+ * - Replace `ErrorHandlerUtil.createErrorMessage(detail)` 
+ *   with toast service using `TOAST.ERROR.*` constants
  */
+
+import { getErrorMessage } from "../../shared/utils/error.utils";
+import { ERROR_MESSAGES } from "../constants/error.constants";
 
 export interface ValidationError {
   severity: "warn" | "error";
@@ -12,6 +29,7 @@ export interface ValidationError {
 export class ErrorHandlerUtil {
   /**
    * Create validation error message
+   * @deprecated Use toast service with TOAST.WARN.REQUIRED_FIELDS instead
    */
   static createValidationError(
     field: string,
@@ -26,6 +44,7 @@ export class ErrorHandlerUtil {
 
   /**
    * Create success message
+   * @deprecated Use toast service with TOAST.SUCCESS.* constants instead
    */
   static createSuccessMessage(detail: string): {
     severity: "success";
@@ -41,6 +60,7 @@ export class ErrorHandlerUtil {
 
   /**
    * Create error message
+   * @deprecated Use toast service with TOAST.ERROR.* constants instead
    */
   static createErrorMessage(
     detail: string,
@@ -55,14 +75,9 @@ export class ErrorHandlerUtil {
 
   /**
    * Extract error message from error object
+   * @deprecated Use getErrorMessage() from shared/utils/error.utils.ts instead
    */
   static extractErrorMessage(error: unknown, defaultMessage: string): string {
-    if (error && typeof error === "object") {
-      if ("message" in error && typeof error.message === "string")
-        return error.message;
-      if ("error" in error && typeof error.error === "string")
-        return error.error;
-    }
-    return defaultMessage;
+    return getErrorMessage(error, defaultMessage);
   }
 }

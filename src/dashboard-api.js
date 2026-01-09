@@ -42,7 +42,7 @@ class DashboardAPI {
 
       const response = await fetch(url, {
         method: options.method || "GET",
-        headers: headers,
+        headers,
         body: options.body ? JSON.stringify(options.body) : undefined,
         signal: controller.signal,
         ...options,
@@ -240,7 +240,7 @@ class DashboardAPI {
 
   setCachedData(key, data) {
     this.cache.set(key, {
-      data: data,
+      data,
       timestamp: Date.now(),
     });
   }

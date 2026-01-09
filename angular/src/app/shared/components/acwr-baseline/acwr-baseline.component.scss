@@ -19,7 +19,7 @@
 }
 
 .acwr-label {
-  font-size: var(--font-body-sm);
+  font-size: var(--font-body-sm-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   text-transform: uppercase;
@@ -27,7 +27,7 @@
 }
 
 .acwr-progress-text {
-  font-size: var(--font-body-sm);
+  font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
   white-space: nowrap;
 }
@@ -38,7 +38,7 @@
 
 .acwr-hint {
   margin: 0;
-  font-size: var(--font-body-xs);
+  font-size: var(--font-caption-size);
   color: var(--color-text-muted);
   font-style: italic;
 }

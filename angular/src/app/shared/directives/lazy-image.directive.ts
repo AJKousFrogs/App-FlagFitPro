@@ -18,7 +18,7 @@
 import {
   Directive,
   ElementRef,
-  Input,
+  input,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -39,25 +39,26 @@ export class LazyImageDirective implements OnInit, OnDestroy {
   private observer: IntersectionObserver | null = null;
   private loaded = false;
 
+  // Angular 21: Use input() signals instead of @Input()
   /** The actual image source to load */
-  @Input() src = '';
+  src = input<string>('');
   
   /** Placeholder image to show while loading (optional) */
-  @Input() placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
+  placeholder = input<string>('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E');
   
   /** Root margin for intersection observer (load before entering viewport) */
-  @Input() rootMargin = '50px';
+  rootMargin = input<string>('50px');
   
   /** Threshold for intersection observer */
-  @Input() threshold = 0.01;
+  threshold = input<number>(0.01);
   
   /** Fallback image on error */
-  @Input() fallback = '';
+  fallback = input<string>('');
 
   ngOnInit(): void {
     if (!isPlatformBrowser(this.platformId)) {
       // SSR: Just set the src directly
-      this.renderer.setAttribute(this.el.nativeElement, 'src', this.src);
+      this.renderer.setAttribute(this.el.nativeElement, 'src', this.src());
       return;
     }
 
@@ -68,7 +69,7 @@ export class LazyImageDirective implements OnInit, OnDestroy {
     this.renderer.setStyle(img, 'transition', 'opacity 0.3s ease-in-out');
     
     // Set placeholder while waiting
-    this.renderer.setAttribute(img, 'src', this.placeholder);
+    this.renderer.setAttribute(img, 'src', this.placeholder());
     
     // Add native lazy loading as fallback
     this.renderer.setAttribute(img, 'loading', 'lazy');
@@ -84,8 +85,8 @@ export class LazyImageDirective implements OnInit, OnDestroy {
           });
         },
         {
-          rootMargin: this.rootMargin,
-          threshold: this.threshold,
+          rootMargin: this.rootMargin(),
+          threshold: this.threshold(),
         }
       );
       
@@ -113,20 +114,20 @@ export class LazyImageDirective implements OnInit, OnDestroy {
     
     preloadImg.onload = () => {
       // Set the actual source
-      this.renderer.setAttribute(img, 'src', this.src);
+      this.renderer.setAttribute(img, 'src', this.src());
       // Fade in
       this.renderer.setStyle(img, 'opacity', '1');
     };
     
     preloadImg.onerror = () => {
-      if (this.fallback) {
-        this.renderer.setAttribute(img, 'src', this.fallback);
+      if (this.fallback()) {
+        this.renderer.setAttribute(img, 'src', this.fallback());
       }
       this.renderer.setStyle(img, 'opacity', '1');
     };
     
     // Start loading
-    preloadImg.src = this.src;
+    preloadImg.src = this.src();
     
     // Stop observing
     if (this.observer) {

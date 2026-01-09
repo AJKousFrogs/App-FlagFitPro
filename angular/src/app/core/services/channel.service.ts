@@ -18,6 +18,7 @@ import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService, RealtimeCallback } from "./realtime.service";
+import { getInitials } from "../../shared/utils/format.utils";
 
 // ============================================================================
 // TYPES
@@ -1137,7 +1138,7 @@ export class ChannelService {
       const members = ((data as ChannelMemberDetails[]) || []).map((m) => ({
         ...m,
         full_name: m.full_name || m.email?.split("@")[0] || "Unknown",
-        initials: this.getInitials(m.full_name || m.email || "U"),
+        initials: this.getInitialsFromName(m.full_name || m.email || "U"),
         is_online: false, // Will be populated by presence system
       }));
 
@@ -1193,15 +1194,10 @@ export class ChannelService {
   }
 
   /**
-   * Get initials from a name
+   * Get initials from a name using centralized utility
    */
-  private getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  private getInitialsFromName(name: string): string {
+    return getInitials(name);
   }
 
   /**
@@ -1258,7 +1254,7 @@ export class ChannelService {
             is_explicit_member: false,
             can_post: true,
             joined_at: m.joined_at,
-            initials: this.getInitials(fullName),
+            initials: this.getInitialsFromName(fullName),
           };
         })
         .filter(

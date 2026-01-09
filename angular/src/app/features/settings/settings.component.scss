@@ -155,7 +155,7 @@
   color: var(--color-text-primary);
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
-  transition: all var(--motion-quick) var(--ease-standard);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   border: var(--border-1) solid transparent;
 }
 
@@ -254,7 +254,7 @@
 }
 
 .notification-icon i {
-  font-size: 1.25rem; /* 20px - larger icon */
+  font-size: var(--font-h3-size); /* 20px - larger icon */
   color: var(--color-text-secondary);
 }
 
@@ -265,14 +265,14 @@
 }
 
 .notification-label {
-  font-size: 1rem; /* 16px - clear title size */
+  font-size: var(--font-body-size); /* 16px - clear title size */
   font-weight: 600; /* Semibold for emphasis */
   color: var(--color-text-primary);
   line-height: 1.3;
 }
 
 .notification-desc {
-  font-size: 0.8125rem; /* 13px - smaller for description */
+  font-size: var(--font-compact-lg); /* 13px - smaller for description */
   font-weight: 400; /* Regular weight */
   color: var(--color-text-muted);
   line-height: 1.4;
@@ -355,7 +355,7 @@
   font-size: var(--font-size-body);
   font-family: inherit;
   
-  &:focus {
+  &:focus-visible {
     outline: none;
     border-color: var(--ds-primary-green);
     box-shadow: 0 0 0 2px var(--ds-primary-green-ultra-subtle);
@@ -450,7 +450,7 @@
 
 .security-info h4 {
   margin: 0 0 var(--space-1) 0;
-  font-size: 1rem; /* 16px - clear title size */
+  font-size: var(--font-body-size); /* 16px - clear title size */
   font-weight: 600; /* Semibold for emphasis */
   color: var(--color-text-primary);
   line-height: 1.3;
@@ -459,7 +459,7 @@
 
 .security-info p {
   margin: 0;
-  font-size: 0.8125rem; /* 13px - smaller for description */
+  font-size: var(--font-compact-lg); /* 13px - smaller for description */
   font-weight: 400; /* Regular weight */
   color: var(--color-text-muted);
   line-height: 1.4;
@@ -596,7 +596,7 @@
 }
 
 .success-icon {
-  font-size: var(--font-display-xl);
+  font-size: var(--font-h1-size);
   color: var(--color-status-success);
   margin-bottom: var(--space-4);
 }
@@ -733,7 +733,7 @@
 }
 
 .dialog-icon i {
-  font-size: 1.25rem;
+  font-size: var(--font-h3-size);
   color: var(--ds-primary-green);
 }
 
@@ -744,7 +744,7 @@
 .dialog-title-section h2 {
   margin: 0 0 var(--space-1) 0;
   font-family: var(--font-family-sans);
-  font-size: 1.25rem; /* 20px */
+  font-size: var(--font-h3-size); /* 20px */
   font-weight: 700;
   color: var(--color-text-primary);
   line-height: 1.3;
@@ -752,7 +752,7 @@
 
 .dialog-title-section p {
   margin: 0;
-  font-size: 0.875rem; /* 14px */
+  font-size: var(--font-body-sm-size); /* 14px */
   color: var(--color-text-muted);
   line-height: 1.4;
 }
@@ -776,13 +776,13 @@
   align-items: center;
   gap: var(--space-2);
   font-family: var(--font-family-sans);
-  font-size: 0.875rem; /* 14px */
+  font-size: var(--font-body-sm-size); /* 14px */
   font-weight: 600;
   color: var(--color-text-primary);
 }
 
 .form-field label i {
-  font-size: 1rem;
+  font-size: var(--font-body-size);
   color: var(--ds-primary-green);
   opacity: 0.8;
 }
@@ -808,13 +808,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: 0.8125rem; /* 13px */
+  font-size: var(--font-compact-lg); /* 13px */
   color: var(--color-text-muted);
   transition: color var(--transition-fast);
 }
 
 .requirement i {
-  font-size: 0.875rem;
+  font-size: var(--font-body-sm-size);
   transition: color var(--transition-fast);
   flex-shrink: 0;
   opacity: 0.5;
@@ -1480,14 +1480,14 @@
 
 .privacy-controls-link .link-info h4 {
   margin: 0 0 var(--space-2) 0;
-  font-size: 1rem; /* 16px - consistent with other headings */
+  font-size: var(--font-body-size); /* 16px - consistent with other headings */
   font-weight: 600;
   color: var(--color-text-primary);
 }
 
 .privacy-controls-link .link-info p {
   margin: 0;
-  font-size: 0.8125rem; /* 13px - consistent with descriptions */
+  font-size: var(--font-compact-lg); /* 13px - consistent with descriptions */
   color: var(--color-text-muted);
   line-height: 1.4;
 }
@@ -1625,7 +1625,7 @@
 
 .dialog-close-btn .pi,
 .dialog-close-btn i {
-  font-size: 0.875rem;
+  font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -1650,15 +1650,15 @@
   padding-right: var(--space-10); /* Space for toggle icon */
   border: 1px solid var(--color-border-primary);
   border-radius: var(--radius-lg); /* 8px */
-  font-size: 0.9375rem; /* 15px */
+  font-size: var(--font-body-sm-size); /* 15px */
   background: var(--surface-primary);
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
 }
 
-.password-input .p-password-input:focus,
-.password-input input:focus {
+.password-input .p-password-input:focus-visible,
+.password-input input:focus-visible {
   border-color: var(--ds-primary-green);
   box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.1);
   outline: none;
@@ -1926,7 +1926,7 @@
 }
 
 .format-option i {
-  font-size: 1.5rem;
+  font-size: var(--font-h2-size);
   color: var(--color-text-muted);
   margin-bottom: var(--space-2);
 }
@@ -1973,7 +1973,7 @@
 }
 
 .option-info i {
-  font-size: 1rem;
+  font-size: var(--font-body-size);
   color: var(--color-text-secondary);
   width: 20px;
   text-align: center;
@@ -2031,7 +2031,7 @@
 
 .info-banner i {
   color: var(--color-info, #3b82f6);
-  font-size: 1.25rem;
+  font-size: var(--font-h3-size);
   flex-shrink: 0;
   margin-top: var(--space-1);
 }
@@ -2059,7 +2059,7 @@
 }
 
 .form-field label i {
-  font-size: 0.875rem;
+  font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
 }
 
@@ -2079,8 +2079,8 @@
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.form-field input:focus,
-.form-field textarea:focus {
+.form-field input:focus-visible,
+.form-field textarea:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-primary-subtle, rgba(16, 201, 107, 0.15));
@@ -2101,5 +2101,5 @@
 }
 
 .field-hint i {
-  font-size: 0.75rem;
+  font-size: var(--font-caption-size);
 }

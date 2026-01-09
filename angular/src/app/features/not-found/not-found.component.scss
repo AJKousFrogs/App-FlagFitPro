@@ -22,7 +22,7 @@
 }
 
 .error-code {
-  font-size: var(--font-display-xl);
+  font-size: var(--font-h1-size);
   font-weight: var(--font-weight-extrabold);
   color: var(--color-brand-primary);
   line-height: 1;
@@ -38,7 +38,7 @@
 }
 
 .error-message {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-6);
   line-height: 1.6;
@@ -86,7 +86,7 @@
 
 @media (max-width: 768px) {
   .error-code {
-    font-size: var(--font-display-lg);
+    font-size: var(--font-h1-size);
   }
 
   .error-title {

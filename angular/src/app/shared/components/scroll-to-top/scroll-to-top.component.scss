@@ -8,7 +8,7 @@
   position: fixed;
   bottom: var(--space-6, 32px);
   right: var(--space-6, 32px);
-  z-index: 1000;
+  z-index: var(--z-modal);
   
   width: 48px;
   height: 48px;

@@ -7,9 +7,10 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { Component, inject, input, output, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, input, output, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
+import { DatePipe } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Checkbox } from "primeng/checkbox";
@@ -52,6 +53,8 @@ interface EventTypeOption {
 
 @Component({
   selector: "app-tournament-calendar",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
     DialogModule,
@@ -62,6 +65,7 @@ interface EventTypeOption {
     Checkbox,
     TagModule,
     TooltipModule,
+    DatePipe,
 
     ButtonComponent,
     IconButtonComponent,
@@ -438,8 +442,8 @@ export class TournamentCalendarComponent {
   editTournament(tournament: Tournament): void {
     this.formData = {
       ...tournament,
-      startDate: new Date(tournament.startDate) as unknown as string,
-      endDate: new Date(tournament.endDate) as unknown as string,
+      startDate: tournament.startDate,
+      endDate: tournament.endDate,
     };
     this.isEditing.set(true);
     this.editingId.set(tournament.id);

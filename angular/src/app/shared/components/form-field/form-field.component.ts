@@ -5,7 +5,7 @@
  * Works with both reactive forms and signal-based forms
  */
 
-import { Component, input, signal, computed, forwardRef } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, signal, computed, forwardRef } from "@angular/core";
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 
@@ -25,6 +25,7 @@ export interface FormFieldConfig {
 @Component({
   selector: "app-form-field",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   providers: [
     {

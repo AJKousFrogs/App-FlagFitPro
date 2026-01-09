@@ -42,6 +42,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { DailyTrainingService } from "../../../core/services/daily-training.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { WellnessService } from "../../../core/services/wellness.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
@@ -782,7 +783,7 @@ export class MorningBriefingComponent implements OnInit {
 
       const result = await this.trainingService.submitWellness(wellnessData);
       if (result?.success) {
-        this.toastService.success("Quick check-in saved! 💪");
+        this.toastService.success(TOAST.SUCCESS.QUICK_CHECKIN_SAVED);
         this.checkInComplete.emit();
       } else {
         this.toastService.error(
@@ -793,7 +794,7 @@ export class MorningBriefingComponent implements OnInit {
       this.isSubmitting.set(false);
     } catch (error) {
       this.logger.error("Error in submitQuickCheckIn:", error);
-      this.toastService.error("Failed to save check-in");
+      this.toastService.error(TOAST.ERROR.CHECKIN_SAVE_FAILED);
       this.isSubmitting.set(false);
     }
   }

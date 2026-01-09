@@ -170,7 +170,7 @@
 }
 
 .acwr-segment .label {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -269,7 +269,7 @@
 }
 
 .metric-label {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: var(--color-text-secondary);
   text-transform: uppercase;
 }
@@ -429,7 +429,7 @@
 .mini-metrics {
   display: flex;
   gap: var(--space-2);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -471,7 +471,7 @@
 }
 
 .not-checked-badge i {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: var(--primitive-warning-600);
 }
 
@@ -565,12 +565,12 @@
 }
 
 .status-indicator.blocked i {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: white;
 }
 
 .mini-blocked-label {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: var(--color-text-secondary);
   font-style: italic;
 }
@@ -589,7 +589,7 @@
 }
 
 .blocked-badge i {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: white;
 }
 

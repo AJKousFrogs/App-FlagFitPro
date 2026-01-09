@@ -6,7 +6,7 @@
  * Features:
  * - 4 sliders: Pain, Fatigue, Sleep Quality, Motivation (0-10)
  * - Auto-computed readiness score
- * - Saves to athlete_daily_state table
+ * - Saves to wellness_entries table
  * - Can be shown as modal or inline card
  * - "Skip for now" option with gentle reminder
  */
@@ -31,6 +31,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { ProgressBarModule } from "primeng/progressbar";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
@@ -421,7 +422,7 @@ export class DailyReadinessComponent implements OnInit {
   async saveState(): Promise<void> {
     const user = this.authService.getUser();
     if (!user?.id) {
-      this.toastService.error("Please log in to save your check-in");
+      this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE);
       return;
     }
 
@@ -460,12 +461,31 @@ export class DailyReadinessComponent implements OnInit {
         this.logger.info(`[DailyReadiness] Weight updated: ${state.weight_kg} kg`);
       }
 
-      this.toastService.success("Daily check-in saved!");
+      this.toastService.success(TOAST.SUCCESS.DAILY_CHECKIN_SAVED);
       this.dialogVisible = false;
       this.completed.emit(this.state());
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error("Error saving wellness entry:", error);
-      this.toastService.error("Failed to save check-in. Please try again.");
+      
+      // Provide user-friendly error messages based on error type
+      let errorMessage = "Failed to save check-in.";
+      
+      if (error?.code === "PGRST116") {
+        // Row-level security violation
+        errorMessage = "Permission denied. Please log out and log back in.";
+      } else if (error?.code === "23505") {
+        // Unique constraint violation - entry already exists
+        errorMessage = "You've already submitted a check-in today. Refresh to see it.";
+      } else if (error?.message?.includes("network") || error?.message?.includes("fetch")) {
+        errorMessage = "Network error. Check your connection and try again.";
+      } else if (error?.code === "42P01") {
+        // Table doesn't exist
+        errorMessage = "System configuration error. Please contact support.";
+      } else {
+        errorMessage = "Failed to save check-in. Please try again in a moment.";
+      }
+      
+      this.toastService.error(errorMessage);
     } finally {
       this.saving.set(false);
     }

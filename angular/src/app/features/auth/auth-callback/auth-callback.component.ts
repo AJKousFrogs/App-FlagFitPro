@@ -13,6 +13,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 /**
@@ -255,7 +256,7 @@ export class AuthCallbackComponent implements OnInit {
 
       case "magiclink":
         this.successMessage.set("Signed in successfully!");
-        this.toastService.success("Welcome back!", "Signed In");
+        this.toastService.success(TOAST.SUCCESS.LOGIN, "Signed In");
         setTimeout(() => this.redirectAfterAuth(), 1500);
         break;
 
@@ -271,7 +272,7 @@ export class AuthCallbackComponent implements OnInit {
       default:
         // OAuth or unknown type
         this.successMessage.set("Signed in successfully!");
-        this.toastService.success("Welcome!", "Signed In");
+        this.toastService.success(TOAST.SUCCESS.WELCOME, "Signed In");
         setTimeout(() => this.redirectAfterAuth(), 1500);
     }
   }

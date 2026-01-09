@@ -279,7 +279,7 @@
 }
 
 .hero-icon .emoji {
-  font-size: var(--font-display-xl);
+  font-size: var(--font-h1-size);
   position: relative;
   z-index: 1;
 }
@@ -1004,7 +1004,7 @@
     background-color var(--transition-fast),
     border-color var(--transition-fast),
     color var(--transition-fast);
-  z-index: 5;
+  z-index: var(--z-base);
 }
 
 .scroll-to-bottom:hover {
@@ -1074,7 +1074,7 @@
   margin-bottom: var(--space-2);
   max-height: 200px;
   overflow-y: auto;
-  z-index: 100;
+  z-index: var(--z-sticky);
 }
 
 .autocomplete-item {

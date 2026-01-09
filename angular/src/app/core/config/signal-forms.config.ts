@@ -16,6 +16,7 @@
 
 import type { Signal } from "@angular/core";
 import { computed, signal, untracked, WritableSignal } from "@angular/core";
+import { VALIDATION } from "../constants/app.constants";
 
 // ============================================================================
 // Signal Form Types
@@ -211,6 +212,21 @@ export function createSignalFormGroup<
 // ============================================================================
 // Built-in Validators
 // ============================================================================
+//
+// Centralized validators for Angular Signal Forms.
+// All regex patterns are imported from VALIDATION constants to ensure consistency.
+//
+// Usage:
+//   const emailField = createSignalFormField(
+//     () => this.email(),
+//     SignalValidators.required(),
+//     SignalValidators.email()
+//   );
+//
+// For direct function validators (non-factory pattern), see FormValidators
+// in @shared/utils/form.utils.ts (deprecated, use SignalValidators when possible).
+//
+// ============================================================================
 
 export const SignalValidators = {
   /**
@@ -232,8 +248,7 @@ export const SignalValidators = {
     (message = "Invalid email format"): ValidationFn<string> =>
     (value: string) => {
       if (!value) return null; // Let required handle empty
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(value) ? null : message;
+      return VALIDATION.EMAIL_PATTERN.test(value) ? null : message;
     },
 
   /**
@@ -297,6 +312,138 @@ export const SignalValidators = {
     <T>(fn: (value: T) => boolean, message: string): ValidationFn<T> =>
     (value: T) => {
       return fn(value) ? null : message;
+    },
+
+  /**
+   * Password strength validator
+   * Returns specific error message for first failed requirement
+   */
+  passwordStrength:
+    (message?: string): ValidationFn<string> =>
+    (value: string) => {
+      if (!value) return null;
+
+      if (value.length < VALIDATION.MIN_PASSWORD_LENGTH) {
+        return message || `Password must be at least ${VALIDATION.MIN_PASSWORD_LENGTH} characters`;
+      }
+
+      if (!VALIDATION.PASSWORD_UPPERCASE_PATTERN.test(value)) {
+        return message || "Password must include at least one uppercase letter";
+      }
+
+      if (!VALIDATION.PASSWORD_LOWERCASE_PATTERN.test(value)) {
+        return message || "Password must include at least one lowercase letter";
+      }
+
+      if (!VALIDATION.PASSWORD_NUMBER_PATTERN.test(value)) {
+        return message || "Password must include at least one number";
+      }
+
+      if (!VALIDATION.PASSWORD_SPECIAL_PATTERN.test(value)) {
+        return message || "Password must include at least one special character (@$!%*?&)";
+      }
+
+      return null;
+    },
+
+  /**
+   * Phone number validator (E.164 format)
+   */
+  phone:
+    (message = "Please enter a valid phone number"): ValidationFn<string> =>
+    (value: string) => {
+      if (!value) return null;
+      const cleaned = value.replace(/[\s\-()]/g, "");
+      return VALIDATION.PHONE_E164_PATTERN.test(cleaned) ? null : message;
+    },
+
+  /**
+   * URL validator
+   */
+  url:
+    (message = "Please enter a valid URL"): ValidationFn<string> =>
+    (value: string) => {
+      if (!value) return null;
+      if (!VALIDATION.URL_PATTERN.test(value)) {
+        return message + " (must start with http:// or https://)";
+      }
+      try {
+        new URL(value);
+        return null;
+      } catch {
+        return message + " (must start with http:// or https://)";
+      }
+    },
+
+  /**
+   * Username validator
+   */
+  username:
+    (message?: string): ValidationFn<string> =>
+    (value: string) => {
+      if (!value) return null;
+
+      if (value.length < 3) {
+        return message || "Username must be at least 3 characters";
+      }
+
+      if (value.length > 20) {
+        return message || "Username cannot exceed 20 characters";
+      }
+
+      if (!VALIDATION.USERNAME_PATTERN.test(value)) {
+        return message || "Username can only contain letters, numbers, and underscores";
+      }
+
+      return null;
+    },
+
+  /**
+   * Date validator
+   */
+  date:
+    (message = "Please enter a valid date"): ValidationFn<string | Date> =>
+    (value: string | Date) => {
+      if (!value) return null;
+      const date = value instanceof Date ? value : new Date(value);
+      return isNaN(date.getTime()) ? message : null;
+    },
+
+  /**
+   * Future date validator
+   */
+  futureDate:
+    (message = "Date must be in the future"): ValidationFn<string | Date> =>
+    (value: string | Date) => {
+      if (!value) return null;
+      const date = value instanceof Date ? value : new Date(value);
+      if (isNaN(date.getTime())) return "Please enter a valid date";
+      return date <= new Date() ? message : null;
+    },
+
+  /**
+   * Past date validator
+   */
+  pastDate:
+    (message = "Date must be in the past"): ValidationFn<string | Date> =>
+    (value: string | Date) => {
+      if (!value) return null;
+      const date = value instanceof Date ? value : new Date(value);
+      if (isNaN(date.getTime())) return "Please enter a valid date";
+      return date >= new Date() ? message : null;
+    },
+
+  /**
+   * Numeric range validator
+   */
+  range:
+    (min: number, max: number, message?: string): ValidationFn<number | null> =>
+    (value: number | null) => {
+      if (value === null || value === undefined) return null;
+      if (value < min || value > max) {
+        return message || `Value must be between ${min} and ${max}`;
+      }
+      return null;
     },
 };
 

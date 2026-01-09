@@ -433,9 +433,10 @@ exports.handler = async (event, context) => {
               "validation_error",
             );
           }
-          const alertDashboardUrl =
-            dashboardUrl || `${getAppUrl()}/coach/dashboard`;
-          const isCritical = acwrValue > 1.5;
+          {
+            const alertDashboardUrl =
+              dashboardUrl || `${getAppUrl()}/coach/dashboard`;
+            const isCritical = acwrValue > 1.5;
           mailOptions = {
             from: {
               name: "FlagFit Pro",
@@ -453,6 +454,7 @@ exports.handler = async (event, context) => {
             ),
             text: `Hi ${coachName},\n\n${playerName} has triggered an ACWR alert.\n\nCurrent ACWR: ${acwrValue.toFixed(2)}\n${isCritical ? "⚠️ Danger Zone (>1.5)" : "⚠️ Elevated Risk (>1.3)"}\n\nAlert: ${alertMessage}\n\nRecommendation: ${recommendation || "Please review the player's training load and consider adjustments to reduce injury risk."}\n\nView Dashboard: ${alertDashboardUrl}\n\nBest regards,\nThe FlagFit Pro Team`,
           };
+          }
           break;
 
         default:

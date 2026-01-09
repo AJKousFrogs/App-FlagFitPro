@@ -38,9 +38,9 @@ export const TIMEOUTS = {
 
   // Session & Cache
   SESSION_WARNING: 300000, // 5 minutes before session expires
-  CACHE_TTL_DEFAULT: 5 * 60 * 1000, // 5 minutes
-  CACHE_TTL_STATIC: 60 * 60 * 1000, // 1 hour for static resources
-  IDLE_TIMEOUT: 5 * 60 * 1000, // 5 minutes before marking idle
+  CACHE_TTL_DEFAULT: 300000, // 5 minutes default TTL
+  CACHE_TTL_STATIC: 3600000, // 1 hour for static resources
+  IDLE_TIMEOUT: 300000, // 5 minutes before marking idle
 } as const;
 
 /**
@@ -55,7 +55,13 @@ export const VALIDATION = {
   MAX_DESCRIPTION_LENGTH: 1000,
   EMAIL_PATTERN: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   PHONE_PATTERN: /^\+?[\d\s\-()]+$/,
+  PHONE_E164_PATTERN: /^\+?[1-9]\d{1,14}$/, // E.164 format
   URL_PATTERN: /^https?:\/\/.+/,
+  USERNAME_PATTERN: /^[a-zA-Z0-9_]+$/, // Letters, numbers, underscores only
+  PASSWORD_UPPERCASE_PATTERN: /[A-Z]/, // At least one uppercase
+  PASSWORD_LOWERCASE_PATTERN: /[a-z]/, // At least one lowercase
+  PASSWORD_NUMBER_PATTERN: /\d/, // At least one number
+  PASSWORD_SPECIAL_PATTERN: /[@$!%*?&]/, // At least one special character
 } as const;
 
 /**
@@ -130,7 +136,19 @@ export const DATE_FORMATS = {
 } as const;
 
 /**
- * Training thresholds
+ * Training thresholds and configuration
+ *
+ * Includes intensity scales, duration limits, ACWR thresholds, speed thresholds,
+ * and training frequency limits for flag football.
+ *
+ * @example
+ * import { TRAINING } from '@core/constants';
+ * if (acwr > TRAINING.ACWR_DANGER_THRESHOLD) {
+ *   // Danger zone - reduce load
+ * }
+ * if (speed > TRAINING.SPRINT_M_S) {
+ *   // Sprint detected
+ * }
  */
 export const TRAINING = {
   // Intensity scale
@@ -159,15 +177,10 @@ export const TRAINING = {
   // Training frequency
   MAX_SESSIONS_PER_WEEK: 5,
   MIN_REST_DAYS_PER_WEEK: 2,
-} as const;
 
-/**
- * Player positions
- */
-export const POSITIONS = {
-  OFFENSE: ["QB", "WR", "RB", "TE", "OL", "C", "G", "T"] as const,
-  DEFENSE: ["DB", "CB", "S", "LB", "DL", "DE", "DT"] as const,
-  SPECIAL_TEAMS: ["K", "P", "LS"] as const,
+  // Speed thresholds (m/s)
+  HIGH_SPEED_M_S: 5.5, // High-speed running threshold
+  SPRINT_M_S: 7.0, // Sprint threshold
 } as const;
 
 /**
@@ -261,20 +274,30 @@ export const UI_LIMITS = {
 } as const;
 
 /**
- * Design system colors
+ * Design system colors (HEX values for Chart.js/Canvas rendering)
  *
- * ⚠️ IMPORTANT: For most use cases, prefer importing from:
- * `@core/utils/design-tokens.util` which provides CSS variable references
+ * ⚠️ IMPORTANT: For DOM elements (styles, classes), use CSS variable references from:
+ * `@core/utils/design-tokens.util` - BRAND_COLORS, STATUS_COLORS
  *
  * This COLORS constant contains HEX VALUES for specific scenarios:
  * - Chart.js/Canvas rendering (cannot read CSS variables)
  * - Server-side rendering fallbacks
  * - External APIs that require hex values
  *
- * For DOM elements (styles, classes), use CSS variable references instead:
+ * For DOM elements, use CSS variable references instead:
  * - Import { BRAND_COLORS, STATUS_COLORS } from '@core/utils/design-tokens.util'
  *
  * Maps to CSS custom properties in design-system-tokens.scss
+ *
+ * @example
+ * // ✅ For Chart.js (hex values required)
+ * import { COLORS } from '@core/constants';
+ * backgroundColor: COLORS.SUCCESS
+ *
+ * @example
+ * // ✅ For DOM elements (use CSS variables)
+ * import { STATUS_COLORS } from '@core/utils/design-tokens.util';
+ * style.color = STATUS_COLORS.success;
  */
 export const COLORS = {
   // Brand colors (use BRAND_COLORS from design-tokens.util for DOM)
@@ -319,53 +342,6 @@ export const COLORS = {
 } as const;
 
 /**
- * Chart configuration
- *
- * ⚠️ For Chart.js colors, prefer importing from:
- * `@core/utils/design-tokens.util` - CHART_COLORS, CHART_PALETTE
- *
- * These provide the same hex values but with better organization
- * and helper functions like hexToRgba() and createChartGradientColors()
- */
-export const CHART = {
-  DEFAULT_COLORS: COLORS.CHART,
-  ANIMATION_DURATION: 750,
-  FONT_FAMILY: "'Poppins', sans-serif",
-} as const;
-
-/**
- * Status types
- */
-export const STATUS = {
-  PENDING: "pending",
-  IN_PROGRESS: "in_progress",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-  FAILED: "failed",
-} as const;
-
-/**
- * User roles
- */
-export const USER_ROLES = {
-  ADMIN: "admin",
-  COACH: "coach",
-  ATHLETE: "athlete",
-  PARENT: "parent",
-  GUEST: "guest",
-} as const;
-
-/**
- * Notification types
- */
-export const NOTIFICATION_TYPES = {
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error",
-} as const;
-
-/**
  * Performance metrics
  */
 export const PERFORMANCE = {
@@ -376,44 +352,3 @@ export const PERFORMANCE = {
   BUNDLE_SIZE_ERROR: 1000000, // 1MB
 } as const;
 
-/**
- * Regular expressions
- */
-export const REGEX = {
-  EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  PHONE_US: /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,
-  ZIP_CODE_US: /^\d{5}(-\d{4})?$/,
-  ALPHA: /^[a-zA-Z]+$/,
-  ALPHA_NUMERIC: /^[a-zA-Z0-9]+$/,
-  NUMBER: /^-?\d+\.?\d*$/,
-  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
-} as const;
-
-/**
- * Error messages
- */
-export const ERROR_MESSAGES = {
-  REQUIRED: "This field is required",
-  INVALID_EMAIL: "Please enter a valid email address",
-  INVALID_PHONE: "Please enter a valid phone number",
-  WEAK_PASSWORD:
-    "Password must be at least 8 characters with uppercase, lowercase, and number",
-  NETWORK_ERROR: "Network error. Please check your connection.",
-  UNAUTHORIZED: "You are not authorized to perform this action",
-  NOT_FOUND: "The requested resource was not found",
-  SERVER_ERROR: "An unexpected error occurred. Please try again.",
-} as const;
-
-/**
- * Success messages
- */
-export const SUCCESS_MESSAGES = {
-  SAVED: "Successfully saved",
-  DELETED: "Successfully deleted",
-  UPDATED: "Successfully updated",
-  CREATED: "Successfully created",
-  LOGIN: "Successfully logged in",
-  LOGOUT: "Successfully logged out",
-  EMAIL_SENT: "Email sent successfully",
-  PASSWORD_CHANGED: "Password changed successfully",
-} as const;

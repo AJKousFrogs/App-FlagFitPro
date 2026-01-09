@@ -17,6 +17,7 @@ import {
 } from "../../core/services/training-metrics.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
+import { formatDate } from "../../shared/utils/date.utils";
 
 @Component({
   selector: "app-flag-load",
@@ -239,7 +240,7 @@ export class FlagLoadComponent implements OnInit {
 
   private updateChartData(metrics: FlagMetrics[]) {
     this.chartData.set({
-      labels: metrics.map((x) => new Date(x.date).toLocaleDateString()),
+      labels: metrics.map((x) => formatDate(x.date, 'P')),
       datasets: [
         {
           label: "Sprint Count",

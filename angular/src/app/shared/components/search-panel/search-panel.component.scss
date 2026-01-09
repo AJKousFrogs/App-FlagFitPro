@@ -59,7 +59,7 @@
 }
 
 .esc-hint {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
   color: var(--text-color-secondary);
   padding: var(--space-1) var(--space-2);
@@ -270,7 +270,7 @@
 }
 
 .recent-tag i {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: var(--text-color-secondary);
 }
 
@@ -301,7 +301,7 @@
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   color: var(--text-color);
-  transition: all var(--motion-fast) var(--ease-standard);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   text-align: left;
 }
 
@@ -314,7 +314,7 @@
 }
 
 .popular-tag i {
-  font-size: var(--font-body-xs);
+  font-size: var(--font-caption-size);
   color: var(--text-color-secondary);
   transition: color var(--motion-fast) var(--ease-standard);
 }
@@ -333,7 +333,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-3) var(--space-4) var(--space-2);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -374,7 +374,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   flex-shrink: 0;
 }
 
@@ -430,7 +430,7 @@
 }
 
 .result-badge {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
@@ -677,7 +677,7 @@
 
 .suggestions-label {
   padding: var(--space-1) var(--space-4) var(--space-2);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -711,7 +711,7 @@
 .suggestion-item i:last-child {
   margin-left: auto;
   color: var(--text-color-secondary);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   opacity: 0;
   transition: opacity 0.1s ease;
 }
@@ -758,7 +758,7 @@
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
   color: var(--text-color);
   min-width: var(--space-5);

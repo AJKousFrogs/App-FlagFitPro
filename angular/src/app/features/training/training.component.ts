@@ -34,6 +34,7 @@ import { ToastModule } from "primeng/toast";
 import { DialogModule } from "primeng/dialog";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import { TrainingBuilderComponent } from "../../shared/components/training-builder/training-builder.component";
@@ -439,7 +440,7 @@ export class TrainingComponent {
       await firstValueFrom(this.trainingService.getTodayOverview());
     } catch (error) {
       console.error("Error loading training data:", error);
-      this.toastService.error("Failed to load training data");
+      this.toastService.error(TOAST.ERROR.LOAD_FAILED);
     }
   }
 
@@ -1199,7 +1200,7 @@ export class TrainingComponent {
 
   showAllWorkouts(): void {
     // Could open a dialog or navigate to a workouts page
-    this.toastService.info("Showing all workouts");
+    this.toastService.info(TOAST.INFO.SHOWING_ALL_WORKOUTS);
   }
 
   /**
@@ -1264,7 +1265,7 @@ export class TrainingComponent {
       this.trainingService.removeWorkout(workout.title);
       this.toastService.success(`${workout.title} marked as complete!`);
     } else {
-      this.toastService.error("Failed to mark workout as complete");
+      this.toastService.error(TOAST.ERROR.SESSION_COMPLETE_FAILED);
     }
   }
 
@@ -1278,7 +1279,7 @@ export class TrainingComponent {
       this.trainingService.removeWorkout(workout.title);
       this.toastService.info(`${workout.title} postponed to tomorrow`);
     } else {
-      this.toastService.error("Failed to postpone workout");
+      this.toastService.error(TOAST.ERROR.SESSION_POSTPONE_FAILED);
     }
   }
 
@@ -1288,7 +1289,7 @@ export class TrainingComponent {
    */
   async refreshTrainingData(): Promise<void> {
     await this.loadData();
-    this.toastService.success("Training data refreshed");
+    this.toastService.success(TOAST.SUCCESS.TRAINING_DATA_REFRESHED);
   }
 
   // ============================================================================

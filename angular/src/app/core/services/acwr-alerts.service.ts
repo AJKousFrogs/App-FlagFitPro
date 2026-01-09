@@ -20,6 +20,7 @@ import { firstValueFrom } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { AuthService } from "./auth.service";
 import { SupabaseService } from "./supabase.service";
+import { TeamMembershipService } from "./team-membership.service";
 import { NotificationStateService } from "./notification-state.service";
 import {
   LoadAlert,
@@ -44,6 +45,7 @@ export class AcwrAlertsService {
   private logger = inject(LoggerService);
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
+  private teamMembershipService = inject(TeamMembershipService);
   private notificationService = inject(NotificationStateService);
   private http = inject(HttpClient);
   private readonly apiBaseUrl = environment.apiUrl || "";
@@ -240,6 +242,7 @@ export class AcwrAlertsService {
    * Notify coach of critical alert
    * Sends database notification, push notification, and email notification
    * Falls back gracefully if push/email fail - DB notification always succeeds
+   * Uses TeamMembershipService for centralized team queries
    */
   private async notifyCoach(alert: LoadAlert): Promise<void> {
     this.logger.info("📧 Notifying coach of critical alert:", alert.message);
@@ -248,110 +251,91 @@ export class AcwrAlertsService {
     if (!user?.id) return;
 
     try {
-      // Find the player's coach through team membership
-      const { data: teamMember } = await this.supabaseService.client
-        .from("team_members")
-        .select("team_id")
-        .eq("user_id", user.id)
-        .limit(1)
-        .single();
+      // Get team ID and coaches using centralized service
+      const teamId = this.teamMembershipService.teamId();
+      if (!teamId) return;
 
-      if (teamMember?.team_id) {
-        // Find coach(es) for the team
-        const { data: coaches } = await this.supabaseService.client
-          .from("team_members")
-          .select("user_id")
-          .eq("team_id", teamMember.team_id)
-          .eq("role", "coach");
+      const coaches = await this.teamMembershipService.getTeamCoaches();
+      if (coaches && coaches.length > 0) {
+        // Create database notification for each coach (always succeeds)
+        const coachNotifications = coaches.map((coach) => ({
+          user_id: coach.userId,
+          type: "player_alert",
+          title: `Critical Alert: ${alert.playerName}`,
+          message: alert.message,
+          priority: alert.severity === "critical" ? "high" : "medium",
+          data: {
+            alertId: alert.id,
+            playerId: alert.playerId,
+            playerName: alert.playerName,
+            severity: alert.severity,
+            recommendation: alert.recommendation,
+            acwrValue: alert.acwrValue,
+          },
+        }));
 
-        if (coaches && coaches.length > 0) {
-          // Create database notification for each coach (always succeeds)
-          const coachNotifications = coaches.map((coach) => ({
-            user_id: coach.user_id,
-            type: "player_alert",
-            title: `Critical Alert: ${alert.playerName}`,
-            message: alert.message,
-            priority: alert.severity === "critical" ? "high" : "medium",
-            data: {
-              alertId: alert.id,
-              playerId: alert.playerId,
-              playerName: alert.playerName,
-              severity: alert.severity,
-              recommendation: alert.recommendation,
-              acwrValue: alert.acwrValue,
-            },
-          }));
+        // Always create DB notifications first (fallback)
+        await this.supabaseService.client
+          .from("notifications")
+          .insert(coachNotifications);
 
-          // Always create DB notifications first (fallback)
-          await this.supabaseService.client
-            .from("notifications")
-            .insert(coachNotifications);
+        // Refresh notification badge
+        this.notificationService.refreshBadgeCount();
 
-          // Refresh notification badge
-          this.notificationService.refreshBadgeCount();
+        // Send push and email notifications to each coach (with fallback)
+        const dashboardUrl = `${window.location.origin}/coach/dashboard`;
 
-          // Send push and email notifications to each coach (with fallback)
-          const dashboardUrl = `${window.location.origin}/coach/dashboard`;
+        for (const coach of coaches) {
+          const coachUserId = coach.userId;
 
-          for (const coach of coaches) {
-            const coachUserId = coach.user_id;
+          // Use coach name from centralized service
+          let coachEmail: string | null = null;
+          let coachName = coach.fullName || "Coach";
 
-            // Fetch coach profile data for email and name
-            // Try profiles table first, fallback to auth user metadata
-            let coachEmail: string | null = null;
-            let coachName = "Coach";
+          try {
+            // Use 'users' table for email
+            const { data: profile } = await this.supabaseService.client
+              .from("users")
+              .select("email")
+              .eq("id", coachUserId)
+              .single();
 
-            try {
-              // Use 'users' table instead of 'profiles' (profiles doesn't exist)
-              const { data: profile } = await this.supabaseService.client
-                .from("users")
-                .select("email, full_name")
-                .eq("id", coachUserId)
-                .single();
-
-              if (profile) {
-                coachEmail = profile.email || null;
-                coachName = profile.full_name || coachName;
-              }
-            } catch (_profileError) {
-              // Profiles table might not exist or have different schema
-              this.logger.debug(
-                `[ACWR Alert] Could not fetch profile for coach ${coachUserId}, will skip email`,
-              );
+            if (profile) {
+              coachEmail = profile.email || null;
             }
-
-            // If no email from profiles, try to get from current user's auth session
-            // (This is a limitation - we can't easily get other users' emails client-side)
-            // Email will be skipped if not available, push notification will still work
-
-            // Send push notification (non-blocking, failures logged but don't stop process)
-            this.sendPushNotificationToCoach(coachUserId, alert, dashboardUrl).catch(
-              (error) => {
-                this.logger.warn(
-                  `[ACWR Alert] Failed to send push notification to coach ${coachUserId}:`,
-                  error,
-                );
-              },
+          } catch (_profileError) {
+            this.logger.debug(
+              `[ACWR Alert] Could not fetch email for coach ${coachUserId}, will skip email`,
             );
+          }
 
-            // Send email notification (non-blocking, failures logged but don't stop process)
-            if (coachEmail) {
-              this.sendEmailNotificationToCoach(
-                coachEmail,
-                coachName,
-                alert,
-                dashboardUrl,
-              ).catch((error) => {
-                this.logger.warn(
-                  `[ACWR Alert] Failed to send email notification to coach ${coachEmail}:`,
-                  error,
-                );
-              });
-            } else {
+          // Send push notification (non-blocking, failures logged but don't stop process)
+          this.sendPushNotificationToCoach(coachUserId, alert, dashboardUrl).catch(
+            (error) => {
               this.logger.warn(
-                `[ACWR Alert] Coach ${coachUserId} has no email address, skipping email notification`,
+                `[ACWR Alert] Failed to send push notification to coach ${coachUserId}:`,
+                error,
               );
-            }
+            },
+          );
+
+          // Send email notification (non-blocking, failures logged but don't stop process)
+          if (coachEmail) {
+            this.sendEmailNotificationToCoach(
+              coachEmail,
+              coachName,
+              alert,
+              dashboardUrl,
+            ).catch((error) => {
+              this.logger.warn(
+                `[ACWR Alert] Failed to send email notification to coach ${coachEmail}:`,
+                error,
+              );
+            });
+          } else {
+            this.logger.warn(
+              `[ACWR Alert] Coach ${coachUserId} has no email address, skipping email notification`,
+            );
           }
         }
       }

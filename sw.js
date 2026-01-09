@@ -8,20 +8,11 @@ const CACHE_NAME = 'flagfit-pro-v1.0.2';
 const RUNTIME_CACHE = 'flagfit-runtime-v1.0.2';
 
 // Assets to cache on install
+// ⚠️ UPDATED: Removed legacy src/css references (January 2026)
+// Angular app uses its own assets from angular/dist/
 const STATIC_ASSETS = [
-  '/dashboard.html',
-  '/training.html',
-  '/wellness.html',
-  '/analytics.html',
-  '/src/css/main.css',
-  '/src/css/components/sidebar.css',
-  '/src/css/components/header.css',
-  '/src/css/utilities.css',
-  '/src/css/pages/dashboard.css',
-  '/src/css/pages/training.css',
-  '/src/css/pages/wellness.css',
   '/manifest.json',
-  // Add other critical assets
+  // Angular assets are handled by Angular Service Worker (ngsw-worker.js)
 ];
 
 // Install event - cache static assets
@@ -113,8 +104,8 @@ async function cacheFirstStrategy(request) {
   } catch (error) {
     console.error('[Service Worker] Fetch failed:', error);
 
-    // Return offline page if available
-    const offlinePage = await caches.match('/offline.html');
+    // Return offline page if available (Angular route)
+    const offlinePage = await caches.match('/offline');
     if (offlinePage) {
       return offlinePage;
     }
@@ -215,7 +206,7 @@ self.addEventListener('notificationclick', (event) => {
 
   event.notification.close();
 
-  const urlToOpen = event.notification.data?.url || '/dashboard.html';
+  const urlToOpen = event.notification.data?.url || '/dashboard';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
@@ -240,7 +231,7 @@ self.addEventListener('notificationclick', (event) => {
 // ========================================
 // Background sync is disabled until IndexedDB persistence is implemented.
 // When ready to enable:
-// 1. Implement IndexedDB storage in src/js/services/offline-storage.js
+// 1. Implement IndexedDB storage (migrated to Angular services)
 // 2. Implement getPendingWellnessData() and getPendingTrainingData()
 // 3. Uncomment the sync event listener below
 // 4. Test thoroughly in offline scenarios

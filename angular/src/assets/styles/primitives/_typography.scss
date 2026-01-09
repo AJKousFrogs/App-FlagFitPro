@@ -28,7 +28,7 @@
 
   body {
     font-family: var(--font-family-sans);
-    font-size: var(--font-body-md);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-normal);
     line-height: var(--line-height-normal);
     color: var(--color-text-primary);
@@ -79,20 +79,20 @@
   // ============================================
 
   .body-text {
-    font-size: var(--font-body-md);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-normal);
     line-height: var(--line-height-normal);
     color: var(--color-text-primary);
   }
 
   .body-lg {
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-normal);
     line-height: var(--line-height-normal);
   }
 
   .body-sm {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-normal);
     line-height: var(--line-height-normal);
   }
@@ -109,7 +109,7 @@
   }
 
   .overline {
-    font-size: var(--font-body-xs);
+    font-size: var(--font-caption-size);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-normal);
     letter-spacing: var(--letter-spacing-wide);
@@ -222,14 +222,14 @@
     .subsection-title,
     .group-title {
       letter-spacing: var(--letter-spacing-normal);
-      line-height: var(--line-height-jp, 1.6);
+      line-height: var(--line-height-jp);
     }
 
     .body-text,
     .body-lg,
     .body-sm,
     .caption {
-      line-height: var(--line-height-jp, 1.6);
+      line-height: var(--line-height-jp);
     }
 
     // CJK line breaking (Decision 61)

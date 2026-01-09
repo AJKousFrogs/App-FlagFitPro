@@ -93,7 +93,7 @@
 }
 
 // Legacy focus support
-.checkbox-input:focus + .checkbox-custom {
+.checkbox-input:focus-visible + .checkbox-custom {
   box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
 }
 

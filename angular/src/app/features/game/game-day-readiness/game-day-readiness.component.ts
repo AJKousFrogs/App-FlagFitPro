@@ -37,8 +37,10 @@ import { TagModule } from "primeng/tag";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { TeamMembershipService } from "../../../core/services/team-membership.service";
 
 interface ReadinessMetric {
   key: string;
@@ -255,6 +257,7 @@ export class GameDayReadinessComponent implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly logger = inject(LoggerService);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
@@ -509,7 +512,7 @@ export class GameDayReadinessComponent implements OnInit {
     try {
       const user = this.authService.getUser();
       if (!user?.id) {
-        this.toastService.error("Please log in to submit readiness check");
+        this.toastService.error(TOAST.ERROR.LOGIN_TO_SUBMIT_READINESS);
         return;
       }
 
@@ -517,7 +520,7 @@ export class GameDayReadinessComponent implements OnInit {
       // CRITICAL: Only submit if all metrics are set
       const allMetricsSet = metrics.every((m) => m.value > 0);
       if (!allMetricsSet) {
-        this.toastService.error("Please complete all metrics before submitting");
+        this.toastService.error(TOAST.ERROR.INCOMPLETE_METRICS);
         this.isSubmitting.set(false);
         return;
       }
@@ -565,11 +568,11 @@ export class GameDayReadinessComponent implements OnInit {
       }
 
       this.isSubmitted.set(true);
-      this.toastService.success("Game day readiness submitted!");
+      this.toastService.success(TOAST.SUCCESS.GAME_DAY_READINESS_SUBMITTED);
       this.logger.success("[GameDayReadiness] Check-in saved successfully");
     } catch (error) {
       this.logger.error("[GameDayReadiness] Error submitting:", error);
-      this.toastService.error("Failed to submit readiness check");
+      this.toastService.error(TOAST.ERROR.READINESS_SUBMIT_FAILED);
     } finally {
       this.isSubmitting.set(false);
     }
@@ -580,22 +583,12 @@ export class GameDayReadinessComponent implements OnInit {
     readinessData: Record<string, unknown>,
   ): Promise<void> {
     try {
-      // Get athlete's team and coach
-      const { data: teamMember } = await this.supabaseService.client
-        .from("team_members")
-        .select("team_id, teams(name)")
-        .eq("user_id", athleteId)
-        .single();
+      // Get athlete's team using centralized service
+      const teamId = this.teamMembershipService.teamId();
+      if (!teamId) return;
 
-      if (!teamMember?.team_id) return;
-
-      // Get coaches for this team
-      const { data: coaches } = await this.supabaseService.client
-        .from("team_members")
-        .select("user_id")
-        .eq("team_id", teamMember.team_id)
-        .in("role", ["head_coach", "coach", "owner"]);
-
+      // Get coaches for this team using centralized service
+      const coaches = await this.teamMembershipService.getTeamCoaches();
       if (!coaches?.length) return;
 
       const user = this.authService.getUser();
@@ -604,7 +597,7 @@ export class GameDayReadinessComponent implements OnInit {
       // Create notifications for coaches
       for (const coach of coaches) {
         await this.supabaseService.client.from("notifications").insert({
-          user_id: coach.user_id,
+          user_id: coach.userId,
           type: "readiness_alert",
           title: "⚠️ Low Game Day Readiness",
           message: `${athleteName} reported a readiness score of ${readinessData["readiness_score"]}/100 before competition. Review recommended.`,

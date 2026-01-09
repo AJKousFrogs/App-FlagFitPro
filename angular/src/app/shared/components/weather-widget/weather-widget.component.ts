@@ -27,6 +27,7 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
 @Component({
   selector: "app-weather-widget",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,

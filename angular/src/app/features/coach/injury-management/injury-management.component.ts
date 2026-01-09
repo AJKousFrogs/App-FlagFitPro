@@ -8,7 +8,7 @@
  */
 
 import { CommonModule, DatePipe } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { AvatarModule } from "primeng/avatar";
@@ -32,6 +32,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { getInitials } from "../../../shared/utils/format.utils";
 
 // ===== Interfaces =====
 interface InjuryRecord {
@@ -177,6 +178,7 @@ const RTP_STAGES: RtpStage[] = [
 @Component({
   selector: "app-injury-management",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -300,7 +302,7 @@ const RTP_STAGES: RtpStage[] = [
                   <p-avatar
                     [image]="injury.avatarUrl"
                     [label]="
-                      !injury.avatarUrl ? getInitials(injury.playerName) : ''
+                      !injury.avatarUrl ? getInitialsStr(injury.playerName) : ''
                     "
                     size="large"
                     shape="circle"
@@ -365,7 +367,7 @@ const RTP_STAGES: RtpStage[] = [
                   <p-avatar
                     [image]="injury.avatarUrl"
                     [label]="
-                      !injury.avatarUrl ? getInitials(injury.playerName) : ''
+                      !injury.avatarUrl ? getInitialsStr(injury.playerName) : ''
                     "
                     size="large"
                     shape="circle"
@@ -465,7 +467,7 @@ const RTP_STAGES: RtpStage[] = [
               <p-card styleClass="injury-card cleared">
                 <div class="injury-content">
                   <p-avatar
-                    [label]="getInitials(injury.playerName)"
+                    [label]="getInitialsStr(injury.playerName)"
                     size="large"
                     shape="circle"
                   ></p-avatar>
@@ -1156,11 +1158,11 @@ export class InjuryManagementComponent implements OnInit {
   }
 
   // Helpers
-  getInitials(name: string): string {
-    const parts = name.split(" ");
-    return parts.length >= 2
-      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-      : name.substring(0, 2).toUpperCase();
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   getStageName(stage: number): string {

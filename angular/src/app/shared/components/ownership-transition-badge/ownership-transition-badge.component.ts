@@ -17,6 +17,7 @@ import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { OwnershipTransition } from "../../../core/services/ownership-transition.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { getTimeAgo } from "../../utils/date.utils";
 
 @Component({
   selector: "app-ownership-transition-badge",
@@ -54,7 +55,7 @@ import { LoggerService } from "../../../core/services/logger.service";
             @if (transition()!.createdAt) {
               <div class="detail-item">
                 <span class="detail-label">Notified:</span>
-                <span class="detail-value">{{ getTimeAgo(transition()!.createdAt!) }}</span>
+                <span class="detail-value">{{ getTimeAgoStr(transition()!.createdAt!) }}</span>
               </div>
             }
             @if (getResponseTimeline(transition()!)) {
@@ -231,17 +232,11 @@ export class OwnershipTransitionBadgeComponent {
     return null;
   }
 
-  getTimeAgo(date: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffMins < 1) return "just now";
-    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  /**
+   * Get time ago string using centralized utility
+   */
+  getTimeAgoStr(date: Date): string {
+    return getTimeAgo(date);
   }
 }
 

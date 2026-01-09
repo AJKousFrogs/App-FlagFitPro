@@ -71,7 +71,7 @@ class ExportService {
                   value.includes('"') ||
                   value.includes("\n")
                 ) {
-                  value = '"' + value.replace(/"/g, '""') + '"';
+                  value = `"${  value.replace(/"/g, '""')  }"`;
                 }
               }
 

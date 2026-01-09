@@ -15,7 +15,7 @@
   justify-content: space-around;
   align-items: center;
   padding: 0 var(--space-2);
-  z-index: 1000;
+  z-index: var(--z-modal);
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
@@ -83,7 +83,7 @@
 }
 
 .nav-label {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -133,7 +133,7 @@
   padding: var(--space-4);
   border-bottom: 1px solid var(--color-border-secondary);
   font-weight: var(--font-weight-semibold);
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
 }
 
 .close-btn {

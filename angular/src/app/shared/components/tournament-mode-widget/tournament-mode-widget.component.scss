@@ -342,7 +342,7 @@
 }
 
 .phase-badge {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
   padding: var(--space-1) 8px;
   border-radius: var(--radius-lg);
@@ -406,7 +406,7 @@
   .game-dot {
     width: 28px;
     height: 28px;
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .quick-hydration {

@@ -10,13 +10,13 @@
 .rating-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .rating {
   display: inline-flex;
   flex-direction: row-reverse;
-  gap: 0.25rem;
+  gap: var(--space-1);
 }
 
 .rating-input {
@@ -59,7 +59,7 @@
 }
 
 .rating-lg {
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .rating-lg .rating-star {

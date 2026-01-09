@@ -143,7 +143,7 @@
   border: var(--border-2) solid var(--color-border-primary);
 
   i {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   &.completed {
@@ -213,7 +213,7 @@
 }
 
 .item-type {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
   background: var(--surface-tertiary);
@@ -270,7 +270,7 @@
 }
 
 .now-label {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-status-error);
   background: var(--color-status-error-light);
@@ -321,7 +321,7 @@
   }
 
   .time-value {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .marker-dot {

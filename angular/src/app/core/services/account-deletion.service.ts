@@ -4,6 +4,7 @@ import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { Router } from "@angular/router";
+import { TOAST } from "../constants/toast-messages.constants";
 
 /**
  * Account Deletion Service
@@ -130,13 +131,13 @@ export class AccountDeletionService {
   async requestDeletion(request: DeletionRequest): Promise<boolean> {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
-      this.toastService.error("Not authenticated");
+      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
       return false;
     }
 
     // Verify confirmation text
     if (request.confirmText !== "DELETE") {
-      this.toastService.error("Please type DELETE to confirm");
+      this.toastService.error(TOAST.ERROR.TYPE_DELETE_TO_CONFIRM);
       return false;
     }
 
@@ -160,10 +161,7 @@ export class AccountDeletionService {
       // Sign out the user
       await this.supabase.signOut();
 
-      this.toastService.success(
-        "Account deletion requested. Your data will be permanently deleted in 30 days. " +
-          "You can cancel this request by logging back in within 30 days.",
-      );
+      this.toastService.success(TOAST.SUCCESS.ACCOUNT_DELETION_REQUESTED);
 
       this.logger.info("Account deletion initiated", { requestId });
 
@@ -173,7 +171,7 @@ export class AccountDeletionService {
       return true;
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Failed to request deletion";
+        err instanceof Error ? err.message : TOAST.ERROR.DELETION_REQUEST_FAILED;
       this._error.set(message);
       this.toastService.error(message);
       this.logger.error("Error requesting deletion:", err);
@@ -196,12 +194,12 @@ export class AccountDeletionService {
     const status = this._deletionStatus();
 
     if (!userId || !status?.requestId) {
-      this.toastService.error("No pending deletion to cancel");
+      this.toastService.error(TOAST.ERROR.NO_PENDING_DELETION);
       return false;
     }
 
     if (!status.canCancel) {
-      this.toastService.error("This deletion request cannot be cancelled");
+      this.toastService.error(TOAST.ERROR.DELETION_CANNOT_CANCEL);
       return false;
     }
 
@@ -306,7 +304,7 @@ export class AccountDeletionService {
   ): Promise<string | null> {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
-      this.toastService.error("Not authenticated");
+      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
       return null;
     }
 

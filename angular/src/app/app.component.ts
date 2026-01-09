@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
@@ -7,6 +7,7 @@ import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loa
 @Component({
   selector: "app-root",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterOutlet,
     SkipToContentComponent,

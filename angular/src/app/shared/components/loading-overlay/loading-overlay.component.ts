@@ -1,10 +1,11 @@
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { LoadingService } from "../../../core/services/loading.service";
 
 @Component({
   selector: "app-loading-overlay",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
     @if (loadingService.isLoading()) {

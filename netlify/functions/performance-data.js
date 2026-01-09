@@ -7,8 +7,7 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   canCoachViewWellness,
   filterWellnessDataForCoach,
-  canCoachViewReadiness,
-  filterReadinessForCoach,
+  // canCoachViewReadiness, filterReadinessForCoach - reserved for readiness endpoint expansion
 } = require("./utils/consent-guard.cjs");
 const {
   detectPainTrigger,

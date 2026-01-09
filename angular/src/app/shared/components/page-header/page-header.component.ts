@@ -1,4 +1,4 @@
-import { Component, input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 /**
  * Page Header Component
@@ -13,6 +13,7 @@ import { Component, input } from "@angular/core";
 @Component({
   selector: "app-page-header",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   template: `
     <div class="page-header" [class.hidden-in-composite]="hideInComposite()">

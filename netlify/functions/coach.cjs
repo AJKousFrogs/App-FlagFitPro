@@ -692,10 +692,10 @@ async function handleCalendarRequest(event, userId, coachId) {
       }
 
       const updates = {};
-      if (body.title) updates.title = body.title;
-      if (body.type) updates.event_type = body.type;
-      if (body.description !== undefined) updates.description = body.description;
-      if (body.location) updates.location = body.location;
+      if (body.title) {updates.title = body.title;}
+      if (body.type) {updates.event_type = body.type;}
+      if (body.description !== undefined) {updates.description = body.description;}
+      if (body.location) {updates.location = body.location;}
       if (body.date && body.startTime) {
         updates.start_time = `${body.date}T${body.startTime}:00`;
       }

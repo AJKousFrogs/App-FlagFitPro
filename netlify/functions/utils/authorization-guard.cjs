@@ -16,25 +16,25 @@ async function getUserRole(userId) {
     return null;
   }
 
-  // Try profiles table first
-  const { data: profile, error: profileError } = await supabaseAdmin
-    .from("profiles")
+  // Try users table first (profiles table doesn't exist - use users)
+  const { data: user, error: userError } = await supabaseAdmin
+    .from("users")
     .select("role")
-    .eq("user_id", userId)
+    .eq("id", userId)
     .single();
 
-  if (!profileError && profile) {
-    return profile.role;
+  if (!userError && user) {
+    return user.role;
   }
 
   // Fallback to auth.users metadata (for backward compatibility)
-  const { data: user, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+  const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.getUserById(userId);
   
-  if (userError || !user) {
+  if (authError || !authUser) {
     return null;
   }
 
-  return user.user_metadata?.role || null;
+  return authUser.user_metadata?.role || null;
 }
 
 /**
@@ -127,7 +127,7 @@ async function logViolation(userId, resourceId, resourceType, action, errorCode,
       user_id: userId,
       resource_id: resourceId,
       resource_type: resourceType,
-      action: action,
+      action,
       error_code: errorCode,
       error_message: errorMessage,
       ip_address: requestInfo.ip,

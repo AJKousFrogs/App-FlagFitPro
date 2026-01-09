@@ -3,6 +3,7 @@ import { Observable, of } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { ApiService, ApiResponse } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { formatDate } from "../../shared/utils/date.utils";
 
 export interface Official {
   id: string;
@@ -426,7 +427,7 @@ export class OfficialsService {
         map((response) => {
           if (response.success && response.data) {
             return response.data.map((g) => ({
-              label: `${new Date(g.date || g.game_date || new Date()).toLocaleDateString()} vs ${g.opponent || g.opponent_name || "TBD"}`,
+              label: `${formatDate(g.date || g.game_date || new Date(), 'P')} vs ${g.opponent || g.opponent_name || "TBD"}`,
               value: g.id || g.game_id || "",
               date: g.date || g.game_date || "",
               opponent: g.opponent || g.opponent_name || "",

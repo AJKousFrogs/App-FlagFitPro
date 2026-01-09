@@ -154,7 +154,9 @@ set SUPABASE_ANON_KEY=your-anon-key
 
 ## Running the Application
 
-### Option A: Angular Frontend Only (Mock API)
+### Option A: Angular Frontend Only (Mock API) - DEVELOPMENT ONLY
+
+⚠️ **WARNING: Mock data is ONLY for local development and testing. NEVER use mock data in production.**
 
 ```bash
 cd angular
@@ -163,6 +165,7 @@ npm start
 
 - **URL:** http://localhost:4200
 - **API Mode:** Uses mock data (no backend required)
+- **⚠️ Development Only:** This mode is for testing UI only. Mock data must NEVER be used in production builds or shown to real users. See [PLAYER_DATA_SAFETY_GUIDE.md](./PLAYER_DATA_SAFETY_GUIDE.md) for critical safety information.
 
 ### Option B: Full Stack with Netlify Dev
 

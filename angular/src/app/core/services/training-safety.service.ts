@@ -23,6 +23,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { DataSourceService } from "./data-source.service";
+import { calculateAge } from "../../shared/utils/date.utils";
 
 // ============================================================================
 // INTERFACES
@@ -276,7 +277,7 @@ export class TrainingSafetyService {
         return null;
       }
 
-      const age = this.calculateAge(new Date(birthDate));
+      const age = calculateAge(new Date(birthDate));
       this._athleteAge.set(age);
       this._athleteProfile.set(this.getAgeAdjustedProfile(age));
 
@@ -289,24 +290,6 @@ export class TrainingSafetyService {
       this.logger.error("[TrainingSafety] Error loading athlete age:", error);
       return null;
     }
-  }
-
-  /**
-   * Calculate age from birth date
-   */
-  private calculateAge(birthDate: Date): number {
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
   }
 
   /**

@@ -41,7 +41,7 @@ exports.handler = createHandler({
           p_season_id: season_id,
         });
 
-        if (error) throw error;
+        if (error) {throw error;}
 
         return {
           statusCode: 200,

@@ -3,6 +3,8 @@ import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
+import { TOAST } from "../constants/toast-messages.constants";
+import { TOAST } from "../constants/toast-messages.constants";
 
 /**
  * Privacy Settings Service
@@ -428,7 +430,7 @@ export class PrivacySettingsService {
   ): Promise<boolean> {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
-      this.toastService.error("Not authenticated");
+      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
       return false;
     }
 
@@ -442,7 +444,7 @@ export class PrivacySettingsService {
 
       // Reload settings to get updated values
       await this.loadSettings();
-      this.toastService.success("Privacy settings updated");
+      this.toastService.success(TOAST.SUCCESS.PRIVACY_UPDATED);
       return true;
     } catch (err) {
       const message =
@@ -470,7 +472,7 @@ export class PrivacySettingsService {
   ): Promise<boolean> {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
-      this.toastService.error("Not authenticated");
+      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
       return false;
     }
 
@@ -498,7 +500,7 @@ export class PrivacySettingsService {
       if (error) throw error;
 
       await this.loadTeamSettings();
-      this.toastService.success("Team sharing settings updated");
+      this.toastService.success(TOAST.SUCCESS.UPDATED);
       return true;
     } catch (err) {
       const message =
@@ -522,7 +524,7 @@ export class PrivacySettingsService {
   ): Promise<boolean> {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
-      this.toastService.error("Not authenticated");
+      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
       return false;
     }
 
@@ -547,7 +549,7 @@ export class PrivacySettingsService {
       // This would typically be done via an Edge Function
 
       await this.checkParentalConsentStatus();
-      this.toastService.success("Consent request sent to guardian");
+      this.toastService.success(TOAST.SUCCESS.CONSENT_REQUEST_SENT);
       return true;
     } catch (err) {
       const message =

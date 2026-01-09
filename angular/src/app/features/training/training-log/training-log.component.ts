@@ -42,6 +42,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { TrainingDataService } from "../../../core/services/training-data.service";
 import { AcwrService } from "../../../core/services/acwr.service";
@@ -598,7 +599,7 @@ export class TrainingLogComponent {
 
       // Show warning if retroactive approval required
       if (this.requiresApproval()) {
-        this.toastService.warn("This session requires coach approval due to retroactive logging.");
+        this.toastService.warn(TOAST.WARN.RETROACTIVE_LOGGING_WARNING);
       }
 
       // Update ACWR calculations
@@ -619,7 +620,7 @@ export class TrainingLogComponent {
         completed: true,
       });
 
-      this.toastService.success("Training session logged successfully!");
+      this.toastService.success(TOAST.SUCCESS.SESSION_LOGGED_SUCCESS);
       this.router.navigate(["/dashboard"]);
     } catch (error) {
       this.logger.error("Failed to log training session", error);
@@ -644,7 +645,7 @@ export class TrainingLogComponent {
         );
         this.router.navigate(["/dashboard"]);
       } else {
-        this.toastService.error("Failed to log session. Please try again.");
+        this.toastService.error(TOAST.ERROR.SESSION_LOG_FAILED);
       }
     } finally {
       this.isSubmitting.set(false);

@@ -29,6 +29,7 @@ import { SharedInsight, SharedInsightFeedService } from "../../../core/services/
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { formatDate } from "../../../shared/utils/date.utils";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §31
 interface Injury {
@@ -194,7 +195,6 @@ const RTP_PHASES = [
     FormsModule,
     RouterModule,
     CardModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
     DialogModule,
     InputTextModule,
     ProgressBarModule,
@@ -1607,7 +1607,7 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
+    return formatDate(date, 'P');
   }
 
   getMetadataEntries(metadata: Record<string, unknown>): Array<{ key: string; value: string }> {

@@ -20,6 +20,7 @@ import { Select } from "primeng/select";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 
@@ -196,7 +197,7 @@ export class TeamCreateComponent {
       const currentUser = this.authService.getUser();
 
       if (!currentUser?.id) {
-        this.toastService.error("You must be logged in to create a team.");
+        this.toastService.error(TOAST.ERROR.MUST_BE_LOGGED_IN);
         return;
       }
 

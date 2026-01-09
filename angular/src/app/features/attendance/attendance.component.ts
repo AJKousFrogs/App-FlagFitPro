@@ -34,7 +34,9 @@ import {
 } from "../../core/services/attendance.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
+import { getInitials } from "../../shared/utils/format.utils";
 
 type EventType =
   | "practice"
@@ -230,7 +232,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                     <td>
                       <div class="player-cell">
                         <p-avatar
-                          [label]="getInitials(stat.player_name || 'U')"
+                          [label]="getInitialsStr(stat.player_name || 'U')"
                           shape="circle"
                           size="normal"
                         ></p-avatar>
@@ -407,7 +409,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   <div class="attendance-row">
                     <div class="player-info">
                       <p-avatar
-                        [label]="getInitials(record.player_name || 'U')"
+                        [label]="getInitialsStr(record.player_name || 'U')"
                         shape="circle"
                       ></p-avatar>
                       <span>{{ record.player_name || "Unknown" }}</span>
@@ -539,7 +541,7 @@ export class AttendanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (events) => this.events.set(events),
-        error: (_err) => this.toastService.error("Failed to load events"),
+        error: (_err) => this.toastService.error(TOAST.ERROR.LOAD_FAILED),
       });
   }
 
@@ -553,7 +555,7 @@ export class AttendanceComponent implements OnInit {
       .subscribe({
         next: (stats) => this.playerStats.set(stats),
         error: (_err) =>
-          this.toastService.error("Failed to load attendance stats"),
+          this.toastService.error(TOAST.ERROR.LOAD_FAILED),
       });
   }
 
@@ -577,13 +579,11 @@ export class AttendanceComponent implements OnInit {
     return icons[type] || "pi pi-calendar";
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   openCreateEventDialog(): void {
@@ -628,11 +628,11 @@ export class AttendanceComponent implements OnInit {
         next: (event) => {
           if (event) {
             this.events.update((events) => [event, ...events]);
-            this.toastService.success("Event created successfully");
+            this.toastService.success(TOAST.SUCCESS.EVENT_CREATED_SUCCESS);
             this.showCreateEventDialog = false;
           }
         },
-        error: () => this.toastService.error("Failed to create event"),
+        error: () => this.toastService.error(TOAST.ERROR.CREATE_FAILED),
       });
   }
 
@@ -649,7 +649,7 @@ export class AttendanceComponent implements OnInit {
       .subscribe({
         next: (records) => this.attendanceRecords.set(records),
         error: () =>
-          this.toastService.error("Failed to load attendance records"),
+          this.toastService.error(TOAST.ERROR.LOAD_FAILED),
       });
   }
 
@@ -678,11 +678,11 @@ export class AttendanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Attendance saved successfully");
+          this.toastService.success(TOAST.SUCCESS.ATTENDANCE_SAVED_SUCCESS);
           this.showAttendanceDialog = false;
           this.loadPlayerStats();
         },
-        error: () => this.toastService.error("Failed to save attendance"),
+        error: () => this.toastService.error(TOAST.ERROR.SAVE_FAILED),
       });
   }
 
@@ -693,10 +693,10 @@ export class AttendanceComponent implements OnInit {
       .subscribe({
         next: (record) => {
           if (record) {
-            this.toastService.success("Checked in successfully!");
+            this.toastService.success(TOAST.SUCCESS.CHECKIN_SUCCESS);
           }
         },
-        error: () => this.toastService.error("Failed to check in"),
+        error: () => this.toastService.error(TOAST.ERROR.CHECKIN_FAILED),
       });
   }
 }

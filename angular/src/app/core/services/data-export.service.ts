@@ -3,6 +3,7 @@ import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { ToastService } from "./toast.service";
+import { TOAST } from "../constants/toast-messages.constants";
 
 /**
  * Data Export Service
@@ -93,7 +94,7 @@ export class DataExportService {
   ): Promise<Blob | null> {
     const userId = this.authService.getUser()?.id;
     if (!userId) {
-      this.toastService.error("Not authenticated");
+      this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
       return null;
     }
 
@@ -173,13 +174,13 @@ export class DataExportService {
       // Trigger download
       this.downloadBlob(blob, filename);
 
-      this.toastService.success("Data export completed successfully");
+      this.toastService.success(TOAST.SUCCESS.DATA_EXPORTED);
       this.logger.info("Data export completed", { categories, format });
 
       return blob;
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Failed to export data";
+        err instanceof Error ? err.message : TOAST.ERROR.EXPORT_FAILED;
       this.toastService.error(message);
       this.logger.error("Data export failed:", err);
       return null;

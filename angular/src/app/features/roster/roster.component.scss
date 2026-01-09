@@ -39,7 +39,7 @@
 }
 
 .no-results i {
-  font-size: var(--font-display-lg);
+  font-size: var(--font-h1-size);
   margin-bottom: var(--space-4);
   opacity: 0.5;
 }
@@ -528,7 +528,7 @@
 }
 
 .empty-invitations i {
-  font-size: var(--font-display-lg);
+  font-size: var(--font-h1-size);
   margin-bottom: var(--space-4);
   opacity: 0.5;
 }
@@ -698,7 +698,7 @@
   }
 
   .section-title {
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     flex-wrap: wrap;
   }
 

@@ -368,7 +368,7 @@ export class PerformanceCharts {
         label: testType.replace(/([A-Z])/g, " $1").trim(),
         data: grouped[testType].sort((a, b) => new Date(a.x) - new Date(b.x)),
         borderColor: colors[testType] || "#667eea",
-        backgroundColor: colors[testType] + "20" || "#667eea20",
+        backgroundColor: colors[testType] ? `${colors[testType]}20` : "#667eea20",
         borderWidth: 2,
         fill: false,
         tension: 0.1,
@@ -402,9 +402,9 @@ export class PerformanceCharts {
       if (data.length > 0) {
         datasets.push({
           label: metric.label,
-          data: data,
+          data,
           borderColor: metric.color,
-          backgroundColor: metric.color + "20",
+          backgroundColor: `${metric.color  }20`,
           borderWidth: 2,
           fill: false,
           tension: 0.1,
@@ -496,7 +496,7 @@ export class PerformanceCharts {
 
   // Add chart interactivity
   addChartInteractivity(chart, type) {
-    const canvas = chart.canvas;
+    const {canvas} = chart;
 
     // Add click events for data points
     canvas.addEventListener("click", (event) => {
@@ -509,8 +509,8 @@ export class PerformanceCharts {
 
       if (points.length > 0) {
         const point = points[0];
-        const datasetIndex = point.datasetIndex;
-        const index = point.index;
+        const {datasetIndex} = point;
+        const {index} = point;
         const dataset = chart.data.datasets[datasetIndex];
         const value = dataset.data[index];
 
@@ -615,7 +615,7 @@ export class PerformanceCharts {
         const values = perf.data.map((d) => d.value);
         const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
         const variance =
-          values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) /
+          values.reduce((sum, v) => sum + (v - mean)**2, 0) /
           values.length;
         totalVariance += variance;
       }

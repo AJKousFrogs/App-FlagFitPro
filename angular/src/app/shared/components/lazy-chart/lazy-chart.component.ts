@@ -7,9 +7,8 @@
 
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   OnInit,
   OnDestroy,
   ChangeDetectionStrategy,
@@ -70,8 +69,8 @@ export type LazyChartOptionsInput = LazyChartOptions | Record<string, unknown> |
     <div class="lazy-chart-container">
       @if (loading()) {
         <app-chart-skeleton
-          [type]="type"
-          [height]="height"
+          [type]="type()"
+          [height]="height()"
         />
       }
       <ng-container #chartContainer></ng-container>
@@ -88,14 +87,16 @@ export class LazyChartComponent implements OnInit, OnDestroy {
   @ViewChild('chartContainer', { read: ViewContainerRef })
   chartContainer!: ViewContainerRef;
 
-  @Input() type: 'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea' = 'line';
-  @Input() data: LazyChartData | Record<string, unknown> | null = null;
-  @Input() options: LazyChartOptionsInput = {};
-  @Input() width: string = '100%';
-  @Input() height: string = '300px';
+  // Angular 21: Use input() signals instead of @Input()
+  type = input<'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea'>('line');
+  data = input<LazyChartData | Record<string, unknown> | null>(null);
+  options = input<LazyChartOptionsInput>({});
+  width = input<string>('100%');
+  height = input<string>('300px');
   
-  @Output() chartClick = new EventEmitter<unknown>();
-  @Output() chartHover = new EventEmitter<unknown>();
+  // Angular 21: Use output() instead of @Output()
+  chartClick = output<unknown>();
+  chartHover = output<unknown>();
 
   loading = signal(true);
   private chartComponentRef: ComponentRef<unknown> | null = null;
@@ -114,20 +115,20 @@ export class LazyChartComponent implements OnInit, OnDestroy {
       // Create the chart component dynamically
       this.chartComponentRef = this.chartContainer.createComponent(Chart);
       
-      // Set inputs
-      if (this.chartComponentRef) {
-        this.chartComponentRef.setInput('type', this.type);
-        this.chartComponentRef.setInput('data', this.data);
-        this.chartComponentRef.setInput('options', this.options);
-        this.chartComponentRef.setInput('width', this.width);
-        this.chartComponentRef.setInput('height', this.height);
+// Set inputs
+        if (this.chartComponentRef) {
+          this.chartComponentRef.setInput('type', this.type());
+          this.chartComponentRef.setInput('data', this.data());
+          this.chartComponentRef.setInput('options', this.options());
+          this.chartComponentRef.setInput('width', this.width());
+          this.chartComponentRef.setInput('height', this.height());
 
-        // Wire up outputs
-        const instance = this.chartComponentRef.instance as { onDataSelect?: { subscribe: (fn: (event: unknown) => void) => void } };
-        instance.onDataSelect?.subscribe((event: unknown) => {
-          this.chartClick.emit(event);
-        });
-      }
+          // Wire up outputs
+          const instance = this.chartComponentRef.instance as { onDataSelect?: { subscribe: (fn: (event: unknown) => void) => void } };
+          instance.onDataSelect?.subscribe((event: unknown) => {
+            this.chartClick.emit(event);
+          });
+        }
 
       this.loading.set(false);
     } catch (error) {

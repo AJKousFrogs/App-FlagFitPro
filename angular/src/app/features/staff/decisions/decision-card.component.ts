@@ -19,6 +19,7 @@ import { TagModule } from "primeng/tag";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
 import type { DecisionLedgerEntry } from "@core/models/decision-ledger.models";
+import { formatDate } from "@shared/utils/date.utils";
 
 @Component({
   selector: "app-decision-card",
@@ -268,7 +269,7 @@ export class DecisionCardComponent {
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Tomorrow";
     if (diffDays < 7) return `In ${diffDays} days`;
-    return date.toLocaleDateString();
+    return formatDate(date, 'P');
   }
 
   isOverdue(date: Date): boolean {

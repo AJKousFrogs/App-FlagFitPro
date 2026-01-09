@@ -144,7 +144,7 @@
   align-items: center;
   justify-content: center;
   font-weight: var(--font-weight-bold);
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   color: var(--color-text-on-primary);
   box-shadow: var(--shadow-md);
   flex-shrink: 0;
@@ -156,7 +156,7 @@
 }
 
 .player-name {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-1);
   color: var(--color-text-primary);

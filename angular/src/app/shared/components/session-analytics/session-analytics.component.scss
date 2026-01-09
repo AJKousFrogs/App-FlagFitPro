@@ -59,7 +59,7 @@
 }
 
 .stat-value {
-  font-size: var(--text-2xl);
+  font-size: var(--font-h2-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
 }
@@ -93,7 +93,7 @@
 
 .chart-header h3 {
   margin: 0;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -165,7 +165,7 @@
 }
 
 .empty-state i {
-  font-size: var(--font-display-sm);
+  font-size: var(--font-h1-size);
   color: var(--surface-300);
   margin-bottom: var(--space-4);
 }

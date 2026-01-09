@@ -24,7 +24,7 @@
 .ai-suggestions h5 {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
   margin: 0 0 0.5rem 0;
   color: var(--ds-primary-green);
   font-weight: var(--font-weight-semibold);
@@ -32,7 +32,7 @@
 
 .suggestion-chips {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   flex-wrap: wrap;
   margin-top: 0.5rem;
 }
@@ -55,7 +55,7 @@
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .form-field label {
@@ -66,8 +66,8 @@
 .session-type-option {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
 }
 
 .session-type-option i {
@@ -95,8 +95,8 @@
 .weather-indicator {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
+  gap: var(--space-2);
+  padding: var(--space-2);
   background: var(--surface-tertiary);
   border-radius: var(--radius-md);
   margin-bottom: 0.5rem;
@@ -124,14 +124,14 @@
 .equipment-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .equipment-option {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
+  gap: var(--space-2);
+  padding: var(--space-2);
 }
 
 .equipment-option i {

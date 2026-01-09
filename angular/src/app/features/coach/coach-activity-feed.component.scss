@@ -35,7 +35,7 @@
 
 .header-title h3 {
   margin: 0;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
 }
@@ -73,7 +73,7 @@
 }
 
 .empty-state i {
-  font-size: var(--font-display-sm);
+  font-size: var(--font-h1-size);
   margin-bottom: var(--space-3);
   opacity: 0.5;
 }
@@ -151,7 +151,7 @@
 }
 
 .activity-icon-badge i {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: white;
 }
 

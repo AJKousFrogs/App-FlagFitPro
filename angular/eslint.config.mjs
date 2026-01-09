@@ -120,6 +120,43 @@ export default tseslint.config(
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "prefer-const": "warn",
       eqeqeq: ["warn", "always", { null: "ignore" }], // Allow == null for null/undefined checks
+
+      // ============================================
+      // CONSTANTS BARREL IMPORT ENFORCEMENT
+      // ============================================
+      // Enforce importing from @core/constants barrel instead of individual files
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@core/constants/app.constants",
+              message:
+                "Import from '@core/constants' barrel instead. Example: import { TRAINING, TIMEOUTS } from '@core/constants'",
+            },
+            {
+              name: "@core/constants/toast-messages.constants",
+              message:
+                "Import from '@core/constants' barrel instead. Example: import { TOAST } from '@core/constants'",
+            },
+            {
+              name: "@core/constants/ui-options.constants",
+              message:
+                "Import from '@core/constants' barrel instead. Example: import { VISIBILITY_OPTIONS } from '@core/constants'",
+            },
+            {
+              name: "@core/constants/wellness.constants",
+              message:
+                "Import from '@core/constants' barrel instead. Example: import { WELLNESS } from '@core/constants'",
+            },
+            {
+              name: "@core/constants/positions.constants",
+              message:
+                "Import from '@core/constants' barrel instead. Example: import { POSITION_SELECT_OPTIONS } from '@core/constants'",
+            },
+          ],
+        },
+      ],
     },
   }, // Component template inline strings - additional checks
   {

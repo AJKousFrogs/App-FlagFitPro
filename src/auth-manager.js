@@ -600,7 +600,7 @@ class AuthManager {
       // Redirect to OAuth provider
       const { data: _data, error } = await safeSupabaseQuery(
         supabase.auth.signInWithOAuth({
-          provider: provider,
+          provider,
           options: {
             redirectTo: `${window.location.origin}/auth/callback`,
             scopes: provider === "google" ? "email profile" : undefined,
@@ -659,7 +659,7 @@ class AuthManager {
               session.user.user_metadata?.full_name ||
               session.user.email,
             email_verified: session.user.email_confirmed_at !== null || isOAuth, // OAuth users auto-verified
-            provider: provider,
+            provider,
           };
 
           // If OAuth and role was pending, update user metadata
@@ -745,7 +745,7 @@ class AuthManager {
       const { error } = await safeSupabaseQuery(
         supabase.auth.resend({
           type: "signup",
-          email: email,
+          email,
           options: {
             emailRedirectTo: `${window.location.origin}/verify-email.html`,
           },
@@ -1061,7 +1061,7 @@ class AuthManager {
     }
 
     // Use centralized constants instead of hardcoded values
-    const SESSION_TIMEOUT = AUTH.SESSION_TIMEOUT;
+    const {SESSION_TIMEOUT} = AUTH;
     const WARNING_TIME = AUTH.SESSION_WARNING_TIME;
 
     let sessionTimer;

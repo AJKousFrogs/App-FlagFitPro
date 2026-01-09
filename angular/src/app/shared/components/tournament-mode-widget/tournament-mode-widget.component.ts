@@ -31,6 +31,7 @@ import { BadgeModule } from "primeng/badge";
 // Services
 import { TournamentModeService } from "../../../core/services/tournament-mode.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 
 @Component({
   selector: "app-tournament-mode-widget",
@@ -272,7 +273,7 @@ export class TournamentModeWidgetComponent {
       )
     ) {
       this.tournamentService.endTournament();
-      this.toastService.info("Tournament ended. Great job!");
+      this.toastService.info(TOAST.INFO.TOURNAMENT_ENDED);
     }
   }
 }

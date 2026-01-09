@@ -109,7 +109,6 @@ export class ResourceService {
       params: urlFn,
       loader: async (loaderParams) => {
         const url = loaderParams.params ?? "";
-        // const abortSignal = loaderParams.abortSignal; // Available for cancellation
         this.logger.debug(`[Resource] Fetching: ${url}`);
 
         try {

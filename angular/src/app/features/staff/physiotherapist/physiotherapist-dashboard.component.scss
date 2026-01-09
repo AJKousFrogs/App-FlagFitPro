@@ -211,7 +211,7 @@
         }
 
         .phase-name {
-          font-size: var(--font-body-2xs);
+          font-size: var(--font-caption-size);
           text-align: center;
           color: var(--text-color-secondary);
         }
@@ -396,7 +396,7 @@
       }
 
       span {
-        font-size: var(--font-body-2xs);
+        font-size: var(--font-caption-size);
         text-align: center;
       }
 
@@ -468,7 +468,7 @@
     color: var(--text-color-secondary);
 
     i {
-      font-size: var(--font-display-md);
+      font-size: var(--font-h1-size);
       margin-bottom: var(--ds-spacing-md);
       opacity: 0.5;
     }

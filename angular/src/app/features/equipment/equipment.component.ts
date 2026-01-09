@@ -31,6 +31,7 @@ import {
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamStatisticsService } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -619,7 +620,7 @@ export class EquipmentComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (items) => this.equipment.set(items),
-        error: () => this.toastService.error("Failed to load equipment"),
+        error: () => this.toastService.error(TOAST.ERROR.LOAD_FAILED),
       });
   }
 
@@ -732,12 +733,12 @@ export class EquipmentComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
-            this.toastService.success("Equipment updated");
+            this.toastService.success(TOAST.SUCCESS.UPDATED);
             this.showAddDialog = false;
             this.loadEquipment();
             this.loadSummary();
           },
-          error: () => this.toastService.error("Failed to update equipment"),
+          error: () => this.toastService.error(TOAST.ERROR.UPDATE_FAILED),
         });
     } else {
       this.equipmentService
@@ -745,12 +746,12 @@ export class EquipmentComponent implements OnInit {
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
-            this.toastService.success("Equipment added");
+            this.toastService.success(TOAST.SUCCESS.CREATED);
             this.showAddDialog = false;
             this.loadEquipment();
             this.loadSummary();
           },
-          error: () => this.toastService.error("Failed to add equipment"),
+          error: () => this.toastService.error(TOAST.ERROR.CREATE_FAILED),
         });
     }
   }
@@ -763,11 +764,11 @@ export class EquipmentComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Equipment deleted");
+          this.toastService.success(TOAST.SUCCESS.DELETED);
           this.loadEquipment();
           this.loadSummary();
         },
-        error: () => this.toastService.error("Failed to delete equipment"),
+        error: () => this.toastService.error(TOAST.ERROR.DELETE_FAILED),
       });
   }
 
@@ -791,13 +792,13 @@ export class EquipmentComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Equipment checked out");
+          this.toastService.success(TOAST.SUCCESS.UPDATED);
           this.showCheckoutDialog = false;
           this.loadEquipment();
           this.loadAssignments();
           this.loadSummary();
         },
-        error: () => this.toastService.error("Failed to checkout equipment"),
+        error: () => this.toastService.error(TOAST.ERROR.UPDATE_FAILED),
       });
   }
 
@@ -820,13 +821,13 @@ export class EquipmentComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.toastService.success("Equipment returned");
+          this.toastService.success(TOAST.SUCCESS.UPDATED);
           this.showReturnDialog = false;
           this.loadEquipment();
           this.loadAssignments();
           this.loadSummary();
         },
-        error: () => this.toastService.error("Failed to process return"),
+        error: () => this.toastService.error(TOAST.ERROR.UPDATE_FAILED),
       });
   }
 }

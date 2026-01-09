@@ -40,6 +40,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
+.ports.lock
 
 # Coverage directory used by tools like istanbul
 coverage

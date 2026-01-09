@@ -23,6 +23,7 @@ import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
+import { formatDate } from "../../../../shared/utils/date.utils";
 
 import {
   ProtocolBlock,
@@ -223,7 +224,7 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           @if (block().status === "complete" && block().completedAt) {
             <div class="completion-info">
               <i class="pi pi-check-circle"></i>
-              <span>Completed at {{ formatTime(block().completedAt!) }}</span>
+              <span>Completed at {{ formatDate(block().completedAt!, 'h:mm a') }}</span>
             </div>
           }
         </div>
@@ -296,10 +297,7 @@ export class ProtocolBlockComponent {
     return formatPrescription(exercise);
   }
 
-  formatTime(date: Date): string {
-    return new Date(date).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  formatDate(date: Date | string, formatStr?: string): string {
+    return formatDate(date, formatStr || "h:mm a");
   }
 }

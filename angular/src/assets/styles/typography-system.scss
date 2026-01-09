@@ -102,13 +102,13 @@ h6 {
 /* Responsive H1 */
 @media (max-width: 768px) {
   h1 {
-    font-size: 1.75rem; /* 28px on mobile */
+    font-size: var(--font-h2-size); /* 28px on mobile */
   }
 }
 
 @media (max-width: 480px) {
   h1 {
-    font-size: 1.5rem; /* 24px on small mobile */
+    font-size: var(--font-h2-size); /* 24px on small mobile */
   }
 }
 
@@ -134,7 +134,7 @@ h6 {
   .ff-h1,
   .page-title,
   .hero-title {
-    font-size: 1.75rem; /* 28px */
+    font-size: var(--font-h2-size); /* 28px */
   }
 }
 
@@ -142,7 +142,7 @@ h6 {
   .ff-h1,
   .page-title,
   .hero-title {
-    font-size: 1.5rem; /* 24px */
+    font-size: var(--font-h2-size); /* 24px */
   }
 }
 
@@ -163,7 +163,7 @@ h6 {
   .ff-h2,
   .section-title,
   .dialog-title {
-    font-size: 1.25rem; /* 20px */
+    font-size: var(--font-h3-size); /* 20px */
   }
 }
 

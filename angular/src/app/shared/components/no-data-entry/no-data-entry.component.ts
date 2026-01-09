@@ -13,7 +13,7 @@
  * - False sense of readiness/recovery status
  */
 
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
 import { CardModule } from "primeng/card";
@@ -149,6 +149,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
 @Component({
   selector: "app-no-data-entry",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, CardModule, RouterModule, ButtonComponent],
   template: `
     <div

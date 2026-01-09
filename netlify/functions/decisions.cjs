@@ -398,7 +398,7 @@ async function createDecision(userId, decisionData) {
     data_points: decisionData.decisionBasis?.dataPoints || [],
     constraints: decisionData.decisionBasis?.constraints || [],
     rationale: decisionData.decisionBasis?.rationale || "",
-    confidence: confidence,
+    confidence,
     data_quality: decisionData.decisionBasis?.dataQuality || {
       completeness: 1.0,
       stale_days: 0,

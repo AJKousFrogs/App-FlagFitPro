@@ -70,7 +70,7 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-  z-index: 10;
+  z-index: var(--z-dropdown);
 }
 
 .nav-arrow:hover:not(:disabled) {

@@ -179,7 +179,7 @@
         border-radius: 50%;
         background: white;
         color: var(--ds-primary-green-hover);
-        font-size: var(--font-body-2xs);
+        font-size: var(--font-caption-size);
         font-weight: var(--font-weight-bold);
         display: flex;
         align-items: center;
@@ -245,7 +245,7 @@
     text-align: center;
 
     i {
-      font-size: var(--font-display-md);
+      font-size: var(--font-h1-size);
       color: var(--ds-text-tertiary);
       margin-bottom: var(--space-3);
     }

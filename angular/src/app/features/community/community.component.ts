@@ -28,10 +28,12 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AnnouncementsBannerComponent } from "../../shared/components/announcements-banner/announcements-banner.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { fadeInOut } from "../../shared/animations/app.animations";
+import { getInitials } from "../../shared/utils/format.utils";
 
 interface Comment {
   id: string;
@@ -950,7 +952,7 @@ export class CommunityComponent implements OnInit {
             const newPosts = response.data.posts.map((p: ApiPostData) => ({
               id: p.id,
               author: p.authorName || p.author || "Unknown",
-              authorInitials: this.getInitials(
+              authorInitials: this.getInitialsStr(
                 p.authorName || p.author || "??",
               ),
               authorRole: p.postType === "announcement" ? "Coach" : undefined,
@@ -1008,7 +1010,7 @@ export class CommunityComponent implements OnInit {
           const mappedPosts = response.data.posts.map((p: ApiPostData) => ({
             id: p.id,
             author: p.authorName || p.author || "Unknown",
-            authorInitials: this.getInitials(p.authorName || p.author || "??"),
+            authorInitials: this.getInitialsStr(p.authorName || p.author || "??"),
             authorRole: p.postType === "announcement" ? "Coach" : undefined,
             timeAgo: this.getRelativeTime(new Date(p.timestamp)),
             location: p.location,
@@ -1041,7 +1043,7 @@ export class CommunityComponent implements OnInit {
           const mappedLeaderboard = leaderboardData.map((entry: ApiLeaderboardEntry) => ({
             rank: entry.rank,
             name: entry.name || "Anonymous",
-            initials: this.getInitials(entry.name || "??"),
+            initials: this.getInitialsStr(entry.name || "??"),
             score: entry.points,
           }));
           this.leaderboard.set(mappedLeaderboard);
@@ -1071,13 +1073,11 @@ export class CommunityComponent implements OnInit {
     });
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   getRelativeTime(date: Date): string {
@@ -1123,7 +1123,7 @@ export class CommunityComponent implements OnInit {
     let mediaType: string | null = null;
 
     if (this.pendingMedia) {
-      this.toastService.info("Uploading media...");
+      this.toastService.info(TOAST.INFO.UPLOADING_MEDIA);
       try {
         const uploadResult = await this.uploadMedia();
         if (uploadResult) {
@@ -1181,7 +1181,7 @@ export class CommunityComponent implements OnInit {
 
             // Update posts signal with new post at the beginning
             this.posts.update((posts) => [newPost, ...posts]);
-            this.toastService.success("Your post has been published!");
+            this.toastService.success(TOAST.SUCCESS.POST_PUBLISHED);
 
             // Update user stats
             this.userStats.update((stats) => ({
@@ -1220,7 +1220,7 @@ export class CommunityComponent implements OnInit {
           this.newPostContent = "";
           this.pendingPoll = null;
           this.pendingMedia = null;
-          this.toastService.warn("Post saved locally. Will sync when online.");
+          this.toastService.warn(TOAST.WARN.POST_SAVED);
         },
       });
   }
@@ -1306,7 +1306,7 @@ export class CommunityComponent implements OnInit {
                         commentsList: comments.map((c: Comment) => ({
                           id: c.id,
                           author: c.author,
-                          authorInitials: this.getInitials(c.author || "??"),
+                          authorInitials: this.getInitialsStr(c.author || "??"),
                           content: c.content,
                           timeAgo: c.timeAgo,
                           likes: c.likes || 0,
@@ -1344,9 +1344,9 @@ export class CommunityComponent implements OnInit {
       .subscribe({
         next: () => {
           if (!wasBookmarked) {
-            this.toastService.success("Post saved to bookmarks");
+            this.toastService.success(TOAST.SUCCESS.BOOKMARK_SAVED);
           } else {
-            this.toastService.info("Bookmark removed");
+            this.toastService.info(TOAST.INFO.BOOKMARK_REMOVED);
           }
         },
         error: (err) => {
@@ -1362,7 +1362,7 @@ export class CommunityComponent implements OnInit {
                 : p,
             ),
           );
-          this.toastService.error("Failed to update bookmark");
+          this.toastService.error(TOAST.ERROR.BOOKMARK_UPDATE_FAILED);
         },
       });
   }
@@ -1447,7 +1447,7 @@ export class CommunityComponent implements OnInit {
                 : p,
             ),
           );
-          this.toastService.error("Failed to add comment");
+          this.toastService.error(TOAST.ERROR.COMMENT_ADD_FAILED);
         },
       });
   }
@@ -1469,7 +1469,7 @@ export class CommunityComponent implements OnInit {
       if (file) {
         // Validate file size (5MB max for images)
         if (file.size > 5 * 1024 * 1024) {
-          this.toastService.error("Image must be less than 5MB");
+          this.toastService.error(TOAST.ERROR.FILE_TOO_LARGE_5MB);
           return;
         }
 
@@ -1482,7 +1482,7 @@ export class CommunityComponent implements OnInit {
             preview: reader.result as string,
           };
           this.newPostContent += `\n📷 [Photo attached: ${file.name}]`;
-          this.toastService.success("Photo ready to upload with your post");
+          this.toastService.success(TOAST.SUCCESS.PHOTO_READY);
           this.cdr.detectChanges();
         };
         reader.readAsDataURL(file);
@@ -1500,7 +1500,7 @@ export class CommunityComponent implements OnInit {
       if (file) {
         // Validate file size (50MB max for videos)
         if (file.size > 50 * 1024 * 1024) {
-          this.toastService.error("Video must be less than 50MB");
+          this.toastService.error(TOAST.ERROR.VIDEO_TOO_LARGE_50MB);
           return;
         }
 
@@ -1513,7 +1513,7 @@ export class CommunityComponent implements OnInit {
             preview: reader.result as string,
           };
           this.newPostContent += `\n🎥 [Video attached: ${file.name}]`;
-          this.toastService.success("Video ready to upload with your post");
+          this.toastService.success(TOAST.SUCCESS.VIDEO_READY);
           this.cdr.detectChanges();
         };
         reader.readAsDataURL(file);
@@ -1604,7 +1604,7 @@ export class CommunityComponent implements OnInit {
       };
       this.newPostContent = this.newPostContent + `\n📊 Poll attached`;
       this.showPollDialog = false;
-      this.toastService.success("Poll added to your post!");
+      this.toastService.success(TOAST.SUCCESS.POLL_ADDED);
       this.cdr.detectChanges();
     }
   }
@@ -1671,7 +1671,7 @@ export class CommunityComponent implements OnInit {
               );
             }
           }
-          this.toastService.success("Vote recorded!");
+          this.toastService.success(TOAST.SUCCESS.VOTE_RECORDED);
         },
         error: (err) => {
           this.logger.error("Error voting on poll:", err);
@@ -1706,7 +1706,7 @@ export class CommunityComponent implements OnInit {
               };
             }),
           );
-          this.toastService.error("Failed to record vote");
+          this.toastService.error(TOAST.ERROR.SAVE_FAILED);
         },
       });
   }
@@ -1730,7 +1730,7 @@ export class CommunityComponent implements OnInit {
     if (this.locationInput.trim()) {
       this.newPostContent = this.newPostContent + `\n📍 ${this.locationInput}`;
       this.showLocationDialog = false;
-      this.toastService.success("Location added!");
+      this.toastService.success(TOAST.SUCCESS.LOCATION_ADDED);
       this.cdr.detectChanges();
     }
   }
@@ -1765,10 +1765,10 @@ export class CommunityComponent implements OnInit {
     if (this.selectedTopic() === topicName) {
       // If clicking the same topic, deselect it
       this.selectedTopic.set(null);
-      this.toastService.info("Filter cleared");
+      this.toastService.info(TOAST.INFO.FILTER_CLEARED);
     } else {
       this.selectedTopic.set(topicName);
-      this.toastService.success(`Showing posts about #${topicName}`);
+      this.toastService.success(TOAST.SUCCESS.SHOWING_POSTS_ABOUT.replace("{topic}", topicName));
 
       // Scroll to posts feed
       setTimeout(() => {
@@ -1780,7 +1780,7 @@ export class CommunityComponent implements OnInit {
 
   clearTopicFilter(): void {
     this.selectedTopic.set(null);
-    this.toastService.info("Filter cleared - showing all posts");
+    this.toastService.info(TOAST.INFO.FILTER_CLEARED_ALL);
   }
 
   private copyToClipboard(post: Post): void {
@@ -1788,7 +1788,7 @@ export class CommunityComponent implements OnInit {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        this.toastService.success("Post link copied to clipboard!");
+        this.toastService.success(TOAST.SUCCESS.POST_LINK_COPIED);
         this.posts.update((posts) =>
           posts.map((p) =>
             p.id === post.id ? { ...p, shares: p.shares + 1 } : p,
@@ -1796,7 +1796,7 @@ export class CommunityComponent implements OnInit {
         );
       })
       .catch(() => {
-        this.toastService.error("Unable to share. Please try again.");
+        this.toastService.error(TOAST.ERROR.SHARE_FAILED);
       });
   }
 

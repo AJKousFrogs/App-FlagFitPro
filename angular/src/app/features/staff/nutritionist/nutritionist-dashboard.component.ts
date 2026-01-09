@@ -82,9 +82,6 @@ interface WellnessMetrics {
   hydrationStatus: "poor" | "adequate" | "good" | "optimal";
 }
 
-//   recommendations: string[];
-// }
-
 interface TournamentNutritionBrief {
   tournament: {
     name: string;
@@ -124,7 +121,6 @@ interface TournamentNutritionBrief {
     FormsModule,
     RouterModule,
     CardModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     DialogModule,

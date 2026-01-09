@@ -4,7 +4,68 @@
  *
  * Enforces DESIGN_SYSTEM_RULES.md decisions via automated linting.
  * See the referenced decisions for full context.
+ *
+ * Updated: January 9, 2026
+ * - Added deprecated token detection
+ * - Enhanced design token enforcement
+ * - Added spacing and color token rules
  */
+
+// ===========================================
+// DEPRECATED TOKENS (January 9, 2026)
+// ===========================================
+// These tokens are deprecated and should not be used.
+// The regex patterns detect var(--token-name) usage.
+const DEPRECATED_FONT_TOKENS = [
+  // Display sizes (deprecated)
+  "--font-display-2xl",
+  "--font-display-xl",
+  "--font-display-lg",
+  "--font-display-md",
+  "--font-display-sm",
+  // Heading sizes (deprecated)
+  "--font-heading-2xl",
+  "--font-heading-xl",
+  "--font-heading-lg",
+  "--font-heading-md",
+  "--font-heading-sm",
+  "--font-heading-xs",
+  // Body sizes (deprecated)
+  "--font-body-lg",
+  "--font-body-md",
+  "--font-body-sm",
+  "--font-body-xs",
+  "--font-body-2xs",
+  "--font-body-3xs",
+  // Compact sizes (deprecated)
+  "--font-compact-sm",
+  "--font-compact-xs",
+  // Text aliases (deprecated)
+  "--text-xs",
+  "--text-sm",
+  "--text-base",
+  "--text-md",
+  "--text-lg",
+  "--text-xl",
+  "--text-2xl",
+  "--text-3xl",
+  "--text-4xl",
+  "--text-5xl",
+  // Font aliases (deprecated)
+  "--font-xs",
+  "--font-sm",
+  "--font-base",
+  "--font-lg",
+  "--font-xl",
+  "--font-2xl",
+  "--font-3xl",
+];
+
+// Build regex pattern to match var(--deprecated-token)
+// Used by custom lint script, kept here for reference
+const _deprecatedTokenRegex = DEPRECATED_FONT_TOKENS.map(
+  (token) => `var\\(${token.replace(/--/g, "--")}\\)`
+).join("|");
 
 module.exports = {
   extends: ["stylelint-config-standard-scss"],
@@ -36,6 +97,8 @@ module.exports = {
 
     // -----------------------------
     // Decision 19: No transition: all
+    // Decision 20: No raw z-index
+    // Design Token Enforcement
     // -----------------------------
     "declaration-property-value-disallowed-list": [
       {
@@ -52,11 +115,26 @@ module.exports = {
 
         // Warn on hardcoded border-radius px values (should use --radius-* tokens)
         // Allows: var(), %, 0, inherit, initial, unset
-        "border-radius": ["/^\\d+px$/", "/^\\d+\\.\\d+px$/"],
+        "border-radius": [
+          "/^\\d+px$/",
+          "/^\\d+\\.\\d+px$/",
+          // Forbidden pill shapes on buttons (per DESIGN_SYSTEM_RULES.md 6.2)
+          "9999px",
+          "100px",
+        ],
+
+        // Warn on hardcoded spacing values (should use --space-* tokens)
+        padding: ["/^\\d+px$/"],
+        margin: ["/^\\d+px$/"],
+        gap: ["/^\\d+px$/"],
+
+        // Warn on hardcoded box-shadow (should use --shadow-* tokens)
+        "box-shadow": ["/^0\\s+\\d+px/"],
       },
       {
         severity: "warning",
-        message: "⚠️ Design Token Audit: Use CSS variable tokens instead of hardcoded values. See DESIGN-TOKEN-AUDIT-2026-01-08.md",
+        message:
+          "⚠️ Design Token Enforcement: Use CSS variable tokens instead of hardcoded values. See DESIGN_TOKENS_AUDIT.md",
       },
     ],
 

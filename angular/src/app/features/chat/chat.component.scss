@@ -14,11 +14,11 @@
 }
 
 .icon-2xl {
-  font-size: var(--font-display-sm); // 36px
+  font-size: var(--font-h1-size); // 36px
 }
 
 .icon-3xl {
-  font-size: var(--font-display-md); // 48px
+  font-size: var(--font-h1-size); // 48px
 }
 
 .icon-secondary {
@@ -280,7 +280,7 @@
 }
 
 .no-channel-selected i {
-  font-size: var(--font-display-xl);
+  font-size: var(--font-h1-size);
   color: var(--ds-primary-green);
   opacity: 0.3;
   animation: pulse 2s ease-in-out infinite;
@@ -503,7 +503,7 @@
 
 .cannot-post-notice i {
   color: var(--ds-primary-green);
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
 }
 
 .input-row {

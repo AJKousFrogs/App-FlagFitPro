@@ -8,7 +8,14 @@
  */
 
 import { CommonModule, DatePipe, DecimalPipe } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
@@ -28,6 +35,8 @@ import {
 } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { getTimeAgo } from "../../shared/utils/date.utils";
+import { UI_LIMITS } from "../../core/constants";
 
 // ===== Interfaces =====
 interface Achievement {
@@ -248,6 +257,7 @@ const CATEGORY_LABELS: Record<
 @Component({
   selector: "app-achievements",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -336,7 +346,7 @@ const CATEGORY_LABELS: Record<
                 }}</span>
                 @if (recentUnlock()) {
                   <span class="stat-hint">{{
-                    getTimeAgo(recentUnlock()!.unlockedAt!)
+                    getTimeAgoStr(recentUnlock()!.unlockedAt!)
                   }}</span>
                 }
               </div>
@@ -349,7 +359,10 @@ const CATEGORY_LABELS: Record<
           <p-card header="Recently Unlocked" styleClass="recent-card">
             <div class="recent-grid">
               @for (
-                achievement of recentUnlocks().slice(0, 3);
+                achievement of recentUnlocks().slice(
+                  0,
+                  UI_LIMITS.RECOMMENDATIONS_PREVIEW
+                );
                 track achievement.id
               ) {
                 <div class="achievement-card unlocked">
@@ -521,6 +534,8 @@ const CATEGORY_LABELS: Record<
   styleUrl: "./achievements.component.scss",
 })
 export class AchievementsComponent implements OnInit {
+  // Expose constants for template use
+  protected readonly UI_LIMITS = UI_LIMITS;
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
@@ -636,16 +651,10 @@ export class AchievementsComponent implements OnInit {
     }
   }
 
-  getTimeAgo(dateStr: string): string {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return `${Math.floor(diffDays / 30)} months ago`;
+  /**
+   * Get time ago string using centralized utility
+   */
+  getTimeAgoStr(dateStr: string): string {
+    return getTimeAgo(dateStr);
   }
 }

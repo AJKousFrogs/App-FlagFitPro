@@ -8,7 +8,7 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
@@ -95,6 +95,7 @@ const RECURRING_OPTIONS = [
 @Component({
   selector: "app-calendar-coach",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

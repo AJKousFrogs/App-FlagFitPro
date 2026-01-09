@@ -17,6 +17,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { getTimeAgo } from "../../utils/date.utils";
 
 export type CoachOverrideType =
   | "load-adjustment"
@@ -50,7 +51,7 @@ export type CoachOverridePlacement = "top-right" | "top-left" | "inline" | "card
         ></p-tag>
       }
       @if (showTimestamp() && timestamp()) {
-        <span class="override-timestamp">{{ getTimeAgo() }}</span>
+        <span class="override-timestamp">{{ getTimeAgoStr() }}</span>
       }
     </div>
   `,
@@ -174,20 +175,11 @@ export class CoachOverrideBadgeComponent {
     return labels[type] || "Coach override";
   }
 
-  getTimeAgo(): string {
-    if (!this.timestamp()) {
-      return "";
-    }
-    const now = new Date();
-    const diffMs = now.getTime() - this.timestamp()!.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffMins < 1) return "just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return `${diffDays}d ago`;
+  /**
+   * Get time ago string using centralized utility
+   */
+  getTimeAgoStr(): string {
+    return this.timestamp() ? getTimeAgo(this.timestamp()!) : "";
   }
 }
 

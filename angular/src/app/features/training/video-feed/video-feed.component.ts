@@ -53,6 +53,7 @@ import {
 } from "../../../core/services/instagram-video.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   FlagPosition,
   TrainingFocus,
@@ -704,7 +705,7 @@ export class VideoFeedComponent {
     this.activePositionFilters.set(new Set());
     this.activeFocusFilters.set(new Set());
     this.updateChipStates();
-    this.toastService.info("Filters cleared");
+    this.toastService.info(TOAST.INFO.FILTERS_CLEARED);
   }
 
   // Video actions
@@ -724,11 +725,11 @@ export class VideoFeedComponent {
     if (isCurrentlyBookmarked) {
       bookmarks.delete(video.id);
       await this.removeBookmark(video.id);
-      this.toastService.info("Removed from saved videos");
+      this.toastService.info(TOAST.INFO.VIDEO_REMOVED);
     } else {
       bookmarks.add(video.id);
       await this.saveBookmark(video);
-      this.toastService.success("Saved to your collection!");
+      this.toastService.success(TOAST.SUCCESS.VIDEO_SAVED);
     }
 
     this.bookmarkedIds.set(bookmarks);
@@ -744,9 +745,9 @@ export class VideoFeedComponent {
 
     try {
       await navigator.clipboard.writeText(video.url);
-      this.toastService.success("Link copied to clipboard!");
+      this.toastService.success(TOAST.SUCCESS.COPIED);
     } catch {
-      this.toastService.error("Failed to copy link");
+      this.toastService.error(TOAST.ERROR.COPY_FAILED);
     }
   }
 

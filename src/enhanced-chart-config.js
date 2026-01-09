@@ -124,7 +124,7 @@ export class EnhancedChartConfig {
       onClick: (e, legendItem, legend) => {
         // Toggle dataset visibility
         const index = legendItem.datasetIndex;
-        const chart = legend.chart;
+        const {chart} = legend;
         const meta = chart.getDatasetMeta(index);
 
         meta.hidden =
@@ -147,7 +147,7 @@ export class EnhancedChartConfig {
     }
 
     container.textContent = "";
-    const datasets = chart.data.datasets;
+    const {datasets} = chart.data;
 
     datasets.forEach((dataset, index) => {
       const meta = chart.getDatasetMeta(index);
@@ -279,10 +279,10 @@ export class EnhancedChartConfig {
     }
 
     return {
-      label: label,
-      data: data,
+      label,
+      data,
       borderColor: baseColor,
-      backgroundColor: backgroundColor,
+      backgroundColor,
       borderWidth: options.borderWidth || 3,
       fill: options.fill !== false,
       tension: options.tension !== undefined ? options.tension : 0.4, // Smooth curves

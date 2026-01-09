@@ -4,10 +4,10 @@
 // ============================================================================
 
 .roster-skeleton {
-  padding: var(--page-padding-desktop, 24px);
+  padding: var(--page-padding-desktop);
   
   @media (max-width: 768px) {
-    padding: var(--page-padding-tablet, 16px);
+    padding: var(--page-padding-tablet);
   }
 }
 
@@ -16,25 +16,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-5, 20px);
+  margin-bottom: var(--space-5);
   
   @media (max-width: 640px) {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-3, 12px);
+    gap: var(--space-3);
   }
 }
 
 .header-actions-skeleton {
   display: flex;
-  gap: var(--space-2, 8px);
+  gap: var(--space-2);
 }
 
 // Filter Bar
 .filter-bar-skeleton {
   display: flex;
-  gap: var(--space-3, 12px);
-  margin-bottom: var(--space-4, 16px);
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
   
   @media (max-width: 640px) {
     flex-direction: column;
@@ -45,17 +45,17 @@
 .table-skeleton {
   background: var(--surface-card);
   border: 1px solid var(--surface-border);
-  border-radius: var(--radius-lg, 12px);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  margin-bottom: var(--space-4, 16px);
+  margin-bottom: var(--space-4);
 }
 
 // Table Header
 .table-header-skeleton {
   display: grid;
   grid-template-columns: var(--roster-grid-template, 60px 180px 120px 100px 120px 100px);
-  gap: var(--space-3, 12px);
-  padding: var(--space-4, 16px);
+  gap: var(--space-3);
+  padding: var(--space-4);
   background: var(--surface-ground);
   border-bottom: 2px solid var(--surface-border);
   
@@ -77,8 +77,8 @@
 .table-row-skeleton {
   display: grid;
   grid-template-columns: var(--roster-grid-template, 60px 180px 120px 100px 120px 100px);
-  gap: var(--space-3, 12px);
-  padding: var(--space-4, 16px);
+  gap: var(--space-3);
+  padding: var(--space-4);
   border-bottom: 1px solid var(--surface-border);
   
   @media (max-width: 1024px) {
@@ -112,17 +112,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-3, 12px);
+  padding: var(--space-3);
   
   @media (max-width: 640px) {
     flex-direction: column;
-    gap: var(--space-3, 12px);
+    gap: var(--space-3);
   }
 }
 
 .pagination-buttons-skeleton {
   display: flex;
-  gap: var(--space-2, 8px);
+  gap: var(--space-2);
 }
 
 // Dark theme

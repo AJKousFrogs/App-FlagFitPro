@@ -1,6 +1,5 @@
-import { Component, signal, computed, inject, DestroyRef } from "@angular/core";
+import { ChangeDetectionStrategy, Component, signal, computed, inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -9,6 +8,8 @@ import { DialogModule } from "primeng/dialog";
 import { TimelineModule } from "primeng/timeline";
 import { CardModule } from "primeng/card";
 import { ApiService } from "../../../../core/services/api.service";
+import { LoggerService } from "../../../../core/services/logger.service";
+import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
 
 interface ProgramCycle {
   id: string;
@@ -44,6 +45,8 @@ interface Milestone {
 
 @Component({
   selector: "app-la28-roadmap",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TagModule,
     TooltipModule,
@@ -51,7 +54,6 @@ interface Milestone {
     DialogModule,
     TimelineModule,
     CardModule,
-    ButtonComponent,
     IconButtonComponent,
   ],
   template: `
@@ -114,7 +116,7 @@ interface Milestone {
               <div class="milestone-info">
                 <span class="milestone-title">{{ milestone.title }}</span>
                 <span class="milestone-date">{{
-                  formatDate(milestone.date)
+                  formatDate(milestone.date, 'MMM yyyy')
                 }}</span>
               </div>
             </div>
@@ -191,8 +193,8 @@ interface Milestone {
                     </div>
                   }
                   <p class="cycle-dates">
-                    {{ formatDate(cycle.program_cycle?.start_date) }} -
-                    {{ formatDate(cycle.program_cycle?.end_date) }}
+                    {{ formatDate(cycle.program_cycle?.start_date, 'MMM yyyy') }} -
+                    {{ formatDate(cycle.program_cycle?.end_date, 'MMM yyyy') }}
                   </p>
                 </div>
               }
@@ -210,7 +212,7 @@ interface Milestone {
               <ng-template #content let-event>
                 <p-card
                   [header]="event.title"
-                  [subheader]="formatDate(event.date)"
+                  [subheader]="formatDate(event.date, 'MMM yyyy')"
                 >
                   <p>{{ event.description }}</p>
                   <p-tag
@@ -257,7 +259,7 @@ interface Milestone {
 })
 export class La28RoadmapComponent {
   private readonly api = inject(ApiService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
 
   // LA 2028 Olympics date (July 14, 2028 - Opening Ceremony)
   private readonly olympicsDate = new Date("2028-07-14");
@@ -377,7 +379,7 @@ export class La28RoadmapComponent {
         this.playerCycles.set(response);
       }
     } catch (err) {
-      console.error("Failed to load program cycles:", err);
+      this.logger.error("Failed to load program cycles", err);
       // Set mock data for now
       this.playerCycles.set(this.getMockCycles());
     }
@@ -495,11 +497,8 @@ export class La28RoadmapComponent {
     return severities[type] || "secondary";
   }
 
-  formatDate(date?: string): string {
+  formatDate(date?: string, formatStr: string = "MMM yyyy"): string {
     if (!date) return "";
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
+    return formatDateUtil(date, formatStr);
   }
 }

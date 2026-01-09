@@ -39,6 +39,7 @@ import { TagModule } from "primeng/tag";
 import { LoggerService } from "../../../core/services/logger.service";
 import { RecoveryService } from "../../../core/services/recovery.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 
 interface SorenessArea {
@@ -485,14 +486,14 @@ export class PostTrainingRecoveryComponent implements OnInit {
       });
 
       this.saved.emit(sessionData);
-      this.toastService.success("Session logged! Check your recovery plan 💪");
+      this.toastService.success(TOAST.SUCCESS.SESSION_SAVED);
       this.isVisible = false;
 
       // Navigate to wellness/recovery
       this.router.navigate(["/wellness"]);
     } catch (error) {
       this.logger.error("Error saving post-training data:", error);
-      this.toastService.error("Failed to save session data");
+      this.toastService.error(TOAST.ERROR.SAVE_FAILED);
     } finally {
       this.isSaving.set(false);
     }

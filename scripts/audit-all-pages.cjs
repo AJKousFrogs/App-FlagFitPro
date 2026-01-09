@@ -67,7 +67,7 @@ function auditComponent(componentPath) {
   
   const result = {
     component: componentPath,
-    componentName: componentName,
+    componentName,
     hasScss: fs.existsSync(scssPath),
     hasHtml: fs.existsSync(htmlPath),
     hasInlineStyles: false,
@@ -189,7 +189,7 @@ if (require.main === module) {
     total: results.length,
     ok: ok.length,
     issues: issues.length,
-    results: results,
+    results,
     summary: {
       missingClasses: issues.filter(r => r.missingClasses.length > 0).map(r => ({
         component: r.componentName,

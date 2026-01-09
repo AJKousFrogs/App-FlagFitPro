@@ -1,7 +1,5 @@
-import { Component, signal, computed, inject, DestroyRef } from "@angular/core";
+import { ChangeDetectionStrategy, Component, signal, computed, inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import {} from "@angular/core/rxjs-interop";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -10,6 +8,8 @@ import { DialogModule } from "primeng/dialog";
 import { TabsModule } from "primeng/tabs";
 import { SkeletonModule } from "primeng/skeleton";
 import { ApiService } from "../../../../core/services/api.service";
+import { LoggerService } from "../../../../core/services/logger.service";
+import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
 
 interface Achievement {
   id: string;
@@ -49,6 +49,8 @@ interface Stats {
 
 @Component({
   selector: "app-achievements-panel",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TagModule,
     TooltipModule,
@@ -56,7 +58,6 @@ interface Stats {
     DialogModule,
     TabsModule,
     SkeletonModule,
-    ButtonComponent,
     IconButtonComponent,
   ],
   template: `
@@ -336,7 +337,7 @@ interface Stats {
 })
 export class AchievementsPanelComponent {
   private readonly api = inject(ApiService);
-  private readonly destroyRef = inject(DestroyRef);
+  private readonly logger = inject(LoggerService);
 
   readonly loading = signal(true);
   readonly achievements = signal<Achievement[]>([]);
@@ -404,7 +405,7 @@ export class AchievementsPanelComponent {
         this.summary.set(response.summary);
       }
     } catch (err) {
-      console.error("Failed to load achievements:", err);
+      this.logger.error("Failed to load achievements", err);
     } finally {
       this.loading.set(false);
     }
@@ -422,7 +423,7 @@ export class AchievementsPanelComponent {
         this.streaks.set(response.streaks);
       }
     } catch (err) {
-      console.error("Failed to load streaks:", err);
+      this.logger.error("Failed to load streaks", err);
     }
   }
 
@@ -438,7 +439,7 @@ export class AchievementsPanelComponent {
         this.stats.set(response.stats);
       }
     } catch (err) {
-      console.error("Failed to load stats:", err);
+      this.logger.error("Failed to load stats", err);
     }
   }
 
@@ -498,7 +499,7 @@ export class AchievementsPanelComponent {
 
   formatDate(date?: string): string {
     if (!date) return "";
-    return new Date(date).toLocaleDateString();
+    return formatDateUtil(date, "PPP");
   }
 
   formatMinutes(minutes: number): string {

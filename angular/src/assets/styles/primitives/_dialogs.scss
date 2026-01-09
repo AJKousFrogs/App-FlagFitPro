@@ -102,7 +102,7 @@
   }
 
   .confirm-dialog__icon {
-    font-size: 48px;
+    font-size: var(--font-h1-size);
     margin-bottom: var(--space-4);
 
     &--warning {
@@ -123,14 +123,14 @@
   }
 
   .confirm-dialog__title {
-    font-size: var(--font-heading-md);
+    font-size: var(--font-h3-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
     margin: 0 0 var(--space-2) 0;
   }
 
   .confirm-dialog__message {
-    font-size: var(--font-body-md);
+    font-size: var(--font-body-size);
     color: var(--color-text-secondary);
     margin: 0 0 var(--space-5) 0;
     line-height: var(--line-height-normal);
@@ -195,7 +195,7 @@
   }
 
   .drawer__title {
-    font-size: var(--font-heading-sm);
+    font-size: var(--font-h4-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
     margin: 0;
@@ -335,12 +335,12 @@
     padding: var(--space-3) var(--space-4);
     border-bottom: var(--border-1) solid var(--color-border-muted);
     font-weight: var(--font-weight-semibold);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
   }
 
   .popover__content {
     padding: var(--space-3) var(--space-4);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
     color: var(--color-text-primary);
   }
 
@@ -366,7 +366,7 @@
     gap: var(--space-3);
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
     color: var(--color-text-primary);
     cursor: pointer;
     transition: background-color var(--motion-fast) var(--ease-standard);
@@ -395,7 +395,7 @@
   }
 
   .overlay-menu__icon {
-    font-size: 16px;
+    font-size: var(--font-body-size);
     color: var(--color-text-muted);
   }
 

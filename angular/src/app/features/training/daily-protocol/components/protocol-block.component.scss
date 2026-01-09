@@ -73,7 +73,7 @@
 
 .block-title {
   margin: 0;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   line-height: var(--line-height-base);
@@ -277,7 +277,7 @@
 }
 
 .completion-info i {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
 }
 
 /* Mobile Adjustments */
@@ -293,7 +293,7 @@
   .block-icon {
     width: var(--icon-container-md); // 40px
     height: var(--icon-container-md); // 40px
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 
   .block-title {

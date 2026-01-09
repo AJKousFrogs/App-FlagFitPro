@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import {
     ChangeDetectionStrategy,
     Component,
-    Input,
+    input,
     OnInit,
     computed,
     inject,
@@ -20,8 +20,10 @@ import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
+import { getInitials } from "../../utils/format.utils";
 
 /**
  * AI Recommendation from the backend
@@ -170,7 +172,7 @@ interface CoachVisibilityRecord {
                     @if (alert.message?.intent) {
                       <span class="alert-intent">
                         <i class="pi pi-tag"></i>
-                        {{ alert.message.intent }}
+                        {{ alert.message?.intent }}
                       </span>
                     }
                   </div>
@@ -246,7 +248,7 @@ interface CoachVisibilityRecord {
                 <td>
                   <div class="player-cell">
                     <span class="player-avatar">
-                      {{ getInitials(rec.player_name) }}
+                      {{ getInitialsStr(rec.player_name) }}
                     </span>
                     <span>{{ rec.player_name || "Unknown" }}</span>
                   </div>
@@ -381,7 +383,8 @@ export class AiCoachVisibilityComponent implements OnInit {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
 
-  @Input() teamId?: string;
+  // Angular 21: Use input() signals instead of @Input()
+  teamId = input<string | undefined>(undefined);
 
   // State
   loading = signal(true);
@@ -613,10 +616,10 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.highRiskAlerts.set([...alerts]);
       }
 
-      this.toastService.success("Note saved successfully");
+      this.toastService.success(TOAST.SUCCESS.NOTE_SAVED);
     } catch (error) {
       this.logger.error("Error saving note:", error);
-      this.toastService.error("Failed to save note");
+      this.toastService.error(TOAST.ERROR.NOTE_SAVE_FAILED);
     }
 
     this.noteDialogVisible = false;
@@ -659,10 +662,10 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.recommendations.set([...recs]);
       }
 
-      this.toastService.success("Recommendation overridden");
+      this.toastService.success(TOAST.SUCCESS.RECOMMENDATION_OVERRIDDEN);
     } catch (error) {
       this.logger.error("Error overriding recommendation:", error);
-      this.toastService.error("Failed to override recommendation");
+      this.toastService.error(TOAST.ERROR.RECOMMENDATION_OVERRIDE_FAILED);
     }
 
     this.overrideDialogVisible = false;
@@ -752,14 +755,12 @@ export class AiCoachVisibilityComponent implements OnInit {
     return severities[status] || "info";
   }
 
-  getInitials(name?: string): string {
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name?: string): string {
     if (!name) return "?";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+    return getInitials(name);
   }
 
   truncate(text: string, length: number): string {

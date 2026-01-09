@@ -21,6 +21,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -700,7 +701,7 @@ export class TrainingScheduleComponent implements OnInit {
 
     // Only allow marking complete for actual sessions (not templates)
     if (session.isTemplate) {
-      this.toastService.warn("Start the session first before marking complete");
+      this.toastService.warn(TOAST.WARN.START_SESSION_FIRST);
       return;
     }
 
@@ -724,10 +725,10 @@ export class TrainingScheduleComponent implements OnInit {
         ),
       );
 
-      this.toastService.success("Session marked as complete!");
+      this.toastService.success(TOAST.SUCCESS.SESSION_COMPLETED);
     } catch (error) {
       this.logger.error("Error marking session complete:", error);
-      this.toastService.error("Failed to update session");
+      this.toastService.error(TOAST.ERROR.SESSION_UPDATE_FAILED);
     }
   }
 
@@ -743,7 +744,7 @@ export class TrainingScheduleComponent implements OnInit {
 
     const user = this.authService.getUser();
     if (!user?.id) {
-      this.toastService.error("Please log in to start a session");
+      this.toastService.error(TOAST.ERROR.LOGIN_TO_START);
       return;
     }
 
@@ -782,13 +783,13 @@ export class TrainingScheduleComponent implements OnInit {
         ),
       );
 
-      this.toastService.success("Session started!");
+      this.toastService.success(TOAST.SUCCESS.SESSION_STARTED);
 
       // Navigate to the session detail page
       this.router.navigate(["/training/session", data.id]);
     } catch (error) {
       this.logger.error("Error starting session:", error);
-      this.toastService.error("Failed to start session");
+      this.toastService.error(TOAST.ERROR.SESSION_START_FAILED);
     }
   }
 

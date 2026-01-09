@@ -14,6 +14,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { TIMEOUTS } from "../constants/app.constants";
+import { TOAST } from "../constants/toast-messages.constants";
 
 export interface QueuedAction {
   id: string;
@@ -117,7 +118,7 @@ export class OfflineQueueService {
   private handleOffline(): void {
     this._isOnline.set(false);
     this.logger.warn("[OfflineQueue] Connection lost - actions will be queued");
-    this.toastService.warn("You're offline. Actions will be synced when connection is restored.");
+    this.toastService.warn(TOAST.WARN.OFFLINE);
   }
 
   /**

@@ -179,7 +179,7 @@ const POSITION_TO_MODIFIER_KEY = {
  * Normalize position value to modifier key
  */
 function normalizePosition(position) {
-  if (!position) return "wr_db";
+  if (!position) {return "wr_db";}
   return POSITION_TO_MODIFIER_KEY[position] || "wr_db";
 }
 
@@ -2179,12 +2179,12 @@ function transformProtocolResponse(protocol, exercises, coachName = null, teamAc
 
   // Build blocks array for resolver
   const blocksArray = [];
-  if (blocks.morning_mobility.length > 0) blocksArray.push({ type: "morning_mobility", title: "Morning Mobility" });
-  if (blocks.foam_roll.length > 0) blocksArray.push({ type: "foam_roll", title: "Pre-Training: Foam Roll" });
-  if (blocks.warm_up.length > 0) blocksArray.push({ type: "warm_up", title: "Warm Up" });
-  if (blocks.main_session.length > 0) blocksArray.push({ type: "main_session", title: "Main Session" });
-  if (blocks.cool_down.length > 0) blocksArray.push({ type: "cool_down", title: "Cool Down" });
-  if (blocks.evening_recovery.length > 0) blocksArray.push({ type: "evening_recovery", title: "Evening Recovery" });
+  if (blocks.morning_mobility.length > 0) {blocksArray.push({ type: "morning_mobility", title: "Morning Mobility" });}
+  if (blocks.foam_roll.length > 0) {blocksArray.push({ type: "foam_roll", title: "Pre-Training: Foam Roll" });}
+  if (blocks.warm_up.length > 0) {blocksArray.push({ type: "warm_up", title: "Warm Up" });}
+  if (blocks.main_session.length > 0) {blocksArray.push({ type: "main_session", title: "Main Session" });}
+  if (blocks.cool_down.length > 0) {blocksArray.push({ type: "cool_down", title: "Cool Down" });}
+  if (blocks.evening_recovery.length > 0) {blocksArray.push({ type: "evening_recovery", title: "Evening Recovery" });}
 
   return {
     id: protocol.id,
@@ -2237,9 +2237,9 @@ function transformProtocolResponse(protocol, exercises, coachName = null, teamAc
       timestampLocal: protocol.modified_at || protocol.updated_at,
     } : null,
     // Team activity (PROMPT 2.10)
-    teamActivity: teamActivity,
+    teamActivity,
     // Session resolution (PROMPT 2.12 - Authority SOT)
-    sessionResolution: sessionResolution,
+    sessionResolution,
     // Confidence metadata (Truthfulness Contract)
     confidenceMetadata: protocol.confidence_metadata || null,
   };

@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { getInitials } from "../../shared/utils/format.utils";
 
 // ============================================================================
 // INTERFACES
@@ -455,7 +456,7 @@ export class TeamStatisticsService {
         jerseyNumber: player["jersey_number"]
           ? String(player["jersey_number"])
           : undefined,
-        avatarInitials: this.getInitials(name),
+        avatarInitials: this.getInitialsFromName(name),
         status,
         performanceScore:
           Number(player["performance_score"] || player["overall_rating"]) || 75,
@@ -558,12 +559,11 @@ export class TeamStatisticsService {
     };
   }
 
-  private getInitials(name: string): string {
-    const parts = name.split(" ");
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
+  /**
+   * Get initials from name using centralized utility
+   */
+  private getInitialsFromName(name: string): string {
+    return getInitials(name);
   }
 
   private getTrend(value: unknown): "up" | "down" | "stable" {

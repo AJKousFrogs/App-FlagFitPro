@@ -1,8 +1,8 @@
 # FlagFit Pro Database Setup Guide
 
-**Version**: 2.0  
-**Last Updated**: 29. December 2025  
-**Last Verified Against Supabase**: 2025-12-29  
+**Version**: 2.1  
+**Last Updated**: January 2026  
+**Last Verified Against Supabase**: January 2026  
 **Status**: ✅ Production Ready
 
 ---

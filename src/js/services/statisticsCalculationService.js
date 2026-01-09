@@ -338,7 +338,7 @@ class StatisticsCalculationService {
     const variance =
       intensityPoints.length > 1
         ? intensityPoints.reduce(
-            (sum, intensity) => sum + Math.pow(intensity - avgIntensity, 2),
+            (sum, intensity) => sum + (intensity - avgIntensity)**2,
             0,
           ) / intensityPoints.length
         : 0;

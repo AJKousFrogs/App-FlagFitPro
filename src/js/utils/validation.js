@@ -480,7 +480,7 @@ export function normalizeInput(value, type = "text") {
       normalized = normalized.replace(/[^\d.-]/g, "");
       break;
     case "phone":
-      normalized = normalized.replace(/[^\d\s\-\+\(\)]/g, "");
+      normalized = normalized.replace(/[^\d\s\-+()]/g, "");
       break;
     case "alphanumeric":
       normalized = normalized.replace(/[^a-zA-Z0-9\s]/g, "");

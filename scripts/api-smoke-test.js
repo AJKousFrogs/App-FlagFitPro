@@ -388,7 +388,7 @@ async function runTests() {
   await testDashboard();
 
   // Print summary
-  log('\n' + '='.repeat(60), 'blue');
+  log(`\n${  '='.repeat(60)}`, 'blue');
   log('📊 Test Summary', 'blue');
   log('='.repeat(60), 'blue');
   log(`✅ Passed: ${results.passed}`, 'green');

@@ -11,7 +11,7 @@
   outline: none;
 }
 
-.chart-container:focus {
+.chart-container:focus-visible {
   outline: 2px solid var(--color-brand-primary);
   outline-offset: 2px;
 }
@@ -46,7 +46,7 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--motion-slow) var(--ease-standard), visibility var(--motion-slow) var(--ease-standard);
-  z-index: 1000;
+  z-index: var(--z-modal);
   max-width: 300px;
 }
 

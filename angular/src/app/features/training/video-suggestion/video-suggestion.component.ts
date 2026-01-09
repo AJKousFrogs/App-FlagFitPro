@@ -63,6 +63,7 @@ import { HapticFeedbackService } from "../../../core/services/haptic-feedback.se
 import { InstagramVideoService } from "../../../core/services/instagram-video.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   FlagPosition,
   TrainingFocus,
@@ -746,7 +747,7 @@ export class VideoSuggestionComponent implements OnInit {
     try {
       const user = this.authService.getUser();
       if (!user?.id) {
-        this.toastService.error("Please log in to submit suggestions");
+        this.toastService.error(TOAST.ERROR.LOGIN_TO_SUBMIT);
         return;
       }
 
@@ -786,10 +787,10 @@ export class VideoSuggestionComponent implements OnInit {
       // Reset form
       this.suggestionForm.reset();
       this.hapticService.success();
-      this.toastService.success("Video submitted for review!");
+      this.toastService.success(TOAST.SUCCESS.VIDEO_SUBMITTED);
     } catch (error) {
       console.error("Failed to submit suggestion:", error);
-      this.toastService.error("Failed to submit. Please try again.");
+      this.toastService.error(TOAST.ERROR.VIDEO_SUBMIT_FAILED);
       this.hapticService.error();
     } finally {
       this.isSubmitting.set(false);
@@ -861,10 +862,10 @@ export class VideoSuggestionComponent implements OnInit {
       this.mySuggestions.update((suggestions) =>
         suggestions.filter((s) => s.id !== suggestion.id),
       );
-      this.toastService.info("Suggestion deleted");
+      this.toastService.info(TOAST.INFO.SUGGESTION_DELETED);
     } catch (error) {
       console.error("Failed to delete suggestion:", error);
-      this.toastService.error("Failed to delete");
+      this.toastService.error(TOAST.ERROR.VIDEO_DELETE_FAILED);
     }
   }
 

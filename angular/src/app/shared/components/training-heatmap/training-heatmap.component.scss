@@ -54,7 +54,7 @@
   box-shadow: var(--shadow-sm);
 }
 
-.heatmap-cell:focus {
+.heatmap-cell:focus-visible {
   outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
 }
@@ -191,7 +191,7 @@
 .metric .value {
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
 }
 
 @media (max-width: 768px) {
@@ -202,7 +202,7 @@
 
   .heatmap-grid {
     grid-template-columns: repeat(7, 1fr);
-    gap: 1px;
+    gap: 1px; /* Intentionally 1px for grid lines */
   }
 
   .heatmap-cell {
@@ -210,6 +210,6 @@
   }
 
   .cell-value {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 }

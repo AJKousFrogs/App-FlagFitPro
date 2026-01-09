@@ -13,6 +13,7 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { MessageModule } from "primeng/message";
 import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { WellnessService } from "../../core/services/wellness.service";
 import { BodyCompositionCardComponent } from "../../shared/components/body-composition-card/body-composition-card.component";
@@ -60,7 +61,6 @@ interface WellnessMetric {
     FormsModule,
     RouterModule,
     CardModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     InputNumberModule,
@@ -761,7 +761,7 @@ export class WellnessComponent {
   submitCheckIn(): void {
     // Validate input
     if (!this.checkInData.sleepHours || this.checkInData.sleepHours <= 0) {
-      this.toastService.warn("Please enter your sleep hours");
+      this.toastService.warn(TOAST.WARN.ENTER_SLEEP_HOURS);
       return;
     }
 
@@ -790,7 +790,7 @@ export class WellnessComponent {
       .then((response: { success: boolean; error?: string }) => {
         this.isSubmitting.set(false);
         if (response.success) {
-          this.toastService.success("Wellness check-in saved! 💪");
+          this.toastService.success(TOAST.SUCCESS.WELLNESS_CHECKIN_SAVED);
           // Reset form to defaults
           this.checkInData = {
             sleepHours: 7,
@@ -807,7 +807,7 @@ export class WellnessComponent {
           // Reload wellness data to show updated stats
           this.loadWellnessData();
         } else {
-          this.toastService.error(response.error || "Failed to save check-in");
+          this.toastService.error(response.error || TOAST.ERROR.CHECKIN_SAVE_FAILED);
         }
       })
       .catch((err) => {
@@ -838,7 +838,7 @@ export class WellnessComponent {
             readiness: 7,
           };
         } else {
-          this.toastService.error("Failed to save wellness check-in");
+          this.toastService.error(TOAST.ERROR.WELLNESS_CHECKIN_FAILED);
         }
       });
   }
@@ -929,6 +929,6 @@ export class WellnessComponent {
     this.wellnessAlerts.update((alerts) =>
       alerts.filter((a) => a.id !== alertId),
     );
-    this.toastService.info("Alert dismissed");
+    this.toastService.info(TOAST.INFO.ALERT_DISMISSED);
   }
 }

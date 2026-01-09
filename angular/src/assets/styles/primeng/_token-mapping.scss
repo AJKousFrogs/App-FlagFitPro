@@ -58,10 +58,10 @@
     // Button sizes (Decision 49)
     --p-button-sm-padding-x: var(--space-4);
     --p-button-sm-padding-y: var(--space-2);
-    --p-button-sm-font-size: var(--font-body-sm);
+    --p-button-sm-font-size: var(--font-body-sm-size);
     --p-button-lg-padding-x: var(--space-8);
     --p-button-lg-padding-y: var(--space-4);
-    --p-button-lg-font-size: var(--font-body-lg);
+    --p-button-lg-font-size: var(--font-body-size);
 
     // Button typography
     --p-button-font-family: var(--font-family-sans);
@@ -96,7 +96,7 @@
     --p-tag-padding-x: var(--space-3);
     --p-tag-padding-y: var(--space-2);
     --p-tag-border-radius: var(--radius-md); // Standard rounded rectangle (NO PILL)
-    --p-tag-font-size: var(--font-body-sm);
+    --p-tag-font-size: var(--font-body-sm-size);
     --p-tag-font-weight: var(--font-weight-semibold);
 
     // Tag severities
@@ -123,7 +123,7 @@
     --p-dialog-header-padding: var(--space-5);
     --p-dialog-header-border-bottom: var(--border-1) solid
       var(--color-border-muted);
-    --p-dialog-header-font-size: var(--font-heading-md);
+    --p-dialog-header-font-size: var(--font-h3-size);
     --p-dialog-header-font-weight: var(--font-weight-semibold);
 
     // Dialog content
@@ -148,7 +148,7 @@
     --p-inputtext-border-radius: var(--radius-lg);
     --p-inputtext-padding-x: var(--space-4);
     --p-inputtext-padding-y: var(--space-3);
-    --p-inputtext-font-size: var(--font-body-md);
+    --p-inputtext-font-size: var(--font-body-size);
     --p-inputtext-font-family: var(--font-family-sans);
     --p-inputtext-min-height: 44px; // Standard touch target height
     --p-inputtext-height-sm: 36px;
@@ -202,7 +202,7 @@
     // Table header
     --p-datatable-header-background: var(--color-surface-secondary);
     --p-datatable-header-padding: var(--space-3) var(--space-4);
-    --p-datatable-header-font-size: var(--font-body-sm);
+    --p-datatable-header-font-size: var(--font-body-sm-size);
     --p-datatable-header-font-weight: var(--font-weight-semibold);
     --p-datatable-header-color: var(--color-text-muted);
     --p-datatable-header-text-transform: uppercase;
@@ -248,7 +248,7 @@
     --p-tooltip-color: var(--color-text-on-inverse);
     --p-tooltip-border-radius: var(--radius-lg);
     --p-tooltip-padding: var(--space-4) var(--space-5);
-    --p-tooltip-font-size: var(--font-body-sm);
+    --p-tooltip-font-size: var(--font-body-sm-size);
     --p-tooltip-max-width: 320px;
     --p-tooltip-shadow: var(--shadow-3);
     --p-tooltip-line-height: 1.5;

@@ -407,7 +407,7 @@ export class PerformanceAnalytics {
       if (["fortyYardDash", "proAgility", "lDrill"].includes(testType)) {
         improvements[testType] = {
           current: recent,
-          previous: previous,
+          previous,
           change: previous - recent,
           percentChange: ((previous - recent) / previous) * 100,
           improved: recent < previous,
@@ -416,7 +416,7 @@ export class PerformanceAnalytics {
         // For distance/weight tests (higher is better)
         improvements[testType] = {
           current: recent,
-          previous: previous,
+          previous,
           change: recent - previous,
           percentChange: ((recent - previous) / previous) * 100,
           improved: recent > previous,
@@ -429,7 +429,7 @@ export class PerformanceAnalytics {
 
   // Get wellness summary
   getWellnessSummary(days = 7) {
-    const wellness = this.performanceData.wellness;
+    const {wellness} = this.performanceData;
     const summary = {};
     ["sleep", "energy", "soreness", "stress", "nutrition", "hydration"].forEach(
       (metric) => {
@@ -466,7 +466,7 @@ export class PerformanceAnalytics {
 
   // Get training load analysis
   getTrainingLoadAnalysis() {
-    const training = this.performanceData.training;
+    const {training} = this.performanceData;
     const last7Days = training.totalVolume.slice(-7);
     const last30Days = training.totalVolume.slice(-30);
 

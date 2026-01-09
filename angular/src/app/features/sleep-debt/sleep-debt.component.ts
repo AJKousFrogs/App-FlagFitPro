@@ -8,7 +8,7 @@
  */
 
 import { CommonModule, DecimalPipe } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
@@ -68,12 +68,12 @@ const DEBT_THRESHOLDS = {
 @Component({
   selector: "app-sleep-debt",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
     DecimalPipe,
     CardModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     MessageModule,

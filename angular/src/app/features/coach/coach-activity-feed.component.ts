@@ -37,6 +37,7 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
 import { ScrollPanelModule } from "primeng/scrollpanel";
 import { LoggerService } from "../../core/services/logger.service";
+import { getInitials } from "../../shared/utils/format.utils";
 
 @Component({
   selector: "app-coach-activity-feed",
@@ -123,7 +124,7 @@ import { LoggerService } from "../../core/services/logger.service";
                     <!-- Player Avatar -->
                     <div class="activity-avatar">
                       <p-avatar
-                        [label]="getInitials(activity.player?.full_name || 'P')"
+                        [label]="getInitialsStr(activity.player?.full_name || 'P')"
                         shape="circle"
                         [style]="{
                           'background-color': getActivityColor(
@@ -319,12 +320,10 @@ export class CoachActivityFeedComponent implements OnDestroy {
     return this.notificationService.formatActivityTime(timestamp);
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 }

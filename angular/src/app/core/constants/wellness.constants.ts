@@ -5,7 +5,31 @@
  * Used by: TodayComponent, DailyReadinessComponent, WellnessService, PlayerDashboard
  *
  * @example
- * import { WELLNESS, READINESS_LEVELS, computeQuickReadiness } from '@core/constants/wellness.constants';
+ * // Import from barrel
+ * import { WELLNESS, getReadinessLevel, computeQuickReadiness } from '@core/constants';
+ *
+ * @example
+ * // Get readiness level from score
+ * const level = getReadinessLevel(score);
+ * if (level.severity === 'success') {
+ *   // Good to train
+ * }
+ *
+ * @example
+ * // Compute quick readiness score
+ * const score = computeQuickReadiness(4, 5, false); // feeling: 4, energy: 5, no soreness
+ *
+ * @example
+ * // Check thresholds
+ * if (score >= WELLNESS.READINESS_EXCELLENT) {
+ *   // Excellent readiness
+ * }
+ *
+ * @example
+ * // Use weights for custom calculations
+ * const { QUICK_READINESS_WEIGHTS } = WELLNESS;
+ * const weightedScore = feeling * QUICK_READINESS_WEIGHTS.feeling +
+ *                       energy * QUICK_READINESS_WEIGHTS.energy;
  */
 
 // =============================================================================
@@ -48,6 +72,7 @@ export const WELLNESS = {
 
   // Quick check-in weights (must sum to 1.0)
   // Used in: today.component.ts quickReadinessScore()
+  // Validated at build time - see constants-validation.ts
   QUICK_READINESS_WEIGHTS: {
     feeling: 0.4,
     energy: 0.35,
@@ -56,6 +81,7 @@ export const WELLNESS = {
 
   // Daily readiness weights (must sum to 1.0)
   // Used in: daily-readiness.component.ts readinessScore()
+  // Validated at build time - see constants-validation.ts
   DAILY_READINESS_WEIGHTS: {
     pain: 0.3,
     fatigue: 0.25,

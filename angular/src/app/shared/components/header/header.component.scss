@@ -14,7 +14,7 @@
   display: block;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: var(--z-modal);
 }
 
 // PrimeNG toolbar overrides moved to _exceptions.scss (DS-EXC-004)
@@ -84,13 +84,13 @@
 .countdown-timer {
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: 1px; /* Intentionally tight for countdown display */
 }
 
 .countdown-segment {
   display: flex;
   align-items: baseline;
-  gap: 1px;
+  gap: 1px; /* Intentionally tight for countdown display */
 }
 
 .countdown-value {
@@ -104,7 +104,7 @@
 }
 
 .countdown-unit {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
   color: var(--text-color-secondary);
   text-transform: uppercase;
@@ -113,7 +113,7 @@
 
 .countdown-sep {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
   color: var(--text-color-secondary);
   opacity: 0.6;
@@ -165,7 +165,7 @@
 }
 
 .weather-location {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
   color: var(--text-color-secondary);
   max-width: 80px;
@@ -244,7 +244,7 @@
 }
 
 .separator {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: var(--text-color-secondary);
   opacity: 0.5;
 }
@@ -276,7 +276,7 @@
   border: none;
   border-radius: var(--radius-sm);
   padding: var(--space-1) var(--space-2);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
   color: var(--text-color-secondary);
   font-family:
@@ -405,7 +405,7 @@
   }
 
   .countdown-value {
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
   }
 
   .search-input {
@@ -542,7 +542,7 @@
     border: 1px solid var(--ds-border-default);
     border-radius: var(--radius-sm);
     font-family: var(--font-family-code, 'SF Mono', 'Courier New', monospace);
-    font-size: var(--font-body-2xs);
+    font-size: var(--font-caption-size);
     font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
     box-shadow: 0 2px 0 var(--ds-border-subtle);
@@ -562,7 +562,7 @@
   margin: 0;
   padding: var(--space-3) var(--space-4) var(--space-4);
   color: var(--ds-text-tertiary);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   background: var(--ds-surface-base);
   border-top: 1px solid var(--ds-border-subtle);
 
@@ -576,7 +576,7 @@
     border: 1px solid var(--ds-border-default);
     border-radius: var(--radius-xs);
     font-family: var(--font-family-code, 'SF Mono', 'Courier New', monospace);
-    font-size: var(--font-body-3xs);
+    font-size: var(--font-caption-size);
     color: var(--ds-text-primary);
   }
 }

@@ -228,7 +228,7 @@ export class SecureStorage {
       const encryptedBuffer = await crypto.subtle.encrypt(
         {
           name: CRYPTO_CONFIG.ALGORITHM,
-          iv: iv,
+          iv,
         },
         this.cryptoKey,
         encodedText,
@@ -278,7 +278,7 @@ export class SecureStorage {
       const decryptedBuffer = await crypto.subtle.decrypt(
         {
           name: CRYPTO_CONFIG.ALGORITHM,
-          iv: iv,
+          iv,
         },
         this.cryptoKey,
         encryptedData,
@@ -362,7 +362,7 @@ export class SecureStorage {
    * @returns {string|null} Cookie value
    */
   getCookie(name) {
-    const nameEQ = name + "=";
+    const nameEQ = `${name  }=`;
     const ca = document.cookie.split(";");
 
     for (let i = 0; i < ca.length; i++) {
@@ -382,7 +382,7 @@ export class SecureStorage {
    * @param {string} name - Cookie name
    */
   deleteCookie(name) {
-    document.cookie = name + "=; Max-Age=-99999999; path=/";
+    document.cookie = `${name  }=; Max-Age=-99999999; path=/`;
   }
 
   /**

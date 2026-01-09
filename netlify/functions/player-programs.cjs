@@ -62,7 +62,7 @@ const POSITION_TO_MODIFIER_KEY = {
  * Normalize position value to modifier key
  */
 function normalizePositionForModifiers(position) {
-  if (!position) return "wr_db";
+  if (!position) {return "wr_db";}
   return POSITION_TO_MODIFIER_KEY[position] || "wr_db";
 }
 

@@ -16,7 +16,7 @@ import { DialogModule } from "primeng/dialog";
 import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { ButtonComponent } from "../button/button.component";
+import { getInitials } from "../../utils/format.utils";
 
 export interface PlayerStats {
   id: string;
@@ -70,8 +70,6 @@ interface StatComparison {
     TagModule,
     TooltipModule,
     DialogModule,
-
-    ButtonComponent,
   ],
   template: `
     <div class="player-comparison">
@@ -94,10 +92,10 @@ interface StatComparison {
               @if (selected) {
                 <div class="player-option">
                   <p-avatar
-                    [label]="getInitials(selected.name)"
+                    [label]="getInitialsStr(selected.name)"
                     [image]="selected.avatarUrl"
                     shape="circle"
-                    size="small"
+                    size="normal"
                   ></p-avatar>
                   <span>{{ selected.name }}</span>
                   <p-tag
@@ -110,10 +108,10 @@ interface StatComparison {
             <ng-template pTemplate="item" let-player>
               <div class="player-option">
                 <p-avatar
-                  [label]="getInitials(player.name)"
+                  [label]="getInitialsStr(player.name)"
                   [image]="player.avatarUrl"
                   shape="circle"
-                  size="small"
+                  size="normal"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
                 <p-tag [value]="player.position" severity="secondary"></p-tag>
@@ -141,10 +139,10 @@ interface StatComparison {
               @if (selected) {
                 <div class="player-option">
                   <p-avatar
-                    [label]="getInitials(selected.name)"
+                    [label]="getInitialsStr(selected.name)"
                     [image]="selected.avatarUrl"
                     shape="circle"
-                    size="small"
+                    size="normal"
                   ></p-avatar>
                   <span>{{ selected.name }}</span>
                   <p-tag
@@ -157,10 +155,10 @@ interface StatComparison {
             <ng-template pTemplate="item" let-player>
               <div class="player-option">
                 <p-avatar
-                  [label]="getInitials(player.name)"
+                  [label]="getInitialsStr(player.name)"
                   [image]="player.avatarUrl"
                   shape="circle"
-                  size="small"
+                  size="normal"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
                 <p-tag [value]="player.position" severity="secondary"></p-tag>
@@ -175,7 +173,7 @@ interface StatComparison {
         <div class="comparison-header">
           <div class="player-header player1">
             <p-avatar
-              [label]="getInitials(player1()!.name)"
+              [label]="getInitialsStr(player1()!.name)"
               [image]="player1()!.avatarUrl"
               shape="circle"
               size="xlarge"
@@ -210,7 +208,7 @@ interface StatComparison {
               }
             </div>
             <p-avatar
-              [label]="getInitials(player2()!.name)"
+              [label]="getInitialsStr(player2()!.name)"
               [image]="player2()!.avatarUrl"
               shape="circle"
               size="xlarge"
@@ -581,13 +579,11 @@ export class PlayerComparisonComponent {
     this.player2.set(player || null);
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   getStatsForCategory(category: string): StatComparison[] {

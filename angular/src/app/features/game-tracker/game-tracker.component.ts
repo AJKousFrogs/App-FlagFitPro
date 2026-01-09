@@ -27,12 +27,14 @@ import { Textarea } from "primeng/textarea";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { OfflineQueueService } from "../../core/services/offline-queue.service";
 import { NetworkStatusService } from "../../core/services/network-status.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { formatDate } from "../../shared/utils/date.utils";
 
 interface Game {
   id: string;
@@ -564,7 +566,7 @@ export class GameTrackerComponent implements OnInit {
 
             return {
               id: game.game_id || game.id,
-              date: new Date(game.game_date).toLocaleDateString(),
+              date: formatDate(game.game_date, 'P'),
               opponent: game.opponent_team_name || game.opponent_name,
               location: game.location || (game.is_home_game ? "Home" : "Away"),
               score: `${teamScore}-${opponentScore}`,
@@ -644,7 +646,7 @@ export class GameTrackerComponent implements OnInit {
               gameId = respGameId;
             }
           }
-          this.toastService.success("Game created successfully!");
+          this.toastService.success(TOAST.SUCCESS.GAME_CREATED);
           this.showGameForm.set(false);
           this.gameForm.reset();
           this.loadGames();
@@ -661,12 +663,12 @@ export class GameTrackerComponent implements OnInit {
               },
               "high"
             );
-            this.toastService.info("Game will be saved when connection is restored");
+            this.toastService.info(TOAST.INFO.GAME_SAVED_OFFLINE);
             this.showGameForm.set(false);
             this.gameForm.reset();
           } else {
             console.error("Error creating game:", err);
-            this.toastService.error("Failed to create game. Please try again.");
+            this.toastService.error(TOAST.ERROR.GAME_CREATE_FAILED);
           }
         },
       });
@@ -738,7 +740,7 @@ export class GameTrackerComponent implements OnInit {
         },
         "high"
       );
-      this.toastService.info("Play will be saved when connection is restored");
+      this.toastService.info(TOAST.INFO.PLAY_SAVED_OFFLINE);
       this.plays.update((plays) => [...plays, playData as Play]);
       this.playForm.reset({
         playType: "",
@@ -780,7 +782,7 @@ export class GameTrackerComponent implements OnInit {
               },
               "high"
             );
-            this.toastService.info("Play will be saved when connection is restored");
+            this.toastService.info(TOAST.INFO.PLAY_SAVED_OFFLINE);
             this.plays.update((plays) => [...plays, playData as Play]);
             this.playForm.reset({
               playType: "",

@@ -1,6 +1,8 @@
 /**
  * Development server for Flag Football Training App
  * Serves static files with proper MIME types and provides REAL API endpoints with Supabase
+ *
+ * @version 2.3.0 - Modular routes migration
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -14,6 +16,19 @@ import http from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { WebSocketServer } from "ws";
+
+// Import modular routes
+import trainingRoutes from "./routes/training.routes.js";
+import wellnessRoutes from "./routes/wellness.routes.js";
+import analyticsRoutes from "./routes/analytics.routes.js";
+import notificationsRoutes from "./routes/notifications.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+
+// Import monitoring middleware
+import {
+  requestLogger,
+  getMetrics,
+} from "./routes/middleware/request-logger.middleware.js";
 
 // Initialize Supabase client for real data
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -107,6 +122,171 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Rate limiting for general API routes
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 100, // 100 requests per minute per IP
+  message: {
+    success: false,
+    error: "Too many requests. Please slow down.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Rate limiting for write operations (POST/PUT/DELETE)
+const writeLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // 30 write operations per minute per IP
+  message: {
+    success: false,
+    error: "Too many write operations. Please slow down.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+/**
+ * Authentication middleware - validates Bearer token via Supabase
+ * Use for protected endpoints that require a logged-in user
+ */
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({
+      success: false,
+      error: "Access token required",
+      code: "MISSING_TOKEN",
+    });
+  }
+
+  if (!supabase) {
+    return res.status(503).json({
+      success: false,
+      error: "Authentication service unavailable",
+      code: "AUTH_SERVICE_ERROR",
+    });
+  }
+
+  try {
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid or expired token",
+        code: "INVALID_TOKEN",
+      });
+    }
+
+    // Attach user info to request
+    req.user = {
+      id: user.id,
+      email: user.email,
+      role: user.user_metadata?.role || "player",
+      name: user.user_metadata?.name || user.email,
+    };
+    req.userId = user.id;
+    next();
+  } catch (error) {
+    console.error("[Auth Middleware] Error:", error);
+    return res.status(401).json({
+      success: false,
+      error: "Authentication failed",
+      code: "AUTH_ERROR",
+    });
+  }
+};
+
+/**
+ * Authorization middleware - validates userId query/param matches authenticated user
+ * Coaches/admins can access team members' data
+ */
+const authorizeUserAccess = async (req, res, next) => {
+  const requestedUserId = req.query.userId || req.params.userId;
+
+  // If no userId requested, allow (will use authenticated user's ID)
+  if (!requestedUserId) {
+    return next();
+  }
+
+  // Users can always access their own data
+  if (req.userId === requestedUserId) {
+    return next();
+  }
+
+  // Coaches and admins can access team members' data
+  if (req.user?.role === "coach" || req.user?.role === "admin") {
+    if (supabase) {
+      try {
+        // Check if coach and requested user are on same team
+        const { data: coachTeam } = await supabase
+          .from("team_members")
+          .select("team_id")
+          .eq("user_id", req.userId)
+          .single();
+
+        if (coachTeam?.team_id) {
+          const { data: playerTeam } = await supabase
+            .from("team_members")
+            .select("team_id")
+            .eq("user_id", requestedUserId)
+            .single();
+
+          if (playerTeam?.team_id === coachTeam.team_id) {
+            return next();
+          }
+        }
+      } catch (error) {
+        console.error("[Authorization] Team check error:", error);
+      }
+    }
+  }
+
+  return res.status(403).json({
+    success: false,
+    error: "You do not have permission to access this user's data",
+    code: "UNAUTHORIZED_ACCESS",
+  });
+};
+
+/**
+ * Optional auth middleware - attaches user if token provided, but doesn't require it
+ * Use for endpoints that have different behavior for authenticated vs anonymous users
+ */
+const optionalAuth = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ") || !supabase) {
+    return next();
+  }
+
+  try {
+    const token = authHeader.replace("Bearer ", "");
+    const {
+      data: { user },
+    } = await supabase.auth.getUser(token);
+
+    if (user) {
+      req.user = {
+        id: user.id,
+        email: user.email,
+        role: user.user_metadata?.role || "player",
+        name: user.user_metadata?.name || user.email,
+      };
+      req.userId = user.id;
+    }
+  } catch {
+    // Ignore auth errors for optional auth
+  }
+  next();
+};
+
 // Enable CORS - dynamically allow localhost and local network for development
 app.use(
   cors({
@@ -150,21 +330,47 @@ app.use(
 // Parse JSON and URL-encoded bodies
 app.use(express.json({ limit: "10mb" }));
 
-// Request logging for development
-app.use((req, res, next) => {
-  const start = Date.now();
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    console.log(
-      `${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`,
-    );
-  });
-  next();
-});
+// Structured request logging with metrics
+app.use(requestLogger());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Apply rate limiter to auth routes
 app.use("/api/auth/", authLimiter);
+
+// Apply rate limiter to all API routes
+app.use("/api/", apiLimiter);
+
+// Apply write limiter to POST/PUT/DELETE operations
+app.use("/api/", (req, res, next) => {
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
+    return writeLimiter(req, res, next);
+  }
+  next();
+});
+
+// =============================================================================
+// MODULAR ROUTES (v2.3.0)
+// These routes are organized in separate files for better maintainability
+// Primary API paths - modular routes handle all traffic
+// =============================================================================
+
+// Primary paths (production)
+app.use("/api/training", trainingRoutes);
+app.use("/api/wellness", wellnessRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/notifications", notificationsRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+
+// Versioned paths for explicit version targeting
+app.use("/api/v2/training", trainingRoutes);
+app.use("/api/v2/wellness", wellnessRoutes);
+app.use("/api/v2/analytics", analyticsRoutes);
+app.use("/api/v2/notifications", notificationsRoutes);
+app.use("/api/v2/dashboard", dashboardRoutes);
+
+// =============================================================================
+// STATIC FILES & LEGACY ROUTES
+// =============================================================================
 
 // Serve Angular build files
 app.use(
@@ -192,6 +398,16 @@ app.get("/api/health", (_req, res) => {
   res.json({
     status: "OK",
     message: "Flag Football Training App Server is running",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Metrics endpoint for monitoring
+app.get("/api/metrics", (_req, res) => {
+  const metrics = getMetrics();
+  res.json({
+    success: true,
+    data: metrics,
     timestamp: new Date().toISOString(),
   });
 });
@@ -597,527 +813,14 @@ app.post("/api/auth/logout", async (req, res) => {
 });
 
 // ============================================
-// ENDPOINTS WITHOUT /api/ PREFIX (Legacy)
+// LEGACY ENDPOINTS REMOVED (January 2026)
+// All clients now use /api/* routes directly
 // ============================================
 
-// Auth-me endpoint (used for token verification)
-app.get("/auth-me", async (req, res) => {
-  const authHeader = req.headers.authorization;
-
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  if (!authHeader) {
-    return res.status(401).json({ success: false, error: "No token provided" });
-  }
-
-  try {
-    const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
-
-    if (error || !user) {
-      return res.status(401).json({ success: false, error: "Invalid token" });
-    }
-
-    // Get user profile
-    const { data: profile } = await supabase
-      .from("user_profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
-
-    res.json({
-      success: true,
-      data: {
-        id: user.id,
-        email: user.email,
-        name: profile?.full_name || user.email?.split("@")[0],
-        role: profile?.role || "player",
-        avatar_url: profile?.avatar_url,
-      },
-    });
-  } catch (error) {
-    console.error("[Auth-me] Error:", error);
-    res.status(500).json({ success: false, error: "Authentication failed" });
-  }
-});
-
-// Training Stats endpoint (legacy without /api/)
-app.get("/training-stats", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const { data: sessions, error } = await supabase
-      .from("training_sessions")
-      .select("*")
-      .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-      .eq("status", "completed")
-      .order("session_date", { ascending: false })
-      .limit(50);
-
-    if (error) {
-      throw error;
-    }
-
-    const totalMinutes =
-      sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
-    const avgRpe =
-      sessions?.length > 0
-        ? sessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessions.length
-        : 0;
-
-    // Calculate this week's sessions
-    const weekStart = new Date();
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-    const thisWeekSessions =
-      sessions?.filter((s) => new Date(s.session_date) >= weekStart) || [];
-
-    res.json({
-      success: true,
-      data: {
-        totalSessions: sessions?.length || 0,
-        totalHours: Math.round((totalMinutes / 60) * 10) / 10,
-        averageRpe: Math.round(avgRpe * 10) / 10,
-        weeklyGoal: {
-          target: 5,
-          completed: thisWeekSessions.length,
-        },
-        recentSessions: sessions?.slice(0, 5) || [],
-      },
-    });
-  } catch (error) {
-    console.error("[Training Stats] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load training stats" });
-  }
-});
-
-// Training Stats Enhanced endpoint
-app.get("/training-stats-enhanced", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const { data: sessions, error } = await supabase
-      .from("training_sessions")
-      .select("*")
-      .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-      .eq("status", "completed")
-      .order("session_date");
-
-    if (error) {
-      throw error;
-    }
-
-    // Weekly trends
-    const weeklyData = {};
-    sessions?.forEach((s) => {
-      const date = new Date(s.session_date);
-      const weekStart = new Date(date);
-      weekStart.setDate(date.getDate() - date.getDay());
-      const weekKey = weekStart.toISOString().split("T")[0];
-
-      if (!weeklyData[weekKey]) {
-        weeklyData[weekKey] = { sessions: 0, minutes: 0, load: 0 };
-      }
-      weeklyData[weekKey].sessions++;
-      weeklyData[weekKey].minutes += s.duration_minutes || 0;
-      weeklyData[weekKey].load += (s.rpe || 5) * (s.duration_minutes || 60);
-    });
-
-    // Session type distribution
-    const typeDistribution = {};
-    sessions?.forEach((s) => {
-      const type = s.session_type || "General";
-      typeDistribution[type] = (typeDistribution[type] || 0) + 1;
-    });
-
-    res.json({
-      success: true,
-      data: {
-        stats: {
-          totalSessions: sessions?.length || 0,
-          totalHours:
-            Math.round(
-              ((sessions?.reduce(
-                (sum, s) => sum + (s.duration_minutes || 0),
-                0,
-              ) || 0) /
-                60) *
-                10,
-            ) / 10,
-        },
-        trends: Object.entries(weeklyData).map(([week, data]) => ({
-          week,
-          ...data,
-        })),
-        distribution: Object.entries(typeDistribution).map(([type, count]) => ({
-          type,
-          count,
-        })),
-      },
-    });
-  } catch (error) {
-    console.error("[Training Stats Enhanced] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load enhanced stats" });
-  }
-});
-
-// Knowledge Search endpoint (legacy without /api/)
-app.get("/knowledge-search", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { query, topic, category, limit = 10 } = req.query;
-
-    let dbQuery = supabase
-      .from("knowledge_base_entries")
-      .select(
-        "id, title, content, category, subcategory, source_type, evidence_grade",
-      )
-      .eq("is_active", true);
-
-    if (query) {
-      dbQuery = dbQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`);
-    }
-    if (topic) {
-      dbQuery = dbQuery.ilike("title", `%${topic}%`);
-    }
-    if (category) {
-      dbQuery = dbQuery.eq("category", category);
-    }
-
-    const { data: entries } = await dbQuery
-      .order("source_quality_score", { ascending: false, nullsFirst: false })
-      .limit(parseInt(limit));
-
-    res.json({ success: true, data: entries || [] });
-  } catch (error) {
-    console.error("[Knowledge Search] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
-
-// Dashboard endpoints - REAL DATA
-app.get("/api/dashboard/overview", async (req, res) => {
-  const authHeader = req.headers.authorization;
-
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    // Get user from token if provided
-    let userId = null;
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      const {
-        data: { user },
-      } = await supabase.auth.getUser(token);
-      userId = user?.id;
-    }
-
-    // Get training sessions count (last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    let sessionsQuery = supabase
-      .from("training_sessions")
-      .select("id, session_date, rpe, duration_minutes, status", {
-        count: "exact",
-      })
-      .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-      .eq("status", "completed");
-
-    if (userId) {
-      if (isValidUUID(userId)) {
-        sessionsQuery = sessionsQuery.eq("user_id", userId);
-      } else {
-        sessionsQuery = sessionsQuery.eq("user_id", DEMO_USER_ID);
-      }
-    }
-
-    const {
-      data: sessions,
-      count: sessionCount,
-      error,
-    } = await sessionsQuery.limit(100);
-    if (error) {
-      throw error;
-    }
-
-    // Calculate performance score (average RPE inverted)
-    const avgRpe =
-      sessions?.length > 0
-        ? sessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessions.length
-        : 5;
-    const performanceScore = Math.round(100 - (avgRpe - 5) * 10);
-
-    // Calculate day streak
-    let dayStreak = 0;
-    if (sessions && sessions.length > 0) {
-      const sortedDates = [...new Set(sessions.map((s) => s.session_date))]
-        .sort()
-        .reverse();
-      const today = new Date().toISOString().split("T")[0];
-      let checkDate = new Date(today);
-
-      for (const date of sortedDates) {
-        const diff = Math.floor(
-          (checkDate - new Date(date)) / (1000 * 60 * 60 * 24),
-        );
-        if (diff <= 1) {
-          dayStreak++;
-          checkDate = new Date(date);
-        } else {
-          break;
-        }
-      }
-    }
-
-    // Get upcoming sessions
-    const { data: upcomingSessions } = await supabase
-      .from("training_sessions")
-      .select("id, session_date, session_type, title")
-      .gte("session_date", new Date().toISOString().split("T")[0])
-      .eq("status", "scheduled")
-      .order("session_date", { ascending: true })
-      .limit(5);
-
-    res.json({
-      success: true,
-      data: {
-        stats: {
-          trainingSessions: sessionCount || 0,
-          performanceScore: Math.min(100, Math.max(0, performanceScore)),
-          dayStreak,
-          tournaments: 0, // Would need tournaments table
-        },
-        activities:
-          sessions?.slice(0, 5).map((s) => ({
-            id: s.id,
-            type: "training",
-            date: s.session_date,
-            rpe: s.rpe,
-            duration: s.duration_minutes,
-          })) || [],
-        upcomingSessions: upcomingSessions || [],
-      },
-    });
-  } catch (error) {
-    console.error("[Dashboard] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load dashboard data" });
-  }
-});
-
-// Additional Dashboard Endpoints for local development
-app.get("/api/dashboard/training-calendar", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-  try {
-    const { data: sessions } = await supabase
-      .from("training_sessions")
-      .select("id, workout_type, session_date, duration_minutes")
-      .order("session_date", { ascending: true });
-    res.json({
-      success: true,
-      data: { calendar: sessions || [], upcomingSessions: sessions || [] },
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-app.get("/api/dashboard/olympic-qualification", async (req, res) => {
-  if (!supabase) {
-    return res.status(503).json({
-      success: false,
-      error: "Database not configured",
-      data: { qualification: null, benchmarks: [] },
-    });
-  }
-  try {
-    let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {
-      userId = DEMO_USER_ID;
-    }
-
-    const { data: qual } = await supabase
-      .from("olympic_qualification")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-
-    const { data: benchmarks } = await supabase
-      .from("performance_benchmarks")
-      .select("*")
-      .eq("user_id", userId);
-
-    res.json({
-      success: true,
-      data: {
-        qualification: qual || null,
-        benchmarks: benchmarks || [],
-        message:
-          !qual && (!benchmarks || benchmarks.length === 0)
-            ? "No qualification data found"
-            : null,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-app.get("/api/dashboard/sponsor-rewards", async (req, res) => {
-  if (!supabase) {
-    return res.status(503).json({
-      success: false,
-      error: "Database not configured",
-      data: { rewards: null, products: [] },
-    });
-  }
-  try {
-    let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {
-      userId = DEMO_USER_ID;
-    }
-
-    const { data: rewards } = await supabase
-      .from("sponsor_rewards")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-
-    const { data: products } = await supabase
-      .from("sponsor_products")
-      .select("*")
-      .limit(5);
-
-    res.json({
-      success: true,
-      data: {
-        rewards: rewards || null,
-        products: products || [],
-        message: !rewards ? "No sponsor rewards data found" : null,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-app.get("/api/dashboard/team-chemistry", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: null });
-  }
-  try {
-    let userId = req.query.userId || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {
-      userId = DEMO_USER_ID;
-    }
-
-    const { data: chem } = await supabase
-      .from("team_chemistry")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-
-    res.json({
-      success: true,
-      data: chem || null,
-      message: !chem ? "No team chemistry data found" : null,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-app.get("/api/dashboard/daily-quote", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: null });
-  }
-  try {
-    const { data: quote } = await supabase
-      .from("daily_quotes")
-      .select("*")
-      .eq("is_active", true)
-      .limit(1)
-      .single();
-
-    res.json({
-      success: true,
-      data: quote || null,
-      message: !quote ? "No daily quote available" : null,
-    });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-app.get("/api/dashboard/health", async (req, res) => {
-  res.json({
-    success: true,
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    service: "dashboard",
-  });
-});
-
-app.get("/api/analytics/health", async (req, res) => {
-  res.json({
-    success: true,
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    service: "analytics",
-  });
-});
-
-app.get("/api/coach/health", async (req, res) => {
-  res.json({
-    success: true,
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    service: "coach",
-  });
-});
+// =============================================================================
+// DASHBOARD ENDPOINTS - Now handled by modular routes at /api/dashboard/*
+// See: routes/dashboard.routes.js
+// =============================================================================
 
 app.get("/api/community/health", async (req, res) => {
   res.json({
@@ -1195,32 +898,7 @@ app.get("/api/dashboard/notifications/count", async (req, res) => {
   }
 });
 
-// For compatibility with test script
-app.get("/notifications-count", async (req, res) => {
-  let userId = req.query.userId || "1";
-  if (!supabase) {
-    return res.json({ success: true, count: 0 });
-  }
-
-  if (!isValidUUID(userId)) {
-    userId = DEMO_USER_ID;
-  }
-
-  try {
-    const { count, error } = await supabase
-      .from("notifications")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("is_read", false);
-
-    if (error) {
-      throw error;
-    }
-    res.json({ success: true, count: count || 0 });
-  } catch (_error) {
-    res.status(500).json({ success: false, error: "Failed" });
-  }
-});
+// Legacy notifications-count redirect removed (January 2026)
 
 // Performance Endpoints
 app.get("/api/performance/metrics", async (req, res) => {
@@ -1249,268 +927,10 @@ app.get("/api/performance/heatmap", async (req, res) => {
   });
 });
 
-// Training Complete
-app.post("/api/training/complete", async (req, res) => {
-  const { sessionId, rpe, duration, notes, userId } = req.body;
-  const targetUserId = userId || "1";
-  if (!supabase) {
-    return res.json({ success: true });
-  }
-
-  if (!isValidUUID(targetUserId)) {
-    // We need a real user ID
-    return res.status(400).json({ success: false, error: "Invalid user ID" });
-  }
-
-  try {
-    // 1. Update training session status
-    if (sessionId && sessionId !== "demo-session" && isValidUUID(sessionId)) {
-      const { error: sessionError } = await supabase
-        .from("training_sessions")
-        .update({
-          status: "completed",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", sessionId);
-
-      if (sessionError) {
-        console.warn("[Training Complete] Session update error:", sessionError);
-      }
-    }
-
-    // 2. Insert into workout_logs
-    const { data, error: logError } = await supabase
-      .from("workout_logs")
-      .insert({
-        player_id: targetUserId,
-        session_id:
-          sessionId && sessionId !== "demo-session" && isValidUUID(sessionId)
-            ? sessionId
-            : null,
-        completed_at: new Date().toISOString(),
-        rpe: rpe || 5,
-        duration_minutes: duration || 60,
-        notes: notes || "Completed via API",
-      })
-      .select();
-
-    if (logError) {
-      if (logError.code === "23503") {
-        // Foreign key violation
-        console.warn(
-          "[Training Complete] Foreign key violation, but returning success for compatibility",
-        );
-        return res.json({
-          success: true,
-          message: "Logged (without DB persistence due to user mismatch)",
-        });
-      }
-      throw logError;
-    }
-    res.json({
-      success: true,
-      message: "Training session marked as complete",
-      data,
-    });
-  } catch (error) {
-    console.error("[Training Complete] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to complete training" });
-  }
-});
-
-// Training endpoints - REAL DATA
-app.get("/api/training/stats", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { data: sessions, error } = await supabase
-      .from("training_sessions")
-      .select("*")
-      .eq("status", "completed")
-      .order("session_date", { ascending: false })
-      .limit(50);
-
-    if (error) {
-      throw error;
-    }
-
-    const totalMinutes =
-      sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
-
-    res.json({
-      success: true,
-      data: {
-        sessions: sessions || [],
-        totalHours: Math.round((totalMinutes / 60) * 10) / 10,
-        sessionCount: sessions?.length || 0,
-      },
-    });
-  } catch (error) {
-    console.error("[Training Stats] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load training stats" });
-  }
-});
-
-// Training stats enhanced endpoint - REAL DATA
-app.get("/api/training/stats-enhanced", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    // Get training stats similar to the function
-    const { data: sessions, error } = await supabase
-      .from("training_sessions")
-      .select("*")
-      .eq("status", "completed")
-      .order("session_date", { ascending: false })
-      .limit(100);
-
-    if (error) {
-      throw error;
-    }
-
-    const totalMinutes =
-      sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
-
-    // Calculate enhanced stats
-    const intensityDistribution = sessions?.reduce((acc, s) => {
-      const intensity = s.intensity || "moderate";
-      acc[intensity] = (acc[intensity] || 0) + 1;
-      return acc;
-    }, {});
-
-    res.json({
-      success: true,
-      data: {
-        sessions: sessions || [],
-        totalHours: Math.round((totalMinutes / 60) * 10) / 10,
-        sessionCount: sessions?.length || 0,
-        intensityDistribution: intensityDistribution || {},
-        avgDuration: sessions?.length ? Math.round(totalMinutes / sessions.length) : 0,
-      },
-    });
-  } catch (error) {
-    console.error("[Training Stats Enhanced] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load enhanced training stats" });
-  }
-});
-
-app.get("/api/training/sessions", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { data: sessions, error } = await supabase
-      .from("training_sessions")
-      .select("*")
-      .order("session_date", { ascending: false })
-      .limit(100);
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({ success: true, data: sessions || [] });
-  } catch (error) {
-    console.error("[Training Sessions] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load sessions" });
-  }
-});
-
-app.post("/api/training/session", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { data: session, error } = await supabase
-      .from("training_sessions")
-      .insert(req.body)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    res.status(201).json({ success: true, data: { session } });
-  } catch (error) {
-    console.error("[Create Session] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to create session" });
-  }
-});
-
-app.get("/api/training/workouts/:id", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { data: session, error } = await supabase
-      .from("training_sessions")
-      .select("*, exercises:session_exercises(*)")
-      .eq("id", req.params.id)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({
-      success: true,
-      data: session || { id: req.params.id, exercises: [] },
-    });
-  } catch (error) {
-    console.error("[Get Workout] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load workout" });
-  }
-});
-
-app.put("/api/training/workouts/:id", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { data: session, error } = await supabase
-      .from("training_sessions")
-      .update(req.body)
-      .eq("id", req.params.id)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({ success: true, data: session });
-  } catch (error) {
-    console.error("[Update Workout] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to update workout" });
-  }
-});
+// =============================================================================
+// TRAINING ENDPOINTS - Now handled by modular routes at /api/training/*
+// See: routes/training.routes.js
+// =============================================================================
 
 // Exercise Library - REAL DATA
 app.get("/api/exercises", async (req, res) => {
@@ -1547,293 +967,10 @@ app.get("/api/exercises", async (req, res) => {
   }
 });
 
-// Analytics endpoints - REAL DATA
-
-// Performance Trends
-app.get("/api/analytics/performance-trends", async (req, res) => {
-  const { userId } = req.query;
-  const weeks = parseInt(req.query.weeks) || 7;
-
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - weeks * 7);
-
-    let query = supabase
-      .from("training_sessions")
-      .select("session_date, score, rpe, duration_minutes")
-      .gte("session_date", startDate.toISOString().split("T")[0])
-      .eq("status", "completed")
-      .order("session_date");
-
-    if (userId && isValidUUID(userId)) {
-      query = query.eq("user_id", userId);
-    } else if (userId) {
-      query = query.eq("user_id", DEMO_USER_ID);
-    }
-
-    const { data: sessions, error } = await query;
-
-    if (error) {
-      throw error;
-    }
-
-    // Group by week
-    const weeklyData = {};
-    sessions?.forEach((s) => {
-      const date = new Date(s.session_date);
-      const weekStart = new Date(date);
-      weekStart.setDate(date.getDate() - date.getDay());
-      const weekKey = weekStart.toISOString().split("T")[0];
-
-      if (!weeklyData[weekKey]) {
-        weeklyData[weekKey] = { scores: [], count: 0 };
-      }
-      weeklyData[weekKey].scores.push(s.score || 70);
-      weeklyData[weekKey].count++;
-    });
-
-    const labels = [];
-    const values = [];
-    for (let i = 0; i < weeks; i++) {
-      labels.push(`Week ${i + 1}`);
-      const weekKeys = Object.keys(weeklyData).sort();
-      if (weekKeys[i] && weeklyData[weekKeys[i]]) {
-        const avg =
-          weeklyData[weekKeys[i]].scores.reduce((a, b) => a + b, 0) /
-          weeklyData[weekKeys[i]].scores.length;
-        values.push(Math.round(avg));
-      } else {
-        values.push(values.length > 0 ? values[values.length - 1] : 70);
-      }
-    }
-
-    res.json({
-      success: true,
-      data: {
-        labels,
-        values,
-        currentScore: values.length > 0 ? values[values.length - 1] : 70,
-        improvement:
-          values.length > 1 ? values[values.length - 1] - values[0] : 0,
-        weeklyTrend:
-          values.length > 1
-            ? (
-                ((values[values.length - 1] - values[values.length - 2]) /
-                  values[values.length - 2]) *
-                100
-              ).toFixed(1)
-            : "0",
-      },
-    });
-  } catch (error) {
-    console.error("[Performance Trends] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load performance trends" });
-  }
-});
-
-// Team Chemistry
-app.get("/api/analytics/team-chemistry", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { data: chemistry, error } = await supabase
-      .from("team_chemistry")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    if (error && error.code !== "PGRST116") {
-      throw error;
-    }
-
-    res.json({
-      success: true,
-      data: chemistry
-        ? {
-            labels: [
-              "Communication",
-              "Coordination",
-              "Trust",
-              "Cohesion",
-              "Leadership",
-              "Adaptability",
-            ],
-            values: [
-              chemistry.communication,
-              chemistry.coordination,
-              chemistry.trust,
-              chemistry.cohesion,
-              chemistry.leadership,
-              chemistry.adaptability,
-            ],
-            overall: chemistry.overall_score,
-            trustLevel: chemistry.trust,
-            leadership: chemistry.leadership,
-          }
-        : {
-            labels: [
-              "Communication",
-              "Coordination",
-              "Trust",
-              "Cohesion",
-              "Leadership",
-              "Adaptability",
-            ],
-            values: [0, 0, 0, 0, 0, 0],
-            overall: 0,
-            trustLevel: 0,
-            leadership: 0,
-            message: "No team chemistry data available",
-          },
-    });
-  } catch (error) {
-    console.error("[Team Chemistry] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load team chemistry" });
-  }
-});
-
-// Training Distribution
-app.get("/api/analytics/training-distribution", async (req, res) => {
-  if (!supabase) {
-    return res.json({ success: true, data: [] });
-  }
-
-  try {
-    const { data: sessions } = await supabase
-      .from("training_sessions")
-      .select("session_type")
-      .eq("status", "completed");
-
-    const counts = {};
-    sessions?.forEach((s) => {
-      counts[s.session_type] = (counts[s.session_type] || 0) + 1;
-    });
-
-    const formattedData = Object.entries(counts).map(([category, value]) => ({
-      category: category.charAt(0).toUpperCase() + category.slice(1),
-      value,
-    }));
-
-    res.json({
-      success: true,
-      data: formattedData,
-    });
-  } catch (error) {
-    console.error("[Training Distribution] Error:", error);
-    res.json({ success: true, data: [] });
-  }
-});
-
-// Position Performance
-app.get("/api/analytics/position-performance", async (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      position: "N/A",
-      metrics: [],
-    },
-  });
-});
-
-// Speed Development
-app.get("/api/analytics/speed-development", async (req, res) => {
-  res.json({
-    success: true,
-    data: [],
-  });
-});
-
-// Analytics Summary
-app.get("/api/analytics/summary", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    // Get training data for last 30 days grouped by week
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const { data: sessions, error } = await supabase
-      .from("training_sessions")
-      .select("session_date, rpe, duration_minutes, session_type")
-      .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-      .eq("status", "completed")
-      .order("session_date");
-
-    if (error) {
-      throw error;
-    }
-
-    // Group by week for trends
-    const weeklyData = {};
-    sessions?.forEach((s) => {
-      const date = new Date(s.session_date);
-      const weekStart = new Date(date);
-      weekStart.setDate(date.getDate() - date.getDay());
-      const weekKey = weekStart.toISOString().split("T")[0];
-
-      if (!weeklyData[weekKey]) {
-        weeklyData[weekKey] = { sessions: 0, totalLoad: 0, totalMinutes: 0 };
-      }
-      weeklyData[weekKey].sessions++;
-      weeklyData[weekKey].totalLoad +=
-        (s.rpe || 5) * (s.duration_minutes || 60);
-      weeklyData[weekKey].totalMinutes += s.duration_minutes || 0;
-    });
-
-    const performanceTrends = Object.entries(weeklyData).map(
-      ([week, data]) => ({
-        week,
-        sessions: data.sessions,
-        avgLoad: Math.round(data.totalLoad / data.sessions),
-        totalMinutes: data.totalMinutes,
-      }),
-    );
-
-    // Training distribution by type
-    const typeDistribution = {};
-    sessions?.forEach((s) => {
-      const type = s.session_type || "General";
-      typeDistribution[type] = (typeDistribution[type] || 0) + 1;
-    });
-
-    res.json({
-      success: true,
-      data: {
-        performanceTrends,
-        trainingDistribution: Object.entries(typeDistribution).map(
-          ([type, count]) => ({
-            type,
-            count,
-            percentage: Math.round((count / (sessions?.length || 1)) * 100),
-          }),
-        ),
-        totalSessions: sessions?.length || 0,
-      },
-    });
-  } catch (error) {
-    console.error("[Analytics] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load analytics" });
-  }
-});
+// =============================================================================
+// ANALYTICS ENDPOINTS - Now handled by modular routes at /api/analytics/*
+// See: routes/analytics.routes.js
+// =============================================================================
 
 // ACWR / Load Management - REAL DATA
 app.get("/api/load-management/acwr", async (req, res) => {
@@ -2259,13 +1396,14 @@ app.get("/api/community/leaderboard", async (req, res) => {
   }
 });
 
-app.post("/api/community/posts", async (req, res) => {
+app.post("/api/community/posts", authenticateToken, async (req, res) => {
   if (!supabase) {
     return res.json({
       success: true,
       data: {
         id: Date.now().toString(),
         ...req.body,
+        user_id: req.userId,
         createdAt: new Date().toISOString(),
       },
     });
@@ -2276,6 +1414,7 @@ app.post("/api/community/posts", async (req, res) => {
       .from("community_posts")
       .insert({
         ...req.body,
+        user_id: req.userId, // Use authenticated user's ID
         created_at: new Date().toISOString(),
       })
       .select()
@@ -2292,207 +1431,11 @@ app.post("/api/community/posts", async (req, res) => {
   }
 });
 
-// Wellness Check-in endpoint (matches Netlify function: /api/wellness-checkin)
-app.get("/api/wellness-checkin", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const userId = req.query.userId || req.headers["x-user-id"];
-    const date = req.query.date || new Date().toISOString().split("T")[0];
-
-    // Try to get user from auth header if not provided
-    let targetUserId = userId;
-    if (!targetUserId) {
-      const authHeader = req.headers.authorization;
-      if (authHeader?.startsWith("Bearer ")) {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
-        targetUserId = user?.id;
-      }
-    }
-
-    if (!targetUserId) {
-      return res.json({ success: true, data: null });
-    }
-
-    const { data, error } = await supabase
-      .from("daily_wellness_checkin")
-      .select("*")
-      .eq("user_id", targetUserId)
-      .eq("checkin_date", date)
-      .single();
-
-    if (error && error.code !== "PGRST116") {
-      // PGRST116 = no rows returned, which is fine
-      console.error("[Wellness Checkin GET] Error:", error);
-    }
-
-    res.json({ success: true, data: data || null });
-  } catch (error) {
-    console.error("[Wellness Checkin GET] Error:", error);
-    res.json({ success: true, data: null });
-  }
-});
-
-app.post("/api/wellness-checkin", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    let targetUserId = req.body.userId || req.body.user_id;
-
-    // Try to get user from auth header if not provided
-    if (!targetUserId) {
-      const authHeader = req.headers.authorization;
-      if (authHeader?.startsWith("Bearer ")) {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
-        targetUserId = user?.id;
-      }
-    }
-
-    if (!targetUserId) {
-      return res
-        .status(401)
-        .json({ success: false, error: "User not authenticated" });
-    }
-
-    const checkinDate =
-      req.body.checkin_date || new Date().toISOString().split("T")[0];
-
-    const { data, error } = await supabase
-      .from("daily_wellness_checkin")
-      .upsert(
-        {
-          user_id: targetUserId,
-          checkin_date: checkinDate,
-          ...req.body,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id,checkin_date" },
-      )
-      .select()
-      .single();
-
-    if (error) {
-      console.error("[Wellness Checkin POST] Error:", error);
-      return res.status(500).json({ success: false, error: error.message });
-    }
-
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error("[Wellness Checkin POST] Error:", error);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
-
-// Wellness endpoints - REAL DATA
-app.get("/api/wellness/checkins", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const days = parseInt(req.query.days) || 7;
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
-
-    const { data: checkins } = await supabase
-      .from("wellness_checkins")
-      .select("*")
-      .gte("created_at", startDate.toISOString())
-      .order("created_at", { ascending: false });
-
-    res.json({ success: true, data: checkins || [] });
-  } catch (error) {
-    console.error("[Wellness] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load wellness data" });
-  }
-});
-
-app.get("/api/wellness/latest", async (req, res) => {
-  if (!supabase) {
-    return res.json({ success: true, data: null });
-  }
-
-  try {
-    const { data: checkin } = await supabase
-      .from("wellness_checkins")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    res.json({ success: true, data: checkin });
-  } catch (error) {
-    console.error("[Wellness Latest] Error:", error);
-    res.json({ success: true, data: null });
-  }
-});
-
-// Wellness Checkin Fix
-app.post("/api/wellness/checkin", async (req, res) => {
-  if (!supabase) {
-    return res.json({ success: true });
-  }
-
-  const {
-    userId,
-    sleep_quality,
-    energy_level,
-    muscle_soreness,
-    stress_level,
-    mood,
-    notes,
-  } = req.body;
-  const targetUserId = userId || "1";
-
-  if (!isValidUUID(targetUserId)) {
-    // If we can't find a real user, return error
-    return res.status(400).json({ success: false, error: "Invalid user ID" });
-  }
-
-  try {
-    const { data, error } = await supabase
-      .from("wellness_entries")
-      .insert({
-        athlete_id: targetUserId,
-        date: new Date().toISOString().split("T")[0],
-        sleep_quality: sleep_quality || 5,
-        energy_level: energy_level || 5,
-        muscle_soreness: muscle_soreness || 0,
-        stress_level: stress_level || 5,
-        mood: mood || 5,
-        notes: notes || "Check-in via API",
-      })
-      .select();
-
-    if (error) {
-      if (error.code === "23505") {
-        // Unique violation (already checked in today)
-        return res.json({ success: true, message: "Already checked in today" });
-      }
-      throw error;
-    }
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error("[Wellness Checkin] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to save checkin" });
-  }
-});
+// =============================================================================
+// WELLNESS ENDPOINTS - Now handled by modular routes at /api/wellness/*
+// See: routes/wellness.routes.js
+// Legacy /api/wellness-checkin redirect removed (January 2026)
+// =============================================================================
 
 // Coach endpoints - REAL DATA
 app.get("/api/coach/dashboard", async (req, res) => {
@@ -3328,7 +2271,7 @@ app.get("/api/supplements", async (req, res) => {
   }
 });
 
-app.post("/api/supplements/log", async (req, res) => {
+app.post("/api/supplements/log", authenticateToken, async (req, res) => {
   if (!supabase) {
     return res
       .status(503)
@@ -3336,10 +2279,7 @@ app.post("/api/supplements/log", async (req, res) => {
   }
 
   try {
-    let userId = req.body.userId || req.headers["x-user-id"] || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {
-      userId = DEMO_USER_ID;
-    }
+    const {userId} = req; // Use authenticated user's ID
     const { supplement, dosage, taken = true, notes } = req.body;
     const today = new Date().toISOString().split("T")[0];
 
@@ -3438,7 +2378,7 @@ app.get("/api/hydration", async (req, res) => {
   }
 });
 
-app.post("/api/hydration/log", async (req, res) => {
+app.post("/api/hydration/log", authenticateToken, async (req, res) => {
   if (!supabase) {
     return res
       .status(503)
@@ -3446,10 +2386,7 @@ app.post("/api/hydration/log", async (req, res) => {
   }
 
   try {
-    let userId = req.body.userId || req.headers["x-user-id"] || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {
-      userId = DEMO_USER_ID;
-    }
+    const {userId} = req; // Use authenticated user's ID
     const { amount, type = "water" } = req.body;
 
     const { data, error } = await supabase
@@ -3495,94 +2432,13 @@ app.post("/api/hydration/log", async (req, res) => {
   }
 });
 
-// ============================================
-// NOTIFICATIONS ENDPOINTS - REAL DATA
-// ============================================
+// =============================================================================
+// NOTIFICATIONS ENDPOINTS - Now handled by modular routes at /api/notifications/*
+// See: routes/notifications.routes.js
+// =============================================================================
 
-app.get("/api/notifications", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { data: notifications } = await supabase
-      .from("notifications")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(50);
-
-    res.json({ success: true, data: notifications || [] });
-  } catch (error) {
-    console.error("[Notifications] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
-
-app.post("/api/notifications/mark-read", async (req, res) => {
-  const { notificationId, ids } = req.body || {};
-
-  if (!supabase) {
-    return res.json({ success: true, message: "Marked as read" });
-  }
-
-  try {
-    if (notificationId === "all") {
-      await supabase
-        .from("notifications")
-        .update({ read: true })
-        .eq("read", false);
-    } else if (Array.isArray(ids) && ids.length > 0) {
-      await supabase.from("notifications").update({ read: true }).in("id", ids);
-    } else if (notificationId) {
-      await supabase
-        .from("notifications")
-        .update({ read: true })
-        .eq("id", notificationId);
-    }
-    res.json({ success: true, message: "Notifications marked as read" });
-  } catch (error) {
-    console.error("[Mark Read] Error:", error);
-    res.json({ success: true, message: "Marked as read" });
-  }
-});
-
-app.get("/api/notifications/count", async (req, res) => {
-  if (!supabase) {
-    return res.json({ success: true, data: { count: 0, unread: 0 } });
-  }
-
-  try {
-    const { count: total } = await supabase
-      .from("notifications")
-      .select("*", { count: "exact", head: true });
-
-    const { count: unread } = await supabase
-      .from("notifications")
-      .select("*", { count: "exact", head: true })
-      .eq("read", false);
-
-    res.json({
-      success: true,
-      data: { count: total || 0, unread: unread || 0 },
-    });
-  } catch (error) {
-    console.error("[Notifications Count] Error:", error);
-    res.json({ success: true, data: { count: 0, unread: 0 } });
-  }
-});
-
-// Legacy Netlify function routes - redirect to /api/
-app.get("/.netlify/functions/notifications", (req, res) =>
-  res.redirect("/api/notifications"),
-);
-app.post("/.netlify/functions/notifications", (req, res) =>
-  res.redirect(307, "/api/notifications/mark-read"),
-);
-app.get("/.netlify/functions/notifications-count", (req, res) =>
-  res.redirect("/api/notifications/count"),
-);
+// Legacy Netlify function route redirects removed (January 2026)
+// All routes now use /api/* directly
 
 // ============================================
 // AI CHAT ENDPOINT - Uses Knowledge Base from Supabase
@@ -3661,14 +2517,14 @@ function generateFollowUpResponse(message, context) {
   return null;
 }
 
-// AI Chat support
-app.post("/api/ai/chat", async (req, res) => {
+// AI Chat support - requires authentication
+app.post("/api/ai/chat", authenticateToken, async (req, res) => {
   // Redirect to existing handler
   req.url = "/api/ai-chat";
   return app._router.handle(req, res, () => {});
 });
 
-app.post("/api/ai-chat", async (req, res) => {
+app.post("/api/ai-chat", authenticateToken, async (req, res) => {
   const { message, session_id } = req.body;
 
   if (!message || typeof message !== "string") {
@@ -4368,7 +3224,7 @@ app.get("/api/player-programs/me", async (req, res) => {
 });
 
 // POST /api/player-programs - Assign user to a program
-app.post("/api/player-programs", async (req, res) => {
+app.post("/api/player-programs", authenticateToken, async (req, res) => {
   if (!supabase) {
     return res
       .status(503)
@@ -4376,27 +3232,8 @@ app.post("/api/player-programs", async (req, res) => {
   }
 
   try {
-    // Get user from auth header
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        error: "Authorization required",
-      });
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return res.status(401).json({
-        success: false,
-        error: "Invalid authentication",
-      });
-    }
+    // User already authenticated via middleware
+    const user = { id: req.userId };
 
     const { program_id, start_date, status = "active", force = false } =
       req.body;
@@ -4703,7 +3540,7 @@ server.listen(PORT, () => {
   );
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🎯 Main app: http://localhost:${PORT}`);
-  console.log(`🔥 Hot reload enabled for Angular dist and legacy src`);
+  console.log(`🔥 Hot reload enabled for Angular dist`);
 });
 
 export default app;

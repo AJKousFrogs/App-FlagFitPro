@@ -110,7 +110,7 @@
 
 /// Card header icon
 @mixin card-header-icon {
-  font-size: var(--font-body-md);
+  font-size: var(--font-body-size);
   color: var(--color-brand-primary);
   opacity: 0.85;
 }
@@ -144,7 +144,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-body-md);
+  font-size: var(--font-body-size);
 }
 
 /// Stat value (large number)
@@ -184,7 +184,7 @@
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
-  font-size: var(--font-body-md);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
 
@@ -211,12 +211,12 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-body-sm);
+  font-size: var(--font-body-sm-size);
 }
 
 /// Empty state icon
 @mixin empty-icon {
-  font-size: var(--font-body-md);
+  font-size: var(--font-body-size);
   opacity: 0.7;
 }
 
@@ -247,7 +247,7 @@
 
 /// Empty state description
 @mixin empty-state-description {
-  font-size: var(--font-body-sm);
+  font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
   max-width: 320px;
   margin-bottom: var(--space-4);
@@ -355,12 +355,12 @@
 
 /// Fast transition (hover states)
 @mixin transition-fast {
-  transition: all 0.15s ease;
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 /// Base transition
 @mixin transition-base {
-  transition: all var(--transition-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 /// Card-specific transition

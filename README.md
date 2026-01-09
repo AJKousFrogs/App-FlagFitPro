@@ -163,15 +163,23 @@ The app will be available at `http://localhost:4200`
 
 Set in Netlify UI (Site Settings → Environment Variables):
 
-| Variable               | Description               | Required    |
-| ---------------------- | ------------------------- | ----------- |
-| `SUPABASE_URL`         | Supabase project URL      | ✅ Yes      |
-| `SUPABASE_SERVICE_KEY` | Supabase service role key | ✅ Yes      |
-| `SUPABASE_ANON_KEY`    | Supabase anon key         | ✅ Yes      |
-| `JWT_SECRET`           | JWT signing secret        | ✅ Yes      |
-| `GROQ_API_KEY`         | Groq API key for AI       | ⚠️ Optional |
+| Variable               | Description               | Required    | Status |
+| ---------------------- | ------------------------- | ----------- | ------ |
+| `SUPABASE_URL`         | Supabase project URL      | ✅ Yes      | ✅ Configured |
+| `SUPABASE_SERVICE_KEY` | Supabase service role key | ✅ Yes      | ✅ Configured |
+| `SUPABASE_ANON_KEY`    | Supabase anon key         | ✅ Yes      | ✅ Configured |
+| `JWT_SECRET`           | JWT signing secret        | ✅ Yes      | ✅ Configured |
+| `GROQ_API_KEY`         | Groq API key for AI       | ✅ Yes      | ✅ Configured |
+| `USDA_API_KEY`         | USDA food database        | ✅ Yes      | ✅ Configured |
 
-Get your FREE Groq API key at: https://console.groq.com/
+### External APIs
+
+| Service | API Key Required | Status | Notes |
+| ------- | ---------------- | ------ | ----- |
+| **Groq AI** | Yes | ✅ Working | FREE tier: 14,400 requests/day |
+| **USDA Food Database** | Yes | ✅ Working | FREE key from fdc.nal.usda.gov |
+| **Weather (Open-Meteo)** | No | ✅ Working | Completely free, no key needed |
+| **Angular/PrimeNG** | No | ✅ Working | Frameworks, not API services |
 
 ---
 
@@ -235,16 +243,19 @@ flagfit-pro/
 
 ## 📚 Documentation
 
+**📖 [Complete Documentation Index](docs/DOCUMENTATION.md)** - Start here for all documentation
+
 | Document                                                              | Description                           |
 | --------------------------------------------------------------------- | ------------------------------------- |
+| [DOCUMENTATION.md](docs/DOCUMENTATION.md)                            | **Master documentation index**        |
+| [LOCAL_DEVELOPMENT_SETUP.md](docs/LOCAL_DEVELOPMENT_SETUP.md)         | **Start here** - Development setup    |
+| [FEATURE_DOCUMENTATION.md](docs/FEATURE_DOCUMENTATION.md)            | Complete feature reference            |
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md)                               | System design and dependencies        |
 | [API.md](docs/API.md)                                                 | Complete API reference (80 endpoints) |
 | [DATABASE_SETUP.md](docs/DATABASE_SETUP.md)                           | Database schema (250+ tables)         |
 | [BACKEND_SETUP.md](docs/BACKEND_SETUP.md)                             | Netlify Functions setup               |
 | [AUTHENTICATION_PATTERN.md](docs/AUTHENTICATION_PATTERN.md)           | Supabase Auth patterns                |
-| [LOAD_MANAGEMENT_QUICK_START.md](docs/LOAD_MANAGEMENT_QUICK_START.md) | ACWR load monitoring                  |
-| [angular/README.md](angular/README.md)                                | Angular-specific documentation        |
-| [ANGULAR_PRIMENG_GUIDE.md](ANGULAR_PRIMENG_GUIDE.md)                  | Angular 21 + PrimeNG best practices   |
+| [ANGULAR_PRIMENG_GUIDE.md](docs/ANGULAR_PRIMENG_GUIDE.md)            | Angular 21 + PrimeNG best practices   |
 
 ---
 

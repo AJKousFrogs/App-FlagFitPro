@@ -23,6 +23,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import {
   getFormControlError,
@@ -379,7 +380,7 @@ export class RegisterComponent {
       .subscribe({
         next: (response) => {
           if (response.success) {
-            this.toastService.success("Account created successfully!");
+            this.toastService.success(TOAST.SUCCESS.ACCOUNT_CREATED);
             // Check for returnUrl (e.g., from team invitation)
             const returnUrl = this.route.snapshot.queryParams["returnUrl"];
             // New users should go to onboarding first, then returnUrl
@@ -390,7 +391,7 @@ export class RegisterComponent {
             // Always send new users to onboarding first
             this.router.navigate(["/onboarding"]);
           } else {
-            this.toastService.error(response.error || "Registration failed");
+            this.toastService.error(response.error || TOAST.ERROR.REGISTRATION_FAILED);
           }
           this.isLoading.set(false);
         },

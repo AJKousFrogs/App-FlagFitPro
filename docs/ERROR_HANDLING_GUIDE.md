@@ -29,8 +29,9 @@ This guide explains the standardized error handling patterns used across the Fla
 
 ### Frontend
 
-- **Location**: `src/js/utils/unified-error-handler.js`
-- **Purpose**: Unified error handling, user notifications, and global error catching
+- **Location**: `angular/src/app/core/interceptors/error.interceptor.ts`
+- **Purpose**: Angular HTTP interceptor for unified error handling, user notifications, and global error catching
+- **Services**: Error handling services in `angular/src/app/core/services/`
 
 ---
 
@@ -166,54 +167,61 @@ exports.handler = async (event, context) => {
 
 ## Frontend Error Handling
 
-### Import the Error Handler
+### Angular HTTP Interceptor
 
-```javascript
-import {
-  errorHandler,
-  AppError,
-  ErrorType,
-} from "../utils/unified-error-handler.js";
+Error handling is automatically applied via Angular HTTP interceptor:
+
+```typescript
+// angular/src/app/core/interceptors/error.interceptor.ts
+// Automatically handles all HTTP errors
 ```
 
-### Basic Usage
+### Basic Usage (Angular Service)
 
-```javascript
-// Wrap async operations
-async function loadData() {
-  const result = await errorHandler.safeAsync(
-    async () => {
-      const response = await fetch("/api/data");
-      if (!response.ok) throw new Error("Failed to load data");
-      return response.json();
-    },
-    {
-      context: "Load Data",
-      showToUser: true,
-      fallbackMessage: "Failed to load data. Please try again.",
-    },
-  );
+```typescript
+// Angular service with error handling
+export class MyService {
+  private http = inject(HttpClient);
+  private messageService = inject(MessageService);
 
-  if (result.success) {
-    console.log("Data loaded:", result.data);
+  loadData(): Observable<Data> {
+    return this.http.get<Data>("/api/data").pipe(
+      catchError((error) => {
+        this.messageService.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to load data. Please try again.",
+        });
+        return throwError(() => error);
+      }),
+    );
   }
 }
 ```
 
-### Show Notifications
+### Show Notifications (Angular)
 
-```javascript
-// Success
-errorHandler.showSuccess("Data saved successfully!");
+```typescript
+// Using PrimeNG MessageService
+export class MyComponent {
+  private messageService = inject(MessageService);
 
-// Error
-errorHandler.showError("Failed to save data");
+  showSuccess() {
+    this.messageService.add({
+      severity: "success",
+      summary: "Success",
+      detail: "Data saved successfully!",
+    });
+  }
 
-// Warning
-errorHandler.showWarning("Connection is unstable");
-
-// Info
-errorHandler.showInfo("Processing your request...");
+  showError() {
+    this.messageService.add({
+      severity: "error",
+      summary: "Error",
+      detail: "Failed to save data",
+    });
+  }
+}
 ```
 
 ### Error with Retry
@@ -315,9 +323,9 @@ try {
 }
 ```
 
-### Frontend Migration
+### Frontend Migration (Angular)
 
-**Before:**
+**Before (Vanilla JS):**
 
 ```javascript
 try {
@@ -325,27 +333,42 @@ try {
   const data = await response.json();
 } catch (error) {
   console.error("Failed:", error);
-  logger.error("API Error:", error);
-  this.showNotification("Failed to load data", "error");
 }
 ```
 
-**After:**
+**After (Angular Service):**
 
-```javascript
-import { errorHandler } from "../utils/unified-error-handler.js";
+```typescript
+// Service
+export class DataService {
+  private http = inject(HttpClient);
+  private messageService = inject(MessageService);
 
-const result = await errorHandler.safeAsync(
-  async () => {
-    const response = await fetch("/api/data");
-    if (!response.ok) throw new Error("Failed to load");
-    return response.json();
-  },
-  { context: "Load Data", showToUser: true },
-);
+  loadData(): Observable<Data> {
+    return this.http.get<Data>("/api/data").pipe(
+      catchError((error) => {
+        this.messageService.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to load data",
+        });
+        return throwError(() => error);
+      }),
+    );
+  }
+}
 
-if (result.success) {
-  // Use result.data
+// Component
+export class MyComponent {
+  private dataService = inject(DataService);
+  data = signal<Data | null>(null);
+
+  loadData() {
+    this.dataService.loadData().subscribe({
+      next: (data) => this.data.set(data),
+      error: (error) => console.error("Error:", error),
+    });
+  }
 }
 ```
 
@@ -483,7 +506,10 @@ const result = await errorHandler.withRetry(
 For questions or issues with error handling:
 
 1. Check this documentation
-2. Review existing implementations in `dashboard.cjs` (backend) or `dashboard-page.js` (frontend)
+2. Review existing implementations:
+   - Backend: `netlify/functions/dashboard.cjs`
+   - Frontend: `angular/src/app/core/interceptors/error.interceptor.ts`
+   - Services: `angular/src/app/core/services/*.service.ts`
 3. Check the error handler source code for additional methods
 
 ## 🔗 **Related Documentation**

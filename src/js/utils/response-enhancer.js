@@ -127,15 +127,15 @@ export class ResponseEnhancer {
 
     if (lowerTopic.includes("supplement") || lowerTopic.includes("dosage")) {
       return (
-        response +
-        "\n\n**⚠️ Disclaimer:** Always consult with a healthcare provider or sports nutritionist before starting any new supplement, especially if you have existing health conditions or take medications."
+        `${response 
+        }\n\n**⚠️ Disclaimer:** Always consult with a healthcare provider or sports nutritionist before starting any new supplement, especially if you have existing health conditions or take medications.`
       );
     }
 
     if (lowerTopic.includes("injury") || lowerTopic.includes("treatment")) {
       return (
-        response +
-        "\n\n**⚠️ Disclaimer:** This information is for educational purposes only and is not a substitute for professional medical advice. If you have a serious injury, consult a healthcare professional immediately."
+        `${response 
+        }\n\n**⚠️ Disclaimer:** This information is for educational purposes only and is not a substitute for professional medical advice. If you have a serious injury, consult a healthcare professional immediately.`
       );
     }
 

@@ -25,7 +25,8 @@ const {
  * // Returns: { statusCode: 200, headers: {...}, body: JSON.stringify({ success: true, data: fixtures }) }
  */
 function successResponse(data, message = null) {
-  return createSuccessResponse({ data: data || [] }, 200, message);
+  // Fixed: was double-nesting data as { data: { data: [...] } }
+  return createSuccessResponse(data || [], 200, message);
 }
 
 /**

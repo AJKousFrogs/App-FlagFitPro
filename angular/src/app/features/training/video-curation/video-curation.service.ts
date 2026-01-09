@@ -14,6 +14,7 @@ import {
 import { AuthService } from "../../../core/services/auth.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   PlayerSuggestion,
   PlaylistForm,
@@ -236,7 +237,7 @@ export class VideoCurationService {
       );
     } catch (error) {
       console.error("Failed to approve suggestion:", error);
-      this.toastService.error("Failed to approve suggestion");
+      this.toastService.error(TOAST.ERROR.VIDEO_APPROVE_FAILED);
     }
   }
 
@@ -263,7 +264,7 @@ export class VideoCurationService {
       this.toastService.info(`"${suggestion.title}" rejected`);
     } catch (error) {
       console.error("Failed to reject suggestion:", error);
-      this.toastService.error("Failed to reject suggestion");
+      this.toastService.error(TOAST.ERROR.VIDEO_REJECT_FAILED);
     }
   }
 

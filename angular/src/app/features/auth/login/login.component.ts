@@ -28,6 +28,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { AuthService } from "../../../core/services/auth.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   getFormControlError,
   isFormControlInvalid,
@@ -273,7 +274,7 @@ export class LoginComponent {
       .subscribe({
         next: async (response: { success?: boolean; error?: string }) => {
           if (response.success) {
-            this.toastService.success("Login successful!");
+            this.toastService.success(TOAST.SUCCESS.LOGIN_SUCCESS);
             // Check onboarding status before redirecting
             const user = this.authService.currentUser();
             if (user) {

@@ -452,7 +452,7 @@ export class RecentlyViewed {
 
     SecureDOMUtils.setTextContent(
       playersLink,
-      playersLink.textContent + "View Top Players",
+      `${playersLink.textContent  }View Top Players`,
     );
 
     // Teams link
@@ -470,7 +470,7 @@ export class RecentlyViewed {
 
     SecureDOMUtils.setTextContent(
       teamsLink,
-      teamsLink.textContent + "Browse Teams",
+      `${teamsLink.textContent  }Browse Teams`,
     );
   }
 

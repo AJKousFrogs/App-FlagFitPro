@@ -26,6 +26,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
@@ -36,6 +37,9 @@ import {
 } from "../../shared/utils/privacy-ux-copy";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { UI_LIMITS } from "../../core/constants/app.constants";
+import { getTimeAgo } from "../../shared/utils/date.utils";
+import { getInitials } from "../../shared/utils/format.utils";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 
 interface PendingInvitation {
   id: string;
@@ -526,6 +530,7 @@ export class ProfileComponent implements OnInit {
   private logger = inject(LoggerService);
   private accountDeletionService = inject(AccountDeletionService);
   private profileCompletionService = inject(ProfileCompletionService);
+  private teamMembershipService = inject(TeamMembershipService);
 
   @ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
 
@@ -637,7 +642,7 @@ export class ProfileComponent implements OnInit {
       this.userName.set(user.name || user.email || "User");
       this.userEmail.set(user.email || "");
       this.userRole.set(user.role || "Player");
-      this.userInitials.set(this.getInitials(this.userName()));
+      this.userInitials.set(getInitials(this.userName()));
 
       // Load position from user data or profile
       if (user.position) {
@@ -860,11 +865,11 @@ export class ProfileComponent implements OnInit {
       // Load recent activities from training sessions
       const recentActivities = sortedSessions.slice(0, UI_LIMITS.RECENT_ACTIVITIES_COUNT).map((session) => {
         const date = new Date(session.completed_at || session.session_date);
-        const timeAgo = this.getTimeAgo(date);
+        const timeAgoStr = getTimeAgo(date);
         return {
           icon: "pi-play",
           title: `Completed ${session.duration_minutes || 0} min training`,
-          time: timeAgo,
+          time: timeAgoStr,
         };
       });
 
@@ -995,20 +1000,6 @@ export class ProfileComponent implements OnInit {
     this.isLoading.set(false);
   }
 
-  private getTimeAgo(date: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 60) return `${diffMins} minutes ago`;
-    if (diffHours < 24) return `${diffHours} hours ago`;
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString();
-  }
-
   private loadEmptyState(): void {
     this.stats.set([
       {
@@ -1069,15 +1060,6 @@ export class ProfileComponent implements OnInit {
     ]);
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  }
-
   trackByActivityTitle(
     index: number,
     activity: { icon: string; title: string; time: string },
@@ -1123,14 +1105,14 @@ export class ProfileComponent implements OnInit {
     // Validate file type
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      this.toastService.error("Please select a JPEG, PNG, or WebP image");
+      this.toastService.error(TOAST.ERROR.INVALID_FILE_TYPE);
       return;
     }
 
     // Validate file size (max 5MB)
     const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
-      this.toastService.error("Image must be smaller than 5MB");
+      this.toastService.error(TOAST.ERROR.FILE_TOO_LARGE_5MB);
       return;
     }
 
@@ -1192,10 +1174,10 @@ export class ProfileComponent implements OnInit {
 
       // Update local state
       this.avatarUrl.set(avatarUrl);
-      this.toastService.success("Profile picture updated!");
+      this.toastService.success(TOAST.SUCCESS.AVATAR_UPDATED);
     } catch (error) {
       this.logger.error("Error uploading avatar:", error);
-      this.toastService.error("Failed to upload profile picture");
+      this.toastService.error(TOAST.ERROR.AVATAR_UPLOAD_FAILED);
     } finally {
       this.isUploadingAvatar.set(false);
       // Reset file input
@@ -1222,56 +1204,39 @@ export class ProfileComponent implements OnInit {
     } else {
       // Fallback: copy URL to clipboard
       navigator.clipboard.writeText(window.location.href);
-      this.toastService.success("Profile link copied to clipboard!");
+      this.toastService.success(TOAST.SUCCESS.COPIED);
     }
   }
 
   /**
-   * Load extended profile data from Supabase
-   * Uses team_members table for position, jersey number, and team info
+   * Load extended profile data using TeamMembershipService
+   * Uses centralized service for position, jersey number, and team info
    */
   private async loadExtendedProfileData(userId: string): Promise<void> {
     try {
-      // Load team membership data (includes position, jersey number, team)
-      const { data: membership, error: memberError } =
-        await this.supabaseService.client
-          .from("team_members")
-          .select(
-            `
-          position,
-          jersey_number,
-          role,
-          joined_at,
-          teams:team_id(name)
-        `,
-          )
-          .eq("user_id", userId)
-          .eq("status", "active")
-          .limit(1)
-          .maybeSingle();
+      // Load team membership using centralized service
+      await this.teamMembershipService.loadMembership();
+      const membership = this.teamMembershipService.membership();
 
-      if (!memberError && membership) {
-        // Load position
+      if (membership) {
+        // Load position from centralized service
         if (membership.position) {
           this.userPosition.set(membership.position);
         }
 
-        // Load jersey number
-        if (membership.jersey_number) {
-          this.jerseyNumber.set(membership.jersey_number.toString());
+        // Load jersey number from centralized service
+        if (membership.jerseyNumber) {
+          this.jerseyNumber.set(membership.jerseyNumber.toString());
         }
 
-        // Load team name - teams is returned as an object from the join
-        const teamsData = membership.teams as unknown as {
-          name: string;
-        } | null;
-        if (teamsData?.name) {
-          this.teamName.set(teamsData.name);
+        // Load team name from centralized service
+        if (membership.teamName) {
+          this.teamName.set(membership.teamName);
         }
 
         // Format member since date from joined_at
-        if (membership.joined_at) {
-          const date = new Date(membership.joined_at);
+        if (membership.joinedAt) {
+          const date = new Date(membership.joinedAt);
           this.memberSince.set(
             date.toLocaleDateString("en-US", {
               month: "long",
@@ -1390,7 +1355,7 @@ export class ProfileComponent implements OnInit {
       this.loadProfileData();
     } catch (error: any) {
       this.logger.error("Error accepting invitation:", error);
-      this.toastService.error(error.message || "Failed to accept invitation");
+      this.toastService.error(error.message || TOAST.ERROR.INVITATION_ACCEPT_FAILED);
     } finally {
       this.processingInvitation.set(null);
     }
@@ -1408,7 +1373,7 @@ export class ProfileComponent implements OnInit {
 
       if (error) throw error;
 
-      this.toastService.info("Invitation declined");
+      this.toastService.info(TOAST.INFO.INVITATION_DECLINED);
 
       // Remove from list
       this.pendingInvitations.update((invs) =>
@@ -1416,7 +1381,7 @@ export class ProfileComponent implements OnInit {
       );
     } catch (error: any) {
       this.logger.error("Error declining invitation:", error);
-      this.toastService.error(error.message || "Failed to decline invitation");
+      this.toastService.error(error.message || TOAST.ERROR.INVITATION_DECLINE_FAILED);
     } finally {
       this.processingInvitation.set(null);
     }

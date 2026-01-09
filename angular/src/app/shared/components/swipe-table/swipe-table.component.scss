@@ -44,7 +44,7 @@
   padding: 0 16px;
   transition: right 0.3s ease;
   background: var(--surface-card);
-  z-index: 10;
+  z-index: var(--z-dropdown);
 }
 
 .swipe-actions.visible {
@@ -98,7 +98,7 @@
 }
 
 /* Focus styles for keyboard navigation */
-.action-btn:focus {
+.action-btn:focus-visible {
   outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
 }

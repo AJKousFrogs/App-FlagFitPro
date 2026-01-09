@@ -25,6 +25,7 @@ import { CountdownTimerComponent } from "../../../../shared/components/countdown
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
+import { formatDate } from "../../../../shared/utils/date.utils";
 
 import {
   PrescribedExercise,
@@ -262,7 +263,7 @@ import {
                 <span>Completed</span>
                 @if (exercise().completedAt) {
                   <span class="completed-time">
-                    at {{ formatTime(exercise().completedAt!) }}
+                    at {{ formatDate(exercise().completedAt!, 'h:mm a') }}
                   </span>
                 }
               </div>
@@ -354,10 +355,7 @@ export class ExerciseCardComponent {
     return `${secs}s`;
   }
 
-  formatTime(date: Date): string {
-    return new Date(date).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  formatDate(date: Date | string, formatStr?: string): string {
+    return formatDate(date, formatStr || "h:mm a");
   }
 }

@@ -32,6 +32,7 @@ import { DataExportService } from "../../../core/services/data-export.service";
 import { AccountDeletionService } from "../../../core/services/account-deletion.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
 
 /**
@@ -856,6 +857,6 @@ export class PrivacyControlsComponent implements OnInit {
 
   showAuditLog(): void {
     // TODO: Navigate to audit log page or show dialog
-    this.toastService.info("Audit log feature coming soon");
+    this.toastService.info(TOAST.INFO.AUDIT_LOG_COMING_SOON);
   }
 }

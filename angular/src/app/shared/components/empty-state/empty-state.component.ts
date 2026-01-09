@@ -1,4 +1,4 @@
-import { Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -20,6 +20,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-empty-state",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, CardModule, ButtonComponent],
   template: `
     <div class="empty-state" [class.compact]="compact()">

@@ -10,7 +10,7 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -73,9 +73,6 @@ interface CycleEntry {
   symptoms: string[];
   notes?: string;
 }
-
-//   severity: string;
-// }
 
 // ===== Design Token Imports =====
 import { CYCLE_PHASE_COLORS } from "../../core/utils/design-tokens.util";
@@ -282,6 +279,7 @@ const RETENTION_OPTIONS = [
 @Component({
   selector: "app-cycle-tracking",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

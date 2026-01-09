@@ -10,7 +10,7 @@
  * - Backend Truthfulness Contract
  */
 
-const { supabaseAdmin, checkEnvVars } = require("./supabase-client.cjs");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   createSuccessResponse,
@@ -70,7 +70,7 @@ async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
     return {
       success: true,
       data: {
-        alertId: alertId,
+        alertId,
         acknowledged: true,
         acknowledgedAt: new Date().toISOString(),
         message: "Alert already acknowledged",
@@ -138,7 +138,7 @@ async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
   return {
     success: true,
     data: {
-      alertId: alertId,
+      alertId,
       acknowledged: true,
       acknowledgedAt: updatedProtocol.coach_acknowledged_at || new Date().toISOString(),
       message: "Alert acknowledged successfully",

@@ -22,14 +22,14 @@
   margin-bottom: var(--space-4);
 
   .merlin-avatar {
-    font-size: var(--font-display-md);
+    font-size: var(--font-h1-size);
     flex-shrink: 0;
   }
 
   .merlin-message {
     h3 {
       margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-lg);
+      font-size: var(--font-body-size);
       font-weight: var(--font-weight-semibold);
       color: var(--ds-primary-green);
     }

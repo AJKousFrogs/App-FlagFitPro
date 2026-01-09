@@ -19,6 +19,7 @@ export interface ScreenshotOptions {
   scrollY?: number;
   useCORS?: boolean;
   allowTaint?: boolean;
+  [key: string]: unknown;
 }
 
 // Dynamic import type - html2canvas is loaded lazily
@@ -82,7 +83,7 @@ export class LazyScreenshotService {
     };
 
     try {
-      const canvas = await this.html2canvas(element, defaultOptions);
+      const canvas = await this.html2canvas!(element, defaultOptions);
       return canvas;
     } catch (error) {
       console.error('Failed to capture screenshot:', error);

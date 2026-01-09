@@ -111,7 +111,7 @@
 
 .hover-glow {
   position: relative;
-  transition: all var(--anim-normal) var(--ease-smooth);
+  transition: opacity var(--anim-normal) var(--ease-smooth), transform var(--anim-normal) var(--ease-smooth), background-color var(--anim-normal) var(--ease-smooth), box-shadow var(--anim-normal) var(--ease-smooth);
 }
 
 .hover-glow::after {
@@ -228,7 +228,7 @@
   border-radius: inherit;
   opacity: 0;
   transform: scale(1.05);
-  transition: all var(--anim-normal) var(--ease-micro-bounce);
+  transition: opacity var(--anim-normal) var(--ease-micro-bounce), transform var(--anim-normal) var(--ease-micro-bounce), background-color var(--anim-normal) var(--ease-micro-bounce);
   pointer-events: none;
 }
 
@@ -332,7 +332,7 @@
   position: relative;
 }
 
-.focus-ring:focus {
+.focus-ring:focus-visible {
   outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
 }
@@ -349,7 +349,7 @@
   border: 2px solid var(--ds-primary-green);
   opacity: 0;
   transform: scale(0.95);
-  transition: all var(--anim-fast) var(--ease-micro-bounce);
+  transition: opacity var(--anim-fast) var(--ease-micro-bounce), transform var(--anim-fast) var(--ease-micro-bounce), background-color var(--anim-fast) var(--ease-micro-bounce);
   pointer-events: none;
 }
 

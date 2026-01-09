@@ -99,7 +99,7 @@
     );
 
     i {
-      font-size: var(--font-display-sm);
+      font-size: var(--font-h1-size);
       color: rgba(255, 255, 255, 0.3);
     }
   }
@@ -171,7 +171,7 @@
     color: var(--ds-text-secondary);
 
     i {
-      font-size: var(--font-body-2xs);
+      font-size: var(--font-caption-size);
     }
   }
 
@@ -202,7 +202,7 @@
     text-align: center;
 
     i {
-      font-size: var(--font-display-md);
+      font-size: var(--font-h1-size);
       color: var(--ds-text-tertiary);
       margin-bottom: var(--space-3);
     }

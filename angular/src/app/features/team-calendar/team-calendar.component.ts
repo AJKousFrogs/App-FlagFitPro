@@ -8,7 +8,7 @@
  */
 
 import { CommonModule, DatePipe } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -86,6 +86,7 @@ const EVENT_TYPE_CONFIG: Record<
 @Component({
   selector: "app-team-calendar",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,

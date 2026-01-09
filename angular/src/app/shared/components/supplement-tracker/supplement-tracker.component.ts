@@ -34,6 +34,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
 import { API_ENDPOINTS, ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 
 export interface Supplement {
   id: string;
@@ -382,7 +383,7 @@ export class SupplementTrackerComponent implements OnInit {
   addSupplement(): void {
     const newSupp = this.newSupplement();
     if (!newSupp.name) {
-      this.toastService.warn("Please enter a supplement name");
+      this.toastService.warn(TOAST.WARN.MISSING_SUPPLEMENT_NAME);
       return;
     }
 

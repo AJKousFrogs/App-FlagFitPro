@@ -238,6 +238,49 @@ const API_ENDPOINTS = {
     rateLimit: "READ (100/min)",
   },
 
+  // AI Coach (Groq)
+  "ai-chat": {
+    path: "/api/ai/chat",
+    method: "POST",
+    description:
+      "Send a message to Merlin, the AI coach. Uses Groq LLM (Llama 3.1) for conversational coaching.",
+    auth: true,
+    rateLimit: "READ (100/min)",
+    body: {
+      message: "string (required) - User's question or message",
+      session_id: "string (optional) - Session ID for conversation continuity",
+    },
+    response: {
+      answer_markdown: "string - Markdown-formatted response",
+      citations: "array - Source references with evidence grades",
+      risk_level: "string - low | medium | high",
+      disclaimer: "string | null - Safety disclaimer for medical topics",
+      suggested_actions: "array - Follow-up actions",
+      chat_session_id: "string - Session identifier",
+      message_id: "string - Unique message ID",
+      metadata: {
+        source: "string - custom_knowledge | follow_up_context | groq-ai",
+        topic: "string | null - Detected topic",
+      },
+    },
+    notes: [
+      "Uses Groq free tier (14,400 requests/day)",
+      "High-risk topics (supplements) use Llama 70B for safety",
+      "Maintains conversation context per session_id",
+      "Built-in knowledge for nutrition topics (magnesium, zinc, iron, etc.)",
+    ],
+  },
+  "ai-chat-session": {
+    path: "/api/ai/chat/session/:sessionId",
+    method: "GET",
+    description: "Get conversation history for a chat session",
+    auth: false,
+    rateLimit: "READ (100/min)",
+    response: {
+      messages: "array - Conversation history",
+    },
+  },
+
   // Fixtures
   fixtures: {
     path: "/api/fixtures",

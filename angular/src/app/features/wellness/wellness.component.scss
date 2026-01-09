@@ -75,7 +75,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--ds-primary-green);
   margin: 0 0 var(--space-4) 0;
@@ -162,7 +162,7 @@
   margin-bottom: var(--space-2);
 
   i {
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 
   .alert-danger & i {

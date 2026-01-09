@@ -153,8 +153,13 @@ FlagFit Pro uses **Supabase Auth** with JWT tokens. The frontend never handles p
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
 
-  // Skip auth for mock API requests
+  // Skip auth for mock API requests (DEVELOPMENT ONLY - never in production)
+  // ⚠️ WARNING: Mock API endpoints should NEVER be accessible in production builds
   if (req.url.includes("mock://api")) {
+    if (environment.production) {
+      console.error("SECURITY ERROR: Mock API accessed in production!");
+      return throwError(() => new Error("Mock API not available in production"));
+    }
     return next(req);
   }
 

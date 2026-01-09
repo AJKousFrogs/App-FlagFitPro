@@ -229,3 +229,53 @@ export function isCurrentYear(date: Date | string): boolean {
   const dateObj = typeof date === "string" ? parseISO(date) : date;
   return isThisYear(dateObj);
 }
+
+/**
+ * Calculate age from birth date
+ * @example
+ * calculateAge(new Date('1990-05-15')) // 34 (in 2024)
+ * calculateAge('1990-05-15') // 34
+ */
+export function calculateAge(birthDate: Date | string): number {
+  const dateObj = typeof birthDate === "string" ? parseISO(birthDate) : birthDate;
+  const today = new Date();
+  let age = today.getFullYear() - dateObj.getFullYear();
+  const monthDiff = today.getMonth() - dateObj.getMonth();
+
+  // Adjust if birthday hasn't occurred this year
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dateObj.getDate())) {
+    age--;
+  }
+
+  return age;
+}
+
+/**
+ * Format time ago with friendly labels
+ * Similar to timeAgo() but with custom formatting for specific UI needs
+ * @example
+ * getTimeAgo(new Date()) // "Just now"
+ * getTimeAgo(oneHourAgo) // "1 hour ago"
+ * getTimeAgo(twoDaysAgo) // "2 days ago"
+ */
+export function getTimeAgo(date: Date | string | null | undefined): string {
+  if (!date) return "";
+  
+  const dateObj = typeof date === "string" ? parseISO(date) : date;
+  const now = new Date();
+  const diffMs = now.getTime() - dateObj.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins === 1) return "1 minute ago";
+  if (diffMins < 60) return `${diffMins} minutes ago`;
+  if (diffHours === 1) return "1 hour ago";
+  if (diffHours < 24) return `${diffHours} hours ago`;
+  if (diffDays === 1) return "1 day ago";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+  
+  return formatDistanceToNow(dateObj, { addSuffix: true });
+}

@@ -116,7 +116,7 @@
 
 .step-content h3 {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   text-align: center;
@@ -187,7 +187,7 @@
 }
 
 .rpe-label {
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   color: var(--color-text-secondary);
   text-align: center;
 }

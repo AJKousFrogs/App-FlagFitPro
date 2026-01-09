@@ -14,6 +14,16 @@ import { analyticsPrefetchResolver } from "../resolvers/analytics-prefetch.resol
 import { gameTrackerPrefetchResolver } from "../resolvers/game-tracker-prefetch.resolver";
 
 /**
+ * Preload Strategy Guide:
+ * - priority: "high" = preload immediately after initial load
+ * - priority: "medium" = preload after 2s delay
+ * - priority: "low" = preload after 5s delay
+ * - preload: false = never preload (load on demand only)
+ *
+ * Default (no data): preload: false (on-demand loading)
+ */
+
+/**
  * Public Routes (No Authentication Required)
  */
 export const publicRoutes: Routes = [
@@ -23,7 +33,7 @@ export const publicRoutes: Routes = [
       import("../../features/landing/landing.component").then(
         (m) => m.LandingComponent,
       ),
-    data: { preload: true }, // Preload landing page
+    data: { preload: true, priority: "high" }, // Landing page loads immediately
   },
   {
     path: "login",
@@ -31,6 +41,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/login/login.component").then(
         (m) => m.LoginComponent,
       ),
+    data: { preload: true, priority: "medium" }, // Auth pages preload after delay
   },
   {
     path: "register",
@@ -38,6 +49,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/register/register.component").then(
         (m) => m.RegisterComponent,
       ),
+    data: { preload: true, priority: "medium" },
   },
   {
     path: "reset-password",
@@ -45,6 +57,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/reset-password/reset-password.component").then(
         (m) => m.ResetPasswordComponent,
       ),
+    data: { preload: false }, // On-demand - rarely accessed
   },
   {
     path: "update-password",
@@ -52,6 +65,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/update-password/update-password.component").then(
         (m) => m.UpdatePasswordComponent,
       ),
+    data: { preload: false }, // On-demand - rarely accessed
   },
   {
     path: "verify-email",
@@ -59,6 +73,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/verify-email/verify-email.component").then(
         (m) => m.VerifyEmailComponent,
       ),
+    data: { preload: false }, // On-demand - one-time use
   },
   {
     path: "auth/callback",
@@ -66,6 +81,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/auth-callback/auth-callback.component").then(
         (m) => m.AuthCallbackComponent,
       ),
+    data: { preload: false }, // On-demand - OAuth callback
   },
   {
     path: "onboarding",
@@ -73,6 +89,7 @@ export const publicRoutes: Routes = [
       import("../../features/onboarding/onboarding.component").then(
         (m) => m.OnboardingComponent,
       ),
+    data: { preload: false }, // On-demand - one-time use
   },
   {
     path: "accept-invitation",
@@ -80,6 +97,7 @@ export const publicRoutes: Routes = [
       import("../../features/team/accept-invitation/accept-invitation.component").then(
         (m) => m.AcceptInvitationComponent,
       ),
+    data: { preload: false }, // On-demand - rarely accessed
   },
 ];
 
@@ -103,6 +121,7 @@ export const dashboardRoutes: Routes = [
         (m) => m.DashboardComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "high" }, // Core dashboard
   },
   {
     path: "player-dashboard",
@@ -168,6 +187,7 @@ export const trainingRoutes: Routes = [
         (m) => m.WorkoutComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Frequently accessed
   },
   {
     path: "exercise-library",
@@ -176,6 +196,7 @@ export const trainingRoutes: Routes = [
         (m) => m.ExerciseLibraryComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "low" }, // Secondary feature
   },
   {
     path: "exercisedb",
@@ -193,6 +214,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingScheduleComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Duplicate of /training
   },
   {
     path: "training/qb",
@@ -201,6 +223,7 @@ export const trainingRoutes: Routes = [
         (m) => m.QbHubComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Position-specific
   },
   {
     path: "training/qb/schedule",
@@ -224,6 +247,7 @@ export const trainingRoutes: Routes = [
         (m) => m.AiTrainingSchedulerComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Advanced feature
   },
   {
     path: "training/log",
@@ -232,6 +256,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingLogComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Frequently accessed
   },
   {
     path: "training/safety",
@@ -240,6 +265,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingSafetyComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Safety feature - on demand
   },
   {
     path: "training/smart-form",
@@ -248,6 +274,7 @@ export const trainingRoutes: Routes = [
         (m) => m.SmartTrainingFormComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Form feature - on demand
   },
   {
     path: "training/session/:id",
@@ -256,6 +283,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingScheduleComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Dynamic route
   },
   {
     path: "training/videos",
@@ -273,6 +301,7 @@ export const trainingRoutes: Routes = [
         (m) => m.VideoCurationComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Coach feature
   },
   {
     path: "training/videos/suggest",
@@ -296,6 +325,7 @@ export const trainingRoutes: Routes = [
         (m) => m.FlagLoadComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Advanced feature
   },
   {
     path: "training/goal-planner",
@@ -304,6 +334,7 @@ export const trainingRoutes: Routes = [
         (m) => m.GoalBasedPlannerComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Advanced feature
   },
   {
     path: "training/microcycle",
@@ -312,6 +343,7 @@ export const trainingRoutes: Routes = [
         (m) => m.MicrocyclePlannerComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Advanced feature
   },
   {
     path: "training/import",
@@ -320,6 +352,7 @@ export const trainingRoutes: Routes = [
         (m) => m.ImportDatasetComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Utility feature
   },
   {
     path: "training/periodization",
@@ -353,6 +386,7 @@ export const analyticsRoutes: Routes = [
         (m) => m.EnhancedAnalyticsComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Advanced analytics
   },
   {
     path: "performance-tracking",
@@ -361,6 +395,7 @@ export const analyticsRoutes: Routes = [
         (m) => m.PerformanceTrackingComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Commonly accessed
   },
 ];
 
@@ -384,6 +419,7 @@ export const teamRoutes: Routes = [
         (m) => m.TeamWorkspaceComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Team hub
   },
   {
     path: "coach",
@@ -397,6 +433,7 @@ export const teamRoutes: Routes = [
         (m) => m.CoachDashboardComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "high" }, // Coach main dashboard
   },
   // === NEW ROUTE: Coach Activity Feed ===
   {
@@ -415,6 +452,7 @@ export const teamRoutes: Routes = [
         (m) => m.CoachAnalyticsComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Coach analytics
   },
   {
     path: "coach/inbox",
@@ -423,6 +461,7 @@ export const teamRoutes: Routes = [
         (m) => m.CoachInboxComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Coach messaging
   },
   {
     path: "coach/team",
@@ -431,6 +470,7 @@ export const teamRoutes: Routes = [
         (m) => m.TeamManagementComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Team management
   },
   {
     path: "coach/programs",
@@ -439,6 +479,7 @@ export const teamRoutes: Routes = [
         (m) => m.ProgramBuilderComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Advanced feature
   },
   {
     path: "coach/practice",
@@ -447,6 +488,7 @@ export const teamRoutes: Routes = [
         (m) => m.PracticePlannerComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "low" }, // Planning feature
   },
   {
     path: "coach/injuries",
@@ -455,6 +497,7 @@ export const teamRoutes: Routes = [
         (m) => m.InjuryManagementComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // On-demand
   },
   {
     path: "coach/playbook",
@@ -463,6 +506,7 @@ export const teamRoutes: Routes = [
         (m) => m.PlaybookManagerComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // On-demand
   },
   {
     path: "coach/development",
@@ -471,6 +515,7 @@ export const teamRoutes: Routes = [
         (m) => m.PlayerDevelopmentComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // On-demand
   },
   {
     path: "coach/tournaments",
@@ -479,6 +524,7 @@ export const teamRoutes: Routes = [
         (m) => m.TournamentManagementComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Seasonal feature
   },
   {
     path: "coach/payments",
@@ -487,6 +533,7 @@ export const teamRoutes: Routes = [
         (m) => m.PaymentManagementComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Admin feature
   },
   {
     path: "coach/ai-scheduler",
@@ -495,6 +542,7 @@ export const teamRoutes: Routes = [
         (m) => m.AiSchedulerComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Advanced feature
   },
   {
     path: "coach/knowledge",
@@ -503,6 +551,7 @@ export const teamRoutes: Routes = [
         (m) => m.KnowledgeBaseComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Reference feature
   },
   {
     path: "coach/film",
@@ -511,6 +560,7 @@ export const teamRoutes: Routes = [
         (m) => m.FilmRoomCoachComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Heavy component
   },
   {
     path: "coach/calendar",
@@ -519,6 +569,7 @@ export const teamRoutes: Routes = [
         (m) => m.CalendarCoachComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "low" }, // Planning feature
   },
   {
     path: "coach/scouting",
@@ -527,14 +578,12 @@ export const teamRoutes: Routes = [
         (m) => m.ScoutingReportsComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // On-demand
   },
   {
     path: "admin",
-    loadComponent: () =>
-      import("../../features/admin/superadmin-dashboard.component").then(
-        (m) => m.SuperadminDashboardComponent,
-      ),
-    canActivate: [authGuard],
+    redirectTo: "superadmin",
+    pathMatch: "full",
   },
   {
     path: "team/create",
@@ -543,6 +592,7 @@ export const teamRoutes: Routes = [
         (m) => m.TeamCreateComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // One-time use
   },
   {
     path: "attendance",
@@ -551,6 +601,7 @@ export const teamRoutes: Routes = [
         (m) => m.AttendanceComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "low" }, // Team feature
   },
   {
     path: "depth-chart",
@@ -559,6 +610,7 @@ export const teamRoutes: Routes = [
         (m) => m.DepthChartComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Coach feature
   },
   {
     path: "equipment",
@@ -567,6 +619,7 @@ export const teamRoutes: Routes = [
         (m) => m.EquipmentComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Admin feature
   },
   {
     path: "officials",
@@ -575,6 +628,7 @@ export const teamRoutes: Routes = [
         (m) => m.OfficialsComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Game day feature
   },
 ];
 
@@ -626,6 +680,7 @@ export const gameRoutes: Routes = [
         (m) => m.TournamentsComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Seasonal feature
   },
   // === NEW ROUTE: Live Game Tracker ===
   {
@@ -650,6 +705,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.WellnessComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "high" }, // Daily feature
   },
   {
     path: "acwr",
@@ -658,6 +714,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.AcwrDashboardComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Load monitoring
   },
   {
     path: "return-to-play",
@@ -763,6 +820,7 @@ export const socialRoutes: Routes = [
         (m) => m.CommunityComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "low" }, // Social feature
   },
   // AI Coach Merlin - Main chat interface
   {
@@ -786,6 +844,7 @@ export const socialRoutes: Routes = [
     loadComponent: () =>
       import("../../features/chat/chat.component").then((m) => m.ChatComponent),
     canActivate: [authGuard],
+    data: { preload: true, priority: "medium" }, // Team communication
   },
 ];
 
@@ -851,6 +910,7 @@ export const profileRoutes: Routes = [
         (m) => m.ProfileComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: true, priority: "low" }, // User profile
   },
   {
     path: "settings",
@@ -859,6 +919,7 @@ export const profileRoutes: Routes = [
         (m) => m.SettingsComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Settings - on demand
   },
   {
     path: "settings/profile",
@@ -867,6 +928,7 @@ export const profileRoutes: Routes = [
         (m) => m.SettingsComponent,
       ),
     canActivate: [authGuard],
+    data: { preload: false }, // Settings - on demand
   },
   {
     path: "settings/privacy",
@@ -900,89 +962,48 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminSettingsComponent,
       ),
     canActivate: [superadminGuard],
+    data: { preload: false }, // Admin only
   },
   {
     path: "superadmin/teams",
     loadComponent: () =>
-      import("../../features/superadmin/superadmin-dashboard.component").then(
-        (m) => m.SuperadminDashboardComponent,
+      import("../../features/superadmin/superadmin-teams.component").then(
+        (m) => m.SuperadminTeamsComponent,
       ),
     canActivate: [superadminGuard],
+    data: { preload: false }, // Admin only
   },
   {
     path: "superadmin/users",
     loadComponent: () =>
-      import("../../features/superadmin/superadmin-dashboard.component").then(
-        (m) => m.SuperadminDashboardComponent,
+      import("../../features/superadmin/superadmin-users.component").then(
+        (m) => m.SuperadminUsersComponent,
       ),
     canActivate: [superadminGuard],
+    data: { preload: false }, // Admin only
   },
 ];
 
 /**
- * Help Routes (Redirect to docs or landing until help center is built)
- * Prevents 404s on privacy-ux-copy.ts help links
+ * Help Routes - Help Center with topic-specific anchors
  */
 export const helpRoutes: Routes = [
   {
-    path: "help/privacy-sharing",
-    redirectTo: "/settings/privacy",
-    pathMatch: "full",
-  },
-  {
-    path: "help/team-privacy",
-    redirectTo: "/settings/privacy",
-    pathMatch: "full",
-  },
-  {
-    path: "help/data-requirements",
-    redirectTo: "/acwr",
-    pathMatch: "full",
-  },
-  {
-    path: "help/acwr",
-    redirectTo: "/acwr",
-    pathMatch: "full",
-  },
-  {
-    path: "help/acute-load",
-    redirectTo: "/acwr",
-    pathMatch: "full",
-  },
-  {
-    path: "help/chronic-load",
-    redirectTo: "/acwr",
-    pathMatch: "full",
-  },
-  {
-    path: "help/monotony",
-    redirectTo: "/acwr",
-    pathMatch: "full",
-  },
-  {
-    path: "help/tsb",
-    redirectTo: "/acwr",
-    pathMatch: "full",
-  },
-  {
-    path: "help/injury-risk",
-    redirectTo: "/acwr",
-    pathMatch: "full",
-  },
-  {
-    path: "help/parental-consent",
-    redirectTo: "/settings/privacy",
-    pathMatch: "full",
-  },
-  {
-    path: "help/data-deletion",
-    redirectTo: "/settings/privacy",
-    pathMatch: "full",
-  },
-  {
     path: "help",
-    redirectTo: "/",
-    pathMatch: "full",
+    loadComponent: () =>
+      import("../../features/help/help-center.component").then(
+        (m) => m.HelpCenterComponent,
+      ),
+    data: { preload: false }, // On-demand
+  },
+  // Topic-specific routes all go to help center (component handles routing)
+  {
+    path: "help/:topic",
+    loadComponent: () =>
+      import("../../features/help/help-center.component").then(
+        (m) => m.HelpCenterComponent,
+      ),
+    data: { preload: false },
   },
 ];
 

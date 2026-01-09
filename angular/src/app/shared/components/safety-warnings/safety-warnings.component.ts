@@ -12,7 +12,7 @@
  * - Age-adjusted recommendations
  */
 
-import { Component, OnInit, inject, computed } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, inject, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
@@ -27,6 +27,7 @@ import { AuthService } from "../../../core/services/auth.service";
 @Component({
   selector: "app-safety-warnings",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, CardModule, TagModule, RouterModule, ButtonComponent],
   template: `
     @if (hasWarnings()) {

@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import {
   FeedbackMessage,
   FeedbackService,
@@ -12,6 +12,7 @@ import {
 @Component({
   selector: "app-feedback-toast",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [],
   template: `
     <div class="toast-container" role="status" aria-live="polite">

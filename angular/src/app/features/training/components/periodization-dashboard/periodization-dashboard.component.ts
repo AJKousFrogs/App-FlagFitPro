@@ -15,7 +15,7 @@
  * @version 1.0.0
  */
 
-import { Component, OnInit, inject, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
@@ -60,6 +60,7 @@ interface TimelineEvent {
 @Component({
   selector: "app-periodization-dashboard",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardModule,

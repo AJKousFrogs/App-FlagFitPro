@@ -14,6 +14,7 @@ import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "../../../core/services/toast.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
+import { formatDate } from "../../../shared/utils/date.utils";
 
 interface InvitationData {
   id: string;
@@ -481,7 +482,7 @@ export class AcceptInvitationComponent implements OnInit {
     } else if (diffDays <= 7) {
       return `In ${diffDays} days`;
     } else {
-      return expiry.toLocaleDateString();
+      return formatDate(expiry, 'P');
     }
   }
 }

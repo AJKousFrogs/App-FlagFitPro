@@ -8,33 +8,34 @@
  * ================================================================
  */
 
-import { Directive, ElementRef, Input, OnInit } from '@angular/core';
+import { Directive, ElementRef, input, OnInit, inject } from '@angular/core';
 
 @Directive({
   selector: 'img[appMobileOptimized]',
   standalone: true
 })
 export class MobileOptimizedImageDirective implements OnInit {
-  @Input() width?: string | number;
-  @Input() height?: string | number;
-  @Input() lazy: boolean = true;
+  private el = inject(ElementRef<HTMLImageElement>);
 
-  constructor(private el: ElementRef<HTMLImageElement>) {}
+  // Angular 21: Use input() signals instead of @Input()
+  width = input<string | number | undefined>(undefined);
+  height = input<string | number | undefined>(undefined);
+  lazy = input<boolean>(true);
 
   ngOnInit() {
     const img = this.el.nativeElement;
 
     // Add lazy loading
-    if (this.lazy) {
+    if (this.lazy()) {
       img.loading = 'lazy';
     }
 
     // Add explicit dimensions if provided
-    if (this.width) {
-      img.setAttribute('width', String(this.width));
+    if (this.width()) {
+      img.setAttribute('width', String(this.width()));
     }
-    if (this.height) {
-      img.setAttribute('height', String(this.height));
+    if (this.height()) {
+      img.setAttribute('height', String(this.height()));
     }
 
     // Add decoding async for better performance

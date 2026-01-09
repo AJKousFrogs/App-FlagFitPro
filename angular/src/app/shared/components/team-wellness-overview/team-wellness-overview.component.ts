@@ -38,7 +38,9 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { CONSENT_BLOCKED_MESSAGES } from "../../utils/privacy-ux-copy";
+import { getInitials } from "../../utils/format.utils";
 
 interface AthleteWellnessStatus {
   id: string;
@@ -201,7 +203,7 @@ interface TeamWellnessSummary {
               <div class="athlete-card attention">
                 <div class="athlete-info">
                   <p-avatar
-                    [label]="getInitials(athlete.name)"
+                    [label]="getInitialsStr(athlete.name)"
                     [image]="athlete.avatar"
                     shape="circle"
                     size="large"
@@ -273,7 +275,7 @@ interface TeamWellnessSummary {
             @for (athlete of athletesNotCheckedIn(); track athlete.id) {
               <div class="athlete-chip">
                 <p-avatar
-                  [label]="getInitials(athlete.name)"
+                  [label]="getInitialsStr(athlete.name)"
                   [image]="athlete.avatar"
                   shape="circle"
                   size="normal"
@@ -339,7 +341,7 @@ interface TeamWellnessSummary {
             >
               <div class="mini-header">
                 <p-avatar
-                  [label]="getInitials(athlete.name)"
+                  [label]="getInitialsStr(athlete.name)"
                   [image]="athlete.avatar"
                   shape="circle"
                 ></p-avatar>
@@ -470,13 +472,11 @@ export class TeamWellnessOverviewComponent implements OnInit {
     this.filter.set(f);
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   getCheckInClass(): string {
@@ -521,7 +521,7 @@ export class TeamWellnessOverviewComponent implements OnInit {
   sendReminders(): void {
     // Would integrate with notification service
     this.logger.info("Sending check-in reminders to athletes");
-    this.toastService.info("Sending check-in reminders to athletes...");
+    this.toastService.info(TOAST.INFO.SENDING_REMINDERS);
   }
 
   /**

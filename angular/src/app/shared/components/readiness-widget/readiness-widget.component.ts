@@ -13,6 +13,7 @@ import { ButtonComponent, CardComponent } from "../ui-components";
 @Component({
   selector: "app-readiness-widget",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     CardComponent,

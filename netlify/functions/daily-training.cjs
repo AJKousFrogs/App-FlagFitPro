@@ -17,10 +17,8 @@ const {
 const {
   guardMerlinRequest,
 } = require("./utils/merlin-guard.cjs");
-const {
-  detectPainTrigger,
-  detectACWRTrigger,
-} = require("./utils/safety-override.cjs");
+// Safety triggers - imported for future integration
+// const { detectPainTrigger, detectACWRTrigger } = require("./utils/safety-override.cjs");
 
 // Seasonal training focus based on month
 const SEASONAL_CONTEXT = {

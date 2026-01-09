@@ -4,12 +4,12 @@
  * ⭐ CANONICAL PAGE — Design System Exemplar (Pending Cleanup)
  * ============================================================
  * This page is marked as canonical but requires cleanup before freeze.
- * 
+ *
  * RULES:
  * - Future refactors copy FROM this page, never INTO it
  * - Changes require design system curator approval
  * - Must be cleaned to full compliance before canonical freeze
- * 
+ *
  * See docs/CANONICAL_PAGES.md for full documentation.
  *
  * CLEANUP REQUIRED:
@@ -43,17 +43,23 @@ import { LoadMonitoringService } from "../../core/services/load-monitoring.servi
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { METRIC_INSUFFICIENT_DATA } from "../../shared/utils/privacy-ux-copy";
+import { UI_LIMITS } from "../../core/constants";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
-import { OwnershipTransitionService, OwnershipTransition } from "../../core/services/ownership-transition.service";
+import {
+  OwnershipTransitionService,
+  OwnershipTransition,
+} from "../../core/services/ownership-transition.service";
 import { OwnershipTransitionBadgeComponent } from "../../shared/components/ownership-transition-badge/ownership-transition-badge.component";
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
+import { formatDate } from "../../shared/utils/date.utils";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -62,7 +68,6 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
   imports: [
     CommonModule,
     RouterModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     PageErrorStateComponent,
@@ -104,7 +109,14 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
         @if (alertRiskMeaning()) {
           <app-semantic-meaning-renderer
             [meaning]="alertRiskMeaning()!"
-            [context]="{ container: 'banner', priority: alertRiskMeaning()!.severity === 'critical' ? 'critical' : 'high', dismissible: true }"
+            [context]="{
+              container: 'banner',
+              priority:
+                alertRiskMeaning()!.severity === 'critical'
+                  ? 'critical'
+                  : 'high',
+              dismissible: true,
+            }"
           ></app-semantic-meaning-renderer>
         }
 
@@ -123,7 +135,7 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
             <div class="alert-content">
               <h3>{{ topAlert()!.message }}</h3>
               <p>{{ topAlert()!.recommendation }}</p>
-              
+
               <!-- Phase 2.1: 5-Question Contract Display -->
               <div class="alert-contract">
                 <!-- 1. What changed - Show trend -->
@@ -139,16 +151,20 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
                     </span>
                   </div>
                 }
-                
+
                 <!-- 2. Why it changed - Cause attribution -->
                 @if (acwrCauseAttribution().length > 0) {
                   <div class="contract-section">
                     <strong>Why it changed:</strong>
                     <ul class="cause-list">
-                      @for (cause of acwrCauseAttribution(); track cause.sessionId) {
+                      @for (
+                        cause of acwrCauseAttribution();
+                        track cause.sessionId
+                      ) {
                         <li>
-                          {{ cause.sessionType }} session on {{ cause.date | date: "MMM d" }}
-                          (Load: {{ cause.load | number: "1.0-0" }} AU)
+                          {{ cause.sessionType }} session on
+                          {{ cause.date | date: "MMM d" }} (Load:
+                          {{ cause.load | number: "1.0-0" }} AU)
                         </li>
                       }
                     </ul>
@@ -156,16 +172,19 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
                 } @else {
                   <div class="contract-section">
                     <strong>Why it changed:</strong>
-                    <span>Recent high-intensity training sessions increased your acute load.</span>
+                    <span
+                      >Recent high-intensity training sessions increased your
+                      acute load.</span
+                    >
                   </div>
                 }
-                
+
                 <!-- 3. What this means -->
                 <div class="contract-section">
                   <strong>What this means:</strong>
                   <span>{{ riskZone().description }}</span>
                 </div>
-                
+
                 <!-- 4. Who is responsible now - Ownership transition -->
                 @if (ownershipTransition()) {
                   <div class="contract-section">
@@ -176,12 +195,15 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
                     ></app-ownership-transition-badge>
                   </div>
                 }
-                
+
                 <!-- 5. What happens next -->
                 <div class="contract-section">
                   <strong>What happens next:</strong>
                   @if (ownershipTransition()?.toRole === "coach") {
-                    <span>Coach is reviewing — no action needed now. You'll be notified when your plan is adjusted.</span>
+                    <span
+                      >Coach is reviewing — no action needed now. You'll be
+                      notified when your plan is adjusted.</span
+                    >
                   } @else {
                     <span>{{ riskZone().recommendation }}</span>
                     <div class="action-buttons">
@@ -262,7 +284,10 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
                   {{ acwrRatio() | number: "1.2-2" }}
                   @if (acwrConfidenceRange()) {
                     <span class="confidence-range">
-                      (est. {{ acwrConfidenceRange()!.min | number: "1.2-2" }}-{{ acwrConfidenceRange()!.max | number: "1.2-2" }})
+                      (est.
+                      {{ acwrConfidenceRange()!.min | number: "1.2-2" }}-{{
+                        acwrConfidenceRange()!.max | number: "1.2-2"
+                      }})
                     </span>
                   }
                 </div>
@@ -270,7 +295,11 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
                   ACWR
                   @if (acwrConfidenceRange()) {
                     <span class="confidence-percentage">
-                      Confidence: {{ (acwrConfidenceRange()!.confidence * 100) | number: "1.0-0" }}%
+                      Confidence:
+                      {{
+                        acwrConfidenceRange()!.confidence * 100
+                          | number: "1.0-0"
+                      }}%
                     </span>
                   }
                 </div>
@@ -289,7 +318,14 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
               @if (riskZoneMeaning()) {
                 <app-semantic-meaning-renderer
                   [meaning]="riskZoneMeaning()!"
-                  [context]="{ container: 'inline', priority: riskZoneMeaning()!.severity === 'critical' ? 'critical' : 'high', dismissible: false }"
+                  [context]="{
+                    container: 'inline',
+                    priority:
+                      riskZoneMeaning()!.severity === 'critical'
+                        ? 'critical'
+                        : 'high',
+                    dismissible: false,
+                  }"
                 ></app-semantic-meaning-renderer>
               } @else {
                 <!-- Non-risk zone display (sweet spot, under-training) -->
@@ -305,7 +341,9 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
                     }
                   </div>
                   <div class="risk-label">{{ riskZone().label }}</div>
-                  <div class="risk-description">{{ riskZone().description }}</div>
+                  <div class="risk-description">
+                    {{ riskZone().description }}
+                  </div>
                 </div>
               }
             </div>
@@ -510,7 +548,9 @@ export class AcwrDashboardComponent implements OnInit {
   private readonly loadService = inject(LoadMonitoringService);
   private readonly alertsService = inject(AcwrAlertsService);
   private readonly confidenceService = inject(DataConfidenceService);
-  private readonly ownershipTransitionService = inject(OwnershipTransitionService);
+  private readonly ownershipTransitionService = inject(
+    OwnershipTransitionService,
+  );
   private logger = inject(LoggerService);
 
   // Runtime guard signals - prevent white screen crashes
@@ -561,7 +601,7 @@ export class AcwrDashboardComponent implements OnInit {
   public readonly acwrConfidenceRange = computed(() => {
     const ratio = this.acwrRatio();
     const confidence = this.acwrConfidence();
-    
+
     if (!ratio || ratio === null || confidence.score >= 0.9) {
       // High confidence - no range needed
       return null;
@@ -573,7 +613,7 @@ export class AcwrDashboardComponent implements OnInit {
     // This gives approximately ±15% at 0% confidence, ±7.5% at 50% confidence, ±1.5% at 90% confidence
     const uncertaintyFactor = (1 - confidence.score) * 0.15;
     const range = ratio * uncertaintyFactor;
-    
+
     const minEstimate = Math.max(0, ratio - range);
     const maxEstimate = ratio + range;
 
@@ -616,12 +656,14 @@ export class AcwrDashboardComponent implements OnInit {
   });
 
   // Phase 2.1 - Cause Attribution (loaded from sessions)
-  acwrCauseAttribution = signal<Array<{
-    sessionId: string;
-    date: Date;
-    sessionType: string;
-    load: number;
-  }>>([]);
+  acwrCauseAttribution = signal<
+    Array<{
+      sessionId: string;
+      date: Date;
+      sessionType: string;
+      load: number;
+    }>
+  >([]);
 
   // Phase 2.1 - Ownership Transition
   ownershipTransition = signal<OwnershipTransition | null>(null);
@@ -658,7 +700,11 @@ export class AcwrDashboardComponent implements OnInit {
 
     // Only show risk meaning for elevated-risk and danger-zone
     // Sweet spot and under-training are not risks (they're status indicators)
-    if (zone.level === "sweet-spot" || zone.level === "under-training" || zone.level === "no-data") {
+    if (
+      zone.level === "sweet-spot" ||
+      zone.level === "under-training" ||
+      zone.level === "no-data"
+    ) {
       return null;
     }
 
@@ -783,11 +829,11 @@ export class AcwrDashboardComponent implements OnInit {
     try {
       const user = this.authService.getUser();
       if (!user?.id) {
-        this.toastService.error("Please log in to download reports");
+        this.toastService.error(TOAST.ERROR.LOGIN_TO_DOWNLOAD_REPORTS);
         return;
       }
 
-      this.toastService.info("Generating ACWR report...");
+      this.toastService.info(TOAST.INFO.ACWR_REPORT_GENERATING);
 
       // Get current ACWR data from the training service
       const acwrData = {
@@ -850,10 +896,10 @@ export class AcwrDashboardComponent implements OnInit {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
 
-      this.toastService.success("ACWR report downloaded successfully");
+      this.toastService.success(TOAST.SUCCESS.ACWR_REPORT_DOWNLOADED);
     } catch (error) {
       this.logger.error("Error generating ACWR report:", error);
-      this.toastService.error("Failed to generate report");
+      this.toastService.error(TOAST.ERROR.REPORT_FAILED);
     }
   }
 
@@ -1041,14 +1087,12 @@ export class AcwrDashboardComponent implements OnInit {
       }
 
       // Get recent ownership transitions for ACWR alerts
-      const transitions = await this.ownershipTransitionService.getPlayerTransitions(
-        user.id,
-        10
-      );
+      const transitions =
+        await this.ownershipTransitionService.getPlayerTransitions(user.id, 10);
 
       // Filter for ACWR-related transitions
       const acwrTransitions = transitions.filter(
-        (t) => t.trigger === "acwr_critical" || t.trigger === "acwr_elevated"
+        (t) => t.trigger === "acwr_critical" || t.trigger === "acwr_elevated",
       );
 
       if (acwrTransitions.length > 0) {
@@ -1056,7 +1100,10 @@ export class AcwrDashboardComponent implements OnInit {
         this.ownershipTransition.set(acwrTransitions[0]);
       }
     } catch (error) {
-      this.logger.error("[ACWR Dashboard] Error loading ownership transition:", error);
+      this.logger.error(
+        "[ACWR Dashboard] Error loading ownership transition:",
+        error,
+      );
     }
   }
 
@@ -1104,11 +1151,14 @@ export class AcwrDashboardComponent implements OnInit {
         }))
         .filter((s) => s.load > 300) // High load threshold
         .sort((a, b) => b.load - a.load)
-        .slice(0, 3); // Top 3 contributors
+        .slice(0, UI_LIMITS.RECOMMENDATIONS_PREVIEW); // Top contributors
 
       this.acwrCauseAttribution.set(highLoadSessions);
     } catch (error) {
-      this.logger.error("[ACWR Dashboard] Error loading cause attribution:", error);
+      this.logger.error(
+        "[ACWR Dashboard] Error loading cause attribution:",
+        error,
+      );
       this.acwrCauseAttribution.set([]);
     }
   }
@@ -1118,7 +1168,7 @@ export class AcwrDashboardComponent implements OnInit {
    */
   async exportPDF(): Promise<void> {
     try {
-      this.toastService.info("Generating PDF report...");
+      this.toastService.info(TOAST.INFO.PDF_REPORT_GENERATING);
 
       // Dynamically import jspdf and html2canvas
       const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
@@ -1130,7 +1180,7 @@ export class AcwrDashboardComponent implements OnInit {
         ".acwr-dashboard",
       ) as HTMLElement;
       if (!dashboard) {
-        this.toastService.error("Dashboard not found");
+        this.toastService.error(TOAST.ERROR.DASHBOARD_NOT_FOUND);
         return;
       }
 
@@ -1156,7 +1206,7 @@ export class AcwrDashboardComponent implements OnInit {
       pdf.setFontSize(20);
       pdf.text("ACWR Dashboard Report", 105, 15, { align: "center" });
       pdf.setFontSize(10);
-      pdf.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 22, {
+      pdf.text(`Generated: ${formatDate(new Date(), 'P')}`, 105, 22, {
         align: "center",
       });
 
@@ -1167,7 +1217,7 @@ export class AcwrDashboardComponent implements OnInit {
       // Save PDF
       pdf.save(`acwr-report-${new Date().toISOString().split("T")[0]}.pdf`);
 
-      this.toastService.success("PDF report downloaded successfully");
+      this.toastService.success(TOAST.SUCCESS.PDF_REPORT_DOWNLOADED);
     } catch (error) {
       this.logger.error("Error generating PDF:", error);
       this.toastService.error(

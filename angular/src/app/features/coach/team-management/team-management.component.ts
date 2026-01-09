@@ -9,7 +9,7 @@
  */
 
 import { CommonModule, DatePipe } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { AvatarModule } from "primeng/avatar";
@@ -33,6 +33,7 @@ import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { getInitials } from "../../../shared/utils/format.utils";
 
 // ===== Interfaces =====
 interface TeamMember {
@@ -113,6 +114,7 @@ const STATUS_CONFIG: Record<
 @Component({
   selector: "app-team-management",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -246,7 +248,7 @@ const STATUS_CONFIG: Record<
                     <p-avatar
                       [image]="member.avatarUrl"
                       [label]="
-                        !member.avatarUrl ? getInitials(member.name) : ''
+                        !member.avatarUrl ? getInitialsStr(member.name) : ''
                       "
                       shape="circle"
                     ></p-avatar>
@@ -700,7 +702,7 @@ const STATUS_CONFIG: Record<
             <div class="player-header">
               <p-avatar
                 [image]="player.avatarUrl"
-                [label]="!player.avatarUrl ? getInitials(player.name) : ''"
+                [label]="!player.avatarUrl ? getInitialsStr(player.name) : ''"
                 size="large"
                 shape="circle"
               ></p-avatar>
@@ -1127,11 +1129,11 @@ export class TeamManagementComponent implements OnInit {
   }
 
   // Helper methods
-  getInitials(name: string): string {
-    const parts = name.split(" ");
-    return parts.length >= 2
-      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-      : name.substring(0, 2).toUpperCase();
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   getStatusConfig(status: PlayerStatus): (typeof STATUS_CONFIG)[PlayerStatus] {

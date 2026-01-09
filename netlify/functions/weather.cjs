@@ -14,7 +14,7 @@ async function getWeatherData(latitude, longitude, city) {
   if (apiKey) {
     try {
       const data = await getOpenWeatherData(latitude, longitude, city, apiKey);
-      if (data) return data;
+      if (data) {return data;}
     } catch (error) {
       console.warn("OpenWeatherMap failed, falling back to Open-Meteo:", error.message);
     }
@@ -106,7 +106,7 @@ async function getOpenMeteoData(latitude, longitude, city) {
     }
 
     const weatherData = await weatherResponse.json();
-    const current = weatherData.current;
+    const {current} = weatherData;
 
     const weatherCondition = getOpenMeteoCondition(current.weather_code);
     const suitability = calculateOpenMeteoSuitability(

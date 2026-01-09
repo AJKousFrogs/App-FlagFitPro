@@ -12,7 +12,6 @@
  * - Flag football specific notification styling
  */
 
-import { DatePipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
@@ -31,13 +30,14 @@ import {
   NotificationStateService,
 } from "../../../core/services/notification-state.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
 
 @Component({
   selector: "app-notifications-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, DatePipe, ScrollerModule, BadgeModule, TooltipModule],
+  imports: [RouterModule, ScrollerModule, BadgeModule, TooltipModule],
   template: `
     <!-- Backdrop -->
     @if (visible) {
@@ -435,18 +435,18 @@ export class NotificationsPanelComponent {
   async markAllAsRead(): Promise<void> {
     try {
       await this.notificationService.markAllAsRead();
-      this.toastService.success("All notifications marked as read");
+      this.toastService.success(TOAST.SUCCESS.NOTIFICATIONS_MARKED_READ);
     } catch {
-      this.toastService.error("Failed to mark notifications as read");
+      this.toastService.error(TOAST.ERROR.NOTIFICATIONS_MARK_READ_FAILED);
     }
   }
 
   async clearAllRead(): Promise<void> {
     try {
       await this.notificationService.dismissAllRead();
-      this.toastService.info("Read notifications cleared");
+      this.toastService.info(TOAST.INFO.NOTIFICATIONS_CLEARED);
     } catch {
-      this.toastService.error("Failed to clear notifications");
+      this.toastService.error(TOAST.ERROR.NOTIFICATIONS_CLEAR_FAILED);
     }
   }
 
@@ -488,7 +488,7 @@ export class NotificationsPanelComponent {
         newSet.delete(notification.id);
         return newSet;
       });
-      this.toastService.error("Failed to dismiss notification");
+      this.toastService.error(TOAST.ERROR.NOTIFICATION_DISMISS_FAILED);
     }
   }
 

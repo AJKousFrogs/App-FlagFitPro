@@ -116,7 +116,7 @@
 }
 
 .card-empty-state__icon {
-  font-size: var(--font-display-lg);
+  font-size: var(--font-h1-size);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
   opacity: 0.5;
@@ -576,7 +576,7 @@
   background: var(--color-brand-primary-subtle);
   color: var(--color-brand-primary);
   border-radius: var(--radius-sm);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
 }
 

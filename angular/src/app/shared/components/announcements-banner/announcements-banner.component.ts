@@ -26,6 +26,7 @@ import { RouterModule } from "@angular/router";
 import { TeamNotificationService } from "../../../core/services/team-notification.service";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
+import { formatDate } from "../../utils/date.utils";
 import { TagModule } from "primeng/tag";
 
 @Component({
@@ -179,6 +180,6 @@ export class AnnouncementsBannerComponent implements OnInit {
     const diffHours = Math.floor(diffMs / 3600000);
     if (diffHours < 24) return `${diffHours}h ago`;
 
-    return date.toLocaleDateString();
+    return formatDate(date, 'P');
   }
 }

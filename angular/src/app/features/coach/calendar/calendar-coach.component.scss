@@ -31,7 +31,7 @@
       margin: 0;
       min-width: 180px;
       text-align: center;
-      font-size: var(--font-body-lg);
+      font-size: var(--font-body-size);
       font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
@@ -51,7 +51,7 @@
 .calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
+  gap: 1px; /* Intentionally 1px for calendar grid lines */
   margin-bottom: var(--space-2);
 
   .weekday {
@@ -66,7 +66,7 @@
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
+  gap: 1px; /* Intentionally 1px for calendar grid lines */
   background: var(--ds-border-subtle);
   border: 1px solid var(--ds-border-default);
   border-radius: var(--radius-md);
@@ -172,7 +172,7 @@
 // Section Title
 .section-title {
   margin: 0 0 var(--space-3) 0;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--ds-text-primary);
 }
@@ -310,7 +310,7 @@
   border-radius: var(--radius-lg);
 
   i {
-    font-size: var(--font-display-md);
+    font-size: var(--font-h1-size);
     color: var(--ds-text-tertiary);
     margin-bottom: var(--space-3);
   }

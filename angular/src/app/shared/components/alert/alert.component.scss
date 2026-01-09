@@ -55,7 +55,7 @@
   background: rgba(0, 0, 0, 0.1);
 }
 
-.alert-close:focus {
+.alert-close:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }

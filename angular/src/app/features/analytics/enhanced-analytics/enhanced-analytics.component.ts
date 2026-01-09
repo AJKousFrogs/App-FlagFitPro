@@ -17,6 +17,7 @@ import { AiConsentRequiredComponent } from "../../../shared/components/ai-consen
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
@@ -32,7 +33,6 @@ import {
   imports: [
     RouterModule,
     CardModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     Tabs,
@@ -388,12 +388,12 @@ export class EnhancedAnalyticsComponent implements OnInit {
   }
 
   exportReport(): void {
-    this.toastService.info("Generating report...");
+    this.toastService.info(TOAST.INFO.REPORT_GENERATING);
 
     // Create a simple CSV export
     const chartData = this.performanceChartData();
     if (!chartData) {
-      this.toastService.error("No data to export");
+      this.toastService.error(TOAST.ERROR.NO_DATA_TO_EXPORT);
       return;
     }
 
@@ -413,6 +413,6 @@ export class EnhancedAnalyticsComponent implements OnInit {
     a.click();
     window.URL.revokeObjectURL(url);
 
-    this.toastService.success("Report exported successfully!");
+    this.toastService.success(TOAST.SUCCESS.REPORT_EXPORTED);
   }
 }

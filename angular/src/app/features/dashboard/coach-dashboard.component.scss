@@ -154,7 +154,7 @@
       }
       .pa-reason {
         display: block;
-        font-size: var(--text-xs);
+        font-size: var(--font-caption-size);
         color: var(--text-secondary);
         white-space: nowrap;
         overflow: hidden;
@@ -163,7 +163,7 @@
     }
 
     i {
-      font-size: var(--text-xs);
+      font-size: var(--font-caption-size);
       color: var(--text-secondary);
     }
   }
@@ -205,7 +205,7 @@
 
   // Decision 8: Use semantic token names
   .team-name {
-    font-size: var(--text-2xl);
+    font-size: var(--font-h2-size);
     font-weight: var(--font-weight-bold);
     color: var(--color-text-primary);
     margin: 0;
@@ -221,7 +221,7 @@
   }
 
   .team-icon {
-    font-size: var(--text-3xl);
+    font-size: var(--font-h2-size);
   }
 
   // Decision 8: Use semantic token names
@@ -882,7 +882,7 @@
     color: var(--color-status-success);
 
     i {
-      font-size: var(--text-3xl);
+      font-size: var(--font-h2-size);
       margin-bottom: var(--space-2);
     }
 
@@ -924,7 +924,7 @@
     }
 
     .jersey-number {
-      font-size: var(--text-xs);
+      font-size: var(--font-caption-size);
       color: var(--text-secondary);
     }
   }

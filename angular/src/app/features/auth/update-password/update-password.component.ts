@@ -22,6 +22,7 @@ import { ToastModule } from "primeng/toast";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 /**
@@ -217,7 +218,7 @@ export class UpdatePasswordComponent implements OnInit {
         this.isValidRecoverySession.set(true);
 
         if (isRecoveryFlow) {
-          this.toastService.info("Please enter your new password");
+          this.toastService.info(TOAST.INFO.ENTER_NEW_PASSWORD);
         }
       } else {
         // No session - check if URL has recovery tokens that haven't been processed

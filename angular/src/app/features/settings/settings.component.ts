@@ -32,6 +32,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -42,7 +43,8 @@ import {
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
-import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
+import { TIMEOUTS, UI_LIMITS, TOAST } from "../../core/constants";
+import { calculateAge } from "../../shared/utils/date.utils";
 
 @Component({
   selector: "app-settings",
@@ -81,6 +83,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   private themeService = inject(ThemeService);
   private logger = inject(LoggerService);
   private profileCompletionService = inject(ProfileCompletionService);
+  private teamMembershipService = inject(TeamMembershipService);
 
   @ViewChild("dobDatePicker", { read: ElementRef })
   dobDatePickerRef?: ElementRef<HTMLElement>;
@@ -312,7 +315,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // Retry after a short delay if element not found
       if (this.retryCount < this.MAX_RETRIES) {
         this.retryCount++;
-        setTimeout(() => this.setupBirthdayInputListener(), TIMEOUTS.UI_MICRO_DELAY);
+        setTimeout(
+          () => this.setupBirthdayInputListener(),
+          TIMEOUTS.UI_MICRO_DELAY,
+        );
       }
       return;
     }
@@ -332,7 +338,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // Retry after a short delay if input not found
       if (this.retryCount < this.MAX_RETRIES) {
         this.retryCount++;
-        setTimeout(() => this.setupBirthdayInputListener(), TIMEOUTS.UI_MICRO_DELAY);
+        setTimeout(
+          () => this.setupBirthdayInputListener(),
+          TIMEOUTS.UI_MICRO_DELAY,
+        );
       }
       return;
     }
@@ -341,7 +350,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     this.retryCount = 0;
 
     // Mark as set up to avoid duplicate listeners
-    const el = inputElement as HTMLInputElement & { __suggestionListenerSetup?: boolean };
+    const el = inputElement as HTMLInputElement & {
+      __suggestionListenerSetup?: boolean;
+    };
     if (el.__suggestionListenerSetup) {
       return;
     }
@@ -473,21 +484,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Calculate age from a birth date
+   * Calculate age from a birth date using centralized utility
    */
   private calculateAgeFromDate(birthDate: Date): number {
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
+    return calculateAge(birthDate);
   }
 
   /**
@@ -520,7 +520,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Load existing profile data from Supabase
+   * Load existing profile data from Supabase and TeamMembershipService
    */
   private async loadProfileData(): Promise<void> {
     try {
@@ -552,20 +552,20 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         });
       }
 
-      // Load current team membership
-      const { data: membership } = await this.supabaseService.client
-        .from("team_members")
-        .select("id, team_id, position, jersey_number")
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .maybeSingle();
+      // Load team membership using centralized service
+      await this.teamMembershipService.loadMembership();
+      const membership = this.teamMembershipService.membership();
 
       if (membership) {
         this.currentTeamMemberId.set(membership.id);
         this.profileForm.patchValue({
-          teamId: membership.team_id,
-          position: membership.position || this.profileForm.get("position")?.value,
-          jerseyNumber: membership.jersey_number?.toString() || this.profileForm.get("jerseyNumber")?.value,
+          teamId: membership.teamId,
+          // team_members is authoritative for position/jersey, override users table values
+          position:
+            membership.position || this.profileForm.get("position")?.value,
+          jerseyNumber:
+            membership.jerseyNumber?.toString() ||
+            this.profileForm.get("jerseyNumber")?.value,
         });
       }
     } catch (error) {
@@ -598,7 +598,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   async saveSettings(): Promise<void> {
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
-      this.toastService.warn("Please fill in all required fields");
+      this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
 
@@ -612,7 +612,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     try {
       const user = this.supabaseService.getCurrentUser();
       if (!user) {
-        this.toastService.error("Please log in to save settings");
+        this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
       }
 
@@ -632,16 +632,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // Try to update user data in Supabase users table (gracefully handle errors)
       try {
         const nameParts = settings.profile.displayName?.split(" ") || [];
-        
+
         // Format date of birth for database (YYYY-MM-DD)
         let dateOfBirthStr: string | null = null;
         if (settings.profile.dateOfBirth) {
           const dob = new Date(settings.profile.dateOfBirth);
           if (!isNaN(dob.getTime())) {
-            dateOfBirthStr = dob.toISOString().split('T')[0];
+            dateOfBirthStr = dob.toISOString().split("T")[0];
           }
         }
-        
+
         const { error: profileError } = await this.supabaseService.client
           .from("users")
           .update({
@@ -649,7 +649,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             first_name: nameParts[0] || null,
             last_name: nameParts.slice(1).join(" ") || null,
             position: settings.profile.position,
-            jersey_number: settings.profile.jerseyNumber ? parseInt(settings.profile.jerseyNumber, 10) : null,
+            jersey_number: settings.profile.jerseyNumber
+              ? parseInt(settings.profile.jerseyNumber, 10)
+              : null,
             height_cm: settings.profile.heightCm || null,
             weight_kg: settings.profile.weightKg || null,
             phone: settings.profile.phone,
@@ -664,10 +666,15 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             profileError.message,
           );
         }
-        
+
         // Update team membership if team was selected
         if (settings.profile.teamId) {
-          await this.updateTeamMembership(user.id, settings.profile.teamId, settings.profile.position, settings.profile.jerseyNumber);
+          await this.updateTeamMembership(
+            user.id,
+            settings.profile.teamId,
+            settings.profile.position,
+            settings.profile.jerseyNumber,
+          );
         }
       } catch {
         // Table update failed, continue with localStorage save
@@ -730,10 +737,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         }
       }
 
-      // Refresh profile completion data immediately so all views update
+      // Refresh centralized services so all views update
       await this.profileCompletionService.refresh();
-      
-      this.toastService.success("Settings saved successfully!");
+      await this.teamMembershipService.refresh();
+
+      this.toastService.success(TOAST.SUCCESS.SETTINGS_SAVED);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to save settings";
@@ -760,7 +768,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         throw new Error(error.message);
       }
 
-      this.toastService.success("Password updated successfully!");
+      this.toastService.success(TOAST.SUCCESS.PASSWORD_CHANGED);
       this.showChangePasswordDialog = false;
       this.passwordForm.reset();
     } catch (error) {
@@ -871,7 +879,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
   copySecret(): void {
     navigator.clipboard.writeText(this.twoFASecret());
-    this.toastService.success("Secret copied to clipboard");
+    this.toastService.success(TOAST.SUCCESS.COPIED);
   }
 
   async verify2FA(): Promise<void> {
@@ -910,7 +918,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       // Move to success step
       this.twoFAStep.set(4);
       this.is2FAEnabled.set(true);
-      this.toastService.success("Two-factor authentication enabled!");
+      this.toastService.success(TOAST.SUCCESS.UPDATED);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Verification failed";
@@ -944,7 +952,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     a.click();
     URL.revokeObjectURL(url);
 
-    this.toastService.success("Backup codes downloaded");
+    this.toastService.success(TOAST.SUCCESS.COPIED);
   }
 
   close2FASetup(): void {
@@ -981,7 +989,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.is2FAEnabled.set(false);
       this.showDisable2FADialog = false;
       this.disable2FACode = "";
-      this.toastService.success("Two-factor authentication disabled");
+      this.toastService.success(TOAST.SUCCESS.UPDATED);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to disable 2FA";
@@ -1038,9 +1046,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.activeSessions.update((sessions) =>
         sessions.filter((s) => s.id !== sessionId),
       );
-      this.toastService.success("Session revoked");
+      this.toastService.success(TOAST.SUCCESS.UPDATED);
     } catch (_error) {
-      this.toastService.error("Failed to revoke session");
+      this.toastService.error(TOAST.ERROR.UPDATE_FAILED);
     }
   }
 
@@ -1049,15 +1057,17 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
     try {
       // In production, call Supabase to revoke all other sessions
-      await new Promise((resolve) => setTimeout(resolve, TIMEOUTS.UI_TRANSITION_DELAY));
+      await new Promise((resolve) =>
+        setTimeout(resolve, TIMEOUTS.UI_TRANSITION_DELAY),
+      );
 
       this.activeSessions.update((sessions) =>
         sessions.filter((s) => s.isCurrent),
       );
-      this.toastService.success("All other sessions revoked");
+      this.toastService.success(TOAST.SUCCESS.UPDATED);
       this.showSessionsDialog = false;
     } catch (_error) {
-      this.toastService.error("Failed to revoke sessions");
+      this.toastService.error(TOAST.ERROR.UPDATE_FAILED);
     } finally {
       this.isRevokingAll.set(false);
     }
@@ -1077,7 +1087,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     try {
       const user = this.supabaseService.getCurrentUser();
       if (!user) {
-        this.toastService.error("Please log in to export your data");
+        this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
       }
 
@@ -1179,11 +1189,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       a.click();
       URL.revokeObjectURL(url);
 
-      this.toastService.success("Data exported successfully!");
+      this.toastService.success(TOAST.SUCCESS.DATA_EXPORTED);
       this.showDataExportDialog = false;
     } catch (error) {
       this.logger.error("Error exporting data:", error);
-      this.toastService.error("Failed to export data. Please try again.");
+      this.toastService.error(TOAST.ERROR.EXPORT_FAILED);
     } finally {
       this.isExportingData.set(false);
       this.exportProgress.set(0);
@@ -1206,14 +1216,18 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     // Profile section
     if (data["profile"]) {
       lines.push("=== PROFILE ===");
-      Object.entries(data["profile"] as Record<string, unknown>).forEach(([key, value]) => {
-        lines.push(`${key},${value || ""}`);
-      });
+      Object.entries(data["profile"] as Record<string, unknown>).forEach(
+        ([key, value]) => {
+          lines.push(`${key},${value || ""}`);
+        },
+      );
       lines.push("");
     }
 
     // Training sessions
-    const sessions = data["trainingSessions"] as Record<string, unknown>[] | undefined;
+    const sessions = data["trainingSessions"] as
+      | Record<string, unknown>[]
+      | undefined;
     if (sessions && sessions.length > 0) {
       lines.push("=== TRAINING SESSIONS ===");
       const headers = Object.keys(sessions[0]);
@@ -1227,7 +1241,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     }
 
     // Wellness checkins
-    const checkins = data["wellnessCheckins"] as Record<string, unknown>[] | undefined;
+    const checkins = data["wellnessCheckins"] as
+      | Record<string, unknown>[]
+      | undefined;
     if (checkins && checkins.length > 0) {
       lines.push("=== WELLNESS CHECKINS ===");
       const headers = Object.keys(checkins[0]);
@@ -1241,7 +1257,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     }
 
     // Achievements
-    const achievements = data["achievements"] as Record<string, unknown>[] | undefined;
+    const achievements = data["achievements"] as
+      | Record<string, unknown>[]
+      | undefined;
     if (achievements && achievements.length > 0) {
       lines.push("=== ACHIEVEMENTS ===");
       const headers = Object.keys(achievements[0]);
@@ -1258,24 +1276,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
   /**
    * Calculate user's age from date of birth
+   * Uses centralized date utility
    */
   calculateAge(): number | null {
     const dob = this.profileForm.get("dateOfBirth")?.value;
     if (!dob) return null;
-
-    const today = new Date();
-    const birthDate = new Date(dob);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-
-    return age;
+    return calculateAge(dob);
   }
 
   // ============================================================================
@@ -1331,7 +1337,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    */
   async submitNewTeamRequest(): Promise<void> {
     if (!this.newTeamName.trim()) {
-      this.toastService.warn("Please enter a team name");
+      this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
 
@@ -1340,49 +1346,53 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     try {
       const user = this.supabaseService.getCurrentUser();
       if (!user) {
-        this.toastService.error("Please log in to request a new team");
+        this.toastService.error(TOAST.ERROR.NOT_AUTHENTICATED);
         return;
       }
 
       // Create the team with pending_approval status
-      const { data: newTeam, error: teamError } = await this.supabaseService.client
-        .from("teams")
-        .insert({
-          name: this.newTeamName.trim(),
-          approval_status: "pending_approval",
-          application_notes: this.newTeamNotes.trim() || null,
-          coach_id: user.id,
-        })
-        .select("id, name")
-        .single();
+      const { data: newTeam, error: teamError } =
+        await this.supabaseService.client
+          .from("teams")
+          .insert({
+            name: this.newTeamName.trim(),
+            approval_status: "pending_approval",
+            application_notes: this.newTeamNotes.trim() || null,
+            coach_id: user.id,
+          })
+          .select("id, name")
+          .single();
 
       if (teamError) {
         throw new Error(teamError.message);
       }
 
       // Create an approval request record
-      await this.supabaseService.client
-        .from("approval_requests")
-        .insert({
-          request_type: "new_team",
-          team_id: newTeam.id,
-          user_id: user.id,
-          request_reason: this.newTeamNotes.trim() || `User requested to create team: ${this.newTeamName}`,
-          status: "pending",
-        });
+      await this.supabaseService.client.from("approval_requests").insert({
+        request_type: "new_team",
+        team_id: newTeam.id,
+        user_id: user.id,
+        request_reason:
+          this.newTeamNotes.trim() ||
+          `User requested to create team: ${this.newTeamName}`,
+        status: "pending",
+      });
 
       // Send email notification to superadmin
       await this.sendTeamApprovalNotification(user, this.newTeamName.trim());
 
       this.toastService.success(
-        "Your team request has been submitted for approval. You will be notified once it's reviewed."
+        "Your team request has been submitted for approval. You will be notified once it's reviewed.",
       );
-      
+
       this.showNewTeamDialog = false;
       this.newTeamName = "";
       this.newTeamNotes = "";
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to submit team request";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to submit team request";
       this.toastService.error(message);
       this.logger.error("Error submitting new team request:", error);
     } finally {
@@ -1393,7 +1403,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   /**
    * Send email notification to superadmin about new team request
    */
-  private async sendTeamApprovalNotification(user: { id: string; email?: string }, teamName: string): Promise<void> {
+  private async sendTeamApprovalNotification(
+    user: { id: string; email?: string },
+    teamName: string,
+  ): Promise<void> {
     try {
       // Call edge function to send email
       const { error } = await this.supabaseService.client.functions.invoke(
@@ -1405,7 +1418,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             requestedById: user.id,
             adminEmail: "merlin@ljubljanafrogs.si",
           },
-        }
+        },
       );
 
       if (error) {
@@ -1420,15 +1433,29 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
   /**
    * Update user's team membership in team_members table
+   * Syncs position and jersey number to team_members (authoritative source)
    */
   private async updateTeamMembership(
     userId: string,
     teamId: string,
     position?: string,
-    jerseyNumber?: string
+    jerseyNumber?: string,
   ): Promise<void> {
     try {
-      // Check if user already has a membership in this team
+      const currentMembership = this.teamMembershipService.membership();
+      const parsedJersey = jerseyNumber ? parseInt(jerseyNumber, 10) : null;
+
+      // If we have current membership from the centralized service, use its method
+      if (currentMembership && currentMembership.teamId === teamId) {
+        // Use centralized service to update position and jersey
+        await this.teamMembershipService.updatePositionAndJersey(
+          position || null,
+          parsedJersey,
+        );
+        return;
+      }
+
+      // Fallback: Check if user already has a membership in this team
       const { data: existingMembership } = await this.supabaseService.client
         .from("team_members")
         .select("id")
@@ -1442,7 +1469,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           .from("team_members")
           .update({
             position: position || null,
-            jersey_number: jerseyNumber ? parseInt(jerseyNumber, 10) : null,
+            jersey_number: parsedJersey,
             updated_at: new Date().toISOString(),
           })
           .eq("id", existingMembership.id);
@@ -1462,22 +1489,20 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             .update({
               team_id: teamId,
               position: position || null,
-              jersey_number: jerseyNumber ? parseInt(jerseyNumber, 10) : null,
+              jersey_number: parsedJersey,
               updated_at: new Date().toISOString(),
             })
             .eq("id", otherMembership.id);
         } else {
           // Create new membership
-          await this.supabaseService.client
-            .from("team_members")
-            .insert({
-              user_id: userId,
-              team_id: teamId,
-              role: "player",
-              position: position || null,
-              jersey_number: jerseyNumber ? parseInt(jerseyNumber, 10) : null,
-              status: "active",
-            });
+          await this.supabaseService.client.from("team_members").insert({
+            user_id: userId,
+            team_id: teamId,
+            role: "player",
+            position: position || null,
+            jersey_number: parsedJersey,
+            status: "active",
+          });
         }
       }
     } catch (error) {

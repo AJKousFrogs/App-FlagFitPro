@@ -54,7 +54,7 @@
 
   .form-label {
     display: block;
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-medium);
     line-height: var(--line-height-normal);
     color: var(--color-text-primary);
@@ -108,7 +108,7 @@
 
   .form-help {
     display: block;
-    font-size: var(--font-body-xs);
+    font-size: var(--font-caption-size);
     line-height: var(--line-height-normal);
     color: var(--color-text-muted);
     margin-top: var(--space-1);
@@ -120,7 +120,7 @@
 
   .form-error {
     display: block;
-    font-size: var(--font-body-xs);
+    font-size: var(--font-caption-size);
     line-height: var(--line-height-normal);
     color: var(--color-status-error);
     margin-top: var(--space-1);
@@ -159,7 +159,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-status-error);
     margin: 0;
@@ -168,7 +168,7 @@
   .form-error-summary__list {
     margin: var(--space-2) 0 0 0;
     padding-left: var(--space-5);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
     color: var(--color-text-primary);
 
     li {
@@ -204,7 +204,7 @@
   }
 
   .form-group__title {
-    font-size: var(--font-heading-sm);
+    font-size: var(--font-h4-size);
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
     margin: 0 0 var(--space-4) 0;
@@ -309,7 +309,7 @@
     padding: 0 var(--space-3);
     background: var(--color-surface-secondary);
     border: var(--border-1) solid var(--color-border-default);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
     color: var(--color-text-muted);
   }
 
@@ -347,7 +347,7 @@
   }
 
   .form-readonly-value {
-    font-size: var(--font-body-md);
+    font-size: var(--font-body-size);
     color: var(--color-text-primary);
     padding: var(--space-3) 0;
   }
@@ -383,18 +383,18 @@
   // Default: 44px (meets iOS touch target requirement)
 
   .form-input--sm {
-    min-height: var(--input-height-sm, 36px) !important;
-    height: var(--input-height-sm, 36px);
+    min-height: var(--input-height-sm) !important;
+    height: var(--input-height-sm);
   }
 
   .form-input--md {
-    min-height: var(--input-height-md, 44px) !important;
-    height: var(--input-height-md, 44px);
+    min-height: var(--input-height-md) !important;
+    height: var(--input-height-md);
   }
 
   .form-input--lg {
-    min-height: var(--input-height-lg, 52px) !important;
-    height: var(--input-height-lg, 52px);
+    min-height: var(--input-height-lg) !important;
+    height: var(--input-height-lg);
   }
 
   // Apply to PrimeNG components
@@ -404,23 +404,23 @@
   .p-autocomplete-input,
   .p-datepicker-input,
   .p-inputnumber-input {
-    min-height: var(--input-height-md, 44px);
+    min-height: var(--input-height-md);
   }
 
   // Small variant class
   .p-inputtext-sm,
   .p-select-sm {
-    min-height: var(--input-height-sm, 36px);
+    min-height: var(--input-height-sm);
     padding: var(--space-2) var(--space-3);
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
   }
 
   // Large variant class
   .p-inputtext-lg,
   .p-select-lg {
-    min-height: var(--input-height-lg, 52px);
+    min-height: var(--input-height-lg);
     padding: var(--space-4) var(--space-5);
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 
   // ============================================

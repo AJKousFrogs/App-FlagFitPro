@@ -22,7 +22,7 @@
   width: 250px;
   background: var(--surface-primary);
   border-right: 1px solid var(--color-border-primary);
-  z-index: 1000;
+  z-index: var(--z-modal);
   transition: transform 0.3s ease;
   overflow-y: auto;
   display: flex;
@@ -50,7 +50,7 @@
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast);
-  z-index: 10;
+  z-index: var(--z-dropdown);
 }
 
 .sidebar-close-btn:hover {
@@ -118,7 +118,7 @@
 }
 
 .logo-text {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   letter-spacing: -0.01em;
@@ -254,7 +254,7 @@
 
 .nav-item-sub {
   padding-left: var(--space-6); // Indent sub-items
-  font-size: var(--font-body-sm);
+  font-size: var(--font-body-sm-size);
 }
 
 .nav-item {
@@ -307,7 +307,7 @@
 }
 
 .nav-item-icon i {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
 }
 
 .nav-badge {
@@ -340,7 +340,7 @@
   right: 0;
   bottom: 0;
   background: var(--surface-overlay);
-  z-index: 999;
+  z-index: var(--z-modal);
   -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }

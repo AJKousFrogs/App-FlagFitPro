@@ -18,7 +18,7 @@ const stats = {
 
 function isCommentedCSSBlock(lines, index) {
   // Detect large commented CSS blocks (5+ consecutive commented lines)
-  if (index + 4 >= lines.length) return false;
+  if (index + 4 >= lines.length) {return false;}
   
   let commentedCount = 0;
   for (let i = index; i < Math.min(index + 10, lines.length); i++) {

@@ -10,6 +10,7 @@ import { firstValueFrom } from "rxjs";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
+import { TOAST } from "../constants/toast-messages.constants";
 import { ApiService } from "./api.service";
 
 export interface Season {
@@ -162,7 +163,7 @@ export class OffboardingService {
 
       if (response.error) throw new Error(response.error);
 
-      this.toastService.success("Season data archived successfully");
+      this.toastService.success(TOAST.SUCCESS.ARCHIVED);
       
       // Reload seasons
       const season = this._seasons().find(s => s.id === seasonId);
@@ -171,7 +172,7 @@ export class OffboardingService {
       }
     } catch (error) {
       this.logger.error("[Offboarding] Error archiving season:", error);
-      this.toastService.error("Failed to archive season data");
+      this.toastService.error(TOAST.ERROR.GENERIC);
       throw error;
     }
   }
@@ -187,11 +188,11 @@ export class OffboardingService {
 
       if (response.error) throw new Error(response.error);
 
-      this.toastService.success("Season reports generated successfully");
+      this.toastService.success(TOAST.SUCCESS.REPORT_GENERATED);
       return response.data || [];
     } catch (error) {
       this.logger.error("[Offboarding] Error generating reports:", error);
-      this.toastService.error("Failed to generate season reports");
+      this.toastService.error(TOAST.ERROR.REPORT_FAILED);
       throw error;
     }
   }
@@ -236,11 +237,11 @@ export class OffboardingService {
       if (response.error) throw new Error(response.error);
 
       await this.loadAccountPause(userId);
-      this.toastService.success("Account paused successfully");
+      this.toastService.success(TOAST.SUCCESS.ACCOUNT_PAUSED);
       return response.data as AccountPause;
     } catch (error) {
       this.logger.error("[Offboarding] Error pausing account:", error);
-      this.toastService.error("Failed to pause account");
+      this.toastService.error(TOAST.ERROR.GENERIC);
       throw error;
     }
   }
@@ -257,10 +258,10 @@ export class OffboardingService {
       if (response.error) throw new Error(response.error);
 
       await this.loadAccountPause(userId);
-      this.toastService.success("Account resumed successfully");
+      this.toastService.success(TOAST.SUCCESS.ACCOUNT_RESUMED);
     } catch (error) {
       this.logger.error("[Offboarding] Error resuming account:", error);
-      this.toastService.error("Failed to resume account");
+      this.toastService.error(TOAST.ERROR.GENERIC);
       throw error;
     }
   }
@@ -305,10 +306,10 @@ export class OffboardingService {
 
       if (response.error) throw new Error(response.error);
 
-      this.toastService.success("Notification sent to player");
+      this.toastService.success(TOAST.SUCCESS.NOTIFICATION_SENT);
     } catch (error) {
       this.logger.error("[Offboarding] Error notifying inactive player:", error);
-      this.toastService.error("Failed to send notification");
+      this.toastService.error(TOAST.ERROR.GENERIC);
       throw error;
     }
   }

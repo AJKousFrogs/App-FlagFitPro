@@ -201,7 +201,7 @@
 }
 
 .exercise-name {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   margin: 0 0 var(--space-2) 0;
   color: var(--color-text-primary);
@@ -525,7 +525,7 @@
 }
 
 .empty-state i {
-  font-size: var(--font-display-md);
+  font-size: var(--font-h1-size);
   opacity: 0.5;
   margin-bottom: var(--space-4);
 }

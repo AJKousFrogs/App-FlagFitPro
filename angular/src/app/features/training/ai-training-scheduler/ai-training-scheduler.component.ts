@@ -22,6 +22,7 @@ import { AiConsentRequiredComponent } from "../../../shared/components/ai-consen
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
 
@@ -377,7 +378,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
       await this.loadScheduledSessions(user.id);
     } catch (error) {
       this.logger.error("Error loading AI scheduler data:", error);
-      this.toastService.error("Failed to load training data");
+      this.toastService.error(TOAST.ERROR.LOAD_FAILED);
     } finally {
       this.isLoading.set(false);
     }
@@ -602,10 +603,10 @@ export class AiTrainingSchedulerComponent implements OnInit {
       // Regenerate suggestions based on current metrics
       this.generateLocalSuggestions();
 
-      this.toastService.success("New AI suggestions generated!");
+      this.toastService.success(TOAST.SUCCESS.AI_SUGGESTIONS_GENERATED);
     } catch (error) {
       this.logger.error("Error generating plan:", error);
-      this.toastService.error("Failed to generate new plan");
+      this.toastService.error(TOAST.ERROR.AI_SUGGESTIONS_FAILED);
     } finally {
       this.isGenerating.set(false);
     }
@@ -643,10 +644,10 @@ export class AiTrainingSchedulerComponent implements OnInit {
         ),
       );
 
-      this.toastService.success("Suggestion applied to your schedule!");
+      this.toastService.success(TOAST.SUCCESS.SUGGESTION_APPLIED);
     } catch (error) {
       this.logger.error("Error applying suggestion:", error);
-      this.toastService.error("Failed to apply suggestion");
+      this.toastService.error(TOAST.ERROR.SUGGESTION_APPLY_FAILED);
     } finally {
       this.applyingId.set(null);
     }
@@ -678,7 +679,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
         suggestions.filter((s) => s.id !== suggestion.id),
       );
 
-      this.toastService.info("Suggestion dismissed");
+      this.toastService.info(TOAST.INFO.SUGGESTION_DISMISSED);
     } catch (error) {
       this.logger.error("Error dismissing suggestion:", error);
     }

@@ -41,7 +41,7 @@
 .programs-section {
   h3 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
@@ -80,7 +80,7 @@
 
     h4 {
       margin: 0;
-      font-size: var(--font-body-lg);
+      font-size: var(--font-body-size);
       font-weight: var(--font-weight-semibold);
       color: var(--ds-text-primary);
     }
@@ -156,7 +156,7 @@
   }
 
   i {
-    font-size: var(--font-body-2xs); /* 10px - micro icon */
+    font-size: var(--font-caption-size); /* 10px - micro icon */
     color: var(--ds-text-tertiary);
   }
 }

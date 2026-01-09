@@ -201,7 +201,7 @@ function fixFormLabels() {
     }
 
     // Check for label with matching for/id
-    const id = input.id;
+    const {id} = input;
     if (id) {
       const label = document.querySelector(`label[for="${id}"]`);
       if (!label) {

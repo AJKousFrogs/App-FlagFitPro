@@ -381,7 +381,7 @@ export function showLoading(element, text = "Loading...") {
   icon.setAttribute('aria-hidden', 'true');
   icon.textContent = '⏳';
   element.appendChild(icon);
-  element.appendChild(document.createTextNode(' ' + text));
+  element.appendChild(document.createTextNode(` ${  text}`));
   element.disabled = true;
 }
 

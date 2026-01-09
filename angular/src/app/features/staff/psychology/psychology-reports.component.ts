@@ -28,6 +28,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { formatDate } from "../../../shared/utils/date.utils";
 
 // Interfaces based on FEATURE_DOCUMENTATION.md §32
 interface MentalWellnessReport {
@@ -134,7 +135,6 @@ interface ReportPrivacySettings {
     RouterModule,
     CardModule,
     CheckboxModule,
-    // ChartModule, // REMOVED: Using LazyChartComponent
 
     LazyChartComponent,
     DialogModule,
@@ -1661,7 +1661,7 @@ export class PsychologyReportsComponent implements OnInit {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString();
+    return formatDate(date, 'P');
   }
 
   getMetadataEntries(metadata: Record<string, unknown>): Array<{ key: string; value: string }> {

@@ -13,7 +13,7 @@
   position: relative;
   
   // Focus styles for keyboard navigation
-  &:focus {
+  &:focus-visible {
     outline: 3px solid rgba(var(--primitive-error-500-rgb), 0.4);
     outline-offset: 2px;
   }

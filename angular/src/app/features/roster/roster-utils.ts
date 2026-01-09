@@ -3,6 +3,8 @@
  * Shared helper functions for roster components
  */
 
+// getInitials is imported directly from format.utils where needed
+
 /**
  * Get full position name from abbreviation
  */
@@ -172,17 +174,7 @@ export function formatHeight(height: string): string {
   return height;
 }
 
-/**
- * Get initials from a name
- */
-export function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase();
-}
+// getInitials() removed - import directly from @shared/utils/format.utils
 
 /**
  * Extract years from experience string (e.g., "5 years" -> "5")

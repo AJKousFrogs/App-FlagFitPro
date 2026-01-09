@@ -49,6 +49,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 // Services
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
     BloodCirculationRisk,
     CarTravelProtocol,
@@ -1399,7 +1400,7 @@ export class TravelRecoveryComponent implements OnInit {
 
   createCarPlan(): void {
     if (!this.canCreateCarPlan()) {
-      this.toastService.warn("Please fill in trip name and duration");
+      this.toastService.warn(TOAST.WARN.MISSING_TRIP_DETAILS);
       return;
     }
 
@@ -1416,7 +1417,7 @@ export class TravelRecoveryComponent implements OnInit {
       this.carTripForm.isDriver,
     );
 
-    this.toastService.success("Car travel protocol generated!");
+    this.toastService.success(TOAST.SUCCESS.TRAVEL_PROTOCOL_GENERATED);
   }
 
   getRiskColor(
@@ -1518,7 +1519,7 @@ export class TravelRecoveryComponent implements OnInit {
 
   createPlan(): void {
     if (!this.canCreatePlan()) {
-      this.toastService.warn("Please fill in all required fields");
+      this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
 
@@ -1533,7 +1534,7 @@ export class TravelRecoveryComponent implements OnInit {
       layovers: this.tripForm.layovers,
     });
 
-    this.toastService.success("Recovery protocol generated!");
+    this.toastService.success(TOAST.SUCCESS.RECOVERY_PROTOCOL_GENERATED);
   }
 
   startNewPlan(): void {

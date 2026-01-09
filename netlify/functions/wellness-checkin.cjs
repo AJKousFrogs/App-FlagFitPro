@@ -347,14 +347,14 @@ async function saveCheckin(supabase, userId, payload, headers) {
         .single();
 
         if (teamMember) {
-          // Get player name
-          const { data: playerProfile } = await supabase
-            .from("profiles")
+          // Get player name (use 'users' table - profiles doesn't exist)
+          const { data: playerData } = await supabase
+            .from("users")
             .select("full_name")
             .eq("id", userId)
             .single();
 
-          const playerName = playerProfile?.full_name || "Player";
+          const playerName = playerData?.full_name || "Player";
 
           // Get psychologist for team
           const { data: psychologists } = await supabase
@@ -463,14 +463,14 @@ async function saveCheckin(supabase, userId, payload, headers) {
           }
 
           if (deviations.length > 0) {
-            // Get player name
-            const { data: playerProfile } = await supabase
-              .from("profiles")
+            // Get player name (use 'users' table - profiles doesn't exist)
+            const { data: playerData } = await supabase
+              .from("users")
               .select("full_name")
               .eq("id", userId)
               .single();
 
-            const playerName = playerProfile?.full_name || "Player";
+            const playerName = playerData?.full_name || "Player";
 
             // Get nutritionist for team
             const { data: nutritionists } = await supabase
@@ -494,7 +494,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
                 metadata: {
                   tournament_id: tournament.id,
                   tournament_name: tournament.name,
-                  deviations: deviations,
+                  deviations,
                   logged_meals: loggedMeals,
                   expected_meals: expectedMeals,
                   total_calories: totalCalories,

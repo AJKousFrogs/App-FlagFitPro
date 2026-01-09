@@ -25,7 +25,6 @@ import { Slider } from "primeng/slider";
 import { StepperModule } from "primeng/stepper";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
-import { ToggleButton } from "primeng/togglebutton";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
@@ -33,7 +32,9 @@ import { LoadMonitoringService } from "../../../core/services/load-monitoring.se
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { WeatherService } from "../../../core/services/weather.service";
+import { formatDate } from "../../utils/date.utils";
 
 interface TrainingExercise {
   id: string;
@@ -76,7 +77,7 @@ interface Goal {
   ],
   template: `
     <p-card header="Smart Training Session Builder" class="training-builder">
-      <p-stepper [value]="activeStep" (valueChange)="activeStep = $event" [linear]="false">
+      <p-stepper [value]="activeStep" (valueChange)="activeStep = $event ?? 0" [linear]="false">
         <p-step-list>
           @for (step of steps; track $index) {
             <p-step [value]="$index">{{ step.label }}</p-step>
@@ -775,7 +776,7 @@ export class TrainingBuilderComponent {
     // Save session to database and start tracking
     const user = this.authService.getUser();
     if (!user?.id) {
-      this.toastService.error("Please log in to start a session");
+      this.toastService.error(TOAST.ERROR.LOGIN_TO_START_SESSION);
       return;
     }
 
@@ -809,17 +810,17 @@ export class TrainingBuilderComponent {
       );
 
       if (session.id) {
-        this.toastService.success("Training session started and logged!");
+        this.toastService.success(TOAST.SUCCESS.SESSION_STARTED_LOGGED);
         this.logger.success("Session saved to database:", session);
 
         // Navigate to dashboard to see updated ACWR
         this.router.navigate(["/dashboard"]);
       } else {
-        this.toastService.warn("Session started but may not have been saved");
+        this.toastService.warn(TOAST.WARN.SESSION_STARTED_UNSAVED);
       }
     } catch (error) {
       this.logger.error("Error starting session:", error);
-      this.toastService.error("Failed to save training session");
+      this.toastService.error(TOAST.ERROR.SESSION_SAVE_FAILED);
     } finally {
       this.isSaving.set(false);
     }
@@ -829,7 +830,7 @@ export class TrainingBuilderComponent {
     // Save session template to database
     const user = this.authService.getUser();
     if (!user?.id) {
-      this.toastService.error("Please log in to save a session");
+      this.toastService.error(TOAST.ERROR.LOGIN_TO_SAVE_SESSION);
       return;
     }
 
@@ -856,7 +857,7 @@ export class TrainingBuilderComponent {
             equipment_needed: [
               ...new Set(exercises.flatMap((e) => e.equipment || [])),
             ],
-            notes: `Generated on ${new Date().toLocaleDateString()}`,
+            notes: `Generated on ${formatDate(new Date(), 'P')}`,
             day_of_week: new Date().getDay(),
             session_order: 1,
           })
@@ -919,7 +920,7 @@ export class TrainingBuilderComponent {
         });
       }
 
-      this.toastService.success("Session template saved successfully!");
+      this.toastService.success(TOAST.SUCCESS.SESSION_TEMPLATE_SAVED);
       this.logger.info("Session template saved:", template.id);
 
       // Optionally navigate to training schedule

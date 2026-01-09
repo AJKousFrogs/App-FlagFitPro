@@ -140,7 +140,7 @@
 
 .card-shell__header-icon {
   // CANONICAL: raw icon, no container
-  font-size: var(--font-body-md); // 16px
+  font-size: var(--font-body-size); // 16px
   color: var(--color-brand-primary);
   opacity: 0.85;
   flex-shrink: 0;
@@ -151,7 +151,7 @@
 }
 
 .card-shell__header-icon--compact {
-  font-size: var(--font-body-sm); // 14px
+  font-size: var(--font-body-sm-size); // 14px
 }
 
 // ============================================
@@ -275,12 +275,12 @@
   }
 
   .card-empty-state__title {
-    font-size: var(--font-body-md);
+    font-size: var(--font-body-size);
     margin-bottom: var(--space-1);
   }
 
   .card-empty-state__text {
-    font-size: var(--font-body-sm);
+    font-size: var(--font-body-sm-size);
   }
 }
 
@@ -305,19 +305,19 @@
 
 .card-empty-state__title {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--font-body-md);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   line-height: var(--line-height-snug);
 }
 
 .card-empty-state--compact .card-empty-state__title {
-  font-size: var(--font-body-sm);
+  font-size: var(--font-body-sm-size);
 }
 
 .card-empty-state__text {
   margin: 0;
-  font-size: var(--font-body-sm);
+  font-size: var(--font-body-sm-size);
   color: var(--color-text-muted);
   line-height: var(--line-height-base);
   max-width: 280px;
@@ -363,7 +363,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   flex-shrink: 0;
 
   // Icon color variants

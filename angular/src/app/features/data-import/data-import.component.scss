@@ -31,14 +31,14 @@
   padding: var(--space-2);
 
   .type-icon {
-    font-size: var(--font-display-sm);
+    font-size: var(--font-h1-size);
     display: block;
     margin-bottom: var(--space-3);
   }
 
   h3 {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
@@ -82,7 +82,7 @@
 .step-card {
   h3 {
     margin: 0 0 var(--space-4) 0;
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }
@@ -115,7 +115,7 @@
   }
 
   i {
-    font-size: var(--font-display-md);
+    font-size: var(--font-h1-size);
     color: var(--ds-primary-green);
     margin-bottom: var(--space-3);
   }
@@ -207,7 +207,7 @@
     .stat-item {
       .stat-value {
         display: block;
-        font-size: var(--font-body-lg);
+        font-size: var(--font-body-size);
         font-weight: var(--font-weight-semibold);
         color: var(--ds-text-primary);
       }
@@ -295,7 +295,7 @@
     margin: 0 auto var(--space-4);
 
     i {
-      font-size: var(--font-display-sm);
+      font-size: var(--font-h1-size);
       color: var(--primitive-error-500);
     }
 
@@ -376,7 +376,7 @@
 .wearables-card {
   h3 {
     margin: 0 0 var(--space-4) 0;
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
     font-weight: var(--font-weight-semibold);
     color: var(--ds-text-primary);
   }

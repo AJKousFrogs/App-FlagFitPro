@@ -11,20 +11,21 @@ const { createClient } = require('@supabase/supabase-js');
 function createMockSupabase(mockData = {}) {
   return {
     from: (table) => ({
-      select: (columns) => ({
+      select: (_columns) => ({
         eq: (column, value) => ({
           maybeSingle: async () => ({ data: mockData[table]?.[column]?.[value] || null, error: null }),
           single: async () => ({ data: mockData[table]?.[column]?.[value] || null, error: null }),
         }),
-        lte: (column, value) => ({
-          gte: (column, value) => ({
-            maybeSingle: async () => ({ data: mockData[table]?.[column] || null, error: null }),
-            single: async () => ({ data: mockData[table]?.[column] || null, error: null }),
+        lte: (_column, _value) => ({
+          gte: (_column2, _value2) => ({
+            maybeSingle: async () => ({ data: mockData[table]?.[_column2] || null, error: null }),
+            single: async () => ({ data: mockData[table]?.[_column2] || null, error: null }),
           }),
         }),
-        eq: (column, value) => ({
-          eq: (column2, value2) => ({
-            maybeSingle: async () => ({ data: mockData[table]?.[column]?.[value] || null, error: null }),
+        // Duplicate eq removed - nested eq was never used
+        nestedEq: (_column3, _value3) => ({
+          eq: (_column4, _value4) => ({
+            maybeSingle: async () => ({ data: mockData[table]?.[_column3]?.[_value3] || null, error: null }),
           }),
         }),
       }),

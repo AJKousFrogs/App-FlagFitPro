@@ -17,6 +17,7 @@ import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { TIMEOUTS } from "../constants/app.constants";
+import { formatDate } from "../../shared/utils/date.utils";
 
 // ============================================================================
 // TYPES
@@ -432,6 +433,6 @@ export class PresenceService implements OnDestroy {
     const diffHours = Math.floor(diffMs / 3600000);
     if (diffHours < 24) return `${diffHours}h ago`;
 
-    return date.toLocaleDateString();
+    return formatDate(date, 'P');
   }
 }

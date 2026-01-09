@@ -11,7 +11,7 @@ import { setSafeContent } from './utils/shared.js';
   "use strict";
 
   // Get storageService from global window object
-  const storageService = window.storageService;
+  const {storageService} = window;
 
   // Wait for notification manager to be available
   function initWellnessNotifications() {

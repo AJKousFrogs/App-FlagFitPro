@@ -99,7 +99,7 @@ function guardMerlinRequest(req, res, next) {
   
   // Check if this is a Merlin request
   if (!isMerlinRequest(headers, userMetadata, token)) {
-    if (next) return next(); // Not Merlin, proceed normally
+    if (next) {return next();} // Not Merlin, proceed normally
     return false; // Not Merlin, allow
   }
   
@@ -142,7 +142,7 @@ function guardMerlinRequest(req, res, next) {
   }
   
   // Read-only request allowed
-  if (next) return next();
+  if (next) {return next();}
   return false; // Allow
 }
 

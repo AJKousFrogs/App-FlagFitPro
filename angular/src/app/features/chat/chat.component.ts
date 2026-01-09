@@ -51,11 +51,14 @@ import {
 import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import {
   DIALOG_STYLES,
   DROPDOWN_WIDTHS,
 } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { getInitials } from "../../shared/utils/format.utils";
+import { formatDate } from "../../shared/utils/date.utils";
 
 @Component({
   selector: "app-chat",
@@ -331,7 +334,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                       <div class="message-row">
                         <p-avatar
                           [label]="
-                            getInitials(
+                            getInitialsStr(
                               message.author?.full_name ||
                                 message.author?.email ||
                                 'U'
@@ -429,7 +432,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                           (click)="insertMention(member)"
                         >
                           <p-avatar
-                            [label]="getInitials(member.full_name)"
+                            [label]="getInitialsStr(member.full_name)"
                             size="normal"
                           ></p-avatar>
                           <span>{{ member.full_name }}</span>
@@ -672,7 +675,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                     <div class="member-avatar-container">
                       <p-avatar
                         [label]="
-                          member.initials || getInitials(member.full_name)
+                          member.initials || getInitialsStr(member.full_name)
                         "
                         shape="circle"
                         size="large"
@@ -728,7 +731,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
                     <div class="member-avatar-container">
                       <p-avatar
                         [label]="
-                          member.initials || getInitials(member.full_name)
+                          member.initials || getInitialsStr(member.full_name)
                         "
                         shape="circle"
                         size="large"
@@ -1018,7 +1021,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
         await this.selectChannel(channels[0]);
       }
     } catch (_error) {
-      this.toastService.error("Failed to load channels");
+      this.toastService.error(TOAST.ERROR.CHANNEL_LOAD_FAILED);
     }
   }
 
@@ -1051,7 +1054,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       // Get team ID (would come from current context in real app)
       const teamId = await this.getCurrentTeamId();
       if (!teamId) {
-        this.toastService.error("No team selected");
+        this.toastService.error(TOAST.ERROR.NO_TEAM_SELECTED);
         return;
       }
 
@@ -1066,14 +1069,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
             : undefined,
       });
 
-      this.toastService.success(`Channel #${channel.name} created!`);
+      this.toastService.success(TOAST.SUCCESS.CHANNEL_CREATED.replace("{name}", channel.name));
       this.showCreateChannelDialog = false;
       this.resetChannelForm();
 
       // Select the new channel
       await this.selectChannel(channel);
     } catch (_error) {
-      this.toastService.error("Failed to create channel");
+      this.toastService.error(TOAST.ERROR.CHANNEL_CREATE_FAILED);
     }
   }
 
@@ -1109,7 +1112,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
       setTimeout(() => this.scrollToBottom(), TIMEOUTS.UI_MICRO_DELAY);
     } catch (_error) {
-      this.toastService.error("Failed to send message");
+      this.toastService.error(TOAST.ERROR.MESSAGE_SEND_FAILED);
     }
   }
 
@@ -1117,7 +1120,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       await this.channelService.togglePinMessage(message.id);
     } catch (_error) {
-      this.toastService.error("Failed to update pin");
+      this.toastService.error(TOAST.ERROR.PIN_UPDATE_FAILED);
     }
   }
 
@@ -1125,7 +1128,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       await this.channelService.toggleImportantMessage(message.id);
     } catch (_error) {
-      this.toastService.error("Failed to update importance");
+      this.toastService.error(TOAST.ERROR.IMPORTANCE_UPDATE_FAILED);
     }
   }
 
@@ -1134,9 +1137,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
     try {
       await this.channelService.deleteMessage(message.id);
-      this.toastService.success("Message deleted");
+      this.toastService.success(TOAST.SUCCESS.MESSAGE_DELETED);
     } catch (_error) {
-      this.toastService.error("Failed to delete message");
+      this.toastService.error(TOAST.ERROR.MESSAGE_DELETE_FAILED);
     }
   }
 
@@ -1308,16 +1311,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     const diffHours = Math.floor(diffMs / 3600000);
     if (diffHours < 24) return `${diffHours}h ago`;
 
-    return date.toLocaleDateString();
+    return formatDate(date, 'P');
   }
 
-  getInitials(name: string): string {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  /**
+   * Get initials from name using centralized utility
+   */
+  getInitialsStr(name: string): string {
+    return getInitials(name);
   }
 
   getAvatarColor(name: string): string {
@@ -1359,7 +1360,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       );
       this._channelMembersData.set(membersData);
     } catch (_error) {
-      this.toastService.error("Failed to load channel members");
+      this.toastService.error(TOAST.ERROR.CHANNEL_MEMBERS_FAILED);
       this._channelMembersData.set(null);
     } finally {
       this._loadingMembers.set(false);
@@ -1375,7 +1376,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     try {
       const teamId = await this.getCurrentTeamId();
       if (!teamId) {
-        this.toastService.error("No team found");
+        this.toastService.error(TOAST.ERROR.NO_TEAM_FOUND);
         return;
       }
 
@@ -1391,11 +1392,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       // Select the DM channel
       await this.selectChannel(dmChannel);
 
-      this.toastService.success(
-        `Started conversation with ${member.full_name}`,
-      );
+      this.toastService.success(TOAST.SUCCESS.CONVERSATION_STARTED.replace("{name}", member.full_name));
     } catch (_error) {
-      this.toastService.error("Failed to start conversation");
+      this.toastService.error(TOAST.ERROR.CONVERSATION_START_FAILED);
     }
   }
 

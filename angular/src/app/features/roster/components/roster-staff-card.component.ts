@@ -5,7 +5,8 @@
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CardModule } from "primeng/card";
 import { StaffMember } from "../roster.models";
-import { getInitials, getYears } from "../roster-utils";
+import { getInitials } from "../../../shared/utils/format.utils";
+import { getYears } from "../roster-utils";
 
 @Component({
   selector: "app-roster-staff-card",

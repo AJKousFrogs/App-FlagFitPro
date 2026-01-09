@@ -5,7 +5,7 @@ import { logger } from "./logger.js";
 import { API_BASE_URL } from "./api-config.js";
 import { CHART_MOCK_DATA } from "./js/config/chart-mock-data.js";
 
-/* global XMLHttpRequest */
+// XMLHttpRequest is a browser global
 
 class AnalyticsDataService {
   constructor() {
@@ -54,7 +54,7 @@ class AnalyticsDataService {
         // Use fetch API
         response = await fetch(url, {
           method: options.method || "GET",
-          headers: headers,
+          headers,
           body: options.body ? JSON.stringify(options.body) : undefined,
           ...options,
         });
@@ -145,7 +145,7 @@ class AnalyticsDataService {
   setCachedData(key, data) {
     try {
       const cacheEntry = {
-        data: data,
+        data,
         timestamp: Date.now(),
       };
 

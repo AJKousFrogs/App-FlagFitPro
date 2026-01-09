@@ -6,6 +6,7 @@
 
 import { signal, computed, Signal, WritableSignal } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
+import { VALIDATION } from "../../core/constants/app.constants";
 
 /**
  * Form Field State (Signal-based)
@@ -51,6 +52,12 @@ export function createFormFieldState<T = unknown>(
 
 /**
  * Common validators as signal-compatible functions
+ * 
+ * NOTE: These validators are maintained for backward compatibility.
+ * New code should use SignalValidators from @core/config/signal-forms.config
+ * which provides a more flexible factory pattern.
+ * 
+ * @deprecated Consider migrating to SignalValidators for new code
  */
 export const FormValidators = {
   required: <T>(value: T | null | undefined): string | null => {
@@ -65,8 +72,7 @@ export const FormValidators = {
 
   email: (value: string | null | undefined): string | null => {
     if (!value) return null;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(value) ? null : "Please enter a valid email address";
+    return VALIDATION.EMAIL_PATTERN.test(value) ? null : "Please enter a valid email address";
   },
 
   minLength:
@@ -101,35 +107,23 @@ export const FormValidators = {
       return "Password must be at least 8 characters";
     }
 
-    if (!/[A-Z]/.test(value)) {
+    if (!VALIDATION.PASSWORD_UPPERCASE_PATTERN.test(value)) {
       return "Password must include at least one uppercase letter";
     }
 
-    if (!/[a-z]/.test(value)) {
+    if (!VALIDATION.PASSWORD_LOWERCASE_PATTERN.test(value)) {
       return "Password must include at least one lowercase letter";
     }
 
-    if (!/\d/.test(value)) {
+    if (!VALIDATION.PASSWORD_NUMBER_PATTERN.test(value)) {
       return "Password must include at least one number";
     }
 
-    if (!/[@$!%*?&]/.test(value)) {
+    if (!VALIDATION.PASSWORD_SPECIAL_PATTERN.test(value)) {
       return "Password must include at least one special character (@$!%*?&)";
     }
 
     return null;
-  },
-
-  /**
-   * Legacy password validator (kept for backwards compatibility)
-   */
-  password: (value: string | null | undefined): string | null => {
-    if (!value) return null;
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(value)
-      ? null
-      : "Password must be at least 8 characters and include uppercase, lowercase, number, and special character";
   },
 
   /**
@@ -138,8 +132,7 @@ export const FormValidators = {
   phone: (value: string | null | undefined): string | null => {
     if (!value) return null;
     const cleaned = value.replace(/[\s\-()]/g, "");
-    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-    return phoneRegex.test(cleaned)
+    return VALIDATION.PHONE_E164_PATTERN.test(cleaned)
       ? null
       : "Please enter a valid phone number";
   },
@@ -149,6 +142,9 @@ export const FormValidators = {
    */
   url: (value: string | null | undefined): string | null => {
     if (!value) return null;
+    if (!VALIDATION.URL_PATTERN.test(value)) {
+      return "Please enter a valid URL (must start with http:// or https://)";
+    }
     try {
       new URL(value);
       return null;
@@ -171,7 +167,7 @@ export const FormValidators = {
       return "Username cannot exceed 20 characters";
     }
 
-    if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+    if (!VALIDATION.USERNAME_PATTERN.test(value)) {
       return "Username can only contain letters, numbers, and underscores";
     }
 

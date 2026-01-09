@@ -10,9 +10,10 @@ import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "../../core/services/toast.service";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingMetricsService } from "../../core/services/training-metrics.service";
 import { WearableParserService } from "../../core/services/wearable-parser.service";
-import { ErrorHandlerUtil } from "../../core/utils/error-handler.util";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 
 @Component({
   selector: "app-import-dataset",
@@ -240,7 +241,7 @@ export class ImportDatasetComponent {
   async parseAndImport() {
     const file = this.selectedFile();
     if (!file || !this.athleteId()) {
-      this.toastService.warn("Please select a file and enter Athlete ID");
+      this.toastService.warn(TOAST.WARN.MISSING_FILE_AND_ID);
       return;
     }
 
@@ -259,13 +260,13 @@ export class ImportDatasetComponent {
           success: true,
           metrics: result.metrics,
         });
-        this.toastService.success("File parsed and imported successfully!");
+        this.toastService.success(TOAST.SUCCESS.DATA_IMPORTED);
         this.selectedFile.set(null);
       } else {
         throw new Error("Import failed");
       }
     } catch (error) {
-      const errorMessage = ErrorHandlerUtil.extractErrorMessage(
+      const errorMessage = getErrorMessage(
         error,
         "Failed to parse and import file",
       );
@@ -283,7 +284,7 @@ export class ImportDatasetComponent {
     const athleteId = this.athleteId();
     const jsonText = this.jsonText();
     if (!athleteId || !jsonText.trim()) {
-      this.toastService.warn("Please fill in both Athlete ID and Dataset JSON");
+      this.toastService.warn(TOAST.WARN.MISSING_REQUIRED_FIELDS);
       return;
     }
 
@@ -309,14 +310,14 @@ export class ImportDatasetComponent {
           success: true,
           metrics: result.metrics,
         });
-        this.toastService.success("Dataset imported successfully!");
+        this.toastService.success(TOAST.SUCCESS.DATA_IMPORTED);
         // Clear form
         this.jsonText.set("");
       } else {
         throw new Error("Import failed");
       }
     } catch (error) {
-      const errorMessage = ErrorHandlerUtil.extractErrorMessage(
+      const errorMessage = getErrorMessage(
         error,
         "Failed to import dataset",
       );

@@ -17,7 +17,8 @@ export interface PDFExportOptions {
 }
 
 // Dynamic import types - these libraries are loaded lazily
-type JsPDFConstructor = new (options: { orientation: string; unit: string; format: string }) => {
+type JsPDFOrientation = 'p' | 'l' | 'portrait' | 'landscape';
+type JsPDFConstructor = new (options: { orientation: JsPDFOrientation; unit: string; format: string }) => {
   addImage: (data: string, format: string, x: number, y: number, w: number, h: number) => void;
   addPage: () => void;
   save: (filename: string) => void;
@@ -90,7 +91,7 @@ export class LazyPdfService {
 
     try {
       // Convert HTML to canvas
-      const canvas = await this.html2canvas(element, {
+      const canvas = await this.html2canvas!(element, {
         scale,
         useCORS: true,
         logging: false,
@@ -102,8 +103,8 @@ export class LazyPdfService {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       // Create PDF
-      const pdf = new this.jsPDF({
-        orientation,
+      const pdf = new this.jsPDF!({
+        orientation: orientation as JsPDFOrientation,
         unit: 'mm',
         format
       });
@@ -138,8 +139,8 @@ export class LazyPdfService {
     } = options;
 
     try {
-      const pdf = new this.jsPDF({
-        orientation,
+      const pdf = new this.jsPDF!({
+        orientation: orientation as JsPDFOrientation,
         unit: 'mm',
         format
       });
@@ -150,7 +151,7 @@ export class LazyPdfService {
         const element = elements[i];
 
         // Convert to canvas
-        const canvas = await this.html2canvas(element, {
+        const canvas = await this.html2canvas!(element, {
           scale,
           useCORS: true,
           logging: false,

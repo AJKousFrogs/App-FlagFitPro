@@ -8,7 +8,7 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -28,6 +28,7 @@ import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
+import { ContextService } from "../../../core/services/context.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -105,6 +106,7 @@ const BALANCE_FILTERS = [
 @Component({
   selector: "app-payment-management",
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -721,6 +723,7 @@ const BALANCE_FILTERS = [
 })
 export class PaymentManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private readonly context = inject(ContextService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
@@ -822,9 +825,15 @@ export class PaymentManagementComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
+      const teamId = this.context.currentTeam()?.id;
+      if (!teamId) {
+        this.logger.warn("No team ID available");
+        return;
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const response: any = await firstValueFrom(
-        this.api.get("/api/coach/payments"),
+        this.api.get("/api/coach/payments", { team_id: teamId }),
       );
       if (response?.success && response.data) {
         this.fees.set(response.data.fees || []);
@@ -876,22 +885,91 @@ export class PaymentManagementComponent implements OnInit {
     this.showPaymentDialog = true;
   }
 
-  createFee(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Fee Created",
-      detail: `${this.feeForm.name} has been created`,
-    });
-    this.showFeeDialog = false;
+  async createFee(): Promise<void> {
+    try {
+      const teamId = this.context.currentTeam()?.id;
+      if (!teamId) {
+        this.messageService.add({
+          severity: "error",
+          summary: "Error",
+          detail: "No team selected",
+        });
+        return;
+      }
+
+      const response: any = await firstValueFrom(
+        this.api.post("/api/coach/payments/fees", {
+          team_id: teamId,
+          name: this.feeForm.name,
+          type: this.feeForm.type,
+          amount: this.feeForm.amount,
+          guestFee: this.feeForm.guestFee || null,
+          dueDate: this.feeForm.dueDate,
+          description: this.feeForm.description,
+          applyTo: this.feeForm.applyTo,
+          playerIds: this.feeForm.applyTo === "select" ? [] : undefined,
+        }),
+      );
+
+      if (response?.success) {
+        this.messageService.add({
+          severity: "success",
+          summary: "Fee Created",
+          detail: `${this.feeForm.name} has been created`,
+        });
+        this.showFeeDialog = false;
+        await this.loadData(); // Reload data
+      }
+    } catch (err) {
+      this.logger.error("Failed to create fee", err);
+      this.messageService.add({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to create fee. Please try again.",
+      });
+    }
   }
 
-  recordPayment(): void {
-    this.messageService.add({
-      severity: "success",
-      summary: "Payment Recorded",
-      detail: `Payment of $${this.paymentForm.amount} has been recorded`,
-    });
-    this.showPaymentDialog = false;
+  async recordPayment(): Promise<void> {
+    try {
+      const teamId = this.context.currentTeam()?.id;
+      if (!teamId) {
+        this.messageService.add({
+          severity: "error",
+          summary: "Error",
+          detail: "No team selected",
+        });
+        return;
+      }
+
+      const response: any = await firstValueFrom(
+        this.api.post("/api/coach/payments/record", {
+          team_id: teamId,
+          player_id: this.paymentForm.playerId,
+          amount: this.paymentForm.amount,
+          method: this.paymentForm.method,
+          date: this.paymentForm.date,
+          reference: this.paymentForm.reference,
+        }),
+      );
+
+      if (response?.success) {
+        this.messageService.add({
+          severity: "success",
+          summary: "Payment Recorded",
+          detail: `Payment of $${this.paymentForm.amount} has been recorded`,
+        });
+        this.showPaymentDialog = false;
+        await this.loadData(); // Reload data
+      }
+    } catch (err) {
+      this.logger.error("Failed to record payment", err);
+      this.messageService.add({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to record payment. Please try again.",
+      });
+    }
   }
 
   // Action methods

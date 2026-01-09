@@ -582,7 +582,7 @@
 
 .budget-value {
   font-weight: var(--font-weight-bold);
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
 }
 
 /* Player Availability List */
@@ -693,7 +693,7 @@
 
 .calc-row.highlight {
   font-weight: var(--font-weight-bold);
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   background: var(--ds-primary-green-ultra-subtle);
   padding: var(--space-3);
   border-radius: var(--radius-md);
@@ -883,7 +883,7 @@
   }
 
   .tournament-title {
-    font-size: var(--font-body-lg);
+    font-size: var(--font-body-size);
   }
 
   .tournament-meta {

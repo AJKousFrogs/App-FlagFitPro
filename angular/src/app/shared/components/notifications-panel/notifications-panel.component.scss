@@ -15,7 +15,7 @@
   right: 0;
   bottom: 0;
   background: var(--surface-overlay);
-  z-index: 1000;
+  z-index: var(--z-modal);
   animation: fadeIn 0.2s ease;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .header-icon {
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   color: var(--ds-primary-green);
 }
 
@@ -97,7 +97,7 @@
   border-radius: var(--radius-full);
   background: var(--color-status-success-subtle);
   color: var(--color-status-success);
-  font-size: 0.65rem;
+  font-size: var(--font-compact-md);
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
@@ -194,7 +194,7 @@
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   white-space: nowrap;
-  transition: all var(--motion-fast) var(--ease-standard);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   
   &:hover {
     background: var(--surface-hover);
@@ -221,7 +221,7 @@
   border-radius: var(--radius-full);
   background: var(--color-status-error);
   color: var(--color-text-on-primary);
-  font-size: 0.65rem;
+  font-size: var(--font-compact-md);
   font-weight: var(--font-weight-bold);
   
   .filter-tab.active & {
@@ -317,7 +317,7 @@
 
 .empty-state h4 {
   margin: 0 0 var(--space-2);
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
 }
@@ -341,7 +341,7 @@
 
 .group-header {
   padding: var(--space-2) var(--space-6);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -355,11 +355,11 @@
   gap: var(--space-3);
   padding: var(--space-4) var(--space-5);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   border-left: var(--border-3) solid transparent;
   
-  &:focus {
+  &:focus-visible {
     outline: 2px solid var(--ds-primary-green);
     outline-offset: -2px;
   }
@@ -409,7 +409,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: var(--font-body-lg);
+  font-size: var(--font-body-size);
 }
 
 .notification-icon.type-training {
@@ -488,7 +488,7 @@
   color: var(--text-tertiary);
   
   i {
-    font-size: 0.65rem;
+    font-size: var(--font-compact-md);
   }
 }
 
@@ -573,7 +573,7 @@
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all var(--motion-fast) var(--ease-standard);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   
   &:hover {
     background: var(--surface-hover);
@@ -600,7 +600,7 @@
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all var(--motion-fast) var(--ease-standard);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .view-all-btn:hover {
@@ -640,7 +640,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-2) var(--space-5);
-  font-size: var(--font-body-2xs);
+  font-size: var(--font-caption-size);
   font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.08em;
