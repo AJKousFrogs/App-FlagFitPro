@@ -617,7 +617,7 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.highRiskAlerts.set([...alerts]);
       }
 
-      this.toastService.success(TOAST.SUCCESS.NOTE_SAVED);
+      this.toastService.success(TOAST.SUCCESS.SAVED);
     } catch (error) {
       this.logger.error("Error saving note:", error);
       this.toastService.error(TOAST.ERROR.NOTE_SAVE_FAILED);
@@ -663,7 +663,7 @@ export class AiCoachVisibilityComponent implements OnInit {
         this.recommendations.set([...recs]);
       }
 
-      this.toastService.success(TOAST.SUCCESS.RECOMMENDATION_OVERRIDDEN);
+      this.toastService.success(TOAST.SUCCESS.UPDATED);
     } catch (error) {
       this.logger.error("Error overriding recommendation:", error);
       this.toastService.error(TOAST.ERROR.RECOMMENDATION_OVERRIDE_FAILED);

@@ -51,7 +51,7 @@ import {
 import { TournamentModeService } from "../../core/services/tournament-mode.service";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
 import { LoggerService } from "../../core/services/logger.service";
-import { toLogContext } from "../../../core/services/logger.service";
+import { toLogContext } from "../../core/services/logger.service";
 import { TIMEOUTS } from "../../core/constants/app.constants";
 import { SupabaseService } from "../../core/services/supabase.service";
 

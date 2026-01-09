@@ -69,12 +69,7 @@ export class GlobalErrorHandlerService {
 
       // Log using LoggerService (redacted for PII safety)
       this.logger.error(
-        "[ErrorHandler] Caught error:",
-        redactedError.message,
-        "Type:",
-        redactedError.errorType,
-        "Route:",
-        redactedError.route,
+        `[ErrorHandler] Caught error: ${redactedError.message} Type: ${redactedError.errorType} Route: ${redactedError.route}`,
       );
 
       // Check if this is a critical error that should show recovery UI

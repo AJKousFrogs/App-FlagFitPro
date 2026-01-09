@@ -297,9 +297,9 @@ interface AutocompleteSuggestion {
                 <div class="hero-icon">
                   <span class="emoji">🏈</span>
                   <div class="icon-rings">
-                    <span class="ring ring-1"></span>
-                    <span class="ring ring-2"></span>
-                    <span class="ring ring-3"></span>
+                    <span class="ring-1"></span>
+                    <span class="ring-2"></span>
+                    <span class="ring-3"></span>
                   </div>
                 </div>
                 <h2>Hey{{ userName() ? ", " + userName() : "" }}! 👋</h2>

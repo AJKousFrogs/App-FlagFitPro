@@ -488,7 +488,7 @@ export class WellnessCheckinComponent implements OnInit {
   async loadExistingCheckin(): Promise<void> {
     try {
       const targetDate = this.date() || new Date().toISOString().split("T")[0];
-      const response: { data?: unknown; error?: string } = await firstValueFrom(
+      const response: { success?: boolean; data?: WellnessData; error?: string } = await firstValueFrom(
         this.trainingService.getWellnessForDay(targetDate),
       );
 

@@ -289,20 +289,27 @@
   inset: 0;
 }
 
-.ring {
+.ring-1,
+.ring-2,
+.ring-3 {
   position: absolute;
   inset: 0;
   border: 2px solid var(--ds-primary-green);
   border-radius: var(--radius-full);
   opacity: 0.2;
+}
+
+.ring-1 {
   animation: ring-expand 3s ease-out infinite;
 }
 
 .ring-2 {
+  animation: ring-expand 3s ease-out infinite;
   animation-delay: 1s;
 }
 
 .ring-3 {
+  animation: ring-expand 3s ease-out infinite;
   animation-delay: 2s;
 }
 

@@ -18,9 +18,10 @@ export interface PDFExportOptions {
 
 // Dynamic import types - these libraries are loaded lazily
 type JsPDFOrientation = "p" | "l" | "portrait" | "landscape";
+type JsPDFUnit = "in" | "em" | "ex" | "cm" | "pt" | "px" | "mm" | "pc";
 type JsPDFConstructor = new (options: {
   orientation: JsPDFOrientation;
-  unit: string;
+  unit: JsPDFUnit;
   format: string;
 }) => {
   addImage: (
@@ -127,7 +128,7 @@ export class LazyPdfService {
       }
       const pdf = new this.jsPDF({
         orientation: orientation as JsPDFOrientation,
-        unit: "mm",
+        unit: "mm" as JsPDFUnit,
         format,
       });
 
@@ -170,7 +171,7 @@ export class LazyPdfService {
 
       const pdf = new this.jsPDF({
         orientation: orientation as JsPDFOrientation,
-        unit: "mm",
+        unit: "mm" as JsPDFUnit,
         format,
       });
 

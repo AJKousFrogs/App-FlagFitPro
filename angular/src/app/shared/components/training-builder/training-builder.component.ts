@@ -814,13 +814,13 @@ export class TrainingBuilderComponent {
       );
 
       if (session.id) {
-        this.toastService.success(TOAST.SUCCESS.SESSION_STARTED_LOGGED);
-        this.logger.success("Session saved to database:", session);
+        this.toastService.success(TOAST.SUCCESS.SESSION_STARTED);
+        this.logger.info("Session saved to database:", session);
 
         // Navigate to dashboard to see updated ACWR
         this.router.navigate(["/dashboard"]);
       } else {
-        this.toastService.warn(TOAST.WARN.SESSION_STARTED_UNSAVED);
+        this.toastService.warn(TOAST.WARN.START_SESSION_FIRST);
       }
     } catch (error) {
       this.logger.error("Error starting session:", error);
@@ -924,7 +924,7 @@ export class TrainingBuilderComponent {
         });
       }
 
-      this.toastService.success(TOAST.SUCCESS.SESSION_TEMPLATE_SAVED);
+      this.toastService.success(TOAST.SUCCESS.SAVED);
       this.logger.info("Session template saved:", toLogContext(template.id));
 
       // Optionally navigate to training schedule

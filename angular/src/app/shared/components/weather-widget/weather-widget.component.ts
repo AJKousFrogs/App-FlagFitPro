@@ -8,7 +8,7 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, OnInit, signal } from "@angular/core";
+import { Component, computed, inject, OnInit, signal, ChangeDetectionStrategy } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
@@ -199,7 +199,7 @@ export class WeatherWidgetComponent implements OnInit {
   isLoading = signal<boolean>(true);
   location = signal<string>("Training Ground");
 
-  isHeatRiskFlag = computed(() => {
+  isHeatRisk = computed(() => {
     const data = this.weatherData();
     if (!data) return false;
     // Severe heat above 30C, or use configurable thresholds
