@@ -195,7 +195,7 @@ interface RecoveryRecommendation {
                 [binary]="true"
                 variant="filled"
                 inputId="noSoreness"
-                (onChange)="onNoSorenessChange()"
+                (onValueChange)="onNoSorenessChange()"
               ></p-checkbox>
               <label for="noSoreness">No new soreness - feeling good! 💪</label>
             </div>
