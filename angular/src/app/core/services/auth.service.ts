@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
+import { LoggerService } from "./logger.service";
 
 export interface UserMetadata {
   full_name?: string;
@@ -56,6 +57,7 @@ interface AuthResponse {
 export class AuthService {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   private readonly TOKEN_KEY = "authToken";
   private readonly USER_KEY = "user";
@@ -168,13 +170,20 @@ export class AuthService {
   }
 
   logout(): Observable<unknown> {
+    const userId = this.currentUser()?.id;
+    const email = this.currentUser()?.email;
+    
+    this.logger.info("[Auth] User logout initiated", { userId, email });
+    
     return from(this.supabaseService.signOut()).pipe(
       tap(() => {
         this.clearAuth();
+        this.logger.info("[Auth] User logout completed", { userId });
         this.router.navigate(["/login"]);
       }),
       catchError((error) => {
         // Even if logout fails on server, clear local auth
+        this.logger.error("[Auth] Logout error on server, clearing local auth", { userId, error });
         this.clearAuth();
         this.router.navigate(["/login"]);
         return throwError(() => error);

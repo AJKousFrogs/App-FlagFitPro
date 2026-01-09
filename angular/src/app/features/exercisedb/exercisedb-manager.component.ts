@@ -4,6 +4,7 @@ import {
   inject,
   signal,
   computed,
+  effect,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -969,13 +970,14 @@ export class ExerciseDBManagerComponent implements OnInit {
     this.loadFilters();
     this.loadImportLogs();
 
-    // Subscribe to loading states
-    this.exerciseDBService.loading$.subscribe((loading) =>
-      this.loading.set(loading),
-    );
-    this.exerciseDBService.importing$.subscribe((importing) =>
-      this.importing.set(importing),
-    );
+    // Subscribe to loading states using effect
+    effect(() => {
+      this.loading.set(this.exerciseDBService.isLoading());
+    });
+
+    effect(() => {
+      this.importing.set(this.exerciseDBService.isImporting());
+    });
   }
 
   loadExercises(): void {

@@ -13,6 +13,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
@@ -97,6 +98,7 @@ export class AuthCallbackComponent implements OnInit {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
 
   isProcessing = signal(true);
   success = signal(false);
@@ -192,6 +194,8 @@ export class AuthCallbackComponent implements OnInit {
     type: string | null,
   ): Promise<void> {
     try {
+      this.logger.debug("[Auth] Processing auth callback", { type });
+      
       // Set the session using the tokens
       const { data, error } = await this.supabaseService.client.auth.setSession(
         {
@@ -201,12 +205,20 @@ export class AuthCallbackComponent implements OnInit {
       );
 
       if (error) {
+        this.logger.error("[Auth] Session establishment failed", { error, type });
         throw error;
       }
 
       if (!data.session) {
+        this.logger.error("[Auth] No session returned from setSession", { type });
         throw new Error("Failed to establish session");
       }
+
+      this.logger.info("[Auth] Session established successfully", {
+        userId: data.session.user.id,
+        email: data.session.user.email,
+        type
+      });
 
       // Clear the hash from the URL
       window.history.replaceState(null, "", window.location.pathname);
@@ -218,6 +230,7 @@ export class AuthCallbackComponent implements OnInit {
         error instanceof Error
           ? error.message
           : "Authentication failed. Please try again.";
+      this.logger.error("[Auth] Token processing error", { error, type });
       this.error.set(message);
       this.isProcessing.set(false);
     }
@@ -255,6 +268,10 @@ export class AuthCallbackComponent implements OnInit {
         break;
 
       case "magiclink":
+        this.logger.info("[Auth] Magic link login successful", {
+          userId: _user?.email,
+          timestamp: new Date().toISOString()
+        });
         this.successMessage.set("Signed in successfully!");
         this.toastService.success(TOAST.SUCCESS.LOGIN, "Signed In");
         setTimeout(() => this.redirectAfterAuth(), 1500);

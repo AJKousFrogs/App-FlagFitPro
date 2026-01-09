@@ -4,7 +4,6 @@ import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { TOAST } from "../constants/toast-messages.constants";
-import { TOAST } from "../constants/toast-messages.constants";
 
 /**
  * Privacy Settings Service

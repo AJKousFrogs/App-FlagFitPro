@@ -503,7 +503,7 @@ export class TrainingLogComponent {
   readonly logStatus = signal<"on_time" | "late" | "retroactive">("on_time");
   readonly requiresApproval = signal(false);
   readonly hoursDelayed = signal<number | null>(null);
-  readonly conflicts = signal<Array<{ type: string; message: string }>>([]);
+  readonly conflicts = signal<Array<{ type: string; message: string; playerValue?: string; coachValue?: string }>>([]);
 
   readonly hasLateLogWarning = computed(() => this.logStatus() !== "on_time");
   readonly hasConflicts = computed(() => this.conflicts().length > 0);

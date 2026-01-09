@@ -48,6 +48,7 @@ export const TOAST_SUCCESS = {
   PASSWORD_CHANGED: "Password changed successfully",
   AVATAR_UPDATED: "Profile picture updated",
   PREFERENCES_SAVED: "Preferences saved",
+  PREFERENCES_UPDATED: "Preferences updated successfully",
   PRIVACY_UPDATED: "Privacy settings updated",
 
   // Authentication
@@ -68,8 +69,12 @@ export const TOAST_SUCCESS = {
   SESSION_COMPLETED: "Session marked as complete!",
   SESSION_SAVED: "Session logged! Check your recovery plan 💪",
   WORKOUT_COMPLETED: "Workout completed!",
+  WORKOUT_COMPLETED_EMOJI: "Workout completed! 💪",
+  WORKOUT_SAVED: "Workout saved!",
   PROGRESS_SAVED: "Progress saved",
   TRAINING_DATA_REFRESHED: "Training data refreshed",
+  TRAINING_COMPLETED: "Training completed successfully",
+  PERFORMANCE_LOGGED: "Performance logged successfully",
   AI_SUGGESTIONS_GENERATED: "New AI suggestions generated!",
   SUGGESTION_APPLIED: "Suggestion applied to your schedule!",
   VIDEO_SUBMITTED: "Video submitted for review!",
@@ -93,6 +98,9 @@ export const TOAST_SUCCESS = {
   MESSAGE_SENT_TO_TEAM: "Message sent to team",
   MESSAGE_DELETED: "Message deleted",
   NOTIFICATION_SENT: "Notification sent",
+  NOTIFICATIONS_MARKED_READ: "Notifications marked as read",
+  CONSENT_REQUEST_SENT: "Consent request sent",
+  ACTIVITY_MARKED_READ: "Activity marked as read",
   CHANNEL_CREATED: "Channel created",
   CHANNEL_CREATED_WITH_NAME: "Channel #{name} created!",
   CONVERSATION_STARTED: "Started conversation with {name}",
@@ -119,6 +127,9 @@ export const TOAST_SUCCESS = {
   // Data & Export
   REPORT_DOWNLOADED: "Report downloaded successfully",
   REPORT_GENERATED: "Report generated successfully",
+  REPORT_EXPORTED: "Report exported successfully",
+  ACWR_REPORT_DOWNLOADED: "ACWR report downloaded successfully",
+  PDF_REPORT_DOWNLOADED: "PDF report downloaded successfully",
   DATA_EXPORTED: "Data exported successfully",
   DATA_IMPORTED: "Data imported successfully",
 
@@ -139,15 +150,18 @@ export const TOAST_SUCCESS = {
   // Account
   ACCOUNT_PAUSED: "Account paused successfully",
   ACCOUNT_RESUMED: "Account resumed successfully",
+  ACCOUNT_DELETION_REQUESTED: "Account deletion requested successfully",
 
   // Wellness & Recovery
   RECOVERY_PROTOCOL_GENERATED: "Recovery protocol generated!",
   TRAVEL_PROTOCOL_GENERATED: "Car travel protocol generated!",
   WINDOW_COMPLETED: "Window completed! Keep it up! 💪",
+  WELLNESS_CHECKIN_SAVED: "Wellness check-in saved successfully",
 
   // Feedback & Reviews
   FEEDBACK_SUBMITTED: "Feedback submitted!",
   SUGGESTION_DELETED: "Suggestion deleted",
+  ASSIGNMENT_REMOVED: "Assignment removed",
 
   // Other
   SYNCED: "Data synced successfully",
@@ -156,6 +170,13 @@ export const TOAST_SUCCESS = {
   FILTERS_CLEARED: "Filters cleared",
   VIDEO_REMOVED: "Removed from saved videos",
   VIDEO_SAVED: "Saved to your collection!",
+  OFFICIAL_ADDED: "Official added successfully",
+  OFFICIAL_UPDATED: "Official updated successfully",
+  OFFICIAL_SCHEDULED: "Official scheduled successfully",
+  STATUS_UPDATED: "Status updated successfully",
+  GAME_CREATED: "Game created successfully",
+  GAME_SAVED_OFFLINE: "Game saved offline",
+  PLAY_SAVED_OFFLINE: "Play saved offline",
 } as const;
 
 /**
@@ -217,11 +238,12 @@ export const TOAST_ERROR = {
   UPLOAD_FAILED: "Upload failed. Please try again.",
   AVATAR_UPLOAD_FAILED: "Failed to upload profile picture",
   FILE_TOO_LARGE: "File is too large.",
-  FILE_TOO_LARGE_5MB: "Image must be less than 5MB",
   VIDEO_TOO_LARGE_50MB: "Video must be less than 50MB",
-  INVALID_FILE_TYPE: "Invalid file type.",
   COPY_FAILED: "Failed to copy link",
   COPY_FAILED_GENERIC: "Failed to copy",
+  NO_DATA_TO_EXPORT: "No data available to export",
+  SHARE_FAILED: "Failed to share. Please try again.",
+  CHAT_START_FAILED: "Failed to start chat. Please try again.",
 
   // Push Notifications
   PUSH_DENIED: "Notification permission was denied.",
@@ -362,6 +384,18 @@ export const TOAST_WARN = {
   // Validation
   REQUIRED_FIELDS: "Please fill in all required fields.",
   INCOMPLETE_FORM: "Please complete all required fields.",
+  MISSING_SUPPLEMENT_NAME: "Please enter a supplement name",
+  MISSING_EMAIL: "Please enter an email address",
+  MISSING_FILE_AND_ID: "Please select a file and enter an Athlete ID",
+  MISSING_REQUIRED_FIELDS: "Please fill in all required fields",
+  MISSING_TRIP_DETAILS: "Please fill in trip name and duration",
+  ENTER_SESSION_TITLE: "Please enter a session title",
+  ENTER_MESSAGE: "Please enter a message",
+  ENTER_SLEEP_HOURS: "Please enter sleep hours",
+  ENTER_PERFORMANCE_METRIC: "Please enter a performance metric",
+  RETROACTIVE_LOGGING_WARNING: "You are logging retroactively. Ensure accuracy.",
+  START_SESSION_FIRST: "Start the session first",
+  POST_SAVED: "Post saved locally. Will sync when online.",
 
   // State
   OFFLINE: "You're offline. Actions will be synced when connection is restored.",
@@ -396,6 +430,9 @@ export const TOAST_INFO = {
   // Specific actions
   GENERATING_REPORT: "Generating report...",
   GENERATING_PDF: "Generating PDF report...",
+  REPORT_GENERATING: "Generating report...",
+  ACWR_REPORT_GENERATING: "Generating ACWR report...",
+  PDF_REPORT_GENERATING: "Generating PDF report...",
 
   // Email
   EMAIL_VERIFICATION_SENT: "Email update requires verification. Check your inbox.",
@@ -404,10 +441,26 @@ export const TOAST_INFO = {
   // Actions
   UPLOADING_MEDIA: "Uploading media...",
   SENDING_REMINDERS: "Sending check-in reminders to athletes...",
+  SENDING_DATA_REQUEST: "Sending data request...",
   COMPLETE_CURRENT_STEP: "Please complete the current step first",
   TOURNAMENT_ENDED: "Tournament ended. Great job!",
   AUDIT_LOG_COMING_SOON: "Audit log feature coming soon",
   SHOWING_ALL_WORKOUTS: "Showing all workouts",
+  NOTIFICATIONS_CLEARED: "Notifications cleared",
+  OPENING_LOAD_ADJUSTMENT: "Opening load adjustment...",
+  NO_OVERRIDES_FOUND: "No overrides found",
+  SUGGESTION_DISMISSED: "Suggestion dismissed",
+  SUGGESTION_DELETED: "Suggestion deleted",
+  BOOKMARK_REMOVED: "Bookmark removed",
+  FILTER_CLEARED: "Filter cleared",
+  FILTERS_CLEARED: "Filters cleared",
+  FILTER_CLEARED_ALL: "Filter cleared - showing all posts",
+  INVITATION_DECLINED: "Invitation declined",
+  SESSION_CANCELLED: "Session cancelled",
+  ALERT_DISMISSED: "Alert dismissed",
+  VIDEO_REMOVED: "Video removed from saved",
+  GAME_SAVED_OFFLINE: "Game saved offline - will sync when online",
+  PLAY_SAVED_OFFLINE: "Play saved offline - will sync when online",
 
   // Other
   WORKING: "Working on it...",

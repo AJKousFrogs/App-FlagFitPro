@@ -1,6 +1,6 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable, BehaviorSubject, of } from "rxjs";
+import { Observable, of } from "rxjs";
 import { map, catchError, tap, shareReplay } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
@@ -130,12 +130,9 @@ export class ExerciseDBService {
   // Cache for filter options
   private filtersCache$: Observable<ExerciseDBFilters> | null = null;
 
-  // Loading states
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-  loading$ = this.loadingSubject.asObservable();
-
-  private importingSubject = new BehaviorSubject<boolean>(false);
-  importing$ = this.importingSubject.asObservable();
+  // Loading states (Angular 21 signals)
+  readonly isLoading = signal<boolean>(false);
+  readonly isImporting = signal<boolean>(false);
 
   // Flag Football Categories for mapping
   readonly FF_CATEGORIES = [
@@ -211,7 +208,7 @@ export class ExerciseDBService {
     limit?: number;
     offset?: number;
   }): Observable<ExerciseDBExercise[]> {
-    this.loadingSubject.next(true);
+    this.isLoading.set(true);
 
     let httpParams = new HttpParams();
 
@@ -232,10 +229,10 @@ export class ExerciseDBService {
       )
       .pipe(
         map((response) => response.exercises || []),
-        tap(() => this.loadingSubject.next(false)),
+        tap(() => this.isLoading.set(false)),
         catchError((error) => {
           this.logger.error("Failed to fetch curated exercises", error);
-          this.loadingSubject.next(false);
+          this.isLoading.set(false);
           throw error;
         }),
       );
@@ -276,7 +273,7 @@ export class ExerciseDBService {
     name?: string;
     limit?: number;
   }): Observable<ExerciseDBExercise[]> {
-    this.loadingSubject.next(true);
+    this.isLoading.set(true);
 
     let httpParams = new HttpParams();
 
@@ -292,10 +289,10 @@ export class ExerciseDBService {
       >(`${this.baseUrl}/api/exercisedb/search`, { params: httpParams })
       .pipe(
         map((response) => response.exercises || []),
-        tap(() => this.loadingSubject.next(false)),
+        tap(() => this.isLoading.set(false)),
         catchError((error) => {
           this.logger.error("Failed to search ExerciseDB", error);
-          this.loadingSubject.next(false);
+          this.isLoading.set(false);
           throw error;
         }),
       );
@@ -309,7 +306,7 @@ export class ExerciseDBService {
     equipment_filter?: string;
     auto_approve?: boolean;
   }): Observable<{ success: boolean; stats?: ImportStats; error?: string }> {
-    this.importingSubject.next(true);
+    this.isImporting.set(true);
 
     return this.http
       .post<
@@ -321,13 +318,13 @@ export class ExerciseDBService {
           stats: response.stats,
         })),
         tap(() => {
-          this.importingSubject.next(false);
+          this.isImporting.set(false);
           // Clear filter cache after import
           this.filtersCache$ = null;
         }),
         catchError((error) => {
           this.logger.error("Failed to import exercises", error);
-          this.importingSubject.next(false);
+          this.isImporting.set(false);
           return of({
             success: false,
             error: error.message || "Import failed",

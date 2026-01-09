@@ -473,12 +473,12 @@ export class DailyReadinessComponent implements OnInit {
       if (error?.code === "PGRST116") {
         // Row-level security violation
         errorMessage = "Permission denied. Please log out and log back in.";
-      } else if (error?.code === "23505") {
+      } else if ((error as any)?.code === "23505") {
         // Unique constraint violation - entry already exists
         errorMessage = "You've already submitted a check-in today. Refresh to see it.";
       } else if (error?.message?.includes("network") || error?.message?.includes("fetch")) {
         errorMessage = "Network error. Check your connection and try again.";
-      } else if (error?.code === "42P01") {
+      } else if ((error as any)?.code === "42P01") {
         // Table doesn't exist
         errorMessage = "System configuration error. Please contact support.";
       } else {
