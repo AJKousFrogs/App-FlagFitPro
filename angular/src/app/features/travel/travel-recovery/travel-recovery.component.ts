@@ -18,11 +18,11 @@
 
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    inject,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -33,36 +33,31 @@ import { AccordionModule } from "primeng/accordion";
 import { BadgeModule } from "primeng/badge";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
-import { Chip } from "primeng/chip";
 import { DatePickerModule } from "primeng/datepicker";
 import { DividerModule } from "primeng/divider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
-import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
 import { TooltipModule } from "primeng/tooltip";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 // Services
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
-  BloodCirculationRisk,
-  CarTravelProtocol,
-  CirculationExercise,
-  MassageGunProtocol,
-  RecoveryProtocol,
-  TravelChecklist,
-  TravelRecoveryService,
+    BloodCirculationRisk,
+    CarTravelProtocol,
+    CirculationExercise,
+    MassageGunProtocol,
+    RecoveryProtocol,
+    TravelChecklist,
+    TravelRecoveryService,
 } from "../../../core/services/travel-recovery.service";
 
 // Layout
-import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 interface TimezoneOption {
   value: string;
@@ -79,7 +74,6 @@ interface TimezoneOption {
     FormsModule,
     RouterModule,
     CardModule,
-    Select,
     DatePickerModule,
     InputNumberModule,
     InputTextModule,
@@ -91,12 +85,7 @@ interface TimezoneOption {
     CheckboxModule,
     TooltipModule,
     DividerModule,
-    Chip,
     BadgeModule,
-    MainLayoutComponent,
-    PageHeaderComponent,
-
-    ButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -355,7 +344,7 @@ interface TimezoneOption {
                             ? 'pi pi-arrow-right'
                             : 'pi pi-arrow-left'
                         "
-                      </p-chip>
+                      ></p-chip>
                       <p-tag
                         [value]="jetLagSeverity().level | titlecase"
                         [severity]="getSeverityColor(jetLagSeverity().level)"

@@ -1,17 +1,16 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { MessageService } from "primeng/api";
 import { BadgeModule } from "primeng/badge";
-import { ButtonComponent } from "../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { IconFieldModule } from "primeng/iconfield";
@@ -25,7 +24,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
-import { Workout } from "../../core/models/training.models";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 
 interface Exercise {
@@ -367,7 +366,7 @@ interface Category {
               </span>
             </div>
 
-            @if (selectedExercise()!.muscleGroups?.length > 0) {
+            @if (selectedExercise()!.muscleGroups && selectedExercise()!.muscleGroups.length > 0) {
               <div class="detail-section">
                 <h3><i class="pi pi-heart-fill"></i> Target Muscle Groups</h3>
                 <div class="muscle-tags-large">
