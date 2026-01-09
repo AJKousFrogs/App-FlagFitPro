@@ -204,7 +204,12 @@ export class TrainingDataService {
     }
 
     // Detect conflicts: RPE vs session type
-    const conflicts: Array<{ type: string; message: string }> = [];
+    const conflicts: Array<{ 
+      type: string; 
+      message: string;
+      playerValue?: number;
+      coachValue?: string;
+    }> = [];
     if (session.rpe && session.session_type) {
       const sessionTypeIntensity: Record<string, { max?: number; min?: number }> =
         {

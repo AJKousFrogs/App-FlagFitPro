@@ -30,6 +30,7 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { ContextService } from "../../../core/services/context.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { RosterService } from "../../roster/roster.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
@@ -724,6 +725,7 @@ const BALANCE_FILTERS = [
 export class PaymentManagementComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly context = inject(ContextService);
+  private readonly roster = inject(RosterService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
 
@@ -825,7 +827,7 @@ export class PaymentManagementComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const teamId = this.context.currentTeam()?.id;
+      const teamId = this.roster.currentTeamId();
       if (!teamId) {
         this.logger.warn("No team ID available");
         return;
@@ -887,7 +889,7 @@ export class PaymentManagementComponent implements OnInit {
 
   async createFee(): Promise<void> {
     try {
-      const teamId = this.context.currentTeam()?.id;
+      const teamId = this.roster.currentTeamId();
       if (!teamId) {
         this.messageService.add({
           severity: "error",
@@ -932,7 +934,7 @@ export class PaymentManagementComponent implements OnInit {
 
   async recordPayment(): Promise<void> {
     try {
-      const teamId = this.context.currentTeam()?.id;
+      const teamId = this.roster.currentTeamId();
       if (!teamId) {
         this.messageService.add({
           severity: "error",

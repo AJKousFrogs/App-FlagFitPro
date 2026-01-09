@@ -191,7 +191,16 @@ export class FlagLoadComponent implements OnInit {
   isLoading = signal(true);
   hasData = signal(false);
 
-  chartData = signal<{ labels: string[]; datasets: Array<{ label: string; data: number[]; borderColor?: string; backgroundColor?: string }> }>({
+  chartData = signal<{ 
+    labels: string[]; 
+    datasets: Array<{ 
+      label: string; 
+      data: number[]; 
+      borderColor?: string; 
+      backgroundColor?: string;
+      tension?: number;
+    }> 
+  }>({
     labels: [],
     datasets: [],
   });

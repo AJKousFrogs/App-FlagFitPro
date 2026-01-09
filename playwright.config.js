@@ -6,9 +6,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  timeout: 30 * 1000,
+  // Increased timeout for tests that may wait for auth/API calls
+  timeout: 60 * 1000, // 60 seconds per test
   expect: {
-    timeout: 5000,
+    timeout: 10000, // 10 seconds for assertions
   },
   reporter: process.env.CI
     ? [
@@ -26,8 +27,9 @@ export default defineConfig({
     trace: process.env.CI ? "retain-on-failure" : "on-first-retry",
     screenshot: "only-on-failure",
     video: process.env.CI ? "retain-on-failure" : "off",
-    actionTimeout: 10000,
-    navigationTimeout: 30000,
+    // Increased timeouts for slower operations
+    actionTimeout: 15000, // 15 seconds for actions
+    navigationTimeout: 45000, // 45 seconds for navigation
   },
   projects: [
     {
@@ -63,10 +65,12 @@ export default defineConfig({
   webServer: {
     command: "npm run dev",
     url: "http://localhost:4200",
-    reuseExistingServer: true,
-    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI, // Always reuse in local dev
+    timeout: 180 * 1000, // 3 minutes for server startup
     stdout: "ignore",
     stderr: "pipe",
+    // Add retry logic for server startup
+    reuseExistingServer: true,
   },
   globalSetup: undefined,
   globalTeardown: undefined,

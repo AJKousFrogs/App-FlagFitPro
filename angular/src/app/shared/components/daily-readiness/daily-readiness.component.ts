@@ -470,15 +470,17 @@ export class DailyReadinessComponent implements OnInit {
       // Provide user-friendly error messages based on error type
       let errorMessage = "Failed to save check-in.";
       
-      if (error?.code === "PGRST116") {
+      const err = error as { code?: string; message?: string };
+      
+      if (err?.code === "PGRST116") {
         // Row-level security violation
         errorMessage = "Permission denied. Please log out and log back in.";
-      } else if ((error as any)?.code === "23505") {
+      } else if (err?.code === "23505") {
         // Unique constraint violation - entry already exists
         errorMessage = "You've already submitted a check-in today. Refresh to see it.";
-      } else if (error?.message?.includes("network") || error?.message?.includes("fetch")) {
+      } else if (err?.message?.includes("network") || err?.message?.includes("fetch")) {
         errorMessage = "Network error. Check your connection and try again.";
-      } else if ((error as any)?.code === "42P01") {
+      } else if (err?.code === "42P01") {
         // Table doesn't exist
         errorMessage = "System configuration error. Please contact support.";
       } else {

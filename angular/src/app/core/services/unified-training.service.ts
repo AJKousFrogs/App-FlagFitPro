@@ -335,7 +335,7 @@ export class UnifiedTrainingService {
       { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
     ];
 
-    const userRoutine: DailyRoutineSlot[] = (metadata as { dailyRoutine?: DailyRoutineSlot[] })?.dailyRoutine || defaultRoutine;
+    const userRoutine: DailyRoutineSlot[] = (metadata as { dailyRoutine?: DailyRoutineSlot[] } | null)?.dailyRoutine || defaultRoutine;
 
     const getItemType = (slotId: string): TodayScheduleItem["type"] => {
       if (slotId === "breakfast" || slotId === "lunch") return "nutrition";
