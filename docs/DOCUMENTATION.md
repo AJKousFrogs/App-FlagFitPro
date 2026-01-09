@@ -105,7 +105,6 @@
 | Document | Description | Type |
 |----------|-------------|------|
 | [AUDITS.md](./AUDITS.md) | **CONSOLIDATED** - Audit reports summary | Summary |
-| [CONSISTENCY_CHECK.md](./CONSISTENCY_CHECK.md) | **Source of Truth** - Documentation consistency verification | Reference |
 | [MOCK_DATA_POLICY.md](./MOCK_DATA_POLICY.md) | **CRITICAL** - Mock data policy (never in production) | Policy |
 
 ---
