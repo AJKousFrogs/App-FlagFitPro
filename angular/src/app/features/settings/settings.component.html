@@ -198,7 +198,7 @@
                 optionValue="value"
                 placeholder="Select your team"
                 appendTo="body"
-                (onValueChange)="onTeamChange($event)"
+                (ngModelChange)="onTeamChange({ value: $event })"
               ></p-select>
               <small class="field-hint">
                 <i class="pi pi-info-circle"></i>

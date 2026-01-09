@@ -400,7 +400,7 @@ interface InjuryEntry {
                       [(ngModel)]="onboardingData.team"
                       [suggestions]="teamSuggestions()"
                       (completeMethod)="searchTeams($event)"
-                      (onValueChange)="onTeamSelect($event)"
+                      (ngModelChange)="onTeamSelect({ value: $event })"
                       (onClear)="onboardingData.team = null"
                       placeholder="Search for your team or enter name..."
                       [minLength]="0"
@@ -1437,8 +1437,8 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-terms"
                           name="consentTermsOfService"
-                          (onValueChange)="
-                            onConsentChange('Terms of Service', $event)
+                          (ngModelChange)="
+                            onConsentChange('Terms of Service', { checked: $event })
                           "
                         />
                         <label for="consent-terms" class="consent-label">
@@ -1463,7 +1463,7 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-privacy"
                           name="consentPrivacyPolicy"
-                          (onValueChange)="onConsentChange('Privacy Policy', $event)"
+                          (ngModelChange)="onConsentChange('Privacy Policy', { checked: $event })"
                         />
                         <label for="consent-privacy" class="consent-label">
                           I accept the
@@ -1487,7 +1487,7 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-data"
                           name="consentDataUsage"
-                          (onValueChange)="onConsentChange('Data Usage', $event)"
+                          (ngModelChange)="onConsentChange('Data Usage', { checked: $event })"
                         />
                         <label for="consent-data" class="consent-label">
                           I consent to my data being used to personalize my
@@ -1509,7 +1509,7 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-ai"
                           name="consentAICoach"
-                          (onValueChange)="onConsentChange('AI Coach', $event)"
+                          (ngModelChange)="onConsentChange('AI Coach', { checked: $event })"
                         />
                         <label for="consent-ai" class="consent-label">
                           I consent to AI Coach (Merlin) providing personalized
@@ -1527,7 +1527,7 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-email"
                           name="consentEmailUpdates"
-                          (onValueChange)="onConsentChange('Email Updates', $event)"
+                          (ngModelChange)="onConsentChange('Email Updates', { checked: $event })"
                         />
                         <label for="consent-email" class="consent-label">
                           I want to receive email updates about new features and

@@ -1,16 +1,14 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    signal,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { AccordionModule } from "primeng/accordion";
+import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
@@ -19,18 +17,20 @@ import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TOAST } from "../../core/constants/toast-messages.constants";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-  StatItem,
-  StatsGridComponent,
+    StatItem,
+    StatsGridComponent,
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -228,7 +228,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 <p-select
                   [options]="positionOptions"
                   [(ngModel)]="selectedPositionValue"
-                  (onValueChange)="onPositionChange($event)"
+                  (ngModelChange)="onPositionChange({ value: $event })"
                   placeholder="Change Position"
                   styleClass="position-selector"
                 ></p-select>

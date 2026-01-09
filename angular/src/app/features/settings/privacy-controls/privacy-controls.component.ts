@@ -1,39 +1,39 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    inject,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { AccordionModule } from "primeng/accordion";
 import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { ToggleSwitch } from "primeng/toggleswitch";
-import { Select } from "primeng/select";
-import { InputTextModule } from "primeng/inputtext";
-import { ToastModule } from "primeng/toast";
+import { Chip } from "primeng/chip";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
-import { TooltipModule } from "primeng/tooltip";
-import { Chip } from "primeng/chip";
+import { InputTextModule } from "primeng/inputtext";
+import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
-import { AccordionModule } from "primeng/accordion";
-import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
-import {
-  PrivacySettingsService,
-  EmergencySharingLevel,
-  EmergencyContact,
-  METRIC_CATEGORIES,
-} from "../../../core/services/privacy-settings.service";
-import { DataExportService } from "../../../core/services/data-export.service";
+import { ToastModule } from "primeng/toast";
+import { ToggleSwitch } from "primeng/toggleswitch";
+import { TooltipModule } from "primeng/tooltip";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AccountDeletionService } from "../../../core/services/account-deletion.service";
 import { AuthService } from "../../../core/services/auth.service";
+import { DataExportService } from "../../../core/services/data-export.service";
+import {
+    EmergencyContact,
+    EmergencySharingLevel,
+    METRIC_CATEGORIES,
+    PrivacySettingsService,
+} from "../../../core/services/privacy-settings.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 /**
  * Privacy Controls Component
@@ -336,7 +336,7 @@ import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select level"
-                    (onValueChange)="onEmergencyLevelChange($event.value)"
+                          (ngModelChange)="onEmergencyLevelChange($event)"
                   ></p-select>
                 </div>
               </div>
