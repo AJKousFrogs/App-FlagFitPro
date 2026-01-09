@@ -26,8 +26,8 @@ require("dotenv").config();
 
 // Program ID constants - these match the database
 const PROGRAM_IDS = {
-  QB: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", // Ljubljana Frogs QB Annual Program 2025-2026
-  WRDB: "ffffffff-ffff-ffff-ffff-ffffffffffff", // Ljubljana Frogs WR/DB Annual Program 2025-2026 (default)
+  QB: "11111111-1111-1111-1111-111111111111", // QB Annual Program 2025-2026
+  WRDB: "22222222-2222-2222-2222-222222222222", // WR/DB Speed & Agility Program 2025-2026 (default)
 };
 
 /**

@@ -17,10 +17,10 @@ import { Observable, catchError, map, of } from "rxjs";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 
-// Program ID constants - must match backend
+// Program ID constants - must match backend and database
 export const PROGRAM_IDS = {
-  QB: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
-  WRDB: "ffffffff-ffff-ffff-ffff-ffffffffffff",
+  QB: "11111111-1111-1111-1111-111111111111", // QB Annual Program 2025-2026
+  WRDB: "22222222-2222-2222-2222-222222222222", // WR/DB Speed & Agility Program 2025-2026
 } as const;
 
 /**
@@ -113,12 +113,25 @@ export function getProgramIdForPosition(position: string): string {
 export class PlayerProgramService {
   private readonly http = inject(HttpClient);
   private readonly logger = inject(LoggerService);
-  private readonly baseUrl = `${environment.apiUrl}/api/player-programs`;
+  private readonly baseUrl = this.getBaseUrl();
 
   constructor() {
     this.logger.info(
       `[PlayerProgramService] Initialized with baseUrl: ${this.baseUrl}`,
     );
+  }
+
+  /**
+   * Get the base URL for player-programs API
+   * Handles undefined/empty apiUrl in production by using relative paths
+   */
+  private getBaseUrl(): string {
+    const apiUrl = environment.apiUrl;
+    // If apiUrl is undefined or empty, use relative path (same origin)
+    if (!apiUrl) {
+      return "/api/player-programs";
+    }
+    return `${apiUrl}/api/player-programs`;
   }
 
   /**
