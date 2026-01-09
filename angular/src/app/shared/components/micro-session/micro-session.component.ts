@@ -371,8 +371,8 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
 
-  readonly session = input<any>(
-    signal<MicroSessionData>({
+  readonly session = input<MicroSessionData>(
+    {
       title: "",
       session_type: "recovery",
       estimated_duration_minutes: 5,
@@ -382,11 +382,11 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
       steps: [],
       coaching_cues: [],
       follow_up_prompt: "How do you feel? (0-10)",
-    }),
+    },
   );
 
-  readonly mode = input<any>(signal<"modal" | "card">("card"));
-  readonly autoStart = input<any>(false);
+  readonly mode = input<"modal" | "card">("card");
+  readonly autoStart = input<boolean>(false);
 
   readonly sessionCompleted = output<{
     duration_minutes: number;

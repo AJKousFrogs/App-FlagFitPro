@@ -4,6 +4,7 @@ import { Observable, of } from "rxjs";
 import { catchError, delay, retryWhen, take } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 
 /**
  * Game Stats Service
@@ -157,7 +158,7 @@ export class GameStatsService {
     plays.forEach((play) => {
       // Data integrity checks
       if (!play.playType || typeof play.playType !== "string") {
-        this.logger.warn("Invalid play type in data:", play);
+        this.logger.warn("Invalid play type in data:", toLogContext(play));
         return;
       }
 

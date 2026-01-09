@@ -123,7 +123,7 @@ test.describe('Launch Smoke Test - 100 Trials', () => {
 /**
  * Step 1: Login
  */
-async function performLogin(page: Page, trialNum: number): Promise<void> {
+async function performLogin(page: Page, _trialNum: number): Promise<void> {
   // Navigate to login page
   await page.goto(`${TEST_CONFIG.BASE_URL}/login`, { waitUntil: 'networkidle' });
   
@@ -303,7 +303,7 @@ async function logTrainingEntries(page: Page, trialNum: number, count: number): 
 /**
  * Step 3: View Dashboard
  */
-async function viewDashboard(page: Page, trialNum: number): Promise<void> {
+async function viewDashboard(page: Page, _trialNum: number): Promise<void> {
   // Navigate to dashboard
   await page.goto(`${TEST_CONFIG.BASE_URL}/dashboard`, { waitUntil: 'domcontentloaded' });
   
@@ -353,7 +353,7 @@ async function viewDashboard(page: Page, trialNum: number): Promise<void> {
 /**
  * Step 4: Logout
  */
-async function performLogout(page: Page, trialNum: number): Promise<void> {
+async function performLogout(page: Page, _trialNum: number): Promise<void> {
   // Click user menu
   const userMenuSelectors = [
     '[data-testid="user-menu"]',
@@ -456,7 +456,7 @@ function generateSummaryReport(): void {
   console.log('='.repeat(80) + '\n');
 
   // Write results to JSON file
-  const fs = require('fs');
+  const fs = await import('fs');
   const resultsPath = 'test-results/launch-smoke-test-results.json';
   fs.writeFileSync(resultsPath, JSON.stringify({
     timestamp: new Date().toISOString(),

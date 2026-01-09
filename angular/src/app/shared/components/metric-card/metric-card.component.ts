@@ -140,8 +140,9 @@ export class MetricCardComponent {
     const statusPart = this.statusLabel()
       ? `. Status: ${this.statusLabel()}`
       : "";
-    const trendPart = this.trend()
-      ? `. Trend: ${this.trend()!.direction} ${this.trend()!.value}%`
+    const trend = this.trend();
+    const trendPart = trend
+      ? `. Trend: ${trend.direction} ${trend.value}%`
       : "";
     return base + unitPart + statusPart + trendPart;
   });

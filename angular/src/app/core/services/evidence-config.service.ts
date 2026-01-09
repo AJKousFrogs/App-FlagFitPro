@@ -13,6 +13,7 @@ import {
   getAllPresets,
 } from "../config/evidence-presets";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 
@@ -98,7 +99,7 @@ export class EvidenceConfigService {
         });
       } catch (error) {
         // Silently fail if table doesn't exist
-        this.logger.debug("Activity log table not available:", error);
+        this.logger.debug("Activity log table not available:", toLogContext(error));
       }
     }
   }

@@ -41,6 +41,7 @@ import { TrainingLimitsService } from "../../../core/services/training-limits.se
 import { ReturnToPlayService } from "../../../core/services/return-to-play.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import {
   METRIC_INSUFFICIENT_DATA,
@@ -862,7 +863,7 @@ export class TrainingSafetyComponent implements OnInit {
   executeAction(action: { label: string; route: string }): void {
     // Navigate to the action route
     // In real implementation, use Router
-    this.logger.info("Executing action", action);
+    this.logger.info("Executing action", toLogContext(action));
   }
 
   openRTPCheckin(): void {

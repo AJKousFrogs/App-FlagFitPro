@@ -560,7 +560,9 @@ export class EnhancedDataTableComponent {
 
   setCellValue(row: TableRow, field: string, value: unknown): void {
     const keys = field.split(".");
-    const lastKey = keys.pop()!;
+    const lastKey = keys.pop();
+    if (!lastKey) return;
+    
     const target = keys.reduce(
       (obj: Record<string, unknown>, key: string) =>
         obj[key] as Record<string, unknown>,

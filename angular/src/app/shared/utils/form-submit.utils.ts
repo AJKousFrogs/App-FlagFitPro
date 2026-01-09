@@ -133,8 +133,9 @@ export class FormSubmitHandler {
       // Navigate if specified
       if (navigateTo && this.router) {
         // Small delay to show success message
+        const router = this.router;
         setTimeout(() => {
-          this.router!.navigate(navigateTo);
+          router.navigate(navigateTo);
         }, 500);
       }
 

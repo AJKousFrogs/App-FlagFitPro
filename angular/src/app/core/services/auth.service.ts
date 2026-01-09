@@ -185,7 +185,8 @@ export class AuthService {
         // Even if logout fails on server, clear local auth
         this.logger.error(
           "[Auth] Logout error on server, clearing local auth",
-          { userId, error },
+          error,
+          { userId: userId },
         );
         this.clearAuth();
         this.router.navigate(["/login"]);

@@ -306,8 +306,9 @@ export class ReviewDecisionDialogComponent {
   // Methods
   onVisibleChange(visible: boolean): void {
     this.visibleChange.emit(visible);
-    if (visible && this.decision()) {
-      this.formData.decisionId = this.decision()!.id;
+    const currentDecision = this.decision();
+    if (visible && currentDecision) {
+      this.formData.decisionId = currentDecision.id;
     } else if (!visible) {
       this.reset();
     }

@@ -12,6 +12,7 @@ import { TrainingHeatmapComponent } from "../training-heatmap/training-heatmap.c
 import { CardModule } from "primeng/card";
 import { Tabs } from "primeng/tabs";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 
 /**
  * Showcase component demonstrating all advanced UX/UI components
@@ -109,7 +110,7 @@ export class UxShowcaseComponent {
     position: string;
     performance: string;
   }) => {
-    this.logger.debug("Edit row:", row);
+    this.logger.debug("Edit row:", toLogContext(row));
     // Implement edit logic
   };
 
@@ -119,7 +120,7 @@ export class UxShowcaseComponent {
     position: string;
     performance: string;
   }) => {
-    this.logger.debug("Delete row:", row);
+    this.logger.debug("Delete row:", toLogContext(row));
     // Implement delete logic
   };
 }

@@ -42,6 +42,7 @@ import {
   PhaseConfig,
   SeasonalRecommendation,
   WeeklyTrainingTemplate,
+  EvidenceReference,
 } from "../../../../core/services/flag-football-periodization.service";
 import {
   SprintTrainingKnowledgeService,
@@ -545,7 +546,7 @@ export class PeriodizationDashboardComponent implements OnInit {
   readonly acwrStatus = signal<ACWRCalculation | null>(null);
   readonly sprintGuidelines = signal<SprintPhaseGuidelines | null>(null);
   readonly sprintRecommendations = signal<string[]>([]);
-  readonly evidenceReferences = signal<any[]>([]);
+  readonly evidenceReferences = signal<EvidenceReference[]>([]);
   readonly allPhases = signal<PhaseConfig[]>([]);
   readonly annualTimeline = signal<TimelineEvent[]>([]);
 

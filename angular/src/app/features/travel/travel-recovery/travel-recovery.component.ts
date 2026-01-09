@@ -1529,10 +1529,18 @@ export class TravelRecoveryComponent implements OnInit {
       return;
     }
 
+    const departureDate = this.tripForm.departureDate;
+    const arrivalDate = this.tripForm.arrivalDate;
+    
+    if (!departureDate || !arrivalDate) {
+      this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
+      return;
+    }
+
     this.travelService.createTravelPlan({
       tripName: this.tripForm.tripName,
-      departureDate: this.tripForm.departureDate!,
-      arrivalDate: this.tripForm.arrivalDate!,
+      departureDate: departureDate,
+      arrivalDate: arrivalDate,
       competitionDate: this.tripForm.competitionDate || undefined,
       departureTimezone: this.tripForm.departureTimezone,
       arrivalTimezone: this.tripForm.arrivalTimezone,

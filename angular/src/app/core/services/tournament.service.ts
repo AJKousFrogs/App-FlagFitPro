@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { firstValueFrom } from "rxjs";
 
 // Tournament visibility scope
@@ -222,7 +223,7 @@ export class TournamentService {
       if (tournament) {
         // Add to local state
         this.tournaments.update((current) => [...current, tournament]);
-        this.logger.info("Tournament created:", tournament.name);
+        this.logger.info("Tournament created:", toLogContext(tournament.name));
       }
       return tournament || null;
     } catch (err) {
@@ -264,7 +265,7 @@ export class TournamentService {
           this.selectedTournament.set(tournament);
         }
 
-        this.logger.info("Tournament updated:", tournament.name);
+        this.logger.info("Tournament updated:", toLogContext(tournament.name));
       }
       return tournament || null;
     } catch (err) {
@@ -298,7 +299,7 @@ export class TournamentService {
         this.selectedTournament.set(null);
       }
 
-      this.logger.info("Tournament deleted:", id);
+      this.logger.info("Tournament deleted:", toLogContext(id));
       return true;
     } catch (err) {
       this.logger.error("Error deleting tournament:", err);

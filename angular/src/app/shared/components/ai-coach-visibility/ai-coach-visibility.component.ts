@@ -18,6 +18,7 @@ import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -471,7 +472,7 @@ export class AiCoachVisibilityComponent implements OnInit {
       const { data, error } = await query;
 
       if (error) {
-        this.logger.warn("Error loading recommendations:", error);
+        this.logger.warn("Error loading recommendations:", toLogContext(error));
         return;
       }
 
@@ -535,7 +536,7 @@ export class AiCoachVisibilityComponent implements OnInit {
       const { data, error } = await query;
 
       if (error) {
-        this.logger.warn("Error loading alerts:", error);
+        this.logger.warn("Error loading alerts:", toLogContext(error));
         return;
       }
 

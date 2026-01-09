@@ -392,8 +392,8 @@ export class SupplementTrackerComponent implements OnInit {
     }
 
     const supplement: Supplement = {
-      id: this.generateId(newSupp.name!),
-      name: newSupp.name!,
+      id: this.generateId(newSupp.name),
+      name: newSupp.name,
       dosage: newSupp.dosage,
       timing: newSupp.timing as Supplement["timing"],
       category: newSupp.category as Supplement["category"],

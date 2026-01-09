@@ -163,7 +163,7 @@ export interface TableColumn {
 export class TableComponent {
   // Angular 21: Use input() signals instead of @Input()
   columns = input<TableColumn[]>([]);
-  data = input<any[]>([]);
+  data = input<Array<Record<string, unknown>>>([]);
   striped = input<boolean>(false);
   bordered = input<boolean>(false);
 

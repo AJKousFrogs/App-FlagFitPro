@@ -23,6 +23,7 @@ import {
   createSignalFormField,
 } from "../../utils/form.utils";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 
 /**
  * Angular 21 Forms Example Component
@@ -327,7 +328,7 @@ export class SignalFormExampleComponent {
 
   onReactiveSubmit(): void {
     if (this.reactiveForm.valid) {
-      this.logger.debug("Reactive Form Submitted:", this.reactiveForm.value);
+      this.logger.debug("Reactive Form Submitted:", toLogContext(this.reactiveForm.value));
       // Handle submission
     } else {
       this.reactiveForm.markAllAsTouched();

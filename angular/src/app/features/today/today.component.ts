@@ -1752,14 +1752,12 @@ export class TodayComponent {
       title: string,
       icon: string,
     ): ProtocolBlock => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const apiBlock = blockData.find((b: any) => b.type === blockType);
       if (!apiBlock || !apiBlock.exercises || apiBlock.exercises.length === 0) {
         return createEmptyBlock(blockType, title, icon);
       }
 
       // Map exercises to PrescribedExercise format
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const exercises: PrescribedExercise[] = apiBlock.exercises.map(
         (ex: any, index: number) => ({
           id: ex.id || `${blockType}-${index}`,

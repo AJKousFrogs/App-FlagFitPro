@@ -19,6 +19,7 @@ import {
 import { ApiService } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import {
   PlayerProgramService,
   ProgramAssignment,
@@ -503,7 +504,7 @@ export class UnifiedTrainingService {
 
       return { data: data as DailyProtocolResponse };
     } catch (err) {
-      this.logger.warn("[UnifiedTraining] Failed to load daily protocol:", err);
+      this.logger.warn("[UnifiedTraining] Failed to load daily protocol:", toLogContext(err));
       return { data: null };
     }
   }

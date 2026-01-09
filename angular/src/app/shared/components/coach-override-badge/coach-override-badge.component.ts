@@ -183,6 +183,7 @@ export class CoachOverrideBadgeComponent {
    * Get time ago string using centralized utility
    */
   getTimeAgoStr(): string {
-    return this.timestamp() ? getTimeAgo(this.timestamp()!) : "";
+    const timestamp = this.timestamp();
+    return timestamp ? getTimeAgo(timestamp) : "";
   }
 }

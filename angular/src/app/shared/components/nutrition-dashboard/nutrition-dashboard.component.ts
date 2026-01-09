@@ -24,6 +24,7 @@ import {
 } from "../../../core/services/nutrition.service";
 import { firstValueFrom } from "rxjs";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 
 interface FoodItem {
   name: string;
@@ -386,6 +387,6 @@ export class NutritionDashboardComponent {
 
   executeInsightAction(insight: ServicePerformanceInsight) {
     // Handle insight actions (e.g., add recommended food, adjust meal timing)
-    this.logger.debug("Executing insight action:", insight);
+    this.logger.debug("Executing insight action:", toLogContext(insight));
   }
 }

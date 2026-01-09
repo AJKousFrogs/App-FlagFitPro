@@ -4,6 +4,7 @@ import { catchError } from "rxjs/operators";
 import { ApiService, API_ENDPOINTS } from "./api.service";
 import { StatisticsCalculationService } from "./statistics-calculation.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import type { ApiResponse } from "@shared/types";
 
 export interface PlayerGameStats {
@@ -739,7 +740,7 @@ export class PlayerStatisticsService {
       );
       return result.percentage;
     } catch (error) {
-      this.logger.warn("Error calculating completion percentage:", error);
+      this.logger.warn("Error calculating completion percentage:", toLogContext(error));
       return attempts > 0 ? (completions / attempts) * 100 : 0;
     }
   }
@@ -752,7 +753,7 @@ export class PlayerStatisticsService {
       const result = this.statsCalcService.calculateDropRate(drops, targets);
       return result.rate;
     } catch (error) {
-      this.logger.warn("Error calculating drop rate:", error);
+      this.logger.warn("Error calculating drop rate:", toLogContext(error));
       return targets > 0 ? (drops / targets) * 100 : 0;
     }
   }
@@ -771,7 +772,7 @@ export class PlayerStatisticsService {
       );
       return result.rate;
     } catch (error) {
-      this.logger.warn("Error calculating flag pull success rate:", error);
+      this.logger.warn("Error calculating flag pull success rate:", toLogContext(error));
       return attempts > 0 ? (successes / attempts) * 100 : 0;
     }
   }

@@ -23,6 +23,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom, Subscription, timer } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import {
   AthleteRecoveryProfile,
   RecoveryService,
@@ -690,7 +691,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   }
 
   selectProtocol(protocol: ServiceRecoveryProtocol) {
-    this.logger.debug("Selected protocol:", protocol);
+    this.logger.debug("Selected protocol:", toLogContext(protocol));
   }
 
   async startProtocol(protocol: ServiceRecoveryProtocol) {

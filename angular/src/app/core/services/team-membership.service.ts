@@ -2,6 +2,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { AuthService } from "./auth.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 
 /**
  * Team membership data structure
@@ -229,9 +230,7 @@ export class TeamMembershipService {
       this._lastUpdated.set(new Date());
       this.logger.debug(
         "[TeamMembership] Membership loaded:",
-        membership.role,
-        "in team",
-        teamName,
+        { role: membership.role, teamName },
       );
 
       return membership;
@@ -277,7 +276,7 @@ export class TeamMembershipService {
         .maybeSingle();
 
       if (error || !coach) {
-        this.logger.warn("[TeamMembership] No coach found for team:", teamId);
+        this.logger.warn("[TeamMembership] No coach found for team:", toLogContext(teamId));
         return null;
       }
 

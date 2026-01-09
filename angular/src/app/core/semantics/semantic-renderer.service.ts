@@ -59,7 +59,7 @@ export class SemanticRendererService {
     if (!validation.valid) {
       this.logger.warn(
         "[SemanticRenderer] Meaning validation failed:",
-        validation.errors,
+        { errors: validation.errors },
       );
       // Continue rendering but log warning
     }

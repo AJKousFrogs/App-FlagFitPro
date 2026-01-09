@@ -30,6 +30,7 @@ import { ToggleSwitch } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { toLogContext } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -569,7 +570,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         });
       }
     } catch (error) {
-      this.logger.warn("Could not load profile data:", error);
+      this.logger.warn("Could not load profile data:", toLogContext(error));
     }
   }
 
@@ -908,7 +909,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
       if (error) {
         // Table might not exist, create it or handle gracefully
-        this.logger.warn("Could not save 2FA settings:", error.message);
+        this.logger.warn("Could not save 2FA settings:", toLogContext(error.message));
       }
 
       // Generate backup codes
@@ -983,7 +984,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         .eq("user_id", user.id);
 
       if (error) {
-        this.logger.warn("Could not disable 2FA:", error.message);
+        this.logger.warn("Could not disable 2FA:", toLogContext(error.message));
       }
 
       this.is2FAEnabled.set(false);
@@ -1300,7 +1301,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         .order("name");
 
       if (error) {
-        this.logger.warn("Could not load teams:", error.message);
+        this.logger.warn("Could not load teams:", toLogContext(error.message));
         return;
       }
 
@@ -1317,7 +1318,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
       this.availableTeams.set(teamOptions);
     } catch (error) {
-      this.logger.warn("Failed to load teams:", error);
+      this.logger.warn("Failed to load teams:", toLogContext(error));
     }
   }
 
@@ -1422,11 +1423,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       );
 
       if (error) {
-        this.logger.warn("Could not send notification email:", error.message);
+        this.logger.warn("Could not send notification email:", toLogContext(error.message));
         // Don't throw - the request was still created successfully
       }
     } catch (error) {
-      this.logger.warn("Failed to send team approval notification:", error);
+      this.logger.warn("Failed to send team approval notification:", toLogContext(error));
       // Don't throw - the request was still created successfully
     }
   }
@@ -1506,7 +1507,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         }
       }
     } catch (error) {
-      this.logger.warn("Could not update team membership:", error);
+      this.logger.warn("Could not update team membership:", toLogContext(error));
       // Don't throw - profile update was still successful
     }
   }

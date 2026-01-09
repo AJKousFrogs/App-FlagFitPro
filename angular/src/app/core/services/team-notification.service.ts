@@ -15,6 +15,7 @@ import { Injectable, inject, signal, computed, effect } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import {
   NotificationStateService,
   Notification as AppNotification,
@@ -260,7 +261,7 @@ export class TeamNotificationService {
    * Handle incoming notification
    */
   private handleNewNotification(notification: AppNotification): void {
-    this.logger.info("📬 New notification:", notification.message);
+    this.logger.info("📬 New notification:", toLogContext(notification.message));
 
     // Add to state
     this.notificationState.addNotification(notification);
@@ -289,7 +290,7 @@ export class TeamNotificationService {
    * Handle new activity item
    */
   private handleNewActivity(activity: CoachActivityItem): void {
-    this.logger.info("📊 New activity:", activity.title);
+    this.logger.info("📊 New activity:", toLogContext(activity.title));
 
     // Add to feed
     this._activityFeed.update((feed) => [activity, ...feed]);

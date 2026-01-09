@@ -24,10 +24,10 @@ import { forkJoin } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
+import { MissingDataDetectionService, PlayerMissingData } from "../../core/services/missing-data-detection.service";
 import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
 import { OverrideLoggingService } from "../../core/services/override-logging.service";
-import { OwnershipTransitionService } from "../../core/services/ownership-transition.service";
+import { OwnershipTransitionService, OwnershipTransition } from "../../core/services/ownership-transition.service";
 import { AccountabilityTrackingService } from "../../core/services/accountability-tracking.service";
 import {
   GameResult,
@@ -1084,10 +1084,10 @@ export class CoachDashboardComponent {
   consentInfo = signal<ConsentInfo>({ blockedPlayerIds: [] });
 
   // Missing data tracking
-  playersWithMissingData = signal<any[]>([]);
+  playersWithMissingData = signal<PlayerMissingData[]>([]);
 
   // Ownership transitions tracking
-  pendingTransitions = signal<any[]>([]);
+  pendingTransitions = signal<OwnershipTransition[]>([]);
 
   // Team continuity tracking
   teamContinuity = signal<{

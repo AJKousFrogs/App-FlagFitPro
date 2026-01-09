@@ -719,13 +719,14 @@ export class PlaybookComponent implements OnInit {
   }
 
   submitAnswer(): void {
-    if (this.selectedAnswer() === null) return;
+    const answer = this.selectedAnswer();
+    if (answer === null) return;
 
     // Record user answer
     this.quizQuestions.update((questions) =>
       questions.map((q, i) =>
         i === this.currentQuestionIndex()
-          ? { ...q, userAnswer: this.selectedAnswer()! }
+          ? { ...q, userAnswer: answer }
           : q,
       ),
     );

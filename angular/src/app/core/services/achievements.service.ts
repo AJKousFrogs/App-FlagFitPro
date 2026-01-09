@@ -7,6 +7,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, catchError, map, of, tap } from "rxjs";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { ToastService } from "./toast.service";
 
 export interface Achievement {
@@ -173,7 +174,7 @@ export class AchievementsService {
             // Reload achievements to get updated state
             this.loadAchievements().subscribe();
           }
-          this.logger.info("[Achievements] Unlock result", result);
+          this.logger.info("[Achievements] Unlock result", toLogContext(result));
         }),
         catchError((error) => {
           this.logger.error(
@@ -229,7 +230,7 @@ export class AchievementsService {
             };
           }),
           tap((result) => {
-            this.logger.info("[Achievements] Synced from localStorage", result);
+            this.logger.info("[Achievements] Synced from localStorage", toLogContext(result));
             // Reload to get fresh data
             this.loadAchievements().subscribe();
           }),

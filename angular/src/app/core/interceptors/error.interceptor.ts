@@ -14,7 +14,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       // Log the error for debugging
-      logger.debug(`[ErrorInterceptor] HTTP Error ${error.status}:`, error.url);
+      logger.debug(`[ErrorInterceptor] HTTP Error ${error.status}:`, { url: error.url || 'unknown' });
 
       if (error.status === 401) {
         // Unauthorized - clear auth and redirect to login

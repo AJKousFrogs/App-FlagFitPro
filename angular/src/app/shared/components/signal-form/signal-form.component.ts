@@ -25,6 +25,7 @@ import {
   createSignalFormField,
 } from "../../utils/form.utils";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 
 @Component({
   selector: "app-signal-form",
@@ -222,7 +223,7 @@ export class SignalFormComponent {
       };
 
       this.formSubmit.emit(formData);
-      this.logger.debug("Form submitted:", formData);
+      this.logger.debug("Form submitted:", toLogContext(formData));
     } else {
       // Focus first invalid field for accessibility
       this.focusFirstInvalidField();

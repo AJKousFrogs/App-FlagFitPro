@@ -19,6 +19,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -907,7 +908,7 @@ export class TrainingScheduleComponent implements OnInit {
         .lte("session_date", endOfMonth.toISOString().split("T")[0]);
 
       if (error) {
-        this.logger.warn("Failed to load date markers:", error);
+        this.logger.warn("Failed to load date markers:", toLogContext(error));
         return;
       }
 
@@ -952,7 +953,7 @@ export class TrainingScheduleComponent implements OnInit {
         .lte("session_date", endOfMonth.toISOString().split("T")[0]);
 
       if (error) {
-        this.logger.warn("Failed to load monthly stats:", error);
+        this.logger.warn("Failed to load monthly stats:", toLogContext(error));
         return;
       }
 

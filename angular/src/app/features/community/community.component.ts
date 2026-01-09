@@ -26,6 +26,7 @@ import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { toLogContext } from "../../core/services/logger.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -996,11 +997,11 @@ export class CommunityComponent implements OnInit {
 
   // Handle announcement events
   onAnnouncementViewed(announcementId: string): void {
-    this.logger.info("Announcement viewed:", announcementId);
+    this.logger.info("Announcement viewed:", toLogContext(announcementId));
   }
 
   onAnnouncementAcknowledged(announcementId: string): void {
-    this.logger.info("Announcement acknowledged:", announcementId);
+    this.logger.info("Announcement acknowledged:", toLogContext(announcementId));
   }
 
   loadCommunityData(): void {

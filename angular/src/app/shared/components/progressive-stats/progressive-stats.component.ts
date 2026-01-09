@@ -15,6 +15,7 @@ import { expandCollapse } from "../../animations/app.animations";
 import { StatItem } from "../stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 
 export interface ProgressiveStatItem extends StatItem {
   id: string;
@@ -225,7 +226,7 @@ export class ProgressiveStatsComponent {
   }
 
   setGoal(stat: ProgressiveStatItem): void {
-    this.logger.debug("Set goal for stat:", stat);
+    this.logger.debug("Set goal for stat:", toLogContext(stat));
     // Implement goal setting logic
     // This could open a modal or navigate to a goal setting page
   }

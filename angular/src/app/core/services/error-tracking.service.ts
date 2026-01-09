@@ -197,7 +197,7 @@ export class ErrorTrackingService {
     const errorObj = error instanceof Error ? error : new Error(String(error));
 
     // Log locally
-    this.logger.error(`[${severity.toUpperCase()}]`, errorObj.message, context);
+    this.logger.error(`[${severity.toUpperCase()}]`, errorObj, context);
 
     // Add breadcrumb
     this.addBreadcrumb({
@@ -241,7 +241,7 @@ export class ErrorTrackingService {
     severity: ErrorSeverity = "info",
   ): void {
     // Log locally
-    this.logger.info(`[${severity.toUpperCase()}]`, message, context);
+    this.logger.info(`[${severity.toUpperCase()}]`, context);
 
     // Send to Sentry if available
     if (this.Sentry && this.isInitialized) {

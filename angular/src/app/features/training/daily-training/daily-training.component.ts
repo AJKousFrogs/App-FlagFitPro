@@ -25,6 +25,7 @@ import {
 import { AuthService } from "../../../core/services/auth.service";
 import { HeaderService } from "../../../core/services/header.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 
 interface WarmupPhase {
   name: string;
@@ -1276,7 +1277,7 @@ export class DailyTrainingComponent implements OnInit {
         next: (data) => {
           this.trainingData.set(data);
           this.loading.set(false);
-          this.logger.info("[DailyTraining] Loaded training plan", data);
+          this.logger.info("[DailyTraining] Loaded training plan", toLogContext(data));
         },
         error: (error) => {
           this.logger.error(

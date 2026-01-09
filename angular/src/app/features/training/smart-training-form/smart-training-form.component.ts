@@ -30,6 +30,7 @@ import {
 } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -312,7 +313,7 @@ export class SmartTrainingFormComponent implements OnInit {
         }));
       }
     } catch (error) {
-      this.logger.warn("Could not load recent performance:", error);
+      this.logger.warn("Could not load recent performance:", toLogContext(error));
     }
 
     // Load upcoming games/events
@@ -337,7 +338,7 @@ export class SmartTrainingFormComponent implements OnInit {
         }));
       }
     } catch (error) {
-      this.logger.warn("Could not load upcoming games:", error);
+      this.logger.warn("Could not load upcoming games:", toLogContext(error));
     }
 
     this.aiService
@@ -430,7 +431,7 @@ export class SmartTrainingFormComponent implements OnInit {
   onSessionTypeChange(event: { value: string }) {
     // Additional logic when session type changes
     const selectedType = event.value;
-    this.logger.debug("Session type changed to:", selectedType);
+    this.logger.debug("Session type changed to:", toLogContext(selectedType));
   }
 
   applySuggestion(suggestion: TrainingSuggestion) {
@@ -460,7 +461,7 @@ export class SmartTrainingFormComponent implements OnInit {
       }
 
       const formValue = this.trainingForm.value;
-      this.logger.debug("Creating training session:", formValue);
+      this.logger.debug("Creating training session:", toLogContext(formValue));
 
       // Save to Supabase
       const { error } = await this.supabaseService.client

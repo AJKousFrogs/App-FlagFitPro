@@ -17,6 +17,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { RealtimeService, RealtimeCallback } from "./realtime.service";
 import { getInitials } from "../../shared/utils/format.utils";
 
@@ -714,7 +715,7 @@ export class ChannelService {
         { onConflict: "message_id,user_id" },
       );
     } catch (error) {
-      this.logger.warn("Error marking message read:", error);
+      this.logger.warn("Error marking message read:", toLogContext(error));
     }
   }
 
@@ -868,7 +869,7 @@ export class ChannelService {
         { onConflict: "channel_id,user_id" },
       );
     } catch (error) {
-      this.logger.warn("Error updating last read:", error);
+      this.logger.warn("Error updating last read:", toLogContext(error));
     }
   }
 
@@ -1231,7 +1232,7 @@ export class ChannelService {
         .in("id", userIds);
 
       if (usersError) {
-        this.logger.warn("Error fetching user details:", usersError);
+        this.logger.warn("Error fetching user details:", toLogContext(usersError));
       }
 
       // Create a map for quick user lookup

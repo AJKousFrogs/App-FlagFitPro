@@ -113,7 +113,12 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
 
     // Create component based on render decision
     try {
-      let componentClass: any;
+      let componentClass:
+        | typeof RiskBadgeComponent
+        | typeof IncompleteDataBadgeComponent
+        | typeof ActionRequiredBadgeComponent
+        | typeof ActionPanelComponent
+        | typeof CoachOverrideBadgeComponent;
 
       switch (decision.component) {
         case "app-risk-badge":
@@ -140,7 +145,8 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
       }
 
       // Create component instance
-      this.componentRef = this.renderTarget.createComponent(componentClass);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.componentRef = this.renderTarget.createComponent(componentClass as any);
 
       // Set component inputs using setInput() for signal input compatibility
       Object.keys(decision.props).forEach((key) => {

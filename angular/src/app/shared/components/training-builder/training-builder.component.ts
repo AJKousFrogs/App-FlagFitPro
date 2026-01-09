@@ -30,6 +30,7 @@ import { AIService } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoadMonitoringService } from "../../../core/services/load-monitoring.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -486,7 +487,7 @@ export class TrainingBuilderComponent {
         }));
       }
     } catch (error) {
-      this.logger.warn("Could not load recent performance:", error);
+      this.logger.warn("Could not load recent performance:", toLogContext(error));
     }
 
     // Load upcoming games/events
@@ -511,7 +512,7 @@ export class TrainingBuilderComponent {
         }));
       }
     } catch (error) {
-      this.logger.warn("Could not load upcoming games:", error);
+      this.logger.warn("Could not load upcoming games:", toLogContext(error));
     }
 
     // Load AI suggestions based on user's recent performance
@@ -767,12 +768,12 @@ export class TrainingBuilderComponent {
 
   previewExercise(event: { title: string; description: string }) {
     // Open exercise preview modal
-    this.logger.debug("Preview exercise:", event);
+    this.logger.debug("Preview exercise:", toLogContext(event));
   }
 
   modifyExercise(event: { title: string; description: string }) {
     // Open exercise modification modal
-    this.logger.debug("Modify exercise:", event);
+    this.logger.debug("Modify exercise:", toLogContext(event));
   }
 
   async startSession() {
@@ -924,7 +925,7 @@ export class TrainingBuilderComponent {
       }
 
       this.toastService.success(TOAST.SUCCESS.SESSION_TEMPLATE_SAVED);
-      this.logger.info("Session template saved:", template.id);
+      this.logger.info("Session template saved:", toLogContext(template.id));
 
       // Optionally navigate to training schedule
       this.router.navigate(["/training/schedule"]);

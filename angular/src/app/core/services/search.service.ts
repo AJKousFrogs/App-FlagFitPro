@@ -16,6 +16,7 @@
 
 import { computed, inject, Injectable, OnDestroy, signal } from "@angular/core";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { TIMEOUTS, UI_LIMITS } from "../constants/app.constants";
 
@@ -366,7 +367,7 @@ export class SearchService implements OnDestroy {
         .limit(10);
 
       if (error) {
-        this.logger.warn("Exercise search error:", error);
+        this.logger.warn("Exercise search error:", toLogContext(error));
         return [];
       }
 
@@ -381,7 +382,7 @@ export class SearchService implements OnDestroy {
         relevance: this.calculateRelevance(query, exercise.name),
       }));
     } catch (error) {
-      this.logger.warn("Exercise search failed:", error);
+      this.logger.warn("Exercise search failed:", toLogContext(error));
       return [];
     }
   }
@@ -400,7 +401,7 @@ export class SearchService implements OnDestroy {
         .limit(10);
 
       if (error) {
-        this.logger.warn("Program search error:", error);
+        this.logger.warn("Program search error:", toLogContext(error));
         return [];
       }
 
@@ -415,7 +416,7 @@ export class SearchService implements OnDestroy {
         relevance: this.calculateRelevance(query, program.name),
       }));
     } catch (error) {
-      this.logger.warn("Program search failed:", error);
+      this.logger.warn("Program search failed:", toLogContext(error));
       return [];
     }
   }
@@ -434,7 +435,7 @@ export class SearchService implements OnDestroy {
         .limit(10);
 
       if (error) {
-        this.logger.warn("Player search error:", error);
+        this.logger.warn("Player search error:", toLogContext(error));
         return [];
       }
 
@@ -453,7 +454,7 @@ export class SearchService implements OnDestroy {
         };
       });
     } catch (error) {
-      this.logger.warn("Player search failed:", error);
+      this.logger.warn("Player search failed:", toLogContext(error));
       return [];
     }
   }
@@ -473,7 +474,7 @@ export class SearchService implements OnDestroy {
         .limit(10);
 
       if (error) {
-        this.logger.warn("Video search error:", error);
+        this.logger.warn("Video search error:", toLogContext(error));
         return [];
       }
 
@@ -488,7 +489,7 @@ export class SearchService implements OnDestroy {
         relevance: this.calculateRelevance(query, video.title),
       }));
     } catch (error) {
-      this.logger.warn("Video search failed:", error);
+      this.logger.warn("Video search failed:", toLogContext(error));
       return [];
     }
   }

@@ -27,6 +27,7 @@ import { ToastModule } from "primeng/toast";
 
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { toLogContext } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import {
   CreateTournamentDto,
@@ -1811,7 +1812,7 @@ export class TournamentsComponent implements OnInit {
 
   viewDetails(tournament: Tournament): void {
     // Could navigate to detail page or open a dialog
-    this.logger.info("View details:", tournament);
+    this.logger.info("View details:", toLogContext(tournament));
   }
 
   scrollToTournament(id: string): void {

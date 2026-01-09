@@ -9,6 +9,7 @@ import { inject } from "@angular/core";
 import { ResolveFn } from "@angular/router";
 import { ApiService, API_ENDPOINTS } from "../services/api.service";
 import { LoggerService } from "../services/logger.service";
+import { toLogContext } from "../services/logger.service";
 
 export const gameTrackerPrefetchResolver: ResolveFn<void> = (
   _route,
@@ -25,7 +26,7 @@ export const gameTrackerPrefetchResolver: ResolveFn<void> = (
     },
     error: (err) => {
       // Silently fail - component will handle error state
-      logger.warn("Game tracker prefetch failed:", err);
+      logger.warn("Game tracker prefetch failed:", toLogContext(err));
     },
   });
 

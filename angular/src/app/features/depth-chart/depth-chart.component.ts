@@ -327,7 +327,10 @@ export class DepthChartComponent implements OnInit {
           players: [],
         });
       }
-      groups.get(key)!.players.push(entry);
+      const group = groups.get(key);
+      if (group) {
+        group.players.push(entry);
+      }
     }
 
     // Sort players by depth order

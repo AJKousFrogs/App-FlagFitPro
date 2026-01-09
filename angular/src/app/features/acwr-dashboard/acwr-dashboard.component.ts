@@ -41,6 +41,7 @@ import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoadMonitoringService } from "../../core/services/load-monitoring.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { toLogContext } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -971,7 +972,7 @@ export class AcwrDashboardComponent implements OnInit {
         .order("session_date", { ascending: true });
 
       if (error) {
-        this.logger.warn("Could not load trend data:", error);
+        this.logger.warn("Could not load trend data:", toLogContext(error));
         return;
       }
 

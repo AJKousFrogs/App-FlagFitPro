@@ -10,6 +10,6 @@ const serverConfig = {
 
 const config = mergeApplicationConfig(appConfig, serverConfig);
 
-export default async function bootstrap(context: any) {
+export default async function bootstrap(context: Record<string, unknown>) {
   return bootstrapApplication(AppComponent, { ...config, ...context });
 }

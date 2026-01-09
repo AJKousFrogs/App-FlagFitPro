@@ -2,6 +2,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { TOAST } from "../constants/toast-messages.constants";
 
@@ -284,7 +285,7 @@ export class PrivacySettingsService {
 
       this._teamSettings.set(teamSettings);
     } catch (err) {
-      this.logger.warn("Error loading team settings:", err);
+      this.logger.warn("Error loading team settings:", toLogContext(err));
     }
   }
 
@@ -350,7 +351,7 @@ export class PrivacySettingsService {
         });
       }
     } catch (err) {
-      this.logger.warn("Error checking parental consent:", err);
+      this.logger.warn("Error checking parental consent:", toLogContext(err));
     }
   }
 
@@ -677,7 +678,7 @@ export class PrivacySettingsService {
       if (error) throw error;
       return data === true;
     } catch (err) {
-      this.logger.warn(`Error checking ${dataType} sharing:`, err);
+      this.logger.warn(`Error checking ${dataType} sharing:`, toLogContext(err));
       return false; // Privacy-first: deny access on error
     }
   }
@@ -703,7 +704,7 @@ export class PrivacySettingsService {
       if (error) throw error;
       return data === true;
     } catch (err) {
-      this.logger.warn("Error checking metric category:", err);
+      this.logger.warn("Error checking metric category:", toLogContext(err));
       return false;
     }
   }
@@ -720,7 +721,7 @@ export class PrivacySettingsService {
       if (error) throw error;
       return data || [];
     } catch (err) {
-      this.logger.warn("Error getting coached teams:", err);
+      this.logger.warn("Error getting coached teams:", toLogContext(err));
       return [];
     }
   }

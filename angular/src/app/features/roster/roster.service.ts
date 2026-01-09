@@ -923,8 +923,8 @@ export class RosterService {
     ]);
   }
 
-  private loadFallbackData(members: any[] | null): void {
-    const staff = this.processStaffMembers(members);
+  private loadFallbackData(members: Array<{ role: string }> | null): void {
+    const staff = this.processStaffMembers(members as TeamMemberRecord[] | null);
     this.coachingStaff.set(staff);
     this.allPlayers.set([]);
     this.teamStats.set([

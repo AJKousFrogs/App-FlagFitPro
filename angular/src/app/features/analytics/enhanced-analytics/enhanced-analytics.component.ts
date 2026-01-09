@@ -19,6 +19,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import {
@@ -212,7 +213,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
         .order("scheduled_date", { ascending: true });
 
       if (error) {
-        this.logger.warn("Error loading sessions:", error);
+        this.logger.warn("Error loading sessions:", toLogContext(error));
         this.setDefaultChartData();
         return;
       }

@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { MessageService } from "primeng/api";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { ImageCompressionService } from "./image-compression.service";
 import { timer } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -132,7 +133,7 @@ export class PerformanceMonitorService {
         this.logger.debug("CLS observation not supported");
       }
     } catch (error) {
-      this.logger.warn("PerformanceObserver not fully supported", error);
+      this.logger.warn("PerformanceObserver not fully supported", toLogContext(error));
     }
 
     // Regular metrics collection using RxJS timer with automatic cleanup
@@ -355,7 +356,7 @@ export class PerformanceMonitorService {
             );
           }
         } catch (error) {
-          this.logger.debug("Could not compress image:", error);
+          this.logger.debug("Could not compress image:", toLogContext(error));
         }
       }
 
@@ -363,7 +364,7 @@ export class PerformanceMonitorService {
         this.logger.info(`Compressed ${compressedCount} images on page`);
       }
     } catch (error) {
-      this.logger.warn("Image compression optimization failed:", error);
+      this.logger.warn("Image compression optimization failed:", toLogContext(error));
     }
   }
 
@@ -410,7 +411,7 @@ export class PerformanceMonitorService {
       url: window.location.href,
     };
 
-    this.logger.info("Performance Issue Report:", issueReport);
+    this.logger.info("Performance Issue Report:", toLogContext(issueReport));
     // In a real application, this would send the report to a backend service
     this.showToast(
       "info",

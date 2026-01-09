@@ -52,6 +52,7 @@ import {
 import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { AcwrSpikeDetectionService } from "./acwr-spike-detection.service";
 import {
   RealtimeChannel,
@@ -1138,7 +1139,7 @@ export class AcwrService {
           filter: `player_id=eq.${userId}`,
         },
         (payload: RealtimePostgresInsertPayload<WorkoutLog>) => {
-          this.logger.info("[ACWR] New workout log received", payload.new);
+          this.logger.info("[ACWR] New workout log received", toLogContext(payload.new));
           const log = payload.new;
 
           const session: TrainingSession = {
@@ -1175,7 +1176,7 @@ export class AcwrService {
           filter: `player_id=eq.${userId}`,
         },
         (payload: RealtimePostgresUpdatePayload<WorkoutLog>) => {
-          this.logger.info("[ACWR] Workout log updated", payload.new);
+          this.logger.info("[ACWR] Workout log updated", toLogContext(payload.new));
           // Reload sessions to update calculations
           this.loadPlayerSessions(userId);
         },
@@ -1304,13 +1305,13 @@ export class AcwrService {
         .limit(1);
 
       if (error) {
-        this.logger.warn("[ACWR] Error checking injury history:", error);
+        this.logger.warn("[ACWR] Error checking injury history:", toLogContext(error));
         return false;
       }
 
       return (data && data.length > 0) || false;
     } catch (error) {
-      this.logger.warn("[ACWR] Failed to check injury history:", error);
+      this.logger.warn("[ACWR] Failed to check injury history:", toLogContext(error));
       return false;
     }
   }

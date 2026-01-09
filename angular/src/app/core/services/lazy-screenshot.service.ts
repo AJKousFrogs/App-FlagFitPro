@@ -88,7 +88,10 @@ export class LazyScreenshotService {
     };
 
     try {
-      const canvas = await this.html2canvas!(element, defaultOptions);
+      if (!this.html2canvas) {
+        throw new Error("html2canvas not loaded");
+      }
+      const canvas = await this.html2canvas(element, defaultOptions);
       return canvas;
     } catch (error) {
       console.error("Failed to capture screenshot:", error);

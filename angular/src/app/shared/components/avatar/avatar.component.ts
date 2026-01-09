@@ -50,8 +50,9 @@ export class AvatarComponent {
 
   // Computed values
   initials = computed(() => {
-    if (!this.name()) return "";
-    const names = this.name()!.split(" ");
+    const name = this.name();
+    if (!name) return "";
+    const names = name.split(" ");
     if (names.length >= 2) {
       return names[0][0] + names[names.length - 1][0];
     }

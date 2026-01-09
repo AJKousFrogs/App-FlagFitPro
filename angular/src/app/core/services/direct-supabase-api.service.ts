@@ -410,10 +410,13 @@ export class DirectSupabaseApiService {
     const exercisesByCategory = new Map<string, typeof allExercises>();
     allExercises.forEach((ex) => {
       const category = (ex.category || "").toLowerCase();
-      if (!exercisesByCategory.has(category)) {
-        exercisesByCategory.set(category, []);
-      }
-      exercisesByCategory.get(category)!.push(ex);
+    if (!exercisesByCategory.has(category)) {
+      exercisesByCategory.set(category, []);
+    }
+    const categoryExercises = exercisesByCategory.get(category);
+    if (categoryExercises) {
+      categoryExercises.push(ex);
+    }
     });
 
     const protocolExercises: Array<{

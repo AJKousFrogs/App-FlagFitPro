@@ -107,7 +107,7 @@ export class AnnouncementsBannerComponent implements OnInit {
   private notificationService = inject(TeamNotificationService);
 
   // Inputs
-  readonly maxDisplay = input<any>(1);
+  readonly maxDisplay = input<number>(1);
 
   // Outputs
   readonly viewed = output<string>();

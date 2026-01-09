@@ -24,6 +24,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
 
 interface AISuggestion {
@@ -36,7 +37,7 @@ interface AISuggestion {
   accepted: boolean;
   dismissed: boolean;
   affected_session_id?: string;
-  suggested_changes?: Record<string, any>;
+  suggested_changes?: Record<string, unknown>;
 }
 
 interface ScheduledSession {
@@ -433,7 +434,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
         this.athleteMetrics.set(null);
       }
     } catch (error) {
-      this.logger.warn("Could not load all athlete metrics:", error);
+      this.logger.warn("Could not load all athlete metrics:", toLogContext(error));
       // No defaults - show empty state
       this.athleteMetrics.set(null);
     }
@@ -450,7 +451,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
         .limit(10);
 
       if (error) {
-        this.logger.warn("Error loading suggestions:", error);
+        this.logger.warn("Error loading suggestions:", toLogContext(error));
         // Generate suggestions based on metrics
         this.generateLocalSuggestions();
         return;
@@ -476,7 +477,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
         this.generateLocalSuggestions();
       }
     } catch (error) {
-      this.logger.warn("Error loading suggestions:", error);
+      this.logger.warn("Error loading suggestions:", toLogContext(error));
       this.generateLocalSuggestions();
     }
   }
@@ -584,7 +585,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
         .order("scheduled_date", { ascending: true });
 
       if (error) {
-        this.logger.warn("Error loading sessions:", error);
+        this.logger.warn("Error loading sessions:", toLogContext(error));
         return;
       }
 
@@ -600,7 +601,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
         })),
       );
     } catch (error) {
-      this.logger.warn("Error loading sessions:", error);
+      this.logger.warn("Error loading sessions:", toLogContext(error));
     }
   }
 

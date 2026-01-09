@@ -906,8 +906,8 @@ export class PaymentManagementComponent implements OnInit {
         return;
       }
 
-      const response: any = await firstValueFrom(
-        this.api.post("/api/coach/payments/fees", {
+      const response = await firstValueFrom(
+        this.api.post<{ success: boolean }>("/api/coach/payments/fees", {
           team_id: teamId,
           name: this.feeForm.name,
           type: this.feeForm.type,
@@ -951,8 +951,8 @@ export class PaymentManagementComponent implements OnInit {
         return;
       }
 
-      const response: any = await firstValueFrom(
-        this.api.post("/api/coach/payments/record", {
+      const response = await firstValueFrom(
+        this.api.post<{ success: boolean }>("/api/coach/payments/record", {
           team_id: teamId,
           player_id: this.paymentForm.playerId,
           amount: this.paymentForm.amount,

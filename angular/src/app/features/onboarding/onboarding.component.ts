@@ -25,7 +25,7 @@ import { ToastModule } from "primeng/toast";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { AuthService } from "../../core/services/auth.service";
-import { LoggerService } from "../../core/services/logger.service";
+import { LoggerService, toLogContext } from "../../core/services/logger.service";
 import {
   PlayerProgramService,
   getProgramIdForPosition,
@@ -2896,7 +2896,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
         // Show user a warning but allow completion
         // They can still access the app and admin can assign program later
-        this.toastService.warning(
+        this.toastService.warn(
           "Training program assignment is pending. You can still access the app, but your personalized plan may not be ready yet. Please contact support if this persists.",
           "Setup Incomplete",
         );
@@ -2988,7 +2988,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         .upsert(preferences, { onConflict: "email" });
 
       if (error) {
-        this.logger.info("Saving preferences to localStorage:", error.message);
+        this.logger.info("Saving preferences to localStorage:", toLogContext(error.message));
         localStorage.setItem(
           "flagfit_preferences",
           JSON.stringify(preferences),
@@ -3146,7 +3146,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         );
       }
     } catch (e) {
-      this.logger.warn("[Onboarding] Error saving current injuries:", e);
+      this.logger.warn("[Onboarding] Error saving current injuries:", toLogContext(e));
       // Non-blocking - continue with onboarding
     }
   }
@@ -3294,7 +3294,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
       }
     } catch (e) {
-      this.logger.warn("[Onboarding] Error adding player to team roster:", e);
+      this.logger.warn("[Onboarding] Error adding player to team roster:", toLogContext(e));
       // Non-blocking - continue with onboarding
     }
   }
@@ -3402,8 +3402,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           programId: programId,
           error: error,
           errorMessage: error instanceof Error ? error.message : String(error),
-          errorCode: (error as any)?.code,
-          errorDetails: (error as any)?.details,
+          errorCode: typeof error === 'object' && error !== null && 'code' in error ? (error as { code: unknown }).code : undefined,
+          errorDetails: typeof error === 'object' && error !== null && 'details' in error ? (error as { details: unknown }).details : undefined,
           stack: error instanceof Error ? error.stack : undefined,
         },
       );

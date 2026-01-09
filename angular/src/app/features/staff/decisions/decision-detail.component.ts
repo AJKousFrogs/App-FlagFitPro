@@ -473,7 +473,14 @@ export class DecisionDetailComponent implements OnInit {
   decision = signal<DecisionLedgerEntry | null>(null);
   isLoading = signal(false);
   error = signal<string | null>(null);
-  relatedDecisions = signal<any[]>([]);
+  relatedDecisions = signal<Array<{ 
+    id: string; 
+    title: string; 
+    category: string; 
+    outcome: string;
+    decisionSummary: string;
+    relation: string;
+  }>>([]);
   showReviewDialog = signal(false);
 
   // Computed

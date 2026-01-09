@@ -1032,7 +1032,10 @@ export class RosterComponent implements OnInit {
       if (!positionMap.has(positionName)) {
         positionMap.set(positionName, []);
       }
-      positionMap.get(positionName)!.push(player);
+      const positionPlayers = positionMap.get(positionName);
+      if (positionPlayers) {
+        positionPlayers.push(player);
+      }
     });
 
     return Array.from(positionMap.entries()).map(([position, players]) => ({

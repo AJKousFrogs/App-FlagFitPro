@@ -12,6 +12,7 @@ import { Observable, of, from } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { TrainingDataService, TrainingSession } from "./training-data.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { AcwrService } from "./acwr.service";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
@@ -141,7 +142,7 @@ export class TrainingStatsCalculationService {
       const { data: sessions, error } = await query;
 
       if (error || !sessions) {
-        this.logger.warn("[TrainingStats] Error loading sessions:", error);
+        this.logger.warn("[TrainingStats] Error loading sessions:", toLogContext(error));
         return this.getEmptyStats();
       }
 

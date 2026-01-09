@@ -23,7 +23,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { AccountDeletionService } from "../../core/services/account-deletion.service";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
-import { LoggerService } from "../../core/services/logger.service";
+import { LoggerService, toLogContext } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -705,7 +705,7 @@ export class ProfileComponent implements OnInit {
           }
         }
       } catch (e) {
-        this.logger.debug("Games data not available:", e);
+        this.logger.debug("Games data not available:", toLogContext(e));
       }
 
       if (sessionsError) {
@@ -1269,7 +1269,7 @@ export class ProfileComponent implements OnInit {
         }
       }
     } catch (error) {
-      this.logger.warn("Could not load extended profile data:", error);
+      this.logger.warn("Could not load extended profile data:", toLogContext(error));
       // Non-critical error, continue with basic profile
     }
   }
@@ -1360,10 +1360,10 @@ export class ProfileComponent implements OnInit {
 
       // Reload profile data to reflect new team membership
       this.loadProfileData();
-    } catch (error: any) {
+    } catch (error) {
       this.logger.error("Error accepting invitation:", error);
       this.toastService.error(
-        error.message || TOAST.ERROR.INVITATION_ACCEPT_FAILED,
+        error instanceof Error ? error.message : TOAST.ERROR.INVITATION_ACCEPT_FAILED,
       );
     } finally {
       this.processingInvitation.set(null);
@@ -1388,10 +1388,10 @@ export class ProfileComponent implements OnInit {
       this.pendingInvitations.update((invs) =>
         invs.filter((i) => i.id !== invitation.id),
       );
-    } catch (error: any) {
+    } catch (error) {
       this.logger.error("Error declining invitation:", error);
       this.toastService.error(
-        error.message || TOAST.ERROR.INVITATION_DECLINE_FAILED,
+        error instanceof Error ? error.message : TOAST.ERROR.INVITATION_DECLINE_FAILED,
       );
     } finally {
       this.processingInvitation.set(null);

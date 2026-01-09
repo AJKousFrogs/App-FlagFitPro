@@ -325,13 +325,14 @@ export class GoalBasedPlannerComponent implements OnInit {
   }
 
   async generatePlan() {
-    if (!this.selectedGoal() || !this.athleteId) return;
+    const goal = this.selectedGoal();
+    if (!goal || !this.athleteId) return;
 
     this.loading.set(true);
 
     try {
       const plan = this.trainingPlanService.generateWeeklyPlan({
-        goal: this.selectedGoal()!,
+        goal: goal,
         currentACWR: this.currentACWR(),
         readinessLevel: this.readinessLevel(),
         gameDays: this.gameDays(),

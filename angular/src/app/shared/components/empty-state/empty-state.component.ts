@@ -147,8 +147,9 @@ export class EmptyStateComponent {
 
   // Event handlers
   handleAction(): void {
-    if (this.actionHandler()) {
-      this.actionHandler()!();
+    const handler = this.actionHandler();
+    if (handler) {
+      handler();
     }
     this.onAction.emit();
   }

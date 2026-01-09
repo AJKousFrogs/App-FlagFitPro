@@ -564,12 +564,15 @@ export class TeamCalendarComponent implements OnInit {
     };
 
     // Optimistically update local state
+    const rsvpStatus = this.rsvpForm.status;
+    if (!rsvpStatus) return;
+    
     this.events.update((events) =>
       events.map((e) =>
         e.id === event.id
           ? {
               ...e,
-              myRsvp: this.rsvpForm.status!,
+              myRsvp: rsvpStatus,
               needsRide: this.rsvpForm.needsRide,
             }
           : e,
@@ -581,7 +584,7 @@ export class TeamCalendarComponent implements OnInit {
         this.messageService.add({
           severity: "success",
           summary: "RSVP Submitted",
-          detail: `You're ${this.getRsvpLabel(this.rsvpForm.status!)} for ${event.title}`,
+          detail: `You're ${this.getRsvpLabel(rsvpStatus)} for ${event.title}`,
         });
       },
       error: (err) => this.logger.error("Failed to submit RSVP", err),

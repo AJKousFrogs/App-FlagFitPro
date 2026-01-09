@@ -18,6 +18,7 @@ import { Injectable, signal, computed, effect, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { AuthService } from "./auth.service";
 import { SupabaseService } from "./supabase.service";
 import { TeamMembershipService } from "./team-membership.service";
@@ -203,7 +204,7 @@ export class AcwrAlertsService {
    * Send in-app notification
    */
   private async sendNotification(alert: LoadAlert): Promise<void> {
-    this.logger.info("🔔 Alert:", alert.message);
+    this.logger.info("🔔 Alert:", toLogContext(alert.message));
 
     // Save notification to database
     const user = this.authService.getUser();
@@ -225,7 +226,7 @@ export class AcwrAlertsService {
         // Refresh notification badge
         this.notificationService.refreshBadgeCount();
       } catch (error) {
-        this.logger.warn("Failed to save notification to database:", error);
+        this.logger.warn("Failed to save notification to database:", toLogContext(error));
       }
     }
 
@@ -247,7 +248,7 @@ export class AcwrAlertsService {
    * Uses TeamMembershipService for centralized team queries
    */
   private async notifyCoach(alert: LoadAlert): Promise<void> {
-    this.logger.info("📧 Notifying coach of critical alert:", alert.message);
+    this.logger.info("📧 Notifying coach of critical alert:", toLogContext(alert.message));
 
     const user = this.authService.getUser();
     if (!user?.id) return;

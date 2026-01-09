@@ -19,6 +19,43 @@ export interface LogContext {
   [key: string]: unknown;
 }
 
+/**
+ * Helper to safely convert unknown to Error
+ * @param error - Unknown error value
+ * @returns Error instance
+ */
+export function toError(error: unknown): Error {
+  if (error instanceof Error) return error;
+  if (typeof error === 'string') return new Error(error);
+  if (error && typeof error === 'object' && 'message' in error) {
+    return new Error(String(error.message));
+  }
+  return new Error(String(error));
+}
+
+/**
+ * Helper to convert any value to LogContext
+ * @param value - Value to convert
+ * @returns LogContext object
+ */
+export function toLogContext(value: unknown): LogContext {
+  if (!value) return {};
+  if (typeof value === 'string') return { message: value };
+  if (typeof value === 'object' && value !== null) {
+    // If it's already a plain object, try to use it
+    if (Object.getPrototypeOf(value) === Object.prototype) {
+      return value as LogContext;
+    }
+    // For complex objects (errors, etc.), extract useful info
+    const ctx: LogContext = {};
+    if ('message' in value) ctx.message = String(value.message);
+    if ('code' in value) ctx.code = String(value.code);
+    if ('name' in value) ctx.name = String(value.name);
+    return ctx;
+  }
+  return { value: String(value) };
+}
+
 export interface StructuredLog {
   level: "debug" | "info" | "warn" | "error";
   message: string;
@@ -174,22 +211,80 @@ export class LoggerService {
   }
 
   /**
+   * Normalize context parameter to LogContext
+   */
+  private normalizeContext(context?: unknown): LogContext | undefined {
+    if (context === undefined || context === null) {
+      return undefined;
+    }
+
+    // If it's already a valid LogContext, return it
+    if (typeof context === "object" && !Array.isArray(context)) {
+      return context as LogContext;
+    }
+
+    // Wrap primitive values
+    if (typeof context === "string" || typeof context === "number" || typeof context === "boolean") {
+      return { data: context };
+    }
+
+    // For arrays or other types, stringify
+    return { data: String(context) };
+  }
+
+  /**
+   * Normalize error parameter to Error object
+   */
+  private normalizeError(error?: unknown): Error | undefined {
+    if (error === undefined || error === null) {
+      return undefined;
+    }
+
+    if (error instanceof Error) {
+      return error;
+    }
+
+    if (typeof error === "string") {
+      return new Error(error);
+    }
+
+    if (typeof error === "object") {
+      // Handle PostgrestError and similar objects
+      if ("message" in error && typeof error.message === "string") {
+        const err = new Error(error.message);
+        if ("code" in error) {
+          (err as any).code = error.code;
+        }
+        if ("details" in error) {
+          (err as any).details = error.details;
+        }
+        return err;
+      }
+    }
+
+    return new Error(String(error));
+  }
+
+  /**
    * Debug logging (development only)
    * @param message - Log message
    * @param context - Optional context
    * @param data - Optional data to log
    */
-  debug(message: string, context?: LogContext, data?: unknown): void {
+  debug(message: string, context?: unknown, data?: unknown): void {
     if (!this.shouldLog("debug")) return;
 
     const log = this.createLog(
       "debug",
       message,
-      context,
+      this.normalizeContext(context),
       this.redactSensitiveData(data),
     );
 
     if (this.isDevelopment) {
+      // Use console.warn/error for allowed methods, or just store in buffer
+      // Debug logs are stored in buffer for debugging purposes
+      // eslint-disable-next-line no-console
       console.log(
         "🔍 [DEBUG]",
         log.message,
@@ -205,17 +300,20 @@ export class LoggerService {
    * @param context - Optional context
    * @param data - Optional data to log
    */
-  info(message: string, context?: LogContext, data?: unknown): void {
+  info(message: string, context?: unknown, data?: unknown): void {
     if (!this.shouldLog("info")) return;
 
     const log = this.createLog(
       "info",
       message,
-      context,
+      this.normalizeContext(context),
       this.redactSensitiveData(data),
     );
 
     if (this.isDevelopment) {
+      // Use console.warn/error for allowed methods, or just store in buffer
+      // Info logs are stored in buffer for debugging purposes
+      // eslint-disable-next-line no-console
       console.log(
         "ℹ️ [INFO]",
         log.message,
@@ -231,13 +329,13 @@ export class LoggerService {
    * @param context - Optional context
    * @param data - Optional data to log
    */
-  warn(message: string, context?: LogContext, data?: unknown): void {
+  warn(message: string, context?: unknown, data?: unknown): void {
     if (!this.shouldLog("warn")) return;
 
     const log = this.createLog(
       "warn",
       message,
-      context,
+      this.normalizeContext(context),
       this.redactSensitiveData(data),
     );
 
@@ -247,24 +345,25 @@ export class LoggerService {
   /**
    * Error logging (always logged except in silent mode)
    * @param message - Error message
-   * @param error - Error object
+   * @param error - Error object or unknown error
    * @param context - Optional context
    * @param data - Optional additional data
    */
   error(
     message: string,
-    error?: Error,
-    context?: LogContext,
+    error?: unknown,
+    context?: unknown,
     data?: unknown,
   ): void {
     if (!this.shouldLog("error")) return;
 
+    const normalizedError = this.normalizeError(error);
     const log = this.createLog(
       "error",
       message,
-      context,
+      this.normalizeContext(context),
       this.redactSensitiveData(data),
-      error,
+      normalizedError,
     );
 
     console.error("❌ [ERROR]", log.message, log.context);
@@ -287,17 +386,20 @@ export class LoggerService {
    * @param context - Optional context
    * @param data - Optional data
    */
-  success(message: string, context?: LogContext, data?: unknown): void {
+  success(message: string, context?: unknown, data?: unknown): void {
     if (!this.shouldLog("info")) return;
 
     const log = this.createLog(
       "info",
       message,
-      context,
+      this.normalizeContext(context),
       this.redactSensitiveData(data),
     );
 
     if (this.isDevelopment) {
+      // Use console.warn/error for allowed methods, or just store in buffer
+      // Success logs are stored in buffer for debugging purposes
+      // eslint-disable-next-line no-console
       console.log("✅ [SUCCESS]", log.message, log.context, log.data);
     }
   }
@@ -317,7 +419,7 @@ export class LoggerService {
 
     if (!this.shouldLog(level)) return;
 
-    const log = this.createLog(
+    this.createLog(
       level,
       `Performance: ${operationName}`,
       context,
@@ -326,6 +428,7 @@ export class LoggerService {
 
     if (this.isDevelopment || level === "warn") {
       const emoji = durationMs > 1000 ? "🐌" : "⚡";
+      // eslint-disable-next-line no-console
       console.log(emoji, `[PERF] ${operationName}: ${durationMs}ms`, context);
     }
   }

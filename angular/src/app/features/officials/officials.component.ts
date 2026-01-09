@@ -526,10 +526,11 @@ export class OfficialsComponent implements OnInit {
     const now = new Date();
     return this.gameAssignments()
       .filter((a) => a.game_date && new Date(a.game_date) >= now)
-      .sort(
-        (a, b) =>
-          new Date(a.game_date!).getTime() - new Date(b.game_date!).getTime(),
-      );
+      .sort((a, b) => {
+        const dateA = a.game_date ? new Date(a.game_date).getTime() : 0;
+        const dateB = b.game_date ? new Date(b.game_date).getTime() : 0;
+        return dateA - dateB;
+      });
   });
 
   ngOnInit(): void {

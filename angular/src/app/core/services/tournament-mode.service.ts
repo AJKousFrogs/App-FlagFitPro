@@ -13,6 +13,7 @@
 
 import { Injectable, inject, signal, computed } from "@angular/core";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 
@@ -168,7 +169,7 @@ export class TournamentModeService {
       await this.saveTournamentToDatabase(tournament);
 
       this._activeTournament.set(tournament);
-      this.logger.info("Tournament started:", tournament.name);
+      this.logger.info("Tournament started:", toLogContext(tournament.name));
     } catch (error) {
       this.logger.error("Error starting tournament:", error);
       throw error;
@@ -193,7 +194,7 @@ export class TournamentModeService {
       localStorage.removeItem("active-tournament");
       this._activeTournament.set(null);
 
-      this.logger.info("Tournament ended:", tournament.name);
+      this.logger.info("Tournament ended:", toLogContext(tournament.name));
     } catch (error) {
       this.logger.error("Error ending tournament:", error);
     }
@@ -224,7 +225,7 @@ export class TournamentModeService {
     await this.saveTournamentToDatabase(tournament);
 
     this._activeTournament.set({ ...tournament });
-    this.logger.info("Game result logged:", gameId);
+    this.logger.info("Game result logged:", toLogContext(gameId));
   }
 
   /**
@@ -427,7 +428,7 @@ export class TournamentModeService {
         updated_at: new Date().toISOString(),
       });
     } catch (error) {
-      this.logger.warn("Could not save tournament to database:", error);
+      this.logger.warn("Could not save tournament to database:", toLogContext(error));
     }
   }
 

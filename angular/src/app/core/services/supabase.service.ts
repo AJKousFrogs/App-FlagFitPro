@@ -11,6 +11,7 @@ import {
 } from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 
 export interface UserMetadata {
   firstName?: string;
@@ -85,7 +86,7 @@ export class SupabaseService {
       // Listen for auth changes
       this.supabase.auth.onAuthStateChange(
         (event: AuthChangeEvent, session: Session | null) => {
-          this.logger.debug("Auth state changed:", event);
+          this.logger.debug("Auth state changed:", toLogContext(event));
           this._session.set(session);
           this._currentUser.set(session?.user ?? null);
 

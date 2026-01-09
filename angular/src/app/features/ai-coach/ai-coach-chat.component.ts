@@ -40,6 +40,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { toLogContext } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
@@ -807,8 +808,8 @@ interface AutocompleteSuggestion {
             (onHide)="onMicroSessionDialogHide()"
           >
             <app-micro-session
-              [session]="activeMicroSessionSignal"
-              [mode]="microSessionDisplayMode"
+              [session]="activeMicroSessionSignal()"
+              [mode]="microSessionDisplayMode()"
               (sessionCompleted)="onMicroSessionCompleted($event)"
               (sessionSkipped)="onMicroSessionSkipped()"
               (closed)="onMicroSessionClosed()"
@@ -1562,7 +1563,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
         }
         break;
       default:
-        this.logger.info("Action executed:", action);
+        this.logger.info("Action executed:", toLogContext(action));
     }
   }
 

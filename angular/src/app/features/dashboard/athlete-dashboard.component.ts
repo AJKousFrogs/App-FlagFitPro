@@ -51,6 +51,7 @@ import {
 import { TournamentModeService } from "../../core/services/tournament-mode.service";
 import { RealtimeBaseComponent } from "../../shared/components/realtime-base.component";
 import { LoggerService } from "../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { TIMEOUTS } from "../../core/constants/app.constants";
 import { SupabaseService } from "../../core/services/supabase.service";
 
@@ -677,7 +678,7 @@ export class AthleteDashboardComponent
     // Subscribe to training sessions updates
     const trainingUnsub = this.realtimeService.subscribeToTrainingSessions(
       (event) => {
-        this.logger.debug("🔴 LIVE: Training session updated", event);
+        this.logger.debug("🔴 LIVE: Training session updated", toLogContext(event));
         // Reload today's workload when training data changes
         this.loadTodayWorkload(userId);
         this.loadNextSession(userId);
@@ -688,7 +689,7 @@ export class AthleteDashboardComponent
     // Subscribe to readiness updates
     const readinessUnsub = this.realtimeService.subscribeToReadiness(
       (event) => {
-        this.logger.debug("🔴 LIVE: Readiness updated", event);
+        this.logger.debug("🔴 LIVE: Readiness updated", toLogContext(event));
         // Reload readiness when it changes
         this.readinessService
           .calculateToday(userId)
@@ -701,7 +702,7 @@ export class AthleteDashboardComponent
     // Subscribe to performance metrics updates
     const performanceUnsub = this.realtimeService.subscribeToPerformance(
       (event) => {
-        this.logger.debug("🔴 LIVE: Performance metrics updated", event);
+        this.logger.debug("🔴 LIVE: Performance metrics updated", toLogContext(event));
         // Reload trends when performance data changes
         this.loadTrends(userId);
       },

@@ -32,6 +32,7 @@ import { Select } from "primeng/select";
 
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
+import { toLogContext } from "../../../../core/services/logger.service";
 
 export interface FlagPracticeSlot {
   day: number; // 0-6 (Sunday-Saturday)
@@ -460,7 +461,7 @@ export class PlayerSettingsDialogComponent {
         this.updateAge();
       }
     } catch (err) {
-      this.logger.warn("Could not load player settings", err);
+      this.logger.warn("Could not load player settings", toLogContext(err));
     }
   }
 
@@ -560,9 +561,9 @@ export class PlayerSettingsDialogComponent {
         birthDate: this.settings.birthDate?.toISOString().split("T")[0],
       };
       // Remove flagPracticeSchedule from payload (API expects availabilitySchedule)
-      delete (payload as any).flagPracticeSchedule;
+      const { flagPracticeSchedule, ...finalPayload } = payload as typeof payload & { flagPracticeSchedule?: unknown };
 
-      await firstValueFrom(this.api.post("/api/player-settings", payload));
+      await firstValueFrom(this.api.post("/api/player-settings", finalPayload));
 
       this.settingsSaved.emit(this.settings);
       this.visible.set(false);

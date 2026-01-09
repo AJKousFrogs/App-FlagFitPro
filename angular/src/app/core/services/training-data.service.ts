@@ -4,6 +4,7 @@ import { Observable, from, of } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 
 export interface TrainingSession {
   id?: string;
@@ -293,7 +294,7 @@ export class TrainingDataService {
           this.logger.error("Error creating training session:", error);
           throw error;
         }
-        this.logger.info("Training session created successfully:", data.id);
+        this.logger.info("Training session created successfully:", toLogContext(data.id));
 
         // Log warning if late or retroactive
         if (detection.logStatus === "late") {

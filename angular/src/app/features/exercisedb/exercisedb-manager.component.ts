@@ -1030,9 +1030,10 @@ export class ExerciseDBManagerComponent implements OnInit {
 
     // Position filter
     if (this.selectedPosition) {
+      const position = this.selectedPosition;
       filtered = filtered.filter(
         (e) =>
-          e.applicable_positions?.includes(this.selectedPosition!) ||
+          e.applicable_positions?.includes(position) ||
           e.applicable_positions?.includes("All"),
       );
     }

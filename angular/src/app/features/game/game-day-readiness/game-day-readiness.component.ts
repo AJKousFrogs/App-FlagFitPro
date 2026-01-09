@@ -39,6 +39,7 @@ import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
+import { toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 
@@ -609,7 +610,7 @@ export class GameDayReadinessComponent implements OnInit {
 
       this.logger.info("[GameDayReadiness] Coach notification sent");
     } catch (error) {
-      this.logger.warn("[GameDayReadiness] Could not notify coach:", error);
+      this.logger.warn("[GameDayReadiness] Could not notify coach:", toLogContext(error));
     }
   }
 

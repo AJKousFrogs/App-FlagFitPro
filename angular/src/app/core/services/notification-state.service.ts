@@ -28,6 +28,7 @@ import {
 } from "@supabase/supabase-js";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { ToastService } from "./toast.service";
 import { UI_LIMITS } from "../constants/app.constants";
@@ -353,7 +354,7 @@ export class NotificationStateService implements OnDestroy {
       this.notifications.update((notifications) =>
         notifications.filter((n) => n.id !== deletedId),
       );
-      this.logger.debug("[NotificationState] Notification deleted:", deletedId);
+      this.logger.debug("[NotificationState] Notification deleted:", toLogContext(deletedId));
     }
   }
 
@@ -674,7 +675,7 @@ export class NotificationStateService implements OnDestroy {
 
       return count;
     } catch (error) {
-      this.logger.warn("Error refreshing badge count:", error);
+      this.logger.warn("Error refreshing badge count:", toLogContext(error));
       // Return current count as fallback
       return this.unreadCount();
     }
@@ -694,7 +695,7 @@ export class NotificationStateService implements OnDestroy {
 
       this.lastOpenedAt.set(new Date().toISOString());
     } catch (error) {
-      this.logger.warn("Error updating last opened timestamp:", error);
+      this.logger.warn("Error updating last opened timestamp:", toLogContext(error));
       // Non-critical error, don't throw
     }
   }

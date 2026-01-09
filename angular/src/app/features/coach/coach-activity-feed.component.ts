@@ -37,6 +37,7 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
 import { ScrollPanelModule } from "primeng/scrollpanel";
 import { LoggerService } from "../../core/services/logger.service";
+import { toLogContext } from "../../core/services/logger.service";
 import { getInitials } from "../../shared/utils/format.utils";
 
 @Component({
@@ -305,7 +306,7 @@ export class CoachActivityFeedComponent implements OnDestroy {
 
     // Navigate based on activity type
     // Would implement navigation to relevant page
-    this.logger.info("Activity clicked:", activity);
+    this.logger.info("Activity clicked:", toLogContext(activity));
   }
 
   // ============================================================================

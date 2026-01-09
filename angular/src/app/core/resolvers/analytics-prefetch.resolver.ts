@@ -10,6 +10,7 @@ import { ResolveFn } from "@angular/router";
 import { AnalyticsDataService } from "../services/data/analytics-data.service";
 import { AnalyticsViewModel } from "../view-models/analytics.view-model";
 import { LoggerService } from "../services/logger.service";
+import { toLogContext } from "../services/logger.service";
 
 export const analyticsPrefetchResolver: ResolveFn<void> = (_route, _state) => {
   const analyticsDataService = inject(AnalyticsDataService);
@@ -25,7 +26,7 @@ export const analyticsPrefetchResolver: ResolveFn<void> = (_route, _state) => {
     },
     error: (err) => {
       // Silently fail - component will handle error state
-      logger.warn("Analytics prefetch failed:", err);
+      logger.warn("Analytics prefetch failed:", toLogContext(err));
     },
   });
 

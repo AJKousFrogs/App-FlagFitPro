@@ -707,9 +707,12 @@ export class GameTrackerComponent implements OnInit {
       recordedBy: string;
       recorderRole: "coach" | "player";
       timestamp: Date;
+      playType?: string;
+      ballCarrierId?: string;
+      ballCarrierIdFlag?: string;
     } = {
       ...formValue,
-      gameId: this.activeGameId()!,
+      gameId: this.activeGameId() || "",
       id: `play-${Date.now()}`,
       recordedBy: currentUser?.id || "unknown",
       recorderRole: recorderRole,
@@ -725,9 +728,9 @@ export class GameTrackerComponent implements OnInit {
     // Map play types for compatibility with existing system
     // Convert pass_play -> pass, run_play -> run for backend compatibility
     if (playData.playType === "pass_play") {
-      playData.playType = "pass" as any;
+      playData.playType = "pass_play"; // Keep as pass_play
     } else if (playData.playType === "run_play") {
-      playData.playType = "run" as any;
+      playData.playType = "run_play"; // Keep as run_play
     }
 
     // Check if offline and queue action

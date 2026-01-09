@@ -2,7 +2,6 @@ import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../button/button.component";
 import {
   CONSENT_BLOCKED_MESSAGES,
   PrivacyMessage,
@@ -39,7 +38,7 @@ export type ConsentBlockedDataType =
   selector: "app-consent-blocked-message",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardModule, ButtonComponent],
+  imports: [CommonModule, RouterModule, CardModule],
   template: `
     <div class="consent-blocked" [class]="variant()">
       <div class="consent-icon">
@@ -95,14 +94,16 @@ export class ConsentBlockedMessageComponent {
   }
 
   getMessage(): string {
-    if (this.customMessage()) {
-      return this.customMessage()!;
+    const customMsg = this.customMessage();
+    if (customMsg) {
+      return customMsg;
     }
 
     const message = this.getPrivacyMessage();
+    const playerName = this.playerName();
 
-    if (this.playerName()) {
-      return `${this.playerName()} has not enabled sharing of ${this.getDataTypeLabel()} with your team.`;
+    if (playerName) {
+      return `${playerName} has not enabled sharing of ${this.getDataTypeLabel()} with your team.`;
     }
 
     return message.reason;

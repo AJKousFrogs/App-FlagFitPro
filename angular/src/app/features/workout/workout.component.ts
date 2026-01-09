@@ -23,6 +23,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../core/services/logger.service";
+import { toLogContext } from "../../core/services/logger.service";
 import { formatDate } from "../../shared/utils/date.utils";
 
 interface WorkoutExercise {
@@ -225,7 +226,7 @@ export class WorkoutComponent implements OnInit {
         .limit(20);
 
       if (error) {
-        this.logger.warn("[Workout] Error loading workouts:", error);
+        this.logger.warn("[Workout] Error loading workouts:", toLogContext(error));
         this.isLoading.set(false);
         return;
       }

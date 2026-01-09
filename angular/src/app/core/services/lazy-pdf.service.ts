@@ -107,7 +107,10 @@ export class LazyPdfService {
 
     try {
       // Convert HTML to canvas
-      const canvas = await this.html2canvas!(element, {
+      if (!this.html2canvas) {
+        throw new Error("html2canvas not loaded");
+      }
+      const canvas = await this.html2canvas(element, {
         scale,
         useCORS: true,
         logging: false,
@@ -119,7 +122,10 @@ export class LazyPdfService {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
       // Create PDF
-      const pdf = new this.jsPDF!({
+      if (!this.jsPDF) {
+        throw new Error("jsPDF not loaded");
+      }
+      const pdf = new this.jsPDF({
         orientation: orientation as JsPDFOrientation,
         unit: "mm",
         format,
@@ -155,7 +161,14 @@ export class LazyPdfService {
     } = options;
 
     try {
-      const pdf = new this.jsPDF!({
+      if (!this.jsPDF) {
+        throw new Error("jsPDF not loaded");
+      }
+      if (!this.html2canvas) {
+        throw new Error("html2canvas not loaded");
+      }
+
+      const pdf = new this.jsPDF({
         orientation: orientation as JsPDFOrientation,
         unit: "mm",
         format,
@@ -167,7 +180,7 @@ export class LazyPdfService {
         const element = elements[i];
 
         // Convert to canvas
-        const canvas = await this.html2canvas!(element, {
+        const canvas = await this.html2canvas(element, {
           scale,
           useCORS: true,
           logging: false,
