@@ -16,20 +16,20 @@
  */
 
 import {
-  animate,
-  keyframes,
-  style,
-  transition,
-  trigger,
+    animate,
+    keyframes,
+    style,
+    transition,
+    trigger,
 } from "@angular/animations";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  computed,
-  effect,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    computed,
+    effect,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
@@ -49,18 +49,18 @@ import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acw
 import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
-  ProtocolJson,
-  TodayViewModel,
-  resolveTodayState,
+    ProtocolJson,
+    TodayViewModel,
+    resolveTodayState,
 } from "../../today/resolution/today-state.resolver";
 import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import { WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
 import {
-  BlockType,
-  DailyProtocol,
-  ExerciseCategory,
-  PrescribedExercise,
-  ProtocolBlock,
+    BlockType,
+    DailyProtocol,
+    ExerciseCategory,
+    PrescribedExercise,
+    ProtocolBlock,
 } from "../training/daily-protocol/daily-protocol.models";
 
 // Services
@@ -75,11 +75,11 @@ import { UnifiedTrainingService } from "../../core/services/unified-training.ser
 import { environment } from "../../../environments/environment";
 
 // Constants
-import {
-  WELLNESS,
-  computeQuickReadiness,
-} from "../../core/constants/wellness.constants";
 import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
+import {
+    WELLNESS,
+    computeQuickReadiness,
+} from "../../core/constants/wellness.constants";
 
 // Types
 type DayPhase = "morning" | "midday" | "evening";
@@ -1915,53 +1915,72 @@ export class TodayComponent {
     return "low";
   }
 
-  async submitQuickCheckin(): Promise<void> {
+  submitQuickCheckin(): void {
     if (!this.isQuickFormValid()) {
+      this.logger.warn("Quick checkin form is invalid");
       return;
     }
 
+    this.logger.info("Starting quick checkin submission...");
     this.isSavingQuickCheckin.set(true);
 
-    try {
-      const data = this.quickFormData();
-      const targetDate = new Date().toISOString().split("T")[0];
-      const readiness = this.quickReadinessScore();
+    const data = this.quickFormData();
+    const targetDate = new Date().toISOString().split("T")[0];
+    const readiness = this.quickReadinessScore();
 
-      // Map quick form to full wellness data
-      const wellnessData = {
-        date: targetDate,
-        sleepQuality: data.overallFeeling ?? 3,
-        sleepHours: 7, // Default
-        energyLevel: data.energyLevel ?? 3,
-        muscleSoreness: data.hasSoreness ? 2 : 4,
-        stressLevel: data.overallFeeling ?? 3,
-        sorenessAreas: [] as string[],
-        readinessScore: readiness,
-      };
+    this.logger.info("Quick checkin data:", {
+      data,
+      targetDate,
+      readiness,
+    });
 
-      const response = (await this.trainingService.submitWellness(
-        wellnessData,
-      )) as { success?: boolean };
+    // Map quick form to full wellness data
+    const wellnessData = {
+      date: targetDate,
+      sleepQuality: data.overallFeeling ?? 3,
+      sleepHours: 7, // Default
+      energyLevel: data.energyLevel ?? 3,
+      muscleSoreness: data.hasSoreness ? 2 : 4,
+      stressLevel: data.overallFeeling ?? 3,
+      sorenessAreas: [] as string[],
+      readinessScore: readiness,
+    };
 
-      if (response?.success) {
-        this.showQuickCheckin.set(false);
-        this.messageService.add({
-          severity: "success",
-          summary: "Quick Check-in Complete",
-          detail: `Readiness: ${readiness}%. Ready to train!`,
-        });
-        this.refreshProtocol();
-      }
-    } catch (err) {
-      this.logger.error("Failed to save quick checkin", err);
-      this.messageService.add({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save check-in. Please try again.",
+    this.trainingService
+      .submitWellness(wellnessData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: unknown) => {
+          this.logger.info("Quick checkin response:", response);
+          const typedResponse = response as { success?: boolean };
+
+          if (typedResponse?.success) {
+            this.showQuickCheckin.set(false);
+            this.messageService.add({
+              severity: "success",
+              summary: "Quick Check-in Complete",
+              detail: `Readiness: ${readiness}%. Ready to train!`,
+            });
+            this.refreshProtocol();
+          } else {
+            this.messageService.add({
+              severity: "error",
+              summary: "Error",
+              detail: "Failed to save check-in. Please try again.",
+            });
+          }
+          this.isSavingQuickCheckin.set(false);
+        },
+        error: (err) => {
+          this.logger.error("Failed to save quick checkin", err);
+          this.messageService.add({
+            severity: "error",
+            summary: "Error",
+            detail: "Failed to save check-in. Please try again.",
+          });
+          this.isSavingQuickCheckin.set(false);
+        },
       });
-    } finally {
-      this.isSavingQuickCheckin.set(false);
-    }
   }
 
   // ============================================================================

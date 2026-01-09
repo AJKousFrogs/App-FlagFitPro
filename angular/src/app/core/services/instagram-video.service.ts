@@ -647,6 +647,20 @@ export class InstagramVideoService {
   }
 
   /**
+   * Generate Instagram thumbnail URL from shortcode
+   * Instagram thumbnail format: https://www.instagram.com/p/{shortcode}/media/?size=l
+   * For reels: https://www.instagram.com/reel/{shortcode}/media/?size=l
+   */
+  getInstagramThumbnail(video: InstagramVideo): string {
+    if (video.thumbnailUrl) {
+      return video.thumbnailUrl;
+    }
+
+    const type = video.isReel ? "reel" : "p";
+    return `https://www.instagram.com/${type}/${video.shortcode}/media/?size=l`;
+  }
+
+  /**
    * Get recommended videos based on athlete profile
    */
   getRecommendedVideos(

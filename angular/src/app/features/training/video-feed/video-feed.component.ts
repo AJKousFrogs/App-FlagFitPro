@@ -290,18 +290,42 @@ interface FilterChip {
                   class="video-card"
                   (click)="openVideo(video)"
                   [class.bookmarked]="isBookmarked(video.id)"
+                  (mouseenter)="onVideoCardHover(video)"
+                  (mouseleave)="onVideoCardLeave()"
                 >
-                  <!-- Thumbnail -->
+                  <!-- Video Embed Preview -->
                   <div class="video-thumbnail">
-                    <div class="thumbnail-placeholder">
-                      <i class="pi pi-play-circle play-icon"></i>
-                      @if (video.isReel) {
-                        <div class="reel-badge">
-                          <i class="pi pi-instagram"></i>
-                          Reel
-                        </div>
-                      }
-                    </div>
+                    <!-- Hover Preview (Optional Feature) -->
+                    @if (isPreviewingVideo(video.id)) {
+                      <div class="video-preview-container">
+                        <iframe
+                          [src]="video.embedUrl"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen
+                          class="video-preview-iframe"
+                        ></iframe>
+                      </div>
+                    } @else {
+                      <!-- Instagram Thumbnail Image -->
+                      <img
+                        [src]="getVideoThumbnail(video)"
+                        [alt]="video.title"
+                        class="video-thumbnail-img"
+                        loading="lazy"
+                        (error)="onThumbnailError($event)"
+                      />
+                      <div class="thumbnail-overlay">
+                        <i class="pi pi-play-circle play-icon"></i>
+                      </div>
+                    }
+
+                    @if (video.isReel) {
+                      <div class="reel-badge">
+                        <i class="pi pi-instagram"></i>
+                        Reel
+                      </div>
+                    }
 
                     <!-- Overlay Actions -->
                     <div class="video-overlay">
@@ -526,6 +550,11 @@ export class VideoFeedComponent {
   selectedVideo = signal<InstagramVideo | null>(null);
   bookmarkedIds = signal<Set<string>>(new Set());
 
+  // 🎥 OPTIONAL: Hover preview feature (disabled by default)
+  enableHoverPreview = signal(false); // Set to true to enable hover-to-play
+  hoveringVideoId = signal<string | null>(null);
+  private hoverTimer: any = null;
+
   // Filter state
   activePositionFilters = signal<Set<FlagPosition>>(new Set());
   activeFocusFilters = signal<Set<TrainingFocus>>(new Set());
@@ -733,6 +762,61 @@ export class VideoFeedComponent {
     this.hapticService.medium();
     this.selectedVideo.set(video);
     this.showVideoDialog.set(true);
+  }
+
+  /**
+   * Get Instagram thumbnail URL for video preview
+   */
+  getVideoThumbnail(video: InstagramVideo): string {
+    return this.instagramService.getInstagramThumbnail(video);
+  }
+
+  /**
+   * Handle thumbnail load error - fallback to placeholder
+   */
+  onThumbnailError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = "none";
+    // Show the fallback placeholder (handled by CSS)
+  }
+
+  /**
+   * 🎥 HOVER PREVIEW FEATURE (Optional)
+   * On hover, start timer to load video preview
+   * Desktop only - disabled on mobile to save bandwidth
+   */
+  onVideoCardHover(video: InstagramVideo): void {
+    if (!this.enableHoverPreview() || window.innerWidth <= 768) {
+      return; // Feature disabled or mobile device
+    }
+
+    // Clear any existing timer
+    if (this.hoverTimer) {
+      clearTimeout(this.hoverTimer);
+    }
+
+    // Wait 1 second before loading preview
+    this.hoverTimer = setTimeout(() => {
+      this.hoveringVideoId.set(video.id);
+    }, 1000);
+  }
+
+  /**
+   * Clear hover state when mouse leaves
+   */
+  onVideoCardLeave(): void {
+    if (this.hoverTimer) {
+      clearTimeout(this.hoverTimer);
+      this.hoverTimer = null;
+    }
+    this.hoveringVideoId.set(null);
+  }
+
+  /**
+   * Check if video is currently being previewed on hover
+   */
+  isPreviewingVideo(videoId: string): boolean {
+    return this.enableHoverPreview() && this.hoveringVideoId() === videoId;
   }
 
   async toggleBookmark(event: Event, video: InstagramVideo): Promise<void> {
