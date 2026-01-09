@@ -42,6 +42,7 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
+import { from } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 
 // Layout & Components
@@ -1946,8 +1947,7 @@ export class TodayComponent {
       readinessScore: readiness,
     };
 
-    this.trainingService
-      .submitWellness(wellnessData)
+    from(this.trainingService.submitWellness(wellnessData))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: unknown) => {
@@ -1971,7 +1971,7 @@ export class TodayComponent {
           }
           this.isSavingQuickCheckin.set(false);
         },
-        error: (err) => {
+        error: (err: unknown) => {
           this.logger.error("Failed to save quick checkin", err);
           this.messageService.add({
             severity: "error",
