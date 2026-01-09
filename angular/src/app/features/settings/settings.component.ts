@@ -1,20 +1,20 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  inject,
-  signal,
-  ViewChild,
-  ElementRef,
-  AfterViewInit,
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    inject,
+    OnInit,
+    signal,
+    ViewChild,
 } from "@angular/core";
 
 import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -28,23 +28,22 @@ import { Select } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
+import { TIMEOUTS, TOAST, UI_LIMITS } from "../../core/constants";
 import { AuthService } from "../../core/services/auth.service";
-import { LoggerService } from "../../core/services/logger.service";
-import { toLogContext } from "../../core/services/logger.service";
+import { LoggerService, toLogContext } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ThemeMode, ThemeService } from "../../core/services/theme.service";
 import { ToastService } from "../../core/services/toast.service";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import {
-  ButtonComponent,
-  CardComponent,
-} from "../../shared/components/ui-components";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import {
+    ButtonComponent,
+    CardComponent,
+} from "../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
-import { TIMEOUTS, UI_LIMITS, TOAST } from "../../core/constants";
 import { calculateAge } from "../../shared/utils/date.utils";
 
 @Component({
@@ -637,7 +636,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         this.logger.info("Theme applied:", settings.preferences.theme);
       }
 
-      // Try to update user data in Supabase users table (gracefully handle errors)
+      // Try to update user data in Supabase users table
       try {
         const nameParts = settings.profile.displayName?.split(" ") || [];
 
@@ -650,7 +649,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           }
         }
 
-        const now = new Date().toISOString();
+        // Prepare update data - NEVER include created_at (it should only be set on insert)
         const updateData = {
           id: user.id,
           email: user.email || null,
@@ -663,15 +662,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             : null,
           height_cm: settings.profile.heightCm || null,
           weight_kg: settings.profile.weightKg || null,
-          phone: settings.profile.phone,
+          phone: settings.profile.phone || null,
           date_of_birth: dateOfBirthStr,
-          created_at: now,
-          updated_at: now,
+          updated_at: new Date().toISOString(), // Only update the timestamp
         };
 
         this.logger.info("Upserting users table with:", updateData);
 
-        // Use upsert to create the user if they don't exist
+        // Use upsert to create or update the user profile
         const { data: upsertedUser, error: profileError } = await this.supabaseService.client
           .from("users")
           .upsert(updateData, {
@@ -687,12 +685,18 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             profileError.message,
             profileError,
           );
-          // Don't throw - continue with other updates
-        } else if (!upsertedUser) {
-          this.logger.warn("User profile upsert returned no data");
-        } else {
-          this.logger.info("User profile upserted successfully:", upsertedUser);
+          // Show error to user and stop execution
+          this.toastService.error(`Failed to save profile: ${profileError.message}`);
+          throw profileError;
+        } 
+        
+        if (!upsertedUser) {
+          this.logger.error("User profile upsert returned no data");
+          this.toastService.error("Failed to save profile: No data returned from database");
+          throw new Error("Upsert returned no data");
         }
+        
+        this.logger.info("User profile saved successfully:", upsertedUser);
 
         // Update team membership if team was selected
         if (settings.profile.teamId) {

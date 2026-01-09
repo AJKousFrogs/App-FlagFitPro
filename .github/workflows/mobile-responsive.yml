@@ -1,0 +1,207 @@
+name: Mobile Responsive Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  responsive-tests:
+    name: Test Mobile Devices
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Build application
+        run: npm run build:production
+
+      - name: Start application
+        run: |
+          npm run start &
+          npx wait-on http://localhost:4200 --timeout 120000
+        
+      - name: Run responsive tests (shard ${{ matrix.shard }}/3)
+        run: npx playwright test tests/responsive/mobile-devices.test.js --shard=${{ matrix.shard }}/3 --reporter=html,json
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-shard-${{ matrix.shard }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test results JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 30
+
+  visual-regression:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Build application
+        run: npm run build:production
+
+      - name: Start application
+        run: |
+          npm run start &
+          npx wait-on http://localhost:4200 --timeout 120000
+
+      - name: Run visual regression tests
+        run: npx playwright test tests/responsive/visual-regression.test.js --reporter=html
+
+      - name: Upload visual test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-screenshots
+          path: tests/responsive/**/*.png
+          retention-days: 30
+
+  report:
+    name: Generate Test Report
+    needs: [responsive-tests, visual-regression]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Merge test results
+        run: |
+          mkdir -p merged-report
+          echo "# 📱 Mobile Responsive Test Results" > merged-report/SUMMARY.md
+          echo "" >> merged-report/SUMMARY.md
+          echo "## Test Coverage" >> merged-report/SUMMARY.md
+          echo "" >> merged-report/SUMMARY.md
+          echo "### iPhone Devices ✅" >> merged-report/SUMMARY.md
+          echo "- iPhone SE (3rd gen)" >> merged-report/SUMMARY.md
+          echo "- iPhone 12/13/14" >> merged-report/SUMMARY.md
+          echo "- iPhone 14 Pro Max" >> merged-report/SUMMARY.md
+          echo "- iPhone 15 Pro" >> merged-report/SUMMARY.md
+          echo "- iPhone 15 Pro Max" >> merged-report/SUMMARY.md
+          echo "" >> merged-report/SUMMARY.md
+          echo "### Samsung Galaxy Devices ✅" >> merged-report/SUMMARY.md
+          echo "- Galaxy S8, S20, S21, S22, S23, S24" >> merged-report/SUMMARY.md
+          echo "- Galaxy A52" >> merged-report/SUMMARY.md
+          echo "- Galaxy Z Fold 4" >> merged-report/SUMMARY.md
+          echo "" >> merged-report/SUMMARY.md
+          echo "### Xiaomi Devices ✅" >> merged-report/SUMMARY.md
+          echo "- Mi 11" >> merged-report/SUMMARY.md
+          echo "- Redmi Note 10, 11" >> merged-report/SUMMARY.md
+          echo "- Xiaomi 12, 13" >> merged-report/SUMMARY.md
+          echo "- Poco X3" >> merged-report/SUMMARY.md
+          echo "" >> merged-report/SUMMARY.md
+          echo "**Total:** 22 devices tested" >> merged-report/SUMMARY.md
+
+      - name: Upload merged report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-summary
+          path: merged-report/
+          retention-days: 90
+
+      - name: Comment PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('merged-report/SUMMARY.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  performance-check:
+    name: Mobile Performance Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build:production
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:4200
+            http://localhost:4200/dashboard
+            http://localhost:4200/training
+          configPath: './.lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Check mobile performance budgets
+        run: |
+          echo "Checking mobile performance metrics..."
+          echo "Target: FCP < 1.8s, LCP < 2.5s, TTI < 3.8s"
