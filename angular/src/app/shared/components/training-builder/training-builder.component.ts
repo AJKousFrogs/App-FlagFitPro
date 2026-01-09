@@ -72,7 +72,6 @@ interface Goal {
     TagModule,
     TimelineModule,
     DialogModule,
-    ToggleButton,
     ButtonComponent,
   ],
   template: `

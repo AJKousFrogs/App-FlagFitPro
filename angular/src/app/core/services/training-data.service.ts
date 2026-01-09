@@ -176,11 +176,15 @@ export class TrainingDataService {
   /**
    * Detect late logging and conflicts
    */
-  private detectLateLoggingAndConflicts(session: any): {
+  private detectLateLoggingAndConflicts(session: {
+    session_date?: string | Date;
+    rpe?: number;
+    session_type?: string;
+  }): {
     logStatus: "on_time" | "late" | "retroactive";
     requiresApproval: boolean;
     hoursDelayed: number | null;
-    conflicts: any[];
+    conflicts: Array<{ type: string; message: string }>;
   } {
     const sessionDate = session.session_date
       ? new Date(session.session_date)
@@ -200,7 +204,7 @@ export class TrainingDataService {
     }
 
     // Detect conflicts: RPE vs session type
-    const conflicts: any[] = [];
+    const conflicts: Array<{ type: string; message: string }> = [];
     if (session.rpe && session.session_type) {
       const sessionTypeIntensity: Record<string, { max?: number; min?: number }> =
         {

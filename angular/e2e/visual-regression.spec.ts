@@ -399,7 +399,6 @@ test.describe("Tablet Viewport Visual Regression (768px)", () => {
     await page.waitForTimeout(2000);
 
     // Verify sidebar X button behavior at 768px (was incorrectly showing before)
-    const closeButton = page.locator('.sidebar-close, .close-sidebar, [class*="close"]').first();
     // At 768px (tablet), close button should NOT be visible (only on mobile <768px)
     // Note: This depends on implementation - adjust assertion if needed
     

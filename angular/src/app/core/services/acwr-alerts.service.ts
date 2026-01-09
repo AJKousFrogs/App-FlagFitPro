@@ -290,7 +290,7 @@ export class AcwrAlertsService {
 
           // Use coach name from centralized service
           let coachEmail: string | null = null;
-          let coachName = coach.fullName || "Coach";
+          const coachName = coach.fullName || "Coach";
 
           try {
             // Use 'users' table for email
@@ -392,11 +392,11 @@ export class AcwrAlertsService {
       } else {
         throw new Error(response.message || "Push notification failed");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Log but don't throw - push failures are acceptable
       this.logger.warn(
         `[ACWR Alert] Push notification error for coach ${coachUserId}:`,
-        error.message || error,
+        error instanceof Error ? error.message : error,
       );
       throw error; // Re-throw so caller can handle gracefully
     }
@@ -440,11 +440,11 @@ export class AcwrAlertsService {
       } else {
         throw new Error(response.error || "Email notification failed");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Log but don't throw - email failures are acceptable
       this.logger.warn(
         `[ACWR Alert] Email notification error for coach ${coachEmail}:`,
-        error.message || error,
+        error instanceof Error ? error.message : error,
       );
       throw error; // Re-throw so caller can handle gracefully
     }
