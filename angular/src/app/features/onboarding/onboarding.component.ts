@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    OnDestroy,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -24,16 +24,16 @@ import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService, toLogContext } from "../../core/services/logger.service";
 import {
-  PlayerProgramService,
-  getProgramIdForPosition,
-  normalizePositionForModifiers,
+    PlayerProgramService,
+    getProgramIdForPosition,
+    normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -219,6 +219,40 @@ interface InjuryEntry {
                       class="w-full"
                       autocomplete="tel"
                     />
+                  </div>
+
+                  <!-- Email Verification Status -->
+                  <div class="form-group span-2">
+                    @if (isEmailVerified()) {
+                      <div class="email-verification-banner verified">
+                        <i class="pi pi-check-circle"></i>
+                        <span>Email verified! You can proceed to the next step.</span>
+                      </div>
+                    } @else {
+                      <div class="email-verification-banner pending">
+                        <i class="pi pi-envelope"></i>
+                        <div class="verification-content">
+                          <span class="verification-message">
+                            Please verify your email to continue. Check your inbox for a verification link.
+                          </span>
+                          <div class="verification-actions">
+                            <app-button
+                              variant="outlined"
+                              size="sm"
+                              iconLeft="pi-refresh"
+                              [loading]="isResendingVerification()"
+                              (clicked)="resendVerificationEmail()"
+                            >Resend Email</app-button>
+                            <app-button
+                              variant="text"
+                              size="sm"
+                              iconLeft="pi-sync"
+                              (clicked)="refreshVerificationStatus()"
+                            >I've Verified</app-button>
+                          </div>
+                        </div>
+                      </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -492,8 +526,8 @@ interface InjuryEntry {
                   }
                 </div>
               </div>
-            } @else if (currentStep() === 2) {
-              <!-- Step 3: Physical Measurements -->
+            } @else if (currentStep() === 2 && isPlayer()) {
+              <!-- Step 3: Physical Measurements (Players only) -->
               <div class="step-content animate-fade-in">
                 <div class="step-header">
                   <i class="pi pi-heart step-icon"></i>
@@ -668,8 +702,8 @@ interface InjuryEntry {
                   >
                 </div>
               </div>
-            } @else if (currentStep() === 3) {
-              <!-- Step 4: Health & Injuries -->
+            } @else if (currentStep() === 3 && isPlayer()) {
+              <!-- Step 4: Health & Injuries (Players only) -->
               <div class="step-content animate-fade-in">
                 <div class="step-header">
                   <i class="pi pi-shield step-icon"></i>
@@ -792,8 +826,8 @@ interface InjuryEntry {
                   ></textarea>
                 </div>
               </div>
-            } @else if (currentStep() === 4) {
-              <!-- Step 5: Equipment -->
+            } @else if (currentStep() === 4 && isPlayer()) {
+              <!-- Step 5: Equipment (Players only) -->
               <div class="step-content animate-fade-in">
                 <div class="step-header">
                   <i class="pi pi-box step-icon"></i>
@@ -850,8 +884,8 @@ interface InjuryEntry {
                   >
                 </div>
               </div>
-            } @else if (currentStep() === 5) {
-              <!-- Step 6: Goals -->
+            } @else if (currentStep() === 5 && isPlayer()) {
+              <!-- Step 6: Goals (Players only) -->
               <div class="step-content animate-fade-in">
                 <div class="step-header">
                   <i class="pi pi-flag step-icon"></i>
@@ -895,8 +929,8 @@ interface InjuryEntry {
                   }
                 </div>
               </div>
-            } @else if (currentStep() === 6) {
-              <!-- Step 7: Schedule -->
+            } @else if (currentStep() === 6 && isPlayer()) {
+              <!-- Step 7: Schedule (Players only) -->
               <div class="step-content animate-fade-in">
                 <div class="step-header">
                   <i class="pi pi-calendar step-icon"></i>
@@ -976,8 +1010,8 @@ interface InjuryEntry {
                   </div>
                 </div>
               </div>
-            } @else if (currentStep() === 7) {
-              <!-- Step 8: Mobility & Recovery -->
+            } @else if (currentStep() === 7 && isPlayer()) {
+              <!-- Step 8: Mobility & Recovery (Players only) -->
               <div class="step-content animate-fade-in">
                 <div class="step-header">
                   <i class="pi pi-refresh step-icon"></i>
@@ -1171,21 +1205,25 @@ interface InjuryEntry {
                   </div>
                 </div>
               </div>
-            } @else if (currentStep() === 8) {
-              <!-- Step 9: Summary -->
+            } @else if (isSummaryStep()) {
+              <!-- Summary Step (varies by user type) -->
               <div class="step-content animate-fade-in">
                 <div class="step-header">
                   <i class="pi pi-check-circle step-icon success"></i>
                   <div>
                     <h3>You're All Set!</h3>
                     <p class="step-description">
-                      Review your profile and start training
+                      @if (isStaff()) {
+                        Review your profile and get started with your team
+                      } @else {
+                        Review your profile and start training
+                      }
                     </p>
                   </div>
                 </div>
 
                 <div class="summary-grid">
-                  <!-- Profile Card -->
+                  <!-- Profile Card (shown for both players and staff) -->
                   <div class="summary-card">
                     <h4><i class="pi pi-user"></i> Profile</h4>
                     <div class="summary-content">
@@ -1218,136 +1256,165 @@ interface InjuryEntry {
                     </div>
                   </div>
 
-                  <!-- Team Card -->
-                  <div class="summary-card">
-                    <h4><i class="pi pi-users"></i> Team</h4>
-                    <div class="summary-content">
-                      <div class="summary-row">
-                        <span class="label">Team</span>
-                        <span class="value">{{
-                          getTeamLabel(onboardingData.team)
-                        }}</span>
-                      </div>
-                      <div class="summary-row">
-                        <span class="label">Jersey</span>
-                        <span class="value jersey-badge"
-                          >#{{ onboardingData.jerseyNumber || "?" }}</span
-                        >
-                      </div>
-                      <div class="summary-row">
-                        <span class="label">Position</span>
-                        <span class="value">{{
-                          getPositionLabel(onboardingData.position)
-                        }}</span>
-                      </div>
-                      @if (isQBSelected()) {
+                  @if (isStaff()) {
+                    <!-- Staff Role Card (staff only) -->
+                    <div class="summary-card">
+                      <h4><i class="pi pi-briefcase"></i> Role</h4>
+                      <div class="summary-content">
                         <div class="summary-row">
-                          <span class="label">Throwing Arm</span>
+                          <span class="label">Team</span>
                           <span class="value">{{
-                            getThrowingArmLabel(onboardingData.throwingArm)
+                            getTeamLabel(onboardingData.team)
                           }}</span>
                         </div>
-                      }
+                        <div class="summary-row">
+                          <span class="label">Staff Role</span>
+                          <span class="value">{{
+                            getStaffRoleLabel(onboardingData.staffRole)
+                          }}</span>
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">App Access</span>
+                          <span class="value">{{
+                            onboardingData.staffVisibility.length
+                          }} section(s)</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  }
 
-                  <!-- Physical Card -->
-                  <div class="summary-card">
-                    <h4><i class="pi pi-heart"></i> Physical</h4>
-                    <div class="summary-content">
-                      <div class="summary-row">
-                        <span class="label">Height</span>
-                        <span class="value">{{ getHeightDisplay() }}</span>
-                      </div>
-                      <div class="summary-row">
-                        <span class="label">Weight</span>
-                        <span class="value">{{ getWeightDisplay() }}</span>
-                      </div>
-                      <div class="summary-row">
-                        <span class="label">Experience</span>
-                        <span class="value">{{
-                          getExperienceLabel(onboardingData.experience)
-                        }}</span>
+                  @if (isPlayer()) {
+                    <!-- Team Card (players only) -->
+                    <div class="summary-card">
+                      <h4><i class="pi pi-users"></i> Team</h4>
+                      <div class="summary-content">
+                        <div class="summary-row">
+                          <span class="label">Team</span>
+                          <span class="value">{{
+                            getTeamLabel(onboardingData.team)
+                          }}</span>
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">Jersey</span>
+                          <span class="value jersey-badge"
+                            >#{{ onboardingData.jerseyNumber || "?" }}</span
+                          >
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">Position</span>
+                          <span class="value">{{
+                            getPositionLabel(onboardingData.position)
+                          }}</span>
+                        </div>
+                        @if (isQBSelected()) {
+                          <div class="summary-row">
+                            <span class="label">Throwing Arm</span>
+                            <span class="value">{{
+                              getThrowingArmLabel(onboardingData.throwingArm)
+                            }}</span>
+                          </div>
+                        }
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Health Card -->
-                  <div class="summary-card">
-                    <h4><i class="pi pi-shield"></i> Health</h4>
-                    <div class="summary-content">
-                      <div class="summary-row">
-                        <span class="label">Current Injuries</span>
-                        <span class="value">
-                          @if (onboardingData.currentInjuries.length === 0) {
-                            None 👍
-                          } @else {
-                            {{ onboardingData.currentInjuries.length }} area(s)
-                          }
-                        </span>
-                      </div>
-                      <div class="summary-row">
-                        <span class="label">Injury History</span>
-                        <span class="value">
-                          @if (
-                            onboardingData.injuryHistory.includes("none") ||
-                            onboardingData.injuryHistory.length === 0
-                          ) {
-                            None 👍
-                          } @else {
-                            {{ onboardingData.injuryHistory.length }} past
-                            injury(s)
-                          }
-                        </span>
+                    <!-- Physical Card (players only) -->
+                    <div class="summary-card">
+                      <h4><i class="pi pi-heart"></i> Physical</h4>
+                      <div class="summary-content">
+                        <div class="summary-row">
+                          <span class="label">Height</span>
+                          <span class="value">{{ getHeightDisplay() }}</span>
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">Weight</span>
+                          <span class="value">{{ getWeightDisplay() }}</span>
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">Experience</span>
+                          <span class="value">{{
+                            getExperienceLabel(onboardingData.experience)
+                          }}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Schedule Card -->
-                  <div class="summary-card">
-                    <h4><i class="pi pi-calendar"></i> Schedule</h4>
-                    <div class="summary-content">
-                      <div class="summary-row">
-                        <span class="label">Schedule Type</span>
-                        <span class="value">{{
-                          getScheduleLabel(onboardingData.scheduleType)
-                        }}</span>
-                      </div>
-                      <div class="summary-row">
-                        <span class="label">Practices/Week</span>
-                        <span class="value">{{
-                          onboardingData.practicesPerWeek || 0
-                        }}</span>
+                    <!-- Health Card (players only) -->
+                    <div class="summary-card">
+                      <h4><i class="pi pi-shield"></i> Health</h4>
+                      <div class="summary-content">
+                        <div class="summary-row">
+                          <span class="label">Current Injuries</span>
+                          <span class="value">
+                            @if (onboardingData.currentInjuries.length === 0) {
+                              None 👍
+                            } @else {
+                              {{ onboardingData.currentInjuries.length }} area(s)
+                            }
+                          </span>
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">Injury History</span>
+                          <span class="value">
+                            @if (
+                              onboardingData.injuryHistory.includes("none") ||
+                              onboardingData.injuryHistory.length === 0
+                            ) {
+                              None 👍
+                            } @else {
+                              {{ onboardingData.injuryHistory.length }} past
+                              injury(s)
+                            }
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Recovery Card -->
-                  <div class="summary-card">
-                    <h4><i class="pi pi-refresh"></i> Recovery</h4>
-                    <div class="summary-content">
-                      <div class="summary-row">
-                        <span class="label">Morning Mobility</span>
-                        <span class="value">{{
-                          getMobilityLabel(onboardingData.morningMobility)
-                        }}</span>
-                      </div>
-                      <div class="summary-row">
-                        <span class="label">Foam Rolling</span>
-                        <span class="value">{{
-                          getFoamRollingLabel(onboardingData.foamRollingTime)
-                        }}</span>
-                      </div>
-                      <div class="summary-row">
-                        <span class="label">Rest Days</span>
-                        <span class="value">{{
-                          getRestDayOptionLabel(
-                            onboardingData.restDayPreference
-                          )
-                        }}</span>
+                    <!-- Schedule Card (players only) -->
+                    <div class="summary-card">
+                      <h4><i class="pi pi-calendar"></i> Schedule</h4>
+                      <div class="summary-content">
+                        <div class="summary-row">
+                          <span class="label">Schedule Type</span>
+                          <span class="value">{{
+                            getScheduleLabel(onboardingData.scheduleType)
+                          }}</span>
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">Practices/Week</span>
+                          <span class="value">{{
+                            onboardingData.practicesPerWeek || 0
+                          }}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+
+                    <!-- Recovery Card (players only) -->
+                    <div class="summary-card">
+                      <h4><i class="pi pi-refresh"></i> Recovery</h4>
+                      <div class="summary-content">
+                        <div class="summary-row">
+                          <span class="label">Morning Mobility</span>
+                          <span class="value">{{
+                            getMobilityLabel(onboardingData.morningMobility)
+                          }}</span>
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">Foam Rolling</span>
+                          <span class="value">{{
+                            getFoamRollingLabel(onboardingData.foamRollingTime)
+                          }}</span>
+                        </div>
+                        <div class="summary-row">
+                          <span class="label">Rest Days</span>
+                          <span class="value">{{
+                            getRestDayOptionLabel(
+                              onboardingData.restDayPreference
+                            )
+                          }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  }
                 </div>
 
                 <!-- Consent Section -->
@@ -1362,23 +1429,12 @@ interface InjuryEntry {
 
                   <div class="consent-list">
                     <!-- Required Consents -->
-                    <!-- Debug: Show current consent values -->
-                    <div
-                      style="padding: 1rem; background: var(--surface-secondary); border-radius: var(--radius-lg); margin-bottom: 1rem; font-family: monospace; font-size: 12px;"
-                    >
-                      <strong>Debug - Consent Values:</strong><br />
-                      Terms: {{ onboardingData.consentTermsOfService }}<br />
-                      Privacy: {{ onboardingData.consentPrivacyPolicy }}<br />
-                      Data: {{ onboardingData.consentDataUsage }}<br />
-                      AI: {{ onboardingData.consentAICoach }}<br />
-                      Email: {{ onboardingData.consentEmailUpdates }}
-                    </div>
-
                     <div class="consent-item required">
                       <div class="consent-checkbox-wrapper">
                         <p-checkbox
                           [(ngModel)]="onboardingData.consentTermsOfService"
                           [binary]="true"
+                          variant="filled"
                           inputId="consent-terms"
                           name="consentTermsOfService"
                           (onChange)="
@@ -1404,6 +1460,7 @@ interface InjuryEntry {
                         <p-checkbox
                           [(ngModel)]="onboardingData.consentPrivacyPolicy"
                           [binary]="true"
+                          variant="filled"
                           inputId="consent-privacy"
                           name="consentPrivacyPolicy"
                           (onChange)="onConsentChange('Privacy Policy', $event)"
@@ -1427,6 +1484,7 @@ interface InjuryEntry {
                         <p-checkbox
                           [(ngModel)]="onboardingData.consentDataUsage"
                           [binary]="true"
+                          variant="filled"
                           inputId="consent-data"
                           name="consentDataUsage"
                           (onChange)="onConsentChange('Data Usage', $event)"
@@ -1448,6 +1506,7 @@ interface InjuryEntry {
                         <p-checkbox
                           [(ngModel)]="onboardingData.consentAICoach"
                           [binary]="true"
+                          variant="filled"
                           inputId="consent-ai"
                           name="consentAICoach"
                           (onChange)="onConsentChange('AI Coach', $event)"
@@ -1465,6 +1524,7 @@ interface InjuryEntry {
                         <p-checkbox
                           [(ngModel)]="onboardingData.consentEmailUpdates"
                           [binary]="true"
+                          variant="filled"
                           inputId="consent-email"
                           name="consentEmailUpdates"
                           (onChange)="onConsentChange('Email Updates', $event)"
@@ -1494,10 +1554,17 @@ interface InjuryEntry {
 
                 <div class="summary-note success">
                   <i class="pi pi-check-circle"></i>
-                  <span
-                    >Your personalized training plan is ready! You can update
-                    these settings anytime in your profile.</span
-                  >
+                  @if (isStaff()) {
+                    <span
+                      >You're ready to manage your team! You can update your
+                      settings anytime in your profile.</span
+                    >
+                  } @else {
+                    <span
+                      >Your personalized training plan is ready! You can update
+                      these settings anytime in your profile.</span
+                    >
+                  }
                 </div>
               </div>
             }
@@ -1545,6 +1612,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   isLoading = signal(true);
   lastSaved = signal<Date | null>(null);
   isSaving = signal(false);
+  isEmailVerified = signal(false);
+  isResendingVerification = signal(false);
 
   // Auto-save subject
   private autoSaveSubject = new Subject<void>();
@@ -2147,7 +2216,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     consentEmailUpdates: false, // Optional
   };
 
-  steps = signal<OnboardingStep[]>([
+  // Player steps (full onboarding)
+  private playerSteps: OnboardingStep[] = [
     { label: "1 · Personal", icon: "pi pi-user", completed: false },
     { label: "2 · Team", icon: "pi pi-users", completed: false },
     { label: "3 · Physical", icon: "pi pi-heart", completed: false },
@@ -2157,7 +2227,17 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     { label: "7 · Schedule", icon: "pi pi-calendar", completed: false },
     { label: "8 · Recovery", icon: "pi pi-refresh", completed: false },
     { label: "9 · Summary", icon: "pi pi-check", completed: false },
-  ]);
+  ];
+
+  // Staff steps (simplified onboarding - no physical/health/equipment/goals/schedule/recovery)
+  private staffSteps: OnboardingStep[] = [
+    { label: "1 · Personal", icon: "pi pi-user", completed: false },
+    { label: "2 · Role", icon: "pi pi-briefcase", completed: false },
+    { label: "3 · Summary", icon: "pi pi-check", completed: false },
+  ];
+
+  // Current steps based on user type
+  steps = signal<OnboardingStep[]>(this.playerSteps);
 
   // Computed progress percentage
   progress = computed(() => {
@@ -2189,6 +2269,21 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     );
   });
 
+  // Check if current step is the summary step (last step)
+  isSummaryStep(): boolean {
+    return this.currentStep() === this.steps().length - 1;
+  }
+
+  // Check if current user is a player (for conditional UI rendering)
+  isPlayer(): boolean {
+    return this.onboardingData.userType === "player";
+  }
+
+  // Check if current user is staff
+  isStaff(): boolean {
+    return this.onboardingData.userType === "staff";
+  }
+
   async ngOnInit(): Promise<void> {
     // Set up auto-save with debounce
     this.autoSaveSubscription = this.autoSaveSubject
@@ -2200,6 +2295,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     // Load saved draft first
     this.loadDraft();
 
+    // Check email verification status
+    await this.checkEmailVerification();
+
+    // Set up listeners for email verification from other tabs
+    this.setupEmailVerificationListeners();
+
     // Load teams from database
     await this.loadTeams();
 
@@ -2207,9 +2308,136 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     await this.loadUserProfile();
   }
 
+  /**
+   * Check if current user's email is verified
+   */
+  async checkEmailVerification(): Promise<void> {
+    try {
+      // Refresh session to get latest verification status
+      const { data, error } = await this.supabaseService.client.auth.getUser();
+
+      if (error) {
+        this.logger.error("[Onboarding] Error checking email verification:", error);
+        return;
+      }
+
+      const isVerified = !!data.user?.email_confirmed_at;
+      this.isEmailVerified.set(isVerified);
+
+      if (isVerified) {
+        this.logger.info("[Onboarding] Email is verified");
+      } else {
+        this.logger.info("[Onboarding] Email not yet verified");
+      }
+    } catch (error) {
+      this.logger.error("[Onboarding] Error checking email verification:", error);
+    }
+  }
+
+  /**
+   * Resend verification email to the user
+   */
+  async resendVerificationEmail(): Promise<void> {
+    this.isResendingVerification.set(true);
+    try {
+      const user = this.supabaseService.currentUser();
+      if (!user?.email) {
+        this.toastService.error("No email address found. Please try logging in again.");
+        return;
+      }
+
+      const { error } = await this.supabaseService.client.auth.resend({
+        type: "signup",
+        email: user.email,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      this.toastService.success(
+        "Verification email sent! Please check your inbox.",
+        "Email Sent",
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to resend verification email";
+      this.toastService.error(message);
+    } finally {
+      this.isResendingVerification.set(false);
+    }
+  }
+
+  /**
+   * Refresh email verification status (user can click after verifying)
+   */
+  async refreshVerificationStatus(): Promise<void> {
+    await this.checkEmailVerification();
+    if (this.isEmailVerified()) {
+      this.toastService.success("Email verified! You can now continue.", "Verified");
+    } else {
+      this.toastService.info("Email not yet verified. Please check your inbox and click the verification link.");
+    }
+  }
+
+  // BroadcastChannel for cross-tab communication
+  private authChannel: BroadcastChannel | null = null;
+  private storageListener: ((event: StorageEvent) => void) | null = null;
+
+  /**
+   * Set up listeners for email verification from other tabs
+   */
+  private setupEmailVerificationListeners(): void {
+    // Listen via BroadcastChannel API
+    try {
+      this.authChannel = new BroadcastChannel("flagfit-auth");
+      this.authChannel.onmessage = async (event) => {
+        if (event.data?.type === "EMAIL_VERIFIED") {
+          this.logger.info("[Onboarding] Received email verification broadcast");
+          await this.checkEmailVerification();
+          if (this.isEmailVerified()) {
+            this.toastService.success("Email verified! You can now continue.", "Verified");
+          }
+        }
+      };
+    } catch {
+      this.logger.debug("[Onboarding] BroadcastChannel not supported");
+    }
+
+    // Also listen to localStorage changes as fallback
+    this.storageListener = async (event: StorageEvent) => {
+      if (event.key === "flagfit_email_verified" && event.newValue) {
+        this.logger.info("[Onboarding] Detected email verification via storage");
+        await this.checkEmailVerification();
+        if (this.isEmailVerified()) {
+          this.toastService.success("Email verified! You can now continue.", "Verified");
+        }
+        // Clear the flag
+        localStorage.removeItem("flagfit_email_verified");
+      }
+    };
+    window.addEventListener("storage", this.storageListener);
+  }
+
+  /**
+   * Clean up email verification listeners
+   */
+  private cleanupEmailVerificationListeners(): void {
+    if (this.authChannel) {
+      this.authChannel.close();
+      this.authChannel = null;
+    }
+    if (this.storageListener) {
+      window.removeEventListener("storage", this.storageListener);
+      this.storageListener = null;
+    }
+  }
+
   ngOnDestroy(): void {
     // Save draft when leaving
     this.saveDraft();
+
+    // Clean up listeners
+    this.cleanupEmailVerificationListeners();
 
     if (this.autoSaveSubscription) {
       this.autoSaveSubscription.unsubscribe();
@@ -2314,7 +2542,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   }
 
   selectUserType(type: "player" | "staff"): void {
+    const previousType = this.onboardingData.userType;
     this.onboardingData.userType = type;
+
     // Reset staff-specific fields when switching to player
     if (type === "player") {
       this.onboardingData.staffRole = null;
@@ -2323,6 +2553,36 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     // Set default visibility for staff based on their role
     if (type === "staff") {
       this.onboardingData.staffVisibility = ["roster", "chat"];
+    }
+
+    // Update steps based on user type if it changed
+    if (previousType !== type) {
+      this.updateStepsForUserType(type);
+    }
+  }
+
+  /**
+   * Update the onboarding steps based on user type
+   * Staff have a simplified flow, players have the full flow
+   */
+  private updateStepsForUserType(userType: "player" | "staff"): void {
+    if (userType === "staff") {
+      // Reset steps to staff version (preserving completion state for shared steps)
+      const currentPersonalCompleted = this.steps()[0]?.completed || false;
+      this.staffSteps[0].completed = currentPersonalCompleted;
+      this.staffSteps[1].completed = false;
+      this.staffSteps[2].completed = false;
+      this.steps.set([...this.staffSteps]);
+      this.logger.info("[Onboarding] Switched to staff onboarding flow");
+    } else {
+      // Reset steps to player version (preserving completion state for shared steps)
+      const currentPersonalCompleted = this.steps()[0]?.completed || false;
+      this.playerSteps[0].completed = currentPersonalCompleted;
+      for (let i = 1; i < this.playerSteps.length; i++) {
+        this.playerSteps[i].completed = false;
+      }
+      this.steps.set([...this.playerSteps]);
+      this.logger.info("[Onboarding] Switched to player onboarding flow");
     }
   }
 
@@ -2440,8 +2700,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    * Check if onboarding can be completed (all required consents accepted)
    */
   canCompleteOnboarding(): boolean {
-    // Must be on last step
-    if (this.currentStep() !== this.steps().length - 1) {
+    // Must be on the summary step (last step for both player and staff)
+    if (!this.isSummaryStep()) {
       return false;
     }
 
@@ -2466,6 +2726,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
         if (!this.onboardingData.country) {
           return { valid: false, message: "Please select your country" };
+        }
+        // Check email verification before allowing to proceed
+        if (!this.isEmailVerified()) {
+          return {
+            valid: false,
+            message: "Please verify your email address before continuing. Check your inbox for a verification link.",
+          };
         }
         return { valid: true };
 
@@ -2653,11 +2920,15 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           value: team.id,
         }));
         this.teams.set(teamOptions);
+        // Initialize suggestions immediately so dropdown doesn't show loading spinner
+        this.teamSuggestions.set(teamOptions);
         this.logger.info(
           `[Onboarding] Loaded ${teamOptions.length} teams from database`,
         );
       } else {
         // Keep predefined teams as fallback
+        // Initialize suggestions with fallback teams
+        this.teamSuggestions.set(this.teams());
         this.logger.info(
           "[Onboarding] Using predefined teams (database query failed or empty)",
         );
@@ -2668,6 +2939,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         error,
       );
       // Keep predefined teams as fallback
+      this.teamSuggestions.set(this.teams());
     }
   }
 
@@ -2719,6 +2991,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   getPositionLabel(value: string | null): string {
     return (
       this.positions.find((p) => p.value === value)?.label || "Not selected"
+    );
+  }
+
+  getStaffRoleLabel(value: string | null): string {
+    return (
+      this.staffRoleOptions.find((r) => r.value === value)?.label ||
+      "Not selected"
     );
   }
 
@@ -2821,11 +3100,14 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       const firstName = nameParts[0] || "";
       const lastName = nameParts.slice(1).join(" ") || "";
 
-      // Convert to metric for storage (database always stores in metric)
-      const heightCm = this.getHeightInCm();
-      const weightKg = this.getWeightInKg();
+      // For staff, don't save player-specific data
+      const isStaffUser = this.isStaff();
 
-      // Prepare user profile data
+      // Convert to metric for storage (database always stores in metric)
+      const heightCm = isStaffUser ? null : this.getHeightInCm();
+      const weightKg = isStaffUser ? null : this.getWeightInKg();
+
+      // Prepare user profile data - different for staff vs players
       const profileData = {
         full_name: this.onboardingData.name,
         first_name: firstName,
@@ -2836,15 +3118,20 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         gender: this.onboardingData.gender,
         country: this.onboardingData.country,
         phone: this.onboardingData.phone || null,
-        position: this.onboardingData.position,
-        secondary_position: this.onboardingData.secondaryPosition,
-        throwing_arm: this.onboardingData.throwingArm,
-        experience_level: this.onboardingData.experience,
         team: this.onboardingData.team,
-        jersey_number: this.onboardingData.jerseyNumber,
+        // Staff-specific fields
+        user_type: this.onboardingData.userType,
+        staff_role: isStaffUser ? this.onboardingData.staffRole : null,
+        staff_visibility: isStaffUser ? this.onboardingData.staffVisibility : null,
+        // Player-specific fields (null for staff)
+        position: isStaffUser ? null : this.onboardingData.position,
+        secondary_position: isStaffUser ? null : this.onboardingData.secondaryPosition,
+        throwing_arm: isStaffUser ? null : this.onboardingData.throwingArm,
+        experience_level: isStaffUser ? null : this.onboardingData.experience,
+        jersey_number: isStaffUser ? null : this.onboardingData.jerseyNumber,
         height_cm: heightCm,
         weight_kg: weightKg,
-        preferred_units: this.onboardingData.unitSystem,
+        preferred_units: isStaffUser ? null : this.onboardingData.unitSystem,
         updated_at: new Date().toISOString(),
       };
 
@@ -2875,59 +3162,86 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         }
       }
 
-      // Save training preferences (schedule, mobility, recovery)
-      await this.saveTrainingPreferences(user.email ?? "");
+      // Update auth user_metadata with role for dashboard routing
+      // Map user_type to appropriate role for auth metadata
+      const authRole = isStaffUser
+        ? this.onboardingData.staffRole === "head_coach"
+          ? "coach"
+          : this.onboardingData.staffRole === "assistant_coach"
+            ? "assistant_coach"
+            : this.onboardingData.staffRole || "coach"
+        : "player";
 
-      // Save current injuries to wellness_checkins table
-      await this.saveCurrentInjuries(user.id);
+      await this.supabaseService.updateUser({
+        data: {
+          role: authRole,
+          user_type: this.onboardingData.userType,
+          full_name: this.onboardingData.name,
+        },
+      });
 
-      // Create athlete_training_config for daily-protocol position modifiers
-      // This maps UI position values to normalized database keys
-      await this.createAthleteTrainingConfig(user.id);
+      // Player-only: Save training preferences and assign program
+      if (!isStaffUser) {
+        // Save training preferences (schedule, mobility, recovery)
+        await this.saveTrainingPreferences(user.email ?? "");
 
-      // BLOCKER B ENFORCEMENT: Assign training program based on position
-      // This is now MANDATORY - every athlete must have a real plan
-      const assignmentResult = await this.assignTrainingProgram();
+        // Save current injuries to wellness_checkins table
+        await this.saveCurrentInjuries(user.id);
 
-      if (!assignmentResult) {
-        this.logger.error(
-          "[Onboarding] Program assignment FAILED - this is a critical error",
-        );
+        // Create athlete_training_config for daily-protocol position modifiers
+        // This maps UI position values to normalized database keys
+        await this.createAthleteTrainingConfig(user.id);
 
-        // Show user a warning but allow completion
-        // They can still access the app and admin can assign program later
-        this.toastService.warn(
-          "Training program assignment is pending. You can still access the app, but your personalized plan may not be ready yet. Please contact support if this persists.",
-          "Setup Incomplete",
-        );
+        // BLOCKER B ENFORCEMENT: Assign training program based on position
+        // This is now MANDATORY - every athlete must have a real plan
+        const assignmentResult = await this.assignTrainingProgram();
 
-        // Set flag for dashboard to show program assignment prompt
-        sessionStorage.setItem("programAssignmentPending", "true");
+        if (!assignmentResult) {
+          this.logger.error(
+            "[Onboarding] Program assignment FAILED - this is a critical error",
+          );
 
-        // Log error details for debugging but don't block onboarding
-        this.logger.error(
-          "[Onboarding] Allowing user to proceed without program assignment",
-          { position: this.onboardingData.position },
-        );
-      }
+          // Show user a warning but allow completion
+          // They can still access the app and admin can assign program later
+          this.toastService.warn(
+            "Training program assignment is pending. You can still access the app, but your personalized plan may not be ready yet. Please contact support if this persists.",
+            "Setup Incomplete",
+          );
 
-      // Add player to team roster if they are a player
-      if (
-        this.onboardingData.userType === "player" &&
-        this.onboardingData.team
-      ) {
-        await this.addPlayerToTeamRoster(user.id);
+          // Set flag for dashboard to show program assignment prompt
+          sessionStorage.setItem("programAssignmentPending", "true");
+
+          // Log error details for debugging but don't block onboarding
+          this.logger.error(
+            "[Onboarding] Allowing user to proceed without program assignment",
+            { position: this.onboardingData.position },
+          );
+        }
+
+        // Add player to team roster
+        if (this.onboardingData.team) {
+          await this.addPlayerToTeamRoster(user.id);
+        }
+
+        // Always set flag to refresh program assignment on dashboard
+        // This ensures the dashboard checks for the program even if assignment had issues
+        sessionStorage.setItem("refreshProgramAssignment", "true");
+      } else {
+        // Staff-only: Add staff member to team roster with appropriate role
+        if (this.onboardingData.team) {
+          await this.addStaffToTeamRoster(user.id);
+        }
       }
 
       // Clear the draft after successful completion
       this.clearDraft();
 
-      // Always set flag to refresh program assignment on dashboard
-      // This ensures the dashboard checks for the program even if assignment had issues
-      sessionStorage.setItem("refreshProgramAssignment", "true");
+      const successMessage = isStaffUser
+        ? "Your staff profile has been set up!"
+        : "Your profile and training preferences have been set up!";
 
       this.toastService.success(
-        "Your profile and training preferences have been set up!",
+        successMessage,
         "Welcome to FlagFit Pro!",
       );
 
@@ -2940,7 +3254,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           sessionStorage.removeItem("postOnboardingRedirect");
           this.router.navigateByUrl(postOnboardingRedirect);
         } else {
-          this.router.navigate(["/dashboard"]);
+          // Redirect based on user type
+          if (isStaffUser) {
+            this.router.navigate(["/coach/team"]);
+          } else {
+            this.router.navigate(["/dashboard"]);
+          }
         }
       }, 1000);
     } catch (error) {
@@ -3295,6 +3614,122 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       }
     } catch (e) {
       this.logger.warn("[Onboarding] Error adding player to team roster:", toLogContext(e));
+      // Non-blocking - continue with onboarding
+    }
+  }
+
+  /**
+   * Add staff member to team roster
+   */
+  private async addStaffToTeamRoster(userId: string): Promise<void> {
+    try {
+      const teamName = this.onboardingData.team;
+      if (!teamName) {
+        this.logger.warn(
+          "[Onboarding] No team name provided, skipping staff roster addition",
+        );
+        return;
+      }
+
+      // 1. Find or create the team
+      let teamId: string | null = null;
+
+      // First, try to find existing team by name
+      const { data: existingTeam } = await this.supabaseService.client
+        .from("teams")
+        .select("id")
+        .ilike("name", teamName)
+        .single();
+
+      if (existingTeam) {
+        teamId = existingTeam.id;
+        this.logger.info(
+          `[Onboarding] Found existing team for staff: ${teamName} (${teamId})`,
+        );
+      } else {
+        // Create new team with staff member as creator
+        const { data: newTeam, error: teamError } =
+          await this.supabaseService.client
+            .from("teams")
+            .insert({
+              name: teamName,
+              created_by: userId,
+            })
+            .select()
+            .single();
+
+        if (teamError) {
+          this.logger.warn(
+            "[Onboarding] Failed to create team:",
+            teamError.message,
+          );
+          return;
+        }
+        teamId = newTeam.id;
+        this.logger.info(
+          `[Onboarding] Created new team for staff: ${teamName} (${teamId})`,
+        );
+      }
+
+      if (!teamId) {
+        this.logger.warn("[Onboarding] Could not determine team ID for staff");
+        return;
+      }
+
+      // 2. Add user to team_members with appropriate role based on staff role
+      // Map staff role to team member role
+      const staffRoleToMemberRole: Record<string, string> = {
+        head_coach: "coach",
+        assistant_coach: "coach",
+        offensive_coordinator: "coach",
+        defensive_coordinator: "coach",
+        strength_coach: "staff",
+        athletic_trainer: "staff",
+        physiotherapist: "staff",
+        nutritionist: "staff",
+        sports_psychologist: "staff",
+        team_manager: "manager",
+        video_analyst: "staff",
+        equipment_manager: "staff",
+        other_staff: "staff",
+      };
+
+      const memberRole =
+        staffRoleToMemberRole[this.onboardingData.staffRole || ""] || "staff";
+
+      // Check if already a member
+      const { data: existingMember } = await this.supabaseService.client
+        .from("team_members")
+        .select("id")
+        .eq("team_id", teamId)
+        .eq("user_id", userId)
+        .single();
+
+      if (!existingMember) {
+        const { error: memberError } = await this.supabaseService.client
+          .from("team_members")
+          .insert({
+            team_id: teamId,
+            user_id: userId,
+            role: memberRole,
+          });
+
+        if (memberError) {
+          this.logger.warn(
+            "[Onboarding] Failed to add staff member:",
+            memberError.message,
+          );
+        } else {
+          this.logger.info(
+            `[Onboarding] Added staff to team_members as ${memberRole}`,
+          );
+        }
+      }
+    } catch (e) {
+      this.logger.warn(
+        "[Onboarding] Error adding staff to team roster:",
+        toLogContext(e),
+      );
       // Non-blocking - continue with onboarding
     }
   }

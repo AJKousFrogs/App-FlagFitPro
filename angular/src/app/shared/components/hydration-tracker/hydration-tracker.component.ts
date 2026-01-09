@@ -158,9 +158,11 @@ export class HydrationTrackerComponent implements OnInit {
 
   // Computed values
   totalIntake = computed(() => {
-    const unifiedLevel = this.trainingService.hydrationLevel();
+    // hydrationLevel() returns glasses, convert to ml (1 glass = 250ml)
+    const unifiedLevelGlasses = this.trainingService.hydrationLevel();
+    const unifiedLevelMl = unifiedLevelGlasses * 250;
     return Math.max(
-      unifiedLevel,
+      unifiedLevelMl,
       this.hydrationLogs().reduce((sum, log) => sum + log.amount, 0),
     );
   });

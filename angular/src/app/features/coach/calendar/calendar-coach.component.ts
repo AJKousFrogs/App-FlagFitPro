@@ -430,6 +430,7 @@ const RECURRING_OPTIONS = [
             <p-checkbox
               [(ngModel)]="eventForm.isMultiDay"
               [binary]="true"
+              variant="filled"
               inputId="multiDay"
             ></p-checkbox>
             <label for="multiDay">Multi-day event (e.g., tournament)</label>
@@ -463,6 +464,7 @@ const RECURRING_OPTIONS = [
               <p-checkbox
                 [(ngModel)]="eventForm.requireRsvp"
                 [binary]="true"
+                variant="filled"
                 inputId="requireRsvp"
               ></p-checkbox>
               <label for="requireRsvp">Require RSVP</label>
@@ -471,6 +473,7 @@ const RECURRING_OPTIONS = [
               <p-checkbox
                 [(ngModel)]="eventForm.sendReminder"
                 [binary]="true"
+                variant="filled"
                 inputId="sendReminder"
               ></p-checkbox>
               <label for="sendReminder"
@@ -502,6 +505,7 @@ const RECURRING_OPTIONS = [
               <p-checkbox
                 [(ngModel)]="eventForm.notifyPlayers"
                 [binary]="true"
+                variant="filled"
                 inputId="notifyPlayers"
               ></p-checkbox>
               <label for="notifyPlayers"
@@ -512,6 +516,7 @@ const RECURRING_OPTIONS = [
               <p-checkbox
                 [(ngModel)]="eventForm.notifyParents"
                 [binary]="true"
+                variant="filled"
                 inputId="notifyParents"
               ></p-checkbox>
               <label for="notifyParents">Include parents/guardians</label>

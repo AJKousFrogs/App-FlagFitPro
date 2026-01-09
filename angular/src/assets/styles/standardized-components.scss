@@ -172,9 +172,7 @@
       color: var(--color-brand-primary);
       border-color: var(--color-brand-primary);
       transform: translateY(-2px);
-      box-shadow:
-        0 8px 20px rgba(34, 139, 34, 0.3),
-        0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--hover-shadow-md);
     }
   }
 

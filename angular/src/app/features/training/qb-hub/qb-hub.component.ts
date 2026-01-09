@@ -69,38 +69,6 @@ import { QbTrainingScheduleComponent } from "../qb-training-schedule/qb-training
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      /*
-     * QB Hub Composite View Styles
-     * Design System Compliant - Refactored January 5, 2026
-     * Removed ::ng-deep - Using CSS custom property cascade
-     */
-      .qb-hub-page {
-        padding: var(--spacing-4);
-
-        /* Hub's own header should display normally */
-        > app-page-header {
-          --page-header-display: block;
-        }
-      }
-
-      .hub-tab-content {
-        padding: var(--spacing-6) 0;
-
-        /*
-       * COMPOSITE VIEW PATTERN
-       * Child components inherit this CSS variable which hides their headers.
-       * PageHeaderComponent reads --page-header-display on :host.
-       * No ::ng-deep needed - CSS custom properties cascade through encapsulation.
-       */
-        --page-header-display: none;
-      }
-
-      .mr-2 {
-        margin-right: 0.5rem;
-      }
-    `,
-  ],
+  styleUrl: "./qb-hub.component.scss",
 })
 export class QbHubComponent {}

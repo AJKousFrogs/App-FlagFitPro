@@ -179,11 +179,9 @@ interface AutocompleteSuggestion {
           <div class="header-brand">
             <div class="avatar-container">
               <div class="avatar-glow"></div>
-              <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvE6wGt8diMxqRhHi__HyjI-mheOoOW8m8fg&s"
-                alt="Merlin AI Coach"
-                class="coach-avatar"
-              />
+              <div class="coach-avatar">
+                <i class="pi pi-sparkles" aria-hidden="true"></i>
+              </div>
               <span class="online-indicator" aria-label="Online"></span>
             </div>
             <div class="brand-info">
@@ -380,10 +378,7 @@ interface AutocompleteSuggestion {
               <!-- Assistant Avatar -->
               @if (message.role === "assistant") {
                 <div class="message-avatar">
-                  <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvE6wGt8diMxqRhHi__HyjI-mheOoOW8m8fg&s"
-                    alt="Merlin"
-                  />
+                  <i class="pi pi-sparkles" aria-hidden="true"></i>
                 </div>
               }
 

@@ -502,6 +502,7 @@ const SEVERITY_LEVELS = [
                     <p-checkbox
                       [(ngModel)]="protocol.criteriaCompleted[i]"
                       [binary]="true"
+                      variant="filled"
                       [inputId]="'criterion-' + i"
                       (onChange)="updateCriterion(i, $event)"
                     ></p-checkbox>
@@ -598,6 +599,7 @@ const SEVERITY_LEVELS = [
                       <p-checkbox
                         [value]="activity"
                         [(ngModel)]="todayCheckin.activitiesCompleted"
+                        variant="filled"
                         [inputId]="'activity-' + i"
                       ></p-checkbox>
                       <label [for]="'activity-' + i">{{ activity }}</label>
@@ -782,6 +784,7 @@ const SEVERITY_LEVELS = [
               <p-checkbox
                 [(ngModel)]="newProtocol.understandProtocol"
                 [binary]="true"
+                variant="filled"
                 inputId="understand"
               ></p-checkbox>
               <label for="understand"
@@ -793,6 +796,7 @@ const SEVERITY_LEVELS = [
               <p-checkbox
                 [(ngModel)]="newProtocol.notifyCoach"
                 [binary]="true"
+                variant="filled"
                 inputId="notify"
               ></p-checkbox>
               <label for="notify"

@@ -142,66 +142,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
       </div>
     </app-main-layout>
   `,
-  styles: [
-    `
-      .advanced-training-page {
-        padding: var(--spacing-4);
-      }
-
-      .tab-content-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: var(--spacing-4);
-        padding: var(--spacing-6) 0;
-      }
-
-      .tool-card {
-        background: var(--surface-primary);
-        border: 1px solid var(--color-border-secondary);
-        border-radius: var(--radius-lg);
-        padding: var(--spacing-6);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        cursor: pointer;
-        transition: all var(--transition-fast);
-      }
-
-      .tool-card:hover {
-        border-color: var(--ds-primary-green);
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-2);
-        background: var(--surface-secondary);
-      }
-
-      .tool-card i {
-        font-size: var(--icon-2xl); /* 32px - feature icon */
-        color: var(--ds-primary-green);
-        margin-bottom: var(--spacing-4);
-        transition: transform var(--transition-fast);
-      }
-
-      .tool-card:hover i {
-        transform: scale(1.1);
-      }
-
-      .tool-card h3 {
-        font-size: var(--font-size-h2); /* H2: Card titles - 18px */
-        margin: 0 0 var(--spacing-2) 0;
-        font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
-      }
-
-      .tool-card p {
-        font-size: var(--font-size-sm);
-        color: var(--text-color-secondary);
-        margin: 0;
-      }
-
-      .mr-2 {
-        margin-right: 0.5rem;
-      }
-    `,
-  ],
+  styleUrl: "./advanced-training.component.scss",
 })
 export class AdvancedTrainingComponent {}

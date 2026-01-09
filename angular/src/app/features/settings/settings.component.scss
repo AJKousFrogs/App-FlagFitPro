@@ -162,6 +162,18 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
   border: var(--border-1) solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  width: auto;
+
+  &:focus {
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .settings-nav-item:hover {
@@ -1575,15 +1587,19 @@
  * Owner: @design-system
  */
 .security-item app-button {
-  width: 140px;
-  min-width: 140px;
-  max-width: 140px;
-  display: inline-block;
+  flex-shrink: 0;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
 }
 
-.security-item app-button .btn {
+.security-item app-button ::ng-deep .btn {
   width: 100%;
+  min-width: 100%;
+  height: var(--button-height-md, 44px);
   justify-content: center;
+  padding: 0 var(--space-4, 16px);
+  box-sizing: border-box;
 }
 
 // PrimeNG divider overrides moved to _exceptions.scss (DS-EXC-051)

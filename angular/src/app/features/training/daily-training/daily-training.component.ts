@@ -249,6 +249,7 @@ interface ScheduleBlock {
                   <p-checkbox
                     [(ngModel)]="block.completed"
                     [binary]="true"
+                    variant="filled"
                     (onChange)="markBlockComplete(block.block, block.completed)"
                   ></p-checkbox>
                   @if (block.completed) {

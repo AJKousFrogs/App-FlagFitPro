@@ -61,6 +61,7 @@ import { OwnershipTransitionBadgeComponent } from "../../shared/components/owner
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
 import { formatDate } from "../../shared/utils/date.utils";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 
 @Component({
   selector: "app-acwr-dashboard",
@@ -76,27 +77,29 @@ import { formatDate } from "../../shared/utils/date.utils";
     ConfidenceIndicatorComponent,
     OwnershipTransitionBadgeComponent,
     SemanticMeaningRendererComponent,
+    MainLayoutComponent,
   ],
   template: `
-    <!-- Loading State -->
-    <app-loading
-      [visible]="isPageLoading()"
-      variant="skeleton"
-      message="Loading ACWR data..."
-    ></app-loading>
+    <app-main-layout>
+      <!-- Loading State -->
+      <app-loading
+        [visible]="isPageLoading()"
+        variant="skeleton"
+        message="Loading ACWR data..."
+      ></app-loading>
 
-    <!-- Error State -->
-    @if (hasPageError()) {
-      <app-page-error-state
-        title="Unable to load ACWR dashboard"
-        [message]="pageErrorMessage()"
-        (retry)="retryLoad()"
-      ></app-page-error-state>
-    }
+      <!-- Error State -->
+      @if (hasPageError()) {
+        <app-page-error-state
+          title="Unable to load ACWR dashboard"
+          [message]="pageErrorMessage()"
+          (retry)="retryLoad()"
+        ></app-page-error-state>
+      }
 
-    <!-- Content -->
-    @else {
-      <div class="acwr-dashboard">
+      <!-- Content -->
+      @else {
+        <div class="acwr-dashboard">
         <!-- Header -->
         <div class="dashboard-header">
           <h1>
@@ -538,8 +541,9 @@ import { formatDate } from "../../shared/utils/date.utils";
           <small> Last updated: {{ lastUpdated() | date: "short" }} </small>
         </div>
       </div>
-    }
-    <!-- End of @else for content -->
+      }
+      <!-- End of @else for content -->
+    </app-main-layout>
   `,
   styleUrl: "./acwr-dashboard.component.scss",
 })

@@ -6,7 +6,10 @@
       subtitle="Manage your account and application preferences"
       icon="pi-cog"
     >
-      <app-button iconLeft="pi-save" (clicked)="saveSettings()"
+      <app-button 
+        iconLeft="pi-save" 
+        [loading]="isSavingSettings()"
+        (clicked)="saveSettings()"
         >Save Changes</app-button
       >
     </app-page-header>
@@ -14,22 +17,22 @@
     <!-- Settings Navigation / Quick Links -->
     <p-card styleClass="settings-nav-card">
       <div class="settings-nav">
-        <a href="#account-settings" class="settings-nav-item">
+        <button type="button" (click)="scrollToSection('account-settings', $event)" class="settings-nav-item">
           <i class="pi pi-user"></i>
           <span>Account</span>
-        </a>
-        <a href="#notifications-settings" class="settings-nav-item">
+        </button>
+        <button type="button" (click)="scrollToSection('notifications-settings', $event)" class="settings-nav-item">
           <i class="pi pi-bell"></i>
           <span>Notifications</span>
-        </a>
-        <a href="#privacy-settings" class="settings-nav-item">
+        </button>
+        <button type="button" (click)="scrollToSection('privacy-settings', $event)" class="settings-nav-item">
           <i class="pi pi-lock"></i>
           <span>Privacy & Security</span>
-        </a>
-        <a href="#preferences-settings" class="settings-nav-item">
+        </button>
+        <button type="button" (click)="scrollToSection('preferences-settings', $event)" class="settings-nav-item">
           <i class="pi pi-sliders-h"></i>
           <span>Preferences</span>
-        </a>
+        </button>
       </div>
     </p-card>
 

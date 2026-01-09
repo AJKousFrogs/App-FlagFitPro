@@ -289,6 +289,7 @@ export interface ReadinessResult {
                     [ngModel]="formData().sorenessAreas.includes(area)"
                     (ngModelChange)="toggleArea(area, $event)"
                     [binary]="true"
+                    variant="filled"
                   />
                   <span>{{ area }}</span>
                 </label>

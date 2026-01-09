@@ -317,13 +317,13 @@
 .session-date {
   margin: 0;
   font-size: var(--font-size-h4);
-  color: var(--color-text-secondary);
+  color: var(--primitive-neutral-600); /* #737373 - ensures readable contrast on light backgrounds */
 }
 
 .session-duration {
   margin: 0;
   font-size: var(--font-size-h4);
-  color: var(--color-text-muted);
+  color: var(--primitive-neutral-500); /* #a3a3a3 - ensures readable contrast on light backgrounds */
 }
 
 .session-actions {

@@ -146,6 +146,7 @@ import { TIME } from "@core/constants";
                   <p-checkbox
                     [(ngModel)]="point.selected"
                     [binary]="true"
+                    variant="filled"
                     [inputId]="point.id"
                   ></p-checkbox>
                   <label [for]="point.id">

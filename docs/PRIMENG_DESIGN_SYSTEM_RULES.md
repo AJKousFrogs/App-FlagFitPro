@@ -193,6 +193,22 @@ All PrimeNG tokens use the `--p-` prefix by default.
 
 ### Checkbox Design Tokens (34 tokens)
 
+#### ⚠️ MANDATORY: Always Use `variant="filled"`
+
+All checkboxes in this application **MUST** use the `variant="filled"` attribute to ensure a clear visual indicator when checked:
+
+```html
+<!-- ✅ CORRECT: Always use variant="filled" -->
+<p-checkbox
+  [(ngModel)]="value"
+  [binary]="true"
+  variant="filled"
+  inputId="myCheckbox"
+></p-checkbox>
+```
+
+This ensures the checkbox displays a filled green background with a checkmark when selected, instead of just an outline.
+
 | Token                               | CSS Variable                            | Description         |
 | ----------------------------------- | --------------------------------------- | ------------------- |
 | `checkbox.width`                    | `--p-checkbox-width`                    | Width               |

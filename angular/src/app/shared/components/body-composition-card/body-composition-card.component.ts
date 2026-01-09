@@ -76,8 +76,7 @@ interface BodyCompositionData {
             variant="primary"
             size="md"
             icon="plus"
-            routerLink="/dashboard"
-            [queryParams]="{ action: 'log-metrics' }"
+            routerLink="/wellness"
           >
             Log Measurement
           </app-button>

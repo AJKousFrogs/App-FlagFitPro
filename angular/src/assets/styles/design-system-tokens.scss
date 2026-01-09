@@ -25,6 +25,7 @@
   --ds-primary-green: #089949; /* SINGLE SOURCE OF TRUTH */
   --ds-primary-green-rgb: 8, 153, 73;
   --ds-primary-green-hover: #036d35;
+  --ds-primary-green-dark: #036d35; /* Alias for hover state - darker green */
   --ds-primary-green-light: #0ab85a;
   --ds-primary-green-subtle: rgba(8, 153, 73, 0.1);
   --ds-primary-green-ultra-subtle: rgba(8, 153, 73, 0.05);
@@ -617,7 +618,10 @@
   --color-surface-selected: rgba(8, 153, 73, 0.08);
   --color-surface-inverse: var(--primitive-neutral-900);
 
-  /* Text Semantic Aliases */
+  /* Text Semantic Aliases - Use fallback values for base :root */
+  --text-primary: #1a1a1a; /* Default for light mode */
+  --text-secondary: #4a4a4a; /* Default for light mode */
+  --text-muted: #525252; /* Default for light mode */
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);

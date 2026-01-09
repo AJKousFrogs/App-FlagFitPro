@@ -133,6 +133,7 @@ import { WellnessService } from "../../../core/services/wellness.service";
             <p-checkbox
               [(ngModel)]="hasPain"
               [binary]="true"
+              variant="filled"
               inputId="hasPain"
             ></p-checkbox>
             <label for="hasPain">Any pain or unusual soreness?</label>

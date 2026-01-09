@@ -602,6 +602,7 @@ const BALANCE_FILTERS = [
                 <p-checkbox
                   [(ngModel)]="feeForm.notifyOnCreate"
                   [binary]="true"
+                  variant="filled"
                   inputId="notifyCreate"
                 ></p-checkbox>
                 <label for="notifyCreate">Send notification when created</label>
@@ -610,6 +611,7 @@ const BALANCE_FILTERS = [
                 <p-checkbox
                   [(ngModel)]="feeForm.remind3Days"
                   [binary]="true"
+                  variant="filled"
                   inputId="remind3"
                 ></p-checkbox>
                 <label for="remind3">Send reminder 3 days before due</label>
@@ -618,6 +620,7 @@ const BALANCE_FILTERS = [
                 <p-checkbox
                   [(ngModel)]="feeForm.remindOverdue"
                   [binary]="true"
+                  variant="filled"
                   inputId="remindOverdue"
                 ></p-checkbox>
                 <label for="remindOverdue">Send reminder when overdue</label>
@@ -710,6 +713,7 @@ const BALANCE_FILTERS = [
             <p-checkbox
               [(ngModel)]="paymentForm.sendConfirmation"
               [binary]="true"
+              variant="filled"
               inputId="sendConfirm"
             ></p-checkbox>
             <label for="sendConfirm">Send confirmation to player</label>

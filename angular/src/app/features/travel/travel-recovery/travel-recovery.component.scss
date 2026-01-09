@@ -198,6 +198,22 @@
     font-weight: var(--font-weight-medium);
     color: var(--color-text-primary);
   }
+
+  // Date picker specific fixes
+  :global(.p-datepicker) {
+    width: 100%;
+  }
+
+  :global(.p-datepicker-input) {
+    width: 100%;
+  }
+
+  // Ensure calendar panel is visible
+  :global(.p-datepicker-panel) {
+    z-index: 10001 !important;
+    position: fixed !important;
+    min-width: 280px;
+  }
 }
 
 .form-actions {

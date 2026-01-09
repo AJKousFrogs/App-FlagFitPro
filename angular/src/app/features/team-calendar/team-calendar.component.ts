@@ -374,6 +374,7 @@ const EVENT_TYPE_CONFIG: Record<
                   <p-checkbox
                     [(ngModel)]="rsvpForm.needsRide"
                     [binary]="true"
+                    variant="filled"
                     inputId="needsRide"
                   ></p-checkbox>
                   <label for="needsRide">I need a ride</label>
@@ -383,6 +384,7 @@ const EVENT_TYPE_CONFIG: Record<
                   <p-checkbox
                     [(ngModel)]="rsvpForm.canProvideRide"
                     [binary]="true"
+                    variant="filled"
                     inputId="canProvideRide"
                   ></p-checkbox>
                   <label for="canProvideRide"

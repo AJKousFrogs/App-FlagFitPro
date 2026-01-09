@@ -20,6 +20,8 @@ import {
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 @Component({
   selector: "app-goal-based-planner",
@@ -32,19 +34,22 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
     Select,
     TagModule,
     TrafficLightRiskComponent,
-
+    MainLayoutComponent,
+    PageHeaderComponent,
     ButtonComponent,
   ],
   template: `
-    <div class="goal-planner bg-surface-primary rounded-lg shadow-medium p-6">
-      <div class="header mb-6">
-        <h2 class="text-2xl font-bold text-text-primary mb-2">
-          Goal-Based Training Planner
-        </h2>
-        <p class="text-text-secondary">
-          Select your goal and get an auto-generated weekly training plan
-        </p>
-      </div>
+    <app-main-layout>
+      <div class="goal-planner-page">
+        <!-- Page Header -->
+        <app-page-header
+          title="Goal-Based Training Planner"
+          subtitle="Select your goal and get an auto-generated weekly training plan"
+          icon="pi-calendar-plus"
+        >
+        </app-page-header>
+
+        <div class="goal-planner-content">
 
       <!-- Goal Selection -->
       <div class="goal-selection mb-6 p-4 bg-surface-secondary rounded-lg">
@@ -276,7 +281,9 @@ import { TrafficLightRiskComponent } from "../../shared/components/traffic-light
           >
         </div>
       }
-    </div>
+        </div>
+      </div>
+    </app-main-layout>
   `,
   styleUrl: "./goal-based-planner.component.scss",
 })

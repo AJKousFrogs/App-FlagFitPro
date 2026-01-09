@@ -131,6 +131,7 @@ import type {
             <p-checkbox
               [(ngModel)]="formData.outcomeData.goalAchieved"
               [binary]="true"
+              variant="filled"
               inputId="goal-achieved"
             ></p-checkbox>
             <label for="goal-achieved">Goal was achieved</label>

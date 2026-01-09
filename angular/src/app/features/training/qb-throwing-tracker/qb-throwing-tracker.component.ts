@@ -418,6 +418,7 @@ interface SessionTypeOption {
             <p-checkbox
               [(ngModel)]="formData.preThrowingWarmupDone"
               [binary]="true"
+              variant="filled"
               inputId="warmup"
             ></p-checkbox>
             <label for="warmup">Pre-throwing warm-up completed (30 min)</label>
@@ -427,6 +428,7 @@ interface SessionTypeOption {
             <p-checkbox
               [(ngModel)]="formData.postThrowingArmCareDone"
               [binary]="true"
+              variant="filled"
               inputId="armcare"
             ></p-checkbox>
             <label for="armcare">Post-throwing arm care completed</label>
@@ -437,6 +439,7 @@ interface SessionTypeOption {
               <p-checkbox
                 [(ngModel)]="formData.iceApplied"
                 [binary]="true"
+                variant="filled"
                 inputId="ice"
               ></p-checkbox>
               <label for="ice">Ice applied (recommended for 100+ throws)</label>

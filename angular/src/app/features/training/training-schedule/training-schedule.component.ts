@@ -138,6 +138,7 @@ interface MonthlyStats {
                   [ngModel]="showWeekNumbers()"
                   (ngModelChange)="onShowWeekToggle($event)"
                   [binary]="true"
+                  variant="filled"
                   inputId="showWeekNumbers"
                 ></p-checkbox>
                 <label for="showWeekNumbers">Show Week Numbers</label>

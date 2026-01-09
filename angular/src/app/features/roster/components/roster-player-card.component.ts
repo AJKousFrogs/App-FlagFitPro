@@ -67,6 +67,7 @@ import { TRAINING } from "../../../core/constants/app.constants";
         <div class="card-checkbox">
           <p-checkbox
             [binary]="true"
+            variant="filled"
             [ngModel]="isSelected()"
             (ngModelChange)="selectionChange.emit(player().id)"
           ></p-checkbox>

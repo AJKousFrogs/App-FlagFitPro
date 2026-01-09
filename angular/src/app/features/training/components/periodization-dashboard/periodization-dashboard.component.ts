@@ -56,6 +56,10 @@ import {
 import { FlagFootballAthleteProfileService } from "../../../../core/services/flag-football-athlete-profile.service";
 import { AcwrService } from "../../../../core/services/acwr.service";
 
+// Layout Components
+import { MainLayoutComponent } from "../../../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../../../shared/components/page-header/page-header.component";
+
 interface TimelineEvent {
   phase: string;
   month: string;
@@ -84,9 +88,21 @@ interface TimelineEvent {
     Chip,
     TimelineModule,
     BadgeModule,
+    MainLayoutComponent,
+    PageHeaderComponent,
   ],
   template: `
-    <div class="periodization-dashboard">
+    <app-main-layout>
+      <div class="periodization-dashboard-page">
+        <!-- Page Header -->
+        <app-page-header
+          title="Training Periodization"
+          subtitle="Evidence-based annual training plan for flag football athletes"
+          icon="pi-calendar"
+        >
+        </app-page-header>
+
+        <div class="periodization-dashboard">
       <!-- Header -->
       <div class="dashboard-header">
         <h1>
@@ -521,7 +537,9 @@ interface TimelineEvent {
           }
         </div>
       }
-    </div>
+        </div>
+      </div>
+    </app-main-layout>
   `,
   styleUrls: ["./periodization-dashboard.component.scss"],
 })

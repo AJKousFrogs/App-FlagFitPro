@@ -365,6 +365,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               <p-checkbox
                 [(ngModel)]="newEvent.is_mandatory"
                 [binary]="true"
+                variant="filled"
                 inputId="mandatory"
               ></p-checkbox>
               <label for="mandatory">Mandatory attendance</label>

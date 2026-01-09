@@ -3032,6 +3032,29 @@ overflow-y: auto; /* Internal scroll only — no page jump */
 
 > **Checkboxes and radios follow consistent hit targets, spacing, and state rules**
 
+### PrimeNG Checkbox Variant - MANDATORY
+
+> **All `p-checkbox` components MUST use `variant="filled"`**
+
+This ensures checkboxes have a clear visual indicator when checked (filled background) rather than just an outline.
+
+```html
+<!-- ✅ CORRECT: Always use variant="filled" -->
+<p-checkbox
+  [(ngModel)]="value"
+  [binary]="true"
+  variant="filled"
+  inputId="myCheckbox"
+></p-checkbox>
+
+<!-- ❌ WRONG: Missing variant="filled" -->
+<p-checkbox
+  [(ngModel)]="value"
+  [binary]="true"
+  inputId="myCheckbox"
+></p-checkbox>
+```
+
 ### Hit Target & Spacing
 
 ```scss
@@ -3071,7 +3094,7 @@ overflow-y: auto; /* Internal scroll only — no page jump */
 
 ### Your Decision
 
-- [ ] **APPROVED** - Implement checkbox/radio standards ⭐ CORE
+- [x] **APPROVED** - Implement checkbox/radio standards ⭐ CORE
 - [ ] **REJECTED** - Allow inconsistent controls (explain why)
 
 ---

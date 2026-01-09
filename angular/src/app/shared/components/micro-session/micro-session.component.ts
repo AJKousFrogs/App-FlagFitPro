@@ -195,6 +195,7 @@ type SessionStatus =
                   <p-checkbox
                     [(ngModel)]="equipmentChecked[i]"
                     [binary]="true"
+                    variant="filled"
                     [inputId]="'equipment-' + i"
                   ></p-checkbox>
                   <label [for]="'equipment-' + i">{{ item }}</label>

@@ -922,6 +922,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.includeWellnessScores"
                     [binary]="true"
+                    variant="filled"
                     inputId="wellness"
                   ></p-checkbox>
                   <label for="wellness">Wellness scores</label>
@@ -930,6 +931,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.includeSleepData"
                     [binary]="true"
+                    variant="filled"
                     inputId="sleep"
                   ></p-checkbox>
                   <label for="sleep">Sleep data</label>
@@ -938,6 +940,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.includeTrainingLoad"
                     [binary]="true"
+                    variant="filled"
                     inputId="training"
                   ></p-checkbox>
                   <label for="training">Training load</label>
@@ -946,6 +949,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.includePerformanceData"
                     [binary]="true"
+                    variant="filled"
                     inputId="performance"
                   ></p-checkbox>
                   <label for="performance">Performance data</label>
@@ -954,6 +958,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.includeInjuryHistory"
                     [binary]="true"
+                    variant="filled"
                     inputId="injuries"
                   ></p-checkbox>
                   <label for="injuries">Injury history</label>
@@ -962,6 +967,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.includeAINotes"
                     [binary]="true"
+                    variant="filled"
                     inputId="ai"
                   ></p-checkbox>
                   <label for="ai">AI-generated patterns</label>
@@ -970,6 +976,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.includePersonalNotes"
                     [binary]="true"
+                    variant="filled"
                     inputId="personal"
                   ></p-checkbox>
                   <label for="personal">Personal notes</label>
@@ -982,6 +989,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.anonymizeTeamName"
                     [binary]="true"
+                    variant="filled"
                     inputId="anonTeam"
                   ></p-checkbox>
                   <label for="anonTeam">Hide team name</label>
@@ -990,6 +998,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.anonymizeCoachNames"
                     [binary]="true"
+                    variant="filled"
                     inputId="anonCoach"
                   ></p-checkbox>
                   <label for="anonCoach">Hide coach names</label>
@@ -998,6 +1007,7 @@ interface ReportPrivacySettings {
                   <p-checkbox
                     [(ngModel)]="privacySettings.removeDates"
                     [binary]="true"
+                    variant="filled"
                     inputId="removeDates"
                   ></p-checkbox>
                   <label for="removeDates">Show relative dates only</label>

@@ -373,11 +373,15 @@ export class TravelRecoveryService {
       "id" | "userId" | "createdAt" | "timezonesEast" | "travelDirection"
     >,
   ): TravelPlan {
+    console.log('[TravelRecoveryService] createTravelPlan called with:', planData);
     const userId = this.authService.getUser()?.id || "anonymous";
 
     // Calculate timezone difference
     const depTz = MAJOR_TIMEZONES[planData.departureTimezone];
     const arrTz = MAJOR_TIMEZONES[planData.arrivalTimezone];
+
+    console.log('[TravelRecoveryService] Departure TZ:', depTz);
+    console.log('[TravelRecoveryService] Arrival TZ:', arrTz);
 
     let timezonesEast = 0;
     let travelDirection: TravelPlan["travelDirection"] = "none";
@@ -396,6 +400,9 @@ export class TravelRecoveryService {
       }
     }
 
+    console.log('[TravelRecoveryService] Timezone difference:', timezonesEast);
+    console.log('[TravelRecoveryService] Travel direction:', travelDirection);
+
     const plan: TravelPlan = {
       ...planData,
       id: `travel-${Date.now()}`,
@@ -405,8 +412,12 @@ export class TravelRecoveryService {
       createdAt: new Date(),
     };
 
+    console.log('[TravelRecoveryService] Created plan object:', plan);
     this._currentPlan.set(plan);
+    console.log('[TravelRecoveryService] Current plan signal set');
+    
     this.generateRecoveryProtocol(plan);
+    console.log('[TravelRecoveryService] Recovery protocol generated');
 
     this.logger.info("[TravelRecovery] Created travel plan:", {
       direction: travelDirection,

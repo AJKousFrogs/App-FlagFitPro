@@ -108,14 +108,30 @@ interface FilterChip {
             </div>
             <div class="header-actions">
               <div class="header-stats">
-                <div class="stat-pill">
-                  <i class="pi pi-play-circle"></i>
-                  <span>{{ totalVideos() }} Videos</span>
-                </div>
-                <div class="stat-pill">
-                  <i class="pi pi-users"></i>
-                  <span>{{ totalCreators() }} Creators</span>
-                </div>
+                <button
+                  class="stat-pill stat-pill-interactive"
+                  pTooltip="Browse all training videos"
+                  tooltipPosition="bottom"
+                  (click)="scrollToVideos()"
+                  pRipple
+                >
+                  <i class="pi pi-video"></i>
+                  <span class="stat-number">{{ totalVideos() }}</span>
+                  <span class="stat-label">Videos</span>
+                  <i class="pi pi-chevron-down stat-action-icon"></i>
+                </button>
+                <button
+                  class="stat-pill stat-pill-interactive"
+                  pTooltip="View all creators"
+                  tooltipPosition="bottom"
+                  (click)="scrollToCreators()"
+                  pRipple
+                >
+                  <i class="pi pi-star"></i>
+                  <span class="stat-number">{{ totalCreators() }}</span>
+                  <span class="stat-label">Creators</span>
+                  <i class="pi pi-chevron-down stat-action-icon"></i>
+                </button>
               </div>
               <button
                 pButton
@@ -159,7 +175,7 @@ interface FilterChip {
           <div class="filter-chips-container">
             <div class="filter-label">
               <i class="pi pi-filter"></i>
-              Position
+              <span>Position</span>
             </div>
             <div class="filter-chips">
               @for (chip of positionChips(); track chip.value) {
@@ -167,12 +183,14 @@ interface FilterChip {
                   class="filter-chip"
                   [class.active]="chip.active"
                   (click)="togglePositionFilter(chip)"
+                  [attr.aria-pressed]="chip.active"
+                  [attr.aria-label]="'Filter by ' + chip.label"
                   pRipple
                 >
                   @if (chip.icon) {
                     <i [class]="chip.icon"></i>
                   }
-                  {{ chip.label }}
+                  <span class="chip-label">{{ chip.label }}</span>
                 </button>
               }
             </div>
@@ -182,7 +200,7 @@ interface FilterChip {
           <div class="filter-chips-container">
             <div class="filter-label">
               <i class="pi pi-bolt"></i>
-              Focus
+              <span>Focus</span>
             </div>
             <div class="filter-chips scrollable">
               @for (chip of focusChips(); track chip.value) {
@@ -190,9 +208,11 @@ interface FilterChip {
                   class="filter-chip"
                   [class.active]="chip.active"
                   (click)="toggleFocusFilter(chip)"
+                  [attr.aria-pressed]="chip.active"
+                  [attr.aria-label]="'Filter by ' + chip.label"
                   pRipple
                 >
-                  {{ chip.label }}
+                  <span class="chip-label">{{ chip.label }}</span>
                 </button>
               }
             </div>
@@ -762,6 +782,18 @@ export class VideoFeedComponent {
 
   getCreatorVideoCount(username: string): number {
     return this.instagramService.getVideosByCreator(username).length;
+  }
+
+  scrollToVideos(): void {
+    this.hapticService.light();
+    const videoSection = document.querySelector('.video-grid-section');
+    videoSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  scrollToCreators(): void {
+    this.hapticService.light();
+    const creatorsSection = document.querySelector('.creators-section');
+    creatorsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   // Bookmark persistence

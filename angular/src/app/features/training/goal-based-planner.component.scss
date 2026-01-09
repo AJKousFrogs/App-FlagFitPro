@@ -3,6 +3,30 @@
 // Design System Compliant
 // ============================================================================
 
+.goal-planner-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.goal-planner-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.goal-selection,
+.status-section,
+.plan-summary {
+  background: var(--surface-secondary);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.goal-selection {
+  margin-bottom: var(--space-6);
+}
+
 .stat-item {
   text-align: center;
   padding: var(--space-3);
@@ -53,4 +77,17 @@
 
 .text-blue-600 {
   color: var(--color-status-info);
+}
+
+.sessions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+}
+
+.actions {
+  margin-top: var(--space-6);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
 }

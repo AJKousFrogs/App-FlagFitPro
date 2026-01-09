@@ -289,6 +289,7 @@ interface TodaysPlan {
                     <p-checkbox
                       [(ngModel)]="quickCheckIn.hasPain"
                       [binary]="true"
+                      variant="filled"
                       inputId="hasPain"
                     ></p-checkbox>
                     <label for="hasPain">Any pain or soreness?</label>
@@ -312,6 +313,7 @@ interface TodaysPlan {
                     <p-checkbox
                       [(ngModel)]="quickCheckIn.tookSupplements"
                       [binary]="true"
+                      variant="filled"
                       inputId="tookSupplements"
                     ></p-checkbox>
                     <label for="tookSupplements"

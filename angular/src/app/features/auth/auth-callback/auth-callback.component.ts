@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
@@ -11,10 +11,10 @@ import { CardModule } from "primeng/card";
 import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
+import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { LoggerService } from "../../../core/services/logger.service";
-import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 /**
@@ -258,6 +258,8 @@ export class AuthCallbackComponent implements OnInit {
           "Your email has been verified. Welcome!",
           "Email Verified",
         );
+        // Notify other tabs (like onboarding) that email is verified
+        this.broadcastEmailVerified();
         // Check if user needs onboarding
         setTimeout(() => this.redirectAfterAuth(), 1500);
         break;
@@ -321,6 +323,25 @@ export class AuthCallbackComponent implements OnInit {
       }
     } else {
       this.router.navigate(["/dashboard"]);
+    }
+  }
+
+  /**
+   * Broadcast email verification to other tabs
+   * This allows the onboarding tab to detect verification and proceed
+   */
+  private broadcastEmailVerified(): void {
+    try {
+      // Use BroadcastChannel API to notify other tabs
+      const channel = new BroadcastChannel("flagfit-auth");
+      channel.postMessage({ type: "EMAIL_VERIFIED", timestamp: Date.now() });
+      channel.close();
+
+      // Also set localStorage flag for tabs that might not support BroadcastChannel
+      localStorage.setItem("flagfit_email_verified", Date.now().toString());
+    } catch (error) {
+      this.logger.debug("[Auth] BroadcastChannel not supported, using localStorage only");
+      localStorage.setItem("flagfit_email_verified", Date.now().toString());
     }
   }
 }

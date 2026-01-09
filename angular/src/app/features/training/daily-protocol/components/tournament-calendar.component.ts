@@ -330,6 +330,7 @@ interface EventTypeOption {
           <p-checkbox
             [(ngModel)]="formData.isPeakEvent"
             [binary]="true"
+            variant="filled"
             inputId="isPeakEvent"
           ></p-checkbox>
           <label for="isPeakEvent">
@@ -342,6 +343,7 @@ interface EventTypeOption {
             <p-checkbox
               [(ngModel)]="formData.isNationalTeamEvent"
               [binary]="true"
+              variant="filled"
               inputId="isNationalTeam"
             ></p-checkbox>
             <label for="isNationalTeam">

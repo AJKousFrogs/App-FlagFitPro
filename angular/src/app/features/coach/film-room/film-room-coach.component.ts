@@ -454,6 +454,7 @@ const TAG_TYPES = [
                     <p-checkbox
                       [value]="player.id"
                       [(ngModel)]="tagForm.playerIds"
+                      variant="filled"
                       [inputId]="'player-' + player.id"
                     ></p-checkbox>
                     <label [for]="'player-' + player.id"

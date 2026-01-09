@@ -112,6 +112,7 @@ export interface TablePreferences {
               <p-checkbox
                 [(ngModel)]="selectAll"
                 [binary]="true"
+                variant="filled"
                 (onChange)="toggleSelectAll()"
               />
               <span class="checkbox-label"
@@ -200,6 +201,7 @@ export interface TablePreferences {
                   <p-checkbox
                     [(ngModel)]="selectAll"
                     [binary]="true"
+                    variant="filled"
                     (onChange)="toggleSelectAll()"
                   />
                 </th>
@@ -240,6 +242,7 @@ export interface TablePreferences {
                   <p-checkbox
                     [(ngModel)]="rowData._selected"
                     [binary]="true"
+                    variant="filled"
                     (onChange)="onRowSelect(rowData)"
                   />
                 </td>
@@ -317,6 +320,7 @@ export interface TablePreferences {
                   <p-checkbox
                     [(ngModel)]="row._selected"
                     [binary]="true"
+                    variant="filled"
                     (onChange)="onRowSelect(row)"
                   />
                 </div>

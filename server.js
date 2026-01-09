@@ -24,6 +24,7 @@ import wellnessRoutes from "./routes/wellness.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 import notificationsRoutes from "./routes/notifications.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import communityRoutes from "./routes/community.routes.js";
 
 // Import monitoring middleware
 import {
@@ -396,6 +397,7 @@ app.use("/api/wellness", wellnessRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/community", communityRoutes);
 
 // Versioned paths for explicit version targeting
 app.use("/api/v2/training", trainingRoutes);
@@ -403,6 +405,7 @@ app.use("/api/v2/wellness", wellnessRoutes);
 app.use("/api/v2/analytics", analyticsRoutes);
 app.use("/api/v2/notifications", notificationsRoutes);
 app.use("/api/v2/dashboard", dashboardRoutes);
+app.use("/api/v2/community", communityRoutes);
 
 // =============================================================================
 // STATIC FILES & LEGACY ROUTES
@@ -979,19 +982,19 @@ app.get("/api/exercises", async (req, res) => {
   try {
     const { category, position, search } = req.query;
 
-    let query = supabase.from("exercises").select("*").eq("is_active", true);
+    let query = supabase.from("exercises").select("*").eq("active", true);
 
-    if (category) {
+    if (category && category !== "all") {
       query = query.eq("category", category);
     }
     if (position) {
-      query = query.contains("target_positions", [position]);
+      query = query.contains("position_specific", [position]);
     }
     if (search) {
       query = query.ilike("name", `%${search}%`);
     }
 
-    const { data: exercises, error } = await query.order("name").limit(100);
+    const { data: exercises, error } = await query.order("name").limit(200);
     if (error) {
       throw error;
     }
@@ -1352,120 +1355,11 @@ app.get("/api/knowledge-search", async (req, res) => {
   }
 });
 
-// Community endpoints - REAL DATA
-app.get("/api/community/feed", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { data: posts } = await supabase
-      .from("community_posts")
-      .select(
-        `
-        *,
-        author:user_id (id, full_name, avatar_url),
-        likes:post_likes (count),
-        comments:post_comments (count)
-      `,
-      )
-      .order("created_at", { ascending: false })
-      .limit(50);
-
-    res.json({ success: true, data: posts || [] });
-  } catch (error) {
-    console.error("[Community Feed] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
-
-app.get("/api/community/leaderboard", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    // Get users with their training stats for leaderboard
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const { data: leaderboard } = await supabase
-      .from("training_sessions")
-      .select(
-        `
-        user_id,
-        users:user_id (id, full_name, avatar_url)
-      `,
-      )
-      .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-      .eq("status", "completed");
-
-    // Aggregate by user
-    const userStats = {};
-    leaderboard?.forEach((s) => {
-      if (s.user_id && s.users) {
-        if (!userStats[s.user_id]) {
-          userStats[s.user_id] = {
-            user: s.users,
-            sessions: 0,
-            points: 0,
-          };
-        }
-        userStats[s.user_id].sessions++;
-        userStats[s.user_id].points += 10; // 10 points per session
-      }
-    });
-
-    const ranked = Object.values(userStats)
-      .sort((a, b) => b.points - a.points)
-      .slice(0, 20)
-      .map((u, i) => ({ ...u, rank: i + 1 }));
-
-    res.json({ success: true, data: ranked });
-  } catch (error) {
-    console.error("[Leaderboard] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
-
-app.post("/api/community/posts", authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return res.json({
-      success: true,
-      data: {
-        id: Date.now().toString(),
-        ...req.body,
-        user_id: req.userId,
-        createdAt: new Date().toISOString(),
-      },
-    });
-  }
-
-  try {
-    const { data: post, error } = await supabase
-      .from("community_posts")
-      .insert({
-        ...req.body,
-        user_id: req.userId, // Use authenticated user's ID
-        created_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({ success: true, data: post });
-  } catch (error) {
-    console.error("[Create Post] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to create post" });
-  }
-});
+// =============================================================================
+// COMMUNITY ENDPOINTS - Now handled by modular routes at /api/community/*
+// See: routes/community.routes.js
+// Legacy endpoints removed (January 2026)
+// =============================================================================
 
 // =============================================================================
 // WELLNESS ENDPOINTS - Now handled by modular routes at /api/wellness/*

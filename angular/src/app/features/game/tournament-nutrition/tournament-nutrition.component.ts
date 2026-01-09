@@ -131,6 +131,15 @@ interface HydrationLog {
             (clicked)="showScheduleEditor = true"
             >Edit Schedule</app-button
           >
+          @if (games().length > 0) {
+            <app-button
+              variant="outlined"
+              iconLeft="pi-trash"
+              severity="danger"
+              (clicked)="clearAllData()"
+              >Clear All</app-button
+            >
+          }
         </app-page-header>
 
         <!-- Tournament Overview Banner -->
@@ -240,6 +249,7 @@ interface HydrationLog {
                       <p-checkbox
                         [(ngModel)]="game.isReferee"
                         [binary]="true"
+                        variant="filled"
                       ></p-checkbox>
                       <span>Referee</span>
                     </label>
@@ -298,6 +308,7 @@ interface HydrationLog {
               <div
                 class="timeline-item"
                 [class.completed]="window.completed"
+                [class.collapsed]="window.completed && !isWindowExpanded(window.id)"
                 [class.current]="isCurrentWindow(window)"
                 [class.critical]="window.priority === 'critical'"
               >
@@ -310,7 +321,7 @@ interface HydrationLog {
                 </div>
 
                 <div class="timeline-content">
-                  <div class="window-header">
+                  <div class="window-header" (click)="toggleWindowExpanded(window.id)">
                     <div class="window-time">
                       <span class="time"
                         >{{ window.startTime }} - {{ window.endTime }}</span
@@ -318,55 +329,71 @@ interface HydrationLog {
                       @if (window.priority === "critical") {
                         <p-tag value="Critical" severity="danger"></p-tag>
                       }
+                      @if (window.completed) {
+                        <span class="completed-badge-inline">
+                          <i class="pi pi-check-circle"></i> Completed
+                        </span>
+                      }
                     </div>
-                    <h4>{{ window.title }}</h4>
+                    <div class="header-row">
+                      <h4>{{ window.title }}</h4>
+                      @if (window.completed) {
+                        <button 
+                          class="expand-toggle"
+                          [class.expanded]="isWindowExpanded(window.id)"
+                          type="button"
+                        >
+                          <i class="pi" [class.pi-chevron-down]="!isWindowExpanded(window.id)" [class.pi-chevron-up]="isWindowExpanded(window.id)"></i>
+                        </button>
+                      }
+                    </div>
                   </div>
 
-                  <div class="recommendations-grid">
-                    @for (rec of window.recommendations; track rec.item) {
-                      <div class="recommendation-card" [class]="rec.category">
-                        <div class="rec-icon">{{ rec.icon }}</div>
-                        <div class="rec-content">
-                          <div class="rec-item">{{ rec.item }}</div>
-                          @if (rec.amount) {
-                            <div class="rec-amount">{{ rec.amount }}</div>
-                          }
-                          @if (rec.timing) {
-                            <div class="rec-timing">{{ rec.timing }}</div>
-                          }
-                          <div class="rec-reason">{{ rec.reason }}</div>
-                          @if (
-                            rec.alternatives && rec.alternatives.length > 0
-                          ) {
-                            <div class="rec-alternatives">
-                              <span class="alt-label">Alternatives:</span>
-                              {{ rec.alternatives.join(", ") }}
+                  @if (!window.completed || isWindowExpanded(window.id)) {
+                    <div class="window-details">
+                      <div class="recommendations-grid">
+                        @for (rec of window.recommendations; track rec.item) {
+                          <div class="recommendation-card" [class]="rec.category">
+                            <div class="rec-icon">{{ rec.icon }}</div>
+                            <div class="rec-content">
+                              <div class="rec-item">{{ rec.item }}</div>
+                              @if (rec.amount) {
+                                <div class="rec-amount">{{ rec.amount }}</div>
+                              }
+                              @if (rec.timing) {
+                                <div class="rec-timing">{{ rec.timing }}</div>
+                              }
+                              <div class="rec-reason">{{ rec.reason }}</div>
+                              @if (
+                                rec.alternatives && rec.alternatives.length > 0
+                              ) {
+                                <div class="rec-alternatives">
+                                  <span class="alt-label">Alternatives:</span>
+                                  {{ rec.alternatives.join(", ") }}
+                                </div>
+                              }
                             </div>
-                          }
-                        </div>
+                          </div>
+                        }
                       </div>
-                    }
-                  </div>
 
-                  <div class="window-footer">
-                    <div class="hydration-target">
-                      <i class="pi pi-tint"></i>
-                      <span>Target: {{ window.hydrationTarget }}ml</span>
+                      <div class="window-footer">
+                        <div class="hydration-target">
+                          <i class="pi pi-tint"></i>
+                          <span>Target: {{ window.hydrationTarget }}ml</span>
+                        </div>
+                        @if (!window.completed) {
+                          <app-button
+                            variant="outlined"
+                            size="sm"
+                            iconLeft="pi-check"
+                            (clicked)="completeWindow(window)"
+                            >Mark Complete</app-button
+                          >
+                        }
+                      </div>
                     </div>
-                    @if (!window.completed) {
-                      <app-button
-                        variant="outlined"
-                        size="sm"
-                        iconLeft="pi-check"
-                        (clicked)="completeWindow(window)"
-                        >Mark Complete</app-button
-                      >
-                    } @else {
-                      <span class="completed-badge">
-                        <i class="pi pi-check-circle"></i> Completed
-                      </span>
-                    }
-                  </div>
+                  }
                 </div>
               </div>
             }
@@ -554,6 +581,7 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   tournamentName = signal("Tournament Day");
   showScheduleEditor = false;
   selectedHydration: string | null = null;
+  expandedWindows = new Set<string>(); // Track which windows are expanded
 
   // Edit state
   editGames: GameSchedule[] = [];
@@ -1301,6 +1329,39 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
     this.nutritionWindows.update((windows) =>
       windows.map((w) => (w.id === window.id ? { ...w, completed: true } : w)),
     );
+    // Auto-collapse when completed
+    this.expandedWindows.delete(window.id);
     this.toastService.success(TOAST.SUCCESS.WINDOW_COMPLETED);
+  }
+
+  toggleWindowExpanded(windowId: string): void {
+    if (this.expandedWindows.has(windowId)) {
+      this.expandedWindows.delete(windowId);
+    } else {
+      this.expandedWindows.add(windowId);
+    }
+  }
+
+  isWindowExpanded(windowId: string): boolean {
+    return this.expandedWindows.has(windowId);
+  }
+
+  clearAllData(): void {
+    if (confirm('Are you sure you want to clear all tournament data? This will remove your schedule, nutrition windows, and hydration logs.')) {
+      // Clear all data
+      this.games.set([]);
+      this.nutritionWindows.set([]);
+      this.hydrationLogs.set([]);
+      this.tournamentName.set("Tournament Day");
+      this.editGames = [];
+      this.editTournamentName = "Tournament Day";
+      this.expandedWindows.clear();
+
+      // Clear localStorage
+      localStorage.removeItem("tournament_schedule");
+      localStorage.removeItem("hydration_logs_" + new Date().toDateString());
+
+      this.toastService.success("All tournament data cleared successfully!");
+    }
   }
 }

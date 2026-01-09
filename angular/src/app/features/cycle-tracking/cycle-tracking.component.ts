@@ -612,6 +612,7 @@ const RETENTION_OPTIONS = [
                   <p-checkbox
                     [value]="symptom.value"
                     [(ngModel)]="todaySymptoms.symptoms"
+                    variant="filled"
                     [inputId]="'symptom-' + symptom.value"
                   ></p-checkbox>
                   <label [for]="'symptom-' + symptom.value">{{
@@ -815,6 +816,7 @@ const RETENTION_OPTIONS = [
                   <p-checkbox
                     [value]="symptom.value"
                     [(ngModel)]="newPeriod.symptoms"
+                    variant="filled"
                     [inputId]="'log-symptom-' + symptom.value"
                   ></p-checkbox>
                   <label [for]="'log-symptom-' + symptom.value">{{

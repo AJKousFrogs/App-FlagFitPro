@@ -549,6 +549,7 @@ const PHASE_PRESETS = [
                 <p-checkbox
                   [(ngModel)]="selectAllPlayers"
                   [binary]="true"
+                  variant="filled"
                   inputId="selectAll"
                   (onChange)="toggleSelectAll()"
                 ></p-checkbox>
@@ -566,6 +567,7 @@ const PHASE_PRESETS = [
                     <p-checkbox
                       [(ngModel)]="player.selected"
                       [binary]="true"
+                      variant="filled"
                       [inputId]="'player-' + player.id"
                       [disabled]="player.status === 'rtp'"
                     ></p-checkbox>

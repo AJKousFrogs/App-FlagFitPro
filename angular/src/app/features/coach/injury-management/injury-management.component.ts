@@ -744,6 +744,7 @@ const RTP_STAGES: RtpStage[] = [
                 <p-checkbox
                   [(ngModel)]="reportForm.actions.iceApplied"
                   [binary]="true"
+                  variant="filled"
                   inputId="actIce"
                 ></p-checkbox>
                 <label for="actIce">Ice applied</label>
@@ -752,6 +753,7 @@ const RTP_STAGES: RtpStage[] = [
                 <p-checkbox
                   [(ngModel)]="reportForm.actions.removedFromActivity"
                   [binary]="true"
+                  variant="filled"
                   inputId="actRemoved"
                 ></p-checkbox>
                 <label for="actRemoved">Player removed from activity</label>
@@ -760,6 +762,7 @@ const RTP_STAGES: RtpStage[] = [
                 <p-checkbox
                   [(ngModel)]="reportForm.actions.medicalContacted"
                   [binary]="true"
+                  variant="filled"
                   inputId="actMedical"
                 ></p-checkbox>
                 <label for="actMedical">Medical professional contacted</label>
@@ -768,6 +771,7 @@ const RTP_STAGES: RtpStage[] = [
                 <p-checkbox
                   [(ngModel)]="reportForm.actions.sentForImaging"
                   [binary]="true"
+                  variant="filled"
                   inputId="actImaging"
                 ></p-checkbox>
                 <label for="actImaging">Sent for imaging</label>

@@ -83,6 +83,25 @@
   border-radius: var(--radius-lg);
 }
 
+// Temporary exception for exercise-library until migration to card-shell
+.stat-value {
+  display: block;
+  font-size: var(--font-size-metric-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--ds-primary-green);
+  line-height: 1;
+  margin-bottom: var(--space-1);
+}
+
+.stat-label {
+  display: block;
+  font-size: var(--font-size-badge);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  font-weight: var(--font-weight-medium);
+}
+
 // .stat-value/.stat-label REMOVED
 // Use .stat-block classes from card-shell instead
 // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
@@ -235,6 +254,13 @@
 
 // .card-header - REMOVED (use app-card-shell component)
 // @see docs/CARD_SHELL_CONTRACT.md
+// Temporary exception for exercise-library until migration
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-4);
+}
 
 .header-left {
   display: flex;
@@ -356,10 +382,10 @@
 }
 
 .card-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: var(--space-3);
   margin-top: var(--space-4);
+  align-items: stretch;
 }
 
 .action-btn {
@@ -379,6 +405,7 @@
   border: var(--border-2) solid;
   min-height: var(--touch-target-md); /* 44px */
   white-space: nowrap;
+  flex: 1;
 }
 
 .action-btn.secondary {
@@ -412,6 +439,38 @@
 /* ===== EMPTY STATE - REMOVED =====
    Use .card-empty-state from card-shell
    @see docs/CARD_SHELL_CONTRACT.md §8 */
+
+/* Temporary exception for exercise-library until migration */
+.empty-state {
+  text-align: center;
+  padding: var(--space-10) var(--space-6);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-xl);
+  border: var(--border-2) dashed var(--color-border-secondary);
+}
+
+.empty-icon {
+  font-size: var(--font-size-metric-xl);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.empty-icon i {
+  font-size: 4rem;
+}
+
+.empty-state h3 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2) 0;
+}
+
+.empty-state p {
+  font-size: var(--font-size-body);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-5) 0;
+}
 
 .reset-btn {
   display: inline-flex;
@@ -485,8 +544,99 @@
   font-weight: var(--font-weight-medium);
 }
 
+.subcategory-label {
+  font-size: var(--font-size-badge);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-normal);
+}
+
 .detail-section {
   margin-bottom: var(--space-5);
+}
+
+.detail-section.warning-section {
+  background: var(--color-warning-bg);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--color-status-warning);
+}
+
+.detail-section.video-section {
+  background: var(--surface-secondary);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+  background: var(--surface-tertiary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+}
+
+.video-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
+  border-radius: var(--radius-lg);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.video-link:hover {
+  background: var(--ds-primary-green-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-2);
+}
+
+.prescription-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.prescription-info p {
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-h4);
+}
+
+.prescription-info strong {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.position-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.position-tag {
+  padding: var(--space-2) var(--space-4);
+  background: var(--ds-primary-green-ultra-subtle);
+  color: var(--ds-primary-green);
+  border: var(--border-1) solid var(--ds-primary-green);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
 }
 
 .detail-section h3 {
@@ -584,7 +734,11 @@
   }
 
   .card-actions {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    width: 100%;
   }
 }
 

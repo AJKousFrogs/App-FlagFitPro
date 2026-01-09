@@ -10,17 +10,16 @@
 
 import { CommonModule, DatePipe } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { AvatarModule } from "primeng/avatar";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { ColorPickerModule } from "primeng/colorpicker";
@@ -35,6 +34,7 @@ import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -557,6 +557,7 @@ const STATUS_CONFIG: Record<
                       teamSettings().preferences.requireWellnessCheckin
                     "
                     [binary]="true"
+                    variant="filled"
                     inputId="reqWellness"
                   ></p-checkbox>
                   <label for="reqWellness"
@@ -570,6 +571,7 @@ const STATUS_CONFIG: Record<
                       teamSettings().preferences.autoSendRsvpReminders
                     "
                     [binary]="true"
+                    variant="filled"
                     inputId="autoRsvp"
                   ></p-checkbox>
                   <label for="autoRsvp"
@@ -583,6 +585,7 @@ const STATUS_CONFIG: Record<
                       teamSettings().preferences.allowPlayersViewAnalytics
                     "
                     [binary]="true"
+                    variant="filled"
                     inputId="allowAnalytics"
                   ></p-checkbox>
                   <label for="allowAnalytics"
@@ -596,6 +599,7 @@ const STATUS_CONFIG: Record<
                       teamSettings().preferences.requireCoachApprovalPosts
                     "
                     [binary]="true"
+                    variant="filled"
                     inputId="reqApproval"
                   ></p-checkbox>
                   <label for="reqApproval"

@@ -260,4 +260,37 @@ export class AuthService {
   getCsrfToken(): string | null {
     return sessionStorage.getItem(this.CSRF_KEY);
   }
+
+  /**
+   * Force refresh the current user from Supabase
+   * Useful after updating user metadata
+   */
+  async refreshUser(): Promise<void> {
+    try {
+      const { data: { user }, error } = await this.supabaseService.client.auth.getUser();
+      
+      if (error) {
+        this.logger.warn("[Auth] Error refreshing user:", error);
+        return;
+      }
+
+      if (user) {
+        const metadata = user.user_metadata as UserMetadata | undefined;
+        const appUser: User = {
+          id: user.id,
+          email: user.email ?? "",
+          name: metadata?.["name"] ?? metadata?.["full_name"] ?? user.email,
+          role: metadata?.["role"] ?? "user",
+          position: metadata?.["position"],
+          avatar_url: metadata?.["avatar_url"],
+          user_metadata: metadata,
+        };
+        this.currentUser.set(appUser);
+        this.isAuthenticated.set(true);
+        this.logger.info("[Auth] User refreshed successfully");
+      }
+    } catch (error) {
+      this.logger.error("[Auth] Failed to refresh user:", error);
+    }
+  }
 }

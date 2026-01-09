@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
+import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { MessageService } from "primeng/api";
 import { BadgeModule } from "primeng/badge";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -30,11 +31,25 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 interface Exercise {
   id: string;
   name: string;
+  slug?: string;
   category: string;
+  subcategory?: string;
   difficulty: "beginner" | "intermediate" | "advanced";
   muscleGroups: string[];
   equipment: string[];
   description: string;
+  video_url?: string;
+  video_id?: string;
+  how_text?: string;
+  feel_text?: string;
+  compensation_text?: string;
+  default_sets?: number;
+  default_reps?: number;
+  default_hold_seconds?: number;
+  default_duration_seconds?: number;
+  position_specific?: string[];
+  load_contribution_au?: number;
+  is_high_intensity?: boolean;
 }
 
 interface Category {
@@ -271,7 +286,7 @@ interface Category {
         [closable]="true"
         [closeOnEscape]="true"
         [dismissableMask]="true"
-        [style]="{ width: '600px', maxWidth: '90vw' }"
+        [style]="{ width: '700px', maxWidth: '90vw' }"
         header="Exercise Details"
         styleClass="exercise-details-dialog"
       >
@@ -290,13 +305,57 @@ interface Category {
                 <span class="category-label">{{
                   selectedExercise()!.category
                 }}</span>
+                @if (selectedExercise()!.subcategory) {
+                  <span class="subcategory-label"> - {{ selectedExercise()!.subcategory }}</span>
+                }
               </div>
             </div>
 
-            <div class="detail-section">
-              <h3><i class="pi pi-info-circle"></i> Description</h3>
-              <p>{{ selectedExercise()!.description }}</p>
-            </div>
+            @if (selectedExercise()!.video_url) {
+              <div class="detail-section video-section">
+                <h3><i class="pi pi-video"></i> Video Tutorial</h3>
+                @if (selectedExercise()!.video_id) {
+                  <div class="video-container">
+                    <iframe
+                      [src]="videoEmbedUrl()"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                    ></iframe>
+                  </div>
+                } @else {
+                  <a [href]="selectedExercise()!.video_url" target="_blank" class="video-link">
+                    <i class="pi pi-external-link"></i> Watch Video
+                  </a>
+                }
+              </div>
+            }
+
+            @if (selectedExercise()!.how_text) {
+              <div class="detail-section">
+                <h3><i class="pi pi-info-circle"></i> How to Perform</h3>
+                <p>{{ selectedExercise()!.how_text }}</p>
+              </div>
+            } @else {
+              <div class="detail-section">
+                <h3><i class="pi pi-info-circle"></i> Description</h3>
+                <p>{{ selectedExercise()!.description }}</p>
+              </div>
+            }
+
+            @if (selectedExercise()!.feel_text) {
+              <div class="detail-section">
+                <h3><i class="pi pi-heart"></i> What You Should Feel</h3>
+                <p>{{ selectedExercise()!.feel_text }}</p>
+              </div>
+            }
+
+            @if (selectedExercise()!.compensation_text) {
+              <div class="detail-section warning-section">
+                <h3><i class="pi pi-exclamation-triangle"></i> Common Mistakes to Avoid</h3>
+                <p>{{ selectedExercise()!.compensation_text }}</p>
+              </div>
+            }
 
             <div class="detail-section">
               <h3><i class="pi pi-signal"></i> Difficulty</h3>
@@ -308,14 +367,16 @@ interface Category {
               </span>
             </div>
 
-            <div class="detail-section">
-              <h3><i class="pi pi-heart-fill"></i> Target Muscle Groups</h3>
-              <div class="muscle-tags-large">
-                @for (group of selectedExercise()!.muscleGroups; track group) {
-                  <span class="muscle-tag-large">{{ group }}</span>
-                }
+            @if (selectedExercise()!.muscleGroups?.length > 0) {
+              <div class="detail-section">
+                <h3><i class="pi pi-heart-fill"></i> Target Muscle Groups</h3>
+                <div class="muscle-tags-large">
+                  @for (group of selectedExercise()!.muscleGroups; track group) {
+                    <span class="muscle-tag-large">{{ group }}</span>
+                  }
+                </div>
               </div>
-            </div>
+            }
 
             @if (
               selectedExercise()!.equipment.length > 0 &&
@@ -326,6 +387,38 @@ interface Category {
                 <div class="equipment-list">
                   @for (item of selectedExercise()!.equipment; track item) {
                     <span class="equipment-item">{{ item }}</span>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (selectedExercise()!.default_sets || selectedExercise()!.default_reps || 
+                 selectedExercise()!.default_hold_seconds || selectedExercise()!.default_duration_seconds) {
+              <div class="detail-section">
+                <h3><i class="pi pi-list"></i> Recommended Prescription</h3>
+                <div class="prescription-info">
+                  @if (selectedExercise()!.default_sets) {
+                    <p><strong>Sets:</strong> {{ selectedExercise()!.default_sets }}</p>
+                  }
+                  @if (selectedExercise()!.default_reps) {
+                    <p><strong>Reps:</strong> {{ selectedExercise()!.default_reps }}</p>
+                  }
+                  @if (selectedExercise()!.default_hold_seconds) {
+                    <p><strong>Hold Time:</strong> {{ selectedExercise()!.default_hold_seconds }}s</p>
+                  }
+                  @if (selectedExercise()!.default_duration_seconds) {
+                    <p><strong>Duration:</strong> {{ selectedExercise()!.default_duration_seconds }}s</p>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (selectedExercise()!.position_specific?.length) {
+              <div class="detail-section">
+                <h3><i class="pi pi-users"></i> Position Specific</h3>
+                <div class="position-tags">
+                  @for (position of selectedExercise()!.position_specific; track position) {
+                    <span class="position-tag">{{ position }}</span>
                   }
                 </div>
               </div>
@@ -359,6 +452,7 @@ export class ExerciseLibraryComponent implements OnInit {
   private apiService = inject(ApiService);
   private messageService = inject(MessageService);
   private trainingService = inject(UnifiedTrainingService);
+  private sanitizer = inject(DomSanitizer);
 
   searchQuery = "";
   selectedCategory = signal<string>("all");
@@ -367,14 +461,18 @@ export class ExerciseLibraryComponent implements OnInit {
 
   categoryList: Category[] = [
     { name: "all", icon: "pi-th-large", color: COLORS.GRAY },
-    { name: "Strength", icon: "pi-bolt", color: COLORS.ERROR },
-    { name: "Cardio", icon: "pi-heart", color: COLORS.AMBER },
-    { name: "Flexibility", icon: "pi-arrows-alt", color: COLORS.PURPLE_LIGHT },
-    { name: "Speed", icon: "pi-forward", color: COLORS.BLUE },
-    { name: "Agility", icon: "pi-sync", color: COLORS.SUCCESS },
+    { name: "mobility", icon: "pi-arrows-alt", color: COLORS.PURPLE_LIGHT },
+    { name: "foam_roll", icon: "pi-circle", color: COLORS.BLUE },
+    { name: "warm_up", icon: "pi-sun", color: COLORS.AMBER },
+    { name: "strength", icon: "pi-bolt", color: COLORS.ERROR },
+    { name: "skill", icon: "pi-star", color: COLORS.SUCCESS },
+    { name: "conditioning", icon: "pi-heart", color: COLORS.ERROR },
+    { name: "plyometric", icon: "pi-forward", color: COLORS.BLUE },
+    { name: "recovery", icon: "pi-refresh", color: COLORS.SUCCESS },
+    { name: "cool_down", icon: "pi-moon", color: COLORS.PURPLE_LIGHT },
   ];
 
-  categories = ["all", "Strength", "Cardio", "Flexibility", "Speed", "Agility"];
+  categories = ["all", "mobility", "foam_roll", "warm_up", "strength", "skill", "conditioning", "plyometric", "recovery", "cool_down"];
 
   exercises = signal<Exercise[]>([]);
   filteredExercises = signal<Exercise[]>([]);
@@ -389,96 +487,66 @@ export class ExerciseLibraryComponent implements OnInit {
     return this.filteredExercises().slice(start, end);
   });
 
+  videoEmbedUrl = computed((): SafeResourceUrl | null => {
+    const exercise = this.selectedExercise();
+    if (!exercise?.video_id) return null;
+    const url = `https://www.youtube.com/embed/${exercise.video_id}?rel=0&modestbranding=1`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  });
+
   ngOnInit(): void {
     this.loadExercises();
   }
 
   loadExercises(): void {
-    const allExercises: Exercise[] = [
-      {
-        id: "1",
-        name: "40-Yard Dash",
-        category: "Speed",
-        difficulty: "beginner",
-        muscleGroups: ["Legs", "Core"],
-        equipment: ["None"],
-        description:
-          "Sprint 40 yards as fast as possible to measure speed and acceleration.",
+    this.apiService.get<any[]>("/api/exercises").subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const mappedExercises: Exercise[] = response.data.map((ex: any) => ({
+            id: ex.id,
+            name: ex.name,
+            slug: ex.slug,
+            category: ex.category || "strength",
+            subcategory: ex.subcategory,
+            difficulty: (ex.difficulty_level || "beginner") as "beginner" | "intermediate" | "advanced",
+            muscleGroups: ex.target_muscles || [],
+            equipment: ex.equipment_required || ["None"],
+            description: ex.how_text || ex.description || "No description available",
+            video_url: ex.video_url,
+            video_id: ex.video_id,
+            how_text: ex.how_text,
+            feel_text: ex.feel_text,
+            compensation_text: ex.compensation_text,
+            default_sets: ex.default_sets,
+            default_reps: ex.default_reps,
+            default_hold_seconds: ex.default_hold_seconds,
+            default_duration_seconds: ex.default_duration_seconds,
+            position_specific: ex.position_specific,
+            load_contribution_au: ex.load_contribution_au,
+            is_high_intensity: ex.is_high_intensity
+          }));
+          
+          this.exercises.set(mappedExercises);
+          this.applyFilters();
+        } else {
+          this.messageService.add({
+            severity: "error",
+            summary: "Error",
+            detail: "Failed to load exercises",
+            life: 3000,
+          });
+        }
       },
-      {
-        id: "2",
-        name: "Vertical Jump",
-        category: "Strength",
-        difficulty: "intermediate",
-        muscleGroups: ["Legs", "Glutes"],
-        equipment: ["None"],
-        description:
-          "Jump vertically as high as possible to measure explosive leg power.",
-      },
-      {
-        id: "3",
-        name: "Broad Jump",
-        category: "Speed",
-        difficulty: "beginner",
-        muscleGroups: ["Legs", "Core"],
-        equipment: ["None"],
-        description:
-          "Jump horizontally as far as possible to measure lower body power.",
-      },
-      {
-        id: "4",
-        name: "Bench Press",
-        category: "Strength",
-        difficulty: "advanced",
-        muscleGroups: ["Chest", "Shoulders", "Triceps"],
-        equipment: ["Barbell", "Bench"],
-        description:
-          "Press weight upward from chest to measure upper body strength.",
-      },
-      {
-        id: "5",
-        name: "Box Jumps",
-        category: "Agility",
-        difficulty: "intermediate",
-        muscleGroups: ["Legs", "Core"],
-        equipment: ["Plyometric Box"],
-        description:
-          "Jump onto elevated platform to develop explosive power and coordination.",
-      },
-      {
-        id: "6",
-        name: "Cone Drills",
-        category: "Agility",
-        difficulty: "beginner",
-        muscleGroups: ["Legs", "Core"],
-        equipment: ["Cones"],
-        description:
-          "Navigate around cones to improve change of direction and footwork.",
-      },
-      {
-        id: "7",
-        name: "Burpees",
-        category: "Cardio",
-        difficulty: "intermediate",
-        muscleGroups: ["Full Body"],
-        equipment: ["None"],
-        description:
-          "Full-body exercise combining squat, plank, and jump for conditioning.",
-      },
-      {
-        id: "8",
-        name: "Yoga Flow",
-        category: "Flexibility",
-        difficulty: "beginner",
-        muscleGroups: ["Full Body"],
-        equipment: ["Mat"],
-        description:
-          "Flowing sequence of poses to improve flexibility and mobility.",
-      },
-    ];
-
-    this.exercises.set(allExercises);
-    this.applyFilters();
+      error: (err) => {
+        console.error("Failed to load exercises:", err);
+        this.messageService.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to load exercises from database",
+          life: 3000,
+        });
+      }
+    });
   }
 
   filterByCategory(category: string): void {
@@ -525,6 +593,16 @@ export class ExerciseLibraryComponent implements OnInit {
 
   getCategoryIcon(category: string): string {
     const icons: Record<string, string> = {
+      mobility: "pi-arrows-alt",
+      foam_roll: "pi-circle",
+      warm_up: "pi-sun",
+      strength: "pi-bolt",
+      skill: "pi-star",
+      conditioning: "pi-heart",
+      plyometric: "pi-forward",
+      recovery: "pi-refresh",
+      cool_down: "pi-moon",
+      // Legacy support
       Strength: "pi-bolt",
       Cardio: "pi-heart",
       Flexibility: "pi-arrows-alt",
@@ -549,50 +627,49 @@ export class ExerciseLibraryComponent implements OnInit {
   }
 
   addToWorkout(exercise: Exercise): void {
-    // Convert Exercise to a Workout object for the service
-    const workout: Workout = {
-      type: exercise.category.toLowerCase(),
+    // Create a proper training session from the exercise
+    const sessionData = {
+      session_type: exercise.category,
       title: exercise.name,
-      description: exercise.description,
-      duration: "30 min", // Default duration
-      intensity:
-        exercise.difficulty === "advanced"
-          ? "high"
-          : exercise.difficulty === "intermediate"
-            ? "medium"
-            : "low",
-      location: "Gym",
-      icon: this.getCategoryIcon(exercise.category),
-      iconBg: COLORS.PRIMARY,
+      duration: exercise.default_duration_seconds 
+        ? Math.ceil(exercise.default_duration_seconds / 60) 
+        : exercise.default_sets 
+          ? exercise.default_sets * (exercise.default_reps || 1) 
+          : 30, // Default 30 minutes
+      intensity: exercise.difficulty === "advanced" 
+        ? 8 
+        : exercise.difficulty === "intermediate" 
+          ? 6 
+          : 4,
+      completed: true,
+      notes: `Exercise from library: ${exercise.description || exercise.how_text || ''}`,
+      exercise_details: {
+        exercise_id: exercise.id,
+        sets: exercise.default_sets,
+        reps: exercise.default_reps,
+        hold_seconds: exercise.default_hold_seconds,
+        duration_seconds: exercise.default_duration_seconds,
+        equipment: exercise.equipment,
+        target_muscles: exercise.muscleGroups,
+      }
     };
 
     this.trainingService
-      .logTrainingSession({
-        session_type: workout.type,
-        title: workout.title,
-        duration: 30,
-        intensity:
-          exercise.difficulty === "advanced"
-            ? 9
-            : exercise.difficulty === "intermediate"
-              ? 6
-              : 3,
-        completed: true,
-        notes: `Added from Exercise Library: ${exercise.description}`,
-      })
+      .logTrainingSession(sessionData)
       .then(() => {
         this.messageService.add({
           severity: "success",
-          summary: "Added to Workout",
-          detail: `"${exercise.name}" has been logged to your daily protocol`,
+          summary: "Exercise Added",
+          detail: `"${exercise.name}" has been added to your training log`,
           life: 3000,
         });
       })
-      .catch((_err) => {
+      .catch((err) => {
+        console.error("Failed to add exercise:", err);
         this.messageService.add({
           severity: "error",
           summary: "Error",
-          detail: "Failed to add exercise to workout",
+          detail: "Failed to add exercise to training log. Please try again.",
           life: 3000,
         });
       });

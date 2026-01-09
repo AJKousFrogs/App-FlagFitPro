@@ -173,9 +173,7 @@
         background: var(--color-text-on-primary, #ffffff);
         color: var(--ds-primary-green);
         border-color: var(--ds-primary-green);
-        box-shadow:
-          0 8px 20px rgba(34, 139, 34, 0.3),
-          0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--hover-shadow-md);
       }
     }
 
@@ -3585,9 +3583,7 @@ p-button .p-button,
   background: var(--color-text-on-primary, #ffffff);
   color: var(--ds-primary-green);
   border-color: var(--ds-primary-green);
-  box-shadow:
-    0 8px 20px rgba(34, 139, 34, 0.3),
-    0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--hover-shadow-md);
 }
 
 .p-button:not(.p-button-outlined):not(.p-button-text):not(

@@ -638,12 +638,16 @@ export class GameTrackerComponent implements OnInit {
           let gameId = `game-${Date.now()}`;
           if (response && typeof response === "object") {
             const respObj = response as Record<string, unknown>;
-            const respId = respObj["id"];
-            const respGameId = respObj["game_id"];
-            if (typeof respId === "string") {
-              gameId = respId;
-            } else if (typeof respGameId === "string") {
-              gameId = respGameId;
+            // Backend returns { success: true, data: {...} } structure
+            const gameData = respObj["data"] as Record<string, unknown> | undefined;
+            if (gameData && typeof gameData === "object") {
+              const respId = gameData["id"];
+              const respGameId = gameData["game_id"];
+              if (typeof respId === "string") {
+                gameId = respId;
+              } else if (typeof respGameId === "string") {
+                gameId = respGameId;
+              }
             }
           }
           this.toastService.success(TOAST.SUCCESS.GAME_CREATED);

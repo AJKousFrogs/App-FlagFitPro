@@ -716,6 +716,7 @@ interface TournamentBudget {
                 <p-checkbox
                   [(ngModel)]="formData.is_home_tournament"
                   [binary]="true"
+                  variant="filled"
                   inputId="homeTournament"
                 ></p-checkbox>
                 <label for="homeTournament" class="checkbox-label">
@@ -930,7 +931,8 @@ interface TournamentBudget {
             <app-button
               [loading]="tournamentService.loading()"
               (clicked)="saveTournament()"
-            ></app-button>
+              >Save</app-button
+            >
           </div>
         </ng-template>
       </p-dialog>
@@ -1029,6 +1031,7 @@ interface TournamentBudget {
                   <p-checkbox
                     [(ngModel)]="availabilityForm.accommodationNeeded"
                     [binary]="true"
+                    variant="filled"
                     inputId="accommodation"
                     label="I need accommodation"
                   ></p-checkbox>
@@ -1038,6 +1041,7 @@ interface TournamentBudget {
                   <p-checkbox
                     [(ngModel)]="availabilityForm.transportationNeeded"
                     [binary]="true"
+                    variant="filled"
                     inputId="transportation"
                     label="I need transportation"
                   ></p-checkbox>

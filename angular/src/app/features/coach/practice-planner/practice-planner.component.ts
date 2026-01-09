@@ -447,6 +447,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                   <p-checkbox
                     [(ngModel)]="item.checked"
                     [binary]="true"
+                    variant="filled"
                     [inputId]="'eq-' + item.name"
                   ></p-checkbox>
                   <label [for]="'eq-' + item.name"

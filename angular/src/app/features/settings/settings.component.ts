@@ -128,6 +128,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   loadingSessions = signal(false);
 
   // Loading states
+  isSavingSettings = signal(false);
   isChangingPassword = signal(false);
   isDeletingAccount = signal(false);
   isEnabling2FA = signal(false);
@@ -254,7 +255,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       injuryRiskAlerts: [true],
       // Frequency & timing
       digestFrequency: ["realtime"], // 'realtime', 'daily', 'weekly'
-      quietHoursEnabled: [false],
+      quietHoursEnabled: [true],
       quietHoursStart: ["22:00"],
       quietHoursEnd: ["07:00"],
     });
@@ -603,6 +604,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    this.isSavingSettings.set(true);
+
     const settings = {
       profile: this.profileForm.value,
       notifications: this.notificationForm.value,
@@ -617,6 +620,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         return;
       }
 
+      this.logger.info("Saving settings for user:", user.id);
+
       // Save settings to localStorage as fallback (works without database tables)
       const localSettings = {
         userId: user.id,
@@ -624,10 +629,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         updatedAt: new Date().toISOString(),
       };
       localStorage.setItem("user_settings", JSON.stringify(localSettings));
+      this.logger.info("Settings saved to localStorage");
 
       // Apply theme immediately
       if (settings.preferences.theme) {
         this.themeService.setMode(settings.preferences.theme);
+        this.logger.info("Theme applied:", settings.preferences.theme);
       }
 
       // Try to update user data in Supabase users table (gracefully handle errors)
@@ -643,33 +650,53 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           }
         }
 
-        const { error: profileError } = await this.supabaseService.client
+        const now = new Date().toISOString();
+        const updateData = {
+          id: user.id,
+          email: user.email || null,
+          full_name: settings.profile.displayName,
+          first_name: nameParts[0] || null,
+          last_name: nameParts.slice(1).join(" ") || null,
+          position: settings.profile.position,
+          jersey_number: settings.profile.jerseyNumber
+            ? parseInt(settings.profile.jerseyNumber, 10)
+            : null,
+          height_cm: settings.profile.heightCm || null,
+          weight_kg: settings.profile.weightKg || null,
+          phone: settings.profile.phone,
+          date_of_birth: dateOfBirthStr,
+          created_at: now,
+          updated_at: now,
+        };
+
+        this.logger.info("Upserting users table with:", updateData);
+
+        // Use upsert to create the user if they don't exist
+        const { data: upsertedUser, error: profileError } = await this.supabaseService.client
           .from("users")
-          .update({
-            full_name: settings.profile.displayName,
-            first_name: nameParts[0] || null,
-            last_name: nameParts.slice(1).join(" ") || null,
-            position: settings.profile.position,
-            jersey_number: settings.profile.jerseyNumber
-              ? parseInt(settings.profile.jerseyNumber, 10)
-              : null,
-            height_cm: settings.profile.heightCm || null,
-            weight_kg: settings.profile.weightKg || null,
-            phone: settings.profile.phone,
-            date_of_birth: dateOfBirthStr,
-            updated_at: new Date().toISOString(),
+          .upsert(updateData, {
+            onConflict: 'id',
+            ignoreDuplicates: false,
           })
-          .eq("id", user.id);
+          .select()
+          .single();
 
         if (profileError) {
-          this.logger.warn(
-            "Could not update user profile:",
+          this.logger.error(
+            "User profile upsert failed:",
             profileError.message,
+            profileError,
           );
+          // Don't throw - continue with other updates
+        } else if (!upsertedUser) {
+          this.logger.warn("User profile upsert returned no data");
+        } else {
+          this.logger.info("User profile upserted successfully:", upsertedUser);
         }
 
         // Update team membership if team was selected
         if (settings.profile.teamId) {
+          this.logger.info("Updating team membership:", settings.profile.teamId);
           await this.updateTeamMembership(
             user.id,
             settings.profile.teamId,
@@ -677,76 +704,103 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             settings.profile.jerseyNumber,
           );
         }
-      } catch {
+      } catch (error) {
         // Table update failed, continue with localStorage save
-        this.logger.info("Using local storage for settings");
+        this.logger.warn("Users table update failed:", toLogContext(error));
       }
 
       // Also update auth user metadata with display name
       try {
-        await this.supabaseService.updateUser({
+        const { data: authData, error: authError } = await this.supabaseService.updateUser({
           data: {
             full_name: settings.profile.displayName,
             name: settings.profile.displayName,
             position: settings.profile.position,
           },
         });
-      } catch {
+
+        if (authError) {
+          this.logger.warn("Auth metadata update failed:", authError);
+        } else {
+          this.logger.info("Auth metadata updated successfully:", authData);
+        }
+      } catch (error) {
         // Non-critical
+        this.logger.warn("Auth metadata update error:", toLogContext(error));
       }
 
       // Try to update user settings table
       try {
-        const { error: settingsError } = await this.supabaseService.client
+        const settingsData = {
+          user_id: user.id,
+          email_notifications: settings.notifications.emailNotifications,
+          push_notifications: settings.notifications.pushNotifications,
+          training_reminders: settings.notifications.trainingReminders,
+          profile_visibility: settings.privacy.profileVisibility,
+          show_stats: settings.privacy.showStats,
+          theme: settings.preferences.theme,
+          language: settings.preferences.language,
+          updated_at: new Date().toISOString(),
+        };
+
+        this.logger.info("Upserting user_settings:", settingsData);
+
+        const { data: settingsResult, error: settingsError } = await this.supabaseService.client
           .from("user_settings")
-          .upsert({
-            user_id: user.id,
-            email_notifications: settings.notifications.emailNotifications,
-            push_notifications: settings.notifications.pushNotifications,
-            training_reminders: settings.notifications.trainingReminders,
-            profile_visibility: settings.privacy.profileVisibility,
-            show_stats: settings.privacy.showStats,
-            theme: settings.preferences.theme,
-            language: settings.preferences.language,
-            updated_at: new Date().toISOString(),
-          });
+          .upsert(settingsData)
+          .select()
+          .single();
 
         if (settingsError) {
           this.logger.warn(
             "Settings table not available:",
             settingsError.message,
           );
+        } else {
+          this.logger.info("User settings upserted successfully:", settingsResult);
         }
-      } catch {
+      } catch (error) {
         // Table doesn't exist, continue with localStorage save
+        this.logger.warn("user_settings table error:", toLogContext(error));
       }
 
       // Update email if changed
       if (settings.profile.email !== this.authService.getUser()?.email) {
         try {
+          this.logger.info("Updating email to:", settings.profile.email);
           const { error: emailError } = await this.supabaseService.updateUser({
             email: settings.profile.email,
           });
 
           if (emailError) {
+            this.logger.warn("Email update error:", emailError);
             this.toastService.info(
               "Email update requires verification. Check your inbox.",
             );
+          } else {
+            this.logger.info("Email update initiated");
           }
-        } catch {
+        } catch (error) {
           // Email update not supported
+          this.logger.warn("Email update failed:", toLogContext(error));
         }
       }
 
       // Refresh centralized services so all views update
+      this.logger.info("Refreshing centralized services...");
+      await this.authService.refreshUser();
       await this.profileCompletionService.refresh();
       await this.teamMembershipService.refresh();
+      this.logger.info("Services refreshed successfully");
 
       this.toastService.success(TOAST.SUCCESS.SETTINGS_SAVED);
     } catch (error) {
+      this.logger.error("Save settings error:", toLogContext(error));
       const message =
         error instanceof Error ? error.message : "Failed to save settings";
       this.toastService.error(message);
+    } finally {
+      this.isSavingSettings.set(false);
     }
   }
 
@@ -1509,6 +1563,23 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     } catch (error) {
       this.logger.warn("Could not update team membership:", toLogContext(error));
       // Don't throw - profile update was still successful
+    }
+  }
+
+  /**
+   * Scroll to a settings section smoothly
+   * @param sectionId The ID of the section to scroll to
+   */
+  scrollToSection(sectionId: string, event?: Event): void {
+    // Prevent any navigation behavior
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 }

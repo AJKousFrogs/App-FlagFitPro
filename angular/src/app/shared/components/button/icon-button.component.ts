@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import {
-  booleanAttribute,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  output,
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    input,
+    output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { RippleModule } from "primeng/ripple";
@@ -131,16 +131,14 @@ export type IconButtonSize = "sm" | "md" | "lg";
         text-decoration: none;
 
         /* DEFAULT: Green background, white icon, raised shadow */
-        background-color: var(--ds-primary-green, #228b22);
-        color: #ffffff;
-        box-shadow:
-          0 4px 6px rgba(0, 0, 0, 0.15),
-          0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: var(--ds-primary-green);
+        color: var(--color-text-on-primary);
+        box-shadow: var(--shadow-md);
 
         transition:
-          transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
-          box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-          background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+          transform var(--hover-transition-fast),
+          box-shadow var(--hover-transition-fast),
+          background-color var(--hover-transition-fast);
         will-change: transform, box-shadow;
 
         /* Default size (md) - 44px touch target */
@@ -154,28 +152,24 @@ export type IconButtonSize = "sm" | "md" | "lg";
       /* Hover state - elevated */
       @media (hover: hover) and (pointer: fine) {
         .icon-btn:hover:not(:disabled):not(.btn-disabled) {
-          background-color: var(--ds-primary-green-hover, #1e7b1e);
+          background-color: var(--ds-primary-green-hover);
           transform: translateY(-2px);
-          box-shadow:
-            0 8px 20px rgba(34, 139, 34, 0.4),
-            0 4px 8px rgba(0, 0, 0, 0.15);
+          box-shadow: var(--hover-shadow-md);
         }
       }
 
       /* Active/pressed state */
       .icon-btn:active:not(:disabled):not(.btn-disabled) {
         transform: translateY(0) scale(0.98);
-        box-shadow:
-          0 2px 4px rgba(0, 0, 0, 0.15),
-          0 1px 2px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-sm);
       }
 
       .icon-btn:focus-visible {
-        outline: 3px solid rgba(34, 139, 34, 0.5);
+        outline: 3px solid var(--focus-ring-color);
         outline-offset: 2px;
         box-shadow:
-          0 4px 6px rgba(0, 0, 0, 0.15),
-          0 0 0 4px rgba(34, 139, 34, 0.25);
+          var(--shadow-md),
+          var(--focus-ring-shadow);
       }
 
       .icon-btn:focus:not(:focus-visible) {
@@ -187,7 +181,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
         opacity: 0.5;
         cursor: not-allowed;
         pointer-events: none;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--shadow-1);
       }
 
       /* ================================
@@ -236,8 +230,8 @@ export type IconButtonSize = "sm" | "md" | "lg";
       .icon-btn-secondary,
       .icon-btn-outlined,
       .icon-btn-success {
-        background-color: var(--ds-primary-green, #228b22);
-        color: #ffffff;
+        background-color: var(--ds-primary-green);
+        color: var(--color-text-on-primary);
       }
 
       @media (hover: hover) and (pointer: fine) {
@@ -245,57 +239,57 @@ export type IconButtonSize = "sm" | "md" | "lg";
         .icon-btn-secondary:hover:not(:disabled):not(.btn-disabled),
         .icon-btn-outlined:hover:not(:disabled):not(.btn-disabled),
         .icon-btn-success:hover:not(:disabled):not(.btn-disabled) {
-          background-color: var(--ds-primary-green-hover, #1e7b1e);
+          background-color: var(--ds-primary-green-hover);
         }
       }
 
       /* TEXT VARIANT: Subtle style (green icon, transparent background) */
       .icon-btn-text {
         background-color: transparent;
-        color: var(--ds-primary-green, #228b22);
+        color: var(--ds-primary-green);
         box-shadow: none;
       }
 
       @media (hover: hover) and (pointer: fine) {
         .icon-btn-text:hover:not(:disabled):not(.btn-disabled) {
-          background-color: rgba(34, 139, 34, 0.08);
-          color: var(--ds-primary-green-hover, #1e7b1e);
+          background-color: var(--hover-bg-tertiary);
+          color: var(--ds-primary-green-hover);
           transform: none;
           box-shadow: none;
         }
       }
 
       .icon-btn-text:active:not(:disabled):not(.btn-disabled) {
-        background-color: rgba(34, 139, 34, 0.12);
+        background-color: var(--ds-primary-green-subtle);
         transform: none;
         box-shadow: none;
       }
 
       .icon-btn-text:focus-visible {
-        box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.25);
+        box-shadow: var(--focus-ring-shadow);
       }
 
       /* Danger - Keep red for danger actions (important UX distinction) */
       .icon-btn-danger {
-        background-color: var(--color-status-error, #dc2626);
-        color: #ffffff;
+        background-color: var(--color-status-error);
+        color: var(--color-text-on-primary);
       }
 
       @media (hover: hover) and (pointer: fine) {
         .icon-btn-danger:hover:not(:disabled):not(.btn-disabled) {
-          background-color: var(--primitive-error-600, #b91c1c);
+          background-color: var(--color-interactive-destructive-hover);
           transform: translateY(-2px);
           box-shadow:
-            0 8px 20px rgba(220, 38, 38, 0.4),
-            0 4px 8px rgba(0, 0, 0, 0.15);
+            0 8px 20px rgba(var(--primitive-error-500-rgb), 0.4),
+            var(--shadow-md);
         }
       }
 
       .icon-btn-danger:focus-visible {
-        outline-color: var(--color-status-error, #dc2626);
+        outline-color: var(--color-status-error);
         box-shadow:
-          0 4px 6px rgba(0, 0, 0, 0.15),
-          0 0 0 4px rgba(220, 38, 38, 0.25);
+          var(--shadow-md),
+          0 0 0 4px rgba(var(--primitive-error-500-rgb), 0.25);
       }
 
       /* ================================

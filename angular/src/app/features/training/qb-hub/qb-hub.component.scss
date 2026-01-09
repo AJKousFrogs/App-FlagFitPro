@@ -1,0 +1,80 @@
+/**
+ * QB Hub Composite View Styles
+ * ================================================================
+ * Design System Compliant - Fixed January 9, 2026
+ * Removed ::ng-deep - Using CSS custom property cascade
+ * ================================================================
+ */
+
+.qb-hub-page {
+  padding: var(--space-4);
+
+  /* Hub's own header should display normally */
+  > app-page-header {
+    --page-header-display: block;
+  }
+
+  @media (max-width: 767px) {
+    padding: var(--space-3);
+  }
+
+  @media (max-width: 479px) {
+    padding: var(--space-2);
+  }
+}
+
+.hub-tab-content {
+  padding: var(--space-6) 0;
+
+  /*
+   * COMPOSITE VIEW PATTERN
+   * Child components inherit this CSS variable which hides their headers.
+   * PageHeaderComponent reads --page-header-display on :host.
+   * No ::ng-deep needed - CSS custom properties cascade through encapsulation.
+   */
+  --page-header-display: none;
+
+  @media (max-width: 767px) {
+    padding: var(--space-4) 0;
+  }
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+// ================================================================
+// PRIMENG TABS OVERRIDES FOR MOBILE
+// ================================================================
+
+:host ::ng-deep {
+  // Ensure tabs scroll horizontally on mobile
+  .p-tablist {
+    @media (max-width: 767px) {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  // Adjust tab padding on mobile
+  .p-tab {
+    @media (max-width: 767px) {
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-size-h4);
+      white-space: nowrap;
+    }
+  }
+
+  // Ensure tab panel has proper padding
+  .p-tabpanel {
+    @media (max-width: 767px) {
+      padding: var(--space-3) 0;
+    }
+  }
+}

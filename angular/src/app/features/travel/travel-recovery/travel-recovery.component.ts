@@ -355,9 +355,9 @@ interface TimezoneOption {
                             ? 'pi pi-arrow-right'
                             : 'pi pi-arrow-left'
                         "
-                      ></p-chip>
+                      </p-chip>
                       <p-tag
-                        [value]}="jetLagSeverity().level | titlecase"
+                        [value]="jetLagSeverity().level | titlecase"
                         [severity]="getSeverityColor(jetLagSeverity().level)"
                       ></p-tag>
                     </div>
@@ -731,6 +731,7 @@ interface TimezoneOption {
                             <p-checkbox
                               [(ngModel)]="item.packed"
                               [binary]="true"
+                              variant="filled"
                               [inputId]="item.id"
                             ></p-checkbox>
                             <label [for]="item.id" [class.packed]="item.packed">
@@ -797,6 +798,7 @@ interface TimezoneOption {
                       <p-checkbox
                         [(ngModel)]="carTripForm.isDriver"
                         [binary]="true"
+                        variant="filled"
                         label="Yes, I'm driving"
                       ></p-checkbox>
                     </div>
@@ -1257,6 +1259,7 @@ interface TimezoneOption {
                                 <p-checkbox
                                   [(ngModel)]="item.packed"
                                   [binary]="true"
+                                  variant="filled"
                                   [inputId]="item.id"
                                 ></p-checkbox>
                                 <label
@@ -1365,6 +1368,7 @@ export class TravelRecoveryComponent implements OnInit {
   Math = Math;
 
   ngOnInit(): void {
+    console.log('[TravelRecovery] Component initialized');
     this.timezones = this.travelService.getAvailableTimezones();
     this.travelChecklist = this.travelService.getTravelChecklist();
 
@@ -1373,6 +1377,9 @@ export class TravelRecoveryComponent implements OnInit {
     this.massageGunProtocols = this.travelService.getMassageGunProtocol();
     this.carTravelChecklist = this.travelService.getCarTravelChecklist();
     this.researchSummary = this.travelService.getCarTravelResearchSummary();
+    
+    console.log('[TravelRecovery] hasActivePlan:', this.hasActivePlan());
+    console.log('[TravelRecovery] currentPlan:', this.currentPlan());
   }
 
   // Travel type management
@@ -1524,7 +1531,12 @@ export class TravelRecoveryComponent implements OnInit {
   }
 
   createPlan(): void {
+    console.log('[TravelRecovery] createPlan() called');
+    console.log('[TravelRecovery] Form data:', this.tripForm);
+    console.log('[TravelRecovery] canCreatePlan:', this.canCreatePlan());
+    
     if (!this.canCreatePlan()) {
+      console.warn('[TravelRecovery] Cannot create plan - validation failed');
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
@@ -1533,22 +1545,34 @@ export class TravelRecoveryComponent implements OnInit {
     const arrivalDate = this.tripForm.arrivalDate;
     
     if (!departureDate || !arrivalDate) {
+      console.warn('[TravelRecovery] Missing dates:', { departureDate, arrivalDate });
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
 
-    this.travelService.createTravelPlan({
-      tripName: this.tripForm.tripName,
-      departureDate: departureDate,
-      arrivalDate: arrivalDate,
-      competitionDate: this.tripForm.competitionDate || undefined,
-      departureTimezone: this.tripForm.departureTimezone,
-      arrivalTimezone: this.tripForm.arrivalTimezone,
-      flightDuration: this.tripForm.flightDuration,
-      layovers: this.tripForm.layovers,
-    });
+    try {
+      console.log('[TravelRecovery] Creating travel plan...');
+      const plan = this.travelService.createTravelPlan({
+        tripName: this.tripForm.tripName,
+        departureDate: departureDate,
+        arrivalDate: arrivalDate,
+        competitionDate: this.tripForm.competitionDate || undefined,
+        departureTimezone: this.tripForm.departureTimezone,
+        arrivalTimezone: this.tripForm.arrivalTimezone,
+        flightDuration: this.tripForm.flightDuration,
+        layovers: this.tripForm.layovers,
+      });
 
-    this.toastService.success(TOAST.SUCCESS.RECOVERY_PROTOCOL_GENERATED);
+      console.log('[TravelRecovery] Plan created successfully:', plan);
+      console.log('[TravelRecovery] hasActivePlan after creation:', this.hasActivePlan());
+      console.log('[TravelRecovery] currentPlan after creation:', this.currentPlan());
+      console.log('[TravelRecovery] recoveryProtocol after creation:', this.recoveryProtocol());
+      
+      this.toastService.success(TOAST.SUCCESS.RECOVERY_PROTOCOL_GENERATED);
+    } catch (error) {
+      console.error('[TravelRecovery] Error creating plan:', error);
+      this.toastService.error('Failed to generate recovery protocol. Please try again.');
+    }
   }
 
   startNewPlan(): void {

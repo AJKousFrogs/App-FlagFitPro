@@ -13,6 +13,8 @@ import { TrainingMetricsService } from "../../core/services/training-metrics.ser
 import { TrainingPlanService } from "../../core/services/training-plan.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { TrafficLightRiskComponent } from "../../shared/components/traffic-light-risk/traffic-light-risk.component";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 interface DayPlan {
   day: string;
@@ -31,22 +33,24 @@ interface DayPlan {
   imports: [
     FormsModule,
     TrafficLightRiskComponent,
+    MainLayoutComponent,
+    PageHeaderComponent,
     DatePipe,
     DecimalPipe,
     TitleCasePipe,
   ],
   template: `
-    <div
-      class="microcycle-planner bg-surface-primary rounded-lg shadow-medium p-6"
-    >
-      <div class="header mb-6">
-        <h2 class="text-2xl font-bold text-text-primary mb-2">
-          Weekly Microcycle Planner
-        </h2>
-        <p class="text-text-secondary">
-          AI-powered sprint load suggestions based on ACWR
-        </p>
-      </div>
+    <app-main-layout>
+      <div class="microcycle-planner-page">
+        <!-- Page Header -->
+        <app-page-header
+          title="Weekly Microcycle Planner"
+          subtitle="AI-powered sprint load suggestions based on ACWR"
+          icon="pi-calendar"
+        >
+        </app-page-header>
+
+        <div class="microcycle-planner-content">
 
       <!-- Current ACWR Status -->
       <div class="current-status mb-6 p-4 bg-surface-secondary rounded-lg">
@@ -194,7 +198,9 @@ interface DayPlan {
           </div>
         </div>
       </div>
-    </div>
+        </div>
+      </div>
+    </app-main-layout>
   `,
   styleUrl: "./microcycle-planner.component.scss",
 })

@@ -179,6 +179,7 @@ import {
               <p-checkbox
                 formControlName="ageVerification"
                 [binary]="true"
+                variant="filled"
                 inputId="ageVerification"
                 data-testid="age-checkbox"
               ></p-checkbox>
@@ -198,6 +199,7 @@ import {
               <p-checkbox
                 formControlName="termsAccepted"
                 [binary]="true"
+                variant="filled"
                 inputId="termsAccepted"
                 data-testid="terms-checkbox"
               ></p-checkbox>

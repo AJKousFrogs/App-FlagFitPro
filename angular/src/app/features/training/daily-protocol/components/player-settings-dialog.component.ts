@@ -11,28 +11,27 @@
  */
 
 import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  model,
-  output,
-  signal,
-  effect,
+    ChangeDetectionStrategy,
+    Component,
+    effect,
+    inject,
+    model,
+    output,
+    signal,
 } from "@angular/core";
-import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { Select } from "primeng/select";
+import { firstValueFrom } from "rxjs";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 
 import { ApiService } from "../../../../core/services/api.service";
-import { LoggerService } from "../../../../core/services/logger.service";
-import { toLogContext } from "../../../../core/services/logger.service";
+import { LoggerService, toLogContext } from "../../../../core/services/logger.service";
 
 export interface FlagPracticeSlot {
   day: number; // 0-6 (Sunday-Saturday)
@@ -296,6 +295,7 @@ interface DayOption {
             <p-checkbox
               [(ngModel)]="settings.hasGymAccess"
               [binary]="true"
+              variant="filled"
               inputId="gymAccess"
             ></p-checkbox>
             <label for="gymAccess">I have gym access</label>
@@ -305,6 +305,7 @@ interface DayOption {
             <p-checkbox
               [(ngModel)]="settings.hasFieldAccess"
               [binary]="true"
+              variant="filled"
               inputId="fieldAccess"
             ></p-checkbox>
             <label for="fieldAccess">I have field access</label>

@@ -110,6 +110,7 @@ interface Workout {
                     <p-checkbox
                       [(ngModel)]="exercise.completed"
                       [binary]="true"
+                      variant="filled"
                       inputId="exercise-{{ exercise.id }}"
                     >
                     </p-checkbox>

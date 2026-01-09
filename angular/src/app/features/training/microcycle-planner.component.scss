@@ -3,6 +3,32 @@
 // Design System Compliant
 // ============================================================================
 
+.microcycle-planner-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.microcycle-planner-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.current-status {
+  background: var(--surface-secondary);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+}
+
+.summary {
+  background: var(--surface-secondary);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  margin-top: var(--space-6);
+}
+
 .stat-card {
   padding: var(--space-3);
   background: var(--surface-primary);
@@ -23,6 +49,12 @@
   font-size: var(--font-body-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
 }
 
 .day-card {

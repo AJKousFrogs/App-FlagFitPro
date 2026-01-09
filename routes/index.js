@@ -11,6 +11,7 @@ export { default as wellnessRoutes } from "./wellness.routes.js";
 export { default as analyticsRoutes } from "./analytics.routes.js";
 export { default as notificationsRoutes } from "./notifications.routes.js";
 export { default as dashboardRoutes } from "./dashboard.routes.js";
+export { default as communityRoutes } from "./community.routes.js";
 
 // Re-export utilities for convenience
 export * from "./utils/validation.js";

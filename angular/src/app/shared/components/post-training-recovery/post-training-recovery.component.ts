@@ -193,6 +193,7 @@ interface RecoveryRecommendation {
               <p-checkbox
                 [(ngModel)]="noSoreness"
                 [binary]="true"
+                variant="filled"
                 inputId="noSoreness"
                 (onChange)="onNoSorenessChange()"
               ></p-checkbox>

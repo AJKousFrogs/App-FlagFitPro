@@ -10,16 +10,15 @@
 
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
@@ -29,6 +28,7 @@ import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -208,6 +208,7 @@ const PRACTICE_DURATIONS = [
                     <p-checkbox
                       [value]="area.value"
                       [(ngModel)]="formData.focusAreas"
+                      variant="filled"
                       [inputId]="'focus-' + area.value"
                       [disabled]="
                         formData.focusAreas.length >= 3 &&
@@ -233,6 +234,7 @@ const PRACTICE_DURATIONS = [
                     <p-checkbox
                       [value]="day.value"
                       [(ngModel)]="formData.availableDays"
+                      variant="filled"
                       [inputId]="'day-' + day.value"
                     ></p-checkbox>
                     <label [for]="'day-' + day.value">{{ day.label }}</label>
@@ -268,6 +270,7 @@ const PRACTICE_DURATIONS = [
                   <p-checkbox
                     [(ngModel)]="formData.considerRtp"
                     [binary]="true"
+                    variant="filled"
                     inputId="considerRtp"
                   ></p-checkbox>
                   <label for="considerRtp"
@@ -280,6 +283,7 @@ const PRACTICE_DURATIONS = [
                   <p-checkbox
                     [(ngModel)]="formData.considerAcwr"
                     [binary]="true"
+                    variant="filled"
                     inputId="considerAcwr"
                   ></p-checkbox>
                   <label for="considerAcwr"
@@ -291,6 +295,7 @@ const PRACTICE_DURATIONS = [
                   <p-checkbox
                     [(ngModel)]="formData.weatherAdjust"
                     [binary]="true"
+                    variant="filled"
                     inputId="weatherAdjust"
                   ></p-checkbox>
                   <label for="weatherAdjust"
