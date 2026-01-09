@@ -33,11 +33,13 @@ import { AccordionModule } from "primeng/accordion";
 import { BadgeModule } from "primeng/badge";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
+import { Chip } from "primeng/chip";
 import { DatePickerModule } from "primeng/datepicker";
 import { DividerModule } from "primeng/divider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
+import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
@@ -57,7 +59,10 @@ import {
     TravelRecoveryService,
 } from "../../../core/services/travel-recovery.service";
 
-// Layout
+// Layout & Components
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 interface TimezoneOption {
   value: string;
@@ -74,9 +79,11 @@ interface TimezoneOption {
     FormsModule,
     RouterModule,
     CardModule,
+    Chip,
     DatePickerModule,
     InputNumberModule,
     InputTextModule,
+    Select,
     StepperModule,
     TimelineModule,
     TagModule,
@@ -86,6 +93,9 @@ interface TimezoneOption {
     TooltipModule,
     DividerModule,
     BadgeModule,
+    ButtonComponent,
+    MainLayoutComponent,
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
