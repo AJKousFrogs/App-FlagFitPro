@@ -15,31 +15,31 @@
 
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  OnInit,
-  computed,
-  inject,
-  input,
-  output,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    inject,
+    input,
+    output,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { COLORS } from "../../../core/constants/app.constants";
 
 // PrimeNG
-import { ButtonComponent } from "../button/button.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
+import { ButtonComponent } from "../button/button.component";
 // Services
+import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { RecoveryService } from "../../../core/services/recovery.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 
 interface SorenessArea {

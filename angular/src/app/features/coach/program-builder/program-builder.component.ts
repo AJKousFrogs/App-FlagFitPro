@@ -9,16 +9,15 @@
 
 import { CommonModule, DatePipe } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -32,6 +31,7 @@ import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -551,7 +551,7 @@ const PHASE_PRESETS = [
                   [binary]="true"
                   variant="filled"
                   inputId="selectAll"
-                  (onChange)="toggleSelectAll()"
+                  (onValueChange)="toggleSelectAll()"
                 ></p-checkbox>
                 <label for="selectAll"
                   >Select All Active Players ({{ activePlayerCount() }})</label

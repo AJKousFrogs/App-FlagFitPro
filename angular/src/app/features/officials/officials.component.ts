@@ -1,18 +1,16 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -21,20 +19,22 @@ import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-  GameOfficial,
-  Official,
-  OfficialsService,
+    GameOfficial,
+    Official,
+    OfficialsService,
 } from "../../core/services/officials.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { getInitials } from "../../shared/utils/format.utils";
 import { formatDate } from "../../shared/utils/date.utils";
+import { getInitials } from "../../shared/utils/format.utils";
 
 type CertificationLevel = "youth" | "high_school" | "college" | "professional";
 type OfficialRole =

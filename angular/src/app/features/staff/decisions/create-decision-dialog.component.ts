@@ -4,36 +4,36 @@
  * Multi-step wizard for creating decisions
  */
 
-import {
-  Component,
-  input,
-  output,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  inject,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    input,
+    output,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { DialogModule } from "primeng/dialog";
-import { ButtonModule } from "primeng/button";
-import { Select } from "primeng/select";
-import { InputTextModule } from "primeng/inputtext";
-import { Textarea } from "primeng/textarea";
-import { CheckboxModule } from "primeng/checkbox";
-import { TagModule } from "primeng/tag";
-import { ModalComponent } from "@shared/components/modal/modal.component";
-import { StepperComponent } from "@shared/components/stepper/stepper.component";
-import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
+import { TIME } from "@core/constants";
+import type {
+    CreateDecisionRequest,
+    DecisionCategory,
+    DecisionType,
+    ReviewTrigger,
+} from "@core/models/decision-ledger.models";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { RosterService } from "@features/roster/roster.service";
-import type {
-  CreateDecisionRequest,
-  DecisionType,
-  DecisionCategory,
-  ReviewTrigger,
-} from "@core/models/decision-ledger.models";
-import { TIME } from "@core/constants";
+import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
+import { ModalComponent } from "@shared/components/modal/modal.component";
+import { StepperComponent } from "@shared/components/stepper/stepper.component";
+import { ButtonModule } from "primeng/button";
+import { CheckboxModule } from "primeng/checkbox";
+import { DialogModule } from "primeng/dialog";
+import { InputTextModule } from "primeng/inputtext";
+import { Select } from "primeng/select";
+import { TagModule } from "primeng/tag";
+import { Textarea } from "primeng/textarea";
 
 @Component({
   selector: "app-create-decision-dialog",

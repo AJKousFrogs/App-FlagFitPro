@@ -1,18 +1,18 @@
-import {
-  Component,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  OnDestroy,
-  input,
-  output,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonComponent } from "../button/button.component";
-import { IconButtonComponent } from "../button/icon-button.component";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnDestroy,
+    computed,
+    input,
+    output,
+    signal,
+} from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { DialogModule } from "primeng/dialog";
 import { Slider } from "primeng/slider";
-import { FormsModule } from "@angular/forms";
+import { ButtonComponent } from "../button/button.component";
+import { IconButtonComponent } from "../button/icon-button.component";
 
 @Component({
   selector: "app-rest-timer",

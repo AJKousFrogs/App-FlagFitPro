@@ -1,11 +1,11 @@
-import { Component, signal, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
+import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
-import { Select } from "primeng/select";
-import { ToggleButtonModule } from "primeng/togglebutton";
-import { TagModule } from "primeng/tag";
 import { DialogModule } from "primeng/dialog";
+import { Select } from "primeng/select";
+import { TagModule } from "primeng/tag";
+import { ToggleButtonModule } from "primeng/togglebutton";
 import { TooltipModule } from "primeng/tooltip";
 import { formatDate } from "../../utils/date.utils";
 

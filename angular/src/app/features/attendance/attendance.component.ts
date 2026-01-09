@@ -1,41 +1,41 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  DestroyRef,
-} from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
+} from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormsModule } from "@angular/forms";
+import { AvatarModule } from "primeng/avatar";
 import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { CheckboxModule } from "primeng/checkbox";
+import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { Textarea } from "primeng/textarea";
-import { Select } from "primeng/select";
-import { DatePicker } from "primeng/datepicker";
-import { CheckboxModule } from "primeng/checkbox";
 import { ProgressBarModule } from "primeng/progressbar";
+import { Select } from "primeng/select";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
-import { AvatarModule } from "primeng/avatar";
-import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import {
-  AttendanceService,
-  TeamEvent,
-  AttendanceRecord,
-  PlayerAttendanceStats,
+    AttendanceRecord,
+    AttendanceService,
+    PlayerAttendanceStats,
+    TeamEvent,
 } from "../../core/services/attendance.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { getInitials } from "../../shared/utils/format.utils";
 
 type EventType =

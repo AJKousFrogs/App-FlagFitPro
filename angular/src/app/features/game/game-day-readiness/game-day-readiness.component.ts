@@ -8,40 +8,39 @@
  * @version 1.0.0
  */
 
-import {
-  Component,
-  computed,
-  signal,
-  inject,
-  OnInit,
-  ChangeDetectionStrategy,
-  DestroyRef,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    OnInit,
+    signal,
+} from "@angular/core";
+import { } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { Router, ActivatedRoute, RouterModule } from "@angular/router";
-import {} from "@angular/core/rxjs-interop";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
 // PrimeNG Components
 import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { DataConfidenceService } from "../../../core/services/data-confidence.service";
-import { ConfidenceIndicatorComponent } from "../../../shared/components/confidence-indicator/confidence-indicator.component";
-import { SliderModule } from "primeng/slider";
-import { TextareaModule } from "primeng/textarea";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TooltipModule } from "primeng/tooltip";
+import { SliderModule } from "primeng/slider";
 import { TagModule } from "primeng/tag";
+import { TextareaModule } from "primeng/textarea";
+import { TooltipModule } from "primeng/tooltip";
+import { DataConfidenceService } from "../../../core/services/data-confidence.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { ConfidenceIndicatorComponent } from "../../../shared/components/confidence-indicator/confidence-indicator.component";
 
 // Services
-import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
-import { AuthService } from "../../../core/services/auth.service";
-import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
-import { LoggerService } from "../../../core/services/logger.service";
-import { toLogContext } from "../../../core/services/logger.service";
+import { AuthService } from "../../../core/services/auth.service";
+import { LoggerService, toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
+import { ToastService } from "../../../core/services/toast.service";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 
 interface ReadinessMetric {
   key: string;

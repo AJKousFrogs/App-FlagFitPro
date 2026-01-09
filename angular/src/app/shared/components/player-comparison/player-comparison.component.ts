@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  input,
-  output,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    input,
+    output,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";

@@ -1,17 +1,15 @@
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -25,6 +23,8 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";

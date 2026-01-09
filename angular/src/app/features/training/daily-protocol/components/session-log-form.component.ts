@@ -11,20 +11,20 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import {
-  Component,
-  input,
-  output,
-  signal,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    input,
+    output,
+    signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { Slider } from "primeng/slider";
 import { InputNumberModule } from "primeng/inputnumber";
+import { Slider } from "primeng/slider";
 import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 
 export interface SessionLogData {
   actualDurationMinutes: number;

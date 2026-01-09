@@ -1,18 +1,16 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { BadgeModule } from "primeng/badge";
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -21,17 +19,19 @@ import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-  EquipmentAssignment,
-  EquipmentItem,
-  EquipmentService,
-  EquipmentSummary,
+    EquipmentAssignment,
+    EquipmentItem,
+    EquipmentService,
+    EquipmentSummary,
 } from "../../core/services/equipment.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamStatisticsService } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TOAST } from "../../core/constants/toast-messages.constants";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
