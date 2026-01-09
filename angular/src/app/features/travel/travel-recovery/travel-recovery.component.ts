@@ -26,7 +26,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { UI_LIMITS } from "@core/constants/app.constants";
+import { UI_LIMITS } from "@core/constants";
 
 // PrimeNG Components
 import { AccordionModule } from "primeng/accordion";

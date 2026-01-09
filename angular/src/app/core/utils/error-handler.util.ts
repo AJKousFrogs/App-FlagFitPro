@@ -18,7 +18,6 @@
  */
 
 import { getErrorMessage } from "../../shared/utils/error.utils";
-import { ERROR_MESSAGES } from "../constants/error.constants";
 
 export interface ValidationError {
   severity: "warn" | "error";

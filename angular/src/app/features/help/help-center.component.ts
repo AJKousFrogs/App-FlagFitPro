@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouterLink, ActivatedRoute } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { AccordionModule } from "primeng/accordion";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";

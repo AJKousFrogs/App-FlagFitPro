@@ -33,7 +33,7 @@ import type {
   DecisionCategory,
   ReviewTrigger,
 } from "@core/models/decision-ledger.models";
-import { TIME } from "@core/constants/app.constants";
+import { TIME } from "@core/constants";
 
 @Component({
   selector: "app-create-decision-dialog",

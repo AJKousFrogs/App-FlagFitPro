@@ -72,7 +72,7 @@ import { SemanticMeaningRendererComponent } from "../../shared/components/semant
 import { CoachOverrideMeaning, IncompleteDataMeaning, ActionRequiredMeaning } from "../../core/semantics/semantic-meaning.types";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
-import { TRAINING, TIME, UI_LIMITS } from "../../core/constants/app.constants";
+import { TRAINING, UI_LIMITS } from "../../core/constants/app.constants";
 import { getReadinessLevel } from "../../core/constants/wellness.constants";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 

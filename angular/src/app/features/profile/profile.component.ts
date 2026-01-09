@@ -1212,7 +1212,7 @@ export class ProfileComponent implements OnInit {
    * Load extended profile data using TeamMembershipService
    * Uses centralized service for position, jersey number, and team info
    */
-  private async loadExtendedProfileData(userId: string): Promise<void> {
+  private async loadExtendedProfileData(_userId: string): Promise<void> {
     try {
       // Load team membership using centralized service
       await this.teamMembershipService.loadMembership();
