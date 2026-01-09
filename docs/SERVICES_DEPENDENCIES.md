@@ -69,17 +69,17 @@ Services that aggregate multiple lower-level services (facade pattern).
 
 ### Foundation Services (No Dependencies)
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `LoggerService` | Centralized logging | None (Angular core only) | ~200 |
-| `SupabaseService` | Supabase client wrapper | `LoggerService` | ~350 |
-| `ApiService` | HTTP client wrapper | `HttpClient`, `LoggerService` | ~185 |
-| `ResourceService` | Angular 21 resource API | `HttpClient`, `LoggerService` | ~260 |
-| `ThemeService` | Theme management | None | ~150 |
-| `PlatformService` | Platform detection | None | ~300 |
-| `NetworkStatusService` | Network connectivity | None | ~200 |
-| `ToastService` | Toast notifications | None | ~150 |
-| `LoadingService` | Loading state management | None | ~100 |
+| Service                | Purpose                  | Dependencies                  | Lines |
+| ---------------------- | ------------------------ | ----------------------------- | ----- |
+| `LoggerService`        | Centralized logging      | None (Angular core only)      | ~200  |
+| `SupabaseService`      | Supabase client wrapper  | `LoggerService`               | ~350  |
+| `ApiService`           | HTTP client wrapper      | `HttpClient`, `LoggerService` | ~185  |
+| `ResourceService`      | Angular 21 resource API  | `HttpClient`, `LoggerService` | ~260  |
+| `ThemeService`         | Theme management         | None                          | ~150  |
+| `PlatformService`      | Platform detection       | None                          | ~300  |
+| `NetworkStatusService` | Network connectivity     | None                          | ~200  |
+| `ToastService`         | Toast notifications      | None                          | ~150  |
+| `LoadingService`       | Loading state management | None                          | ~100  |
 
 **Note:** `SupabaseService` depends on `LoggerService`, but `LoggerService` has no dependencies, so `SupabaseService` is still considered Level 0.
 
@@ -89,25 +89,25 @@ Services that aggregate multiple lower-level services (facade pattern).
 
 ### Core Business Logic Services
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `AuthService` | Authentication | `SupabaseService`, `Router` | ~250 |
-| `ContextService` | User context | `SupabaseService`, `Router`, `LoggerService` | ~530 |
-| `EvidenceConfigService` | Evidence-based config | None (Level 0) | ~220 |
-| `PrivacySettingsService` | Privacy controls | `SupabaseService` | ~890 |
-| `ErrorTrackingService` | Error tracking | `LoggerService` | ~375 |
-| `UnitManagerService` | Unit conversion | None (Level 0) | ~335 |
+| Service                  | Purpose               | Dependencies                                 | Lines |
+| ------------------------ | --------------------- | -------------------------------------------- | ----- |
+| `AuthService`            | Authentication        | `SupabaseService`, `Router`                  | ~250  |
+| `ContextService`         | User context          | `SupabaseService`, `Router`, `LoggerService` | ~530  |
+| `EvidenceConfigService`  | Evidence-based config | None (Level 0)                               | ~220  |
+| `PrivacySettingsService` | Privacy controls      | `SupabaseService`                            | ~890  |
+| `ErrorTrackingService`   | Error tracking        | `LoggerService`                              | ~375  |
+| `UnitManagerService`     | Unit conversion       | None (Level 0)                               | ~335  |
 
 ### Data Access Services
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `DirectSupabaseApiService` | Direct Supabase queries | `SupabaseService`, `LoggerService` | ~570 |
-| `TrainingDataService` | Training data access | `SupabaseService`, `ApiService` | ~700 |
-| `PerformanceDataService` | Performance metrics | `SupabaseService`, `ApiService` | ~500 |
-| `WellnessService` | Wellness data | `SupabaseService`, `ApiService` | ~620 |
-| `ChannelService` | Team chat channels | `SupabaseService`, `RealtimeService` | ~1,270 |
-| `RealtimeService` | Real-time subscriptions | `SupabaseService` | ~400 |
+| Service                    | Purpose                 | Dependencies                         | Lines  |
+| -------------------------- | ----------------------- | ------------------------------------ | ------ |
+| `DirectSupabaseApiService` | Direct Supabase queries | `SupabaseService`, `LoggerService`   | ~570   |
+| `TrainingDataService`      | Training data access    | `SupabaseService`, `ApiService`      | ~700   |
+| `PerformanceDataService`   | Performance metrics     | `SupabaseService`, `ApiService`      | ~500   |
+| `WellnessService`          | Wellness data           | `SupabaseService`, `ApiService`      | ~620   |
+| `ChannelService`           | Team chat channels      | `SupabaseService`, `RealtimeService` | ~1,270 |
+| `RealtimeService`          | Real-time subscriptions | `SupabaseService`                    | ~400   |
 
 ---
 
@@ -115,83 +115,83 @@ Services that aggregate multiple lower-level services (facade pattern).
 
 ### ACWR & Load Monitoring
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `AcwrService` | ACWR calculations | `EvidenceConfigService`, `SupabaseService`, `LoggerService`, `AcwrSpikeDetectionService` | ~1,275 |
-| `AcwrSpikeDetectionService` | Spike detection | `SupabaseService`, `LoggerService` | ~200 |
-| `AcwrAlertsService` | Load alerts | `AcwrService` | ~435 |
-| `LoadMonitoringService` | Load monitoring | `AcwrService`, `SupabaseService` | ~540 |
+| Service                     | Purpose           | Dependencies                                                                             | Lines  |
+| --------------------------- | ----------------- | ---------------------------------------------------------------------------------------- | ------ |
+| `AcwrService`               | ACWR calculations | `EvidenceConfigService`, `SupabaseService`, `LoggerService`, `AcwrSpikeDetectionService` | ~1,275 |
+| `AcwrSpikeDetectionService` | Spike detection   | `SupabaseService`, `LoggerService`                                                       | ~200   |
+| `AcwrAlertsService`         | Load alerts       | `AcwrService`                                                                            | ~435   |
+| `LoadMonitoringService`     | Load monitoring   | `AcwrService`, `SupabaseService`                                                         | ~540   |
 
 ### Wellness & Readiness
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `ReadinessService` | Readiness calculations | `ApiService`, `EvidenceConfigService`, `LoggerService` | ~370 |
-| `WellnessRecoveryService` | Wellness tracking | `SupabaseService`, `RecoveryService`, `ReadinessService` | ~600 |
-| `RecoveryService` | Recovery protocols | `SupabaseService` | ~400 |
-| `SleepDebtService` | Sleep debt tracking | `SupabaseService` | ~770 |
-| `GameDayRecoveryService` | Game day recovery | `SupabaseService` | ~300 |
-| `TravelRecoveryService` | Travel recovery | `SupabaseService` | ~250 |
-| `AgeAdjustedRecoveryService` | Age-adjusted recovery | `LoggerService` | ~300 |
+| Service                      | Purpose                | Dependencies                                             | Lines |
+| ---------------------------- | ---------------------- | -------------------------------------------------------- | ----- |
+| `ReadinessService`           | Readiness calculations | `ApiService`, `EvidenceConfigService`, `LoggerService`   | ~370  |
+| `WellnessRecoveryService`    | Wellness tracking      | `SupabaseService`, `RecoveryService`, `ReadinessService` | ~600  |
+| `RecoveryService`            | Recovery protocols     | `SupabaseService`                                        | ~400  |
+| `SleepDebtService`           | Sleep debt tracking    | `SupabaseService`                                        | ~770  |
+| `GameDayRecoveryService`     | Game day recovery      | `SupabaseService`                                        | ~300  |
+| `TravelRecoveryService`      | Travel recovery        | `SupabaseService`                                        | ~250  |
+| `AgeAdjustedRecoveryService` | Age-adjusted recovery  | `LoggerService`                                          | ~300  |
 
 ### AI & Intelligence
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `AiService` | AI/LLM integration | `ApiService`, `PrivacySettingsService`, `LoggerService` | ~400 |
-| `AiChatService` | AI Coach chat | `ApiService` | ~290 |
-| `FlagFootballEvidenceService` | Evidence knowledge | None (Level 0) | ~200 |
-| `EvidenceKnowledgeBaseService` | Knowledge base | `SupabaseService` | ~200 |
-| `SprintTrainingKnowledgeService` | Sprint knowledge | `SupabaseService` | ~1,770 |
+| Service                          | Purpose            | Dependencies                                            | Lines  |
+| -------------------------------- | ------------------ | ------------------------------------------------------- | ------ |
+| `AiService`                      | AI/LLM integration | `ApiService`, `PrivacySettingsService`, `LoggerService` | ~400   |
+| `AiChatService`                  | AI Coach chat      | `ApiService`                                            | ~290   |
+| `FlagFootballEvidenceService`    | Evidence knowledge | None (Level 0)                                          | ~200   |
+| `EvidenceKnowledgeBaseService`   | Knowledge base     | `SupabaseService`                                       | ~200   |
+| `SprintTrainingKnowledgeService` | Sprint knowledge   | `SupabaseService`                                       | ~1,770 |
 
 ### Training & Performance
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `TrainingPlanService` | Training plans | `SupabaseService`, `ApiService` | ~500 |
-| `TrainingProgramService` | Training programs | `SupabaseService` | ~400 |
-| `TrainingMetricsService` | Training metrics | `SupabaseService` | ~300 |
-| `TrainingStatsCalculationService` | Stats calculations | `SupabaseService` | ~400 |
-| `TrainingSafetyService` | Safety checks | `AcwrService`, `ReadinessService` | ~300 |
-| `PlayerStatisticsService` | Player stats | `SupabaseService`, `ApiService` | ~500 |
-| `StatisticsCalculationService` | Statistical calculations | `SupabaseService` | ~400 |
-| `PerformanceMonitorService` | Performance monitoring | `LoggerService` | ~200 |
+| Service                           | Purpose                  | Dependencies                      | Lines |
+| --------------------------------- | ------------------------ | --------------------------------- | ----- |
+| `TrainingPlanService`             | Training plans           | `SupabaseService`, `ApiService`   | ~500  |
+| `TrainingProgramService`          | Training programs        | `SupabaseService`                 | ~400  |
+| `TrainingMetricsService`          | Training metrics         | `SupabaseService`                 | ~300  |
+| `TrainingStatsCalculationService` | Stats calculations       | `SupabaseService`                 | ~400  |
+| `TrainingSafetyService`           | Safety checks            | `AcwrService`, `ReadinessService` | ~300  |
+| `PlayerStatisticsService`         | Player stats             | `SupabaseService`, `ApiService`   | ~500  |
+| `StatisticsCalculationService`    | Statistical calculations | `SupabaseService`                 | ~400  |
+| `PerformanceMonitorService`       | Performance monitoring   | `LoggerService`                   | ~200  |
 
 ### Analytics & Data
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `AnalyticsDataService` | Analytics data | `SupabaseService`, `ApiService` | ~600 |
-| `TrendsService` | Trend analysis | `SupabaseService` | ~400 |
-| `DashboardDataService` | Dashboard data | `SupabaseService`, `ApiService` | ~500 |
-| `DataSourceService` | Data source abstraction | `SupabaseService` | ~300 |
+| Service                | Purpose                 | Dependencies                    | Lines |
+| ---------------------- | ----------------------- | ------------------------------- | ----- |
+| `AnalyticsDataService` | Analytics data          | `SupabaseService`, `ApiService` | ~600  |
+| `TrendsService`        | Trend analysis          | `SupabaseService`               | ~400  |
+| `DashboardDataService` | Dashboard data          | `SupabaseService`, `ApiService` | ~500  |
+| `DataSourceService`    | Data source abstraction | `SupabaseService`               | ~300  |
 
 ### Team & Social
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `TeamMembershipService` | Team membership | `SupabaseService`, `LoggerService` | ~470 |
-| `TeamStatisticsService` | Team stats | `SupabaseService` | ~400 |
-| `TeamNotificationService` | Team notifications | `SupabaseService` | ~300 |
-| `PresenceService` | User presence | `SupabaseService`, `RealtimeService` | ~300 |
-| `SharedInsightFeedService` | Community feed | `SupabaseService` | ~400 |
+| Service                    | Purpose            | Dependencies                         | Lines |
+| -------------------------- | ------------------ | ------------------------------------ | ----- |
+| `TeamMembershipService`    | Team membership    | `SupabaseService`, `LoggerService`   | ~470  |
+| `TeamStatisticsService`    | Team stats         | `SupabaseService`                    | ~400  |
+| `TeamNotificationService`  | Team notifications | `SupabaseService`                    | ~300  |
+| `PresenceService`          | User presence      | `SupabaseService`, `RealtimeService` | ~300  |
+| `SharedInsightFeedService` | Community feed     | `SupabaseService`                    | ~400  |
 
 ### Other Feature Services
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `NutritionService` | Nutrition tracking | `SupabaseService`, `ApiService` | ~600 |
-| `ExerciseDBService` | Exercise database | `HttpClient`, `LoggerService` | ~445 |
-| `GameStatsService` | Game statistics | `SupabaseService`, `ApiService` | ~500 |
-| `TournamentService` | Tournament management | `SupabaseService` | ~400 |
-| `RosterService` | Roster management | `SupabaseService` | ~400 |
-| `DepthChartService` | Depth chart | `SupabaseService` | ~300 |
-| `AttendanceService` | Attendance tracking | `ApiService`, `AuthService`, `LoggerService` | ~300 |
-| `EquipmentService` | Equipment management | `SupabaseService` | ~300 |
-| `OfficialsService` | Officials management | `SupabaseService` | ~300 |
-| `ReturnToPlayService` | RTP protocols | `SupabaseService` | ~400 |
-| `WeatherService` | Weather integration | `HttpClient` | ~200 |
-| `DataExportService` | Data export | `SupabaseService` | ~400 |
+| Service               | Purpose               | Dependencies                                 | Lines |
+| --------------------- | --------------------- | -------------------------------------------- | ----- |
+| `NutritionService`    | Nutrition tracking    | `SupabaseService`, `ApiService`              | ~600  |
+| `ExerciseDBService`   | Exercise database     | `HttpClient`, `LoggerService`                | ~445  |
+| `GameStatsService`    | Game statistics       | `SupabaseService`, `ApiService`              | ~500  |
+| `TournamentService`   | Tournament management | `SupabaseService`                            | ~400  |
+| `RosterService`       | Roster management     | `SupabaseService`                            | ~400  |
+| `DepthChartService`   | Depth chart           | `SupabaseService`                            | ~300  |
+| `AttendanceService`   | Attendance tracking   | `ApiService`, `AuthService`, `LoggerService` | ~300  |
+| `EquipmentService`    | Equipment management  | `SupabaseService`                            | ~300  |
+| `OfficialsService`    | Officials management  | `SupabaseService`                            | ~300  |
+| `ReturnToPlayService` | RTP protocols         | `SupabaseService`                            | ~400  |
+| `WeatherService`      | Weather integration   | `HttpClient`                                 | ~200  |
+| `DataExportService`   | Data export           | `SupabaseService`                            | ~400  |
 
 ---
 
@@ -199,29 +199,29 @@ Services that aggregate multiple lower-level services (facade pattern).
 
 ### Composite/Facade Services
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `UnifiedTrainingService` | Training facade | `AcwrService`, `ReadinessService`, `TrainingDataService`, `PerformanceDataService`, `WellnessService`, `ApiService`, `AuthService`, `LoggerService`, `PlayerProgramService`, `SupabaseService` | ~1,350 |
-| `ContinuityIndicatorsService` | Continuity metrics | `SupabaseService`, `LoggerService`, `GameDayRecoveryService`, `AcwrSpikeDetectionService` | ~300 |
-| `DataConfidenceService` | Data quality | `SupabaseService`, `LoggerService` | ~200 |
-| `MissingDataDetectionService` | Missing data detection | `SupabaseService` | ~300 |
-| `CalibrationLoggingService` | Calibration logging | `ApiService`, `LoggerService` | ~200 |
+| Service                       | Purpose                | Dependencies                                                                                                                                                                                   | Lines  |
+| ----------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `UnifiedTrainingService`      | Training facade        | `AcwrService`, `ReadinessService`, `TrainingDataService`, `PerformanceDataService`, `WellnessService`, `ApiService`, `AuthService`, `LoggerService`, `PlayerProgramService`, `SupabaseService` | ~1,350 |
+| `ContinuityIndicatorsService` | Continuity metrics     | `SupabaseService`, `LoggerService`, `GameDayRecoveryService`, `AcwrSpikeDetectionService`                                                                                                      | ~300   |
+| `DataConfidenceService`       | Data quality           | `SupabaseService`, `LoggerService`                                                                                                                                                             | ~200   |
+| `MissingDataDetectionService` | Missing data detection | `SupabaseService`                                                                                                                                                                              | ~300   |
+| `CalibrationLoggingService`   | Calibration logging    | `ApiService`, `LoggerService`                                                                                                                                                                  | ~200   |
 
 ### Specialized Services
 
-| Service | Purpose | Dependencies | Lines |
-|---------|---------|--------------|-------|
-| `SuperadminService` | Superadmin operations | `SupabaseService` | ~400 |
-| `AdminService` | Admin operations | `SupabaseService` | ~300 |
-| `AccountDeletionService` | Account deletion | `SupabaseService`, `AuthService`, `LoggerService`, `ToastService`, `Router` | ~300 |
-| `ProfileCompletionService` | Profile completion | `SupabaseService` | ~300 |
-| `SearchService` | Global search | `SupabaseService`, `ApiService` | ~590 |
-| `AchievementsService` | Achievements | `HttpClient`, `LoggerService`, `ToastService` | ~400 |
-| `BodyWeightLoadService` | Body weight tracking | `LoggerService` | ~300 |
-| `DecisionLedgerService` | Decision tracking | `SupabaseService` | ~300 |
-| `PlayerProgramService` | Player programs | `SupabaseService` | ~400 |
-| `TournamentModeService` | Tournament mode | `SupabaseService` | ~300 |
-| `TournamentRecoveryService` | Tournament recovery | `SupabaseService` | ~300 |
+| Service                     | Purpose               | Dependencies                                                                | Lines |
+| --------------------------- | --------------------- | --------------------------------------------------------------------------- | ----- |
+| `SuperadminService`         | Superadmin operations | `SupabaseService`                                                           | ~400  |
+| `AdminService`              | Admin operations      | `SupabaseService`                                                           | ~300  |
+| `AccountDeletionService`    | Account deletion      | `SupabaseService`, `AuthService`, `LoggerService`, `ToastService`, `Router` | ~300  |
+| `ProfileCompletionService`  | Profile completion    | `SupabaseService`                                                           | ~300  |
+| `SearchService`             | Global search         | `SupabaseService`, `ApiService`                                             | ~590  |
+| `AchievementsService`       | Achievements          | `HttpClient`, `LoggerService`, `ToastService`                               | ~400  |
+| `BodyWeightLoadService`     | Body weight tracking  | `LoggerService`                                                             | ~300  |
+| `DecisionLedgerService`     | Decision tracking     | `SupabaseService`                                                           | ~300  |
+| `PlayerProgramService`      | Player programs       | `SupabaseService`                                                           | ~400  |
+| `TournamentModeService`     | Tournament mode       | `SupabaseService`                                                           | ~300  |
+| `TournamentRecoveryService` | Tournament recovery   | `SupabaseService`                                                           | ~300  |
 
 ---
 
@@ -230,17 +230,20 @@ Services that aggregate multiple lower-level services (facade pattern).
 ### Core Responsibilities by Category
 
 #### Authentication & Authorization
+
 - **`AuthService`**: User authentication, session management
 - **`ContextService`**: User context, team context, role management
 - **`PrivacySettingsService`**: Privacy controls, consent management
 
 #### Data Access
+
 - **`SupabaseService`**: Base Supabase client, auth state
 - **`ApiService`**: HTTP client wrapper, API base URL management
 - **`DirectSupabaseApiService`**: Direct database queries
 - **`ResourceService`**: Angular 21 resource API for reactive data fetching
 
 #### Training & Performance
+
 - **`AcwrService`**: ACWR calculations (1,275 lines - core service)
 - **`TrainingDataService`**: Training session data
 - **`TrainingPlanService`**: Training plan management
@@ -248,6 +251,7 @@ Services that aggregate multiple lower-level services (facade pattern).
 - **`UnifiedTrainingService`**: Facade for training operations
 
 #### Wellness & Recovery
+
 - **`ReadinessService`**: Readiness score calculations
 - **`WellnessService`**: Wellness data management
 - **`WellnessRecoveryService`**: Wellness tracking and recovery
@@ -255,6 +259,7 @@ Services that aggregate multiple lower-level services (facade pattern).
 - **`SleepDebtService`**: Sleep debt calculations
 
 #### Analytics & Intelligence
+
 - **`AnalyticsDataService`**: Analytics data aggregation
 - **`TrendsService`**: Trend analysis
 - **`DashboardDataService`**: Dashboard data aggregation
@@ -262,6 +267,7 @@ Services that aggregate multiple lower-level services (facade pattern).
 - **`AiChatService`**: AI Coach chat interface
 
 #### Team Management
+
 - **`TeamMembershipService`**: Team membership management
 - **`TeamStatisticsService`**: Team statistics
 - **`ChannelService`**: Team chat channels (1,270 lines)
@@ -279,6 +285,7 @@ Services that aggregate multiple lower-level services (facade pattern).
 **Date Analyzed:** January 9, 2026
 
 **Analysis Method:**
+
 ```bash
 # Using madge tool
 npx madge --circular angular/src/app/core/services/
@@ -291,6 +298,7 @@ npx madge --circular angular/src/app/core/services/
 ✅ **No circular dependencies detected** in the service layer.
 
 All services follow a clean dependency hierarchy:
+
 - Level 0 services have no dependencies
 - Level 1 services depend only on Level 0
 - Level 2 services depend on Level 0-1
@@ -300,13 +308,13 @@ All services follow a clean dependency hierarchy:
 
 Based on dependency analysis:
 
-| Service | Dependencies | Level |
-|---------|--------------|-------|
-| `UnifiedTrainingService` | 14 services | Level 3+ |
-| `AcwrAlertsService` | 9 services | Level 2 |
-| `ChannelService` | 5 services | Level 2 |
-| `EvidenceConfigService` | 5 services | Level 1 |
-| `NotificationStateService` | 5 services | Level 2 |
+| Service                    | Dependencies | Level    |
+| -------------------------- | ------------ | -------- |
+| `UnifiedTrainingService`   | 14 services  | Level 3+ |
+| `AcwrAlertsService`        | 9 services   | Level 2  |
+| `ChannelService`           | 5 services   | Level 2  |
+| `EvidenceConfigService`    | 5 services   | Level 1  |
+| `NotificationStateService` | 5 services   | Level 2  |
 
 ### Dependency Health Metrics
 
@@ -357,6 +365,7 @@ Based on dependency analysis:
 ### Key Dependency Chains
 
 #### ACWR Calculation Chain
+
 ```
 EvidenceConfigService (Level 0)
   ↓
@@ -370,6 +379,7 @@ UnifiedTrainingService (Level 3)
 ```
 
 #### Wellness Chain
+
 ```
 SupabaseService (Level 0)
   ↓
@@ -384,6 +394,7 @@ UnifiedTrainingService (Level 3)
 ```
 
 #### AI Coach Chain
+
 ```
 ApiService (Level 0)
 PrivacySettingsService (Level 1)
@@ -400,6 +411,7 @@ AiChatService (Level 2)
 ### 1. Dependency Injection
 
 ✅ **DO:**
+
 - Use `inject()` function for dependencies
 - Keep dependencies explicit in constructor or `inject()` calls
 - Document dependencies in JSDoc comments
@@ -411,12 +423,13 @@ AiChatService (Level 2)
 export class MyService {
   private supabase = inject(SupabaseService);
   private logger = inject(LoggerService);
-  
+
   // ...
 }
 ```
 
 ❌ **DON'T:**
+
 - Create circular dependencies
 - Inject services that aren't needed
 - Use global singletons unnecessarily
@@ -424,11 +437,13 @@ export class MyService {
 ### 2. Service Organization
 
 ✅ **DO:**
+
 - Keep services focused on single responsibility
 - Use facade services (`UnifiedTrainingService`) to aggregate related services
 - Document service purpose and dependencies
 
 ❌ **DON'T:**
+
 - Create god services (services that do everything)
 - Duplicate functionality across services
 - Create unnecessary abstraction layers
@@ -436,11 +451,13 @@ export class MyService {
 ### 3. Dependency Management
 
 ✅ **DO:**
+
 - Keep dependency chains shallow (prefer Level 0-2)
 - Use dependency injection for testability
 - Document service dependencies
 
 ❌ **DON'T:**
+
 - Create deep dependency chains (Level 4+)
 - Create circular dependencies
 - Hard-code service dependencies
@@ -448,11 +465,13 @@ export class MyService {
 ### 4. Testing
 
 ✅ **DO:**
+
 - Mock dependencies in unit tests
 - Test services in isolation
 - Use Angular testing utilities
 
 ❌ **DON'T:**
+
 - Test multiple services together (use integration tests for that)
 - Create real service instances in unit tests
 - Skip dependency mocking
@@ -471,7 +490,7 @@ export class UnifiedTrainingService {
   private readinessService = inject(ReadinessService);
   private trainingDataService = inject(TrainingDataService);
   // ... more services
-  
+
   // Expose unified API
   readonly acwrRatio = this.acwrService.acwrRatio;
   readonly readinessScore = this.readinessService.readinessScore;
@@ -501,7 +520,7 @@ Services compose other services:
 export class AcwrService {
   private evidenceConfigService = inject(EvidenceConfigService);
   private acwrSpikeDetection = inject(AcwrSpikeDetectionService);
-  
+
   // Use composed services
   calculateACWR() {
     const config = this.evidenceConfigService.getACWRConfig();
@@ -600,15 +619,18 @@ grep -r "constructor" angular/src/app/core/services/ | grep -v "//"
 ### Analysis Date: January 9, 2026
 
 **Tools Used:**
+
 - `madge` - Dependency analysis tool
 - Command: `npx madge --circular angular/src/app/core/services/`
 
 **Results:**
+
 - ✅ **No circular dependencies found**
 - ✅ **141 service files analyzed**
 - ✅ **Dependency JSON generated:** `docs/services-deps.json`
 
 **Top Services by Dependency Count:**
+
 1. `UnifiedTrainingService` - 14 dependencies (Level 3+ facade)
 2. `AcwrAlertsService` - 9 dependencies (Level 2)
 3. `ChannelService` - 5 dependencies (Level 2)
@@ -616,6 +638,7 @@ grep -r "constructor" angular/src/app/core/services/ | grep -v "//"
 5. `NotificationStateService` - 5 dependencies (Level 2)
 
 **Health Metrics:**
+
 - Average dependencies per service: ~2-3
 - Services with 0 dependencies: ~10 (Level 0 foundation)
 - Max dependencies: 14 (acceptable for facade pattern)

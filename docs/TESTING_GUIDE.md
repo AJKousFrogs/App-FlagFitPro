@@ -20,29 +20,31 @@ A cross-platform guide for setting up and testing the Angular frontend with API 
 
 ### Required Software
 
-| Software | Version | Check Command |
-|----------|---------|---------------|
-| Node.js | ≥ 20.0.0 | `node --version` |
-| npm | ≥ 10.0.0 | `npm --version` |
-| Git | Any recent | `git --version` |
+| Software | Version    | Check Command    |
+| -------- | ---------- | ---------------- |
+| Node.js  | ≥ 20.0.0   | `node --version` |
+| npm      | ≥ 10.0.0   | `npm --version`  |
+| Git      | Any recent | `git --version`  |
 
 ### Optional (for full stack testing)
 
-| Software | Purpose | Install |
-|----------|---------|---------|
-| Netlify CLI | Run functions locally | `npm i -g netlify-cli` |
-| Supabase CLI | Database management | `npm i -g supabase` |
-| curl / wget | API testing | Usually pre-installed |
+| Software     | Purpose               | Install                |
+| ------------ | --------------------- | ---------------------- |
+| Netlify CLI  | Run functions locally | `npm i -g netlify-cli` |
+| Supabase CLI | Database management   | `npm i -g supabase`    |
+| curl / wget  | API testing           | Usually pre-installed  |
 
 ### Platform-Specific Notes
 
 **macOS:**
+
 ```bash
 # Install Node.js via Homebrew
 brew install node@20
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 # Install Node.js via NodeSource
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
@@ -50,6 +52,7 @@ sudo apt-get install -y nodejs
 ```
 
 **Windows:**
+
 ```powershell
 # Install Node.js via winget
 winget install OpenJS.NodeJS.LTS
@@ -142,13 +145,13 @@ set SUPABASE_ANON_KEY=your-anon-key
 
 ### 3. Common Environment Variables
 
-| Variable | Required | Description | Where to Find |
-|----------|----------|-------------|---------------|
-| `SUPABASE_URL` | Yes | Supabase project URL | Dashboard → Settings → API |
-| `SUPABASE_ANON_KEY` | Yes | Public API key | Dashboard → Settings → API |
+| Variable               | Required     | Description              | Where to Find              |
+| ---------------------- | ------------ | ------------------------ | -------------------------- |
+| `SUPABASE_URL`         | Yes          | Supabase project URL     | Dashboard → Settings → API |
+| `SUPABASE_ANON_KEY`    | Yes          | Public API key           | Dashboard → Settings → API |
 | `SUPABASE_SERVICE_KEY` | Backend only | Service role key (admin) | Dashboard → Settings → API |
-| `JWT_SECRET` | Backend only | JWT signing secret | Dashboard → Settings → API |
-| `VITE_SENTRY_DSN` | No | Sentry error tracking | Sentry dashboard |
+| `JWT_SECRET`           | Backend only | JWT signing secret       | Dashboard → Settings → API |
+| `VITE_SENTRY_DSN`      | No           | Sentry error tracking    | Sentry dashboard           |
 
 ---
 
@@ -175,18 +178,20 @@ netlify dev
 ```
 
 - **Frontend:** http://localhost:8888
-- **Functions:** http://localhost:8888/.netlify/functions/*
+- **Functions:** http://localhost:8888/.netlify/functions/\*
 - **Supabase:** Connected (requires `.env`)
 
 ### Option C: Angular + Separate Backend
 
 **Terminal 1 - Backend:**
+
 ```bash
 # From project root
 node server.js
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
 cd angular
 npm start
@@ -214,6 +219,7 @@ curl http://localhost:3001/api/health
 ```
 
 **Expected Response:**
+
 ```json
 {
   "status": "OK",
@@ -223,6 +229,7 @@ curl http://localhost:3001/api/health
 ```
 
 **Troubleshooting:**
+
 - `Connection refused` → Backend not running
 - `404 Not Found` → Wrong port or path
 - `500 Error` → Check backend logs
@@ -239,6 +246,7 @@ npm run build
 **Expected:** Build completes with no errors. Warnings are acceptable.
 
 **Troubleshooting:**
+
 - TypeScript errors → Check for missing dependencies
 - Memory errors → Increase Node memory: `NODE_OPTIONS=--max-old-space-size=4096 npm run build`
 
@@ -254,6 +262,7 @@ npm run build
 **Expected:** Successful login, dashboard loads with data.
 
 **Troubleshooting:**
+
 - "Invalid credentials" → Check Supabase has test user
 - Network errors → Check CORS settings
 - Blank dashboard → Check API responses in DevTools
@@ -284,6 +293,7 @@ curl http://localhost:3001/api/auth/me \
 ```
 
 **Expected:**
+
 ```json
 {
   "success": true,
@@ -305,6 +315,7 @@ curl -X POST http://localhost:3001/api/auth/login \
 ```
 
 **Expected:**
+
 ```json
 {
   "success": true,
@@ -317,17 +328,17 @@ curl -X POST http://localhost:3001/api/auth/login \
 
 ### Available API Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `/api/health` | Health check |
-| `/api/auth/*` | Authentication |
-| `/api/dashboard/*` | Dashboard data |
-| `/api/training/*` | Training sessions |
-| `/api/analytics/*` | Analytics data |
-| `/api/tournaments/*` | Tournament data |
-| `/api/community/*` | Community features |
-| `/api/wellness/*` | Wellness tracking |
-| `/api/coach/*` | Coach dashboard |
+| Endpoint             | Description        |
+| -------------------- | ------------------ |
+| `/api/health`        | Health check       |
+| `/api/auth/*`        | Authentication     |
+| `/api/dashboard/*`   | Dashboard data     |
+| `/api/training/*`    | Training sessions  |
+| `/api/analytics/*`   | Analytics data     |
+| `/api/tournaments/*` | Tournament data    |
+| `/api/community/*`   | Community features |
+| `/api/wellness/*`    | Wellness tracking  |
+| `/api/coach/*`       | Coach dashboard    |
 
 ---
 
@@ -371,11 +382,11 @@ npm run e2e:headed
 
 ### Test Configuration Files
 
-| File | Purpose |
-|------|---------|
-| `angular/vitest.config.ts` | Unit test configuration |
-| `angular/playwright.config.ts` | E2E test configuration |
-| `angular/e2e/` | E2E test files |
+| File                           | Purpose                 |
+| ------------------------------ | ----------------------- |
+| `angular/vitest.config.ts`     | Unit test configuration |
+| `angular/playwright.config.ts` | E2E test configuration  |
+| `angular/e2e/`                 | E2E test files          |
 
 ---
 
@@ -461,11 +472,11 @@ npm run build
 
 ### Important URLs (Local Development)
 
-| Service | URL |
-|---------|-----|
-| Angular App | http://localhost:4200 |
-| Netlify Dev | http://localhost:8888 |
-| Backend API | http://localhost:3001 |
+| Service      | URL                              |
+| ------------ | -------------------------------- |
+| Angular App  | http://localhost:4200            |
+| Netlify Dev  | http://localhost:8888            |
+| Backend API  | http://localhost:3001            |
 | Health Check | http://localhost:3001/api/health |
 
 ### API Response Format

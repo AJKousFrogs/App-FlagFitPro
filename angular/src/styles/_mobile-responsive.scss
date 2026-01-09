@@ -211,16 +211,29 @@
   @media (max-width: 767px) {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    
+
     // Scroll shadow indicators
-    background: 
-      linear-gradient(to right, white 30%, rgba(255,255,255,0)),
-      linear-gradient(to right, rgba(255,255,255,0), white 70%) 0 100%,
-      radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)),
-      radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+    background:
+      linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+      linear-gradient(to right, rgba(255, 255, 255, 0), white 70%) 0 100%,
+      radial-gradient(
+        farthest-side at 0% 50%,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0)
+      ),
+      radial-gradient(
+          farthest-side at 100% 50%,
+          rgba(0, 0, 0, 0.2),
+          rgba(0, 0, 0, 0)
+        )
+        0 100%;
     background-repeat: no-repeat;
     background-color: white;
-    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-size:
+      40px 100%,
+      40px 100%,
+      14px 100%,
+      14px 100%;
     background-attachment: local, local, scroll, scroll;
 
     table {
@@ -303,7 +316,10 @@
 @supports (padding: max(0px)) {
   .mobile-safe-bottom {
     @media (max-width: 767px) {
-      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom)) !important;
+      padding-bottom: max(
+        var(--space-4),
+        env(safe-area-inset-bottom)
+      ) !important;
     }
   }
 
@@ -363,12 +379,13 @@
     // DatePicker full width
     .p-datepicker {
       max-width: calc(100vw - var(--space-6)) !important;
-      
+
       .p-datepicker-calendar {
         font-size: var(--font-size-h4) !important;
       }
 
-      td, th {
+      td,
+      th {
         padding: var(--space-2) !important;
       }
     }
@@ -471,10 +488,9 @@
 //   color: white;
 //   z-index: 99999;
 //   font-size: var(--font-caption-size);
-//   
+//
 //   @media (min-width: 480px) { content: 'sm'; background: orange; }
 //   @media (min-width: 640px) { content: 'md'; background: yellow; color: black; }
 //   @media (min-width: 768px) { content: 'lg'; background: green; }
 //   @media (min-width: 1024px) { content: 'xl'; background: blue; }
 // }
-

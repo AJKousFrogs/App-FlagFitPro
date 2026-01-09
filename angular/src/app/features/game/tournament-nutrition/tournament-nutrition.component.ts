@@ -277,7 +277,10 @@ interface HydrationLog {
             <div class="empty-state">
               <i class="pi pi-calendar"></i>
               <h3>No Tournament Schedule</h3>
-              <p>Create your tournament schedule to get personalized nutrition recommendations.</p>
+              <p>
+                Create your tournament schedule to get personalized nutrition
+                recommendations.
+              </p>
               <app-button
                 iconLeft="pi-calendar"
                 (clicked)="showScheduleEditor = true"
@@ -292,79 +295,81 @@ interface HydrationLog {
             </h3>
 
             @for (window of nutritionWindows(); track window.id) {
-            <div
-              class="timeline-item"
-              [class.completed]="window.completed"
-              [class.current]="isCurrentWindow(window)"
-              [class.critical]="window.priority === 'critical'"
-            >
-              <div class="timeline-marker">
-                <div
-                  class="marker-dot"
-                  [class.pulse]="isCurrentWindow(window)"
-                ></div>
-                <div class="marker-line"></div>
-              </div>
+              <div
+                class="timeline-item"
+                [class.completed]="window.completed"
+                [class.current]="isCurrentWindow(window)"
+                [class.critical]="window.priority === 'critical'"
+              >
+                <div class="timeline-marker">
+                  <div
+                    class="marker-dot"
+                    [class.pulse]="isCurrentWindow(window)"
+                  ></div>
+                  <div class="marker-line"></div>
+                </div>
 
-              <div class="timeline-content">
-                <div class="window-header">
-                  <div class="window-time">
-                    <span class="time"
-                      >{{ window.startTime }} - {{ window.endTime }}</span
-                    >
-                    @if (window.priority === "critical") {
-                      <p-tag value="Critical" severity="danger"></p-tag>
+                <div class="timeline-content">
+                  <div class="window-header">
+                    <div class="window-time">
+                      <span class="time"
+                        >{{ window.startTime }} - {{ window.endTime }}</span
+                      >
+                      @if (window.priority === "critical") {
+                        <p-tag value="Critical" severity="danger"></p-tag>
+                      }
+                    </div>
+                    <h4>{{ window.title }}</h4>
+                  </div>
+
+                  <div class="recommendations-grid">
+                    @for (rec of window.recommendations; track rec.item) {
+                      <div class="recommendation-card" [class]="rec.category">
+                        <div class="rec-icon">{{ rec.icon }}</div>
+                        <div class="rec-content">
+                          <div class="rec-item">{{ rec.item }}</div>
+                          @if (rec.amount) {
+                            <div class="rec-amount">{{ rec.amount }}</div>
+                          }
+                          @if (rec.timing) {
+                            <div class="rec-timing">{{ rec.timing }}</div>
+                          }
+                          <div class="rec-reason">{{ rec.reason }}</div>
+                          @if (
+                            rec.alternatives && rec.alternatives.length > 0
+                          ) {
+                            <div class="rec-alternatives">
+                              <span class="alt-label">Alternatives:</span>
+                              {{ rec.alternatives.join(", ") }}
+                            </div>
+                          }
+                        </div>
+                      </div>
                     }
                   </div>
-                  <h4>{{ window.title }}</h4>
-                </div>
 
-                <div class="recommendations-grid">
-                  @for (rec of window.recommendations; track rec.item) {
-                    <div class="recommendation-card" [class]="rec.category">
-                      <div class="rec-icon">{{ rec.icon }}</div>
-                      <div class="rec-content">
-                        <div class="rec-item">{{ rec.item }}</div>
-                        @if (rec.amount) {
-                          <div class="rec-amount">{{ rec.amount }}</div>
-                        }
-                        @if (rec.timing) {
-                          <div class="rec-timing">{{ rec.timing }}</div>
-                        }
-                        <div class="rec-reason">{{ rec.reason }}</div>
-                        @if (rec.alternatives && rec.alternatives.length > 0) {
-                          <div class="rec-alternatives">
-                            <span class="alt-label">Alternatives:</span>
-                            {{ rec.alternatives.join(", ") }}
-                          </div>
-                        }
-                      </div>
+                  <div class="window-footer">
+                    <div class="hydration-target">
+                      <i class="pi pi-tint"></i>
+                      <span>Target: {{ window.hydrationTarget }}ml</span>
                     </div>
-                  }
-                </div>
-
-                <div class="window-footer">
-                  <div class="hydration-target">
-                    <i class="pi pi-tint"></i>
-                    <span>Target: {{ window.hydrationTarget }}ml</span>
+                    @if (!window.completed) {
+                      <app-button
+                        variant="outlined"
+                        size="sm"
+                        iconLeft="pi-check"
+                        (clicked)="completeWindow(window)"
+                        >Mark Complete</app-button
+                      >
+                    } @else {
+                      <span class="completed-badge">
+                        <i class="pi pi-check-circle"></i> Completed
+                      </span>
+                    }
                   </div>
-                  @if (!window.completed) {
-                    <app-button
-                      variant="outlined"
-                      size="sm"
-                      iconLeft="pi-check"
-                      (clicked)="completeWindow(window)"
-                      >Mark Complete</app-button
-                    >
-                  } @else {
-                    <span class="completed-badge">
-                      <i class="pi pi-check-circle"></i> Completed
-                    </span>
-                  }
                 </div>
               </div>
-            </div>
-          }
+            }
           </div>
         }
 

@@ -114,7 +114,9 @@ export interface TablePreferences {
                 [binary]="true"
                 (onChange)="toggleSelectAll()"
               />
-              <span class="checkbox-label">{{ selectedRows().length }} selected</span>
+              <span class="checkbox-label"
+                >{{ selectedRows().length }} selected</span
+              >
             </div>
           }
 
@@ -204,7 +206,9 @@ export interface TablePreferences {
               }
               @for (col of columns; track col.field) {
                 <th
-                  [attr.pReorderableColumn]="col.reorderable !== false ? '' : null"
+                  [attr.pReorderableColumn]="
+                    col.reorderable !== false ? '' : null
+                  "
                   [attr.pResizableColumn]="col.resizable !== false ? '' : null"
                   [pSortableColumn]="col.sortable !== false ? col.field : null"
                   [style.width]="getColumnWidth(col)"
@@ -422,15 +426,15 @@ export class EnhancedDataTableComponent {
     }));
   });
 
-  private lastColumnsHash = '';
-  
+  private lastColumnsHash = "";
+
   constructor() {
     // Initialize visible columns when columns input changes
     effect(() => {
       const cols = this.columns();
       // Create a hash of column fields to detect actual changes
-      const colsHash = cols.map(c => c.field).join(',');
-      
+      const colsHash = cols.map((c) => c.field).join(",");
+
       // Only reinitialize when columns actually change
       if (cols.length > 0 && colsHash !== this.lastColumnsHash) {
         this.lastColumnsHash = colsHash;

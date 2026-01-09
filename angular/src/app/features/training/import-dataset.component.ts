@@ -317,10 +317,7 @@ export class ImportDatasetComponent {
         throw new Error("Import failed");
       }
     } catch (error) {
-      const errorMessage = getErrorMessage(
-        error,
-        "Failed to import dataset",
-      );
+      const errorMessage = getErrorMessage(error, "Failed to import dataset");
       this.importResult.set({
         success: false,
         error: errorMessage,

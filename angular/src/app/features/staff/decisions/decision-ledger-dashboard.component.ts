@@ -1,26 +1,26 @@
 /**
  * Decision Ledger Dashboard Component
- * 
+ *
  * Main dashboard for viewing and managing decisions
  */
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 import type {
-    CreateDecisionRequest,
-    DecisionFilters,
-    DecisionLedgerEntry,
-    ReviewDecisionRequest,
+  CreateDecisionRequest,
+  DecisionFilters,
+  DecisionLedgerEntry,
+  ReviewDecisionRequest,
 } from "@core/models/decision-ledger.models";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
@@ -53,143 +53,114 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
   ],
   template: `
     <div class="decision-ledger-dashboard">
-        <app-page-header
-          title="Decision Ledger"
-          subtitle="Track decisions, reviews, and outcomes"
-        >
-          <p-button
-            label="New Decision"
-            icon="pi pi-plus"
-            (onClick)="openCreateDialog()"
-          ></p-button>
-        </app-page-header>
+      <app-page-header
+        title="Decision Ledger"
+        subtitle="Track decisions, reviews, and outcomes"
+      >
+        <p-button
+          label="New Decision"
+          icon="pi pi-plus"
+          (onClick)="openCreateDialog()"
+        ></p-button>
+      </app-page-header>
 
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-          <app-card-shell title="Active Decisions" headerIcon="pi-check-circle">
-            <div class="stat-value">{{ stats()?.active || 0 }}</div>
-            <div class="stat-label">Currently active</div>
-          </app-card-shell>
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <app-card-shell title="Active Decisions" headerIcon="pi-check-circle">
+          <div class="stat-value">{{ stats()?.active || 0 }}</div>
+          <div class="stat-label">Currently active</div>
+        </app-card-shell>
 
-          <app-card-shell title="Due for Review" headerIcon="pi-clock">
-            <div class="stat-value stat-value--warning">
-              {{ stats()?.dueForReview || 0 }}
+        <app-card-shell title="Due for Review" headerIcon="pi-clock">
+          <div class="stat-value stat-value--warning">
+            {{ stats()?.dueForReview || 0 }}
+          </div>
+          <div class="stat-label">Requires attention</div>
+        </app-card-shell>
+
+        <app-card-shell title="Overdue" headerIcon="pi-exclamation-triangle">
+          <div class="stat-value stat-value--danger">
+            {{ stats()?.overdue || 0 }}
+          </div>
+          <div class="stat-label">Past review date</div>
+        </app-card-shell>
+
+        <app-card-shell title="Low Confidence" headerIcon="pi-info-circle">
+          <div class="stat-value stat-value--warning">
+            {{ stats()?.lowConfidence || 0 }}
+          </div>
+          <div class="stat-label">Need more data</div>
+        </app-card-shell>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-section">
+        <app-card-shell title="Filters" headerIcon="pi-filter">
+          <div class="filters-grid">
+            <div class="filter-item">
+              <label>Status</label>
+              <p-select
+                [options]="statusOptions"
+                [(ngModel)]="filters().status"
+                placeholder="All Statuses"
+                (onChange)="applyFilters()"
+              ></p-select>
             </div>
-            <div class="stat-label">Requires attention</div>
-          </app-card-shell>
 
-          <app-card-shell title="Overdue" headerIcon="pi-exclamation-triangle">
-            <div class="stat-value stat-value--danger">
-              {{ stats()?.overdue || 0 }}
+            <div class="filter-item">
+              <label>Category</label>
+              <p-select
+                [options]="categoryOptions"
+                [(ngModel)]="filters().decisionCategory"
+                placeholder="All Categories"
+                (onChange)="applyFilters()"
+              ></p-select>
             </div>
-            <div class="stat-label">Past review date</div>
-          </app-card-shell>
 
-          <app-card-shell title="Low Confidence" headerIcon="pi-info-circle">
-            <div class="stat-value stat-value--warning">
-              {{ stats()?.lowConfidence || 0 }}
+            <div class="filter-item">
+              <label>Priority</label>
+              <p-select
+                [options]="priorityOptions"
+                [(ngModel)]="filters().reviewPriority"
+                placeholder="All Priorities"
+                (onChange)="applyFilters()"
+              ></p-select>
             </div>
-            <div class="stat-label">Need more data</div>
-          </app-card-shell>
+
+            <div class="filter-item">
+              <p-button
+                label="Clear Filters"
+                icon="pi pi-times"
+                [outlined]="true"
+                size="small"
+                (onClick)="clearFilters()"
+              ></p-button>
+            </div>
+          </div>
+        </app-card-shell>
+      </div>
+
+      <!-- Loading State -->
+      @if (decisionService.isLoading()) {
+        <div class="loading-state">
+          <p>Loading decisions...</p>
         </div>
+      }
 
-        <!-- Filters -->
-        <div class="filters-section">
-          <app-card-shell title="Filters" headerIcon="pi-filter">
-            <div class="filters-grid">
-              <div class="filter-item">
-                <label>Status</label>
-                <p-select
-                  [options]="statusOptions"
-                  [(ngModel)]="filters().status"
-                  placeholder="All Statuses"
-                  (onChange)="applyFilters()"
-                ></p-select>
-              </div>
-
-              <div class="filter-item">
-                <label>Category</label>
-                <p-select
-                  [options]="categoryOptions"
-                  [(ngModel)]="filters().decisionCategory"
-                  placeholder="All Categories"
-                  (onChange)="applyFilters()"
-                ></p-select>
-              </div>
-
-              <div class="filter-item">
-                <label>Priority</label>
-                <p-select
-                  [options]="priorityOptions"
-                  [(ngModel)]="filters().reviewPriority"
-                  placeholder="All Priorities"
-                  (onChange)="applyFilters()"
-                ></p-select>
-              </div>
-
-              <div class="filter-item">
-                <p-button
-                  label="Clear Filters"
-                  icon="pi pi-times"
-                  [outlined]="true"
-                  size="small"
-                  (onClick)="clearFilters()"
-                ></p-button>
-              </div>
-            </div>
-          </app-card-shell>
+      <!-- Error State -->
+      @if (decisionService.error()) {
+        <div class="error-state">
+          <p>Error: {{ decisionService.error() }}</p>
+          <p-button label="Retry" (onClick)="loadData()"></p-button>
         </div>
+      }
 
-        <!-- Loading State -->
-        @if (decisionService.isLoading()) {
-          <div class="loading-state">
-            <p>Loading decisions...</p>
-          </div>
-        }
-
-        <!-- Error State -->
-        @if (decisionService.error()) {
-          <div class="error-state">
-            <p>Error: {{ decisionService.error() }}</p>
-            <p-button label="Retry" (onClick)="loadData()"></p-button>
-          </div>
-        }
-
-        <!-- Due for Review Section -->
-        @if (dueForReview().length > 0) {
-          <div class="section">
-            <app-card-shell
-              title="Due for Review ({{ dueForReview().length }})"
-              headerIcon="pi-clock"
-            >
-              <ng-container header-actions>
-                <p-button
-                  label="View All"
-                  [outlined]="true"
-                  size="small"
-                  [routerLink]="['/staff/decisions']"
-                  [queryParams]="{ dueForReview: true }"
-                ></p-button>
-              </ng-container>
-
-              <div class="decisions-grid">
-                @for (decision of dueForReview().slice(0, UI_LIMITS.DECISIONS_PREVIEW); track decision.id) {
-                  <app-decision-card
-                    [decision]="decision"
-                    [canReview]="true"
-                    (review)="onReviewDecision($event)"
-                  ></app-decision-card>
-                }
-              </div>
-            </app-card-shell>
-          </div>
-        }
-
-        <!-- Recent Decisions -->
+      <!-- Due for Review Section -->
+      @if (dueForReview().length > 0) {
         <div class="section">
           <app-card-shell
-            title="Recent Decisions"
-            headerIcon="pi-history"
+            title="Due for Review ({{ dueForReview().length }})"
+            headerIcon="pi-clock"
           >
             <ng-container header-actions>
               <p-button
@@ -197,47 +168,85 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
                 [outlined]="true"
                 size="small"
                 [routerLink]="['/staff/decisions']"
+                [queryParams]="{ dueForReview: true }"
               ></p-button>
             </ng-container>
 
-            @if (decisions().length === 0) {
-              <div class="empty-state">
-                <p>No decisions found</p>
-                <p-button
-                  label="Create First Decision"
-                  icon="pi pi-plus"
-                  (onClick)="openCreateDialog()"
-                ></p-button>
-              </div>
-            } @else {
-              <div class="decisions-grid">
-                @for (decision of decisions().slice(0, UI_LIMITS.DECISIONS_LIST_COUNT); track decision.id) {
-                  <app-decision-card
-                    [decision]="decision"
-                    [canReview]="canReviewDecision(decision)"
-                    (review)="onReviewDecision($event)"
-                  ></app-decision-card>
-                }
-              </div>
-            }
+            <div class="decisions-grid">
+              @for (
+                decision of dueForReview().slice(
+                  0,
+                  UI_LIMITS.DECISIONS_PREVIEW
+                );
+                track decision.id
+              ) {
+                <app-decision-card
+                  [decision]="decision"
+                  [canReview]="true"
+                  (review)="onReviewDecision($event)"
+                ></app-decision-card>
+              }
+            </div>
           </app-card-shell>
         </div>
+      }
 
-        <!-- Create Decision Dialog -->
-        <app-create-decision-dialog
-          [visible]="showCreateDialog()"
-          (visibleChange)="onCreateDialogVisibleChange($event)"
-          (created)="onDecisionCreated($event)"
-        ></app-create-decision-dialog>
+      <!-- Recent Decisions -->
+      <div class="section">
+        <app-card-shell title="Recent Decisions" headerIcon="pi-history">
+          <ng-container header-actions>
+            <p-button
+              label="View All"
+              [outlined]="true"
+              size="small"
+              [routerLink]="['/staff/decisions']"
+            ></p-button>
+          </ng-container>
 
-        <!-- Review Decision Dialog -->
-        <app-review-decision-dialog
-          [visible]="showReviewDialog()"
-          [decision]="selectedDecisionForReview()"
-          (visibleChange)="onReviewDialogVisibleChange($event)"
-          (reviewed)="onDecisionReviewed($event)"
-        ></app-review-decision-dialog>
+          @if (decisions().length === 0) {
+            <div class="empty-state">
+              <p>No decisions found</p>
+              <p-button
+                label="Create First Decision"
+                icon="pi pi-plus"
+                (onClick)="openCreateDialog()"
+              ></p-button>
+            </div>
+          } @else {
+            <div class="decisions-grid">
+              @for (
+                decision of decisions().slice(
+                  0,
+                  UI_LIMITS.DECISIONS_LIST_COUNT
+                );
+                track decision.id
+              ) {
+                <app-decision-card
+                  [decision]="decision"
+                  [canReview]="canReviewDecision(decision)"
+                  (review)="onReviewDecision($event)"
+                ></app-decision-card>
+              }
+            </div>
+          }
+        </app-card-shell>
       </div>
+
+      <!-- Create Decision Dialog -->
+      <app-create-decision-dialog
+        [visible]="showCreateDialog()"
+        (visibleChange)="onCreateDialogVisibleChange($event)"
+        (created)="onDecisionCreated($event)"
+      ></app-create-decision-dialog>
+
+      <!-- Review Decision Dialog -->
+      <app-review-decision-dialog
+        [visible]="showReviewDialog()"
+        [decision]="selectedDecisionForReview()"
+        (visibleChange)="onReviewDialogVisibleChange($event)"
+        (reviewed)="onDecisionReviewed($event)"
+      ></app-review-decision-dialog>
+    </div>
   `,
   styles: [
     `
@@ -403,10 +412,7 @@ export class DecisionLedgerDashboardComponent implements OnInit {
 
   async onDecisionReviewed(request: ReviewDecisionRequest): Promise<void> {
     try {
-      await this.decisionService.reviewDecision(
-        request.decisionId,
-        request,
-      );
+      await this.decisionService.reviewDecision(request.decisionId, request);
       this.showReviewDialog.set(false);
       this.selectedDecisionForReview.set(null);
       await this.loadData();
@@ -437,4 +443,3 @@ export class DecisionLedgerDashboardComponent implements OnInit {
     }
   }
 }
-

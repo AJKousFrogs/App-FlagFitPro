@@ -1,10 +1,7 @@
 {
   "metadata": {
     "title": "Practitioner's Guide to the Calf and Achilles Complex",
-    "authors": [
-      "Sue Mayes",
-      "VALD Performance Contributors"
-    ],
+    "authors": ["Sue Mayes", "VALD Performance Contributors"],
     "organizations": [
       "Australian Ballet",
       "La Trobe University",
@@ -16,10 +13,7 @@
   },
   "research_article": {
     "title": "Practitioner's Guide to the Calf and Achilles Complex",
-    "authors": [
-      "Sue Mayes",
-      "VALD Performance Contributors"
-    ],
+    "authors": ["Sue Mayes", "VALD Performance Contributors"],
     "publication_year": 2024,
     "publisher": "VALD Performance",
     "primary_category": "injury",
@@ -64,12 +58,7 @@
       "achilles_rupture",
       "plantaris_injury"
     ],
-    "training_types": [
-      "strength",
-      "isometric",
-      "eccentric",
-      "plyometric"
-    ],
+    "training_types": ["strength", "isometric", "eccentric", "plyometric"],
     "recovery_methods": [
       "rehabilitation",
       "load_management",
@@ -110,11 +99,7 @@
         "jumping_athletes"
       ],
       "sport_specificity": "general",
-      "categories": [
-        "anatomy",
-        "biomechanics",
-        "lower_limb"
-      ],
+      "categories": ["anatomy", "biomechanics", "lower_limb"],
       "tags": [
         "calf",
         "achilles",
@@ -144,11 +129,7 @@
         "injured_athletes"
       ],
       "sport_specificity": "general",
-      "categories": [
-        "assessment",
-        "testing",
-        "monitoring"
-      ],
+      "categories": ["assessment", "testing", "monitoring"],
       "tags": [
         "isometric_testing",
         "force_plate",
@@ -158,14 +139,8 @@
         "VALD"
       ],
       "protocols": {
-        "equipment": [
-          "ForceFrame",
-          "ForceDecks"
-        ],
-        "test_positions": [
-          "knee_straight_gastrocnemius",
-          "knee_bent_soleus"
-        ],
+        "equipment": ["ForceFrame", "ForceDecks"],
+        "test_positions": ["knee_straight_gastrocnemius", "knee_bent_soleus"],
         "metrics": [
           "peak_force",
           "rate_of_force_development",
@@ -197,11 +172,7 @@
         "field_sport_athletes"
       ],
       "sport_specificity": "running_jumping_sports",
-      "categories": [
-        "injury",
-        "pathology",
-        "diagnosis"
-      ],
+      "categories": ["injury", "pathology", "diagnosis"],
       "tags": [
         "achilles_tendinopathy",
         "calf_strain",
@@ -242,11 +213,7 @@
         "running_athletes"
       ],
       "sport_specificity": "general",
-      "categories": [
-        "rehabilitation",
-        "recovery",
-        "return_to_sport"
-      ],
+      "categories": ["rehabilitation", "recovery", "return_to_sport"],
       "tags": [
         "rehab",
         "tendinopathy_treatment",
@@ -305,11 +272,7 @@
         "court_sport_athletes"
       ],
       "sport_specificity": "running_jumping_sports",
-      "categories": [
-        "injury_prevention",
-        "training",
-        "monitoring"
-      ],
+      "categories": ["injury_prevention", "training", "monitoring"],
       "tags": [
         "injury_prevention",
         "calf_strength",
@@ -317,12 +280,7 @@
         "load_management",
         "screening"
       ],
-      "training_types": [
-        "strength",
-        "eccentric",
-        "isometric",
-        "plyometric"
-      ],
+      "training_types": ["strength", "eccentric", "isometric", "plyometric"],
       "best_practices": [
         "Include regular calf strengthening (gastrocnemius and soleus)",
         "Implement eccentric training programs",

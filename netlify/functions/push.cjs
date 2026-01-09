@@ -543,7 +543,10 @@ exports.handler = async (event, context) => {
             );
           }
 
-          const result = await sendNotificationToUser(targetUserId, notification);
+          const result = await sendNotificationToUser(
+            targetUserId,
+            notification,
+          );
           return createSuccessResponse(result);
         }
 

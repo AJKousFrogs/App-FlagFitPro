@@ -2,24 +2,24 @@
 /**
  * Design Token Linting Script
  * ===========================
- * 
+ *
  * Scans SCSS files for:
  * 1. Deprecated token usage
  * 2. Hardcoded values that should use tokens
  * 3. Forbidden patterns (pill shapes, !important, etc.)
- * 
+ *
  * Usage:
  *   node scripts/lint-design-tokens.cjs [--fix] [--ci] [path]
- * 
+ *
  * Options:
  *   --fix    Attempt to auto-fix some violations (WIP)
  *   --ci     Exit with code 1 on any errors (for CI pipelines)
  *   path     Specific file or directory to lint (default: angular/src)
- * 
+ *
  * Exit codes:
  *   0: No errors (warnings allowed)
  *   1: Errors found (in --ci mode, also exits 1 for warnings)
- * 
+ *
  * Updated: January 9, 2026
  */
 
@@ -35,60 +35,170 @@ const CONFIG = {
   // Deprecated tokens (January 9, 2026)
   deprecatedTokens: {
     // Font display sizes
-    "--font-display-2xl": { replacement: "--font-h1-size", reason: "Use unified typography" },
-    "--font-display-xl": { replacement: "--font-h1-size", reason: "Use unified typography" },
-    "--font-display-lg": { replacement: "--font-h1-size", reason: "Use unified typography" },
-    "--font-display-md": { replacement: "--font-h1-size", reason: "Use unified typography" },
-    "--font-display-sm": { replacement: "--font-h1-size", reason: "Use unified typography" },
+    "--font-display-2xl": {
+      replacement: "--font-h1-size",
+      reason: "Use unified typography",
+    },
+    "--font-display-xl": {
+      replacement: "--font-h1-size",
+      reason: "Use unified typography",
+    },
+    "--font-display-lg": {
+      replacement: "--font-h1-size",
+      reason: "Use unified typography",
+    },
+    "--font-display-md": {
+      replacement: "--font-h1-size",
+      reason: "Use unified typography",
+    },
+    "--font-display-sm": {
+      replacement: "--font-h1-size",
+      reason: "Use unified typography",
+    },
     // Font heading sizes
-    "--font-heading-2xl": { replacement: "--font-h1-size", reason: "Use unified typography" },
-    "--font-heading-xl": { replacement: "--font-h2-size", reason: "Use unified typography" },
-    "--font-heading-lg": { replacement: "--font-h2-size", reason: "Use unified typography" },
-    "--font-heading-md": { replacement: "--font-h3-size", reason: "Use unified typography" },
-    "--font-heading-sm": { replacement: "--font-h4-size", reason: "Use unified typography" },
-    "--font-heading-xs": { replacement: "--font-h4-size", reason: "Use unified typography" },
+    "--font-heading-2xl": {
+      replacement: "--font-h1-size",
+      reason: "Use unified typography",
+    },
+    "--font-heading-xl": {
+      replacement: "--font-h2-size",
+      reason: "Use unified typography",
+    },
+    "--font-heading-lg": {
+      replacement: "--font-h2-size",
+      reason: "Use unified typography",
+    },
+    "--font-heading-md": {
+      replacement: "--font-h3-size",
+      reason: "Use unified typography",
+    },
+    "--font-heading-sm": {
+      replacement: "--font-h4-size",
+      reason: "Use unified typography",
+    },
+    "--font-heading-xs": {
+      replacement: "--font-h4-size",
+      reason: "Use unified typography",
+    },
     // Font body sizes
-    "--font-body-lg": { replacement: "--font-body-size", reason: "Use unified typography" },
-    "--font-body-md": { replacement: "--font-body-size", reason: "Use unified typography" },
-    "--font-body-sm": { replacement: "--font-body-sm-size", reason: "Use unified typography" },
-    "--font-body-xs": { replacement: "--font-caption-size", reason: "Use unified typography" },
-    "--font-body-2xs": { replacement: "--font-caption-size", reason: "Minimum 12px for accessibility" },
-    "--font-body-3xs": { replacement: "--font-caption-size", reason: "Minimum 12px for accessibility" },
+    "--font-body-lg": {
+      replacement: "--font-body-size",
+      reason: "Use unified typography",
+    },
+    "--font-body-md": {
+      replacement: "--font-body-size",
+      reason: "Use unified typography",
+    },
+    "--font-body-sm": {
+      replacement: "--font-body-sm-size",
+      reason: "Use unified typography",
+    },
+    "--font-body-xs": {
+      replacement: "--font-caption-size",
+      reason: "Use unified typography",
+    },
+    "--font-body-2xs": {
+      replacement: "--font-caption-size",
+      reason: "Minimum 12px for accessibility",
+    },
+    "--font-body-3xs": {
+      replacement: "--font-caption-size",
+      reason: "Minimum 12px for accessibility",
+    },
     // Font compact sizes
-    "--font-compact-sm": { replacement: "--font-compact-md", reason: "Minimum 11px for accessibility" },
-    "--font-compact-xs": { replacement: "--font-compact-md", reason: "Minimum 11px for accessibility" },
+    "--font-compact-sm": {
+      replacement: "--font-compact-md",
+      reason: "Minimum 11px for accessibility",
+    },
+    "--font-compact-xs": {
+      replacement: "--font-compact-md",
+      reason: "Minimum 11px for accessibility",
+    },
     // Text aliases
-    "--text-xs": { replacement: "--font-caption-size", reason: "Use canonical tokens" },
-    "--text-sm": { replacement: "--font-body-sm-size", reason: "Use canonical tokens" },
-    "--text-base": { replacement: "--font-body-size", reason: "Use canonical tokens" },
-    "--text-md": { replacement: "--font-body-size", reason: "Use canonical tokens" },
-    "--text-lg": { replacement: "--font-body-size", reason: "Use canonical tokens" },
-    "--text-xl": { replacement: "--font-h3-size", reason: "Use canonical tokens" },
-    "--text-2xl": { replacement: "--font-h2-size", reason: "Use canonical tokens" },
-    "--text-3xl": { replacement: "--font-h2-size", reason: "Use canonical tokens" },
-    "--text-4xl": { replacement: "--font-h1-size", reason: "Use canonical tokens" },
-    "--text-5xl": { replacement: "--font-h1-size", reason: "Use canonical tokens" },
+    "--text-xs": {
+      replacement: "--font-caption-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-sm": {
+      replacement: "--font-body-sm-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-base": {
+      replacement: "--font-body-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-md": {
+      replacement: "--font-body-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-lg": {
+      replacement: "--font-body-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-xl": {
+      replacement: "--font-h3-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-2xl": {
+      replacement: "--font-h2-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-3xl": {
+      replacement: "--font-h2-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-4xl": {
+      replacement: "--font-h1-size",
+      reason: "Use canonical tokens",
+    },
+    "--text-5xl": {
+      replacement: "--font-h1-size",
+      reason: "Use canonical tokens",
+    },
     // Font size aliases
-    "--font-xs": { replacement: "--font-caption-size", reason: "Use canonical tokens" },
-    "--font-sm": { replacement: "--font-body-sm-size", reason: "Use canonical tokens" },
-    "--font-base": { replacement: "--font-body-size", reason: "Use canonical tokens" },
-    "--font-lg": { replacement: "--font-body-size", reason: "Use canonical tokens" },
-    "--font-xl": { replacement: "--font-h3-size", reason: "Use canonical tokens" },
-    "--font-2xl": { replacement: "--font-h2-size", reason: "Use canonical tokens" },
-    "--font-3xl": { replacement: "--font-h2-size", reason: "Use canonical tokens" },
+    "--font-xs": {
+      replacement: "--font-caption-size",
+      reason: "Use canonical tokens",
+    },
+    "--font-sm": {
+      replacement: "--font-body-sm-size",
+      reason: "Use canonical tokens",
+    },
+    "--font-base": {
+      replacement: "--font-body-size",
+      reason: "Use canonical tokens",
+    },
+    "--font-lg": {
+      replacement: "--font-body-size",
+      reason: "Use canonical tokens",
+    },
+    "--font-xl": {
+      replacement: "--font-h3-size",
+      reason: "Use canonical tokens",
+    },
+    "--font-2xl": {
+      replacement: "--font-h2-size",
+      reason: "Use canonical tokens",
+    },
+    "--font-3xl": {
+      replacement: "--font-h2-size",
+      reason: "Use canonical tokens",
+    },
   },
 
   // Forbidden patterns
   forbiddenPatterns: [
     {
       pattern: /border-radius:\s*(9999|100)px/gi,
-      message: "Pill shape (9999px/100px) forbidden for buttons/cards. Use --radius-lg (8px).",
+      message:
+        "Pill shape (9999px/100px) forbidden for buttons/cards. Use --radius-lg (8px).",
       severity: "error",
       rule: "DESIGN_SYSTEM_RULES.md 4.3",
     },
     {
       pattern: /\[rounded\]\s*=\s*["']true["']/gi,
-      message: "[rounded]=\"true\" is forbidden. Buttons use raised rectangular style.",
+      message:
+        '[rounded]="true" is forbidden. Buttons use raised rectangular style.',
       severity: "error",
       rule: "DESIGN_SYSTEM_RULES.md 6.2",
     },
@@ -142,7 +252,8 @@ const CONFIG = {
     },
     {
       // Only warn on z-index >= 3 (0, 1, 2, -1 are acceptable for simple stacking)
-      pattern: /z-index:\s*(?!var\(|0|1|2|-1|auto|inherit|initial|unset)[3-9]\d*/gi,
+      pattern:
+        /z-index:\s*(?!var\(|0|1|2|-1|auto|inherit|initial|unset)[3-9]\d*/gi,
       message: "Hardcoded z-index. Use var(--z-*) tokens.",
       severity: "warning",
       rule: "DESIGN_SYSTEM_RULES.md (z-index scale)",
@@ -166,7 +277,12 @@ const CONFIG = {
     "_token-mapping.scss": ["hardcodedHex"],
     "color-contrast-fixes.scss": ["hardcodedHex"],
     "cascade-layers.scss": ["hardcodedHex"], // Defines tokens in CSS layers
-    "_exceptions.scss": ["hardcodedHex", "hardcodedFontSize", "hardcodedSpacing", "hardcodedZIndex"], // Documented exceptions
+    "_exceptions.scss": [
+      "hardcodedHex",
+      "hardcodedFontSize",
+      "hardcodedSpacing",
+      "hardcodedZIndex",
+    ], // Documented exceptions
     // Mobile files use 16px font-size intentionally to prevent iOS zoom
     "_mobile-touch-components.scss": ["hardcodedFontSize"],
     "_mobile-responsive.scss": ["hardcodedFontSize"],
@@ -207,7 +323,7 @@ function lintFile(filePath, content) {
     for (const [token, info] of Object.entries(CONFIG.deprecatedTokens)) {
       const regex = new RegExp(`var\\(${token}\\)`, "g");
       let match;
-      
+
       lines.forEach((line, index) => {
         if (regex.test(line)) {
           results.deprecations.push({
@@ -230,13 +346,17 @@ function lintFile(filePath, content) {
     inMultilineComment = false;
     lines.forEach((line, index) => {
       // Track multiline comments
-      if (line.includes("/*")) {inMultilineComment = true;}
+      if (line.includes("/*")) {
+        inMultilineComment = true;
+      }
       if (line.includes("*/")) {
         inMultilineComment = false;
         return; // Skip comment closing line
       }
-      if (inMultilineComment) {return;}
-      
+      if (inMultilineComment) {
+        return;
+      }
+
       // Skip lines that are single-line comments
       const trimmedLine = line.trim();
       if (trimmedLine.startsWith("//") || trimmedLine.startsWith("*")) {
@@ -261,23 +381,40 @@ function lintFile(filePath, content) {
   // Check for hardcoded values
   for (const rule of CONFIG.hardcodedPatterns) {
     // Skip if file is in allowed list
-    if (rule.allowedFiles && rule.allowedFiles.some((f) => filePath.includes(f))) {
+    if (
+      rule.allowedFiles &&
+      rule.allowedFiles.some((f) => filePath.includes(f))
+    ) {
       continue;
     }
     // Skip if rule is relaxed for this file
-    if (rule.pattern.toString().includes("#") && relaxedRules.includes("hardcodedHex")) {
+    if (
+      rule.pattern.toString().includes("#") &&
+      relaxedRules.includes("hardcodedHex")
+    ) {
       continue;
     }
     // Skip hardcoded font-size checks for mobile files (iOS zoom prevention)
-    if (rule.message.includes("font-size") && relaxedRules.includes("hardcodedFontSize")) {
+    if (
+      rule.message.includes("font-size") &&
+      relaxedRules.includes("hardcodedFontSize")
+    ) {
       continue;
     }
     // Skip hardcoded spacing checks for exception files
-    if ((rule.message.includes("padding") || rule.message.includes("margin") || rule.message.includes("gap")) && relaxedRules.includes("hardcodedSpacing")) {
+    if (
+      (rule.message.includes("padding") ||
+        rule.message.includes("margin") ||
+        rule.message.includes("gap")) &&
+      relaxedRules.includes("hardcodedSpacing")
+    ) {
       continue;
     }
     // Skip hardcoded z-index checks for exception files
-    if (rule.message.includes("z-index") && relaxedRules.includes("hardcodedZIndex")) {
+    if (
+      rule.message.includes("z-index") &&
+      relaxedRules.includes("hardcodedZIndex")
+    ) {
       continue;
     }
 
@@ -287,11 +424,19 @@ function lintFile(filePath, content) {
         return;
       }
       // Skip lines with exception comments or intentional hardcoded values
-      if (line.includes("EXCEPTION") || line.includes("@deprecated") || line.includes("Intentionally") || line.includes("intentionally")) {
+      if (
+        line.includes("EXCEPTION") ||
+        line.includes("@deprecated") ||
+        line.includes("Intentionally") ||
+        line.includes("intentionally")
+      ) {
         return;
       }
       // Skip var() fallback values (these are acceptable)
-      if (rule.pattern.toString().includes("#") && /var\([^,]+,\s*#/.test(line)) {
+      if (
+        rule.pattern.toString().includes("#") &&
+        /var\([^,]+,\s*#/.test(line)
+      ) {
         return;
       }
 
@@ -341,7 +486,10 @@ async function lintDirectory(targetPath) {
         allResults.filesWithIssues++;
       }
     } catch (err) {
-      console.error(`${colors.red}Error reading ${file}:${colors.reset}`, err.message);
+      console.error(
+        `${colors.red}Error reading ${file}:${colors.reset}`,
+        err.message,
+      );
     }
   }
 
@@ -368,7 +516,7 @@ function printResults(results) {
     // Print errors
     for (const error of fileResults.errors) {
       console.log(
-        `  ${colors.red}✖ ERROR${colors.reset} (line ${error.line}): ${error.message}`
+        `  ${colors.red}✖ ERROR${colors.reset} (line ${error.line}): ${error.message}`,
       );
       if (error.rule) {
         console.log(`    ${colors.dim}Rule: ${error.rule}${colors.reset}`);
@@ -378,17 +526,17 @@ function printResults(results) {
     // Print deprecations
     for (const dep of fileResults.deprecations) {
       console.log(
-        `  ${colors.yellow}⚠ DEPRECATED${colors.reset} (line ${dep.line}): ${dep.message}`
+        `  ${colors.yellow}⚠ DEPRECATED${colors.reset} (line ${dep.line}): ${dep.message}`,
       );
       console.log(
-        `    ${colors.dim}Replace: var(${dep.token}) → var(${dep.replacement})${colors.reset}`
+        `    ${colors.dim}Replace: var(${dep.token}) → var(${dep.replacement})${colors.reset}`,
       );
     }
 
     // Print warnings
     for (const warning of fileResults.warnings) {
       console.log(
-        `  ${colors.yellow}⚠ WARNING${colors.reset} (line ${warning.line}): ${warning.message}`
+        `  ${colors.yellow}⚠ WARNING${colors.reset} (line ${warning.line}): ${warning.message}`,
       );
       if (warning.rule) {
         console.log(`    ${colors.dim}Rule: ${warning.rule}${colors.reset}`);
@@ -403,20 +551,20 @@ function printResults(results) {
   console.log(`${colors.bold}Summary${colors.reset}`);
   console.log("=".repeat(60));
   console.log(`Files with issues: ${results.filesWithIssues}`);
+  console.log(`${colors.red}Errors: ${results.totalErrors}${colors.reset}`);
   console.log(
-    `${colors.red}Errors: ${results.totalErrors}${colors.reset}`
+    `${colors.yellow}Deprecations: ${results.totalDeprecations}${colors.reset}`,
   );
   console.log(
-    `${colors.yellow}Deprecations: ${results.totalDeprecations}${colors.reset}`
-  );
-  console.log(
-    `${colors.yellow}Warnings: ${results.totalWarnings}${colors.reset}`
+    `${colors.yellow}Warnings: ${results.totalWarnings}${colors.reset}`,
   );
   console.log("");
 
   if (results.totalDeprecations > 0) {
     console.log(`${colors.cyan}💡 Migration Guide:${colors.reset}`);
-    console.log("   See docs/DESIGN_TOKENS_AUDIT.md section 3.7 for deprecated token replacements.");
+    console.log(
+      "   See docs/DESIGN_TOKENS_AUDIT.md section 3.7 for deprecated token replacements.",
+    );
     console.log("");
   }
 }
@@ -434,8 +582,12 @@ async function main() {
   console.log("");
   console.log(`${colors.bold}🔍 Design Token Linter${colors.reset}`);
   console.log(`${colors.dim}Scanning: ${targetPath}${colors.reset}`);
-  if (isCI) {console.log(`${colors.dim}Mode: CI (strict)${colors.reset}`);}
-  if (isFix) {console.log(`${colors.dim}Mode: Auto-fix (experimental)${colors.reset}`);}
+  if (isCI) {
+    console.log(`${colors.dim}Mode: CI (strict)${colors.reset}`);
+  }
+  if (isFix) {
+    console.log(`${colors.dim}Mode: Auto-fix (experimental)${colors.reset}`);
+  }
 
   const results = await lintDirectory(targetPath);
   printResults(results);
@@ -444,7 +596,9 @@ async function main() {
   if (isCI) {
     // In CI mode, exit 1 on any errors or deprecations
     if (results.totalErrors > 0 || results.totalDeprecations > 0) {
-      console.log(`${colors.red}❌ CI check failed. Fix errors and deprecations before merging.${colors.reset}`);
+      console.log(
+        `${colors.red}❌ CI check failed. Fix errors and deprecations before merging.${colors.reset}`,
+      );
       process.exit(1);
     }
   } else {
@@ -454,7 +608,9 @@ async function main() {
     }
   }
 
-  console.log(`${colors.green}✅ Design token linting complete.${colors.reset}`);
+  console.log(
+    `${colors.green}✅ Design token linting complete.${colors.reset}`,
+  );
   process.exit(0);
 }
 

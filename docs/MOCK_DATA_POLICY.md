@@ -13,14 +13,14 @@
 
 ## 📋 Policy Summary
 
-| Context | Mock Data Allowed? | Notes |
-|---------|-------------------|-------|
-| **Local Development** | ✅ Yes | Only for UI testing, must be clearly marked |
-| **Unit Tests** | ✅ Yes | Standard testing practice with HttpTestingController |
-| **Integration Tests** | ✅ Yes | Test fixtures and mock services |
-| **Production Build** | ❌ **NEVER** | Production must use real data only |
-| **User-Facing Features** | ❌ **NEVER** | Even in development, mock data must be clearly marked as demo |
-| **Fallback Values** | ❌ **NEVER** | Use "No Data" states instead of mock values |
+| Context                  | Mock Data Allowed? | Notes                                                         |
+| ------------------------ | ------------------ | ------------------------------------------------------------- |
+| **Local Development**    | ✅ Yes             | Only for UI testing, must be clearly marked                   |
+| **Unit Tests**           | ✅ Yes             | Standard testing practice with HttpTestingController          |
+| **Integration Tests**    | ✅ Yes             | Test fixtures and mock services                               |
+| **Production Build**     | ❌ **NEVER**       | Production must use real data only                            |
+| **User-Facing Features** | ❌ **NEVER**       | Even in development, mock data must be clearly marked as demo |
+| **Fallback Values**      | ❌ **NEVER**       | Use "No Data" states instead of mock values                   |
 
 ---
 
@@ -29,6 +29,7 @@
 **Mock data in a training app can cause real injuries.** See [PLAYER_DATA_SAFETY_GUIDE.md](./PLAYER_DATA_SAFETY_GUIDE.md) for details.
 
 Athletes making training decisions based on fake metrics may:
+
 - Overtrain due to false low ACWR readings
 - Undertrain due to false high readiness scores
 - Ignore genuine fatigue signals
@@ -50,6 +51,7 @@ if (!environment.production && USE_MOCK_DATA) {
 ```
 
 **Requirements:**
+
 - Must check `environment.production` first
 - Must show clear warning in console/logs
 - Must never be accessible in production builds
@@ -63,6 +65,7 @@ const mockUser = { id: "1", name: "Test" };
 ```
 
 **Requirements:**
+
 - Only in `.spec.ts` test files
 - Use Angular's HttpTestingController
 - Standard testing practice
@@ -72,11 +75,12 @@ const mockUser = { id: "1", name: "Test" };
 ```typescript
 // ✅ ALLOWED - Test fixtures
 const mockService = {
-  getData: () => of(testFixtureData)
+  getData: () => of(testFixtureData),
 };
 ```
 
 **Requirements:**
+
 - Only in test files
 - Use test fixtures
 - Clear test data only

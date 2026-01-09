@@ -10,7 +10,14 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -572,7 +579,10 @@ const RETENTION_OPTIONS = [
           } @else {
             <div class="empty-state">
               <i class="pi pi-info-circle"></i>
-              <p>ACWR data not available. Log training sessions to see phase-adjusted training recommendations.</p>
+              <p>
+                ACWR data not available. Log training sessions to see
+                phase-adjusted training recommendations.
+              </p>
             </div>
           }
         </p-card>
@@ -965,13 +975,13 @@ export class CycleTrackingComponent implements OnInit {
           this.baseAcwr.set(response.data.acwr);
         }
       }
-      } catch (err) {
-        this.logger.error("Failed to load cycle tracking data", err);
-        // No cycle data - user hasn't logged any cycles yet
-        this.cycleHistory.set([]);
-        // CRITICAL: Do NOT set default ACWR - calculations require real data
-        this.baseAcwr.set(null);
-      }
+    } catch (err) {
+      this.logger.error("Failed to load cycle tracking data", err);
+      // No cycle data - user hasn't logged any cycles yet
+      this.cycleHistory.set([]);
+      // CRITICAL: Do NOT set default ACWR - calculations require real data
+      this.baseAcwr.set(null);
+    }
   }
 
   getCurrentPhase(): CyclePhase {
@@ -1005,10 +1015,11 @@ export class CycleTrackingComponent implements OnInit {
     if (adjusted === null) {
       return {
         severity: "info",
-        message: "ACWR data not available. Log training sessions to see phase-adjusted recommendations.",
+        message:
+          "ACWR data not available. Log training sessions to see phase-adjusted recommendations.",
       };
     }
-    
+
     const sweetSpot = this.getAcwrSweetSpot();
 
     if (adjusted >= sweetSpot.min && adjusted <= sweetSpot.max) {

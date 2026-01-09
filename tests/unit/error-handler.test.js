@@ -481,7 +481,7 @@ describe("Error Handler - Comprehensive Tests", () => {
 
       errorHandler.createErrorReport.mockImplementation((error, context) => {
         return {
-          errorId: `err-${  Date.now()}`,
+          errorId: `err-${Date.now()}`,
           timestamp: new Date().toISOString(),
           error: {
             message: error.message,
@@ -517,7 +517,7 @@ describe("Error Handler - Comprehensive Tests", () => {
 
       errorHandler.reportTelemetry.mockImplementation((_data) => {
         // Simulate sending telemetry to analytics service
-        return { sent: true, telemetryId: `tel-${  Date.now()}` };
+        return { sent: true, telemetryId: `tel-${Date.now()}` };
       });
 
       const result = errorHandler.reportTelemetry(telemetryData);
@@ -568,8 +568,7 @@ describe("Error Handler - Comprehensive Tests", () => {
             context: {
               ...context,
               timestamp: Date.now(),
-              errorId:
-                `enhanced-err-${  Math.random().toString(36).substr(2, 9)}`,
+              errorId: `enhanced-err-${Math.random().toString(36).substr(2, 9)}`,
             },
           };
         });

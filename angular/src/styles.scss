@@ -261,7 +261,7 @@ button {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }
-  
+
   /* Fix for badges with absolute positioning */
   .incomplete-data-badge,
   .risk-badge,
@@ -272,7 +272,7 @@ button {
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
   }
-  
+
   /* Ensure text-decoration doesn't leak in Safari */
   .p-toolbar *,
   .app-header *,
@@ -1005,7 +1005,9 @@ html.no-transitions * {
     align-items: center;
     justify-content: center;
     opacity: 0.7;
-    transition: opacity var(--transition-fast), background-color var(--transition-fast);
+    transition:
+      opacity var(--transition-fast),
+      background-color var(--transition-fast);
     flex-shrink: 0;
     background: rgba(255, 255, 255, 0.1);
     border: none;

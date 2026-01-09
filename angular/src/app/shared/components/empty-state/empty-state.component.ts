@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -51,15 +56,17 @@ import { ButtonComponent } from "../button/button.component";
         <!-- Primary action -->
         @if (actionLabel()) {
           @if (actionLink()) {
-            <app-button 
+            <app-button
               [routerLink]="actionLink()!"
               [iconLeft]="actionIcon() || ''"
-            >{{ actionLabel() }}</app-button>
+              >{{ actionLabel() }}</app-button
+            >
           } @else if (actionHandler()) {
-            <app-button 
+            <app-button
               (clicked)="handleAction()"
               [iconLeft]="actionIcon() || ''"
-            >{{ actionLabel() }}</app-button>
+              >{{ actionLabel() }}</app-button
+            >
           }
         }
 
@@ -70,13 +77,15 @@ import { ButtonComponent } from "../button/button.component";
               variant="outlined"
               [routerLink]="secondaryActionLink()!"
               [iconLeft]="secondaryActionIcon() || ''"
-            >{{ secondaryActionLabel() }}</app-button>
+              >{{ secondaryActionLabel() }}</app-button
+            >
           } @else {
             <app-button
               variant="outlined"
               (clicked)="handleSecondaryAction()"
               [iconLeft]="secondaryActionIcon() || ''"
-            >{{ secondaryActionLabel() }}</app-button>
+              >{{ secondaryActionLabel() }}</app-button
+            >
           }
         }
       </div>

@@ -1,6 +1,6 @@
 /**
  * Create Decision Dialog Component
- * 
+ *
  * Multi-step wizard for creating decisions
  */
 
@@ -166,7 +166,10 @@ import { TIME } from "@core/constants";
             <h3>Constraints</h3>
             <p>Add any constraints or limitations</p>
             <div class="constraints-list">
-              @for (constraint of formData.decisionBasis.constraints; track $index) {
+              @for (
+                constraint of formData.decisionBasis.constraints;
+                track $index
+              ) {
                 <div class="constraint-item">
                   <input
                     type="text"
@@ -600,8 +603,7 @@ export class CreateDecisionDialogComponent {
     if (step === 0) return !!this.formData.athleteId;
     if (step === 1) return !!this.formData.decisionType;
     if (step === 2) return !!this.formData.decisionSummary.trim();
-    if (step === 3)
-      return this.formData.decisionBasis.dataPoints.length > 0;
+    if (step === 3) return this.formData.decisionBasis.dataPoints.length > 0;
     if (step === 5) return !!this.formData.reviewTrigger;
     return true;
   }
@@ -677,7 +679,9 @@ export class CreateDecisionDialogComponent {
       }
     }
 
-    return new Date(now.getTime() + TIME.DEFAULT_REVIEW_PERIOD_DAYS * TIME.MS_PER_DAY);
+    return new Date(
+      now.getTime() + TIME.DEFAULT_REVIEW_PERIOD_DAYS * TIME.MS_PER_DAY,
+    );
   }
 
   async onConfirm(): Promise<void> {
@@ -758,4 +762,3 @@ export class CreateDecisionDialogComponent {
     return option?.label || type;
   }
 }
-

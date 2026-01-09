@@ -429,7 +429,7 @@ export class PerformanceAnalytics {
 
   // Get wellness summary
   getWellnessSummary(days = 7) {
-    const {wellness} = this.performanceData;
+    const { wellness } = this.performanceData;
     const summary = {};
     ["sleep", "energy", "soreness", "stress", "nutrition", "hydration"].forEach(
       (metric) => {
@@ -466,7 +466,7 @@ export class PerformanceAnalytics {
 
   // Get training load analysis
   getTrainingLoadAnalysis() {
-    const {training} = this.performanceData;
+    const { training } = this.performanceData;
     const last7Days = training.totalVolume.slice(-7);
     const last30Days = training.totalVolume.slice(-30);
 

@@ -22,7 +22,7 @@ const isUSDAConfigured = !!USDA_API_KEY;
 
 if (!isUSDAConfigured) {
   console.warn(
-    "[USDA Sync] USDA_API_KEY not configured. USDA food sync features will be unavailable. Get a free key at: https://fdc.nal.usda.gov/api-key-signup.html"
+    "[USDA Sync] USDA_API_KEY not configured. USDA food sync features will be unavailable. Get a free key at: https://fdc.nal.usda.gov/api-key-signup.html",
   );
 }
 
@@ -557,7 +557,8 @@ exports.handler = async (event, _context) => {
       body: JSON.stringify({
         success: false,
         error: "USDA API key not configured",
-        message: "USDA food sync features are unavailable. Set USDA_API_KEY environment variable.",
+        message:
+          "USDA food sync features are unavailable. Set USDA_API_KEY environment variable.",
         setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
       }),
     };

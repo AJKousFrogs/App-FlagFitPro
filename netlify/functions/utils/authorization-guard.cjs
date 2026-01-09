@@ -28,8 +28,9 @@ async function getUserRole(userId) {
   }
 
   // Fallback to auth.users metadata (for backward compatibility)
-  const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.getUserById(userId);
-  
+  const { data: authUser, error: authError } =
+    await supabaseAdmin.auth.admin.getUserById(userId);
+
   if (authError || !authUser) {
     return null;
   }
@@ -41,20 +42,34 @@ async function getUserRole(userId) {
  * Check if session can be modified
  * Contract: Section 3.1 - Session Mutation APIs
  */
-async function canModifySession(userId, sessionId, modificationType = "structure") {
+async function canModifySession(
+  userId,
+  sessionId,
+  modificationType = "structure",
+) {
   if (!userId || !sessionId) {
-    return { authorized: false, error: "MISSING_PARAMS", message: "User ID and session ID required" };
+    return {
+      authorized: false,
+      error: "MISSING_PARAMS",
+      message: "User ID and session ID required",
+    };
   }
 
   // Get session with current state
   const { data: session, error } = await supabaseAdmin
     .from("training_sessions")
-    .select("coach_locked, session_state, modified_by_coach_id, user_id, athlete_id")
+    .select(
+      "coach_locked, session_state, modified_by_coach_id, user_id, athlete_id",
+    )
     .eq("id", sessionId)
     .single();
 
   if (error || !session) {
-    return { authorized: false, error: "SESSION_NOT_FOUND", message: "Session not found" };
+    return {
+      authorized: false,
+      error: "SESSION_NOT_FOUND",
+      message: "Session not found",
+    };
   }
 
   // Determine owner (handle both user_id and athlete_id columns)
@@ -67,29 +82,29 @@ async function canModifySession(userId, sessionId, modificationType = "structure
       return {
         authorized: false,
         error: "COACH_LOCKED",
-        message: "Cannot modify coach_locked session"
+        message: "Cannot modify coach_locked session",
       };
     }
   }
 
   // Check session state
-  const mutableStates = ['PLANNED', 'GENERATED', 'VISIBLE', 'ACKNOWLEDGED'];
+  const mutableStates = ["PLANNED", "GENERATED", "VISIBLE", "ACKNOWLEDGED"];
   if (session.session_state && !mutableStates.includes(session.session_state)) {
     return {
       authorized: false,
       error: "STATE_IMMUTABLE",
-      message: `Cannot modify session: session is ${session.session_state}`
+      message: `Cannot modify session: session is ${session.session_state}`,
     };
   }
 
   // Check role for structure modifications
   if (modificationType === "structure") {
     const role = await getUserRole(userId);
-    if (!['coach', 'admin'].includes(role)) {
+    if (!["coach", "admin"].includes(role)) {
       return {
         authorized: false,
         error: "INSUFFICIENT_PERMISSIONS",
-        message: "Coach role required for structure modifications"
+        message: "Coach role required for structure modifications",
       };
     }
   }
@@ -100,16 +115,16 @@ async function canModifySession(userId, sessionId, modificationType = "structure
       return {
         authorized: false,
         error: "OWNERSHIP_MISMATCH",
-        message: "Can only log execution for own sessions"
+        message: "Can only log execution for own sessions",
       };
     }
-    
+
     // Execution logging only allowed in IN_PROGRESS or COMPLETED states
-    if (!['IN_PROGRESS', 'COMPLETED'].includes(session.session_state)) {
+    if (!["IN_PROGRESS", "COMPLETED"].includes(session.session_state)) {
       return {
         authorized: false,
         error: "STATE_IMMUTABLE",
-        message: `Cannot log execution: session is ${session.session_state}`
+        message: `Cannot log execution: session is ${session.session_state}`,
       };
     }
   }
@@ -121,7 +136,15 @@ async function canModifySession(userId, sessionId, modificationType = "structure
  * Log authorization violation
  * Contract: Section 8 - Violation Handling
  */
-async function logViolation(userId, resourceId, resourceType, action, errorCode, errorMessage, requestInfo = {}) {
+async function logViolation(
+  userId,
+  resourceId,
+  resourceType,
+  action,
+  errorCode,
+  errorMessage,
+  requestInfo = {},
+) {
   try {
     await supabaseAdmin.from("authorization_violations").insert({
       user_id: userId,
@@ -134,7 +157,11 @@ async function logViolation(userId, resourceId, resourceType, action, errorCode,
       user_agent: requestInfo.userAgent,
       request_path: requestInfo.path,
       request_method: requestInfo.method,
-      request_body: requestInfo.body ? (typeof requestInfo.body === 'string' ? JSON.parse(requestInfo.body) : requestInfo.body) : null
+      request_body: requestInfo.body
+        ? typeof requestInfo.body === "string"
+          ? JSON.parse(requestInfo.body)
+          : requestInfo.body
+        : null,
     });
   } catch (error) {
     console.error("[Authorization] Failed to log violation:", error);
@@ -146,9 +173,16 @@ async function logViolation(userId, resourceId, resourceType, action, errorCode,
  * Authorization guard middleware
  * Contract: Section 2 - Global Authorization Model
  */
-async function requireAuthorization(userId, resourceId, resourceType, action, modificationType = "structure", requestInfo = {}) {
+async function requireAuthorization(
+  userId,
+  resourceId,
+  resourceType,
+  action,
+  modificationType = "structure",
+  requestInfo = {},
+) {
   const result = await canModifySession(userId, resourceId, modificationType);
-  
+
   if (!result.authorized) {
     // Log violation
     await logViolation(
@@ -158,19 +192,19 @@ async function requireAuthorization(userId, resourceId, resourceType, action, mo
       action,
       result.error,
       result.message,
-      requestInfo
+      requestInfo,
     );
-    
+
     return {
       success: false,
       error: createErrorResponse(
         result.message || "Authorization failed",
         403,
-        result.error || "AUTHORIZATION_FAILED"
-      )
+        result.error || "AUTHORIZATION_FAILED",
+      ),
     };
   }
-  
+
   return { success: true };
 }
 
@@ -179,15 +213,15 @@ async function requireAuthorization(userId, resourceId, resourceType, action, mo
  */
 async function requireRole(userId, requiredRoles) {
   const role = await getUserRole(userId);
-  
+
   if (!role || !requiredRoles.includes(role)) {
     return {
       authorized: false,
       error: "INSUFFICIENT_PERMISSIONS",
-      message: `Required role: ${requiredRoles.join(' or ')}`
+      message: `Required role: ${requiredRoles.join(" or ")}`,
     };
   }
-  
+
   return { authorized: true, role };
 }
 
@@ -195,7 +229,11 @@ async function requireRole(userId, requiredRoles) {
  * Check consent for data access
  * Contract: Section 7 - Consent Enforcement
  */
-async function checkConsent(viewerUserId, dataOwnerUserId, consentType = "wellness") {
+async function checkConsent(
+  viewerUserId,
+  dataOwnerUserId,
+  consentType = "wellness",
+) {
   // Users can always view their own data
   if (viewerUserId === dataOwnerUserId) {
     return { authorized: true };
@@ -213,7 +251,7 @@ async function checkConsent(viewerUserId, dataOwnerUserId, consentType = "wellne
     return {
       authorized: false,
       error: "CONSENT_REQUIRED",
-      message: "Consent required to access this data"
+      message: "Consent required to access this data",
     };
   }
 
@@ -222,7 +260,7 @@ async function checkConsent(viewerUserId, dataOwnerUserId, consentType = "wellne
     return {
       authorized: false,
       error: "CONSENT_REQUIRED",
-      message: "Consent required to access this data"
+      message: "Consent required to access this data",
     };
   }
 
@@ -235,6 +273,5 @@ module.exports = {
   logViolation,
   requireAuthorization,
   requireRole,
-  checkConsent
+  checkConsent,
 };
-

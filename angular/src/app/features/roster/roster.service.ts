@@ -179,7 +179,7 @@ export class RosterService {
     this.isLoading.set(true);
     this.error.set(null);
     const userId = this.authService.currentUser()?.id;
-    
+
     this.logger.warn(`[RosterService] Loading roster for user: ${userId}`);
 
     if (!userId) {
@@ -190,15 +190,22 @@ export class RosterService {
 
     try {
       // Get user's team and role
-      const { data: teamMember, error: teamError } = await this.supabaseService.client
-        .from("team_members")
-        .select("team_id, role, teams(name)")
-        .eq("user_id", userId)
-        .single();
-      
-      this.logger.warn(`[RosterService] Team member query result:`, JSON.stringify(teamMember));
+      const { data: teamMember, error: teamError } =
+        await this.supabaseService.client
+          .from("team_members")
+          .select("team_id, role, teams(name)")
+          .eq("user_id", userId)
+          .single();
+
+      this.logger.warn(
+        `[RosterService] Team member query result:`,
+        JSON.stringify(teamMember),
+      );
       if (teamError) {
-        this.logger.warn(`[RosterService] Team member query error:`, JSON.stringify(teamError));
+        this.logger.warn(
+          `[RosterService] Team member query error:`,
+          JSON.stringify(teamError),
+        );
       }
 
       if (!teamMember?.team_id) {
@@ -237,23 +244,31 @@ export class RosterService {
         .select("id, team_id, user_id, role, position, jersey_number")
         .eq("team_id", teamMember.team_id)
         .eq("role", "player");
-      
-      this.logger.warn(`[RosterService] Player member IDs:`, JSON.stringify(playerMemberIds));
-      
+
+      this.logger.warn(
+        `[RosterService] Player member IDs:`,
+        JSON.stringify(playerMemberIds),
+      );
+
       // Then fetch user data for those members
       let playerMembers: PlayerMemberRecord[] = [];
       if (playerMemberIds && playerMemberIds.length > 0) {
-        const userIds = playerMemberIds.map(m => m.user_id).filter(Boolean);
+        const userIds = playerMemberIds.map((m) => m.user_id).filter(Boolean);
         const { data: userData } = await this.supabaseService.client
           .from("users")
-          .select("id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed")
+          .select(
+            "id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed",
+          )
           .in("id", userIds);
-        
-        this.logger.warn(`[RosterService] User data:`, JSON.stringify(userData));
-        
+
+        this.logger.warn(
+          `[RosterService] User data:`,
+          JSON.stringify(userData),
+        );
+
         // Combine member and user data - team_members fields take priority
-        const userMap = new Map((userData || []).map(u => [u.id, u]));
-        playerMembers = playerMemberIds.map(m => ({
+        const userMap = new Map((userData || []).map((u) => [u.id, u]));
+        playerMembers = playerMemberIds.map((m) => ({
           id: m.id,
           team_id: m.team_id,
           user_id: m.user_id,
@@ -263,8 +278,11 @@ export class RosterService {
           users: userMap.get(m.user_id) || undefined,
         }));
       }
-      
-      this.logger.info(`[RosterService] Combined player members:`, JSON.stringify(playerMembers));
+
+      this.logger.info(
+        `[RosterService] Combined player members:`,
+        JSON.stringify(playerMembers),
+      );
 
       // Load players from team_players table
       const { data: players, error: playersError } =
@@ -290,7 +308,7 @@ export class RosterService {
 
       // Process players from team_players table
       const playersFromTable = this.processPlayers(players);
-      
+
       // Process players from team_members with role='player'
       const playersFromMembers = this.processPlayerMembers(
         playerMembers as PlayerMemberRecord[] | null,
@@ -299,7 +317,7 @@ export class RosterService {
       // Merge both player lists, avoiding duplicates by user_id
       const seenUserIds = new Set<string>();
       const allPlayersList: Player[] = [];
-      
+
       // First add players from team_players (these are explicitly added players)
       for (const player of playersFromTable) {
         if (player.user_id) {
@@ -307,7 +325,7 @@ export class RosterService {
         }
         allPlayersList.push(player);
       }
-      
+
       // Then add players from team_members who don't already exist in team_players
       for (const player of playersFromMembers) {
         if (player.user_id && seenUserIds.has(player.user_id)) {
@@ -315,7 +333,7 @@ export class RosterService {
         }
         allPlayersList.push(player);
       }
-      
+
       this.allPlayers.set(allPlayersList);
 
       // Calculate team stats
@@ -832,7 +850,7 @@ export class RosterService {
       .filter((m) => m.users?.onboarding_completed) // Only include onboarded users
       .map((m) => {
         const user = m.users;
-        
+
         // Calculate age from date of birth
         let age = 0;
         if (user?.date_of_birth) {
@@ -840,7 +858,10 @@ export class RosterService {
           const today = new Date();
           age = today.getFullYear() - birthDate.getFullYear();
           const monthDiff = today.getMonth() - birthDate.getMonth();
-          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          if (
+            monthDiff < 0 ||
+            (monthDiff === 0 && today.getDate() < birthDate.getDate())
+          ) {
             age--;
           }
         }
@@ -850,9 +871,10 @@ export class RosterService {
         const weight = user?.weight_kg ? `${user.weight_kg} kg` : "N/A";
 
         // Build name from first_name + last_name or full_name
-        const name = user?.full_name || 
-          [user?.first_name, user?.last_name].filter(Boolean).join(" ") || 
-          user?.email?.split("@")[0] || 
+        const name =
+          user?.full_name ||
+          [user?.first_name, user?.last_name].filter(Boolean).join(" ") ||
+          user?.email?.split("@")[0] ||
           "Unknown";
 
         // PRIORITY: team_members fields > users fields (team_members is the authoritative source)

@@ -131,7 +131,7 @@
         height: 8px;
         background: var(--surface-secondary);
         border-radius: var(--radius-full);
-        
+
         .p-progressbar-value {
           background: var(--ds-primary-green);
           border-radius: var(--radius-full);
@@ -269,16 +269,38 @@
         :global(.p-datatable-wrapper) {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch; // iOS smooth scrolling
-          
+
           // Scroll shadow indicators (shows there's more content)
-          background: 
-            linear-gradient(to right, var(--surface-card) 30%, rgba(255,255,255,0)),
-            linear-gradient(to right, rgba(255,255,255,0), var(--surface-card) 70%) 0 100%,
-            radial-gradient(farthest-side at 0% 50%, rgba(0,0,0,.15), transparent),
-            radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.15), transparent) 0 100%;
+          background:
+            linear-gradient(
+              to right,
+              var(--surface-card) 30%,
+              rgba(255, 255, 255, 0)
+            ),
+            linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0),
+                var(--surface-card) 70%
+              )
+              0 100%,
+            radial-gradient(
+              farthest-side at 0% 50%,
+              rgba(0, 0, 0, 0.15),
+              transparent
+            ),
+            radial-gradient(
+                farthest-side at 100% 50%,
+                rgba(0, 0, 0, 0.15),
+                transparent
+              )
+              0 100%;
           background-repeat: no-repeat;
           background-color: var(--surface-card);
-          background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+          background-size:
+            40px 100%,
+            40px 100%,
+            14px 100%,
+            14px 100%;
           background-attachment: local, local, scroll, scroll;
         }
 
@@ -339,21 +361,21 @@
     box-shadow: var(--shadow-1);
     display: flex;
     align-items: center;
-    
+
     // Safari fix: Ensure proper stacking context and prevent z-index leaking
     position: relative;
     z-index: var(--z-modal);
     isolation: isolate; // Creates new stacking context in Safari
-    
+
     // Safari fix: Force hardware acceleration to prevent rendering glitches
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    
+
     // Safari fix: Ensure text doesn't inherit decorations from ancestors
     text-decoration: none !important;
-    
+
     // Safari fix: Prevent any overflow issues
     overflow: visible;
     contain: layout style; // CSS containment for better rendering
@@ -366,14 +388,14 @@
       height: 100%;
       margin: 0;
       padding: 0;
-      
+
       // Safari fix: Ensure children don't escape bounds
       position: relative;
       overflow: visible;
-      
+
       // Ensure no text-decoration leaks
       text-decoration: none !important;
-      
+
       * {
         text-decoration: none !important;
       }
@@ -1196,7 +1218,9 @@
 
     // Jersey badge color override for white text on green background
     .jersey-badge {
-      color: var(--ds-text-on-primary) !important; // White text on green background
+      color: var(
+        --ds-text-on-primary
+      ) !important; // White text on green background
     }
 
     .onboarding-progress-bar {
@@ -1220,7 +1244,12 @@
           border: 2px solid var(--color-border-primary);
           border-radius: var(--radius-sm);
           background: var(--surface-primary);
-          transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+          transition:
+            opacity var(--transition-fast),
+            transform var(--transition-fast),
+            background-color var(--transition-fast),
+            border-color var(--transition-fast),
+            box-shadow var(--transition-fast);
 
           &:hover {
             border-color: var(--ds-primary-green);
@@ -1291,7 +1320,12 @@
             cursor: pointer;
             padding: var(--space-2);
             border-radius: var(--radius-lg);
-            transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            transition:
+              opacity 0.2s ease,
+              transform 0.2s ease,
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
             background: transparent;
             border: none;
             width: 100%;
@@ -1318,7 +1352,12 @@
             border: 2px solid var(--color-border-muted);
             background: var(--surface-primary);
             color: var(--color-text-secondary);
-            transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            transition:
+              opacity 0.2s ease,
+              transform 0.2s ease,
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
             position: relative;
             z-index: 2;
           }
@@ -1335,7 +1374,12 @@
             overflow: visible;
             white-space: normal;
             word-break: break-word;
-            transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            transition:
+              opacity 0.2s ease,
+              transform 0.2s ease,
+              background-color 0.2s ease,
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
             padding: 0 var(--space-1);
           }
 
@@ -1598,9 +1642,10 @@
 
       @media (max-width: 767px) {
         .p-datepicker-calendar {
-          th, td {
+          th,
+          td {
             padding: var(--space-2);
-            
+
             span {
               width: 40px;
               height: 40px;
@@ -1619,7 +1664,7 @@
 
         .p-datepicker-header {
           padding: var(--space-3);
-          
+
           .p-datepicker-title {
             font-size: var(--font-size-h3);
           }
@@ -1633,9 +1678,10 @@
 
       @media (max-width: 479px) {
         .p-datepicker-calendar {
-          th, td {
+          th,
+          td {
             padding: var(--space-1);
-            
+
             span {
               width: 36px;
               height: 36px;
@@ -1955,7 +2001,8 @@
         }
       }
 
-      &:not(.p-disabled):has(.p-checkbox-box.p-highlight):hover .p-checkbox-box {
+      &:not(.p-disabled):has(.p-checkbox-box.p-highlight):hover
+        .p-checkbox-box {
         background: var(--ds-primary-green-hover);
         border-color: var(--ds-primary-green-hover);
       }

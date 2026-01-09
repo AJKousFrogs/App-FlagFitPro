@@ -140,12 +140,12 @@
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
   margin-left: var(--space-2);
-  
+
   &.pending {
     background: var(--overlay-white-20);
     color: var(--color-text-on-primary);
   }
-  
+
   &.in-progress {
     background: var(--overlay-white-30);
     color: var(--color-text-on-primary);
@@ -166,7 +166,12 @@
   color: var(--color-text-on-primary);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   font-size: var(--font-size-body);
 }
 
@@ -287,7 +292,10 @@
 
 .zones-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(calc(var(--space-24) * 2.604), 1fr)); /* 250px - using spacing tokens */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(calc(var(--space-24) * 2.604), 1fr)
+  ); /* 250px - using spacing tokens */
   gap: var(--space-4);
 }
 
@@ -681,7 +689,7 @@
   // ================================================================
   // MAIN CONTAINER
   // ================================================================
-  
+
   .acwr-dashboard {
     padding: var(--space-3);
   }
@@ -877,7 +885,7 @@
     padding: var(--space-3) var(--space-4);
     font-size: var(--font-size-h4);
     min-height: var(--touch-target-md); /* 44px - touch-friendly */
-    
+
     &:active {
       transform: translateY(0);
     }

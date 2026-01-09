@@ -141,8 +141,9 @@
   border-radius: var(--radius-lg);
   height: 34px;
   cursor: default;
-  transition: border-color var(--motion-fast) var(--ease-standard),
-              background-color var(--motion-fast) var(--ease-standard);
+  transition:
+    border-color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
 
   i {
     font-size: var(--font-size-body);
@@ -177,7 +178,7 @@
 // Weather severity states
 .weather-excellent {
   border-color: var(--primitive-success-300);
-  
+
   i {
     color: var(--primitive-success-500);
   }
@@ -185,7 +186,7 @@
 
 .weather-good {
   border-color: var(--primitive-info-300);
-  
+
   i {
     color: var(--primitive-info-500);
   }
@@ -193,7 +194,7 @@
 
 .weather-fair {
   border-color: var(--primitive-warning-300);
-  
+
   i {
     color: var(--primitive-warning-500);
   }
@@ -202,7 +203,7 @@
 .weather-poor {
   border-color: var(--primitive-danger-300);
   background: var(--primitive-danger-50);
-  
+
   i {
     color: var(--primitive-danger-500);
   }
@@ -211,7 +212,7 @@
 .weather-loading {
   min-width: 60px;
   justify-content: center;
-  
+
   i {
     color: var(--text-color-secondary);
   }
@@ -298,7 +299,7 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-lg);
   transition: background-color var(--motion-fast) var(--ease-standard);
-  
+
   &:hover {
     background: var(--primitive-neutral-100);
   }
@@ -313,10 +314,10 @@
   border-radius: var(--radius-md);
   background: var(--primitive-neutral-100);
   border: 1px solid var(--primitive-neutral-200);
-  
+
   // Visual indicator based on theme
   position: relative;
-  
+
   &::before {
     content: "";
     position: absolute;
@@ -328,33 +329,47 @@
     border-radius: var(--radius-full);
     transition: background-color var(--motion-fast) var(--ease-standard);
   }
-  
+
   // Light theme indicator
   :host-context([data-theme="light"]) & {
     padding-left: var(--space-3);
-    
+
     &::before {
-      background: linear-gradient(135deg, var(--primitive-warning-400) 0%, var(--primitive-warning-500) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--primitive-warning-400) 0%,
+        var(--primitive-warning-500) 100%
+      );
       box-shadow: 0 0 4px rgba(var(--primitive-warning-500-rgb), 0.5);
     }
   }
-  
+
   // Dark theme indicator
   :host-context([data-theme="dark"]) & {
     padding-left: var(--space-3);
-    
+
     &::before {
-      background: linear-gradient(135deg, var(--color-status-help) 0%, var(--color-staff-coaching) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--color-status-help) 0%,
+        var(--color-staff-coaching) 100%
+      );
       box-shadow: 0 0 4px rgba(var(--color-status-help-rgb), 0.5);
     }
   }
-  
+
   // Auto mode indicator (split gradient)
   :host-context([data-theme="auto"]) & {
     padding-left: var(--space-3);
-    
+
     &::before {
-      background: linear-gradient(90deg, var(--primitive-warning-400) 0%, var(--primitive-warning-400) 50%, var(--color-status-help) 50%, var(--color-status-help) 100%);
+      background: linear-gradient(
+        90deg,
+        var(--primitive-warning-400) 0%,
+        var(--primitive-warning-400) 50%,
+        var(--color-status-help) 50%,
+        var(--color-status-help) 100%
+      );
       box-shadow: 0 0 4px rgba(var(--color-status-help-rgb), 0.3);
     }
   }
@@ -541,7 +556,7 @@
     background: var(--ds-surface-elevated);
     border: 1px solid var(--ds-border-default);
     border-radius: var(--radius-sm);
-    font-family: var(--font-family-code, 'SF Mono', 'Courier New', monospace);
+    font-family: var(--font-family-code, "SF Mono", "Courier New", monospace);
     font-size: var(--font-caption-size);
     font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
@@ -575,7 +590,7 @@
     background: var(--ds-surface-elevated);
     border: 1px solid var(--ds-border-default);
     border-radius: var(--radius-xs);
-    font-family: var(--font-family-code, 'SF Mono', 'Courier New', monospace);
+    font-family: var(--font-family-code, "SF Mono", "Courier New", monospace);
     font-size: var(--font-caption-size);
     color: var(--ds-text-primary);
   }

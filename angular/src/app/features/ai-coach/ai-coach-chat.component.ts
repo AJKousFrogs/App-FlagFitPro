@@ -48,7 +48,10 @@ import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
-import { AIModeExplanationComponent, AIModeStatus } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
+import {
+  AIModeExplanationComponent,
+  AIModeStatus,
+} from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
 
@@ -252,7 +255,9 @@ interface AutocompleteSuggestion {
         <!-- Phase 2.3: AI Mode Explanation -->
         @if (aiModeStatus() && aiModeStatus()!.isConservative) {
           <div class="ai-mode-section">
-            <app-ai-mode-explanation [modeStatus]="aiModeStatus()!"></app-ai-mode-explanation>
+            <app-ai-mode-explanation
+              [modeStatus]="aiModeStatus()!"
+            ></app-ai-mode-explanation>
           </div>
         }
 
@@ -1229,9 +1234,12 @@ export class AiCoachChatComponent implements AfterViewChecked {
       if (!user?.id) return;
 
       // Check data confidence
-      const wellnessStatus = await this.missingDataService.checkMissingWellness(user.id);
-      const trainingDays = this.trainingService.acwrData().dataQuality.daysWithData || 0;
-      
+      const wellnessStatus = await this.missingDataService.checkMissingWellness(
+        user.id,
+      );
+      const trainingDays =
+        this.trainingService.acwrData().dataQuality.daysWithData || 0;
+
       // Calculate confidence similar to backend
       let confidence = 1.0;
       const missingData: string[] = [];
@@ -1259,7 +1267,8 @@ export class AiCoachChatComponent implements AfterViewChecked {
         if (wellnessStatus.missing) {
           reason = "Missing wellness check-ins reduce recommendation accuracy.";
         } else if (trainingDays < 10) {
-          reason = "Insufficient training data reduces recommendation accuracy.";
+          reason =
+            "Insufficient training data reduces recommendation accuracy.";
         } else if (staleData.length > 0) {
           reason = "Stale wellness data reduces recommendation accuracy.";
         }
@@ -1410,7 +1419,10 @@ export class AiCoachChatComponent implements AfterViewChecked {
               timestamp: new Date(),
               riskLevel: response.data.risk_level,
               citations: response.data.citations,
-              suggestedActions: response.data.suggested_actions?.slice(0, UI_LIMITS.SUGGESTED_ACTIONS_COUNT),
+              suggestedActions: response.data.suggested_actions?.slice(
+                0,
+                UI_LIMITS.SUGGESTED_ACTIONS_COUNT,
+              ),
               disclaimer: response.data.disclaimer,
               acwrSafety: response.data.acwr_safety
                 ? {

@@ -242,7 +242,9 @@ class RoleAwareResponseGenerator {
    * Get position-specific advice based on user's position
    */
   getPositionSpecificAdvice(position, intent, _entities) {
-    if (!position) {return "";}
+    if (!position) {
+      return "";
+    }
 
     const positionAdvice = {
       QB: {
@@ -298,7 +300,9 @@ class RoleAwareResponseGenerator {
     };
 
     const advice = positionAdvice[position];
-    if (!advice) {return "";}
+    if (!advice) {
+      return "";
+    }
 
     // Return advice based on intent
     if (advice[intent]) {

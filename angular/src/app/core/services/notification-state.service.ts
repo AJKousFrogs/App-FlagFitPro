@@ -22,7 +22,10 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
@@ -224,7 +227,9 @@ export class NotificationStateService implements OnDestroy {
             table: "notifications",
             filter: `user_id=eq.${userId}`,
           },
-          (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+          (
+            payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
+          ) => {
             this.handleNewNotification(payload);
           },
         )
@@ -236,7 +241,9 @@ export class NotificationStateService implements OnDestroy {
             table: "notifications",
             filter: `user_id=eq.${userId}`,
           },
-          (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+          (
+            payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
+          ) => {
             this.handleNotificationUpdate(payload);
           },
         )
@@ -248,7 +255,9 @@ export class NotificationStateService implements OnDestroy {
             table: "notifications",
             filter: `user_id=eq.${userId}`,
           },
-          (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => {
+          (
+            payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
+          ) => {
             this.handleNotificationDelete(payload);
           },
         )
@@ -274,10 +283,14 @@ export class NotificationStateService implements OnDestroy {
   private handleNewNotification(
     payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
   ): void {
-    const newNotification = this.mapPayloadToNotification(payload.new as Record<string, unknown>);
+    const newNotification = this.mapPayloadToNotification(
+      payload.new as Record<string, unknown>,
+    );
 
     // Avoid duplicates
-    const exists = this.notifications().some((n) => n.id === newNotification.id);
+    const exists = this.notifications().some(
+      (n) => n.id === newNotification.id,
+    );
     if (exists) {
       this.logger.debug(
         "[NotificationState] Duplicate notification ignored:",
@@ -313,7 +326,9 @@ export class NotificationStateService implements OnDestroy {
   private handleNotificationUpdate(
     payload: RealtimePostgresChangesPayload<Record<string, unknown>>,
   ): void {
-    const updatedNotification = this.mapPayloadToNotification(payload.new as Record<string, unknown>);
+    const updatedNotification = this.mapPayloadToNotification(
+      payload.new as Record<string, unknown>,
+    );
 
     this.notifications.update((notifications) =>
       notifications.map((n) =>
@@ -373,7 +388,8 @@ export class NotificationStateService implements OnDestroy {
    * Show toast notification for important notifications
    */
   private showNotificationToast(notification: Notification): void {
-    const title = notification.title || this.getCategoryTitle(notification.category);
+    const title =
+      notification.title || this.getCategoryTitle(notification.category);
     const severity = notification.severity || "info";
 
     switch (severity) {
@@ -743,7 +759,9 @@ export class NotificationStateService implements OnDestroy {
    * Dismiss a notification (soft delete)
    */
   async dismissNotification(notificationId: string): Promise<boolean> {
-    const notification = this.notifications().find((n) => n.id === notificationId);
+    const notification = this.notifications().find(
+      (n) => n.id === notificationId,
+    );
     if (!notification || notification.dismissed) {
       return true;
     }
@@ -771,7 +789,9 @@ export class NotificationStateService implements OnDestroy {
     } catch (error) {
       this.notifications.set(previousState);
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to dismiss notification";
+        error instanceof Error
+          ? error.message
+          : "Failed to dismiss notification";
       this.error.set(errorMessage);
       this.logger.error("Error dismissing notification:", error);
       throw error;
@@ -812,7 +832,9 @@ export class NotificationStateService implements OnDestroy {
     } catch (error) {
       this.notifications.set(previousState);
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to dismiss notifications";
+        error instanceof Error
+          ? error.message
+          : "Failed to dismiss notifications";
       this.error.set(errorMessage);
       this.logger.error("Error dismissing read notifications:", error);
       throw error;

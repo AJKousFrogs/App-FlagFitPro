@@ -1,6 +1,6 @@
 /**
  * Override Logging Service
- * 
+ *
  * Logs all coach overrides of AI recommendations for transparency and accountability
  */
 
@@ -38,7 +38,9 @@ export class OverrideLoggingService {
    * Log coach override of AI recommendation
    * Also creates notification for player (Phase 2.1 - Trust Repair)
    */
-  async logOverride(override: Omit<CoachOverride, "id" | "createdAt">): Promise<string | null> {
+  async logOverride(
+    override: Omit<CoachOverride, "id" | "createdAt">,
+  ): Promise<string | null> {
     try {
       const { data, error } = await this.supabaseService.client
         .from("coach_overrides")
@@ -61,7 +63,7 @@ export class OverrideLoggingService {
       }
 
       this.logger.info(
-        `[OverrideLogging] Logged override: ${override.overrideType} for player ${override.playerId}`
+        `[OverrideLogging] Logged override: ${override.overrideType} for player ${override.playerId}`,
       );
 
       // Phase 2.1: Create notification for player about the override
@@ -80,7 +82,7 @@ export class OverrideLoggingService {
    */
   private async createPlayerNotification(
     overrideId: string,
-    override: Omit<CoachOverride, "id" | "createdAt">
+    override: Omit<CoachOverride, "id" | "createdAt">,
   ): Promise<void> {
     try {
       // Get coach name for notification (use 'users' table - profiles doesn't exist)
@@ -129,12 +131,12 @@ export class OverrideLoggingService {
       });
 
       this.logger.info(
-        `[OverrideLogging] Created notification for player ${override.playerId} about override ${overrideId}`
+        `[OverrideLogging] Created notification for player ${override.playerId} about override ${overrideId}`,
       );
     } catch (error) {
       this.logger.error(
         "[OverrideLogging] Error creating player notification:",
-        error
+        error,
       );
       // Don't fail the override logging if notification fails
     }
@@ -145,7 +147,7 @@ export class OverrideLoggingService {
    */
   async getPlayerOverrides(
     playerId: string,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<CoachOverride[]> {
     try {
       const { data, error } = await this.supabaseService.client
@@ -156,10 +158,7 @@ export class OverrideLoggingService {
         .limit(limit);
 
       if (error) {
-        this.logger.error(
-          "[OverrideLogging] Error fetching overrides:",
-          error
-        );
+        this.logger.error("[OverrideLogging] Error fetching overrides:", error);
         return [];
       }
 
@@ -177,10 +176,7 @@ export class OverrideLoggingService {
         })) || []
       );
     } catch (error) {
-      this.logger.error(
-        "[OverrideLogging] Error fetching overrides:",
-        error
-      );
+      this.logger.error("[OverrideLogging] Error fetching overrides:", error);
       return [];
     }
   }
@@ -190,7 +186,7 @@ export class OverrideLoggingService {
    */
   async getPlayerOverrideCount(
     playerId: string,
-    days: number = 7
+    days: number = 7,
   ): Promise<number> {
     try {
       const cutoff = new Date();
@@ -203,19 +199,13 @@ export class OverrideLoggingService {
         .gte("created_at", cutoff.toISOString());
 
       if (error) {
-        this.logger.error(
-          "[OverrideLogging] Error counting overrides:",
-          error
-        );
+        this.logger.error("[OverrideLogging] Error counting overrides:", error);
         return 0;
       }
 
       return count || 0;
     } catch (error) {
-      this.logger.error(
-        "[OverrideLogging] Error counting overrides:",
-        error
-      );
+      this.logger.error("[OverrideLogging] Error counting overrides:", error);
       return 0;
     }
   }
@@ -225,7 +215,7 @@ export class OverrideLoggingService {
    */
   async getCoachOverrides(
     coachId: string,
-    limit: number = 20
+    limit: number = 20,
   ): Promise<CoachOverride[]> {
     try {
       const { data, error } = await this.supabaseService.client
@@ -238,7 +228,7 @@ export class OverrideLoggingService {
       if (error) {
         this.logger.error(
           "[OverrideLogging] Error fetching coach overrides:",
-          error
+          error,
         );
         return [];
       }
@@ -259,7 +249,7 @@ export class OverrideLoggingService {
     } catch (error) {
       this.logger.error(
         "[OverrideLogging] Error fetching coach overrides:",
-        error
+        error,
       );
       return [];
     }
@@ -271,7 +261,7 @@ export class OverrideLoggingService {
    */
   async getRecentUnreadOverrides(
     playerId: string,
-    limit: number = 5
+    limit: number = 5,
   ): Promise<CoachOverride[]> {
     try {
       // Get recent override notifications
@@ -289,7 +279,7 @@ export class OverrideLoggingService {
       if (notifError) {
         this.logger.error(
           "[OverrideLogging] Error fetching override notifications:",
-          notifError
+          notifError,
         );
         return [];
       }
@@ -318,7 +308,7 @@ export class OverrideLoggingService {
       if (overrideError) {
         this.logger.error(
           "[OverrideLogging] Error fetching override details:",
-          overrideError
+          overrideError,
         );
         return [];
       }
@@ -339,10 +329,9 @@ export class OverrideLoggingService {
     } catch (error) {
       this.logger.error(
         "[OverrideLogging] Error fetching recent unread overrides:",
-        error
+        error,
       );
       return [];
     }
   }
 }
-

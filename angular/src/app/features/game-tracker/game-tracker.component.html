@@ -693,7 +693,7 @@
       <ng-template pTemplate="header">
         <h3>{{ isCoachOrAdmin() ? "Team & Personal Games" : "My Games" }}</h3>
       </ng-template>
-      
+
       <!-- Empty State -->
       @if (games().length === 0) {
         <div class="empty-state-container">
@@ -702,89 +702,103 @@
           </div>
           <h3>No Games Scheduled</h3>
           @if (isCoachOrAdmin()) {
-            <p>You haven't scheduled any games yet. Create your first game to start tracking team performance.</p>
+            <p>
+              You haven't scheduled any games yet. Create your first game to
+              start tracking team performance.
+            </p>
             <div class="empty-state-actions">
               <app-button iconLeft="pi-plus" (clicked)="openNewGame()">
                 Schedule a Game
               </app-button>
             </div>
           } @else {
-            <p>You haven't logged any games yet. Log your personal or team games to track your performance.</p>
+            <p>
+              You haven't logged any games yet. Log your personal or team games
+              to track your performance.
+            </p>
             <div class="empty-state-actions">
               <app-button iconLeft="pi-plus" (clicked)="openNewGame()">
                 Log a Game
               </app-button>
-              <app-button variant="outlined" iconLeft="pi-calendar" (clicked)="viewPracticeSchedule()">
+              <app-button
+                variant="outlined"
+                iconLeft="pi-calendar"
+                (clicked)="viewPracticeSchedule()"
+              >
                 View Practice Schedule
               </app-button>
             </div>
           }
-          
+
           <div class="empty-state-tip">
             <i class="pi pi-info-circle"></i>
-            <span>{{ isCoachOrAdmin() ? 'Track plays, stats, and player performance in real-time' : 'Keep a record of all your domestic league and pickup games' }}</span>
+            <span>{{
+              isCoachOrAdmin()
+                ? "Track plays, stats, and player performance in real-time"
+                : "Keep a record of all your domestic league and pickup games"
+            }}</span>
           </div>
         </div>
       }
-      
+
       <!-- Games Table -->
       @else {
         <p-table [value]="games()" [paginator]="true" [rows]="10">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Date</th>
-            <th>Opponent</th>
-            <th>Type</th>
-            <th>Location</th>
-            <th>Score</th>
-            <th>Result</th>
-            <th>Actions</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-game>
-          <tr
-            [attr.data-game-id]="game.id"
-            [class.personal-game-row]="game.isPersonal"
-          >
-            <td>{{ game.date }}</td>
-            <td>{{ game.opponent }}</td>
-            <td>
-              @if (game.isPersonal) {
-                <span class="personal-badge">
-                  <i class="pi pi-user"></i>
-                  Personal
-                </span>
-              } @else {
-                <span class="team-badge">
-                  <i class="pi pi-users"></i>
-                  Team
-                </span>
-              }
-            </td>
-            <td>{{ game.location }}</td>
-            <td>{{ game.score }}</td>
-            <td>
-              <p-tag
-                [value]="game.result.toUpperCase()"
-                [severity]="getResultSeverity(game.result)"
-              >
-              </p-tag>
-            </td>
-            <td>
-              <app-icon-button
-                icon="pi-play"
-                ariaLabel="Start tracking"
-                (clicked)="startTrackingGame(game.id)"
-              />
-              <app-icon-button
-                icon="pi-eye"
-                ariaLabel="View details"
-                (clicked)="viewGameDetails(game)"
-              />
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Date</th>
+              <th>Opponent</th>
+              <th>Type</th>
+              <th>Location</th>
+              <th>Score</th>
+              <th>Result</th>
+              <th>Actions</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-game>
+            <tr
+              [attr.data-game-id]="game.id"
+              [class.personal-game-row]="game.isPersonal"
+            >
+              <td>{{ game.date }}</td>
+              <td>{{ game.opponent }}</td>
+              <td>
+                @if (game.isPersonal) {
+                  <span class="personal-badge">
+                    <i class="pi pi-user"></i>
+                    Personal
+                  </span>
+                } @else {
+                  <span class="team-badge">
+                    <i class="pi pi-users"></i>
+                    Team
+                  </span>
+                }
+              </td>
+              <td>{{ game.location }}</td>
+              <td>{{ game.score }}</td>
+              <td>
+                <p-tag
+                  [value]="game.result.toUpperCase()"
+                  [severity]="getResultSeverity(game.result)"
+                >
+                </p-tag>
+              </td>
+              <td>
+                <app-icon-button
+                  icon="pi-play"
+                  ariaLabel="Start tracking"
+                  (clicked)="startTrackingGame(game.id)"
+                />
+                <app-icon-button
+                  icon="pi-eye"
+                  ariaLabel="View details"
+                  (clicked)="viewGameDetails(game)"
+                />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
       }
     </p-card>
   </div>

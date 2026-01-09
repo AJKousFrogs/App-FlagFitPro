@@ -400,7 +400,8 @@ export class GameDayReadinessComponent implements OnInit {
 
   readinessMessage = computed(() => {
     const status = this.readinessStatus();
-    if (status === "info") return "Please complete all metrics below to see your readiness score.";
+    if (status === "info")
+      return "Please complete all metrics below to see your readiness score.";
     switch (status) {
       case "excellent":
         return "You're in great shape for today's competition. Go get it!";
@@ -419,12 +420,12 @@ export class GameDayReadinessComponent implements OnInit {
   readinessConfidence = computed(() => {
     const m = this.metrics();
     const allMetricsSet = m.every((metric) => metric.value > 0);
-    
+
     if (!allMetricsSet) {
       const completedMetrics = m.filter((metric) => metric.value > 0).length;
       const totalMetrics = m.length;
       const completeness = completedMetrics / totalMetrics;
-      
+
       return {
         score: completeness,
         missingInputs: m

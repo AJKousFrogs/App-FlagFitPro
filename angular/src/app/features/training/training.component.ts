@@ -4,12 +4,12 @@
  * ⭐ CANONICAL PAGE — Design System Exemplar (Pending Cleanup)
  * ============================================================
  * This page is marked as canonical but requires cleanup before freeze.
- * 
+ *
  * RULES:
  * - Future refactors copy FROM this page, never INTO it
  * - Changes require design system curator approval
  * - Must be cleaned to full compliance before canonical freeze
- * 
+ *
  * See docs/CANONICAL_PAGES.md for full documentation.
  *
  * CLEANUP REQUIRED:
@@ -266,7 +266,10 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
           >
             <div class="workouts-list-compact">
               @for (
-                workout of workouts().slice(0, UI_LIMITS.WORKOUTS_PREVIEW_COUNT);
+                workout of workouts().slice(
+                  0,
+                  UI_LIMITS.WORKOUTS_PREVIEW_COUNT
+                );
                 track trackByWorkoutTitle($index, workout)
               ) {
                 <div

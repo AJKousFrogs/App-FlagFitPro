@@ -907,7 +907,8 @@ export class CommunityComponent implements OnInit {
   // Check if user is a coach
   readonly isCoach = computed(() => {
     const user = this.authService.getUser();
-    const metadata = (user as { user_metadata?: UserMetadata } | null)?.user_metadata;
+    const metadata = (user as { user_metadata?: UserMetadata } | null)
+      ?.user_metadata;
     return metadata?.role === "coach" || metadata?.role === "assistant_coach";
   });
 
@@ -1004,73 +1005,83 @@ export class CommunityComponent implements OnInit {
 
   loadCommunityData(): void {
     // Load posts from real API
-    this.apiService.get<CommunityFeedResponse>("/api/community?feed=true").subscribe({
-      next: (response) => {
-        if (response?.data?.posts) {
-          const mappedPosts = response.data.posts.map((p: ApiPostData) => ({
-            id: p.id,
-            author: p.authorName || p.author || "Unknown",
-            authorInitials: this.getInitialsStr(p.authorName || p.author || "??"),
-            authorRole: p.postType === "announcement" ? "Coach" : undefined,
-            timeAgo: this.getRelativeTime(new Date(p.timestamp)),
-            location: p.location,
-            content: p.content,
-            likes: p.likes || 0,
-            comments: p.comments || 0,
-            shares: p.shares || 0,
-            isLiked: p.isLiked || false,
-            isBookmarked: p.isBookmarked || false,
-            showComments: false,
-            commentsList: [],
-            newComment: "",
-            media: p.mediaUrl
-              ? { type: p.mediaType || "image", url: p.mediaUrl }
-              : undefined,
-          }));
-          this.posts.set(mappedPosts);
-        }
-      },
-      error: (err) => this.logger.error("Error loading community feed:", err),
-    });
+    this.apiService
+      .get<CommunityFeedResponse>("/api/community?feed=true")
+      .subscribe({
+        next: (response) => {
+          if (response?.data?.posts) {
+            const mappedPosts = response.data.posts.map((p: ApiPostData) => ({
+              id: p.id,
+              author: p.authorName || p.author || "Unknown",
+              authorInitials: this.getInitialsStr(
+                p.authorName || p.author || "??",
+              ),
+              authorRole: p.postType === "announcement" ? "Coach" : undefined,
+              timeAgo: this.getRelativeTime(new Date(p.timestamp)),
+              location: p.location,
+              content: p.content,
+              likes: p.likes || 0,
+              comments: p.comments || 0,
+              shares: p.shares || 0,
+              isLiked: p.isLiked || false,
+              isBookmarked: p.isBookmarked || false,
+              showComments: false,
+              commentsList: [],
+              newComment: "",
+              media: p.mediaUrl
+                ? { type: p.mediaType || "image", url: p.mediaUrl }
+                : undefined,
+            }));
+            this.posts.set(mappedPosts);
+          }
+        },
+        error: (err) => this.logger.error("Error loading community feed:", err),
+      });
 
     // Load leaderboard from real API
-    this.apiService.get<ApiLeaderboardEntry[]>("/api/community?leaderboard=true").subscribe({
-      next: (response) => {
-        if (response?.data) {
-          const leaderboardData = Array.isArray(response.data)
-            ? response.data
-            : [];
-          const mappedLeaderboard = leaderboardData.map((entry: ApiLeaderboardEntry) => ({
-            rank: entry.rank,
-            name: entry.name || "Anonymous",
-            initials: this.getInitialsStr(entry.name || "??"),
-            score: entry.points,
-          }));
-          this.leaderboard.set(mappedLeaderboard);
-        }
-      },
-      error: (err) => this.logger.error("Error loading leaderboard:", err),
-    });
+    this.apiService
+      .get<ApiLeaderboardEntry[]>("/api/community?leaderboard=true")
+      .subscribe({
+        next: (response) => {
+          if (response?.data) {
+            const leaderboardData = Array.isArray(response.data)
+              ? response.data
+              : [];
+            const mappedLeaderboard = leaderboardData.map(
+              (entry: ApiLeaderboardEntry) => ({
+                rank: entry.rank,
+                name: entry.name || "Anonymous",
+                initials: this.getInitialsStr(entry.name || "??"),
+                score: entry.points,
+              }),
+            );
+            this.leaderboard.set(mappedLeaderboard);
+          }
+        },
+        error: (err) => this.logger.error("Error loading leaderboard:", err),
+      });
 
     // Load trending topics from real API
-    this.apiService.get<TrendingTopicsResponse>("/api/community?trending=true").subscribe({
-      next: (response) => {
-        if (response?.data?.topics) {
-          this.trendingTopics.set(response.data.topics);
-        }
-      },
-      error: (err) => {
-        this.logger.error("Error loading trending topics:", err);
-        // Set default trending topics as fallback
-        this.trendingTopics.set([
-          { name: "Training", count: 45 },
-          { name: "GameDay", count: 38 },
-          { name: "Quarterback", count: 27 },
-          { name: "Defense", count: 19 },
-          { name: "Fitness", count: 15 },
-        ]);
-      },
-    });
+    this.apiService
+      .get<TrendingTopicsResponse>("/api/community?trending=true")
+      .subscribe({
+        next: (response) => {
+          if (response?.data?.topics) {
+            this.trendingTopics.set(response.data.topics);
+          }
+        },
+        error: (err) => {
+          this.logger.error("Error loading trending topics:", err);
+          // Set default trending topics as fallback
+          this.trendingTopics.set([
+            { name: "Training", count: 45 },
+            { name: "GameDay", count: 38 },
+            { name: "Quarterback", count: 27 },
+            { name: "Defense", count: 19 },
+            { name: "Fitness", count: 15 },
+          ]);
+        },
+      });
   }
 
   /**
@@ -1397,9 +1408,12 @@ export class CommunityComponent implements OnInit {
 
     // Call API to persist comment
     this.apiService
-      .post<ApiCommentResponse>(`/api/community?postId=${post.id}&comment=true`, {
-        content: commentContent,
-      })
+      .post<ApiCommentResponse>(
+        `/api/community?postId=${post.id}&comment=true`,
+        {
+          content: commentContent,
+        },
+      )
       .subscribe({
         next: (response) => {
           // Replace temp comment with real one from server
@@ -1648,7 +1662,10 @@ export class CommunityComponent implements OnInit {
 
     // Call API to persist vote
     this.apiService
-      .post<ApiPollVoteResponse>(`/api/community?optionId=${optionId}&pollVote=true`, {})
+      .post<ApiPollVoteResponse>(
+        `/api/community?optionId=${optionId}&pollVote=true`,
+        {},
+      )
       .subscribe({
         next: (response) => {
           if (response?.data?.options) {
@@ -1768,7 +1785,9 @@ export class CommunityComponent implements OnInit {
       this.toastService.info(TOAST.INFO.FILTER_CLEARED);
     } else {
       this.selectedTopic.set(topicName);
-      this.toastService.success(TOAST.SUCCESS.SHOWING_POSTS_ABOUT.replace("{topic}", topicName));
+      this.toastService.success(
+        TOAST.SUCCESS.SHOWING_POSTS_ABOUT.replace("{topic}", topicName),
+      );
 
       // Scroll to posts feed
       setTimeout(() => {

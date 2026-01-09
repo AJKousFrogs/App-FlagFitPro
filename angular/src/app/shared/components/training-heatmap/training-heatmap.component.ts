@@ -171,12 +171,12 @@ export class TrainingHeatmapComponent {
 
   getTooltipText(cell: HeatmapCell): string {
     const metric = this.showIntensity ? "Intensity" : "Volume";
-    return `${formatDate(cell.date, 'P')}\n${metric}: ${cell.value}${this.showIntensity ? "/70" : " min"}`;
+    return `${formatDate(cell.date, "P")}\n${metric}: ${cell.value}${this.showIntensity ? "/70" : " min"}`;
   }
 
   getAriaLabel(cell: HeatmapCell): string {
     const metric = this.showIntensity ? "Intensity" : "Volume";
-    return `Training ${metric} on ${formatDate(cell.date, 'P')}: ${cell.value}${this.showIntensity ? "/70" : " minutes"}`;
+    return `Training ${metric} on ${formatDate(cell.date, "P")}: ${cell.value}${this.showIntensity ? "/70" : " minutes"}`;
   }
 
   onCellClick(cell: HeatmapCell) {
@@ -192,10 +192,7 @@ export class TrainingHeatmapComponent {
     return cell.date.toISOString();
   }
 
-  trackByStep(
-    index: number,
-    _step: { class: string },
-  ): number {
+  trackByStep(index: number, _step: { class: string }): number {
     return index;
   }
 }

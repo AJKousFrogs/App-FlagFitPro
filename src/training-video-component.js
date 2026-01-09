@@ -544,7 +544,7 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     // Add click handlers to video cards
     videoGrid.querySelectorAll(".video-card").forEach((card) => {
       card.addEventListener("click", () => {
-        const {videoId} = card.dataset;
+        const { videoId } = card.dataset;
         const video = videos.find((v) => v.id === videoId);
         if (video) {
           this.selectVideo(video);
@@ -607,7 +607,7 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     // Add click handlers
     videoGrid.querySelectorAll(".video-card").forEach((card) => {
       card.addEventListener("click", () => {
-        const {videoId} = card.dataset;
+        const { videoId } = card.dataset;
         let video = null;
         playlist.forEach((section) => {
           const found = section.videos.find((v) => v.id === videoId);
@@ -689,7 +689,7 @@ class TrainingVideoComponent extends ComponentWithCleanup {
     document.getElementById("current-video-title").textContent = video.title;
     document.getElementById("current-video-description").textContent =
       video.description.length > 200
-        ? `${video.description.substring(0, 200)  }...`
+        ? `${video.description.substring(0, 200)}...`
         : video.description;
     document.getElementById("video-channel").textContent = video.channelTitle;
     document.getElementById("video-duration").textContent =

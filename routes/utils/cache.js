@@ -123,7 +123,9 @@ function invalidateCache(pattern) {
   }
 
   cacheStats.invalidations += count;
-  serverLogger.info(`Cache invalidated: ${count} entries matching "${pattern}"`);
+  serverLogger.info(
+    `Cache invalidated: ${count} entries matching "${pattern}"`,
+  );
   return count;
 }
 
@@ -131,7 +133,7 @@ function invalidateCache(pattern) {
  * Clear all cache entries
  */
 function clearCache() {
-  const {size} = cacheStore;
+  const { size } = cacheStore;
   cacheStore.clear();
   serverLogger.info(`Cache cleared: ${size} entries removed`);
   return size;
@@ -149,30 +151,33 @@ function getCacheStats() {
         ? `${(
             (cacheStats.hits / (cacheStats.hits + cacheStats.misses)) *
             100
-          ).toFixed(1)  }%`
+          ).toFixed(1)}%`
         : "0%",
   };
 }
 
 // Cleanup expired entries every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  let cleaned = 0;
+setInterval(
+  () => {
+    const now = Date.now();
+    let cleaned = 0;
 
-  for (const [key, entry] of cacheStore.entries()) {
-    const config = CACHE_CONFIG[entry.type] || CACHE_CONFIG.DEFAULT;
-    const maxAge = config.ttlMs + config.staleWhileRevalidate;
+    for (const [key, entry] of cacheStore.entries()) {
+      const config = CACHE_CONFIG[entry.type] || CACHE_CONFIG.DEFAULT;
+      const maxAge = config.ttlMs + config.staleWhileRevalidate;
 
-    if (now - entry.timestamp > maxAge) {
-      cacheStore.delete(key);
-      cleaned++;
+      if (now - entry.timestamp > maxAge) {
+        cacheStore.delete(key);
+        cleaned++;
+      }
     }
-  }
 
-  if (cleaned > 0) {
-    serverLogger.info(`Cache cleanup: ${cleaned} expired entries removed`);
-  }
-}, 5 * 60 * 1000);
+    if (cleaned > 0) {
+      serverLogger.info(`Cache cleanup: ${cleaned} expired entries removed`);
+    }
+  },
+  5 * 60 * 1000,
+);
 
 /**
  * Cache middleware factory

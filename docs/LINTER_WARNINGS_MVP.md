@@ -11,6 +11,7 @@
 This document explains the **81 remaining linter warnings** in the codebase and why they are acceptable for MVP release.
 
 **Key Points:**
+
 - ✅ **0 errors** - All critical issues resolved
 - ⚠️ **81 warnings** - Non-blocking, acceptable for MVP
 - 🎯 **Type Safety:** `strict: true` with `strictNullChecks` enabled
@@ -29,10 +30,10 @@ npm run lint
 
 ### Breakdown by Type
 
-| Warning Type | Count | Severity | MVP Status |
-|--------------|-------|----------|------------|
-| `no-non-null-assertion` | ~60 | Low | ✅ Acceptable |
-| `no-explicit-any` | ~21 | Medium | ✅ Acceptable |
+| Warning Type            | Count | Severity | MVP Status    |
+| ----------------------- | ----- | -------- | ------------- |
+| `no-non-null-assertion` | ~60   | Low      | ✅ Acceptable |
+| `no-explicit-any`       | ~21   | Medium   | ✅ Acceptable |
 
 ---
 
@@ -47,8 +48,8 @@ npm run lint
 
 ```typescript
 // Example
-const element = document.querySelector('.btn')!;
-const user = users.find(u => u.id === id)!;
+const element = document.querySelector(".btn")!;
+const user = users.find((u) => u.id === id)!;
 ```
 
 The `!` operator tells TypeScript "I know this value exists, trust me."
@@ -80,9 +81,9 @@ if (users.length > 0) {
 }
 
 // After guard (safe)
-const element = document.querySelector('.btn');
+const element = document.querySelector(".btn");
 if (element) {
-  element.classList.add('active'); // Safe: null check above
+  element.classList.add("active"); // Safe: null check above
 }
 ```
 
@@ -102,6 +103,7 @@ const response: any = await fetch(...);
 #### Where They Are
 
 Distribution by area:
+
 - Training/Wellness Services: 10 (✅ **Fixed in this PR**)
 - Charts/Visualization: 3
 - Profile/Roster: 5
@@ -137,15 +139,21 @@ const response: { data?: unknown; error?: string } = await service.getData();
 #### Remaining `any` Examples
 
 **Chart Data (Acceptable):**
+
 ```typescript
 // Third-party library with complex types
 chartOptions: any = {
-  scales: { /* 50+ nested options */ },
-  plugins: { /* Complex plugin config */ }
+  scales: {
+    /* 50+ nested options */
+  },
+  plugins: {
+    /* Complex plugin config */
+  },
 };
 ```
 
 **Dynamic Forms (Acceptable):**
+
 ```typescript
 // FormControl types are complex, any is pragmatic
 validator(control: any) {
@@ -156,7 +164,7 @@ validator(control: any) {
 #### Risk Assessment
 
 - **Medium Risk:** Could hide type errors
-- **Mitigation:** 
+- **Mitigation:**
   - Strict mode catches most issues
   - Manual testing covers these areas
   - Runtime checks in place
@@ -168,6 +176,7 @@ validator(control: any) {
 ### 1. Zero Critical Errors ✅
 
 All **errors** are resolved. Warnings don't block:
+
 - Compilation
 - Runtime execution
 - Type safety in most areas
@@ -175,11 +184,13 @@ All **errors** are resolved. Warnings don't block:
 ### 2. Risk vs. Effort Trade-off
 
 **Fixing Remaining Warnings:**
+
 - Requires 40-60 hours of refactoring
 - High risk of introducing bugs
 - Limited player-facing benefit
 
 **Better Use of Time:**
+
 - Get player feedback on MVP
 - Fix real user-reported issues
 - Optimize based on usage data
@@ -187,12 +198,13 @@ All **errors** are resolved. Warnings don't block:
 ### 3. Type Safety Still Strong
 
 TypeScript config remains strict:
+
 ```json
 {
-  "strict": true,              // ✅ All strict checks
-  "noImplicitAny": true,       // ✅ Catch untyped params
-  "strictNullChecks": true,    // ✅ Null/undefined safety
-  "strictFunctionTypes": true  // ✅ Function type safety
+  "strict": true, // ✅ All strict checks
+  "noImplicitAny": true, // ✅ Catch untyped params
+  "strictNullChecks": true, // ✅ Null/undefined safety
+  "strictFunctionTypes": true // ✅ Function type safety
 }
 ```
 
@@ -206,6 +218,7 @@ TypeScript config remains strict:
 ### 5. Industry Standards
 
 Most production TypeScript codebases have:
+
 - Some non-null assertions (pragmatic)
 - Some `any` types (third-party, dynamic data)
 - Gradual improvement over time
@@ -217,27 +230,32 @@ Most production TypeScript codebases have:
 **Post-Player Feedback (Month 2-3)**
 
 ### Phase 1: Chart Types (Week 1)
+
 - Create proper Chart.js type wrappers
 - Replace chart `any` types
 - **Impact:** 3 warnings fixed
 
 ### Phase 2: Form Validation (Week 2)
+
 - Type all form validators
 - Create validation type helpers
 - **Impact:** 5 warnings fixed
 
 ### Phase 3: API Response Types (Week 3-4)
+
 - Define all API response interfaces
 - Replace remaining `any` responses
 - **Impact:** 8 warnings fixed
 
 ### Phase 4: Non-Null Assertion Review (Week 5-6)
+
 - Review production non-null assertions
 - Add runtime checks where needed
 - Refactor with optional chaining
 - **Impact:** 20 warnings fixed
 
 ### Goal
+
 - Reduce to <30 warnings by MVP2
 - Focus on production code (not tests)
 - Maintain development velocity
@@ -256,6 +274,7 @@ Most production TypeScript codebases have:
 ### Extra Validation for `any` Types
 
 Areas with `any` types have extra testing:
+
 - Chart rendering: Visual regression tests
 - Form validation: Unit + integration tests
 - API responses: Contract tests
@@ -267,6 +286,7 @@ Areas with `any` types have extra testing:
 ### Runtime Error Tracking
 
 Using Sentry to catch:
+
 - Type-related runtime errors
 - Null/undefined access
 - Chart rendering failures
@@ -280,6 +300,7 @@ Using Sentry to catch:
 ### Escalation Triggers
 
 If we see:
+
 - Type-related errors >1% of sessions
 - Multiple user reports of same issue
 - Data corruption from type issues

@@ -1,11 +1,11 @@
 /**
  * Shared Insight Feed Service
- * 
+ *
  * Provides role-filtered feed of professional insights from:
  * - Physiotherapist → Coach (injury notes, RTP progress)
  * - Nutritionist → Coach/Player (compliance tracking, meal plans)
  * - Psychologist → Coach (mental fatigue flags, summary-only)
- * 
+ *
  * Implements write-once, multi-role visibility model
  */
 
@@ -16,7 +16,11 @@ import { AuthService } from "./auth.service";
 
 export interface SharedInsight {
   id: string;
-  insightType: "physio_note" | "nutrition_compliance" | "psychology_flag" | "coach_note";
+  insightType:
+    | "physio_note"
+    | "nutrition_compliance"
+    | "psychology_flag"
+    | "coach_note";
   fromRole: "physiotherapist" | "nutritionist" | "psychologist" | "coach";
   toRoles: string[]; // Roles that can view this insight
   playerId: string;
@@ -73,7 +77,10 @@ export class SharedInsightFeedService {
       }
 
       // Type filter
-      if (filter.insightType && !filter.insightType.includes(insight.insightType)) {
+      if (
+        filter.insightType &&
+        !filter.insightType.includes(insight.insightType)
+      ) {
         return false;
       }
 
@@ -154,7 +161,9 @@ export class SharedInsightFeedService {
   /**
    * Create a new shared insight
    */
-  async createInsight(insight: Omit<SharedInsight, "id" | "createdAt" | "status">): Promise<string | null> {
+  async createInsight(
+    insight: Omit<SharedInsight, "id" | "createdAt" | "status">,
+  ): Promise<string | null> {
     try {
       const user = this.authService.getUser();
       if (!user?.id) {
@@ -207,4 +216,3 @@ export class SharedInsightFeedService {
     this._filter.set({});
   }
 }
-

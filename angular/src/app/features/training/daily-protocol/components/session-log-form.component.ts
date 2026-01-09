@@ -58,8 +58,8 @@ export interface SessionLogData {
         <div class="form-field">
           <label for="rpe">
             Session RPE (Rate of Perceived Exertion)
-            <i 
-              class="pi pi-info-circle info-icon" 
+            <i
+              class="pi pi-info-circle info-icon"
               pTooltip="RPE (1-10 scale) measures how hard you felt the session was. This helps track training load for injury prevention. 1=Very Easy, 10=Maximal Effort"
               tooltipPosition="right"
               [showDelay]="300"

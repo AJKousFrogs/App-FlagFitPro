@@ -18,7 +18,10 @@
 .metric-card {
   position: relative;
   overflow: hidden;
-  transition: background-color var(--motion-slow) var(--ease-standard), box-shadow var(--motion-slow) var(--ease-standard), transform var(--motion-slow) var(--ease-standard);
+  transition:
+    background-color var(--motion-slow) var(--ease-standard),
+    box-shadow var(--motion-slow) var(--ease-standard),
+    transform var(--motion-slow) var(--ease-standard);
   border: 1px solid var(--color-border-primary);
 }
 

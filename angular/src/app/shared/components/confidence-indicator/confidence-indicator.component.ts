@@ -1,6 +1,6 @@
 /**
  * Confidence Indicator Component
- * 
+ *
  * Displays confidence score with visual indicators and warnings
  */
 
@@ -22,10 +22,15 @@ import { ButtonModule } from "primeng/button";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, TagModule, TooltipModule, ButtonModule],
   template: `
-    <div class="confidence-indicator" [class]="'confidence-' + confidenceClass()">
+    <div
+      class="confidence-indicator"
+      [class]="'confidence-' + confidenceClass()"
+    >
       <div class="confidence-header">
         <div class="confidence-score">
-          <span class="score-value">{{ (score() * 100) | number: "1.0-0" }}%</span>
+          <span class="score-value"
+            >{{ score() * 100 | number: "1.0-0" }}%</span
+          >
           <span class="score-label">{{ confidenceLevel() }} Confidence</span>
         </div>
         <p-tag
@@ -49,13 +54,25 @@ import { ButtonModule } from "primeng/button";
           <!-- Impact explanation -->
           <div class="explanation-text">
             @if (score() >= 0.9) {
-              <span>Your ACWR calculation is highly reliable based on complete data.</span>
+              <span
+                >Your ACWR calculation is highly reliable based on complete
+                data.</span
+              >
             } @else if (score() >= 0.7) {
-              <span>ACWR reliability is reduced due to missing data. Estimates may vary by ±10%.</span>
+              <span
+                >ACWR reliability is reduced due to missing data. Estimates may
+                vary by ±10%.</span
+              >
             } @else if (score() >= 0.5) {
-              <span>ACWR reliability is low. Missing data means estimates may vary significantly (±15-20%).</span>
+              <span
+                >ACWR reliability is low. Missing data means estimates may vary
+                significantly (±15-20%).</span
+              >
             } @else {
-              <span>ACWR reliability is very low. Critical data is missing. Estimates are unreliable.</span>
+              <span
+                >ACWR reliability is very low. Critical data is missing.
+                Estimates are unreliable.</span
+              >
             }
           </div>
 
@@ -76,7 +93,7 @@ import { ButtonModule } from "primeng/button";
             <div class="confidence-actions">
               <strong>Improve confidence:</strong>
               <div class="action-buttons">
-                @if (missingInputs().includes('wellness')) {
+                @if (missingInputs().includes("wellness")) {
                   <button
                     pButton
                     label="Complete Wellness Check-in"
@@ -85,7 +102,7 @@ import { ButtonModule } from "primeng/button";
                     styleClass="p-button-sm p-button-outlined"
                   ></button>
                 }
-                @if (missingInputs().includes('training')) {
+                @if (missingInputs().includes("training")) {
                   <button
                     pButton
                     label="Log Training Session"
@@ -273,7 +290,13 @@ export class ConfidenceIndicatorComponent {
     return "very-low";
   });
 
-  getSeverity(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
+  getSeverity():
+    | "secondary"
+    | "success"
+    | "info"
+    | "warn"
+    | "danger"
+    | "contrast" {
     const s = this.score();
     if (s >= 0.9) return "success";
     if (s >= 0.7) return "warn";
@@ -295,4 +318,3 @@ export class ConfidenceIndicatorComponent {
     return labels[input] || input;
   }
 }
-

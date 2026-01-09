@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -25,7 +25,10 @@ import { TimelineModule } from "primeng/timeline";
 import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
-import { SharedInsight, SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
+import {
+  SharedInsight,
+  SharedInsightFeedService,
+} from "../../../core/services/shared-insight-feed.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -359,7 +362,10 @@ const RTP_PHASES = [
                           @if (athlete.activeInjuries.length > 0) {
                             <div class="injuries-list">
                               @for (
-                                injury of athlete.activeInjuries.slice(0, UI_LIMITS.INJURIES_PREVIEW);
+                                injury of athlete.activeInjuries.slice(
+                                  0,
+                                  UI_LIMITS.INJURIES_PREVIEW
+                                );
                                 track injury.id
                               ) {
                                 <span
@@ -812,16 +818,27 @@ const RTP_PHASES = [
                       <i class="pi pi-spin pi-spinner"></i>
                       <span>Loading insights...</span>
                     </div>
-                  } @else if (insightFeedService.filteredInsights().length === 0) {
+                  } @else if (
+                    insightFeedService.filteredInsights().length === 0
+                  ) {
                     <div class="empty-state">
                       <i class="pi pi-info-circle"></i>
                       <p>No shared insights available</p>
-                      <small>Insights from coaches, nutritionists, and psychologists will appear here</small>
+                      <small
+                        >Insights from coaches, nutritionists, and psychologists
+                        will appear here</small
+                      >
                     </div>
                   } @else {
                     <div class="insights-list">
-                      @for (insight of insightFeedService.filteredInsights(); track insight.id) {
-                        <p-card styleClass="insight-card" [class]="'priority-' + insight.priority">
+                      @for (
+                        insight of insightFeedService.filteredInsights();
+                        track insight.id
+                      ) {
+                        <p-card
+                          styleClass="insight-card"
+                          [class]="'priority-' + insight.priority"
+                        >
                           <ng-template #header>
                             <div class="insight-header">
                               <div class="insight-meta">
@@ -829,29 +846,43 @@ const RTP_PHASES = [
                                   [value]="insight.fromRole"
                                   [severity]="getRoleSeverity(insight.fromRole)"
                                 ></p-tag>
-                                <span class="insight-type">{{ getInsightTypeLabel(insight.insightType) }}</span>
+                                <span class="insight-type">{{
+                                  getInsightTypeLabel(insight.insightType)
+                                }}</span>
                                 @if (insight.playerName) {
-                                  <span class="player-name">{{ insight.playerName }}</span>
+                                  <span class="player-name">{{
+                                    insight.playerName
+                                  }}</span>
                                 }
                               </div>
                               <div class="insight-actions">
                                 <p-tag
                                   [value]="insight.priority"
-                                  [severity]="getPrioritySeverity(insight.priority)"
+                                  [severity]="
+                                    getPrioritySeverity(insight.priority)
+                                  "
                                   styleClass="priority-tag"
                                 ></p-tag>
-                                <span class="insight-date">{{ formatDate(insight.createdAt) }}</span>
+                                <span class="insight-date">{{
+                                  formatDate(insight.createdAt)
+                                }}</span>
                               </div>
                             </div>
                           </ng-template>
                           <div class="insight-content">
                             <h4 class="insight-title">{{ insight.title }}</h4>
                             <p class="insight-text">{{ insight.content }}</p>
-                            @if (insight.metadata && hasMetadata(insight.metadata)) {
+                            @if (
+                              insight.metadata && hasMetadata(insight.metadata)
+                            ) {
                               <div class="insight-metadata">
-                                @for (entry of getMetadataEntries(insight.metadata); track entry.key) {
+                                @for (
+                                  entry of getMetadataEntries(insight.metadata);
+                                  track entry.key
+                                ) {
                                   <div class="metadata-item">
-                                    <strong>{{ entry.key }}:</strong> {{ entry.value }}
+                                    <strong>{{ entry.key }}:</strong>
+                                    {{ entry.value }}
                                   </div>
                                 }
                               </div>
@@ -1587,12 +1618,15 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     return typeMap[type] || type;
   }
 
-  getPrioritySeverity(priority: string): "success" | "info" | "warn" | "danger" {
-    const priorityMap: Record<string, "success" | "info" | "warn" | "danger"> = {
-      low: "info",
-      medium: "warn",
-      high: "danger",
-    };
+  getPrioritySeverity(
+    priority: string,
+  ): "success" | "info" | "warn" | "danger" {
+    const priorityMap: Record<string, "success" | "info" | "warn" | "danger"> =
+      {
+        low: "info",
+        medium: "warn",
+        high: "danger",
+      };
     return priorityMap[priority] || "info";
   }
 
@@ -1607,10 +1641,12 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    return formatDate(date, 'P');
+    return formatDate(date, "P");
   }
 
-  getMetadataEntries(metadata: Record<string, unknown>): Array<{ key: string; value: string }> {
+  getMetadataEntries(
+    metadata: Record<string, unknown>,
+  ): Array<{ key: string; value: string }> {
     return Object.entries(metadata).map(([key, value]) => ({
       key: key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
       value: String(value),

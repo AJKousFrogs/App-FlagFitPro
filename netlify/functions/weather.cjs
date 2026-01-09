@@ -14,9 +14,14 @@ async function getWeatherData(latitude, longitude, city) {
   if (apiKey) {
     try {
       const data = await getOpenWeatherData(latitude, longitude, city, apiKey);
-      if (data) {return data;}
+      if (data) {
+        return data;
+      }
     } catch (error) {
-      console.warn("OpenWeatherMap failed, falling back to Open-Meteo:", error.message);
+      console.warn(
+        "OpenWeatherMap failed, falling back to Open-Meteo:",
+        error.message,
+      );
     }
   }
 
@@ -80,7 +85,7 @@ async function getOpenMeteoData(latitude, longitude, city) {
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`,
           {
             headers: { "User-Agent": "FlagFitPro/1.0" },
-          }
+          },
         );
 
         if (geoResponse.ok) {
@@ -92,7 +97,10 @@ async function getOpenMeteoData(latitude, longitude, city) {
           }
         }
       } catch (geoError) {
-        console.warn("Geocoding failed, using default location:", geoError.message);
+        console.warn(
+          "Geocoding failed, using default location:",
+          geoError.message,
+        );
       }
     }
 
@@ -106,13 +114,13 @@ async function getOpenMeteoData(latitude, longitude, city) {
     }
 
     const weatherData = await weatherResponse.json();
-    const {current} = weatherData;
+    const { current } = weatherData;
 
     const weatherCondition = getOpenMeteoCondition(current.weather_code);
     const suitability = calculateOpenMeteoSuitability(
       current.temperature_2m,
       current.wind_speed_10m,
-      current.weather_code
+      current.weather_code,
     );
 
     return {
@@ -150,19 +158,47 @@ async function getOpenMeteoData(latitude, longitude, city) {
  */
 function getOpenMeteoCondition(code) {
   if (code === 0) {
-    return { condition: "Clear", description: "Perfect weather for training", icon: "☀️" };
+    return {
+      condition: "Clear",
+      description: "Perfect weather for training",
+      icon: "☀️",
+    };
   } else if (code <= 3) {
-    return { condition: "Partly Cloudy", description: "Good conditions for outdoor activity", icon: "⛅" };
+    return {
+      condition: "Partly Cloudy",
+      description: "Good conditions for outdoor activity",
+      icon: "⛅",
+    };
   } else if (code <= 48) {
-    return { condition: "Foggy", description: "Reduced visibility, be cautious", icon: "🌫️" };
+    return {
+      condition: "Foggy",
+      description: "Reduced visibility, be cautious",
+      icon: "🌫️",
+    };
   } else if (code <= 67) {
-    return { condition: "Rainy", description: "Consider indoor training", icon: "🌧️" };
+    return {
+      condition: "Rainy",
+      description: "Consider indoor training",
+      icon: "🌧️",
+    };
   } else if (code <= 77) {
-    return { condition: "Snowy", description: "Indoor training recommended", icon: "❄️" };
+    return {
+      condition: "Snowy",
+      description: "Indoor training recommended",
+      icon: "❄️",
+    };
   } else if (code <= 99) {
-    return { condition: "Stormy", description: "Stay indoors, unsafe for training", icon: "⛈️" };
+    return {
+      condition: "Stormy",
+      description: "Stay indoors, unsafe for training",
+      icon: "⛈️",
+    };
   }
-  return { condition: "Unknown", description: "Weather data unavailable", icon: "🌤️" };
+  return {
+    condition: "Unknown",
+    description: "Weather data unavailable",
+    icon: "🌤️",
+  };
 }
 
 /**

@@ -40,9 +40,24 @@
  * Controls who can see a user's profile
  */
 export const VISIBILITY_OPTIONS = [
-  { label: "Public", value: "public", icon: "pi pi-globe", description: "Anyone can see your profile" },
-  { label: "Team Only", value: "team", icon: "pi pi-users", description: "Only your team can see your profile" },
-  { label: "Private", value: "private", icon: "pi pi-lock", description: "Only you can see your profile" },
+  {
+    label: "Public",
+    value: "public",
+    icon: "pi pi-globe",
+    description: "Anyone can see your profile",
+  },
+  {
+    label: "Team Only",
+    value: "team",
+    icon: "pi pi-users",
+    description: "Only your team can see your profile",
+  },
+  {
+    label: "Private",
+    value: "private",
+    icon: "pi pi-lock",
+    description: "Only you can see your profile",
+  },
 ] as const;
 
 /**

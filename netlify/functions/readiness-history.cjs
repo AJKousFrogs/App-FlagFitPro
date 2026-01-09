@@ -41,8 +41,8 @@ exports.handler = async (event, context) => {
 
       // Check if coach requesting another athlete's data
       const role = await getUserRole(userId);
-      const isCoach = ['coach', 'admin'].includes(role);
-      
+      const isCoach = ["coach", "admin"].includes(role);
+
       // Get readiness scores
       const query = supabaseAdmin
         .from("readiness_scores")
@@ -63,11 +63,13 @@ exports.handler = async (event, context) => {
       // Filter data for coach if consent not granted
       if (isCoach && athleteId !== userId && result.data) {
         const consentCheck = await canCoachViewReadiness(userId, athleteId);
-        const filteredData = result.data.map(item => filterReadinessForCoach(
-          item,
-          consentCheck.allowed && consentCheck.reason === 'CONSENT_GRANTED',
-          consentCheck.safetyOverride
-        ));
+        const filteredData = result.data.map((item) =>
+          filterReadinessForCoach(
+            item,
+            consentCheck.allowed && consentCheck.reason === "CONSENT_GRANTED",
+            consentCheck.safetyOverride,
+          ),
+        );
         return successResponse(filteredData);
       }
 

@@ -16,20 +16,20 @@
  */
 
 import {
-    animate,
-    keyframes,
-    style,
-    transition,
-    trigger,
+  animate,
+  keyframes,
+  style,
+  transition,
+  trigger,
 } from "@angular/animations";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    computed,
-    effect,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  effect,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
@@ -48,12 +48,20 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acwr-baseline.component";
 import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { ProtocolJson, TodayViewModel, resolveTodayState } from "../../today/resolution/today-state.resolver";
-import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import {
-    WeekDay,
-} from "../training/daily-protocol/components/week-progress-strip.component";
-import { BlockType, DailyProtocol, ExerciseCategory, PrescribedExercise, ProtocolBlock } from "../training/daily-protocol/daily-protocol.models";
+  ProtocolJson,
+  TodayViewModel,
+  resolveTodayState,
+} from "../../today/resolution/today-state.resolver";
+import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
+import { WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
+import {
+  BlockType,
+  DailyProtocol,
+  ExerciseCategory,
+  PrescribedExercise,
+  ProtocolBlock,
+} from "../training/daily-protocol/daily-protocol.models";
 
 // Services
 import { ApiService } from "../../core/services/api.service";
@@ -1170,7 +1178,7 @@ export class TodayComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(ApiService);
   private readonly directApi = inject(DirectSupabaseApiService);
-  
+
   // Environment flag for API routing
   private readonly useDirectSupabase = environment.useDirectSupabase;
 
@@ -1372,12 +1380,14 @@ export class TodayComponent {
   // Computed signals for template use
   readonly hasAlertBanner = computed(() => {
     const banners = this.todayViewModel()?.banners ?? [];
-    return banners.some(b => b.type === 'alert' && b.text.includes('Acknowledgment required'));
+    return banners.some(
+      (b) => b.type === "alert" && b.text.includes("Acknowledgment required"),
+    );
   });
 
   readonly alertBannerText = computed(() => {
     const banners = this.todayViewModel()?.banners ?? [];
-    return banners.find(b => b.type === 'alert')?.text ?? '';
+    return banners.find((b) => b.type === "alert")?.text ?? "";
   });
 
   readonly tomorrowDate = computed(() => {
@@ -1413,7 +1423,7 @@ export class TodayComponent {
     return computeQuickReadiness(
       data.overallFeeling,
       data.energyLevel,
-      data.hasSoreness
+      data.hasSoreness,
     );
   });
 
@@ -1435,7 +1445,10 @@ export class TodayComponent {
     this.loadTomorrowProtocol();
 
     // Update time every minute
-    const interval = setInterval(() => this.currentTime.set(new Date()), TIMEOUTS.TIME_UPDATE_INTERVAL);
+    const interval = setInterval(
+      () => this.currentTime.set(new Date()),
+      TIMEOUTS.TIME_UPDATE_INTERVAL,
+    );
     this.destroyRef.onDestroy(() => clearInterval(interval));
 
     // Watch for protocol completion to trigger celebration
@@ -1462,7 +1475,7 @@ export class TodayComponent {
    * 3. Resolve state using deterministic resolver
    * 4. Do NOT generate multiple times
    * 5. Do NOT fabricate fallback UI if generation fails
-   * 
+   *
    * When useDirectSupabase is true (local dev without Netlify):
    * - Uses DirectSupabaseApiService to call database directly
    * - No need for Netlify Dev server running
@@ -1470,17 +1483,21 @@ export class TodayComponent {
   private loadTodayData(): void {
     const today = new Date().toISOString().split("T")[0];
     let generationAttempted = false;
-    
+
     // Use direct Supabase API in local development mode
     if (this.useDirectSupabase) {
-      this.logger.info("[TodayComponent] Using direct Supabase API for protocol data");
+      this.logger.info(
+        "[TodayComponent] Using direct Supabase API for protocol data",
+      );
       this.loadTodayDataDirect(today, generationAttempted);
       return;
     }
-    
+
     // Step 1: Try GET first (via Netlify Functions)
     this.api
-      .get<{ success: boolean; data?: ProtocolJson }>(`/api/daily-protocol?date=${today}`)
+      .get<{ success: boolean; data?: ProtocolJson }>(
+        `/api/daily-protocol?date=${today}`,
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -1500,7 +1517,9 @@ export class TodayComponent {
               "Unable to generate your training plan. Please contact support.",
             );
             this.protocolJson.set(null);
-            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+            this.todayViewModel.set(
+              resolveTodayState(null, this.currentTime()),
+            );
           }
         },
         error: (err) => {
@@ -1513,16 +1532,21 @@ export class TodayComponent {
               "Failed to load your training data. Please try again.",
             );
             this.protocolJson.set(null);
-            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+            this.todayViewModel.set(
+              resolveTodayState(null, this.currentTime()),
+            );
           }
         },
       });
   }
-  
+
   /**
    * Load today data using direct Supabase API (for local development)
    */
-  private loadTodayDataDirect(date: string, generationAttempted: boolean): void {
+  private loadTodayDataDirect(
+    date: string,
+    generationAttempted: boolean,
+  ): void {
     this.directApi
       .getDailyProtocol(date)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -1531,10 +1555,12 @@ export class TodayComponent {
           if (response?.success && response.data) {
             // Store full protocol data for UI rendering (includes blocks with exercises)
             this.fullProtocolData = response.data;
-            
+
             // Protocol found, resolve state
             // Map direct API response to ProtocolJson format
-            const protocolData = this.mapDirectResponseToProtocolJson(response.data);
+            const protocolData = this.mapDirectResponseToProtocolJson(
+              response.data,
+            );
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
             this.error.set(null);
@@ -1547,7 +1573,9 @@ export class TodayComponent {
             );
             this.protocolJson.set(null);
             this.fullProtocolData = null;
-            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+            this.todayViewModel.set(
+              resolveTodayState(null, this.currentTime()),
+            );
           }
         },
         error: (err) => {
@@ -1559,18 +1587,20 @@ export class TodayComponent {
               "Failed to load your training data. Please try again.",
             );
             this.protocolJson.set(null);
-            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+            this.todayViewModel.set(
+              resolveTodayState(null, this.currentTime()),
+            );
           }
         },
       });
   }
-  
+
   /**
    * Generate protocol using direct Supabase API
    */
   private generateAndLoadProtocolDirect(date: string): void {
     this.isGeneratingProtocol.set(true);
-    
+
     this.directApi
       .generateDailyProtocol(date)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -1580,9 +1610,11 @@ export class TodayComponent {
           if (response?.success && response.data) {
             // Store full protocol data for UI rendering
             this.fullProtocolData = response.data;
-            
+
             // Generation succeeded
-            const protocolData = this.mapDirectResponseToProtocolJson(response.data);
+            const protocolData = this.mapDirectResponseToProtocolJson(
+              response.data,
+            );
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
             this.error.set(null);
@@ -1592,7 +1624,9 @@ export class TodayComponent {
             );
             this.protocolJson.set(null);
             this.fullProtocolData = null;
-            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+            this.todayViewModel.set(
+              resolveTodayState(null, this.currentTime()),
+            );
           }
         },
         error: (err) => {
@@ -1607,7 +1641,7 @@ export class TodayComponent {
         },
       });
   }
-  
+
   /**
    * Map DirectSupabaseApiService response to ProtocolJson format
    * Only includes fields that exist in the ProtocolJson interface
@@ -1619,21 +1653,25 @@ export class TodayComponent {
       protocol_date: data.date,
       readiness_score: data.readinessScore,
       acwr_value: data.acwrValue ?? null,
-      blocks: data.blocks?.map((block: { type: string; title?: string }) => ({
-        type: block.type,
-        title: block.title || block.type,
-      })) || [],
+      blocks:
+        data.blocks?.map((block: { type: string; title?: string }) => ({
+          type: block.type,
+          title: block.title || block.type,
+        })) || [],
     };
   }
-  
+
   /**
    * Generate protocol and then reload
    */
   private generateAndLoadProtocol(date: string): void {
     this.isGeneratingProtocol.set(true);
-    
+
     this.api
-      .post<{ success: boolean; data?: ProtocolJson }>("/api/daily-protocol/generate", { date })
+      .post<{ success: boolean; data?: ProtocolJson }>(
+        "/api/daily-protocol/generate",
+        { date },
+      )
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -1647,7 +1685,9 @@ export class TodayComponent {
               "Unable to generate your training plan. Please contact support.",
             );
             this.protocolJson.set(null);
-            this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
+            this.todayViewModel.set(
+              resolveTodayState(null, this.currentTime()),
+            );
           }
         },
         error: (err) => {
@@ -1661,14 +1701,14 @@ export class TodayComponent {
         },
       });
   }
-  
+
   /**
    * Resolve protocol JSON to TodayViewModel and update signals
    */
   private resolveAndUpdateViewModel(protocolJson: ProtocolJson): void {
     const viewModel = resolveTodayState(protocolJson, this.currentTime());
     this.todayViewModel.set(viewModel);
-    
+
     // Also update protocol signal for backward compatibility
     // We need to keep the full blocks data for UI rendering
     if (this.fullProtocolData) {
@@ -1683,14 +1723,18 @@ export class TodayComponent {
       } as Partial<DailyProtocol>);
     }
   }
-  
+
   /**
    * Map API response to DailyProtocol structure with full block data
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapToDailyProtocol(data: any): Partial<DailyProtocol> {
     // Create empty block helper
-    const createEmptyBlock = (type: string, title: string, icon: string): ProtocolBlock => ({
+    const createEmptyBlock = (
+      type: string,
+      title: string,
+      icon: string,
+    ): ProtocolBlock => ({
       type: type as BlockType,
       title,
       icon,
@@ -1700,71 +1744,95 @@ export class TodayComponent {
       totalCount: 0,
       progressPercent: 0,
     });
-    
+
     // Map blocks from API to named properties
     const blockData = data.blocks || [];
-    const getBlock = (blockType: string, title: string, icon: string): ProtocolBlock => {
+    const getBlock = (
+      blockType: string,
+      title: string,
+      icon: string,
+    ): ProtocolBlock => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const apiBlock = blockData.find((b: any) => b.type === blockType);
       if (!apiBlock || !apiBlock.exercises || apiBlock.exercises.length === 0) {
         return createEmptyBlock(blockType, title, icon);
       }
-      
+
       // Map exercises to PrescribedExercise format
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const exercises: PrescribedExercise[] = apiBlock.exercises.map((ex: any, index: number) => ({
-        id: ex.id || `${blockType}-${index}`,
-        exerciseId: ex.id || `${blockType}-${index}`,
-        // Nested exercise object with video data for UI rendering
-        exercise: {
+      const exercises: PrescribedExercise[] = apiBlock.exercises.map(
+        (ex: any, index: number) => ({
           id: ex.id || `${blockType}-${index}`,
-          name: ex.name || "Exercise",
-          slug: ex.name?.toLowerCase().replace(/\s+/g, '-') || 'exercise',
-          category: (ex.category || blockType) as ExerciseCategory,
-          videoUrl: ex.videoUrl,
-          videoId: ex.videoId,
-          howText: ex.notes || '',
-          defaultSets: 1,
-          difficultyLevel: 'intermediate' as const,
+          exerciseId: ex.id || `${blockType}-${index}`,
+          // Nested exercise object with video data for UI rendering
+          exercise: {
+            id: ex.id || `${blockType}-${index}`,
+            name: ex.name || "Exercise",
+            slug: ex.name?.toLowerCase().replace(/\s+/g, "-") || "exercise",
+            category: (ex.category || blockType) as ExerciseCategory,
+            videoUrl: ex.videoUrl,
+            videoId: ex.videoId,
+            howText: ex.notes || "",
+            defaultSets: 1,
+            difficultyLevel: "intermediate" as const,
+            loadContributionAu: 0,
+            isHighIntensity: false,
+          },
+          blockType: blockType as BlockType,
+          sequenceOrder: index + 1,
+          prescribedSets: 1,
+          status:
+            ex.status === "completed"
+              ? ("complete" as const)
+              : ("pending" as const),
           loadContributionAu: 0,
-          isHighIntensity: false,
-        },
-        blockType: blockType as BlockType,
-        sequenceOrder: index + 1,
-        prescribedSets: 1,
-        status: ex.status === "completed" ? "complete" as const : "pending" as const,
-        loadContributionAu: 0,
-      }));
-      
-      const completedCount = exercises.filter(e => e.status === "complete").length;
+        }),
+      );
+
+      const completedCount = exercises.filter(
+        (e) => e.status === "complete",
+      ).length;
       const totalCount = exercises.length;
-      
+
       return {
         type: blockType as BlockType,
         title,
         icon,
-        status: completedCount === totalCount && totalCount > 0 
-          ? "complete" as const 
-          : completedCount > 0 
-            ? "in_progress" as const 
-            : "pending" as const,
+        status:
+          completedCount === totalCount && totalCount > 0
+            ? ("complete" as const)
+            : completedCount > 0
+              ? ("in_progress" as const)
+              : ("pending" as const),
         exercises,
         completedCount,
         totalCount,
-        progressPercent: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0,
+        progressPercent:
+          totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0,
         estimatedDurationMinutes: apiBlock.estimatedMinutes,
       };
     };
-    
-    const morningMobility = getBlock("morning_mobility", "Morning Mobility", "pi-sun");
+
+    const morningMobility = getBlock(
+      "morning_mobility",
+      "Morning Mobility",
+      "pi-sun",
+    );
     const foamRoll = getBlock("foam_roll", "Foam Rolling", "pi-circle");
     const mainSession = getBlock("main_session", "Main Session", "pi-bolt");
-    const eveningRecovery = getBlock("evening_recovery", "Evening Recovery", "pi-moon");
-    
+    const eveningRecovery = getBlock(
+      "evening_recovery",
+      "Evening Recovery",
+      "pi-moon",
+    );
+
     const allBlocks = [morningMobility, foamRoll, mainSession, eveningRecovery];
     const totalExercises = allBlocks.reduce((sum, b) => sum + b.totalCount, 0);
-    const completedExercises = allBlocks.reduce((sum, b) => sum + b.completedCount, 0);
-    
+    const completedExercises = allBlocks.reduce(
+      (sum, b) => sum + b.completedCount,
+      0,
+    );
+
     return {
       id: data.id,
       protocolDate: data.date,
@@ -1775,7 +1843,10 @@ export class TodayComponent {
       foamRoll,
       mainSession,
       eveningRecovery,
-      overallProgress: totalExercises > 0 ? Math.round((completedExercises / totalExercises) * 100) : 0,
+      overallProgress:
+        totalExercises > 0
+          ? Math.round((completedExercises / totalExercises) * 100)
+          : 0,
       completedExercises,
       totalExercises,
     };
@@ -1870,8 +1941,9 @@ export class TodayComponent {
         readinessScore: readiness,
       };
 
-      const response =
-        await this.trainingService.submitWellness(wellnessData) as { success?: boolean };
+      const response = (await this.trainingService.submitWellness(
+        wellnessData,
+      )) as { success?: boolean };
 
       if (response?.success) {
         this.showQuickCheckin.set(false);
@@ -1910,7 +1982,10 @@ export class TodayComponent {
       this.trainingService.generateDailyProtocol(),
       this.protocol,
       this.isGeneratingProtocol,
-      { success: "Protocol Generated", detail: "Your personalized training plan is ready!" }
+      {
+        success: "Protocol Generated",
+        detail: "Your personalized training plan is ready!",
+      },
     );
   }
 
@@ -1920,7 +1995,10 @@ export class TodayComponent {
       this.trainingService.generateDailyProtocol(this.tomorrowDate()),
       this.tomorrowProtocol,
       this.isGeneratingTomorrow,
-      { success: "Tomorrow's Protocol Ready", detail: "Your training plan for tomorrow has been generated!" }
+      {
+        success: "Tomorrow's Protocol Ready",
+        detail: "Your training plan for tomorrow has been generated!",
+      },
     );
   }
 
@@ -1929,16 +2007,15 @@ export class TodayComponent {
     this.handleProtocolRequest(
       this.trainingService.getProtocolForDate(this.tomorrowDate()),
       this.tomorrowProtocol,
-      this.isLoadingTomorrow
+      this.isLoadingTomorrow,
     );
   }
 
-   
   private handleProtocolRequest(
     request: ReturnType<typeof this.trainingService.generateDailyProtocol>,
     targetSignal: typeof this.protocol,
     loadingSignal: typeof this.isGeneratingProtocol,
-    toast?: { success: string; detail: string }
+    toast?: { success: string; detail: string },
   ): void {
     request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1946,7 +2023,11 @@ export class TodayComponent {
         if (response?.success && response.data) {
           targetSignal.set(response.data as Partial<DailyProtocol>);
           if (toast) {
-            this.messageService.add({ severity: "success", summary: toast.success, detail: toast.detail });
+            this.messageService.add({
+              severity: "success",
+              summary: toast.success,
+              detail: toast.detail,
+            });
           }
         }
         loadingSignal.set(false);
@@ -1954,7 +2035,11 @@ export class TodayComponent {
       error: (err) => {
         if (toast) {
           this.logger.error("Protocol request failed", err);
-          this.messageService.add({ severity: "error", summary: "Error", detail: "Request failed. Please try again." });
+          this.messageService.add({
+            severity: "error",
+            summary: "Error",
+            detail: "Request failed. Please try again.",
+          });
         }
         loadingSignal.set(false);
       },
@@ -1988,141 +2073,142 @@ export class TodayComponent {
    */
   handleCta(actionId: string): void {
     switch (actionId) {
-      case 'open_checkin':
-      case 'start_checkin':
-      case 'update_checkin':
+      case "open_checkin":
+      case "start_checkin":
+      case "update_checkin":
         // Open the Quick Check-in dialog (not scroll to wellness section)
         this.showQuickCheckin.set(true);
         break;
-        
-      case 'start_training':
-      case 'start_training_anyway':
-      case 'continue_anyway':
+
+      case "start_training":
+      case "start_training_anyway":
+      case "continue_anyway":
         // Scroll to first block or start first block
         this.scrollToFirstBlock();
         break;
-        
-      case 'view_practice_details':
+
+      case "view_practice_details":
         // TODO: Navigate to practice details or show modal
         this.messageService.add({
-          severity: 'info',
-          summary: 'Practice Details',
-          detail: 'Practice details view coming soon',
+          severity: "info",
+          summary: "Practice Details",
+          detail: "Practice details view coming soon",
         });
         break;
-        
-      case 'view_film_room_details':
+
+      case "view_film_room_details":
         // TODO: Navigate to film room details
         this.messageService.add({
-          severity: 'info',
-          summary: 'Film Room',
-          detail: 'Film room details view coming soon',
+          severity: "info",
+          summary: "Film Room",
+          detail: "Film room details view coming soon",
         });
         break;
-        
-      case 'view_rehab':
-      case 'view_rehab_details':
+
+      case "view_rehab":
+      case "view_rehab_details":
         // TODO: Navigate to rehab details
         this.messageService.add({
-          severity: 'info',
-          summary: 'Rehab Protocol',
-          detail: 'Rehab details view coming soon',
+          severity: "info",
+          summary: "Rehab Protocol",
+          detail: "Rehab details view coming soon",
         });
         break;
-        
-      case 'contact_coach':
+
+      case "contact_coach":
         // TODO: Open coach contact/messaging
         this.messageService.add({
-          severity: 'info',
-          summary: 'Contact Coach',
-          detail: 'Coach messaging coming soon',
+          severity: "info",
+          summary: "Contact Coach",
+          detail: "Coach messaging coming soon",
         });
         break;
-        
-      case 'contact_physio':
+
+      case "contact_physio":
         // TODO: Open physio contact
         this.messageService.add({
-          severity: 'info',
-          summary: 'Contact Physio',
-          detail: 'Physio contact coming soon',
+          severity: "info",
+          summary: "Contact Physio",
+          detail: "Physio contact coming soon",
         });
         break;
-        
-      case 'view_taper':
-      case 'view_taper_plan':
+
+      case "view_taper":
+      case "view_taper_plan":
         // TODO: Navigate to taper plan
         this.messageService.add({
-          severity: 'info',
-          summary: 'Taper Plan',
-          detail: 'Taper plan view coming soon',
+          severity: "info",
+          summary: "Taper Plan",
+          detail: "Taper plan view coming soon",
         });
         break;
-        
-      case 'log_session':
+
+      case "log_session":
         // TODO: Open session logging
         this.messageService.add({
-          severity: 'info',
-          summary: 'Log Session',
-          detail: 'Session logging coming soon',
+          severity: "info",
+          summary: "Log Session",
+          detail: "Session logging coming soon",
         });
         break;
-        
-      case 'read_coach_alert':
+
+      case "read_coach_alert":
         // Show coach alert modal/dialog
         this.showCoachAlertDialog();
         break;
-        
-      case 'acknowledge_coach_alert':
+
+      case "acknowledge_coach_alert":
         this.acknowledgeCoachAlert();
         break;
-        
-      case 'view_coach_note':
+
+      case "view_coach_note":
         // Show coach note modal
         this.showCoachNoteDialog();
         break;
-        
+
       default:
         this.logger.warn(`Unknown CTA action: ${actionId}`);
         this.messageService.add({
-          severity: 'warn',
-          summary: 'Action Not Available',
-          detail: 'This action is not yet implemented',
+          severity: "warn",
+          summary: "Action Not Available",
+          detail: "This action is not yet implemented",
         });
     }
   }
-  
+
   private scrollToFirstBlock(): void {
-    const firstBlock = document.querySelector('[data-block-type]');
+    const firstBlock = document.querySelector("[data-block-type]");
     if (firstBlock) {
-      firstBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      firstBlock.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
-  
+
   private showCoachAlertDialog(): void {
     const vm = this.todayViewModel();
     const protocol = this.protocolJson();
-    
+
     if (!vm || !protocol) {
       return;
     }
-    
+
     // Show coach alert message in a dialog or toast
-    const alertMessage = protocol.coach_alert_message || 'Coach has updated your plan.';
-    const coachName = protocol.modified_by_coach_name || 'Your coach';
-    
+    const alertMessage =
+      protocol.coach_alert_message || "Coach has updated your plan.";
+    const coachName = protocol.modified_by_coach_name || "Your coach";
+
     this.messageService.add({
-      severity: 'info',
+      severity: "info",
       summary: `Coach Alert from ${coachName}`,
       detail: alertMessage,
       life: 10000, // Show for 10 seconds
     });
-    
+
     // If there's a coach note, show that too
     if (protocol.coach_note?.content) {
       const noteContent = protocol.coach_note.content;
       setTimeout(() => {
         this.messageService.add({
-          severity: 'info',
+          severity: "info",
           summary: `Coach Note from ${coachName}`,
           detail: noteContent,
           life: 10000,
@@ -2130,124 +2216,130 @@ export class TodayComponent {
       }, 500);
     }
   }
-  
+
   private acknowledgeCoachAlert(): void {
     const vm = this.todayViewModel();
     const protocol = this.protocolJson();
-    
+
     if (!vm || !protocol || !protocol.id) {
       this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Unable to acknowledge alert. Please refresh the page.',
+        severity: "error",
+        summary: "Error",
+        detail: "Unable to acknowledge alert. Please refresh the page.",
       });
       return;
     }
-    
+
     const alertId = protocol.id;
-    const sessionDate = protocol.protocol_date || new Date().toISOString().split('T')[0];
-    
+    const sessionDate =
+      protocol.protocol_date || new Date().toISOString().split("T")[0];
+
     // Call backend endpoint to acknowledge coach alert
     this.api
-      .post<{ success: boolean; data?: unknown; error?: string; code?: string }>(
-        `/api/coach-alerts/${alertId}/acknowledge`,
-        { sessionDate }
-      )
+      .post<{
+        success: boolean;
+        data?: unknown;
+        error?: string;
+        code?: string;
+      }>(`/api/coach-alerts/${alertId}/acknowledge`, { sessionDate })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (response?.success) {
             this.messageService.add({
-              severity: 'success',
-              summary: 'Alert Acknowledged',
-              detail: 'You can now proceed with training',
+              severity: "success",
+              summary: "Alert Acknowledged",
+              detail: "You can now proceed with training",
             });
             // Refresh protocol to update state
             this.loadTodayData();
           } else {
             this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: response?.error || 'Failed to acknowledge alert',
+              severity: "error",
+              summary: "Error",
+              detail: response?.error || "Failed to acknowledge alert",
             });
           }
         },
         error: (err) => {
-          this.logger.error('Failed to acknowledge coach alert', err);
+          this.logger.error("Failed to acknowledge coach alert", err);
           this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to acknowledge alert. Please try again.',
+            severity: "error",
+            summary: "Error",
+            detail: "Failed to acknowledge alert. Please try again.",
           });
         },
       });
   }
-  
+
   private showCoachNoteDialog(): void {
     // TODO: Show coach note in dialog
     this.messageService.add({
-      severity: 'info',
-      summary: 'Coach Note',
-      detail: 'Coach note view coming soon',
+      severity: "info",
+      summary: "Coach Note",
+      detail: "Coach note view coming soon",
     });
   }
-  
+
   // ============================================================================
   // COMPUTED HELPERS FOR TEMPLATE
   // ============================================================================
   readonly todayDateLabel = computed(() => {
-    return new Date().toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
+    return new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
     });
   });
-  
+
   readonly readinessDisplay = computed(() => {
     const vm = this.todayViewModel();
     const protocol = this.protocolJson();
-    
+
     if (!vm || !protocol) {
-      return { value: '—', logged: false };
+      return { value: "—", logged: false };
     }
-    
+
     const score = protocol.readiness_score;
     if (score === null || score === undefined) {
-      return { value: '—', logged: false };
+      return { value: "—", logged: false };
     }
-    
+
     // Check if logged today (from confidence metadata)
     const logged = protocol.confidence_metadata?.readiness?.daysStale === 0;
-    
+
     return {
       value: `${score}`,
       logged,
     };
   });
-  
+
   // ============================================================================
   // TEMPLATE HELPERS
   // ============================================================================
   /**
    * Get block by type from DailyProtocol
    */
-  getBlockByType(protocol: Partial<DailyProtocol>, blockType: string): ProtocolBlock | null {
+  getBlockByType(
+    protocol: Partial<DailyProtocol>,
+    blockType: string,
+  ): ProtocolBlock | null {
     if (!protocol) return null;
-    
+
     const blockMap: Record<string, keyof DailyProtocol> = {
-      'morning_mobility': 'morningMobility',
-      'foam_roll': 'foamRoll',
-      'main_session': 'mainSession',
-      'recovery': 'eveningRecovery',
-      'evening_recovery': 'eveningRecovery',
+      morning_mobility: "morningMobility",
+      foam_roll: "foamRoll",
+      main_session: "mainSession",
+      recovery: "eveningRecovery",
+      evening_recovery: "eveningRecovery",
     };
-    
+
     const prop = blockMap[blockType];
     if (!prop) return null;
-    
+
     return (protocol[prop] as ProtocolBlock) || null;
   }
-  
+
   /**
    * Format coach modification timestamp
    */
@@ -2257,21 +2349,21 @@ export class TodayComponent {
       const now = new Date();
       const diffMs = now.getTime() - date.getTime();
       const diffHours = diffMs / (1000 * 60 * 60);
-      
+
       if (diffHours < 24) {
         const hours = Math.floor(diffHours);
         if (hours === 0) {
           const minutes = Math.floor(diffMs / (1000 * 60));
-          return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+          return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
         }
-        return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+        return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
       }
-      
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
+
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
       });
     } catch {
       return timestamp;

@@ -1,6 +1,6 @@
 /**
  * Coach Override Notification Component
- * 
+ *
  * Phase 2.1 - Trust Repair
  * Displays coach override notifications following the 5-Question Contract:
  * 1. What changed
@@ -25,7 +25,10 @@ import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ButtonComponent } from "../button/button.component";
 import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-override-badge.component";
-import { OverrideLoggingService, CoachOverride } from "../../../core/services/override-logging.service";
+import {
+  OverrideLoggingService,
+  CoachOverride,
+} from "../../../core/services/override-logging.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { getTimeAgo } from "../../utils/date.utils";
 
@@ -98,7 +101,8 @@ import { getTimeAgo } from "../../utils/date.utils";
           <div class="contract-section">
             <h4 class="contract-question">Who is responsible now:</h4>
             <p class="contract-answer">
-              {{ getCoachName() }} made this adjustment and will monitor your response.
+              {{ getCoachName() }} made this adjustment and will monitor your
+              response.
             </p>
             <small class="timestamp">
               Adjusted {{ getTimeAgoStr(override()!.createdAt!) }}
@@ -135,9 +139,7 @@ import { getTimeAgo } from "../../utils/date.utils";
             >
               <i
                 [class]="
-                  showTransparency()
-                    ? 'pi pi-chevron-up'
-                    : 'pi pi-chevron-down'
+                  showTransparency() ? 'pi pi-chevron-up' : 'pi pi-chevron-down'
                 "
               ></i>
               <span>View AI Recommendation vs Coach Decision</span>
@@ -148,11 +150,15 @@ import { getTimeAgo } from "../../utils/date.utils";
                 <div class="comparison-row">
                   <div class="comparison-item ai">
                     <h5>AI Recommended</h5>
-                    <pre>{{ formatRecommendation(override()!.aiRecommendation) }}</pre>
+                    <pre>{{
+                      formatRecommendation(override()!.aiRecommendation)
+                    }}</pre>
                   </div>
                   <div class="comparison-item coach">
                     <h5>Coach Set</h5>
-                    <pre>{{ formatRecommendation(override()!.coachDecision) }}</pre>
+                    <pre>{{
+                      formatRecommendation(override()!.coachDecision)
+                    }}</pre>
                   </div>
                 </div>
               </div>
@@ -176,7 +182,9 @@ import { getTimeAgo } from "../../utils/date.utils";
           @for (item of overrideHistory(); track item.id) {
             <div class="history-item">
               <div class="history-header">
-                <span class="history-date">{{ formatDate(item.createdAt!) }}</span>
+                <span class="history-date">{{
+                  formatDate(item.createdAt!)
+                }}</span>
                 <!-- Phase 3: Semantic Coach Override Badge -->
                 <app-coach-override-badge
                   [overrideType]="getSemanticOverrideType(item.overrideType)"
@@ -384,8 +392,18 @@ export class CoachOverrideNotificationComponent {
   /**
    * Phase 3: Map override type to semantic override type
    */
-  getSemanticOverrideType(type: CoachOverride["overrideType"]): "load-adjustment" | "session-modification" | "plan-change" | "threshold-override" | "general" {
-    const map: Record<CoachOverride["overrideType"], ReturnType<typeof this.getSemanticOverrideType>> = {
+  getSemanticOverrideType(
+    type: CoachOverride["overrideType"],
+  ):
+    | "load-adjustment"
+    | "session-modification"
+    | "plan-change"
+    | "threshold-override"
+    | "general" {
+    const map: Record<
+      CoachOverride["overrideType"],
+      ReturnType<typeof this.getSemanticOverrideType>
+    > = {
       training_load: "load-adjustment",
       session_modification: "session-modification",
       acwr_override: "threshold-override",
@@ -479,7 +497,7 @@ export class CoachOverrideNotificationComponent {
     try {
       const history = await this.overrideLoggingService.getPlayerOverrides(
         this.playerId(),
-        10
+        10,
       );
       this.overrideHistory.set(history);
     } catch (error) {
@@ -487,4 +505,3 @@ export class CoachOverrideNotificationComponent {
     }
   }
 }
-

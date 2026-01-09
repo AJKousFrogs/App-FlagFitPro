@@ -50,7 +50,10 @@ import { ButtonModule } from "primeng/button";
         <ng-template pTemplate="header">
           <div class="modal-header-custom">
             @if (headerIcon()) {
-              <div class="modal-header-icon" [class]="'icon-' + headerIconColor()">
+              <div
+                class="modal-header-icon"
+                [class]="'icon-' + headerIconColor()"
+              >
                 <i [class]="'pi ' + headerIcon()"></i>
               </div>
             }
@@ -65,17 +68,23 @@ import { ButtonModule } from "primeng/button";
       }
 
       <!-- Modal content -->
-      <div class="modal-content" [class.modal-content-scrollable]="scrollable()">
+      <div
+        class="modal-content"
+        [class.modal-content-scrollable]="scrollable()"
+      >
         <ng-content></ng-content>
       </div>
 
       <!-- Footer -->
       @if (showFooter()) {
         <ng-template pTemplate="footer">
-          <div class="modal-footer" [class]="'modal-footer-' + footerAlignment()">
+          <div
+            class="modal-footer"
+            [class]="'modal-footer-' + footerAlignment()"
+          >
             <!-- Custom footer content -->
             <ng-content select="[footer]"></ng-content>
-            
+
             <!-- Default buttons -->
             @if (showDefaultButtons()) {
               <div class="modal-footer-buttons">
@@ -120,7 +129,7 @@ import { ButtonModule } from "primeng/button";
 
       :host ::ng-deep .p-dialog {
         border-radius: var(--radius-xl);
-        box-shadow: 
+        box-shadow:
           0 25px 50px -12px rgba(0, 0, 0, 0.25),
           0 12px 24px -8px rgba(0, 0, 0, 0.15);
         overflow: hidden;
@@ -248,7 +257,7 @@ import { ButtonModule } from "primeng/button";
         height: 2.5rem;
         border-radius: var(--radius-lg);
         color: var(--color-text-secondary);
-        transition: 
+        transition:
           background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
           color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
           transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -482,7 +491,9 @@ export class ModalComponent {
   header = input<string>();
   headerSubtitle = input<string>();
   headerIcon = input<string>();
-  headerIconColor = input<"primary" | "success" | "warning" | "error" | "info">("primary");
+  headerIconColor = input<"primary" | "success" | "warning" | "error" | "info">(
+    "primary",
+  );
   size = input<"sm" | "md" | "lg" | "xl" | "full">("md");
   position = input<
     | "center"
@@ -536,7 +547,7 @@ export class ModalComponent {
       xl: { width: "1140px", maxWidth: "95vw" },
       full: { width: "95vw", height: "90vh" },
     };
-    return sizeMap[this.size()] || sizeMap['md'];
+    return sizeMap[this.size()] || sizeMap["md"];
   });
 
   dialogStyleClass = computed(() => {
@@ -579,6 +590,6 @@ export class ModalComponent {
   }
 
   toggle(): void {
-    this.visible.update(v => !v);
+    this.visible.update((v) => !v);
   }
 }

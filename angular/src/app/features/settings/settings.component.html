@@ -44,172 +44,178 @@
         <div class="settings-section-description">
           Manage your personal information and account details
         </div>
-        
+
         <!-- Profile Settings -->
         <app-card
           title="Profile Information"
           headerIcon="pi-user"
           headerIconColor="primary"
         >
-        <form [formGroup]="profileForm">
-          <div class="p-field mb-4">
-            <label for="settings-displayName" class="p-label"
-              >Display Name</label
-            >
-            <input
-              id="settings-displayName"
-              name="displayName"
-              type="text"
-              pInputText
-              formControlName="displayName"
-              placeholder="Enter your display name"
-              autocomplete="name"
-            />
-          </div>
-          <div class="p-field mb-4">
-            <label for="settings-email" class="p-label">Email</label>
-            <input
-              id="settings-email"
-              name="email"
-              type="email"
-              pInputText
-              formControlName="email"
-              placeholder="Enter your email"
-              autocomplete="email"
-            />
-          </div>
-          <div class="p-field mb-4">
-            <label for="settings-dob" class="p-label">Date of Birth</label>
-            <div class="datepicker-with-suggestion">
-              <p-datepicker
-                #dobDatePicker
-                inputId="settings-dob"
-                formControlName="dateOfBirth"
-                [showIcon]="true"
-                [maxDate]="maxBirthDate"
-                dateFormat="mm/dd/yy"
-                placeholder="Select your date of birth"
-                appendTo="body"
-                styleClass="w-full"
-              ></p-datepicker>
-              @if (birthdaySuggestion(); as suggestion) {
-                <div class="birthday-suggestion">
-                  <div class="suggestion-content">
-                    <i class="pi pi-lightbulb suggestion-icon"></i>
-                    <div class="suggestion-text">
-                      <span class="suggestion-label">Suggested:</span>
-                      <span class="suggestion-date">{{ suggestion.formatted }}</span>
-                      @if (suggestion.age !== null) {
-                        <span class="suggestion-age">(Age: {{ suggestion.age }} years)</span>
-                      }
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    class="suggestion-apply-btn"
-                    (click)="applyBirthdaySuggestion()"
-                    aria-label="Apply suggested date"
-                  >
-                    <i class="pi pi-check"></i>
-                    Apply
-                  </button>
-                </div>
-              }
-            </div>
-            @if (calculateAge() !== null) {
-              <small class="age-display">Age: {{ calculateAge() }} years</small>
-            }
-          </div>
-          <div class="form-row two-columns">
-            <div class="p-field">
-              <label for="settings-position" class="p-label">Position</label>
-              <p-select
-                inputId="settings-position"
-                formControlName="position"
-                [options]="positionOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select your position"
-                appendTo="body"
-              ></p-select>
-            </div>
-            <div class="p-field">
-              <label for="settings-jerseyNumber" class="p-label"
-                >Jersey Number</label
+          <form [formGroup]="profileForm">
+            <div class="p-field mb-4">
+              <label for="settings-displayName" class="p-label"
+                >Display Name</label
               >
               <input
-                id="settings-jerseyNumber"
-                name="jerseyNumber"
+                id="settings-displayName"
+                name="displayName"
                 type="text"
                 pInputText
-                formControlName="jerseyNumber"
-                placeholder="#55"
-                maxlength="3"
-                autocomplete="off"
+                formControlName="displayName"
+                placeholder="Enter your display name"
+                autocomplete="name"
               />
             </div>
-          </div>
-          <div class="form-row two-columns">
-            <div class="p-field">
-              <label for="settings-height" class="p-label">Height (cm)</label>
+            <div class="p-field mb-4">
+              <label for="settings-email" class="p-label">Email</label>
               <input
-                id="settings-height"
-                name="height"
-                type="number"
+                id="settings-email"
+                name="email"
+                type="email"
                 pInputText
-                formControlName="heightCm"
-                placeholder="175"
-                min="100"
-                max="250"
-                autocomplete="off"
+                formControlName="email"
+                placeholder="Enter your email"
+                autocomplete="email"
               />
             </div>
-            <div class="p-field">
-              <label for="settings-weight" class="p-label">Weight (kg)</label>
+            <div class="p-field mb-4">
+              <label for="settings-dob" class="p-label">Date of Birth</label>
+              <div class="datepicker-with-suggestion">
+                <p-datepicker
+                  #dobDatePicker
+                  inputId="settings-dob"
+                  formControlName="dateOfBirth"
+                  [showIcon]="true"
+                  [maxDate]="maxBirthDate"
+                  dateFormat="mm/dd/yy"
+                  placeholder="Select your date of birth"
+                  appendTo="body"
+                  styleClass="w-full"
+                ></p-datepicker>
+                @if (birthdaySuggestion(); as suggestion) {
+                  <div class="birthday-suggestion">
+                    <div class="suggestion-content">
+                      <i class="pi pi-lightbulb suggestion-icon"></i>
+                      <div class="suggestion-text">
+                        <span class="suggestion-label">Suggested:</span>
+                        <span class="suggestion-date">{{
+                          suggestion.formatted
+                        }}</span>
+                        @if (suggestion.age !== null) {
+                          <span class="suggestion-age"
+                            >(Age: {{ suggestion.age }} years)</span
+                          >
+                        }
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      class="suggestion-apply-btn"
+                      (click)="applyBirthdaySuggestion()"
+                      aria-label="Apply suggested date"
+                    >
+                      <i class="pi pi-check"></i>
+                      Apply
+                    </button>
+                  </div>
+                }
+              </div>
+              @if (calculateAge() !== null) {
+                <small class="age-display"
+                  >Age: {{ calculateAge() }} years</small
+                >
+              }
+            </div>
+            <div class="form-row two-columns">
+              <div class="p-field">
+                <label for="settings-position" class="p-label">Position</label>
+                <p-select
+                  inputId="settings-position"
+                  formControlName="position"
+                  [options]="positionOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select your position"
+                  appendTo="body"
+                ></p-select>
+              </div>
+              <div class="p-field">
+                <label for="settings-jerseyNumber" class="p-label"
+                  >Jersey Number</label
+                >
+                <input
+                  id="settings-jerseyNumber"
+                  name="jerseyNumber"
+                  type="text"
+                  pInputText
+                  formControlName="jerseyNumber"
+                  placeholder="#55"
+                  maxlength="3"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <div class="form-row two-columns">
+              <div class="p-field">
+                <label for="settings-height" class="p-label">Height (cm)</label>
+                <input
+                  id="settings-height"
+                  name="height"
+                  type="number"
+                  pInputText
+                  formControlName="heightCm"
+                  placeholder="175"
+                  min="100"
+                  max="250"
+                  autocomplete="off"
+                />
+              </div>
+              <div class="p-field">
+                <label for="settings-weight" class="p-label">Weight (kg)</label>
+                <input
+                  id="settings-weight"
+                  name="weight"
+                  type="number"
+                  pInputText
+                  formControlName="weightKg"
+                  placeholder="70"
+                  min="30"
+                  max="200"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <div class="p-field mb-4">
+              <label for="settings-team" class="p-label">Team</label>
+              <p-select
+                inputId="settings-team"
+                formControlName="teamId"
+                [options]="availableTeams()"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select your team"
+                appendTo="body"
+                (onChange)="onTeamChange($event)"
+              ></p-select>
+              <small class="field-hint">
+                <i class="pi pi-info-circle"></i>
+                Select your team or request to create a new one
+              </small>
+            </div>
+            <div class="p-field mb-4">
+              <label for="settings-phone" class="p-label">Phone Number</label>
               <input
-                id="settings-weight"
-                name="weight"
-                type="number"
+                id="settings-phone"
+                name="phone"
+                type="tel"
                 pInputText
-                formControlName="weightKg"
-                placeholder="70"
-                min="30"
-                max="200"
-                autocomplete="off"
+                formControlName="phone"
+                placeholder="Enter your phone number"
+                autocomplete="tel"
               />
             </div>
-          </div>
-          <div class="p-field mb-4">
-            <label for="settings-team" class="p-label">Team</label>
-            <p-select
-              inputId="settings-team"
-              formControlName="teamId"
-              [options]="availableTeams()"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select your team"
-              appendTo="body"
-              (onChange)="onTeamChange($event)"
-            ></p-select>
-            <small class="field-hint">
-              <i class="pi pi-info-circle"></i>
-              Select your team or request to create a new one
-            </small>
-          </div>
-          <div class="p-field mb-4">
-            <label for="settings-phone" class="p-label">Phone Number</label>
-            <input
-              id="settings-phone"
-              name="phone"
-              type="tel"
-              pInputText
-              formControlName="phone"
-              placeholder="Enter your phone number"
-              autocomplete="tel"
-            />
-          </div>
-        </form>
-      </app-card>
+          </form>
+        </app-card>
       </div>
 
       <!-- Section 2: Notifications -->
@@ -222,334 +228,337 @@
           Control how and when you receive notifications
         </div>
 
-      <!-- Notification Settings -->
-      <app-card
-        title="Notification Preferences"
-        headerIcon="pi-bell"
-        headerIconColor="warning"
-      >
-        <form
-          [formGroup]="notificationForm"
-          class="notification-form card-stack"
+        <!-- Notification Settings -->
+        <app-card
+          title="Notification Preferences"
+          headerIcon="pi-bell"
+          headerIconColor="warning"
         >
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-envelope"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Email Notifications</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Receive updates and alerts via email</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="emailNotifications"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-mobile"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Push Notifications</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Get instant alerts on your device</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="pushNotifications"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-clock"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Training Reminders</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Daily reminders for scheduled workouts</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="trainingReminders"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-heart"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Wellness Reminders</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Daily wellness check-in reminders</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="wellnessReminders"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-flag"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Game Alerts</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Notifications about upcoming games</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch formControlName="gameAlerts"></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-megaphone"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Team Announcements</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Important team news and updates</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="teamAnnouncements"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-user"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Coach Messages</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Direct messages from your coach</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch formControlName="coachMessages"></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-trophy"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Achievement Alerts</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Celebrate your milestones and badges</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="achievementAlerts"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-star"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Tournament Alerts</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Bracket updates, schedules, and results</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="tournamentAlerts"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon type-warning">
-                <i class="pi pi-exclamation-triangle"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Injury Risk Alerts</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Warnings when overtraining is detected</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="injuryRiskAlerts"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-inbox"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >In-App Notifications</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Show notifications in the notification center</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="inAppNotifications"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          <!-- Notification Frequency -->
-          <div class="notification-section-header">
-            <h4>Notification Frequency</h4>
-            <p>Control how often you receive non-urgent notifications</p>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-clock"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Digest Frequency</span
-                >
-                <span class="notification-desc control-row__description"
-                  >How often to bundle non-urgent notifications</span
-                >
-              </div>
-            </div>
-            <div class="control-row__control digest-select">
-              <p-select
-                formControlName="digestFrequency"
-                [options]="[
-                  { label: 'Real-time (Instant)', value: 'realtime' },
-                  { label: 'Daily Digest', value: 'daily' },
-                  { label: 'Weekly Summary', value: 'weekly' }
-                ]"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select frequency"
-              ></p-select>
-            </div>
-          </div>
-
-          <!-- Quiet Hours -->
-          <div class="notification-section-header">
-            <h4>Do Not Disturb</h4>
-            <p>Pause notifications during specific hours</p>
-          </div>
-
-          <div class="notification-item control-row">
-            <div class="notification-info control-row__label">
-              <div class="notification-icon">
-                <i class="pi pi-moon"></i>
-              </div>
-              <div class="notification-text">
-                <span class="notification-label control-row__title"
-                  >Enable Quiet Hours</span
-                >
-                <span class="notification-desc control-row__description"
-                  >Silence non-urgent notifications at night</span
-                >
-              </div>
-            </div>
-            <div class="toggle-wrapper control-row__control">
-              <p-toggleswitch
-                formControlName="quietHoursEnabled"
-              ></p-toggleswitch>
-            </div>
-          </div>
-
-          @if (notificationForm.get('quietHoursEnabled')?.value) {
-            <div class="quiet-hours-config">
-              <div class="time-range">
-                <div class="time-input">
-                  <label>Start Time</label>
-                  <input
-                    type="time"
-                    formControlName="quietHoursStart"
-                    class="time-picker"
-                  />
+          <form
+            [formGroup]="notificationForm"
+            class="notification-form card-stack"
+          >
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-envelope"></i>
                 </div>
-                <span class="time-separator">to</span>
-                <div class="time-input">
-                  <label>End Time</label>
-                  <input
-                    type="time"
-                    formControlName="quietHoursEnd"
-                    class="time-picker"
-                  />
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Email Notifications</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Receive updates and alerts via email</span
+                  >
                 </div>
               </div>
-              <p class="quiet-hours-note">
-                <i class="pi pi-info-circle"></i>
-                High priority alerts (game reminders, injury risks) will still come through
-              </p>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="emailNotifications"
+                ></p-toggleswitch>
+              </div>
             </div>
-          }
-        </form>
-      </app-card>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-mobile"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Push Notifications</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Get instant alerts on your device</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="pushNotifications"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-clock"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Training Reminders</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Daily reminders for scheduled workouts</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="trainingReminders"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-heart"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Wellness Reminders</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Daily wellness check-in reminders</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="wellnessReminders"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-flag"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Game Alerts</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Notifications about upcoming games</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch formControlName="gameAlerts"></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-megaphone"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Team Announcements</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Important team news and updates</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="teamAnnouncements"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-user"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Coach Messages</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Direct messages from your coach</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="coachMessages"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-trophy"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Achievement Alerts</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Celebrate your milestones and badges</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="achievementAlerts"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-star"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Tournament Alerts</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Bracket updates, schedules, and results</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="tournamentAlerts"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon type-warning">
+                  <i class="pi pi-exclamation-triangle"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Injury Risk Alerts</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Warnings when overtraining is detected</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="injuryRiskAlerts"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-inbox"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >In-App Notifications</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Show notifications in the notification center</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="inAppNotifications"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            <!-- Notification Frequency -->
+            <div class="notification-section-header">
+              <h4>Notification Frequency</h4>
+              <p>Control how often you receive non-urgent notifications</p>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-clock"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Digest Frequency</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >How often to bundle non-urgent notifications</span
+                  >
+                </div>
+              </div>
+              <div class="control-row__control digest-select">
+                <p-select
+                  formControlName="digestFrequency"
+                  [options]="[
+                    { label: 'Real-time (Instant)', value: 'realtime' },
+                    { label: 'Daily Digest', value: 'daily' },
+                    { label: 'Weekly Summary', value: 'weekly' },
+                  ]"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Select frequency"
+                ></p-select>
+              </div>
+            </div>
+
+            <!-- Quiet Hours -->
+            <div class="notification-section-header">
+              <h4>Do Not Disturb</h4>
+              <p>Pause notifications during specific hours</p>
+            </div>
+
+            <div class="notification-item control-row">
+              <div class="notification-info control-row__label">
+                <div class="notification-icon">
+                  <i class="pi pi-moon"></i>
+                </div>
+                <div class="notification-text">
+                  <span class="notification-label control-row__title"
+                    >Enable Quiet Hours</span
+                  >
+                  <span class="notification-desc control-row__description"
+                    >Silence non-urgent notifications at night</span
+                  >
+                </div>
+              </div>
+              <div class="toggle-wrapper control-row__control">
+                <p-toggleswitch
+                  formControlName="quietHoursEnabled"
+                ></p-toggleswitch>
+              </div>
+            </div>
+
+            @if (notificationForm.get("quietHoursEnabled")?.value) {
+              <div class="quiet-hours-config">
+                <div class="time-range">
+                  <div class="time-input">
+                    <label>Start Time</label>
+                    <input
+                      type="time"
+                      formControlName="quietHoursStart"
+                      class="time-picker"
+                    />
+                  </div>
+                  <span class="time-separator">to</span>
+                  <div class="time-input">
+                    <label>End Time</label>
+                    <input
+                      type="time"
+                      formControlName="quietHoursEnd"
+                      class="time-picker"
+                    />
+                  </div>
+                </div>
+                <p class="quiet-hours-note">
+                  <i class="pi pi-info-circle"></i>
+                  High priority alerts (game reminders, injury risks) will still
+                  come through
+                </p>
+              </div>
+            }
+          </form>
+        </app-card>
       </div>
 
       <!-- Section 3: Privacy & Security -->
@@ -562,79 +571,81 @@
           Manage your privacy settings and account security
         </div>
 
-      <!-- Privacy Settings -->
-      <app-card
-        title="Privacy Controls"
-        headerIcon="pi-lock"
-        headerIconColor="error"
-      >
-        <form [formGroup]="privacyForm">
-          <div class="p-field mb-4">
-            <label for="profileVisibility" class="p-label"
-              >Profile Visibility</label
-            >
-            <p-select
-              id="profileVisibility"
-              formControlName="profileVisibility"
-              [options]="visibilityOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select visibility"
-              appendTo="body"
-            >
-              <ng-template pTemplate="item" let-option>
-                <div class="visibility-option">
-                  <span class="visibility-label">{{ option.label }}</span>
-                  <span class="visibility-desc">{{ option.description }}</span>
-                </div>
-              </ng-template>
-            </p-select>
-          </div>
-          <div class="p-field-checkbox mb-4">
-            <label id="settings-showStats-label" class="p-label"
-              >Show Statistics Publicly</label
-            >
-            <div class="toggle-wrapper">
-              <p-toggleswitch
-                formControlName="showStats"
-                ariaLabelledBy="settings-showStats-label"
-              ></p-toggleswitch>
+        <!-- Privacy Settings -->
+        <app-card
+          title="Privacy Controls"
+          headerIcon="pi-lock"
+          headerIconColor="error"
+        >
+          <form [formGroup]="privacyForm">
+            <div class="p-field mb-4">
+              <label for="profileVisibility" class="p-label"
+                >Profile Visibility</label
+              >
+              <p-select
+                id="profileVisibility"
+                formControlName="profileVisibility"
+                [options]="visibilityOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select visibility"
+                appendTo="body"
+              >
+                <ng-template pTemplate="item" let-option>
+                  <div class="visibility-option">
+                    <span class="visibility-label">{{ option.label }}</span>
+                    <span class="visibility-desc">{{
+                      option.description
+                    }}</span>
+                  </div>
+                </ng-template>
+              </p-select>
             </div>
+            <div class="p-field-checkbox mb-4">
+              <label id="settings-showStats-label" class="p-label"
+                >Show Statistics Publicly</label
+              >
+              <div class="toggle-wrapper">
+                <p-toggleswitch
+                  formControlName="showStats"
+                  ariaLabelledBy="settings-showStats-label"
+                ></p-toggleswitch>
+              </div>
+            </div>
+          </form>
+          <p-divider></p-divider>
+          <div class="privacy-controls-link">
+            <div class="link-info">
+              <h4>Advanced Privacy Controls</h4>
+              <p>
+                Manage AI processing, team data sharing, research participation,
+                and more.
+              </p>
+            </div>
+            <app-button
+              variant="outlined"
+              icon="shield"
+              routerLink="/settings/privacy"
+              >Privacy Controls</app-button
+            >
           </div>
-        </form>
-        <p-divider></p-divider>
-        <div class="privacy-controls-link">
-          <div class="link-info">
-            <h4>Advanced Privacy Controls</h4>
-            <p>
-              Manage AI processing, team data sharing, research participation,
-              and more.
-            </p>
+          <p-divider></p-divider>
+          <div class="privacy-controls-link">
+            <div class="link-info">
+              <h4>Export Your Data</h4>
+              <p>
+                Download a copy of all your data including training sessions,
+                wellness logs, and achievements.
+              </p>
+            </div>
+            <app-button
+              variant="outlined"
+              icon="download"
+              (clicked)="showDataExportDialog = true"
+              >Export Data</app-button
+            >
           </div>
-          <app-button
-            variant="outlined"
-            icon="shield"
-            routerLink="/settings/privacy"
-            >Privacy Controls</app-button
-          >
-        </div>
-        <p-divider></p-divider>
-        <div class="privacy-controls-link">
-          <div class="link-info">
-            <h4>Export Your Data</h4>
-            <p>
-              Download a copy of all your data including training sessions,
-              wellness logs, and achievements.
-            </p>
-          </div>
-          <app-button
-            variant="outlined"
-            icon="download"
-            (clicked)="showDataExportDialog = true"
-            >Export Data</app-button
-          >
-        </div>
-      </app-card>
+        </app-card>
       </div>
 
       <!-- Section 4: Preferences -->
@@ -647,797 +658,796 @@
           Customize your app experience and display options
         </div>
 
-      <!-- App Preferences -->
-      <app-card
-        title="App Preferences"
-        headerIcon="pi-cog"
-        headerIconColor="info"
-      >
-        <form [formGroup]="preferencesForm">
-          <div class="p-field mb-4">
-            <span id="settings-theme-label" class="p-label">Theme</span>
-            <div
-              class="theme-selector"
-              role="radiogroup"
-              aria-labelledby="settings-theme-label"
-            >
-              @for (option of themeOptions; track option.value) {
-                <button
-                  type="button"
-                  class="theme-option"
-                  [class.active]="
-                    preferencesForm.get('theme')?.value === option.value
-                  "
-                  (click)="selectTheme(option.value)"
+        <!-- App Preferences -->
+        <app-card
+          title="App Preferences"
+          headerIcon="pi-cog"
+          headerIconColor="info"
+        >
+          <form [formGroup]="preferencesForm">
+            <div class="p-field mb-4">
+              <span id="settings-theme-label" class="p-label">Theme</span>
+              <div
+                class="theme-selector"
+                role="radiogroup"
+                aria-labelledby="settings-theme-label"
+              >
+                @for (option of themeOptions; track option.value) {
+                  <button
+                    type="button"
+                    class="theme-option"
+                    [class.active]="
+                      preferencesForm.get('theme')?.value === option.value
+                    "
+                    (click)="selectTheme(option.value)"
+                  >
+                    <i [class]="option.icon"></i>
+                    <span>{{ option.label }}</span>
+                  </button>
+                }
+              </div>
+              <small class="theme-hint">
+                @switch (preferencesForm.get("theme")?.value) {
+                  @case ("light") {
+                    Always use light theme
+                  }
+                  @case ("dark") {
+                    Always use dark theme
+                  }
+                  @case ("auto") {
+                    Follows your system preference
+                  }
+                }
+              </small>
+            </div>
+            <div class="p-field language-field">
+              <label for="language" class="p-label">Language</label>
+              <p-select
+                id="language"
+                formControlName="language"
+                [options]="languageOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select language"
+                styleClass="language-selector"
+                appendTo="body"
+                [showClear]="false"
+              >
+                <ng-template pTemplate="selectedItem" let-selected>
+                  @if (selected) {
+                    <div class="lang-selected">
+                      <span class="lang-flag">{{ selected.flag }}</span>
+                      <span class="lang-label">{{ selected.label }}</span>
+                    </div>
+                  }
+                </ng-template>
+                <ng-template pTemplate="item" let-lang>
+                  <div class="lang-item">
+                    <span class="lang-flag">{{ lang.flag }}</span>
+                    <div class="lang-details">
+                      <span class="lang-label">{{ lang.label }}</span>
+                      <span class="lang-native">{{ lang.native }}</span>
+                    </div>
+                    <i class="pi pi-check lang-check"></i>
+                  </div>
+                </ng-template>
+              </p-select>
+              <div class="language-hint-box">
+                <i class="pi pi-info-circle"></i>
+                <span
+                  >Translation coming soon - your preference will be saved</span
                 >
-                  <i [class]="option.icon"></i>
-                  <span>{{ option.label }}</span>
-                </button>
-              }
+              </div>
             </div>
-            <small class="theme-hint">
-              @switch (preferencesForm.get("theme")?.value) {
-                @case ("light") {
-                  Always use light theme
-                }
-                @case ("dark") {
-                  Always use dark theme
-                }
-                @case ("auto") {
-                  Follows your system preference
-                }
-              }
-            </small>
-          </div>
-          <div class="p-field language-field">
-            <label for="language" class="p-label">Language</label>
-            <p-select
-              id="language"
-              formControlName="language"
-              [options]="languageOptions"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select language"
-              styleClass="language-selector"
-              appendTo="body"
-              [showClear]="false"
-            >
-              <ng-template pTemplate="selectedItem" let-selected>
-                @if (selected) {
-                  <div class="lang-selected">
-                    <span class="lang-flag">{{ selected.flag }}</span>
-                    <span class="lang-label">{{ selected.label }}</span>
-                  </div>
-                }
-              </ng-template>
-              <ng-template pTemplate="item" let-lang>
-                <div class="lang-item">
-                  <span class="lang-flag">{{ lang.flag }}</span>
-                  <div class="lang-details">
-                    <span class="lang-label">{{ lang.label }}</span>
-                    <span class="lang-native">{{ lang.native }}</span>
-                  </div>
-                  <i class="pi pi-check lang-check"></i>
-                </div>
-              </ng-template>
-            </p-select>
-            <div class="language-hint-box">
-              <i class="pi pi-info-circle"></i>
-              <span
-                >Translation coming soon - your preference will be saved</span
-              >
-            </div>
-          </div>
-        </form>
-      </app-card>
+          </form>
+        </app-card>
 
-      <!-- Security Settings -->
-      <app-card
-        title="Security"
-        headerIcon="pi-shield"
-        headerIconColor="primary"
-      >
-        <div class="security-actions">
-          <div class="security-item">
-            <div class="security-info">
-              <h4>Change Password</h4>
-              <p>Update your account password</p>
-            </div>
-            <app-button
-              variant="outlined"
-              icon="key"
-              (clicked)="showChangePasswordDialog = true"
-              >Change</app-button
-            >
-          </div>
-          <p-divider></p-divider>
-
-          <!-- Two-Factor Authentication -->
-          <div class="security-item">
-            <div class="security-info">
-              <h4>Two-Factor Authentication (2FA)</h4>
-              <p>
-                @if (is2FAEnabled()) {
-                  <span class="status-badge enabled">
-                    <i class="pi pi-shield"></i> Enabled
-                  </span>
-                } @else {
-                  Add an extra layer of security to your account
-                }
-              </p>
-            </div>
-            @if (is2FAEnabled()) {
+        <!-- Security Settings -->
+        <app-card
+          title="Security"
+          headerIcon="pi-shield"
+          headerIconColor="primary"
+        >
+          <div class="security-actions">
+            <div class="security-item">
+              <div class="security-info">
+                <h4>Change Password</h4>
+                <p>Update your account password</p>
+              </div>
               <app-button
                 variant="outlined"
-                icon="times"
-                (clicked)="showDisable2FADialog = true"
-                >Disable</app-button
+                icon="key"
+                (clicked)="showChangePasswordDialog = true"
+                >Change</app-button
               >
-            } @else {
+            </div>
+            <p-divider></p-divider>
+
+            <!-- Two-Factor Authentication -->
+            <div class="security-item">
+              <div class="security-info">
+                <h4>Two-Factor Authentication (2FA)</h4>
+                <p>
+                  @if (is2FAEnabled()) {
+                    <span class="status-badge enabled">
+                      <i class="pi pi-shield"></i> Enabled
+                    </span>
+                  } @else {
+                    Add an extra layer of security to your account
+                  }
+                </p>
+              </div>
+              @if (is2FAEnabled()) {
+                <app-button
+                  variant="outlined"
+                  icon="times"
+                  (clicked)="showDisable2FADialog = true"
+                  >Disable</app-button
+                >
+              } @else {
+                <app-button
+                  variant="outlined"
+                  icon="shield"
+                  (clicked)="startSetup2FA()"
+                  >Enable</app-button
+                >
+              }
+            </div>
+            <p-divider></p-divider>
+
+            <!-- Active Sessions -->
+            <div class="security-item">
+              <div class="security-info">
+                <h4>Active Sessions</h4>
+                <p>Manage your logged-in devices</p>
+              </div>
               <app-button
                 variant="outlined"
-                icon="shield"
-                (clicked)="startSetup2FA()"
-                >Enable</app-button
+                icon="desktop"
+                (clicked)="showSessionsDialog = true; loadSessions()"
+                >View</app-button
               >
-            }
-          </div>
-          <p-divider></p-divider>
-
-          <!-- Active Sessions -->
-          <div class="security-item">
-            <div class="security-info">
-              <h4>Active Sessions</h4>
-              <p>Manage your logged-in devices</p>
             </div>
-            <app-button
-              variant="outlined"
-              icon="desktop"
-              (clicked)="showSessionsDialog = true; loadSessions()"
-              >View</app-button
-            >
-          </div>
-          <p-divider></p-divider>
+            <p-divider></p-divider>
 
-          <div class="security-item danger">
-            <div class="security-info">
-              <h4>Delete Account</h4>
-              <p>Permanently delete your account and all data</p>
+            <div class="security-item danger">
+              <div class="security-info">
+                <h4>Delete Account</h4>
+                <p>Permanently delete your account and all data</p>
+              </div>
+              <app-button
+                variant="danger"
+                icon="trash"
+                (clicked)="showDeleteAccountDialog = true"
+                >Delete</app-button
+              >
             </div>
-            <app-button
-              variant="danger"
-              icon="trash"
-              (clicked)="showDeleteAccountDialog = true"
-              >Delete</app-button
-            >
           </div>
-        </div>
-      </app-card>
+        </app-card>
+      </div>
     </div>
   </div>
-</div>
 </app-main-layout>
 
 <!-- All Dialogs (outside main layout for proper portal rendering) -->
 <!-- Change Password Dialog -->
 <p-dialog
-    [(visible)]="showChangePasswordDialog"
-    [modal]="true"
-    [closable]="true"
-    [showHeader]="false"
-    styleClass="password-dialog"
-  >
-    <div class="dialog-container">
-      <!-- Custom Header -->
-      <div class="dialog-header">
-        <div class="dialog-icon">
-          <i class="pi pi-lock"></i>
-        </div>
-        <div class="dialog-title-section">
-          <h2>Change Password</h2>
-          <p>Update your account password</p>
-        </div>
-        <app-button
-          icon="times"
-          variant="text"
-          ariaLabel="Close dialog"
-          severity="secondary"
-          class="dialog-close-btn"
-          (clicked)="showChangePasswordDialog = false"
-        ></app-button>
+  [(visible)]="showChangePasswordDialog"
+  [modal]="true"
+  [closable]="true"
+  [showHeader]="false"
+  styleClass="password-dialog"
+>
+  <div class="dialog-container">
+    <!-- Custom Header -->
+    <div class="dialog-header">
+      <div class="dialog-icon">
+        <i class="pi pi-lock"></i>
       </div>
-
-      <!-- Form Content -->
-      <form [formGroup]="passwordForm" class="password-form">
-        <div class="form-field">
-          <label for="settings-currentPassword">
-            <i class="pi pi-key"></i>
-            Current Password
-          </label>
-          <div class="input-wrapper">
-            <p-password
-              inputId="settings-currentPassword"
-              formControlName="currentPassword"
-              [feedback]="false"
-              [toggleMask]="true"
-              placeholder="Enter your current password"
-              styleClass="password-input"
-              autocomplete="current-password"
-            ></p-password>
-          </div>
-        </div>
-
-        <div class="form-field">
-          <label for="settings-newPassword">
-            <i class="pi pi-shield"></i>
-            New Password
-          </label>
-          <div class="input-wrapper">
-            <p-password
-              inputId="settings-newPassword"
-              formControlName="newPassword"
-              [toggleMask]="true"
-              placeholder="Create a strong password"
-              styleClass="password-input"
-              autocomplete="new-password"
-            ></p-password>
-          </div>
-          <div class="password-requirements">
-            <div
-              class="requirement"
-              [class.met]="passwordForm.get('newPassword')?.value?.length >= 8"
-            >
-              <i
-                class="pi"
-                [class.pi-check-circle]="
-                  passwordForm.get('newPassword')?.value?.length >= 8
-                "
-                [class.pi-circle]="
-                  !(passwordForm.get('newPassword')?.value?.length >= 8)
-                "
-              ></i>
-              <span>At least 8 characters</span>
-            </div>
-            <div class="requirement" [class.met]="hasUppercase()">
-              <i
-                class="pi"
-                [class.pi-check-circle]="hasUppercase()"
-                [class.pi-circle]="!hasUppercase()"
-              ></i>
-              <span>One uppercase letter</span>
-            </div>
-            <div class="requirement" [class.met]="hasNumber()">
-              <i
-                class="pi"
-                [class.pi-check-circle]="hasNumber()"
-                [class.pi-circle]="!hasNumber()"
-              ></i>
-              <span>One number</span>
-            </div>
-            <div class="requirement" [class.met]="hasSpecialChar()">
-              <i
-                class="pi"
-                [class.pi-check-circle]="hasSpecialChar()"
-                [class.pi-circle]="!hasSpecialChar()"
-              ></i>
-              <span>One special character</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-field">
-          <label for="settings-confirmNewPassword">
-            <i class="pi pi-check-square"></i>
-            Confirm New Password
-          </label>
-          <div class="input-wrapper">
-            <p-password
-              inputId="settings-confirmNewPassword"
-              formControlName="confirmNewPassword"
-              [feedback]="false"
-              [toggleMask]="true"
-              placeholder="Confirm your new password"
-              styleClass="password-input"
-              autocomplete="new-password"
-            ></p-password>
-          </div>
-          @if (
-            passwordForm.errors?.["passwordMismatch"] &&
-            passwordForm.get("confirmNewPassword")?.touched
-          ) {
-            <div class="error-message">
-              <i class="pi pi-exclamation-circle"></i>
-              <span>Passwords do not match</span>
-            </div>
-          }
-          @if (
-            passwordsMatch() && passwordForm.get("confirmNewPassword")?.value
-          ) {
-            <div class="success-message">
-              <i class="pi pi-check-circle"></i>
-              <span>Passwords match</span>
-            </div>
-          }
-        </div>
-      </form>
-
-      <div class="dialog-actions">
-        <app-button variant="text" (clicked)="showChangePasswordDialog = false"
-          >Cancel</app-button
-        >
-        <app-button
-          icon="check"
-          [loading]="isChangingPassword()"
-          [disabled]="passwordForm.invalid"
-          (clicked)="changePassword()"
-          >Update Password</app-button
-        >
+      <div class="dialog-title-section">
+        <h2>Change Password</h2>
+        <p>Update your account password</p>
       </div>
+      <app-button
+        icon="times"
+        variant="text"
+        ariaLabel="Close dialog"
+        severity="secondary"
+        class="dialog-close-btn"
+        (clicked)="showChangePasswordDialog = false"
+      ></app-button>
     </div>
-  </p-dialog>
 
-  <!-- Delete Account Dialog -->
-  <p-dialog
-    [(visible)]="showDeleteAccountDialog"
-    [modal]="true"
-    [closable]="true"
-    [showHeader]="false"
-    styleClass="delete-dialog"
-  >
-    <div class="dialog-container">
-      <!-- Custom Header -->
-      <div class="dialog-header danger-header">
-        <div class="dialog-icon danger-icon">
-          <i class="pi pi-trash"></i>
-        </div>
-        <div class="dialog-title-section">
-          <h2>Delete Account</h2>
-          <p>This action is permanent and irreversible</p>
-        </div>
-        <app-button
-          icon="times"
-          variant="text"
-          ariaLabel="Close dialog"
-          severity="secondary"
-          class="dialog-close-btn"
-          (clicked)="showDeleteAccountDialog = false"
-        ></app-button>
-      </div>
-
-      <!-- Warning Content -->
-      <div class="delete-content">
-        <div class="warning-box">
-          <div class="warning-icon-large">
-            <i class="pi pi-exclamation-triangle"></i>
-          </div>
-          <div class="warning-text">
-            <h4>Are you absolutely sure?</h4>
-            <p>All your data will be permanently deleted, including:</p>
-            <ul class="delete-list">
-              <li>
-                <i class="pi pi-chart-line"></i> Training history & progress
-              </li>
-              <li>
-                <i class="pi pi-chart-bar"></i> Performance metrics & analytics
-              </li>
-              <li><i class="pi pi-cog"></i> Settings & preferences</li>
-              <li><i class="pi pi-user"></i> Profile information</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="confirm-field">
-          <label for="settings-deleteConfirm">
-            Type <strong>DELETE</strong> to confirm
-          </label>
-          <input
-            id="settings-deleteConfirm"
-            name="deleteConfirm"
-            type="text"
-            pInputText
-            [(ngModel)]="deleteConfirmText"
-            placeholder="Type DELETE"
-            class="delete-input"
-            autocomplete="off"
-          />
+    <!-- Form Content -->
+    <form [formGroup]="passwordForm" class="password-form">
+      <div class="form-field">
+        <label for="settings-currentPassword">
+          <i class="pi pi-key"></i>
+          Current Password
+        </label>
+        <div class="input-wrapper">
+          <p-password
+            inputId="settings-currentPassword"
+            formControlName="currentPassword"
+            [feedback]="false"
+            [toggleMask]="true"
+            placeholder="Enter your current password"
+            styleClass="password-input"
+            autocomplete="current-password"
+          ></p-password>
         </div>
       </div>
 
-      <!-- Footer Actions -->
-      <div class="dialog-actions">
-        <app-button variant="text" (clicked)="showDeleteAccountDialog = false"
-          >Cancel</app-button
-        >
-        <app-button
-          variant="danger"
-          icon="trash"
-          [loading]="isDeletingAccount()"
-          [disabled]="deleteConfirmText !== 'DELETE'"
-          (clicked)="deleteAccount()"
-          >Delete My Account</app-button
-        >
-      </div>
-    </div>
-  </p-dialog>
-
-  <!-- 2FA Setup Dialog -->
-  <p-dialog
-    [(visible)]="show2FASetupDialog"
-    [modal]="true"
-    [closable]="true"
-    [showHeader]="false"
-    styleClass="twofa-dialog"
-  >
-    <div class="dialog-container">
-      <!-- Custom Header -->
-      <div class="dialog-header">
-        <div class="dialog-icon">
+      <div class="form-field">
+        <label for="settings-newPassword">
           <i class="pi pi-shield"></i>
+          New Password
+        </label>
+        <div class="input-wrapper">
+          <p-password
+            inputId="settings-newPassword"
+            formControlName="newPassword"
+            [toggleMask]="true"
+            placeholder="Create a strong password"
+            styleClass="password-input"
+            autocomplete="new-password"
+          ></p-password>
         </div>
-        <div class="dialog-title-section">
-          <h2>Two-Factor Authentication</h2>
-          <p>Step {{ twoFAStep() }} of 4 — Add extra security</p>
+        <div class="password-requirements">
+          <div
+            class="requirement"
+            [class.met]="passwordForm.get('newPassword')?.value?.length >= 8"
+          >
+            <i
+              class="pi"
+              [class.pi-check-circle]="
+                passwordForm.get('newPassword')?.value?.length >= 8
+              "
+              [class.pi-circle]="
+                !(passwordForm.get('newPassword')?.value?.length >= 8)
+              "
+            ></i>
+            <span>At least 8 characters</span>
+          </div>
+          <div class="requirement" [class.met]="hasUppercase()">
+            <i
+              class="pi"
+              [class.pi-check-circle]="hasUppercase()"
+              [class.pi-circle]="!hasUppercase()"
+            ></i>
+            <span>One uppercase letter</span>
+          </div>
+          <div class="requirement" [class.met]="hasNumber()">
+            <i
+              class="pi"
+              [class.pi-check-circle]="hasNumber()"
+              [class.pi-circle]="!hasNumber()"
+            ></i>
+            <span>One number</span>
+          </div>
+          <div class="requirement" [class.met]="hasSpecialChar()">
+            <i
+              class="pi"
+              [class.pi-check-circle]="hasSpecialChar()"
+              [class.pi-circle]="!hasSpecialChar()"
+            ></i>
+            <span>One special character</span>
+          </div>
         </div>
-        <app-button
-          icon="times"
-          variant="text"
-          ariaLabel="Close dialog"
-          severity="secondary"
-          class="dialog-close-btn"
-          (clicked)="close2FASetup()"
-        ></app-button>
       </div>
 
-      <!-- Step Progress -->
-      <div class="step-progress">
-        @for (step of [1, 2, 3, 4]; track step) {
-          <div
-            class="step-dot"
-            [class.active]="twoFAStep() >= step"
-            [class.current]="twoFAStep() === step"
-          ></div>
+      <div class="form-field">
+        <label for="settings-confirmNewPassword">
+          <i class="pi pi-check-square"></i>
+          Confirm New Password
+        </label>
+        <div class="input-wrapper">
+          <p-password
+            inputId="settings-confirmNewPassword"
+            formControlName="confirmNewPassword"
+            [feedback]="false"
+            [toggleMask]="true"
+            placeholder="Confirm your new password"
+            styleClass="password-input"
+            autocomplete="new-password"
+          ></p-password>
+        </div>
+        @if (
+          passwordForm.errors?.["passwordMismatch"] &&
+          passwordForm.get("confirmNewPassword")?.touched
+        ) {
+          <div class="error-message">
+            <i class="pi pi-exclamation-circle"></i>
+            <span>Passwords do not match</span>
+          </div>
+        }
+        @if (
+          passwordsMatch() && passwordForm.get("confirmNewPassword")?.value
+        ) {
+          <div class="success-message">
+            <i class="pi pi-check-circle"></i>
+            <span>Passwords match</span>
+          </div>
         }
       </div>
+    </form>
 
-      <!-- Step Content -->
-      <div class="twofa-content">
-        @switch (twoFAStep()) {
-          @case (1) {
-            <div class="step-section">
-              <h3>Install an Authenticator App</h3>
-              <p class="step-desc">
-                Download one of these apps on your mobile device:
-              </p>
-              <div class="app-list">
-                <div class="app-card">
-                  <div class="app-icon google">
-                    <i class="pi pi-google"></i>
-                  </div>
-                  <span>Google Authenticator</span>
+    <div class="dialog-actions">
+      <app-button variant="text" (clicked)="showChangePasswordDialog = false"
+        >Cancel</app-button
+      >
+      <app-button
+        icon="check"
+        [loading]="isChangingPassword()"
+        [disabled]="passwordForm.invalid"
+        (clicked)="changePassword()"
+        >Update Password</app-button
+      >
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Delete Account Dialog -->
+<p-dialog
+  [(visible)]="showDeleteAccountDialog"
+  [modal]="true"
+  [closable]="true"
+  [showHeader]="false"
+  styleClass="delete-dialog"
+>
+  <div class="dialog-container">
+    <!-- Custom Header -->
+    <div class="dialog-header danger-header">
+      <div class="dialog-icon danger-icon">
+        <i class="pi pi-trash"></i>
+      </div>
+      <div class="dialog-title-section">
+        <h2>Delete Account</h2>
+        <p>This action is permanent and irreversible</p>
+      </div>
+      <app-button
+        icon="times"
+        variant="text"
+        ariaLabel="Close dialog"
+        severity="secondary"
+        class="dialog-close-btn"
+        (clicked)="showDeleteAccountDialog = false"
+      ></app-button>
+    </div>
+
+    <!-- Warning Content -->
+    <div class="delete-content">
+      <div class="warning-box">
+        <div class="warning-icon-large">
+          <i class="pi pi-exclamation-triangle"></i>
+        </div>
+        <div class="warning-text">
+          <h4>Are you absolutely sure?</h4>
+          <p>All your data will be permanently deleted, including:</p>
+          <ul class="delete-list">
+            <li>
+              <i class="pi pi-chart-line"></i> Training history & progress
+            </li>
+            <li>
+              <i class="pi pi-chart-bar"></i> Performance metrics & analytics
+            </li>
+            <li><i class="pi pi-cog"></i> Settings & preferences</li>
+            <li><i class="pi pi-user"></i> Profile information</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="confirm-field">
+        <label for="settings-deleteConfirm">
+          Type <strong>DELETE</strong> to confirm
+        </label>
+        <input
+          id="settings-deleteConfirm"
+          name="deleteConfirm"
+          type="text"
+          pInputText
+          [(ngModel)]="deleteConfirmText"
+          placeholder="Type DELETE"
+          class="delete-input"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="dialog-actions">
+      <app-button variant="text" (clicked)="showDeleteAccountDialog = false"
+        >Cancel</app-button
+      >
+      <app-button
+        variant="danger"
+        icon="trash"
+        [loading]="isDeletingAccount()"
+        [disabled]="deleteConfirmText !== 'DELETE'"
+        (clicked)="deleteAccount()"
+        >Delete My Account</app-button
+      >
+    </div>
+  </div>
+</p-dialog>
+
+<!-- 2FA Setup Dialog -->
+<p-dialog
+  [(visible)]="show2FASetupDialog"
+  [modal]="true"
+  [closable]="true"
+  [showHeader]="false"
+  styleClass="twofa-dialog"
+>
+  <div class="dialog-container">
+    <!-- Custom Header -->
+    <div class="dialog-header">
+      <div class="dialog-icon">
+        <i class="pi pi-shield"></i>
+      </div>
+      <div class="dialog-title-section">
+        <h2>Two-Factor Authentication</h2>
+        <p>Step {{ twoFAStep() }} of 4 — Add extra security</p>
+      </div>
+      <app-button
+        icon="times"
+        variant="text"
+        ariaLabel="Close dialog"
+        severity="secondary"
+        class="dialog-close-btn"
+        (clicked)="close2FASetup()"
+      ></app-button>
+    </div>
+
+    <!-- Step Progress -->
+    <div class="step-progress">
+      @for (step of [1, 2, 3, 4]; track step) {
+        <div
+          class="step-dot"
+          [class.active]="twoFAStep() >= step"
+          [class.current]="twoFAStep() === step"
+        ></div>
+      }
+    </div>
+
+    <!-- Step Content -->
+    <div class="twofa-content">
+      @switch (twoFAStep()) {
+        @case (1) {
+          <div class="step-section">
+            <h3>Install an Authenticator App</h3>
+            <p class="step-desc">
+              Download one of these apps on your mobile device:
+            </p>
+            <div class="app-list">
+              <div class="app-card">
+                <div class="app-icon google">
+                  <i class="pi pi-google"></i>
                 </div>
-                <div class="app-card">
-                  <div class="app-icon microsoft">
-                    <i class="pi pi-microsoft"></i>
-                  </div>
-                  <span>Microsoft Authenticator</span>
+                <span>Google Authenticator</span>
+              </div>
+              <div class="app-card">
+                <div class="app-icon microsoft">
+                  <i class="pi pi-microsoft"></i>
                 </div>
-                <div class="app-card">
-                  <div class="app-icon authy">
-                    <i class="pi pi-lock"></i>
-                  </div>
-                  <span>Authy</span>
+                <span>Microsoft Authenticator</span>
+              </div>
+              <div class="app-card">
+                <div class="app-icon authy">
+                  <i class="pi pi-lock"></i>
                 </div>
+                <span>Authy</span>
               </div>
             </div>
-          }
-          @case (2) {
-            <div class="step-section">
-              <h3>Scan QR Code</h3>
-              <p class="step-desc">
-                Open your authenticator app and scan this code:
-              </p>
-              <div class="qr-wrapper">
-                @if (qrCodeUrl()) {
-                  <img
-                    appMobileOptimized
-                    [width]="256"
-                    [height]="256"
-                    [lazy]="false"
-                    [src]="qrCodeUrl()"
-                    alt="2FA QR Code"
-                    class="qr-image"
-                  />
-                } @else {
-                  <div class="qr-loading">
-                    <i class="pi pi-spin pi-spinner"></i>
-                    <span>Generating...</span>
-                  </div>
-                }
-              </div>
-              <div class="manual-code">
-                <span class="manual-label">Can't scan? Enter manually:</span>
-                <div class="code-box">
-                  <code>{{ twoFASecret() }}</code>
-                  <app-icon-button
-                    icon="pi-copy"
-                    ariaLabel="Copy secret to clipboard"
-                    variant="primary"
-                    size="sm"
-                    (clicked)="copySecret()"
-                  ></app-icon-button>
-                </div>
-              </div>
-            </div>
-          }
-          @case (3) {
-            <div class="step-section">
-              <h3>Verify Setup</h3>
-              <p class="step-desc">Enter the 6-digit code from your app:</p>
-              <div class="code-input-wrapper">
-                <input
-                  id="settings-2fa-code"
-                  name="twoFACode"
-                  type="text"
-                  [(ngModel)]="twoFAVerificationCode"
-                  placeholder="000000"
-                  maxlength="6"
-                  class="verification-code-input"
-                  autocomplete="one-time-code"
-                  inputmode="numeric"
-                  (keyup.enter)="verify2FA()"
+          </div>
+        }
+        @case (2) {
+          <div class="step-section">
+            <h3>Scan QR Code</h3>
+            <p class="step-desc">
+              Open your authenticator app and scan this code:
+            </p>
+            <div class="qr-wrapper">
+              @if (qrCodeUrl()) {
+                <img
+                  appMobileOptimized
+                  [width]="256"
+                  [height]="256"
+                  [lazy]="false"
+                  [src]="qrCodeUrl()"
+                  alt="2FA QR Code"
+                  class="qr-image"
                 />
-              </div>
-              @if (twoFAError()) {
-                <div class="error-message">
-                  <i class="pi pi-exclamation-circle"></i>
-                  <span>{{ twoFAError() }}</span>
+              } @else {
+                <div class="qr-loading">
+                  <i class="pi pi-spin pi-spinner"></i>
+                  <span>Generating...</span>
                 </div>
               }
             </div>
-          }
-          @case (4) {
-            <div class="step-section success-section">
-              <div class="success-icon-wrapper">
-                <i class="pi pi-check"></i>
-              </div>
-              <h3>2FA Enabled!</h3>
-              <p class="step-desc">
-                Your account is now protected with two-factor authentication.
-              </p>
-              <div class="backup-section">
-                <div class="backup-header">
-                  <i class="pi pi-key"></i>
-                  <span>Backup Codes</span>
-                </div>
-                <p class="backup-desc">
-                  Save these codes securely. Use them if you lose access to your
-                  authenticator.
-                </p>
-                <div class="codes-grid">
-                  @for (code of backupCodes(); track code) {
-                    <code class="backup-code-item">{{ code }}</code>
-                  }
-                </div>
-                <app-button
-                  variant="outlined"
-                  icon="download"
-                  [fullWidth]="true"
-                  (clicked)="downloadBackupCodes()"
-                  >Download Codes</app-button
-                >
+            <div class="manual-code">
+              <span class="manual-label">Can't scan? Enter manually:</span>
+              <div class="code-box">
+                <code>{{ twoFASecret() }}</code>
+                <app-icon-button
+                  icon="pi-copy"
+                  ariaLabel="Copy secret to clipboard"
+                  variant="primary"
+                  size="sm"
+                  (clicked)="copySecret()"
+                ></app-icon-button>
               </div>
             </div>
-          }
-        }
-      </div>
-
-      <!-- Footer Actions -->
-      <div class="dialog-actions">
-        @if (twoFAStep() < 4) {
-          <app-button variant="text" (clicked)="close2FASetup()"
-            >Cancel</app-button
-          >
-
-          @if (twoFAStep() === 1) {
-            <app-button
-              icon="arrow-right"
-              iconPosition="right"
-              (clicked)="twoFAStep.set(2)"
-              >I have an app</app-button
-            >
-          } @else if (twoFAStep() === 2) {
-            <app-button
-              icon="arrow-right"
-              iconPosition="right"
-              (clicked)="twoFAStep.set(3)"
-              >Next</app-button
-            >
-          } @else if (twoFAStep() === 3) {
-            <app-button
-              icon="shield"
-              [loading]="isEnabling2FA()"
-              [disabled]="twoFAVerificationCode.length !== 6"
-              (clicked)="verify2FA()"
-              >Verify & Enable</app-button
-            >
-          }
-        } @else {
-          <app-button
-            iconLeft="check"
-            [fullWidth]="true"
-            (clicked)="close2FASetup()"
-            >Done</app-button
-          >
-        }
-      </div>
-    </div>
-  </p-dialog>
-
-  <!-- Disable 2FA Dialog -->
-  <p-dialog
-    [(visible)]="showDisable2FADialog"
-    [modal]="true"
-    [closable]="true"
-    [showHeader]="false"
-    styleClass="twofa-dialog"
-  >
-    <div class="dialog-container">
-      <!-- Custom Header -->
-      <div class="dialog-header danger-header">
-        <div class="dialog-icon danger-icon">
-          <i class="pi pi-shield-slash"></i>
-        </div>
-        <div class="dialog-title-section">
-          <h2>Disable 2FA</h2>
-          <p>Remove the extra layer of security</p>
-        </div>
-        <app-button
-          icon="times"
-          variant="text"
-          ariaLabel="Close dialog"
-          severity="secondary"
-          class="dialog-close-btn"
-          (clicked)="showDisable2FADialog = false"
-        ></app-button>
-      </div>
-
-      <div class="twofa-content">
-        <div class="step-section">
-          <i
-            class="pi pi-exclamation-triangle success-icon error-warning-icon"
-          ></i>
-          <p class="step-desc">
-            Disabling 2FA will make your account less secure. Please confirm
-            with your authenticator code.
-          </p>
-
-          <div class="code-input-wrapper">
-            <input
-              id="settings-disable2FACode"
-              name="disable2FACode"
-              type="text"
-              [(ngModel)]="disable2FACode"
-              placeholder="000000"
-              maxlength="6"
-              class="verification-code-input"
-              autocomplete="one-time-code"
-              inputmode="numeric"
-            />
           </div>
-        </div>
-      </div>
-
-      <!-- Footer Actions -->
-      <div class="dialog-actions">
-        <app-button variant="text" (clicked)="showDisable2FADialog = false"
-          >Cancel</app-button
-        >
-        <app-button
-          variant="danger"
-          icon="times"
-          [loading]="isDisabling2FA()"
-          [disabled]="disable2FACode.length !== 6"
-          (clicked)="disable2FA()"
-          >Disable 2FA</app-button
-        >
-      </div>
-    </div>
-  </p-dialog>
-
-  <!-- Active Sessions Dialog -->
-  <p-dialog
-    [(visible)]="showSessionsDialog"
-    [modal]="true"
-    [closable]="true"
-    [showHeader]="false"
-    styleClass="sessions-dialog"
-  >
-    <div class="dialog-container">
-      <!-- Custom Header -->
-      <div class="dialog-header">
-        <div class="dialog-icon">
-          <i class="pi pi-desktop"></i>
-        </div>
-        <div class="dialog-title-section">
-          <h2>Active Sessions</h2>
-          <p>Manage your logged-in devices</p>
-        </div>
-        <app-button
-          icon="times"
-          variant="text"
-          ariaLabel="Close dialog"
-          severity="secondary"
-          class="dialog-close-btn"
-          (clicked)="showSessionsDialog = false"
-        ></app-button>
-      </div>
-
-      <!-- Sessions Content -->
-      <div class="sessions-content">
-        @if (loadingSessions()) {
-          <div class="sessions-loading">
-            <i class="pi pi-spin pi-spinner"></i>
-            <span>Loading sessions...</span>
-          </div>
-        } @else {
-          <div class="sessions-list-new">
-            @for (session of activeSessions(); track session.id) {
-              <div class="session-card" [class.current]="session.isCurrent">
-                <div
-                  class="session-device-icon"
-                  [class.mobile]="session.deviceType === 'mobile'"
-                  [class.tablet]="session.deviceType === 'tablet'"
-                >
-                  <i [class]="getDeviceIcon(session.deviceType)"></i>
-                </div>
-                <div class="session-details-new">
-                  <div class="session-name">
-                    {{ session.deviceName }}
-                    @if (session.isCurrent) {
-                      <span class="current-tag">This device</span>
-                    }
-                  </div>
-                  <div class="session-meta">
-                    <span
-                      ><i class="pi pi-map-marker"></i>
-                      {{ session.location }}</span
-                    >
-                    <span
-                      ><i class="pi pi-clock"></i>
-                      {{ session.lastActive }}</span
-                    >
-                  </div>
-                </div>
-                @if (!session.isCurrent) {
-                  <app-icon-button
-                    icon="pi-sign-out"
-                    ariaLabel="Revoke this session"
-                    variant="danger"
-                    size="md"
-                    (clicked)="revokeSession(session.id)"
-                  ></app-icon-button>
-                }
+        }
+        @case (3) {
+          <div class="step-section">
+            <h3>Verify Setup</h3>
+            <p class="step-desc">Enter the 6-digit code from your app:</p>
+            <div class="code-input-wrapper">
+              <input
+                id="settings-2fa-code"
+                name="twoFACode"
+                type="text"
+                [(ngModel)]="twoFAVerificationCode"
+                placeholder="000000"
+                maxlength="6"
+                class="verification-code-input"
+                autocomplete="one-time-code"
+                inputmode="numeric"
+                (keyup.enter)="verify2FA()"
+              />
+            </div>
+            @if (twoFAError()) {
+              <div class="error-message">
+                <i class="pi pi-exclamation-circle"></i>
+                <span>{{ twoFAError() }}</span>
               </div>
             }
           </div>
         }
-      </div>
+        @case (4) {
+          <div class="step-section success-section">
+            <div class="success-icon-wrapper">
+              <i class="pi pi-check"></i>
+            </div>
+            <h3>2FA Enabled!</h3>
+            <p class="step-desc">
+              Your account is now protected with two-factor authentication.
+            </p>
+            <div class="backup-section">
+              <div class="backup-header">
+                <i class="pi pi-key"></i>
+                <span>Backup Codes</span>
+              </div>
+              <p class="backup-desc">
+                Save these codes securely. Use them if you lose access to your
+                authenticator.
+              </p>
+              <div class="codes-grid">
+                @for (code of backupCodes(); track code) {
+                  <code class="backup-code-item">{{ code }}</code>
+                }
+              </div>
+              <app-button
+                variant="outlined"
+                icon="download"
+                [fullWidth]="true"
+                (clicked)="downloadBackupCodes()"
+                >Download Codes</app-button
+              >
+            </div>
+          </div>
+        }
+      }
+    </div>
 
-      <!-- Footer Actions -->
-      <div class="dialog-actions">
-        <app-button variant="text" (clicked)="showSessionsDialog = false"
-          >Close</app-button
+    <!-- Footer Actions -->
+    <div class="dialog-actions">
+      @if (twoFAStep() < 4) {
+        <app-button variant="text" (clicked)="close2FASetup()"
+          >Cancel</app-button
         >
+
+        @if (twoFAStep() === 1) {
+          <app-button
+            icon="arrow-right"
+            iconPosition="right"
+            (clicked)="twoFAStep.set(2)"
+            >I have an app</app-button
+          >
+        } @else if (twoFAStep() === 2) {
+          <app-button
+            icon="arrow-right"
+            iconPosition="right"
+            (clicked)="twoFAStep.set(3)"
+            >Next</app-button
+          >
+        } @else if (twoFAStep() === 3) {
+          <app-button
+            icon="shield"
+            [loading]="isEnabling2FA()"
+            [disabled]="twoFAVerificationCode.length !== 6"
+            (clicked)="verify2FA()"
+            >Verify & Enable</app-button
+          >
+        }
+      } @else {
         <app-button
-          variant="danger"
-          icon="sign-out"
-          [loading]="isRevokingAll()"
-          (clicked)="revokeAllSessions()"
-          >Sign out all others</app-button
+          iconLeft="check"
+          [fullWidth]="true"
+          (clicked)="close2FASetup()"
+          >Done</app-button
         >
+      }
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Disable 2FA Dialog -->
+<p-dialog
+  [(visible)]="showDisable2FADialog"
+  [modal]="true"
+  [closable]="true"
+  [showHeader]="false"
+  styleClass="twofa-dialog"
+>
+  <div class="dialog-container">
+    <!-- Custom Header -->
+    <div class="dialog-header danger-header">
+      <div class="dialog-icon danger-icon">
+        <i class="pi pi-shield-slash"></i>
+      </div>
+      <div class="dialog-title-section">
+        <h2>Disable 2FA</h2>
+        <p>Remove the extra layer of security</p>
+      </div>
+      <app-button
+        icon="times"
+        variant="text"
+        ariaLabel="Close dialog"
+        severity="secondary"
+        class="dialog-close-btn"
+        (clicked)="showDisable2FADialog = false"
+      ></app-button>
+    </div>
+
+    <div class="twofa-content">
+      <div class="step-section">
+        <i
+          class="pi pi-exclamation-triangle success-icon error-warning-icon"
+        ></i>
+        <p class="step-desc">
+          Disabling 2FA will make your account less secure. Please confirm with
+          your authenticator code.
+        </p>
+
+        <div class="code-input-wrapper">
+          <input
+            id="settings-disable2FACode"
+            name="disable2FACode"
+            type="text"
+            [(ngModel)]="disable2FACode"
+            placeholder="000000"
+            maxlength="6"
+            class="verification-code-input"
+            autocomplete="one-time-code"
+            inputmode="numeric"
+          />
+        </div>
       </div>
     </div>
-  </p-dialog>
+
+    <!-- Footer Actions -->
+    <div class="dialog-actions">
+      <app-button variant="text" (clicked)="showDisable2FADialog = false"
+        >Cancel</app-button
+      >
+      <app-button
+        variant="danger"
+        icon="times"
+        [loading]="isDisabling2FA()"
+        [disabled]="disable2FACode.length !== 6"
+        (clicked)="disable2FA()"
+        >Disable 2FA</app-button
+      >
+    </div>
+  </div>
+</p-dialog>
+
+<!-- Active Sessions Dialog -->
+<p-dialog
+  [(visible)]="showSessionsDialog"
+  [modal]="true"
+  [closable]="true"
+  [showHeader]="false"
+  styleClass="sessions-dialog"
+>
+  <div class="dialog-container">
+    <!-- Custom Header -->
+    <div class="dialog-header">
+      <div class="dialog-icon">
+        <i class="pi pi-desktop"></i>
+      </div>
+      <div class="dialog-title-section">
+        <h2>Active Sessions</h2>
+        <p>Manage your logged-in devices</p>
+      </div>
+      <app-button
+        icon="times"
+        variant="text"
+        ariaLabel="Close dialog"
+        severity="secondary"
+        class="dialog-close-btn"
+        (clicked)="showSessionsDialog = false"
+      ></app-button>
+    </div>
+
+    <!-- Sessions Content -->
+    <div class="sessions-content">
+      @if (loadingSessions()) {
+        <div class="sessions-loading">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Loading sessions...</span>
+        </div>
+      } @else {
+        <div class="sessions-list-new">
+          @for (session of activeSessions(); track session.id) {
+            <div class="session-card" [class.current]="session.isCurrent">
+              <div
+                class="session-device-icon"
+                [class.mobile]="session.deviceType === 'mobile'"
+                [class.tablet]="session.deviceType === 'tablet'"
+              >
+                <i [class]="getDeviceIcon(session.deviceType)"></i>
+              </div>
+              <div class="session-details-new">
+                <div class="session-name">
+                  {{ session.deviceName }}
+                  @if (session.isCurrent) {
+                    <span class="current-tag">This device</span>
+                  }
+                </div>
+                <div class="session-meta">
+                  <span
+                    ><i class="pi pi-map-marker"></i>
+                    {{ session.location }}</span
+                  >
+                  <span
+                    ><i class="pi pi-clock"></i> {{ session.lastActive }}</span
+                  >
+                </div>
+              </div>
+              @if (!session.isCurrent) {
+                <app-icon-button
+                  icon="pi-sign-out"
+                  ariaLabel="Revoke this session"
+                  variant="danger"
+                  size="md"
+                  (clicked)="revokeSession(session.id)"
+                ></app-icon-button>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="dialog-actions">
+      <app-button variant="text" (clicked)="showSessionsDialog = false"
+        >Close</app-button
+      >
+      <app-button
+        variant="danger"
+        icon="sign-out"
+        [loading]="isRevokingAll()"
+        (clicked)="revokeAllSessions()"
+        >Sign out all others</app-button
+      >
+    </div>
+  </div>
+</p-dialog>
 
 <!-- Data Export Dialog -->
 <p-dialog
@@ -1605,8 +1615,8 @@
       <div class="info-banner">
         <i class="pi pi-info-circle"></i>
         <p>
-          New team requests require approval from a superadmin. 
-          You will be notified via email once your request has been reviewed.
+          New team requests require approval from a superadmin. You will be
+          notified via email once your request has been reviewed.
         </p>
       </div>
 

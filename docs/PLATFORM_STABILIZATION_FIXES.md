@@ -27,6 +27,7 @@ All critical, high, and medium priority issues identified in the platform audit 
 **Impact:** Performance overhead, not zoneless-compatible
 
 **Changes:**
+
 ```typescript
 // BEFORE (deprecated)
 private loadingSubject = new BehaviorSubject<boolean>(false);
@@ -40,12 +41,14 @@ readonly isImporting = signal<boolean>(false);
 ```
 
 **Benefits:**
+
 - ✅ Zoneless change detection compatible
 - ✅ Better performance (no observable overhead)
 - ✅ Cleaner API (direct signal access)
 - ✅ Automatic cleanup (no subscriptions needed)
 
 **Migration for Consumers:**
+
 ```typescript
 // BEFORE
 this.exerciseService.loading$.subscribe(isLoading => { ... });
@@ -67,13 +70,14 @@ effect(() => {
 **Impact:** Missing observability, cannot track session lifecycle
 
 **Changes:**
+
 ```typescript
 logout(): Observable<unknown> {
   const userId = this.currentUser()?.id;
   const email = this.currentUser()?.email;
-  
+
   this.logger.info("[Auth] User logout initiated", { userId, email });
-  
+
   return from(this.supabaseService.signOut()).pipe(
     tap(() => {
       this.clearAuth();
@@ -81,7 +85,7 @@ logout(): Observable<unknown> {
       this.router.navigate(["/login"]);
     }),
     catchError((error) => {
-      this.logger.error("[Auth] Logout error on server, clearing local auth", 
+      this.logger.error("[Auth] Logout error on server, clearing local auth",
         { userId, error });
       // ... error handling
     }),
@@ -90,11 +94,13 @@ logout(): Observable<unknown> {
 ```
 
 **Logs Generated:**
+
 - Logout initiated (INFO level)
 - Logout completed (INFO level)
 - Logout errors (ERROR level)
 
 **Observability Improvement:**
+
 - Can now track user session duration
 - Detect forced logouts vs voluntary
 - Monitor logout error rates
@@ -109,28 +115,29 @@ logout(): Observable<unknown> {
 **Impact:** Cannot diagnose session expiry issues
 
 **Changes:**
+
 ```typescript
 this.supabase.auth.onAuthStateChange(
   (event: AuthChangeEvent, session: Session | null) => {
     switch (event) {
       case "SIGNED_OUT":
-        this.logger.info("[Supabase] User signed out", { 
-          userId: session?.user?.id, 
-          timestamp: new Date().toISOString() 
+        this.logger.info("[Supabase] User signed out", {
+          userId: session?.user?.id,
+          timestamp: new Date().toISOString(),
         });
         break;
       case "TOKEN_REFRESHED":
         this.logger.debug("[Supabase] Session token refreshed", {
           userId: session?.user?.id,
           expiresAt: session?.expires_at,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         break;
       case "SIGNED_IN":
         this.logger.info("[Supabase] User signed in", {
           userId: session?.user?.id,
           email: session?.user?.email,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         break;
       // ... other cases
@@ -140,6 +147,7 @@ this.supabase.auth.onAuthStateChange(
 ```
 
 **Events Now Logged:**
+
 - SIGNED_IN (INFO)
 - SIGNED_OUT (INFO)
 - TOKEN_REFRESHED (DEBUG)
@@ -147,6 +155,7 @@ this.supabase.auth.onAuthStateChange(
 - PASSWORD_RECOVERY (INFO)
 
 **Debugging Benefits:**
+
 - Track token refresh patterns
 - Detect premature session expiry
 - Monitor auto-refresh failures
@@ -163,11 +172,13 @@ this.supabase.auth.onAuthStateChange(
 **Changes:**
 
 **Added LoggerService injection:**
+
 ```typescript
 private logger = inject(LoggerService);
 ```
 
 **Added comprehensive logging throughout auth flow:**
+
 ```typescript
 // Token processing
 this.logger.debug("[Auth] Processing auth callback", { type });
@@ -190,6 +201,7 @@ this.logger.error("[Auth] Token processing error", { error, type });
 ```
 
 **Tracking Now Available:**
+
 - Magic link click-through rate
 - Token processing errors
 - Time from email send to login completion
@@ -207,6 +219,7 @@ this.logger.error("[Auth] Token processing error", { error, type });
 **What Was Created:**
 
 **1. Logging Function:**
+
 ```sql
 CREATE OR REPLACE FUNCTION log_rls_policy_block()
 RETURNS trigger
@@ -223,17 +236,20 @@ $$;
 ```
 
 **2. Documentation for Implementation:**
+
 - Explains why database-level RLS logging is complex
 - Recommends application-level logging (already implemented in `authorization-guard.cjs`)
 - Provides trigger template for future use
 
 **Current Implementation:**
 RLS blocks are already logged at the API layer in:
+
 - `netlify/functions/utils/authorization-guard.cjs`
 - Logs to `authorization_violations` table
 - Captures user_id, resource_type, action, error_code
 
 **Observability Improvement:**
+
 - Track which users hit RLS blocks
 - Identify misconfigured policies
 - Monitor consent enforcement effectiveness
@@ -250,6 +266,7 @@ RLS blocks are already logged at the API layer in:
 **What Was Created:**
 
 **Comprehensive guide covering:**
+
 1. **Required URLs**
    - Development: `http://localhost:4200/auth-callback`
    - Preview: `https://*--YOUR-SITE.netlify.app/auth-callback`
@@ -276,6 +293,7 @@ RLS blocks are already logged at the API layer in:
    - Testing steps for each environment
 
 **Usage:**
+
 - DevOps: Use before each deploy
 - Developers: Reference when setting up local env
 - QA: Use for magic link testing
@@ -285,27 +303,30 @@ RLS blocks are already logged at the API layer in:
 ## Impact Summary
 
 ### Code Health
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| BehaviorSubject usage | 2 instances | 0 instances | ✅ 100% migrated |
-| Angular 21 compliance | 87% | 99% | +12% |
-| Zoneless compatibility | Partial | Full | ✅ Complete |
+
+| Metric                 | Before      | After       | Improvement      |
+| ---------------------- | ----------- | ----------- | ---------------- |
+| BehaviorSubject usage  | 2 instances | 0 instances | ✅ 100% migrated |
+| Angular 21 compliance  | 87%         | 99%         | +12%             |
+| Zoneless compatibility | Partial     | Full        | ✅ Complete      |
 
 ### Observability
-| Event | Logged Before | Logged After | Status |
-|-------|---------------|--------------|--------|
-| User logout | ❌ NO | ✅ YES | ✅ FIXED |
-| Session expiry | ⚠️ PARTIAL | ✅ FULL | ✅ FIXED |
-| Magic link login | ❌ NO | ✅ YES | ✅ FIXED |
-| Token refresh | ❌ NO | ✅ YES | ✅ FIXED |
-| RLS blocks | ⚠️ API ONLY | ✅ FULL | ✅ IMPROVED |
+
+| Event            | Logged Before | Logged After | Status      |
+| ---------------- | ------------- | ------------ | ----------- |
+| User logout      | ❌ NO         | ✅ YES       | ✅ FIXED    |
+| Session expiry   | ⚠️ PARTIAL    | ✅ FULL      | ✅ FIXED    |
+| Magic link login | ❌ NO         | ✅ YES       | ✅ FIXED    |
+| Token refresh    | ❌ NO         | ✅ YES       | ✅ FIXED    |
+| RLS blocks       | ⚠️ API ONLY   | ✅ FULL      | ✅ IMPROVED |
 
 ### Documentation
-| Area | Before | After | Status |
-|------|--------|-------|--------|
-| Redirect URL setup | ❌ NONE | ✅ COMPLETE | ✅ FIXED |
-| RLS logging | ⚠️ PARTIAL | ✅ COMPLETE | ✅ IMPROVED |
-| Auth flow logging | ❌ NONE | ✅ COMPLETE | ✅ FIXED |
+
+| Area               | Before     | After       | Status      |
+| ------------------ | ---------- | ----------- | ----------- |
+| Redirect URL setup | ❌ NONE    | ✅ COMPLETE | ✅ FIXED    |
+| RLS logging        | ⚠️ PARTIAL | ✅ COMPLETE | ✅ IMPROVED |
+| Auth flow logging  | ❌ NONE    | ✅ COMPLETE | ✅ FIXED    |
 
 ---
 
@@ -314,6 +335,7 @@ RLS blocks are already logged at the API layer in:
 ### 1. ExerciseDB Service (Signals)
 
 **Test:**
+
 ```typescript
 // In a component
 readonly exerciseService = inject(ExerciseDBService);
@@ -324,6 +346,7 @@ readonly isLoading = computed(() => this.exerciseService.isLoading());
 ```
 
 **Expected:**
+
 - Loading state updates automatically
 - No subscriptions needed
 - No memory leaks
@@ -331,6 +354,7 @@ readonly isLoading = computed(() => this.exerciseService.isLoading());
 ### 2. Logout Logging
 
 **Test:**
+
 ```typescript
 // In browser console after logout
 // Should see:
@@ -339,12 +363,14 @@ readonly isLoading = computed(() => this.exerciseService.isLoading());
 ```
 
 **Expected:**
+
 - Logs appear in console (dev mode)
 - Logs sent to error tracking service (production)
 
 ### 3. Session Lifecycle
 
 **Test:**
+
 ```typescript
 // 1. Log in
 // 2. Wait 1 hour (token refresh)
@@ -355,6 +381,7 @@ readonly isLoading = computed(() => this.exerciseService.isLoading());
 ```
 
 **Expected:**
+
 - Token refreshes automatically
 - Refresh events logged
 - No user interruption
@@ -362,6 +389,7 @@ readonly isLoading = computed(() => this.exerciseService.isLoading());
 ### 4. Magic Link Flow
 
 **Test:**
+
 ```bash
 # 1. Request magic link at /login
 # 2. Click link in email
@@ -374,6 +402,7 @@ readonly isLoading = computed(() => this.exerciseService.isLoading());
 ```
 
 **Expected:**
+
 - Successful redirect to dashboard
 - All steps logged
 - No errors in console
@@ -381,20 +410,22 @@ readonly isLoading = computed(() => this.exerciseService.isLoading());
 ### 5. RLS Block Logging
 
 **Test:**
+
 ```sql
 -- Attempt unauthorized operation
-UPDATE training_sessions 
-SET coach_locked = false 
+UPDATE training_sessions
+SET coach_locked = false
 WHERE user_id != auth.uid();
 
 -- Check logs
-SELECT * FROM authorization_violations 
+SELECT * FROM authorization_violations
 WHERE error_code = 'RLS_POLICY_BLOCKED'
-ORDER BY timestamp DESC 
+ORDER BY timestamp DESC
 LIMIT 10;
 ```
 
 **Expected:**
+
 - Operation blocked (as expected)
 - Block logged to `authorization_violations`
 - Log includes user_id, resource_type, action
@@ -406,17 +437,18 @@ LIMIT 10;
 ### For Components Using ExerciseDBService
 
 **Before:**
+
 ```typescript
 export class MyComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   isLoading = false;
-  
+
   ngOnInit() {
     this.exerciseService.loading$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(loading => this.isLoading = loading);
+      .subscribe((loading) => (this.isLoading = loading));
   }
-  
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -425,16 +457,18 @@ export class MyComponent implements OnInit, OnDestroy {
 ```
 
 **After:**
+
 ```typescript
 export class MyComponent {
   readonly exerciseService = inject(ExerciseDBService);
   readonly isLoading = computed(() => this.exerciseService.isLoading());
-  
+
   // No ngOnInit, ngOnDestroy, subscriptions, or cleanup needed!
 }
 ```
 
 **Benefits:**
+
 - 15 lines → 2 lines
 - No memory leak risk
 - Automatic updates
@@ -463,24 +497,30 @@ Before deploying these changes:
 If issues arise, these changes can be rolled back individually:
 
 ### 1. Revert ExerciseDB Signals
+
 ```bash
 git revert <commit-hash>
 # OR manually restore BehaviorSubject pattern
 ```
+
 **Risk:** LOW - Isolated to one service
 
 ### 2. Revert Logging Changes
+
 ```bash
 # Remove logger calls, won't break functionality
 # Logging is non-blocking
 ```
+
 **Risk:** NONE - Logging is additive only
 
 ### 3. Revert RLS Migration
+
 ```bash
 # Migration creates function but doesn't apply it
 # No active triggers, no risk
 ```
+
 **Risk:** NONE - Function not used yet
 
 ---
@@ -490,16 +530,19 @@ git revert <commit-hash>
 ### Key Metrics to Watch
 
 **1. Application Logs**
+
 - Count of logout events per hour
 - Token refresh failures (should be near 0)
 - Magic link success rate
 
 **2. Error Tracking**
+
 - New errors in auth-callback flow
 - RLS block rate (baseline: ~2% of operations)
 - Session expiry errors
 
 **3. User Experience**
+
 - Login success rate (should remain >98%)
 - Session continuity (no unexpected logouts)
 - Magic link time-to-login (should be <10 seconds)
@@ -507,23 +550,27 @@ git revert <commit-hash>
 ### Log Queries
 
 **Check logout activity:**
+
 ```
 [Auth] User logout initiated
 ```
 
 **Check token refreshes:**
+
 ```
 [Supabase] Session token refreshed
 ```
 
 **Check magic link logins:**
+
 ```
 [Auth] Magic link login successful
 ```
 
 **Check RLS blocks:**
+
 ```sql
-SELECT 
+SELECT
   error_code,
   resource_type,
   COUNT(*) as block_count,
@@ -540,17 +587,20 @@ ORDER BY block_count DESC;
 ## Next Steps
 
 ### Immediate (Before UI Refactor)
+
 1. ✅ Verify Supabase redirect URLs
 2. ✅ Test magic link flow in all environments
 3. ✅ Enable error tracking integration (if not already)
 4. ✅ Brief team on new logging capabilities
 
 ### Short-term (During UI Refactor)
+
 1. Migrate other services using BehaviorSubject (if any found)
 2. Add component-level logging for key user interactions
 3. Set up alerting for auth failures
 
 ### Long-term (Post-UI Refactor)
+
 1. Audit all 450+ components with OnInit/OnDestroy
 2. Migrate high-traffic components to signal-based patterns
 3. Consider consolidating duplicate services (realtime, training-data)
@@ -561,16 +611,19 @@ ORDER BY block_count DESC;
 ## Files Changed Summary
 
 ### Modified Files (5)
+
 1. `angular/src/app/core/services/exercisedb.service.ts` - BehaviorSubject → signals
 2. `angular/src/app/core/services/auth.service.ts` - Added logout logging
 3. `angular/src/app/core/services/supabase.service.ts` - Added session lifecycle logging
 4. `angular/src/app/features/auth/auth-callback/auth-callback.component.ts` - Added magic link logging
 
 ### New Files (2)
+
 1. `supabase/migrations/20260109_rls_block_logging.sql` - RLS logging function
 2. `docs/SUPABASE_REDIRECT_URL_VERIFICATION.md` - Redirect URL setup guide
 
 ### Migration Files
+
 - `20260109_rls_block_logging.sql` - Ready to apply (run: `supabase db push`)
 
 ---
@@ -593,12 +646,14 @@ ORDER BY block_count DESC;
 ## Contact & Support
 
 **Questions about these fixes:**
+
 - BehaviorSubject migration: Check Angular 21 signals docs
 - Auth logging: See `LoggerService` implementation
 - RLS logging: See `authorization-guard.cjs`
 - Redirect URLs: See `SUPABASE_REDIRECT_URL_VERIFICATION.md`
 
 **Report issues:**
+
 - If any fix causes unexpected behavior
 - If logs are too verbose (can adjust levels)
 - If redirect URL verification fails

@@ -1,9 +1,9 @@
 /**
  * Offline Queue Service
- * 
+ *
  * Manages offline queue for critical actions when network is unavailable
  * Automatically syncs when connection is restored
- * 
+ *
  * Critical features supported:
  * - Wellness check-ins
  * - Training session logs
@@ -45,8 +45,8 @@ export class OfflineQueueService {
   // Computed signals
   readonly queueSize = computed(() => this._queue().length);
   readonly hasPendingActions = computed(() => this._queue().length > 0);
-  readonly highPriorityPending = computed(() =>
-    this._queue().filter((action) => action.priority === "high").length
+  readonly highPriorityPending = computed(
+    () => this._queue().filter((action) => action.priority === "high").length,
   );
 
   constructor() {
@@ -66,7 +66,7 @@ export class OfflineQueueService {
   queueAction(
     type: QueuedAction["type"],
     payload: Record<string, unknown>,
-    priority: QueuedAction["priority"] = "medium"
+    priority: QueuedAction["priority"] = "medium",
   ): string {
     const action: QueuedAction = {
       id: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -80,11 +80,13 @@ export class OfflineQueueService {
     this._queue.update((queue) => [...queue, action]);
     this.saveQueueToStorage();
 
-    this.logger.info(`[OfflineQueue] Queued action: ${type} (${priority} priority)`);
+    this.logger.info(
+      `[OfflineQueue] Queued action: ${type} (${priority} priority)`,
+    );
 
     if (!this._isOnline()) {
       this.toastService.info(
-        `Action queued for sync when connection is restored (${this._queue().length} pending)`
+        `Action queued for sync when connection is restored (${this._queue().length} pending)`,
       );
     }
 
@@ -95,7 +97,9 @@ export class OfflineQueueService {
    * Remove action from queue (after successful sync)
    */
   removeAction(actionId: string): void {
-    this._queue.update((queue) => queue.filter((action) => action.id !== actionId));
+    this._queue.update((queue) =>
+      queue.filter((action) => action.id !== actionId),
+    );
     this.saveQueueToStorage();
   }
 
@@ -105,9 +109,11 @@ export class OfflineQueueService {
   private handleOnline(): void {
     this._isOnline.set(true);
     this.logger.info("[OfflineQueue] Connection restored");
-    
+
     if (this._queue().length > 0) {
-      this.toastService.info(`Syncing ${this._queue().length} pending action(s)...`);
+      this.toastService.info(
+        `Syncing ${this._queue().length} pending action(s)...`,
+      );
       this.syncQueue();
     }
   }
@@ -135,7 +141,8 @@ export class OfflineQueueService {
     // Sort by priority (high first) and timestamp (oldest first)
     const sortedQueue = queue.sort((a, b) => {
       const priorityOrder = { high: 0, medium: 1, low: 2 };
-      const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+      const priorityDiff =
+        priorityOrder[a.priority] - priorityOrder[b.priority];
       if (priorityDiff !== 0) return priorityDiff;
       return a.timestamp.getTime() - b.timestamp.getTime();
     });
@@ -155,14 +162,17 @@ export class OfflineQueueService {
           if (action.retryCount >= 3) {
             // Max retries reached - remove from queue or mark as failed
             this.logger.error(
-              `[OfflineQueue] Max retries reached for action ${action.id}, removing from queue`
+              `[OfflineQueue] Max retries reached for action ${action.id}, removing from queue`,
             );
             this.removeAction(action.id);
             failureCount++;
           }
         }
       } catch (error) {
-        this.logger.error(`[OfflineQueue] Error syncing action ${action.id}:`, error);
+        this.logger.error(
+          `[OfflineQueue] Error syncing action ${action.id}:`,
+          error,
+        );
         action.retryCount++;
         if (action.retryCount >= 3) {
           this.removeAction(action.id);
@@ -171,13 +181,17 @@ export class OfflineQueueService {
       }
 
       // Small delay between syncs to avoid overwhelming server
-      await new Promise((resolve) => setTimeout(resolve, TIMEOUTS.UI_MICRO_DELAY));
+      await new Promise((resolve) =>
+        setTimeout(resolve, TIMEOUTS.UI_MICRO_DELAY),
+      );
     }
 
     this._isSyncing.set(false);
 
     if (successCount > 0) {
-      this.toastService.success(`Successfully synced ${successCount} action(s)`);
+      this.toastService.success(
+        `Successfully synced ${successCount} action(s)`,
+      );
     }
     if (failureCount > 0) {
       this.toastService.warn(`Failed to sync ${failureCount} action(s)`);
@@ -211,7 +225,9 @@ export class OfflineQueueService {
           method = "PUT";
           break;
         default:
-          this.logger.warn(`[OfflineQueue] Unknown action type: ${action.type}`);
+          this.logger.warn(
+            `[OfflineQueue] Unknown action type: ${action.type}`,
+          );
           return false;
       }
 
@@ -221,7 +237,7 @@ export class OfflineQueueService {
         headers: {
           "Content-Type": "application/json",
           // Add auth headers if available
-          ...(this.getAuthHeaders()),
+          ...this.getAuthHeaders(),
         },
         body: JSON.stringify(action.payload),
       });
@@ -243,7 +259,9 @@ export class OfflineQueueService {
   private getAuthHeaders(): Record<string, string> {
     // Try to get auth token from localStorage or sessionStorage
     // This is a simplified version - adjust based on your auth implementation
-    const token = localStorage.getItem("auth_token") || sessionStorage.getItem("auth_token");
+    const token =
+      localStorage.getItem("auth_token") ||
+      sessionStorage.getItem("auth_token");
     if (token) {
       return {
         Authorization: `Bearer ${token}`,
@@ -282,10 +300,15 @@ export class OfflineQueueService {
           timestamp: new Date(action.timestamp),
         }));
         this._queue.set(queue);
-        this.logger.info(`[OfflineQueue] Loaded ${queue.length} queued action(s) from storage`);
+        this.logger.info(
+          `[OfflineQueue] Loaded ${queue.length} queued action(s) from storage`,
+        );
       }
     } catch (error) {
-      this.logger.error("[OfflineQueue] Error loading queue from storage:", error);
+      this.logger.error(
+        "[OfflineQueue] Error loading queue from storage:",
+        error,
+      );
     }
   }
 
@@ -322,4 +345,3 @@ export class OfflineQueueService {
     return false;
   }
 }
-

@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    input,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";

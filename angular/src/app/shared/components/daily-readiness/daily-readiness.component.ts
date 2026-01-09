@@ -327,7 +327,7 @@ export class DailyReadinessComponent implements OnInit {
       s.pain_level,
       s.fatigue_level,
       s.sleep_quality,
-      s.motivation_level
+      s.motivation_level,
     );
   });
 
@@ -354,7 +354,7 @@ export class DailyReadinessComponent implements OnInit {
   ngOnInit(): void {
     // Load last recorded weight for reference
     this.loadLastWeight();
-    
+
     if (this.showOnInit() && this.mode() === "modal") {
       this.checkAndShowPrompt();
     }
@@ -368,7 +368,7 @@ export class DailyReadinessComponent implements OnInit {
     if (weight) {
       this.lastWeight.set(weight);
       // Pre-fill with last weight as starting point
-      this.state.update(s => ({ ...s, weight_kg: weight }));
+      this.state.update((s) => ({ ...s, weight_kg: weight }));
     }
   }
 
@@ -431,7 +431,7 @@ export class DailyReadinessComponent implements OnInit {
     try {
       const today = new Date().toISOString().split("T")[0];
       const state = this.state();
-      
+
       // Map daily check-in fields to wellness_entries columns
       // pain_level (0-10 where 10 is severe) → muscle_soreness (0-10)
       // fatigue_level (0-10 where 10 is exhausted) → energy_level (inverted: 10 - fatigue)
@@ -458,7 +458,9 @@ export class DailyReadinessComponent implements OnInit {
       // Save weight if provided (updates both body_measurements for history + users for profile)
       if (state.weight_kg && state.weight_kg > 0) {
         await this.profileCompletionService.updateWeight(state.weight_kg);
-        this.logger.info(`[DailyReadiness] Weight updated: ${state.weight_kg} kg`);
+        this.logger.info(
+          `[DailyReadiness] Weight updated: ${state.weight_kg} kg`,
+        );
       }
 
       this.toastService.success(TOAST.SUCCESS.DAILY_CHECKIN_SAVED);
@@ -466,19 +468,23 @@ export class DailyReadinessComponent implements OnInit {
       this.completed.emit(this.state());
     } catch (error: unknown) {
       this.logger.error("Error saving wellness entry:", error);
-      
+
       // Provide user-friendly error messages based on error type
       let errorMessage = "Failed to save check-in.";
-      
+
       const err = error as { code?: string; message?: string };
-      
+
       if (err?.code === "PGRST116") {
         // Row-level security violation
         errorMessage = "Permission denied. Please log out and log back in.";
       } else if (err?.code === "23505") {
         // Unique constraint violation - entry already exists
-        errorMessage = "You've already submitted a check-in today. Refresh to see it.";
-      } else if (err?.message?.includes("network") || err?.message?.includes("fetch")) {
+        errorMessage =
+          "You've already submitted a check-in today. Refresh to see it.";
+      } else if (
+        err?.message?.includes("network") ||
+        err?.message?.includes("fetch")
+      ) {
         errorMessage = "Network error. Check your connection and try again.";
       } else if (err?.code === "42P01") {
         // Table doesn't exist
@@ -486,7 +492,7 @@ export class DailyReadinessComponent implements OnInit {
       } else {
         errorMessage = "Failed to save check-in. Please try again in a moment.";
       }
-      
+
       this.toastService.error(errorMessage);
     } finally {
       this.saving.set(false);

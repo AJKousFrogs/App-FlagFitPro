@@ -231,7 +231,12 @@ interface PendingInvitation {
                     <span
                       >Complete your profile:
                       {{
-                        profileCompletion().missingFields.slice(0, UI_LIMITS.MISSING_FIELDS_PREVIEW).join(", ")
+                        profileCompletion()
+                          .missingFields.slice(
+                            0,
+                            UI_LIMITS.MISSING_FIELDS_PREVIEW
+                          )
+                          .join(", ")
                       }}
                       @if (profileCompletion().missingFields.length > 2) {
                         and
@@ -616,10 +621,10 @@ export class ProfileComponent implements OnInit {
   private async initializePage(): Promise<void> {
     this.isLoading.set(true);
     this.hasError.set(false);
-    
+
     // Load centralized profile data first for consistent completion calculation
     await this.profileCompletionService.loadProfileData();
-    
+
     this.loadProfileData();
     this.loadPendingInvitations();
     // Check for pending deletion to show banner and restrict actions
@@ -663,7 +668,7 @@ export class ProfileComponent implements OnInit {
 
     // Load extended profile data from Supabase
     await this.loadExtendedProfileData(user.id);
-    
+
     // Profile completion is computed automatically from the service
 
     try {
@@ -863,15 +868,17 @@ export class ProfileComponent implements OnInit {
       ]);
 
       // Load recent activities from training sessions
-      const recentActivities = sortedSessions.slice(0, UI_LIMITS.RECENT_ACTIVITIES_COUNT).map((session) => {
-        const date = new Date(session.completed_at || session.session_date);
-        const timeAgoStr = getTimeAgo(date);
-        return {
-          icon: "pi-play",
-          title: `Completed ${session.duration_minutes || 0} min training`,
-          time: timeAgoStr,
-        };
-      });
+      const recentActivities = sortedSessions
+        .slice(0, UI_LIMITS.RECENT_ACTIVITIES_COUNT)
+        .map((session) => {
+          const date = new Date(session.completed_at || session.session_date);
+          const timeAgoStr = getTimeAgo(date);
+          return {
+            icon: "pi-play",
+            title: `Completed ${session.duration_minutes || 0} min training`,
+            time: timeAgoStr,
+          };
+        });
 
       this.activities.set(recentActivities.length > 0 ? recentActivities : []);
 
@@ -1355,7 +1362,9 @@ export class ProfileComponent implements OnInit {
       this.loadProfileData();
     } catch (error: any) {
       this.logger.error("Error accepting invitation:", error);
-      this.toastService.error(error.message || TOAST.ERROR.INVITATION_ACCEPT_FAILED);
+      this.toastService.error(
+        error.message || TOAST.ERROR.INVITATION_ACCEPT_FAILED,
+      );
     } finally {
       this.processingInvitation.set(null);
     }
@@ -1381,7 +1390,9 @@ export class ProfileComponent implements OnInit {
       );
     } catch (error: any) {
       this.logger.error("Error declining invitation:", error);
-      this.toastService.error(error.message || TOAST.ERROR.INVITATION_DECLINE_FAILED);
+      this.toastService.error(
+        error.message || TOAST.ERROR.INVITATION_DECLINE_FAILED,
+      );
     } finally {
       this.processingInvitation.set(null);
     }

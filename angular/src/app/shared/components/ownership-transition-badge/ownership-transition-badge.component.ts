@@ -1,6 +1,6 @@
 /**
  * Ownership Transition Badge Component
- * 
+ *
  * Phase 2.1 - Trust Repair
  * Displays ownership transition status to players following the 5-Question Contract:
  * Shows who is responsible now and what happens next
@@ -23,11 +23,7 @@ import { getTimeAgo } from "../../utils/date.utils";
   selector: "app-ownership-transition-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    TagModule,
-    TooltipModule,
-  ],
+  imports: [CommonModule, TagModule, TooltipModule],
   template: `
     @if (transition()) {
       <div class="ownership-badge" [class]="'status-' + transition()!.status">
@@ -36,7 +32,9 @@ import { getTimeAgo } from "../../utils/date.utils";
           <div class="badge-text">
             <span class="badge-title">{{ getTitle(transition()!) }}</span>
             @if (showDetails()) {
-              <span class="badge-subtitle">{{ getSubtitle(transition()!) }}</span>
+              <span class="badge-subtitle">{{
+                getSubtitle(transition()!)
+              }}</span>
             }
           </div>
           <p-tag
@@ -45,23 +43,29 @@ import { getTimeAgo } from "../../utils/date.utils";
             styleClass="status-tag"
           ></p-tag>
         </div>
-        
+
         @if (showDetails()) {
           <div class="badge-details">
             <div class="detail-item">
               <span class="detail-label">Action Required:</span>
-              <span class="detail-value">{{ transition()!.actionRequired }}</span>
+              <span class="detail-value">{{
+                transition()!.actionRequired
+              }}</span>
             </div>
             @if (transition()!.createdAt) {
               <div class="detail-item">
                 <span class="detail-label">Notified:</span>
-                <span class="detail-value">{{ getTimeAgoStr(transition()!.createdAt!) }}</span>
+                <span class="detail-value">{{
+                  getTimeAgoStr(transition()!.createdAt!)
+                }}</span>
               </div>
             }
             @if (getResponseTimeline(transition()!)) {
               <div class="detail-item">
                 <span class="detail-label">Expected Response:</span>
-                <span class="detail-value">{{ getResponseTimeline(transition()!) }}</span>
+                <span class="detail-value">{{
+                  getResponseTimeline(transition()!)
+                }}</span>
               </div>
             }
           </div>
@@ -203,8 +207,13 @@ export class OwnershipTransitionBadgeComponent {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: OwnershipTransition["status"]): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
-    const severities: Record<string, "secondary" | "success" | "info" | "warn" | "danger" | "contrast"> = {
+  getStatusSeverity(
+    status: OwnershipTransition["status"],
+  ): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
+    const severities: Record<
+      string,
+      "secondary" | "success" | "info" | "warn" | "danger" | "contrast"
+    > = {
       pending: "warn",
       in_progress: "info",
       completed: "success",
@@ -239,4 +248,3 @@ export class OwnershipTransitionBadgeComponent {
     return getTimeAgo(date);
   }
 }
-

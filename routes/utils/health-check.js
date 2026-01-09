@@ -29,8 +29,7 @@ export function createHealthCheckHandler(serviceName, version = "2.1.0") {
           dbHealth.supabase === "connected" ||
           dbHealth.postgres === "connected",
         status:
-          dbHealth.supabase === "connected" ||
-          dbHealth.postgres === "connected"
+          dbHealth.supabase === "connected" || dbHealth.postgres === "connected"
             ? "healthy"
             : "unhealthy",
         service: serviceName,

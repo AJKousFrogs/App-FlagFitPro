@@ -6,6 +6,7 @@
 ## Test Overview
 
 This document outlines comprehensive testing for:
+
 1. Authentication flows (login, register, magic link)
 2. Session management and token refresh
 3. Role-based access control (player vs organizer)
@@ -19,6 +20,7 @@ This document outlines comprehensive testing for:
 ### 1.1 Magic Link Delivery Test
 
 **Desktop Test**:
+
 ```bash
 # 1. Navigate to login page
 http://localhost:4200/login
@@ -40,6 +42,7 @@ http://localhost:4200/login
 ```
 
 **Mobile Test** (iPhone 12 / Pixel 5):
+
 ```bash
 # Use browser dev tools to simulate mobile viewport
 - Open Chrome DevTools (Cmd+Option+I)
@@ -51,6 +54,7 @@ http://localhost:4200/login
 ```
 
 **Expected Results**:
+
 - ✅ Magic link email sent successfully
 - ✅ Link contains valid access_token and refresh_token
 - ✅ AuthCallbackComponent sets session via Supabase
@@ -61,6 +65,7 @@ http://localhost:4200/login
 ### 1.2 Password Login Test
 
 **Desktop Test**:
+
 ```bash
 # 1. Navigate to login
 http://localhost:4200/login
@@ -78,6 +83,7 @@ http://localhost:4200/login
 ```
 
 **Expected Results**:
+
 - ✅ Form validation works (invalid email shows error)
 - ✅ Password field is type="password" (masked)
 - ✅ Submit button disabled when form invalid
@@ -88,6 +94,7 @@ http://localhost:4200/login
 ### 1.3 Registration Test
 
 **Test Flow**:
+
 ```bash
 # 1. Navigate to register
 http://localhost:4200/register
@@ -106,6 +113,7 @@ http://localhost:4200/register
 ```
 
 **Expected Results**:
+
 - ✅ Password confirmation validation works
 - ✅ Password strength requirements enforced
 - ✅ Email format validated
@@ -120,6 +128,7 @@ http://localhost:4200/register
 ### 2.1 Session Persistence Test
 
 **Test Procedure**:
+
 ```bash
 # 1. Login as test user
 # 2. Close browser tab (not entire browser)
@@ -130,6 +139,7 @@ http://localhost:4200/register
 ```
 
 **Verification**:
+
 - Check `SupabaseService.initializeAuth()` called on page load
 - Verify `getSession()` returns valid session
 - Verify `onAuthStateChange` listener active
@@ -138,6 +148,7 @@ http://localhost:4200/register
 ### 2.2 Token Refresh Test
 
 **Automated Test** (Supabase handles this automatically):
+
 ```typescript
 // Auth tokens expire after 1 hour by default
 // Supabase automatically refreshes tokens before expiry
@@ -150,6 +161,7 @@ http://localhost:4200/register
 ```
 
 **Manual Verification**:
+
 ```bash
 # In browser console:
 const { data: { session } } = await supabase.auth.getSession()
@@ -160,6 +172,7 @@ console.log('Expires at:', new Date(session.expires_at * 1000))
 ```
 
 **Expected Results**:
+
 - ✅ TOKEN_REFRESHED event logged
 - ✅ Session remains valid across refresh
 - ✅ User not logged out during refresh
@@ -168,6 +181,7 @@ console.log('Expires at:', new Date(session.expires_at * 1000))
 ### 2.3 Session Timeout Test
 
 **Test Procedure**:
+
 ```bash
 # 1. Login as user
 # 2. Manually clear Supabase tokens from localStorage
@@ -186,6 +200,7 @@ localStorage.clear()
 **User**: `test-player@flagfitpro.com` (role: "player")
 
 **Test Access**:
+
 ```bash
 # Can access:
 ✅ /dashboard - Player dashboard
@@ -201,10 +216,11 @@ localStorage.clear()
 ```
 
 **Verification**:
+
 ```typescript
 // Check user role in browser console:
-const user = authService.getUser()
-console.log('Role:', user.role) // Should be "player"
+const user = authService.getUser();
+console.log("Role:", user.role); // Should be "player"
 ```
 
 ### 3.2 Organizer Role Test
@@ -212,6 +228,7 @@ console.log('Role:', user.role) // Should be "player"
 **User**: `test-organizer@flagfitpro.com` (role: "organizer")
 
 **Test Access**:
+
 ```bash
 # Can access:
 ✅ /dashboard - Organizer dashboard
@@ -226,6 +243,7 @@ console.log('Role:', user.role) // Should be "player"
 ```
 
 **Verification**:
+
 ```typescript
 // Route guards should prevent unauthorized access
 // AuthGuard checks user.role before allowing navigation
@@ -233,13 +251,13 @@ console.log('Role:', user.role) // Should be "player"
 
 ### 3.3 Role Guard Test Matrix
 
-| Route | Player | Organizer | Coach | Admin |
-|-------|--------|-----------|-------|-------|
-| /dashboard | ✅ | ✅ | ✅ | ✅ |
-| /training/log | ✅ | ❌ | ❌ | ✅ |
-| /organizer/teams | ❌ | ✅ | ❌ | ✅ |
-| /coach/inbox | ❌ | ❌ | ✅ | ✅ |
-| /admin/users | ❌ | ❌ | ❌ | ✅ |
+| Route            | Player | Organizer | Coach | Admin |
+| ---------------- | ------ | --------- | ----- | ----- |
+| /dashboard       | ✅     | ✅        | ✅    | ✅    |
+| /training/log    | ✅     | ❌        | ❌    | ✅    |
+| /organizer/teams | ❌     | ✅        | ❌    | ✅    |
+| /coach/inbox     | ❌     | ❌        | ✅    | ✅    |
+| /admin/users     | ❌     | ❌        | ❌    | ✅    |
 
 ---
 
@@ -251,6 +269,7 @@ console.log('Role:', user.role) // Should be "player"
 **Dates**: January 3-12, 2026 (10 days)
 
 ### Entry 1: Practice Session
+
 ```yaml
 Date: 2026-01-03
 Session Type: Practice
@@ -262,6 +281,7 @@ Notes: "Team practice, moderate intensity"
 ```
 
 **Test Steps**:
+
 1. Navigate to `/training/log`
 2. Select "Practice" session type
 3. Set date to 2026-01-03
@@ -276,10 +296,12 @@ Notes: "Team practice, moderate intensity"
 12. Verify session appears in dashboard list
 
 **Expected Calculations**:
+
 - Training Load: 90 × 6 = 540 AU
 - ACWR: Initial acute load calculation starts
 
 ### Entry 2: Strength Training
+
 ```yaml
 Date: 2026-01-04
 Session Type: Strength
@@ -290,6 +312,7 @@ Notes: "Lower body focus - squats and plyos"
 ```
 
 ### Entry 3: Game Day
+
 ```yaml
 Date: 2026-01-05
 Session Type: Game
@@ -302,6 +325,7 @@ Notes: "Championship game - high intensity"
 ```
 
 ### Entry 4: Recovery Session
+
 ```yaml
 Date: 2026-01-06
 Session Type: Recovery
@@ -311,6 +335,7 @@ Notes: "Light stretching and mobility"
 ```
 
 ### Entry 5: Speed Work
+
 ```yaml
 Date: 2026-01-07
 Session Type: Speed
@@ -321,6 +346,7 @@ Notes: "40-yard dash drills, acceleration work"
 ```
 
 ### Entry 6: Skills Practice
+
 ```yaml
 Date: 2026-01-08
 Session Type: Skills
@@ -331,6 +357,7 @@ Notes: "Route running, agility ladder"
 ```
 
 ### Entry 7: Full Practice
+
 ```yaml
 Date: 2026-01-09
 Session Type: Practice
@@ -343,6 +370,7 @@ Notes: "Full team scrimmage"
 ```
 
 ### Entry 8: Gym Session
+
 ```yaml
 Date: 2026-01-10
 Session Type: Strength
@@ -353,6 +381,7 @@ Notes: "Upper body + explosive power"
 ```
 
 ### Entry 9: Light Practice
+
 ```yaml
 Date: 2026-01-11
 Session Type: Practice
@@ -363,6 +392,7 @@ Notes: "Walkthrough, low intensity"
 ```
 
 ### Entry 10: Game Preparation
+
 ```yaml
 Date: 2026-01-12
 Session Type: Skills
@@ -377,6 +407,7 @@ Notes: "Pre-game warmup and drills"
 For **each entry**, verify:
 
 **UI Form**:
+
 - [ ] Session type buttons clickable and highlight when selected
 - [ ] Date picker shows correct date (max: today)
 - [ ] Duration input validates (1-300 minutes)
@@ -388,6 +419,7 @@ For **each entry**, verify:
 - [ ] Loading spinner shows during submission
 
 **API POST**:
+
 - [ ] POST request sent to Supabase `training_sessions` table
 - [ ] Request includes all form fields
 - [ ] Request includes `user_id` from authenticated user
@@ -395,6 +427,7 @@ For **each entry**, verify:
 - [ ] Request includes `training_load` calculated value
 
 **Supabase Insert**:
+
 - [ ] Row inserted into `training_sessions` table
 - [ ] `id` generated (UUID)
 - [ ] `created_at` and `updated_at` timestamps set
@@ -403,6 +436,7 @@ For **each entry**, verify:
 - [ ] RLS (Row Level Security) allows insert for authenticated user
 
 **UI Refresh**:
+
 - [ ] Success toast appears: "Session logged successfully!"
 - [ ] Redirect to `/dashboard` after 1 second
 - [ ] Dashboard loads and displays new session in list
@@ -412,6 +446,7 @@ For **each entry**, verify:
 - [ ] No data loss or corruption
 
 **ACWR Calculation**:
+
 - [ ] Acute load (7-day) updated with new session
 - [ ] Chronic load (28-day) updated with new session
 - [ ] ACWR ratio recalculated: `acute / chronic`
@@ -424,7 +459,7 @@ After all 10 entries, run SQL query:
 
 ```sql
 -- Verify all 10 sessions inserted
-SELECT 
+SELECT
   session_date,
   session_type,
   duration_minutes,
@@ -443,6 +478,7 @@ ORDER BY session_date ASC;
 ```
 
 **Expected Total Training Load**:
+
 ```
 Entry 1: 90 × 6 = 540
 Entry 2: 60 × 7 = 420
@@ -470,6 +506,7 @@ npm run test -- src/app/core/services/auth.service.spec.ts
 ```
 
 **Expected Test Results**:
+
 ```
 ✓ Initial State (3 tests)
 ✓ Login (4 tests)
@@ -526,7 +563,9 @@ Create new E2E test file:
 import { test, expect } from "@playwright/test";
 
 test.describe("Login to Training Log Flow", () => {
-  test("should complete full flow from login to training log", async ({ page }) => {
+  test("should complete full flow from login to training log", async ({
+    page,
+  }) => {
     // 1. Start at login page
     await page.goto("/login");
     await page.waitForSelector("app-login");
@@ -547,11 +586,11 @@ test.describe("Login to Training Log Flow", () => {
     // 5. Fill training form
     await page.click(".session-type-card[data-value='practice']");
     await page.fill("#duration", "60");
-    
+
     // Set RPE slider
     const rpeSlider = page.locator("p-slider[formControlName='rpe']");
     await rpeSlider.click();
-    
+
     // 6. Verify calculated load updates
     const calculatedLoad = page.locator(".calculated-load .load-value");
     await expect(calculatedLoad).toContainText("AU");
@@ -655,15 +694,18 @@ npm run test:e2e
 ### 7.2 Known Issues / Notes
 
 **Issues Identified**:
+
 1. None currently
 
 **Performance Notes**:
+
 - Login to dashboard: < 2s
 - Training log form load: < 1s
 - Form submission to DB: < 500ms
 - Dashboard refresh: < 1s
 
 **Browser Compatibility**:
+
 - ✅ Chrome 120+
 - ✅ Firefox 121+
 - ✅ Safari 17+
@@ -739,6 +781,7 @@ Success Rate: 100% ✅
 ## 9. Next Steps
 
 **Post-Test Actions**:
+
 1. Review any failed tests and investigate root cause
 2. Update test cases based on findings
 3. Document any new bugs in GitHub Issues
@@ -746,12 +789,14 @@ Success Rate: 100% ✅
 5. Update test coverage goals if needed
 
 **Continuous Testing**:
+
 - Run unit tests on every commit (pre-commit hook)
 - Run E2E tests on every PR (GitHub Actions)
 - Monitor Sentry for production errors
 - Track Supabase auth analytics
 
 **Future Test Enhancements**:
+
 - Add performance testing with Lighthouse
 - Add accessibility testing with axe-core
 - Add visual regression testing with Percy

@@ -1,6 +1,6 @@
 /**
  * Decision Ledger Service
- * 
+ *
  * Handles all API calls for the Decision Ledger system
  */
 
@@ -49,21 +49,24 @@ export class DecisionLedgerService {
   );
 
   readonly lowConfidenceDecisions = computed(() =>
-    this.decisions().filter(
-      (d) => (d.decisionBasis.confidence || 1.0) < 0.7,
-    ),
+    this.decisions().filter((d) => (d.decisionBasis.confidence || 1.0) < 0.7),
   );
 
   /**
    * Get decisions with filters
    */
-  async getDecisions(filters?: DecisionFilters): Promise<DecisionLedgerEntry[]> {
+  async getDecisions(
+    filters?: DecisionFilters,
+  ): Promise<DecisionLedgerEntry[]> {
     this.isLoading.set(true);
     this.error.set(null);
 
     try {
       const response = await firstValueFrom(
-        this.apiService.get<DecisionLedgerEntry[]>("/api/decisions", filters as Record<string, unknown> | undefined),
+        this.apiService.get<DecisionLedgerEntry[]>(
+          "/api/decisions",
+          filters as Record<string, unknown> | undefined,
+        ),
       );
 
       if (response.success && response.data) {
@@ -128,7 +131,9 @@ export class DecisionLedgerService {
 
     try {
       const response = await firstValueFrom(
-        this.apiService.get<DecisionReviewReminder[]>("/api/decisions/reminders"),
+        this.apiService.get<DecisionReviewReminder[]>(
+          "/api/decisions/reminders",
+        ),
       );
 
       if (response.success && response.data) {
@@ -163,7 +168,9 @@ export class DecisionLedgerService {
 
     try {
       const response = await firstValueFrom(
-        this.apiService.get<DecisionLedgerEntry>(`/api/decisions/${decisionId}`),
+        this.apiService.get<DecisionLedgerEntry>(
+          `/api/decisions/${decisionId}`,
+        ),
       );
 
       if (response.success && response.data) {
@@ -297,4 +304,3 @@ export class DecisionLedgerService {
     ]);
   }
 }
-

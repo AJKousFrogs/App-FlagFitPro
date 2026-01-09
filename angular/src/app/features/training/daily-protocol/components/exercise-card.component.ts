@@ -263,7 +263,7 @@ import {
                 <span>Completed</span>
                 @if (exercise().completedAt) {
                   <span class="completed-time">
-                    at {{ formatDate(exercise().completedAt!, 'h:mm a') }}
+                    at {{ formatDate(exercise().completedAt!, "h:mm a") }}
                   </span>
                 }
               </div>

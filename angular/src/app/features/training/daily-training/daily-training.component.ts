@@ -18,7 +18,10 @@ import { CheckboxModule } from "primeng/checkbox";
 import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
-import { DailyTrainingService, DailyTrainingResponse } from "../../../core/services/daily-training.service";
+import {
+  DailyTrainingService,
+  DailyTrainingResponse,
+} from "../../../core/services/daily-training.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { HeaderService } from "../../../core/services/header.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -116,14 +119,21 @@ interface ScheduleBlock {
 
         <!-- Seasonal Context Banner -->
         @if (seasonalContext()) {
-          <div class="seasonal-banner" [class]="'season-' + seasonalContext()?.season">
+          <div
+            class="seasonal-banner"
+            [class]="'season-' + seasonalContext()?.season"
+          >
             <div class="seasonal-icon">
               <i [class]="getSeasonIcon()"></i>
             </div>
             <div class="seasonal-info">
-              <span class="seasonal-focus">{{ seasonalContext()?.primaryFocus }}</span>
+              <span class="seasonal-focus">{{
+                seasonalContext()?.primaryFocus
+              }}</span>
               @if (seasonalContext()?.coachingNotes) {
-                <span class="seasonal-notes">{{ seasonalContext()?.coachingNotes }}</span>
+                <span class="seasonal-notes">{{
+                  seasonalContext()?.coachingNotes
+                }}</span>
               }
             </div>
             @if (!seasonalContext()?.outdoorSprintSuitable) {
@@ -147,7 +157,11 @@ interface ScheduleBlock {
             </div>
           </div>
 
-          <div class="status-card acwr-card" [class.optimal]="isAcwrOptimal()" [class.warning]="!isAcwrOptimal()">
+          <div
+            class="status-card acwr-card"
+            [class.optimal]="isAcwrOptimal()"
+            [class.warning]="!isAcwrOptimal()"
+          >
             <div class="status-icon">
               <i class="pi pi-chart-line"></i>
             </div>
@@ -167,7 +181,7 @@ interface ScheduleBlock {
               <span class="status-value">{{ sessionType() }}</span>
             </div>
           </div>
-          
+
           <div class="status-card position-card">
             <div class="status-icon">
               <i class="pi pi-user"></i>
@@ -193,9 +207,15 @@ interface ScheduleBlock {
         <div class="progress-section">
           <div class="progress-header">
             <span>Session Progress</span>
-            <span class="progress-text">{{ completedBlocks() }}/{{ totalBlocks() }} blocks completed</span>
+            <span class="progress-text"
+              >{{ completedBlocks() }}/{{ totalBlocks() }} blocks
+              completed</span
+            >
           </div>
-          <p-progressBar [value]="progressPercentage()" [showValue]="false"></p-progressBar>
+          <p-progressBar
+            [value]="progressPercentage()"
+            [showValue]="false"
+          ></p-progressBar>
         </div>
 
         <!-- Session Focus Areas -->
@@ -219,7 +239,9 @@ interface ScheduleBlock {
                   <div class="block-number">{{ i + 1 }}</div>
                   <div class="block-details">
                     <h3>{{ block.block }}</h3>
-                    <span class="block-duration">{{ block.duration }} minutes</span>
+                    <span class="block-duration"
+                      >{{ block.duration }} minutes</span
+                    >
                   </div>
                 </div>
                 <div class="block-actions">
@@ -235,28 +257,48 @@ interface ScheduleBlock {
               </div>
 
               <!-- Warm-Up Protocol -->
-              @if (block.block === 'Warm-Up' && block.protocol) {
+              @if (block.block === "Warm-Up" && block.protocol) {
                 <p-accordion [multiple]="true">
                   @for (phase of block.protocol.phases; track phase.name) {
                     <p-accordion-panel [value]="phase.name">
-                      <p-accordion-header>{{ phase.name }} ({{ phase.duration }} min)</p-accordion-header>
+                      <p-accordion-header
+                        >{{ phase.name }} ({{
+                          phase.duration
+                        }}
+                        min)</p-accordion-header
+                      >
                       <p-accordion-content>
                         <div class="exercise-list">
-                          @for (exercise of phase.exercises; track exercise.name) {
+                          @for (
+                            exercise of phase.exercises;
+                            track exercise.name
+                          ) {
                             <div class="exercise-item">
-                              <div class="exercise-name">{{ exercise.name }}</div>
+                              <div class="exercise-name">
+                                {{ exercise.name }}
+                              </div>
                               <div class="exercise-details">
                                 @if (exercise.duration) {
-                                  <span class="detail-badge">{{ exercise.duration }}</span>
+                                  <span class="detail-badge">{{
+                                    exercise.duration
+                                  }}</span>
                                 }
                                 @if (exercise.sets && exercise.reps) {
-                                  <span class="detail-badge">{{ exercise.sets }}×{{ exercise.reps }}</span>
+                                  <span class="detail-badge"
+                                    >{{ exercise.sets }}×{{
+                                      exercise.reps
+                                    }}</span
+                                  >
                                 }
                                 @if (exercise.distance) {
-                                  <span class="detail-badge">{{ exercise.distance }}</span>
+                                  <span class="detail-badge">{{
+                                    exercise.distance
+                                  }}</span>
                                 }
                                 @if (exercise.focus) {
-                                  <span class="focus-badge">{{ exercise.focus }}</span>
+                                  <span class="focus-badge">{{
+                                    exercise.focus
+                                  }}</span>
                                 }
                               </div>
                               @if (exercise.variations) {
@@ -268,8 +310,13 @@ interface ScheduleBlock {
                               }
                               @if (exercise.breakdown) {
                                 <div class="breakdown">
-                                  @for (b of exercise.breakdown; track b.variation) {
-                                    <span class="breakdown-item">{{ b.variation }}: {{ b.duration }}</span>
+                                  @for (
+                                    b of exercise.breakdown;
+                                    track b.variation
+                                  ) {
+                                    <span class="breakdown-item"
+                                      >{{ b.variation }}: {{ b.duration }}</span
+                                    >
                                   }
                                 </div>
                               }
@@ -283,7 +330,7 @@ interface ScheduleBlock {
               }
 
               <!-- Plyometrics Block -->
-              @if (block.block === 'Plyometrics' && block.exercises) {
+              @if (block.block === "Plyometrics" && block.exercises) {
                 <div class="block-summary">
                   <span class="summary-item">
                     <i class="pi pi-bolt"></i>
@@ -294,30 +341,59 @@ interface ScheduleBlock {
                   }
                 </div>
                 <p-accordion [multiple]="true">
-                  @for (exercise of asPlyoExercises(block.exercises); track exercise.exercise_name) {
+                  @for (
+                    exercise of asPlyoExercises(block.exercises);
+                    track exercise.exercise_name
+                  ) {
                     <p-accordion-panel [value]="exercise.exercise_name">
-                      <p-accordion-header>{{ exercise.exercise_name }}</p-accordion-header>
+                      <p-accordion-header>{{
+                        exercise.exercise_name
+                      }}</p-accordion-header>
                       <p-accordion-content>
                         <div class="exercise-detail-card">
-                          <p class="exercise-description">{{ exercise.description }}</p>
+                          <p class="exercise-description">
+                            {{ exercise.description }}
+                          </p>
                           <div class="exercise-meta">
-                            <p-tag [value]="exercise.difficulty_level" [severity]="getDifficultySeverity(exercise.difficulty_level)"></p-tag>
-                            <span class="meta-item">{{ exercise.session_sets }} sets × {{ exercise.session_reps }} reps</span>
-                            <span class="meta-item">{{ exercise.recommended_contacts }} contacts</span>
+                            <p-tag
+                              [value]="exercise.difficulty_level"
+                              [severity]="
+                                getDifficultySeverity(exercise.difficulty_level)
+                              "
+                            ></p-tag>
+                            <span class="meta-item"
+                              >{{ exercise.session_sets }} sets ×
+                              {{ exercise.session_reps }} reps</span
+                            >
+                            <span class="meta-item"
+                              >{{
+                                exercise.recommended_contacts
+                              }}
+                              contacts</span
+                            >
                           </div>
                           <div class="instructions">
                             <h4>Instructions</h4>
                             <ol>
-                              @for (instruction of exercise.instructions; track instruction) {
+                              @for (
+                                instruction of exercise.instructions;
+                                track instruction
+                              ) {
                                 <li>{{ instruction }}</li>
                               }
                             </ol>
                           </div>
                           @if (exercise.safety_notes.length) {
                             <div class="safety-notes">
-                              <h4><i class="pi pi-exclamation-triangle"></i> Safety Notes</h4>
+                              <h4>
+                                <i class="pi pi-exclamation-triangle"></i>
+                                Safety Notes
+                              </h4>
                               <ul>
-                                @for (note of exercise.safety_notes; track note) {
+                                @for (
+                                  note of exercise.safety_notes;
+                                  track note
+                                ) {
                                   <li>{{ note }}</li>
                                 }
                               </ul>
@@ -331,7 +407,7 @@ interface ScheduleBlock {
               }
 
               <!-- Isometrics Block -->
-              @if (block.block === 'Isometrics' && block.exercises) {
+              @if (block.block === "Isometrics" && block.exercises) {
                 <div class="block-summary">
                   <span class="summary-item">
                     <i class="pi pi-stopwatch"></i>
@@ -342,17 +418,37 @@ interface ScheduleBlock {
                   }
                 </div>
                 <p-accordion [multiple]="true">
-                  @for (exercise of asIsoExercises(block.exercises); track exercise.name) {
+                  @for (
+                    exercise of asIsoExercises(block.exercises);
+                    track exercise.name
+                  ) {
                     <p-accordion-panel [value]="exercise.name">
-                      <p-accordion-header>{{ exercise.name }}</p-accordion-header>
+                      <p-accordion-header>{{
+                        exercise.name
+                      }}</p-accordion-header>
                       <p-accordion-content>
                         <div class="exercise-detail-card">
-                          <p class="exercise-description">{{ exercise.description }}</p>
+                          <p class="exercise-description">
+                            {{ exercise.description }}
+                          </p>
                           <div class="exercise-meta">
-                            <p-tag [value]="exercise.difficulty_level" [severity]="getDifficultySeverity(exercise.difficulty_level)"></p-tag>
-                            <p-tag [value]="exercise.category" severity="secondary"></p-tag>
-                            <span class="meta-item">{{ exercise.session_sets }} sets × {{ exercise.session_duration }}s hold</span>
-                            <span class="meta-item">{{ exercise.rest_between_sets }}s rest</span>
+                            <p-tag
+                              [value]="exercise.difficulty_level"
+                              [severity]="
+                                getDifficultySeverity(exercise.difficulty_level)
+                              "
+                            ></p-tag>
+                            <p-tag
+                              [value]="exercise.category"
+                              severity="secondary"
+                            ></p-tag>
+                            <span class="meta-item"
+                              >{{ exercise.session_sets }} sets ×
+                              {{ exercise.session_duration }}s hold</span
+                            >
+                            <span class="meta-item"
+                              >{{ exercise.rest_between_sets }}s rest</span
+                            >
                           </div>
                           <div class="setup">
                             <h4>Setup</h4>
@@ -362,7 +458,10 @@ interface ScheduleBlock {
                             <div class="cues">
                               <h4>Execution Cues</h4>
                               <div class="cue-tags">
-                                @for (cue of exercise.execution_cues; track cue) {
+                                @for (
+                                  cue of exercise.execution_cues;
+                                  track cue
+                                ) {
                                   <span class="cue-tag">{{ cue }}</span>
                                 }
                               </div>
@@ -376,7 +475,7 @@ interface ScheduleBlock {
               }
 
               <!-- Main Session Block -->
-              @if (block.block === 'Main Session') {
+              @if (block.block === "Main Session") {
                 <div class="main-session-content">
                   <div class="session-type-badge">
                     <i class="pi pi-star"></i>
@@ -399,7 +498,7 @@ interface ScheduleBlock {
               }
 
               <!-- Cool-Down Block -->
-              @if (block.block === 'Cool-Down' && block.activities) {
+              @if (block.block === "Cool-Down" && block.activities) {
                 <div class="cooldown-content">
                   <div class="activity-list">
                     @for (activity of block.activities; track activity) {
@@ -435,7 +534,11 @@ interface ScheduleBlock {
 
       /* Greeting Section */
       .greeting-section {
-        background: linear-gradient(135deg, var(--p-primary-600) 0%, var(--p-primary-800) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--p-primary-600) 0%,
+          var(--p-primary-800) 100%
+        );
         border-radius: var(--radius-2xl);
         padding: var(--space-8);
         margin-bottom: var(--space-6);
@@ -451,7 +554,7 @@ interface ScheduleBlock {
         font-size: 2rem;
         font-weight: 700;
         margin: 0 0 var(--space-2) 0;
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: "Space Grotesk", sans-serif;
       }
 
       .date-text {
@@ -490,22 +593,38 @@ interface ScheduleBlock {
       }
 
       .seasonal-banner.season-winter {
-        background: linear-gradient(135deg, var(--p-blue-50) 0%, var(--p-cyan-50) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--p-blue-50) 0%,
+          var(--p-cyan-50) 100%
+        );
         border: 1px solid var(--p-blue-200);
       }
 
       .seasonal-banner.season-spring {
-        background: linear-gradient(135deg, var(--p-green-50) 0%, var(--p-lime-50) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--p-green-50) 0%,
+          var(--p-lime-50) 100%
+        );
         border: 1px solid var(--p-green-200);
       }
 
       .seasonal-banner.season-summer {
-        background: linear-gradient(135deg, var(--p-yellow-50) 0%, var(--p-orange-50) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--p-yellow-50) 0%,
+          var(--p-orange-50) 100%
+        );
         border: 1px solid var(--p-yellow-200);
       }
 
       .seasonal-banner.season-fall {
-        background: linear-gradient(135deg, var(--p-orange-50) 0%, var(--p-amber-50) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--p-orange-50) 0%,
+          var(--p-amber-50) 100%
+        );
         border: 1px solid var(--p-orange-200);
       }
 
@@ -590,7 +709,9 @@ interface ScheduleBlock {
         align-items: center;
         gap: var(--space-4);
         border: 1px solid var(--p-surface-200);
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
 
       .status-card:hover {
@@ -809,7 +930,8 @@ interface ScheduleBlock {
         font-size: 0.75rem;
       }
 
-      .variations, .breakdown {
+      .variations,
+      .breakdown {
         margin-top: var(--space-2);
         display: flex;
         flex-wrap: wrap;
@@ -885,11 +1007,16 @@ interface ScheduleBlock {
         border-radius: var(--radius-full);
       }
 
-      .instructions, .setup, .cues {
+      .instructions,
+      .setup,
+      .cues {
         margin-top: var(--space-4);
       }
 
-      .instructions h4, .setup h4, .cues h4, .safety-notes h4 {
+      .instructions h4,
+      .setup h4,
+      .cues h4,
+      .safety-notes h4 {
         font-size: 0.875rem;
         font-weight: 600;
         color: var(--text-primary);
@@ -1077,15 +1204,17 @@ export class DailyTrainingComponent implements OnInit {
     });
   });
   motivationalMessage = computed(
-    () => this.trainingData()?.motivationalMessage || "Let's train!"
+    () => this.trainingData()?.motivationalMessage || "Let's train!",
   );
 
   trainingPhase = computed(
-    () => this.trainingData()?.trainingStatus?.phase || "Loading..."
+    () => this.trainingData()?.trainingStatus?.phase || "Loading...",
   );
-  acwr = computed(() => this.trainingData()?.trainingStatus?.acwr?.toFixed(2) || "0.00");
+  acwr = computed(
+    () => this.trainingData()?.trainingStatus?.acwr?.toFixed(2) || "0.00",
+  );
   acwrStatus = computed(
-    () => this.trainingData()?.trainingStatus?.acwrStatus || ""
+    () => this.trainingData()?.trainingStatus?.acwrStatus || "",
   );
   isAcwrOptimal = computed(() => {
     const acwr = this.trainingData()?.trainingStatus?.acwr || 0;
@@ -1093,31 +1222,33 @@ export class DailyTrainingComponent implements OnInit {
   });
 
   sessionType = computed(
-    () => this.trainingData()?.todaysPractice?.sessionType || "Training"
+    () => this.trainingData()?.todaysPractice?.sessionType || "Training",
   );
   totalDuration = computed(
-    () => this.trainingData()?.todaysPractice?.totalDuration || 0
+    () => this.trainingData()?.todaysPractice?.totalDuration || 0,
   );
   sessionFocus = computed(
-    () => this.trainingData()?.todaysPractice?.focus || []
+    () => this.trainingData()?.todaysPractice?.focus || [],
   );
 
   // Seasonal context
   seasonalContext = computed(() => this.trainingData()?.seasonalContext);
-  
+
   // Player context
   playerPosition = computed(
-    () => this.trainingData()?.playerContext?.position?.toUpperCase() || "PLAYER"
+    () =>
+      this.trainingData()?.playerContext?.position?.toUpperCase() || "PLAYER",
   );
   playerExperience = computed(
-    () => this.trainingData()?.playerContext?.experienceLevel || "intermediate"
+    () => this.trainingData()?.playerContext?.experienceLevel || "intermediate",
   );
 
   scheduleBlocks = computed<ScheduleBlock[]>(
-    () => (this.trainingData()?.todaysPractice?.schedule as ScheduleBlock[]) || []
+    () =>
+      (this.trainingData()?.todaysPractice?.schedule as ScheduleBlock[]) || [],
   );
   completedBlocks = computed(
-    () => this.scheduleBlocks().filter((b) => b.completed).length
+    () => this.scheduleBlocks().filter((b) => b.completed).length,
   );
   totalBlocks = computed(() => this.scheduleBlocks().length);
   progressPercentage = computed(() => {
@@ -1148,7 +1279,10 @@ export class DailyTrainingComponent implements OnInit {
           this.logger.info("[DailyTraining] Loaded training plan", data);
         },
         error: (error) => {
-          this.logger.error("[DailyTraining] Error loading training plan", error);
+          this.logger.error(
+            "[DailyTraining] Error loading training plan",
+            error,
+          );
           this.loading.set(false);
         },
       });
@@ -1180,45 +1314,55 @@ export class DailyTrainingComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.logger.info(`[DailyTraining] Marked ${blockName} as ${completed ? "complete" : "incomplete"}`);
-          
+          this.logger.info(
+            `[DailyTraining] Marked ${blockName} as ${completed ? "complete" : "incomplete"}`,
+          );
+
           // Dispatch trainingCompleted event for achievements system
           if (completed) {
             const now = new Date();
             const hour = now.getHours();
-            
-            document.dispatchEvent(new CustomEvent('trainingCompleted', {
-              detail: {
-                blockName,
-                completed: true,
-                timestamp: now.toISOString(),
-                startTime: now.toISOString(),
-                sessionType: this.sessionType(),
-                duration: this.totalDuration(),
-                isMorning: hour < 8,
-                isEvening: hour >= 18,
-              }
-            }));
-            
-            this.logger.info(`[DailyTraining] Dispatched trainingCompleted event for ${blockName}`);
-            
-            // Check if all blocks are completed - dispatch full session completion
-            const allBlocks = this.scheduleBlocks();
-            const allCompleted = allBlocks.every(b => b.completed);
-            
-            if (allCompleted && allBlocks.length > 0) {
-              document.dispatchEvent(new CustomEvent('trainingSessionCompleted', {
+
+            document.dispatchEvent(
+              new CustomEvent("trainingCompleted", {
                 detail: {
+                  blockName,
+                  completed: true,
+                  timestamp: now.toISOString(),
+                  startTime: now.toISOString(),
                   sessionType: this.sessionType(),
-                  totalDuration: this.totalDuration(),
-                  completedAt: now.toISOString(),
-                  blocksCompleted: allBlocks.length,
+                  duration: this.totalDuration(),
                   isMorning: hour < 8,
                   isEvening: hour >= 18,
-                }
-              }));
-              
-              this.logger.info('[DailyTraining] Full session completed! Dispatched trainingSessionCompleted event');
+                },
+              }),
+            );
+
+            this.logger.info(
+              `[DailyTraining] Dispatched trainingCompleted event for ${blockName}`,
+            );
+
+            // Check if all blocks are completed - dispatch full session completion
+            const allBlocks = this.scheduleBlocks();
+            const allCompleted = allBlocks.every((b) => b.completed);
+
+            if (allCompleted && allBlocks.length > 0) {
+              document.dispatchEvent(
+                new CustomEvent("trainingSessionCompleted", {
+                  detail: {
+                    sessionType: this.sessionType(),
+                    totalDuration: this.totalDuration(),
+                    completedAt: now.toISOString(),
+                    blocksCompleted: allBlocks.length,
+                    isMorning: hour < 8,
+                    isEvening: hour >= 18,
+                  },
+                }),
+              );
+
+              this.logger.info(
+                "[DailyTraining] Full session completed! Dispatched trainingSessionCompleted event",
+              );
             }
           }
         },
@@ -1228,7 +1372,9 @@ export class DailyTrainingComponent implements OnInit {
       });
   }
 
-  getDifficultySeverity(level: string): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  getDifficultySeverity(
+    level: string,
+  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
     switch (level?.toLowerCase()) {
       case "beginner":
         return "success";
@@ -1258,11 +1404,15 @@ export class DailyTrainingComponent implements OnInit {
   }
 
   // Type guard helpers for template
-  asPlyoExercises(exercises: PlyometricExercise[] | IsometricExercise[]): PlyometricExercise[] {
+  asPlyoExercises(
+    exercises: PlyometricExercise[] | IsometricExercise[],
+  ): PlyometricExercise[] {
     return exercises as PlyometricExercise[];
   }
 
-  asIsoExercises(exercises: PlyometricExercise[] | IsometricExercise[]): IsometricExercise[] {
+  asIsoExercises(
+    exercises: PlyometricExercise[] | IsometricExercise[],
+  ): IsometricExercise[] {
     return exercises as IsometricExercise[];
   }
 }

@@ -15,7 +15,13 @@ import {
   authenticateToken,
   optionalAuth,
 } from "./middleware/auth.middleware.js";
-import { sendError, sendSuccess } from "./utils/validation.js";
+import {
+  sendError,
+  sendSuccess,
+  validateHydrationAmount,
+  sanitizeText,
+  sanitizeFields,
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "wellness";
@@ -134,7 +140,19 @@ router.get("/checkins", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     let query = supabase
       .from("daily_wellness_checkin")
-      .select("*")
+      .select(`
+        id,
+        user_id,
+        checkin_date,
+        sleep_quality,
+        sleep_hours,
+        energy_level,
+        stress_level,
+        muscle_soreness,
+        mood,
+        notes,
+        created_at
+      `)
       .gte("checkin_date", startDate.toISOString().split("T")[0])
       .order("checkin_date", { ascending: false });
 
@@ -144,17 +162,14 @@ router.get("/checkins", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     const { data: checkins, error } = await query;
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     return sendSuccess(res, checkins || []);
   } catch (error) {
     serverLogger.error(`[${ROUTE_NAME}] Get checkins error:`, error);
-    return sendError(
-      res,
-      "Failed to load wellness data",
-      "FETCH_ERROR",
-      500,
-    );
+    return sendError(res, "Failed to load wellness data", "FETCH_ERROR", 500);
   }
 });
 
@@ -212,7 +227,17 @@ router.get(
       // Get user's supplement regimen
       let query = supabase
         .from("supplement_regimens")
-        .select("*")
+        .select(`
+          id,
+          user_id,
+          supplement_name,
+          dosage,
+          frequency,
+          timing,
+          is_active,
+          notes,
+          created_at
+        `)
         .eq("is_active", true);
 
       if (userId && isValidUUID(userId)) {
@@ -247,9 +272,12 @@ router.post(
     }
 
     try {
-      const {userId} = req;
+      const { userId } = req;
       const { supplement, dosage, taken = true, notes } = req.body;
       const today = new Date().toISOString().split("T")[0];
+
+      // SANITIZE notes to prevent XSS
+      const sanitizedNotes = notes ? sanitizeText(notes) : null;
 
       const { data, error } = await supabase
         .from("supplement_logs")
@@ -259,13 +287,15 @@ router.post(
           dosage,
           taken,
           date: today,
-          notes: notes || null,
+          notes: sanitizedNotes, // Use sanitized notes
           created_at: new Date().toISOString(),
         })
         .select()
         .single();
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       return sendSuccess(res, data, "Supplement logged");
     } catch (error) {
@@ -304,7 +334,9 @@ router.get(
 
       const { data, error } = await query;
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       return sendSuccess(res, { logs: data || [] });
     } catch (error) {
@@ -368,14 +400,20 @@ router.post(
     }
 
     try {
-      const {userId} = req;
+      const { userId } = req;
       const { amount, type = "water" } = req.body;
+
+      // VALIDATE AMOUNT
+      const amountValidation = validateHydrationAmount(amount);
+      if (!amountValidation.isValid) {
+        return sendError(res, amountValidation.error, "INVALID_AMOUNT", 400);
+      }
 
       const { data, error } = await supabase
         .from("hydration_logs")
         .insert({
           user_id: userId,
-          amount,
+          amount: amountValidation.amount, // Use validated value
           type,
           timestamp: new Date().toISOString(),
         })
@@ -388,7 +426,7 @@ router.post(
             res,
             {
               id: Date.now().toString(),
-              amount,
+              amount: amountValidation.amount,
               type,
               timestamp: new Date().toISOString(),
             },

@@ -31,7 +31,7 @@
       font-size: var(--font-size-h4) !important;
       border-radius: var(--radius-md) !important;
       cursor: pointer;
-      
+
       // Prevent accidental double-tap zoom
       touch-action: manipulation;
       user-select: none;
@@ -131,9 +131,11 @@
       border: 1px solid var(--surface-border) !important;
       background: var(--surface-card) !important;
       color: var(--text-color) !important;
-      
+
       // Smooth transitions
-      transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease !important;
 
       // Focus state - clear visual feedback
       &:focus-visible,
@@ -178,7 +180,7 @@
     // Number input - hide spinners (too small for touch)
     input[type="number"] {
       -moz-appearance: textfield;
-      
+
       &::-webkit-outer-spin-button,
       &::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -189,7 +191,7 @@
     // Search input - clear button
     input[type="search"] {
       -webkit-appearance: none;
-      
+
       &::-webkit-search-cancel-button {
         -webkit-appearance: none;
         height: 20px;
@@ -204,7 +206,7 @@
     input[type="time"],
     input[type="datetime-local"] {
       position: relative;
-      
+
       // Larger touch target for calendar icon
       &::-webkit-calendar-picker-indicator {
         width: 24px;
@@ -490,7 +492,7 @@
     textarea:invalid,
     select:invalid {
       border-color: var(--primitive-error-500) !important;
-      
+
       &:focus-visible {
         box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.15) !important;
       }
@@ -528,4 +530,3 @@
     touch-action: pan-x pan-y;
   }
 }
-

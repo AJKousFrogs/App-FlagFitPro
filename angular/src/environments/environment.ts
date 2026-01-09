@@ -90,16 +90,16 @@ export const environment = {
   },
   /**
    * Use direct Supabase calls instead of Netlify Functions API
-   * 
+   *
    * When TRUE (default for ng serve on port 4200):
    *   - API calls go directly to Supabase
    *   - No need for Netlify Dev server
    *   - Faster local development
-   * 
+   *
    * When FALSE (Netlify Dev on port 8888 or production):
    *   - API calls go through /api/* endpoints
    *   - Tests full production flow with Netlify Functions
-   * 
+   *
    * Auto-detects based on port: 4200 = direct, 8888 = via API
    */
   useDirectSupabase: !isNetlifyDev(),

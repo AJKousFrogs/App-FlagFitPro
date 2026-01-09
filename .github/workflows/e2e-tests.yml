@@ -79,4 +79,3 @@ jobs:
           name: test-videos
           path: angular/test-results/
           retention-days: 7
-

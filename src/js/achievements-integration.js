@@ -1,4 +1,4 @@
-import { logger } from '../logger.js';
+import { logger } from "../logger.js";
 
 /**
  * FlagFit Pro - Achievements Integration
@@ -22,10 +22,13 @@ import { logger } from '../logger.js';
 
     // Listen for training completions (individual blocks)
     document.addEventListener("trainingCompleted", handleTrainingCompleted);
-    
+
     // Listen for full training session completions
-    document.addEventListener("trainingSessionCompleted", handleFullSessionCompleted);
-    
+    document.addEventListener(
+      "trainingSessionCompleted",
+      handleFullSessionCompleted,
+    );
+
     // Listen for achievement unlock events (for UI updates)
     document.addEventListener("achievementUnlocked", handleAchievementUnlocked);
 
@@ -240,13 +243,16 @@ import { logger } from '../logger.js';
    */
   function handleFullSessionCompleted(event) {
     const sessionData = event.detail;
-    logger.info("[Achievements Integration] Full session completed:", sessionData);
+    logger.info(
+      "[Achievements Integration] Full session completed:",
+      sessionData,
+    );
 
     // Update training history in localStorage
     const trainingHistory = JSON.parse(
-      localStorage.getItem("trainingHistory") || "[]"
+      localStorage.getItem("trainingHistory") || "[]",
     );
-    
+
     trainingHistory.push({
       date: sessionData.completedAt || new Date().toISOString(),
       startTime: sessionData.completedAt,
@@ -254,12 +260,12 @@ import { logger } from '../logger.js';
       duration: sessionData.totalDuration,
       blocksCompleted: sessionData.blocksCompleted,
     });
-    
+
     localStorage.setItem("trainingHistory", JSON.stringify(trainingHistory));
 
     // Calculate user data and check achievements
     const userData = calculateUserData();
-    
+
     // Add session-specific data
     if (sessionData.isMorning) {
       userData.morningWorkouts = (userData.morningWorkouts || 0) + 1;
@@ -267,11 +273,12 @@ import { logger } from '../logger.js';
       userData.eveningWorkouts = (userData.eveningWorkouts || 0) + 1;
     }
 
-    const newAchievements = window.achievementsService.checkAchievements(userData);
+    const newAchievements =
+      window.achievementsService.checkAchievements(userData);
 
     if (newAchievements.length > 0) {
       logger.info(
-        `[Achievements] Unlocked ${newAchievements.length} new achievement(s) from session completion!`
+        `[Achievements] Unlocked ${newAchievements.length} new achievement(s) from session completion!`,
       );
       refreshAchievementsWidget();
     }
@@ -283,18 +290,20 @@ import { logger } from '../logger.js';
   function handleAchievementUnlocked(event) {
     const { achievement, totalPoints, progress } = event.detail;
     logger.info(
-      `[Achievements Integration] Achievement unlocked: ${achievement.name} (+${achievement.points} pts)`
+      `[Achievements Integration] Achievement unlocked: ${achievement.name} (+${achievement.points} pts)`,
     );
-    logger.info(`[Achievements Integration] Total: ${totalPoints} pts, Progress: ${progress}%`);
-    
+    logger.info(
+      `[Achievements Integration] Total: ${totalPoints} pts, Progress: ${progress}%`,
+    );
+
     // Refresh the achievements widget
     refreshAchievementsWidget();
-    
+
     // Show a toast/notification if available
     if (window.showToast) {
       window.showToast({
-        severity: 'success',
-        summary: '🏆 Achievement Unlocked!',
+        severity: "success",
+        summary: "🏆 Achievement Unlocked!",
         detail: `${achievement.name} - ${achievement.description}`,
         life: 5000,
       });

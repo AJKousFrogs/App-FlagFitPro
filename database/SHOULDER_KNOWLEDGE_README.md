@@ -9,15 +9,18 @@ The data has been converted into formats compatible with your FlagFit Pro databa
 ## Generated Files
 
 ### 1. `practitioners_guide_shoulders_knowledge.json`
+
 **Purpose**: Structured JSON data ready for import or API consumption
 
 **Contents**:
+
 - 1 research article entry
 - 5 detailed knowledge base entries
 - Case studies
 - Performance metrics
 
 **Structure**:
+
 ```json
 {
   "metadata": { ... },
@@ -38,14 +41,17 @@ The data has been converted into formats compatible with your FlagFit Pro databa
 ```
 
 ### 2. `seed-shoulder-knowledge.sql`
+
 **Purpose**: Direct SQL import into Supabase database
 
 **Tables populated**:
+
 - `research_articles`
 - `knowledge_base_entries`
 - `knowledge_search_index`
 
 **Usage**:
+
 ```bash
 # Via Supabase CLI
 supabase db execute -f database/seed-shoulder-knowledge.sql
@@ -57,6 +63,7 @@ psql $DATABASE_URL -f database/seed-shoulder-knowledge.sql
 ## Knowledge Base Entries
 
 ### 1. Shoulder Anatomy & Biomechanics
+
 - **Type**: training_method
 - **Topic**: shoulder_anatomy_biomechanics
 - **Key Concepts**:
@@ -65,6 +72,7 @@ psql $DATABASE_URL -f database/seed-shoulder-knowledge.sql
   - Kinetic chain relationships
 
 ### 2. Shoulder Assessment Protocols
+
 - **Type**: training_method
 - **Topic**: shoulder_assessment_protocols
 - **Key Equipment**: DynaMo, ForceFrame, ForceDecks
@@ -77,6 +85,7 @@ psql $DATABASE_URL -f database/seed-shoulder-knowledge.sql
   - Regular monitoring for injury prevention
 
 ### 3. Common Shoulder Injuries
+
 - **Type**: injury
 - **Topic**: shoulder_injuries_pathologies
 - **Common Injuries**:
@@ -87,6 +96,7 @@ psql $DATABASE_URL -f database/seed-shoulder-knowledge.sql
 - **Risk Groups**: Overhead athletes, throwing athletes
 
 ### 4. Shoulder Rehabilitation
+
 - **Type**: recovery_method
 - **Topic**: shoulder_rehabilitation
 - **Rehab Phases**:
@@ -103,6 +113,7 @@ psql $DATABASE_URL -f database/seed-shoulder-knowledge.sql
   - Gradual return to sport activities
 
 ### 5. Shoulder Prehab & Training
+
 - **Type**: training_method
 - **Topic**: shoulder_prehab_training
 - **Focus Areas**:
@@ -115,7 +126,9 @@ psql $DATABASE_URL -f database/seed-shoulder-knowledge.sql
 ## Integration with FlagFit Pro
 
 ### AI Chat Integration
+
 This knowledge can be queried by your AI coaching system for:
+
 - Injury prevention advice for overhead athletes
 - Rehabilitation guidance for shoulder injuries
 - Prehab programming for QBs and WRs
@@ -124,17 +137,20 @@ This knowledge can be queried by your AI coaching system for:
 ### Use Cases in Your App
 
 #### For Quarterbacks (Throwing Athletes)
+
 - Shoulder prehab programs
 - ROM monitoring
 - Injury risk assessment
 - Rehabilitation protocols for throwing injuries
 
 #### For Wide Receivers
+
 - Overhead movement assessment
 - Scapular stability training
 - Injury prevention strategies
 
 #### For All Athletes
+
 - General shoulder health education
 - Injury identification
 - Evidence-based training methods
@@ -144,30 +160,32 @@ This knowledge can be queried by your AI coaching system for:
 ```typescript
 // Query for shoulder knowledge
 const { data: shoulderKnowledge } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .in('topic', [
-    'shoulder_anatomy_biomechanics',
-    'shoulder_assessment_protocols',
-    'shoulder_injuries_pathologies',
-    'shoulder_rehabilitation',
-    'shoulder_prehab_training'
+  .from("knowledge_base_entries")
+  .select("*")
+  .in("topic", [
+    "shoulder_anatomy_biomechanics",
+    "shoulder_assessment_protocols",
+    "shoulder_injuries_pathologies",
+    "shoulder_rehabilitation",
+    "shoulder_prehab_training",
   ]);
 
 // Search for specific topics
 const { data: assessmentInfo } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .eq('topic', 'shoulder_assessment_protocols')
+  .from("knowledge_base_entries")
+  .select("*")
+  .eq("topic", "shoulder_assessment_protocols")
   .single();
 ```
 
 ## Database Schema Compatibility
 
 These entries match your existing schema from:
+
 - `database/migrations/028_evidence_based_knowledge_base.sql`
 
 **Key fields mapped**:
+
 - ✅ entry_type
 - ✅ topic
 - ✅ question
@@ -186,6 +204,7 @@ These entries match your existing schema from:
 ## Import Instructions
 
 ### Option 1: SQL Import (Recommended)
+
 ```bash
 cd "/Users/aljosaursakous/Desktop/Flag football HTML - APP"
 
@@ -197,17 +216,21 @@ PGPASSWORD="your-password" psql -h your-db-host -U postgres -d postgres -f datab
 ```
 
 ### Option 2: JSON Import via API
+
 ```typescript
-import shoulderData from './database/practitioners_guide_shoulders_knowledge.json';
+import shoulderData from "./database/practitioners_guide_shoulders_knowledge.json";
 
 // Import research article
-await supabase.from('research_articles').insert(shoulderData.research_article);
+await supabase.from("research_articles").insert(shoulderData.research_article);
 
 // Import knowledge entries
-await supabase.from('knowledge_base_entries').insert(shoulderData.knowledge_base_entries);
+await supabase
+  .from("knowledge_base_entries")
+  .insert(shoulderData.knowledge_base_entries);
 ```
 
 ### Option 3: Manual Review First
+
 1. Open `practitioners_guide_shoulders_knowledge.json`
 2. Review the extracted content
 3. Modify if needed

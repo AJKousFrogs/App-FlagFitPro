@@ -1,4 +1,4 @@
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 /**
  * FlagFit Pro - Application Constants
@@ -202,7 +202,7 @@ export const A11Y = {
 /**
  * Feature Flags
  * These can be used to toggle features on/off
- * 
+ *
  * Updated: 2026-01-09 - Fixed flags to match implementation status
  */
 export const FEATURES = {

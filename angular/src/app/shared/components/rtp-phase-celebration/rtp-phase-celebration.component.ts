@@ -1,6 +1,6 @@
 /**
  * RTP Phase Celebration Component
- * 
+ *
  * Phase 2.3 - Motivation & Safety
  * Celebrates RTP phase advancement with progress context, clear instructions, and next phase unlock info
  */
@@ -36,13 +36,7 @@ export interface RTPPhaseInfo {
   selector: "app-rtp-phase-celebration",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterModule,
-    CardModule,
-    TagModule,
-    ButtonModule,
-  ],
+  imports: [CommonModule, RouterModule, CardModule, TagModule, ButtonModule],
   template: `
     @if (showCelebration()) {
       <p-card styleClass="celebration-card">
@@ -51,7 +45,8 @@ export interface RTPPhaseInfo {
           <div class="celebration-content">
             <h2>You've Progressed to {{ phaseInfo()!.phaseName }}!</h2>
             <p class="celebration-subtitle">
-              Stage {{ phaseInfo()!.currentPhase }} • Day {{ phaseInfo()!.daysInPhase }} of {{ phaseInfo()!.minimumDays }}
+              Stage {{ phaseInfo()!.currentPhase }} • Day
+              {{ phaseInfo()!.daysInPhase }} of {{ phaseInfo()!.minimumDays }}
             </p>
           </div>
         </div>
@@ -59,7 +54,9 @@ export interface RTPPhaseInfo {
         <!-- Progress Context -->
         <div class="progress-context">
           <div class="context-item">
-            <span class="context-label">Days in Phase {{ phaseInfo()!.currentPhase - 1 }}:</span>
+            <span class="context-label"
+              >Days in Phase {{ phaseInfo()!.currentPhase - 1 }}:</span
+            >
             <span class="context-value">{{ daysInPreviousPhase() }} days</span>
           </div>
           <div class="context-item">
@@ -80,7 +77,10 @@ export interface RTPPhaseInfo {
           @if (phaseInfo()!.restrictions.length > 0) {
             <h3><i class="pi pi-times-circle"></i> Restrictions</h3>
             <ul class="activities-list restricted">
-              @for (restriction of phaseInfo()!.restrictions; track restriction) {
+              @for (
+                restriction of phaseInfo()!.restrictions;
+                track restriction
+              ) {
                 <li>{{ restriction }}</li>
               }
             </ul>
@@ -90,10 +90,16 @@ export interface RTPPhaseInfo {
         <!-- What Unlocks Next Phase -->
         @if (phaseInfo()!.nextPhase) {
           <div class="next-phase-section">
-            <h3><i class="pi pi-flag"></i> What Unlocks Phase {{ phaseInfo()!.nextPhase!.phase }}</h3>
+            <h3>
+              <i class="pi pi-flag"></i> What Unlocks Phase
+              {{ phaseInfo()!.nextPhase!.phase }}
+            </h3>
             <p class="next-phase-name">{{ phaseInfo()!.nextPhase!.name }}</p>
             <ul class="unlock-criteria">
-              @for (criterion of phaseInfo()!.nextPhase!.unlockCriteria; track criterion) {
+              @for (
+                criterion of phaseInfo()!.nextPhase!.unlockCriteria;
+                track criterion
+              ) {
                 <li>{{ criterion }}</li>
               }
             </ul>
@@ -123,7 +129,11 @@ export interface RTPPhaseInfo {
     `
       .celebration-card {
         margin-bottom: var(--space-6);
-        background: linear-gradient(135deg, var(--color-status-success-subtle) 0%, var(--surface-primary) 100%);
+        background: linear-gradient(
+          135deg,
+          var(--color-status-success-subtle) 0%,
+          var(--surface-primary) 100%
+        );
         border: 2px solid var(--color-status-success);
         border-radius: var(--radius-xl);
         padding: var(--space-6);
@@ -288,4 +298,3 @@ export class RTPPhaseCelebrationComponent {
     return "Completed all progression criteria and minimum days";
   }
 }
-

@@ -3,13 +3,15 @@
 ## ✅ Completed Tasks
 
 ### 1. Test Files Created
+
 - ✅ `smoke.spec.ts` - Basic smoke test that verifies app shell renders
 - ✅ `critical-flow-morning-training.spec.ts` - Complete critical flow test
 
 ### 2. Data-TestID Attributes Added
+
 - ✅ `protocol-blocks` - Protocol blocks container
 - ✅ `protocol-block-morning-mobility` - Morning mobility block
-- ✅ `protocol-block-foam-rolling` - Foam rolling block  
+- ✅ `protocol-block-foam-rolling` - Foam rolling block
 - ✅ `protocol-block-header` - Block header (expandable)
 - ✅ `protocol-block-exercise-list` - Exercise list
 - ✅ `exercise-item-{id}` - Individual exercise items
@@ -17,6 +19,7 @@
 - ✅ `nav-todays-practice` - Navigation link (via sidebar)
 
 ### 3. Playwright Configuration
+
 - ✅ Updated `angular/playwright.config.ts` with:
   - CI/local compatibility
   - Proper timeouts and retries
@@ -24,6 +27,7 @@
   - Single browser (chromium) in CI, multiple locally
 
 ### 4. CI/CD Integration
+
 - ✅ Created `.github/workflows/e2e-tests.yml`:
   - Runs on push/PR to main/develop
   - Runs smoke tests first
@@ -32,12 +36,14 @@
   - Uses GitHub Secrets for test credentials
 
 ### 5. npm Scripts
+
 - ✅ Added to root `package.json`:
   - `test:e2e:smoke` - Run smoke tests
   - `test:e2e:critical` - Run critical flow test
   - Updated existing `test:e2e` commands
 
 ### 6. Documentation
+
 - ✅ Created `angular/e2e/README.md` with:
   - Setup instructions
   - Running tests locally
@@ -47,11 +53,13 @@
 ## Test Coverage
 
 ### Smoke Test (`smoke.spec.ts`)
+
 - ✅ App shell loads
 - ✅ Login page renders
 - ✅ Unauthenticated redirect works
 
 ### Critical Flow Test (`critical-flow-morning-training.spec.ts`)
+
 - ✅ Visit app URL
 - ✅ Login with test credentials
 - ✅ Complete onboarding (all 9 steps)
@@ -77,6 +85,7 @@
 ## Running Tests
 
 ### Locally
+
 ```bash
 # Setup
 cd angular
@@ -95,7 +104,9 @@ npm run test:e2e                # All tests
 ```
 
 ### In CI
+
 Tests run automatically on push/PR. Ensure GitHub Secrets are set:
+
 - `E2E_TEST_EMAIL` - Test user email
 - `E2E_TEST_PASSWORD` - Test user password
 
@@ -110,6 +121,7 @@ Tests run automatically on push/PR. Ensure GitHub Secrets are set:
    - Ensure the account can complete onboarding
 
 3. **Run tests locally** to verify everything works:
+
    ```bash
    npm run test:e2e:smoke
    npm run test:e2e:critical
@@ -124,4 +136,3 @@ Tests run automatically on push/PR. Ensure GitHub Secrets are set:
 - Tests wait for network idle and specific UI states to avoid flakiness
 - Cookie banner is automatically dismissed in tests
 - Tests are designed to work both locally and in CI
-

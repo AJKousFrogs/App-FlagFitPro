@@ -14,9 +14,7 @@ const {
   createSuccessResponse,
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
-const {
-  guardMerlinRequest,
-} = require("./utils/merlin-guard.cjs");
+const { guardMerlinRequest } = require("./utils/merlin-guard.cjs");
 // Safety triggers - imported for future integration
 // const { detectPainTrigger, detectACWRTrigger } = require("./utils/safety-override.cjs");
 
@@ -718,7 +716,10 @@ function getCoachingNotes(season, sessionType) {
  */
 async function updateTrainingProgress(userId, updates, requestInfo = {}) {
   try {
-    const { requireAuthorization, logViolation } = require("./utils/authorization-guard.cjs");
+    const {
+      requireAuthorization,
+      logViolation,
+    } = require("./utils/authorization-guard.cjs");
     const today = new Date().toISOString().split("T")[0];
 
     // Check if there's an existing session for today
@@ -741,11 +742,14 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
         "session",
         "update",
         "execution",
-        requestInfo
+        requestInfo,
       );
 
       if (!authCheck.success) {
-        return { success: false, message: authCheck.error.body || "Authorization failed" };
+        return {
+          success: false,
+          message: authCheck.error.body || "Authorization failed",
+        };
       }
 
       // Update existing session (execution data only)
@@ -759,7 +763,10 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
 
       if (updateError) {
         // Check if error is from trigger
-        if (updateError.message && updateError.message.includes("Cannot modify")) {
+        if (
+          updateError.message &&
+          updateError.message.includes("Cannot modify")
+        ) {
           await logViolation(
             userId,
             existing.id,
@@ -767,7 +774,7 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
             "update",
             "DB_TRIGGER_REJECTED",
             updateError.message,
-            requestInfo
+            requestInfo,
           );
         }
         throw updateError;
@@ -806,12 +813,12 @@ async function updateTrainingProgress(userId, updates, requestInfo = {}) {
 exports.handler = async (event, context) => {
   // Apply Merlin guard for POST (mutation)
   if (event.httpMethod === "POST") {
-    const req = { 
-      method: event.httpMethod, 
-      path: event.path, 
-      headers: event.headers, 
+    const req = {
+      method: event.httpMethod,
+      path: event.path,
+      headers: event.headers,
       body: event.body,
-      user: context.user || {}
+      user: context.user || {},
     };
     const blocked = guardMerlinRequest(req);
     if (blocked && blocked.statusCode === 403) {

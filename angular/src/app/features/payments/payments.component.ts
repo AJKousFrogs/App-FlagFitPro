@@ -2,10 +2,10 @@
  * My Payments Component (Player View)
  *
  * ⚠️ IMPORTANT: This is for TRACKING ONLY - No payment processing!
- * 
+ *
  * FlagFit Pro does NOT process payments (no Stripe, PayPal, credit cards).
  * Players pay coaches directly via cash, Venmo, Zelle, CashApp, etc.
- * 
+ *
  * This component allows:
  * - Track what players owe (fees, equipment, tournament registration)
  * - View payment status and history
@@ -17,7 +17,14 @@
  */
 
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";

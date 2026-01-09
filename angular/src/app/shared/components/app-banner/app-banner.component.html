@@ -1,4 +1,4 @@
-<div 
+<div
   class="banner"
   [class.banner-info]="type() === 'info'"
   [class.banner-warning]="type() === 'warning'"
@@ -9,12 +9,14 @@
     <i [class]="getIconClass()" class="banner-icon" aria-hidden="true"></i>
     <p class="banner-message">{{ message() }}</p>
   </div>
-  
+
   @if (primaryCta() || secondaryCta()) {
     <div class="banner-actions">
       @if (primaryCta()) {
         <app-button
-          [variant]="primaryCta()?.variant === 'secondary' ? 'outlined' : 'primary'"
+          [variant]="
+            primaryCta()?.variant === 'secondary' ? 'outlined' : 'primary'
+          "
           size="sm"
           (clicked)="onCtaClick(primaryCta()!.action)"
         >

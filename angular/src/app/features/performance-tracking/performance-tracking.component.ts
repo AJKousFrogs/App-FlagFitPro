@@ -1,8 +1,8 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -28,7 +28,10 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { StatItem, StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import {
+  StatItem,
+  StatsGridComponent,
+} from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 

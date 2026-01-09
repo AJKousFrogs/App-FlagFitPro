@@ -8,13 +8,22 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { RTPPhaseCelebrationComponent, RTPPhaseInfo } from "../../shared/components/rtp-phase-celebration/rtp-phase-celebration.component";
+import {
+  RTPPhaseCelebrationComponent,
+  RTPPhaseInfo,
+} from "../../shared/components/rtp-phase-celebration/rtp-phase-celebration.component";
 import { MessageService } from "primeng/api";
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
@@ -34,7 +43,10 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
-import { LazyChartComponent, LazyChartData } from "../../shared/components/lazy-chart/lazy-chart.component";
+import {
+  LazyChartComponent,
+  LazyChartData,
+} from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
 // ===== Interfaces =====
@@ -575,7 +587,10 @@ const SEVERITY_LEVELS = [
                 <div class="activities-checklist">
                   <label>Activities Completed Today</label>
                   @for (
-                    activity of getCurrentStage().activities.slice(0, UI_LIMITS.ACTIVITIES_PREVIEW);
+                    activity of getCurrentStage().activities.slice(
+                      0,
+                      UI_LIMITS.ACTIVITIES_PREVIEW
+                    );
                     track activity;
                     let i = $index
                   ) {
@@ -819,7 +834,7 @@ export class ReturnToPlayComponent implements OnInit {
   readonly isStartingProtocol = signal(false);
   readonly isSavingCheckin = signal(false);
   readonly chartData = signal<LazyChartData | null>(null);
-  
+
   // Phase 2.3: RTP Phase Celebration
   readonly showPhaseCelebration = signal(false);
   readonly phaseCelebrationInfo = signal<RTPPhaseInfo | null>(null);
@@ -971,11 +986,15 @@ export class ReturnToPlayComponent implements OnInit {
         allowedActivities: nextStageData.activities,
         restrictions: nextStageData.restrictions,
         progressionCriteria: nextStageData.progressionCriteria,
-        nextPhase: newStage < 7 ? {
-          phase: newStage + 1,
-          name: PROTOCOL_STAGES[newStage]?.name || "",
-          unlockCriteria: PROTOCOL_STAGES[newStage]?.progressionCriteria || [],
-        } : undefined,
+        nextPhase:
+          newStage < 7
+            ? {
+                phase: newStage + 1,
+                name: PROTOCOL_STAGES[newStage]?.name || "",
+                unlockCriteria:
+                  PROTOCOL_STAGES[newStage]?.progressionCriteria || [],
+              }
+            : undefined,
       });
       this.showPhaseCelebration.set(true);
 

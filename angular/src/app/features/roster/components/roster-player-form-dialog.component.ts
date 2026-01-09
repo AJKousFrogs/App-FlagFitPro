@@ -1,7 +1,7 @@
 /**
  * Roster Player Form Dialog Component
  * Add/Edit player dialog
- * 
+ *
  * Enhanced with Form Error Summary (WCAG 2.1 AA)
  */
 import {
@@ -26,7 +26,10 @@ import { Select } from "primeng/select";
 import { InputNumberModule } from "primeng/inputnumber";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { FormErrorSummaryComponent, FormError } from "../../../shared/components/form-error-summary/form-error-summary.component";
+import {
+  FormErrorSummaryComponent,
+  FormError,
+} from "../../../shared/components/form-error-summary/form-error-summary.component";
 import { FormErrorService } from "../../../core/services/form-error.service";
 import { Player, POSITION_OPTIONS, STATUS_OPTIONS } from "../roster.models";
 
@@ -72,7 +75,7 @@ export interface PlayerFormData {
         [errors]="formErrors()"
         (scrollToField)="scrollToField($event)"
       />
-      
+
       <form [formGroup]="playerForm" class="player-form">
         <div class="form-field">
           <label for="roster-player-name">Full Name *</label>
@@ -281,54 +284,64 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
     }
 
     // Name validation
-    const nameControl = form.get('name');
+    const nameControl = form.get("name");
     if (nameControl?.invalid && (nameControl.dirty || nameControl.touched)) {
-      if (nameControl.errors?.['required']) {
+      if (nameControl.errors?.["required"]) {
         errors.push({
-          field: 'roster-player-name',
-          fieldLabel: 'Full Name',
-          message: 'Player name is required',
-          suggestion: 'Enter the player\'s full name (first and last)'
+          field: "roster-player-name",
+          fieldLabel: "Full Name",
+          message: "Player name is required",
+          suggestion: "Enter the player's full name (first and last)",
         });
-      } else if (nameControl.errors?.['minlength']) {
+      } else if (nameControl.errors?.["minlength"]) {
         errors.push({
-          field: 'roster-player-name',
-          fieldLabel: 'Full Name',
-          message: 'Name must be at least 2 characters',
+          field: "roster-player-name",
+          fieldLabel: "Full Name",
+          message: "Name must be at least 2 characters",
         });
       }
     }
 
     // Position validation
-    const positionControl = form.get('position');
-    if (positionControl?.invalid && (positionControl.dirty || positionControl.touched)) {
+    const positionControl = form.get("position");
+    if (
+      positionControl?.invalid &&
+      (positionControl.dirty || positionControl.touched)
+    ) {
       errors.push({
-        field: 'roster-player-position',
-        fieldLabel: 'Position',
-        message: 'Position is required',
-        suggestion: 'Select the player\'s primary position on the field'
+        field: "roster-player-position",
+        fieldLabel: "Position",
+        message: "Position is required",
+        suggestion: "Select the player's primary position on the field",
       });
     }
 
     // Jersey validation
-    const jerseyControl = form.get('jersey');
-    if (jerseyControl?.invalid && (jerseyControl.dirty || jerseyControl.touched)) {
+    const jerseyControl = form.get("jersey");
+    if (
+      jerseyControl?.invalid &&
+      (jerseyControl.dirty || jerseyControl.touched)
+    ) {
       errors.push({
-        field: 'roster-player-jersey',
-        fieldLabel: 'Jersey Number',
-        message: 'Jersey number is required',
-        suggestion: 'Enter a number between 0-99'
+        field: "roster-player-jersey",
+        fieldLabel: "Jersey Number",
+        message: "Jersey number is required",
+        suggestion: "Enter a number between 0-99",
       });
     }
 
     // Email validation
-    const emailControl = form.get('email');
-    if (emailControl?.invalid && emailControl.value && (emailControl.dirty || emailControl.touched)) {
+    const emailControl = form.get("email");
+    if (
+      emailControl?.invalid &&
+      emailControl.value &&
+      (emailControl.dirty || emailControl.touched)
+    ) {
       errors.push({
-        field: 'roster-player-email',
-        fieldLabel: 'Email Address',
-        message: 'Enter a valid email address',
-        suggestion: 'Format: player@example.com'
+        field: "roster-player-email",
+        fieldLabel: "Email Address",
+        message: "Enter a valid email address",
+        suggestion: "Format: player@example.com",
       });
     }
 
@@ -369,7 +382,7 @@ export class RosterPlayerFormDialogComponent implements OnChanges {
       this.save.emit(this.playerForm.value as PlayerFormData);
     } else {
       // Mark all fields as touched to trigger error display
-      Object.keys(this.playerForm.controls).forEach(key => {
+      Object.keys(this.playerForm.controls).forEach((key) => {
         this.playerForm.get(key)?.markAsTouched();
       });
     }

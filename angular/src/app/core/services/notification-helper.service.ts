@@ -362,8 +362,14 @@ export class NotificationHelperService {
     rsvpStatus: "yes" | "no" | "maybe",
     gameId?: string,
   ): Promise<string | null> {
-    const statusEmoji = rsvpStatus === "yes" ? "✅" : rsvpStatus === "no" ? "❌" : "❓";
-    const statusText = rsvpStatus === "yes" ? "confirmed" : rsvpStatus === "no" ? "can't make it" : "is maybe";
+    const statusEmoji =
+      rsvpStatus === "yes" ? "✅" : rsvpStatus === "no" ? "❌" : "❓";
+    const statusText =
+      rsvpStatus === "yes"
+        ? "confirmed"
+        : rsvpStatus === "no"
+          ? "can't make it"
+          : "is maybe";
 
     return this.createNotification(userId, {
       type: "player_rsvp",
@@ -447,7 +453,11 @@ export class NotificationHelperService {
       severity: "warning",
       priority: "high",
       action_url: "/training",
-      data: { sessionName, reason, rescheduledTo: rescheduledTo?.toISOString() },
+      data: {
+        sessionName,
+        reason,
+        rescheduledTo: rescheduledTo?.toISOString(),
+      },
     });
   }
 
@@ -795,7 +805,10 @@ export class NotificationHelperService {
         .single();
 
       if (error) {
-        this.logger.error("[NotificationHelper] Failed to create notification:", error);
+        this.logger.error(
+          "[NotificationHelper] Failed to create notification:",
+          error,
+        );
         return null;
       }
 
@@ -804,7 +817,10 @@ export class NotificationHelperService {
       );
       return data?.id ? String(data.id) : null;
     } catch (error) {
-      this.logger.error("[NotificationHelper] Error creating notification:", error);
+      this.logger.error(
+        "[NotificationHelper] Error creating notification:",
+        error,
+      );
       return null;
     }
   }
@@ -841,7 +857,9 @@ export class NotificationHelperService {
         sender_id: senderId,
         is_read: false,
         dismissed: false,
-        expires_at: new Date(Date.now() + TIME.NOTIFICATION_EXPIRY_DAYS * TIME.MS_PER_DAY).toISOString(),
+        expires_at: new Date(
+          Date.now() + TIME.NOTIFICATION_EXPIRY_DAYS * TIME.MS_PER_DAY,
+        ).toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }));
@@ -852,7 +870,10 @@ export class NotificationHelperService {
         .select("id");
 
       if (error) {
-        this.logger.error("[NotificationHelper] Failed to create batch notifications:", error);
+        this.logger.error(
+          "[NotificationHelper] Failed to create batch notifications:",
+          error,
+        );
         return 0;
       }
 
@@ -862,7 +883,10 @@ export class NotificationHelperService {
       );
       return count;
     } catch (error) {
-      this.logger.error("[NotificationHelper] Error creating batch notifications:", error);
+      this.logger.error(
+        "[NotificationHelper] Error creating batch notifications:",
+        error,
+      );
       return 0;
     }
   }

@@ -177,7 +177,10 @@
   padding: space(3) space(4);
   font-weight: get-font-weight(semibold);
   border-radius: get-radius(lg);
-  transition: opacity get-transition(fast) get-easing(smooth), transform get-transition(fast) get-easing(smooth), background-color get-transition(fast) get-easing(smooth);
+  transition:
+    opacity get-transition(fast) get-easing(smooth),
+    transform get-transition(fast) get-easing(smooth),
+    background-color get-transition(fast) get-easing(smooth);
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
@@ -420,7 +423,12 @@
   $hover-bg: var(--surface-secondary),
   $active-bg: var(--surface-tertiary)
 ) {
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   will-change: transform, box-shadow, background-color;
 
   // Hover - Desktop only

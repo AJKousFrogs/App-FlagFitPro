@@ -15,37 +15,37 @@ FlagFit Pro uses route redirects to maintain backward compatibility and consolid
 
 ### Training Routes
 
-| Old Route | New Route | Reason | Status | Deprecation Date |
-|-----------|-----------|--------|--------|------------------|
-| `/training/daily` | `/todays-practice` | Route consolidation | ✅ Active | 2026-01-09 |
-| `/training/protocol` | `/todays-practice` | Route consolidation | ✅ Active | 2026-01-09 |
-| `/training/protocol/:date` | `/todays-practice` | Route consolidation | ✅ Active | 2026-01-09 |
-| `/training/schedule` | `/training` | Duplicate route | ✅ Active | 2026-01-09 |
-| `/training/qb/schedule` | `/training/qb` | Route consolidation | ✅ Active | 2026-01-09 |
-| `/training/qb/throwing` | `/training/qb` | Route consolidation | ✅ Active | 2026-01-09 |
-| `/training/qb/assessment` | `/training/qb` | Route consolidation | ✅ Active | 2026-01-09 |
-| `/training/ai-companion` | `/training/advanced` | Feature consolidation | ✅ Active | 2026-01-09 |
-| `/load-monitoring` | `/acwr` | Route consolidation | ✅ Active | 2026-01-09 |
-| `/injury-prevention` | `/acwr` | Route consolidation | ✅ Active | 2026-01-09 |
+| Old Route                  | New Route            | Reason                | Status    | Deprecation Date |
+| -------------------------- | -------------------- | --------------------- | --------- | ---------------- |
+| `/training/daily`          | `/todays-practice`   | Route consolidation   | ✅ Active | 2026-01-09       |
+| `/training/protocol`       | `/todays-practice`   | Route consolidation   | ✅ Active | 2026-01-09       |
+| `/training/protocol/:date` | `/todays-practice`   | Route consolidation   | ✅ Active | 2026-01-09       |
+| `/training/schedule`       | `/training`          | Duplicate route       | ✅ Active | 2026-01-09       |
+| `/training/qb/schedule`    | `/training/qb`       | Route consolidation   | ✅ Active | 2026-01-09       |
+| `/training/qb/throwing`    | `/training/qb`       | Route consolidation   | ✅ Active | 2026-01-09       |
+| `/training/qb/assessment`  | `/training/qb`       | Route consolidation   | ✅ Active | 2026-01-09       |
+| `/training/ai-companion`   | `/training/advanced` | Feature consolidation | ✅ Active | 2026-01-09       |
+| `/load-monitoring`         | `/acwr`              | Route consolidation   | ✅ Active | 2026-01-09       |
+| `/injury-prevention`       | `/acwr`              | Route consolidation   | ✅ Active | 2026-01-09       |
 
 ### Dashboard Routes
 
-| Old Route | New Route | Reason | Status | Deprecation Date |
-|-----------|-----------|--------|--------|------------------|
-| `/athlete-dashboard` | `/player-dashboard` | Terminology update | ✅ Active | 2026-01-09 |
+| Old Route            | New Route           | Reason             | Status    | Deprecation Date |
+| -------------------- | ------------------- | ------------------ | --------- | ---------------- |
+| `/athlete-dashboard` | `/player-dashboard` | Terminology update | ✅ Active | 2026-01-09       |
 
 ### AI Coach Routes
 
-| Old Route | New Route | Reason | Status | Deprecation Date |
-|-----------|-----------|--------|--------|------------------|
-| `/ai-coach` | `/chat` | Rebranding to "Merlin" | ✅ Active | 2026-01-09 |
+| Old Route   | New Route | Reason                 | Status    | Deprecation Date |
+| ----------- | --------- | ---------------------- | --------- | ---------------- |
+| `/ai-coach` | `/chat`   | Rebranding to "Merlin" | ✅ Active | 2026-01-09       |
 
 ### Team Management Routes
 
-| Old Route | New Route | Reason | Status | Deprecation Date |
-|-----------|-----------|--------|--------|------------------|
-| `/coach` | `/team/workspace` | Route consolidation | ✅ Active | 2026-01-09 |
-| `/admin` | `/superadmin` | Route consolidation | ✅ Active | 2026-01-09 |
+| Old Route | New Route         | Reason              | Status    | Deprecation Date |
+| --------- | ----------------- | ------------------- | --------- | ---------------- |
+| `/coach`  | `/team/workspace` | Route consolidation | ✅ Active | 2026-01-09       |
+| `/admin`  | `/superadmin`     | Route consolidation | ✅ Active | 2026-01-09       |
 
 ---
 
@@ -92,16 +92,19 @@ When updating navigation or links:
 ## Deprecation Timeline
 
 ### Phase 1: Active Redirects (Current)
+
 - **Duration:** 3 months from deprecation date
 - **Status:** Redirects active, old routes still accessible
 - **Action:** Update navigation to use canonical routes
 
 ### Phase 2: Warning Period (Future)
+
 - **Duration:** 1 month
 - **Status:** Redirects active with console warnings
 - **Action:** Final migration push
 
 ### Phase 3: Removal (Future)
+
 - **Duration:** Permanent
 - **Status:** Old routes return 404, suggest correct route
 - **Action:** Complete migration
@@ -111,16 +114,19 @@ When updating navigation or links:
 ## Route Consolidation Rationale
 
 ### Training Routes
+
 - **Consolidation:** Multiple training entry points consolidated to `/todays-practice`
 - **Benefit:** Single source of truth for daily training protocol
 - **Impact:** Improved navigation consistency
 
 ### Dashboard Routes
+
 - **Consolidation:** `/athlete-dashboard` → `/player-dashboard`
 - **Benefit:** Consistent terminology across application
 - **Impact:** Better alignment with user roles
 
 ### AI Coach Routes
+
 - **Consolidation:** `/ai-coach` → `/chat`
 - **Benefit:** Simpler, more intuitive route
 - **Impact:** Better user experience

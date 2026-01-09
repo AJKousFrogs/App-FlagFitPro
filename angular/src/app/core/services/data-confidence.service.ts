@@ -1,6 +1,6 @@
 /**
  * Data Confidence Service
- * 
+ *
  * Calculates confidence scores for metrics based on data completeness and recency
  * Used to display confidence indicators throughout the app
  */
@@ -38,7 +38,7 @@ export class DataConfidenceService {
    */
   calculateWellnessConfidence(
     wellnessData: WellnessData[],
-    daysRequired: number = 7
+    daysRequired: number = 7,
   ): ConfidenceScore {
     if (!wellnessData || wellnessData.length === 0) {
       return {
@@ -49,9 +49,7 @@ export class DataConfidenceService {
     }
 
     const now = new Date();
-    const cutoff = new Date(
-      now.getTime() - daysRequired * 24 * 60 * 60 * 1000
-    );
+    const cutoff = new Date(now.getTime() - daysRequired * 24 * 60 * 60 * 1000);
 
     const recentData = wellnessData.filter((d) => {
       const entryDate = new Date(d.date);
@@ -104,7 +102,7 @@ export class DataConfidenceService {
    */
   calculateACWRConfidence(
     trainingDays: number,
-    requiredDays: number = 21
+    requiredDays: number = 21,
   ): ConfidenceScore {
     if (trainingDays === 0) {
       return {
@@ -118,8 +116,7 @@ export class DataConfidenceService {
 
     return {
       score: Math.max(0, completeness),
-      missingInputs:
-        trainingDays < requiredDays ? ["training_data"] : [],
+      missingInputs: trainingDays < requiredDays ? ["training_data"] : [],
       staleData: [],
     };
   }
@@ -127,15 +124,13 @@ export class DataConfidenceService {
   /**
    * Calculate confidence for game day readiness
    */
-  calculateGameDayReadinessConfidence(
-    metrics: {
-      sleep?: number;
-      energy?: number;
-      soreness?: number;
-      hydration?: number;
-      confidence?: number;
-    }
-  ): ConfidenceScore {
+  calculateGameDayReadinessConfidence(metrics: {
+    sleep?: number;
+    energy?: number;
+    soreness?: number;
+    hydration?: number;
+    confidence?: number;
+  }): ConfidenceScore {
     const expectedMetrics = [
       "sleep",
       "energy",
@@ -167,7 +162,7 @@ export class DataConfidenceService {
    */
   calculatePartialWellnessConfidence(
     providedMetrics: string[],
-    totalMetrics: number = 5
+    totalMetrics: number = 5,
   ): ConfidenceScore {
     const completeness = providedMetrics.length / totalMetrics;
 
@@ -199,13 +194,10 @@ export class DataConfidenceService {
   /**
    * Get confidence severity for UI
    */
-  getConfidenceSeverity(
-    score: number
-  ): "success" | "info" | "warn" | "danger" {
+  getConfidenceSeverity(score: number): "success" | "info" | "warn" | "danger" {
     if (score >= 0.9) return "success";
     if (score >= 0.7) return "info";
     if (score >= 0.5) return "warn";
     return "danger";
   }
 }
-

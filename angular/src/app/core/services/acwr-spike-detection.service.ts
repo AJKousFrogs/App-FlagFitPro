@@ -1,6 +1,6 @@
 /**
  * ACWR Spike Detection Service
- * 
+ *
  * Detects ACWR spikes and automatically caps training load for next sessions
  */
 
@@ -28,10 +28,7 @@ export class AcwrSpikeDetectionService {
   /**
    * Check for ACWR spike and create load cap if needed
    */
-  async checkAndCapLoad(
-    playerId: string,
-    acwrValue: number
-  ): Promise<boolean> {
+  async checkAndCapLoad(playerId: string, acwrValue: number): Promise<boolean> {
     if (acwrValue <= 1.5) {
       return false;
     }
@@ -51,7 +48,7 @@ export class AcwrSpikeDetectionService {
       });
 
       this.logger.info(
-        `[AcwrSpike] Created load cap for player ${playerId} due to ACWR ${acwrValue.toFixed(2)}`
+        `[AcwrSpike] Created load cap for player ${playerId} due to ACWR ${acwrValue.toFixed(2)}`,
       );
       return true;
     } catch (error) {
@@ -65,7 +62,7 @@ export class AcwrSpikeDetectionService {
    */
   private async createLoadCap(
     playerId: string,
-    cap: Omit<LoadCap, "id" | "playerId" | "status" | "createdAt">
+    cap: Omit<LoadCap, "id" | "playerId" | "status" | "createdAt">,
   ): Promise<void> {
     try {
       const { error } = await this.supabaseService.client
@@ -104,10 +101,7 @@ export class AcwrSpikeDetectionService {
         .maybeSingle();
 
       if (error && error.code !== "PGRST116") {
-        this.logger.error(
-          "[AcwrSpike] Error fetching load cap:",
-          error
-        );
+        this.logger.error("[AcwrSpike] Error fetching load cap:", error);
         return null;
       }
 
@@ -153,13 +147,10 @@ export class AcwrSpikeDetectionService {
           .eq("id", cap.id);
 
         if (error) {
-          this.logger.error(
-            "[AcwrSpike] Error deactivating load cap:",
-            error
-          );
+          this.logger.error("[AcwrSpike] Error deactivating load cap:", error);
         } else {
           this.logger.info(
-            `[AcwrSpike] Load cap completed for player ${playerId}`
+            `[AcwrSpike] Load cap completed for player ${playerId}`,
           );
         }
       } else {
@@ -173,10 +164,7 @@ export class AcwrSpikeDetectionService {
           .eq("id", cap.id);
 
         if (error) {
-          this.logger.error(
-            "[AcwrSpike] Error updating load cap:",
-            error
-          );
+          this.logger.error("[AcwrSpike] Error updating load cap:", error);
         }
       }
     } catch (error) {
@@ -190,7 +178,7 @@ export class AcwrSpikeDetectionService {
   async overrideLoadCap(
     playerId: string,
     reason: string,
-    coachId: string
+    coachId: string,
   ): Promise<void> {
     const cap = await this.getActiveLoadCap(playerId);
     if (!cap || !cap.id) {
@@ -210,13 +198,10 @@ export class AcwrSpikeDetectionService {
         .eq("id", cap.id);
 
       if (error) {
-        this.logger.error(
-          "[AcwrSpike] Error overriding load cap:",
-          error
-        );
+        this.logger.error("[AcwrSpike] Error overriding load cap:", error);
       } else {
         this.logger.info(
-          `[AcwrSpike] Load cap overridden for player ${playerId} by coach ${coachId}`
+          `[AcwrSpike] Load cap overridden for player ${playerId} by coach ${coachId}`,
         );
       }
     } catch (error) {
@@ -224,4 +209,3 @@ export class AcwrSpikeDetectionService {
     }
   }
 }
-

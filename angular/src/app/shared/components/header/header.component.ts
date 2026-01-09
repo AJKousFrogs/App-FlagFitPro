@@ -1,16 +1,16 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    HostListener,
-    inject,
-    model,
-    OnDestroy,
-    OnInit,
-    output,
-    signal,
-    ViewChild,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  HostListener,
+  inject,
+  model,
+  OnDestroy,
+  OnInit,
+  output,
+  signal,
+  ViewChild,
 } from "@angular/core";
 
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -35,7 +35,10 @@ import { NotificationStateService } from "../../../core/services/notification-st
 import { SearchService } from "../../../core/services/search.service";
 import { ThemeService } from "../../../core/services/theme.service";
 import { TrainingStatsCalculationService } from "../../../core/services/training-stats-calculation.service";
-import { WeatherData, WeatherService } from "../../../core/services/weather.service";
+import {
+  WeatherData,
+  WeatherService,
+} from "../../../core/services/weather.service";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { NotificationsPanelComponent } from "../notifications-panel/notifications-panel.component";
 import { SearchPanelComponent } from "../search-panel/search-panel.component";
@@ -146,12 +149,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // Keyboard shortcuts dialog
   showShortcutsDialog = signal(false);
   shortcuts = [
-    { key: "⌘K / Ctrl+K", description: "Open Global Search", icon: "pi-search" },
+    {
+      key: "⌘K / Ctrl+K",
+      description: "Open Global Search",
+      icon: "pi-search",
+    },
     { key: "⌘D / Ctrl+D", description: "Go to Dashboard", icon: "pi-home" },
     { key: "⌘T / Ctrl+T", description: "Go to Training", icon: "pi-bolt" },
-    { key: "⌘N / Ctrl+N", description: "Toggle Notifications", icon: "pi-bell" },
+    {
+      key: "⌘N / Ctrl+N",
+      description: "Toggle Notifications",
+      icon: "pi-bell",
+    },
     { key: "Escape", description: "Close Dialogs/Menus", icon: "pi-times" },
-    { key: "?", description: "Show Keyboard Shortcuts", icon: "pi-question-circle" },
+    {
+      key: "?",
+      description: "Show Keyboard Shortcuts",
+      icon: "pi-question-circle",
+    },
   ];
 
   // User menu items for p-menu
@@ -196,11 +211,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (!data) return "pi-cloud";
 
     const condition = data.condition?.toLowerCase() || "";
-    if (condition.includes("sun") || condition.includes("clear")) return "pi-sun";
+    if (condition.includes("sun") || condition.includes("clear"))
+      return "pi-sun";
     if (condition.includes("cloud")) return "pi-cloud";
     if (condition.includes("rain")) return "pi-cloud";
     if (condition.includes("snow")) return "pi-snowflake";
-    if (condition.includes("storm") || condition.includes("thunder")) return "pi-bolt";
+    if (condition.includes("storm") || condition.includes("thunder"))
+      return "pi-bolt";
     return "pi-cloud";
   });
 
@@ -491,7 +508,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           // Geolocation denied or failed, use default location
           this.fetchWeatherByLocation();
         },
-        { timeout: 5000, enableHighAccuracy: false }
+        { timeout: 5000, enableHighAccuracy: false },
       );
     } else {
       // Geolocation not supported

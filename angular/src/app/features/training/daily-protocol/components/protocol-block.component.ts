@@ -151,7 +151,10 @@ import { ExerciseCardComponent } from "./exercise-card.component";
             @if (simpleView()) {
               <!-- Simple list view matching wireframe -->
               @for (exercise of block().exercises; track exercise.id) {
-                <div class="exercise-list-item" [attr.data-testid]="'exercise-item-' + exercise.id">
+                <div
+                  class="exercise-list-item"
+                  [attr.data-testid]="'exercise-item-' + exercise.id"
+                >
                   <label class="exercise-checkbox">
                     <input
                       type="checkbox"
@@ -224,7 +227,10 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           @if (block().status === "complete" && block().completedAt) {
             <div class="completion-info">
               <i class="pi pi-check-circle"></i>
-              <span>Completed at {{ formatDate(block().completedAt!, 'h:mm a') }}</span>
+              <span
+                >Completed at
+                {{ formatDate(block().completedAt!, "h:mm a") }}</span
+              >
             </div>
           }
         </div>

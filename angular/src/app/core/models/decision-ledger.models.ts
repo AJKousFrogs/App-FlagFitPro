@@ -1,57 +1,53 @@
 /**
  * Decision Ledger Models
- * 
+ *
  * TypeScript interfaces and types for the Decision Ledger system
  */
 
 export type DecisionType =
-  | 'load_adjustment'
-  | 'rtp_clearance'
-  | 'rtp_progression'
-  | 'nutrition_change'
-  | 'hydration_adjustment'
-  | 'mental_protocol'
-  | 'tactical_modification'
-  | 'recovery_intervention'
-  | 'medical_constraint'
-  | 'supplement_change'
-  | 'training_program_assignment'
-  | 'session_modification'
-  | 'readiness_override'
-  | 'acwr_override'
-  | 'other';
+  | "load_adjustment"
+  | "rtp_clearance"
+  | "rtp_progression"
+  | "nutrition_change"
+  | "hydration_adjustment"
+  | "mental_protocol"
+  | "tactical_modification"
+  | "recovery_intervention"
+  | "medical_constraint"
+  | "supplement_change"
+  | "training_program_assignment"
+  | "session_modification"
+  | "readiness_override"
+  | "acwr_override"
+  | "other";
 
 export type DecisionCategory =
-  | 'medical'
-  | 'load'
-  | 'nutrition'
-  | 'psychological'
-  | 'tactical'
-  | 'recovery';
+  | "medical"
+  | "load"
+  | "nutrition"
+  | "psychological"
+  | "tactical"
+  | "recovery";
 
 export type DecisionStatus =
-  | 'active'
-  | 'reviewed'
-  | 'superseded'
-  | 'expired'
-  | 'cancelled';
+  | "active"
+  | "reviewed"
+  | "superseded"
+  | "expired"
+  | "cancelled";
 
-export type ReviewPriority = 'critical' | 'high' | 'normal' | 'low';
+export type ReviewPriority = "critical" | "high" | "normal" | "low";
 
-export type ReviewOutcome =
-  | 'maintained'
-  | 'modified'
-  | 'reversed'
-  | 'extended';
+export type ReviewOutcome = "maintained" | "modified" | "reversed" | "extended";
 
 export type ReviewTrigger =
   | `in_${number}h`
   | `in_${number}d`
   | `in_${number}w`
   | `after_${number}_sessions`
-  | 'after_next_session'
-  | 'after_next_game'
-  | 'if_symptoms_worsen'
+  | "after_next_session"
+  | "after_next_game"
+  | "if_symptoms_worsen"
   | `if_acwr_exceeds:${number}`
   | `if_readiness_drops:${number}`
   | `if_compliance_fails:${number}`
@@ -125,13 +121,17 @@ export interface DecisionLedgerEntry {
 export interface DecisionReviewReminder {
   id: string;
   decisionId: string;
-  reminderType: 'review_due' | 'review_overdue' | 'decision_expiring' | 'outcome_check';
+  reminderType:
+    | "review_due"
+    | "review_overdue"
+    | "decision_expiring"
+    | "outcome_check";
   scheduledFor: Date;
   notifiedAt?: Date;
   notificationSent: boolean;
   notifyUserIds?: string[];
   notifyRoles?: string[];
-  status: 'pending' | 'sent' | 'acknowledged' | 'dismissed' | 'expired';
+  status: "pending" | "sent" | "acknowledged" | "dismissed" | "expired";
   createdAt: Date;
 }
 
@@ -184,8 +184,7 @@ export interface DecisionStats {
 export interface DecisionConflict {
   decisionId: string;
   conflictingDecisionId: string;
-  conflictType: 'contradictory' | 'overlapping' | 'supersession_chain';
+  conflictType: "contradictory" | "overlapping" | "supersession_chain";
   description: string;
   resolutionRequired: boolean;
 }
-

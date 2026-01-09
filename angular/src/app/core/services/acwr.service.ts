@@ -692,20 +692,20 @@ export class AcwrService {
 
       // Check for ACWR spike and create load cap if needed
       if (currentData.ratio > 1.5 && session.playerId) {
-        this.acwrSpikeDetection.checkAndCapLoad(session.playerId, currentData.ratio).catch(
-          (error) => {
+        this.acwrSpikeDetection
+          .checkAndCapLoad(session.playerId, currentData.ratio)
+          .catch((error) => {
             this.logger.error("[ACWR] Error checking spike:", error);
-          }
-        );
+          });
       }
 
       // Decrement load cap if session was logged
       if (session.playerId && session.completed) {
-        this.acwrSpikeDetection.decrementLoadCap(session.playerId).catch(
-          (error) => {
+        this.acwrSpikeDetection
+          .decrementLoadCap(session.playerId)
+          .catch((error) => {
             this.logger.error("[ACWR] Error decrementing load cap:", error);
-          }
-        );
+          });
       }
       const filteredHistory = history.filter((h) => h.date >= historyCutoff);
 
@@ -1267,7 +1267,7 @@ export class AcwrService {
         this.logger.error("[ACWR] Error saving to database:", error);
       } else {
         this.logger.debug("[ACWR] Saved to database successfully");
-        
+
         // Check for ACWR spike and create load cap if needed
         if (acwrData.ratio > 1.5) {
           await this.acwrSpikeDetection.checkAndCapLoad(userId, acwrData.ratio);

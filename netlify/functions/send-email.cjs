@@ -258,7 +258,7 @@ function getAcwrAlertEmailTemplate(
   const alertColor = isCritical ? "#dc3545" : "#ffc107";
   const alertIcon = isCritical ? "🚨" : "⚠️";
   const alertTitle = isCritical ? "CRITICAL ALERT" : "Warning Alert";
-  
+
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -426,7 +426,12 @@ exports.handler = async (event, context) => {
           break;
 
         case "acwr_alert":
-          if (!coachName || !playerName || acwrValue === undefined || !alertMessage) {
+          if (
+            !coachName ||
+            !playerName ||
+            acwrValue === undefined ||
+            !alertMessage
+          ) {
             return createErrorResponse(
               "coachName, playerName, acwrValue, and alertMessage are required for ACWR alert emails",
               400,
@@ -437,23 +442,23 @@ exports.handler = async (event, context) => {
             const alertDashboardUrl =
               dashboardUrl || `${getAppUrl()}/coach/dashboard`;
             const isCritical = acwrValue > 1.5;
-          mailOptions = {
-            from: {
-              name: "FlagFit Pro",
-              address: fromEmail,
-            },
-            to,
-            subject: `${isCritical ? "🚨 CRITICAL" : "⚠️"} ACWR Alert: ${playerName} (${acwrValue.toFixed(2)})`,
-            html: getAcwrAlertEmailTemplate(
-              coachName,
-              playerName,
-              acwrValue,
-              alertMessage,
-              recommendation,
-              alertDashboardUrl,
-            ),
-            text: `Hi ${coachName},\n\n${playerName} has triggered an ACWR alert.\n\nCurrent ACWR: ${acwrValue.toFixed(2)}\n${isCritical ? "⚠️ Danger Zone (>1.5)" : "⚠️ Elevated Risk (>1.3)"}\n\nAlert: ${alertMessage}\n\nRecommendation: ${recommendation || "Please review the player's training load and consider adjustments to reduce injury risk."}\n\nView Dashboard: ${alertDashboardUrl}\n\nBest regards,\nThe FlagFit Pro Team`,
-          };
+            mailOptions = {
+              from: {
+                name: "FlagFit Pro",
+                address: fromEmail,
+              },
+              to,
+              subject: `${isCritical ? "🚨 CRITICAL" : "⚠️"} ACWR Alert: ${playerName} (${acwrValue.toFixed(2)})`,
+              html: getAcwrAlertEmailTemplate(
+                coachName,
+                playerName,
+                acwrValue,
+                alertMessage,
+                recommendation,
+                alertDashboardUrl,
+              ),
+              text: `Hi ${coachName},\n\n${playerName} has triggered an ACWR alert.\n\nCurrent ACWR: ${acwrValue.toFixed(2)}\n${isCritical ? "⚠️ Danger Zone (>1.5)" : "⚠️ Elevated Risk (>1.3)"}\n\nAlert: ${alertMessage}\n\nRecommendation: ${recommendation || "Please review the player's training load and consider adjustments to reduce injury risk."}\n\nView Dashboard: ${alertDashboardUrl}\n\nBest regards,\nThe FlagFit Pro Team`,
+            };
           }
           break;
 

@@ -67,7 +67,7 @@ export class SearchPanelComponent implements OnDestroy {
 
   // Use a signal for visibility to ensure proper change detection
   private readonly _visible = signal(false);
-  
+
   // Getter/setter for two-way binding with p-dialog [(visible)]
   get visible(): boolean {
     return this._visible();

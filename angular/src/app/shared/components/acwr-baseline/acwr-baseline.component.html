@@ -5,14 +5,12 @@
       Building baseline: {{ daysLogged() }}/{{ targetDays() }} days
     </span>
   </div>
-  
-  <p-progressBar 
-    [value]="progressPercent()" 
+
+  <p-progressBar
+    [value]="progressPercent()"
     [showValue]="false"
     styleClass="acwr-progress-bar"
   ></p-progressBar>
-  
-  <p class="acwr-hint">
-    Keep logging to unlock injury-risk insights
-  </p>
+
+  <p class="acwr-hint">Keep logging to unlock injury-risk insights</p>
 </div>

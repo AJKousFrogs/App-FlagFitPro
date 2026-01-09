@@ -5,7 +5,7 @@
 
 import { statisticsCalculationService } from "./statisticsCalculationService.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 class StatsService {
   /**

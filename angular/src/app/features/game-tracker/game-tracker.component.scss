@@ -643,7 +643,7 @@
   .form-row.four-col {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .quick-stats-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -662,7 +662,7 @@
 
     app-button {
       width: 100%;
-      
+
       button {
         width: 100%;
         justify-content: center;
@@ -711,7 +711,7 @@
 
     app-button {
       width: 100%;
-      
+
       button {
         width: 100%;
         justify-content: center;
@@ -736,7 +736,7 @@
     .play-type-option {
       padding: var(--space-2);
       min-height: 44px; // Touch-friendly
-      
+
       // PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-003)
 
       .play-type-label-text {
@@ -797,7 +797,7 @@
 
   .stat-box {
     padding: var(--space-3);
-    
+
     .stat-label {
       font-size: var(--font-caption-size);
     }
@@ -850,7 +850,7 @@
       left: 0;
       z-index: 1;
       background: var(--surface-card);
-      box-shadow: 2px 0 4px rgba(0,0,0,0.05);
+      box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
     }
 
     // Compact table cells
@@ -896,7 +896,7 @@
 
   .unit-toggle-switch {
     justify-content: flex-start;
-    
+
     .unit-label {
       font-size: var(--font-caption-size);
     }
@@ -977,7 +977,7 @@
   .game-tracker-page {
     padding: var(--space-2);
   }
-  
+
   .empty-state-container {
     padding: var(--space-6);
     min-height: 200px;
@@ -1022,7 +1022,10 @@
 
   .visibility-info-banner {
     padding: var(--space-2);
-    font-size: var(--font-compact-md, 0.6875rem); /* 11px - Design System compliant */
+    font-size: var(
+      --font-compact-md,
+      0.6875rem
+    ); /* 11px - Design System compliant */
   }
 }
 

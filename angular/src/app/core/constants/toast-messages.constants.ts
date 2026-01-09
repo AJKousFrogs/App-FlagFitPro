@@ -354,7 +354,8 @@ export const TOAST_ERROR = {
   NO_PENDING_DELETION: "No pending deletion to cancel",
   DELETION_CANNOT_CANCEL: "This deletion request cannot be cancelled",
   PREFERENCES_UPDATED: "Preferences updated",
-  ACCOUNT_DELETION_REQUESTED: "Account deletion requested. Your data will be permanently deleted in 30 days. You can cancel this request by logging back in within 30 days.",
+  ACCOUNT_DELETION_REQUESTED:
+    "Account deletion requested. Your data will be permanently deleted in 30 days. You can cancel this request by logging back in within 30 days.",
   DELETION_REQUEST_FAILED: "Failed to request deletion",
   EXPORT_FAILED: "Failed to export data",
   REGISTRATION_FAILED: "Registration failed",
@@ -373,7 +374,8 @@ export const TOAST_ERROR = {
   LOGIN_TO_SUBMIT: "Please log in to submit suggestions",
   LOGIN_TO_START: "Please log in to start a session",
   LOGIN_TO_SUBMIT_READINESS: "Please log in to submit readiness check",
-  RETROACTIVE_LOGGING_WARNING: "This session requires coach approval due to retroactive logging.",
+  RETROACTIVE_LOGGING_WARNING:
+    "This session requires coach approval due to retroactive logging.",
   START_SESSION_FIRST: "Start the session first before marking complete",
 } as const;
 
@@ -393,12 +395,14 @@ export const TOAST_WARN = {
   ENTER_MESSAGE: "Please enter a message",
   ENTER_SLEEP_HOURS: "Please enter sleep hours",
   ENTER_PERFORMANCE_METRIC: "Please enter a performance metric",
-  RETROACTIVE_LOGGING_WARNING: "You are logging retroactively. Ensure accuracy.",
+  RETROACTIVE_LOGGING_WARNING:
+    "You are logging retroactively. Ensure accuracy.",
   START_SESSION_FIRST: "Start the session first",
   POST_SAVED: "Post saved locally. Will sync when online.",
 
   // State
-  OFFLINE: "You're offline. Actions will be synced when connection is restored.",
+  OFFLINE:
+    "You're offline. Actions will be synced when connection is restored.",
   UNSAVED_CHANGES: "You have unsaved changes.",
 
   // Team
@@ -435,7 +439,8 @@ export const TOAST_INFO = {
   PDF_REPORT_GENERATING: "Generating PDF report...",
 
   // Email
-  EMAIL_VERIFICATION_SENT: "Email update requires verification. Check your inbox.",
+  EMAIL_VERIFICATION_SENT:
+    "Email update requires verification. Check your inbox.",
   ENTER_NEW_PASSWORD: "Please enter your new password",
 
   // Actions

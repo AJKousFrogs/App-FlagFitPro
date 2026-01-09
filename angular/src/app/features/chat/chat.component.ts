@@ -1069,7 +1069,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
             : undefined,
       });
 
-      this.toastService.success(TOAST.SUCCESS.CHANNEL_CREATED.replace("{name}", channel.name));
+      this.toastService.success(
+        TOAST.SUCCESS.CHANNEL_CREATED.replace("{name}", channel.name),
+      );
       this.showCreateChannelDialog = false;
       this.resetChannelForm();
 
@@ -1311,7 +1313,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     const diffHours = Math.floor(diffMs / 3600000);
     if (diffHours < 24) return `${diffHours}h ago`;
 
-    return formatDate(date, 'P');
+    return formatDate(date, "P");
   }
 
   /**
@@ -1392,7 +1394,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       // Select the DM channel
       await this.selectChannel(dmChannel);
 
-      this.toastService.success(TOAST.SUCCESS.CONVERSATION_STARTED.replace("{name}", member.full_name));
+      this.toastService.success(
+        TOAST.SUCCESS.CONVERSATION_STARTED.replace("{name}", member.full_name),
+      );
     } catch (_error) {
       this.toastService.error(TOAST.ERROR.CONVERSATION_START_FAILED);
     }

@@ -1,17 +1,13 @@
 /**
  * Roster Skeleton Component
- * 
+ *
  * Loading placeholder for roster/table views
  * Matches table structure with rows and columns
- * 
+ *
  * Used in: Roster page, Player lists, Team management
  */
 
-import {
-  Component,
-  input,
-  ChangeDetectionStrategy,
-} from "@angular/core";
+import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { SkeletonComponent } from "../skeleton/skeleton.component";
 
@@ -26,15 +22,35 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
       <div class="roster-header-skeleton">
         <app-skeleton variant="text" width="150px" height="28px"></app-skeleton>
         <div class="header-actions-skeleton">
-          <app-skeleton variant="rectangle" width="120px" height="40px" borderRadius="8px"></app-skeleton>
-          <app-skeleton variant="rectangle" width="100px" height="40px" borderRadius="8px"></app-skeleton>
+          <app-skeleton
+            variant="rectangle"
+            width="120px"
+            height="40px"
+            borderRadius="8px"
+          ></app-skeleton>
+          <app-skeleton
+            variant="rectangle"
+            width="100px"
+            height="40px"
+            borderRadius="8px"
+          ></app-skeleton>
         </div>
       </div>
 
       <!-- Search/Filter Bar Skeleton -->
       <div class="filter-bar-skeleton">
-        <app-skeleton variant="rectangle" width="300px" height="40px" borderRadius="8px"></app-skeleton>
-        <app-skeleton variant="rectangle" width="150px" height="40px" borderRadius="8px"></app-skeleton>
+        <app-skeleton
+          variant="rectangle"
+          width="300px"
+          height="40px"
+          borderRadius="8px"
+        ></app-skeleton>
+        <app-skeleton
+          variant="rectangle"
+          width="150px"
+          height="40px"
+          borderRadius="8px"
+        ></app-skeleton>
       </div>
 
       <!-- Table Skeleton -->
@@ -43,7 +59,11 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
         <div class="table-header-skeleton">
           @for (col of columns(); track col) {
             <div class="table-header-cell-skeleton">
-              <app-skeleton variant="text" [width]="col.width" height="16px"></app-skeleton>
+              <app-skeleton
+                variant="text"
+                [width]="col.width"
+                height="16px"
+              ></app-skeleton>
             </div>
           }
         </div>
@@ -53,12 +73,25 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
           <div class="table-row-skeleton">
             @for (col of columns(); track col) {
               <div class="table-cell-skeleton">
-                @if (col.type === 'avatar') {
-                  <app-skeleton variant="circle" width="40px" height="40px"></app-skeleton>
-                } @else if (col.type === 'badge') {
-                  <app-skeleton variant="rectangle" width="80px" height="24px" borderRadius="12px"></app-skeleton>
+                @if (col.type === "avatar") {
+                  <app-skeleton
+                    variant="circle"
+                    width="40px"
+                    height="40px"
+                  ></app-skeleton>
+                } @else if (col.type === "badge") {
+                  <app-skeleton
+                    variant="rectangle"
+                    width="80px"
+                    height="24px"
+                    borderRadius="12px"
+                  ></app-skeleton>
                 } @else {
-                  <app-skeleton variant="text" [width]="col.cellWidth || col.width" height="16px"></app-skeleton>
+                  <app-skeleton
+                    variant="text"
+                    [width]="col.cellWidth || col.width"
+                    height="16px"
+                  ></app-skeleton>
                 }
               </div>
             }
@@ -70,10 +103,30 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
       <div class="pagination-skeleton">
         <app-skeleton variant="text" width="120px" height="16px"></app-skeleton>
         <div class="pagination-buttons-skeleton">
-          <app-skeleton variant="rectangle" width="32px" height="32px" borderRadius="4px"></app-skeleton>
-          <app-skeleton variant="rectangle" width="32px" height="32px" borderRadius="4px"></app-skeleton>
-          <app-skeleton variant="rectangle" width="32px" height="32px" borderRadius="4px"></app-skeleton>
-          <app-skeleton variant="rectangle" width="32px" height="32px" borderRadius="4px"></app-skeleton>
+          <app-skeleton
+            variant="rectangle"
+            width="32px"
+            height="32px"
+            borderRadius="4px"
+          ></app-skeleton>
+          <app-skeleton
+            variant="rectangle"
+            width="32px"
+            height="32px"
+            borderRadius="4px"
+          ></app-skeleton>
+          <app-skeleton
+            variant="rectangle"
+            width="32px"
+            height="32px"
+            borderRadius="4px"
+          ></app-skeleton>
+          <app-skeleton
+            variant="rectangle"
+            width="32px"
+            height="32px"
+            borderRadius="4px"
+          ></app-skeleton>
         </div>
       </div>
     </div>
@@ -83,9 +136,15 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
 export class RosterSkeletonComponent {
   /** Number of rows to display */
   rows = input<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  
+
   /** Column definitions for table structure */
-  columns = input<Array<{width: string; cellWidth?: string; type?: 'text' | 'avatar' | 'badge'}>>([
+  columns = input<
+    Array<{
+      width: string;
+      cellWidth?: string;
+      type?: "text" | "avatar" | "badge";
+    }>
+  >([
     { width: "60px", type: "avatar" },
     { width: "180px", cellWidth: "150px", type: "text" },
     { width: "120px", cellWidth: "100px", type: "text" },

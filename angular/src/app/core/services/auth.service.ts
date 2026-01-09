@@ -172,9 +172,9 @@ export class AuthService {
   logout(): Observable<unknown> {
     const userId = this.currentUser()?.id;
     const email = this.currentUser()?.email;
-    
+
     this.logger.info("[Auth] User logout initiated", { userId, email });
-    
+
     return from(this.supabaseService.signOut()).pipe(
       tap(() => {
         this.clearAuth();
@@ -183,7 +183,10 @@ export class AuthService {
       }),
       catchError((error) => {
         // Even if logout fails on server, clear local auth
-        this.logger.error("[Auth] Logout error on server, clearing local auth", { userId, error });
+        this.logger.error(
+          "[Auth] Logout error on server, clearing local auth",
+          { userId, error },
+        );
         this.clearAuth();
         this.router.navigate(["/login"]);
         return throwError(() => error);

@@ -1,9 +1,9 @@
 /**
  * Action Required Badge Component
- * 
+ *
  * Phase 3 - Unified Action Required Indicator
  * Standardized component for displaying required actions across all contexts
- * 
+ *
  * Usage:
  * <app-action-required-badge [actionType]="'complete-profile'" [urgency]="'high'"></app-action-required-badge>
  */
@@ -236,9 +236,18 @@ export class ActionRequiredBadgeComponent {
     return labels[u] || "Action Required";
   }
 
-  getSeverity(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
+  getSeverity():
+    | "secondary"
+    | "success"
+    | "info"
+    | "warn"
+    | "danger"
+    | "contrast" {
     const u = this.urgency();
-    const severities: Record<ActionUrgency, "secondary" | "success" | "info" | "warn" | "danger" | "contrast"> = {
+    const severities: Record<
+      ActionUrgency,
+      "secondary" | "success" | "info" | "warn" | "danger" | "contrast"
+    > = {
       low: "info",
       medium: "warn",
       high: "warn",
@@ -259,4 +268,3 @@ export class ActionRequiredBadgeComponent {
     return message;
   }
 }
-

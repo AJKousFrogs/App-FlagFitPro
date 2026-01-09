@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    OnDestroy,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -24,10 +24,10 @@ import { firstValueFrom, Subscription, timer } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import {
-    AthleteRecoveryProfile,
-    RecoveryService,
-    RecoveryProtocol as ServiceRecoveryProtocol,
-    RecoverySession as ServiceRecoverySession,
+  AthleteRecoveryProfile,
+  RecoveryService,
+  RecoveryProtocol as ServiceRecoveryProtocol,
+  RecoverySession as ServiceRecoverySession,
 } from "../../../core/services/recovery.service";
 import { ButtonComponent } from "../button/button.component";
 import { CountdownTimerComponent } from "../countdown-timer/countdown-timer.component";
@@ -242,7 +242,10 @@ interface ChartOptions {
                     <h5>Expected Benefits:</h5>
                     <ul>
                       @for (
-                        benefit of protocol.benefits.slice(0, UI_LIMITS.BENEFITS_PREVIEW);
+                        benefit of protocol.benefits.slice(
+                          0,
+                          UI_LIMITS.BENEFITS_PREVIEW
+                        );
                         track benefit
                       ) {
                         <li>{{ benefit }}</li>
@@ -261,7 +264,10 @@ interface ChartOptions {
                   <div class="equipment-info">
                     <i class="pi pi-box"></i>
                     <span
-                      >{{ protocol.equipment.slice(0, UI_LIMITS.EQUIPMENT_PREVIEW).join(", ")
+                      >{{
+                        protocol.equipment
+                          .slice(0, UI_LIMITS.EQUIPMENT_PREVIEW)
+                          .join(", ")
                       }}{{ protocol.equipment.length > 2 ? "..." : "" }}</span
                     >
                   </div>

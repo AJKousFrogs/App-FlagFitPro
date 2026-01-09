@@ -8,7 +8,10 @@
   border-radius: var(--radius-xl);
   padding: var(--space-5);
   border: 2px solid var(--color-border-secondary);
-  transition: background-color var(--motion-slow) var(--ease-standard), border-color var(--motion-slow) var(--ease-standard), box-shadow var(--motion-slow) var(--ease-standard);
+  transition:
+    background-color var(--motion-slow) var(--ease-standard),
+    border-color var(--motion-slow) var(--ease-standard),
+    box-shadow var(--motion-slow) var(--ease-standard);
 }
 
 .countdown-widget.urgent {

@@ -9,7 +9,7 @@ import { API_ENDPOINTS } from "../../api-config.js";
 import { storageService } from "./storage-service-unified.js";
 import { statisticsCalculationService } from "./statisticsCalculationService.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 class GameStatsService {
   constructor() {

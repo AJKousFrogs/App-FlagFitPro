@@ -1,9 +1,9 @@
 /**
  * Incomplete Data Badge Component
- * 
+ *
  * Phase 3 - Unified Incomplete Data Indicator
  * Standardized component for displaying incomplete/missing data across all contexts
- * 
+ *
  * Usage:
  * <app-incomplete-data-badge [severity]="'warning'" [daysMissing]="3" [dataType]="'wellness'"></app-incomplete-data-badge>
  */
@@ -21,8 +21,17 @@ import { TooltipModule } from "primeng/tooltip";
 import { ButtonModule } from "primeng/button";
 
 export type IncompleteDataSeverity = "warning" | "critical";
-export type IncompleteDataType = "wellness" | "training" | "rpe" | "sleep" | "general";
-export type IncompleteDataPlacement = "top-right" | "top-left" | "inline" | "card";
+export type IncompleteDataType =
+  | "wellness"
+  | "training"
+  | "rpe"
+  | "sleep"
+  | "general";
+export type IncompleteDataPlacement =
+  | "top-right"
+  | "top-left"
+  | "inline"
+  | "card";
 
 @Component({
   selector: "app-incomplete-data-badge",
@@ -46,7 +55,9 @@ export type IncompleteDataPlacement = "top-right" | "top-left" | "inline" | "car
         ></p-tag>
       }
       @if (showDaysCount() && daysMissing() > 0) {
-        <span class="days-count">{{ daysMissing() }} day{{ daysMissing()! > 1 ? 's' : '' }}</span>
+        <span class="days-count"
+          >{{ daysMissing() }} day{{ daysMissing()! > 1 ? "s" : "" }}</span
+        >
       }
     </div>
   `,
@@ -188,7 +199,13 @@ export class IncompleteDataBadgeComponent {
     return s === "critical" ? "Critical" : "Warning";
   }
 
-  getSeverityTag(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
+  getSeverityTag():
+    | "secondary"
+    | "success"
+    | "info"
+    | "warn"
+    | "danger"
+    | "contrast" {
     const s = this.severity();
     return s === "critical" ? "danger" : "warn";
   }
@@ -211,4 +228,3 @@ export class IncompleteDataBadgeComponent {
     return message;
   }
 }
-

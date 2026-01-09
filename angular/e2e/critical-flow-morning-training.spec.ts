@@ -71,13 +71,17 @@ async function login(page: Page): Promise<void> {
   // Can be overridden via TEST_USER_EMAIL and TEST_USER_PASSWORD environment variables
 
   // Fill email
-  const emailInput = page.locator('input[type="email"], [data-testid="email-input"]');
+  const emailInput = page.locator(
+    'input[type="email"], [data-testid="email-input"]',
+  );
   await emailInput.click();
   await emailInput.fill(TEST_USER.email);
   await emailInput.press("Tab");
 
   // Fill password
-  const passwordInput = page.locator('input[type="password"], [data-testid="password-input"]');
+  const passwordInput = page.locator(
+    'input[type="password"], [data-testid="password-input"]',
+  );
   await passwordInput.click();
   await passwordInput.fill(TEST_USER.password);
   await passwordInput.press("Tab");
@@ -110,14 +114,19 @@ async function completeOnboarding(page: Page): Promise<void> {
   ).toBeVisible({ timeout: 10000 });
 
   // Fill required fields for Step 1
-  const nameInput = page.locator('input[placeholder*="name" i], input[formcontrolname="name"]').first();
+  const nameInput = page
+    .locator('input[placeholder*="name" i], input[formcontrolname="name"]')
+    .first();
   if (await nameInput.isVisible({ timeout: 2000 }).catch(() => false)) {
     await nameInput.fill("Test User");
     await nameInput.press("Tab");
   }
 
   // Select gender if present
-  const genderSelect = page.locator('p-select, select').filter({ hasText: /gender/i }).first();
+  const genderSelect = page
+    .locator("p-select, select")
+    .filter({ hasText: /gender/i })
+    .first();
   if (await genderSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
     await genderSelect.click();
     await page.locator('li[role="option"]').first().click();
@@ -141,7 +150,10 @@ async function completeOnboarding(page: Page): Promise<void> {
   }
 
   // Select position (e.g., QB)
-  const positionSelect = page.locator('p-select, select').filter({ hasText: /position/i }).first();
+  const positionSelect = page
+    .locator("p-select, select")
+    .filter({ hasText: /position/i })
+    .first();
   if (await positionSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
     await positionSelect.click();
     await page.waitForTimeout(300);
@@ -157,13 +169,21 @@ async function completeOnboarding(page: Page): Promise<void> {
 
   // Step 3: Physical Measurements
   // Fill height and weight (use metric defaults)
-  const heightInput = page.locator('input[placeholder*="height" i], input[formcontrolname*="height" i]').first();
+  const heightInput = page
+    .locator(
+      'input[placeholder*="height" i], input[formcontrolname*="height" i]',
+    )
+    .first();
   if (await heightInput.isVisible({ timeout: 2000 }).catch(() => false)) {
     await heightInput.fill("180");
     await heightInput.press("Tab");
   }
 
-  const weightInput = page.locator('input[placeholder*="weight" i], input[formcontrolname*="weight" i]').first();
+  const weightInput = page
+    .locator(
+      'input[placeholder*="weight" i], input[formcontrolname*="weight" i]',
+    )
+    .first();
   if (await weightInput.isVisible({ timeout: 2000 }).catch(() => false)) {
     await weightInput.fill("75");
     await weightInput.press("Tab");
@@ -183,7 +203,9 @@ async function completeOnboarding(page: Page): Promise<void> {
 
   // Step 5: Equipment
   // Select at least one equipment option
-  const equipmentCheckbox = page.locator('p-checkbox, input[type="checkbox"]').first();
+  const equipmentCheckbox = page
+    .locator('p-checkbox, input[type="checkbox"]')
+    .first();
   if (await equipmentCheckbox.isVisible({ timeout: 2000 }).catch(() => false)) {
     await equipmentCheckbox.click();
     await page.waitForTimeout(500);
@@ -197,7 +219,9 @@ async function completeOnboarding(page: Page): Promise<void> {
 
   // Step 6: Training Goals
   // Select at least one goal
-  const goalCheckbox = page.locator('p-checkbox, input[type="checkbox"]').first();
+  const goalCheckbox = page
+    .locator('p-checkbox, input[type="checkbox"]')
+    .first();
   if (await goalCheckbox.isVisible({ timeout: 2000 }).catch(() => false)) {
     await goalCheckbox.click();
     await page.waitForTimeout(500);
@@ -232,7 +256,9 @@ async function completeOnboarding(page: Page): Promise<void> {
     .locator("button, p-select")
     .filter({ hasText: /yes|enable|morning mobility/i })
     .first();
-  if (await morningMobilityOption.isVisible({ timeout: 2000 }).catch(() => false)) {
+  if (
+    await morningMobilityOption.isVisible({ timeout: 2000 }).catch(() => false)
+  ) {
     await morningMobilityOption.click();
     await page.waitForTimeout(500);
   }
@@ -320,7 +346,7 @@ test.describe("Critical Flow - Morning Training Block", () => {
     const todayLink = page.locator(
       'a[href*="todays-practice"], a[href*="today"], a[routerlink*="todays-practice"], [data-testid="nav-todays-practice"]',
     );
-    
+
     if (await todayLink.isVisible({ timeout: 5000 }).catch(() => false)) {
       await todayLink.click();
     } else {
@@ -336,63 +362,84 @@ test.describe("Critical Flow - Morning Training Block", () => {
     // Wait for page to fully load and check what's visible
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(2000); // Additional wait for async data loading
-    
+
     // Verify we're on the Today's Practice page
     await expect(page).toHaveURL(/.*todays-practice.*/, { timeout: 10000 });
-    
+
     // Check for protocol section - it may show check-in first, or protocol, or empty state
     // Look for various possible states:
     // 1. Protocol blocks exist (protocol generated)
     // 2. Empty state with "Generate Today's Protocol" button
     // 3. Check-in section (if user hasn't checked in)
     // 4. Loading state
-    
+
     const protocolBlocksContainer = page.locator(
       "[data-testid='protocol-blocks'], .protocol-blocks",
     );
     const emptyState = page.locator(".empty-state");
-    const generateButton = page.getByRole("button", { name: /generate.*today.*protocol/i });
-    const checkinSection = page.locator("text=/morning check-in|wellness check-in/i");
-    
+    const generateButton = page.getByRole("button", {
+      name: /generate.*today.*protocol/i,
+    });
+    const checkinSection = page.locator(
+      "text=/morning check-in|wellness check-in/i",
+    );
+
     // Wait a bit more for content to render
     await page.waitForTimeout(2000);
-    
+
     // Check what's visible
-    const hasProtocolBlocks = await protocolBlocksContainer.isVisible({ timeout: 3000 }).catch(() => false);
-    const hasEmptyState = await emptyState.isVisible({ timeout: 3000 }).catch(() => false);
-    const hasGenerateButton = await generateButton.isVisible({ timeout: 3000 }).catch(() => false);
-    const hasCheckin = await checkinSection.isVisible({ timeout: 3000 }).catch(() => false);
-    
+    const hasProtocolBlocks = await protocolBlocksContainer
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+    const hasEmptyState = await emptyState
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+    const hasGenerateButton = await generateButton
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+    const hasCheckin = await checkinSection
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
+
     // If check-in is required first, that's fine - verify page loaded correctly
     if (hasCheckin) {
-      console.log("ℹ️  Check-in required first - this is expected for new users");
+      console.log(
+        "ℹ️  Check-in required first - this is expected for new users",
+      );
       await expect(checkinSection).toBeVisible({ timeout: 5000 });
       // Test can continue - we've verified the page structure
       return; // Skip protocol verification for now
     }
-    
+
     // If empty state, verify it's correct
     if (hasEmptyState || hasGenerateButton) {
       console.log("ℹ️  Protocol not generated yet - empty state shown");
-      await expect(emptyState.or(generateButton)).toBeVisible({ timeout: 5000 });
+      await expect(emptyState.or(generateButton)).toBeVisible({
+        timeout: 5000,
+      });
       // Test can continue - we've verified the page structure
       return; // Skip protocol block verification
     }
-    
+
     // Protocol blocks should exist
     if (!hasProtocolBlocks) {
       // Take a screenshot for debugging
-      await page.screenshot({ path: "test-results/todays-practice-page.png", fullPage: true });
+      await page.screenshot({
+        path: "test-results/todays-practice-page.png",
+        fullPage: true,
+      });
       const pageText = await page.locator("body").textContent();
       throw new Error(
         `Could not find protocol blocks, empty state, or check-in section. ` +
-        `Page content preview: ${pageText?.substring(0, 200)}... ` +
-        `Check screenshot: test-results/todays-practice-page.png`
+          `Page content preview: ${pageText?.substring(0, 200)}... ` +
+          `Check screenshot: test-results/todays-practice-page.png`,
       );
     }
-    
+
     // Protocol blocks exist - verify they're visible
-    await expect(protocolBlocksContainer.first()).toBeVisible({ timeout: 5000 });
+    await expect(protocolBlocksContainer.first()).toBeVisible({
+      timeout: 5000,
+    });
 
     // Verify Morning Mobility block exists
     const morningMobilityBlock = page
@@ -410,10 +457,10 @@ test.describe("Critical Flow - Morning Training Block", () => {
 
     // Step 6: Start the morning mobility block (expand/open)
     // Check if block is already expanded (defaultExpanded="true")
-    const blockHeader = morningMobilityBlock.locator(
-      ".block-header, [role='button']",
-    ).first();
-    
+    const blockHeader = morningMobilityBlock
+      .locator(".block-header, [role='button']")
+      .first();
+
     const isExpanded = await morningMobilityBlock
       .locator(".block-content, .exercise-list")
       .isVisible({ timeout: 1000 })
@@ -447,8 +494,10 @@ test.describe("Critical Flow - Morning Training Block", () => {
     const timerSection = morningMobilityBlock.locator(
       ".exercise-timer-section, app-countdown-timer, .timer",
     );
-    const _hasTimer = await timerSection.isVisible({ timeout: 2000 }).catch(() => false);
-    
+    const _hasTimer = await timerSection
+      .isVisible({ timeout: 2000 })
+      .catch(() => false);
+
     // Mark first exercise as started/complete
     const firstCheckbox = checkboxes.first();
     if (await firstCheckbox.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -470,4 +519,3 @@ test.describe("Critical Flow - Morning Training Block", () => {
     await expect(progressIndicator.first()).toBeVisible({ timeout: 5000 });
   });
 });
-

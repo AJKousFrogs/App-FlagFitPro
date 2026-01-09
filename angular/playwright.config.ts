@@ -108,7 +108,10 @@ export default defineConfig({
       : [
           {
             name: "firefox",
-            testIgnore: [/design-system.*\.spec\.ts/, /visual-regression\.spec\.ts/],
+            testIgnore: [
+              /design-system.*\.spec\.ts/,
+              /visual-regression\.spec\.ts/,
+            ],
             use: {
               ...devices["Desktop Firefox"],
               viewport: { width: 1920, height: 1080 },
@@ -116,7 +119,10 @@ export default defineConfig({
           },
           {
             name: "webkit",
-            testIgnore: [/design-system.*\.spec\.ts/, /visual-regression\.spec\.ts/],
+            testIgnore: [
+              /design-system.*\.spec\.ts/,
+              /visual-regression\.spec\.ts/,
+            ],
             use: {
               ...devices["Desktop Safari"],
               viewport: { width: 1920, height: 1080 },

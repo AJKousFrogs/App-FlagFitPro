@@ -48,7 +48,7 @@ import { ThemeService } from "../../../core/services/theme.service";
 
       <!-- Mobile Bottom Navigation -->
       <app-bottom-nav></app-bottom-nav>
-      
+
       <!-- Scroll to Top Button (UX Audit Fix #10) -->
       <app-scroll-to-top></app-scroll-to-top>
     </div>

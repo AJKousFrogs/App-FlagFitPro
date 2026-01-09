@@ -16,7 +16,10 @@
 
 .import-type-card {
   cursor: pointer;
-  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
   border: var(--border-2) solid transparent;
 
   &:hover {
@@ -107,7 +110,10 @@
   border-radius: var(--radius-lg);
   background: var(--ds-surface-base);
   cursor: pointer;
-  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
 
   &:hover {
     border-color: var(--ds-primary-green);

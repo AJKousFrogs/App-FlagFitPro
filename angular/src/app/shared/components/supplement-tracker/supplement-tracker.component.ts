@@ -318,7 +318,9 @@ export class SupplementTrackerComponent implements OnInit {
   }
 
   toggleSupplement(supplement: Supplement): void {
-    this.logger.info(`[Supplement] Toggling: ${supplement.name}, current: ${supplement.taken}`);
+    this.logger.info(
+      `[Supplement] Toggling: ${supplement.name}, current: ${supplement.taken}`,
+    );
     const updatedSupplements = this.supplements().map((s) => {
       if (s.id === supplement.id) {
         const taken = !s.taken;
@@ -338,7 +340,9 @@ export class SupplementTrackerComponent implements OnInit {
       this.apiService
         .post(API_ENDPOINTS.supplements.log, {
           supplement: supplement.name,
-          dose: supplement.dosage ? parseFloat(supplement.dosage) || null : null,
+          dose: supplement.dosage
+            ? parseFloat(supplement.dosage) || null
+            : null,
           takenAt: new Date().toISOString(),
           notes: `Dosage: ${supplement.dosage || "standard"}`,
         })

@@ -123,4 +123,3 @@ test.describe("Smoke Test - App Shell", () => {
     await expect(heading).toBeVisible({ timeout: 5000 });
   });
 });
-

@@ -8,18 +8,15 @@
  */
 
 import { CommonModule } from "@angular/common";
-import {
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal,
-} from "@angular/core";
+import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { WeatherService, WeatherData } from "../../../core/services/weather.service";
+import {
+  WeatherService,
+  WeatherData,
+} from "../../../core/services/weather.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { CardComponent } from "../card/card.component";
 import { isHeatRisk } from "../../../core/constants/wellness.constants";
@@ -28,13 +25,7 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
   selector: "app-weather-widget",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    CardModule,
-    TagModule,
-    TooltipModule,
-    CardComponent,
-  ],
+  imports: [CommonModule, CardModule, TagModule, TooltipModule, CardComponent],
   template: `
     @if (weatherData()) {
       <app-card
@@ -223,7 +214,7 @@ export class WeatherWidgetComponent implements OnInit {
     this.isLoading.set(true);
     try {
       const weather = await firstValueFrom(
-        this.weatherService.getWeatherData(this.location())
+        this.weatherService.getWeatherData(this.location()),
       );
       this.weatherData.set(weather || null);
     } catch (error) {
@@ -268,4 +259,3 @@ export class WeatherWidgetComponent implements OnInit {
     return tooltips[suitability] || "Weather conditions unknown";
   }
 }
-

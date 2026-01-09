@@ -143,7 +143,7 @@ const USDA_BASE_URL = "https://api.nal.usda.gov/fdc/v1";
 // Log warning but don't throw - allows other admin features to work
 if (!USDA_API_KEY) {
   console.warn(
-    "[Admin] USDA_API_KEY not configured. USDA food sync features will be unavailable. Get a free key at: https://fdc.nal.usda.gov/api-key-signup.html"
+    "[Admin] USDA_API_KEY not configured. USDA food sync features will be unavailable. Get a free key at: https://fdc.nal.usda.gov/api-key-signup.html",
   );
 }
 
@@ -261,7 +261,8 @@ async function syncUSDAData(options = {}) {
     return {
       success: false,
       error: "USDA_API_KEY not configured",
-      message: "USDA food sync is unavailable. Set USDA_API_KEY environment variable.",
+      message:
+        "USDA food sync is unavailable. Set USDA_API_KEY environment variable.",
       setupUrl: "https://fdc.nal.usda.gov/api-key-signup.html",
     };
   }

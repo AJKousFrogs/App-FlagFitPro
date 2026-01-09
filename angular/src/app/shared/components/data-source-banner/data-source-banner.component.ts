@@ -5,7 +5,6 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonComponent } from "../button/button.component";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataState } from "../../../core/services/data-source.service";
@@ -35,7 +34,7 @@ import {
   selector: "app-data-source-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule, ButtonComponent],
+  imports: [CommonModule, TagModule, TooltipModule],
   template: `
     @if (shouldShow()) {
       <div class="data-source-banner" [class]="bannerClass()">
@@ -44,7 +43,15 @@ import {
             <i [class]="'pi ' + icon()"></i>
           </div>
           <div class="banner-text">
-            <h4 class="banner-title">{{ title() }}</h4>
+            <div class="banner-header">
+              <h4 class="banner-title">{{ title() }}</h4>
+              <p-tag
+                [value]="badgeText()"
+                [severity]="badgeSeverity()"
+                [icon]="badgeIcon()"
+                styleClass="data-source-badge"
+              />
+            </div>
             <p class="banner-message">{{ message() }}</p>
             @if (showProgress()) {
               <div class="progress-info">
@@ -147,7 +154,49 @@ export class DataSourceBannerComponent {
 
   progressPercent = computed(() => {
     if (this.minimumRequired() === 0) return 0;
-    return Math.min((this.currentDataPoints() / this.minimumRequired()) * 100, 100);
+    return Math.min(
+      (this.currentDataPoints() / this.minimumRequired()) * 100,
+      100,
+    );
+  });
+
+  badgeText = computed(() => {
+    switch (this.dataState()) {
+      case DataState.NO_DATA:
+        return "No Data";
+      case DataState.INSUFFICIENT_DATA:
+        return "Limited Data";
+      case DataState.REAL_DATA:
+        return "Live Data";
+      default:
+        return "Unknown";
+    }
+  });
+
+  badgeSeverity = computed(() => {
+    switch (this.dataState()) {
+      case DataState.NO_DATA:
+        return "secondary";
+      case DataState.INSUFFICIENT_DATA:
+        return "warn"; // PrimeNG uses "warn" not "warning"
+      case DataState.REAL_DATA:
+        return "success";
+      default:
+        return "info";
+    }
+  });
+
+  badgeIcon = computed(() => {
+    switch (this.dataState()) {
+      case DataState.NO_DATA:
+        return "pi-inbox";
+      case DataState.INSUFFICIENT_DATA:
+        return "pi-chart-line";
+      case DataState.REAL_DATA:
+        return "pi-check-circle";
+      default:
+        return "pi-info-circle";
+    }
   });
 
   onDismiss(): void {

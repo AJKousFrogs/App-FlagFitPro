@@ -766,7 +766,12 @@
       font-size: var(--font-size-body);
       font-weight: var(--font-weight-medium);
       cursor: pointer;
-      transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+      transition:
+        opacity var(--transition-base),
+        transform var(--transition-base),
+        background-color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
       white-space: nowrap;
       outline: none;
       min-height: 44px;

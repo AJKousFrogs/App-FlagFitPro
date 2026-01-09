@@ -56,7 +56,10 @@
 // Event Card
 .event-card {
   border-left: 4px solid var(--ds-border-default);
-  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
 
   &.type-practice {
     border-left-color: var(--ds-primary-green);
@@ -307,7 +310,10 @@
     border: 2px solid var(--ds-border-default);
     border-radius: var(--radius-md);
     cursor: pointer;
-    transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+    transition:
+      background-color var(--motion-base) var(--ease-standard),
+      border-color var(--motion-base) var(--ease-standard),
+      box-shadow var(--motion-base) var(--ease-standard);
 
     &:hover {
       border-color: var(--ds-primary-green);

@@ -8,7 +8,10 @@
  * DEPRECATED: ErrorHandlerUtil.extractErrorMessage (use getErrorMessage instead)
  */
 
-import { ERROR_MESSAGES, HTTP_ERROR_MESSAGES } from "../../core/constants/error.constants";
+import {
+  ERROR_MESSAGES,
+  HTTP_ERROR_MESSAGES,
+} from "../../core/constants/error.constants";
 
 /**
  * Extract a user-friendly error message from any error type
@@ -30,7 +33,7 @@ import { ERROR_MESSAGES, HTTP_ERROR_MESSAGES } from "../../core/constants/error.
  */
 export function getErrorMessage(
   error: unknown,
-  fallback: string = ERROR_MESSAGES.GENERIC
+  fallback: string = ERROR_MESSAGES.GENERIC,
 ): string {
   // Error instance
   if (error instanceof Error) {
@@ -123,7 +126,7 @@ export function isAbortError(error: unknown): boolean {
 export function logError(
   context: string,
   error: unknown,
-  logger?: { error: (msg: string, ...args: unknown[]) => void }
+  logger?: { error: (msg: string, ...args: unknown[]) => void },
 ): void {
   const message = getErrorMessage(error);
   const logMessage = `[${context}] ${message}`;

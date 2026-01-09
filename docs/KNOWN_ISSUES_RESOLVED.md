@@ -8,6 +8,7 @@
 ## Issue #1: Vitest Dependency Issue (tinyexec)
 
 ### Original Problem
+
 ```
 Error: Cannot find package '/Users/.../node_modules/tinyexec/index.js'
 ```
@@ -15,23 +16,28 @@ Error: Cannot find package '/Users/.../node_modules/tinyexec/index.js'
 Unit tests could not run due to missing `tinyexec` module, which is a transitive dependency of Vitest.
 
 ### Root Cause
+
 The `tinyexec` package was not properly installed when `vitest@4.0.8` was added to the project. This is a known issue with some npm installations where peer dependencies aren't resolved correctly.
 
 ### Resolution ✅
+
 **Fixed**: January 9, 2026
 
 **Solution Applied**:
+
 ```bash
 cd angular
 npm install tinyexec --save-dev
 ```
 
 **Verification**:
+
 - `tinyexec` now installed in `angular/node_modules/tinyexec`
 - Package added to `devDependencies`
 - Vitest can now import and use tinyexec correctly
 
-**Test Status**: 
+**Test Status**:
+
 - Unit tests can now run: `npm run test`
 - Auth service tests (31 test cases) executable
 - Coverage reports working
@@ -44,25 +50,30 @@ The test runner script (`run-comprehensive-tests.sh`) now automatically checks f
 ## Issue #2: E2E Test Timeout Issues
 
 ### Original Problem
+
 ```
 Command timed out after 30 seconds
 ```
 
 E2E tests were timing out when:
+
 1. Starting dev server for first time (Angular compilation)
 2. Waiting for auth API calls
 3. Loading heavy pages with data
 
 ### Root Cause
+
 Default Playwright timeouts were too aggressive:
+
 - Test timeout: 30 seconds
-- Navigation timeout: 30 seconds  
+- Navigation timeout: 30 seconds
 - Action timeout: 10 seconds
 - Server startup: 120 seconds
 
 Angular compilation and Supabase API calls can take longer, especially on first run.
 
 ### Resolution ✅
+
 **Fixed**: January 9, 2026
 
 **Changes Made to `playwright.config.js`**:
@@ -82,11 +93,13 @@ webServer.timeout: 180000,  // 3min (+50%)
 ```
 
 **Additional Improvements**:
+
 - Expect timeout increased: 5s → 10s
 - `reuseExistingServer: true` always enabled for local dev
 - Better error messages on timeout
 
 **Test Status**:
+
 - E2E tests now have sufficient time to complete
 - Dev server startup reliable
 - Auth flows complete within timeout
@@ -94,6 +107,7 @@ webServer.timeout: 180000,  // 3min (+50%)
 
 **Best Practice**:
 Start dev servers manually before running E2E tests for fastest execution:
+
 ```bash
 # Terminal 1:
 npm run dev
@@ -107,15 +121,19 @@ npm run test:e2e
 ## Issue #3: Magic Link Email Delivery
 
 ### Original Problem
+
 Magic link authentication required email configuration to test properly. Without SMTP setup, magic links couldn't be delivered or tested.
 
 ### Root Cause
+
 Supabase requires email service configuration for production magic link delivery. In development, emails aren't sent by default - links are only logged.
 
 ### Resolution ✅
+
 **Fixed**: January 9, 2026
 
 **Documentation Created**:
+
 1. **Complete Email Configuration Guide**: `docs/SUPABASE_EMAIL_CONFIGURATION.md`
    - 3 setup options (Development, SMTP, Mailhog)
    - Step-by-step instructions for each provider
@@ -131,6 +149,7 @@ Supabase requires email service configuration for production magic link delivery
 **Testing Options**:
 
 **Option 1: Development (No Config Required)** ✅ Recommended for Testing
+
 ```bash
 # Request magic link in app
 # Retrieve from Supabase Dashboard → Auth → Logs
@@ -138,6 +157,7 @@ Supabase requires email service configuration for production magic link delivery
 ```
 
 **Option 2: Mailhog (Local Email Capture)**
+
 ```bash
 brew install mailhog
 mailhog
@@ -146,12 +166,14 @@ mailhog
 ```
 
 **Option 3: Production SMTP (SendGrid/Mailgun)**
+
 ```
 Configure in Supabase Dashboard → Auth Settings → SMTP
 Recommended for production deployments
 ```
 
 **Test Script Usage**:
+
 ```bash
 # Set environment variables
 export SUPABASE_URL='https://your-project.supabase.co'
@@ -164,6 +186,7 @@ export SUPABASE_ANON_KEY='your-anon-key'
 ```
 
 **Test Status**:
+
 - Magic links can be tested without email setup ✅
 - Complete documentation for all email providers ✅
 - Production-ready SMTP configuration documented ✅
@@ -175,11 +198,11 @@ export SUPABASE_ANON_KEY='your-anon-key'
 
 All issues have been resolved and verified:
 
-| Issue | Status | Fix Applied | Verification |
-|-------|--------|-------------|--------------|
-| Vitest Dependency | ✅ Fixed | `npm install tinyexec` | Tests run successfully |
-| E2E Timeouts | ✅ Fixed | Increased timeouts in config | Tests complete without timeout |
-| Magic Link Email | ✅ Fixed | Documentation + test script | Can test without email config |
+| Issue             | Status   | Fix Applied                  | Verification                   |
+| ----------------- | -------- | ---------------------------- | ------------------------------ |
+| Vitest Dependency | ✅ Fixed | `npm install tinyexec`       | Tests run successfully         |
+| E2E Timeouts      | ✅ Fixed | Increased timeouts in config | Tests complete without timeout |
+| Magic Link Email  | ✅ Fixed | Documentation + test script  | Can test without email config  |
 
 ---
 
@@ -208,10 +231,10 @@ npm run test:e2e
 
 ### Test Execution Times (After Fixes)
 
-| Test Suite | Before Fix | After Fix | Improvement |
-|------------|------------|-----------|-------------|
-| Unit Tests | ❌ Failed | ✅ 45s | Working |
-| E2E Tests | ⚠️ Timeout | ✅ 90s | +50% time |
+| Test Suite | Before Fix         | After Fix           | Improvement    |
+| ---------- | ------------------ | ------------------- | -------------- |
+| Unit Tests | ❌ Failed          | ✅ 45s              | Working        |
+| E2E Tests  | ⚠️ Timeout         | ✅ 90s              | +50% time      |
 | Full Suite | ⚠️ 2 min (partial) | ✅ 3 min (complete) | 100% pass rate |
 
 ---
@@ -245,23 +268,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       # Fix #1: Dependencies resolved
       - name: Install dependencies
         run: |
           npm install
           cd angular && npm install
-      
+
       # Fix #1: Unit tests work
       - name: Run unit tests
         run: cd angular && npm run test
-      
+
       # Fix #2: E2E tests have proper timeouts
       - name: Run E2E tests
         run: npm run test:e2e
         env:
           CI: true
-      
+
       # Fix #3: Magic link testing documented
       - name: Test auth flows
         run: npm run test:e2e -- tests/e2e/user-authentication.spec.js
@@ -273,12 +296,12 @@ jobs:
 
 After applying fixes:
 
-| Metric | Improvement |
-|--------|-------------|
-| Test reliability | 100% (was ~60% due to timeouts) |
-| Setup time | -5 min (auto-install dependencies) |
-| Debugging time | -30 min (clear error messages) |
-| Documentation completeness | +100% (all scenarios covered) |
+| Metric                     | Improvement                        |
+| -------------------------- | ---------------------------------- |
+| Test reliability           | 100% (was ~60% due to timeouts)    |
+| Setup time                 | -5 min (auto-install dependencies) |
+| Debugging time             | -30 min (clear error messages)     |
+| Documentation completeness | +100% (all scenarios covered)      |
 
 ---
 
@@ -305,6 +328,7 @@ All documentation has been updated to reflect fixes:
 ✅ **Issue #3**: Magic link testing enabled with documentation and test script
 
 **Test suite is now**:
+
 - ✅ 100% functional
 - ✅ Properly documented
 - ✅ Ready for CI/CD integration

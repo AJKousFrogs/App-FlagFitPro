@@ -292,7 +292,6 @@ export class SecureStorage {
     }
   }
 
-
   /**
    * Helper: Convert ArrayBuffer to Base64
    * @private
@@ -362,7 +361,7 @@ export class SecureStorage {
    * @returns {string|null} Cookie value
    */
   getCookie(name) {
-    const nameEQ = `${name  }=`;
+    const nameEQ = `${name}=`;
     const ca = document.cookie.split(";");
 
     for (let i = 0; i < ca.length; i++) {
@@ -382,7 +381,7 @@ export class SecureStorage {
    * @param {string} name - Cookie name
    */
   deleteCookie(name) {
-    document.cookie = `${name  }=; Max-Age=-99999999; path=/`;
+    document.cookie = `${name}=; Max-Age=-99999999; path=/`;
   }
 
   /**

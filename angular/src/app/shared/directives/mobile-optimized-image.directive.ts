@@ -8,11 +8,11 @@
  * ================================================================
  */
 
-import { Directive, ElementRef, input, OnInit, inject } from '@angular/core';
+import { Directive, ElementRef, input, OnInit, inject } from "@angular/core";
 
 @Directive({
-  selector: 'img[appMobileOptimized]',
-  standalone: true
+  selector: "img[appMobileOptimized]",
+  standalone: true,
 })
 export class MobileOptimizedImageDirective implements OnInit {
   private el = inject(ElementRef<HTMLImageElement>);
@@ -27,19 +27,19 @@ export class MobileOptimizedImageDirective implements OnInit {
 
     // Add lazy loading
     if (this.lazy()) {
-      img.loading = 'lazy';
+      img.loading = "lazy";
     }
 
     // Add explicit dimensions if provided
     if (this.width()) {
-      img.setAttribute('width', String(this.width()));
+      img.setAttribute("width", String(this.width()));
     }
     if (this.height()) {
-      img.setAttribute('height', String(this.height()));
+      img.setAttribute("height", String(this.height()));
     }
 
     // Add decoding async for better performance
-    img.decoding = 'async';
+    img.decoding = "async";
 
     // Prevent dragging (better UX on mobile)
     img.draggable = false;

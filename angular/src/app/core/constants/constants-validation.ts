@@ -49,9 +49,7 @@ export function validateThresholds(
   danger: number,
 ): void {
   if (min >= max) {
-    throw new Error(
-      `Min threshold (${min}) must be less than max (${max})`,
-    );
+    throw new Error(`Min threshold (${min}) must be less than max (${max})`);
   }
   if (warning <= max) {
     throw new Error(

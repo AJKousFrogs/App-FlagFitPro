@@ -195,7 +195,7 @@ export class AuthCallbackComponent implements OnInit {
   ): Promise<void> {
     try {
       this.logger.debug("[Auth] Processing auth callback", { type });
-      
+
       // Set the session using the tokens
       const { data, error } = await this.supabaseService.client.auth.setSession(
         {
@@ -205,19 +205,24 @@ export class AuthCallbackComponent implements OnInit {
       );
 
       if (error) {
-        this.logger.error("[Auth] Session establishment failed", { error, type });
+        this.logger.error("[Auth] Session establishment failed", {
+          error,
+          type,
+        });
         throw error;
       }
 
       if (!data.session) {
-        this.logger.error("[Auth] No session returned from setSession", { type });
+        this.logger.error("[Auth] No session returned from setSession", {
+          type,
+        });
         throw new Error("Failed to establish session");
       }
 
       this.logger.info("[Auth] Session established successfully", {
         userId: data.session.user.id,
         email: data.session.user.email,
-        type
+        type,
       });
 
       // Clear the hash from the URL
@@ -270,7 +275,7 @@ export class AuthCallbackComponent implements OnInit {
       case "magiclink":
         this.logger.info("[Auth] Magic link login successful", {
           userId: _user?.email,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         this.successMessage.set("Signed in successfully!");
         this.toastService.success(TOAST.SUCCESS.LOGIN, "Signed In");

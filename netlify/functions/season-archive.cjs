@@ -12,7 +12,9 @@ exports.handler = createHandler({
     const supabase = getSupabaseClient();
 
     // Only coaches/admins can archive seasons
-    if (!["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)) {
+    if (
+      !["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)
+    ) {
       return {
         statusCode: 403,
         body: JSON.stringify({
@@ -37,11 +39,13 @@ exports.handler = createHandler({
 
       try {
         // Archive season data using database function
-        const { data, error } = await supabaseAdmin.rpc("archive_season_data", {
+        const { data: _data, error } = await supabaseAdmin.rpc("archive_season_data", {
           p_season_id: season_id,
         });
 
-        if (error) {throw error;}
+        if (error) {
+          throw error;
+        }
 
         return {
           statusCode: 200,
@@ -70,4 +74,3 @@ exports.handler = createHandler({
     };
   },
 });
-

@@ -1,9 +1,9 @@
 /**
  * Scroll To Top Button Component
- * 
+ *
  * Floating action button that appears when user scrolls down
  * Smoothly scrolls back to top when clicked
- * 
+ *
  * UX Audit Fix #10: Add scroll-to-top button for long pages
  */
 
@@ -43,7 +43,11 @@ export class ScrollToTopComponent {
   @HostListener("window:scroll")
   onWindowScroll(): void {
     // Show button after scrolling down 300px
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const scrollPosition =
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0;
     this.isVisible.set(scrollPosition > 300);
   }
 

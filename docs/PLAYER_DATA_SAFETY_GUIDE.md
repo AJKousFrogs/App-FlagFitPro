@@ -32,25 +32,25 @@ if (dataSourceService.isRealData()) {
 
 ### 2. Distinguish Between States
 
-| State | What It Means | What to Show |
-|-------|--------------|--------------|
-| **No Data Entry** | User hasn't logged any data yet | Welcome message + CTA to log first entry |
-| **Insufficient Data** | Some data, but not enough for reliable calculations | Progress indicator + how many more entries needed |
-| **Mock/Demo Data** | Fake data for demonstration only | **PROMINENT WARNING** - DO NOT make decisions based on this |
-| **Real Data** | User's actual logged data | Normal display (optionally show "✅ Real Data" indicator) |
+| State                 | What It Means                                       | What to Show                                                |
+| --------------------- | --------------------------------------------------- | ----------------------------------------------------------- |
+| **No Data Entry**     | User hasn't logged any data yet                     | Welcome message + CTA to log first entry                    |
+| **Insufficient Data** | Some data, but not enough for reliable calculations | Progress indicator + how many more entries needed           |
+| **Mock/Demo Data**    | Fake data for demonstration only                    | **PROMINENT WARNING** - DO NOT make decisions based on this |
+| **Real Data**         | User's actual logged data                           | Normal display (optionally show "✅ Real Data" indicator)   |
 
 ### 3. Minimum Data Requirements
 
 Based on sports science best practices:
 
-| Metric | Minimum Data Points | Why |
-|--------|-------------------|-----|
-| **ACWR** | 28 days (4 weeks) | Need chronic load baseline |
-| **Readiness Score** | 7 days | Need pattern recognition |
-| **Performance Trends** | 2 data points | Need comparison baseline |
-| **Wellness Tracking** | 7 days | Need baseline for anomaly detection |
-| **Body Composition** | 4 measurements | Need trend establishment |
-| **Training Load** | 7 days | Need weekly pattern |
+| Metric                 | Minimum Data Points | Why                                 |
+| ---------------------- | ------------------- | ----------------------------------- |
+| **ACWR**               | 28 days (4 weeks)   | Need chronic load baseline          |
+| **Readiness Score**    | 7 days              | Need pattern recognition            |
+| **Performance Trends** | 2 data points       | Need comparison baseline            |
+| **Wellness Tracking**  | 7 days              | Need baseline for anomaly detection |
+| **Body Composition**   | 4 measurements      | Need trend establishment            |
+| **Training Load**      | 7 days              | Need weekly pattern                 |
 
 ---
 
@@ -64,12 +64,12 @@ import { DataSourceService, DATA_REQUIREMENTS } from './data-source.service';
 @Component({...})
 export class MyDashboard {
   private dataSourceService = inject(DataSourceService);
-  
+
   // Check if user has real data
   isRealData = this.dataSourceService.isRealData;
   isFirstTimeUser = this.dataSourceService.isFirstTimeUser;
   hasEnoughData = this.dataSourceService.hasEnoughData;
-  
+
   ngOnInit() {
     // Register metrics with their requirements
     this.dataSourceService.registerMetric(
@@ -96,6 +96,7 @@ Add this to the top of any dashboard showing performance metrics:
 ```
 
 The banner automatically:
+
 - Shows **danger** warning for mock/demo data
 - Shows **info** message for first-time users
 - Shows **warning** for insufficient data
@@ -115,9 +116,7 @@ For specific metrics with no data:
 ></app-no-data-entry>
 
 <!-- For wellness check-ins -->
-<app-no-data-entry
-  context="wellness"
-></app-no-data-entry>
+<app-no-data-entry context="wellness"></app-no-data-entry>
 
 <!-- Compact version for inline use -->
 <app-no-data-entry
@@ -129,6 +128,7 @@ For specific metrics with no data:
 ```
 
 Available contexts:
+
 - `training` - Training sessions
 - `wellness` - Wellness check-ins
 - `performance` - Performance tests
@@ -145,16 +145,17 @@ Available contexts:
 
 ```html
 @if (isFirstTimeUser()) {
-  <app-no-data-entry
-    context="training"
-    [showMinimumInfo]="true"
-    [minimumEntries]="28"
-    metricName="ACWR"
-  ></app-no-data-entry>
+<app-no-data-entry
+  context="training"
+  [showMinimumInfo]="true"
+  [minimumEntries]="28"
+  metricName="ACWR"
+></app-no-data-entry>
 }
 ```
 
 **Shows:**
+
 - Welcoming icon and message
 - Benefits of tracking
 - Clear CTA to log first entry
@@ -164,13 +165,13 @@ Available contexts:
 
 ```html
 @if (!hasEnoughData() && !isFirstTimeUser()) {
-  <div class="insufficient-data-warning">
-    <i class="pi pi-info-circle"></i>
-    <span>
-      {{ remainingEntries }} more entries needed for reliable 
-      {{ metricName }} calculations
-    </span>
-  </div>
+<div class="insufficient-data-warning">
+  <i class="pi pi-info-circle"></i>
+  <span>
+    {{ remainingEntries }} more entries needed for reliable {{ metricName }}
+    calculations
+  </span>
+</div>
 }
 ```
 
@@ -191,12 +192,15 @@ Available contexts:
   <div class="metric-content">
     <h3>ACWR</h3>
     @if (acwrDataSource().isReliable) {
-      <div class="metric-value">{{ acwrValue() | number:'1.2-2' }}</div>
+    <div class="metric-value">{{ acwrValue() | number:'1.2-2' }}</div>
     } @else {
-      <div class="metric-insufficient">
-        <i class="pi pi-exclamation-triangle"></i>
-        <span>Need {{ acwrDataSource().minimumRequired - acwrDataSource().dataPoints }} more days</span>
-      </div>
+    <div class="metric-insufficient">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span
+        >Need {{ acwrDataSource().minimumRequired - acwrDataSource().dataPoints
+        }} more days</span
+      >
+    </div>
     }
   </div>
 </p-card>
@@ -274,6 +278,7 @@ calculateACWR(sessions: TrainingSession[]): number | null {
 ## 📊 When Can Athletes Start Using the App?
 
 ### Day 1: Immediate Value
+
 - ✅ Log training sessions
 - ✅ Log wellness check-ins
 - ✅ Track body measurements
@@ -282,6 +287,7 @@ calculateACWR(sessions: TrainingSession[]): number | null {
 - ❌ Trend analysis (needs baseline)
 
 ### Week 1: Growing Value
+
 - ✅ All Day 1 features
 - ✅ Weekly load totals
 - ✅ Basic wellness patterns
@@ -289,6 +295,7 @@ calculateACWR(sessions: TrainingSession[]): number | null {
 - ❌ ACWR still building
 
 ### Week 4+: Full Features
+
 - ✅ All features unlocked
 - ✅ Reliable ACWR calculations
 - ✅ Trend analysis

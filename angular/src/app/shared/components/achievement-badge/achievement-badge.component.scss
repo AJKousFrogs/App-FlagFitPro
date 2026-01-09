@@ -17,7 +17,10 @@
   border-radius: var(--radius-xl);
   border: var(--border-1) solid var(--color-border-secondary);
   cursor: pointer;
-  transition: background-color var(--motion-slow) cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow var(--motion-slow) cubic-bezier(0.34, 1.56, 0.64, 1), transform var(--motion-slow) cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    background-color var(--motion-slow) cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow var(--motion-slow) cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform var(--motion-slow) cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
 }
@@ -72,23 +75,43 @@
  * Remove by: Never - metallic colors are permanent visual effects
  */
 .tier-bronze .badge-glow {
-  background: radial-gradient(circle, var(--color-metallic-bronze) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    var(--color-metallic-bronze) 0%,
+    transparent 70%
+  );
 }
 
 .tier-silver .badge-glow {
-  background: radial-gradient(circle, var(--color-metallic-silver) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    var(--color-metallic-silver) 0%,
+    transparent 70%
+  );
 }
 
 .tier-gold .badge-glow {
-  background: radial-gradient(circle, var(--color-metallic-gold) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    var(--color-metallic-gold) 0%,
+    transparent 70%
+  );
 }
 
 .tier-platinum .badge-glow {
-  background: radial-gradient(circle, var(--color-metallic-platinum) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    var(--color-metallic-platinum) 0%,
+    transparent 70%
+  );
 }
 
 .tier-diamond .badge-glow {
-  background: radial-gradient(circle, var(--color-metallic-diamond) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    var(--color-metallic-diamond) 0%,
+    transparent 70%
+  );
 }
 
 .achievement-badge:hover .badge-glow {
@@ -115,27 +138,49 @@
 
 /* Metallic badge shapes - see EXCEPTION comment above for .badge-glow */
 .tier-bronze .badge-shape {
-  background: linear-gradient(135deg, var(--color-metallic-bronze) 0%, var(--color-metallic-bronze-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-metallic-bronze) 0%,
+    var(--color-metallic-bronze-dark) 100%
+  );
   box-shadow: var(--shadow-2);
 }
 
 .tier-silver .badge-shape {
-  background: linear-gradient(135deg, var(--color-metallic-silver-light) 0%, var(--color-metallic-silver-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-metallic-silver-light) 0%,
+    var(--color-metallic-silver-dark) 100%
+  );
   box-shadow: var(--shadow-2);
 }
 
 .tier-gold .badge-shape {
-  background: linear-gradient(135deg, var(--color-metallic-gold) 0%, var(--color-metallic-gold-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-metallic-gold) 0%,
+    var(--color-metallic-gold-dark) 100%
+  );
   box-shadow: var(--shadow-2);
 }
 
 .tier-platinum .badge-shape {
-  background: linear-gradient(135deg, var(--color-metallic-platinum) 0%, var(--color-metallic-platinum-dark) 50%, var(--color-metallic-platinum) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-metallic-platinum) 0%,
+    var(--color-metallic-platinum-dark) 50%,
+    var(--color-metallic-platinum) 100%
+  );
   box-shadow: var(--shadow-2);
 }
 
 .tier-diamond .badge-shape {
-  background: linear-gradient(135deg, var(--color-metallic-diamond) 0%, var(--color-metallic-diamond-dark) 50%, var(--color-metallic-diamond) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-metallic-diamond) 0%,
+    var(--color-metallic-diamond-dark) 50%,
+    var(--color-metallic-diamond) 100%
+  );
   box-shadow: var(--shadow-2);
 }
 

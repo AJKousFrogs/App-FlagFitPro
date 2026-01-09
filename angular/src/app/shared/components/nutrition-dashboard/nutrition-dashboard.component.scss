@@ -87,7 +87,9 @@
   padding: var(--space-4);
   border: var(--border-1) solid var(--color-border-primary);
   border-radius: var(--radius-md);
-  transition: background-color var(--motion-slow) var(--ease-standard), border-color var(--motion-slow) var(--ease-standard);
+  transition:
+    background-color var(--motion-slow) var(--ease-standard),
+    border-color var(--motion-slow) var(--ease-standard);
 }
 
 .goal-item.achieved {

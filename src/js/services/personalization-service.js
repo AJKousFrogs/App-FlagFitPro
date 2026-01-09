@@ -1,4 +1,4 @@
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 // Personalization Service
 // Enriches chatbot questions with user profile data (body metrics, injuries, training schedule, position)
@@ -30,8 +30,9 @@ class PersonalizationService {
       }
 
       const response = await fetch(
-        `/.netlify/functions/user-profile?userId=${ 
-          encodeURIComponent(this.userId)}`,
+        `/.netlify/functions/user-profile?userId=${encodeURIComponent(
+          this.userId,
+        )}`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,

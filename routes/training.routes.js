@@ -18,6 +18,11 @@ import {
 } from "./middleware/auth.middleware.js";
 import {
   validateUserId,
+  validateRPE,
+  validateDuration,
+  validateDate,
+  sanitizeText,
+  sanitizeFields,
   sendError,
   sendSuccess,
 } from "./utils/validation.js";
@@ -47,60 +52,75 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.2.0"));
  * Get training statistics for a user
  * Cached for 1 minute with ETag support
  */
-router.get("/stats", rateLimit("READ"), withCache("STATS"), optionalAuth, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const userId = req.userId || req.query.userId;
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    let query = supabase
-      .from("training_sessions")
-      .select("*")
-      .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-      .eq("status", "completed")
-      .order("session_date", { ascending: false })
-      .limit(50);
-
-    if (userId && isValidUUID(userId)) {
-      query = query.eq("user_id", userId);
+router.get(
+  "/stats",
+  rateLimit("READ"),
+  withCache("STATS"),
+  optionalAuth,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const { data: sessions, error } = await query;
+    try {
+      const userId = req.userId || req.query.userId;
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    if (error) {throw error;}
+      let query = supabase
+        .from("training_sessions")
+        .select(
+          "id, user_id, session_date, duration_minutes, rpe, status, session_type",
+        )
+        .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
+        .eq("status", "completed")
+        .order("session_date", { ascending: false })
+        .limit(50);
 
-    const totalMinutes =
-      sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
-    const avgRpe =
-      sessions?.length > 0
-        ? sessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessions.length
-        : 0;
+      if (userId && isValidUUID(userId)) {
+        query = query.eq("user_id", userId);
+      }
 
-    // Calculate this week's sessions
-    const weekStart = new Date();
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-    const thisWeekSessions =
-      sessions?.filter((s) => new Date(s.session_date) >= weekStart) || [];
+      const { data: sessions, error } = await query;
 
-    return sendSuccess(res, {
-      totalSessions: sessions?.length || 0,
-      totalHours: Math.round((totalMinutes / 60) * 10) / 10,
-      averageRpe: Math.round(avgRpe * 10) / 10,
-      weeklyGoal: {
-        target: 5,
-        completed: thisWeekSessions.length,
-      },
-      recentSessions: sessions?.slice(0, 5) || [],
-    });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Stats error:`, error);
-    return sendError(res, "Failed to load training stats", "FETCH_ERROR", 500);
-  }
-});
+      if (error) {
+        throw error;
+      }
+
+      const totalMinutes =
+        sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
+      const avgRpe =
+        sessions?.length > 0
+          ? sessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessions.length
+          : 0;
+
+      // Calculate this week's sessions
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      const thisWeekSessions =
+        sessions?.filter((s) => new Date(s.session_date) >= weekStart) || [];
+
+      return sendSuccess(res, {
+        totalSessions: sessions?.length || 0,
+        totalHours: Math.round((totalMinutes / 60) * 10) / 10,
+        averageRpe: Math.round(avgRpe * 10) / 10,
+        weeklyGoal: {
+          target: 5,
+          completed: thisWeekSessions.length,
+        },
+        recentSessions: sessions?.slice(0, 5) || [],
+      });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Stats error:`, error);
+      return sendError(
+        res,
+        "Failed to load training stats",
+        "FETCH_ERROR",
+        500,
+      );
+    }
+  },
+);
 
 /**
  * GET /stats-enhanced
@@ -124,7 +144,7 @@ router.get(
 
       let query = supabase
         .from("training_sessions")
-        .select("*")
+        .select("session_date, duration_minutes, rpe, session_type")
         .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
         .eq("status", "completed")
         .order("session_date");
@@ -135,7 +155,9 @@ router.get(
 
       const { data: sessions, error } = await query;
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       // Weekly trends
       const weeklyData = {};
@@ -213,7 +235,17 @@ router.get("/sessions", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     let query = supabase
       .from("training_sessions")
-      .select("*")
+      .select(`
+        id,
+        user_id,
+        session_date,
+        session_type,
+        duration_minutes,
+        rpe,
+        status,
+        notes,
+        created_at
+      `)
       .order("session_date", { ascending: false })
       .limit(limit);
 
@@ -223,7 +255,9 @@ router.get("/sessions", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     const { data: sessions, error } = await query;
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     return sendSuccess(res, { sessions: sessions || [] });
   } catch (error) {
@@ -246,6 +280,38 @@ router.post(
     }
 
     try {
+      // VALIDATE RPE if provided
+      if (req.body.rpe !== undefined) {
+        const rpeValidation = validateRPE(req.body.rpe);
+        if (!rpeValidation.isValid) {
+          return sendError(res, rpeValidation.error, "INVALID_RPE", 400);
+        }
+        req.body.rpe = rpeValidation.rpe;
+      }
+
+      // VALIDATE DURATION if provided
+      if (req.body.duration_minutes !== undefined) {
+        const durationValidation = validateDuration(req.body.duration_minutes);
+        if (!durationValidation.isValid) {
+          return sendError(
+            res,
+            durationValidation.error,
+            "INVALID_DURATION",
+            400,
+          );
+        }
+        req.body.duration_minutes = durationValidation.duration;
+      }
+
+      // VALIDATE DATE if provided
+      if (req.body.session_date !== undefined) {
+        const dateValidation = validateDate(req.body.session_date);
+        if (!dateValidation.isValid) {
+          return sendError(res, dateValidation.error, "INVALID_DATE", 400);
+        }
+        req.body.session_date = dateValidation.date.split("T")[0]; // YYYY-MM-DD
+      }
+
       const sessionData = { ...req.body, user_id: req.userId };
       const { data: session, error } = await supabase
         .from("training_sessions")
@@ -253,7 +319,9 @@ router.post(
         .select()
         .single();
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       return sendSuccess(res, { session }, "Session created successfully");
     } catch (error) {
@@ -280,6 +348,27 @@ router.post(
 
     try {
       const { sessionId, rpe, duration, notes } = req.body;
+
+      // VALIDATE RPE
+      const rpeValidation = validateRPE(rpe);
+      if (!rpeValidation.isValid) {
+        return sendError(res, rpeValidation.error, "INVALID_RPE", 400);
+      }
+
+      // VALIDATE DURATION
+      const durationValidation = validateDuration(duration);
+      if (!durationValidation.isValid) {
+        return sendError(
+          res,
+          durationValidation.error,
+          "INVALID_DURATION",
+          400,
+        );
+      }
+
+      // SANITIZE notes to prevent XSS
+      const sanitizedNotes = notes ? sanitizeText(notes) : "Completed via API";
+
       const targetUserId = req.userId;
 
       // Update training session status if sessionId provided
@@ -291,10 +380,10 @@ router.post(
             updated_at: new Date().toISOString(),
           })
           .eq("id", sessionId)
-          .eq("user_id", targetUserId);
+          .eq("user_id", targetUserId); // Authorization check already included
       }
 
-      // Insert into workout_logs
+      // Insert into workout_logs with validated values
       const { data, error: logError } = await supabase
         .from("workout_logs")
         .insert({
@@ -304,9 +393,9 @@ router.post(
               ? sessionId
               : null,
           completed_at: new Date().toISOString(),
-          rpe: rpe || 5,
-          duration_minutes: duration || 60,
-          notes: notes || "Completed via API",
+          rpe: rpeValidation.rpe, // Use validated value
+          duration_minutes: durationValidation.duration, // Use validated value
+          notes: sanitizedNotes, // Use sanitized notes
         })
         .select();
 
@@ -354,7 +443,9 @@ router.get("/workouts/:id", rateLimit("READ"), async (req, res) => {
       .eq("id", req.params.id)
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     return sendSuccess(res, session || { id: req.params.id, exercises: [] });
   } catch (error) {
@@ -377,19 +468,104 @@ router.put(
     }
 
     try {
+      // VALIDATE RPE if provided
+      if (req.body.rpe !== undefined) {
+        const rpeValidation = validateRPE(req.body.rpe);
+        if (!rpeValidation.isValid) {
+          return sendError(res, rpeValidation.error, "INVALID_RPE", 400);
+        }
+        req.body.rpe = rpeValidation.rpe;
+      }
+
+      // VALIDATE DURATION if provided
+      if (req.body.duration_minutes !== undefined) {
+        const durationValidation = validateDuration(req.body.duration_minutes);
+        if (!durationValidation.isValid) {
+          return sendError(
+            res,
+            durationValidation.error,
+            "INVALID_DURATION",
+            400,
+          );
+        }
+        req.body.duration_minutes = durationValidation.duration;
+      }
+
       const { data: session, error } = await supabase
         .from("training_sessions")
         .update(req.body)
         .eq("id", req.params.id)
+        .eq("user_id", req.userId) // ADD AUTHORIZATION CHECK
         .select()
         .single();
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
+
+      if (!session) {
+        return sendError(
+          res,
+          "Training session not found or you don't have permission to update it",
+          "NOT_FOUND",
+          404,
+        );
+      }
 
       return sendSuccess(res, { session }, "Workout updated successfully");
     } catch (error) {
       serverLogger.error(`[${ROUTE_NAME}] Update workout error:`, error);
       return sendError(res, "Failed to update workout", "UPDATE_ERROR", 500);
+    }
+  },
+);
+
+// =============================================================================
+// DELETE ENDPOINT
+// =============================================================================
+
+/**
+ * DELETE /session/:id
+ * Soft delete a training session
+ */
+router.delete(
+  "/session/:id",
+  rateLimit("CREATE"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("training_sessions")
+        .update({
+          status: "deleted",
+          deleted_at: new Date().toISOString(),
+        })
+        .eq("id", req.params.id)
+        .eq("user_id", req.userId) // AUTHORIZATION CHECK
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        return sendError(
+          res,
+          "Training session not found or you don't have permission to delete it",
+          "NOT_FOUND",
+          404,
+        );
+      }
+
+      return sendSuccess(res, null, "Training session deleted successfully");
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Delete session error:`, error);
+      return sendError(res, "Failed to delete session", "DELETE_ERROR", 500);
     }
   },
 );

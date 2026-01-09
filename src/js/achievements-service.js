@@ -6,7 +6,7 @@
 
 import { storageService } from "./services/storage-service-unified.js";
 
-import { logger } from '../logger.js';
+import { logger } from "../logger.js";
 
 class AchievementsService {
   constructor() {
@@ -16,7 +16,7 @@ class AchievementsService {
     this.achievements = this.defineAchievements();
     this.loadUnlockedAchievements();
     this.isSyncing = false;
-    
+
     // Auto-sync with database when user is authenticated
     this.initDatabaseSync();
   }
@@ -43,7 +43,10 @@ class AchievementsService {
       await this.syncWithDatabase();
       sessionStorage.setItem(this.syncedKey, "true");
     } catch (error) {
-      logger.warn("[Achievements] Database sync failed, using localStorage:", error);
+      logger.warn(
+        "[Achievements] Database sync failed, using localStorage:",
+        error,
+      );
     }
   }
 
@@ -54,7 +57,9 @@ class AchievementsService {
    * - Uploads any missing achievements to database
    */
   async syncWithDatabase() {
-    if (this.isSyncing) {return;}
+    if (this.isSyncing) {
+      return;
+    }
     this.isSyncing = true;
 
     try {
@@ -62,43 +67,50 @@ class AchievementsService {
 
       // Fetch achievements from database
       const response = await window.apiClient.get("/api/achievements");
-      
+
       if (!response || !response.success) {
         throw new Error("Failed to fetch achievements from database");
       }
 
       const dbAchievements = response.data.achievements || [];
       const dbUnlockedIds = dbAchievements
-        .filter(a => a.unlocked)
-        .map(a => a.id);
+        .filter((a) => a.unlocked)
+        .map((a) => a.id);
 
       // Get local unlocked achievements
-      const localUnlockedIds = Object.keys(this.achievements)
-        .filter(id => this.achievements[id].unlocked);
+      const localUnlockedIds = Object.keys(this.achievements).filter(
+        (id) => this.achievements[id].unlocked,
+      );
 
       // Merge: Mark any DB achievements as unlocked locally
       let newFromDb = 0;
-      dbUnlockedIds.forEach(id => {
+      dbUnlockedIds.forEach((id) => {
         if (this.achievements[id] && !this.achievements[id].unlocked) {
           this.achievements[id].unlocked = true;
-          const dbAchievement = dbAchievements.find(a => a.id === id);
+          const dbAchievement = dbAchievements.find((a) => a.id === id);
           this.achievements[id].unlockedAt = dbAchievement?.unlockedAt;
           newFromDb++;
         }
       });
 
       if (newFromDb > 0) {
-        logger.info(`[Achievements] Loaded ${newFromDb} achievements from database`);
+        logger.info(
+          `[Achievements] Loaded ${newFromDb} achievements from database`,
+        );
         this.saveUnlockedAchievements();
       }
 
       // Find achievements that exist locally but not in DB
-      const localOnly = localUnlockedIds.filter(id => !dbUnlockedIds.includes(id));
-      
+      const localOnly = localUnlockedIds.filter(
+        (id) => !dbUnlockedIds.includes(id),
+      );
+
       if (localOnly.length > 0) {
-        logger.info(`[Achievements] Uploading ${localOnly.length} local achievements to database`);
+        logger.info(
+          `[Achievements] Uploading ${localOnly.length} local achievements to database`,
+        );
         const history = this.getHistory();
-        
+
         await window.apiClient.put("/api/achievements", {
           achievementIds: localOnly,
           history,
@@ -130,7 +142,10 @@ class AchievementsService {
       });
       logger.info(`[Achievements] Synced "${achievement.name}" to database`);
     } catch (error) {
-      logger.warn(`[Achievements] Failed to sync "${achievement.name}" to database:`, error);
+      logger.warn(
+        `[Achievements] Failed to sync "${achievement.name}" to database:`,
+        error,
+      );
       // Achievement is still saved locally, will sync later
     }
   }
@@ -419,20 +434,22 @@ class AchievementsService {
         }
 
         // Dispatch custom event for other components
-        document.dispatchEvent(new CustomEvent('achievementUnlocked', {
-          detail: {
-            achievement: {
-              id: achievement.id,
-              name: achievement.name,
-              description: achievement.description,
-              icon: achievement.icon,
-              points: achievement.points,
-              category: achievement.category,
+        document.dispatchEvent(
+          new CustomEvent("achievementUnlocked", {
+            detail: {
+              achievement: {
+                id: achievement.id,
+                name: achievement.name,
+                description: achievement.description,
+                icon: achievement.icon,
+                points: achievement.points,
+                category: achievement.category,
+              },
+              totalPoints: this.getTotalPoints(),
+              progress: this.getProgress(),
             },
-            totalPoints: this.getTotalPoints(),
-            progress: this.getProgress(),
-          }
-        }));
+          }),
+        );
 
         logger.info(`[Achievements] Unlocked: ${achievement.name}`);
       }

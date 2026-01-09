@@ -16,9 +16,9 @@ import {
   ViewChild,
   ViewContainerRef,
   ComponentRef,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ChartSkeletonComponent } from '../chart-skeleton/chart-skeleton.component';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ChartSkeletonComponent } from "../chart-skeleton/chart-skeleton.component";
 
 export interface ChartDatasetConfig {
   label?: string;
@@ -58,42 +58,46 @@ export interface LazyChartOptions {
 }
 
 // Type alias for better compatibility with Chart.js types
-export type LazyChartOptionsInput = LazyChartOptions | Record<string, unknown> | null;
+export type LazyChartOptionsInput =
+  | LazyChartOptions
+  | Record<string, unknown>
+  | null;
 
 @Component({
-  selector: 'app-lazy-chart',
+  selector: "app-lazy-chart",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ChartSkeletonComponent],
   template: `
     <div class="lazy-chart-container">
       @if (loading()) {
-        <app-chart-skeleton
-          [type]="type()"
-          [height]="height()"
-        />
+        <app-chart-skeleton [type]="type()" [height]="height()" />
       }
       <ng-container #chartContainer></ng-container>
     </div>
   `,
-  styles: [`
-    .lazy-chart-container {
-      position: relative;
-      width: 100%;
-    }
-  `]
+  styles: [
+    `
+      .lazy-chart-container {
+        position: relative;
+        width: 100%;
+      }
+    `,
+  ],
 })
 export class LazyChartComponent implements OnInit, OnDestroy {
-  @ViewChild('chartContainer', { read: ViewContainerRef })
+  @ViewChild("chartContainer", { read: ViewContainerRef })
   chartContainer!: ViewContainerRef;
 
   // Angular 21: Use input() signals instead of @Input()
-  type = input<'line' | 'bar' | 'pie' | 'doughnut' | 'radar' | 'polarArea'>('line');
+  type = input<"line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea">(
+    "line",
+  );
   data = input<LazyChartData | Record<string, unknown> | null>(null);
   options = input<LazyChartOptionsInput>({});
-  width = input<string>('100%');
-  height = input<string>('300px');
-  
+  width = input<string>("100%");
+  height = input<string>("300px");
+
   // Angular 21: Use output() instead of @Output()
   chartClick = output<unknown>();
   chartHover = output<unknown>();
@@ -105,34 +109,38 @@ export class LazyChartComponent implements OnInit, OnDestroy {
     // Only load Chart.js when this component is actually rendered
     try {
       // Dynamically import PrimeNG's UIChart component (the actual component class)
-      const chartModule = await import('primeng/chart');
+      const chartModule = await import("primeng/chart");
       const Chart = chartModule.UIChart || chartModule.default;
-      
+
       if (!Chart) {
-        throw new Error('Could not find Chart component in primeng/chart module');
+        throw new Error(
+          "Could not find Chart component in primeng/chart module",
+        );
       }
-      
+
       // Create the chart component dynamically
       this.chartComponentRef = this.chartContainer.createComponent(Chart);
-      
-// Set inputs
-        if (this.chartComponentRef) {
-          this.chartComponentRef.setInput('type', this.type());
-          this.chartComponentRef.setInput('data', this.data());
-          this.chartComponentRef.setInput('options', this.options());
-          this.chartComponentRef.setInput('width', this.width());
-          this.chartComponentRef.setInput('height', this.height());
 
-          // Wire up outputs
-          const instance = this.chartComponentRef.instance as { onDataSelect?: { subscribe: (fn: (event: unknown) => void) => void } };
-          instance.onDataSelect?.subscribe((event: unknown) => {
-            this.chartClick.emit(event);
-          });
-        }
+      // Set inputs
+      if (this.chartComponentRef) {
+        this.chartComponentRef.setInput("type", this.type());
+        this.chartComponentRef.setInput("data", this.data());
+        this.chartComponentRef.setInput("options", this.options());
+        this.chartComponentRef.setInput("width", this.width());
+        this.chartComponentRef.setInput("height", this.height());
+
+        // Wire up outputs
+        const instance = this.chartComponentRef.instance as {
+          onDataSelect?: { subscribe: (fn: (event: unknown) => void) => void };
+        };
+        instance.onDataSelect?.subscribe((event: unknown) => {
+          this.chartClick.emit(event);
+        });
+      }
 
       this.loading.set(false);
     } catch (error) {
-      console.error('Failed to load Chart component:', error);
+      console.error("Failed to load Chart component:", error);
       this.loading.set(false);
     }
   }
@@ -148,7 +156,7 @@ export class LazyChartComponent implements OnInit, OnDestroy {
    */
   updateData(newData: LazyChartData) {
     if (this.chartComponentRef) {
-      this.chartComponentRef.setInput('data', newData);
+      this.chartComponentRef.setInput("data", newData);
     }
   }
 
@@ -157,7 +165,7 @@ export class LazyChartComponent implements OnInit, OnDestroy {
    */
   updateOptions(newOptions: LazyChartOptions) {
     if (this.chartComponentRef) {
-      this.chartComponentRef.setInput('options', newOptions);
+      this.chartComponentRef.setInput("options", newOptions);
     }
   }
 
@@ -166,7 +174,9 @@ export class LazyChartComponent implements OnInit, OnDestroy {
    */
   refresh() {
     if (this.chartComponentRef) {
-      const instance = this.chartComponentRef.instance as { refresh?: () => void };
+      const instance = this.chartComponentRef.instance as {
+        refresh?: () => void;
+      };
       instance.refresh?.();
     }
   }

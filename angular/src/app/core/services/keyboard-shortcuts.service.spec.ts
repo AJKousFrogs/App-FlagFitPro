@@ -100,10 +100,14 @@ describe("KeyboardShortcutsService", () => {
       };
 
       service.register(shortcut);
-      expect(service.shortcuts().find((s) => s.id === "temp-shortcut")).toBeDefined();
+      expect(
+        service.shortcuts().find((s) => s.id === "temp-shortcut"),
+      ).toBeDefined();
 
       service.unregister("temp-shortcut");
-      expect(service.shortcuts().find((s) => s.id === "temp-shortcut")).toBeUndefined();
+      expect(
+        service.shortcuts().find((s) => s.id === "temp-shortcut"),
+      ).toBeUndefined();
     });
   });
 
@@ -121,11 +125,15 @@ describe("KeyboardShortcutsService", () => {
       service.register(shortcut);
 
       service.setEnabled("toggle-shortcut", false);
-      const disabled = service.shortcuts().find((s) => s.id === "toggle-shortcut");
+      const disabled = service
+        .shortcuts()
+        .find((s) => s.id === "toggle-shortcut");
       expect(disabled?.enabled).toBe(false);
 
       service.setEnabled("toggle-shortcut", true);
-      const enabled = service.shortcuts().find((s) => s.id === "toggle-shortcut");
+      const enabled = service
+        .shortcuts()
+        .find((s) => s.id === "toggle-shortcut");
       expect(enabled?.enabled).toBe(true);
     });
 

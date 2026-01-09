@@ -20,7 +20,11 @@
 import { Injectable, inject, NgZone } from "@angular/core";
 import { Router } from "@angular/router";
 import { LoggerService } from "./logger.service";
-import { getErrorMessage, isNetworkError, isAuthError } from "../../shared/utils/error.utils";
+import {
+  getErrorMessage,
+  isNetworkError,
+  isAuthError,
+} from "../../shared/utils/error.utils";
 import { ERROR_MESSAGES } from "../constants/error.constants";
 
 export interface RedactedError {

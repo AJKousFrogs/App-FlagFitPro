@@ -1804,7 +1804,7 @@ export class CoachDashboardComponent {
     const overrideList = overrides
       .map(
         (o) =>
-          `${formatDate(o.createdAt || "", 'P')}: ${o.overrideType} - ${o.reason || "No reason provided"}`,
+          `${formatDate(o.createdAt || "", "P")}: ${o.overrideType} - ${o.reason || "No reason provided"}`,
       )
       .join("\n");
 

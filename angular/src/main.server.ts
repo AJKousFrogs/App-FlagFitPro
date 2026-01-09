@@ -5,9 +5,7 @@ import { mergeApplicationConfig } from "@angular/core";
 import { bootstrapApplication } from "@angular/platform-browser";
 
 const serverConfig = {
-  providers: [
-    provideServerRendering()
-  ]
+  providers: [provideServerRendering()],
 };
 
 const config = mergeApplicationConfig(appConfig, serverConfig);

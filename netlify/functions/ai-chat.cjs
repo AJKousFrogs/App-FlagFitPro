@@ -62,9 +62,7 @@ const {
 const {
   isEmbeddingServiceAvailable,
 } = require("./utils/embedding-service.cjs");
-const {
-  guardMerlinRequest,
-} = require("./utils/merlin-guard.cjs");
+const { guardMerlinRequest } = require("./utils/merlin-guard.cjs");
 
 // =====================================================
 // CONSTANTS
@@ -388,7 +386,7 @@ async function getUserContext(userId) {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split("T")[0];
-    
+
     const { data: yesterdayWellness } = await supabaseAdmin
       .from("athlete_daily_state")
       .select("readiness_score")
@@ -403,11 +401,13 @@ async function getUserContext(userId) {
     // 6b. Get recent games (last 7 days) for temporal context
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    
+
     const { data: recentGames } = await supabaseAdmin
       .from("games")
       .select("game_date, our_score, opponent_score")
-      .or(`player_id.eq.${userId},team_id.in.(SELECT team_id FROM team_members WHERE user_id.eq.${userId})`)
+      .or(
+        `player_id.eq.${userId},team_id.in.(SELECT team_id FROM team_members WHERE user_id.eq.${userId})`,
+      )
       .gte("game_date", sevenDaysAgo.toISOString().split("T")[0])
       .order("game_date", { ascending: false })
       .limit(3);
@@ -460,24 +460,35 @@ async function getUserContext(userId) {
       confidenceScore *= 0.7;
     } else {
       // Check if wellness has all metrics
-      const requiredMetrics = ["sleep_quality", "energy_level", "soreness", "stress_level", "mood"];
-      const missingMetrics = requiredMetrics.filter(metric => !wellness[metric] && wellness[metric] !== 0);
+      const requiredMetrics = [
+        "sleep_quality",
+        "energy_level",
+        "soreness",
+        "stress_level",
+        "mood",
+      ];
+      const missingMetrics = requiredMetrics.filter(
+        (metric) => !wellness[metric] && wellness[metric] !== 0,
+      );
       if (missingMetrics.length > 0) {
-        missingInputs.push(...missingMetrics.map(m => `wellness_${m}`));
-        confidenceScore *= (1 - missingMetrics.length / requiredMetrics.length);
+        missingInputs.push(...missingMetrics.map((m) => `wellness_${m}`));
+        confidenceScore *= 1 - missingMetrics.length / requiredMetrics.length;
       }
     }
 
     // Check training data completeness (for ACWR)
     if (context.recentSessions.length < 10) {
-      missingInputs.push(`${10 - context.recentSessions.length} training_sessions`);
+      missingInputs.push(
+        `${10 - context.recentSessions.length} training_sessions`,
+      );
       confidenceScore *= Math.min(context.recentSessions.length / 10, 1.0);
     }
 
     // Check if wellness is stale (older than 2 days)
     if (wellness && wellness.state_date) {
       const wellnessDate = new Date(wellness.state_date);
-      const daysSince = (new Date().getTime() - wellnessDate.getTime()) / (1000 * 60 * 60 * 24);
+      const daysSince =
+        (new Date().getTime() - wellnessDate.getTime()) / (1000 * 60 * 60 * 24);
       if (daysSince > 2) {
         staleData.push("wellness");
         confidenceScore *= 0.8;
@@ -3051,12 +3062,12 @@ async function checkAiProcessingConsent(userId) {
 
 exports.handler = async (event, context) => {
   // Apply Merlin guard - AI chat is POST only (mutation)
-  const req = { 
-    method: event.httpMethod, 
-    path: event.path, 
-    headers: event.headers, 
+  const req = {
+    method: event.httpMethod,
+    path: event.path,
+    headers: event.headers,
     body: event.body,
-    user: context.user || {}
+    user: context.user || {},
   };
   const blocked = guardMerlinRequest(req);
   if (blocked && blocked.statusCode === 403) {

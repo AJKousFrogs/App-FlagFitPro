@@ -3,9 +3,7 @@ const {
   canCoachViewWellness,
   filterWellnessDataForCoach,
 } = require("./utils/consent-guard.cjs");
-const {
-  detectPainTrigger,
-} = require("./utils/safety-override.cjs");
+const { detectPainTrigger } = require("./utils/safety-override.cjs");
 const { getUserRole } = require("./utils/authorization-guard.cjs");
 
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -84,8 +82,8 @@ exports.handler = async (event) => {
 async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
-  const isCoach = ['coach', 'admin'].includes(role);
-  
+  const isCoach = ["coach", "admin"].includes(role);
+
   const { data, error } = await supabase
     .from("daily_wellness_checkin")
     .select("*")
@@ -134,8 +132,8 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
       // Filter based on consent level
       responseData = filterWellnessDataForCoach(
         responseData,
-        consentCheck.reason === 'CONSENT_GRANTED',
-        consentCheck.safetyOverride
+        consentCheck.reason === "CONSENT_GRANTED",
+        consentCheck.safetyOverride,
       );
     }
   }
@@ -166,8 +164,17 @@ async function saveCheckin(supabase, userId, payload, headers) {
   const targetDate = date || new Date().toISOString().split("T")[0];
 
   // Safety override: Check for pain triggers (muscleSoreness >3/10)
-  if (muscleSoreness !== undefined && muscleSoreness !== null && muscleSoreness > 3) {
-    await detectPainTrigger(userId, muscleSoreness, sorenessAreas?.join(', ') || 'general', null);
+  if (
+    muscleSoreness !== undefined &&
+    muscleSoreness !== null &&
+    muscleSoreness > 3
+  ) {
+    await detectPainTrigger(
+      userId,
+      muscleSoreness,
+      sorenessAreas?.join(", ") || "general",
+      null,
+    );
   }
 
   // Calculate readiness if not provided
@@ -216,7 +223,10 @@ async function saveCheckin(supabase, userId, payload, headers) {
         });
       }
     } catch (recoveryError) {
-      console.warn("[Wellness] Error creating recovery focus:", recoveryError.message);
+      console.warn(
+        "[Wellness] Error creating recovery focus:",
+        recoveryError.message,
+      );
       // Non-fatal - continue with check-in
     }
   }
@@ -263,7 +273,10 @@ async function saveCheckin(supabase, userId, payload, headers) {
         }
       }
     } catch (transitionError) {
-      console.warn("[Wellness] Error logging ownership transition:", transitionError.message);
+      console.warn(
+        "[Wellness] Error logging ownership transition:",
+        transitionError.message,
+      );
       // Non-fatal - continue with check-in
     }
   }
@@ -328,16 +341,23 @@ async function saveCheckin(supabase, userId, payload, headers) {
       .limit(3);
 
     if (recentWellness && recentWellness.length >= 2) {
-      const avgStress = recentWellness.reduce((sum, w) => sum + (w.stress_level || 5), 0) / recentWellness.length;
-      const avgEnergy = recentWellness.reduce((sum, w) => sum + (w.energy_level || 5), 0) / recentWellness.length;
-      
+      const avgStress =
+        recentWellness.reduce((sum, w) => sum + (w.stress_level || 5), 0) /
+        recentWellness.length;
+      const avgEnergy =
+        recentWellness.reduce((sum, w) => sum + (w.energy_level || 5), 0) /
+        recentWellness.length;
+
       if (avgStress >= 7 && avgEnergy <= 4) {
         mentalFatigueIndicators.push("Sustained high stress with low energy");
       }
     }
 
     // If multiple indicators or severe single indicator, flag for psychologist
-    if (mentalFatigueIndicators.length >= 2 || (stressLevel >= 8 && energyLevel <= 2)) {
+    if (
+      mentalFatigueIndicators.length >= 2 ||
+      (stressLevel >= 8 && energyLevel <= 2)
+    ) {
       // Get player's team and psychologist
       const { data: teamMember } = await supabase
         .from("team_members")
@@ -346,25 +366,25 @@ async function saveCheckin(supabase, userId, payload, headers) {
         .eq("role", "player")
         .single();
 
-        if (teamMember) {
-          // Get player name (use 'users' table - profiles doesn't exist)
-          const { data: playerData } = await supabase
-            .from("users")
-            .select("full_name")
-            .eq("id", userId)
-            .single();
+      if (teamMember) {
+        // Get player name (use 'users' table - profiles doesn't exist)
+        const { data: playerData } = await supabase
+          .from("users")
+          .select("full_name")
+          .eq("id", userId)
+          .single();
 
-          const playerName = playerData?.full_name || "Player";
+        const playerName = playerData?.full_name || "Player";
 
-          // Get psychologist for team
-          const { data: psychologists } = await supabase
-            .from("team_members")
-            .select("user_id")
-            .eq("team_id", teamMember.team_id)
-            .eq("role", "psychologist")
-            .limit(1);
+        // Get psychologist for team
+        const { data: psychologists } = await supabase
+          .from("team_members")
+          .select("user_id")
+          .eq("team_id", teamMember.team_id)
+          .eq("role", "psychologist")
+          .limit(1);
 
-          if (psychologists && psychologists.length > 0) {
+        if (psychologists && psychologists.length > 0) {
           // Create shared insight for psychologist
           await supabase.from("shared_insights").insert({
             insight_type: "psychology_flag",
@@ -387,19 +407,22 @@ async function saveCheckin(supabase, userId, payload, headers) {
             created_at: new Date().toISOString(),
           });
 
-            // Notify psychologist
-            await supabase.from("notifications").insert({
-              user_id: psychologists[0].user_id,
-              notification_type: "wellness",
-              message: `${playerName} showing mental fatigue indicators - review recommended`,
-              priority: stressLevel >= 8 ? "high" : "medium",
-              metadata: { playerId: userId, indicators: mentalFatigueIndicators },
-            });
-          }
+          // Notify psychologist
+          await supabase.from("notifications").insert({
+            user_id: psychologists[0].user_id,
+            notification_type: "wellness",
+            message: `${playerName} showing mental fatigue indicators - review recommended`,
+            priority: stressLevel >= 8 ? "high" : "medium",
+            metadata: { playerId: userId, indicators: mentalFatigueIndicators },
+          });
         }
+      }
     }
   } catch (mentalFatigueError) {
-    console.warn("[Wellness] Error detecting mental fatigue:", mentalFatigueError.message);
+    console.warn(
+      "[Wellness] Error detecting mental fatigue:",
+      mentalFatigueError.message,
+    );
     // Non-fatal - continue
   }
 
@@ -437,91 +460,108 @@ async function saveCheckin(supabase, userId, payload, headers) {
 
           // Check if check-in date is within tournament dates
           if (checkinDate >= tournamentStart && checkinDate <= tournamentEnd) {
-          // Get today's nutrition logs
-          const { data: nutritionLogs } = await supabase
-            .from("nutrition_logs")
-            .select("meal_type, calories")
-            .eq("user_id", userId)
-            .gte("logged_at", `${targetDate}T00:00:00`)
-            .lt("logged_at", `${targetDate}T23:59:59`);
+            // Get today's nutrition logs
+            const { data: nutritionLogs } = await supabase
+              .from("nutrition_logs")
+              .select("meal_type, calories")
+              .eq("user_id", userId)
+              .gte("logged_at", `${targetDate}T00:00:00`)
+              .lt("logged_at", `${targetDate}T23:59:59`);
 
-          // Check for nutrition deviations
-          const deviations = [];
-          const loggedMeals = nutritionLogs?.length || 0;
-          const expectedMeals = 4; // Default tournament expectation
+            // Check for nutrition deviations
+            const deviations = [];
+            const loggedMeals = nutritionLogs?.length || 0;
+            const expectedMeals = 4; // Default tournament expectation
 
-          // Check meal compliance (expect at least 3 meals during tournament)
-          if (loggedMeals < expectedMeals * 0.75) {
-            deviations.push(`Missing meals: ${loggedMeals}/${expectedMeals} logged`);
-          }
-
-          // Check calorie compliance (basic check - expect reasonable intake)
-          const totalCalories = nutritionLogs?.reduce((sum, log) => sum + (log.calories || 0), 0) || 0;
-          const expectedCalories = 2500; // Baseline tournament expectation
-          if (totalCalories > 0 && totalCalories < expectedCalories * 0.6) {
-            deviations.push(`Low calorie intake: ${Math.round(totalCalories)}/${expectedCalories} (${Math.round((totalCalories / expectedCalories) * 100)}% of target)`);
-          }
-
-          if (deviations.length > 0) {
-            // Get player name (use 'users' table - profiles doesn't exist)
-            const { data: playerData } = await supabase
-              .from("users")
-              .select("full_name")
-              .eq("id", userId)
-              .single();
-
-            const playerName = playerData?.full_name || "Player";
-
-            // Get nutritionist for team
-            const { data: nutritionists } = await supabase
-              .from("team_members")
-              .select("user_id")
-              .eq("team_id", teamMember.team_id)
-              .eq("role", "nutritionist")
-              .limit(1);
-
-            if (nutritionists && nutritionists.length > 0) {
-              // Create shared insight for nutritionist
-              await supabase.from("shared_insights").insert({
-                insight_type: "nutrition_compliance",
-                from_role: "system",
-                to_roles: ["nutritionist", "coach"],
-                player_id: userId,
-                player_name: playerName,
-                team_id: teamMember.team_id,
-                title: `Tournament Nutrition Deviation - ${tournament.name}`,
-                content: `Player deviating from tournament nutrition plan: ${deviations.join("; ")}.`,
-                metadata: {
-                  tournament_id: tournament.id,
-                  tournament_name: tournament.name,
-                  deviations,
-                  logged_meals: loggedMeals,
-                  expected_meals: expectedMeals,
-                  total_calories: totalCalories,
-                  target_calories: expectedCalories,
-                  checkin_date: targetDate,
-                },
-                priority: loggedMeals < expectedMeals * 0.5 ? "high" : "medium",
-                status: "active",
-                created_at: new Date().toISOString(),
-              });
-
-              // Notify nutritionist
-              await supabase.from("notifications").insert({
-                user_id: nutritionists[0].user_id,
-                notification_type: "nutrition",
-                message: `${playerName} deviating from tournament nutrition plan - review recommended`,
-                priority: loggedMeals < expectedMeals * 0.5 ? "high" : "medium",
-                metadata: { playerId: userId, tournamentId: tournament.id, deviations },
-              });
+            // Check meal compliance (expect at least 3 meals during tournament)
+            if (loggedMeals < expectedMeals * 0.75) {
+              deviations.push(
+                `Missing meals: ${loggedMeals}/${expectedMeals} logged`,
+              );
             }
-          }
+
+            // Check calorie compliance (basic check - expect reasonable intake)
+            const totalCalories =
+              nutritionLogs?.reduce(
+                (sum, log) => sum + (log.calories || 0),
+                0,
+              ) || 0;
+            const expectedCalories = 2500; // Baseline tournament expectation
+            if (totalCalories > 0 && totalCalories < expectedCalories * 0.6) {
+              deviations.push(
+                `Low calorie intake: ${Math.round(totalCalories)}/${expectedCalories} (${Math.round((totalCalories / expectedCalories) * 100)}% of target)`,
+              );
+            }
+
+            if (deviations.length > 0) {
+              // Get player name (use 'users' table - profiles doesn't exist)
+              const { data: playerData } = await supabase
+                .from("users")
+                .select("full_name")
+                .eq("id", userId)
+                .single();
+
+              const playerName = playerData?.full_name || "Player";
+
+              // Get nutritionist for team
+              const { data: nutritionists } = await supabase
+                .from("team_members")
+                .select("user_id")
+                .eq("team_id", teamMember.team_id)
+                .eq("role", "nutritionist")
+                .limit(1);
+
+              if (nutritionists && nutritionists.length > 0) {
+                // Create shared insight for nutritionist
+                await supabase.from("shared_insights").insert({
+                  insight_type: "nutrition_compliance",
+                  from_role: "system",
+                  to_roles: ["nutritionist", "coach"],
+                  player_id: userId,
+                  player_name: playerName,
+                  team_id: teamMember.team_id,
+                  title: `Tournament Nutrition Deviation - ${tournament.name}`,
+                  content: `Player deviating from tournament nutrition plan: ${deviations.join("; ")}.`,
+                  metadata: {
+                    tournament_id: tournament.id,
+                    tournament_name: tournament.name,
+                    deviations,
+                    logged_meals: loggedMeals,
+                    expected_meals: expectedMeals,
+                    total_calories: totalCalories,
+                    target_calories: expectedCalories,
+                    checkin_date: targetDate,
+                  },
+                  priority:
+                    loggedMeals < expectedMeals * 0.5 ? "high" : "medium",
+                  status: "active",
+                  created_at: new Date().toISOString(),
+                });
+
+                // Notify nutritionist
+                await supabase.from("notifications").insert({
+                  user_id: nutritionists[0].user_id,
+                  notification_type: "nutrition",
+                  message: `${playerName} deviating from tournament nutrition plan - review recommended`,
+                  priority:
+                    loggedMeals < expectedMeals * 0.5 ? "high" : "medium",
+                  metadata: {
+                    playerId: userId,
+                    tournamentId: tournament.id,
+                    deviations,
+                  },
+                });
+              }
+            }
           }
         }
       }
     }
   } catch (nutritionError) {
-    console.warn("[Wellness] Error detecting nutrition deviation:", nutritionError.message);
+    console.warn(
+      "[Wellness] Error detecting nutrition deviation:",
+      nutritionError.message,
+    );
     // Non-fatal - continue
   }
 

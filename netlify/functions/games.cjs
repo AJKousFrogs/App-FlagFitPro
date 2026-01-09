@@ -355,7 +355,9 @@ async function triggerGameDayRecovery(playerId, gameDate) {
       }),
     ]);
 
-    console.log(`[GameDayRecovery] Created 48h recovery protocol for player ${playerId}`);
+    console.log(
+      `[GameDayRecovery] Created 48h recovery protocol for player ${playerId}`,
+    );
   } catch (error) {
     console.error("[GameDayRecovery] Error creating recovery protocol:", error);
   }
@@ -441,10 +443,11 @@ const updateGame = async (userId, gameId, updates) => {
     }
 
     // If game was just completed (status changed to completed or scores were added), trigger recovery
-    const wasCompleted = 
+    const wasCompleted =
       (updateObj.status === "completed" && game.status !== "completed") ||
-      ((updateObj.our_score !== undefined || updateObj.opponent_score !== undefined) && 
-       (game.status === "completed" || updateObj.status === "completed"));
+      ((updateObj.our_score !== undefined ||
+        updateObj.opponent_score !== undefined) &&
+        (game.status === "completed" || updateObj.status === "completed"));
 
     if (wasCompleted && updatedGame.game_date) {
       // Get all players on the team

@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, computed, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  computed,
+  inject,
+} from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { TagModule } from "primeng/tag";
@@ -116,7 +122,7 @@ interface Milestone {
               <div class="milestone-info">
                 <span class="milestone-title">{{ milestone.title }}</span>
                 <span class="milestone-date">{{
-                  formatDate(milestone.date, 'MMM yyyy')
+                  formatDate(milestone.date, "MMM yyyy")
                 }}</span>
               </div>
             </div>
@@ -193,8 +199,11 @@ interface Milestone {
                     </div>
                   }
                   <p class="cycle-dates">
-                    {{ formatDate(cycle.program_cycle?.start_date, 'MMM yyyy') }} -
-                    {{ formatDate(cycle.program_cycle?.end_date, 'MMM yyyy') }}
+                    {{
+                      formatDate(cycle.program_cycle?.start_date, "MMM yyyy")
+                    }}
+                    -
+                    {{ formatDate(cycle.program_cycle?.end_date, "MMM yyyy") }}
                   </p>
                 </div>
               }

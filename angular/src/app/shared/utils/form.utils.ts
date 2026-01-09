@@ -52,11 +52,11 @@ export function createFormFieldState<T = unknown>(
 
 /**
  * Common validators as signal-compatible functions
- * 
+ *
  * NOTE: These validators are maintained for backward compatibility.
  * New code should use SignalValidators from @core/config/signal-forms.config
  * which provides a more flexible factory pattern.
- * 
+ *
  * @deprecated Consider migrating to SignalValidators for new code
  */
 export const FormValidators = {
@@ -72,7 +72,9 @@ export const FormValidators = {
 
   email: (value: string | null | undefined): string | null => {
     if (!value) return null;
-    return VALIDATION.EMAIL_PATTERN.test(value) ? null : "Please enter a valid email address";
+    return VALIDATION.EMAIL_PATTERN.test(value)
+      ? null
+      : "Please enter a valid email address";
   },
 
   minLength:

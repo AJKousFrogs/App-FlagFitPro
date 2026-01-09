@@ -88,7 +88,9 @@ export class TeamMembershipService {
   readonly teamName = computed(() => this._membership()?.teamName || null);
   readonly role = computed(() => this._membership()?.role || null);
   readonly position = computed(() => this._membership()?.position || null);
-  readonly jerseyNumber = computed(() => this._membership()?.jerseyNumber || null);
+  readonly jerseyNumber = computed(
+    () => this._membership()?.jerseyNumber || null,
+  );
 
   /**
    * Check if user has coach/staff role
@@ -189,7 +191,7 @@ export class TeamMembershipService {
           status,
           joined_at,
           teams:team_id(id, name)
-        `
+        `,
         )
         .eq("user_id", user.id)
         .eq("status", "active")
@@ -229,7 +231,7 @@ export class TeamMembershipService {
         "[TeamMembership] Membership loaded:",
         membership.role,
         "in team",
-        teamName
+        teamName,
       );
 
       return membership;
@@ -267,7 +269,7 @@ export class TeamMembershipService {
           user_id,
           role,
           users:user_id(first_name, last_name, full_name)
-        `
+        `,
         )
         .eq("team_id", teamId)
         .in("role", ["head_coach", "coach"])
@@ -316,10 +318,16 @@ export class TeamMembershipService {
           user_id,
           role,
           users:user_id(first_name, last_name, full_name)
-        `
+        `,
         )
         .eq("team_id", teamId)
-        .in("role", ["head_coach", "coach", "offense_coordinator", "defense_coordinator", "assistant_coach"]);
+        .in("role", [
+          "head_coach",
+          "coach",
+          "offense_coordinator",
+          "defense_coordinator",
+          "assistant_coach",
+        ]);
 
       if (error || !coaches) return [];
 
@@ -353,7 +361,7 @@ export class TeamMembershipService {
    */
   async getTeamMemberIds(
     teamId?: string,
-    options?: { role?: TeamRole | TeamRole[] }
+    options?: { role?: TeamRole | TeamRole[] },
   ): Promise<string[]> {
     const targetTeamId = teamId || this.teamId();
     if (!targetTeamId) return [];
@@ -393,7 +401,7 @@ export class TeamMembershipService {
    */
   async updatePositionAndJersey(
     position: string | null,
-    jerseyNumber: number | null
+    jerseyNumber: number | null,
   ): Promise<boolean> {
     const membership = this._membership();
     if (!membership?.id) {

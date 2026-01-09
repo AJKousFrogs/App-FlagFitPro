@@ -1,9 +1,9 @@
 /**
  * Coach Override Badge Component
- * 
+ *
  * Phase 3 - Unified Coach Override Indicator
  * Standardized component for displaying coach override indicators across all contexts
- * 
+ *
  * Usage:
  * <app-coach-override-badge [overrideType]="'load-adjustment'" [placement]="'top-right'"></app-coach-override-badge>
  */
@@ -25,7 +25,11 @@ export type CoachOverrideType =
   | "plan-change"
   | "threshold-override"
   | "general";
-export type CoachOverridePlacement = "top-right" | "top-left" | "inline" | "card";
+export type CoachOverridePlacement =
+  | "top-right"
+  | "top-left"
+  | "inline"
+  | "card";
 
 @Component({
   selector: "app-coach-override-badge",
@@ -182,4 +186,3 @@ export class CoachOverrideBadgeComponent {
     return this.timestamp() ? getTimeAgo(this.timestamp()!) : "";
   }
 }
-

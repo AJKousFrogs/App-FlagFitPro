@@ -62,7 +62,9 @@ router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     const { data: notifications, error } = await query;
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     return sendSuccess(res, notifications || []);
   } catch (error) {
@@ -127,7 +129,7 @@ router.post(
 
     try {
       const { notificationId, ids } = req.body || {};
-      const {userId} = req;
+      const { userId } = req;
 
       if (notificationId === "all") {
         // Mark all user's notifications as read
@@ -175,7 +177,7 @@ router.delete(
 
     try {
       const { id } = req.params;
-      const {userId} = req;
+      const { userId } = req;
 
       const { error } = await supabase
         .from("notifications")
@@ -183,12 +185,19 @@ router.delete(
         .eq("id", id)
         .eq("user_id", userId);
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       return sendSuccess(res, null, "Notification deleted");
     } catch (error) {
       serverLogger.error(`[${ROUTE_NAME}] Delete error:`, error);
-      return sendError(res, "Failed to delete notification", "DELETE_ERROR", 500);
+      return sendError(
+        res,
+        "Failed to delete notification",
+        "DELETE_ERROR",
+        500,
+      );
     }
   },
 );
@@ -214,7 +223,7 @@ router.get(
     }
 
     try {
-      const {userId} = req;
+      const { userId } = req;
 
       const { data: preferences, error } = await supabase
         .from("notification_preferences")
@@ -239,12 +248,7 @@ router.get(
       );
     } catch (error) {
       serverLogger.error(`[${ROUTE_NAME}] Get preferences error:`, error);
-      return sendError(
-        res,
-        "Failed to get preferences",
-        "FETCH_ERROR",
-        500,
-      );
+      return sendError(res, "Failed to get preferences", "FETCH_ERROR", 500);
     }
   },
 );
@@ -263,7 +267,7 @@ router.put(
     }
 
     try {
-      const {userId} = req;
+      const { userId } = req;
 
       const { data, error } = await supabase
         .from("notification_preferences")
@@ -278,7 +282,9 @@ router.put(
         .select()
         .single();
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       return sendSuccess(res, data, "Preferences updated");
     } catch (error) {

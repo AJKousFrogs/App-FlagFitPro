@@ -8,7 +8,10 @@ const {
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { checkTeamMembership, getUserContext } = require("./utils/auth-helper.cjs");
+const {
+  checkTeamMembership,
+  getUserContext,
+} = require("./utils/auth-helper.cjs");
 
 // Get player payment data (player view)
 const getPlayerPayments = async (userId, queryParams) => {
@@ -53,18 +56,21 @@ const getPlayerPayments = async (userId, queryParams) => {
   }
 
   // Calculate summary
-  const totalOwed = payments
-    ?.filter((p) => p.status === "pending")
-    .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0) || 0;
+  const totalOwed =
+    payments
+      ?.filter((p) => p.status === "pending")
+      .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0) || 0;
 
-  const totalPaid = payments
-    ?.filter((p) => p.status === "completed")
-    .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0) || 0;
+  const totalPaid =
+    payments
+      ?.filter((p) => p.status === "completed")
+      .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0) || 0;
 
   // Get next payment due
   const pendingPayments = payments?.filter((p) => p.status === "pending") || [];
-  const nextPayment = pendingPayments
-    .sort((a, b) => new Date(a.due_date || 0) - new Date(b.due_date || 0))[0];
+  const nextPayment = pendingPayments.sort(
+    (a, b) => new Date(a.due_date || 0) - new Date(b.due_date || 0),
+  )[0];
 
   // Format fees for display
   const fees = pendingPayments.map((p) => ({
@@ -73,11 +79,12 @@ const getPlayerPayments = async (userId, queryParams) => {
     description: p.description || "",
     amount: parseFloat(p.amount || 0),
     dueDate: p.due_date || null,
-    status: p.status === "pending" && p.due_date && new Date(p.due_date) < new Date()
-      ? "overdue"
-      : p.status === "pending"
-      ? "pending"
-      : "paid",
+    status:
+      p.status === "pending" && p.due_date && new Date(p.due_date) < new Date()
+        ? "overdue"
+        : p.status === "pending"
+          ? "pending"
+          : "paid",
     breakdown: [],
   }));
 
@@ -124,7 +131,9 @@ const getPlayerPayments = async (userId, queryParams) => {
       totalOwed,
       totalPaid,
       nextPaymentDue: nextPayment?.due_date || null,
-      nextPaymentAmount: nextPayment ? parseFloat(nextPayment.amount || 0) : null,
+      nextPaymentAmount: nextPayment
+        ? parseFloat(nextPayment.amount || 0)
+        : null,
     },
     fees,
     history,
@@ -151,14 +160,16 @@ const getCoachPayments = async (userId, queryParams) => {
   // Get all payments for this team
   const { data: payments, error: paymentsError } = await supabaseAdmin
     .from("player_payments")
-    .select(`
+    .select(
+      `
       *,
       team_members!player_payments_player_id_fkey (
         id,
         user_id,
         display_name
       )
-    `)
+    `,
+    )
     .eq("team_id", team_id)
     .order("created_at", { ascending: false });
 
@@ -185,9 +196,14 @@ const getCoachPayments = async (userId, queryParams) => {
       feesMap.set(key, {
         id: p.id,
         name: p.description || `${p.payment_type} Fee`,
-        type: p.payment_type === "membership_fee" ? "dues" : 
-              p.payment_type === "tournament_fee" ? "tournament" :
-              p.payment_type === "equipment" ? "equipment" : "other",
+        type:
+          p.payment_type === "membership_fee"
+            ? "dues"
+            : p.payment_type === "tournament_fee"
+              ? "tournament"
+              : p.payment_type === "equipment"
+                ? "equipment"
+                : "other",
         amount: parseFloat(p.amount || 0),
         guestFee: null,
         dueDate: p.due_date || null,
@@ -234,16 +250,20 @@ const getCoachPayments = async (userId, queryParams) => {
   });
 
   payments?.forEach((p) => {
-    if (!balancesMap.has(p.player_id)) return;
+    if (!balancesMap.has(p.player_id)) {
+      return;
+    }
     const balance = balancesMap.get(p.player_id);
     if (p.status === "pending") {
       balance.balance += parseFloat(p.amount || 0);
-      balance.status = p.due_date && new Date(p.due_date) < new Date() 
-        ? "overdue" 
-        : "due";
+      balance.status =
+        p.due_date && new Date(p.due_date) < new Date() ? "overdue" : "due";
     } else if (p.status === "completed" && p.paid_at) {
       const paidDate = new Date(p.paid_at);
-      if (!balance.lastPaymentDate || paidDate > new Date(balance.lastPaymentDate)) {
+      if (
+        !balance.lastPaymentDate ||
+        paidDate > new Date(balance.lastPaymentDate)
+      ) {
         balance.lastPaymentDate = p.paid_at;
         balance.lastPaymentAmount = parseFloat(p.amount || 0);
       }
@@ -315,7 +335,9 @@ const createFee = async (userId, body) => {
       .select("id")
       .eq("team_id", team_id)
       .eq("status", "active");
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     membersToApply = members || [];
   } else if (applyTo === "select" && playerIds?.length > 0) {
     membersToApply = playerIds.map((id) => ({ id }));
@@ -391,7 +413,9 @@ const recordPayment = async (userId, body) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return { success: true, payment: data };
   }
 
@@ -413,7 +437,9 @@ const recordPayment = async (userId, body) => {
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    throw error;
+  }
   return { success: true, payment: data };
 };
 
@@ -437,19 +463,28 @@ exports.handler = async (event, context) => {
         }
 
         // Route: GET /api/coach/payments (coach view)
-        if (method === "GET" && (path.includes("/coach/payments") || queryParams.coach === "true")) {
+        if (
+          method === "GET" &&
+          (path.includes("/coach/payments") || queryParams.coach === "true")
+        ) {
           const data = await getCoachPayments(userId, queryParams);
           return createSuccessResponse(data);
         }
 
         // Route: POST /api/coach/payments/fees (create fee)
-        if (method === "POST" && (path.includes("/fees") || body.action === "create_fee")) {
+        if (
+          method === "POST" &&
+          (path.includes("/fees") || body.action === "create_fee")
+        ) {
           const result = await createFee(userId, body);
           return createSuccessResponse(result);
         }
 
         // Route: POST /api/coach/payments/record (record payment)
-        if (method === "POST" && (path.includes("/record") || body.action === "record_payment")) {
+        if (
+          method === "POST" &&
+          (path.includes("/record") || body.action === "record_payment")
+        ) {
           const result = await recordPayment(userId, body);
           return createSuccessResponse(result);
         }
@@ -457,7 +492,10 @@ exports.handler = async (event, context) => {
         return createErrorResponse("Invalid endpoint", 404);
       } catch (error) {
         console.error("Payments API error:", error);
-        return createErrorResponse(error.message || "Internal server error", 500);
+        return createErrorResponse(
+          error.message || "Internal server error",
+          500,
+        );
       }
     },
   });

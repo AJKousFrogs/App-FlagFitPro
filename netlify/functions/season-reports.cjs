@@ -12,7 +12,9 @@ exports.handler = createHandler({
     const supabase = getSupabaseClient();
 
     // Only coaches/admins can generate reports
-    if (!["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)) {
+    if (
+      !["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)
+    ) {
       return {
         statusCode: 403,
         body: JSON.stringify({
@@ -43,7 +45,9 @@ exports.handler = createHandler({
           .eq("id", season_id)
           .single();
 
-        if (seasonError) {throw seasonError;}
+        if (seasonError) {
+          throw seasonError;
+        }
 
         // Get team members
         const { data: teamMembers, error: membersError } = await supabase
@@ -51,9 +55,11 @@ exports.handler = createHandler({
           .select("user_id, role")
           .eq("team_id", season.team_id);
 
-        if (membersError) {throw membersError;}
+        if (membersError) {
+          throw membersError;
+        }
 
-        const players = teamMembers.filter(m => m.role === "player");
+        const players = teamMembers.filter((m) => m.role === "player");
         const reports = [];
 
         // Generate team report
@@ -61,7 +67,11 @@ exports.handler = createHandler({
         reports.push(teamReport);
 
         // Generate coach report
-        const coachReport = await generateCoachReport(supabase, season, players);
+        const coachReport = await generateCoachReport(
+          supabase,
+          season,
+          players,
+        );
         reports.push(coachReport);
 
         // Generate player reports
@@ -69,7 +79,7 @@ exports.handler = createHandler({
           const playerReport = await generatePlayerReport(
             supabase,
             season,
-            player.user_id
+            player.user_id,
           );
           reports.push(playerReport);
         }
@@ -79,7 +89,9 @@ exports.handler = createHandler({
           .from("season_summary_reports")
           .insert(reports);
 
-        if (insertError) {throw insertError;}
+        if (insertError) {
+          throw insertError;
+        }
 
         return {
           statusCode: 200,
@@ -117,7 +129,7 @@ async function generateTeamReport(supabase, season, players) {
     .select("readiness_score")
     .in(
       "user_id",
-      players.map(p => p.user_id)
+      players.map((p) => p.user_id),
     )
     .gte("checkin_date", season.start_date)
     .lte("checkin_date", season.end_date);
@@ -127,7 +139,7 @@ async function generateTeamReport(supabase, season, players) {
     .select("duration_minutes, rpe")
     .in(
       "user_id",
-      players.map(p => p.user_id)
+      players.map((p) => p.user_id),
     )
     .gte("session_date", season.start_date)
     .lte("session_date", season.end_date);
@@ -138,7 +150,8 @@ async function generateTeamReport(supabase, season, players) {
   const totalTrainingHours =
     training?.reduce((sum, t) => sum + (t.duration_minutes || 0), 0) / 60 || 0;
   const avgRPE =
-    training?.reduce((sum, t) => sum + (t.rpe || 0), 0) / (training?.length || 1) || 0;
+    training?.reduce((sum, t) => sum + (t.rpe || 0), 0) /
+      (training?.length || 1) || 0;
 
   return {
     season_id: season.id,
@@ -223,11 +236,11 @@ async function generatePlayerReport(supabase, season, playerId) {
       final_acwr: Math.round(finalAcwr * 100) / 100,
       wellness_checkins: wellness?.length || 0,
       training_sessions: training?.length || 0,
-      readiness_trend: wellness?.map(w => ({
-        date: w.checkin_date,
-        readiness: w.readiness_score,
-      })) || [],
+      readiness_trend:
+        wellness?.map((w) => ({
+          date: w.checkin_date,
+          readiness: w.readiness_score,
+        })) || [],
     },
   };
 }
-

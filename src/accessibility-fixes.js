@@ -201,7 +201,7 @@ function fixFormLabels() {
     }
 
     // Check for label with matching for/id
-    const {id} = input;
+    const { id } = input;
     if (id) {
       const label = document.querySelector(`label[for="${id}"]`);
       if (!label) {
@@ -271,5 +271,7 @@ if (typeof lucide !== "undefined" && !window.lucide_patched) {
     return result;
   };
   window.lucide_patched = true;
-  logger.info("Accessibility fixes: Lucide createIcons patched for auto-fixes.");
+  logger.info(
+    "Accessibility fixes: Lucide createIcons patched for auto-fixes.",
+  );
 }

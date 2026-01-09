@@ -41,7 +41,9 @@ import { environment } from "../../../environments/environment";
 export class AcwrAlertsService {
   // Inject dependencies using inject() for Angular 21 best practices
   private readonly acwrService = inject(AcwrService);
-  private readonly ownershipTransitionService = inject(OwnershipTransitionService);
+  private readonly ownershipTransitionService = inject(
+    OwnershipTransitionService,
+  );
   private logger = inject(LoggerService);
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
@@ -96,7 +98,7 @@ export class AcwrAlertsService {
         recommendation: riskZone.recommendation,
         acwrValue: ratio,
       });
-      
+
       // Log ownership transition for critical ACWR
       this.logOwnershipTransition("acwr_critical", ratio);
     }
@@ -109,7 +111,7 @@ export class AcwrAlertsService {
         recommendation: riskZone.recommendation,
         acwrValue: ratio,
       });
-      
+
       // Log ownership transition for elevated ACWR
       this.logOwnershipTransition("acwr_elevated", ratio);
     }
@@ -310,14 +312,16 @@ export class AcwrAlertsService {
           }
 
           // Send push notification (non-blocking, failures logged but don't stop process)
-          this.sendPushNotificationToCoach(coachUserId, alert, dashboardUrl).catch(
-            (error) => {
-              this.logger.warn(
-                `[ACWR Alert] Failed to send push notification to coach ${coachUserId}:`,
-                error,
-              );
-            },
-          );
+          this.sendPushNotificationToCoach(
+            coachUserId,
+            alert,
+            dashboardUrl,
+          ).catch((error) => {
+            this.logger.warn(
+              `[ACWR Alert] Failed to send push notification to coach ${coachUserId}:`,
+              error,
+            );
+          });
 
           // Send email notification (non-blocking, failures logged but don't stop process)
           if (coachEmail) {
@@ -427,10 +431,11 @@ export class AcwrAlertsService {
       };
 
       const response = await firstValueFrom(
-        this.http.post<{ success: boolean; messageId?: string; error?: string }>(
-          emailEndpoint,
-          emailPayload,
-        ),
+        this.http.post<{
+          success: boolean;
+          messageId?: string;
+          error?: string;
+        }>(emailEndpoint, emailPayload),
       );
 
       if (response.success) {
@@ -631,12 +636,15 @@ export class AcwrAlertsService {
   /**
    * Log ownership transition for ACWR alerts
    */
-  private async logOwnershipTransition(trigger: string, acwrValue: number): Promise<void> {
+  private async logOwnershipTransition(
+    trigger: string,
+    acwrValue: number,
+  ): Promise<void> {
     const user = this.authService.getUser();
     if (!user?.id) return;
 
     try {
-      const actionRequired = 
+      const actionRequired =
         trigger === "acwr_critical"
           ? `ACWR critical (${acwrValue.toFixed(2)}) - adjust training load immediately`
           : `ACWR elevated (${acwrValue.toFixed(2)}) - monitor and consider load reduction`;
@@ -650,9 +658,14 @@ export class AcwrAlertsService {
         status: trigger === "acwr_critical" ? "pending" : "pending",
       });
 
-      this.logger.info(`[ACWRAlerts] Logged ownership transition: ${trigger} (ACWR: ${acwrValue.toFixed(2)})`);
+      this.logger.info(
+        `[ACWRAlerts] Logged ownership transition: ${trigger} (ACWR: ${acwrValue.toFixed(2)})`,
+      );
     } catch (error) {
-      this.logger.error("[ACWRAlerts] Error logging ownership transition:", error);
+      this.logger.error(
+        "[ACWRAlerts] Error logging ownership transition:",
+        error,
+      );
     }
   }
 

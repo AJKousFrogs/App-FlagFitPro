@@ -8,9 +8,7 @@ const {
   createErrorResponse,
   handleValidationError,
 } = require("./utils/error-handler.cjs");
-const {
-  detectACWRTrigger,
-} = require("./utils/safety-override.cjs");
+const { detectACWRTrigger } = require("./utils/safety-override.cjs");
 // Note: authenticateRequest, applyRateLimit are handled by baseHandler
 
 /**

@@ -1,13 +1,13 @@
 import { DatePipe, DecimalPipe, TitleCasePipe } from "@angular/common";
 import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    HostListener,
-    QueryList,
-    ViewChildren,
-    inject,
-    signal,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  QueryList,
+  ViewChildren,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -20,16 +20,20 @@ import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { COLORS, TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
+import {
+  COLORS,
+  TIMEOUTS,
+  UI_LIMITS,
+} from "../../core/constants/app.constants";
 import { AcwrService } from "../../core/services/acwr.service";
 import { API_ENDPOINTS, ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-    PlayerGameStats,
-    PlayerMultiSeasonStats,
-    PlayerSeasonStats,
-    PlayerStatisticsService,
+  PlayerGameStats,
+  PlayerMultiSeasonStats,
+  PlayerSeasonStats,
+  PlayerStatisticsService,
 } from "../../core/services/player-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -43,13 +47,13 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-    ENHANCED_BAR_CHART_OPTIONS,
-    ENHANCED_DOUGHNUT_CHART_OPTIONS,
-    ENHANCED_LINE_CHART_OPTIONS,
-    ENHANCED_RADAR_CHART_OPTIONS,
-    exportChartAsPNG,
-    resetChartZoom,
-    updateChartFontSizes,
+  ENHANCED_BAR_CHART_OPTIONS,
+  ENHANCED_DOUGHNUT_CHART_OPTIONS,
+  ENHANCED_LINE_CHART_OPTIONS,
+  ENHANCED_RADAR_CHART_OPTIONS,
+  exportChartAsPNG,
+  resetChartZoom,
+  updateChartFontSizes,
 } from "../../shared/config/enhanced-chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 import { formatDate } from "../../shared/utils/date.utils";
@@ -135,7 +139,9 @@ interface DevelopmentGoal {
                 (clicked)="showShareDialog.set(true)"
                 >Share with Coach</app-button
               >
-              <app-button iconLeft="pi-file-pdf" (clicked)="exportAnalyticsPDF()"
+              <app-button
+                iconLeft="pi-file-pdf"
+                (clicked)="exportAnalyticsPDF()"
                 >Export PDF</app-button
               >
             </div>
@@ -169,11 +175,18 @@ interface DevelopmentGoal {
                   iconLeft="pi-envelope"
                   routerLink="/team-chat"
                   class="empty-state-cta"
-                >Request Goals from Coach</app-button>
+                  >Request Goals from Coach</app-button
+                >
               </div>
             } @else {
               <div class="goals-grid">
-                @for (goal of developmentGoals().slice(0, UI_LIMITS.GOALS_PREVIEW_COUNT); track goal.id) {
+                @for (
+                  goal of developmentGoals().slice(
+                    0,
+                    UI_LIMITS.GOALS_PREVIEW_COUNT
+                  );
+                  track goal.id
+                ) {
                   <div
                     class="goal-card"
                     [class.achieved]="goal.status === 'achieved'"
@@ -239,7 +252,10 @@ interface DevelopmentGoal {
                   <div class="metric-details">
                     <div class="metric-value">{{ metric.value }}</div>
                     <div class="metric-label">{{ metric.label }}</div>
-                    <div class="metric-trend" [class]="'trend-' + metric.trendType">
+                    <div
+                      class="metric-trend"
+                      [class]="'trend-' + metric.trendType"
+                    >
                       {{ metric.trend }}
                     </div>
                   </div>
@@ -1151,14 +1167,14 @@ export class AnalyticsComponent implements AfterViewInit {
 
   // Responsive doughnut chart options - legend position based on screen width
   get DOUGHNUT_CHART_OPTIONS() {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     return {
       ...ENHANCED_DOUGHNUT_CHART_OPTIONS,
       plugins: {
         ...ENHANCED_DOUGHNUT_CHART_OPTIONS.plugins,
         legend: {
           ...ENHANCED_DOUGHNUT_CHART_OPTIONS.plugins?.legend,
-          position: isMobile ? 'bottom' : 'right' as const,
+          position: isMobile ? "bottom" : ("right" as const),
         },
       },
     };
@@ -1217,7 +1233,10 @@ export class AnalyticsComponent implements AfterViewInit {
       this.loadGapAnalysis();
 
       // Set loading to false after initial data load starts
-      setTimeout(() => this.isPageLoading.set(false), TIMEOUTS.UI_TRANSITION_DELAY);
+      setTimeout(
+        () => this.isPageLoading.set(false),
+        TIMEOUTS.UI_TRANSITION_DELAY,
+      );
     } catch (error) {
       this.isPageLoading.set(false);
       this.hasPageError.set(true);
@@ -1272,7 +1291,10 @@ export class AnalyticsComponent implements AfterViewInit {
             datasets: [
               {
                 data: values,
-                backgroundColor: COLORS.CHART.slice(0, UI_LIMITS.CHART_COLORS_COUNT),
+                backgroundColor: COLORS.CHART.slice(
+                  0,
+                  UI_LIMITS.CHART_COLORS_COUNT,
+                ),
                 borderWidth: 0,
                 hoverOffset: 10,
               },
@@ -1459,7 +1481,10 @@ export class AnalyticsComponent implements AfterViewInit {
                   data: (
                     response.data as { labels: string[]; values: number[] }
                   ).values,
-                  backgroundColor: COLORS.CHART.slice(0, UI_LIMITS.CHART_COLORS_COUNT),
+                  backgroundColor: COLORS.CHART.slice(
+                    0,
+                    UI_LIMITS.CHART_COLORS_COUNT,
+                  ),
                 },
               ],
             });
@@ -1522,7 +1547,11 @@ export class AnalyticsComponent implements AfterViewInit {
               }>;
             };
             // Guard against undefined datasets
-            if (speedData.labels && speedData.datasets && Array.isArray(speedData.datasets)) {
+            if (
+              speedData.labels &&
+              speedData.datasets &&
+              Array.isArray(speedData.datasets)
+            ) {
               this.speedChartData.set({
                 labels: speedData.labels,
                 datasets: speedData.datasets.map((ds) => ({
@@ -2248,7 +2277,7 @@ export class AnalyticsComponent implements AfterViewInit {
         }
 
         <div class="footer">
-          <p>Generated by FlagFit Pro • ${formatDate(new Date(), 'PPp')}</p>
+          <p>Generated by FlagFit Pro • ${formatDate(new Date(), "PPp")}</p>
           <p>This report is confidential and intended for coaching purposes only.</p>
         </div>
       </body>

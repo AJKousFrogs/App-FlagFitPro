@@ -9,7 +9,6 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
 exports.handler = createHandler({
   functionName: "account-pause",
   handler: async (event, _context, { userId }) => {
-
     if (event.httpMethod === "POST") {
       const body = JSON.parse(event.body || "{}");
       const { action, paused_until, reason } = body;
@@ -23,7 +22,9 @@ exports.handler = createHandler({
             p_reason: reason || null,
           });
 
-          if (error) {throw error;}
+          if (error) {
+            throw error;
+          }
 
           return {
             statusCode: 200,
@@ -50,7 +51,9 @@ exports.handler = createHandler({
             p_user_id: userId,
           });
 
-          if (error) {throw error;}
+          if (error) {
+            throw error;
+          }
 
           if (!data) {
             return {
@@ -97,4 +100,3 @@ exports.handler = createHandler({
     };
   },
 });
-

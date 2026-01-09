@@ -18,11 +18,11 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -51,13 +51,13 @@ import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
-    BloodCirculationRisk,
-    CarTravelProtocol,
-    CirculationExercise,
-    MassageGunProtocol,
-    RecoveryProtocol,
-    TravelChecklist,
-    TravelRecoveryService,
+  BloodCirculationRisk,
+  CarTravelProtocol,
+  CirculationExercise,
+  MassageGunProtocol,
+  RecoveryProtocol,
+  TravelChecklist,
+  TravelRecoveryService,
 } from "../../../core/services/travel-recovery.service";
 
 // Layout
@@ -683,7 +683,10 @@ interface TimezoneOption {
 
                         <div class="timeline-recommendations">
                           @for (
-                            rec of protocol.recommendations.slice(0, UI_LIMITS.RECOMMENDATIONS_PREVIEW);
+                            rec of protocol.recommendations.slice(
+                              0,
+                              UI_LIMITS.RECOMMENDATIONS_PREVIEW
+                            );
                             track rec.action
                           ) {
                             <div class="mini-rec">
@@ -1148,7 +1151,10 @@ interface TimezoneOption {
                             </div>
                             <div class="stop-actions">
                               @for (
-                                rec of protocol.recommendations.slice(0, UI_LIMITS.RECOMMENDATIONS_EXPANDED);
+                                rec of protocol.recommendations.slice(
+                                  0,
+                                  UI_LIMITS.RECOMMENDATIONS_EXPANDED
+                                );
                                 track rec.action
                               ) {
                                 <div

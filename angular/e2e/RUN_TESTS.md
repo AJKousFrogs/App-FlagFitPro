@@ -3,24 +3,28 @@
 ## Quick Start
 
 ### Option 1: Run Design System Tests in Headed Mode (See Browser)
+
 ```bash
 cd angular
 npm run e2e:design-system:watch
 ```
 
 ### Option 2: Run Design System Tests with UI Mode
+
 ```bash
 cd angular
 npx playwright test e2e/design-system-compliance.spec.ts --ui --project=chromium
 ```
 
 ### Option 3: Run Navigation Tests (Click Through Everything)
+
 ```bash
 cd angular
 npm run e2e:navigation:watch
 ```
 
 ### Option 4: Run All Tests
+
 ```bash
 cd angular
 npm run e2e -- --project=chromium
@@ -29,10 +33,11 @@ npm run e2e -- --project=chromium
 ## If UI Mode Shows "No Tests"
 
 1. **Make sure dev server is running:**
+
    ```bash
    # In one terminal
    npm run dev:angular-only
-   
+
    # Wait for "Compiled successfully" message
    # Then in another terminal:
    cd angular
@@ -67,9 +72,9 @@ npm run e2e:navigation:watch
 ```
 
 This will:
+
 - Open a browser window
 - Show you everything it's clicking
 - Navigate through all pages
 - Click buttons and verify routing
 - Show results in terminal
-

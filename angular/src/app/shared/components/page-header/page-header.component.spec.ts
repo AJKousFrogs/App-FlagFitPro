@@ -208,7 +208,7 @@ describe("PageHeaderComponent - Composite View Pattern", () => {
 
   it("should render parent header in DOM", () => {
     const parentContainer = fixture.nativeElement.querySelector(
-      ".parent-header-container"
+      ".parent-header-container",
     );
     const parentHeader = parentContainer.querySelector("app-page-header");
 
@@ -219,7 +219,8 @@ describe("PageHeaderComponent - Composite View Pattern", () => {
   });
 
   it("should render child header in DOM", () => {
-    const childContainer = fixture.nativeElement.querySelector(".child-content");
+    const childContainer =
+      fixture.nativeElement.querySelector(".child-content");
     const childHeader = childContainer.querySelector("app-page-header");
 
     expect(childHeader).toBeTruthy();
@@ -229,7 +230,8 @@ describe("PageHeaderComponent - Composite View Pattern", () => {
   });
 
   it("should have both headers in DOM for composite view", () => {
-    const allHeaders = fixture.nativeElement.querySelectorAll("app-page-header");
+    const allHeaders =
+      fixture.nativeElement.querySelectorAll("app-page-header");
     expect(allHeaders.length).toBe(2);
   });
 
@@ -347,7 +349,8 @@ describe("PageHeaderComponent - QB Hub Pattern Simulation", () => {
   });
 
   it("should have both headers in DOM", () => {
-    const allHeaders = fixture.nativeElement.querySelectorAll("app-page-header");
+    const allHeaders =
+      fixture.nativeElement.querySelectorAll("app-page-header");
 
     // Should have 2 headers: hub header + child header
     expect(allHeaders.length).toBe(2);

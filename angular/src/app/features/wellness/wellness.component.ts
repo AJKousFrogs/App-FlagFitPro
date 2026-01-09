@@ -21,7 +21,10 @@ import { HydrationTrackerComponent } from "../../shared/components/hydration-tra
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { StatItem, StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
+import {
+  StatItem,
+  StatsGridComponent,
+} from "../../shared/components/stats-grid/stats-grid.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
   AppLoadingComponent,
@@ -121,8 +124,11 @@ interface WellnessMetric {
                   [showDetails]="true"
                 ></app-confidence-indicator>
                 <p class="confidence-message">
-                  Your wellness score is calculated from {{ completedMetricsCount() }}/{{ totalMetricsCount() }} metrics.
-                  Complete all fields for a more accurate score.
+                  Your wellness score is calculated from
+                  {{ completedMetricsCount() }}/{{
+                    totalMetricsCount()
+                  }}
+                  metrics. Complete all fields for a more accurate score.
                 </p>
               </div>
             </p-card>
@@ -261,7 +267,8 @@ interface WellnessMetric {
                 <div class="cycle-tracking-content">
                   <p class="cycle-description">
                     Track your menstrual cycle to receive personalized training,
-                    nutrition, and recovery recommendations based on your cycle phase.
+                    nutrition, and recovery recommendations based on your cycle
+                    phase.
                   </p>
                   <div class="cycle-benefits">
                     <div class="benefit-item">
@@ -278,7 +285,10 @@ interface WellnessMetric {
                     </div>
                     <div class="benefit-item">
                       <i class="pi pi-check-circle"></i>
-                      <span>Private by default - coaches only see recovery recommendations</span>
+                      <span
+                        >Private by default - coaches only see recovery
+                        recommendations</span
+                      >
                     </div>
                   </div>
                   <app-button
@@ -511,7 +521,10 @@ export class WellnessComponent {
   readonly wellnessAlerts = signal<WellnessAlert[]>([]);
 
   // Confidence tracking
-  readonly wellnessConfidence = signal<{ score: number; missingInputs: string[] }>({ score: 1.0, missingInputs: [] });
+  readonly wellnessConfidence = signal<{
+    score: number;
+    missingInputs: string[];
+  }>({ score: 1.0, missingInputs: [] });
   readonly completedMetricsCount = signal<number>(0);
   readonly totalMetricsCount = signal<number>(4);
 
@@ -807,22 +820,24 @@ export class WellnessComponent {
           // Reload wellness data to show updated stats
           this.loadWellnessData();
         } else {
-          this.toastService.error(response.error || TOAST.ERROR.CHECKIN_SAVE_FAILED);
+          this.toastService.error(
+            response.error || TOAST.ERROR.CHECKIN_SAVE_FAILED,
+          );
         }
       })
       .catch((err) => {
         this.isSubmitting.set(false);
         this.logger.error("Error submitting wellness check-in:", err);
-        
+
         // Check if we should queue this action for offline sync
         if (this.offlineQueue.shouldQueue(err)) {
           const _actionId = this.offlineQueue.queueAction(
             "wellness_checkin",
             wellnessData,
-            "high"
+            "high",
           ); // Action ID available for tracking
           this.toastService.info(
-            "You're offline. Check-in queued for sync when connection is restored."
+            "You're offline. Check-in queued for sync when connection is restored.",
           );
           // Reset form even if queued
           this.checkInData = {

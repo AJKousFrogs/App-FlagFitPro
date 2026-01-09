@@ -1,6 +1,6 @@
 /**
  * Missing Data Explanation Component
- * 
+ *
  * Phase 2.2 - Data Literacy
  * Explains why missing wellness data matters, shows impact, and provides clear actions
  */
@@ -23,23 +23,23 @@ import { LoggerService } from "../../../core/services/logger.service";
   selector: "app-missing-data-explanation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterModule,
-    TagModule,
-    ButtonModule,
-    CardModule,
-  ],
+  imports: [CommonModule, RouterModule, TagModule, ButtonModule, CardModule],
   template: `
     @if (missingStatus() && missingStatus()!.missing) {
-      <p-card styleClass="missing-data-card" [class]="'severity-' + missingStatus()!.severity">
+      <p-card
+        styleClass="missing-data-card"
+        [class]="'severity-' + missingStatus()!.severity"
+      >
         <div class="missing-data-header">
           <div class="header-content">
             <i [class]="getIconClass()"></i>
             <div class="header-text">
               <h3>{{ getTitle() }}</h3>
               <p class="days-missing">
-                {{ missingStatus()!.daysMissing }} day{{ missingStatus()!.daysMissing > 1 ? 's' : '' }} without wellness check-in
+                {{ missingStatus()!.daysMissing }} day{{
+                  missingStatus()!.daysMissing > 1 ? "s" : ""
+                }}
+                without wellness check-in
               </p>
             </div>
           </div>
@@ -68,11 +68,17 @@ import { LoggerService } from "../../../core/services/logger.service";
           </div>
 
           <!-- Escalation visibility -->
-          @if (missingStatus()!.severity === "critical" || missingStatus()!.daysMissing >= 3) {
+          @if (
+            missingStatus()!.severity === "critical" ||
+            missingStatus()!.daysMissing >= 3
+          ) {
             <div class="escalation-section">
               <div class="escalation-badge">
                 <i class="pi pi-bell"></i>
-                <span>Your coach has been notified due to continued missing data.</span>
+                <span
+                  >Your coach has been notified due to continued missing
+                  data.</span
+                >
               </div>
             </div>
           }
@@ -261,7 +267,13 @@ export class MissingDataExplanationComponent {
     return "Warning";
   }
 
-  getSeverityTag(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
+  getSeverityTag():
+    | "secondary"
+    | "success"
+    | "info"
+    | "warn"
+    | "danger"
+    | "contrast" {
     const severity = this.missingStatus()?.severity || "warning";
     return severity === "critical" ? "danger" : "warn";
   }
@@ -296,4 +308,3 @@ export class MissingDataExplanationComponent {
     return impacts;
   }
 }
-

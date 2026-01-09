@@ -7,9 +7,10 @@
 **Applies To:** All new code and all refactors starting Phase 1
 
 > **⚠️ Enforcement Policy:** As of January 2026, we use **incremental enforcement**:
+>
 > - **Legacy files** (existing before enforcement date): Tolerated (warnings only)
 > - **Changed files** (modified after enforcement date): Strict enforcement (errors block merge)
-> 
+>
 > Enforcement is automated via **Stylelint + code review**.
 
 ---
@@ -139,12 +140,14 @@ Single spacing system for padding, margin, gap, grid:
 ❌ **`--radius-full` (pill shape) is RESTRICTED** — Limited use only.
 
 **Allowed uses:**
+
 - Avatars/profile images (circular)
 - Progress bar tracks and fills
 - Toggle switch tracks
 - Dot indicators (status dots)
 
 **Forbidden uses:**
+
 - ❌ Buttons
 - ❌ Tags/Badges
 - ❌ Cards
@@ -348,13 +351,13 @@ Use these CSS classes for button groups:
 
 **Available Grid Classes:**
 
-| Class | Columns | Mobile |
-|-------|---------|--------|
-| `.button-grid` | 2 | 2 |
-| `.button-grid.cols-3` | 3 | 2 |
-| `.button-grid.cols-4` | 4 | 2 |
-| `.quick-actions-grid` | 3 | 2 |
-| `.actions-grid` | auto-fit | auto-fit |
+| Class                 | Columns  | Mobile   |
+| --------------------- | -------- | -------- |
+| `.button-grid`        | 2        | 2        |
+| `.button-grid.cols-3` | 3        | 2        |
+| `.button-grid.cols-4` | 4        | 2        |
+| `.quick-actions-grid` | 3        | 2        |
+| `.actions-grid`       | auto-fit | auto-fit |
 
 **Alternative:** Use `[fullWidth]="true"` on individual buttons when needed.
 
@@ -363,12 +366,14 @@ Use these CSS classes for button groups:
 **Icons must always be positioned LEFT of text, never above.**
 
 This applies to:
+
 - Stat cards
 - Selection buttons/cards
 - Action cards
 - List items with icons
 
 **Correct Pattern:**
+
 ```html
 <div class="stat-card-content">
   <div class="stat-icon">
@@ -382,6 +387,7 @@ This applies to:
 ```
 
 **CSS Pattern:**
+
 ```scss
 .card-content {
   display: flex;
@@ -1345,12 +1351,12 @@ border: var(--border-1) solid var(--color-border-default);
 
 ### Final Card Rules (UPDATED)
 
-| State              | Styling                                                                   |
-| ------------------ | ------------------------------------------------------------------------- |
-| **Default**        | `border: none` + `box-shadow: var(--shadow-sm)`                           |
-| **Hover**          | `box-shadow: var(--shadow-md)`                                            |
-| **Focus-visible**  | Focus ring tokens (Decision 12/18), NOT border highlighting               |
-| **Active/Pressed** | `box-shadow: var(--shadow-sm)` + optional `translateY(1px)`               |
+| State              | Styling                                                     |
+| ------------------ | ----------------------------------------------------------- |
+| **Default**        | `border: none` + `box-shadow: var(--shadow-sm)`             |
+| **Hover**          | `box-shadow: var(--shadow-md)`                              |
+| **Focus-visible**  | Focus ring tokens (Decision 12/18), NOT border highlighting |
+| **Active/Pressed** | `box-shadow: var(--shadow-sm)` + optional `translateY(1px)` |
 
 ### Your Decision
 

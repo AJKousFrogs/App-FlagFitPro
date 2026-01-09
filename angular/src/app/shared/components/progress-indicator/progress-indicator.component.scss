@@ -92,7 +92,9 @@
   color: var(--text-secondary, #6b7280);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-2, 0.5rem);
-  transition: color var(--motion-slow) var(--ease-standard), transform var(--motion-slow) var(--ease-standard);
+  transition:
+    color var(--motion-slow) var(--ease-standard),
+    transform var(--motion-slow) var(--ease-standard);
 }
 
 .step-item.active .step-marker {

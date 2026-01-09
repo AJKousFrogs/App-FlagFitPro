@@ -91,7 +91,9 @@ export class AiConsentRequiredComponent {
   readonly showSettingsLink = input<boolean>(true);
   readonly showDismiss = input<boolean>(false);
   readonly variant = input<"default" | "banner" | "card">("default");
-  readonly status = input<"disabled" | "not_consented" | "consent_required">("consent_required");
+  readonly status = input<"disabled" | "not_consented" | "consent_required">(
+    "consent_required",
+  );
 
   readonly onDismiss = output<void>();
 

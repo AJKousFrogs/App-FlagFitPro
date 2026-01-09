@@ -59,7 +59,9 @@ describe("AnalyticsComponent", () => {
         .mockReturnValue({ id: "user-123", email: "test@example.com" }),
       // Signal-based properties used by QuickActionsFABComponent
       isAuthenticated: vi.fn().mockReturnValue(true),
-      currentUser: vi.fn().mockReturnValue({ id: "user-123", email: "test@example.com" }),
+      currentUser: vi
+        .fn()
+        .mockReturnValue({ id: "user-123", email: "test@example.com" }),
     };
 
     mockTrainingStatsService = {

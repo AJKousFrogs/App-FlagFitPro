@@ -63,12 +63,16 @@ async function login(page: Page): Promise<void> {
   await page.goto(`${BASE_URL}/login`);
   await dismissCookieBanner(page);
 
-  const emailInput = page.locator('input[type="email"], [data-testid="email-input"]');
+  const emailInput = page.locator(
+    'input[type="email"], [data-testid="email-input"]',
+  );
   await emailInput.click();
   await emailInput.fill(TEST_USER.email);
   await emailInput.press("Tab");
 
-  const passwordInput = page.locator('input[type="password"], [data-testid="password-input"]');
+  const passwordInput = page.locator(
+    'input[type="password"], [data-testid="password-input"]',
+  );
   await passwordInput.click();
   await passwordInput.fill(TEST_USER.password);
   await passwordInput.press("Tab");
@@ -93,13 +97,10 @@ test.describe("UX Inconsistencies", () => {
     }
   });
 
-  test("should have consistent button placement and behavior", async ({ page }) => {
-    const routes = [
-      "/dashboard",
-      "/todays-practice",
-      "/training",
-      "/wellness",
-    ];
+  test("should have consistent button placement and behavior", async ({
+    page,
+  }) => {
+    const routes = ["/dashboard", "/todays-practice", "/training", "/wellness"];
 
     const inconsistencies: Array<{
       route: string;
@@ -192,11 +193,7 @@ test.describe("UX Inconsistencies", () => {
   });
 
   test("should have consistent loading states", async ({ page }) => {
-    const routes = [
-      "/dashboard",
-      "/todays-practice",
-      "/training",
-    ];
+    const routes = ["/dashboard", "/todays-practice", "/training"];
 
     // Reserved for future use - will track loading state inconsistencies
     const _inconsistencies: Array<{
@@ -258,7 +255,9 @@ test.describe("UX Inconsistencies", () => {
     console.log("Loading state consistency check complete");
   });
 
-  test("should have consistent error handling and feedback", async ({ page }) => {
+  test("should have consistent error handling and feedback", async ({
+    page,
+  }) => {
     await page.goto(`${BASE_URL}/dashboard`);
     await page.waitForLoadState("networkidle");
     await dismissCookieBanner(page);
@@ -339,7 +338,9 @@ test.describe("UX Inconsistencies", () => {
     const backButtonCount = await backButtons.count();
 
     // Check for breadcrumbs
-    const breadcrumbs = page.locator(".breadcrumb, .p-breadcrumb, nav[aria-label='breadcrumb']");
+    const breadcrumbs = page.locator(
+      ".breadcrumb, .p-breadcrumb, nav[aria-label='breadcrumb']",
+    );
     const breadcrumbCount = await breadcrumbs.count();
 
     // Check sidebar navigation
@@ -488,7 +489,9 @@ test.describe("UX Inconsistencies", () => {
     expect(inconsistencies.length).toBeLessThan(10);
   });
 
-  test("should have consistent accessibility patterns affecting UX", async ({ page }) => {
+  test("should have consistent accessibility patterns affecting UX", async ({
+    page,
+  }) => {
     await page.goto(`${BASE_URL}/dashboard`);
     await page.waitForLoadState("networkidle");
     await dismissCookieBanner(page);
@@ -509,7 +512,7 @@ test.describe("UX Inconsistencies", () => {
     for (let i = 0; i < Math.min(iconButtonCount, 20); i++) {
       const button = iconButtons.nth(i);
       const text = await button.textContent();
-      const hasIcon = await button.locator("i, svg, .pi").count() > 0;
+      const hasIcon = (await button.locator("i, svg, .pi").count()) > 0;
 
       if (hasIcon && (!text || text.trim().length === 0)) {
         iconOnlyCount++;
@@ -583,4 +586,3 @@ test.describe("UX Inconsistencies", () => {
     expect(inconsistencies.length).toBeLessThan(15);
   });
 });
-

@@ -312,10 +312,15 @@ export class UnifiedTrainingService {
     const tomorrowDayOfWeek = tomorrow.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
     // Find tomorrow in weekly schedule (convert Sunday=0 to Monday=0 format)
-    const scheduleDayIndex = tomorrowDayOfWeek === 0 ? 6 : tomorrowDayOfWeek - 1;
+    const scheduleDayIndex =
+      tomorrowDayOfWeek === 0 ? 6 : tomorrowDayOfWeek - 1;
     const tomorrowSchedule = weekly[scheduleDayIndex];
 
-    if (!tomorrowSchedule || !tomorrowSchedule.sessions || tomorrowSchedule.sessions.length === 0) {
+    if (
+      !tomorrowSchedule ||
+      !tomorrowSchedule.sessions ||
+      tomorrowSchedule.sessions.length === 0
+    ) {
       return [];
     }
 
@@ -326,16 +331,43 @@ export class UnifiedTrainingService {
     // Get user routine for tomorrow (same routine applies daily)
     const defaultRoutine: DailyRoutineSlot[] = [
       { id: "wake", label: "Wake Up", time: "07:00", icon: "pi-refresh" },
-      { id: "breakfast", label: "Breakfast", time: "07:30", icon: "pi-refresh" },
-      { id: "work_start", label: "Work/Study Start", time: "09:00", icon: "pi-briefcase" },
+      {
+        id: "breakfast",
+        label: "Breakfast",
+        time: "07:30",
+        icon: "pi-refresh",
+      },
+      {
+        id: "work_start",
+        label: "Work/Study Start",
+        time: "09:00",
+        icon: "pi-briefcase",
+      },
       { id: "lunch", label: "Lunch", time: "12:30", icon: "pi-utensils" },
-      { id: "work_end", label: "Work/Study End", time: "17:00", icon: "pi-home" },
-      { id: "training", label: "Daily Training", time: "18:00", icon: "pi-bolt" },
-      { id: "shower", label: "Shower (Hot)", time: "20:00", icon: "pi-info-circle" },
+      {
+        id: "work_end",
+        label: "Work/Study End",
+        time: "17:00",
+        icon: "pi-home",
+      },
+      {
+        id: "training",
+        label: "Daily Training",
+        time: "18:00",
+        icon: "pi-bolt",
+      },
+      {
+        id: "shower",
+        label: "Shower (Hot)",
+        time: "20:00",
+        icon: "pi-info-circle",
+      },
       { id: "sleep", label: "Sleep", time: "22:30", icon: "pi-moon" },
     ];
 
-    const userRoutine: DailyRoutineSlot[] = (metadata as { dailyRoutine?: DailyRoutineSlot[] } | null)?.dailyRoutine || defaultRoutine;
+    const userRoutine: DailyRoutineSlot[] =
+      (metadata as { dailyRoutine?: DailyRoutineSlot[] } | null)
+        ?.dailyRoutine || defaultRoutine;
 
     const getItemType = (slotId: string): TodayScheduleItem["type"] => {
       if (slotId === "breakfast" || slotId === "lunch") return "nutrition";
@@ -356,7 +388,8 @@ export class UnifiedTrainingService {
         type: getItemType(slot.id),
         duration: slot.id === "work_start" ? 480 : 30,
         status: "upcoming", // All tomorrow items are upcoming
-        description: slot.id === "breakfast" ? "Include supplements" : slot.label,
+        description:
+          slot.id === "breakfast" ? "Include supplements" : slot.label,
         icon: slot.icon,
       };
 
@@ -403,7 +436,7 @@ export class UnifiedTrainingService {
   /**
    * Get everything needed for the "Today" view in one coordinated call
    * This now also populates the internal signals for global consistency
-   * 
+   *
    * Uses direct Supabase for protocol data when API is not available
    */
   getTodayOverview(date?: string) {
@@ -443,20 +476,28 @@ export class UnifiedTrainingService {
   /**
    * Load daily protocol directly from Supabase
    */
-  private async loadDailyProtocolDirect(userId: string, date: string): Promise<{ data: DailyProtocolResponse | null }> {
+  private async loadDailyProtocolDirect(
+    userId: string,
+    date: string,
+  ): Promise<{ data: DailyProtocolResponse | null }> {
     try {
       const { data, error } = await this.supabase.client
         .from("daily_protocols")
-        .select(`
+        .select(
+          `
           *,
           protocol_exercises (*)
-        `)
+        `,
+        )
         .eq("user_id", userId)
         .eq("protocol_date", date)
         .maybeSingle();
 
       if (error) {
-        this.logger.warn("[UnifiedTraining] Error loading daily protocol:", error);
+        this.logger.warn(
+          "[UnifiedTraining] Error loading daily protocol:",
+          error,
+        );
         return { data: null };
       }
 
@@ -470,7 +511,9 @@ export class UnifiedTrainingService {
   /**
    * Load training recommendations directly from Supabase
    */
-  private async loadRecommendationsDirect(userId: string): Promise<{ data: SmartRecommendationsResponse | null }> {
+  private async loadRecommendationsDirect(
+    userId: string,
+  ): Promise<{ data: SmartRecommendationsResponse | null }> {
     try {
       // Get latest training suggestions for user
       const { data, error } = await this.supabase.client
@@ -481,7 +524,10 @@ export class UnifiedTrainingService {
         .limit(5);
 
       if (error) {
-        this.logger.warn("[UnifiedTraining] Error loading recommendations:", error);
+        this.logger.warn(
+          "[UnifiedTraining] Error loading recommendations:",
+          error,
+        );
         return { data: null };
       }
 
@@ -491,15 +537,21 @@ export class UnifiedTrainingService {
         athleteId: userId,
         date: new Date().toISOString().split("T")[0],
         overallStatus: "optimal",
-        recommendations: data?.map(s => ({
-          type: (s.suggestion_type as TrainingRecommendation["type"]) || "focus",
-          priority: (s.priority as TrainingRecommendation["priority"]) || "medium",
-          message: s.description || s.title || "Training suggestion",
-          action: undefined, // Column doesn't exist in table
-          reasoning: undefined, // Column doesn't exist in table
-        })) || [],
+        recommendations:
+          data?.map((s) => ({
+            type:
+              (s.suggestion_type as TrainingRecommendation["type"]) || "focus",
+            priority:
+              (s.priority as TrainingRecommendation["priority"]) || "medium",
+            message: s.description || s.title || "Training suggestion",
+            action: undefined, // Column doesn't exist in table
+            reasoning: undefined, // Column doesn't exist in table
+          })) || [],
         warnings: [],
-        suggestions: data?.map(s => s.title || s.description).filter(Boolean) as string[] || [],
+        suggestions:
+          (data
+            ?.map((s) => s.title || s.description)
+            .filter(Boolean) as string[]) || [],
         metrics: {
           acwr: 1.0, // Will be overridden by actual ACWR service
           readiness: 75,
@@ -510,7 +562,10 @@ export class UnifiedTrainingService {
 
       return { data: recommendations };
     } catch (err) {
-      this.logger.warn("[UnifiedTraining] Failed to load recommendations:", err);
+      this.logger.warn(
+        "[UnifiedTraining] Failed to load recommendations:",
+        err,
+      );
       return { data: null };
     }
   }
@@ -909,7 +964,8 @@ export class UnifiedTrainingService {
     if (lower.includes("skills")) return "skills";
     if (lower.includes("conditioning")) return "conditioning";
     if (lower.includes("technique")) return "technique";
-    if (lower.includes("team_practice") || lower.includes("team practice")) return "team_practice";
+    if (lower.includes("team_practice") || lower.includes("team practice"))
+      return "team_practice";
     if (lower.includes("scrimmage")) return "scrimmage";
     if (lower.includes("mixed")) return "mixed";
     // For generic "training", return undefined since type is optional

@@ -433,6 +433,6 @@ export class PresenceService implements OnDestroy {
     const diffHours = Math.floor(diffMs / 3600000);
     if (diffHours < 24) return `${diffHours}h ago`;
 
-    return formatDate(date, 'P');
+    return formatDate(date, "P");
   }
 }

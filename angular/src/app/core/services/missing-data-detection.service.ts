@@ -1,6 +1,6 @@
 /**
  * Missing Data Detection Service
- * 
+ *
  * Detects missing wellness data and other incomplete data patterns
  * Used to show "Data Incomplete" badges to coaches
  */
@@ -37,9 +37,7 @@ export class MissingDataDetectionService {
    * Check if player has missing wellness data
    * Returns days since last check-in
    */
-  async checkMissingWellness(
-    playerId: string
-  ): Promise<MissingDataStatus> {
+  async checkMissingWellness(playerId: string): Promise<MissingDataStatus> {
     try {
       // Try wellness_entries first (primary wellness table)
       const { data, error } = await this.supabaseService.client
@@ -52,10 +50,7 @@ export class MissingDataDetectionService {
 
       if (error && error.code !== "PGRST116") {
         // PGRST116 is "no rows returned" which is fine
-        this.logger.error(
-          "[MissingData] Error checking wellness:",
-          error
-        );
+        this.logger.error("[MissingData] Error checking wellness:", error);
         return {
           missing: true,
           daysMissing: 999,
@@ -74,7 +69,7 @@ export class MissingDataDetectionService {
       const lastCheckin = new Date(data.date);
       const now = new Date();
       const daysDiff = Math.floor(
-        (now.getTime() - lastCheckin.getTime()) / (1000 * 60 * 60 * 24)
+        (now.getTime() - lastCheckin.getTime()) / (1000 * 60 * 60 * 24),
       );
 
       let severity: "none" | "warning" | "critical" = "none";
@@ -105,11 +100,12 @@ export class MissingDataDetectionService {
    */
   async checkAndCreateCoachReminders(teamId: string): Promise<void> {
     try {
-      const playersWithMissing = await this.getPlayersWithMissingWellness(teamId);
-      
+      const playersWithMissing =
+        await this.getPlayersWithMissingWellness(teamId);
+
       // Filter players with 3+ days missing
       const criticalPlayers = playersWithMissing.filter(
-        (p) => p.daysMissing >= 3
+        (p) => p.daysMissing >= 3,
       );
 
       if (criticalPlayers.length === 0) {
@@ -140,19 +136,18 @@ export class MissingDataDetectionService {
             playerName: player.playerName,
             daysMissing: player.daysMissing,
           },
-        }))
+        })),
       );
 
-      await this.supabaseService.client.from("notifications").insert(notifications);
+      await this.supabaseService.client
+        .from("notifications")
+        .insert(notifications);
 
       this.logger.info(
-        `[MissingData] Created ${notifications.length} coach reminders for ${criticalPlayers.length} players with missing wellness`
+        `[MissingData] Created ${notifications.length} coach reminders for ${criticalPlayers.length} players with missing wellness`,
       );
     } catch (error) {
-      this.logger.error(
-        "[MissingData] Error creating coach reminders:",
-        error
-      );
+      this.logger.error("[MissingData] Error creating coach reminders:", error);
     }
   }
 
@@ -160,7 +155,7 @@ export class MissingDataDetectionService {
    * Get all players with missing wellness data for a team
    */
   async getPlayersWithMissingWellness(
-    teamId: string
+    teamId: string,
   ): Promise<PlayerMissingData[]> {
     try {
       // Get all team members
@@ -174,7 +169,7 @@ export class MissingDataDetectionService {
       if (teamError || !teamMembers) {
         this.logger.error(
           "[MissingData] Error fetching team members:",
-          teamError
+          teamError,
         );
         return [];
       }
@@ -200,11 +195,13 @@ export class MissingDataDetectionService {
         }
       }
 
-      return playersWithMissingData.sort((a, b) => b.daysMissing - a.daysMissing);
+      return playersWithMissingData.sort(
+        (a, b) => b.daysMissing - a.daysMissing,
+      );
     } catch (error) {
       this.logger.error(
         "[MissingData] Error getting players with missing data:",
-        error
+        error,
       );
       return [];
     }
@@ -215,7 +212,7 @@ export class MissingDataDetectionService {
    */
   async checkMissingTraining(
     playerId: string,
-    daysRequired: number = 7
+    daysRequired: number = 7,
   ): Promise<MissingDataStatus> {
     try {
       const cutoff = new Date();
@@ -232,10 +229,7 @@ export class MissingDataDetectionService {
         .maybeSingle();
 
       if (error && error.code !== "PGRST116") {
-        this.logger.error(
-          "[MissingData] Error checking training:",
-          error
-        );
+        this.logger.error("[MissingData] Error checking training:", error);
         return {
           missing: true,
           daysMissing: daysRequired,
@@ -254,7 +248,7 @@ export class MissingDataDetectionService {
       const lastSession = new Date(data.session_date);
       const now = new Date();
       const daysDiff = Math.floor(
-        (now.getTime() - lastSession.getTime()) / (1000 * 60 * 60 * 24)
+        (now.getTime() - lastSession.getTime()) / (1000 * 60 * 60 * 24),
       );
 
       let severity: "none" | "warning" | "critical" = "none";
@@ -284,7 +278,7 @@ export class MissingDataDetectionService {
    * Get comprehensive missing data status for a player
    */
   async getPlayerMissingDataStatus(
-    playerId: string
+    playerId: string,
   ): Promise<PlayerMissingData> {
     const wellnessStatus = await this.checkMissingWellness(playerId);
     const trainingStatus = await this.checkMissingTraining(playerId);
@@ -318,11 +312,10 @@ export class MissingDataDetectionService {
       missing: wellnessStatus.missing || trainingStatus.missing,
       daysMissing: Math.max(
         wellnessStatus.daysMissing,
-        trainingStatus.daysMissing
+        trainingStatus.daysMissing,
       ),
       severity,
       dataType,
     };
   }
 }
-

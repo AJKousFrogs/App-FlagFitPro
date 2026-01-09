@@ -8,7 +8,14 @@
  */
 
 import { CommonModule, DecimalPipe } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
@@ -99,10 +106,7 @@ const DEBT_THRESHOLDS = {
         @if (sleepDebtAnalysis(); as analysis) {
           <p-card styleClass="debt-status-card">
             <div class="debt-display">
-              <div
-                class="debt-circle"
-                [class]="'debt-' + analysis.debtLevel"
-              >
+              <div class="debt-circle" [class]="'debt-' + analysis.debtLevel">
                 <span class="debt-value">{{
                   analysis.cumulativeDebt | number: "1.1-1"
                 }}</span>
@@ -121,9 +125,11 @@ const DEBT_THRESHOLDS = {
               <h3>No Sleep Data Yet</h3>
               <p>
                 @if (userAge() === null) {
-                  Please provide your age and log sleep data in wellness check-ins to see your sleep debt analysis.
+                  Please provide your age and log sleep data in wellness
+                  check-ins to see your sleep debt analysis.
                 } @else {
-                  Log sleep data in wellness check-ins to see your sleep debt analysis.
+                  Log sleep data in wellness check-ins to see your sleep debt
+                  analysis.
                 }
               </p>
             </div>
@@ -139,10 +145,7 @@ const DEBT_THRESHOLDS = {
                 <div class="stat-details">
                   <span class="stat-label">7-Day Avg Sleep</span>
                   <span class="stat-value"
-                    >{{
-                      analysis.sevenDayAvg | number: "1.1-1"
-                    }}
-                    hrs</span
+                    >{{ analysis.sevenDayAvg | number: "1.1-1" }} hrs</span
                   >
                   <p-tag
                     [value]="
@@ -166,10 +169,7 @@ const DEBT_THRESHOLDS = {
                 <div class="stat-details">
                   <span class="stat-label">14-Day Avg Sleep</span>
                   <span class="stat-value"
-                    >{{
-                      analysis.fourteenDayAvg | number: "1.1-1"
-                    }}
-                    hrs</span
+                    >{{ analysis.fourteenDayAvg | number: "1.1-1" }} hrs</span
                   >
                   <p-tag
                     [value]="
@@ -235,9 +235,8 @@ const DEBT_THRESHOLDS = {
                 ></p-progressBar>
                 <p class="impact-description">
                   Your body can only absorb
-                  {{
-                    multipliers.trainingCapacity * 100 | number: "1.0-0"
-                  }}% of planned training load effectively
+                  {{ multipliers.trainingCapacity * 100 | number: "1.0-0" }}% of
+                  planned training load effectively
                 </p>
               </div>
 
@@ -257,9 +256,8 @@ const DEBT_THRESHOLDS = {
                 ></p-progressBar>
                 <p class="impact-description">
                   Recovery between sessions is
-                  {{
-                    100 - multipliers.recoveryRate * 100 | number: "1.0-0"
-                  }}% slower than optimal
+                  {{ 100 - multipliers.recoveryRate * 100 | number: "1.0-0" }}%
+                  slower than optimal
                 </p>
               </div>
 
@@ -275,10 +273,7 @@ const DEBT_THRESHOLDS = {
                 </div>
                 <p-progressBar
                   [value]="
-                    Math.min(
-                      (multipliers.injuryRiskMultiplier - 1) * 100,
-                      100
-                    )
+                    Math.min((multipliers.injuryRiskMultiplier - 1) * 100, 100)
                   "
                   [showValue]="false"
                   styleClass="impact-bar danger"
@@ -325,7 +320,12 @@ const DEBT_THRESHOLDS = {
         }
 
         <!-- AI Recommendation -->
-        @if (sleepDebtAnalysis()?.cumulativeDebt && sleepDebtAnalysis()!.cumulativeDebt > 0 && impactMultipliers(); as multipliers) {
+        @if (
+          sleepDebtAnalysis()?.cumulativeDebt &&
+            sleepDebtAnalysis()!.cumulativeDebt > 0 &&
+            impactMultipliers();
+          as multipliers
+        ) {
           <p-card styleClass="recommendation-card">
             <ng-template pTemplate="header">
               <div class="rec-header">
@@ -348,9 +348,8 @@ const DEBT_THRESHOLDS = {
                 <li>
                   <i class="pi pi-minus-circle"></i>
                   Reduce training intensity to
-                  {{
-                    multipliers.trainingCapacity * 100 | number: "1.0-0"
-                  }}% until debt is cleared
+                  {{ multipliers.trainingCapacity * 100 | number: "1.0-0" }}%
+                  until debt is cleared
                 </li>
                 <li>
                   <i class="pi pi-sun"></i>
@@ -450,12 +449,12 @@ export class SleepDebtComponent implements OnInit {
   readonly sleepDebtAnalysis = computed<SleepDebtAnalysis | null>(() => {
     const history = this.sleepHistory();
     const age = this.userAge();
-    
+
     // CRITICAL: Only calculate if we have real data
     if (age === null || history.length === 0) {
       return null; // No calculations without real data
     }
-    
+
     const optimalHours = this.getOptimalSleepHours(age);
     return this.calculateSleepDebt(history, optimalHours);
   });

@@ -81,7 +81,11 @@ import { TRAINING } from "../../../core/constants/app.constants";
         @if (riskMeaning() && enrichedPlayer().riskLevel !== "low") {
           <app-semantic-meaning-renderer
             [meaning]="riskMeaning()!"
-            [context]="{ container: 'card', priority: getRiskPriority(), dismissible: false }"
+            [context]="{
+              container: 'card',
+              priority: getRiskPriority(),
+              dismissible: false,
+            }"
           ></app-semantic-meaning-renderer>
         }
       </div>
@@ -97,7 +101,9 @@ import { TRAINING } from "../../../core/constants/app.constants";
           <h3 class="player-name">{{ player().name }}</h3>
           <div class="player-position">{{ player().position }}</div>
           <div class="player-meta">
-            <span class="country-flag" [attr.title]="player().country">{{ getCountryFlag(player().country) }}</span>
+            <span class="country-flag" [attr.title]="player().country">{{
+              getCountryFlag(player().country)
+            }}</span>
             <span>{{ player().country }}</span>
             <span class="separator">•</span>
             <span>Age {{ player().age }}</span>
@@ -296,7 +302,10 @@ export class RosterPlayerCardComponent {
         return {
           text: `Sprint Capacity: ${sprintCapacity}%`,
           icon: "pi pi-forward",
-          type: sprintCapacity < TRAINING.SPRINT_CAPACITY_WARNING ? "warning" : "info",
+          type:
+            sprintCapacity < TRAINING.SPRINT_CAPACITY_WARNING
+              ? "warning"
+              : "info",
         };
       }
     }
@@ -308,7 +317,8 @@ export class RosterPlayerCardComponent {
         return {
           text: `First-Step Explosion: ${firstStep}%`,
           icon: "pi pi-bolt",
-          type: firstStep < TRAINING.SPRINT_CAPACITY_WARNING ? "warning" : "info",
+          type:
+            firstStep < TRAINING.SPRINT_CAPACITY_WARNING ? "warning" : "info",
         };
       }
     }
@@ -361,7 +371,7 @@ export class RosterPlayerCardComponent {
     }
 
     const assessment = this.metricsService.getRiskAssessment(this.player());
-    
+
     // Map PlayerRiskLevel to RiskMeaning severity
     const severityMap: Record<string, RiskMeaning["severity"]> = {
       low: "low",
@@ -378,7 +388,10 @@ export class RosterPlayerCardComponent {
       source = "acwr";
     } else if (player.readiness < 50) {
       source = "readiness";
-    } else if (this.player().status === "injured" || this.player().status === "returning") {
+    } else if (
+      this.player().status === "injured" ||
+      this.player().status === "returning"
+    ) {
       source = "injury-status";
     }
 

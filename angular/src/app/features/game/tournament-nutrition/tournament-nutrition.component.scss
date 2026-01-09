@@ -719,8 +719,14 @@
   }
 
   &.evidence-conditional {
-    background: var(--primitive-orange-500, #f97316); // Vibrant orange background
-    color: var(--color-text-on-primary, #ffffff); // White text to match Strong Evidence design
+    background: var(
+      --primitive-orange-500,
+      #f97316
+    ); // Vibrant orange background
+    color: var(
+      --color-text-on-primary,
+      #ffffff
+    ); // White text to match Strong Evidence design
   }
 }
 

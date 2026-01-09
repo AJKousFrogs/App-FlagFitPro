@@ -19,7 +19,7 @@ const {
 
 /**
  * Acknowledge a coach alert
- * 
+ *
  * Rules:
  * - Must enforce role/ownership (athlete can acknowledge only their own alert)
  * - Must be idempotent (2nd call returns success without duplicating)
@@ -31,10 +31,12 @@ async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
   // Step 1: Verify alert exists and belongs to this athlete
   // For now, we'll check daily_protocols table for coach alerts
   // In the future, this might be a separate coach_alerts table
-  
+
   const { data: protocol, error: protocolError } = await supabaseAdmin
     .from("daily_protocols")
-    .select("id, user_id, protocol_date, coach_alert_active, coach_alert_requires_acknowledgment, coach_acknowledged")
+    .select(
+      "id, user_id, protocol_date, coach_alert_active, coach_alert_requires_acknowledgment, coach_acknowledged",
+    )
     .eq("id", alertId)
     .eq("user_id", userId)
     .single();
@@ -140,7 +142,8 @@ async function acknowledgeCoachAlert(supabase, userId, alertId, sessionDate) {
     data: {
       alertId,
       acknowledged: true,
-      acknowledgedAt: updatedProtocol.coach_acknowledged_at || new Date().toISOString(),
+      acknowledgedAt:
+        updatedProtocol.coach_acknowledged_at || new Date().toISOString(),
       message: "Alert acknowledged successfully",
     },
   };
@@ -167,7 +170,8 @@ exports.handler = async (event, context) => {
         const acknowledgeMatch = path.match(/^([^/]+)\/acknowledge$/);
         if (method === "POST" && acknowledgeMatch) {
           const alertId = acknowledgeMatch[1];
-          const sessionDate = body.sessionDate || new Date().toISOString().split("T")[0];
+          const sessionDate =
+            body.sessionDate || new Date().toISOString().split("T")[0];
 
           // Verify user is athlete (not coach trying to acknowledge for athlete)
           // This is enforced by checking user_id matches in acknowledgeCoachAlert
@@ -176,14 +180,14 @@ exports.handler = async (event, context) => {
             supabaseAdmin,
             userId,
             alertId,
-            sessionDate
+            sessionDate,
           );
 
           if (!result.success) {
             return createErrorResponse(
               result.error || "Failed to acknowledge alert",
               400,
-              result.code || "ACKNOWLEDGE_FAILED"
+              result.code || "ACKNOWLEDGE_FAILED",
             );
           }
 
@@ -196,10 +200,9 @@ exports.handler = async (event, context) => {
         return createErrorResponse(
           error.message || "Internal server error",
           500,
-          "SERVER_ERROR"
+          "SERVER_ERROR",
         );
       }
     },
   });
 };
-

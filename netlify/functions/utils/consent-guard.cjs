@@ -3,11 +3,11 @@
  * Checks consent before returning data to coaches
  */
 
-const { createClient } = require('@supabase/supabase-js');
+const { createClient } = require("@supabase/supabase-js");
 
 const supabaseAdmin = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
 );
 
 /**
@@ -17,32 +17,38 @@ const supabaseAdmin = createClient(
 async function canCoachViewReadiness(coachId, athleteId) {
   // Check consent setting
   const { data: consent, error } = await supabaseAdmin
-    .from('athlete_consent_settings')
-    .select('share_readiness_with_coach')
-    .eq('athlete_id', athleteId)
+    .from("athlete_consent_settings")
+    .select("share_readiness_with_coach")
+    .eq("athlete_id", athleteId)
     .single();
 
-  if (error && error.code !== 'PGRST116') { // PGRST116 = not found
-    return { allowed: false, reason: 'CONSENT_CHECK_FAILED', error };
+  if (error && error.code !== "PGRST116") {
+    // PGRST116 = not found
+    return { allowed: false, reason: "CONSENT_CHECK_FAILED", error };
   }
 
   const hasConsent = consent?.share_readiness_with_coach === true;
 
   // Check safety override (ACWR danger zone)
   const { data: readiness } = await supabaseAdmin
-    .from('readiness_scores')
-    .select('acwr')
-    .eq('athlete_id', athleteId)
-    .order('day', { ascending: false })
+    .from("readiness_scores")
+    .select("acwr")
+    .eq("athlete_id", athleteId)
+    .order("day", { ascending: false })
     .limit(1)
     .single();
 
-  const safetyOverride = readiness?.acwr && (readiness.acwr > 1.5 || readiness.acwr < 0.8);
+  const safetyOverride =
+    readiness?.acwr && (readiness.acwr > 1.5 || readiness.acwr < 0.8);
 
   return {
     allowed: hasConsent || safetyOverride,
-    reason: hasConsent ? 'CONSENT_GRANTED' : (safetyOverride ? 'SAFETY_OVERRIDE' : 'NO_CONSENT'),
-    safetyOverride
+    reason: hasConsent
+      ? "CONSENT_GRANTED"
+      : safetyOverride
+        ? "SAFETY_OVERRIDE"
+        : "NO_CONSENT",
+    safetyOverride,
   };
 }
 
@@ -52,29 +58,36 @@ async function canCoachViewReadiness(coachId, athleteId) {
  */
 async function canCoachViewWellness(coachId, athleteId) {
   const { data: consent, error } = await supabaseAdmin
-    .from('athlete_consent_settings')
-    .select('share_wellness_answers_with_coach')
-    .eq('athlete_id', athleteId)
+    .from("athlete_consent_settings")
+    .select("share_wellness_answers_with_coach")
+    .eq("athlete_id", athleteId)
     .single();
 
-  if (error && error.code !== 'PGRST116') {
-    return { allowed: false, reason: 'CONSENT_CHECK_FAILED', error };
+  if (error && error.code !== "PGRST116") {
+    return { allowed: false, reason: "CONSENT_CHECK_FAILED", error };
   }
 
   const hasConsent = consent?.share_wellness_answers_with_coach === true;
 
   // Check safety override (pain >3/10, high stress)
-  const { data: safetyCheck } = await supabaseAdmin.rpc('has_active_safety_override', {
-    p_athlete_id: athleteId,
-    p_data_type: 'pain'
-  });
+  const { data: safetyCheck } = await supabaseAdmin.rpc(
+    "has_active_safety_override",
+    {
+      p_athlete_id: athleteId,
+      p_data_type: "pain",
+    },
+  );
 
   const safetyOverride = safetyCheck === true;
 
   return {
     allowed: hasConsent || safetyOverride,
-    reason: hasConsent ? 'CONSENT_GRANTED' : (safetyOverride ? 'SAFETY_OVERRIDE' : 'NO_CONSENT'),
-    safetyOverride
+    reason: hasConsent
+      ? "CONSENT_GRANTED"
+      : safetyOverride
+        ? "SAFETY_OVERRIDE"
+        : "NO_CONSENT",
+    safetyOverride,
   };
 }
 
@@ -97,7 +110,7 @@ function filterWellnessDataForCoach(wellnessData, hasConsent, safetyOverride) {
     stress_level: null,
     muscle_soreness: null,
     mood: null,
-    notes: null
+    notes: null,
   };
 }
 
@@ -116,7 +129,7 @@ function filterReadinessForCoach(readinessData, hasConsent, safetyOverride) {
     // Hide readinessScore
     score: null,
     level: null,
-    suggestion: null
+    suggestion: null,
   };
 }
 
@@ -124,6 +137,5 @@ module.exports = {
   canCoachViewReadiness,
   canCoachViewWellness,
   filterWellnessDataForCoach,
-  filterReadinessForCoach
+  filterReadinessForCoach,
 };
-

@@ -222,7 +222,11 @@ describe("AuthManager - Comprehensive Tests", () => {
   describe("User Role Management", () => {
     it("should return user role when user exists", () => {
       authManager = new AuthManager();
-      authManager.user = { id: 1, email: "coach@flagfitpro.com", role: "coach" };
+      authManager.user = {
+        id: 1,
+        email: "coach@flagfitpro.com",
+        role: "coach",
+      };
 
       expect(authManager.getUserRole()).toBe("coach");
     });
@@ -243,7 +247,11 @@ describe("AuthManager - Comprehensive Tests", () => {
 
     it("should correctly check if user has specific role", () => {
       authManager = new AuthManager();
-      authManager.user = { id: 1, email: "coach@flagfitpro.com", role: "coach" };
+      authManager.user = {
+        id: 1,
+        email: "coach@flagfitpro.com",
+        role: "coach",
+      };
 
       expect(authManager.hasRole("coach")).toBe(true);
       expect(authManager.hasRole("player")).toBe(false);
@@ -291,9 +299,8 @@ describe("AuthManager - Comprehensive Tests", () => {
     it("should clear auth data on logout", async () => {
       const { secureStorage } = await import("../../src/secure-storage.js");
       const { apiClient } = await import("../../src/api-config.js");
-      const { csrfProtection } = await import(
-        "../../src/js/security/csrf-protection.js"
-      );
+      const { csrfProtection } =
+        await import("../../src/js/security/csrf-protection.js");
 
       authManager = new AuthManager();
       authManager.token = "test-token";
@@ -329,9 +336,8 @@ describe("AuthManager - Comprehensive Tests", () => {
     });
 
     it("should notify login callbacks with user data", async () => {
-      const { csrfProtection } = await import(
-        "../../src/js/security/csrf-protection.js"
-      );
+      const { csrfProtection } =
+        await import("../../src/js/security/csrf-protection.js");
 
       authManager = new AuthManager();
       const callback = vi.fn();
@@ -445,16 +451,13 @@ describe("AuthManager - Comprehensive Tests", () => {
       const mockHandler = { event: "mousedown", handler: vi.fn() };
       authManager.activityHandlers = [mockHandler];
 
-      const removeEventListenerSpy = vi.spyOn(
-        document,
-        "removeEventListener"
-      );
+      const removeEventListenerSpy = vi.spyOn(document, "removeEventListener");
 
       authManager.cleanup();
 
       expect(removeEventListenerSpy).toHaveBeenCalledWith(
         "mousedown",
-        mockHandler.handler
+        mockHandler.handler,
       );
       expect(authManager.activityHandlers).toEqual([]);
     });

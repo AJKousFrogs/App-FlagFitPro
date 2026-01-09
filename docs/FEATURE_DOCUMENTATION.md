@@ -180,16 +180,17 @@ The **Dashboard** serves as the central hub and primary entry point for all user
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `GET` | `/api/dashboard` | Get dashboard data (player view) | ✅ Yes |
-| `GET` | `/api/coach/dashboard` | Get dashboard data (coach view) | ✅ Yes (Coach) |
-| `GET` | `/api/wellness/latest` | Get latest wellness check-in | ✅ Yes |
-| `GET` | `/api/acwr/current` | Get current ACWR ratio | ✅ Yes |
-| `GET` | `/api/training/stats` | Get training statistics | ✅ Yes |
-| `GET` | `/api/calendar/upcoming` | Get upcoming events | ✅ Yes |
+| Method | Endpoint                 | Purpose                          | Auth Required  |
+| ------ | ------------------------ | -------------------------------- | -------------- |
+| `GET`  | `/api/dashboard`         | Get dashboard data (player view) | ✅ Yes         |
+| `GET`  | `/api/coach/dashboard`   | Get dashboard data (coach view)  | ✅ Yes (Coach) |
+| `GET`  | `/api/wellness/latest`   | Get latest wellness check-in     | ✅ Yes         |
+| `GET`  | `/api/acwr/current`      | Get current ACWR ratio           | ✅ Yes         |
+| `GET`  | `/api/training/stats`    | Get training statistics          | ✅ Yes         |
+| `GET`  | `/api/calendar/upcoming` | Get upcoming events              | ✅ Yes         |
 
 **Backend Functions:**
+
 - `dashboard.cjs` - Main dashboard data aggregation
 - `coach.cjs` - Coach dashboard data
 - `compute-acwr.cjs` - ACWR calculations
@@ -197,6 +198,7 @@ The **Dashboard** serves as the central hub and primary entry point for all user
 - `tournament-calendar.cjs` - Calendar events
 
 **Request Example:**
+
 ```typescript
 // Player dashboard
 GET /api/dashboard?team_id=123&date=2026-01-09
@@ -269,19 +271,21 @@ GET /api/dashboard?team_id=123&date=2026-01-09
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `GET` | `/api/coach/dashboard` | Get coach dashboard data | ✅ Yes (Coach) |
-| `GET` | `/api/coach/alerts` | Get player risk alerts | ✅ Yes (Coach) |
-| `GET` | `/api/team/roster` | Get team roster with metrics | ✅ Yes (Coach) |
-| `GET` | `/api/team/stats` | Get team statistics | ✅ Yes (Coach) |
+| Method | Endpoint               | Purpose                      | Auth Required  |
+| ------ | ---------------------- | ---------------------------- | -------------- |
+| `GET`  | `/api/coach/dashboard` | Get coach dashboard data     | ✅ Yes (Coach) |
+| `GET`  | `/api/coach/alerts`    | Get player risk alerts       | ✅ Yes (Coach) |
+| `GET`  | `/api/team/roster`     | Get team roster with metrics | ✅ Yes (Coach) |
+| `GET`  | `/api/team/stats`      | Get team statistics          | ✅ Yes (Coach) |
 
 **Backend Functions:**
+
 - `coach.cjs` - Coach dashboard and team data
 - `coach-alerts.cjs` - Risk alerts for coaches
 - `coach-activity.cjs` - Team activity feed
 
 **Request Example:**
+
 ```typescript
 // Coach dashboard
 GET /api/coach/dashboard?team_id=123
@@ -363,22 +367,24 @@ Type Multipliers:
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `GET` | `/api/training/sessions` | Get training sessions | ✅ Yes |
-| `POST` | `/api/training/sessions` | Create training session | ✅ Yes |
-| `PUT` | `/api/training/sessions/:id` | Update training session | ✅ Yes |
-| `DELETE` | `/api/training/sessions/:id` | Delete training session | ✅ Yes |
-| `POST` | `/api/training/log` | Log completed session | ✅ Yes |
-| `GET` | `/api/training/stats` | Get training statistics | ✅ Yes |
-| `GET` | `/api/training/history` | Get training history | ✅ Yes |
+| Method   | Endpoint                     | Purpose                 | Auth Required |
+| -------- | ---------------------------- | ----------------------- | ------------- |
+| `GET`    | `/api/training/sessions`     | Get training sessions   | ✅ Yes        |
+| `POST`   | `/api/training/sessions`     | Create training session | ✅ Yes        |
+| `PUT`    | `/api/training/sessions/:id` | Update training session | ✅ Yes        |
+| `DELETE` | `/api/training/sessions/:id` | Delete training session | ✅ Yes        |
+| `POST`   | `/api/training/log`          | Log completed session   | ✅ Yes        |
+| `GET`    | `/api/training/stats`        | Get training statistics | ✅ Yes        |
+| `GET`    | `/api/training/history`      | Get training history    | ✅ Yes        |
 
 **Backend Functions:**
+
 - `training-sessions.cjs` - Training session CRUD operations
 - `daily-protocol.cjs` - Daily training protocol
 - `compute-acwr.cjs` - ACWR calculation after session log
 
 **Request Example:**
+
 ```typescript
 // Log training session
 POST /api/training/log
@@ -576,18 +582,19 @@ if (todayHR - baselineHR >= 10) {
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `GET` | `/api/wellness/latest` | Get latest wellness check-in | ✅ Yes |
-| `GET` | `/api/wellness/history` | Get wellness history | ✅ Yes |
-| `POST` | `/api/wellness/checkin` | Submit wellness check-in | ✅ Yes |
-| `GET` | `/api/wellness/trends` | Get wellness trends | ✅ Yes |
-| `GET` | `/api/readiness/current` | Get current readiness score | ✅ Yes |
-| `GET` | `/api/readiness/history` | Get readiness history | ✅ Yes |
-| `POST` | `/api/hydration/log` | Log hydration | ✅ Yes |
-| `GET` | `/api/hydration/today` | Get today's hydration | ✅ Yes |
+| Method | Endpoint                 | Purpose                      | Auth Required |
+| ------ | ------------------------ | ---------------------------- | ------------- |
+| `GET`  | `/api/wellness/latest`   | Get latest wellness check-in | ✅ Yes        |
+| `GET`  | `/api/wellness/history`  | Get wellness history         | ✅ Yes        |
+| `POST` | `/api/wellness/checkin`  | Submit wellness check-in     | ✅ Yes        |
+| `GET`  | `/api/wellness/trends`   | Get wellness trends          | ✅ Yes        |
+| `GET`  | `/api/readiness/current` | Get current readiness score  | ✅ Yes        |
+| `GET`  | `/api/readiness/history` | Get readiness history        | ✅ Yes        |
+| `POST` | `/api/hydration/log`     | Log hydration                | ✅ Yes        |
+| `GET`  | `/api/hydration/today`   | Get today's hydration        | ✅ Yes        |
 
 **Backend Functions:**
+
 - `wellness-checkin.cjs` - Wellness check-in submission
 - `wellness.cjs` - Wellness data retrieval
 - `calc-readiness.cjs` - Readiness score calculation
@@ -595,6 +602,7 @@ if (todayHR - baselineHR >= 10) {
 - `hydration.cjs` - Hydration tracking
 
 **Request Example:**
+
 ```typescript
 // Submit wellness check-in
 POST /api/wellness/checkin
@@ -735,21 +743,23 @@ const MIN_REQUIREMENTS = {
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `GET` | `/api/acwr/current` | Get current ACWR ratio | ✅ Yes |
-| `GET` | `/api/acwr/history` | Get ACWR history | ✅ Yes |
-| `GET` | `/api/acwr/loads` | Get acute/chronic loads | ✅ Yes |
-| `GET` | `/api/acwr/alerts` | Get ACWR alerts | ✅ Yes |
-| `POST` | `/api/acwr/compute` | Compute ACWR (after training log) | ✅ Yes |
-| `GET` | `/api/load-monitoring/status` | Get load monitoring status | ✅ Yes |
+| Method | Endpoint                      | Purpose                           | Auth Required |
+| ------ | ----------------------------- | --------------------------------- | ------------- |
+| `GET`  | `/api/acwr/current`           | Get current ACWR ratio            | ✅ Yes        |
+| `GET`  | `/api/acwr/history`           | Get ACWR history                  | ✅ Yes        |
+| `GET`  | `/api/acwr/loads`             | Get acute/chronic loads           | ✅ Yes        |
+| `GET`  | `/api/acwr/alerts`            | Get ACWR alerts                   | ✅ Yes        |
+| `POST` | `/api/acwr/compute`           | Compute ACWR (after training log) | ✅ Yes        |
+| `GET`  | `/api/load-monitoring/status` | Get load monitoring status        | ✅ Yes        |
 
 **Backend Functions:**
+
 - `compute-acwr.cjs` - ACWR calculation engine
 - `load-management.cjs` - Load monitoring and alerts
 - `coach-alerts.cjs` - Coach alerts for high-risk players
 
 **Request Example:**
+
 ```typescript
 // Get current ACWR
 GET /api/acwr/current?player_id=123&team_id=456
@@ -1514,23 +1524,25 @@ function calculatePerPlayerCost(tournament: Tournament): number {
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `GET` | `/api/team/roster` | Get team roster | ✅ Yes |
-| `GET` | `/api/team/roster/:player_id` | Get player details | ✅ Yes |
-| `POST` | `/api/team/roster` | Add player to roster | ✅ Yes (Coach) |
-| `PUT` | `/api/team/roster/:player_id` | Update player info | ✅ Yes (Coach) |
-| `DELETE` | `/api/team/roster/:player_id` | Remove player | ✅ Yes (Coach) |
-| `GET` | `/api/team/staff` | Get staff roster | ✅ Yes |
-| `POST` | `/api/team/injuries` | Log injury | ✅ Yes (Coach) |
-| `GET` | `/api/team/injuries` | Get injury list | ✅ Yes |
+| Method   | Endpoint                      | Purpose              | Auth Required  |
+| -------- | ----------------------------- | -------------------- | -------------- |
+| `GET`    | `/api/team/roster`            | Get team roster      | ✅ Yes         |
+| `GET`    | `/api/team/roster/:player_id` | Get player details   | ✅ Yes         |
+| `POST`   | `/api/team/roster`            | Add player to roster | ✅ Yes (Coach) |
+| `PUT`    | `/api/team/roster/:player_id` | Update player info   | ✅ Yes (Coach) |
+| `DELETE` | `/api/team/roster/:player_id` | Remove player        | ✅ Yes (Coach) |
+| `GET`    | `/api/team/staff`             | Get staff roster     | ✅ Yes         |
+| `POST`   | `/api/team/injuries`          | Log injury           | ✅ Yes (Coach) |
+| `GET`    | `/api/team/injuries`          | Get injury list      | ✅ Yes         |
 
 **Backend Functions:**
+
 - `coach.cjs` - Roster management operations
 - `team-invite.cjs` - Team invitation handling
 - `recovery.cjs` - Injury and recovery tracking
 
 **Request Example:**
+
 ```typescript
 // Get team roster
 GET /api/team/roster?team_id=123
@@ -1606,18 +1618,20 @@ const FLAG_FOOTBALL_POSITIONS = {
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `GET` | `/api/depth-chart` | Get depth chart | ✅ Yes |
-| `PUT` | `/api/depth-chart` | Update depth chart | ✅ Yes (Coach) |
-| `POST` | `/api/depth-chart/positions` | Assign player to position | ✅ Yes (Coach) |
+| Method   | Endpoint                         | Purpose                    | Auth Required  |
+| -------- | -------------------------------- | -------------------------- | -------------- |
+| `GET`    | `/api/depth-chart`               | Get depth chart            | ✅ Yes         |
+| `PUT`    | `/api/depth-chart`               | Update depth chart         | ✅ Yes (Coach) |
+| `POST`   | `/api/depth-chart/positions`     | Assign player to position  | ✅ Yes (Coach) |
 | `DELETE` | `/api/depth-chart/positions/:id` | Remove position assignment | ✅ Yes (Coach) |
-| `GET` | `/api/depth-chart/export` | Export depth chart | ✅ Yes |
+| `GET`    | `/api/depth-chart/export`        | Export depth chart         | ✅ Yes         |
 
 **Backend Functions:**
+
 - `depth-chart.cjs` - Depth chart management
 
 **Request Example:**
+
 ```typescript
 // Update depth chart
 PUT /api/depth-chart
@@ -1883,21 +1897,23 @@ function calculatePerformanceScore(data: AnalyticsData): number {
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `GET` | `/api/analytics/overview` | Get analytics overview | ✅ Yes |
-| `GET` | `/api/analytics/performance` | Get performance metrics | ✅ Yes |
-| `GET` | `/api/analytics/trends` | Get trend data | ✅ Yes |
-| `GET` | `/api/analytics/comparison` | Get comparison data | ✅ Yes |
-| `POST` | `/api/analytics/export` | Export analytics report | ✅ Yes |
-| `GET` | `/api/analytics/coach` | Get coach analytics (team view) | ✅ Yes (Coach) |
+| Method | Endpoint                     | Purpose                         | Auth Required  |
+| ------ | ---------------------------- | ------------------------------- | -------------- |
+| `GET`  | `/api/analytics/overview`    | Get analytics overview          | ✅ Yes         |
+| `GET`  | `/api/analytics/performance` | Get performance metrics         | ✅ Yes         |
+| `GET`  | `/api/analytics/trends`      | Get trend data                  | ✅ Yes         |
+| `GET`  | `/api/analytics/comparison`  | Get comparison data             | ✅ Yes         |
+| `POST` | `/api/analytics/export`      | Export analytics report         | ✅ Yes         |
+| `GET`  | `/api/analytics/coach`       | Get coach analytics (team view) | ✅ Yes (Coach) |
 
 **Backend Functions:**
+
 - `analytics.cjs` - Analytics data aggregation
 - `coach-analytics.cjs` - Coach analytics view
 - `data-export.cjs` - Report export functionality
 
 **Request Example:**
+
 ```typescript
 // Get analytics overview
 GET /api/analytics/overview?period=30d&player_id=123
@@ -1956,22 +1972,24 @@ GET /api/analytics/overview?period=30d&player_id=123
 
 #### API Endpoints
 
-| Method | Endpoint | Purpose | Auth Required |
-|--------|----------|---------|---------------|
-| `POST` | `/api/ai/chat` | Send message to AI Coach | ✅ Yes |
-| `GET` | `/api/ai/chat/sessions` | Get chat sessions | ✅ Yes |
-| `GET` | `/api/ai/chat/sessions/:id` | Get specific chat session | ✅ Yes |
-| `DELETE` | `/api/ai/chat/sessions/:id` | Delete chat session | ✅ Yes |
-| `POST` | `/api/ai/feedback` | Submit feedback on AI response | ✅ Yes |
-| `GET` | `/api/ai/stats` | Get AI Coach usage statistics | ✅ Yes (Coach) |
+| Method   | Endpoint                    | Purpose                        | Auth Required  |
+| -------- | --------------------------- | ------------------------------ | -------------- |
+| `POST`   | `/api/ai/chat`              | Send message to AI Coach       | ✅ Yes         |
+| `GET`    | `/api/ai/chat/sessions`     | Get chat sessions              | ✅ Yes         |
+| `GET`    | `/api/ai/chat/sessions/:id` | Get specific chat session      | ✅ Yes         |
+| `DELETE` | `/api/ai/chat/sessions/:id` | Delete chat session            | ✅ Yes         |
+| `POST`   | `/api/ai/feedback`          | Submit feedback on AI response | ✅ Yes         |
+| `GET`    | `/api/ai/stats`             | Get AI Coach usage statistics  | ✅ Yes (Coach) |
 
 **Backend Functions:**
+
 - `ai-chat.cjs` - AI chat message handling
 - `chat.cjs` - Chat session management
 - `ai-feedback.cjs` - Feedback collection
 - `update-chatbot-stats.cjs` - Usage statistics
 
 **Request Example:**
+
 ```typescript
 // Send message to AI Coach
 POST /api/ai/chat

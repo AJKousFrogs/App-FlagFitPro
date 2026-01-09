@@ -13,7 +13,12 @@
  * - False sense of readiness/recovery status
  */
 
-import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
 import { CardModule } from "primeng/card";

@@ -4,12 +4,12 @@
  * ⭐ CANONICAL PAGE — Design System Exemplar
  * ==========================================
  * This page is FROZEN as a design system exemplar.
- * 
+ *
  * RULES:
  * - Future refactors copy FROM this page, never INTO it
  * - Changes require design system curator approval
  * - This page demonstrates correct design system usage
- * 
+ *
  * See docs/CANONICAL_PAGES.md for full documentation.
  *
  * The main overview page for athletes showing:
@@ -53,7 +53,10 @@ import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
 import { AcwrSpikeDetectionService } from "../../core/services/acwr-spike-detection.service";
-import { PrivacySettingsService, METRIC_CATEGORIES } from "../../core/services/privacy-settings.service";
+import {
+  PrivacySettingsService,
+  METRIC_CATEGORIES,
+} from "../../core/services/privacy-settings.service";
 import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -63,13 +66,26 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
 import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
 import { DashboardSkeletonComponent } from "../../shared/components/dashboard-skeleton/dashboard-skeleton.component";
 import { CoachOverrideNotificationComponent } from "../../shared/components/coach-override-notification/coach-override-notification.component";
-import { OverrideLoggingService, CoachOverride } from "../../core/services/override-logging.service";
+import {
+  OverrideLoggingService,
+  CoachOverride,
+} from "../../core/services/override-logging.service";
 import { OwnershipTransitionBadgeComponent } from "../../shared/components/ownership-transition-badge/ownership-transition-badge.component";
-import { OwnershipTransitionService, OwnershipTransition } from "../../core/services/ownership-transition.service";
+import {
+  OwnershipTransitionService,
+  OwnershipTransition,
+} from "../../core/services/ownership-transition.service";
 import { MissingDataExplanationComponent } from "../../shared/components/missing-data-explanation/missing-data-explanation.component";
-import { MissingDataDetectionService, MissingDataStatus } from "../../core/services/missing-data-detection.service";
+import {
+  MissingDataDetectionService,
+  MissingDataStatus,
+} from "../../core/services/missing-data-detection.service";
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
-import { CoachOverrideMeaning, IncompleteDataMeaning, ActionRequiredMeaning } from "../../core/semantics/semantic-meaning.types";
+import {
+  CoachOverrideMeaning,
+  IncompleteDataMeaning,
+  ActionRequiredMeaning,
+} from "../../core/semantics/semantic-meaning.types";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TRAINING, UI_LIMITS } from "../../core/constants/app.constants";
@@ -155,7 +171,8 @@ interface AnnouncementBanner {
                   </div>
                   <h3 class="no-program-title">Let's Get You Set Up!</h3>
                   <p class="no-program-message">
-                    Your training program is almost ready. Let's check what's needed:
+                    Your training program is almost ready. Let's check what's
+                    needed:
                   </p>
 
                   <!-- Diagnostic Steps Checklist -->
@@ -175,7 +192,11 @@ interface AnnouncementBanner {
                       @if (getOnboardingActionRequiredMeaning()) {
                         <app-semantic-meaning-renderer
                           [meaning]="getOnboardingActionRequiredMeaning()!"
-                          [context]="{ container: 'inline', priority: 'high', dismissible: false }"
+                          [context]="{
+                            container: 'inline',
+                            priority: 'high',
+                            dismissible: false,
+                          }"
                         ></app-semantic-meaning-renderer>
                       }
                       <!-- Fallback checklist item for visual consistency -->
@@ -184,7 +205,9 @@ interface AnnouncementBanner {
                           <i class="pi pi-exclamation-circle"></i>
                         </div>
                         <div class="checklist-content">
-                          <span class="checklist-label">Complete your profile</span>
+                          <span class="checklist-label"
+                            >Complete your profile</span
+                          >
                           <span class="checklist-status">Action required</span>
                         </div>
                       </div>
@@ -205,8 +228,12 @@ interface AnnouncementBanner {
                         <i class="pi pi-clock"></i>
                       </div>
                       <div class="checklist-content">
-                        <span class="checklist-label">Coach program assignment</span>
-                        <span class="checklist-status">Usually 24-48 hours</span>
+                        <span class="checklist-label"
+                          >Coach program assignment</span
+                        >
+                        <span class="checklist-status"
+                          >Usually 24-48 hours</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -216,17 +243,24 @@ interface AnnouncementBanner {
                     <h4 class="next-steps-title">What happens next?</h4>
                     @if (!hasCompletedOnboarding()) {
                       <ol class="next-steps-list">
-                        <li><strong>Complete your profile</strong> (2-3 minutes)</li>
-                        <li>Your coach will review and assign a program (24-48 hours)</li>
+                        <li>
+                          <strong>Complete your profile</strong> (2-3 minutes)
+                        </li>
+                        <li>
+                          Your coach will review and assign a program (24-48
+                          hours)
+                        </li>
                         <li>Start training!</li>
                       </ol>
                     } @else {
                       <p class="next-steps-message">
-                        Your profile looks great! Your coach will assign a training program within 24-48 hours.
-                        You'll receive a notification when it's ready.
+                        Your profile looks great! Your coach will assign a
+                        training program within 24-48 hours. You'll receive a
+                        notification when it's ready.
                       </p>
                       <p class="next-steps-tip">
-                        💡 <strong>In the meantime:</strong> Explore the exercise library and watch training videos!
+                        💡 <strong>In the meantime:</strong> Explore the
+                        exercise library and watch training videos!
                       </p>
                     }
                   </div>
@@ -234,12 +268,18 @@ interface AnnouncementBanner {
                   <!-- Action Buttons -->
                   <div class="no-program-actions">
                     @if (!hasCompletedOnboarding()) {
-                      <app-button iconLeft="pi-user-edit" routerLink="/onboarding">
+                      <app-button
+                        iconLeft="pi-user-edit"
+                        routerLink="/onboarding"
+                      >
                         Complete Profile (2 min)
                       </app-button>
                     }
                     @if (hasCompletedOnboarding()) {
-                      <app-button iconLeft="pi-book" routerLink="/exercise-library">
+                      <app-button
+                        iconLeft="pi-book"
+                        routerLink="/exercise-library"
+                      >
                         Browse Exercises
                       </app-button>
                       <app-button
@@ -262,7 +302,10 @@ interface AnnouncementBanner {
                   <!-- Expected Timeline -->
                   <div class="setup-timeline">
                     <i class="pi pi-info-circle"></i>
-                    <span>Most athletes get their program within 24 hours. Check back tomorrow!</span>
+                    <span
+                      >Most athletes get their program within 24 hours. Check
+                      back tomorrow!</span
+                    >
                   </div>
                 </div>
               </p-card>
@@ -310,7 +353,11 @@ interface AnnouncementBanner {
                 @if (getCoachOverrideMeaning(override)) {
                   <app-semantic-meaning-renderer
                     [meaning]="getCoachOverrideMeaning(override)!"
-                    [context]="{ container: 'card', priority: 'medium', dismissible: false }"
+                    [context]="{
+                      container: 'card',
+                      priority: 'medium',
+                      dismissible: false,
+                    }"
                   ></app-semantic-meaning-renderer>
                 }
                 <!-- Fallback: Keep notification component for detailed view -->
@@ -362,10 +409,18 @@ interface AnnouncementBanner {
                     <!-- Privacy Status Badge -->
                     @if (privacySharingStatus().totalMetrics > 0) {
                       <p-tag
-                        [value]="'Sharing: ' + privacySharingStatus().sharedMetrics + '/' + privacySharingStatus().totalMetrics + ' metrics'"
+                        [value]="
+                          'Sharing: ' +
+                          privacySharingStatus().sharedMetrics +
+                          '/' +
+                          privacySharingStatus().totalMetrics +
+                          ' metrics'
+                        "
                         severity="info"
                         styleClass="privacy-status-badge"
-                        [pTooltip]="'Manage your data sharing preferences in Settings'"
+                        [pTooltip]="
+                          'Manage your data sharing preferences in Settings'
+                        "
                         tooltipPosition="bottom"
                         [routerLink]="['/settings/privacy']"
                         style="cursor: pointer;"
@@ -431,7 +486,7 @@ interface AnnouncementBanner {
                   ></p-tag>
                 </div>
               }
-              
+
               <!-- Wellness Check-in Status Indicator -->
               <div class="wellness-checkin-status">
                 @if (wellnessCheckedInToday()) {
@@ -463,7 +518,24 @@ interface AnnouncementBanner {
               styleClass="stat-card stat-acwr"
               [style]="{ cursor: 'pointer' }"
               (click)="navigateToACWR()"
-              [pTooltip]="acwrDataSufficient() ? '📊 Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (' + TRAINING.ACUTE_LOAD_DAYS + ' days) to long-term fitness (' + TRAINING.CHRONIC_LOAD_DAYS + ' days).\n\n✅ Optimal range: ' + TRAINING.ACWR_SAFE_RANGE_MIN + '–' + TRAINING.ACWR_SAFE_RANGE_MAX : '💡 ACWR requires ' + TRAINING.MIN_DAYS_FOR_CHRONIC + ' days of training data to calculate.\n\nKeep logging sessions to unlock this injury prevention metric!'"
+              [pTooltip]="
+                acwrDataSufficient()
+                  ? '📊 Acute:Chronic Workload Ratio tracks your injury risk by comparing recent training load (' +
+                    TRAINING.ACUTE_LOAD_DAYS +
+                    ' days) to long-term fitness (' +
+                    TRAINING.CHRONIC_LOAD_DAYS +
+                    ' days).
+
+✅ Optimal range: ' +
+                    TRAINING.ACWR_SAFE_RANGE_MIN +
+                    '–' +
+                    TRAINING.ACWR_SAFE_RANGE_MAX
+                  : '💡 ACWR requires ' +
+                    TRAINING.MIN_DAYS_FOR_CHRONIC +
+                    ' days of training data to calculate.
+
+Keep logging sessions to unlock this injury prevention metric!'
+              "
               tooltipPosition="bottom"
               [showDelay]="500"
             >
@@ -474,7 +546,9 @@ interface AnnouncementBanner {
                     <i class="pi pi-chart-line"></i>
                   </div>
                   <div class="stat-details">
-                    <span class="stat-value">{{ acwr() | number: "1.2-2" }}</span>
+                    <span class="stat-value">{{
+                      acwr() | number: "1.2-2"
+                    }}</span>
                     <span class="stat-label">ACWR</span>
                   </div>
                   <p-tag
@@ -493,21 +567,46 @@ interface AnnouncementBanner {
                     <span class="acwr-progress-title">Load Monitoring</span>
                     <div class="acwr-progress-bar-container">
                       <div class="acwr-progress-bar">
-                        <div 
-                          class="acwr-progress-fill" 
-                          [style.width.%]="(trainingDaysLogged()! / TRAINING.MIN_DAYS_FOR_CHRONIC) * 100"
+                        <div
+                          class="acwr-progress-fill"
+                          [style.width.%]="
+                            (trainingDaysLogged()! /
+                              TRAINING.MIN_DAYS_FOR_CHRONIC) *
+                            100
+                          "
                         ></div>
                       </div>
                       <span class="acwr-progress-text">
-                        {{ trainingDaysLogged() }}/{{ TRAINING.MIN_DAYS_FOR_CHRONIC }} days
+                        {{ trainingDaysLogged() }}/{{
+                          TRAINING.MIN_DAYS_FOR_CHRONIC
+                        }}
+                        days
                       </span>
                     </div>
-                    @if (trainingDaysLogged()! >= TRAINING.ACUTE_LOAD_DAYS && trainingDaysLogged()! < 14) {
-                      <p-tag value="7-day milestone! 🎉" severity="success" styleClass="milestone-tag"></p-tag>
-                    } @else if (trainingDaysLogged()! >= 14 && trainingDaysLogged()! < TRAINING.MIN_DAYS_FOR_CHRONIC) {
-                      <p-tag value="Halfway there!" severity="info" styleClass="milestone-tag"></p-tag>
-                    } @else if (trainingDaysLogged()! < TRAINING.ACUTE_LOAD_DAYS) {
-                      <span class="acwr-help-text">Keep logging to unlock insights</span>
+                    @if (
+                      trainingDaysLogged()! >= TRAINING.ACUTE_LOAD_DAYS &&
+                      trainingDaysLogged()! < 14
+                    ) {
+                      <p-tag
+                        value="7-day milestone! 🎉"
+                        severity="success"
+                        styleClass="milestone-tag"
+                      ></p-tag>
+                    } @else if (
+                      trainingDaysLogged()! >= 14 &&
+                      trainingDaysLogged()! < TRAINING.MIN_DAYS_FOR_CHRONIC
+                    ) {
+                      <p-tag
+                        value="Halfway there!"
+                        severity="info"
+                        styleClass="milestone-tag"
+                      ></p-tag>
+                    } @else if (
+                      trainingDaysLogged()! < TRAINING.ACUTE_LOAD_DAYS
+                    ) {
+                      <span class="acwr-help-text"
+                        >Keep logging to unlock insights</span
+                      >
                     }
                   </div>
                 </div>
@@ -528,15 +627,23 @@ interface AnnouncementBanner {
                   ></p-tag>
                 </div>
               }
-              
+
               <!-- Data Confidence Indicator (Phase 3 - Semantic Meaning) -->
               @if (acwr() !== null || trainingDaysLogged() !== null) {
                 <div class="confidence-indicator-wrapper">
                   <!-- Phase 3: Semantic Incomplete Data Badge when confidence is low -->
-                  @if (acwrConfidence().score < 0.9 && getACWRIncompleteDataMeaning()) {
+                  @if (
+                    acwrConfidence().score < 0.9 &&
+                    getACWRIncompleteDataMeaning()
+                  ) {
                     <app-semantic-meaning-renderer
                       [meaning]="getACWRIncompleteDataMeaning()!"
-                      [context]="{ container: 'inline', priority: acwrConfidence().score < 0.5 ? 'critical' : 'medium', dismissible: false }"
+                      [context]="{
+                        container: 'inline',
+                        priority:
+                          acwrConfidence().score < 0.5 ? 'critical' : 'medium',
+                        dismissible: false,
+                      }"
                     ></app-semantic-meaning-renderer>
                   }
                   <!-- Detailed confidence indicator -->
@@ -648,7 +755,9 @@ interface AnnouncementBanner {
               </ng-template>
               @if (todaySchedule().length > 0) {
                 <p-timeline
-                  [value]="todaySchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)"
+                  [value]="
+                    todaySchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)
+                  "
                   styleClass="schedule-timeline"
                 >
                   <ng-template pTemplate="marker" let-item>
@@ -747,15 +856,9 @@ interface AnnouncementBanner {
                       height="180px"
                     ></app-lazy-chart>
                   } @placeholder {
-                    <app-chart-skeleton
-                      type="line"
-                      height="180px"
-                    />
+                    <app-chart-skeleton type="line" height="180px" />
                   } @loading (minimum 500ms) {
-                    <app-chart-skeleton
-                      type="line"
-                      height="180px"
-                    />
+                    <app-chart-skeleton type="line" height="180px" />
                   }
                 </div>
                 <div class="card-footer-action">
@@ -790,11 +893,16 @@ interface AnnouncementBanner {
                 @for (event of continuityEvents(); track event.type) {
                   <p-card styleClass="continuity-event-card">
                     <div class="continuity-event">
-                      <span class="event-icon">{{ getEventIcon(event.type) }}</span>
+                      <span class="event-icon">{{
+                        getEventIcon(event.type)
+                      }}</span>
                       <div class="event-details">
                         <h4>{{ event.title }}</h4>
                         <p>{{ event.description }}</p>
-                        @if (event.daysRemaining !== undefined && event.daysRemaining > 0) {
+                        @if (
+                          event.daysRemaining !== undefined &&
+                          event.daysRemaining > 0
+                        ) {
                           <p-tag
                             [value]="event.daysRemaining + ' day(s) remaining'"
                             severity="info"
@@ -803,7 +911,9 @@ interface AnnouncementBanner {
                         }
                         @if (event.sessionsRemaining !== undefined) {
                           <p-tag
-                            [value]="event.sessionsRemaining + ' sessions remaining'"
+                            [value]="
+                              event.sessionsRemaining + ' sessions remaining'
+                            "
                             severity="warn"
                             styleClass="event-tag"
                           ></p-tag>
@@ -825,7 +935,12 @@ interface AnnouncementBanner {
               </h3>
               <p-card styleClass="schedule-card">
                 <p-timeline
-                  [value]="tomorrowSchedule().slice(0, UI_LIMITS.SCHEDULE_PREVIEW_COUNT)"
+                  [value]="
+                    tomorrowSchedule().slice(
+                      0,
+                      UI_LIMITS.SCHEDULE_PREVIEW_COUNT
+                    )
+                  "
                   styleClass="schedule-timeline"
                 >
                   <ng-template pTemplate="marker" let-item>
@@ -873,7 +988,13 @@ interface AnnouncementBanner {
                 Coming Up
               </h3>
               <div class="events-strip">
-                @for (event of upcomingEvents().slice(0, UI_LIMITS.EVENTS_PREVIEW_COUNT); track event.id) {
+                @for (
+                  event of upcomingEvents().slice(
+                    0,
+                    UI_LIMITS.EVENTS_PREVIEW_COUNT
+                  );
+                  track event.id
+                ) {
                   <p-card
                     styleClass="event-card"
                     [ngClass]="'event-' + event.type"
@@ -1787,7 +1908,9 @@ interface AnnouncementBanner {
 
         .announcement-meta {
           width: 100%;
-          margin-left: calc(var(--space-10) + var(--space-3)); /* Align with text */
+          margin-left: calc(
+            var(--space-10) + var(--space-3)
+          ); /* Align with text */
           margin-top: var(--space-1);
         }
       }
@@ -1808,8 +1931,12 @@ export class PlayerDashboardComponent {
   private readonly acwrSpikeDetection = inject(AcwrSpikeDetectionService);
   private readonly privacySettingsService = inject(PrivacySettingsService);
   private readonly overrideLoggingService = inject(OverrideLoggingService);
-  private readonly ownershipTransitionService = inject(OwnershipTransitionService);
-  private readonly missingDataDetectionService = inject(MissingDataDetectionService);
+  private readonly ownershipTransitionService = inject(
+    OwnershipTransitionService,
+  );
+  private readonly missingDataDetectionService = inject(
+    MissingDataDetectionService,
+  );
   private readonly supabaseService = inject(SupabaseService);
   private readonly channelService = inject(ChannelService);
   private readonly toastService = inject(ToastService);
@@ -1845,8 +1972,8 @@ export class PlayerDashboardComponent {
   missingWellnessStatus = signal<MissingDataStatus | null>(null);
 
   // Program assignment state (from UnifiedTrainingService)
-  needsProgramAssignment = computed(
-    () => this.unifiedTrainingService.needsProgramAssignment(),
+  needsProgramAssignment = computed(() =>
+    this.unifiedTrainingService.needsProgramAssignment(),
   );
 
   // Stats - CRITICAL: No defaults - only real data
@@ -2000,7 +2127,12 @@ export class PlayerDashboardComponent {
     if (acwrVal !== null && acwrVal > 1.3) {
       return "Your training load is elevated. Take it easy today to avoid overtraining and reduce injury risk.";
     }
-    if (readiness !== null && readiness >= 80 && acwrVal !== null && acwrVal <= 1.0) {
+    if (
+      readiness !== null &&
+      readiness >= 80 &&
+      acwrVal !== null &&
+      acwrVal <= 1.0
+    ) {
       return "You're in great shape! Today is perfect for a high-intensity session. Let's push it!";
     }
     return "Solid day ahead! Stick to your plan and focus on quality over quantity in today's session.";
@@ -2043,7 +2175,7 @@ export class PlayerDashboardComponent {
   privacySharingStatus = computed(() => {
     const teamSettings = this.privacySettingsService.teamSettings();
     const totalMetrics = METRIC_CATEGORIES.length; // 6 metrics
-    
+
     if (teamSettings.length === 0) {
       return {
         sharedMetrics: 0,
@@ -2056,18 +2188,21 @@ export class PlayerDashboardComponent {
     // For simplicity, count metrics shared with at least one team
     const sharedCategories = new Set<string>();
     teamSettings.forEach((teamSetting) => {
-      if (teamSetting.performanceSharingEnabled || teamSetting.healthSharingEnabled) {
+      if (
+        teamSetting.performanceSharingEnabled ||
+        teamSetting.healthSharingEnabled
+      ) {
         // Add all allowed metric categories
         teamSetting.allowedMetricCategories?.forEach((category) => {
           sharedCategories.add(category);
         });
-        
+
         // If performance sharing is enabled, add performance and training_load
         if (teamSetting.performanceSharingEnabled) {
           sharedCategories.add("performance");
           sharedCategories.add("training_load");
         }
-        
+
         // If health sharing is enabled, add wellness, readiness, injury_history
         if (teamSetting.healthSharingEnabled) {
           sharedCategories.add("wellness");
@@ -2090,21 +2225,23 @@ export class PlayerDashboardComponent {
 
   constructor() {
     this.headerService.setDashboardHeader();
-    
+
     // Load centralized services first (for consistent data across views)
     this.profileCompletionService.loadProfileData();
     this.teamMembershipService.loadMembership();
-    
+
     this.loadData();
-    
+
     // Check if we need to refresh program assignment (e.g., after onboarding)
-    const refreshProgramAssignment = sessionStorage.getItem("refreshProgramAssignment");
+    const refreshProgramAssignment = sessionStorage.getItem(
+      "refreshProgramAssignment",
+    );
     if (refreshProgramAssignment === "true") {
       sessionStorage.removeItem("refreshProgramAssignment");
       // Force refresh program assignment check
       this.unifiedTrainingService.loadProgramAssignment();
     }
-    
+
     // Trigger data loading in UnifiedTrainingService to populate schedule
     // This ensures today's schedule is available
     this.unifiedTrainingService.getTodayOverview().subscribe({
@@ -2156,7 +2293,7 @@ export class PlayerDashboardComponent {
         } else {
           this.acwr.set(null); // No data - show empty state
         }
-        
+
         this.currentStreak.set(stats?.currentStreak ?? 0);
         this.weeklySessionsCompleted.set(stats?.weeklySessions ?? 0);
 
@@ -2172,7 +2309,7 @@ export class PlayerDashboardComponent {
 
         // Load continuity events
         this.loadContinuityEvents();
-        
+
         // Load privacy settings
         // Note: loadTeamSettings is a private method, handled internally by the service
 
@@ -2181,7 +2318,7 @@ export class PlayerDashboardComponent {
 
         // Phase 2.1 - Load recent coach override notifications
         this.loadRecentOverrides();
-        
+
         // Phase 2.1 - Load active ownership transitions
         this.loadActiveTransitions();
 
@@ -2252,10 +2389,8 @@ export class PlayerDashboardComponent {
     if (!userId) return;
 
     try {
-      const overrides = await this.overrideLoggingService.getRecentUnreadOverrides(
-        userId,
-        5
-      );
+      const overrides =
+        await this.overrideLoggingService.getRecentUnreadOverrides(userId, 5);
       this.recentOverrides.set(overrides);
 
       // Load coach names for display
@@ -2331,9 +2466,15 @@ export class PlayerDashboardComponent {
 
     // Determine data type from missing inputs
     let dataType: IncompleteDataMeaning["dataType"] = "general";
-    if (confidence.missingInputs.includes("wellness") || confidence.missingInputs.includes("wellness_data")) {
+    if (
+      confidence.missingInputs.includes("wellness") ||
+      confidence.missingInputs.includes("wellness_data")
+    ) {
       dataType = "wellness";
-    } else if (confidence.missingInputs.includes("training") || confidence.missingInputs.includes("training_sessions")) {
+    } else if (
+      confidence.missingInputs.includes("training") ||
+      confidence.missingInputs.includes("training_sessions")
+    ) {
       dataType = "training";
     }
 
@@ -2350,13 +2491,18 @@ export class PlayerDashboardComponent {
   /**
    * Phase 3: Convert CoachOverride to semantic CoachOverrideMeaning
    */
-  getCoachOverrideMeaning(override: CoachOverride): CoachOverrideMeaning | null {
+  getCoachOverrideMeaning(
+    override: CoachOverride,
+  ): CoachOverrideMeaning | null {
     if (!override.aiRecommendation || !override.coachDecision) {
       return null;
     }
 
     // Map override type to semantic override type
-    const overrideTypeMap: Record<string, CoachOverrideMeaning["overrideType"]> = {
+    const overrideTypeMap: Record<
+      string,
+      CoachOverrideMeaning["overrideType"]
+    > = {
       training_load: "load-adjustment",
       session_modification: "session-modification",
       acwr_override: "threshold-override",
@@ -2427,14 +2573,12 @@ export class PlayerDashboardComponent {
     if (!userId) return;
 
     try {
-      const transitions = await this.ownershipTransitionService.getPlayerTransitions(
-        userId,
-        5
-      );
+      const transitions =
+        await this.ownershipTransitionService.getPlayerTransitions(userId, 5);
 
       // Filter for active (pending or in_progress) transitions
       const active = transitions.filter(
-        (t) => t.status === "pending" || t.status === "in_progress"
+        (t) => t.status === "pending" || t.status === "in_progress",
       );
 
       this.activeTransitions.set(active);
@@ -2451,12 +2595,14 @@ export class PlayerDashboardComponent {
     if (!userId) return;
 
     try {
-      const status = await this.missingDataDetectionService.checkMissingWellness(
-        userId
-      );
+      const status =
+        await this.missingDataDetectionService.checkMissingWellness(userId);
       this.missingWellnessStatus.set(status);
     } catch (error) {
-      this.logger.error("[Dashboard] Error loading missing wellness status:", error);
+      this.logger.error(
+        "[Dashboard] Error loading missing wellness status:",
+        error,
+      );
     }
   }
 
@@ -2525,14 +2671,13 @@ export class PlayerDashboardComponent {
       // Create or find existing DM channel with the coach
       const dmChannel = await this.channelService.createDirectMessage(
         coach.userId,
-        teamId
+        teamId,
       );
 
       // Navigate to team chat with the DM channel selected
       this.router.navigate(["/team-chat"], {
-        queryParams: { channel: dmChannel.id }
+        queryParams: { channel: dmChannel.id },
       });
-
     } catch (error) {
       this.logger.error("Error contacting coach:", error);
       this.toastService.error(TOAST.ERROR.CHAT_START_FAILED);
@@ -2585,7 +2730,7 @@ export class PlayerDashboardComponent {
   daysSinceLastCheckin(): number {
     const lastCheckin = this.lastWellnessCheckin();
     if (!lastCheckin) return 99; // Never checked in
-    
+
     const now = new Date();
     const diffMs = now.getTime() - lastCheckin.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));

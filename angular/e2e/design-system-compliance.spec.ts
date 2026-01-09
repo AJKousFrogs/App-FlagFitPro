@@ -61,12 +61,16 @@ async function login(page: Page): Promise<void> {
   await page.goto(`${BASE_URL}/login`);
   await dismissCookieBanner(page);
 
-  const emailInput = page.locator('input[type="email"], [data-testid="email-input"]');
+  const emailInput = page.locator(
+    'input[type="email"], [data-testid="email-input"]',
+  );
   await emailInput.click();
   await emailInput.fill(TEST_USER.email);
   await emailInput.press("Tab");
 
-  const passwordInput = page.locator('input[type="password"], [data-testid="password-input"]');
+  const passwordInput = page.locator(
+    'input[type="password"], [data-testid="password-input"]',
+  );
   await passwordInput.click();
   await passwordInput.fill(TEST_USER.password);
   await passwordInput.press("Tab");
@@ -228,7 +232,10 @@ test.describe("Design System Compliance", () => {
         const styles = await getComputedStyles(
           page,
           await button.evaluate((el) => {
-            return el.tagName.toLowerCase() + (el.className ? "." + el.className.split(" ")[0] : "");
+            return (
+              el.tagName.toLowerCase() +
+              (el.className ? "." + el.className.split(" ")[0] : "")
+            );
           }),
         );
 
@@ -274,7 +281,10 @@ test.describe("Design System Compliance", () => {
         const styles = await getComputedStyles(
           page,
           await card.evaluate((el) => {
-            return el.tagName.toLowerCase() + (el.className ? "." + el.className.split(" ")[0] : "");
+            return (
+              el.tagName.toLowerCase() +
+              (el.className ? "." + el.className.split(" ")[0] : "")
+            );
           }),
         );
 
@@ -302,7 +312,9 @@ test.describe("Design System Compliance", () => {
         );
       });
     } else {
-      console.log("\n✅ No design token violations found! All colors use CSS variables.");
+      console.log(
+        "\n✅ No design token violations found! All colors use CSS variables.",
+      );
     }
 
     // Allow some violations (PrimeNG defaults that can't be overridden, etc.)
@@ -346,7 +358,10 @@ test.describe("Design System Compliance", () => {
 
     // Check for inconsistent padding (more than 3 different values suggests inconsistency)
     const uniquePadding = [...new Set(buttonPadding)];
-    console.log(`Found ${uniquePadding.length} unique button padding values:`, uniquePadding);
+    console.log(
+      `Found ${uniquePadding.length} unique button padding values:`,
+      uniquePadding,
+    );
 
     // Check card spacing
     const cards = page.locator("p-card, .p-card");
@@ -372,7 +387,10 @@ test.describe("Design System Compliance", () => {
     }
 
     const uniqueCardPadding = [...new Set(cardPadding)];
-    console.log(`Found ${uniqueCardPadding.length} unique card padding values:`, uniqueCardPadding);
+    console.log(
+      `Found ${uniqueCardPadding.length} unique card padding values:`,
+      uniqueCardPadding,
+    );
 
     // Warn if too many inconsistencies
     if (uniquePadding.length > 5) {
@@ -439,7 +457,9 @@ test.describe("Design System Compliance", () => {
     console.log("Typography consistency check complete");
   });
 
-  test("should verify PrimeNG components use theme tokens", async ({ page }) => {
+  test("should verify PrimeNG components use theme tokens", async ({
+    page,
+  }) => {
     await page.goto(`${BASE_URL}/dashboard`);
     await page.waitForLoadState("networkidle");
     await dismissCookieBanner(page);
@@ -478,21 +498,22 @@ test.describe("Design System Compliance", () => {
     expect(hasTokens).toBe(true);
 
     if (!hasTokens) {
-      console.warn("⚠️  No design tokens (CSS variables) found - check theme configuration");
+      console.warn(
+        "⚠️  No design tokens (CSS variables) found - check theme configuration",
+      );
     }
   });
 
   test("should check for inline styles (design system violation)", async ({
     page,
   }) => {
-    const routes = [
-      "/dashboard",
-      "/todays-practice",
-      "/training",
-      "/wellness",
-    ];
+    const routes = ["/dashboard", "/todays-practice", "/training", "/wellness"];
 
-    const violations: Array<{ route: string; selector: string; styles: string }> = [];
+    const violations: Array<{
+      route: string;
+      selector: string;
+      styles: string;
+    }> = [];
 
     for (const route of routes) {
       await page.goto(`${BASE_URL}${route}`);
@@ -503,7 +524,11 @@ test.describe("Design System Compliance", () => {
       // Find elements with inline styles
       const elementsWithInlineStyles = await page.evaluate(() => {
         const elements = document.querySelectorAll("[style]");
-        const results: Array<{ tag: string; className: string; styles: string }> = [];
+        const results: Array<{
+          tag: string;
+          className: string;
+          styles: string;
+        }> = [];
 
         elements.forEach((el) => {
           const style = el.getAttribute("style");
@@ -600,12 +625,16 @@ test.describe("Design System Compliance", () => {
     }
 
     const uniqueBorderRadius = [...new Set(borderRadiusValues)];
-    console.log(`Found ${uniqueBorderRadius.length} unique border radius values:`, uniqueBorderRadius);
+    console.log(
+      `Found ${uniqueBorderRadius.length} unique border radius values:`,
+      uniqueBorderRadius,
+    );
 
     // Warn if too many different values
     if (uniqueBorderRadius.length > 4) {
-      console.warn("⚠️  High border radius inconsistency - consider using design tokens");
+      console.warn(
+        "⚠️  High border radius inconsistency - consider using design tokens",
+      );
     }
   });
 });
-

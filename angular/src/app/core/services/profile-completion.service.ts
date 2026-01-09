@@ -214,7 +214,9 @@ export class ProfileCompletionService {
       {
         name: "Display Name",
         key: "fullName",
-        value: data.fullName || `${data.firstName || ""} ${data.lastName || ""}`.trim(),
+        value:
+          data.fullName ||
+          `${data.firstName || ""} ${data.lastName || ""}`.trim(),
         required: true,
         weight: 15,
       },

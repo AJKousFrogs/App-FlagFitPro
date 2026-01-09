@@ -124,7 +124,7 @@ export class TeamNotificationService {
     const groups: Map<string, CoachActivityItem[]> = new Map();
 
     activities.forEach((activity) => {
-      const date = formatDate(activity.created_at, 'P');
+      const date = formatDate(activity.created_at, "P");
       const existing = groups.get(date) || [];
       groups.set(date, [...existing, activity]);
     });
@@ -638,10 +638,13 @@ export class TeamNotificationService {
   ): Promise<void> {
     // Database trigger handles coach notifications
     // This shows local confirmation
-      this.toastService.success(
-        TOAST.SUCCESS.TRAINING_COMPLETED.replace("{type}", sessionType).replace("{duration}", duration.toString()),
-        { life: 3000 },
-      );
+    this.toastService.success(
+      TOAST.SUCCESS.TRAINING_COMPLETED.replace("{type}", sessionType).replace(
+        "{duration}",
+        duration.toString(),
+      ),
+      { life: 3000 },
+    );
   }
 
   /**
@@ -671,7 +674,9 @@ export class TeamNotificationService {
       if (error) throw error;
 
       this.toastService.success(
-        isImportant ? TOAST.SUCCESS.ANNOUNCEMENT_SENT : TOAST.SUCCESS.ANNOUNCEMENT_POSTED,
+        isImportant
+          ? TOAST.SUCCESS.ANNOUNCEMENT_SENT
+          : TOAST.SUCCESS.ANNOUNCEMENT_POSTED,
       );
     } catch (error) {
       this.logger.error("Error sending announcement:", error);
@@ -845,7 +850,7 @@ export class TeamNotificationService {
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
 
-    return formatDate(date, 'P');
+    return formatDate(date, "P");
   }
 
   /**

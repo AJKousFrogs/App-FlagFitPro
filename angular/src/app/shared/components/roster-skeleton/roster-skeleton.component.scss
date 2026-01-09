@@ -5,7 +5,7 @@
 
 .roster-skeleton {
   padding: var(--page-padding-desktop);
-  
+
   @media (max-width: 768px) {
     padding: var(--page-padding-tablet);
   }
@@ -17,7 +17,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-5);
-  
+
   @media (max-width: 640px) {
     flex-direction: column;
     align-items: flex-start;
@@ -35,7 +35,7 @@
   display: flex;
   gap: var(--space-3);
   margin-bottom: var(--space-4);
-  
+
   @media (max-width: 640px) {
     flex-direction: column;
   }
@@ -53,16 +53,19 @@
 // Table Header
 .table-header-skeleton {
   display: grid;
-  grid-template-columns: var(--roster-grid-template, 60px 180px 120px 100px 120px 100px);
+  grid-template-columns: var(
+    --roster-grid-template,
+    60px 180px 120px 100px 120px 100px
+  );
   gap: var(--space-3);
   padding: var(--space-4);
   background: var(--surface-ground);
   border-bottom: 2px solid var(--surface-border);
-  
+
   @media (max-width: 1024px) {
     grid-template-columns: 60px 1fr 100px 100px;
   }
-  
+
   @media (max-width: 640px) {
     grid-template-columns: 60px 1fr 80px;
   }
@@ -76,27 +79,30 @@
 // Table Row
 .table-row-skeleton {
   display: grid;
-  grid-template-columns: var(--roster-grid-template, 60px 180px 120px 100px 120px 100px);
+  grid-template-columns: var(
+    --roster-grid-template,
+    60px 180px 120px 100px 120px 100px
+  );
   gap: var(--space-3);
   padding: var(--space-4);
   border-bottom: 1px solid var(--surface-border);
-  
+
   @media (max-width: 1024px) {
     grid-template-columns: 60px 1fr 100px 100px;
-    
-    .table-cell-skeleton:nth-child(n+5) {
+
+    .table-cell-skeleton:nth-child(n + 5) {
       display: none;
     }
   }
-  
+
   @media (max-width: 640px) {
     grid-template-columns: 60px 1fr 80px;
-    
-    .table-cell-skeleton:nth-child(n+4) {
+
+    .table-cell-skeleton:nth-child(n + 4) {
       display: none;
     }
   }
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -113,7 +119,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-3);
-  
+
   @media (max-width: 640px) {
     flex-direction: column;
     gap: var(--space-3);
@@ -131,12 +137,12 @@
     background: var(--surface-card);
     border-color: var(--surface-border);
   }
-  
+
   .table-header-skeleton {
     background: var(--surface-ground);
     border-bottom-color: var(--surface-border);
   }
-  
+
   .table-row-skeleton {
     border-bottom-color: var(--surface-border);
   }

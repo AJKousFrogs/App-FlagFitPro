@@ -62,7 +62,9 @@ const POSITION_TO_MODIFIER_KEY = {
  * Normalize position value to modifier key
  */
 function normalizePositionForModifiers(position) {
-  if (!position) {return "wr_db";}
+  if (!position) {
+    return "wr_db";
+  }
   return POSITION_TO_MODIFIER_KEY[position] || "wr_db";
 }
 
@@ -617,4 +619,3 @@ module.exports.PROGRAM_IDS = PROGRAM_IDS;
 module.exports.POSITION_TO_MODIFIER_KEY = POSITION_TO_MODIFIER_KEY;
 module.exports.getProgramIdForPosition = getProgramIdForPosition;
 module.exports.normalizePositionForModifiers = normalizePositionForModifiers;
-

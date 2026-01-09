@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, computed, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  computed,
+  inject,
+} from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { TagModule } from "primeng/tag";

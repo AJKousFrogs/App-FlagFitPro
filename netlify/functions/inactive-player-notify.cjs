@@ -9,9 +9,10 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
 exports.handler = createHandler({
   functionName: "inactive-player-notify",
   handler: async (event, _context, { userId, userRole }) => {
-
     // Only coaches/admins can send notifications
-    if (!["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)) {
+    if (
+      !["coach", "head_coach", "assistant_coach", "admin"].includes(userRole)
+    ) {
       return {
         statusCode: 403,
         body: JSON.stringify({
@@ -42,7 +43,9 @@ exports.handler = createHandler({
           .eq("id", user_id)
           .single();
 
-        if (playerError) {throw playerError;}
+        if (playerError) {
+          throw playerError;
+        }
 
         // Update notification status
         const { error: updateError } = await supabaseAdmin
@@ -54,11 +57,15 @@ exports.handler = createHandler({
           })
           .eq("user_id", user_id);
 
-        if (updateError) {throw updateError;}
+        if (updateError) {
+          throw updateError;
+        }
 
         // TODO: Send actual notification (email/push)
         // For now, just log it
-        console.log(`[InactivePlayer] Notification sent to ${player.email} (${days_inactive} days inactive)`);
+        console.log(
+          `[InactivePlayer] Notification sent to ${player.email} (${days_inactive} days inactive)`,
+        );
 
         return {
           statusCode: 200,
@@ -87,4 +94,3 @@ exports.handler = createHandler({
     };
   },
 });
-

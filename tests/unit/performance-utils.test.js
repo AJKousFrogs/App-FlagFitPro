@@ -195,7 +195,7 @@ describe("Performance Utils - Comprehensive Tests", () => {
       global.performance.timing = mockNavigationTiming;
 
       performanceUtils.trackPageLoad.mockImplementation(() => {
-        const {timing} = performance;
+        const { timing } = performance;
         return {
           totalLoadTime: timing.loadEventEnd - timing.navigationStart,
           domContentLoaded:
@@ -429,7 +429,7 @@ describe("Performance Utils - Comprehensive Tests", () => {
       global.performance.memory = mockMemoryInfo;
 
       performanceUtils.measureMemoryUsage.mockImplementation(() => {
-        const {memory} = performance;
+        const { memory } = performance;
         return {
           used: Math.round(memory.usedJSHeapSize / 1024 / 1024), // MB
           total: Math.round(memory.totalJSHeapSize / 1024 / 1024), // MB

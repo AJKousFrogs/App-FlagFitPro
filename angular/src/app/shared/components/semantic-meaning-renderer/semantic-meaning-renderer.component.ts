@@ -1,16 +1,16 @@
 /**
  * Semantic Meaning Renderer Component
- * 
+ *
  * Phase 3 - Meaning-First Architecture
- * 
+ *
  * This component automatically renders semantic meanings using the SemanticRendererService.
- * 
+ *
  * Usage:
- * <app-semantic-meaning-renderer 
- *   [meaning]="riskMeaning" 
+ * <app-semantic-meaning-renderer
+ *   [meaning]="riskMeaning"
  *   [context]="{ container: 'dashboard', priority: 'high' }">
  * </app-semantic-meaning-renderer>
- * 
+ *
  * Features NEVER choose components directly.
  * Features choose meanings, and this component renders them.
  */
@@ -47,12 +47,8 @@ import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-overr
   selector: "app-semantic-meaning-renderer",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-  ],
-  template: `
-    <ng-container #renderTarget></ng-container>
-  `,
+  imports: [CommonModule],
+  template: ` <ng-container #renderTarget></ng-container> `,
   styles: [
     `
       :host {
@@ -138,7 +134,7 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
         default:
           this.logger.error(
             "[SemanticRenderer] Unknown component:",
-            decision.component
+            decision.component,
           );
           return;
       }
@@ -157,9 +153,8 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
       this.logger.error(
         "[SemanticRenderer] Error rendering meaning:",
         error,
-        decision
+        decision,
       );
     }
   }
 }
-

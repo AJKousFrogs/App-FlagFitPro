@@ -1,11 +1,11 @@
 /**
  * Form Error Service
- * 
+ *
  * Helper service for form error handling:
  * - Scroll to field with error
  * - Focus on field
  * - Announce error to screen readers
- * 
+ *
  * Evidence-Based: WCAG 2.1 Success Criterion 3.3.1, 3.3.3
  */
 
@@ -17,18 +17,15 @@ import { Injectable } from "@angular/core";
 export class FormErrorService {
   /**
    * Scroll to a form field and focus it
-   * 
+   *
    * @param fieldId - Form control name or element ID
    * @param options - Scroll behavior options
    */
   scrollToField(
     fieldId: string,
-    options: { behavior?: ScrollBehavior; block?: ScrollLogicalPosition } = {}
+    options: { behavior?: ScrollBehavior; block?: ScrollLogicalPosition } = {},
   ): void {
-    const {
-      behavior = "smooth",
-      block = "center",
-    } = options;
+    const { behavior = "smooth", block = "center" } = options;
 
     // Try multiple selectors to find the field
     const selectors = [
@@ -57,12 +54,12 @@ export class FormErrorService {
     setTimeout(() => {
       if (element) {
         element.focus();
-        
+
         // For elements that can't be focused directly (like divs),
         // try to focus the first input inside
         if (document.activeElement !== element) {
           const focusableElement = element.querySelector<HTMLElement>(
-            'input, select, textarea, button, [tabindex]:not([tabindex="-1"])'
+            'input, select, textarea, button, [tabindex]:not([tabindex="-1"])',
           );
           focusableElement?.focus();
         }
@@ -72,13 +69,13 @@ export class FormErrorService {
 
   /**
    * Announce message to screen readers
-   * 
+   *
    * @param message - Message to announce
    * @param priority - 'polite' or 'assertive'
    */
   announceToScreenReader(
     message: string,
-    priority: "polite" | "assertive" = "polite"
+    priority: "polite" | "assertive" = "polite",
   ): void {
     const announcer = document.createElement("div");
     announcer.setAttribute("aria-live", priority);

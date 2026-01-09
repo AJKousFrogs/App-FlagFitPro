@@ -324,7 +324,10 @@ export const SignalValidators = {
       if (!value) return null;
 
       if (value.length < VALIDATION.MIN_PASSWORD_LENGTH) {
-        return message || `Password must be at least ${VALIDATION.MIN_PASSWORD_LENGTH} characters`;
+        return (
+          message ||
+          `Password must be at least ${VALIDATION.MIN_PASSWORD_LENGTH} characters`
+        );
       }
 
       if (!VALIDATION.PASSWORD_UPPERCASE_PATTERN.test(value)) {
@@ -340,7 +343,10 @@ export const SignalValidators = {
       }
 
       if (!VALIDATION.PASSWORD_SPECIAL_PATTERN.test(value)) {
-        return message || "Password must include at least one special character (@$!%*?&)";
+        return (
+          message ||
+          "Password must include at least one special character (@$!%*?&)"
+        );
       }
 
       return null;
@@ -392,7 +398,10 @@ export const SignalValidators = {
       }
 
       if (!VALIDATION.USERNAME_PATTERN.test(value)) {
-        return message || "Username can only contain letters, numbers, and underscores";
+        return (
+          message ||
+          "Username can only contain letters, numbers, and underscores"
+        );
       }
 
       return null;

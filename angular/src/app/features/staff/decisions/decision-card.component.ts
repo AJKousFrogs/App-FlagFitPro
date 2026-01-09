@@ -1,6 +1,6 @@
 /**
  * Decision Card Component
- * 
+ *
  * Displays a single decision in card format
  */
 
@@ -62,7 +62,9 @@ import { formatDate } from "@shared/utils/date.utils";
             {{ decision().madeBy.name }}
             <span class="role-badge">{{ decision().madeBy.role }}</span>
           </span>
-          <span class="time-ago">{{ formatTimeAgo(decision().createdAt) }}</span>
+          <span class="time-ago">{{
+            formatTimeAgo(decision().createdAt)
+          }}</span>
         </div>
 
         <!-- Confidence Indicator -->
@@ -269,11 +271,10 @@ export class DecisionCardComponent {
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Tomorrow";
     if (diffDays < 7) return `In ${diffDays} days`;
-    return formatDate(date, 'P');
+    return formatDate(date, "P");
   }
 
   isOverdue(date: Date): boolean {
     return new Date(date) < new Date();
   }
 }
-

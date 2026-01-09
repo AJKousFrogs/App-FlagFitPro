@@ -180,6 +180,6 @@ export class AnnouncementsBannerComponent implements OnInit {
     const diffHours = Math.floor(diffMs / 3600000);
     if (diffHours < 24) return `${diffHours}h ago`;
 
-    return formatDate(date, 'P');
+    return formatDate(date, "P");
   }
 }

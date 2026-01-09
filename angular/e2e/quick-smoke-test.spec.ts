@@ -25,17 +25,21 @@ async function dismissCookieBanner(page: Page): Promise<void> {
       analytics: true,
       functional: true,
       consentDate: new Date().toISOString(),
-      consentVersion: "1.0"
+      consentVersion: "1.0",
     };
     localStorage.setItem("flagfit_cookie_consent", JSON.stringify(consent));
   });
-  
+
   // Also try to click dismiss if banner is already visible
   try {
     const banner = page.locator("app-cookie-consent-banner");
     if (await banner.isVisible({ timeout: 500 }).catch(() => false)) {
       // Use force click to bypass any overlay issues
-      await page.locator("app-cookie-consent-banner button").filter({ hasText: /Accept All/i }).click({ force: true, timeout: 2000 }).catch(() => {});
+      await page
+        .locator("app-cookie-consent-banner button")
+        .filter({ hasText: /Accept All/i })
+        .click({ force: true, timeout: 2000 })
+        .catch(() => {});
       // Wait briefly for banner to hide
       await page.waitForTimeout(500);
     }
@@ -54,7 +58,7 @@ test.describe("Quick Smoke Tests", () => {
     await emailInput.click();
     await emailInput.fill(TEST_USER.email);
     await emailInput.press("Tab");
-    
+
     // Fill password with proper blur to trigger Angular form validation
     const passwordInput = page.locator('input[type="password"]');
     await passwordInput.click();
@@ -246,21 +250,23 @@ test.describe("Quick Smoke Tests", () => {
 async function loginAndNavigate(page: Page, path: string) {
   await page.goto(`${BASE_URL}/login`);
   await dismissCookieBanner(page);
-  
+
   // Fill email with proper blur to trigger Angular form validation
   const emailInput = page.locator('input[type="email"]');
   await emailInput.click();
   await emailInput.fill(TEST_USER.email);
   await emailInput.press("Tab");
-  
+
   // Fill password with proper blur to trigger Angular form validation
   const passwordInput = page.locator('input[type="password"]');
   await passwordInput.click();
   await passwordInput.fill(TEST_USER.password);
   await passwordInput.press("Tab");
-  
+
   // Wait for form validation and button to be enabled
-  await page.waitForSelector('button[type="submit"]:not([disabled])', { timeout: 10000 });
+  await page.waitForSelector('button[type="submit"]:not([disabled])', {
+    timeout: 10000,
+  });
   await page.click('button[type="submit"]');
   await page.waitForURL(/.*dashboard.*/, { timeout: 15000 });
   await page.goto(`${BASE_URL}${path}`);

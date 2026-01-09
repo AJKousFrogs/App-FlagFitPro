@@ -1,9 +1,9 @@
 /**
  * Risk Badge Component
- * 
+ *
  * Phase 3 - Unified Risk Indicator
  * Standardized component for displaying risk levels across all contexts
- * 
+ *
  * Usage:
  * <app-risk-badge [level]="'high'" [showIcon]="true" [placement]="'top-right'"></app-risk-badge>
  */
@@ -184,9 +184,18 @@ export class RiskBadgeComponent {
     return icons[l] || "pi pi-info-circle";
   }
 
-  getSeverity(): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
+  getSeverity():
+    | "secondary"
+    | "success"
+    | "info"
+    | "warn"
+    | "danger"
+    | "contrast" {
     const l = this.level();
-    const severities: Record<RiskLevel, "secondary" | "success" | "info" | "warn" | "danger" | "contrast"> = {
+    const severities: Record<
+      RiskLevel,
+      "secondary" | "success" | "info" | "warn" | "danger" | "contrast"
+    > = {
       low: "success",
       moderate: "warn",
       high: "warn",
@@ -206,4 +215,3 @@ export class RiskBadgeComponent {
     return tooltips[l] || "Risk assessment";
   }
 }
-

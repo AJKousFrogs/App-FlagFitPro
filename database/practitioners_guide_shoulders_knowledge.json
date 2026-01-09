@@ -1,10 +1,7 @@
 {
   "metadata": {
     "title": "Practitioner's Guide to Shoulders",
-    "authors": [
-      "Jo Clubb",
-      "Ben Ashworth"
-    ],
+    "authors": ["Jo Clubb", "Ben Ashworth"],
     "organizations": [
       "Global Performance Insights",
       "Athletic Shoulder",
@@ -16,10 +13,7 @@
   },
   "research_article": {
     "title": "Practitioner's Guide to Shoulders",
-    "authors": [
-      "Jo Clubb",
-      "Ben Ashworth"
-    ],
+    "authors": ["Jo Clubb", "Ben Ashworth"],
     "publication_year": 2024,
     "publisher": "VALD Performance",
     "primary_category": "injury",
@@ -59,12 +53,7 @@
       "shoulder_instability",
       "labral_injury"
     ],
-    "training_types": [
-      "strength",
-      "stability",
-      "prehab",
-      "ROM"
-    ],
+    "training_types": ["strength", "stability", "prehab", "ROM"],
     "recovery_methods": [
       "rehabilitation",
       "return_to_sport_protocols",
@@ -117,11 +106,7 @@
         "overhead_athletes"
       ],
       "sport_specificity": "general",
-      "categories": [
-        "anatomy",
-        "biomechanics",
-        "shoulder_health"
-      ],
+      "categories": ["anatomy", "biomechanics", "shoulder_health"],
       "tags": [
         "shoulder_complex",
         "rotator_cuff",
@@ -149,11 +134,7 @@
         "throwing_athletes"
       ],
       "sport_specificity": "general",
-      "categories": [
-        "assessment",
-        "testing",
-        "monitoring"
-      ],
+      "categories": ["assessment", "testing", "monitoring"],
       "tags": [
         "force_plate",
         "dynamometer",
@@ -163,11 +144,7 @@
         "VALD"
       ],
       "protocols": {
-        "equipment": [
-          "DynaMo",
-          "ForceFrame",
-          "ForceDecks"
-        ],
+        "equipment": ["DynaMo", "ForceFrame", "ForceDecks"],
         "metrics": [
           "peak_force",
           "rate_of_force_development",
@@ -198,11 +175,7 @@
         "contact_sport_athletes"
       ],
       "sport_specificity": "overhead_sports",
-      "categories": [
-        "injury",
-        "pathology",
-        "diagnosis"
-      ],
+      "categories": ["injury", "pathology", "diagnosis"],
       "tags": [
         "impingement",
         "rotator_cuff",
@@ -240,11 +213,7 @@
         "overhead_athletes"
       ],
       "sport_specificity": "general",
-      "categories": [
-        "rehabilitation",
-        "recovery",
-        "return_to_sport"
-      ],
+      "categories": ["rehabilitation", "recovery", "return_to_sport"],
       "tags": [
         "rehab",
         "ROM",
@@ -267,13 +236,7 @@
           "RFD_training",
           "return_to_sport"
         ],
-        "key_metrics": [
-          "ROM",
-          "strength",
-          "RFD",
-          "pain_levels",
-          "function"
-        ],
+        "key_metrics": ["ROM", "strength", "RFD", "pain_levels", "function"],
         "progression_criteria": "objective_measures_guide_advancement"
       },
       "best_practices": [
@@ -298,11 +261,7 @@
         "all_athletes"
       ],
       "sport_specificity": "overhead_sports",
-      "categories": [
-        "training",
-        "prehab",
-        "injury_prevention"
-      ],
+      "categories": ["training", "prehab", "injury_prevention"],
       "tags": [
         "prehab",
         "rotator_cuff",
@@ -310,12 +269,7 @@
         "injury_prevention",
         "overhead_training"
       ],
-      "training_types": [
-        "strength",
-        "stability",
-        "mobility",
-        "prehab"
-      ],
+      "training_types": ["strength", "stability", "mobility", "prehab"],
       "best_practices": [
         "Include rotator cuff strengthening in all programs",
         "Maintain external/internal rotation balance",

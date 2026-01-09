@@ -438,40 +438,40 @@
 .button-grid {
   display: grid;
   gap: var(--space-3);
-  
+
   /* Default: 2 columns on mobile, auto-fit for larger screens */
   grid-template-columns: repeat(2, 1fr);
-  
+
   /* All direct children (app-button hosts) fill their grid cell */
   > * {
     display: block;
     width: 100%;
   }
-  
+
   /* Inner button elements also fill width */
   app-button,
   .btn {
     display: block;
     width: 100%;
   }
-  
+
   /* Responsive columns */
   &.cols-3 {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   &.cols-4 {
     grid-template-columns: repeat(4, 1fr);
   }
-  
+
   &.cols-auto {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
-  
+
   /* Mobile: stack or 2 columns */
   @media (max-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
-    
+
     &.cols-1-mobile {
       grid-template-columns: 1fr;
     }
@@ -483,18 +483,18 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
-  
+
   > * {
     display: block;
     width: 100%;
   }
-  
+
   app-button,
   .btn {
     display: block;
     width: 100%;
   }
-  
+
   @media (max-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -505,12 +505,12 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--space-3);
-  
+
   > * {
     display: block;
     width: 100%;
   }
-  
+
   app-button,
   .btn {
     display: block;
@@ -661,7 +661,12 @@
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-xl);
   overflow: hidden;
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   will-change: transform, box-shadow;
 
   /* Accent bar - visual interest */
@@ -802,7 +807,12 @@ input[type="datetime-local"] {
   background-color: var(--surface-primary);
   border: 1px solid var(--color-border-primary);
   border-radius: var(--radius-md);
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
   min-height: var(--touch-target-min);
 
   &::placeholder {
@@ -1141,7 +1151,12 @@ select {
     color: var(--color-text-primary);
     text-decoration: none;
     border-radius: var(--radius-md);
-    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+    transition:
+      opacity var(--transition-base),
+      transform var(--transition-base),
+      background-color var(--transition-base),
+      border-color var(--transition-base),
+      box-shadow var(--transition-base);
 
     &:hover {
       background-color: var(--surface-secondary);
@@ -1187,7 +1202,12 @@ select {
     color: var(--color-text-primary);
     text-decoration: none;
     border-radius: var(--radius-md);
-    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+    transition:
+      opacity var(--transition-base),
+      transform var(--transition-base),
+      background-color var(--transition-base),
+      border-color var(--transition-base),
+      box-shadow var(--transition-base);
     min-height: var(--touch-target-min);
 
     &:hover {
@@ -1314,7 +1334,12 @@ select {
       background-color: var(--surface-primary);
       border: 1px solid var(--color-border-primary);
       border-radius: var(--radius-md);
-      transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+      transition:
+        opacity var(--transition-base),
+        transform var(--transition-base),
+        background-color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
 
       &:hover:not(.disabled):not(.active) {
         background-color: var(--surface-secondary);
@@ -1413,7 +1438,12 @@ select {
       cursor: pointer;
       color: var(--color-text-secondary);
       border-radius: var(--radius-md);
-      transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+      transition:
+        opacity var(--transition-base),
+        transform var(--transition-base),
+        background-color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
       min-width: var(--touch-target-min);
       min-height: var(--touch-target-min);
 
@@ -1687,7 +1717,12 @@ select {
       cursor: pointer;
       color: var(--color-text-secondary);
       border-radius: var(--radius-sm);
-      transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+      transition:
+        opacity var(--transition-base),
+        transform var(--transition-base),
+        background-color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
 
       &:hover {
         background-color: var(--surface-secondary);
@@ -1907,7 +1942,12 @@ select {
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
-    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+    transition:
+      opacity var(--transition-base),
+      transform var(--transition-base),
+      background-color var(--transition-base),
+      border-color var(--transition-base),
+      box-shadow var(--transition-base);
 
     &.show {
       opacity: 1;
@@ -1921,7 +1961,12 @@ select {
       font-size: var(--font-body-size);
       color: var(--color-text-primary);
       text-decoration: none;
-      transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+      transition:
+        opacity var(--transition-base),
+        transform var(--transition-base),
+        background-color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
       min-height: var(--touch-target-min);
 
       &:hover {
@@ -1962,7 +2007,12 @@ select {
       text-decoration: none;
       border-bottom: 2px solid transparent;
       margin-bottom: -2px;
-      transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+      transition:
+        opacity var(--transition-base),
+        transform var(--transition-base),
+        background-color var(--transition-base),
+        border-color var(--transition-base),
+        box-shadow var(--transition-base);
       min-height: var(--touch-target-min);
 
       &:hover {

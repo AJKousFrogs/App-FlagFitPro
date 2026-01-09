@@ -8,10 +8,7 @@ import { secureStorage } from "./secure-storage.js";
 import { config } from "./config/environment.js";
 import { csrfProtection } from "./js/security/csrf-protection.js";
 import { ErrorHandler } from "./error-handler.js";
-import {
-  AUTH,
-  ERROR_MESSAGES,
-} from "./js/config/app-constants.js";
+import { AUTH, ERROR_MESSAGES } from "./js/config/app-constants.js";
 import { debounce } from "./js/utils/shared.js";
 import { storageService } from "./js/services/storage-service-unified.js";
 
@@ -1061,7 +1058,7 @@ class AuthManager {
     }
 
     // Use centralized constants instead of hardcoded values
-    const {SESSION_TIMEOUT} = AUTH;
+    const { SESSION_TIMEOUT } = AUTH;
     const WARNING_TIME = AUTH.SESSION_WARNING_TIME;
 
     let sessionTimer;

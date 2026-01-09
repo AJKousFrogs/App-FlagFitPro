@@ -95,7 +95,9 @@ export type StatusTagSeverity =
 
         /* Raised effect with shadow */
         border: none;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        box-shadow:
+          0 1px 3px rgba(0, 0, 0, 0.1),
+          0 1px 2px rgba(0, 0, 0, 0.06);
         outline: none;
 
         /* Default: Success (green) */

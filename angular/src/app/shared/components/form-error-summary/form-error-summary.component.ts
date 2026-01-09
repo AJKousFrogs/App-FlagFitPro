@@ -1,12 +1,12 @@
 /**
  * Form Error Summary Component
- * 
+ *
  * WCAG 2.1 Success Criterion 3.3.1 (Error Identification) - Level A
  * WCAG 2.1 Success Criterion 3.3.3 (Error Suggestion) - Level AA
- * 
+ *
  * Evidence: Baymard Institute - 60% → 85% error recovery rate with summaries
  * Pattern: GOV.UK Design System (mandatory), Microsoft Fluent UI
- * 
+ *
  * Displays a summary of form errors at the top of the form with:
  * - Clear error count
  * - Clickable links to jump to each error field
@@ -28,13 +28,13 @@ import { CommonModule } from "@angular/common";
 export interface FormError {
   /** Field identifier (matches form control name or ID) */
   field: string;
-  
+
   /** User-friendly field label */
   fieldLabel: string;
-  
+
   /** Error message to display */
   message: string;
-  
+
   /** Optional: Suggestion for fixing the error */
   suggestion?: string;
 }
@@ -46,7 +46,7 @@ export interface FormError {
   imports: [CommonModule],
   template: `
     @if (errors().length > 0) {
-      <div 
+      <div
         class="error-summary"
         role="alert"
         aria-live="assertive"
@@ -64,7 +64,7 @@ export interface FormError {
             }
           </h2>
         </div>
-        
+
         <ul class="error-summary-list">
           @for (error of errors(); track error.field) {
             <li class="error-summary-item">
@@ -84,7 +84,7 @@ export interface FormError {
             </li>
           }
         </ul>
-        
+
         <button
           type="button"
           class="error-summary-dismiss"
@@ -100,16 +100,16 @@ export interface FormError {
 })
 export class FormErrorSummaryComponent {
   private elementRef = inject(ElementRef);
-  
+
   /** Array of form errors to display */
   errors = input.required<FormError[]>();
-  
+
   /** Emitted when user clicks an error to scroll to that field */
   scrollToField = output<string>();
-  
+
   /** Emitted when user dismisses the summary */
   dismissSummary = output<void>();
-  
+
   constructor() {
     // Auto-scroll to summary when errors appear
     effect(() => {
@@ -117,11 +117,12 @@ export class FormErrorSummaryComponent {
       if (errorCount > 0) {
         // Wait for rendering
         setTimeout(() => {
-          const summaryElement = this.elementRef.nativeElement.querySelector('.error-summary');
+          const summaryElement =
+            this.elementRef.nativeElement.querySelector(".error-summary");
           if (summaryElement) {
-            summaryElement.scrollIntoView({ 
-              behavior: 'smooth', 
-              block: 'start' 
+            summaryElement.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
             });
             summaryElement.focus();
           }

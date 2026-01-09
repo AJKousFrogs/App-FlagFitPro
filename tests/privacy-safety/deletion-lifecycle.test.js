@@ -397,8 +397,3 @@ async function cleanupTestData(supabase) {
     .is("user_id", null)
     .in("action", ["deletion_completed", "retention_cleanup"]);
 }
-
-
-
-
-

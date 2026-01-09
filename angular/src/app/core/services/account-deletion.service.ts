@@ -171,7 +171,9 @@ export class AccountDeletionService {
       return true;
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : TOAST.ERROR.DELETION_REQUEST_FAILED;
+        err instanceof Error
+          ? err.message
+          : TOAST.ERROR.DELETION_REQUEST_FAILED;
       this._error.set(message);
       this.toastService.error(message);
       this.logger.error("Error requesting deletion:", err);

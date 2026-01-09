@@ -427,7 +427,7 @@ export class OfficialsService {
         map((response) => {
           if (response.success && response.data) {
             return response.data.map((g) => ({
-              label: `${formatDate(g.date || g.game_date || new Date(), 'P')} vs ${g.opponent || g.opponent_name || "TBD"}`,
+              label: `${formatDate(g.date || g.game_date || new Date(), "P")} vs ${g.opponent || g.opponent_name || "TBD"}`,
               value: g.id || g.game_id || "",
               date: g.date || g.game_date || "",
               opponent: g.opponent || g.opponent_name || "",

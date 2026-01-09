@@ -423,10 +423,7 @@ export class RestTimerComponent implements OnDestroy {
         osc2.type = "sine";
 
         gain2.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain2.gain.exponentialRampToValueAtTime(
-          0.01,
-          ctx.currentTime + 0.5,
-        );
+        gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
 
         osc2.start(ctx.currentTime);
         osc2.stop(ctx.currentTime + 0.5);

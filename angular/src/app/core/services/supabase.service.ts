@@ -92,33 +92,36 @@ export class SupabaseService {
           // Handle specific auth events
           switch (event) {
             case "SIGNED_OUT":
-              this.logger.info("[Supabase] User signed out", { 
-                userId: session?.user?.id, 
-                timestamp: new Date().toISOString() 
+              this.logger.info("[Supabase] User signed out", {
+                userId: session?.user?.id,
+                timestamp: new Date().toISOString(),
               });
               break;
             case "TOKEN_REFRESHED":
-              this.logger.debug("[Supabase] Session token refreshed automatically", {
-                userId: session?.user?.id,
-                expiresAt: session?.expires_at,
-                timestamp: new Date().toISOString()
-              });
+              this.logger.debug(
+                "[Supabase] Session token refreshed automatically",
+                {
+                  userId: session?.user?.id,
+                  expiresAt: session?.expires_at,
+                  timestamp: new Date().toISOString(),
+                },
+              );
               break;
             case "USER_UPDATED":
               this.logger.debug("[Supabase] User profile updated", {
-                userId: session?.user?.id
+                userId: session?.user?.id,
               });
               break;
             case "PASSWORD_RECOVERY":
               this.logger.info("[Supabase] Password recovery initiated", {
-                userId: session?.user?.id
+                userId: session?.user?.id,
               });
               break;
             case "SIGNED_IN":
               this.logger.info("[Supabase] User signed in", {
                 userId: session?.user?.id,
                 email: session?.user?.email,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
               });
               break;
           }

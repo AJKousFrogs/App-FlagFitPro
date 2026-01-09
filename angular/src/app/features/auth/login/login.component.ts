@@ -285,7 +285,7 @@ export class LoginComponent {
                 .single();
 
               const returnUrl = this.route.snapshot.queryParams["returnUrl"];
-              
+
               // If onboarding not completed and no specific returnUrl, redirect to onboarding
               if (userData && !userData.onboarding_completed && !returnUrl) {
                 this.router.navigate(["/onboarding"]);

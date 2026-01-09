@@ -248,7 +248,9 @@ export class PlayerProgramService {
    */
   hasActiveProgram(): Observable<boolean> {
     return this.getMyProgramAssignment().pipe(
-      map((assignment) => assignment !== null && assignment.status === "active"),
+      map(
+        (assignment) => assignment !== null && assignment.status === "active",
+      ),
     );
   }
 }

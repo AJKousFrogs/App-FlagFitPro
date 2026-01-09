@@ -71,7 +71,10 @@ export interface BreadcrumbItem {
               }
 
               @if (!isLast) {
-                <i class="pi pi-chevron-right breadcrumb-separator" aria-hidden="true"></i>
+                <i
+                  class="pi pi-chevron-right breadcrumb-separator"
+                  aria-hidden="true"
+                ></i>
               }
             </li>
           }
@@ -142,11 +145,7 @@ export class BreadcrumbComponent implements OnInit {
     const first = allItems[0];
     const lastTwo = allItems.slice(-2);
 
-    return [
-      first,
-      { label: "...", route: undefined },
-      ...lastTwo,
-    ];
+    return [first, { label: "...", route: undefined }, ...lastTwo];
   });
 
   ngOnInit(): void {
@@ -193,7 +192,9 @@ export class BreadcrumbComponent implements OnInit {
 
       // Skip UUID-like segments and IDs
       if (
-        segment.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/) ||
+        segment.match(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+        ) ||
         segment.match(/^\d+$/)
       ) {
         continue;

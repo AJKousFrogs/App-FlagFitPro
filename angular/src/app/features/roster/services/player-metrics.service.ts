@@ -112,19 +112,19 @@ export class PlayerMetricsService {
 
     return enriched;
   }
-  
+
   /**
    * Enrich a player and update the cache.
    * Call this from effects or event handlers, not from computed signals.
    */
   enrichPlayerAndCache(player: Player): PlayerWithMetrics {
     const enriched = this.enrichPlayer(player);
-    
+
     // Update cache (safe to do outside of computed)
     const newCache = new Map(this._playerMetricsCache());
     newCache.set(player.id, enriched);
     this._playerMetricsCache.set(newCache);
-    
+
     return enriched;
   }
 
@@ -202,7 +202,10 @@ export class PlayerMetricsService {
 
     const requirements =
       this.athleteProfileService.getPositionRequirements(position);
-    return requirements.trainingPriorities.slice(0, UI_LIMITS.UPCOMING_SESSIONS_COUNT);
+    return requirements.trainingPriorities.slice(
+      0,
+      UI_LIMITS.UPCOMING_SESSIONS_COUNT,
+    );
   }
 
   /**
@@ -356,7 +359,9 @@ export class PlayerMetricsService {
       metricCount++;
     }
 
-    return metricCount > 0 ? Math.round(totalScore / metricCount) : WELLNESS.DEFAULT_READINESS_SCORE;
+    return metricCount > 0
+      ? Math.round(totalScore / metricCount)
+      : WELLNESS.DEFAULT_READINESS_SCORE;
   }
 
   /**

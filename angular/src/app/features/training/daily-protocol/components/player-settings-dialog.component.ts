@@ -169,10 +169,16 @@ interface DayOption {
         <div class="form-section">
           <h4>Availability</h4>
           <p class="section-description">
-            This does not schedule team practice. Coaches schedule team activities.
+            This does not schedule team practice. Coaches schedule team
+            activities.
           </p>
-          <p class="section-description" style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;">
-            Add your typical training times for reference. This information helps coaches understand your availability but does not create team practices.
+          <p
+            class="section-description"
+            style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;"
+          >
+            Add your typical training times for reference. This information
+            helps coaches understand your availability but does not create team
+            practices.
           </p>
 
           @for (slot of settings.flagPracticeSchedule; track slot.day) {
@@ -437,8 +443,11 @@ export class PlayerSettingsDialogComponent {
       );
       if (response?.success && response.data) {
         // Map availabilitySchedule from API to flagPracticeSchedule in component
-        const availabilitySchedule = response.data.availabilitySchedule || response.data.flagPracticeSchedule || [];
-        
+        const availabilitySchedule =
+          response.data.availabilitySchedule ||
+          response.data.flagPracticeSchedule ||
+          [];
+
         this.settings = {
           ...this.settings,
           ...response.data,

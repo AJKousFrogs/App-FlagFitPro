@@ -15,7 +15,13 @@
  * @version 1.0.0
  */
 
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 // PrimeNG

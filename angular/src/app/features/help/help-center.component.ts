@@ -61,7 +61,9 @@ interface HelpTopic {
         <!-- FAQ Sections -->
         <p-card>
           <ng-template pTemplate="header">
-            <h3><i class="pi pi-question-circle"></i> Frequently Asked Questions</h3>
+            <h3>
+              <i class="pi pi-question-circle"></i> Frequently Asked Questions
+            </h3>
           </ng-template>
 
           <p-accordion [multiple]="true">
@@ -69,7 +71,10 @@ interface HelpTopic {
               <p-accordion-panel [value]="category">
                 <p-accordion-header>{{ category }}</p-accordion-header>
                 <p-accordion-content>
-                  @for (topic of getTopicsByCategory(category); track topic.id) {
+                  @for (
+                    topic of getTopicsByCategory(category);
+                    track topic.id
+                  ) {
                     <div class="faq-item">
                       <h4>{{ topic.title }}</h4>
                       <p>{{ topic.content }}</p>

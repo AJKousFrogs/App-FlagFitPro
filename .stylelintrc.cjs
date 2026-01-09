@@ -64,7 +64,7 @@ const DEPRECATED_FONT_TOKENS = [
 // Build regex pattern to match var(--deprecated-token)
 // Used by custom lint script, kept here for reference
 const _deprecatedTokenRegex = DEPRECATED_FONT_TOKENS.map(
-  (token) => `var\\(${token.replace(/--/g, "--")}\\)`
+  (token) => `var\\(${token.replace(/--/g, "--")}\\)`,
 ).join("|");
 
 module.exports = {

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
@@ -87,7 +92,9 @@ interface Team {
                 >Pending</app-button
               >
               <app-button
-                [variant]="statusFilter === 'suspended' ? 'primary' : 'outlined'"
+                [variant]="
+                  statusFilter === 'suspended' ? 'primary' : 'outlined'
+                "
                 size="sm"
                 (clicked)="setStatusFilter('suspended')"
                 >Suspended</app-button

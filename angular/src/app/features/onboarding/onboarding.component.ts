@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnDestroy,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -27,9 +27,9 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-    PlayerProgramService,
-    getProgramIdForPosition,
-    normalizePositionForModifiers,
+  PlayerProgramService,
+  getProgramIdForPosition,
+  normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -108,7 +108,11 @@ interface InjuryEntry {
             </div>
           </div>
 
-          <p-stepper [value]="currentStep()" (valueChange)="goToStep($event)" [linear]="false">
+          <p-stepper
+            [value]="currentStep()"
+            (valueChange)="goToStep($event)"
+            [linear]="false"
+          >
             <p-step-list>
               @for (step of steps(); track $index) {
                 <p-step [value]="$index">
@@ -380,7 +384,8 @@ interface InjuryEntry {
                       </ng-template>
                     </p-autoComplete>
                     <small class="field-hint"
-                      >You can search existing teams or enter a new team name</small
+                      >You can search existing teams or enter a new team
+                      name</small
                     >
                   </div>
 
@@ -1358,12 +1363,14 @@ interface InjuryEntry {
                   <div class="consent-list">
                     <!-- Required Consents -->
                     <!-- Debug: Show current consent values -->
-                    <div style="padding: 1rem; background: var(--surface-secondary); border-radius: var(--radius-lg); margin-bottom: 1rem; font-family: monospace; font-size: 12px;">
-                      <strong>Debug - Consent Values:</strong><br/>
-                      Terms: {{ onboardingData.consentTermsOfService }}<br/>
-                      Privacy: {{ onboardingData.consentPrivacyPolicy }}<br/>
-                      Data: {{ onboardingData.consentDataUsage }}<br/>
-                      AI: {{ onboardingData.consentAICoach }}<br/>
+                    <div
+                      style="padding: 1rem; background: var(--surface-secondary); border-radius: var(--radius-lg); margin-bottom: 1rem; font-family: monospace; font-size: 12px;"
+                    >
+                      <strong>Debug - Consent Values:</strong><br />
+                      Terms: {{ onboardingData.consentTermsOfService }}<br />
+                      Privacy: {{ onboardingData.consentPrivacyPolicy }}<br />
+                      Data: {{ onboardingData.consentDataUsage }}<br />
+                      AI: {{ onboardingData.consentAICoach }}<br />
                       Email: {{ onboardingData.consentEmailUpdates }}
                     </div>
 
@@ -1374,7 +1381,9 @@ interface InjuryEntry {
                           [binary]="true"
                           inputId="consent-terms"
                           name="consentTermsOfService"
-                          (onChange)="onConsentChange('Terms of Service', $event)"
+                          (onChange)="
+                            onConsentChange('Terms of Service', $event)
+                          "
                         />
                         <label for="consent-terms" class="consent-label">
                           I accept the
@@ -2538,8 +2547,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         if (!this.onboardingData.consentDataUsage) {
           return {
             valid: false,
-            message:
-              "Please consent to data usage for personalized training",
+            message: "Please consent to data usage for personalized training",
           };
         }
         return { valid: true };
@@ -2585,22 +2593,22 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   onConsentChange(consentType: string, event: { checked?: boolean }): void {
     const isChecked = event.checked ?? false;
     this.logger.debug(`Consent ${consentType} changed`, { checked: isChecked });
-    
+
     // Manually update the value to ensure it's set
     switch (consentType) {
-      case 'Terms of Service':
+      case "Terms of Service":
         this.onboardingData.consentTermsOfService = isChecked;
         break;
-      case 'Privacy Policy':
+      case "Privacy Policy":
         this.onboardingData.consentPrivacyPolicy = isChecked;
         break;
-      case 'Data Usage':
+      case "Data Usage":
         this.onboardingData.consentDataUsage = isChecked;
         break;
-      case 'AI Coach':
+      case "AI Coach":
         this.onboardingData.consentAICoach = isChecked;
         break;
-      case 'Email Updates':
+      case "Email Updates":
         this.onboardingData.consentEmailUpdates = isChecked;
         break;
     }
@@ -2645,7 +2653,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           value: team.id,
         }));
         this.teams.set(teamOptions);
-        this.logger.info(`[Onboarding] Loaded ${teamOptions.length} teams from database`);
+        this.logger.info(
+          `[Onboarding] Loaded ${teamOptions.length} teams from database`,
+        );
       } else {
         // Keep predefined teams as fallback
         this.logger.info(
@@ -2653,7 +2663,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         );
       }
     } catch (error) {
-      this.logger.warn("[Onboarding] Failed to load teams from database:", error);
+      this.logger.warn(
+        "[Onboarding] Failed to load teams from database:",
+        error,
+      );
       // Keep predefined teams as fallback
     }
   }
@@ -2875,24 +2888,29 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       // BLOCKER B ENFORCEMENT: Assign training program based on position
       // This is now MANDATORY - every athlete must have a real plan
       const assignmentResult = await this.assignTrainingProgram();
-      
+
       if (!assignmentResult) {
         this.logger.error(
           "[Onboarding] Program assignment FAILED - this is a critical error",
         );
-        
+
         // Show user a clear error message
         this.toastService.error(
           "We couldn't assign your training program. Please contact support or try again.",
-          "Setup Error"
+          "Setup Error",
         );
-        
+
         // Don't proceed - they need a program
-        throw new Error("Program assignment failed - cannot complete onboarding without a training program");
+        throw new Error(
+          "Program assignment failed - cannot complete onboarding without a training program",
+        );
       }
 
       // Add player to team roster if they are a player
-      if (this.onboardingData.userType === "player" && this.onboardingData.team) {
+      if (
+        this.onboardingData.userType === "player" &&
+        this.onboardingData.team
+      ) {
         await this.addPlayerToTeamRoster(user.id);
       }
 
@@ -3014,17 +3032,19 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         secondary_position: this.onboardingData.secondaryPosition
           ? normalizePositionForModifiers(this.onboardingData.secondaryPosition)
           : null,
-        birth_date: this.onboardingData.dateOfBirth
-          ?.toISOString()
-          .split("T")[0] || null,
+        birth_date:
+          this.onboardingData.dateOfBirth?.toISOString().split("T")[0] || null,
         preferred_training_days: this.getPreferredTrainingDays(),
         max_sessions_per_week: this.onboardingData.practicesPerWeek || 3,
         available_equipment: this.onboardingData.equipmentAvailable || [],
-        has_gym_access: this.onboardingData.equipmentAvailable?.includes("gym") || false,
-        has_field_access: this.onboardingData.equipmentAvailable?.includes("field") || true,
-        current_limitations: this.onboardingData.currentInjuries?.length > 0
-          ? { injuries: this.onboardingData.currentInjuries }
-          : null,
+        has_gym_access:
+          this.onboardingData.equipmentAvailable?.includes("gym") || false,
+        has_field_access:
+          this.onboardingData.equipmentAvailable?.includes("field") || true,
+        current_limitations:
+          this.onboardingData.currentInjuries?.length > 0
+            ? { injuries: this.onboardingData.currentInjuries }
+            : null,
         // Default ACWR targets (can be adjusted by coach later)
         acwr_target_min: 0.8,
         acwr_target_max: 1.3,
@@ -3047,7 +3067,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         );
       }
     } catch (e) {
-      this.logger.warn("[Onboarding] Error creating athlete_training_config:", e);
+      this.logger.warn(
+        "[Onboarding] Error creating athlete_training_config:",
+        e,
+      );
       // Non-blocking - continue with onboarding
     }
   }
@@ -3059,7 +3082,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   private async saveCurrentInjuries(userId: string): Promise<void> {
     try {
       // Only save if there are current injuries
-      if (!this.onboardingData.currentInjuries || this.onboardingData.currentInjuries.length === 0) {
+      if (
+        !this.onboardingData.currentInjuries ||
+        this.onboardingData.currentInjuries.length === 0
+      ) {
         return;
       }
 
@@ -3071,13 +3097,14 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           // e.g., "hamstring" -> "hamstring", "hip_flexor" -> "hip flexor"
           const area = injury.area.replace(/_/g, " ");
           return `${area} (${injury.severity})`;
-        }
+        },
       );
 
       // Also save injury history as notes or in a separate field
-      const injuryHistoryNotes = this.onboardingData.injuryHistory.length > 0
-        ? `Past injuries: ${this.onboardingData.injuryHistory.join(", ")}`
-        : null;
+      const injuryHistoryNotes =
+        this.onboardingData.injuryHistory.length > 0
+          ? `Past injuries: ${this.onboardingData.injuryHistory.join(", ")}`
+          : null;
 
       // Create or update wellness checkin for today with current injuries
       const today = new Date().toISOString().split("T")[0];
@@ -3093,12 +3120,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
             sleep_quality: 5,
             sleep_hours: 7,
             energy_level: 5,
-            muscle_soreness: this.onboardingData.currentInjuries.length > 0 ? 5 : 0,
+            muscle_soreness:
+              this.onboardingData.currentInjuries.length > 0 ? 5 : 0,
             stress_level: 5,
             readiness_score: 50, // Default readiness score
             updated_at: new Date().toISOString(),
           },
-          { onConflict: "user_id,checkin_date" }
+          { onConflict: "user_id,checkin_date" },
         );
 
       if (error) {
@@ -3126,7 +3154,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     try {
       const teamName = this.onboardingData.team;
       if (!teamName) {
-        this.logger.warn("[Onboarding] No team name provided, skipping roster addition");
+        this.logger.warn(
+          "[Onboarding] No team name provided, skipping roster addition",
+        );
         return;
       }
 
@@ -3142,24 +3172,32 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       if (existingTeam) {
         teamId = existingTeam.id;
-        this.logger.info(`[Onboarding] Found existing team: ${teamName} (${teamId})`);
+        this.logger.info(
+          `[Onboarding] Found existing team: ${teamName} (${teamId})`,
+        );
       } else {
         // Create new team
-        const { data: newTeam, error: teamError } = await this.supabaseService.client
-          .from("teams")
-          .insert({
-            name: teamName,
-            created_by: userId,
-          })
-          .select()
-          .single();
+        const { data: newTeam, error: teamError } =
+          await this.supabaseService.client
+            .from("teams")
+            .insert({
+              name: teamName,
+              created_by: userId,
+            })
+            .select()
+            .single();
 
         if (teamError) {
-          this.logger.warn("[Onboarding] Failed to create team:", teamError.message);
+          this.logger.warn(
+            "[Onboarding] Failed to create team:",
+            teamError.message,
+          );
           return;
         }
         teamId = newTeam.id;
-        this.logger.info(`[Onboarding] Created new team: ${teamName} (${teamId})`);
+        this.logger.info(
+          `[Onboarding] Created new team: ${teamName} (${teamId})`,
+        );
       }
 
       if (!teamId) {
@@ -3186,7 +3224,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           });
 
         if (memberError) {
-          this.logger.warn("[Onboarding] Failed to add team member:", memberError.message);
+          this.logger.warn(
+            "[Onboarding] Failed to add team member:",
+            memberError.message,
+          );
         } else {
           this.logger.info(`[Onboarding] Added user to team_members as player`);
         }
@@ -3200,7 +3241,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         const today = new Date();
         age = today.getFullYear() - birthDate.getFullYear();
         const monthDiff = today.getMonth() - birthDate.getMonth();
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
           age--;
         }
       }
@@ -3234,9 +3278,14 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           });
 
         if (playerError) {
-          this.logger.warn("[Onboarding] Failed to add to team_players:", playerError.message);
+          this.logger.warn(
+            "[Onboarding] Failed to add to team_players:",
+            playerError.message,
+          );
         } else {
-          this.logger.info(`[Onboarding] Added player to team_players: ${this.onboardingData.name}`);
+          this.logger.info(
+            `[Onboarding] Added player to team_players: ${this.onboardingData.name}`,
+          );
         }
       }
     } catch (e) {
@@ -3266,14 +3315,24 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    * Returns days that are NOT practice days (for strength training)
    */
   private getPreferredTrainingDays(): string[] {
-    const allDays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    const allDays = [
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday",
+    ];
     const practiceDays = this.onboardingData.practiceDays || [];
     // Prefer non-practice days for strength training
     const trainingDays = allDays.filter(
       (day) => !practiceDays.map((d: string) => d.toLowerCase()).includes(day),
     );
     // Return at least 3 days
-    return trainingDays.length >= 3 ? trainingDays.slice(0, UI_LIMITS.ONBOARDING_DAYS_PREVIEW) : allDays.slice(0, UI_LIMITS.ONBOARDING_DAYS_PREVIEW);
+    return trainingDays.length >= 3
+      ? trainingDays.slice(0, UI_LIMITS.ONBOARDING_DAYS_PREVIEW)
+      : allDays.slice(0, UI_LIMITS.ONBOARDING_DAYS_PREVIEW);
   }
 
   /**

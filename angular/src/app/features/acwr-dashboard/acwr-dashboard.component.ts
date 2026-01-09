@@ -1206,7 +1206,7 @@ export class AcwrDashboardComponent implements OnInit {
       pdf.setFontSize(20);
       pdf.text("ACWR Dashboard Report", 105, 15, { align: "center" });
       pdf.setFontSize(10);
-      pdf.text(`Generated: ${formatDate(new Date(), 'P')}`, 105, 22, {
+      pdf.text(`Generated: ${formatDate(new Date(), "P")}`, 105, 22, {
         align: "center",
       });
 

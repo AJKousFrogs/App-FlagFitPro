@@ -33,7 +33,13 @@ export interface ImageUploadResult {
   selector: "app-image-upload",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressBarModule, MessageModule, ButtonComponent, MobileOptimizedImageDirective],
+  imports: [
+    CommonModule,
+    ProgressBarModule,
+    MessageModule,
+    ButtonComponent,
+    MobileOptimizedImageDirective,
+  ],
   template: `
     <div [class]="containerClass()">
       <!-- Upload Area -->

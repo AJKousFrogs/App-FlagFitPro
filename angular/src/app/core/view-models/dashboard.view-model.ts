@@ -9,11 +9,11 @@
 
 import { Injectable, computed, inject, signal } from "@angular/core";
 import {
-    ActivityItem,
-    DashboardData,
-    DashboardDataService,
-    DashboardStats,
-    UpcomingSession,
+  ActivityItem,
+  DashboardData,
+  DashboardDataService,
+  DashboardStats,
+  UpcomingSession,
 } from "../services/data/dashboard-data.service";
 import { BaseViewModel } from "./base.view-model";
 

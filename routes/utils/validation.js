@@ -3,9 +3,10 @@
  * Centralizes validation functions and standardized response helpers
  *
  * @module routes/utils/validation
- * @version 1.0.0
+ * @version 1.1.0 - Added XSS sanitization
  */
 
+import DOMPurify from "isomorphic-dompurify";
 import { safeFormatDate } from "./query-helper.js";
 
 // =============================================================================
@@ -130,6 +131,188 @@ export function validatePagination(page, limit, maxLimit = 100) {
   };
 }
 
+/**
+ * Validate RPE (Rate of Perceived Exertion) value
+ * @param {any} rpe - RPE value to validate
+ * @returns {object} Validation result
+ */
+export function validateRPE(rpe) {
+  if (rpe === undefined || rpe === null) {
+    return { isValid: true, rpe: 5 }; // Default to 5
+  }
+
+  const parsed = parseInt(rpe, 10);
+
+  if (isNaN(parsed)) {
+    return { isValid: false, error: "RPE must be a number" };
+  }
+
+  if (parsed < 1 || parsed > 10) {
+    return { isValid: false, error: "RPE must be between 1 and 10" };
+  }
+
+  return { isValid: true, rpe: parsed };
+}
+
+/**
+ * Validate duration in minutes
+ * @param {any} duration - Duration to validate
+ * @param {number} min - Minimum duration (default: 1)
+ * @param {number} max - Maximum duration (default: 1440 = 24 hours)
+ * @returns {object} Validation result
+ */
+export function validateDuration(duration, min = 1, max = 1440) {
+  if (!duration) {
+    return { isValid: false, error: "Duration is required" };
+  }
+
+  const parsed = parseInt(duration, 10);
+
+  if (isNaN(parsed)) {
+    return { isValid: false, error: "Duration must be a number" };
+  }
+
+  if (parsed < min || parsed > max) {
+    return {
+      isValid: false,
+      error: `Duration must be between ${min} and ${max} minutes`,
+    };
+  }
+
+  return { isValid: true, duration: parsed };
+}
+
+/**
+ * Validate hydration amount in ml
+ * @param {any} amount - Amount in ml to validate
+ * @returns {object} Validation result
+ */
+export function validateHydrationAmount(amount) {
+  if (!amount) {
+    return { isValid: false, error: "Amount is required" };
+  }
+
+  const parsed = parseFloat(amount);
+
+  if (isNaN(parsed)) {
+    return { isValid: false, error: "Amount must be a number" };
+  }
+
+  if (parsed <= 0 || parsed > 10000) {
+    return {
+      isValid: false,
+      error: "Amount must be between 1 and 10000 ml (10L)",
+    };
+  }
+
+  return { isValid: true, amount: parsed };
+}
+
+/**
+ * Validate date is in valid format and reasonable range
+ * @param {string} dateString - Date string to validate
+ * @returns {object} Validation result
+ */
+export function validateDate(dateString) {
+  if (!dateString) {
+    return { isValid: false, error: "Date is required" };
+  }
+
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) {
+    return { isValid: false, error: "Invalid date format" };
+  }
+
+  // Check not in future
+  const now = new Date();
+  if (date > now) {
+    return { isValid: false, error: "Date cannot be in the future" };
+  }
+
+  // Check not more than 5 years in past
+  const fiveYearsAgo = new Date();
+  fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
+
+  if (date < fiveYearsAgo) {
+    return {
+      isValid: false,
+      error: "Date cannot be more than 5 years in the past",
+    };
+  }
+
+  return { isValid: true, date: date.toISOString() };
+}
+
+// =============================================================================
+// INPUT SANITIZATION (XSS Prevention)
+// =============================================================================
+
+/**
+ * Sanitize text input to prevent XSS attacks
+ * Removes all HTML tags and malicious code while preserving text content
+ *
+ * @param {string} text - Text to sanitize
+ * @param {object} options - DOMPurify options
+ * @returns {string} Sanitized text
+ */
+export function sanitizeText(text, options = {}) {
+  if (!text || typeof text !== "string") {
+    return text;
+  }
+
+  const defaultOptions = {
+    ALLOWED_TAGS: [], // Remove all HTML tags by default
+    ALLOWED_ATTR: [],
+    KEEP_CONTENT: true, // Keep text content when removing tags
+    ...options,
+  };
+
+  return DOMPurify.sanitize(text, defaultOptions).trim();
+}
+
+/**
+ * Sanitize multiple fields in an object
+ * Useful for sanitizing all text fields in request bodies
+ *
+ * @param {object} obj - Object containing fields to sanitize
+ * @param {string[]} fields - Array of field names to sanitize
+ * @returns {object} Object with sanitized fields
+ *
+ * @example
+ * const sanitized = sanitizeFields(req.body, ['notes', 'description', 'feedback']);
+ */
+export function sanitizeFields(obj, fields) {
+  const sanitized = { ...obj };
+
+  for (const field of fields) {
+    if (sanitized[field] && typeof sanitized[field] === "string") {
+      sanitized[field] = sanitizeText(sanitized[field]);
+    }
+  }
+
+  return sanitized;
+}
+
+/**
+ * Sanitize rich text that may contain some allowed HTML
+ * More permissive than sanitizeText, allows basic formatting
+ *
+ * @param {string} html - HTML to sanitize
+ * @returns {string} Sanitized HTML with only safe tags
+ */
+export function sanitizeRichText(html) {
+  if (!html || typeof html !== "string") {
+    return html;
+  }
+
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ["b", "i", "em", "strong", "p", "br", "ul", "ol", "li"],
+    ALLOWED_ATTR: [],
+    KEEP_CONTENT: true,
+  });
+}
+
 // =============================================================================
 // RESPONSE HELPERS
 // =============================================================================
@@ -180,6 +363,21 @@ export function createSuccessResponse(data, message = null) {
   }
 
   return response;
+}
+
+/**
+ * Send validation error response with field-specific errors
+ * @param {Response} res - Express response object
+ * @param {object} errors - Object with field names as keys and error messages as values
+ */
+export function sendValidationError(res, errors) {
+  return res.status(400).json({
+    success: false,
+    error: "Validation failed",
+    code: "VALIDATION_ERROR",
+    fields: errors,
+    timestamp: safeFormatDate(new Date()),
+  });
 }
 
 /**
@@ -278,16 +476,19 @@ export default {
   validateWeeks,
   validatePeriod,
   validatePagination,
+  validateRPE,
+  validateDuration,
+  validateHydrationAmount,
+  validateDate,
+  sanitizeText,
+  sanitizeFields,
+  sanitizeRichText,
   createErrorResponse,
   createSuccessResponse,
   sendError,
   sendSuccess,
+  sendValidationError,
   safeParseFloat,
   safePercentage,
   safeAverage,
 };
-
-
-
-
-

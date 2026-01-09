@@ -111,7 +111,10 @@
   padding: var(--space-3);
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
   border: 1px solid var(--ds-border-subtle);
 
   &.unlocked {
@@ -266,7 +269,10 @@
     border: 1px solid var(--ds-border-default);
     border-radius: var(--radius-full);
     cursor: pointer;
-    transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+    transition:
+      background-color var(--motion-base) var(--ease-standard),
+      border-color var(--motion-base) var(--ease-standard),
+      box-shadow var(--motion-base) var(--ease-standard);
     white-space: nowrap;
     color: var(--ds-text-secondary);
 

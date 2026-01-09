@@ -158,7 +158,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.url.includes("mock://api")) {
     if (environment.production) {
       console.error("SECURITY ERROR: Mock API accessed in production!");
-      return throwError(() => new Error("Mock API not available in production"));
+      return throwError(
+        () => new Error("Mock API not available in production"),
+      );
     }
     return next(req);
   }

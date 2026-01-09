@@ -1,16 +1,12 @@
 /**
  * AI Mode Explanation Component
- * 
+ *
  * Phase 2.3 - Motivation & Safety
  * Shows when AI switches to conservative mode, why, confidence level, and actions to improve
  */
 
 import { CommonModule } from "@angular/common";
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
@@ -54,7 +50,9 @@ export interface AIModeStatus {
             value="Conservative"
             severity="warn"
             styleClass="mode-badge"
-            [pTooltip]="'AI is being cautious because data confidence is below 70%'"
+            [pTooltip]="
+              'AI is being cautious because data confidence is below 70%'
+            "
           ></p-tag>
         </div>
 
@@ -77,7 +75,7 @@ export interface AIModeStatus {
                 ></div>
               </div>
               <span class="confidence-value">
-                {{ (modeStatus()!.confidence * 100) | number: "1.0-0" }}%
+                {{ modeStatus()!.confidence * 100 | number: "1.0-0" }}%
               </span>
             </div>
             <p class="confidence-note">
@@ -292,13 +290,15 @@ export class AIModeExplanationComponent {
         item.includes("wellness") ||
         item.includes("sleep") ||
         item.includes("energy") ||
-        item.includes("soreness")
+        item.includes("soreness"),
     );
   }
 
   hasMissingTraining(): boolean {
     const missing = this.modeStatus()?.missingData || [];
-    return missing.some((item) => item.includes("training") || item.includes("session"));
+    return missing.some(
+      (item) => item.includes("training") || item.includes("session"),
+    );
   }
 
   getDataLabel(item: string): string {
@@ -324,4 +324,3 @@ export class AIModeExplanationComponent {
     return labels[item] || item.replace(/_/g, " ");
   }
 }
-

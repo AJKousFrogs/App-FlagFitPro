@@ -76,7 +76,10 @@
 
 .play-card {
   cursor: pointer;
-  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
   border: 1px solid var(--ds-border-subtle);
 
   &:hover {
@@ -336,7 +339,10 @@
   border: 2px solid var(--ds-border-default);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
   text-align: left;
   width: 100%;
 

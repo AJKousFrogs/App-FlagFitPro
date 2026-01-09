@@ -278,7 +278,10 @@ export class SearchService implements OnDestroy {
     suggestions.push(...matchingCommon);
 
     // Return unique suggestions, limited
-    const uniqueSuggestions = [...new Set(suggestions)].slice(0, UI_LIMITS.SEARCH_SUGGESTIONS_MAX);
+    const uniqueSuggestions = [...new Set(suggestions)].slice(
+      0,
+      UI_LIMITS.SEARCH_SUGGESTIONS_MAX,
+    );
     this._suggestions.set(uniqueSuggestions);
     return uniqueSuggestions;
   }

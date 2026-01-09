@@ -116,7 +116,10 @@
           <span class="weather-location">{{ weatherLocation() }}</span>
         </div>
       } @else if (weatherLoading()) {
-        <div class="weather-indicator weather-loading" pTooltip="Loading weather...">
+        <div
+          class="weather-indicator weather-loading"
+          pTooltip="Loading weather..."
+        >
           <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
         </div>
       }

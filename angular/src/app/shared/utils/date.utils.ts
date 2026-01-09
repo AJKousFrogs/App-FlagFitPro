@@ -237,13 +237,17 @@ export function isCurrentYear(date: Date | string): boolean {
  * calculateAge('1990-05-15') // 34
  */
 export function calculateAge(birthDate: Date | string): number {
-  const dateObj = typeof birthDate === "string" ? parseISO(birthDate) : birthDate;
+  const dateObj =
+    typeof birthDate === "string" ? parseISO(birthDate) : birthDate;
   const today = new Date();
   let age = today.getFullYear() - dateObj.getFullYear();
   const monthDiff = today.getMonth() - dateObj.getMonth();
 
   // Adjust if birthday hasn't occurred this year
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dateObj.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < dateObj.getDate())
+  ) {
     age--;
   }
 
@@ -260,7 +264,7 @@ export function calculateAge(birthDate: Date | string): number {
  */
 export function getTimeAgo(date: Date | string | null | undefined): string {
   if (!date) return "";
-  
+
   const dateObj = typeof date === "string" ? parseISO(date) : date;
   const now = new Date();
   const diffMs = now.getTime() - dateObj.getTime();
@@ -276,6 +280,6 @@ export function getTimeAgo(date: Date | string | null | undefined): string {
   if (diffDays === 1) return "1 day ago";
   if (diffDays < 7) return `${diffDays} days ago`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-  
+
   return formatDistanceToNow(dateObj, { addSuffix: true });
 }

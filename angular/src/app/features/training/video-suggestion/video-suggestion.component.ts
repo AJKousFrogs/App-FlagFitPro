@@ -412,7 +412,10 @@ interface VideoSuggestion {
                       @if (suggestion.training_focus.length > 0) {
                         <div class="suggestion-tags">
                           @for (
-                            focus of suggestion.training_focus.slice(0, UI_LIMITS.TRAINING_FOCUS_PREVIEW);
+                            focus of suggestion.training_focus.slice(
+                              0,
+                              UI_LIMITS.TRAINING_FOCUS_PREVIEW
+                            );
                             track focus
                           ) {
                             <p-chip
@@ -488,7 +491,13 @@ interface VideoSuggestion {
                         {{ video.submitted_by_name }}
                       </span>
                       <div class="video-tags">
-                        @for (pos of video.positions.slice(0, UI_LIMITS.POSITIONS_PREVIEW); track pos) {
+                        @for (
+                          pos of video.positions.slice(
+                            0,
+                            UI_LIMITS.POSITIONS_PREVIEW
+                          );
+                          track pos
+                        ) {
                           <span class="mini-tag">{{ pos }}</span>
                         }
                       </div>

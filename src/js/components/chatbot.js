@@ -1,6 +1,5 @@
-import { logger } from '../../logger.js';
-import { setSafeContent } from '../utils/shared.js';
-
+import { logger } from "../../logger.js";
+import { setSafeContent } from "../utils/shared.js";
 
 // FlagFit AI Chatbot Component
 // Provides intelligent responses about sports psychology, nutrition, speed training, injuries, recovery, etc.
@@ -212,7 +211,9 @@ class FlagFitChatbot {
     modal.setAttribute("aria-labelledby", "chatbot-title");
     modal.setAttribute("aria-hidden", "true");
 
-    setSafeContent(modal, `
+    setSafeContent(
+      modal,
+      `
       <div class="chatbot-modal-content">
         <div class="chatbot-header">
           <div class="chatbot-header-info">
@@ -286,7 +287,10 @@ class FlagFitChatbot {
           </div>
         </div>
       </div>
-    `, true, true);
+    `,
+      true,
+      true,
+    );
 
     document.body.appendChild(modal);
     this.modal = modal;
@@ -568,7 +572,9 @@ class FlagFitChatbot {
             const existingMessages =
               messagesContainer.querySelectorAll(".chatbot-message");
             existingMessages.forEach((msg, index) => {
-              if (index > 0) {msg.remove();} // Keep welcome message
+              if (index > 0) {
+                msg.remove();
+              } // Keep welcome message
             });
 
             // Render stored messages
@@ -621,7 +627,9 @@ class FlagFitChatbot {
     // Clear UI
     const messagesContainer = document.getElementById("chatbot-messages");
     if (messagesContainer) {
-      setSafeContent(messagesContainer, `
+      setSafeContent(
+        messagesContainer,
+        `
         <div class="chatbot-message bot-message">
           <div class="message-avatar">🤖</div>
           <div class="message-content">
@@ -640,7 +648,10 @@ class FlagFitChatbot {
             </div>
           </div>
         </div>
-      `, true, true);
+      `,
+        true,
+        true,
+      );
     }
 
     // Reset conversation context
@@ -660,7 +671,7 @@ class FlagFitChatbot {
 
       // Auto-resize textarea
       e.target.style.height = "auto";
-      e.target.style.height = `${Math.min(e.target.scrollHeight, 120)  }px`;
+      e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
     });
 
     input.addEventListener("keydown", (e) => {
@@ -709,7 +720,7 @@ class FlagFitChatbot {
     // Quick action buttons
     quickBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
-        const {topic} = btn.dataset;
+        const { topic } = btn.dataset;
         this.handleQuickAction(topic);
       });
     });
@@ -941,12 +952,19 @@ class FlagFitChatbot {
 
   showProgressIndicator() {
     const messagesContainer = document.getElementById("chatbot-messages");
-    if (!messagesContainer) {return null;}
+    if (!messagesContainer) {
+      return null;
+    }
 
     const progressBar = document.createElement("div");
     progressBar.className = "chatbot-progress-bar";
     progressBar.id = "chatbot-progress";
-    setSafeContent(progressBar, '<div class="chatbot-progress-fill"></div>', true, true);
+    setSafeContent(
+      progressBar,
+      '<div class="chatbot-progress-fill"></div>',
+      true,
+      true,
+    );
 
     const typingIndicator = document.getElementById("typing-indicator");
     if (typingIndicator) {
@@ -957,7 +975,9 @@ class FlagFitChatbot {
     let progress = 0;
     const interval = setInterval(() => {
       progress += 2; // Increase by 2% every ~600ms (30s total)
-      if (progress > 95) {progress = 95;} // Cap at 95%
+      if (progress > 95) {
+        progress = 95;
+      } // Cap at 95%
 
       const fill = progressBar.querySelector(".chatbot-progress-fill");
       if (fill) {
@@ -970,7 +990,9 @@ class FlagFitChatbot {
 
   showErrorMessage(message) {
     const messagesContainer = document.getElementById("chatbot-messages");
-    if (!messagesContainer) {return;}
+    if (!messagesContainer) {
+      return;
+    }
 
     // Remove existing error message if any
     const existingError = document.getElementById("chatbot-error-message");
@@ -982,12 +1004,17 @@ class FlagFitChatbot {
     errorDiv.id = "chatbot-error-message";
     errorDiv.className = "chatbot-error-message";
     errorDiv.setAttribute("role", "alert");
-    setSafeContent(errorDiv, `
+    setSafeContent(
+      errorDiv,
+      `
       <div class="error-content">
         <span class="error-icon">⚠️</span>
         <span class="error-text">${this.escapeHtml(message)}</span>
       </div>
-    `, true, true);
+    `,
+      true,
+      true,
+    );
 
     messagesContainer.appendChild(errorDiv);
     this.scrollToBottom();
@@ -1159,7 +1186,10 @@ class FlagFitChatbot {
             parsedQuestion.entities?.psychology?.[0] ||
             "general";
           this.updateQueryStats(detectedTopic).catch((error) => {
-            logger.warn("[Chatbot] Failed to update query stats (non-critical):", error);
+            logger.warn(
+              "[Chatbot] Failed to update query stats (non-critical):",
+              error,
+            );
           });
 
           return answer;
@@ -1217,7 +1247,10 @@ class FlagFitChatbot {
         parsedQuestion?.entities?.psychology?.[0] ||
         "general";
       this.updateQueryStats(detectedTopic).catch((error) => {
-        logger.warn("[Chatbot] Failed to update query stats (non-critical):", error);
+        logger.warn(
+          "[Chatbot] Failed to update query stats (non-critical):",
+          error,
+        );
       });
 
       return localResponse;
@@ -1394,7 +1427,7 @@ class FlagFitChatbot {
     }
 
     if (bestMatch && bestMatchScore > 0) {
-      const {responses} = this.knowledgeBase[bestMatch];
+      const { responses } = this.knowledgeBase[bestMatch];
       if (responses && responses.length > 0) {
         // Return a random response from the best matching category
         return responses[Math.floor(Math.random() * responses.length)];
@@ -1480,7 +1513,7 @@ class FlagFitChatbot {
 
   getLocalKnowledgeEntry(parsedQuestion, _lowerMessage) {
     // Create a knowledge entry structure from local knowledge base
-    const {entities} = parsedQuestion;
+    const { entities } = parsedQuestion;
 
     // Check for supplements
     if (entities.supplements.length > 0) {
@@ -1592,19 +1625,29 @@ class FlagFitChatbot {
     messageDiv.className = `chatbot-message ${type}-message`;
 
     if (type === "user") {
-      setSafeContent(messageDiv, `
+      setSafeContent(
+        messageDiv,
+        `
         <div class="message-content">
           <div class="message-text">${this.escapeHtml(text)}</div>
         </div>
         <div class="message-avatar">You</div>
-      `, true, true);
+      `,
+        true,
+        true,
+      );
     } else {
-      setSafeContent(messageDiv, `
+      setSafeContent(
+        messageDiv,
+        `
         <div class="message-avatar">🤖</div>
         <div class="message-content">
           <div class="message-text">${this.formatBotMessage(text)}</div>
         </div>
-      `, true, true);
+      `,
+        true,
+        true,
+      );
     }
 
     messagesContainer.appendChild(messageDiv);
@@ -1648,7 +1691,9 @@ class FlagFitChatbot {
     const typingDiv = document.createElement("div");
     typingDiv.className = "chatbot-message bot-message typing-indicator";
     typingDiv.id = "typing-indicator";
-    setSafeContent(typingDiv, `
+    setSafeContent(
+      typingDiv,
+      `
       <div class="message-avatar">🤖</div>
       <div class="message-content">
         <div class="typing-dots">
@@ -1657,7 +1702,10 @@ class FlagFitChatbot {
           <span></span>
         </div>
       </div>
-    `, true, true);
+    `,
+      true,
+      true,
+    );
 
     messagesContainer.appendChild(typingDiv);
     this.scrollToBottom();

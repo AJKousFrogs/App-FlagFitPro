@@ -95,7 +95,9 @@
 
     --p-tag-padding-x: var(--space-3);
     --p-tag-padding-y: var(--space-2);
-    --p-tag-border-radius: var(--radius-md); // Standard rounded rectangle (NO PILL)
+    --p-tag-border-radius: var(
+      --radius-md
+    ); // Standard rounded rectangle (NO PILL)
     --p-tag-font-size: var(--font-body-sm-size);
     --p-tag-font-weight: var(--font-weight-semibold);
 

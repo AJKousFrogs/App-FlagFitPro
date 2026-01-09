@@ -4,12 +4,12 @@
  * ⭐ CANONICAL PAGE — Design System Exemplar (Pending Cleanup)
  * ============================================================
  * This page is marked as canonical but requires cleanup before freeze.
- * 
+ *
  * RULES:
  * - Future refactors copy FROM this page, never INTO it
  * - Changes require design system curator approval
  * - Must be cleaned to full compliance before canonical freeze
- * 
+ *
  * See docs/CANONICAL_PAGES.md for full documentation.
  *
  * CLEANUP REQUIRED:
@@ -495,7 +495,9 @@ import {
                 <div class="details-item">
                   <span class="details-label">Country</span>
                   <span class="details-value">
-                    <span class="country-flag">{{ getCountryFlag(selectedPlayer()!.country) }}</span>
+                    <span class="country-flag">{{
+                      getCountryFlag(selectedPlayer()!.country)
+                    }}</span>
                     {{ selectedPlayer()!.country }}
                   </span>
                 </div>
@@ -1132,7 +1134,9 @@ export class RosterComponent implements OnInit {
 
     if (result.success) {
       this.toastService.success(
-        this.editingPlayer() ? TOAST.SUCCESS.PLAYER_UPDATED : TOAST.SUCCESS.PLAYER_ADDED,
+        this.editingPlayer()
+          ? TOAST.SUCCESS.PLAYER_UPDATED
+          : TOAST.SUCCESS.PLAYER_ADDED,
       );
       this.showPlayerDialog.set(false);
       this.editingPlayer.set(null);
@@ -1154,7 +1158,9 @@ export class RosterComponent implements OnInit {
         if (result.success) {
           this.toastService.success(`${player.name} has been removed`);
         } else {
-          this.toastService.error(result.error || TOAST.ERROR.PLAYER_REMOVE_FAILED);
+          this.toastService.error(
+            result.error || TOAST.ERROR.PLAYER_REMOVE_FAILED,
+          );
         }
       },
     });
@@ -1264,7 +1270,9 @@ export class RosterComponent implements OnInit {
           this.toastService.success(`Removed ${count} players`);
           this.clearSelection();
         } else {
-          this.toastService.error(result.error || TOAST.ERROR.PLAYERS_REMOVE_FAILED);
+          this.toastService.error(
+            result.error || TOAST.ERROR.PLAYERS_REMOVE_FAILED,
+          );
         }
       },
     });
@@ -1326,7 +1334,9 @@ export class RosterComponent implements OnInit {
       this.toastService.success(`Invitation sent to ${this.inviteEmail}`);
       this.showInviteDialog.set(false);
     } else {
-      this.toastService.error(result.error || TOAST.ERROR.INVITATION_SEND_FAILED);
+      this.toastService.error(
+        result.error || TOAST.ERROR.INVITATION_SEND_FAILED,
+      );
     }
 
     this.isSaving.set(false);
@@ -1342,7 +1352,9 @@ export class RosterComponent implements OnInit {
     if (result.success) {
       this.toastService.success(`Invitation resent to ${invitation.email}`);
     } else {
-      this.toastService.error(result.error || TOAST.ERROR.INVITATION_RESEND_FAILED);
+      this.toastService.error(
+        result.error || TOAST.ERROR.INVITATION_RESEND_FAILED,
+      );
     }
   }
 

@@ -1,6 +1,6 @@
 /**
  * Game Day Recovery Service
- * 
+ *
  * Automatically triggers 48h recovery protocol after game day
  */
 
@@ -29,24 +29,20 @@ export class GameDayRecoveryService {
    */
   async checkAndTriggerRecovery(
     playerId: string,
-    gameDate: Date
+    gameDate: Date,
   ): Promise<boolean> {
     try {
       // Check if game was logged
       const gameDateStr = gameDate.toISOString().split("T")[0];
-      const { data: game, error: gameError } =
-        await this.supabaseService.client
-          .from("games")
-          .select("id, date")
-          .eq("player_id", playerId)
-          .eq("date", gameDateStr)
-          .maybeSingle();
+      const { data: game, error: gameError } = await this.supabaseService.client
+        .from("games")
+        .select("id, date")
+        .eq("player_id", playerId)
+        .eq("date", gameDateStr)
+        .maybeSingle();
 
       if (gameError && gameError.code !== "PGRST116") {
-        this.logger.error(
-          "[GameDayRecovery] Error checking game:",
-          gameError
-        );
+        this.logger.error("[GameDayRecovery] Error checking game:", gameError);
         return false;
       }
 
@@ -79,7 +75,7 @@ export class GameDayRecoveryService {
     } catch (error) {
       this.logger.error(
         "[GameDayRecovery] Error checking/triggering recovery:",
-        error
+        error,
       );
       return false;
     }
@@ -90,7 +86,7 @@ export class GameDayRecoveryService {
    */
   private async createRecoveryProtocol(
     playerId: string,
-    gameDate: Date
+    gameDate: Date,
   ): Promise<void> {
     const day1 = new Date(gameDate);
     day1.setDate(day1.getDate() + 1);
@@ -126,7 +122,7 @@ export class GameDayRecoveryService {
       if (protocolError) {
         this.logger.error(
           "[GameDayRecovery] Error creating protocol:",
-          protocolError
+          protocolError,
         );
         return;
       }
@@ -146,12 +142,12 @@ export class GameDayRecoveryService {
       ]);
 
       this.logger.info(
-        `[GameDayRecovery] Created 48h recovery protocol for player ${playerId}`
+        `[GameDayRecovery] Created 48h recovery protocol for player ${playerId}`,
       );
     } catch (error) {
       this.logger.error(
         "[GameDayRecovery] Error creating recovery protocol:",
-        error
+        error,
       );
     }
   }
@@ -166,7 +162,7 @@ export class GameDayRecoveryService {
       maxLoad: number;
       focus: string;
       restrictions: string[];
-    }
+    },
   ): Promise<void> {
     try {
       const { error } = await this.supabaseService.client
@@ -184,13 +180,13 @@ export class GameDayRecoveryService {
       if (error) {
         this.logger.error(
           "[GameDayRecovery] Error creating recovery block:",
-          error
+          error,
         );
       }
     } catch (error) {
       this.logger.error(
         "[GameDayRecovery] Error creating recovery block:",
-        error
+        error,
       );
     }
   }
@@ -213,7 +209,7 @@ export class GameDayRecoveryService {
       if (error && error.code !== "PGRST116") {
         this.logger.error(
           "[GameDayRecovery] Error fetching active recovery:",
-          error
+          error,
         );
         return null;
       }
@@ -233,7 +229,7 @@ export class GameDayRecoveryService {
     } catch (error) {
       this.logger.error(
         "[GameDayRecovery] Error fetching active recovery:",
-        error
+        error,
       );
       return null;
     }
@@ -247,4 +243,3 @@ export class GameDayRecoveryService {
     return recovery !== null;
   }
 }
-

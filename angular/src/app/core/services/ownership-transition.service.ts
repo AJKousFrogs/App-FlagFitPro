@@ -1,6 +1,6 @@
 /**
  * Ownership Transition Service
- * 
+ *
  * Logs all ownership transitions (Player → Coach → Physio, etc.)
  * Provides accountability tracking for decision handoffs
  */
@@ -34,7 +34,7 @@ export class OwnershipTransitionService {
    * Log ownership transition
    */
   async logTransition(
-    transition: Omit<OwnershipTransition, "id" | "createdAt">
+    transition: Omit<OwnershipTransition, "id" | "createdAt">,
   ): Promise<string | null> {
     try {
       const { data, error } = await this.supabaseService.client
@@ -54,19 +54,19 @@ export class OwnershipTransitionService {
       if (error) {
         this.logger.error(
           "[OwnershipTransition] Error logging transition:",
-          error
+          error,
         );
         return null;
       }
 
       this.logger.info(
-        `[OwnershipTransition] Logged transition: ${transition.trigger} (${transition.fromRole} → ${transition.toRole})`
+        `[OwnershipTransition] Logged transition: ${transition.trigger} (${transition.fromRole} → ${transition.toRole})`,
       );
       return data.id;
     } catch (error) {
       this.logger.error(
         "[OwnershipTransition] Error logging transition:",
-        error
+        error,
       );
       return null;
     }
@@ -78,7 +78,7 @@ export class OwnershipTransitionService {
   async updateStatus(
     transitionId: string,
     status: "pending" | "in_progress" | "completed" | "overdue",
-    acknowledgedBy?: string
+    acknowledgedBy?: string,
   ): Promise<boolean> {
     try {
       const updateData: Record<string, unknown> = {
@@ -103,17 +103,14 @@ export class OwnershipTransitionService {
       if (error) {
         this.logger.error(
           "[OwnershipTransition] Error updating status:",
-          error
+          error,
         );
         return false;
       }
 
       return true;
     } catch (error) {
-      this.logger.error(
-        "[OwnershipTransition] Error updating status:",
-        error
-      );
+      this.logger.error("[OwnershipTransition] Error updating status:", error);
       return false;
     }
   }
@@ -123,7 +120,7 @@ export class OwnershipTransitionService {
    */
   async getPendingTransitions(
     toRole: string,
-    limit: number = 20
+    limit: number = 20,
   ): Promise<OwnershipTransition[]> {
     try {
       const { data, error } = await this.supabaseService.client
@@ -137,7 +134,7 @@ export class OwnershipTransitionService {
       if (error) {
         this.logger.error(
           "[OwnershipTransition] Error fetching transitions:",
-          error
+          error,
         );
         return [];
       }
@@ -162,7 +159,7 @@ export class OwnershipTransitionService {
     } catch (error) {
       this.logger.error(
         "[OwnershipTransition] Error fetching transitions:",
-        error
+        error,
       );
       return [];
     }
@@ -187,7 +184,7 @@ export class OwnershipTransitionService {
       if (error) {
         this.logger.error(
           "[OwnershipTransition] Error checking overdue:",
-          error
+          error,
         );
         return;
       }
@@ -204,14 +201,11 @@ export class OwnershipTransitionService {
           .in("id", ids);
 
         this.logger.warn(
-          `[OwnershipTransition] Marked ${ids.length} transitions as overdue`
+          `[OwnershipTransition] Marked ${ids.length} transitions as overdue`,
         );
       }
     } catch (error) {
-      this.logger.error(
-        "[OwnershipTransition] Error checking overdue:",
-        error
-      );
+      this.logger.error("[OwnershipTransition] Error checking overdue:", error);
     }
   }
 
@@ -220,7 +214,7 @@ export class OwnershipTransitionService {
    */
   async getPlayerTransitions(
     playerId: string,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<OwnershipTransition[]> {
     try {
       const { data, error } = await this.supabaseService.client
@@ -233,7 +227,7 @@ export class OwnershipTransitionService {
       if (error) {
         this.logger.error(
           "[OwnershipTransition] Error fetching player transitions:",
-          error
+          error,
         );
         return [];
       }
@@ -258,10 +252,9 @@ export class OwnershipTransitionService {
     } catch (error) {
       this.logger.error(
         "[OwnershipTransition] Error fetching player transitions:",
-        error
+        error,
       );
       return [];
     }
   }
 }
-

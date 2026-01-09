@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, computed } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  computed,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 export type TrafficLightStatus = "green" | "yellow" | "red" | "orange";

@@ -27,7 +27,10 @@
 
 .day-card {
   background: var(--surface-primary);
-  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard);
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard);
   border: 2px solid var(--color-border-secondary);
 
   &:hover {

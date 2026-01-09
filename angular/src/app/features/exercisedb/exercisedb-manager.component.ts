@@ -1178,5 +1178,4 @@ export class ExerciseDBManagerComponent implements OnInit {
       minute: "2-digit",
     });
   }
-
 }

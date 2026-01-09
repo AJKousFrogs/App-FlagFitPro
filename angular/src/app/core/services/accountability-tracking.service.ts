@@ -1,6 +1,6 @@
 /**
  * Accountability Tracking Service
- * 
+ *
  * Tracks accountability for ownership transitions and actions
  * Provides status tracking: Pending → In Progress → Completed
  */
@@ -27,7 +27,9 @@ export interface AccountabilityItem {
 export class AccountabilityTrackingService {
   private readonly supabaseService = inject(SupabaseService);
   private readonly logger = inject(LoggerService);
-  private readonly ownershipTransitionService = inject(OwnershipTransitionService);
+  private readonly ownershipTransitionService = inject(
+    OwnershipTransitionService,
+  );
 
   // State
   private readonly _items = signal<AccountabilityItem[]>([]);
@@ -38,16 +40,16 @@ export class AccountabilityTrackingService {
   readonly loading = this._loading.asReadonly();
 
   // Computed signals
-  readonly pendingCount = computed(() =>
-    this._items().filter((item) => item.status === "pending").length
+  readonly pendingCount = computed(
+    () => this._items().filter((item) => item.status === "pending").length,
   );
 
-  readonly overdueCount = computed(() =>
-    this._items().filter((item) => item.status === "overdue").length
+  readonly overdueCount = computed(
+    () => this._items().filter((item) => item.status === "overdue").length,
   );
 
-  readonly inProgressCount = computed(() =>
-    this._items().filter((item) => item.status === "in_progress").length
+  readonly inProgressCount = computed(
+    () => this._items().filter((item) => item.status === "in_progress").length,
   );
 
   /**
@@ -56,8 +58,9 @@ export class AccountabilityTrackingService {
   async loadAccountabilityItems(role: string): Promise<void> {
     this._loading.set(true);
     try {
-      const transitions = await this.ownershipTransitionService.getPendingTransitions(role, 50);
-      
+      const transitions =
+        await this.ownershipTransitionService.getPendingTransitions(role, 50);
+
       // Convert transitions to accountability items
       const items: AccountabilityItem[] = transitions.map((transition) => ({
         id: transition.id || `item_${Date.now()}_${Math.random()}`,
@@ -83,14 +86,14 @@ export class AccountabilityTrackingService {
   async updateItemStatus(
     itemId: string,
     status: "pending" | "in_progress" | "completed" | "overdue",
-    notes?: string
+    notes?: string,
   ): Promise<boolean> {
     try {
       // Update the underlying ownership transition
       const success = await this.ownershipTransitionService.updateStatus(
         itemId,
         status,
-        undefined // acknowledgedBy will be set by the transition service
+        undefined, // acknowledgedBy will be set by the transition service
       );
 
       if (success) {
@@ -102,10 +105,11 @@ export class AccountabilityTrackingService {
                   ...item,
                   status,
                   notes: notes || item.notes,
-                  completedAt: status === "completed" ? new Date() : item.completedAt,
+                  completedAt:
+                    status === "completed" ? new Date() : item.completedAt,
                 }
-              : item
-          )
+              : item,
+          ),
         );
       }
 
@@ -119,7 +123,10 @@ export class AccountabilityTrackingService {
   /**
    * Mark item as in progress
    */
-  async markInProgress(itemId: string, _acknowledgedBy: string): Promise<boolean> {
+  async markInProgress(
+    itemId: string,
+    _acknowledgedBy: string,
+  ): Promise<boolean> {
     return this.updateItemStatus(itemId, "in_progress");
   }
 
@@ -133,10 +140,16 @@ export class AccountabilityTrackingService {
   /**
    * Get accountability items for a specific player
    */
-  async getPlayerAccountabilityItems(playerId: string): Promise<AccountabilityItem[]> {
+  async getPlayerAccountabilityItems(
+    playerId: string,
+  ): Promise<AccountabilityItem[]> {
     try {
-      const transitions = await this.ownershipTransitionService.getPlayerTransitions(playerId, 20);
-      
+      const transitions =
+        await this.ownershipTransitionService.getPlayerTransitions(
+          playerId,
+          20,
+        );
+
       return transitions.map((transition) => ({
         id: transition.id || `item_${Date.now()}_${Math.random()}`,
         transitionId: transition.id || "",
@@ -152,4 +165,3 @@ export class AccountabilityTrackingService {
     }
   }
 }
-

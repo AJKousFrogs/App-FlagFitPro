@@ -11,6 +11,7 @@ import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import { rateLimit } from "express-rate-limit";
+import helmet from "helmet";
 import fs from "fs";
 import http from "http";
 import path from "path";
@@ -310,10 +311,7 @@ app.use(
       }
 
       // Allow Netlify deployments
-      if (
-        origin.includes("netlify.app") ||
-        origin.includes("netlify.com")
-      ) {
+      if (origin.includes("netlify.app") || origin.includes("netlify.com")) {
         return callback(null, true);
       }
 
@@ -327,8 +325,46 @@ app.use(
   }),
 );
 
-// Parse JSON and URL-encoded bodies
-app.use(express.json({ limit: "10mb" }));
+// Security headers with Helmet.js
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"], // Required for Angular inline styles
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Required for Angular dev mode
+        imgSrc: ["'self'", "data:", "https:", "blob:"],
+        connectSrc: ["'self'", "https://*.supabase.co", "wss://*.supabase.co"],
+        fontSrc: ["'self'", "data:"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"],
+      },
+    },
+    crossOriginEmbedderPolicy: false, // Disable for Angular compatibility
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+      preload: true,
+    },
+  }),
+);
+
+// Parse JSON and URL-encoded bodies with size limits
+app.use(
+  express.json({
+    limit: "10mb",
+    verify: (req, res, buf, encoding) => {
+      // Log large payloads for monitoring
+      if (buf.length > 1024 * 1024) {
+        // > 1MB
+        console.warn(
+          `[Security] Large request body: ${(buf.length / 1024 / 1024).toFixed(2)}MB from ${req.ip}`,
+        );
+      }
+    },
+  }),
+);
 
 // Structured request logging with metrics
 app.use(requestLogger());
@@ -2279,7 +2315,7 @@ app.post("/api/supplements/log", authenticateToken, async (req, res) => {
   }
 
   try {
-    const {userId} = req; // Use authenticated user's ID
+    const { userId } = req; // Use authenticated user's ID
     const { supplement, dosage, taken = true, notes } = req.body;
     const today = new Date().toISOString().split("T")[0];
 
@@ -2386,7 +2422,7 @@ app.post("/api/hydration/log", authenticateToken, async (req, res) => {
   }
 
   try {
-    const {userId} = req; // Use authenticated user's ID
+    const { userId } = req; // Use authenticated user's ID
     const { amount, type = "water" } = req.body;
 
     const { data, error } = await supabase
@@ -3235,8 +3271,12 @@ app.post("/api/player-programs", authenticateToken, async (req, res) => {
     // User already authenticated via middleware
     const user = { id: req.userId };
 
-    const { program_id, start_date, status = "active", force = false } =
-      req.body;
+    const {
+      program_id,
+      start_date,
+      status = "active",
+      force = false,
+    } = req.body;
 
     if (!program_id) {
       return res.status(400).json({
@@ -3370,7 +3410,10 @@ app.post("/api/player-programs", authenticateToken, async (req, res) => {
       .single();
 
     if (createError) {
-      console.error("[player-programs] Error creating assignment:", createError);
+      console.error(
+        "[player-programs] Error creating assignment:",
+        createError,
+      );
       return res.status(500).json({
         success: false,
         error: createError.message,
@@ -3508,19 +3551,42 @@ app.get(/^(?!\/api).*$/, (_req, res) => {
 // ERROR HANDLING
 // ============================================
 
-app.use((err, req, res, _next) => {
+// Handle payload too large errors
+app.use((err, req, res, next) => {
+  if (err.type === "entity.too.large") {
+    return res.status(413).json({
+      success: false,
+      error: "Request body too large",
+      code: "PAYLOAD_TOO_LARGE",
+      maxSize: "10MB",
+      timestamp: new Date().toISOString(),
+    });
+  }
+  next(err);
+});
+
+// Handle JSON syntax errors
+app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     return res.status(400).json({
       success: false,
       error: `Invalid JSON: ${err.message}`,
+      code: "INVALID_JSON",
+      timestamp: new Date().toISOString(),
     });
   }
+  next(err);
+});
 
+// General error handler
+app.use((err, req, res, _next) => {
   console.error("Server error:", err);
   res.status(500).json({
     success: false,
     error: "Internal server error",
-    message: err.message,
+    code: "INTERNAL_ERROR",
+    message: process.env.NODE_ENV === "development" ? err.message : undefined,
+    timestamp: new Date().toISOString(),
   });
 });
 

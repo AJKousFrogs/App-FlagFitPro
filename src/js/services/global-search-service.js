@@ -7,7 +7,7 @@
 // MORNING_MOBILITY_ROUTINE available for future use
 // import { MORNING_MOBILITY_ROUTINE } from "../data/shared-protocols.js";
 
-import { logger } from '../../logger.js';
+import { logger } from "../../logger.js";
 
 // Dynamic import for team data and API (to avoid circular dependencies)
 let getAllPlayers = null;

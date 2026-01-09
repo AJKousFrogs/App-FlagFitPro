@@ -10,7 +10,12 @@
  * @version 2.0.0
  */
 
-import { ChangeDetectionStrategy, Component, input, computed } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  computed,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RiskZone } from "../../../core/models/acwr.models";
 

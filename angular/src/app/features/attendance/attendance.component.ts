@@ -554,8 +554,7 @@ export class AttendanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (stats) => this.playerStats.set(stats),
-        error: (_err) =>
-          this.toastService.error(TOAST.ERROR.LOAD_FAILED),
+        error: (_err) => this.toastService.error(TOAST.ERROR.LOAD_FAILED),
       });
   }
 
@@ -648,8 +647,7 @@ export class AttendanceComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (records) => this.attendanceRecords.set(records),
-        error: () =>
-          this.toastService.error(TOAST.ERROR.LOAD_FAILED),
+        error: () => this.toastService.error(TOAST.ERROR.LOAD_FAILED),
       });
   }
 

@@ -7,7 +7,12 @@
  * Design System Compliant (DESIGN_SYSTEM_RULES.md)
  */
 
-import { ChangeDetectionStrategy, Component, inject, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";

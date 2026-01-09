@@ -37,12 +37,14 @@ node -e "console.log(process.env.SUPABASE_ANON_KEY ? 'SET' : 'NOT SET')"
 Create test users in Supabase Dashboard:
 
 **Player Account**:
+
 - Email: `test-player@flagfitpro.com`
 - Password: `TestPlayer123!`
 - Role: `player`
 - Confirm email (or disable email confirmation in Supabase settings)
 
 **Organizer Account**:
+
 - Email: `test-organizer@flagfitpro.com`
 - Password: `TestOrganizer123!`
 - Role: `organizer`
@@ -56,12 +58,14 @@ Create test users in Supabase Dashboard:
 **Objective**: Verify magic link authentication flow
 
 **Steps**:
+
 1. Navigate to `http://localhost:4200/login`
 2. Look for "Magic Link" or "Send Email Link" option
 3. Enter email: `test-player@flagfitpro.com`
 4. Click "Send Magic Link"
 
 **Verification**:
+
 - [ ] Toast notification: "Check your email for magic link"
 - [ ] No errors in browser console
 - [ ] Navigate to Supabase Dashboard → Authentication → Logs
@@ -69,11 +73,13 @@ Create test users in Supabase Dashboard:
 - [ ] Copy magic link URL from logs (if email not configured)
 
 **Click Magic Link**:
+
 1. Paste URL in browser (or click from email)
 2. Should redirect to `/auth/callback` with tokens in URL hash
 3. Verify URL contains: `access_token=...&refresh_token=...&type=magiclink`
 
 **Expected Result**:
+
 - [ ] `AuthCallbackComponent` displays "Signing you in..."
 - [ ] Console log: `[Auth] Session established successfully`
 - [ ] Redirect to `/dashboard` after ~1.5 seconds
@@ -82,7 +88,7 @@ Create test users in Supabase Dashboard:
 - [ ] `currentUser()` signal populated (check DevTools → Components)
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -91,12 +97,14 @@ Create test users in Supabase Dashboard:
 **Objective**: Verify magic link flow on mobile viewport
 
 **Steps**:
+
 1. Open Chrome DevTools (Cmd+Option+I / Ctrl+Shift+I)
 2. Click "Toggle device toolbar" (Cmd+Shift+M / Ctrl+Shift+M)
 3. Select "iPhone 12" (390 × 844)
 4. Repeat TEST 1 steps
 
 **Verification**:
+
 - [ ] Login page is responsive (buttons not cut off)
 - [ ] Email input is usable (no zoom issues)
 - [ ] Magic link button is tappable (>44px touch target)
@@ -104,11 +112,12 @@ Create test users in Supabase Dashboard:
 - [ ] Auth callback page responsive
 
 **Also test on**:
+
 - [ ] Pixel 5 (393 × 851)
 - [ ] iPad (768 × 1024)
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -117,6 +126,7 @@ Create test users in Supabase Dashboard:
 **Objective**: Verify traditional email/password login
 
 **Steps**:
+
 1. Navigate to `http://localhost:4200/login`
 2. Enter email: `test-player@flagfitpro.com`
 3. Enter password: `TestPlayer123!`
@@ -124,6 +134,7 @@ Create test users in Supabase Dashboard:
 5. Click "Sign In"
 
 **Verification**:
+
 - [ ] Form validation works (try invalid email first)
 - [ ] Password field is masked (type="password")
 - [ ] Submit button disabled when form invalid
@@ -133,12 +144,12 @@ Create test users in Supabase Dashboard:
 - [ ] Check localStorage for Supabase session:
   ```javascript
   // In browser console:
-  JSON.parse(localStorage.getItem('sb-[project-id]-auth-token'))
+  JSON.parse(localStorage.getItem("sb-[project-id]-auth-token"));
   // Should show: { access_token, refresh_token, expires_at, ... }
   ```
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -147,6 +158,7 @@ Create test users in Supabase Dashboard:
 **Objective**: Verify new user registration
 
 **Steps**:
+
 1. Navigate to `http://localhost:4200/register`
 2. Fill form:
    - Full Name: `Test User [timestamp]`
@@ -157,6 +169,7 @@ Create test users in Supabase Dashboard:
 3. Click "Create Account"
 
 **Verification**:
+
 - [ ] Password strength indicator shows strength
 - [ ] Password confirmation validates match
 - [ ] Email format validated
@@ -166,7 +179,7 @@ Create test users in Supabase Dashboard:
 - [ ] Email confirmation sent (check Supabase logs)
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -175,6 +188,7 @@ Create test users in Supabase Dashboard:
 **Objective**: Verify session persists across page refreshes
 
 **Steps**:
+
 1. Login as `test-player@flagfitpro.com`
 2. Verify logged in (see user menu)
 3. **Close browser tab** (not entire browser)
@@ -182,6 +196,7 @@ Create test users in Supabase Dashboard:
 5. Navigate to dashboard
 
 **Verification**:
+
 - [ ] User still logged in (no redirect to /login)
 - [ ] User menu shows correct name
 - [ ] Dashboard loads without auth prompt
@@ -189,7 +204,7 @@ Create test users in Supabase Dashboard:
 - [ ] `localStorage` still has valid session token
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -200,30 +215,39 @@ Create test users in Supabase Dashboard:
 **Note**: This test requires waiting ~55 minutes or mocking time
 
 **Steps**:
+
 1. Login as test user
 2. Open browser console
 3. Run:
    ```javascript
-   const { data: { session } } = await supabase.auth.getSession()
-   console.log('Expires at:', new Date(session.expires_at * 1000))
-   console.log('In:', Math.floor((session.expires_at * 1000 - Date.now()) / 60000), 'minutes')
+   const {
+     data: { session },
+   } = await supabase.auth.getSession();
+   console.log("Expires at:", new Date(session.expires_at * 1000));
+   console.log(
+     "In:",
+     Math.floor((session.expires_at * 1000 - Date.now()) / 60000),
+     "minutes",
+   );
    ```
 4. Wait for ~55 minutes (or until 5 minutes before expiry)
 5. Make an API call (navigate to analytics page)
 
 **Verification**:
+
 - [ ] Before expiry, console logs: `[Supabase] Session token refreshed automatically`
 - [ ] No logout or auth error
 - [ ] User can continue working seamlessly
 - [ ] New expiry time extended by 1 hour
 
 **Alternative Quick Test**:
+
 1. Manually set session expiry to near future in localStorage
 2. Trigger a Supabase call
 3. Verify refresh happens
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -232,16 +256,18 @@ Create test users in Supabase Dashboard:
 **Objective**: Verify handling of expired/invalid session
 
 **Steps**:
+
 1. Login as test user
 2. Open browser console
 3. Clear session:
    ```javascript
-   localStorage.clear()
-   sessionStorage.clear()
+   localStorage.clear();
+   sessionStorage.clear();
    ```
 4. Try to navigate to `/dashboard`
 
 **Verification**:
+
 - [ ] Redirected to `/login`
 - [ ] URL contains `returnUrl` parameter: `/login?returnUrl=%2Fdashboard`
 - [ ] No error thrown in console
@@ -249,7 +275,7 @@ Create test users in Supabase Dashboard:
 - [ ] After login, redirected to original destination (dashboard)
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -258,10 +284,12 @@ Create test users in Supabase Dashboard:
 **Objective**: Verify player role permissions
 
 **Steps**:
+
 1. Login as `test-player@flagfitpro.com`
 2. Try to access each route below
 
 **Can Access** (should load successfully):
+
 - [ ] `/dashboard` - Player dashboard
 - [ ] `/training/log` - Log training session
 - [ ] `/analytics` - View analytics
@@ -269,20 +297,22 @@ Create test users in Supabase Dashboard:
 - [ ] `/ai-coach` - Chat with AI
 
 **Cannot Access** (should redirect to /login or /unauthorized):
+
 - [ ] `/organizer/teams` - Organizer-only route
 - [ ] `/organizer/events` - Organizer-only route
 - [ ] `/coach/inbox` - Coach-only route
 - [ ] `/admin/users` - Admin-only route
 
 **Verification**:
+
 ```javascript
 // In browser console:
-const user = authService.getUser()
-console.log('Role:', user.role) // Should be "player"
+const user = authService.getUser();
+console.log("Role:", user.role); // Should be "player"
 ```
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -291,30 +321,34 @@ console.log('Role:', user.role) // Should be "player"
 **Objective**: Verify organizer role permissions
 
 **Steps**:
+
 1. Logout current user
 2. Login as `test-organizer@flagfitpro.com`
 3. Try to access each route below
 
 **Can Access**:
+
 - [ ] `/dashboard` - Organizer dashboard
 - [ ] `/organizer/teams` - Manage teams
 - [ ] `/organizer/events` - Create events
 - [ ] `/analytics` - View team analytics
 
 **Cannot Access**:
+
 - [ ] `/training/log` - Players only
 - [ ] `/coach/inbox` - Coaches only
 - [ ] `/admin/users` - Admins only
 
 **Verification**:
+
 ```javascript
 // In browser console:
-const user = authService.getUser()
-console.log('Role:', user.role) // Should be "organizer"
+const user = authService.getUser();
+console.log("Role:", user.role); // Should be "organizer"
 ```
 
 **Result**: PASS / FAIL / SKIP  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -328,6 +362,7 @@ console.log('Role:', user.role) // Should be "organizer"
 For each entry below, follow these steps:
 
 #### Log Entry Steps:
+
 1. Navigate to `/training/log`
 2. Fill form with data below
 3. Click "Log Session"
@@ -342,6 +377,7 @@ For each entry below, follow these steps:
 ---
 
 #### Entry 1: Practice Session
+
 - **Date**: 2026-01-03
 - **Type**: Practice
 - **Duration**: 90 minutes
@@ -352,12 +388,13 @@ For each entry below, follow these steps:
 - **Expected Load**: 90 × 6 = **540 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load Calculated**: _____ AU  
-**Session ID in DB**: _____________
+**Actual Load Calculated**: **\_** AU  
+**Session ID in DB**: ******\_******
 
 ---
 
 #### Entry 2: Strength Training
+
 - **Date**: 2026-01-04
 - **Type**: Strength
 - **Duration**: 60 minutes
@@ -367,11 +404,12 @@ For each entry below, follow these steps:
 - **Expected Load**: 60 × 7 = **420 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
 #### Entry 3: Game Day
+
 - **Date**: 2026-01-05
 - **Type**: Game
 - **Duration**: 120 minutes
@@ -383,11 +421,12 @@ For each entry below, follow these steps:
 - **Expected Load**: 120 × 9 = **1080 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
 #### Entry 4: Recovery Session
+
 - **Date**: 2026-01-06
 - **Type**: Recovery
 - **Duration**: 30 minutes
@@ -396,11 +435,12 @@ For each entry below, follow these steps:
 - **Expected Load**: 30 × 3 = **90 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
 #### Entry 5: Speed Work
+
 - **Date**: 2026-01-07
 - **Type**: Speed
 - **Duration**: 45 minutes
@@ -410,11 +450,12 @@ For each entry below, follow these steps:
 - **Expected Load**: 45 × 8 = **360 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
 #### Entry 6: Skills Practice
+
 - **Date**: 2026-01-08
 - **Type**: Skills
 - **Duration**: 60 minutes
@@ -424,11 +465,12 @@ For each entry below, follow these steps:
 - **Expected Load**: 60 × 5 = **300 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
 #### Entry 7: Full Practice
+
 - **Date**: 2026-01-09
 - **Type**: Practice
 - **Duration**: 90 minutes
@@ -440,11 +482,12 @@ For each entry below, follow these steps:
 - **Expected Load**: 90 × 7 = **630 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
 #### Entry 8: Gym Session
+
 - **Date**: 2026-01-10
 - **Type**: Strength
 - **Duration**: 75 minutes
@@ -454,11 +497,12 @@ For each entry below, follow these steps:
 - **Expected Load**: 75 × 8 = **600 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
 #### Entry 9: Light Practice
+
 - **Date**: 2026-01-11
 - **Type**: Practice
 - **Duration**: 60 minutes
@@ -468,11 +512,12 @@ For each entry below, follow these steps:
 - **Expected Load**: 60 × 5 = **300 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
 #### Entry 10: Game Preparation
+
 - **Date**: 2026-01-12
 - **Type**: Skills
 - **Duration**: 45 minutes
@@ -482,7 +527,7 @@ For each entry below, follow these steps:
 - **Expected Load**: 45 × 6 = **270 AU**
 
 **Result**: PASS / FAIL  
-**Actual Load**: _____ AU
+**Actual Load**: **\_** AU
 
 ---
 
@@ -491,8 +536,9 @@ For each entry below, follow these steps:
 After completing all 10 entries, verify data in Supabase:
 
 **SQL Query**:
+
 ```sql
-SELECT 
+SELECT
   session_date,
   session_type,
   duration_minutes,
@@ -507,6 +553,7 @@ ORDER BY session_date ASC;
 ```
 
 **Verification Checklist**:
+
 - [ ] 10 rows returned
 - [ ] All dates correct (2026-01-03 to 2026-01-12)
 - [ ] All session types correct
@@ -515,13 +562,14 @@ ORDER BY session_date ASC;
 - [ ] Total training load: **4590 AU**
 
 **Calculation Check**:
+
 ```
 540 + 420 + 1080 + 90 + 360 + 300 + 630 + 600 + 300 + 270 = 4590 AU
 ```
 
 **Result**: PASS / FAIL  
-**Total Load in DB**: _____ AU  
-**Notes**: _______________________________________________
+**Total Load in DB**: **\_** AU  
+**Notes**: **********************\_\_\_**********************
 
 ---
 
@@ -530,10 +578,12 @@ ORDER BY session_date ASC;
 **Objective**: Verify ACWR updates correctly with new training loads
 
 **Steps**:
+
 1. After logging all 10 entries, navigate to `/dashboard` or `/analytics`
 2. Find ACWR display
 
 **Verification**:
+
 - [ ] ACWR ratio displayed (e.g., "1.2")
 - [ ] Acute load (7-day) includes recent sessions
 - [ ] Chronic load (28-day) calculated
@@ -543,6 +593,7 @@ ORDER BY session_date ASC;
   - Red: > 1.5 or < 0.8 (high risk)
 
 **Manual Calculation**:
+
 ```
 Acute Load (7-day):
 Jan 6-12 sessions: 90 + 360 + 300 + 630 + 600 + 300 + 270 = 2550 AU
@@ -555,35 +606,39 @@ ACWR = Acute / Chronic
 ```
 
 **Result**: PASS / FAIL  
-**ACWR Value**: _____  
+**ACWR Value**: **\_**  
 **Risk Zone**: GREEN / YELLOW / RED  
-**Notes**: _______________________________________________
+**Notes**: **********************\_\_\_**********************
 
 ---
 
 ## Test Summary
 
 **Total Tests**: 20  
-**Passed**: _____  
-**Failed**: _____  
-**Skipped**: _____  
+**Passed**: **\_**  
+**Failed**: **\_**  
+**Skipped**: **\_**
 
-**Success Rate**: _____%
+**Success Rate**: **\_**%
 
-**Critical Issues Found**: ___ (describe below)
+**Critical Issues Found**: \_\_\_ (describe below)
 
 ---
 
 **Issues**:
-1. _______________________________________________
-2. _______________________________________________
-3. _______________________________________________
+
+1. ***
+2. ***
+3. ***
 
 **Notes**:
-_______________________________________________
-_______________________________________________
-_______________________________________________
 
-**Tested By**: _____________  
-**Date**: _____________  
-**Sign-off**: _____________
+---
+
+---
+
+---
+
+**Tested By**: ******\_******  
+**Date**: ******\_******  
+**Sign-off**: ******\_******

@@ -108,33 +108,33 @@ async function maskDynamicContent(page: Page): Promise<void> {
     const dynamicSelectors = [
       // Timestamps and dates
       '[data-testid="timestamp"]',
-      '.timestamp',
-      'time',
-      '.date',
+      ".timestamp",
+      "time",
+      ".date",
       '[class*="time"]',
       '[class*="date"]',
       '[class*="ago"]',
-      '.relative-time',
-      '.last-updated',
-      '.updated-at',
+      ".relative-time",
+      ".last-updated",
+      ".updated-at",
       // Counters and live data
-      '.streak-count',
-      '.session-count',
+      ".streak-count",
+      ".session-count",
       '[class*="count"]',
       '[class*="streak"]',
       // Chart tooltips and dynamic badges
-      '.chart-tooltip',
-      '.p-tooltip',
+      ".chart-tooltip",
+      ".p-tooltip",
       // Notifications badges with counts
-      '.notification-badge',
-      '.badge-count',
+      ".notification-badge",
+      ".badge-count",
       // Loading spinners that might be visible
-      '.p-progressspinner',
-      '.loading-indicator',
+      ".p-progressspinner",
+      ".loading-indicator",
     ];
 
-    document.querySelectorAll(dynamicSelectors.join(', ')).forEach((el) => {
-      (el as HTMLElement).style.visibility = 'hidden';
+    document.querySelectorAll(dynamicSelectors.join(", ")).forEach((el) => {
+      (el as HTMLElement).style.visibility = "hidden";
     });
   });
 }
@@ -148,7 +148,7 @@ async function maskDynamicContent(page: Page): Promise<void> {
 test.describe.skip("Storybook Components (blocked by SB10 bug)", () => {
   test("Button - Primary variant unchanged", async ({ page }) => {
     await page.goto(
-      `${STORYBOOK_URL}/iframe.html?id=design-system-button--primary&viewMode=story`
+      `${STORYBOOK_URL}/iframe.html?id=design-system-button--primary&viewMode=story`,
     );
     const ready = await waitForStorybook(page);
     test.skip(!ready, "Story not rendering due to Storybook 10 bug");
@@ -161,7 +161,7 @@ test.describe.skip("Storybook Components (blocked by SB10 bug)", () => {
 
   test("Empty State - Default unchanged", async ({ page }) => {
     await page.goto(
-      `${STORYBOOK_URL}/iframe.html?id=components-emptystate--default&viewMode=story`
+      `${STORYBOOK_URL}/iframe.html?id=components-emptystate--default&viewMode=story`,
     );
     const ready = await waitForStorybook(page);
     test.skip(!ready, "Story not rendering due to Storybook 10 bug");
@@ -188,7 +188,7 @@ test.describe("App Page Visual Regression", () => {
       await page.goto(`${APP_URL}/dashboard`);
       await page.waitForLoadState("networkidle");
     }
-    
+
     // Now dismiss cookie banner after we're on a real page
     await dismissCookieBanner(page);
   });
@@ -289,21 +289,29 @@ test.describe("Mobile Viewport Visual Regression (375px)", () => {
     await dismissCookieBanner(page);
   });
 
-  test("Analytics page renders content on mobile (P0 fix verification)", async ({ page }) => {
+  test("Analytics page renders content on mobile (P0 fix verification)", async ({
+    page,
+  }) => {
     // This was a P0 critical bug - Analytics page was completely blank at 375px
     await page.goto(`${APP_URL}/analytics`);
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(3000); // Extra wait for deferred content
 
     // Verify content actually renders (was blank before fix)
-    const mainContent = page.locator('.analytics-container, .analytics-page, main, [class*="analytics"]').first();
+    const mainContent = page
+      .locator(
+        '.analytics-container, .analytics-page, main, [class*="analytics"]',
+      )
+      .first();
     await expect(mainContent).toBeVisible({ timeout: 10000 });
 
     // Verify page is not blank - should have visible text or components
     const hasContent = await page.evaluate(() => {
       const body = document.body;
       // Check if there's actual visible content (not just a green line)
-      const visibleElements = body.querySelectorAll('h1, h2, h3, p, .p-card, .stat-card, .metric-card, [class*="card"]');
+      const visibleElements = body.querySelectorAll(
+        'h1, h2, h3, p, .p-card, .stat-card, .metric-card, [class*="card"]',
+      );
       return visibleElements.length > 0;
     });
     expect(hasContent).toBe(true);
@@ -324,7 +332,9 @@ test.describe("Mobile Viewport Visual Regression (375px)", () => {
     await maskDynamicContent(page);
 
     // Verify stat cards have proper padding (P0 fix)
-    const statCard = page.locator('.stat-card, .metric-card, [class*="metric"]').first();
+    const statCard = page
+      .locator('.stat-card, .metric-card, [class*="metric"]')
+      .first();
     if (await statCard.isVisible({ timeout: 3000 }).catch(() => false)) {
       const padding = await statCard.evaluate((el) => {
         return window.getComputedStyle(el).padding;
@@ -393,7 +403,9 @@ test.describe("Tablet Viewport Visual Regression (768px)", () => {
     await dismissCookieBanner(page);
   });
 
-  test("Dashboard tablet layout - sidebar behavior (P1 fix)", async ({ page }) => {
+  test("Dashboard tablet layout - sidebar behavior (P1 fix)", async ({
+    page,
+  }) => {
     await page.goto(`${APP_URL}/dashboard`);
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(2000);
@@ -401,7 +413,7 @@ test.describe("Tablet Viewport Visual Regression (768px)", () => {
     // Verify sidebar X button behavior at 768px (was incorrectly showing before)
     // At 768px (tablet), close button should NOT be visible (only on mobile <768px)
     // Note: This depends on implementation - adjust assertion if needed
-    
+
     await maskDynamicContent(page);
 
     await expect(page).toHaveScreenshot("dashboard-tablet-768.png", {
@@ -430,8 +442,12 @@ test.describe("Tablet Viewport Visual Regression (768px)", () => {
 
     // Verify cards in same row have equal heights (align-items: stretch fix)
     const cardHeights = await page.evaluate(() => {
-      const cards = document.querySelectorAll('.stats-overview .p-card, .stats-overview .stat-card, .grid .p-card');
-      return Array.from(cards).slice(0, 4).map(card => (card as HTMLElement).offsetHeight);
+      const cards = document.querySelectorAll(
+        ".stats-overview .p-card, .stats-overview .stat-card, .grid .p-card",
+      );
+      return Array.from(cards)
+        .slice(0, 4)
+        .map((card) => (card as HTMLElement).offsetHeight);
     });
 
     // If we have cards in a 2-column grid, adjacent cards should have similar heights
@@ -464,7 +480,7 @@ test.describe("Component Element Screenshots", () => {
       await page.goto(`${APP_URL}/dashboard`);
       await page.waitForLoadState("networkidle");
     }
-    
+
     // Now dismiss cookie banner after we're on a real page
     await dismissCookieBanner(page);
   });
@@ -481,13 +497,21 @@ test.describe("Component Element Screenshots", () => {
 
     // Also hide welcome card personalized content (user name, greeting)
     await page.evaluate(() => {
-      document.querySelectorAll('.welcome-card h2, .welcome-card h3, .greeting, [class*="welcome"]').forEach((el) => {
-        (el as HTMLElement).style.visibility = 'hidden';
-      });
+      document
+        .querySelectorAll(
+          '.welcome-card h2, .welcome-card h3, .greeting, [class*="welcome"]',
+        )
+        .forEach((el) => {
+          (el as HTMLElement).style.visibility = "hidden";
+        });
     });
 
     // Capture first card on dashboard (skip cards with highly dynamic content)
-    const card = page.locator("p-card:not(.missing-data-card):not(.welcome-card), .p-card:not(.missing-data-card):not(.welcome-card)").first();
+    const card = page
+      .locator(
+        "p-card:not(.missing-data-card):not(.welcome-card), .p-card:not(.missing-data-card):not(.welcome-card)",
+      )
+      .first();
     if (await card.isVisible({ timeout: 5000 }).catch(() => false)) {
       await expect(card).toHaveScreenshot("primeng-card.png", {
         maxDiffPixels: 5000, // Allow for dynamic content within card
@@ -504,9 +528,7 @@ test.describe("Component Element Screenshots", () => {
     await page.waitForTimeout(2000);
 
     // Capture a primary button
-    const primaryButton = page
-      .locator("button.p-button, app-button")
-      .first();
+    const primaryButton = page.locator("button.p-button, app-button").first();
     if (await primaryButton.isVisible({ timeout: 5000 }).catch(() => false)) {
       await expect(primaryButton).toHaveScreenshot("button-in-context.png", {
         maxDiffPixels: 100, // Allow for minor rendering variations

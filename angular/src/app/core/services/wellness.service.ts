@@ -321,7 +321,10 @@ export class WellnessService {
       notes: data.notes,
     };
 
-    this.logger.info("[Wellness] Inserting wellness entry:", JSON.stringify(wellnessEntry));
+    this.logger.info(
+      "[Wellness] Inserting wellness entry:",
+      JSON.stringify(wellnessEntry),
+    );
 
     return from(
       this.supabaseService.client
@@ -332,8 +335,13 @@ export class WellnessService {
     ).pipe(
       map(({ data: insertedData, error }) => {
         if (error) {
-          const errorMessage = error?.message || error?.details || JSON.stringify(error);
-          this.logger.error("[Wellness] Error logging entry:", errorMessage, error);
+          const errorMessage =
+            error?.message || error?.details || JSON.stringify(error);
+          this.logger.error(
+            "[Wellness] Error logging entry:",
+            errorMessage,
+            error,
+          );
           throw new Error(errorMessage);
         }
         this.logger.success("[Wellness] Entry logged:", insertedData?.id);
@@ -363,8 +371,13 @@ export class WellnessService {
         }
       }),
       catchError((error) => {
-        const errorMessage = error?.message || error?.details || JSON.stringify(error);
-        this.logger.error("[Wellness] Failed to log entry:", errorMessage, error);
+        const errorMessage =
+          error?.message || error?.details || JSON.stringify(error);
+        this.logger.error(
+          "[Wellness] Failed to log entry:",
+          errorMessage,
+          error,
+        );
         return of({ success: false, error: errorMessage });
       }),
     );
@@ -372,7 +385,7 @@ export class WellnessService {
 
   /**
    * Get wellness score (average of all metrics)
-   * 
+   *
    * For a full evidence-based readiness score, use ReadinessService.calculateToday().
    * This method provides a quick client-side average suitable for UI display.
    */

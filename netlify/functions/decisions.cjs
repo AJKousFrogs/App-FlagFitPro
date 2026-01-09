@@ -8,9 +8,7 @@ const {
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
-const {
-  guardMerlinRequest,
-} = require("./utils/merlin-guard.cjs");
+const { guardMerlinRequest } = require("./utils/merlin-guard.cjs");
 
 /**
  * Verify user is a staff member with decision-making access
@@ -130,10 +128,7 @@ function calculateReviewPriority(
   }
 
   // Normal: Most decisions
-  if (
-    reviewTrigger.includes("in_7d") ||
-    reviewTrigger.includes("after_next")
-  ) {
+  if (reviewTrigger.includes("in_7d") || reviewTrigger.includes("after_next")) {
     return "normal";
   }
 
@@ -200,10 +195,7 @@ async function getDecisions(userId, filters = {}) {
   }
 
   if (filters.lowConfidence) {
-    query = query.lt(
-      "decision_basis->>confidence",
-      "0.7",
-    );
+    query = query.lt("decision_basis->>confidence", "0.7");
   }
 
   if (filters.dateFrom) {
@@ -265,18 +257,12 @@ async function getDecisionStats(userId) {
     }
 
     // Count due for review
-    if (
-      decision.status === "active" &&
-      new Date(decision.review_date) <= now
-    ) {
+    if (decision.status === "active" && new Date(decision.review_date) <= now) {
       stats.dueForReview++;
     }
 
     // Count overdue
-    if (
-      decision.status === "active" &&
-      new Date(decision.review_date) < now
-    ) {
+    if (decision.status === "active" && new Date(decision.review_date) < now) {
       stats.overdue++;
     }
 
@@ -511,8 +497,11 @@ async function reviewDecision(decisionId, userId, reviewData) {
     updateData.status = "superseded";
     updateData.superseded_by = null; // Will be set after new decision is created
 
-    const { data: createdDecision, error: createError } =
-      await supabaseAdmin.from("decision_ledger").insert(newDecision).select().single();
+    const { data: createdDecision, error: createError } = await supabaseAdmin
+      .from("decision_ledger")
+      .insert(newDecision)
+      .select()
+      .single();
 
     if (createError) {
       throw createError;
@@ -627,10 +616,7 @@ async function handleRequest(event, _context, { userId }) {
     }
 
     // POST /api/decisions/:id/review - Review decision
-    if (
-      event.httpMethod === "POST" &&
-      path.match(/^[a-f0-9-]{36}\/review$/)
-    ) {
+    if (event.httpMethod === "POST" && path.match(/^[a-f0-9-]{36}\/review$/)) {
       const decisionId = path.split("/")[0];
       const reviewedDecision = await reviewDecision(decisionId, userId, body);
       return createSuccessResponse(reviewedDecision);
@@ -674,4 +660,3 @@ exports.handler = async (event, context) => {
     handler: handleRequest,
   });
 };
-

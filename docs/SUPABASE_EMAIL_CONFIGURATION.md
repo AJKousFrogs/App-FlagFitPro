@@ -58,13 +58,13 @@ Configure your own SMTP server for reliable email delivery.
 
 ### Recommended Providers:
 
-| Provider | Free Tier | Setup Difficulty | Best For |
-|----------|-----------|------------------|----------|
-| **SendGrid** | 100 emails/day | Easy | Production |
-| **Mailgun** | 1,000 emails/month | Easy | Production |
-| **AWS SES** | 62,000 emails/month | Medium | High volume |
-| **Postmark** | 100 emails/month | Easy | Transactional |
-| **Mailhog** | Unlimited | Easy | Local testing |
+| Provider     | Free Tier           | Setup Difficulty | Best For      |
+| ------------ | ------------------- | ---------------- | ------------- |
+| **SendGrid** | 100 emails/day      | Easy             | Production    |
+| **Mailgun**  | 1,000 emails/month  | Easy             | Production    |
+| **AWS SES**  | 62,000 emails/month | Medium           | High volume   |
+| **Postmark** | 100 emails/month    | Easy             | Transactional |
+| **Mailhog**  | Unlimited           | Easy             | Local testing |
 
 ### Setup Steps (SendGrid Example):
 
@@ -82,6 +82,7 @@ Configure your own SMTP server for reliable email delivery.
    - Enable **Custom SMTP**
 
 3. **Enter SMTP Details**:
+
    ```
    SMTP Host: smtp.sendgrid.net
    SMTP Port: 587
@@ -113,22 +114,25 @@ Mailhog captures emails locally without sending them.
 ### Setup Steps:
 
 1. **Install Mailhog**:
+
    ```bash
    # macOS
    brew install mailhog
-   
+
    # Or use Docker
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
    ```
 
 2. **Start Mailhog**:
+
    ```bash
    mailhog
-   
+
    # Access web UI at: http://localhost:8025
    ```
 
 3. **Configure Supabase (Local)**:
+
    ```env
    # In your .env file:
    SMTP_HOST=localhost
@@ -140,13 +144,14 @@ Mailhog captures emails locally without sending them.
    ```
 
 4. **Update Supabase Local Config**:
+
    ```bash
    # Edit: supabase/config.toml
-   
+
    [auth.email]
    enable_signup = true
    enable_confirmations = true
-   
+
    [auth.email.smtp]
    enabled = true
    host = "localhost"
@@ -211,6 +216,7 @@ Customize your magic link email templates in Supabase:
    - Supabase Dashboard → **Authentication → Email Templates**
 
 2. **Customize Magic Link Template**:
+
    ```html
    <h2>Magic Link Sign In</h2>
    <p>Click the link below to sign in to FlagFit Pro:</p>
@@ -239,6 +245,7 @@ Customize your magic link email templates in Supabase:
 ### Manual Test:
 
 1. **Navigate to Login Page**:
+
    ```
    http://localhost:4200/login
    ```
@@ -260,9 +267,9 @@ Customize your magic link email templates in Supabase:
 5. **Verify Session**:
    ```javascript
    // In browser console:
-   const { data } = await supabase.auth.getSession()
-   console.log('User:', data.session?.user)
-   console.log('Expires at:', new Date(data.session?.expires_at * 1000))
+   const { data } = await supabase.auth.getSession();
+   console.log("User:", data.session?.user);
+   console.log("Expires at:", new Date(data.session?.expires_at * 1000));
    ```
 
 ### Automated Test:
@@ -279,15 +286,18 @@ npm run test:e2e -- tests/e2e/login-to-log-flow.spec.js
 ### Issue: Magic link not arriving
 
 **Causes**:
+
 - SMTP not configured
 - Email in spam folder
 - Wrong SMTP credentials
 - Domain not verified
 
 **Solutions**:
+
 1. Check Supabase logs for send errors
 2. Verify SMTP settings in Supabase Dashboard
 3. Test SMTP credentials with curl:
+
    ```bash
    curl --url 'smtp://smtp.sendgrid.net:587' \
      --mail-from 'noreply@yourdomain.com' \
@@ -297,20 +307,23 @@ npm run test:e2e -- tests/e2e/login-to-log-flow.spec.js
    From: FlagFit Pro <noreply@yourdomain.com>
    To: test@example.com
    Subject: Test Email
-   
+
    This is a test email.
    EOF
    ```
+
 4. Check spam folder
 5. Whitelist sender email in email provider
 
 ### Issue: Magic link expired
 
 **Causes**:
+
 - Link older than 1 hour (default expiry)
 - Token already used
 
 **Solutions**:
+
 1. Request new magic link
 2. Adjust expiry time in Supabase (max 24 hours):
    - Dashboard → Auth Settings → JWT Expiry
@@ -319,10 +332,12 @@ npm run test:e2e -- tests/e2e/login-to-log-flow.spec.js
 ### Issue: Redirect not working after click
 
 **Causes**:
+
 - Redirect URL not whitelisted in Supabase
 - Wrong callback URL in code
 
 **Solutions**:
+
 1. Add redirect URLs to Supabase:
    - Auth Settings → URL Configuration → Redirect URLs
    - Add: `http://localhost:4200/auth/callback`
@@ -332,11 +347,13 @@ npm run test:e2e -- tests/e2e/login-to-log-flow.spec.js
 ### Issue: Token invalid or expired
 
 **Causes**:
+
 - URL tampered with
 - Session expired server-side
 - Clock skew between client/server
 
 **Solutions**:
+
 1. Request new magic link
 2. Clear browser localStorage/sessionStorage
 3. Check server time is correct:
@@ -394,14 +411,14 @@ Before deploying to production:
 
 ## Quick Reference
 
-| Task | Command/URL |
-|------|-------------|
-| View Auth Logs | Supabase Dashboard → Authentication → Logs |
-| Configure SMTP | Project Settings → Auth → SMTP Settings |
-| Test Local Email | http://localhost:8025 (Mailhog) |
-| Email Templates | Authentication → Email Templates |
-| Redirect URLs | Auth Settings → URL Configuration |
-| Test Magic Link | POST /auth/v1/magiclink (Supabase API) |
+| Task             | Command/URL                                |
+| ---------------- | ------------------------------------------ |
+| View Auth Logs   | Supabase Dashboard → Authentication → Logs |
+| Configure SMTP   | Project Settings → Auth → SMTP Settings    |
+| Test Local Email | http://localhost:8025 (Mailhog)            |
+| Email Templates  | Authentication → Email Templates           |
+| Redirect URLs    | Auth Settings → URL Configuration          |
+| Test Magic Link  | POST /auth/v1/magiclink (Supabase API)     |
 
 ---
 

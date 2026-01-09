@@ -11,13 +11,13 @@
   padding: var(--space-5, 20px);
   margin-bottom: var(--space-6, 32px);
   position: relative;
-  
+
   // Focus styles for keyboard navigation
   &:focus-visible {
     outline: 3px solid rgba(var(--primitive-error-500-rgb), 0.4);
     outline-offset: 2px;
   }
-  
+
   @media (max-width: 640px) {
     padding: var(--space-4, 16px);
     margin-bottom: var(--space-4, 16px);
@@ -29,7 +29,7 @@
   align-items: flex-start;
   gap: var(--space-3, 12px);
   margin-bottom: var(--space-4, 16px);
-  
+
   i {
     color: var(--primitive-error-600);
     font-size: var(--font-size-h3, 20px);
@@ -44,7 +44,7 @@
   font-weight: var(--font-weight-bold, 700);
   color: var(--primitive-error-900);
   line-height: var(--line-height-tight, 1.25);
-  
+
   @media (max-width: 640px) {
     font-size: var(--font-size-h4, 18px);
   }
@@ -76,18 +76,18 @@
   cursor: pointer;
   text-decoration: underline;
   transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
-  
+
   &:hover {
     color: var(--primitive-error-800);
     text-decoration: none;
   }
-  
+
   &:focus-visible {
     outline: 2px solid var(--primitive-error-600);
     outline-offset: 2px;
     border-radius: var(--radius-sm, 4px);
   }
-  
+
   strong {
     font-weight: var(--font-weight-semibold, 600);
   }
@@ -103,7 +103,7 @@
   font-size: var(--font-size-h4, 14px);
   color: var(--color-text-secondary);
   border-left: 3px solid var(--primitive-warning-400);
-  
+
   i {
     color: var(--primitive-warning-600);
     font-size: var(--font-body-sm, 14px);
@@ -123,12 +123,13 @@
   cursor: pointer;
   padding: var(--space-2, 8px);
   border-radius: var(--radius-sm, 4px);
-  transition: background-color var(--motion-fast, 150ms) var(--ease-standard, ease);
-  
+  transition: background-color var(--motion-fast, 150ms)
+    var(--ease-standard, ease);
+
   &:hover {
     background: var(--primitive-error-100);
   }
-  
+
   &:focus-visible {
     outline: 2px solid var(--primitive-error-600);
     outline-offset: 2px;
@@ -141,19 +142,19 @@
     background: var(--color-status-error-light);
     border-color: var(--primitive-error-500);
   }
-  
+
   .error-summary-title {
     color: var(--primitive-error-200);
   }
-  
+
   .error-link {
     color: var(--primitive-error-300);
-    
+
     &:hover {
       color: var(--primitive-error-200);
     }
   }
-  
+
   .error-suggestion {
     background: var(--color-border-subtle);
     color: var(--color-text-secondary);
@@ -165,7 +166,7 @@
   .error-summary {
     border-width: 4px;
   }
-  
+
   .error-link {
     text-decoration: underline;
     font-weight: var(--font-weight-bold, 700);

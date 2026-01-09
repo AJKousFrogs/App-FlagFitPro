@@ -967,7 +967,8 @@
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
-    animation: dialog-scale-in 250ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: dialog-scale-in 250ms
+      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
   }
 
   @keyframes dialog-scale-in {
@@ -1276,7 +1277,8 @@
   .p-toast-message {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    animation: toast-slide-in 250ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: toast-slide-in 250ms
+      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     overflow: hidden;
   }
 
@@ -1388,7 +1390,8 @@
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--color-border-secondary);
     overflow: hidden;
-    animation: menu-scale-in 180ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: menu-scale-in 180ms
+      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     transform-origin: top left;
   }
 
@@ -1640,7 +1643,8 @@
     background: var(--surface-primary);
     margin-top: 4px;
     overflow: hidden;
-    animation: dropdown-scale-in 180ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: dropdown-scale-in 180ms
+      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     transform-origin: top center;
   }
 
@@ -1794,7 +1798,8 @@
     background: var(--surface-primary);
     margin-top: 4px;
     overflow: hidden;
-    animation: dropdown-scale-in 180ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: dropdown-scale-in 180ms
+      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     transform-origin: top center;
   }
 
@@ -2073,7 +2078,8 @@
         border-color: var(--ds-primary-green);
 
         .p-checkbox-icon {
-          animation: checkbox-check 200ms var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+          animation: checkbox-check 200ms
+            var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
         }
       }
     }
@@ -2109,7 +2115,8 @@
 
         .p-radiobutton-icon {
           background: var(--ds-primary-green);
-          animation: radio-select 200ms var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+          animation: radio-select 200ms
+            var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
         }
       }
     }
@@ -2159,8 +2166,11 @@
   .p-badge {
     border-radius: var(--radius-md);
     font-weight: var(--font-weight-semibold);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-    animation: badge-pop-in 250ms var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.06);
+    animation: badge-pop-in 250ms
+      var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
   }
 
   @keyframes badge-pop-in {
@@ -2217,7 +2227,9 @@
     border-radius: var(--radius-md, 8px);
 
     /* Raised effect with shadow */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.06);
     text-decoration: none;
     letter-spacing: 0;
     white-space: nowrap;
@@ -2736,7 +2748,8 @@
 
   .p-accordion-content {
     padding: var(--space-5);
-    animation: accordion-expand 250ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: accordion-expand 250ms
+      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
   }
 
   @keyframes accordion-expand {
@@ -3108,11 +3121,13 @@
     box-shadow: var(--shadow-xl);
 
     &.p-sidebar-left {
-      animation: sidebar-slide-left 280ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+      animation: sidebar-slide-left 280ms
+        var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     }
 
     &.p-sidebar-right {
-      animation: sidebar-slide-right 280ms var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+      animation: sidebar-slide-right 280ms
+        var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
     }
   }
 

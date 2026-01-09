@@ -19,7 +19,8 @@ export const ERROR_MESSAGES = {
 
   // Network
   NETWORK: "Network error. Please check your connection and try again.",
-  OFFLINE: "You're offline. Actions will be synced when connection is restored.",
+  OFFLINE:
+    "You're offline. Actions will be synced when connection is restored.",
   TIMEOUT: "Request timed out. Please try again.",
 
   // Authentication & Authorization
@@ -33,7 +34,8 @@ export const ERROR_MESSAGES = {
 
   // Server Errors
   SERVER_ERROR: "Server error. Please try again later.",
-  SERVICE_UNAVAILABLE: "Service is currently unavailable. Please try again later.",
+  SERVICE_UNAVAILABLE:
+    "Service is currently unavailable. Please try again later.",
   BAD_GATEWAY: "Service temporarily unavailable. Please try again.",
 
   // Client Errors

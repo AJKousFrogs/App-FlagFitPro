@@ -12,15 +12,15 @@ test.describe("Login to Training Log Flow", () => {
   async function loginUser(page, email, password) {
     await page.goto("/login");
     await page.waitForSelector("app-login", { timeout: 10000 });
-    
+
     // Fill login form
     await page.fill("#email", email);
     await page.fill("#password", password);
-    
+
     // Submit
     const submitButton = page.locator("button[type='submit']");
     await submitButton.click();
-    
+
     // Wait for dashboard
     await page.waitForURL(/\/dashboard/, { timeout: 10000 });
   }
@@ -41,11 +41,11 @@ test.describe("Login to Training Log Flow", () => {
       // Step 1: Login
       await page.goto("/login");
       await page.waitForSelector("app-login", { timeout: 10000 });
-      
+
       // Use demo credentials (pre-filled in dev mode)
       const email = await page.inputValue("#email");
       const password = await page.inputValue("#password");
-      
+
       // If not pre-filled, fill manually
       if (!email) {
         await page.fill("#email", "test@flagfitpro.com");
@@ -53,7 +53,7 @@ test.describe("Login to Training Log Flow", () => {
       if (!password) {
         await page.fill("#password", "TestDemo123!");
       }
-      
+
       // Submit login
       const submitButton = page.locator("button[type='submit']");
       await submitButton.click();
@@ -65,7 +65,7 @@ test.describe("Login to Training Log Flow", () => {
         // If auth fails in test env, that's okay - document it
         const currentUrl = page.url();
         console.log("Note: Auth redirect expected but URL is:", currentUrl);
-        
+
         // For now, navigate directly (simulating authenticated state)
         await page.goto("/training/log");
       }
@@ -80,21 +80,19 @@ test.describe("Login to Training Log Flow", () => {
           await page.goto("/training/log");
         }
       }
-      
+
       // Wait for training log page
       await page.waitForSelector("app-training-log", { timeout: 10000 });
 
       // Step 4: Verify form elements visible
-      await expect(
-        page.locator(".session-types-grid")
-      ).toBeVisible();
-      
+      await expect(page.locator(".session-types-grid")).toBeVisible();
+
       // Step 5: Fill training session form
       // Select session type (Practice)
-      const practiceCard = page.locator(
-        ".session-type-card"
-      ).filter({ hasText: "Practice" });
-      
+      const practiceCard = page
+        .locator(".session-type-card")
+        .filter({ hasText: "Practice" });
+
       if (await practiceCard.isVisible()) {
         await practiceCard.click();
       }
@@ -114,7 +112,7 @@ test.describe("Login to Training Log Flow", () => {
       const logButton = page.locator("button").filter({
         hasText: "Log Session",
       });
-      
+
       if (await logButton.isVisible()) {
         await logButton.click();
 
@@ -125,7 +123,9 @@ test.describe("Login to Training Log Flow", () => {
           console.log("✅ Redirected to dashboard after log");
         } catch {
           // May show loading or toast instead
-          console.log("Note: Dashboard redirect not detected, form may still be processing");
+          console.log(
+            "Note: Dashboard redirect not detected, form may still be processing",
+          );
         }
       }
     });
@@ -134,14 +134,16 @@ test.describe("Login to Training Log Flow", () => {
       page,
     }) => {
       await page.goto("/training/log");
-      
+
       // Wait for page load
       try {
         await page.waitForSelector("app-training-log", { timeout: 5000 });
       } catch {
         // May redirect to login - that's expected behavior
         if (page.url().includes("/login")) {
-          console.log("Redirected to login (expected for unauthenticated access)");
+          console.log(
+            "Redirected to login (expected for unauthenticated access)",
+          );
           return;
         }
       }
@@ -152,7 +154,7 @@ test.describe("Login to Training Log Flow", () => {
         const submitButton = page.locator("button").filter({
           hasText: "Log Session",
         });
-        
+
         // Button should be disabled or form should show errors
         if (await submitButton.isVisible()) {
           const isDisabled = await submitButton.isDisabled();
@@ -163,7 +165,7 @@ test.describe("Login to Training Log Flow", () => {
 
     test("should calculate training load correctly", async ({ page }) => {
       await page.goto("/training/log");
-      
+
       try {
         await page.waitForSelector("app-training-log", { timeout: 5000 });
       } catch {
@@ -184,7 +186,7 @@ test.describe("Login to Training Log Flow", () => {
 
         // RPE defaults to 5 (check calculated load)
         const loadValue = page.locator(".load-value");
-        
+
         // Should show 60 * 5 = 300 AU (if RPE is 5)
         // We just verify it contains "AU" since actual calc depends on RPE
         if (await loadValue.isVisible()) {
@@ -197,15 +199,15 @@ test.describe("Login to Training Log Flow", () => {
   test.describe("Training Log Form Validation", () => {
     test("should require session type selection", async ({ page }) => {
       await page.goto("/training/log");
-      
+
       try {
         await page.waitForSelector("app-training-log", { timeout: 5000 });
-        
+
         // Submit button should be disabled without session type
         const submitButton = page.locator("button").filter({
           hasText: "Log Session",
         });
-        
+
         if (await submitButton.isVisible()) {
           // Should be disabled if form is invalid
           const isDisabled = await submitButton.isDisabled();
@@ -219,20 +221,20 @@ test.describe("Login to Training Log Flow", () => {
 
     test("should validate duration range (1-300 minutes)", async ({ page }) => {
       await page.goto("/training/log");
-      
+
       try {
         await page.waitForSelector("app-training-log", { timeout: 5000 });
-        
+
         const durationInput = page.locator("#duration");
         if (await durationInput.isVisible()) {
           // Try to set invalid duration
           await durationInput.fill("0");
-          
+
           // Form should show validation error or prevent submission
           const submitButton = page.locator("button").filter({
             hasText: "Log Session",
           });
-          
+
           if (await submitButton.isVisible()) {
             const isDisabled = await submitButton.isDisabled();
             expect(isDisabled).toBe(true);
@@ -262,7 +264,7 @@ test.describe("Login to Training Log Flow", () => {
       // Should redirect to login
       await page.waitForURL(/\/login/, { timeout: 10000 });
       await expect(page.locator("h1.login-title")).toContainText(
-        "Sign in to FlagFit Pro"
+        "Sign in to FlagFit Pro",
       );
     });
 
@@ -323,7 +325,7 @@ test.describe("Login to Training Log Flow", () => {
     test("should maintain session after page refresh", async ({ page }) => {
       // This test documents expected behavior
       // In real Supabase auth, session persists in localStorage
-      
+
       await page.goto("/login");
       await page.waitForSelector("app-login", { timeout: 10000 });
 
@@ -337,7 +339,7 @@ test.describe("Login to Training Log Flow", () => {
 
       // Token should still be present
       const token = await page.evaluate(() =>
-        localStorage.getItem("authToken")
+        localStorage.getItem("authToken"),
       );
       expect(token).toBe("test-token");
     });

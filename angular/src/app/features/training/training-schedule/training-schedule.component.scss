@@ -116,14 +116,13 @@
   app-card-shell:last-child {
     grid-column: 2;
     grid-row: 1 / -1; // Span all rows
-    
+
     @media (max-width: 767px) {
       grid-column: 1;
       grid-row: auto;
     }
   }
 }
-
 
 // ================================================================
 // DATE PICKER - MOBILE OPTIMIZED
@@ -261,7 +260,12 @@
   border-left: 4px solid var(--ds-primary-green);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 
   &:hover {
     background: var(--surface-tertiary);
@@ -278,7 +282,7 @@
 
 .session-item-skeleton {
   cursor: default;
-  
+
   &:hover {
     transform: none;
     box-shadow: none;
@@ -343,22 +347,22 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-badge);
   font-weight: var(--font-weight-medium);
-  
+
   &.status-completed {
     background: var(--color-status-success-subtle);
     color: var(--color-status-success);
   }
-  
+
   &.status-scheduled {
     background: var(--ds-primary-green-subtle);
     color: var(--ds-primary-green);
   }
-  
+
   &.status-in_progress {
     background: var(--color-status-warning-subtle);
     color: var(--color-status-warning);
   }
-  
+
   &.status-missed {
     background: var(--color-status-error-subtle);
     color: var(--color-status-error);
@@ -383,12 +387,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  
+
   strong {
     font-size: var(--font-size-body);
     color: var(--color-text-primary);
   }
-  
+
   p {
     margin: 0;
     font-size: var(--font-size-h4);
@@ -439,10 +443,10 @@
 
   @media (max-width: 639px) {
     width: 100%;
-    
+
     app-button {
       flex: 1;
-      
+
       button {
         width: 100%;
       }
@@ -471,7 +475,12 @@
   background: var(--surface-card);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-md);
-  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   cursor: pointer;
 
   &:hover {
@@ -568,10 +577,10 @@
   // Mobile: Stack buttons vertically for better touch targets
   @media (max-width: 639px) {
     flex-direction: column;
-    
+
     app-button {
       width: 100%;
-      
+
       button {
         width: 100%;
         justify-content: center;
@@ -754,19 +763,19 @@
 
   i {
     font-size: var(--font-size-body);
-    
+
     &.legend-completed {
       color: var(--primitive-success-500);
     }
-    
+
     &.legend-scheduled {
       color: var(--ds-primary-green);
     }
-    
+
     &.legend-in-progress {
       color: var(--primitive-warning-500);
     }
-    
+
     &.legend-missed {
       color: var(--primitive-error-500);
     }
@@ -777,7 +786,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  
+
   label {
     font-size: var(--font-size-h4);
     color: var(--color-text-primary);
@@ -856,10 +865,10 @@
   @media (max-width: 639px) {
     width: 100%;
     justify-content: space-between;
-    
+
     app-button {
       flex: 1;
-      
+
       button {
         width: 100%;
       }

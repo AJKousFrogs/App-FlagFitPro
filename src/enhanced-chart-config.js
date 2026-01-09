@@ -124,7 +124,7 @@ export class EnhancedChartConfig {
       onClick: (e, legendItem, legend) => {
         // Toggle dataset visibility
         const index = legendItem.datasetIndex;
-        const {chart} = legend;
+        const { chart } = legend;
         const meta = chart.getDatasetMeta(index);
 
         meta.hidden =
@@ -147,7 +147,7 @@ export class EnhancedChartConfig {
     }
 
     container.textContent = "";
-    const {datasets} = chart.data;
+    const { datasets } = chart.data;
 
     datasets.forEach((dataset, index) => {
       const meta = chart.getDatasetMeta(index);

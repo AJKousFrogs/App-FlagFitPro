@@ -4,7 +4,10 @@
  */
 
 // Logger stub for environments where logger is not available
-const logger = typeof window !== 'undefined' && window.console ? console : { warn: () => {}, error: () => {} };
+const logger =
+  typeof window !== "undefined" && window.console
+    ? console
+    : { warn: () => {}, error: () => {} };
 
 /**
  * Escape HTML special characters to prevent XSS

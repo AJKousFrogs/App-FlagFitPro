@@ -12,7 +12,13 @@
  * - Age-adjusted recommendations
  */
 
-import { ChangeDetectionStrategy, Component, OnInit, inject, computed } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  computed,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";

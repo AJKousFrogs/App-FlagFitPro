@@ -391,7 +391,9 @@ export class RegisterComponent {
             // Always send new users to onboarding first
             this.router.navigate(["/onboarding"]);
           } else {
-            this.toastService.error(response.error || TOAST.ERROR.REGISTRATION_FAILED);
+            this.toastService.error(
+              response.error || TOAST.ERROR.REGISTRATION_FAILED,
+            );
           }
           this.isLoading.set(false);
         },

@@ -566,7 +566,7 @@ export class GameTrackerComponent implements OnInit {
 
             return {
               id: game.game_id || game.id,
-              date: formatDate(game.game_date, 'P'),
+              date: formatDate(game.game_date, "P"),
               opponent: game.opponent_team_name || game.opponent_name,
               location: game.location || (game.is_home_game ? "Home" : "Away"),
               score: `${teamScore}-${opponentScore}`,
@@ -661,7 +661,7 @@ export class GameTrackerComponent implements OnInit {
                 action: "create_game",
                 data: gameData,
               },
-              "high"
+              "high",
             );
             this.toastService.info(TOAST.INFO.GAME_SAVED_OFFLINE);
             this.showGameForm.set(false);
@@ -738,7 +738,7 @@ export class GameTrackerComponent implements OnInit {
           action: "create_play",
           data: playData,
         },
-        "high"
+        "high",
       );
       this.toastService.info(TOAST.INFO.PLAY_SAVED_OFFLINE);
       this.plays.update((plays) => [...plays, playData as Play]);
@@ -780,7 +780,7 @@ export class GameTrackerComponent implements OnInit {
                 action: "create_play",
                 data: playData,
               },
-              "high"
+              "high",
             );
             this.toastService.info(TOAST.INFO.PLAY_SAVED_OFFLINE);
             this.plays.update((plays) => [...plays, playData as Play]);

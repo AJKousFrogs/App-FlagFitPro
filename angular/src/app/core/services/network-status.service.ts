@@ -1,6 +1,6 @@
 /**
  * Network Status Service
- * 
+ *
  * Monitors network connectivity and provides reactive status
  * Used by offline queue and other services that need network awareness
  */
@@ -32,7 +32,14 @@ export class NetworkStatusService {
 
       // Monitor connection type if available (Network Information API)
       if ("connection" in navigator) {
-        const connection = (navigator as Navigator & { connection?: { effectiveType: string; addEventListener: (event: string, listener: () => void) => void } }).connection;
+        const connection = (
+          navigator as Navigator & {
+            connection?: {
+              effectiveType: string;
+              addEventListener: (event: string, listener: () => void) => void;
+            };
+          }
+        ).connection;
         if (connection) {
           this._connectionType.set(connection.effectiveType || "unknown");
           connection.addEventListener("change", () => {
@@ -85,4 +92,3 @@ export class NetworkStatusService {
     return type === "4g";
   }
 }
-

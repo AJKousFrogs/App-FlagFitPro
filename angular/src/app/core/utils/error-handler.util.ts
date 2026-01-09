@@ -1,19 +1,19 @@
 /**
  * Error Handler Utilities
- * 
+ *
  * DEPRECATED: This class is maintained for backward compatibility.
- * 
+ *
  * PREFERRED: Use error handling utilities from `shared/utils/error.utils.ts`:
  * - `getErrorMessage()` instead of `extractErrorMessage()`
  * - `getHttpErrorMessage()` for HTTP status codes
  * - `isNetworkError()`, `isAuthError()` for error type checking
- * 
+ *
  * Error messages should use constants from `core/constants/error.constants.ts`
- * 
+ *
  * Migration guide:
- * - Replace `ErrorHandlerUtil.extractErrorMessage(error, fallback)` 
+ * - Replace `ErrorHandlerUtil.extractErrorMessage(error, fallback)`
  *   with `getErrorMessage(error, fallback)`
- * - Replace `ErrorHandlerUtil.createErrorMessage(detail)` 
+ * - Replace `ErrorHandlerUtil.createErrorMessage(detail)`
  *   with toast service using `TOAST.ERROR.*` constants
  */
 

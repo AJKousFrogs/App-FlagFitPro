@@ -69,7 +69,9 @@ export class ConsentBlockedMessageComponent {
   readonly showContactOption = input<boolean>(false);
   readonly variant = input<"default" | "inline" | "card">("default");
   readonly customMessage = input<string>();
-  readonly context = input<"single_player" | "team_partial" | "health_data">("single_player");
+  readonly context = input<"single_player" | "team_partial" | "health_data">(
+    "single_player",
+  );
   readonly role = input<UserRole>("coach");
 
   /**

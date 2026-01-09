@@ -1,6 +1,6 @@
 /**
  * Review Decision Dialog Component
- * 
+ *
  * Dialog for reviewing decisions
  */
 
@@ -70,9 +70,7 @@ import type {
           </div>
           <div class="context-item">
             <label>Made By:</label>
-            <p>
-              {{ decision()!.madeBy.name }} ({{ decision()!.madeBy.role }})
-            </p>
+            <p>{{ decision()!.madeBy.name }} ({{ decision()!.madeBy.role }})</p>
           </div>
           <div class="context-item">
             <label>Created:</label>
@@ -148,7 +146,9 @@ import type {
                 <input
                   type="text"
                   pInputText
-                  [(ngModel)]="formData.outcomeData.unintendedConsequences[$index]"
+                  [(ngModel)]="
+                    formData.outcomeData.unintendedConsequences[$index]
+                  "
                   placeholder="Describe any unintended consequences"
                   styleClass="w-full"
                 />
@@ -183,7 +183,11 @@ import type {
 
       <!-- Footer -->
       <ng-container footer>
-        <p-button label="Cancel" [outlined]="true" (onClick)="onCancel()"></p-button>
+        <p-button
+          label="Cancel"
+          [outlined]="true"
+          (onClick)="onCancel()"
+        ></p-button>
         <p-button
           label="Submit Review"
           (onClick)="onConfirm()"
@@ -373,4 +377,3 @@ export class ReviewDecisionDialogComponent {
     });
   }
 }
-

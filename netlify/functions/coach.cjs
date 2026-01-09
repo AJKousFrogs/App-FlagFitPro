@@ -456,9 +456,13 @@ async function getTrainingAnalytics(userId, coachId) {
 async function createTrainingSession(userId, sessionData, requestInfo = {}) {
   try {
     // Verify coach role
-    const { getUserRole, requireRole, logViolation } = require("./utils/authorization-guard.cjs");
-    const roleCheck = await requireRole(userId, ['coach', 'admin']);
-    
+    const {
+      getUserRole,
+      requireRole,
+      logViolation,
+    } = require("./utils/authorization-guard.cjs");
+    const roleCheck = await requireRole(userId, ["coach", "admin"]);
+
     if (!roleCheck.authorized) {
       await logViolation(
         userId,
@@ -467,7 +471,7 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
         "create",
         "INSUFFICIENT_PERMISSIONS",
         "Coach role required",
-        requestInfo
+        requestInfo,
       );
       throw new Error("Insufficient permissions: coach role required");
     }
@@ -638,12 +642,10 @@ async function handleCalendarRequest(event, userId, coachId) {
       } = body;
 
       // Combine date and time
-      const startDateTime = date && startTime
-        ? `${date}T${startTime}:00`
-        : date || null;
-      const endDateTime = date && endTime
-        ? `${date}T${endTime}:00`
-        : date || null;
+      const startDateTime =
+        date && startTime ? `${date}T${startTime}:00` : date || null;
+      const endDateTime =
+        date && endTime ? `${date}T${endTime}:00` : date || null;
 
       const { data, error } = await supabaseAdmin
         .from("team_events")
@@ -692,10 +694,18 @@ async function handleCalendarRequest(event, userId, coachId) {
       }
 
       const updates = {};
-      if (body.title) {updates.title = body.title;}
-      if (body.type) {updates.event_type = body.type;}
-      if (body.description !== undefined) {updates.description = body.description;}
-      if (body.location) {updates.location = body.location;}
+      if (body.title) {
+        updates.title = body.title;
+      }
+      if (body.type) {
+        updates.event_type = body.type;
+      }
+      if (body.description !== undefined) {
+        updates.description = body.description;
+      }
+      if (body.location) {
+        updates.location = body.location;
+      }
       if (body.date && body.startTime) {
         updates.start_time = `${body.date}T${body.startTime}:00`;
       }

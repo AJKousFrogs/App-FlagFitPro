@@ -1,4 +1,4 @@
-import { logger } from '../logger.js';
+import { logger } from "../logger.js";
 
 /**
  * FlagFit Pro - Notification Manager
@@ -7,7 +7,7 @@ import { logger } from '../logger.js';
  */
 
 // Access storageService from global window object
-const {storageService} = window;
+const { storageService } = window;
 
 class NotificationManager {
   constructor() {
@@ -236,7 +236,7 @@ class NotificationManager {
    */
   notifyAchievement(achievement) {
     this.show(`Achievement Unlocked! ${achievement.icon}`, {
-      body: `${achievement.name  }\n${  achievement.description}`,
+      body: `${achievement.name}\n${achievement.description}`,
       icon: "/icons/icon-192.png",
       tag: `achievement-${achievement.id}`,
       requireInteraction: true,

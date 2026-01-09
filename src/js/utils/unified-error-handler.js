@@ -166,7 +166,8 @@ export class UnifiedErrorHandler {
       context = "Operation",
       showToUser = true,
       logLevel = "error",
-      fallbackMessage: _fallbackMessage = "An error occurred. Please try again.",
+      fallbackMessage:
+        _fallbackMessage = "An error occurred. Please try again.",
       onError = null,
       allowRetry = false,
       retryCallback = null,
@@ -361,7 +362,8 @@ export class UnifiedErrorHandler {
 
     // Build notification using safe DOM methods (no inline event handlers)
     const container = document.createElement("div");
-    container.style.cssText = "display: flex; align-items: flex-start; gap: 0.75rem;";
+    container.style.cssText =
+      "display: flex; align-items: flex-start; gap: 0.75rem;";
 
     const iconSpan = document.createElement("span");
     iconSpan.style.cssText = "flex-shrink: 0; font-size: 1rem;";
@@ -379,8 +381,12 @@ export class UnifiedErrorHandler {
       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;
     `;
     closeBtn.addEventListener("click", () => notification.remove());
-    closeBtn.addEventListener("mouseenter", () => { closeBtn.style.opacity = "1"; });
-    closeBtn.addEventListener("mouseleave", () => { closeBtn.style.opacity = "0.8"; });
+    closeBtn.addEventListener("mouseenter", () => {
+      closeBtn.style.opacity = "1";
+    });
+    closeBtn.addEventListener("mouseleave", () => {
+      closeBtn.style.opacity = "0.8";
+    });
 
     container.appendChild(iconSpan);
     container.appendChild(messageSpan);
@@ -446,7 +452,8 @@ export class UnifiedErrorHandler {
 
     // Build notification using safe DOM methods (no inline event handlers)
     const container = document.createElement("div");
-    container.style.cssText = "display: flex; align-items: flex-start; gap: 0.75rem;";
+    container.style.cssText =
+      "display: flex; align-items: flex-start; gap: 0.75rem;";
 
     const iconSpan = document.createElement("span");
     iconSpan.style.cssText = "flex-shrink: 0; font-size: 1rem;";
@@ -467,8 +474,12 @@ export class UnifiedErrorHandler {
       color: white; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer;
       font-size: 0.75rem; font-weight: 500; margin-top: 0.5rem;
     `;
-    retryBtn.addEventListener("mouseenter", () => { retryBtn.style.background = "rgba(255,255,255,0.3)"; });
-    retryBtn.addEventListener("mouseleave", () => { retryBtn.style.background = "rgba(255,255,255,0.2)"; });
+    retryBtn.addEventListener("mouseenter", () => {
+      retryBtn.style.background = "rgba(255,255,255,0.3)";
+    });
+    retryBtn.addEventListener("mouseleave", () => {
+      retryBtn.style.background = "rgba(255,255,255,0.2)";
+    });
     retryBtn.addEventListener("click", () => {
       notification.remove();
       if (retryCallback) {
@@ -484,8 +495,12 @@ export class UnifiedErrorHandler {
       opacity: 0.8; padding: 0; margin: 0; line-height: 1; flex-shrink: 0;
     `;
     closeBtn.addEventListener("click", () => notification.remove());
-    closeBtn.addEventListener("mouseenter", () => { closeBtn.style.opacity = "1"; });
-    closeBtn.addEventListener("mouseleave", () => { closeBtn.style.opacity = "0.8"; });
+    closeBtn.addEventListener("mouseenter", () => {
+      closeBtn.style.opacity = "1";
+    });
+    closeBtn.addEventListener("mouseleave", () => {
+      closeBtn.style.opacity = "0.8";
+    });
 
     contentDiv.appendChild(messageDiv);
     contentDiv.appendChild(retryBtn);

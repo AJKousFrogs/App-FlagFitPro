@@ -482,7 +482,7 @@ export class AcceptInvitationComponent implements OnInit {
     } else if (diffDays <= 7) {
       return `In ${diffDays} days`;
     } else {
-      return formatDate(expiry, 'P');
+      return formatDate(expiry, "P");
     }
   }
 }

@@ -52,7 +52,7 @@ function getRoutePattern(req) {
   // Normalize UUIDs to :id
   path = path.replace(
     /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,
-    ":id"
+    ":id",
   );
 
   // Normalize numeric IDs
@@ -137,7 +137,9 @@ function recordError(route, statusCode, errorCode, message) {
  * @returns {number} Percentile value
  */
 function percentile(arr, p) {
-  if (arr.length === 0) {return 0;}
+  if (arr.length === 0) {
+    return 0;
+  }
   const sorted = [...arr].sort((a, b) => a - b);
   const index = Math.ceil((p / 100) * sorted.length) - 1;
   return sorted[Math.max(0, index)];
@@ -179,7 +181,7 @@ export function requestLogger() {
       const duration = Number(endTime - startTime) / 1e6; // Convert to ms
 
       const route = getRoutePattern(req);
-      const {statusCode} = res;
+      const { statusCode } = res;
 
       // Track by route and status
       metrics.requests.byRoute[route] =
@@ -218,15 +220,22 @@ export function requestLogger() {
 
       // Log based on status
       if (isError) {
-        serverLogger.warn(`[REQUEST] ${req.method} ${route} ${statusCode} (${duration.toFixed(0)}ms)`, {
-          ...logEntry,
-          error: responseBody?.error || responseBody?.message,
-        });
+        serverLogger.warn(
+          `[REQUEST] ${req.method} ${route} ${statusCode} (${duration.toFixed(0)}ms)`,
+          {
+            ...logEntry,
+            error: responseBody?.error || responseBody?.message,
+          },
+        );
       } else if (duration > 1000) {
         // Slow request warning (> 1s)
-        serverLogger.warn(`[SLOW] ${req.method} ${route} ${statusCode} (${duration.toFixed(0)}ms)`);
+        serverLogger.warn(
+          `[SLOW] ${req.method} ${route} ${statusCode} (${duration.toFixed(0)}ms)`,
+        );
       } else {
-        serverLogger.debug(`[REQUEST] ${req.method} ${route} ${statusCode} (${duration.toFixed(0)}ms)`);
+        serverLogger.debug(
+          `[REQUEST] ${req.method} ${route} ${statusCode} (${duration.toFixed(0)}ms)`,
+        );
       }
 
       return originalEnd.apply(this, args);
@@ -253,7 +262,7 @@ export function getMetrics() {
   // Calculate error rate
   const errorRate =
     metrics.requests.total > 0
-      ? `${((metrics.errors.total / metrics.requests.total) * 100).toFixed(2)  }%`
+      ? `${((metrics.errors.total / metrics.requests.total) * 100).toFixed(2)}%`
       : "0%";
 
   // Calculate requests per minute
@@ -333,7 +342,7 @@ function getErrorRoutes(n) {
       errors: count,
       rate:
         metrics.requests.byRoute[route] > 0
-          ? `${((count / metrics.requests.byRoute[route]) * 100).toFixed(1)  }%`
+          ? `${((count / metrics.requests.byRoute[route]) * 100).toFixed(1)}%`
           : "N/A",
     }));
 }
@@ -350,10 +359,18 @@ function formatUptime(seconds) {
   const secs = seconds % 60;
 
   const parts = [];
-  if (days > 0) {parts.push(`${days}d`);}
-  if (hours > 0) {parts.push(`${hours}h`);}
-  if (minutes > 0) {parts.push(`${minutes}m`);}
-  if (secs > 0 || parts.length === 0) {parts.push(`${secs}s`);}
+  if (days > 0) {
+    parts.push(`${days}d`);
+  }
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
+  if (secs > 0 || parts.length === 0) {
+    parts.push(`${secs}s`);
+  }
 
   return parts.join(" ");
 }

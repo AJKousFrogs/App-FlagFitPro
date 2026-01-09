@@ -20,8 +20,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         // Unauthorized - clear auth and redirect to login
         // Only redirect if not already on login/auth pages
         const currentUrl = router.url;
-        if (!currentUrl.includes('/login') && !currentUrl.includes('/auth')) {
-          logger.warn('[ErrorInterceptor] 401 Unauthorized - redirecting to login');
+        if (!currentUrl.includes("/login") && !currentUrl.includes("/auth")) {
+          logger.warn(
+            "[ErrorInterceptor] 401 Unauthorized - redirecting to login",
+          );
           authService.logout().subscribe();
           router.navigate(["/login"]);
         }

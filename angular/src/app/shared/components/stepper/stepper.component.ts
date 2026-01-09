@@ -54,7 +54,7 @@ export interface StepperStep {
 export class StepperComponent {
   steps = input.required<StepperStep[]>();
   activeStepIndex = input<number>(0);
-  
+
   stepClick = output<number>();
 
   onStepClick(index: number): void {

@@ -45,11 +45,12 @@ function initializeCoreWebVitals() {
   // inject() is valid here because this factory runs in injection context
   // The service auto-initializes on construction, we just need to inject it
   const _webVitalsService = inject(CoreWebVitalsService);
-  
+
   return () => {
     // Defer actual monitoring to avoid blocking initial render
     if (typeof window !== "undefined") {
-      const scheduleInit = window.requestIdleCallback || ((cb: () => void) => setTimeout(cb, 100));
+      const scheduleInit =
+        window.requestIdleCallback || ((cb: () => void) => setTimeout(cb, 100));
       scheduleInit(() => {
         // Service is already injected, just trigger initialization if needed
         // The service will auto-initialize on construction
@@ -75,11 +76,11 @@ export const appConfig: ApplicationConfig = {
       withPreloading(AuthAwarePreloadStrategy), // Custom preloading strategy for authenticated routes
       ...(isDevMode() ? [withDebugTracing()] : []), // Router event inspector - only in development
     ),
-    
+
     // PERFORMANCE: Use async animations to reduce initial bundle
     // Animations are loaded asynchronously, reducing TBT
     provideAnimationsAsync(),
-    
+
     provideHttpClient(
       withFetch(), // Angular 21: Use fetch API for better performance and streaming support
       withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor]),
@@ -106,10 +107,10 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    
+
     // CRITICAL SERVICES: Only register services needed at startup
     AuthAwarePreloadStrategy, // Register the preloading strategy
-    
+
     // DEFERRED SERVICES: These are initialized lazily when needed
     // They are tree-shakeable and won't add to initial bundle if not used
     AcwrService,
@@ -121,14 +122,14 @@ export const appConfig: ApplicationConfig = {
     // Error tracking and monitoring (Sentry integration)
     ErrorTrackingService,
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
-    
+
     // PERFORMANCE: Initialize Core Web Vitals monitoring after app is stable
     {
       provide: APP_INITIALIZER,
       useFactory: initializeCoreWebVitals,
       multi: true,
     },
-    
+
     // Service Worker for PWA support (offline caching, push notifications)
     // PERFORMANCE: Delay registration to not block initial render
     provideServiceWorker("ngsw-worker.js", {

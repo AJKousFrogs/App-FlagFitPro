@@ -123,7 +123,10 @@ interface AthleteMetrics {
                   <span class="metric-label">ACWR</span>
                   <span
                     class="metric-value"
-                    [class.warning]="athleteMetrics()!.acwr !== null && athleteMetrics()!.acwr! > 1.5"
+                    [class.warning]="
+                      athleteMetrics()!.acwr !== null &&
+                      athleteMetrics()!.acwr! > 1.5
+                    "
                   >
                     @if (athleteMetrics()!.acwr !== null) {
                       {{ athleteMetrics()!.acwr!.toFixed(2) }}
@@ -172,7 +175,10 @@ interface AthleteMetrics {
             <div class="empty-state">
               <i class="pi pi-info-circle"></i>
               <h4>No Readiness Data Available</h4>
-              <p>Complete your wellness check-in to see your readiness metrics here.</p>
+              <p>
+                Complete your wellness check-in to see your readiness metrics
+                here.
+              </p>
             </div>
           </p-card>
         }
@@ -539,7 +545,12 @@ export class AiTrainingSchedulerComponent implements OnInit {
       });
     }
 
-    if (metrics.readiness_score !== null && metrics.readiness_score > 80 && metrics.acwr !== null && metrics.acwr < 1.2) {
+    if (
+      metrics.readiness_score !== null &&
+      metrics.readiness_score > 80 &&
+      metrics.acwr !== null &&
+      metrics.acwr < 1.2
+    ) {
       suggestions.push({
         id: crypto.randomUUID(),
         type: "increase",

@@ -1,18 +1,18 @@
 /**
  * Semantic Renderer Service
- * 
+ *
  * Phase 3 - Meaning-First Architecture
- * 
+ *
  * This service maps semantic meanings to UI components automatically.
- * 
+ *
  * Rule: Features choose meanings. This service chooses components.
- * 
+ *
  * Features do NOT:
  * - Choose colors
  * - Choose badges vs banners vs tags
  * - Choose placement
  * - Choose icons
- * 
+ *
  * Features DO:
  * - Define semantic meaning
  * - Provide context
@@ -47,7 +47,7 @@ export class SemanticRendererService {
 
   /**
    * Render a semantic meaning into a component decision
-   * 
+   *
    * This is the ONLY way features should render meanings.
    * Features call this, get a render decision, and use that component.
    */
@@ -59,7 +59,7 @@ export class SemanticRendererService {
     if (!validation.valid) {
       this.logger.warn(
         "[SemanticRenderer] Meaning validation failed:",
-        validation.errors
+        validation.errors,
       );
       // Continue rendering but log warning
     }
@@ -75,17 +75,16 @@ export class SemanticRendererService {
       case "coach-override":
         return this.renderCoachOverride(meaning, context);
       default:
-        this.logger.error(
-          "[SemanticRenderer] Unknown meaning type:",
-          meaning
+        this.logger.error("[SemanticRenderer] Unknown meaning type:", meaning);
+        throw new Error(
+          `Unknown meaning type: ${(meaning as SemanticMeaning).type}`,
         );
-        throw new Error(`Unknown meaning type: ${(meaning as SemanticMeaning).type}`);
     }
   }
 
   /**
    * Render RISK meaning
-   * 
+   *
    * Visual Grammar:
    * - Color: Red ONLY
    * - Component: RiskBanner (primary)
@@ -93,7 +92,7 @@ export class SemanticRendererService {
    */
   private renderRisk(
     meaning: RiskMeaning,
-    context: MeaningMetadata["context"]
+    context: MeaningMetadata["context"],
   ): RenderDecision {
     // Determine component based on context
     let component = "app-risk-badge";
@@ -129,7 +128,7 @@ export class SemanticRendererService {
 
   /**
    * Render INCOMPLETE DATA meaning
-   * 
+   *
    * Visual Grammar:
    * - Color: Orange/Amber ONLY
    * - Component: DataConfidenceIndicator
@@ -137,7 +136,7 @@ export class SemanticRendererService {
    */
   private renderIncompleteData(
     meaning: IncompleteDataMeaning,
-    context: MeaningMetadata["context"]
+    context: MeaningMetadata["context"],
   ): RenderDecision {
     const _grammar = MEANING_VISUAL_GRAMMAR["incomplete-data"];
 
@@ -159,7 +158,7 @@ export class SemanticRendererService {
 
   /**
    * Render ACTION REQUIRED meaning
-   * 
+   *
    * Visual Grammar:
    * - Color: White surface + strong border
    * - Component: ActionPanel
@@ -167,7 +166,7 @@ export class SemanticRendererService {
    */
   private renderActionRequired(
     meaning: ActionRequiredMeaning,
-    _context: MeaningMetadata["context"]
+    _context: MeaningMetadata["context"],
   ): RenderDecision {
     const _grammar = MEANING_VISUAL_GRAMMAR["action-required"];
 
@@ -194,7 +193,7 @@ export class SemanticRendererService {
 
   /**
    * Render COACH OVERRIDE meaning
-   * 
+   *
    * Visual Grammar:
    * - Color: Blue (informational, authoritative)
    * - Component: OverrideNotice
@@ -202,7 +201,7 @@ export class SemanticRendererService {
    */
   private renderCoachOverride(
     meaning: CoachOverrideMeaning,
-    context: MeaningMetadata["context"]
+    context: MeaningMetadata["context"],
   ): RenderDecision {
     const _grammar = MEANING_VISUAL_GRAMMAR["coach-override"];
 
@@ -228,7 +227,7 @@ export class SemanticRendererService {
    * Helper: Get risk visual intensity (NOT color - color is always red)
    */
   private getRiskIntensity(
-    severity: RiskMeaning["severity"]
+    severity: RiskMeaning["severity"],
   ): "subtle" | "normal" | "strong" | "critical" {
     switch (severity) {
       case "low":
@@ -283,4 +282,3 @@ export class SemanticRendererService {
     return decisions.sort((a, b) => b.priority - a.priority);
   }
 }
-

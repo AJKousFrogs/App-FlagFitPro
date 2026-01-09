@@ -549,7 +549,7 @@ export class OfficialsComponent implements OnInit {
         next: (games) => {
           this.upcomingGames.set(
             games.map((g) => ({
-              label: `${formatDate(g.date, 'P')} vs ${g.opponent}`,
+              label: `${formatDate(g.date, "P")} vs ${g.opponent}`,
               value: g.value,
             })),
           );
@@ -699,7 +699,8 @@ export class OfficialsComponent implements OnInit {
             this.showOfficialDialog = false;
             this.loadOfficials();
           },
-          error: () => this.toastService.error(TOAST.ERROR.OFFICIAL_UPDATE_FAILED),
+          error: () =>
+            this.toastService.error(TOAST.ERROR.OFFICIAL_UPDATE_FAILED),
         });
     } else {
       this.officialsService
@@ -745,7 +746,8 @@ export class OfficialsComponent implements OnInit {
           this.showScheduleDialog = false;
           this.loadPaymentSummary();
         },
-        error: () => this.toastService.error(TOAST.ERROR.OFFICIAL_SCHEDULE_FAILED),
+        error: () =>
+          this.toastService.error(TOAST.ERROR.OFFICIAL_SCHEDULE_FAILED),
       });
   }
 
@@ -781,7 +783,8 @@ export class OfficialsComponent implements OnInit {
           );
           this.loadPaymentSummary();
         },
-        error: () => this.toastService.error(TOAST.ERROR.ASSIGNMENT_REMOVE_FAILED),
+        error: () =>
+          this.toastService.error(TOAST.ERROR.ASSIGNMENT_REMOVE_FAILED),
       });
   }
 }

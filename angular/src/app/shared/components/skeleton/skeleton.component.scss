@@ -15,7 +15,7 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: var(--radius-md, 8px);
-  
+
   // Prevent layout shift
   min-height: 1rem;
 }
@@ -64,7 +64,7 @@
     animation: none;
     background: var(--primitive-neutral-200);
   }
-  
+
   :host-context([data-theme="dark"]) .skeleton {
     background: var(--primitive-neutral-800);
   }

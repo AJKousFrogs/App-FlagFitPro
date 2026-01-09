@@ -1993,7 +1993,8 @@ export class TournamentsComponent implements OnInit {
       this.showAvailabilityDialog = false;
     } catch (error: unknown) {
       this.logger.error("Error saving availability:", error);
-      const message = error instanceof Error ? error.message : "Failed to save availability";
+      const message =
+        error instanceof Error ? error.message : "Failed to save availability";
       this.messageService.add({
         severity: "error",
         summary: "Error",
@@ -2263,7 +2264,8 @@ export class TournamentsComponent implements OnInit {
       this.showBudgetDialog = false;
     } catch (error: unknown) {
       this.logger.error("Error saving budget:", error);
-      const message = error instanceof Error ? error.message : "Failed to save budget";
+      const message =
+        error instanceof Error ? error.message : "Failed to save budget";
       this.messageService.add({
         severity: "error",
         summary: "Error",

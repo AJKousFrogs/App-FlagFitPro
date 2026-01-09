@@ -124,7 +124,9 @@ import { getInitials } from "../../shared/utils/format.utils";
                     <!-- Player Avatar -->
                     <div class="activity-avatar">
                       <p-avatar
-                        [label]="getInitialsStr(activity.player?.full_name || 'P')"
+                        [label]="
+                          getInitialsStr(activity.player?.full_name || 'P')
+                        "
                         shape="circle"
                         [style]="{
                           'background-color': getActivityColor(
@@ -278,7 +280,9 @@ export class CoachActivityFeedComponent implements OnDestroy {
     try {
       // Would implement pagination
       // For now, just simulate
-      await new Promise((resolve) => setTimeout(resolve, TIMEOUTS.UI_TRANSITION_DELAY));
+      await new Promise((resolve) =>
+        setTimeout(resolve, TIMEOUTS.UI_TRANSITION_DELAY),
+      );
       this._hasMore.set(false);
     } finally {
       this._loadingMore.set(false);

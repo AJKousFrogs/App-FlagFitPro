@@ -5,7 +5,14 @@
  * Enhanced with accessibility features and improved DX
  */
 
-import { ChangeDetectionStrategy, Component, model, computed, output, inject } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  model,
+  computed,
+  output,
+  inject,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";

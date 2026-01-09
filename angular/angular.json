@@ -30,15 +30,10 @@
               "src/manifest.json"
             ],
             "serviceWorker": "ngsw-config.json",
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": [],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "src",
-                "node_modules"
-              ]
+              "includePaths": ["src", "node_modules"]
             },
             "outputMode": "static"
           },
@@ -156,12 +151,7 @@
         "prerender": {
           "builder": "@angular-devkit/build-angular:prerender",
           "options": {
-            "routes": [
-              "/",
-              "/login",
-              "/register",
-              "/reset-password"
-            ]
+            "routes": ["/", "/login", "/register", "/reset-password"]
           }
         },
         "server": {

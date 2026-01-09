@@ -24,14 +24,17 @@ export class WeatherService {
    * @param location - City name or location string
    * @param coords - Optional coordinates { lat, lon }
    */
-  getWeatherData(location?: string, coords?: { lat: number; lon: number }): Observable<WeatherData | null> {
+  getWeatherData(
+    location?: string,
+    coords?: { lat: number; lon: number },
+  ): Observable<WeatherData | null> {
     // Build query params
     const params: Record<string, string> = {};
     if (coords) {
-      params['lat'] = coords.lat.toString();
-      params['lon'] = coords.lon.toString();
+      params["lat"] = coords.lat.toString();
+      params["lon"] = coords.lon.toString();
     } else if (location) {
-      params['location'] = location;
+      params["location"] = location;
     }
 
     // Try API
@@ -61,25 +64,33 @@ export class WeatherService {
   private normalizeWeatherData(data: Record<string, unknown>): WeatherData {
     // Handle both Netlify function format and server.js format
     return {
-      temp: (data['temp'] as number) ?? (data['temperature'] as number) ?? 0,
-      condition: (data['condition'] as string) ?? (data['conditions'] as string) ?? 'Unknown',
-      suitability: this.normalizeSuitability(data['suitability'] as string),
-      suitable: (data['suitable'] as boolean) ?? true,
-      humidity: (data['humidity'] as number) ?? undefined,
-      windSpeed: (data['windSpeed'] as number) ?? (data['wind_speed'] as number) ?? undefined,
-      description: (data['description'] as string) ?? undefined,
+      temp: (data["temp"] as number) ?? (data["temperature"] as number) ?? 0,
+      condition:
+        (data["condition"] as string) ??
+        (data["conditions"] as string) ??
+        "Unknown",
+      suitability: this.normalizeSuitability(data["suitability"] as string),
+      suitable: (data["suitable"] as boolean) ?? true,
+      humidity: (data["humidity"] as number) ?? undefined,
+      windSpeed:
+        (data["windSpeed"] as number) ??
+        (data["wind_speed"] as number) ??
+        undefined,
+      description: (data["description"] as string) ?? undefined,
     };
   }
 
   /**
    * Normalize suitability string to valid enum value
    */
-  private normalizeSuitability(suitability: string | undefined): "excellent" | "good" | "fair" | "poor" {
-    const valid = ['excellent', 'good', 'fair', 'poor'];
+  private normalizeSuitability(
+    suitability: string | undefined,
+  ): "excellent" | "good" | "fair" | "poor" {
+    const valid = ["excellent", "good", "fair", "poor"];
     if (suitability && valid.includes(suitability)) {
       return suitability as "excellent" | "good" | "fair" | "poor";
     }
-    return 'fair'; // Default
+    return "fair"; // Default
   }
 
   /**

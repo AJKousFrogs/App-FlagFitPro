@@ -195,7 +195,7 @@ export function getReadinessLevel(score: number): ReadinessLevelConfig {
 export function computeQuickReadiness(
   feeling: number,
   energy: number,
-  hasSoreness: boolean
+  hasSoreness: boolean,
 ): number {
   const { FEELING_SCALE_MAX, PERCENTAGE_MAX, QUICK_READINESS_WEIGHTS } =
     WELLNESS;
@@ -203,12 +203,14 @@ export function computeQuickReadiness(
 
   const feelingScore = (feeling / FEELING_SCALE_MAX) * PERCENTAGE_MAX;
   const energyScore = (energy / FEELING_SCALE_MAX) * PERCENTAGE_MAX;
-  const sorenessScore = hasSoreness ? SORENESS_PENALTY_SCORE : NO_SORENESS_SCORE;
+  const sorenessScore = hasSoreness
+    ? SORENESS_PENALTY_SCORE
+    : NO_SORENESS_SCORE;
 
   const score = Math.round(
     feelingScore * QUICK_READINESS_WEIGHTS.feeling +
       energyScore * QUICK_READINESS_WEIGHTS.energy +
-      sorenessScore * QUICK_READINESS_WEIGHTS.soreness
+      sorenessScore * QUICK_READINESS_WEIGHTS.soreness,
   );
 
   return Math.max(0, Math.min(PERCENTAGE_MAX, score));
@@ -228,9 +230,10 @@ export function computeDailyReadiness(
   pain: number,
   fatigue: number,
   sleepQuality: number,
-  motivation: number
+  motivation: number,
 ): number {
-  const { SLIDER_SCALE_MAX, PERCENTAGE_MAX, DAILY_READINESS_WEIGHTS } = WELLNESS;
+  const { SLIDER_SCALE_MAX, PERCENTAGE_MAX, DAILY_READINESS_WEIGHTS } =
+    WELLNESS;
 
   // Invert pain and fatigue (lower is better for these)
   const painScore = SLIDER_SCALE_MAX - pain;
@@ -244,7 +247,7 @@ export function computeDailyReadiness(
     SLIDER_SCALE_MAX;
 
   const score = Math.round(
-    Math.max(0, Math.min(PERCENTAGE_MAX, weightedScore))
+    Math.max(0, Math.min(PERCENTAGE_MAX, weightedScore)),
   );
   return score;
 }
@@ -285,7 +288,7 @@ export function getRiskFlags(state: {
  */
 export function isHeatRisk(
   tempCelsius: number,
-  humidityPercent: number
+  humidityPercent: number,
 ): boolean {
   return (
     tempCelsius > WELLNESS.HEAT_RISK_TEMP_CELSIUS &&

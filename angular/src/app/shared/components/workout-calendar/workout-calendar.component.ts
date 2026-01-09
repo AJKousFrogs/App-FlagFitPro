@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    input,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { BadgeModule } from "primeng/badge";
 import { TooltipModule } from "primeng/tooltip";
@@ -106,7 +106,13 @@ export interface WorkoutEntry {
               <span class="day-number">{{ day.date.getDate() }}</span>
               @if (day.workouts.length > 0) {
                 <div class="workout-indicators">
-                  @for (workout of day.workouts.slice(0, UI_LIMITS.GOALS_PREVIEW_COUNT); track workout.id) {
+                  @for (
+                    workout of day.workouts.slice(
+                      0,
+                      UI_LIMITS.GOALS_PREVIEW_COUNT
+                    );
+                    track workout.id
+                  ) {
                     <span
                       class="workout-dot"
                       [class]="'type-' + workout.type"

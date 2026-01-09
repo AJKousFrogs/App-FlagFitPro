@@ -113,7 +113,9 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
         >
           All
           @if (notificationService.unreadCount() > 0) {
-            <span class="tab-badge">{{ notificationService.unreadCount() }}</span>
+            <span class="tab-badge">{{
+              notificationService.unreadCount()
+            }}</span>
           }
         </button>
         @for (cat of categoryTabs; track cat.id) {
@@ -173,9 +175,14 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
               <div class="notification-group">
                 <div class="group-header">
                   <span>{{ group.label }}</span>
-                  <span class="group-count">{{ group.notifications.length }}</span>
+                  <span class="group-count">{{
+                    group.notifications.length
+                  }}</span>
                 </div>
-                @for (notification of group.notifications; track notification.id) {
+                @for (
+                  notification of group.notifications;
+                  track notification.id
+                ) {
                   <div
                     class="notification-item"
                     [class.unread]="!notification.read"
@@ -192,17 +199,27 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
                     <!-- Category/Severity Icon -->
                     <div
                       class="notification-icon"
-                      [class]="getIconClass(notification.category || notification.type)"
+                      [class]="
+                        getIconClass(notification.category || notification.type)
+                      "
                     >
-                      <i [class]="getIcon(notification.category || notification.type)"></i>
+                      <i
+                        [class]="
+                          getIcon(notification.category || notification.type)
+                        "
+                      ></i>
                     </div>
 
                     <!-- Content -->
                     <div class="notification-body">
                       @if (notification.title) {
-                        <h4 class="notification-title">{{ notification.title }}</h4>
+                        <h4 class="notification-title">
+                          {{ notification.title }}
+                        </h4>
                       }
-                      <p class="notification-message">{{ notification.message }}</p>
+                      <p class="notification-message">
+                        {{ notification.message }}
+                      </p>
                       <div class="notification-meta">
                         <span class="notification-time">
                           <i class="pi pi-clock"></i>
@@ -228,7 +245,7 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
                       @if (!notification.read) {
                         <div class="unread-indicator" aria-label="Unread"></div>
                       }
-                      @if (notification.priority === 'high') {
+                      @if (notification.priority === "high") {
                         <i
                           class="pi pi-exclamation-circle priority-indicator"
                           pTooltip="High priority"
@@ -281,15 +298,16 @@ export class NotificationsPanelComponent {
   dismissingIds = signal<Set<string>>(new Set());
 
   // Category tabs for filtering
-  categoryTabs: { id: NotificationCategory; icon: string; tooltip: string }[] = [
-    { id: "game", icon: "pi-flag", tooltip: "Games" },
-    { id: "team", icon: "pi-users", tooltip: "Team" },
-    { id: "training", icon: "pi-bolt", tooltip: "Training" },
-    { id: "tournament", icon: "pi-trophy", tooltip: "Tournaments" },
-    { id: "coach", icon: "pi-user", tooltip: "Coach" },
-    { id: "wellness", icon: "pi-heart", tooltip: "Wellness" },
-    { id: "achievement", icon: "pi-star", tooltip: "Achievements" },
-  ];
+  categoryTabs: { id: NotificationCategory; icon: string; tooltip: string }[] =
+    [
+      { id: "game", icon: "pi-flag", tooltip: "Games" },
+      { id: "team", icon: "pi-users", tooltip: "Team" },
+      { id: "training", icon: "pi-bolt", tooltip: "Training" },
+      { id: "tournament", icon: "pi-trophy", tooltip: "Tournaments" },
+      { id: "coach", icon: "pi-user", tooltip: "Coach" },
+      { id: "wellness", icon: "pi-heart", tooltip: "Wellness" },
+      { id: "achievement", icon: "pi-star", tooltip: "Achievements" },
+    ];
 
   // Close on Escape key
   @HostListener("document:keydown.escape")
@@ -300,7 +318,9 @@ export class NotificationsPanelComponent {
   }
 
   // Base notifications (active, not dismissed)
-  notifications = computed(() => this.notificationService.activeNotifications());
+  notifications = computed(() =>
+    this.notificationService.activeNotifications(),
+  );
 
   // Filtered by category
   filteredNotifications = computed(() => {

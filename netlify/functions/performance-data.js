@@ -9,13 +9,9 @@ const {
   filterWellnessDataForCoach,
   // canCoachViewReadiness, filterReadinessForCoach - reserved for readiness endpoint expansion
 } = require("./utils/consent-guard.cjs");
-const {
-  detectPainTrigger,
-} = require("./utils/safety-override.cjs");
+const { detectPainTrigger } = require("./utils/safety-override.cjs");
 const { getUserRole } = require("./utils/authorization-guard.cjs");
-const {
-  guardMerlinRequest,
-} = require("./utils/merlin-guard.cjs");
+const { guardMerlinRequest } = require("./utils/merlin-guard.cjs");
 
 // CORS Headers for cross-origin requests
 const CORS_HEADERS = {
@@ -105,12 +101,12 @@ const ENDPOINT_HANDLERS = {
 exports.handler = async (event, context) => {
   // Apply Merlin guard for mutation endpoints
   if (event.httpMethod !== "GET" && event.httpMethod !== "OPTIONS") {
-    const req = { 
-      method: event.httpMethod, 
-      path: event.path, 
-      headers: event.headers, 
+    const req = {
+      method: event.httpMethod,
+      path: event.path,
+      headers: event.headers,
       body: event.body,
-      user: context.user || {}
+      user: context.user || {},
     };
     const blocked = guardMerlinRequest(req);
     if (blocked && blocked.statusCode === 403) {
@@ -146,7 +142,13 @@ exports.handler = async (event, context) => {
       // Extract athleteId from query for coach requests
       const requestedAthleteId = queryStringParameters?.athleteId || userId;
 
-      return await handler(httpMethod, userId, requestedAthleteId, body, queryStringParameters);
+      return await handler(
+        httpMethod,
+        userId,
+        requestedAthleteId,
+        body,
+        queryStringParameters,
+      );
     },
   });
 };
@@ -443,7 +445,7 @@ async function handlePerformanceTests(method, userId, body, query) {
 async function handleWellness(method, userId, requestedAthleteId, body, query) {
   const targetAthleteId = requestedAthleteId || userId;
   const role = await getUserRole(userId);
-  const isCoach = ['coach', 'admin'].includes(role);
+  const isCoach = ["coach", "admin"].includes(role);
 
   switch (method) {
     case "GET": {
@@ -466,7 +468,10 @@ async function handleWellness(method, userId, requestedAthleteId, body, query) {
 
         // Filter data for coach if consent not granted
         if (isCoach && targetAthleteId !== userId && wellnessData.length > 0) {
-          const consentCheck = await canCoachViewWellness(userId, targetAthleteId);
+          const consentCheck = await canCoachViewWellness(
+            userId,
+            targetAthleteId,
+          );
           if (!consentCheck.allowed) {
             // Return compliance-only data
             wellnessData = wellnessData.map(() => ({
@@ -475,11 +480,13 @@ async function handleWellness(method, userId, requestedAthleteId, body, query) {
             }));
           } else {
             // Filter based on consent level
-            wellnessData = wellnessData.map(item => filterWellnessDataForCoach(
-              item,
-              consentCheck.reason === 'CONSENT_GRANTED',
-              consentCheck.safetyOverride
-            ));
+            wellnessData = wellnessData.map((item) =>
+              filterWellnessDataForCoach(
+                item,
+                consentCheck.reason === "CONSENT_GRANTED",
+                consentCheck.safetyOverride,
+              ),
+            );
           }
         }
 
@@ -508,8 +515,12 @@ async function handleWellness(method, userId, requestedAthleteId, body, query) {
       const wellnessData = JSON.parse(body);
 
       // Safety override: Check for pain triggers (muscle_soreness >3/10)
-      if (wellnessData.soreness !== undefined && wellnessData.soreness !== null && wellnessData.soreness > 3) {
-        await detectPainTrigger(userId, wellnessData.soreness, 'general', null);
+      if (
+        wellnessData.soreness !== undefined &&
+        wellnessData.soreness !== null &&
+        wellnessData.soreness > 3
+      ) {
+        await detectPainTrigger(userId, wellnessData.soreness, "general", null);
       }
 
       try {

@@ -39,17 +39,21 @@ async function dismissCookieBanner(page: Page): Promise<void> {
       analytics: true,
       functional: true,
       consentDate: new Date().toISOString(),
-      consentVersion: "1.0"
+      consentVersion: "1.0",
     };
     localStorage.setItem("flagfit_cookie_consent", JSON.stringify(consent));
   });
-  
+
   // Also try to click dismiss if banner is already visible
   try {
     const banner = page.locator("app-cookie-consent-banner");
     if (await banner.isVisible({ timeout: 500 }).catch(() => false)) {
       // Use force click to bypass any overlay issues
-      await page.locator("app-cookie-consent-banner button").filter({ hasText: /Accept All/i }).click({ force: true, timeout: 2000 }).catch(() => {});
+      await page
+        .locator("app-cookie-consent-banner button")
+        .filter({ hasText: /Accept All/i })
+        .click({ force: true, timeout: 2000 })
+        .catch(() => {});
       // Wait briefly for banner to hide
       await page.waitForTimeout(500);
     }
@@ -60,7 +64,7 @@ async function dismissCookieBanner(page: Page): Promise<void> {
 
 async function login(page: Page): Promise<void> {
   await page.goto(`${BASE_URL}/login`);
-  
+
   // Dismiss cookie banner if present (blocks interactions on mobile)
   await dismissCookieBanner(page);
 

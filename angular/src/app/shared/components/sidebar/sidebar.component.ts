@@ -1,12 +1,12 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    HostListener,
-    inject,
-    OnDestroy,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
@@ -86,7 +86,9 @@ interface _CollapsibleGroup {
               [attr.data-testid]="getNavTestId(item.route)"
               routerLinkActive="active"
               [routerLinkActiveOptions]="{
-                exact: item.route === '/dashboard' || item.route === '/todays-practice',
+                exact:
+                  item.route === '/dashboard' ||
+                  item.route === '/todays-practice',
               }"
               class="nav-item"
               [class.nav-item-primary]="true"
@@ -133,7 +135,13 @@ interface _CollapsibleGroup {
             aria-controls="me-group-items"
           >
             <span class="me-group-icon">
-              <i [class]="meGroupExpanded() ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+              <i
+                [class]="
+                  meGroupExpanded()
+                    ? 'pi pi-chevron-down'
+                    : 'pi pi-chevron-right'
+                "
+              ></i>
             </span>
             <span class="me-group-label">Me</span>
           </button>
@@ -209,7 +217,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       this.closeSidebar();
     }
   }
-  
+
   // State persistence for "Me" group expansion
   meGroupExpanded = signal(this.loadMeGroupState());
 
@@ -257,7 +265,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: "Performance",
       route: "/performance-tracking",
       icon: "pi-bullseye",
-      ariaLabel: "Performance Tracking - Track and analyze your performance metrics",
+      ariaLabel:
+        "Performance Tracking - Track and analyze your performance metrics",
       group: "primary",
     },
     {
@@ -285,7 +294,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: "Tournament Fuel",
       route: "/game/nutrition",
       icon: "pi-apple",
-      ariaLabel: "Tournament Fuel - Nutrition and hydration for tournament days",
+      ariaLabel:
+        "Tournament Fuel - Nutrition and hydration for tournament days",
       group: "primary",
     },
     {
@@ -379,7 +389,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
       label: "Performance",
       route: "/performance-tracking",
       icon: "pi-bullseye",
-      ariaLabel: "Performance Tracking - Track and analyze team performance metrics",
+      ariaLabel:
+        "Performance Tracking - Track and analyze team performance metrics",
       group: "primary",
     },
     {
@@ -479,7 +490,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   primaryNavItems = computed(() => {
     const userRole = this.authService.getUser()?.role || "player";
     const isCoach = ["coach", "assistant_coach", "admin"].includes(userRole);
-    
+
     return isCoach ? this.coachNavItems : this.athleteNavItems;
   });
 
@@ -489,7 +500,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   additionalItems = computed(() => {
     const userRole = this.authService.getUser()?.role || "player";
     return this.additionalNavItems.filter(
-      (item) => !item.roles || item.roles.includes(userRole)
+      (item) => !item.roles || item.roles.includes(userRole),
     );
   });
 
@@ -502,8 +513,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
    * Navigation groups for organized display
    */
   navGroups = [
-    { id: 'primary', label: 'Main', icon: 'pi-home' },
-    { id: 'me', label: 'Me', icon: 'pi-user' }
+    { id: "primary", label: "Main", icon: "pi-home" },
+    { id: "me", label: "Me", icon: "pi-user" },
   ];
 
   userName = computed(() => {
@@ -592,10 +603,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
    */
   private saveMeGroupState(isExpanded: boolean): void {
     if (typeof window === "undefined") return;
-    localStorage.setItem(
-      "sidebar-me-group-expanded",
-      isExpanded.toString(),
-    );
+    localStorage.setItem("sidebar-me-group-expanded", isExpanded.toString());
   }
 
   /**
@@ -610,9 +618,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
    * Get navigation items for a specific group
    */
   getGroupItems(groupId: string): NavItem[] {
-    if (groupId === 'primary') {
+    if (groupId === "primary") {
       return this.primaryNavItems();
-    } else if (groupId === 'me') {
+    } else if (groupId === "me") {
       return this.meItems();
     }
     return [];

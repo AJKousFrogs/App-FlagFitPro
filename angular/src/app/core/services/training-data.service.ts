@@ -64,7 +64,10 @@ export class TrainingDataService {
   private getApiBaseUrl(): string {
     if (typeof window !== "undefined") {
       const hostname = window.location.hostname;
-      if (hostname.includes("netlify.app") || hostname.includes("netlify.com")) {
+      if (
+        hostname.includes("netlify.app") ||
+        hostname.includes("netlify.com")
+      ) {
         return window.location.origin + "/.netlify/functions";
       }
       if (hostname === "localhost" || hostname === "127.0.0.1") {
@@ -204,20 +207,22 @@ export class TrainingDataService {
     }
 
     // Detect conflicts: RPE vs session type
-    const conflicts: Array<{ 
-      type: string; 
+    const conflicts: Array<{
+      type: string;
       message: string;
       playerValue?: number;
       coachValue?: string;
     }> = [];
     if (session.rpe && session.session_type) {
-      const sessionTypeIntensity: Record<string, { max?: number; min?: number }> =
-        {
-          recovery: { max: 4 },
-          light: { max: 5 },
-          moderate: { max: 7 },
-          intense: { min: 7 },
-        };
+      const sessionTypeIntensity: Record<
+        string,
+        { max?: number; min?: number }
+      > = {
+        recovery: { max: 4 },
+        light: { max: 5 },
+        moderate: { max: 7 },
+        intense: { min: 7 },
+      };
 
       const typeRules = sessionTypeIntensity[session.session_type];
       if (typeRules) {
@@ -293,11 +298,11 @@ export class TrainingDataService {
         // Log warning if late or retroactive
         if (detection.logStatus === "late") {
           this.logger.warn(
-            `[TrainingLog] Session logged ${detection.hoursDelayed} hours late`
+            `[TrainingLog] Session logged ${detection.hoursDelayed} hours late`,
           );
         } else if (detection.logStatus === "retroactive") {
           this.logger.warn(
-            `[TrainingLog] Session logged retroactively (${detection.hoursDelayed} hours late) - requires coach approval`
+            `[TrainingLog] Session logged retroactively (${detection.hoursDelayed} hours late) - requires coach approval`,
           );
         }
 
@@ -305,7 +310,7 @@ export class TrainingDataService {
         if (detection.conflicts.length > 0) {
           this.logger.warn(
             `[TrainingLog] Conflicts detected:`,
-            detection.conflicts
+            detection.conflicts,
           );
         }
 
@@ -350,16 +355,19 @@ export class TrainingDataService {
     // Contract: Section 9.1 - No frontend direct writes
     const apiUrl = this.getApiBaseUrl();
     return this.http
-      .put<{ success: boolean; data: TrainingSession }>(
-        `${apiUrl}/training-sessions`,
-        { sessionId: id, ...updateData }
-      )
+      .put<{
+        success: boolean;
+        data: TrainingSession;
+      }>(`${apiUrl}/training-sessions`, { sessionId: id, ...updateData })
       .pipe(
         map((response) => {
           // API returns { success: true, data: session } from createSuccessResponse
           const session = response.data;
           if (session) {
-            this.logger.info("Training session updated successfully:", session.id);
+            this.logger.info(
+              "Training session updated successfully:",
+              session.id,
+            );
           }
           return session || null;
         }),
@@ -367,7 +375,9 @@ export class TrainingDataService {
           this.logger.error("Error updating training session:", error);
           // Return explicit error, don't swallow
           if (error.status === 403) {
-            this.logger.error("Authorization failed - session may be coach_locked or IN_PROGRESS");
+            this.logger.error(
+              "Authorization failed - session may be coach_locked or IN_PROGRESS",
+            );
           }
           return of(null);
         }),
@@ -383,7 +393,7 @@ export class TrainingDataService {
     // Contract violation: Sessions MUST be locked, not deleted
     // See AUTHORIZATION_AND_GUARDRAILS_CONTRACT_v1 Section 8.11
     this.logger.warn(
-      "Session deletion not allowed per contract. Sessions must be locked, not deleted."
+      "Session deletion not allowed per contract. Sessions must be locked, not deleted.",
     );
     return of(false);
   }

@@ -19,17 +19,17 @@ This document maps **user actions to database operations** for every feature in 
 
 ## Quick Navigation
 
-| Domain                        | Features                                                         |
-| ----------------------------- | ---------------------------------------------------------------- |
-| [Authentication](#1-authentication--user-management) | Login, Registration, Profile                    |
-| [Training](#2-training-system)                        | Schedule, Today, Workout Logs                   |
-| [Load Monitoring](#3-load-monitoring--acwr)           | ACWR, Load Metrics, Alerts                      |
-| [Wellness](#4-wellness--recovery)                     | Check-ins, Sleep, Readiness                     |
-| [AI Coaching](#5-ai-coaching-merlin)                  | Chat, Recommendations, Safety                   |
-| [Team Management](#6-team-management)                 | Roster, Depth Chart, Attendance                 |
-| [Competition](#7-competition--tournaments)            | Games, Tournaments, Stats                       |
-| [Nutrition](#8-nutrition-system)                      | Logs, Profiles, Hydration                       |
-| [Analytics](#9-analytics--reporting)                  | Performance, Trends, Reports                    |
+| Domain                                               | Features                        |
+| ---------------------------------------------------- | ------------------------------- |
+| [Authentication](#1-authentication--user-management) | Login, Registration, Profile    |
+| [Training](#2-training-system)                       | Schedule, Today, Workout Logs   |
+| [Load Monitoring](#3-load-monitoring--acwr)          | ACWR, Load Metrics, Alerts      |
+| [Wellness](#4-wellness--recovery)                    | Check-ins, Sleep, Readiness     |
+| [AI Coaching](#5-ai-coaching-merlin)                 | Chat, Recommendations, Safety   |
+| [Team Management](#6-team-management)                | Roster, Depth Chart, Attendance |
+| [Competition](#7-competition--tournaments)           | Games, Tournaments, Stats       |
+| [Nutrition](#8-nutrition-system)                     | Logs, Profiles, Hydration       |
+| [Analytics](#9-analytics--reporting)                 | Performance, Trends, Reports    |
 
 ---
 
@@ -182,6 +182,7 @@ This document maps **user actions to database operations** for every feature in 
 ```
 
 **Data Aggregation**:
+
 ```typescript
 // Calendar data structure
 {
@@ -247,6 +248,7 @@ This document maps **user actions to database operations** for every feature in 
 ```
 
 **Load Calculation (per FEATURE_DOCUMENTATION.md §2)**:
+
 ```typescript
 Session Load (AU) = Duration (min) × RPE × Type Multiplier
 
@@ -364,6 +366,7 @@ Type Multipliers:
 ```
 
 **ACWR Calculation (per FEATURE_DOCUMENTATION.md §5)**:
+
 ```typescript
 // Standard Rolling Average
 Acute Load = Sum(last 7 days load) / 7
@@ -463,6 +466,7 @@ EWMA Chronic = (Today's Load × λ) + ((1 - λ) × Yesterday's EWMA)
 ```
 
 **Wellness Score Calculation (per FEATURE_DOCUMENTATION.md §4)**:
+
 ```typescript
 Wellness Score = Weighted Average of:
   - Sleep Hours: 20% (normalized to 7-9 optimal)
@@ -675,6 +679,7 @@ Wellness Score = Weighted Average of:
 ```
 
 **Adding Player**:
+
 ```
 [Add Player Form]
     │
@@ -911,6 +916,7 @@ Wellness Score = Weighted Average of:
 ```
 
 **Calculation (Athletes Plate Method)**:
+
 ```typescript
 // Based on training day type
 Easy Day: 50% vegetables, 25% protein, 25% carbs
@@ -1203,18 +1209,18 @@ Protein = 1.6-2.2g per kg body weight
 
 ### Access Patterns by Role
 
-| Table Category | Player Access | Coach Access | Admin Access |
-|---------------|---------------|--------------|--------------|
-| Own user data | ✅ Full CRUD | ✅ Full CRUD | ✅ Full CRUD |
-| Own training data | ✅ Full CRUD | ✅ Full CRUD | ✅ Full CRUD |
-| Own wellness data | ✅ Full CRUD | ✅ Full CRUD | ✅ Full CRUD |
-| Team roster | ✅ Read own team | ✅ Full CRUD own team | ✅ All teams |
-| Other player's training | ❌ Denied | ✅ Read (team members) | ✅ All |
-| Other player's wellness | ❌ Denied | ✅ Read (with consent) | ✅ All |
-| AI chat (own) | ✅ Full CRUD | ✅ Full CRUD | ✅ Full CRUD |
-| AI chat (other) | ❌ Denied | ✅ Read (Tier 2/3 only) | ✅ All |
-| Exercise libraries | ✅ Read only | ✅ Read only | ✅ Full CRUD |
-| Research studies | ✅ Read only | ✅ Read only | ✅ Full CRUD |
+| Table Category          | Player Access    | Coach Access            | Admin Access |
+| ----------------------- | ---------------- | ----------------------- | ------------ |
+| Own user data           | ✅ Full CRUD     | ✅ Full CRUD            | ✅ Full CRUD |
+| Own training data       | ✅ Full CRUD     | ✅ Full CRUD            | ✅ Full CRUD |
+| Own wellness data       | ✅ Full CRUD     | ✅ Full CRUD            | ✅ Full CRUD |
+| Team roster             | ✅ Read own team | ✅ Full CRUD own team   | ✅ All teams |
+| Other player's training | ❌ Denied        | ✅ Read (team members)  | ✅ All       |
+| Other player's wellness | ❌ Denied        | ✅ Read (with consent)  | ✅ All       |
+| AI chat (own)           | ✅ Full CRUD     | ✅ Full CRUD            | ✅ Full CRUD |
+| AI chat (other)         | ❌ Denied        | ✅ Read (Tier 2/3 only) | ✅ All       |
+| Exercise libraries      | ✅ Read only     | ✅ Read only            | ✅ Full CRUD |
+| Research studies        | ✅ Read only     | ✅ Read only            | ✅ Full CRUD |
 
 ### Key RLS Policies
 
@@ -1253,13 +1259,13 @@ CREATE POLICY "Public read for exercises" ON exercises
 
 ### Frontend Validation → Backend Validation → Database Constraints
 
-| Field | Frontend | Backend | Database |
-|-------|----------|---------|----------|
-| `rpe` | 1-10 slider | `parseInt`, range check | `CHECK (rpe >= 1 AND rpe <= 10)` |
-| `sleep_hours` | 0-24 input | `parseFloat`, range check | `CHECK (sleep_hours >= 0 AND sleep_hours <= 24)` |
-| `email` | HTML5 email | Regex validation | `UNIQUE`, format constraint |
-| `user_id` | From auth | JWT validation | `REFERENCES auth.users(id)` |
-| `acwr_ratio` | Calculated | Business logic | `CHECK (acwr_ratio >= 0)` |
+| Field         | Frontend    | Backend                   | Database                                         |
+| ------------- | ----------- | ------------------------- | ------------------------------------------------ |
+| `rpe`         | 1-10 slider | `parseInt`, range check   | `CHECK (rpe >= 1 AND rpe <= 10)`                 |
+| `sleep_hours` | 0-24 input  | `parseFloat`, range check | `CHECK (sleep_hours >= 0 AND sleep_hours <= 24)` |
+| `email`       | HTML5 email | Regex validation          | `UNIQUE`, format constraint                      |
+| `user_id`     | From auth   | JWT validation            | `REFERENCES auth.users(id)`                      |
+| `acwr_ratio`  | Calculated  | Business logic            | `CHECK (acwr_ratio >= 0)`                        |
 
 ---
 
@@ -1267,50 +1273,50 @@ CREATE POLICY "Public read for exercises" ON exercises
 
 ### Features → Database Mapping
 
-| # | Feature | Primary Tables | Verified |
-|---|---------|----------------|----------|
-| 1 | Dashboard | `users`, `training_load_metrics`, `readiness_scores` | ✅ |
-| 2 | Training Schedule | `training_sessions`, `training_programs`, `workout_logs` | ✅ |
-| 3 | Today's Practice | `daily_training_schedule`, `exercises`, `training_videos` | ✅ |
-| 4 | Wellness | `wellness_entries`, `readiness_scores` | ✅ |
-| 5 | ACWR Dashboard | `load_monitoring`, `training_load_metrics`, `injury_risk_flags` | ✅ |
-| 6 | Travel Recovery | `athlete_travel_log`, `travel_protocols` | ✅ |
-| 7 | Game Day Readiness | `competition_readiness`, `game_day_workflows` | ✅ |
-| 8 | Tournament Nutrition | `tournament_nutrition_protocols`, `meal_templates` | ✅ |
-| 9 | Game Tracker | `games`, `game_plays`, `game_events` | ✅ |
-| 10 | Tournaments | `tournaments`, `tournament_participation` | ✅ |
-| 11 | Roster | `teams`, `team_members`, `team_players` | ✅ |
-| 12 | Depth Chart | `depth_chart_templates`, `depth_chart_entries` | ✅ |
-| 13 | Attendance | `team_events`, `attendance_records` | ✅ |
-| 14 | Equipment | `equipment_inventory`, `equipment_assignments` | ✅ |
-| 15 | Officials | `officials`, `game_official_assignments` | ✅ |
-| 16 | Analytics | `performance_metrics`, `training_analytics` | ✅ |
-| 17 | AI Coach | `ai_chat_sessions`, `ai_messages`, `knowledge_base_entries` | ✅ |
-| 18 | Global Search | N/A (client-side + API) | ✅ |
-| 19 | Notifications | `notifications`, `push_notification_tokens` | ✅ |
-| 20 | Achievements | `achievement_definitions`, `user_achievements` | ✅ |
-| 21 | User Profile | `users`, `user_profiles` | ✅ |
-| 22 | Settings | `user_preferences`, `notification_preferences` | ✅ |
-| 23 | Onboarding | `users`, `user_profiles`, `gdpr_consent` | ✅ |
-| 24 | Body Composition | `physical_measurements`, `athlete_nutrition_profiles` | ✅ |
-| 25 | Supplement Tracker | `supplements`, `supplement_logs`, `supplement_wada_compliance` | ✅ |
+| #   | Feature              | Primary Tables                                                  | Verified |
+| --- | -------------------- | --------------------------------------------------------------- | -------- |
+| 1   | Dashboard            | `users`, `training_load_metrics`, `readiness_scores`            | ✅       |
+| 2   | Training Schedule    | `training_sessions`, `training_programs`, `workout_logs`        | ✅       |
+| 3   | Today's Practice     | `daily_training_schedule`, `exercises`, `training_videos`       | ✅       |
+| 4   | Wellness             | `wellness_entries`, `readiness_scores`                          | ✅       |
+| 5   | ACWR Dashboard       | `load_monitoring`, `training_load_metrics`, `injury_risk_flags` | ✅       |
+| 6   | Travel Recovery      | `athlete_travel_log`, `travel_protocols`                        | ✅       |
+| 7   | Game Day Readiness   | `competition_readiness`, `game_day_workflows`                   | ✅       |
+| 8   | Tournament Nutrition | `tournament_nutrition_protocols`, `meal_templates`              | ✅       |
+| 9   | Game Tracker         | `games`, `game_plays`, `game_events`                            | ✅       |
+| 10  | Tournaments          | `tournaments`, `tournament_participation`                       | ✅       |
+| 11  | Roster               | `teams`, `team_members`, `team_players`                         | ✅       |
+| 12  | Depth Chart          | `depth_chart_templates`, `depth_chart_entries`                  | ✅       |
+| 13  | Attendance           | `team_events`, `attendance_records`                             | ✅       |
+| 14  | Equipment            | `equipment_inventory`, `equipment_assignments`                  | ✅       |
+| 15  | Officials            | `officials`, `game_official_assignments`                        | ✅       |
+| 16  | Analytics            | `performance_metrics`, `training_analytics`                     | ✅       |
+| 17  | AI Coach             | `ai_chat_sessions`, `ai_messages`, `knowledge_base_entries`     | ✅       |
+| 18  | Global Search        | N/A (client-side + API)                                         | ✅       |
+| 19  | Notifications        | `notifications`, `push_notification_tokens`                     | ✅       |
+| 20  | Achievements         | `achievement_definitions`, `user_achievements`                  | ✅       |
+| 21  | User Profile         | `users`, `user_profiles`                                        | ✅       |
+| 22  | Settings             | `user_preferences`, `notification_preferences`                  | ✅       |
+| 23  | Onboarding           | `users`, `user_profiles`, `gdpr_consent`                        | ✅       |
+| 24  | Body Composition     | `physical_measurements`, `athlete_nutrition_profiles`           | ✅       |
+| 25  | Supplement Tracker   | `supplements`, `supplement_logs`, `supplement_wada_compliance`  | ✅       |
 
 ---
 
 ## Appendix A: Table Count Summary
 
-| Category | Table Count | Key Tables |
-|----------|-------------|------------|
-| Users & Auth | 15 | `users`, `user_profiles`, `gdpr_consent` |
-| Training | 25 | `workout_logs`, `training_programs`, `exercises` |
-| Load Monitoring | 8 | `load_monitoring`, `training_load_metrics` |
-| Wellness | 12 | `wellness_entries`, `readiness_scores` |
-| AI Coaching | 10 | `ai_chat_sessions`, `ai_messages`, `knowledge_base_entries` |
-| Teams | 20 | `teams`, `team_members`, `depth_chart_entries` |
-| Competition | 15 | `games`, `tournaments`, `game_plays` |
-| Nutrition | 18 | `nutrition_logs`, `usda_foods`, `supplements` |
-| Research | 8 | `research_studies`, `research_topics` |
-| **Total** | **300+** | |
+| Category        | Table Count | Key Tables                                                  |
+| --------------- | ----------- | ----------------------------------------------------------- |
+| Users & Auth    | 15          | `users`, `user_profiles`, `gdpr_consent`                    |
+| Training        | 25          | `workout_logs`, `training_programs`, `exercises`            |
+| Load Monitoring | 8           | `load_monitoring`, `training_load_metrics`                  |
+| Wellness        | 12          | `wellness_entries`, `readiness_scores`                      |
+| AI Coaching     | 10          | `ai_chat_sessions`, `ai_messages`, `knowledge_base_entries` |
+| Teams           | 20          | `teams`, `team_members`, `depth_chart_entries`              |
+| Competition     | 15          | `games`, `tournaments`, `game_plays`                        |
+| Nutrition       | 18          | `nutrition_logs`, `usda_foods`, `supplements`               |
+| Research        | 8           | `research_studies`, `research_topics`                       |
+| **Total**       | **300+**    |                                                             |
 
 ---
 

@@ -1,10 +1,10 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -375,17 +375,17 @@ export class TrainingScheduleComponent implements OnInit {
   // Sessions filtered to show upcoming sessions starting from tomorrow
   filteredSessions = computed(() => {
     const allSessions = this.sessions();
-    
+
     // Calculate tomorrow's date (start of day)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
 
     // Filter to sessions from tomorrow onwards and limit to 5
     const upcomingSessions = allSessions
-      .filter(session => {
-        const sessionDateStr = session.date.toISOString().split('T')[0];
+      .filter((session) => {
+        const sessionDateStr = session.date.toISOString().split("T")[0];
         return sessionDateStr >= tomorrowStr;
       })
       .sort((a, b) => a.date.getTime() - b.date.getTime())
@@ -444,7 +444,7 @@ export class TrainingScheduleComponent implements OnInit {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(0, 0, 0, 0);
-      
+
       const twoWeeksOut = new Date(tomorrow);
       twoWeeksOut.setDate(tomorrow.getDate() + 14);
 
@@ -526,32 +526,36 @@ export class TrainingScheduleComponent implements OnInit {
       // Map scheduled templates to sessions (if no template error)
       let mappedScheduledSessions: TrainingSession[] = [];
       if (!templatesError && scheduledTemplates) {
-        this.logger.debug("Found scheduled templates", { count: scheduledTemplates.length });
-        
+        this.logger.debug("Found scheduled templates", {
+          count: scheduledTemplates.length,
+        });
+
         mappedScheduledSessions = scheduledTemplates
           .filter((template) => {
             // training_weeks can be an array or single object from Supabase join
             const weeks = template.training_weeks;
             // Check if it's an array with data OR a single object with start_date
-            const hasWeekData = Array.isArray(weeks) 
-              ? weeks.length > 0 
-              : weeks && typeof weeks === 'object' && 'start_date' in weeks;
+            const hasWeekData = Array.isArray(weeks)
+              ? weeks.length > 0
+              : weeks && typeof weeks === "object" && "start_date" in weeks;
             return hasWeekData;
           })
           .map((template) => {
             // Handle both array and single object response from Supabase
             const weeks = template.training_weeks;
-            const weekData = Array.isArray(weeks) 
-              ? weeks[0] as { start_date: string; week_number: number }
-              : weeks as { start_date: string; week_number: number };
-            
+            const weekData = Array.isArray(weeks)
+              ? (weeks[0] as { start_date: string; week_number: number })
+              : (weeks as { start_date: string; week_number: number });
+
             // Parse date string as local date to avoid timezone issues
-            const dateStr = weekData.start_date.split('T')[0]; // Get just YYYY-MM-DD
-            const [year, month, day] = dateStr.split('-').map(Number);
+            const dateStr = weekData.start_date.split("T")[0]; // Get just YYYY-MM-DD
+            const [year, month, day] = dateStr.split("-").map(Number);
             const weekStart = new Date(year, month - 1, day, 0, 0, 0, 0);
-            
+
             const sessionDate = new Date(weekStart);
-            sessionDate.setDate(weekStart.getDate() + (template.day_of_week || 0));
+            sessionDate.setDate(
+              weekStart.getDate() + (template.day_of_week || 0),
+            );
 
             return {
               id: template.id,
@@ -563,8 +567,10 @@ export class TrainingScheduleComponent implements OnInit {
               isTemplate: true,
             };
           });
-        
-        this.logger.debug("Mapped scheduled sessions", { count: mappedScheduledSessions.length });
+
+        this.logger.debug("Mapped scheduled sessions", {
+          count: mappedScheduledSessions.length,
+        });
       } else if (templatesError) {
         this.logger.error("Error loading templates", templatesError);
       } else {
@@ -591,7 +597,7 @@ export class TrainingScheduleComponent implements OnInit {
           (a, b) => a.date.getTime() - b.date.getTime(),
         );
         this.logger.debug("Using scheduled templates as primary source", {
-          templateCount: mappedScheduledSessions.length
+          templateCount: mappedScheduledSessions.length,
         });
       } else {
         // No templates found, fallback to actual sessions from training_sessions table
@@ -654,9 +660,9 @@ export class TrainingScheduleComponent implements OnInit {
     // This allows filtering by specific dates
     const weekChanged = prevWeekStart.getTime() !== newWeekStart.getTime();
     this.logger.debug("Week changed check", { weekChanged });
-    
+
     // Reload if week changed OR if in month view (to show relevant sessions)
-    if (weekChanged || this.viewMode() === 'month') {
+    if (weekChanged || this.viewMode() === "month") {
       this.loadSessions();
     } else {
       // In week view, just update the filter without reloading

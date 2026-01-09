@@ -27,7 +27,11 @@ export type AutosaveStatus = "idle" | "saving" | "saved" | "error";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   template: `
-    <div class="autosave-indicator" [class]="statusClass()" [attr.aria-live]="ariaLive()">
+    <div
+      class="autosave-indicator"
+      [class]="statusClass()"
+      [attr.aria-live]="ariaLive()"
+    >
       <div class="indicator-content">
         <i [class]="iconClass()" aria-hidden="true"></i>
         <span class="indicator-text">{{ statusText() }}</span>

@@ -1,6 +1,6 @@
 /**
  * Offboarding Service
- * 
+ *
  * Handles season end archiving, inactive player detection, account pause,
  * and long-term injury analytics exclusion
  */
@@ -90,10 +90,18 @@ export class OffboardingService {
   readonly longTermInjuries = this._longTermInjuries.asReadonly();
 
   // Computed signals
-  readonly isAccountPaused = computed(() => this._accountPause()?.is_active ?? false);
-  readonly isAcwrFrozen = computed(() => this._accountPause()?.acwr_frozen ?? false);
-  readonly hasInactivePlayers = computed(() => this._inactivePlayers().length > 0);
-  readonly hasLongTermInjuries = computed(() => this._longTermInjuries().length > 0);
+  readonly isAccountPaused = computed(
+    () => this._accountPause()?.is_active ?? false,
+  );
+  readonly isAcwrFrozen = computed(
+    () => this._accountPause()?.acwr_frozen ?? false,
+  );
+  readonly hasInactivePlayers = computed(
+    () => this._inactivePlayers().length > 0,
+  );
+  readonly hasLongTermInjuries = computed(
+    () => this._longTermInjuries().length > 0,
+  );
 
   /**
    * Load seasons for current team
@@ -109,9 +117,9 @@ export class OffboardingService {
       if (error) throw error;
 
       this._seasons.set(data || []);
-      
+
       // Set active season
-      const active = data?.find(s => s.is_active && !s.is_archived);
+      const active = data?.find((s) => s.is_active && !s.is_archived);
       this._activeSeason.set(active || null);
     } catch (error) {
       this.logger.error("[Offboarding] Error loading seasons:", error);
@@ -126,7 +134,7 @@ export class OffboardingService {
     teamId: string,
     name: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<Season> {
     try {
       const { data, error } = await this.supabase.client
@@ -157,16 +165,18 @@ export class OffboardingService {
    */
   async archiveSeason(seasonId: string): Promise<void> {
     try {
-      const response = await firstValueFrom(this.apiService.post("/api/season/archive", {
-        season_id: seasonId,
-      }));
+      const response = await firstValueFrom(
+        this.apiService.post("/api/season/archive", {
+          season_id: seasonId,
+        }),
+      );
 
       if (response.error) throw new Error(response.error);
 
       this.toastService.success(TOAST.SUCCESS.ARCHIVED);
-      
+
       // Reload seasons
-      const season = this._seasons().find(s => s.id === seasonId);
+      const season = this._seasons().find((s) => s.id === seasonId);
       if (season) {
         await this.loadSeasons(season.team_id);
       }
@@ -180,11 +190,18 @@ export class OffboardingService {
   /**
    * Generate season summary reports
    */
-  async generateSeasonReports(seasonId: string): Promise<SeasonSummaryReport[]> {
+  async generateSeasonReports(
+    seasonId: string,
+  ): Promise<SeasonSummaryReport[]> {
     try {
-      const response = await firstValueFrom(this.apiService.post<SeasonSummaryReport[]>("/api/season/generate-reports", {
-        season_id: seasonId,
-      }));
+      const response = await firstValueFrom(
+        this.apiService.post<SeasonSummaryReport[]>(
+          "/api/season/generate-reports",
+          {
+            season_id: seasonId,
+          },
+        ),
+      );
 
       if (response.error) throw new Error(response.error);
 
@@ -225,14 +242,16 @@ export class OffboardingService {
   async pauseAccount(
     userId: string,
     pausedUntil?: string,
-    reason?: string
+    reason?: string,
   ): Promise<AccountPause> {
     try {
-      const response = await firstValueFrom(this.apiService.post<AccountPause>("/api/account/pause", {
-        user_id: userId,
-        paused_until: pausedUntil,
-        reason,
-      }));
+      const response = await firstValueFrom(
+        this.apiService.post<AccountPause>("/api/account/pause", {
+          user_id: userId,
+          paused_until: pausedUntil,
+          reason,
+        }),
+      );
 
       if (response.error) throw new Error(response.error);
 
@@ -251,9 +270,11 @@ export class OffboardingService {
    */
   async resumeAccount(userId: string): Promise<void> {
     try {
-      const response = await firstValueFrom(this.apiService.post("/api/account/resume", {
-        user_id: userId,
-      }));
+      const response = await firstValueFrom(
+        this.apiService.post("/api/account/resume", {
+          user_id: userId,
+        }),
+      );
 
       if (response.error) throw new Error(response.error);
 
@@ -273,7 +294,8 @@ export class OffboardingService {
     try {
       const { data, error } = await this.supabase.client
         .from("player_activity_tracking")
-        .select(`
+        .select(
+          `
           *,
           user:user_id (
             id,
@@ -281,7 +303,8 @@ export class OffboardingService {
             last_name,
             email
           )
-        `)
+        `,
+        )
         .eq("team_id", teamId)
         .gte("days_inactive", 30)
         .order("days_inactive", { ascending: false });
@@ -297,18 +320,26 @@ export class OffboardingService {
   /**
    * Send notification to inactive player
    */
-  async notifyInactivePlayer(userId: string, daysInactive: number): Promise<void> {
+  async notifyInactivePlayer(
+    userId: string,
+    daysInactive: number,
+  ): Promise<void> {
     try {
-      const response = await firstValueFrom(this.apiService.post("/api/player/notify-inactive", {
-        user_id: userId,
-        days_inactive: daysInactive,
-      }));
+      const response = await firstValueFrom(
+        this.apiService.post("/api/player/notify-inactive", {
+          user_id: userId,
+          days_inactive: daysInactive,
+        }),
+      );
 
       if (response.error) throw new Error(response.error);
 
       this.toastService.success(TOAST.SUCCESS.NOTIFICATION_SENT);
     } catch (error) {
-      this.logger.error("[Offboarding] Error notifying inactive player:", error);
+      this.logger.error(
+        "[Offboarding] Error notifying inactive player:",
+        error,
+      );
       this.toastService.error(TOAST.ERROR.GENERIC);
       throw error;
     }
@@ -321,7 +352,8 @@ export class OffboardingService {
     try {
       const { data, error } = await this.supabase.client
         .from("long_term_injury_tracking")
-        .select(`
+        .select(
+          `
           *,
           user:user_id (
             id,
@@ -333,7 +365,8 @@ export class OffboardingService {
             injury_type,
             severity
           )
-        `)
+        `,
+        )
         .eq("team_id", teamId)
         .eq("excluded_from_analytics", true)
         .order("days_injured", { ascending: false });
@@ -342,7 +375,10 @@ export class OffboardingService {
 
       this._longTermInjuries.set(data || []);
     } catch (error) {
-      this.logger.error("[Offboarding] Error loading long-term injuries:", error);
+      this.logger.error(
+        "[Offboarding] Error loading long-term injuries:",
+        error,
+      );
     }
   }
 
@@ -351,17 +387,22 @@ export class OffboardingService {
    */
   async checkAcwrFrozen(userId: string): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase.client.rpc("should_freeze_acwr", {
-        p_user_id: userId,
-      });
+      const { data, error } = await this.supabase.client.rpc(
+        "should_freeze_acwr",
+        {
+          p_user_id: userId,
+        },
+      );
 
       if (error) throw error;
 
       return data ?? false;
     } catch (error) {
-      this.logger.error("[Offboarding] Error checking ACWR freeze status:", error);
+      this.logger.error(
+        "[Offboarding] Error checking ACWR freeze status:",
+        error,
+      );
       return false;
     }
   }
 }
-

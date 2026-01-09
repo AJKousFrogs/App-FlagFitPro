@@ -16,9 +16,7 @@ const {
   getUserRole,
   logViolation,
 } = require("./utils/authorization-guard.cjs");
-const {
-  guardMerlinRequest,
-} = require("./utils/merlin-guard.cjs");
+const { guardMerlinRequest } = require("./utils/merlin-guard.cjs");
 // Note: authenticateRequest, applyRateLimit, and CORS are handled by baseHandler
 
 /**
@@ -37,7 +35,7 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
         "create",
         "ROLE_NOT_FOUND",
         "User role not found",
-        requestInfo
+        requestInfo,
       );
       throw new Error("User role not found");
     }
@@ -55,7 +53,7 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
 
     // If creating for another user, must be coach
     const finalUserId = targetUserId || userId;
-    if (finalUserId !== userId && !['coach', 'admin'].includes(role)) {
+    if (finalUserId !== userId && !["coach", "admin"].includes(role)) {
       await logViolation(
         userId,
         null,
@@ -63,7 +61,7 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
         "create",
         "INSUFFICIENT_PERMISSIONS",
         "Coach role required to create sessions for other users",
-        requestInfo
+        requestInfo,
       );
       throw new Error("Insufficient permissions: coach role required");
     }
@@ -219,7 +217,12 @@ async function getTrainingSessions(userId, queryParams) {
  * Update a training session
  * Contract: Section 3.1 - Session Mutation APIs
  */
-async function updateTrainingSession(userId, sessionId, updates, requestInfo = {}) {
+async function updateTrainingSession(
+  userId,
+  sessionId,
+  updates,
+  requestInfo = {},
+) {
   // Check authorization
   const authCheck = await requireAuthorization(
     userId,
@@ -227,7 +230,7 @@ async function updateTrainingSession(userId, sessionId, updates, requestInfo = {
     "session",
     "update",
     "structure",
-    requestInfo
+    requestInfo,
   );
 
   if (!authCheck.success) {
@@ -255,7 +258,7 @@ async function updateTrainingSession(userId, sessionId, updates, requestInfo = {
         "update",
         "DB_TRIGGER_REJECTED",
         error.message,
-        requestInfo
+        requestInfo,
       );
     }
     throw error;
@@ -269,12 +272,12 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 exports.handler = async (event, context) => {
   // Apply Merlin guard for mutation endpoints
   if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
-    const req = { 
-      method: event.httpMethod, 
-      path: event.path, 
-      headers: event.headers, 
+    const req = {
+      method: event.httpMethod,
+      path: event.path,
+      headers: event.headers,
       body: event.body,
-      user: context.user || {}
+      user: context.user || {},
     };
     const blocked = guardMerlinRequest(req);
     if (blocked && blocked.statusCode === 403) {
@@ -285,7 +288,10 @@ exports.handler = async (event, context) => {
   return baseHandler(event, context, {
     functionName: "training-sessions",
     allowedMethods: ["GET", "POST", "PUT"],
-    rateLimitType: event.httpMethod === "POST" || event.httpMethod === "PUT" ? "CREATE" : "READ",
+    rateLimitType:
+      event.httpMethod === "POST" || event.httpMethod === "PUT"
+        ? "CREATE"
+        : "READ",
     handler: async (event, _context, { userId }) => {
       const requestInfo = {
         ip: event.headers["x-forwarded-for"] || event.headers["x-real-ip"],
@@ -324,7 +330,11 @@ exports.handler = async (event, context) => {
         }
 
         try {
-          const result = await createTrainingSession(userId, sessionData, requestInfo);
+          const result = await createTrainingSession(
+            userId,
+            sessionData,
+            requestInfo,
+          );
           return createSuccessResponse(
             { session: result.session, id: result.id, note: result.note },
             201,
@@ -334,7 +344,9 @@ exports.handler = async (event, context) => {
           return createErrorResponse(
             error.message || "Failed to create training session",
             403,
-            error.message?.includes("permissions") ? "INSUFFICIENT_PERMISSIONS" : "CREATE_FAILED",
+            error.message?.includes("permissions")
+              ? "INSUFFICIENT_PERMISSIONS"
+              : "CREATE_FAILED",
           );
         }
       }
@@ -355,7 +367,12 @@ exports.handler = async (event, context) => {
         }
 
         try {
-          const session = await updateTrainingSession(userId, sessionId, updates, requestInfo);
+          const session = await updateTrainingSession(
+            userId,
+            sessionId,
+            updates,
+            requestInfo,
+          );
           return createSuccessResponse(session);
         } catch (error) {
           // Error response already created by updateTrainingSession if auth failed

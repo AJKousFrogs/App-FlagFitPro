@@ -1,13 +1,13 @@
 /**
  * Direct Supabase API Service
- * 
+ *
  * Provides direct database access for local development without Netlify Functions.
  * This service mirrors the API endpoints but calls Supabase directly.
- * 
+ *
  * Use case:
  * - When running `ng serve` (port 4200), this service is used
  * - When running `netlify dev` (port 8888), the regular API endpoints are used
- * 
+ *
  * This allows faster local development without needing Netlify Dev running.
  */
 
@@ -85,30 +85,43 @@ export class DirectSupabaseApiService {
   private logger = inject(LoggerService);
 
   constructor() {
-    this.logger.info("[DirectSupabaseApi] Service initialized for direct database access");
+    this.logger.info(
+      "[DirectSupabaseApi] Service initialized for direct database access",
+    );
   }
 
   /**
    * GET /api/daily-protocol?date=YYYY-MM-DD
    * Fetches daily protocol directly from Supabase
    */
-  getDailyProtocol(date: string): Observable<DirectApiResponse<DailyProtocolData>> {
+  getDailyProtocol(
+    date: string,
+  ): Observable<DirectApiResponse<DailyProtocolData>> {
     const userId = this.authService.getUser()?.id;
-    
+
     if (!userId) {
       return of({ success: false, error: "Not authenticated" });
     }
 
     return from(this.fetchDailyProtocol(userId, date)).pipe(
-      map(data => ({ success: true, data })),
-      catchError(error => {
-        this.logger.error("[DirectSupabaseApi] Error fetching daily protocol:", error);
-        return of({ success: false, error: error.message || "Failed to fetch protocol" });
-      })
+      map((data) => ({ success: true, data })),
+      catchError((error) => {
+        this.logger.error(
+          "[DirectSupabaseApi] Error fetching daily protocol:",
+          error,
+        );
+        return of({
+          success: false,
+          error: error.message || "Failed to fetch protocol",
+        });
+      }),
     );
   }
 
-  private async fetchDailyProtocol(userId: string, date: string): Promise<DailyProtocolData | undefined> {
+  private async fetchDailyProtocol(
+    userId: string,
+    date: string,
+  ): Promise<DailyProtocolData | undefined> {
     // Fetch from daily_protocols table
     const { data: protocol, error } = await this.supabase.client
       .from("daily_protocols")
@@ -130,7 +143,8 @@ export class DirectSupabaseApiService {
     // Fetch protocol exercises with exercise details joined (including video)
     const { data: protocolExercises } = await this.supabase.client
       .from("protocol_exercises")
-      .select(`
+      .select(
+        `
         id,
         block_type,
         sequence_order,
@@ -150,17 +164,25 @@ export class DirectSupabaseApiService {
           video_url,
           video_id
         )
-      `)
+      `,
+      )
       .eq("protocol_id", protocol.id)
       .order("block_type", { ascending: true })
       .order("sequence_order", { ascending: true });
 
     // Group exercises into blocks
     const blockMap = new Map<string, ProtocolExercise[]>();
-    const blockTypes = ["morning_mobility", "foam_roll", "warm_up", "main_session", "cool_down", "evening_recovery"];
-    
+    const blockTypes = [
+      "morning_mobility",
+      "foam_roll",
+      "warm_up",
+      "main_session",
+      "cool_down",
+      "evening_recovery",
+    ];
+
     // Initialize all block types
-    blockTypes.forEach(type => blockMap.set(type, []));
+    blockTypes.forEach((type) => blockMap.set(type, []));
 
     // Populate exercises into blocks
     if (protocolExercises) {
@@ -168,7 +190,7 @@ export class DirectSupabaseApiService {
       protocolExercises.forEach((ex: any) => {
         const exercise = ex.exercises;
         const blockExercises = blockMap.get(ex.block_type) || [];
-        
+
         // Format prescription based on available data
         let prescription = "";
         if (ex.prescribed_sets && ex.prescribed_reps) {
@@ -180,7 +202,7 @@ export class DirectSupabaseApiService {
         } else if (exercise?.default_sets && exercise?.default_reps) {
           prescription = `${exercise.default_sets}x${exercise.default_reps}`;
         }
-        
+
         blockExercises.push({
           id: ex.id,
           name: exercise?.name || "Exercise",
@@ -196,13 +218,20 @@ export class DirectSupabaseApiService {
     }
 
     // Build blocks array
-    const blocks: ProtocolBlock[] = blockTypes.map(type => {
+    const blocks: ProtocolBlock[] = blockTypes.map((type) => {
       const blockExercises = blockMap.get(type) || [];
-      const completedCount = blockExercises.filter(e => e.status === "completed").length;
-      const status = blockExercises.length === 0 ? "pending" as const :
-                     completedCount === blockExercises.length ? "completed" as const :
-                     completedCount > 0 ? "in_progress" as const : "pending" as const;
-      
+      const completedCount = blockExercises.filter(
+        (e) => e.status === "completed",
+      ).length;
+      const status =
+        blockExercises.length === 0
+          ? ("pending" as const)
+          : completedCount === blockExercises.length
+            ? ("completed" as const)
+            : completedCount > 0
+              ? ("in_progress" as const)
+              : ("pending" as const);
+
       return {
         type,
         status,
@@ -213,7 +242,7 @@ export class DirectSupabaseApiService {
 
     // Determine if there's an override based on conditions
     let override = null;
-    
+
     // Check for active injuries/rehab
     const { data: activeInjuries } = await this.supabase.client
       .from("wellness_checkins")
@@ -223,7 +252,11 @@ export class DirectSupabaseApiService {
       .order("created_at", { ascending: false })
       .limit(1);
 
-    if (activeInjuries?.[0]?.injuries && Array.isArray(activeInjuries[0].injuries) && activeInjuries[0].injuries.length > 0) {
+    if (
+      activeInjuries?.[0]?.injuries &&
+      Array.isArray(activeInjuries[0].injuries) &&
+      activeInjuries[0].injuries.length > 0
+    ) {
       override = {
         type: "rehab_protocol",
         reason: `Active injury protocol: ${activeInjuries[0].injuries.join(", ")}`,
@@ -239,7 +272,9 @@ export class DirectSupabaseApiService {
       trainingFocus: protocol.training_focus || "general",
       blocks,
       overallProgress: protocol.overall_progress || 0,
-      totalExercises: protocol.total_exercises || blocks.reduce((sum, b) => sum + b.exercises.length, 0),
+      totalExercises:
+        protocol.total_exercises ||
+        blocks.reduce((sum, b) => sum + b.exercises.length, 0),
       completedExercises: protocol.completed_exercises || 0,
       override,
     };
@@ -261,23 +296,34 @@ export class DirectSupabaseApiService {
    * POST /api/daily-protocol/generate
    * Generates a new daily protocol (simplified version for direct access)
    */
-  generateDailyProtocol(date: string): Observable<DirectApiResponse<DailyProtocolData>> {
+  generateDailyProtocol(
+    date: string,
+  ): Observable<DirectApiResponse<DailyProtocolData>> {
     const userId = this.authService.getUser()?.id;
-    
+
     if (!userId) {
       return of({ success: false, error: "Not authenticated" });
     }
 
     return from(this.createDailyProtocol(userId, date)).pipe(
-      map(data => ({ success: true, data })),
-      catchError(error => {
-        this.logger.error("[DirectSupabaseApi] Error generating protocol:", error);
-        return of({ success: false, error: error.message || "Failed to generate protocol" });
-      })
+      map((data) => ({ success: true, data })),
+      catchError((error) => {
+        this.logger.error(
+          "[DirectSupabaseApi] Error generating protocol:",
+          error,
+        );
+        return of({
+          success: false,
+          error: error.message || "Failed to generate protocol",
+        });
+      }),
     );
   }
 
-  private async createDailyProtocol(userId: string, date: string): Promise<DailyProtocolData> {
+  private async createDailyProtocol(
+    userId: string,
+    date: string,
+  ): Promise<DailyProtocolData> {
     // Get user's training config for personalization
     const { data: config } = await this.supabase.client
       .from("athlete_training_config")
@@ -288,35 +334,38 @@ export class DirectSupabaseApiService {
     // Determine training focus based on day of week
     const dayOfWeek = new Date(date).getDay();
     const focusMap: Record<number, string> = {
-      0: "recovery",      // Sunday
-      1: "strength",      // Monday
-      2: "speed",         // Tuesday
-      3: "agility",       // Wednesday
-      4: "strength",      // Thursday
-      5: "conditioning",  // Friday
-      6: "recovery",      // Saturday
+      0: "recovery", // Sunday
+      1: "strength", // Monday
+      2: "speed", // Tuesday
+      3: "agility", // Wednesday
+      4: "strength", // Thursday
+      5: "conditioning", // Friday
+      6: "recovery", // Saturday
     };
     const trainingFocus = focusMap[dayOfWeek] || "general";
 
     // Insert the protocol
     const { data: protocol, error } = await this.supabase.client
       .from("daily_protocols")
-      .upsert({
-        user_id: userId,
-        protocol_date: date,
-        training_focus: trainingFocus,
-        readiness_score: null, // Will be calculated from wellness checkin
-        overall_progress: 0,
-        total_exercises: 12,
-        completed_exercises: 0,
-        morning_status: "pending",
-        foam_roll_status: "pending",
-        main_session_status: "pending",
-        evening_status: "pending",
-        generated_at: new Date().toISOString(),
-      }, {
-        onConflict: "user_id,protocol_date",
-      })
+      .upsert(
+        {
+          user_id: userId,
+          protocol_date: date,
+          training_focus: trainingFocus,
+          readiness_score: null, // Will be calculated from wellness checkin
+          overall_progress: 0,
+          total_exercises: 12,
+          completed_exercises: 0,
+          morning_status: "pending",
+          foam_roll_status: "pending",
+          main_session_status: "pending",
+          evening_status: "pending",
+          generated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: "user_id,protocol_date",
+        },
+      )
       .select()
       .single();
 
@@ -326,7 +375,11 @@ export class DirectSupabaseApiService {
     }
 
     // Generate default exercises using real exercise IDs from the database
-    await this.generateProtocolExercises(protocol.id, trainingFocus, config?.primary_position);
+    await this.generateProtocolExercises(
+      protocol.id,
+      trainingFocus,
+      config?.primary_position,
+    );
 
     // Return the created protocol
     return this.fetchDailyProtocol(userId, date) as Promise<DailyProtocolData>;
@@ -335,11 +388,17 @@ export class DirectSupabaseApiService {
   /**
    * Generate protocol exercises using real exercises from the database
    */
-  private async generateProtocolExercises(protocolId: string, focus: string, _position?: string): Promise<void> {
+  private async generateProtocolExercises(
+    protocolId: string,
+    focus: string,
+    _position?: string,
+  ): Promise<void> {
     // Fetch exercises by category
     const { data: allExercises } = await this.supabase.client
       .from("exercises")
-      .select("id, name, category, default_sets, default_reps, default_hold_seconds, default_duration_seconds")
+      .select(
+        "id, name, category, default_sets, default_reps, default_hold_seconds, default_duration_seconds",
+      )
       .eq("active", true);
 
     if (!allExercises || allExercises.length === 0) {
@@ -349,7 +408,7 @@ export class DirectSupabaseApiService {
 
     // Group exercises by category (case-insensitive)
     const exercisesByCategory = new Map<string, typeof allExercises>();
-    allExercises.forEach(ex => {
+    allExercises.forEach((ex) => {
       const category = (ex.category || "").toLowerCase();
       if (!exercisesByCategory.has(category)) {
         exercisesByCategory.set(category, []);
@@ -406,7 +465,7 @@ export class DirectSupabaseApiService {
     let mainCategory = focus.toLowerCase();
     if (mainCategory === "conditioning") mainCategory = "cardio";
     if (mainCategory === "recovery") mainCategory = "mobility";
-    
+
     // Try to get exercises from the focus category, fall back to strength/core
     let mainExercises = getExercises(mainCategory, 4);
     if (mainExercises.length === 0) {
@@ -415,7 +474,7 @@ export class DirectSupabaseApiService {
         ...getExercises("core", 2),
       ];
     }
-    
+
     mainExercises.forEach((ex, i) => {
       protocolExercises.push({
         protocol_id: protocolId,
@@ -460,9 +519,12 @@ export class DirectSupabaseApiService {
       const { error } = await this.supabase.client
         .from("protocol_exercises")
         .insert(protocolExercises);
-      
+
       if (error) {
-        this.logger.error("[DirectSupabaseApi] Error inserting protocol exercises:", error);
+        this.logger.error(
+          "[DirectSupabaseApi] Error inserting protocol exercises:",
+          error,
+        );
       }
     }
 
@@ -477,33 +539,42 @@ export class DirectSupabaseApiService {
    * GET /api/training/sessions
    * Fetches training sessions directly from Supabase
    */
-  getTrainingSessions(params?: { 
-    startDate?: string; 
-    endDate?: string; 
+  getTrainingSessions(params?: {
+    startDate?: string;
+    endDate?: string;
     status?: string;
     limit?: number;
   }): Observable<DirectApiResponse<TrainingSession[]>> {
     const userId = this.authService.getUser()?.id;
-    
+
     if (!userId) {
       return of({ success: false, error: "Not authenticated" });
     }
 
     return from(this.fetchTrainingSessions(userId, params)).pipe(
-      map(data => ({ success: true, data })),
-      catchError(error => {
-        this.logger.error("[DirectSupabaseApi] Error fetching training sessions:", error);
-        return of({ success: false, error: error.message || "Failed to fetch sessions" });
-      })
+      map((data) => ({ success: true, data })),
+      catchError((error) => {
+        this.logger.error(
+          "[DirectSupabaseApi] Error fetching training sessions:",
+          error,
+        );
+        return of({
+          success: false,
+          error: error.message || "Failed to fetch sessions",
+        });
+      }),
     );
   }
 
-  private async fetchTrainingSessions(userId: string, params?: {
-    startDate?: string;
-    endDate?: string;
-    status?: string;
-    limit?: number;
-  }): Promise<TrainingSession[]> {
+  private async fetchTrainingSessions(
+    userId: string,
+    params?: {
+      startDate?: string;
+      endDate?: string;
+      status?: string;
+      limit?: number;
+    },
+  ): Promise<TrainingSession[]> {
     let query = this.supabase.client
       .from("training_sessions")
       .select("*")
@@ -528,11 +599,14 @@ export class DirectSupabaseApiService {
     const { data, error } = await query;
 
     if (error) {
-      this.logger.error("[DirectSupabaseApi] Supabase error fetching sessions:", error);
+      this.logger.error(
+        "[DirectSupabaseApi] Supabase error fetching sessions:",
+        error,
+      );
       throw error;
     }
 
-    return (data || []).map(session => ({
+    return (data || []).map((session) => ({
       id: session.id,
       athleteId: session.athlete_id,
       userId: session.user_id,
@@ -551,7 +625,10 @@ export class DirectSupabaseApiService {
   /**
    * Generic method to check if we have data in a table for the user
    */
-  async hasDataForUser(tableName: string, userColumn: string = "user_id"): Promise<boolean> {
+  async hasDataForUser(
+    tableName: string,
+    userColumn: string = "user_id",
+  ): Promise<boolean> {
     const userId = this.authService.getUser()?.id;
     if (!userId) return false;
 
@@ -561,7 +638,10 @@ export class DirectSupabaseApiService {
       .eq(userColumn, userId);
 
     if (error) {
-      this.logger.warn(`[DirectSupabaseApi] Error checking ${tableName}:`, error);
+      this.logger.warn(
+        `[DirectSupabaseApi] Error checking ${tableName}:`,
+        error,
+      );
       return false;
     }
 

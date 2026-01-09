@@ -2,17 +2,11 @@
   "mcpServers": {
     "primeng": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@primeng/mcp"
-      ]
+      "args": ["-y", "@primeng/mcp"]
     },
     "browser": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-puppeteer"
-      ]
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
     }
   }
 }

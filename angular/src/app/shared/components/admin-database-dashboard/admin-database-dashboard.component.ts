@@ -1,16 +1,20 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
 } from "@angular/core";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
 import { Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { firstValueFrom } from "rxjs";
-import { AdminService, HealthMetric, SyncStatus } from "../../../core/services/admin.service";
+import {
+  AdminService,
+  HealthMetric,
+  SyncStatus,
+} from "../../../core/services/admin.service";
 import { ButtonComponent } from "../button/button.component";
 
 @Component({

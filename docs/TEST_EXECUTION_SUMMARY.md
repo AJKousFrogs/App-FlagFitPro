@@ -24,16 +24,16 @@ A comprehensive testing suite has been created and documented for the authentica
 
 ### 1. Authentication Tests
 
-| Test | Type | Status | Notes |
-|------|------|--------|-------|
-| Magic Link Delivery (Desktop) | Manual | ✅ Documented | Requires Supabase email config |
-| Magic Link Delivery (Mobile) | Manual | ✅ Documented | iPhone 12, Pixel 5 viewports |
-| Password Login (Desktop) | E2E | ✅ Automated | tests/e2e/user-authentication.spec.js |
-| Password Login (Mobile) | E2E | ✅ Automated | Mobile Chrome, Mobile Safari |
-| Registration Flow | E2E | ✅ Automated | Email verification tested |
-| Session Persistence | Manual | ✅ Documented | Browser tab close/reopen |
-| Token Refresh (Auto) | Unit | ✅ Automated | Supabase handles automatically |
-| Session Timeout | E2E | ✅ Automated | Invalid token handling |
+| Test                          | Type   | Status        | Notes                                 |
+| ----------------------------- | ------ | ------------- | ------------------------------------- |
+| Magic Link Delivery (Desktop) | Manual | ✅ Documented | Requires Supabase email config        |
+| Magic Link Delivery (Mobile)  | Manual | ✅ Documented | iPhone 12, Pixel 5 viewports          |
+| Password Login (Desktop)      | E2E    | ✅ Automated  | tests/e2e/user-authentication.spec.js |
+| Password Login (Mobile)       | E2E    | ✅ Automated  | Mobile Chrome, Mobile Safari          |
+| Registration Flow             | E2E    | ✅ Automated  | Email verification tested             |
+| Session Persistence           | Manual | ✅ Documented | Browser tab close/reopen              |
+| Token Refresh (Auto)          | Unit   | ✅ Automated  | Supabase handles automatically        |
+| Session Timeout               | E2E    | ✅ Automated  | Invalid token handling                |
 
 **Total**: 8 auth tests  
 **Automated**: 5 (62.5%)  
@@ -41,13 +41,13 @@ A comprehensive testing suite has been created and documented for the authentica
 
 ### 2. Role-Based Access Control Tests
 
-| Test | Type | Status | Notes |
-|------|------|--------|-------|
-| Player Role Access | Manual | ✅ Documented | 5 routes accessible |
-| Player Role Restrictions | Manual | ✅ Documented | 3 routes blocked |
-| Organizer Role Access | Manual | ✅ Documented | 4 routes accessible |
-| Organizer Role Restrictions | Manual | ✅ Documented | 3 routes blocked |
-| Route Guard Enforcement | Unit | ✅ Code Review | AuthGuard implementation verified |
+| Test                        | Type   | Status         | Notes                             |
+| --------------------------- | ------ | -------------- | --------------------------------- |
+| Player Role Access          | Manual | ✅ Documented  | 5 routes accessible               |
+| Player Role Restrictions    | Manual | ✅ Documented  | 3 routes blocked                  |
+| Organizer Role Access       | Manual | ✅ Documented  | 4 routes accessible               |
+| Organizer Role Restrictions | Manual | ✅ Documented  | 3 routes blocked                  |
+| Route Guard Enforcement     | Unit   | ✅ Code Review | AuthGuard implementation verified |
 
 **Total**: 5 RBAC tests  
 **Automated**: 1 (20%)  
@@ -55,16 +55,16 @@ A comprehensive testing suite has been created and documented for the authentica
 
 ### 3. Training Log End-to-End Tests
 
-| Test | Type | Status | Notes |
-|------|------|--------|-------|
-| 10 Manual Log Entries | Manual | ✅ Documented | Detailed data in checklist |
-| UI Form Validation | E2E | ✅ Automated | tests/e2e/login-to-log-flow.spec.js |
-| Calculated Load Updates | E2E | ✅ Automated | Real-time calculation verified |
-| API POST to Supabase | Manual | ✅ Documented | Network tab verification |
-| Database Insert Verification | Manual | ✅ Documented | SQL query provided |
-| UI Refresh After Save | Manual | ✅ Documented | Dashboard list update |
-| ACWR Calculation Updates | Manual | ✅ Documented | Risk zone indicator |
-| Data Integrity Check | Manual | ✅ Documented | 4590 AU total load |
+| Test                         | Type   | Status        | Notes                               |
+| ---------------------------- | ------ | ------------- | ----------------------------------- |
+| 10 Manual Log Entries        | Manual | ✅ Documented | Detailed data in checklist          |
+| UI Form Validation           | E2E    | ✅ Automated  | tests/e2e/login-to-log-flow.spec.js |
+| Calculated Load Updates      | E2E    | ✅ Automated  | Real-time calculation verified      |
+| API POST to Supabase         | Manual | ✅ Documented | Network tab verification            |
+| Database Insert Verification | Manual | ✅ Documented | SQL query provided                  |
+| UI Refresh After Save        | Manual | ✅ Documented | Dashboard list update               |
+| ACWR Calculation Updates     | Manual | ✅ Documented | Risk zone indicator                 |
+| Data Integrity Check         | Manual | ✅ Documented | 4590 AU total load                  |
 
 **Total**: 8 logging tests  
 **Automated**: 2 (25%)  
@@ -77,9 +77,11 @@ A comprehensive testing suite has been created and documented for the authentica
 ### Automated Tests Created
 
 #### 1. Unit Tests (Vitest)
+
 **Location**: `angular/src/app/core/services/auth.service.spec.ts`
 
 **Test Suites**:
+
 - Initial State (3 tests)
 - Login (4 tests)
 - Registration (4 tests)
@@ -95,9 +97,11 @@ A comprehensive testing suite has been created and documented for the authentica
 **Workaround**: Unit test logic verified through code review
 
 #### 2. E2E Tests (Playwright)
+
 **Location**: `tests/e2e/login-to-log-flow.spec.js`
 
 **Test Scenarios**:
+
 - Complete login → navigate → log training flow
 - Form validation for invalid training log
 - Training load calculation accuracy
@@ -113,9 +117,11 @@ A comprehensive testing suite has been created and documented for the authentica
 **Status**: ✅ Ready to run (may timeout on first run due to dev server startup)
 
 #### 3. Test Runner Script
+
 **Location**: `run-comprehensive-tests.sh`
 
 **Features**:
+
 - Executes unit tests (when dependencies fixed)
 - Runs E2E tests across multiple browsers
 - Tests mobile responsiveness
@@ -124,6 +130,7 @@ A comprehensive testing suite has been created and documented for the authentica
 - Provides manual test instructions
 
 **Usage**:
+
 ```bash
 ./run-comprehensive-tests.sh
 ```
@@ -133,9 +140,11 @@ A comprehensive testing suite has been created and documented for the authentica
 ## Documentation Created
 
 ### 1. Comprehensive Test Plan
+
 **File**: `docs/COMPREHENSIVE_AUTH_AND_LOGGING_TESTS.md`
 
 **Contents**:
+
 - Magic link delivery procedures (desktop/mobile)
 - Password login/registration flows
 - Session persistence and token refresh tests
@@ -152,9 +161,11 @@ A comprehensive testing suite has been created and documented for the authentica
 **Length**: 9 sections, ~800 lines
 
 ### 2. Manual Testing Checklist
+
 **File**: `docs/MANUAL_TESTING_CHECKLIST.md`
 
 **Contents**:
+
 - Pre-test setup instructions
 - Step-by-step test procedures for all 20 tests
 - Expected results for each test
@@ -173,22 +184,24 @@ A comprehensive testing suite has been created and documented for the authentica
 ### Quick Start
 
 1. **Start Development Servers**:
+
    ```bash
    # Terminal 1: API
    npm run dev:api
-   
+
    # Terminal 2: Angular
    npm run dev:angular
    ```
 
 2. **Run Automated Tests**:
+
    ```bash
    # Run E2E tests
    npm run test:e2e -- tests/e2e/login-to-log-flow.spec.js
-   
+
    # Run auth E2E tests
    npm run test:e2e -- tests/e2e/user-authentication.spec.js
-   
+
    # Run all E2E tests
    npm run test:e2e
    ```
@@ -256,6 +269,7 @@ A comprehensive testing suite has been created and documented for the authentica
 ### 🔧 Recommendations
 
 1. **Fix Vitest Dependencies**
+
    ```bash
    cd angular
    rm -rf node_modules package-lock.json
@@ -288,16 +302,17 @@ A comprehensive testing suite has been created and documented for the authentica
 
 **Estimated Time**:
 
-| Task | Duration | Notes |
-|------|----------|-------|
-| Setup (servers, users) | 10 min | One-time setup |
-| Automated E2E Tests | 15 min | All browsers |
-| Manual Auth Tests (1-9) | 30 min | Including RBAC |
-| Manual Log Entries (10-19) | 45 min | 10 training sessions |
-| Data Verification (20) | 10 min | SQL queries, ACWR check |
-| **Total** | **110 min** | ~2 hours |
+| Task                       | Duration    | Notes                   |
+| -------------------------- | ----------- | ----------------------- |
+| Setup (servers, users)     | 10 min      | One-time setup          |
+| Automated E2E Tests        | 15 min      | All browsers            |
+| Manual Auth Tests (1-9)    | 30 min      | Including RBAC          |
+| Manual Log Entries (10-19) | 45 min      | 10 training sessions    |
+| Data Verification (20)     | 10 min      | SQL queries, ACWR check |
+| **Total**                  | **110 min** | ~2 hours                |
 
 **Recommended Schedule**:
+
 - **Daily**: Run automated E2E tests (15 min)
 - **Weekly**: Full manual testing (2 hours)
 - **Release**: Complete test suite + regression tests (4 hours)
@@ -317,6 +332,7 @@ A comprehensive testing infrastructure has been established for the authenticati
 **Current Status**: 🟢 **READY FOR TESTING**
 
 **Next Steps**:
+
 1. Fix Vitest dependency issue to enable unit tests
 2. Configure Supabase email for magic link testing
 3. Execute manual testing checklist and record results
@@ -329,6 +345,7 @@ A comprehensive testing infrastructure has been established for the authenticati
 ## Test Artifacts
 
 **Created Files**:
+
 1. `docs/COMPREHENSIVE_AUTH_AND_LOGGING_TESTS.md` - Full test plan
 2. `docs/MANUAL_TESTING_CHECKLIST.md` - QA checklist
 3. `tests/e2e/login-to-log-flow.spec.js` - New E2E test
@@ -336,6 +353,7 @@ A comprehensive testing infrastructure has been established for the authenticati
 5. `docs/TEST_EXECUTION_SUMMARY.md` - This document
 
 **Existing Test Files**:
+
 - `angular/src/app/core/services/auth.service.spec.ts` (31 tests)
 - `tests/e2e/user-authentication.spec.js` (existing)
 - `tests/e2e/training-workflow.spec.js` (existing)

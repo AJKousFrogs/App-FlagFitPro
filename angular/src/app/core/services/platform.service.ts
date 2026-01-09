@@ -2,14 +2,14 @@
  * Platform Service
  * =================
  * Safely handles browser-only APIs for SSR compatibility
- * 
+ *
  * Usage:
  * ```typescript
  * constructor(private platform: PlatformService) {}
- * 
+ *
  * // Instead of: localStorage.setItem('key', 'value')
  * this.platform.setLocalStorage('key', 'value');
- * 
+ *
  * // Instead of: window.scrollTo(0, 0)
  * if (this.platform.isBrowser) {
  *   window.scrollTo(0, 0);
@@ -17,11 +17,11 @@
  * ```
  */
 
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
-import { isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { isPlatformBrowser, isPlatformServer } from "@angular/common";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class PlatformService {
   private platformId = inject(PLATFORM_ID);
@@ -112,7 +112,7 @@ export class PlatformService {
       localStorage.clear();
       return true;
     } catch (error) {
-      console.warn('Failed to clear localStorage', error);
+      console.warn("Failed to clear localStorage", error);
       return false;
     }
   }
@@ -171,7 +171,7 @@ export class PlatformService {
    */
   getUserAgent(): string {
     if (!this.isBrowser) {
-      return '';
+      return "";
     }
     return navigator.userAgent;
   }
@@ -184,14 +184,14 @@ export class PlatformService {
       return false; // Assume desktop for SSR
     }
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
+      navigator.userAgent,
     );
   }
 
   /**
    * Safely scroll to top
    */
-  scrollToTop(behavior: ScrollBehavior = 'smooth'): void {
+  scrollToTop(behavior: ScrollBehavior = "smooth"): void {
     this.runInBrowser(() => {
       window.scrollTo({ top: 0, behavior });
     });
@@ -200,7 +200,10 @@ export class PlatformService {
   /**
    * Safely scroll to element
    */
-  scrollToElement(elementId: string, behavior: ScrollBehavior = 'smooth'): void {
+  scrollToElement(
+    elementId: string,
+    behavior: ScrollBehavior = "smooth",
+  ): void {
     this.runInBrowser(() => {
       const element = document.getElementById(elementId);
       if (element) {
@@ -240,20 +243,20 @@ export class PlatformService {
       await navigator.clipboard.writeText(text);
       return true;
     } catch (error) {
-      console.warn('Failed to copy to clipboard', error);
+      console.warn("Failed to copy to clipboard", error);
       // Fallback for older browsers
       try {
-        const textArea = document.createElement('textarea');
+        const textArea = document.createElement("textarea");
         textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.opacity = '0';
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
         document.body.appendChild(textArea);
         textArea.select();
-        const success = document.execCommand('copy');
+        const success = document.execCommand("copy");
         document.body.removeChild(textArea);
         return success;
       } catch (fallbackError) {
-        console.warn('Fallback copy failed', fallbackError);
+        console.warn("Fallback copy failed", fallbackError);
         return false;
       }
     }
@@ -264,7 +267,7 @@ export class PlatformService {
    */
   openInNewTab(url: string): void {
     this.runInBrowser(() => {
-      window.open(url, '_blank', 'noopener,noreferrer');
+      window.open(url, "_blank", "noopener,noreferrer");
     });
   }
 

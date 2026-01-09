@@ -1,4 +1,4 @@
-import { logger } from '../logger.js';
+import { logger } from "../logger.js";
 
 /**
  * FlagFit Pro - Export Service
@@ -71,7 +71,7 @@ class ExportService {
                   value.includes('"') ||
                   value.includes("\n")
                 ) {
-                  value = `"${  value.replace(/"/g, '""')  }"`;
+                  value = `"${value.replace(/"/g, '""')}"`;
                 }
               }
 

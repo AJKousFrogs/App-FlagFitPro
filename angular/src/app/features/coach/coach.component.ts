@@ -320,7 +320,13 @@ export class CoachComponent implements OnInit {
   private router = inject(Router);
 
   stats = signal<
-    { label: string; value: number | string; icon: string; iconType?: "primary" | "error" | "warning" | "info"; trend?: string }[]
+    {
+      label: string;
+      value: number | string;
+      icon: string;
+      iconType?: "primary" | "error" | "warning" | "info";
+      trend?: string;
+    }[]
   >([]);
   teamChartData = signal<{
     labels: string[];
@@ -461,9 +467,10 @@ export class CoachComponent implements OnInit {
         (s) => s.label === "Active Sessions",
       );
       if (sessionsStat) {
-        const currentValue = typeof sessionsStat.value === 'string' 
-          ? parseInt(sessionsStat.value, 10) 
-          : sessionsStat.value;
+        const currentValue =
+          typeof sessionsStat.value === "string"
+            ? parseInt(sessionsStat.value, 10)
+            : sessionsStat.value;
         sessionsStat.value = String((currentValue || 0) + 1);
         this.stats.set([...currentStats]);
       }

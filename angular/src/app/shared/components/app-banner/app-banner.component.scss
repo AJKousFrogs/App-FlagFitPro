@@ -11,21 +11,21 @@
   border-radius: var(--radius-md);
   border-left: 4px solid;
   margin-bottom: var(--space-4);
-  
+
   // Info (blue)
   &.banner-info {
     background: var(--color-status-info-light);
     border-left-color: var(--color-status-info);
     color: var(--color-text-primary);
   }
-  
+
   // Warning (amber)
   &.banner-warning {
     background: var(--color-status-warning-light);
     border-left-color: var(--color-status-warning);
     color: var(--color-text-primary);
   }
-  
+
   // Alert (amber, higher priority)
   &.banner-alert {
     background: var(--color-status-warning-surface);
@@ -34,7 +34,7 @@
     color: var(--color-text-primary);
     font-weight: var(--font-weight-medium);
   }
-  
+
   // Error (red)
   &.banner-error {
     background: var(--color-status-error-light);
@@ -55,16 +55,16 @@
   font-size: var(--icon-md);
   margin-top: var(--space-1);
   flex-shrink: 0;
-  
+
   .banner-info & {
     color: var(--color-status-info);
   }
-  
+
   .banner-warning &,
   .banner-alert & {
     color: var(--color-status-warning);
   }
-  
+
   .banner-error & {
     color: var(--color-status-error);
   }
@@ -89,11 +89,11 @@
     flex-direction: column;
     gap: var(--space-3);
   }
-  
+
   .banner-actions {
     width: 100%;
     flex-direction: column;
-    
+
     app-button {
       width: 100%;
     }

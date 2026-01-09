@@ -204,8 +204,14 @@ router.get(
               data.map((d) => d.coordination_score),
               0,
             ),
-            avg_trust: safeAverage(data.map((d) => d.trust_score), 0),
-            avg_cohesion: safeAverage(data.map((d) => d.cohesion_score), 0),
+            avg_trust: safeAverage(
+              data.map((d) => d.trust_score),
+              0,
+            ),
+            avg_cohesion: safeAverage(
+              data.map((d) => d.cohesion_score),
+              0,
+            ),
             avg_overall: safeAverage(
               data.map((d) => d.overall_chemistry_score),
               0,
@@ -264,7 +270,9 @@ router.get(
           "Leadership",
           "Adaptability",
         ],
-        currentScores: currentScores.map((score) => Math.round(score * 10) / 10),
+        currentScores: currentScores.map(
+          (score) => Math.round(score * 10) / 10,
+        ),
         targetScores: targetScores.map((score) => Math.round(score * 10) / 10),
         overallScore: Math.round((chemistryData.avg_overall || 0) * 10) / 10,
         lastUpdated: new Date().toISOString(),
@@ -398,94 +406,102 @@ router.get(
  * Get analytics summary for dashboard
  * Cached for 2 minutes with ETag support
  */
-router.get("/summary", rateLimit("READ"), withCache("ANALYTICS"), optionalAuth, async (req, res) => {
-  try {
-    const userId = req.userId || req.query.userId;
+router.get(
+  "/summary",
+  rateLimit("READ"),
+  withCache("ANALYTICS"),
+  optionalAuth,
+  async (req, res) => {
+    try {
+      const userId = req.userId || req.query.userId;
 
-    if (!userId) {
-      return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+      if (!userId) {
+        return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+      }
+
+      const summary = {
+        weekly_sessions: 0,
+        avg_performance: 0,
+        weekly_active_users: 0,
+        avg_load_time: 1000,
+      };
+
+      if (supabase && isValidUUID(userId)) {
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        const monthAgo = new Date();
+        monthAgo.setDate(monthAgo.getDate() - 30);
+
+        // Get weekly sessions
+        const { data: sessions } = await supabase
+          .from("training_analytics")
+          .select("id")
+          .eq("user_id", userId)
+          .gte("created_at", weekAgo.toISOString());
+
+        summary.weekly_sessions = sessions?.length || 0;
+
+        // Get avg performance
+        const { data: performance } = await supabase
+          .from("training_analytics")
+          .select("performance_score")
+          .eq("user_id", userId)
+          .gte("created_at", monthAgo.toISOString());
+
+        if (performance?.length > 0) {
+          summary.avg_performance = safeAverage(
+            performance.map((p) => p.performance_score),
+            0,
+          );
+        }
+
+        // Get weekly active users
+        const { data: events } = await supabase
+          .from("analytics_events")
+          .select("user_id")
+          .gte("created_at", weekAgo.toISOString());
+
+        if (events?.length > 0) {
+          summary.weekly_active_users = new Set(
+            events.map((e) => e.user_id),
+          ).size;
+        }
+
+        // Get avg load time
+        const { data: metrics } = await supabase
+          .from("performance_metrics")
+          .select("load_time")
+          .gte("created_at", weekAgo.toISOString());
+
+        if (metrics?.length > 0) {
+          summary.avg_load_time = safeAverage(
+            metrics.map((m) => m.load_time),
+            1000,
+          );
+        }
+      }
+
+      return sendSuccess(res, {
+        weeklySessions: safeParseInt(summary.weekly_sessions, 0),
+        averagePerformance:
+          Math.round(safeParseFloat(summary.avg_performance, 0) * 10) / 10,
+        weeklyActiveUsers: safeParseInt(summary.weekly_active_users, 0),
+        averageLoadTime: Math.round(
+          safeParseFloat(summary.avg_load_time, 1000),
+        ),
+        lastUpdated: new Date().toISOString(),
+      });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Summary error:`, error);
+      return sendError(
+        res,
+        "Failed to fetch analytics summary",
+        "FETCH_ERROR",
+        500,
+      );
     }
-
-    const summary = {
-      weekly_sessions: 0,
-      avg_performance: 0,
-      weekly_active_users: 0,
-      avg_load_time: 1000,
-    };
-
-    if (supabase && isValidUUID(userId)) {
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      const monthAgo = new Date();
-      monthAgo.setDate(monthAgo.getDate() - 30);
-
-      // Get weekly sessions
-      const { data: sessions } = await supabase
-        .from("training_analytics")
-        .select("id")
-        .eq("user_id", userId)
-        .gte("created_at", weekAgo.toISOString());
-
-      summary.weekly_sessions = sessions?.length || 0;
-
-      // Get avg performance
-      const { data: performance } = await supabase
-        .from("training_analytics")
-        .select("performance_score")
-        .eq("user_id", userId)
-        .gte("created_at", monthAgo.toISOString());
-
-      if (performance?.length > 0) {
-        summary.avg_performance = safeAverage(
-          performance.map((p) => p.performance_score),
-          0,
-        );
-      }
-
-      // Get weekly active users
-      const { data: events } = await supabase
-        .from("analytics_events")
-        .select("user_id")
-        .gte("created_at", weekAgo.toISOString());
-
-      if (events?.length > 0) {
-        summary.weekly_active_users = new Set(
-          events.map((e) => e.user_id),
-        ).size;
-      }
-
-      // Get avg load time
-      const { data: metrics } = await supabase
-        .from("performance_metrics")
-        .select("load_time")
-        .gte("created_at", weekAgo.toISOString());
-
-      if (metrics?.length > 0) {
-        summary.avg_load_time = safeAverage(
-          metrics.map((m) => m.load_time),
-          1000,
-        );
-      }
-    }
-
-    return sendSuccess(res, {
-      weeklySessions: safeParseInt(summary.weekly_sessions, 0),
-      averagePerformance:
-        Math.round(safeParseFloat(summary.avg_performance, 0) * 10) / 10,
-      weeklyActiveUsers: safeParseInt(summary.weekly_active_users, 0),
-      averageLoadTime: Math.round(safeParseFloat(summary.avg_load_time, 1000)),
-      lastUpdated: new Date().toISOString(),
-    });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Summary error:`, error);
-    return sendError(
-      res,
-      "Failed to fetch analytics summary",
-      "FETCH_ERROR",
-      500,
-    );
-  }
-});
+  },
+);
 
 // =============================================================================
 // ERROR HANDLING

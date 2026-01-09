@@ -147,7 +147,10 @@
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
   color: var(--text-color);
   text-align: left;
   position: relative;
@@ -261,7 +264,10 @@
   font-size: var(--font-size-h4);
   cursor: pointer;
   color: var(--text-color);
-  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
 }
 
 .recent-tag:hover {
@@ -294,14 +300,23 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  background: linear-gradient(135deg, var(--surface-ground), var(--surface-card));
+  background: linear-gradient(
+    135deg,
+    var(--surface-ground),
+    var(--surface-card)
+  );
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   color: var(--text-color);
-  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
   text-align: left;
 }
 
@@ -322,7 +337,6 @@
 .popular-tag:hover i {
   color: white;
 }
-
 
 /* ================================================================
    SEARCH RESULTS
@@ -655,7 +669,10 @@
   border-radius: var(--radius-2xl);
   font-size: var(--font-size-h4);
   cursor: pointer;
-  transition: background-color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+  transition:
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
   color: var(--text-color);
 }
 

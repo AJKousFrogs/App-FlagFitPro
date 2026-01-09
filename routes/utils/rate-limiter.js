@@ -20,14 +20,17 @@ const RATE_LIMITS = {
 };
 
 // Cleanup old entries every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, value] of rateLimitStore.entries()) {
-    if (now - value.windowStart > value.windowMs * 2) {
-      rateLimitStore.delete(key);
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [key, value] of rateLimitStore.entries()) {
+      if (now - value.windowStart > value.windowMs * 2) {
+        rateLimitStore.delete(key);
+      }
     }
-  }
-}, 5 * 60 * 1000);
+  },
+  5 * 60 * 1000,
+);
 
 /**
  * Get client identifier from request
@@ -99,13 +102,18 @@ export function rateLimit(type = "DEFAULT") {
     res.setHeader("X-RateLimit-Reset", Math.ceil(resetTime / 1000));
 
     if (limited) {
+      const retryAfterSeconds = Math.ceil((resetTime - Date.now()) / 1000);
+
+      // Add Retry-After HTTP header
+      res.setHeader("Retry-After", retryAfterSeconds);
+
       serverLogger.warn(`Rate limit exceeded for ${identifier} (${type})`);
 
       return res.status(429).json({
         success: false,
         error: "Too many requests, please try again later",
         code: "RATE_LIMIT_EXCEEDED",
-        retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
+        retryAfter: retryAfterSeconds,
         timestamp: new Date().toISOString(),
       });
     }

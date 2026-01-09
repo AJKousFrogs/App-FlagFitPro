@@ -1,0 +1,227 @@
+# Artillery Load Test Configuration
+# FlagFit Pro - Logging System Performance Test
+# Target: 50 concurrent users, <2s response time
+#
+# Run with: npm run test:load:logging
+
+config:
+  target: "http://localhost:3000"
+  phases:
+    # Phase 1: Warm up - gradual ramp to 10 users
+    - duration: 60
+      arrivalRate: 10
+      name: "Warm up"
+
+    # Phase 2: Peak load - sustained 50 concurrent users
+    - duration: 180
+      arrivalRate: 50
+      name: "Peak load - 50 concurrent users"
+
+    # Phase 3: Cool down - gradual decrease
+    - duration: 60
+      arrivalRate: 5
+      name: "Cool down"
+
+  # Performance thresholds (from requirements)
+  ensure:
+    maxErrorRate: 1 # <1% error rate
+    p95: 2000 # 95th percentile <2s (2000ms)
+    p99: 3000 # 99th percentile <3s (3000ms)
+
+  # HTTP settings
+  http:
+    timeout: 10 # 10 second timeout
+
+  # Plugins
+  plugins:
+    expect: {}
+    metrics-by-endpoint:
+      stripQueryString: true
+
+  # Defaults for all requests
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      User-Agent: "Artillery Load Test"
+
+# Test scenarios
+scenarios:
+  # ================================================================
+  # Scenario 1: Complete Login-to-Log Flow (Primary User Journey)
+  # ================================================================
+  - name: "Login to Training Log Flow"
+    weight: 50 # 50% of traffic
+    flow:
+      # Step 1: Login
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "athlete{{ $randomNumber(1, 100) }}@flagfit.test"
+            password: "TestPass123!"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+            - json: "$.user.id"
+              as: "userId"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: token
+          afterResponse: "recordMetric"
+
+      # Step 2: Get Dashboard (verify session)
+      - get:
+          url: "/api/dashboard"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - responseTime: 2000 # <2s requirement
+          afterResponse: "recordMetric"
+
+      # Step 3: Load Training Log Form
+      - get:
+          url: "/api/training/log"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - responseTime: 2000 # <2s requirement
+          afterResponse: "recordMetric"
+
+      # Step 4: Submit Training Session
+      - post:
+          url: "/api/training/sessions"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          json:
+            session_type: "{{ $pick(['practice', 'game', 'strength', 'speed', 'recovery', 'skills']) }}"
+            duration_minutes: "{{ $randomNumber(30, 120) }}"
+            rpe: "{{ $randomNumber(1, 10) }}"
+            session_date: "2026-01-09"
+            sprint_reps: "{{ $randomNumber(0, 30) }}"
+            cutting_movements: "{{ $randomNumber(0, 50) }}"
+            throw_count: "{{ $randomNumber(0, 60) }}"
+            jump_count: "{{ $randomNumber(0, 40) }}"
+            notes: "Load test session #{{ $randomString() }}"
+          expect:
+            - statusCode: 201
+            - responseTime: 2000 # <2s requirement
+            - hasProperty: data
+          afterResponse: "recordMetric"
+
+      # Step 5: Verify ACWR Update
+      - get:
+          url: "/api/acwr"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - responseTime: 2000 # <2s requirement
+            - hasProperty: acwr_ratio
+          afterResponse: "recordMetric"
+
+      # Think time between actions (simulate real user)
+      - think: 2
+
+  # ================================================================
+  # Scenario 2: Rapid Session Logging (Bulk Data Entry)
+  # ================================================================
+  - name: "Bulk Session Logging"
+    weight: 30 # 30% of traffic
+    flow:
+      # Login
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "coach{{ $randomNumber(1, 20) }}@flagfit.test"
+            password: "TestPass123!"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+      # Submit multiple sessions in quick succession
+      - loop:
+          - post:
+              url: "/api/training/sessions"
+              headers:
+                Authorization: "Bearer {{ authToken }}"
+              json:
+                session_type: "{{ $pick(['practice', 'game', 'strength', 'speed']) }}"
+                duration_minutes: "{{ $randomNumber(45, 90) }}"
+                rpe: "{{ $randomNumber(3, 8) }}"
+                session_date: "2026-01-0{{ $randomNumber(1, 9) }}"
+                notes: "Bulk entry {{ $randomNumber(1, 1000) }}"
+              expect:
+                - statusCode: 201
+                - responseTime: 2000
+          - think: 0.5 # Minimal delay between submissions
+        count: 5 # Log 5 sessions rapidly
+
+  # ================================================================
+  # Scenario 3: Read-Heavy Analytics Queries
+  # ================================================================
+  - name: "Analytics Dashboard Load"
+    weight: 20 # 20% of traffic
+    flow:
+      # Login
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "athlete{{ $randomNumber(50, 150) }}@flagfit.test"
+            password: "TestPass123!"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+      # Load dashboard
+      - get:
+          url: "/api/dashboard"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - responseTime: 2000
+
+      # Load analytics page
+      - get:
+          url: "/api/analytics/performance?period=30_days"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - responseTime: 2000
+
+      # Load training history
+      - get:
+          url: "/api/training/sessions?page=1&limit=20"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - responseTime: 2000
+
+      # Load ACWR trend
+      - get:
+          url: "/api/acwr/trend?days=28"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+          expect:
+            - statusCode: 200
+            - responseTime: 2000
+
+# ================================================================
+# Custom Functions (requires processor file)
+# ================================================================
+# Create tests/load/helpers.js with:
+#
+# module.exports = {
+#   recordMetric: function(req, res, ctx, ee, next) {
+#     const responseTime = res.timings.phases.firstByte;
+#     ee.emit('customStat', {
+#       stat: 'response_time',
+#       value: responseTime
+#     });
+#     return next();
+#   }
+# };

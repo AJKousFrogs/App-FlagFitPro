@@ -12,7 +12,7 @@ import { ProgressBarModule } from "primeng/progressbar";
  *
  * A standardized progress indicator component for showing completion status
  * Uses Angular signals for reactive state management
- * 
+ *
  * Enhanced with time estimates (UX Best Practice - Nielsen Norman Group)
  */
 @Component({

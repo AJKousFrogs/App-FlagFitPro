@@ -13,7 +13,7 @@ const {
 } = require("./utils/consent-guard.cjs");
 const {
   detectPainTrigger,
-  detectACWRTrigger,
+  // detectACWRTrigger,
 } = require("./utils/safety-override.cjs");
 const { getUserRole } = require("./utils/authorization-guard.cjs");
 
@@ -25,10 +25,10 @@ const { getUserRole } = require("./utils/authorization-guard.cjs");
 async function createWellnessCheckin(userId, checkinData) {
   try {
     const { readiness, sleep, energy, mood, soreness, notes } = checkinData;
-    
+
     // Safety override: Check for pain triggers (if soreness >3/10)
     if (soreness !== undefined && soreness !== null && soreness > 3) {
-      await detectPainTrigger(userId, soreness, notes || 'general', null);
+      await detectPainTrigger(userId, soreness, notes || "general", null);
     }
 
     // Validate required fields
@@ -102,9 +102,9 @@ async function createWellnessCheckin(userId, checkinData) {
 async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
   try {
     const role = await getUserRole(userId);
-    const isCoach = ['coach', 'admin'].includes(role);
+    const isCoach = ["coach", "admin"].includes(role);
     const targetAthleteId = requestedAthleteId || userId;
-    
+
     // If coach requesting another athlete's data, check consent
     if (isCoach && targetAthleteId !== userId) {
       const consentCheck = await canCoachViewWellness(userId, targetAthleteId);
@@ -116,14 +116,14 @@ async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
           .eq("user_id", targetAthleteId)
           .order("created_at", { ascending: false })
           .limit(limit);
-        return (data || []).map(item => ({
+        return (data || []).map((item) => ({
           check_in_completed: true,
           check_in_date: item.created_at,
           // All wellness answers hidden
         }));
       }
     }
-    
+
     const { data, error } = await supabaseAdmin
       .from("wellness_checkins")
       .select("*")
@@ -139,11 +139,13 @@ async function getWellnessCheckins(userId, requestedAthleteId, limit = 30) {
     // Filter data for coach if consent not granted
     if (isCoach && targetAthleteId !== userId && data) {
       const consentCheck = await canCoachViewWellness(userId, targetAthleteId);
-      return data.map(item => filterWellnessDataForCoach(
-        item,
-        consentCheck.allowed && consentCheck.reason === 'CONSENT_GRANTED',
-        consentCheck.safetyOverride
-      ));
+      return data.map((item) =>
+        filterWellnessDataForCoach(
+          item,
+          consentCheck.allowed && consentCheck.reason === "CONSENT_GRANTED",
+          consentCheck.safetyOverride,
+        ),
+      );
     }
 
     return data || [];

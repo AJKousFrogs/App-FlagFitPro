@@ -1,6 +1,6 @@
 /**
  * Tournament Recovery Service
- * 
+ *
  * Implements cross-day continuity: Tournament End → Sleep + Hydration Emphasis (7 days)
  */
 
@@ -20,7 +20,7 @@ export class TournamentRecoveryService {
    */
   async checkAndCreateTournamentRecovery(
     playerId: string,
-    tournamentEndDate: Date
+    tournamentEndDate: Date,
   ): Promise<void> {
     try {
       const endDate = new Date(tournamentEndDate);
@@ -104,19 +104,19 @@ export class TournamentRecoveryService {
       await this.supabaseService.client.from("notifications").insert({
         user_id: playerId,
         notification_type: "recovery",
-        message: "Tournament recovery protocol activated. Focus on sleep, hydration, and gradual return to training over the next 7 days.",
+        message:
+          "Tournament recovery protocol activated. Focus on sleep, hydration, and gradual return to training over the next 7 days.",
         priority: "medium",
       });
 
       this.logger.info(
-        `[TournamentRecovery] Created 7-day recovery protocol for player ${playerId} after tournament`
+        `[TournamentRecovery] Created 7-day recovery protocol for player ${playerId} after tournament`,
       );
     } catch (error) {
       this.logger.error(
         "[TournamentRecovery] Error creating recovery protocol:",
-        error
+        error,
       );
     }
   }
 }
-

@@ -607,7 +607,7 @@ export const TrendAnalyzer = {
 
   calculateVariance(values) {
     const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const squaredDiffs = values.map((val) => (val - mean)**2);
+    const squaredDiffs = values.map((val) => (val - mean) ** 2);
     return squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
   },
 

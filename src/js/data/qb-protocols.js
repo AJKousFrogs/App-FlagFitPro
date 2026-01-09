@@ -21,7 +21,8 @@ export const QB_ENHANCED_WARMUP = {
     {
       title: "Phase 1: Cardiovascular Prep & Core",
       duration: 10,
-      purpose: "Increase body temperature, activate nervous system, and build core stability",
+      purpose:
+        "Increase body temperature, activate nervous system, and build core stability",
       exercises: [
         {
           name: "Jump rope",
@@ -34,7 +35,12 @@ export const QB_ENHANCED_WARMUP = {
             "Fast singles (1 min)",
           ],
           focus: "Coordination and footwork",
-          cues: ["Light on feet", "Relaxed shoulders", "Rhythm", "Stay on balls of feet"],
+          cues: [
+            "Light on feet",
+            "Relaxed shoulders",
+            "Rhythm",
+            "Stay on balls of feet",
+          ],
         },
         {
           name: "Plank series",

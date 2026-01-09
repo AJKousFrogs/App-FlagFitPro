@@ -5,7 +5,13 @@
  * Shows what "model" is being used and allows preset switching.
  */
 
-import { ChangeDetectionStrategy, Component, inject, signal, computed } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  computed,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";

@@ -8,7 +8,14 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
@@ -180,7 +187,13 @@ const RECURRING_OPTIONS = [
                     <span class="day-number">{{ day.date }}</span>
                     @if (day.events.length > 0) {
                       <div class="day-events">
-                        @for (event of day.events.slice(0, UI_LIMITS.CALENDAR_EVENTS_PER_DAY); track event.id) {
+                        @for (
+                          event of day.events.slice(
+                            0,
+                            UI_LIMITS.CALENDAR_EVENTS_PER_DAY
+                          );
+                          track event.id
+                        ) {
                           <div
                             class="event-dot"
                             [class]="'type-' + event.type"

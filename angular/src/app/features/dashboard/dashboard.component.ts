@@ -14,7 +14,7 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
  * Role-based redirection to the appropriate dashboard
  * - Coaches go to /coach/dashboard
  * - Players/Athletes go to /player-dashboard
- * 
+ *
  * UX Audit Fix #2: Added role-aware loading message
  */
 @Component({
@@ -23,10 +23,7 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AppLoadingComponent, CommonModule],
   template: `
-    <app-loading
-      [visible]="true"
-      [message]="loadingMessage()"
-    ></app-loading>
+    <app-loading [visible]="true" [message]="loadingMessage()"></app-loading>
   `,
 })
 export class DashboardComponent implements OnInit {
@@ -37,7 +34,7 @@ export class DashboardComponent implements OnInit {
   loadingMessage = (): string => {
     const user = this.authService.getUser();
     if (!user) return "Redirecting...";
-    
+
     const role = user.role;
     if (role === "coach" || role === "assistant_coach" || role === "admin") {
       return "Loading your Coach Dashboard...";

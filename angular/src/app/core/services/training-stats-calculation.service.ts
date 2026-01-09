@@ -93,7 +93,7 @@ export class TrainingStatsCalculationService {
   /**
    * Get comprehensive training statistics
    * Uses direct Supabase calculation (API fallback removed for reliability)
-   * 
+   *
    * Note: Previously tried API first, but this caused connection errors
    * when backend wasn't running. Now uses direct Supabase for reliability.
    */
@@ -147,26 +147,35 @@ export class TrainingStatsCalculationService {
 
       // Calculate stats from sessions
       const totalSessions = sessions.length;
-      const totalDuration = sessions.reduce((sum, s) => sum + (s.duration_minutes || 0), 0);
+      const totalDuration = sessions.reduce(
+        (sum, s) => sum + (s.duration_minutes || 0),
+        0,
+      );
       const totalLoad = sessions.reduce((sum, s) => {
         const duration = s.duration_minutes || 0;
         const rpe = s.rpe || s.intensity_level || 5;
-        return sum + (duration * rpe);
+        return sum + duration * rpe;
       }, 0);
 
       // Weekly volume calculation
-      const weeklyVolume = this.calculateWeeklyVolume(sessions as TrainingSession[]);
+      const weeklyVolume = this.calculateWeeklyVolume(
+        sessions as TrainingSession[],
+      );
 
       // Session breakdown by type
-      const sessionsByType: Record<string, { count: number; totalDuration: number; totalLoad: number }> = {};
-      sessions.forEach(s => {
+      const sessionsByType: Record<
+        string,
+        { count: number; totalDuration: number; totalLoad: number }
+      > = {};
+      sessions.forEach((s) => {
         const type = s.session_type || "general";
         if (!sessionsByType[type]) {
           sessionsByType[type] = { count: 0, totalDuration: 0, totalLoad: 0 };
         }
         sessionsByType[type].count++;
         sessionsByType[type].totalDuration += s.duration_minutes || 0;
-        sessionsByType[type].totalLoad += (s.duration_minutes || 0) * (s.rpe || 5);
+        sessionsByType[type].totalLoad +=
+          (s.duration_minutes || 0) * (s.rpe || 5);
       });
 
       // Get ACWR from dedicated service
@@ -176,7 +185,8 @@ export class TrainingStatsCalculationService {
         totalSessions,
         totalDuration,
         totalLoad,
-        avgDuration: totalSessions > 0 ? Math.round(totalDuration / totalSessions) : 0,
+        avgDuration:
+          totalSessions > 0 ? Math.round(totalDuration / totalSessions) : 0,
         avgLoad: totalSessions > 0 ? Math.round(totalLoad / totalSessions) : 0,
         currentStreak: this.calculateStreakFromSessions(sessions),
         acwr: acwrData?.ratio ?? null,
@@ -204,15 +214,19 @@ export class TrainingStatsCalculationService {
   /**
    * Calculate current training streak from raw session data
    */
-  private calculateStreakFromSessions(sessions: Array<{ session_date?: string; date?: string }>): number {
+  private calculateStreakFromSessions(
+    sessions: Array<{ session_date?: string; date?: string }>,
+  ): number {
     if (sessions.length === 0) return 0;
 
-    const sortedDates = [...new Set(
-      sessions
-        .map(s => s.session_date || s.date)
-        .filter((d): d is string => Boolean(d))
-        .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-    )];
+    const sortedDates = [
+      ...new Set(
+        sessions
+          .map((s) => s.session_date || s.date)
+          .filter((d): d is string => Boolean(d))
+          .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()),
+      ),
+    ];
 
     if (sortedDates.length === 0) return 0;
 
@@ -224,13 +238,17 @@ export class TrainingStatsCalculationService {
     lastSession.setHours(0, 0, 0, 0);
 
     // Check if streak is still active (within last 2 days)
-    const daysSinceLastSession = Math.floor((today.getTime() - lastSession.getTime()) / (1000 * 60 * 60 * 24));
+    const daysSinceLastSession = Math.floor(
+      (today.getTime() - lastSession.getTime()) / (1000 * 60 * 60 * 24),
+    );
     if (daysSinceLastSession > 2) return 0;
 
     for (let i = 1; i < sortedDates.length; i++) {
       const current = new Date(sortedDates[i - 1]);
       const prev = new Date(sortedDates[i]);
-      const dayDiff = Math.floor((current.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
+      const dayDiff = Math.floor(
+        (current.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24),
+      );
 
       if (dayDiff <= 2) {
         streak++;

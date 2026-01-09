@@ -17,21 +17,26 @@ Supabase requires explicit whitelisting of redirect URLs for security. If your r
 Your application needs the following redirect URLs configured:
 
 ### Development (Local)
+
 ```
 http://localhost:4200/auth-callback
 http://127.0.0.1:4200/auth-callback
 ```
 
 ### Netlify Preview Deploys
+
 ```
 https://*--YOUR-SITE-NAME.netlify.app/auth-callback
 ```
+
 Note: Use wildcard `*` for preview deploys (e.g., `https://*--flagfit-pro.netlify.app/auth-callback`)
 
 ### Production
+
 ```
 https://your-production-domain.com/auth-callback
 ```
+
 Replace with your actual production domain.
 
 ---
@@ -62,6 +67,7 @@ While on the URL Configuration page:
 ### 4. Test Magic Link Flow
 
 **Local Testing:**
+
 ```bash
 # Start local dev server
 npm run dev
@@ -77,6 +83,7 @@ npm run dev
 ```
 
 **Production Testing:**
+
 1. Deploy to production
 2. Request magic link with real email
 3. Click link in email
@@ -92,6 +99,7 @@ npm run dev
 **Symptom:** After clicking magic link, user sees "Invalid redirect URL" error
 
 **Solution:**
+
 1. Double-check URL is in Supabase redirect allowlist
 2. Ensure URL exactly matches (including `https://` or `http://`)
 3. Check for trailing slashes (Supabase is strict about exact matches)
@@ -101,6 +109,7 @@ npm run dev
 **Symptom:** Magic link opens, but user stays on loading screen
 
 **Solution:**
+
 1. Open browser console
 2. Check for errors
 3. Likely issue: Tokens in URL hash not being parsed
@@ -111,6 +120,7 @@ npm run dev
 **Symptom:** User redirected but session not established
 
 **Solution:**
+
 1. Check browser console for Supabase errors
 2. Verify tokens are valid (not expired)
 3. Magic links expire after 1 hour by default
@@ -123,6 +133,7 @@ npm run dev
 ### Why Whitelisting?
 
 Supabase whitelists redirect URLs to prevent:
+
 - Open redirect vulnerabilities
 - Token theft via malicious redirect
 - Phishing attacks
@@ -148,30 +159,33 @@ Supabase whitelists redirect URLs to prevent:
 Verify your Angular environment files:
 
 **`angular/src/environments/environment.development.ts`:**
+
 ```typescript
 export const environment = {
   supabase: {
-    url: 'https://YOUR-PROJECT.supabase.co',
-    anonKey: 'YOUR-ANON-KEY',
-    redirectUrl: 'http://localhost:4200/auth-callback'  // Add this
-  }
+    url: "https://YOUR-PROJECT.supabase.co",
+    anonKey: "YOUR-ANON-KEY",
+    redirectUrl: "http://localhost:4200/auth-callback", // Add this
+  },
 };
 ```
 
 **`angular/src/environments/environment.ts`:**
+
 ```typescript
 export const environment = {
   supabase: {
-    url: 'https://YOUR-PROJECT.supabase.co',
-    anonKey: 'YOUR-ANON-KEY',
-    redirectUrl: 'https://your-production-domain.com/auth-callback'  // Add this
-  }
+    url: "https://YOUR-PROJECT.supabase.co",
+    anonKey: "YOUR-ANON-KEY",
+    redirectUrl: "https://your-production-domain.com/auth-callback", // Add this
+  },
 };
 ```
 
 ### Supabase Config
 
 Check `supabase/config.toml`:
+
 ```toml
 [auth]
 site_url = "https://your-production-domain.com"
@@ -204,11 +218,13 @@ Use this checklist before deploying:
 ### Check Logs
 
 **Supabase Auth Logs:**
+
 1. Go to Supabase Dashboard → Authentication → Logs
 2. Filter by "magic link" or "email verification"
 3. Look for failed attempts
 
 **Frontend Logs:**
+
 1. Check browser console for `[Auth]` prefixed logs
 2. Look for "Token processing error" messages
 3. Verify "Session established successfully" appears
@@ -216,11 +232,12 @@ Use this checklist before deploying:
 ### Application Logs
 
 In `auth-callback.component.ts`, logging is now enabled:
+
 ```typescript
 this.logger.info("[Auth] Session established successfully", {
   userId: data.session.user.id,
   email: data.session.user.email,
-  type: 'magiclink'
+  type: "magiclink",
 });
 ```
 
@@ -231,6 +248,7 @@ Check application logs for these entries.
 ## Troubleshooting Commands
 
 ### Check Current Supabase Config
+
 ```bash
 # In Supabase CLI
 supabase status
@@ -240,6 +258,7 @@ supabase settings get
 ```
 
 ### Test Auth Flow Locally
+
 ```bash
 # Start local Supabase
 supabase start
@@ -268,11 +287,13 @@ If issues persist after following this guide:
 
 **Date Applied:** January 9, 2026  
 **Related Files:**
+
 - `angular/src/app/features/auth/auth-callback/auth-callback.component.ts` (updated with logging)
 - `angular/src/app/core/services/supabase.service.ts` (updated with session logging)
 - `supabase/migrations/20260109_rls_block_logging.sql` (RLS monitoring)
 
 **Next Steps:**
+
 1. Verify redirect URLs in Supabase Dashboard (5 minutes)
 2. Test magic link flow locally (5 minutes)
 3. Test on preview deploy (5 minutes)

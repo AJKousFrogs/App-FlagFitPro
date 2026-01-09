@@ -46,98 +46,111 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.3.0"));
  * Get dashboard overview data
  * Cached for 30 seconds with ETag support
  */
-router.get("/overview", rateLimit("READ"), withCache("DASHBOARD"), optionalAuth, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const userId = req.userId || req.query.userId;
-
-    // Get training sessions count (last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    let sessionsQuery = supabase
-      .from("training_sessions")
-      .select("id, session_date, rpe, duration_minutes, status", {
-        count: "exact",
-      })
-      .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-      .eq("status", "completed");
-
-    if (userId && isValidUUID(userId)) {
-      sessionsQuery = sessionsQuery.eq("user_id", userId);
+router.get(
+  "/overview",
+  rateLimit("READ"),
+  withCache("DASHBOARD"),
+  optionalAuth,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const {
-      data: sessions,
-      count: sessionCount,
-      error,
-    } = await sessionsQuery.limit(100);
+    try {
+      const userId = req.userId || req.query.userId;
 
-    if (error) {throw error;}
+      // Get training sessions count (last 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // Calculate performance score (average RPE inverted)
-    const avgRpe =
-      sessions?.length > 0
-        ? sessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessions.length
-        : 5;
-    const performanceScore = Math.round(100 - (avgRpe - 5) * 10);
+      let sessionsQuery = supabase
+        .from("training_sessions")
+        .select("id, session_date, rpe, duration_minutes, status", {
+          count: "exact",
+        })
+        .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
+        .eq("status", "completed");
 
-    // Calculate day streak
-    let dayStreak = 0;
-    if (sessions && sessions.length > 0) {
-      const sortedDates = [...new Set(sessions.map((s) => s.session_date))]
-        .sort()
-        .reverse();
-      const today = new Date().toISOString().split("T")[0];
-      let checkDate = new Date(today);
+      if (userId && isValidUUID(userId)) {
+        sessionsQuery = sessionsQuery.eq("user_id", userId);
+      }
 
-      for (const date of sortedDates) {
-        const diff = Math.floor(
-          (checkDate - new Date(date)) / (1000 * 60 * 60 * 24),
-        );
-        if (diff <= 1) {
-          dayStreak++;
-          checkDate = new Date(date);
-        } else {
-          break;
+      const {
+        data: sessions,
+        count: sessionCount,
+        error,
+      } = await sessionsQuery.limit(100);
+
+      if (error) {
+        throw error;
+      }
+
+      // Calculate performance score (average RPE inverted)
+      const avgRpe =
+        sessions?.length > 0
+          ? sessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessions.length
+          : 5;
+      const performanceScore = Math.round(100 - (avgRpe - 5) * 10);
+
+      // Calculate day streak
+      let dayStreak = 0;
+      if (sessions && sessions.length > 0) {
+        const sortedDates = [...new Set(sessions.map((s) => s.session_date))]
+          .sort()
+          .reverse();
+        const today = new Date().toISOString().split("T")[0];
+        let checkDate = new Date(today);
+
+        for (const date of sortedDates) {
+          const diff = Math.floor(
+            (checkDate - new Date(date)) / (1000 * 60 * 60 * 24),
+          );
+          if (diff <= 1) {
+            dayStreak++;
+            checkDate = new Date(date);
+          } else {
+            break;
+          }
         }
       }
+
+      // Get upcoming sessions
+      const { data: upcomingSessions } = await supabase
+        .from("training_sessions")
+        .select("id, session_date, session_type, title")
+        .gte("session_date", new Date().toISOString().split("T")[0])
+        .eq("status", "scheduled")
+        .order("session_date", { ascending: true })
+        .limit(5);
+
+      return sendSuccess(res, {
+        stats: {
+          trainingSessions: sessionCount || 0,
+          performanceScore: Math.min(100, Math.max(0, performanceScore)),
+          dayStreak,
+          tournaments: 0,
+        },
+        activities:
+          sessions?.slice(0, 5).map((s) => ({
+            id: s.id,
+            type: "training",
+            date: s.session_date,
+            rpe: s.rpe,
+            duration: s.duration_minutes,
+          })) || [],
+        upcomingSessions: upcomingSessions || [],
+      });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Overview error:`, error);
+      return sendError(
+        res,
+        "Failed to load dashboard data",
+        "FETCH_ERROR",
+        500,
+      );
     }
-
-    // Get upcoming sessions
-    const { data: upcomingSessions } = await supabase
-      .from("training_sessions")
-      .select("id, session_date, session_type, title")
-      .gte("session_date", new Date().toISOString().split("T")[0])
-      .eq("status", "scheduled")
-      .order("session_date", { ascending: true })
-      .limit(5);
-
-    return sendSuccess(res, {
-      stats: {
-        trainingSessions: sessionCount || 0,
-        performanceScore: Math.min(100, Math.max(0, performanceScore)),
-        dayStreak,
-        tournaments: 0,
-      },
-      activities:
-        sessions?.slice(0, 5).map((s) => ({
-          id: s.id,
-          type: "training",
-          date: s.session_date,
-          rpe: s.rpe,
-          duration: s.duration_minutes,
-        })) || [],
-      upcomingSessions: upcomingSessions || [],
-    });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Overview error:`, error);
-    return sendError(res, "Failed to load dashboard data", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 // =============================================================================
 // TRAINING CALENDAR
@@ -338,7 +351,8 @@ router.get("/daily-quote", rateLimit("READ"), async (req, res) => {
     }
 
     return sendSuccess(res, {
-      quote: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+      quote:
+        "Success is not final, failure is not fatal: it is the courage to continue that counts.",
       author: "Winston Churchill",
     });
   } catch (error) {
@@ -382,7 +396,9 @@ router.get(
 
       const { data: notifications, error } = await query;
 
-      if (error) {throw error;}
+      if (error) {
+        throw error;
+      }
 
       return sendSuccess(res, notifications || []);
     } catch (error) {

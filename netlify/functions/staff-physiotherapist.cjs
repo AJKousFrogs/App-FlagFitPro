@@ -256,8 +256,11 @@ async function updateRTPProgress(injuryId, updates) {
   }
 
   // Check if RTP phase is completing (progress >= 100% or phase changed significantly)
-  const phaseCompleted = updates.progress >= 100 || 
-    (currentInjury && currentInjury.rtp_progress < 100 && updates.progress >= 100);
+  const phaseCompleted =
+    updates.progress >= 100 ||
+    (currentInjury &&
+      currentInjury.rtp_progress < 100 &&
+      updates.progress >= 100);
 
   if (phaseCompleted && data.user_id) {
     // Log ownership transition: Physio → Coach (for approval)
@@ -297,12 +300,19 @@ async function updateRTPProgress(injuryId, updates) {
             notification_type: "rtp",
             message: `RTP phase completed - approval required for next phase`,
             priority: "medium",
-            metadata: { playerId: data.user_id, injuryId, phase: updates.phase },
+            metadata: {
+              playerId: data.user_id,
+              injuryId,
+              phase: updates.phase,
+            },
           });
         }
       }
     } catch (transitionError) {
-      console.warn("[Physio] Error logging RTP completion transition:", transitionError.message);
+      console.warn(
+        "[Physio] Error logging RTP completion transition:",
+        transitionError.message,
+      );
       // Non-fatal - continue with RTP update
     }
   }
@@ -361,7 +371,11 @@ async function getTeamInjurySummary(teamId) {
 /**
  * Log a new injury
  */
-async function logInjury(userId, injuryData, createdByRole = "physiotherapist") {
+async function logInjury(
+  userId,
+  injuryData,
+  createdByRole = "physiotherapist",
+) {
   const { data, error } = await supabaseAdmin
     .from("athlete_injuries")
     .insert({
@@ -408,7 +422,11 @@ async function logInjury(userId, injuryData, createdByRole = "physiotherapist") 
         .eq("role", "coach")
         .limit(1);
 
-      if (coaches && coaches.length > 0 && createdByRole !== "physiotherapist") {
+      if (
+        coaches &&
+        coaches.length > 0 &&
+        createdByRole !== "physiotherapist"
+      ) {
         // Log transition: Coach → Physio
         await supabaseAdmin.from("ownership_transitions").insert({
           trigger: "injury_flag",
@@ -431,7 +449,10 @@ async function logInjury(userId, injuryData, createdByRole = "physiotherapist") 
       }
     }
   } catch (transitionError) {
-    console.warn("[Physio] Error logging ownership transition:", transitionError.message);
+    console.warn(
+      "[Physio] Error logging ownership transition:",
+      transitionError.message,
+    );
     // Non-fatal - continue with injury logging
   }
 
@@ -581,7 +602,8 @@ async function handler(event) {
       }
       // Determine role: if called from physio dashboard, role is physiotherapist
       // Otherwise, assume coach flagged it
-      const createdByRole = access.role === "physiotherapist" ? "physiotherapist" : "coach";
+      const createdByRole =
+        access.role === "physiotherapist" ? "physiotherapist" : "coach";
       const injury = await logInjury(body.userId, body, createdByRole);
       return createSuccessResponse({ injury });
     }

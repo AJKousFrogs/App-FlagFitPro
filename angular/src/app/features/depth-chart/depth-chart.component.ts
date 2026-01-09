@@ -164,7 +164,9 @@ interface PositionGroup {
                                     @if (entry.player_id) {
                                       <p-avatar
                                         [label]="
-                                          getInitialsStr(entry.player_name || 'U')
+                                          getInitialsStr(
+                                            entry.player_name || 'U'
+                                          )
                                         "
                                         shape="circle"
                                         size="normal"
@@ -375,7 +377,8 @@ export class DepthChartComponent implements OnInit {
             this.loadChartDetails(charts[0].id);
           }
         },
-        error: () => this.toastService.error(TOAST.ERROR.DEPTH_CHART_LOAD_FAILED),
+        error: () =>
+          this.toastService.error(TOAST.ERROR.DEPTH_CHART_LOAD_FAILED),
       });
   }
 
@@ -530,7 +533,8 @@ export class DepthChartComponent implements OnInit {
             this.loadChartDetails(chart.id);
           }
         },
-        error: () => this.toastService.error(TOAST.ERROR.BACKUP_SLOT_ADD_FAILED),
+        error: () =>
+          this.toastService.error(TOAST.ERROR.BACKUP_SLOT_ADD_FAILED),
       });
   }
 }

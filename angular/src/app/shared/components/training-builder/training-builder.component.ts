@@ -76,7 +76,11 @@ interface Goal {
   ],
   template: `
     <p-card header="Smart Training Session Builder" class="training-builder">
-      <p-stepper [value]="activeStep" (valueChange)="activeStep = $event ?? 0" [linear]="false">
+      <p-stepper
+        [value]="activeStep"
+        (valueChange)="activeStep = $event ?? 0"
+        [linear]="false"
+      >
         <p-step-list>
           @for (step of steps; track $index) {
             <p-step [value]="$index">{{ step.label }}</p-step>
@@ -856,7 +860,7 @@ export class TrainingBuilderComponent {
             equipment_needed: [
               ...new Set(exercises.flatMap((e) => e.equipment || [])),
             ],
-            notes: `Generated on ${formatDate(new Date(), 'P')}`,
+            notes: `Generated on ${formatDate(new Date(), "P")}`,
             day_of_week: new Date().getDay(),
             session_order: 1,
           })

@@ -110,13 +110,15 @@ interface SessionType {
                 </div>
               }
             </div>
-            @if (sessionForm.get('sessionType')?.value) {
+            @if (sessionForm.get("sessionType")?.value) {
               <small class="state-narration">
-                <strong>What changed:</strong> Session type set to {{ getSelectedSessionTypeLabel() }}.
-                <strong>Why:</strong> You selected this session type.
-                <strong>What it means:</strong> This determines how your training load is categorized for ACWR calculations.
-                <strong>Who:</strong> You control this selection.
-                <strong>What next:</strong> Continue filling out duration, RPE, and other details below.
+                <strong>What changed:</strong> Session type set to
+                {{ getSelectedSessionTypeLabel() }}. <strong>Why:</strong> You
+                selected this session type. <strong>What it means:</strong> This
+                determines how your training load is categorized for ACWR
+                calculations. <strong>Who:</strong> You control this selection.
+                <strong>What next:</strong> Continue filling out duration, RPE,
+                and other details below.
               </small>
             }
           </app-card-shell>
@@ -149,13 +151,16 @@ interface SessionType {
                   [showButtons]="true"
                   placeholder="Enter duration"
                 ></p-inputNumber>
-                @if (sessionForm.get('durationMinutes')?.value) {
+                @if (sessionForm.get("durationMinutes")?.value) {
                   <small class="state-narration">
-                    <strong>What changed:</strong> Duration set to {{ sessionForm.get('durationMinutes')?.value }} minutes.
+                    <strong>What changed:</strong> Duration set to
+                    {{ sessionForm.get("durationMinutes")?.value }} minutes.
                     <strong>Why:</strong> Based on your input.
-                    <strong>What it means:</strong> Duration is multiplied by RPE to calculate training load ({{ calculatedLoad() }} AU).
+                    <strong>What it means:</strong> Duration is multiplied by
+                    RPE to calculate training load ({{ calculatedLoad() }} AU).
                     <strong>Who:</strong> You control this value.
-                    <strong>What next:</strong> Training load updates automatically below as you change duration or RPE.
+                    <strong>What next:</strong> Training load updates
+                    automatically below as you change duration or RPE.
                   </small>
                 }
               </div>
@@ -183,11 +188,17 @@ interface SessionType {
                 </div>
                 @if (sessionForm.get("rpe")?.value) {
                   <small class="state-narration">
-                    <strong>What changed:</strong> RPE set to {{ sessionForm.get("rpe")?.value }}/10 ({{ getRpeDescription(sessionForm.get("rpe")?.value) }}).
-                    <strong>Why:</strong> Based on your input.
-                    <strong>What it means:</strong> RPE measures perceived exertion. It's multiplied by duration to calculate training load ({{ calculatedLoad() }} AU), which affects your ACWR.
+                    <strong>What changed:</strong> RPE set to
+                    {{ sessionForm.get("rpe")?.value }}/10 ({{
+                      getRpeDescription(sessionForm.get("rpe")?.value)
+                    }}). <strong>Why:</strong> Based on your input.
+                    <strong>What it means:</strong> RPE measures perceived
+                    exertion. It's multiplied by duration to calculate training
+                    load ({{ calculatedLoad() }} AU), which affects your ACWR.
                     <strong>Who:</strong> You control this value.
-                    <strong>What next:</strong> Training load updates automatically below. This load will be added to your ACWR calculations.
+                    <strong>What next:</strong> Training load updates
+                    automatically below. This load will be added to your ACWR
+                    calculations.
                   </small>
                 }
               </div>
@@ -201,12 +212,33 @@ interface SessionType {
                 {{ sessionForm.get("durationMinutes")?.value || 0 }} min ×
                 {{ sessionForm.get("rpe")?.value || 0 }} RPE
               </div>
-              <small class="state-narration" style="margin-top: var(--space-3); display: block;">
-                <strong>What changed:</strong> Training load calculated as {{ calculatedLoad() }} AU.
-                <strong>Why:</strong> System automatically calculates: Duration ({{ sessionForm.get("durationMinutes")?.value || 0 }} min) × RPE ({{ sessionForm.get("rpe")?.value || 0 }}) = {{ calculatedLoad() }} AU.
-                <strong>What it means:</strong> This load will be added to your 7-day acute workload for ACWR calculations. {{ calculatedLoad() > 500 ? 'High load - may increase injury risk if ACWR exceeds 1.5.' : calculatedLoad() > 300 ? 'Moderate load.' : 'Low load - good for recovery days.' }}
-                <strong>Who:</strong> System calculates this automatically from your inputs.
-                <strong>What next:</strong> {{ hasLateLogWarning() ? 'See timing notice below for ACWR impact.' : 'When you submit, this load will update your ACWR ratio.' }}
+              <small
+                class="state-narration"
+                style="margin-top: var(--space-3); display: block;"
+              >
+                <strong>What changed:</strong> Training load calculated as
+                {{ calculatedLoad() }} AU. <strong>Why:</strong> System
+                automatically calculates: Duration ({{
+                  sessionForm.get("durationMinutes")?.value || 0
+                }}
+                min) × RPE ({{ sessionForm.get("rpe")?.value || 0 }}) =
+                {{ calculatedLoad() }} AU. <strong>What it means:</strong> This
+                load will be added to your 7-day acute workload for ACWR
+                calculations.
+                {{
+                  calculatedLoad() > 500
+                    ? "High load - may increase injury risk if ACWR exceeds 1.5."
+                    : calculatedLoad() > 300
+                      ? "Moderate load."
+                      : "Low load - good for recovery days."
+                }}
+                <strong>Who:</strong> System calculates this automatically from
+                your inputs. <strong>What next:</strong>
+                {{
+                  hasLateLogWarning()
+                    ? "See timing notice below for ACWR impact."
+                    : "When you submit, this load will update your ACWR ratio."
+                }}
               </small>
             </div>
           </app-card-shell>
@@ -285,40 +317,64 @@ interface SessionType {
 
           <!-- Phase 2.2: Late Log Framing - Neutral tone with ACWR impact -->
           @if (hasLateLogWarning()) {
-            <app-card-shell title="Session Timing Notice" headerIcon="pi-info-circle">
+            <app-card-shell
+              title="Session Timing Notice"
+              headerIcon="pi-info-circle"
+            >
               <div class="late-log-notice">
                 @if (logStatus() === "retroactive") {
                   <div class="notice-content notice-retroactive">
                     <div class="notice-header">
                       <i class="pi pi-calendar-clock"></i>
                       <div class="notice-title-section">
-                        <strong>Logged {{ hoursDelayed() }} hours after session</strong>
-                        <span class="notice-subtitle">Flagged for accuracy review</span>
+                        <strong
+                          >Logged {{ hoursDelayed() }} hours after
+                          session</strong
+                        >
+                        <span class="notice-subtitle"
+                          >Flagged for accuracy review</span
+                        >
                       </div>
                     </div>
-                    
+
                     <!-- Phase 2.2: ACWR Impact Display -->
                     <div class="acwr-impact-section">
                       <strong>ACWR Impact:</strong>
                       <div class="impact-comparison">
                         <div class="impact-item">
                           <span class="impact-label">Before this log:</span>
-                          <span class="impact-value">{{ getAcwrBefore() | number: "1.2-2" }}</span>
+                          <span class="impact-value">{{
+                            getAcwrBefore() | number: "1.2-2"
+                          }}</span>
                         </div>
                         <div class="impact-arrow">→</div>
                         <div class="impact-item">
                           <span class="impact-label">After this log:</span>
-                          <span class="impact-value">{{ getAcwrAfter() | number: "1.2-2" }}</span>
+                          <span class="impact-value">{{
+                            getAcwrAfter() | number: "1.2-2"
+                          }}</span>
                         </div>
                       </div>
-                      <p class="impact-note">ACWR will update once this session is approved.</p>
+                      <p class="impact-note">
+                        ACWR will update once this session is approved.
+                      </p>
                     </div>
-                    <small class="state-narration" style="margin-top: var(--space-2); display: block;">
-                      <strong>What changed:</strong> Logging {{ hoursDelayed() }} hours after session completion.
-                      <strong>Why:</strong> You're entering this session retroactively (more than 24 hours late).
-                      <strong>What it means:</strong> ACWR will change from {{ getAcwrBefore() | number: "1.2-2" }} to approximately {{ getAcwrAfter() | number: "1.2-2" }} after approval. Retroactive logs require coach review for accuracy.
-                      <strong>Who:</strong> Your coach will review and approve this entry.
-                      <strong>What next:</strong> Coach has been notified. You'll be notified when approved. ACWR updates after approval.
+                    <small
+                      class="state-narration"
+                      style="margin-top: var(--space-2); display: block;"
+                    >
+                      <strong>What changed:</strong> Logging
+                      {{ hoursDelayed() }} hours after session completion.
+                      <strong>Why:</strong> You're entering this session
+                      retroactively (more than 24 hours late).
+                      <strong>What it means:</strong> ACWR will change from
+                      {{ getAcwrBefore() | number: "1.2-2" }} to approximately
+                      {{ getAcwrAfter() | number: "1.2-2" }} after approval.
+                      Retroactive logs require coach review for accuracy.
+                      <strong>Who:</strong> Your coach will review and approve
+                      this entry. <strong>What next:</strong> Coach has been
+                      notified. You'll be notified when approved. ACWR updates
+                      after approval.
                     </small>
 
                     <!-- Phase 2.2: Approval Status Visibility -->
@@ -328,7 +384,8 @@ interface SessionType {
                         <span>Status: Pending coach review</span>
                       </div>
                       <p class="status-note">
-                        Your coach has been notified and will review this entry. You'll be notified when it's approved.
+                        Your coach has been notified and will review this entry.
+                        You'll be notified when it's approved.
                       </p>
                     </div>
                   </div>
@@ -337,33 +394,54 @@ interface SessionType {
                     <div class="notice-header">
                       <i class="pi pi-clock"></i>
                       <div class="notice-title-section">
-                        <strong>Logged {{ hoursDelayed() }} hours after session</strong>
-                        <span class="notice-subtitle">Flagged for accuracy</span>
+                        <strong
+                          >Logged {{ hoursDelayed() }} hours after
+                          session</strong
+                        >
+                        <span class="notice-subtitle"
+                          >Flagged for accuracy</span
+                        >
                       </div>
                     </div>
-                    
+
                     <!-- Phase 2.2: ACWR Impact Display -->
                     <div class="acwr-impact-section">
                       <strong>ACWR Impact:</strong>
                       <div class="impact-comparison">
                         <div class="impact-item">
                           <span class="impact-label">Before this log:</span>
-                          <span class="impact-value">{{ getAcwrBefore() | number: "1.2-2" }}</span>
+                          <span class="impact-value">{{
+                            getAcwrBefore() | number: "1.2-2"
+                          }}</span>
                         </div>
                         <div class="impact-arrow">→</div>
                         <div class="impact-item">
                           <span class="impact-label">After this log:</span>
-                          <span class="impact-value">{{ getAcwrAfter() | number: "1.2-2" }}</span>
+                          <span class="impact-value">{{
+                            getAcwrAfter() | number: "1.2-2"
+                          }}</span>
                         </div>
                       </div>
-                      <p class="impact-note">ACWR updated automatically. No approval needed.</p>
+                      <p class="impact-note">
+                        ACWR updated automatically. No approval needed.
+                      </p>
                     </div>
-                    <small class="state-narration" style="margin-top: var(--space-2); display: block;">
-                      <strong>What changed:</strong> Logging {{ hoursDelayed() }} hours after session completion.
-                      <strong>Why:</strong> You're entering this session late (within 24 hours but after completion).
-                      <strong>What it means:</strong> ACWR will update automatically from {{ getAcwrBefore() | number: "1.2-2" }} to approximately {{ getAcwrAfter() | number: "1.2-2" }}. No coach approval needed.
-                      <strong>Who:</strong> System will update ACWR automatically when you submit.
-                      <strong>What next:</strong> Submit your log to update ACWR immediately.
+                    <small
+                      class="state-narration"
+                      style="margin-top: var(--space-2); display: block;"
+                    >
+                      <strong>What changed:</strong> Logging
+                      {{ hoursDelayed() }} hours after session completion.
+                      <strong>Why:</strong> You're entering this session late
+                      (within 24 hours but after completion).
+                      <strong>What it means:</strong> ACWR will update
+                      automatically from
+                      {{ getAcwrBefore() | number: "1.2-2" }} to approximately
+                      {{ getAcwrAfter() | number: "1.2-2" }}. No coach approval
+                      needed. <strong>Who:</strong> System will update ACWR
+                      automatically when you submit.
+                      <strong>What next:</strong> Submit your log to update ACWR
+                      immediately.
                     </small>
                   </div>
                 }
@@ -373,7 +451,10 @@ interface SessionType {
 
           <!-- Conflict Warning -->
           @if (hasConflicts()) {
-            <app-card-shell title="Data Conflict Detected" headerIcon="pi-exclamation-circle">
+            <app-card-shell
+              title="Data Conflict Detected"
+              headerIcon="pi-exclamation-circle"
+            >
               <div class="conflict-warning">
                 @for (conflict of conflicts(); track conflict.type) {
                   <p-message severity="warn" [closable]="false">
@@ -384,19 +465,31 @@ interface SessionType {
                           <strong>Conflict: {{ conflict.type }}</strong>
                           <p>{{ conflict.message }}</p>
                           <p class="conflict-detail">
-                            RPE: {{ conflict.playerValue }} vs Session Type: {{ conflict.coachValue }}
+                            RPE: {{ conflict.playerValue }} vs Session Type:
+                            {{ conflict.coachValue }}
                           </p>
                         </div>
                       </div>
                     </ng-template>
                   </p-message>
                 }
-                <small class="state-narration" style="margin-top: var(--space-3); display: block;">
-                  <strong>What changed:</strong> Conflict detected between your RPE input and expected session type intensity.
-                  <strong>Why:</strong> Your RPE ({{ conflicts()[0]?.playerValue }}) doesn't match the typical intensity for this session type ({{ conflicts()[0]?.coachValue }}).
-                  <strong>What it means:</strong> This may indicate the session was harder/easier than expected, or there's a data entry issue. Your log will still be saved.
-                  <strong>Who:</strong> System detected this automatically. You can adjust RPE if needed, or proceed as-is.
-                  <strong>What next:</strong> Review your RPE value. If correct, proceed with submission. Coach may follow up if needed.
+                <small
+                  class="state-narration"
+                  style="margin-top: var(--space-3); display: block;"
+                >
+                  <strong>What changed:</strong> Conflict detected between your
+                  RPE input and expected session type intensity.
+                  <strong>Why:</strong> Your RPE ({{
+                    conflicts()[0]?.playerValue
+                  }}) doesn't match the typical intensity for this session type
+                  ({{ conflicts()[0]?.coachValue }}).
+                  <strong>What it means:</strong> This may indicate the session
+                  was harder/easier than expected, or there's a data entry
+                  issue. Your log will still be saved.
+                  <strong>Who:</strong> System detected this automatically. You
+                  can adjust RPE if needed, or proceed as-is.
+                  <strong>What next:</strong> Review your RPE value. If correct,
+                  proceed with submission. Coach may follow up if needed.
                 </small>
               </div>
             </app-card-shell>
@@ -411,12 +504,21 @@ interface SessionType {
               >Log Session</app-button
             >
             @if (isSubmitting()) {
-              <div class="submit-narration" style="width: 100%; margin-top: var(--space-2); padding: var(--space-2); background: var(--surface-secondary); border-radius: var(--radius-md);">
+              <div
+                class="submit-narration"
+                style="width: 100%; margin-top: var(--space-2); padding: var(--space-2); background: var(--surface-secondary); border-radius: var(--radius-md);"
+              >
                 <small class="state-narration">
                   <strong>What changed:</strong> Session is being saved.
                   <strong>Why:</strong> You clicked "Log Session".
-                  <strong>What it means:</strong> Your training session ({{ getSelectedSessionTypeLabel() }}, {{ calculatedLoad() }} AU load) is being recorded.
-                  <strong>Who:</strong> System is processing your submission{{ requiresApproval() ? '. Coach will review for approval.' : '.' }}
+                  <strong>What it means:</strong> Your training session ({{
+                    getSelectedSessionTypeLabel()
+                  }}, {{ calculatedLoad() }} AU load) is being recorded.
+                  <strong>Who:</strong> System is processing your submission{{
+                    requiresApproval()
+                      ? ". Coach will review for approval."
+                      : "."
+                  }}
                   <strong>What next:</strong> {{ getSubmitNextStepMessage() }}
                 </small>
               </div>
@@ -503,7 +605,14 @@ export class TrainingLogComponent {
   readonly logStatus = signal<"on_time" | "late" | "retroactive">("on_time");
   readonly requiresApproval = signal(false);
   readonly hoursDelayed = signal<number | null>(null);
-  readonly conflicts = signal<Array<{ type: string; message: string; playerValue?: string; coachValue?: string }>>([]);
+  readonly conflicts = signal<
+    Array<{
+      type: string;
+      message: string;
+      playerValue?: string;
+      coachValue?: string;
+    }>
+  >([]);
 
   readonly hasLateLogWarning = computed(() => this.logStatus() !== "on_time");
   readonly hasConflicts = computed(() => this.conflicts().length > 0);
@@ -519,7 +628,7 @@ export class TrainingLogComponent {
     // Estimate ACWR after this session is logged
     const currentACWR = this.getAcwrBefore();
     const sessionLoad = this.calculatedLoad();
-    
+
     // Rough estimate: add session load to acute (7-day) window
     // This is a simplified calculation for display purposes
     const estimatedIncrease = sessionLoad / 1000; // Rough scaling factor
@@ -574,7 +683,8 @@ export class TrainingLogComponent {
       const sessionData = {
         athlete_id: user?.id,
         session_type: formValue.sessionType,
-        session_date: formValue.sessionDate || new Date().toISOString().split("T")[0],
+        session_date:
+          formValue.sessionDate || new Date().toISOString().split("T")[0],
         duration_minutes: formValue.durationMinutes,
         rpe: formValue.rpe,
         training_load: formValue.durationMinutes * formValue.rpe,
@@ -624,7 +734,7 @@ export class TrainingLogComponent {
       this.router.navigate(["/dashboard"]);
     } catch (error) {
       this.logger.error("Failed to log training session", error);
-      
+
       // Check if we should queue this action for offline sync
       if (this.offlineQueue.shouldQueue(error)) {
         const formValue = this.sessionForm.value;
@@ -632,16 +742,17 @@ export class TrainingLogComponent {
         const sessionData = {
           athlete_id: user?.id,
           session_type: formValue.sessionType,
-          session_date: formValue.sessionDate || new Date().toISOString().split("T")[0],
+          session_date:
+            formValue.sessionDate || new Date().toISOString().split("T")[0],
           duration_minutes: formValue.durationMinutes,
           rpe: formValue.rpe,
           training_load: formValue.durationMinutes * formValue.rpe,
           notes: formValue.notes,
         };
-        
+
         this.offlineQueue.queueAction("training_log", sessionData, "high");
         this.toastService.info(
-          "You're offline. Session queued for sync when connection is restored."
+          "You're offline. Session queued for sync when connection is restored.",
         );
         this.router.navigate(["/dashboard"]);
       } else {
@@ -675,9 +786,9 @@ export class TrainingLogComponent {
    * Get the label for the currently selected session type
    */
   getSelectedSessionTypeLabel(): string {
-    const selectedValue = this.sessionForm.get('sessionType')?.value;
-    const found = this.sessionTypes.find(t => t.value === selectedValue);
-    return found?.label || '';
+    const selectedValue = this.sessionForm.get("sessionType")?.value;
+    const found = this.sessionTypes.find((t) => t.value === selectedValue);
+    return found?.label || "";
   }
 
   /**

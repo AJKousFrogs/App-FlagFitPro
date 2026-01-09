@@ -1,6 +1,6 @@
 /**
  * Wellness Recovery Service
- * 
+ *
  * Implements cross-day continuity: Wellness < 40% → Next Day Recovery Focus
  */
 
@@ -76,14 +76,13 @@ export class WellnessRecoveryService {
       });
 
       this.logger.info(
-        `[WellnessRecovery] Created recovery focus for player ${playerId} due to low wellness yesterday`
+        `[WellnessRecovery] Created recovery focus for player ${playerId} due to low wellness yesterday`,
       );
     } catch (error) {
       this.logger.error(
         "[WellnessRecovery] Error creating recovery focus:",
-        error
+        error,
       );
     }
   }
 }
-

@@ -18,18 +18,21 @@ This directory contains end-to-end tests for the FlagFit Pro application using P
 ### Setup
 
 1. Install dependencies:
+
 ```bash
 npm ci
 cd angular && npm ci
 ```
 
 2. Install Playwright browsers:
+
 ```bash
 cd angular
 npx playwright install chromium
 ```
 
 3. Test credentials (defaults are set, optional to override):
+
 ```bash
 # Default: aljkous@gmail.com / Futsal12!!!!
 # Optional: override credentials
@@ -47,12 +50,14 @@ npx playwright test
 ### Run Specific Test Suites
 
 **Smoke tests only:**
+
 ```bash
 cd angular
 npx playwright test e2e/smoke.spec.ts
 ```
 
 **Critical flow test:**
+
 ```bash
 cd angular
 npx playwright test e2e/critical-flow-morning-training.spec.ts
@@ -117,6 +122,7 @@ The tests use the following environment variables:
 ### Smoke Test (`smoke.spec.ts`)
 
 Quick tests to verify:
+
 - App shell loads correctly
 - Login page renders
 - Unauthenticated redirect works
@@ -124,6 +130,7 @@ Quick tests to verify:
 ### Critical Flow Test (`critical-flow-morning-training.spec.ts`)
 
 Complete user journey:
+
 1. Visit app URL
 2. Login with test credentials
 3. Complete onboarding (happy path through all 9 steps)
@@ -147,11 +154,13 @@ Tests use `data-testid` attributes for stable selectors. Key test IDs:
 ## CI/CD
 
 Tests run automatically in GitHub Actions on:
+
 - Push to `main` or `develop` branches
 - Pull requests to `main` or `develop`
 - Manual workflow dispatch
 
 The CI workflow:
+
 1. Installs dependencies
 2. Builds the application
 3. Starts the server
@@ -164,6 +173,7 @@ The CI workflow:
 ### Tests fail with "Test credentials not provided"
 
 Set the environment variables:
+
 ```bash
 export TEST_USER_EMAIL="your-email@example.com"
 export TEST_USER_PASSWORD="your-password"
@@ -204,4 +214,3 @@ Test reports are generated in `angular/playwright-report/`. View them with:
 cd angular
 npx playwright show-report
 ```
-

@@ -125,7 +125,10 @@ The `baseHandler` pattern provides a standardized middleware for all Netlify fun
 
 ```javascript
 const { baseHandler } = require("./utils/base-handler.cjs");
-const { createSuccessResponse, createErrorResponse } = require("./utils/error-handler.cjs");
+const {
+  createSuccessResponse,
+  createErrorResponse,
+} = require("./utils/error-handler.cjs");
 
 exports.handler = async (event, context) => {
   return baseHandler(event, context, {
@@ -144,24 +147,24 @@ exports.handler = async (event, context) => {
 
 ### Features
 
-| Feature | Description |
-|---------|-------------|
-| CORS | Automatic CORS headers for all responses |
-| Authentication | JWT validation with user ID extraction |
-| Rate Limiting | Configurable per endpoint type |
-| Request ID | Unique ID for request tracking |
-| Error Handling | Consistent error responses |
-| Logging | Automatic request/response logging |
+| Feature        | Description                              |
+| -------------- | ---------------------------------------- |
+| CORS           | Automatic CORS headers for all responses |
+| Authentication | JWT validation with user ID extraction   |
+| Rate Limiting  | Configurable per endpoint type           |
+| Request ID     | Unique ID for request tracking           |
+| Error Handling | Consistent error responses               |
+| Logging        | Automatic request/response logging       |
 
 ### Configuration Options
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| `functionName` | string | Yes | Name for logging |
-| `allowedMethods` | string[] | Yes | HTTP methods allowed |
-| `rateLimitType` | string | Yes | Rate limit tier |
-| `requireAuth` | boolean | Yes | Require authentication |
-| `handler` | function | Yes | Business logic function |
+| Option           | Type     | Required | Description             |
+| ---------------- | -------- | -------- | ----------------------- |
+| `functionName`   | string   | Yes      | Name for logging        |
+| `allowedMethods` | string[] | Yes      | HTTP methods allowed    |
+| `rateLimitType`  | string   | Yes      | Rate limit tier         |
+| `requireAuth`    | boolean  | Yes      | Require authentication  |
+| `handler`        | function | Yes      | Business logic function |
 
 ---
 

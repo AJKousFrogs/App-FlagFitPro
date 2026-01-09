@@ -57,10 +57,10 @@ try {
 // 4. Find large commented blocks
 console.log("💭 Finding large commented code blocks...");
 try {
-  const result = execSync(
-    'grep -r "^\\s*//" --include="*.ts" src/ | wc -l',
-    { cwd: __dirname, encoding: "utf8" },
-  );
+  const result = execSync('grep -r "^\\s*//" --include="*.ts" src/ | wc -l', {
+    cwd: __dirname,
+    encoding: "utf8",
+  });
   const count = parseInt(result.trim());
   console.log(`   Found ${count} comment lines (some may be documentation)\n`);
 } catch (_error) {

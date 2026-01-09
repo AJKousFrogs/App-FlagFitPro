@@ -1,6 +1,5 @@
-import { logger } from '../logger.js';
-import { setSafeContent } from './utils/shared.js';
-
+import { logger } from "../logger.js";
+import { setSafeContent } from "./utils/shared.js";
 
 /**
  * FlagFit Pro - Wellness Notifications Integration
@@ -11,7 +10,7 @@ import { setSafeContent } from './utils/shared.js';
   "use strict";
 
   // Get storageService from global window object
-  const {storageService} = window;
+  const { storageService } = window;
 
   // Wait for notification manager to be available
   function initWellnessNotifications() {
@@ -58,7 +57,9 @@ import { setSafeContent } from './utils/shared.js';
     // Create prompt modal
     const modal = document.createElement("div");
     modal.className = "notification-prompt-modal";
-    setSafeContent(modal, `
+    setSafeContent(
+      modal,
+      `
       <div class="notification-prompt-overlay"></div>
       <div class="notification-prompt-content">
         <div class="notification-prompt-icon">🔔</div>
@@ -87,7 +88,10 @@ import { setSafeContent } from './utils/shared.js';
           </button>
         </div>
       </div>
-    `, true, true);
+    `,
+      true,
+      true,
+    );
 
     // Add styles
     const style = document.createElement("style");
@@ -225,14 +229,19 @@ import { setSafeContent } from './utils/shared.js';
 
         if (granted) {
           // Show success message
-          setSafeContent(modal.querySelector(".notification-prompt-content"), `
+          setSafeContent(
+            modal.querySelector(".notification-prompt-content"),
+            `
           <div class="notification-prompt-icon">✅</div>
           <h3>You're all set!</h3>
           <p>You'll receive daily wellness reminders at 9:00 PM.</p>
           <button class="btn-primary" onclick="this.closest('.notification-prompt-modal').remove()">
             Got it!
           </button>
-        `, true, true);
+        `,
+            true,
+            true,
+          );
 
           // Auto-close after 2 seconds
           setTimeout(() => {
@@ -380,10 +389,15 @@ import { setSafeContent } from './utils/shared.js';
     // Create install button
     const installBtn = document.createElement("button");
     installBtn.className = "pwa-install-btn";
-    setSafeContent(installBtn, `
+    setSafeContent(
+      installBtn,
+      `
       <span class="pwa-install-icon">📱</span>
       <span>Install App</span>
-    `, true, true);
+    `,
+      true,
+      true,
+    );
 
     // Add styles
     const style = document.createElement("style");

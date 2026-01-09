@@ -245,7 +245,10 @@ export class WorkoutComponent implements OnInit {
               exercises = (parsedExercises || []).map(
                 (ex: Record<string, unknown>, idx: number) => ({
                   id: (ex["id"] as string) || `${log.id}-${idx}`,
-                  name: (ex["name"] as string) || (ex["exercise_name"] as string) || "Exercise",
+                  name:
+                    (ex["name"] as string) ||
+                    (ex["exercise_name"] as string) ||
+                    "Exercise",
                   sets: (ex["sets"] as number) || 3,
                   reps: (ex["reps"] as number) || 10,
                   weight: ex["weight"] as number | undefined,
@@ -297,7 +300,7 @@ export class WorkoutComponent implements OnInit {
             id: log.id,
             name:
               log.training_sessions?.name || this.inferWorkoutName(log.notes),
-            date: formatDate(log.completed_at, 'P'),
+            date: formatDate(log.completed_at, "P"),
             exercises,
             duration: log.duration_minutes,
             completed: true,
