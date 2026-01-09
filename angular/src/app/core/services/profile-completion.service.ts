@@ -369,7 +369,7 @@ export class ProfileCompletionService {
   }
 
   /**
-   * Update weight (creates body_measurement entry for tracking)
+   * Update weight (creates physical_measurement entry for tracking)
    */
   async updateWeight(weightKg: number): Promise<boolean> {
     const user = this.authService.getUser();
@@ -378,9 +378,10 @@ export class ProfileCompletionService {
     try {
       const today = new Date().toISOString().split("T")[0];
 
-      // Upsert to body_measurements for daily tracking
+      // Upsert to physical_measurements for daily tracking
+      // Table has: user_id (UUID), measurement_date (DATE), weight_kg (NUMERIC)
       const { error: measurementError } = await this.supabaseService.client
-        .from("body_measurements")
+        .from("physical_measurements")
         .upsert(
           {
             user_id: user.id,
@@ -395,6 +396,7 @@ export class ProfileCompletionService {
           "[ProfileCompletion] Error saving measurement:",
           measurementError,
         );
+        // Don't fail if measurement insert fails - continue to update user table
       }
 
       // Also update users table for profile display

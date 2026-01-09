@@ -909,7 +909,7 @@ export class PerformanceDataService {
             .gte("created_at", startDate.toISOString())
             .order("created_at", { ascending: true }),
           this.supabaseService.client
-            .from("body_measurements")
+            .from("physical_measurements")
             .select("*")
             .eq("user_id", user.id)
             .gte("created_at", startDate.toISOString())

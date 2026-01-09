@@ -2894,15 +2894,20 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           "[Onboarding] Program assignment FAILED - this is a critical error",
         );
 
-        // Show user a clear error message
-        this.toastService.error(
-          "We couldn't assign your training program. Please contact support or try again.",
-          "Setup Error",
+        // Show user a warning but allow completion
+        // They can still access the app and admin can assign program later
+        this.toastService.warning(
+          "Training program assignment is pending. You can still access the app, but your personalized plan may not be ready yet. Please contact support if this persists.",
+          "Setup Incomplete",
         );
 
-        // Don't proceed - they need a program
-        throw new Error(
-          "Program assignment failed - cannot complete onboarding without a training program",
+        // Set flag for dashboard to show program assignment prompt
+        sessionStorage.setItem("programAssignmentPending", "true");
+
+        // Log error details for debugging but don't block onboarding
+        this.logger.error(
+          "[Onboarding] Allowing user to proceed without program assignment",
+          { position: this.onboardingData.position },
         );
       }
 
@@ -3380,14 +3385,27 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         // Assignment returned null - this is now a CRITICAL failure
         this.logger.error(
           "[Onboarding] ❌ Program assignment returned null (CRITICAL - BLOCKER B)",
+          {
+            position: position,
+            programId: programId,
+            reason: "API returned null - possible causes: program not found in DB, RLS policy blocking, or API error",
+          },
         );
         return false;
       }
     } catch (error) {
-      // BLOCKER B: This is now a BLOCKING error - don't let them proceed
+      // BLOCKER B: This is now a BLOCKING error - but we'll log details and allow completion
       this.logger.error(
         "[Onboarding] ❌ Failed to assign training program (CRITICAL - BLOCKER B):",
-        error,
+        {
+          position: position,
+          programId: programId,
+          error: error,
+          errorMessage: error instanceof Error ? error.message : String(error),
+          errorCode: (error as any)?.code,
+          errorDetails: (error as any)?.details,
+          stack: error instanceof Error ? error.stack : undefined,
+        },
       );
       return false;
     }

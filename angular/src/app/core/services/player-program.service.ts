@@ -169,6 +169,11 @@ export class PlayerProgramService {
       body.force = true;
     }
 
+    this.logger.info(
+      `[PlayerProgramService] Assigning program ${programId} with options:`,
+      options,
+    );
+
     return this.http
       .post<AssignmentResponse>(this.baseUrl, body, {
         withCredentials: true,
@@ -177,18 +182,33 @@ export class PlayerProgramService {
         map((response) => {
           if (response.success && response.data?.assignment) {
             this.logger.info(
-              `[PlayerProgramService] Assigned program: ${response.data.assignment.program.name}`,
+              `[PlayerProgramService] ✅ Assigned program: ${response.data.assignment.program.name}`,
             );
             return response.data.assignment;
           }
+          this.logger.warn(
+            "[PlayerProgramService] API response missing assignment data",
+            response,
+          );
           return null;
         }),
         catchError((error) => {
-          // Log but don't throw - let caller handle
+          // Enhanced error logging with all available details
           this.logger.error(
-            "[PlayerProgramService] Error assigning program:",
-            error,
+            "[PlayerProgramService] ❌ Error assigning program:",
+            {
+              programId: programId,
+              options: options,
+              error: error,
+              status: error.status,
+              statusText: error.statusText,
+              message: error.message,
+              errorResponse: error.error,
+              url: error.url,
+            },
           );
+          
+          // Return null instead of throwing to prevent blocking
           return of(null);
         }),
       );
