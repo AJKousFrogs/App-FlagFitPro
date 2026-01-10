@@ -539,6 +539,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         .maybeSingle();
 
       if (!error && profile) {
+        this.logger.debug("[Settings] Loaded user profile:", {
+          position: profile.position,
+          jerseyNumber: profile.jersey_number,
+        });
+
         // Patch form with existing data (map users columns to form fields)
         this.profileForm.patchValue({
           displayName:
@@ -561,6 +566,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       const membership = this.teamMembershipService.membership();
 
       if (membership) {
+        this.logger.debug("[Settings] Loaded team membership (authoritative):", {
+          position: membership.position,
+          jerseyNumber: membership.jerseyNumber,
+        });
+
         this.currentTeamMemberId.set(membership.id);
         this.profileForm.patchValue({
           teamId: membership.teamId,
@@ -570,6 +580,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           jerseyNumber:
             membership.jerseyNumber?.toString() ||
             this.profileForm.get("jerseyNumber")?.value,
+        });
+
+        this.logger.info("[Settings] Final form values:", {
+          position: this.profileForm.get("position")?.value,
+          jerseyNumber: this.profileForm.get("jerseyNumber")?.value,
         });
       }
     } catch (error) {
@@ -718,18 +733,37 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             ? parseInt(settings.profile.jerseyNumber, 10)
             : null;
 
-          await this.supabaseService.client
-            .from("team_members")
-            .update({
-              position: settings.profile.position || null,
-              jersey_number: parsedJersey,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("id", existingTeamMember.id);
+          this.logger.info(
+            "Updating team_members with position/jersey:",
+            { position: settings.profile.position, jersey: parsedJersey },
+          );
+
+          const { data: updatedMember, error: memberError } =
+            await this.supabaseService.client
+              .from("team_members")
+              .update({
+                position: settings.profile.position || null,
+                jersey_number: parsedJersey,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", existingTeamMember.id)
+              .select()
+              .maybeSingle();
+
+          if (memberError) {
+            this.logger.error(
+              "Failed to update team_members:",
+              memberError.message,
+              memberError,
+            );
+            throw new Error(
+              `Failed to update team membership: ${memberError.message}`,
+            );
+          }
 
           this.logger.info(
-            "Updated existing team membership:",
-            existingTeamMember.team_id,
+            "Successfully updated team membership:",
+            updatedMember,
           );
         } else if (settings.profile.teamId) {
           // No existing membership but team was selected - create new
@@ -789,7 +823,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         const { data: settingsResult, error: settingsError } =
           await this.supabaseService.client
             .from("user_settings")
-            .upsert(settingsData)
+            .upsert(settingsData, { onConflict: 'user_id' })
             .select()
             .maybeSingle();
 
