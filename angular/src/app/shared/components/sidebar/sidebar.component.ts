@@ -1,19 +1,23 @@
+import { isPlatformBrowser } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    HostListener,
+    inject,
+    OnDestroy,
+    OnInit,
+    PLATFORM_ID,
+    Renderer2,
+    signal
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";
 import { filter, Subscription } from "rxjs";
+import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
-import { UI_LIMITS } from "../../../core/constants/app.constants";
 
 interface NavItem {
   label: string;
@@ -204,9 +208,27 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private authService = inject(AuthService);
   private notificationState = inject(NotificationStateService);
+  private renderer = inject(Renderer2);
+  private platformId = inject(PLATFORM_ID);
   private routerSub?: Subscription;
 
   isOpen = signal(false);
+
+  constructor() {
+    // Effect to manage body scroll lock when sidebar is open on mobile
+    if (isPlatformBrowser(this.platformId)) {
+      effect(() => {
+        const isOpen = this.isOpen();
+        if (window.innerWidth <= 768) {
+          if (isOpen) {
+            this.renderer.addClass(document.body, "sidebar-open");
+          } else {
+            this.renderer.removeClass(document.body, "sidebar-open");
+          }
+        }
+      });
+    }
+  }
 
   /**
    * Close sidebar on Escape key press

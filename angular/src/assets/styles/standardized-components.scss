@@ -805,6 +805,9 @@ input[type="datetime-local"] {
   background-color: var(--surface-primary);
   border: 1px solid var(--color-border-primary);
   border-radius: var(--radius-md);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   transition:
     opacity var(--transition-base),
     transform var(--transition-base),
@@ -855,6 +858,9 @@ input[type="datetime-local"] {
 /* Textarea */
 textarea.form-control,
 textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   min-height: 120px;
   resize: vertical;
 }

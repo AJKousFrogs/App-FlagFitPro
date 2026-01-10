@@ -19,10 +19,11 @@
   left: 0;
   top: 0;
   height: 100vh;
+  height: 100dvh; /* Use dynamic viewport height for mobile browsers */
   width: 250px;
   background: var(--surface-primary);
   border-right: 1px solid var(--color-border-primary);
-  z-index: var(--z-modal);
+  z-index: calc(var(--z-modal) + 10); /* Higher than overlay to prevent blur */
   transition: transform 0.3s ease;
   overflow-y: auto;
   display: flex;
@@ -339,10 +340,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--surface-overlay);
-  z-index: var(--z-modal);
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px);
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Use dynamic viewport height for mobile browsers */
+  background: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-modal) + 5); /* Below sidebar but above content */
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 // ============================================
@@ -413,7 +418,11 @@
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
-    width: 280px;
+    width: min(85vw, 320px); /* Responsive width, max 320px */
+    max-width: 320px;
+    box-shadow: var(--shadow-xl); /* Enhanced shadow for mobile */
+    will-change: transform; /* Optimize animation performance */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 
   .sidebar.sidebar-open {
@@ -428,7 +437,8 @@
 
   .sidebar-overlay.active {
     display: block;
-    animation: fadeIn 0.2s ease;
+    animation: fadeIn 0.25s ease-out;
+    will-change: opacity;
   }
 
   @keyframes fadeIn {
@@ -438,5 +448,36 @@
     to {
       opacity: 1;
     }
+  }
+}
+
+// ============================================
+// MOBILE: Specific fixes for Samsung Galaxy S24 and similar devices
+// Samsung Galaxy S24: 1080x2340px (360x780 logical)
+// Samsung Galaxy S24 Ultra: 1440x3088px (480x1029 logical)
+// ============================================
+@media (max-width: 768px) and (min-height: 700px) {
+  .sidebar {
+    /* Ensure full height coverage on tall mobile screens */
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  .sidebar-overlay {
+    /* Prevent any overflow or scroll on overlay */
+    overflow: hidden;
+    touch-action: none;
+    position: fixed; /* Ensure it stays in place */
+    overscroll-behavior: contain;
+  }
+}
+
+// ============================================
+// MOBILE: Prevent content shift and ensure proper layering
+// ============================================
+@media (max-width: 768px) {
+  /* Applied via Renderer2 in component when sidebar opens */
+  :host-context(body.sidebar-open) {
+    overflow: hidden;
   }
 }

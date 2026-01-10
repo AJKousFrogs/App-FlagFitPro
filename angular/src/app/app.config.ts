@@ -22,6 +22,7 @@ import {
 } from "@angular/common/http";
 import { MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
+import Aura from "@primeuix/themes/aura";
 import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
 import { cacheInterceptor } from "./core/interceptors/cache.interceptor";
@@ -94,11 +95,14 @@ export const appConfig: ApplicationConfig = {
         menu: 1000,
         tooltip: 1100,
       },
-      // CSS Layers: Place PrimeNG styles in the cascade layer system
-      // This allows our custom styles to override PrimeNG without !important
-      // Layer order: reset, tokens, primeng-base, primeng-brand, primitives, features, overrides
+      // CRITICAL FIX: PrimeNG 21 requires theme preset for base styles
+      // Aura is the default PrimeNG 21 theme that provides foundational component styling
+      // Our custom CSS variables (in primeng-theme.scss) override Aura's defaults
       theme: {
+        preset: Aura, // Provides base PrimeNG component styles
         options: {
+          prefix: "p", // CSS variable prefix (e.g., --p-primary-color)
+          darkModeSelector: ".dark-theme", // Use class-based dark mode toggle
           cssLayer: {
             name: "primeng-base",
             order:

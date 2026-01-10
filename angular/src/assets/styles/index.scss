@@ -34,8 +34,10 @@
 // ============================================
 // 2. LAYER ORDER DECLARATION
 // ============================================
+// NOTE: This layer declaration is also in styles.scss
+// If using index.scss directly, keep this. Otherwise it's redundant.
 
-@layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
+// @layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
 
 // ============================================
 // 3. RESET LAYER

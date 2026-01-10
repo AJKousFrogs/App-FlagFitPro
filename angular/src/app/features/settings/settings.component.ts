@@ -1,20 +1,20 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    inject,
+    OnInit,
+    signal,
+    ViewChild,
 } from "@angular/core";
 
 import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
+    FormBuilder,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -31,8 +31,8 @@ import { TooltipModule } from "primeng/tooltip";
 import { TIMEOUTS, TOAST, UI_LIMITS } from "../../core/constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-  LoggerService,
-  toLogContext,
+    LoggerService,
+    toLogContext,
 } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -43,8 +43,8 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-  ButtonComponent,
-  CardComponent,
+    ButtonComponent,
+    CardComponent,
 } from "../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { calculateAge } from "../../shared/utils/date.utils";

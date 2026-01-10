@@ -451,6 +451,20 @@
   --p-slider-range-background: var(--ds-primary-green);
   --p-slider-handle-background: var(--ds-primary-green);
 
+  /* InputSwitch (Toggle) */
+  --p-inputswitch-width: 48px;
+  --p-inputswitch-height: 26px;
+  --p-inputswitch-border-radius: 13px;
+  --p-inputswitch-background: var(--primitive-neutral-300);
+  --p-inputswitch-hover-background: var(--primitive-neutral-400);
+  --p-inputswitch-checked-background: var(--ds-primary-green);
+  --p-inputswitch-checked-hover-background: var(
+    --color-brand-primary-dark,
+    var(--primitive-primary-800)
+  );
+  --p-inputswitch-handle-size: 20px;
+  --p-inputswitch-handle-background: var(--color-text-on-primary);
+
   /* ================================================================
      TRANSITIONS & ANIMATIONS
      ================================================================ */
@@ -1039,4 +1053,89 @@ p-button[severity="primary"] .p-button {
 .p-inputnumber-button:hover {
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
+}
+
+/* ================================================================
+   INPUTSWITCH (TOGGLE) NORMALIZATION
+   ================================================================ */
+
+.p-inputswitch {
+  width: var(--p-inputswitch-width, 50px);
+  height: var(--p-inputswitch-height, 28px);
+  position: relative;
+  display: inline-block;
+}
+
+/* Toggle track (background slider) */
+.p-inputswitch .p-inputswitch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--p-inputswitch-background);
+  border-radius: var(--p-inputswitch-border-radius, 14px);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  border: 1px solid transparent;
+}
+
+/* Toggle thumb (circle handle) */
+.p-inputswitch .p-inputswitch-slider::before {
+  content: "";
+  position: absolute;
+  height: var(--p-inputswitch-handle-size, 20px);
+  width: var(--p-inputswitch-handle-size, 20px);
+  left: 3px;
+  top: 3px;
+  background: var(--p-inputswitch-handle-background);
+  border-radius: 50%;
+  transition: left 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover state - unchecked */
+.p-inputswitch:hover .p-inputswitch-slider:not(.p-inputswitch-checked) {
+  background: var(--p-inputswitch-hover-background);
+}
+
+/* Checked state (ON) */
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background: var(--p-inputswitch-checked-background);
+  border-color: var(--p-inputswitch-checked-background);
+}
+
+/* Move thumb to the right when checked */
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider::before {
+  left: calc(100% - var(--p-inputswitch-handle-size, 20px) - 3px);
+}
+
+/* Hover state - checked */
+.p-inputswitch.p-inputswitch-checked:hover .p-inputswitch-slider {
+  background: var(--p-inputswitch-checked-hover-background);
+}
+
+/* Focus state - accessibility */
+.p-inputswitch:focus-visible .p-inputswitch-slider {
+  outline: none;
+  box-shadow:
+    0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Disabled state */
+.p-inputswitch.p-disabled {
+  opacity: var(--p-disabled-opacity, 0.6);
+  cursor: not-allowed;
+}
+
+.p-inputswitch.p-disabled .p-inputswitch-slider {
+  cursor: not-allowed;
+}
+
+/* Hide the native input */
+.p-inputswitch .p-inputswitch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
