@@ -12,7 +12,11 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { TableModule } from "primeng/table";
+import {
+  TableModule,
+  TableColumnReorderEvent,
+  TableColResizeEvent,
+} from "primeng/table";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { CheckboxModule } from "primeng/checkbox";
@@ -26,23 +30,6 @@ import { MenuModule } from "primeng/menu";
 export interface TableRow {
   _selected?: boolean;
   [key: string]: unknown;
-}
-
-/**
- * Column reorder event
- */
-interface ColumnReorderEvent {
-  columns: Array<{ field: string }>;
-}
-
-/**
- * Column resize event
- */
-interface ColumnResizeEvent {
-  element: HTMLElement & {
-    dataset: { field: string };
-    style: { width: string };
-  };
 }
 
 /**
@@ -190,8 +177,10 @@ export interface TablePreferences {
           columnResizeMode="expand"
           [scrollable]="true"
           scrollHeight="600px"
-          (onColReorder)="onColumnReorder($any($event))"
-          (onColResize)="onColumnResize($any($event))"
+          [virtualScroll]="data().length > 100"
+          [virtualScrollItemSize]="46"
+          (onColReorder)="onColumnReorder($event)"
+          (onColResize)="onColumnResize($event)"
           styleClass="enhanced-table"
         >
           <ng-template pTemplate="header" let-columns>
@@ -503,17 +492,21 @@ export class EnhancedDataTableComponent {
     this.savePreferencesToStorage();
   }
 
-  onColumnReorder(event: ColumnReorderEvent): void {
-    const order = event.columns.map((col) => col.field);
+  onColumnReorder(event: TableColumnReorderEvent): void {
+    const order = event.columns?.map((col) => col.field) ?? [];
     this.columnOrderState.set(order);
     this.savePreferencesToStorage();
   }
 
-  onColumnResize(event: ColumnResizeEvent): void {
+  onColumnResize(event: TableColResizeEvent): void {
     const widths = { ...this.columnWidths() };
-    widths[event.element.dataset.field] = event.element.style.width;
-    this.columnWidths.set(widths);
-    this.savePreferencesToStorage();
+    const element = event.element as HTMLElement;
+    const field = element.dataset?.["field"];
+    if (field) {
+      widths[field] = element.style.width;
+      this.columnWidths.set(widths);
+      this.savePreferencesToStorage();
+    }
   }
 
   getColumnWidth(col: EnhancedTableColumn): string {
@@ -566,7 +559,7 @@ export class EnhancedDataTableComponent {
     const keys = field.split(".");
     const lastKey = keys.pop();
     if (!lastKey) return;
-    
+
     const target = keys.reduce(
       (obj: Record<string, unknown>, key: string) =>
         obj[key] as Record<string, unknown>,

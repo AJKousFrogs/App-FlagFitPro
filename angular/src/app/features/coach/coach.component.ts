@@ -134,6 +134,10 @@ interface TeamMember {
             [paginator]="true"
             [rows]="10"
             [rowsPerPageOptions]="[10, 25, 50]"
+            [scrollable]="teamMembers().length > 20"
+            [scrollHeight]="teamMembers().length > 20 ? '600px' : undefined"
+            [virtualScroll]="teamMembers().length > 50"
+            [virtualScrollItemSize]="46"
           >
             <ng-template pTemplate="header">
               <tr>
