@@ -3413,18 +3413,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Convert injury entries to soreness_areas format
-      // soreness_areas is an array of strings in wellness_checkins table
-      const sorenessAreas = this.onboardingData.currentInjuries.map(
-        (injury: InjuryEntry) => {
-          // Map injury area to soreness area format
-          // e.g., "hamstring" -> "hamstring", "hip_flexor" -> "hip flexor"
-          const area = injury.area.replace(/_/g, " ");
-          return `${area} (${injury.severity})`;
-        },
-      );
-
-      // Also save injury history as notes or in a separate field
+      // Save injury history as notes
       const injuryHistoryNotes =
         this.onboardingData.injuryHistory.length > 0
           ? `Past injuries: ${this.onboardingData.injuryHistory.join(", ")}`

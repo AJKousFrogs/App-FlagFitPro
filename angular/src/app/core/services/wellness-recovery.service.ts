@@ -71,7 +71,7 @@ export class WellnessRecoveryService {
       await this.supabaseService.client.from("notifications").insert({
         user_id: playerId,
         notification_type: "wellness",
-        message: `Your wellness was low yesterday (${yesterdayWellness.readiness_score}%). Today's training is focused on recovery - prioritize sleep, hydration, and light movement.`,
+        message: `Your wellness was low yesterday (${yesterdayWellness.score}%). Today's training is focused on recovery - prioritize sleep, hydration, and light movement.`,
         priority: "medium",
       });
 

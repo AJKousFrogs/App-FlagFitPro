@@ -48,6 +48,7 @@ import { TooltipModule } from "primeng/tooltip";
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AuthService } from "../../../core/services/auth.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
     BloodCirculationRisk,
@@ -1298,6 +1299,7 @@ export class TravelRecoveryComponent implements OnInit {
   private travelService = inject(TravelRecoveryService);
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
+  private logger = inject(LoggerService);
 
   // Constants exposed to template
   protected readonly UI_LIMITS = UI_LIMITS;
@@ -1367,7 +1369,7 @@ export class TravelRecoveryComponent implements OnInit {
   Math = Math;
 
   ngOnInit(): void {
-    console.log('[TravelRecovery] Component initialized');
+    this.logger.debug('[TravelRecovery] Component initialized');
     this.timezones = this.travelService.getAvailableTimezones();
     this.travelChecklist = this.travelService.getTravelChecklist();
 
@@ -1377,8 +1379,10 @@ export class TravelRecoveryComponent implements OnInit {
     this.carTravelChecklist = this.travelService.getCarTravelChecklist();
     this.researchSummary = this.travelService.getCarTravelResearchSummary();
     
-    console.log('[TravelRecovery] hasActivePlan:', this.hasActivePlan());
-    console.log('[TravelRecovery] currentPlan:', this.currentPlan());
+    this.logger.debug('[TravelRecovery] State', {
+      hasActivePlan: this.hasActivePlan(),
+      currentPlan: this.currentPlan()
+    });
   }
 
   // Travel type management
@@ -1530,12 +1534,13 @@ export class TravelRecoveryComponent implements OnInit {
   }
 
   createPlan(): void {
-    console.log('[TravelRecovery] createPlan() called');
-    console.log('[TravelRecovery] Form data:', this.tripForm);
-    console.log('[TravelRecovery] canCreatePlan:', this.canCreatePlan());
+    this.logger.debug('[TravelRecovery] createPlan() called', {
+      formData: this.tripForm,
+      canCreate: this.canCreatePlan()
+    });
     
     if (!this.canCreatePlan()) {
-      console.warn('[TravelRecovery] Cannot create plan - validation failed');
+      this.logger.warn('[TravelRecovery] Cannot create plan - validation failed');
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
@@ -1544,13 +1549,13 @@ export class TravelRecoveryComponent implements OnInit {
     const arrivalDate = this.tripForm.arrivalDate;
     
     if (!departureDate || !arrivalDate) {
-      console.warn('[TravelRecovery] Missing dates:', { departureDate, arrivalDate });
+      this.logger.warn('[TravelRecovery] Missing dates', { departureDate, arrivalDate });
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
 
     try {
-      console.log('[TravelRecovery] Creating travel plan...');
+      this.logger.debug('[TravelRecovery] Creating travel plan...');
       const plan = this.travelService.createTravelPlan({
         tripName: this.tripForm.tripName,
         departureDate: departureDate,
@@ -1562,14 +1567,16 @@ export class TravelRecoveryComponent implements OnInit {
         layovers: this.tripForm.layovers,
       });
 
-      console.log('[TravelRecovery] Plan created successfully:', plan);
-      console.log('[TravelRecovery] hasActivePlan after creation:', this.hasActivePlan());
-      console.log('[TravelRecovery] currentPlan after creation:', this.currentPlan());
-      console.log('[TravelRecovery] recoveryProtocol after creation:', this.recoveryProtocol());
+      this.logger.debug('[TravelRecovery] Plan created successfully', {
+        plan,
+        hasActivePlan: this.hasActivePlan(),
+        currentPlan: this.currentPlan(),
+        recoveryProtocol: this.recoveryProtocol()
+      });
       
       this.toastService.success(TOAST.SUCCESS.RECOVERY_PROTOCOL_GENERATED);
     } catch (error) {
-      console.error('[TravelRecovery] Error creating plan:', error);
+      this.logger.error('[TravelRecovery] Error creating plan', { error });
       this.toastService.error('Failed to generate recovery protocol. Please try again.');
     }
   }

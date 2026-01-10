@@ -243,7 +243,7 @@ export class DirectSupabaseApiService {
     // Determine if there's an override based on conditions
     let override = null;
 
-    // Check for active injuries/rehab
+    // Check for active injuries/rehab from notes field
     const { data: activeInjuries } = await this.supabase.client
       .from("wellness_entries")
       .select("notes")
@@ -252,16 +252,19 @@ export class DirectSupabaseApiService {
       .order("created_at", { ascending: false })
       .limit(1);
 
-    if (
-      activeInjuries?.[0]?.injuries &&
-      Array.isArray(activeInjuries[0].injuries) &&
-      activeInjuries[0].injuries.length > 0
-    ) {
-      override = {
-        type: "rehab_protocol",
-        reason: `Active injury protocol: ${activeInjuries[0].injuries.join(", ")}`,
-        replaceSession: true,
-      };
+    if (activeInjuries?.[0]?.notes) {
+      // Parse notes to check for injury keywords
+      const notes = activeInjuries[0].notes.toLowerCase();
+      const injuryKeywords = ['injury', 'injured', 'pain', 'rehab', 'rehabilitation'];
+      const hasInjuryNote = injuryKeywords.some(keyword => notes.includes(keyword));
+      
+      if (hasInjuryNote) {
+        override = {
+          type: "rehab_protocol",
+          reason: `Active injury protocol: ${activeInjuries[0].notes}`,
+          replaceSession: true,
+        };
+      }
     }
 
     return {

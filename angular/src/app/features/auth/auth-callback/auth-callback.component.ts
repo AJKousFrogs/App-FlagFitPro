@@ -339,7 +339,7 @@ export class AuthCallbackComponent implements OnInit {
 
       // Also set localStorage flag for tabs that might not support BroadcastChannel
       localStorage.setItem("flagfit_email_verified", Date.now().toString());
-    } catch (error) {
+    } catch (_error) {
       this.logger.debug("[Auth] BroadcastChannel not supported, using localStorage only");
       localStorage.setItem("flagfit_email_verified", Date.now().toString());
     }

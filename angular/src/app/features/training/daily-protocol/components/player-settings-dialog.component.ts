@@ -562,7 +562,7 @@ export class PlayerSettingsDialogComponent {
         birthDate: this.settings.birthDate?.toISOString().split("T")[0],
       };
       // Remove flagPracticeSchedule from payload (API expects availabilitySchedule)
-      const { flagPracticeSchedule, ...finalPayload } = payload as typeof payload & { flagPracticeSchedule?: unknown };
+      const { flagPracticeSchedule: _flagPracticeSchedule, ...finalPayload } = payload as typeof payload & { flagPracticeSchedule?: unknown };
 
       await firstValueFrom(this.api.post("/api/player-settings", finalPayload));
 

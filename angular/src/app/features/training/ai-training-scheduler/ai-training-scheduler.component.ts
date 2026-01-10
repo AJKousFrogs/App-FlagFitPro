@@ -427,7 +427,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
           acwr: acwr?.acwr_ratio ?? null,
           fatigue_level: wellness?.energy_level ?? null,
           sleep_quality: wellness?.sleep_quality ?? null,
-          soreness_level: wellness?.soreness ?? null,
+          soreness_level: wellness?.muscle_soreness ?? null,
         });
       } else {
         // No data available - show empty state
