@@ -71,7 +71,7 @@
   }
 }
 
-@media (min-width: 769px) and respond-to(lg) {
+@media (min-width: 769px) and (max-width: 1024px) {
   .team-overview-grid {
     grid-template-columns: repeat(3, 1fr);
   }

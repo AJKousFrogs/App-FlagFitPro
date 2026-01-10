@@ -755,7 +755,7 @@
 }
 
 /* Tablet Landscape (769px - 1023px) */
-@media (min-width: 769px) and respond-to(lg) {
+@media (min-width: 769px) and (max-width: 1024px) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -833,7 +833,7 @@
 }
 
 /* Mobile Large (481px - 767px) */
-@media (min-width: 481px) and respond-to(md) {
+@media (min-width: 481px) and (max-width: 768px) {
   .availability-options {
     grid-template-columns: repeat(2, 1fr);
   }

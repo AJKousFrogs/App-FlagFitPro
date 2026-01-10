@@ -1433,7 +1433,7 @@
   }
 }
 
-@media (min-width: 769px) and respond-to(lg) {
+@media (min-width: 769px) and (max-width: 1024px) {
   .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1516,7 +1516,7 @@
   }
 }
 
-@media (min-width: 481px) and respond-to(md) {
+@media (min-width: 481px) and (max-width: 768px) {
   .olympic-buttons {
     grid-template-columns: repeat(2, 1fr);
   }
