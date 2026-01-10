@@ -53,7 +53,8 @@
   color: var(--color-text-on-primary);
 }
 
-::ng-deep .data-source-badge {
+// Removed ::ng-deep - Using proper CSS cascade
+.data-source-badge {
   font-size: var(--font-size-badge);
   font-weight: var(--font-weight-semibold);
   padding: var(--space-1) var(--space-2);

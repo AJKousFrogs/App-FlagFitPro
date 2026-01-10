@@ -158,7 +158,7 @@
 // PRIMENG TABS OVERRIDES FOR MOBILE
 // ================================================================
 
-:host ::ng-deep {
+:host {
   // Ensure tabs scroll horizontally on mobile
   .p-tablist {
     @media respond-to(md) {
