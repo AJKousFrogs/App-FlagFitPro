@@ -269,7 +269,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .cookie-content {
     padding: var(--space-4) var(--space-3);
   }

@@ -281,7 +281,7 @@
 }
 
 /* Mobile Adjustments */
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .block-header {
     padding: var(--space-3, 12px) var(--space-4, 16px);
   }

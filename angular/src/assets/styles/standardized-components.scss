@@ -1,3 +1,7 @@
+ "styles/mixins" as *;
+
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - STANDARDIZED COMPONENT STYLES
    All components use the same variants: primary, secondary, ghost, destructive
@@ -85,7 +89,7 @@
     font-size: var(--font-body-sm-size);
     min-height: 36px;
 
-    @media (max-width: 480px) {
+    @media respond-to(sm) {
       min-height: var(--touch-target-min, 44px);
     }
   }
@@ -118,7 +122,7 @@
       min-width: 36px;
       min-height: 36px;
 
-      @media (max-width: 480px) {
+      @media respond-to(sm) {
         min-width: var(--touch-target-min, 44px);
         min-height: var(--touch-target-min, 44px);
       }
@@ -467,7 +471,7 @@
   }
 
   /* Mobile: stack or 2 columns */
-  @media (max-width: 640px) {
+  @media respond-to(sm) {
     grid-template-columns: repeat(2, 1fr);
 
     &.cols-1-mobile {
@@ -493,7 +497,7 @@
     width: 100%;
   }
 
-  @media (max-width: 640px) {
+  @media respond-to(sm) {
     grid-template-columns: repeat(2, 1fr);
   }
 }

@@ -177,7 +177,7 @@
 }
 
 // Responsive Design
-@media (max-width: 1024px) {
+@media respond-to(lg) {
   .stepper-nav {
     padding: 0 var(--space-4);
     gap: var(--space-1);

@@ -43,7 +43,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .error-state {
     padding: var(--space-6);
   }

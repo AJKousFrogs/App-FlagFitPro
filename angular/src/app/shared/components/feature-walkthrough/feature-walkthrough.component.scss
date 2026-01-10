@@ -265,7 +265,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .walkthrough-content {
     padding: var(--space-4);
   }

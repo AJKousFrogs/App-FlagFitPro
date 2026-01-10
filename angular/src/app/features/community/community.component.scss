@@ -1,3 +1,7 @@
+ "styles/mixins" as *;
+
+ "styles/mixins" as *;
+
 /* ================================================================
    COMMUNITY COMPONENT STYLES
    Design System Compliant - January 4, 2026
@@ -1532,7 +1536,7 @@
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 1024px) {
+@media respond-to(lg) {
   .community-grid {
     grid-template-columns: 1fr;
   }
@@ -1542,7 +1546,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .community-page {
     padding: var(--space-3);
     gap: var(--space-5);

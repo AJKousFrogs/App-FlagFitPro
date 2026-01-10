@@ -61,7 +61,7 @@
   margin: 0;
 }
 
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .error-actions {
     flex-direction: column;
   }

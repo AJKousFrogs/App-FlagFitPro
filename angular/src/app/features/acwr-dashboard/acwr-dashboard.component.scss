@@ -1099,7 +1099,7 @@
 // SMALL MOBILE - EXTRA COMPACT
 // ================================================================
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .acwr-dashboard {
     padding: var(--space-2);
   }

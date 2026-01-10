@@ -1,5 +1,9 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
+ "styles/mixins" as *;
+
 /* ================================================================
    PROFILE COMPONENT STYLES
    BEM Naming | Modern CSS | Standalone Component
@@ -107,7 +111,7 @@
   color: var(--color-status-warning);
 }
 
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .profile-page .deletion-banner-content {
     flex-direction: column;
   }
@@ -792,7 +796,7 @@
 }
 
 /* Media Query Fallback - Tablet */
-@media (max-width: 1024px) {
+@media respond-to(lg) {
   .profile-page .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }

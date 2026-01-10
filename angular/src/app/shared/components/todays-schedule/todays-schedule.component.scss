@@ -310,7 +310,7 @@
   gap: var(--space-3);
 }
 
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .timeline-item {
     grid-template-columns: var(--space-10) var(--space-5) 1fr; // 40px 20px
     gap: var(--space-2);

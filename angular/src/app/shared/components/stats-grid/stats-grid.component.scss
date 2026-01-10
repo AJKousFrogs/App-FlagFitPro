@@ -125,7 +125,7 @@
 }
 
 // Responsive: Mobile - force 1 column
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .stats-overview {
     grid-template-columns: 1fr;
     gap: var(--space-2);

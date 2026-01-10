@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /**
  * Chart Primitives
  * ================
@@ -171,7 +173,7 @@
     }
   }
 
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     .chart-container {
       padding: var(--space-2);
       min-height: 150px;

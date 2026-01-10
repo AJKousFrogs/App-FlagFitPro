@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - SPACING SYSTEM
    Consistent spacing across all components
@@ -440,7 +442,7 @@ input.input-lg {
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   /* Further reduce on small screens */
   .p-card .p-card-body {
     padding: var(--space-3);

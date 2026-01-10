@@ -400,7 +400,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .player-jersey {
     width: var(--space-10);
     height: var(--space-10);

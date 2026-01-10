@@ -257,7 +257,7 @@
   gap: var(--space-3, 12px);
 }
 
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .instruction-row {
     grid-template-columns: 1fr;
   }

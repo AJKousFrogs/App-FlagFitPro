@@ -301,7 +301,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .insight-card {
     flex-direction: column;
   }

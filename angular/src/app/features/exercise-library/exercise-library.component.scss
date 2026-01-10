@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    EXERCISE LIBRARY COMPONENT STYLES
    Design System Compliant - January 2, 2026
@@ -706,7 +708,7 @@
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
+@media respond-to(lg) {
   .exercises-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }

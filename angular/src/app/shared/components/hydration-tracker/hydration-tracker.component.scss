@@ -217,7 +217,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .hydration-display {
     flex-direction: column;
     text-align: center;

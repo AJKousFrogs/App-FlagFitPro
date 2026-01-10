@@ -1,5 +1,9 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
+ "styles/mixins" as *;
+
 /**
  * Layout Primitives
  * =================
@@ -63,7 +67,7 @@
     }
   }
 
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     .container {
       padding-left: var(--page-padding-mobile);
       padding-right: var(--page-padding-mobile);
@@ -204,7 +208,7 @@
   }
 
   // Responsive bento (Decision 35)
-  @media (max-width: 1024px) {
+  @media respond-to(lg) {
     .bento {
       grid-template-columns: repeat(6, 1fr);
     }
@@ -468,7 +472,7 @@
     }
   }
 
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     .hide-xs {
       display: none;
     }
@@ -490,7 +494,7 @@
     }
   }
 
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     .md\:grid-cols-2 {
       grid-template-columns: repeat(1, 1fr);
     }

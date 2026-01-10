@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Banner Component Styles
  * Contract-compliant styling for TODAY screen banners
@@ -84,7 +86,7 @@
   align-items: flex-start;
 }
 
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .banner {
     flex-direction: column;
     gap: var(--space-3);

@@ -290,7 +290,7 @@
 /* ========================================================================
    RESPONSIVE ADJUSTMENTS
    ======================================================================== */
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .body-area-grid {
     grid-template-columns: repeat(2, 1fr);
   }

@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - UNIFIED TYPOGRAPHY SYSTEM
    SINGLE SOURCE OF TRUTH for all typography
@@ -108,7 +110,7 @@ h6 {
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   h1 {
     font-size: var(--font-h2-size); /* 24px on small mobile */
   }
@@ -140,7 +142,7 @@ h6 {
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .ff-h1,
   .page-title,
   .hero-title {

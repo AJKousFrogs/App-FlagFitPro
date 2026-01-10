@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /**
  * Table Primitives
  * =================
@@ -359,7 +361,7 @@
     }
   }
 
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-mobile));
       padding: 0 var(--page-padding-mobile);

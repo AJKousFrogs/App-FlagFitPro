@@ -18,7 +18,7 @@
     outline-offset: 2px;
   }
 
-  @media (max-width: 640px) {
+  @media respond-to(sm) {
     padding: var(--space-4, 16px);
     margin-bottom: var(--space-4, 16px);
   }
@@ -45,7 +45,7 @@
   color: var(--primitive-error-900);
   line-height: var(--line-height-tight, 1.25);
 
-  @media (max-width: 640px) {
+  @media respond-to(sm) {
     font-size: var(--font-size-h4, 18px);
   }
 }

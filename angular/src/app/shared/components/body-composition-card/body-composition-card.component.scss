@@ -184,7 +184,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .metrics-grid {
     grid-template-columns: 1fr;
   }

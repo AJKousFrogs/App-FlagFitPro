@@ -162,7 +162,7 @@
   align-items: center;
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .suggestions-grid {
     grid-template-columns: 1fr;
   }

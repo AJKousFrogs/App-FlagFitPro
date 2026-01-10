@@ -1,5 +1,9 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
+ "styles/mixins" as *;
+
 /* ================================================================
    GAME TRACKER - Premium Professional Design
    Design System Compliant - January 4, 2026
@@ -641,7 +645,7 @@
    ================================================================ */
 
 /* Tablet breakpoint */
-@media (max-width: 1024px) {
+@media respond-to(lg) {
   .form-row.four-col {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -975,7 +979,7 @@
 }
 
 /* Small mobile - Extra compact */
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .game-tracker-page {
     padding: var(--space-2);
   }

@@ -1526,7 +1526,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .travel-recovery-page {
     padding: var(--space-3);
   }

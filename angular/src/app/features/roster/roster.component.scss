@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    ROSTER COMPONENT STYLES
    Design System Compliant - January 2, 2026
@@ -660,7 +662,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .roster-page {
     padding: var(--space-3);
   }

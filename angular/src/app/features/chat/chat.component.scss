@@ -1,5 +1,9 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
+ "styles/mixins" as *;
+
 /* ================================================================
    TEAM CHAT COMPONENT STYLES
    Design System Compliant - January 2, 2026
@@ -884,7 +888,7 @@
    RESPONSIVE - TABLET
    ============================================ */
 
-@media (max-width: 1024px) {
+@media respond-to(lg) {
   .chat-container {
     gap: var(--space-3);
     padding: var(--space-3);
@@ -968,7 +972,7 @@
    RESPONSIVE - SMALL MOBILE
    ============================================ */
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .chat-title {
     font-size: var(--font-size-h2);
   }

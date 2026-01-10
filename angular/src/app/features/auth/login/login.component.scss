@@ -378,7 +378,7 @@
   // RESPONSIVE DESIGN
   // ============================================================================
 
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     .login-page {
       padding: var(--space-4, 1rem);
       align-items: flex-start;

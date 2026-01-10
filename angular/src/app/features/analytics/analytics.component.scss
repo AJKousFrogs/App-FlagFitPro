@@ -735,7 +735,7 @@
 // SMALL MOBILE - EXTRA COMPACT
 // ================================================================
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .analytics-page {
     padding: var(--space-2);
   }
@@ -857,7 +857,7 @@
   min-height: 100vh; /* Ensure page has height for viewport detection */
 
   // Mobile fix: ensure content is visible
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     padding: var(--space-3);
   }
 }

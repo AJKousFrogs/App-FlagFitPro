@@ -1,3 +1,7 @@
+ "styles/mixins" as *;
+
+ "styles/mixins" as *;
+
 /**
  * Mobile Responsive Utilities
  * ================================================================
@@ -64,21 +68,21 @@
 
 // iPhone 11-14 (414px viewport width)
 @mixin iphone-standard {
-  @media (max-width: 414px) {
+  @media respond-to(xs) {
     @content;
   }
 }
 
 // iPhone 15-17 Pro Max, Samsung S25 Ultra (430px viewport width)
 @mixin iphone-pro-max {
-  @media (max-width: 430px) {
+  @media respond-to(xs) {
     @content;
   }
 }
 
 // Combined: All target mobile devices (up to 430px)
 @mixin target-mobile-devices {
-  @media (max-width: 430px) {
+  @media respond-to(xs) {
     @content;
   }
 }
@@ -438,7 +442,7 @@
 // Viewport: 390-430px width
 // ================================================================
 
-@media (max-width: 430px) and (min-width: 375px) {
+@media respond-to(xs) and (min-width: 375px) {
   // iPhone notch area padding
   .iphone-notch-aware {
     padding-top: max(var(--space-4), env(safe-area-inset-top));
@@ -523,7 +527,7 @@
   // ================================================================
 
   // iPhone 15-17 Pro Max, Samsung S25 Ultra (430px)
-  @media (max-width: 430px) {
+  @media respond-to(xs) {
     .p-dialog {
       width: 100vw !important;
       max-width: 100vw !important;
@@ -573,7 +577,7 @@
   }
 
   // iPhone 11-14, Samsung S23/S24 (412-414px) - Even more compact
-  @media (max-width: 414px) {
+  @media respond-to(xs) {
     .p-dialog {
       width: 100vw !important;
       max-width: 100vw !important;
@@ -686,7 +690,7 @@
   // iPhone 11-17 (414-430px), Samsung S23-S25 (412-430px)
   // ================================================================
 
-  @media (max-width: 430px) {
+  @media respond-to(xs) {
     // Full-width select overlays on target devices
     .p-select-overlay,
     .p-dropdown-panel,
@@ -742,7 +746,7 @@
     }
   }
 
-  @media (max-width: 414px) {
+  @media respond-to(xs) {
     // Even more compact for iPhone 11-14 / Samsung S23/S24
     .p-select-overlay,
     .p-dropdown-panel {

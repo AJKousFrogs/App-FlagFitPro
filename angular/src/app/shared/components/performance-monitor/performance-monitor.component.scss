@@ -139,7 +139,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .action-buttons {
     flex-direction: column;
   }

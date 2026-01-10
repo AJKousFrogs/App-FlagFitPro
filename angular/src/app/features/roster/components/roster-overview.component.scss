@@ -87,7 +87,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .team-overview-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);

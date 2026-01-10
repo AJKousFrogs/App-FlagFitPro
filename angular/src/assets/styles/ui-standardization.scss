@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - UI STANDARDIZATION LAYER
    Enterprise / Calm Clinical Style
@@ -172,7 +174,7 @@
     padding: 0 var(--space-4);
   }
 
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     padding: 0 var(--space-3);
   }
 }
@@ -924,7 +926,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   :root {
     --p-card-body-padding: var(--space-3); /* 12px */
     --p-card-header-padding: var(--space-3); /* 12px */

@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 .sleep-debt-page {
   padding: var(--space-4);
   max-width: 1200px;
@@ -318,7 +320,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .stats-grid {
     grid-template-columns: 1fr;
   }

@@ -354,7 +354,7 @@
 // TABLET: Collapsed sidebar (icons only)
 // Design System: --bp-tablet: 768px, --bp-laptop: 1024px
 // ============================================
-@media (max-width: 1024px) and (min-width: 769px) {
+@media respond-to(lg) and (min-width: 769px) {
   .sidebar {
     width: 72px;
   }

@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - MAIN STYLES
    Single source of truth design system
@@ -1120,7 +1122,7 @@ html.no-transitions * {
   }
 
   /* Responsive toast */
-  @media (max-width: 480px) {
+  @media respond-to(sm) {
     .p-toast.p-toast-top-right {
       top: 1rem;
       right: 1rem;

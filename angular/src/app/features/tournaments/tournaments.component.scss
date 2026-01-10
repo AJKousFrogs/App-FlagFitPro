@@ -1,5 +1,7 @@
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    TOURNAMENTS COMPONENT STYLES
    Design System Compliant - January 2, 2026
@@ -842,7 +844,7 @@
 }
 
 /* Mobile Small (< 480px) */
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .tournaments-page {
     padding: var(--space-3);
   }

@@ -267,7 +267,7 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media respond-to(sm) {
   .orientation-horizontal .item-labels {
     display: none;
   }

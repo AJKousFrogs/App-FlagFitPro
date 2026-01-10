@@ -219,7 +219,7 @@
   color: var(--color-text-primary, #171717);
 }
 
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .form-row {
     grid-template-columns: 1fr;
   }

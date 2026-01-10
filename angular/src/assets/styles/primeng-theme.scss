@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - PRIMENG 21 THEME CONFIGURATION
    Premium theme customization for PrimeNG components
@@ -2677,7 +2679,7 @@
   }
 
   /* Tablet adjustments */
-  @media (min-width: 768px) and (max-width: 1024px) {
+  @media (min-width: 768px) and respond-to(lg) {
     .p-datatable-thead > tr > th,
     .p-datatable-tbody > tr > td {
       padding: var(--space-3);

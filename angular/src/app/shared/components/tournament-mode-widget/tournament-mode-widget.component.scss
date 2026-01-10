@@ -398,7 +398,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media respond-to(sm) {
   .game-dots {
     flex-wrap: wrap;
   }
