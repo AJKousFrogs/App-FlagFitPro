@@ -386,7 +386,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .payment-management-page {
     padding: var(--space-3);
   }

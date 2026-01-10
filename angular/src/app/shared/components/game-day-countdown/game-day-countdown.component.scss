@@ -274,7 +274,7 @@
 }
 
 /* Responsive */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .countdown-display {
     gap: var(--space-3);
   }

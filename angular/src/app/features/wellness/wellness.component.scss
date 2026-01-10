@@ -215,7 +215,7 @@
 }
 
 // ===== Responsive =====
-@media respond-to(md) {
+@include respond-to(md) {
   .charts-grid {
     grid-template-columns: 1fr;
   }

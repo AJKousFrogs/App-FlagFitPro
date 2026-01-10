@@ -292,7 +292,7 @@
   color: var(--color-text-secondary);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .calendar-day {
     min-height: 60px;
     padding: var(--space-1);

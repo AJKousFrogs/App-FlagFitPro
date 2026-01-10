@@ -56,7 +56,7 @@
   color: var(--color-status-error);
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .date-range-container {
     flex-direction: column;
   }

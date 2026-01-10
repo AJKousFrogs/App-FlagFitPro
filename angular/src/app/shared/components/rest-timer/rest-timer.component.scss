@@ -247,7 +247,7 @@
   color: var(--color-status-error);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .floating-timer {
     bottom: 140px;
   }

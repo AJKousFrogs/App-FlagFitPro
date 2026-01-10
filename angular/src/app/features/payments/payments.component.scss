@@ -370,7 +370,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .payments-page {
     padding: var(--space-3);
   }

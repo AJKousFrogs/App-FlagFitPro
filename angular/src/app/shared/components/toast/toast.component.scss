@@ -201,7 +201,7 @@
    RESPONSIVE
    ================================ */
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   // PrimeNG toast responsive override moved to _exceptions.scss (DS-EXC-034)
   .app-toast {
     width: calc(100% - var(--space-4));

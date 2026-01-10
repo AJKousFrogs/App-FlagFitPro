@@ -2043,7 +2043,7 @@ select {
    ================================================================ */
 
 /* Hide on Mobile */
-@media respond-to(md) {
+@include respond-to(md) {
   .hide-mobile {
     display: none;
   }
@@ -2063,7 +2063,7 @@ select {
   margin: 0 auto;
   padding: 0 var(--space-6);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: 0 var(--space-4);
   }
 }
@@ -2080,7 +2080,7 @@ select {
   &.grid-cols-2 {
     grid-template-columns: repeat(2, 1fr);
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       grid-template-columns: 1fr;
     }
   }
@@ -2088,11 +2088,11 @@ select {
   &.grid-cols-3 {
     grid-template-columns: repeat(3, 1fr);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       grid-template-columns: 1fr;
     }
   }
@@ -2100,11 +2100,11 @@ select {
   &.grid-cols-4 {
     grid-template-columns: repeat(4, 1fr);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       grid-template-columns: 1fr;
     }
   }
@@ -2175,7 +2175,7 @@ select {
 }
 
 /* Safari/iOS input zoom prevention (font-size >= 16px) */
-@media respond-to(md) {
+@include respond-to(md) {
   input[type="text"],
   input[type="email"],
   input[type="password"],
@@ -2190,7 +2190,7 @@ select {
 }
 
 /* Mobile-first responsive table */
-@media respond-to(md) {
+@include respond-to(md) {
   .table-container {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -2237,7 +2237,7 @@ select {
 }
 
 /* Modal responsive fixes */
-@media respond-to(md) {
+@include respond-to(md) {
   .modal {
     width: 100%;
     max-width: 100%;
@@ -2264,7 +2264,7 @@ select {
 }
 
 /* Toast positioning for mobile */
-@media respond-to(md) {
+@include respond-to(md) {
   .toast {
     left: var(--space-4);
     right: var(--space-4);
@@ -2275,7 +2275,7 @@ select {
 }
 
 /* Sidebar responsive fixes */
-@media respond-to(md) {
+@include respond-to(md) {
   .sidebar {
     width: 100%;
     max-width: 300px;
@@ -2284,7 +2284,7 @@ select {
 }
 
 /* Bottom navigation safe area */
-@media respond-to(md) {
+@include respond-to(md) {
   .bottom-nav {
     padding-bottom: var(--safe-area-bottom, 0px);
   }

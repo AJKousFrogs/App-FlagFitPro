@@ -725,7 +725,7 @@
 // @see docs/CARD_SHELL_CONTRACT.md §8
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .physio-dashboard {
     padding: var(--ds-spacing-md);
   }

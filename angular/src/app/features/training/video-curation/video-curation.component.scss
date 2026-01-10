@@ -41,7 +41,7 @@
 // PrimeNG tabs overrides moved to _brand-overrides.scss (global tabs styling)
 
 /* Responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .curation-page {
     padding: var(--space-4);
   }
@@ -53,7 +53,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .curation-page {
     padding: var(--space-3);
   }
@@ -68,7 +68,7 @@
   }
 }
 
-@media respond-to(xs) {
+@include respond-to(xs) {
   .curation-page {
     padding: var(--space-2);
   }

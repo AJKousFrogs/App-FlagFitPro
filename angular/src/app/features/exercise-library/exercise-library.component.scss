@@ -708,13 +708,13 @@
 }
 
 /* ===== RESPONSIVE ===== */
-@media respond-to(lg) {
+@include respond-to(lg) {
   .exercises-grid {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .exercise-library-page {
     padding: var(--space-4);
   }

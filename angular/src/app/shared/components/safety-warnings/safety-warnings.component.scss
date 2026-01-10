@@ -222,7 +222,7 @@
   border-top: 1px solid var(--color-border-secondary);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .warnings-header {
     flex-direction: column;
     gap: var(--space-3);

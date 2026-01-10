@@ -61,7 +61,7 @@
   margin: 0;
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .error-actions {
     flex-direction: column;
   }

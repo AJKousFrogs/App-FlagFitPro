@@ -856,7 +856,7 @@
     }
 
     // Mobile responsive overrides
-    @media respond-to(md) {
+    @include respond-to(md) {
       .p-tablist {
         padding: var(--space-1);
         gap: 0;
@@ -941,7 +941,7 @@
   // MOBILE RESPONSIVE FIXES
   // ============================================
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     .p-dialog {
       max-height: 90vh;
       max-width: 95vw;

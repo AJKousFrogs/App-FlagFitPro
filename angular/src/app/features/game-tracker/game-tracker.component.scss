@@ -645,7 +645,7 @@
    ================================================================ */
 
 /* Tablet breakpoint */
-@media respond-to(lg) {
+@include respond-to(lg) {
   .form-row.four-col {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -656,7 +656,7 @@
 }
 
 /* Mobile breakpoint - PRIMARY (Chrome & Safari) */
-@media respond-to(md) {
+@include respond-to(md) {
   .game-tracker-page {
     padding: var(--space-3);
   }
@@ -979,7 +979,7 @@
 }
 
 /* Small mobile - Extra compact */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .game-tracker-page {
     padding: var(--space-2);
   }
@@ -1036,7 +1036,7 @@
 }
 
 /* Landscape mode on phones */
-@media respond-to(md) and (orientation: landscape) {
+@include respond-to(md) and (orientation: landscape) {
   .outcome-buttons {
     grid-template-columns: repeat(4, 1fr);
   }

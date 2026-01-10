@@ -507,7 +507,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .team-management-page {
     padding: var(--space-3);
   }

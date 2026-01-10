@@ -89,7 +89,7 @@
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .table-filters {
     flex-direction: column;
     width: 100%;

@@ -43,7 +43,7 @@
 }
 
 /* Responsive */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .error-state {
     padding: var(--space-6);
   }

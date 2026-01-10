@@ -329,7 +329,7 @@
 }
 
 /* Responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .dashboard-content {
     padding: var(--space-4);
   }

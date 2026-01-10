@@ -680,13 +680,13 @@
 }
 
 /* ===== RESPONSIVE ===== */
-@media respond-to(lg) {
+@include respond-to(lg) {
   .hero-stats {
     gap: var(--space-6);
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .hero-section {
     min-height: auto;
     padding: var(--space-20) 0 var(--space-16);
@@ -750,7 +750,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .footer-grid {
     grid-template-columns: 1fr;
     text-align: center;
@@ -761,7 +761,7 @@
   }
 }
 
-@media respond-to(xs) {
+@include respond-to(xs) {
   .countdown-value {
     font-size: var(--font-size-metric-lg);
   }

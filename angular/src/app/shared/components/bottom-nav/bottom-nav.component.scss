@@ -23,7 +23,7 @@
   display: none;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .bottom-nav {
     display: flex;
   }

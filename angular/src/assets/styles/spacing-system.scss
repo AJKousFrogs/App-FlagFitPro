@@ -403,7 +403,7 @@ input.input-lg {
    RESPONSIVE SPACING ADJUSTMENTS
    ================================================================ */
 
-@media respond-to(md) {
+@include respond-to(md) {
   /* Reduce card padding on mobile */
   .p-card .p-card-body {
     padding: var(--space-4);
@@ -442,7 +442,7 @@ input.input-lg {
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   /* Further reduce on small screens */
   .p-card .p-card-body {
     padding: var(--space-3);

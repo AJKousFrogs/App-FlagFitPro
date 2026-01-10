@@ -109,7 +109,7 @@
   // Component-specific styles remain here
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .offline-banner {
     padding: var(--space-2) var(--space-3);
   }

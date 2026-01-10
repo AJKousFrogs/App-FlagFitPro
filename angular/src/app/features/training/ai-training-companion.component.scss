@@ -306,7 +306,7 @@
   display: none;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .companion-interface {
     width: calc(100vw - var(--space-8));
     max-width: none;

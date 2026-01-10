@@ -59,7 +59,7 @@
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-5);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: 1fr;
     }
   }
@@ -68,11 +68,11 @@
   .dashboard-grid--3col {
     grid-template-columns: repeat(3, 1fr);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       grid-template-columns: 1fr;
     }
   }
@@ -87,11 +87,11 @@
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-3);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       grid-template-columns: 1fr;
       gap: var(--space-2);
     }
@@ -101,19 +101,19 @@
   .stats-overview--6col {
     grid-template-columns: repeat(6, 1fr);
 
-    @media respond-to(xl) {
+    @include respond-to(xl) {
       grid-template-columns: repeat(4, 1fr);
     }
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: repeat(3, 1fr);
     }
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       grid-template-columns: 1fr;
     }
   }
@@ -243,11 +243,11 @@
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-3);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       grid-template-columns: 1fr;
     }
   }
@@ -323,7 +323,7 @@
     gap: var(--space-4);
     align-items: flex-start;
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       flex-direction: column;
       text-align: center;
     }
@@ -343,7 +343,7 @@
     color: var(--color-text-on-primary);
     flex-shrink: 0;
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       margin: 0 auto;
     }
   }
@@ -375,7 +375,7 @@
     flex-wrap: wrap;
     align-items: center;
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       justify-content: center;
     }
   }
@@ -552,7 +552,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-3);
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       grid-template-columns: repeat(2, 1fr);
     }
 
@@ -579,7 +579,7 @@
     width: 100%;
     flex-wrap: wrap;
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       flex-direction: column;
       align-items: flex-start;
     }
@@ -609,7 +609,7 @@
     margin-left: 0;
     white-space: nowrap;
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       margin-left: var(--space-5);
     }
   }

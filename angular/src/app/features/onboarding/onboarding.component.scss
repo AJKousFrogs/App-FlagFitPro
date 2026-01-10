@@ -1911,7 +1911,7 @@
 }
 
 /* Responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .form-grid {
     grid-template-columns: 1fr;
 

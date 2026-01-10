@@ -65,7 +65,7 @@
   height: 8px;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .performance-metrics-grid {
     grid-template-columns: 1fr;
   }

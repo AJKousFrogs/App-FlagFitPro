@@ -75,7 +75,7 @@ body.sidebar-open {
   height: 100% !important;
   
   /* Prevent any touch scroll behavior on mobile */
-  @media respond-to(md) {
+  @include respond-to(md) {
     touch-action: none;
     overscroll-behavior: contain;
   }

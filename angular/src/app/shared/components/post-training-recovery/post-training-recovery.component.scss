@@ -417,7 +417,7 @@
 }
 
 /* Responsive */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .rpe-scale {
     grid-template-columns: repeat(5, 1fr);
     gap: var(--space-1);

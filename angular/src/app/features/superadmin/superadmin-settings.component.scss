@@ -378,7 +378,7 @@
 }
 
 /* Responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .settings-content {
     padding: var(--space-4);
   }

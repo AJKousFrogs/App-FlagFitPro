@@ -290,7 +290,7 @@
 /* ========================================================================
    RESPONSIVE ADJUSTMENTS
    ======================================================================== */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .body-area-grid {
     grid-template-columns: repeat(2, 1fr);
   }

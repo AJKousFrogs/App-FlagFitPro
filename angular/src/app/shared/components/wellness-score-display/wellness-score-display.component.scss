@@ -312,7 +312,7 @@
 }
 
 /* Responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .ring-outer,
   .score-ring {
     width: 100px;

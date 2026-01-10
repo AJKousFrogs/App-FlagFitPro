@@ -559,7 +559,7 @@
 }
 
 // ===== Responsive =====
-@media respond-to(md) {
+@include respond-to(md) {
   .return-to-play-page {
     padding: var(--space-4);
   }

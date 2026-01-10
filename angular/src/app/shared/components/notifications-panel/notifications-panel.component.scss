@@ -678,7 +678,7 @@
 }
 
 /* Responsive */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .notifications-panel {
     width: 100vw;
   }

@@ -447,7 +447,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .ai-scheduler-page {
     padding: var(--space-3);
   }

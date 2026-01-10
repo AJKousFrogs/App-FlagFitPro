@@ -445,7 +445,7 @@
 }
 
 /* iPhone 11-14, Samsung S23/S24 (412-414px viewport) */
-@media respond-to(xs) {
+@include respond-to(xs) {
   .settings-nav {
     flex-direction: column;
     gap: var(--space-2);

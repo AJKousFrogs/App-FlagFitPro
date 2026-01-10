@@ -301,7 +301,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .sleep-debt-page {
     padding: var(--space-3);
   }
@@ -320,7 +320,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .stats-grid {
     grid-template-columns: 1fr;
   }

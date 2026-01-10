@@ -51,7 +51,7 @@
 // .empty-state REMOVED - use .card-empty-state from card-shell
 // @see docs/CARD_SHELL_CONTRACT.md §8
 
-@media respond-to(md) {
+@include respond-to(md) {
   .charts-grid {
     grid-template-columns: 1fr;
   }
@@ -271,7 +271,7 @@
   color: var(--color-text-secondary);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .form-grid {
     grid-template-columns: 1fr;
   }

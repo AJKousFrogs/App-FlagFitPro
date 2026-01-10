@@ -776,7 +776,7 @@
 }
 
 /* Tablet Portrait (768px) */
-@media respond-to(md) {
+@include respond-to(md) {
   .header-actions {
     flex-direction: column;
     width: 100%;
@@ -846,7 +846,7 @@
 }
 
 /* Mobile Small (< 480px) */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .tournaments-page {
     padding: var(--space-3);
   }
@@ -883,7 +883,7 @@
 }
 
 /* Extra Small Screens (< 375px) */
-@media respond-to(xs) {
+@include respond-to(xs) {
   .tournaments-page {
     padding: var(--space-2);
   }

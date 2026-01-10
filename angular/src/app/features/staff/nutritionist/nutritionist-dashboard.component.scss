@@ -499,7 +499,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .nutritionist-dashboard {
     padding: var(--ds-spacing-md);
   }

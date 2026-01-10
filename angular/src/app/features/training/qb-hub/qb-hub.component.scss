@@ -16,11 +16,11 @@
     --page-header-display: block;
   }
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-3);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     padding: var(--space-2);
   }
 }
@@ -36,7 +36,7 @@
    */
   --page-header-display: none;
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-4) 0;
   }
 }
@@ -52,7 +52,7 @@
 :host {
   // Ensure tabs scroll horizontally on mobile
   .p-tablist {
-    @media respond-to(md) {
+    @include respond-to(md) {
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
@@ -66,7 +66,7 @@
 
   // Adjust tab padding on mobile
   .p-tab {
-    @media respond-to(md) {
+    @include respond-to(md) {
       padding: var(--space-2) var(--space-3);
       font-size: var(--font-size-h4);
       white-space: nowrap;
@@ -75,7 +75,7 @@
 
   // Ensure tab panel has proper padding
   .p-tabpanel {
-    @media respond-to(md) {
+    @include respond-to(md) {
       padding: var(--space-3) 0;
     }
   }

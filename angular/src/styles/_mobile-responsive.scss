@@ -27,25 +27,25 @@
 // ================================================================
 
 @mixin mobile-xs {
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     @content;
   }
 }
 
 @mixin mobile-sm {
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     @content;
   }
 }
 
 @mixin mobile-md {
-  @media respond-to(md) {
+  @include respond-to(md) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media respond-to(lg) {
+  @include respond-to(lg) {
     @content;
   }
 }
@@ -63,28 +63,28 @@
 
 // Samsung Galaxy S23/S24 (412px viewport width)
 @mixin samsung-standard {
-  @media respond-to(xs) {
+  @include respond-to(xs) {
     @content;
   }
 }
 
 // iPhone 11-14 (414px viewport width)
 @mixin iphone-standard {
-  @media respond-to(xs) {
+  @include respond-to(xs) {
     @content;
   }
 }
 
 // iPhone 15-17 Pro Max, Samsung S25 Ultra (430px viewport width)
 @mixin iphone-pro-max {
-  @media respond-to(xs) {
+  @include respond-to(xs) {
     @content;
   }
 }
 
 // Combined: All target mobile devices (up to 430px)
 @mixin target-mobile-devices {
-  @media respond-to(xs) {
+  @include respond-to(xs) {
     @content;
   }
 }
@@ -95,7 +95,7 @@
 
 // Remove iOS Safari input shadows and zoom
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     // Prevent zoom on input focus (iOS Safari)
     input[type="text"],
     input[type="email"],
@@ -148,7 +148,7 @@
 // ================================================================
 
 .mobile-grid-1 {
-  @media respond-to(md) {
+  @include respond-to(md) {
     display: grid !important;
     grid-template-columns: 1fr !important;
     gap: var(--space-3) !important;
@@ -156,7 +156,7 @@
 }
 
 .mobile-grid-2 {
-  @media respond-to(md) {
+  @include respond-to(md) {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: var(--space-3) !important;
@@ -164,7 +164,7 @@
 }
 
 .tablet-grid-2 {
-  @media respond-to(lg) {
+  @include respond-to(lg) {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
@@ -174,25 +174,25 @@
 // ================================================================
 
 .mobile-p-2 {
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-2) !important;
   }
 }
 
 .mobile-p-3 {
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-3) !important;
   }
 }
 
 .mobile-gap-2 {
-  @media respond-to(md) {
+  @include respond-to(md) {
     gap: var(--space-2) !important;
   }
 }
 
 .mobile-gap-3 {
-  @media respond-to(md) {
+  @include respond-to(md) {
     gap: var(--space-3) !important;
   }
 }
@@ -202,19 +202,19 @@
 // ================================================================
 
 .mobile-text-sm {
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-h4) !important;
   }
 }
 
 .mobile-text-base {
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-body) !important;
   }
 }
 
 .mobile-hide {
-  @media respond-to(md) {
+  @include respond-to(md) {
     display: none !important;
   }
 }
@@ -230,7 +230,7 @@
 // ================================================================
 
 .mobile-card-compact {
-  @media respond-to(md) {
+  @include respond-to(md) {
     :global(.p-card-body) {
       padding: var(--space-3) !important;
     }
@@ -247,7 +247,7 @@
 // ================================================================
 
 .mobile-table-scroll {
-  @media respond-to(md) {
+  @include respond-to(md) {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 
@@ -295,7 +295,7 @@
 // ================================================================
 
 .mobile-button-large {
-  @media respond-to(md) {
+  @include respond-to(md) {
     min-height: 48px !important;
     padding: var(--space-3) var(--space-4) !important;
     font-size: var(--font-size-body) !important;
@@ -311,7 +311,7 @@
 // ================================================================
 
 .mobile-form-stack {
-  @media respond-to(md) {
+  @include respond-to(md) {
     display: flex !important;
     flex-direction: column !important;
     gap: var(--space-3) !important;
@@ -335,7 +335,7 @@
 // ================================================================
 
 .mobile-chart-responsive {
-  @media respond-to(md) {
+  @include respond-to(md) {
     canvas {
       max-width: 100% !important;
       height: auto !important;
@@ -355,7 +355,7 @@
 
 @supports (padding: max(0px)) {
   .mobile-safe-bottom {
-    @media respond-to(md) {
+    @include respond-to(md) {
       padding-bottom: max(
         var(--space-4),
         env(safe-area-inset-bottom)
@@ -364,13 +364,13 @@
   }
 
   .mobile-safe-top {
-    @media respond-to(md) {
+    @include respond-to(md) {
       padding-top: max(var(--space-4), env(safe-area-inset-top));
     }
   }
 
   .mobile-safe-inline {
-    @media respond-to(md) {
+    @include respond-to(md) {
       padding-left: max(var(--space-4), env(safe-area-inset-left));
       padding-right: max(var(--space-4), env(safe-area-inset-right));
     }
@@ -378,7 +378,7 @@
 
   // Full safe area wrapper
   .mobile-safe-all {
-    @media respond-to(md) {
+    @include respond-to(md) {
       padding-top: max(var(--space-4), env(safe-area-inset-top));
       padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
       padding-left: max(var(--space-4), env(safe-area-inset-left));
@@ -423,7 +423,7 @@
 }
 
 // Input focus scroll adjustment
-@media respond-to(md) {
+@include respond-to(md) {
   // Scroll input into view when focused
   input:focus,
   textarea:focus,
@@ -444,7 +444,7 @@
 // Viewport: 390-430px width
 // ================================================================
 
-@media respond-to(xs) and (min-width: 375px) {
+@include respond-to(xs) and (min-width: 375px) {
   // iPhone notch area padding
   .iphone-notch-aware {
     padding-top: max(var(--space-4), env(safe-area-inset-top));
@@ -461,7 +461,7 @@
 // Viewport: 360-412px width
 // ================================================================
 
-@media respond-to(xs) and (min-width: 360px) {
+@include respond-to(xs) and (min-width: 360px) {
   // Samsung navigation bar area
   .samsung-nav-aware {
     padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
@@ -473,7 +473,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     // Full-screen dialogs on mobile
     .p-dialog {
       width: 95vw !important;
@@ -529,7 +529,7 @@
   // ================================================================
 
   // iPhone 15-17 Pro Max, Samsung S25 Ultra (430px)
-  @media respond-to(xs) {
+  @include respond-to(xs) {
     .p-dialog {
       width: 100vw !important;
       max-width: 100vw !important;
@@ -579,7 +579,7 @@
   }
 
   // iPhone 11-14, Samsung S23/S24 (412-414px) - Even more compact
-  @media respond-to(xs) {
+  @include respond-to(xs) {
     .p-dialog {
       width: 100vw !important;
       max-width: 100vw !important;
@@ -644,7 +644,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     // DatePicker full width
     .p-datepicker {
       max-width: calc(100vw - var(--space-6)) !important;
@@ -692,7 +692,7 @@
   // iPhone 11-17 (414-430px), Samsung S23-S25 (412-430px)
   // ================================================================
 
-  @media respond-to(xs) {
+  @include respond-to(xs) {
     // Full-width select overlays on target devices
     .p-select-overlay,
     .p-dropdown-panel,
@@ -748,7 +748,7 @@
     }
   }
 
-  @media respond-to(xs) {
+  @include respond-to(xs) {
     // Even more compact for iPhone 11-14 / Samsung S23/S24
     .p-select-overlay,
     .p-dropdown-panel {
@@ -794,7 +794,7 @@
 // MOBILE SCROLLBAR STYLING (Webkit - Chrome & Safari)
 // ================================================================
 
-@media respond-to(md) {
+@include respond-to(md) {
   // Thin scrollbars for mobile
   * {
     scrollbar-width: thin;
@@ -825,7 +825,7 @@
 // PERFORMANCE OPTIMIZATIONS FOR MOBILE
 // ================================================================
 
-@media respond-to(md) {
+@include respond-to(md) {
   // Use GPU acceleration for animations
   .mobile-gpu-accelerated {
     transform: translateZ(0);

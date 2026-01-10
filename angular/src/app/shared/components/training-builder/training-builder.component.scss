@@ -223,7 +223,7 @@
   border-top: var(--border-1) solid var(--color-border-primary);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .form-row {
     grid-template-columns: 1fr;
   }

@@ -128,7 +128,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .empty-actions p-button {
     width: 100%;
   }
@@ -161,7 +161,7 @@ p-button {
   animation: inherit;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .empty-state {
     padding: var(--space-6);
     min-height: 200px;

@@ -1004,14 +1004,14 @@
 }
 
 /* ===== RESPONSIVE ===== */
-@media respond-to(lg) {
+@include respond-to(lg) {
   .video-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: var(--space-5);
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .feed-header {
     padding: var(--space-8) var(--space-4);
   }
@@ -1127,7 +1127,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .feed-header {
     padding: var(--space-6) var(--space-4);
   }

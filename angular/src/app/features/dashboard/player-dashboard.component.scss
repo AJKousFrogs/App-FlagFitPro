@@ -20,12 +20,12 @@
   margin: 0 auto;
 
   // Mobile: Reduce padding
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-3);
   }
 
   // Small phones: Minimal padding
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     padding: var(--space-2);
   }
 }
@@ -42,13 +42,13 @@
   align-items: stretch; /* Ensure equal card heights */
 
   // Tablet: 2 columns
-  @media respond-to(lg) {
+  @include respond-to(lg) {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
   }
 
   // Mobile: 1 column (stacked)
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     grid-template-columns: 1fr;
     gap: var(--space-3);
     margin-bottom: var(--space-4);
@@ -74,12 +74,12 @@
   }
 
   // Mobile: Compact padding
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-3);
   }
 
   // Mobile: Horizontal layout for better space usage
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -98,7 +98,7 @@
   margin-bottom: var(--space-2);
 
   // Mobile: Smaller icons, no margin
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     width: var(--space-10); /* 40px */
     height: var(--space-10); /* 40px */
     font-size: var(--font-size-h3);
@@ -109,7 +109,7 @@
 
 .stat-content {
   // Mobile: Flex layout
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -123,7 +123,7 @@
   font-weight: var(--font-weight-medium);
 
   // Mobile: Smaller text
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-caption-size);
   }
 }
@@ -135,11 +135,11 @@
   line-height: 1.2;
 
   // Mobile: Smaller value
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-h1);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     font-size: var(--font-size-h2);
   }
 }
@@ -152,7 +152,7 @@
   margin-bottom: var(--space-4);
 
   // Mobile: Compact
-  @media respond-to(md) {
+  @include respond-to(md) {
     margin-bottom: var(--space-3);
   }
 }
@@ -163,7 +163,7 @@
   gap: var(--space-4);
 
   // Mobile: Stack vertically
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     flex-direction: column;
     gap: var(--space-3);
     align-items: center;
@@ -189,7 +189,7 @@
   box-shadow: var(--shadow-2);
 
   // Mobile: Smaller avatar
-  @media respond-to(md) {
+  @include respond-to(md) {
     width: var(--space-16); /* 64px */
     height: var(--space-16); /* 64px */
     font-size: var(--font-h1-size);
@@ -203,11 +203,11 @@
   margin: 0 0 var(--space-2) 0;
 
   // Mobile: Smaller heading
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-h1);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     font-size: var(--font-size-h2);
   }
 }
@@ -219,7 +219,7 @@
   margin-bottom: var(--space-3);
 
   // Mobile: Smaller text
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-h4);
   }
 }
@@ -230,7 +230,7 @@
   flex-wrap: wrap;
 
   // Mobile: Stack buttons vertically
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     flex-direction: column;
     width: 100%;
 
@@ -252,7 +252,7 @@
 .weekly-progress-card {
   margin-bottom: var(--space-4);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     margin-bottom: var(--space-3);
   }
 }
@@ -263,12 +263,12 @@
   padding: var(--space-2);
 
   // Mobile: Smaller chart
-  @media respond-to(md) {
+  @include respond-to(md) {
     height: calc(var(--space-10) * 6.25); /* 250px */
     padding: var(--space-1);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     height: calc(var(--space-10) * 5); /* 200px */
   }
 
@@ -285,7 +285,7 @@
 .schedule-card {
   margin-bottom: var(--space-4);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     margin-bottom: var(--space-3);
   }
 }
@@ -302,7 +302,7 @@
   border-left: var(--space-1) solid var(--ds-primary-green); /* 4px - closest token to 3px */
 
   // Mobile: Compact padding
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-2);
   }
 }
@@ -312,7 +312,7 @@
   color: var(--ds-text-tertiary);
   font-weight: var(--font-weight-medium);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-caption-size);
   }
 }
@@ -323,7 +323,7 @@
   font-weight: var(--font-weight-semibold);
   margin: var(--space-1) 0;
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-h4);
   }
 }
@@ -339,12 +339,12 @@
   margin-bottom: var(--space-4);
 
   // Tablet: 2 columns
-  @media respond-to(lg) {
+  @include respond-to(lg) {
     grid-template-columns: repeat(2, 1fr);
   }
 
   // Mobile: 1 column (stacked)
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     grid-template-columns: 1fr;
     gap: var(--space-2);
     margin-bottom: var(--space-3);
@@ -367,7 +367,7 @@
   gap: var(--space-3);
 
   // Touch-friendly on mobile
-  @media respond-to(md) {
+  @include respond-to(md) {
     min-height: calc(var(--space-8) * 2.25); /* 72px - Apple HIG minimum */
     padding: var(--space-3);
   }
@@ -398,7 +398,7 @@
   font-size: var(--font-size-h2);
   flex-shrink: 0;
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     width: var(--space-10); /* 40px */
     height: var(--space-10); /* 40px */
     font-size: var(--font-size-h3);
@@ -415,7 +415,7 @@
   color: var(--ds-text-primary);
   margin-bottom: var(--space-1);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-h4);
   }
 }
@@ -424,7 +424,7 @@
   font-size: var(--font-size-h4);
   color: var(--ds-text-secondary);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-caption-size);
   }
 }
@@ -436,7 +436,7 @@
 .announcement-banner {
   margin-bottom: var(--space-4);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     margin-bottom: var(--space-3);
   }
   // PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
@@ -449,7 +449,7 @@
 .no-program-section {
   margin: var(--space-6) 0;
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     margin: var(--space-4) 0;
   }
 }
@@ -458,11 +458,11 @@
   text-align: center;
   padding: var(--space-6);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-4);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     padding: var(--space-3);
   }
 }
@@ -479,7 +479,7 @@
   margin: 0 auto var(--space-4);
   font-size: var(--font-h1-size);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     width: var(--space-16); /* 64px */
     height: var(--space-16); /* 64px */
     font-size: var(--font-h1-size);
@@ -492,7 +492,7 @@
   color: var(--ds-text-primary);
   margin-bottom: var(--space-2);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-h1);
   }
 }
@@ -504,7 +504,7 @@
   margin: 0 auto var(--space-4);
   line-height: var(--line-height-relaxed);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-size-h4);
   }
 }
@@ -516,7 +516,7 @@
   flex-wrap: wrap;
 
   // Mobile: Stack vertically
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     flex-direction: column;
     align-items: stretch;
     max-width: calc(var(--space-12) * 6.25); /* 300px */
@@ -557,7 +557,7 @@
   flex-shrink: 0;
   opacity: 0.7; // Dimmed to indicate "building"
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     width: var(--space-10); /* 40px */
     height: var(--space-10); /* 40px */
     font-size: var(--font-size-h3); /* 20px */
@@ -576,7 +576,7 @@
   font-weight: var(--font-weight-semibold);
   color: var(--ds-text-primary);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-caption-size);
   }
 }
@@ -613,7 +613,7 @@
   color: var(--ds-text-secondary);
   white-space: nowrap;
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     font-size: var(--font-caption-size);
   }
 }

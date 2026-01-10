@@ -383,7 +383,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .player-development-page {
     padding: var(--space-3);
   }

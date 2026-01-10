@@ -211,7 +211,7 @@ tr.selected {
 }
 
 /* Media Query Fallback */
-@media respond-to(md) {
+@include respond-to(md) {
   .table-toolbar {
     flex-direction: column;
     align-items: stretch;

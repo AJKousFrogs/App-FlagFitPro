@@ -741,7 +741,7 @@
 // MOBILE RESPONSIVE - CHROME & SAFARI OPTIMIZED
 // ================================================================
 
-@media respond-to(md) {
+@include respond-to(md) {
   // ================================================================
   // MAIN CONTAINER
   // ================================================================
@@ -1099,7 +1099,7 @@
 // SMALL MOBILE - EXTRA COMPACT
 // ================================================================
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .acwr-dashboard {
     padding: var(--space-2);
   }
@@ -1171,7 +1171,7 @@
 // LANDSCAPE MODE ON PHONES
 // ================================================================
 
-@media respond-to(md) and (orientation: landscape) {
+@include respond-to(md) and (orientation: landscape) {
   .acwr-ratio-display {
     flex-direction: row;
     justify-content: space-around;

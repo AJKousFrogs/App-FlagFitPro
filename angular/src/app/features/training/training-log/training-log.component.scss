@@ -293,7 +293,7 @@ app-card-shell {
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .session-types-grid {
     grid-template-columns: repeat(2, 1fr);
   }

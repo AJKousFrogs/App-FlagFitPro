@@ -812,7 +812,7 @@
    RESPONSIVE
    ================================================================ */
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   // PrimeNG dialog responsive overrides moved to _exceptions.scss (DS-EXC-013)
 
   .search-panel {

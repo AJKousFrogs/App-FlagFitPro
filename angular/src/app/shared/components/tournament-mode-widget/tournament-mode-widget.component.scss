@@ -398,7 +398,7 @@
 }
 
 /* Responsive */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .game-dots {
     flex-wrap: wrap;
   }

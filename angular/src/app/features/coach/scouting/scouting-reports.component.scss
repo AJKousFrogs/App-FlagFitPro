@@ -583,7 +583,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .scouting-reports {
     padding: var(--ds-spacing-md);
   }

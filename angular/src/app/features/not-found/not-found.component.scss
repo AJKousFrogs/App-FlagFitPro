@@ -84,7 +84,7 @@
   text-decoration: underline;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .error-code {
     font-size: var(--font-h1-size);
   }

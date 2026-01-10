@@ -162,7 +162,7 @@
   align-items: center;
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .suggestions-grid {
     grid-template-columns: 1fr;
   }

@@ -39,7 +39,7 @@
   width: 100%;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .form-row {
     flex-direction: column;
   }

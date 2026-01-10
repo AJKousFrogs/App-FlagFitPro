@@ -1536,7 +1536,7 @@
    RESPONSIVE
    ============================================ */
 
-@media respond-to(lg) {
+@include respond-to(lg) {
   .community-grid {
     grid-template-columns: 1fr;
   }
@@ -1546,7 +1546,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .community-page {
     padding: var(--space-3);
     gap: var(--space-5);

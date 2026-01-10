@@ -20,7 +20,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     // All buttons (including PrimeNG)
     button,
     [role="button"],
@@ -114,7 +114,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     // All text inputs
     input[type="text"],
     input[type="email"],
@@ -230,7 +230,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     // Native checkboxes and radios
     input[type="checkbox"],
     input[type="radio"] {
@@ -315,7 +315,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     .p-toggleswitch,
     .toggle-switch {
       width: 48px !important;
@@ -347,7 +347,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     .p-slider,
     input[type="range"] {
       height: 8px !important;
@@ -386,7 +386,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     label,
     .p-field-label,
     .form-label {
@@ -412,7 +412,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     .p-field,
     .form-field,
     .form-group {
@@ -465,7 +465,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     a {
       min-height: 44px !important;
       display: inline-flex !important;
@@ -492,7 +492,7 @@
 // ================================================================
 
 :global {
-  @media respond-to(md) {
+  @include respond-to(md) {
     // Invalid state
     .p-invalid,
     .form-control.invalid,
@@ -525,7 +525,7 @@
 // PREVENT IOS ZOOM ON INPUT FOCUS
 // ================================================================
 
-@media respond-to(md) {
+@include respond-to(md) {
   // This is the most important rule for iOS Safari
   input,
   select,

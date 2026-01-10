@@ -620,7 +620,7 @@
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .roster-page {
     padding: var(--space-4);
   }
@@ -664,7 +664,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .roster-page {
     padding: var(--space-3);
   }
@@ -694,7 +694,7 @@
   }
 }
 
-@media respond-to(xs) {
+@include respond-to(xs) {
   .roster-page {
     padding: var(--space-2);
   }

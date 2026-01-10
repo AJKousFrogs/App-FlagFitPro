@@ -594,7 +594,7 @@
 }
 
 /* Responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .summary-grid {
     grid-template-columns: 1fr;
   }

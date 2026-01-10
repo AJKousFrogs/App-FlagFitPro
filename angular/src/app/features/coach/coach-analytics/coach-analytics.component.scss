@@ -270,7 +270,7 @@
   border-bottom: none;
 }
 
-@media respond-to(lg) {
+@include respond-to(lg) {
   .analytics-grid {
     grid-template-columns: 1fr;
   }

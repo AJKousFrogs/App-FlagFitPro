@@ -113,7 +113,7 @@
   flex-wrap: wrap;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .pending-grid {
     grid-template-columns: 1fr;
     gap: var(--space-3);

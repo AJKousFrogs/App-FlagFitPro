@@ -372,7 +372,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .practice-planner-page {
     padding: var(--space-3);
   }

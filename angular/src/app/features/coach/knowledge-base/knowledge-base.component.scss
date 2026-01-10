@@ -341,7 +341,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .knowledge-base-page {
     padding: var(--space-3);
   }

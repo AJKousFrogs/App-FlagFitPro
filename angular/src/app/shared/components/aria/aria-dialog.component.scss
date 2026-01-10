@@ -125,7 +125,7 @@
   display: none;
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .aria-dialog {
     margin: var(--space-4);
     max-height: calc(100vh - var(--space-8));

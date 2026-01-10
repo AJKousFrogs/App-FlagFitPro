@@ -511,7 +511,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .data-import-page {
     padding: var(--space-3);
   }

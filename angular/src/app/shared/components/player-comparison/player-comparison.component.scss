@@ -287,7 +287,7 @@
   color: var(--color-text-secondary);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .selection-row {
     flex-direction: column;
   }

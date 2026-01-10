@@ -336,7 +336,7 @@
 }
 
 // ===== Responsive =====
-@media respond-to(md) {
+@include respond-to(md) {
   .readiness-header {
     flex-direction: column;
   }

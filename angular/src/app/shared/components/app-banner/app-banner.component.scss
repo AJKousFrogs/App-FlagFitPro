@@ -86,7 +86,7 @@
   align-items: flex-start;
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .banner {
     flex-direction: column;
     gap: var(--space-3);

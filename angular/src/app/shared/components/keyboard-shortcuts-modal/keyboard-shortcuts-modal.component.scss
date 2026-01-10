@@ -168,7 +168,7 @@ kbd {
 }
 
 /* Responsive */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .modal-header {
     gap: var(--space-3);
   }

@@ -6,11 +6,11 @@
 .dashboard-skeleton {
   padding: var(--page-padding-desktop);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--page-padding-tablet);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     padding: var(--page-padding-mobile);
   }
 }
@@ -30,11 +30,11 @@
   gap: var(--space-4);
   margin-bottom: var(--space-6);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     grid-template-columns: 1fr;
   }
 }

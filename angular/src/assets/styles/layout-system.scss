@@ -94,7 +94,7 @@
   }
 
   /* Responsive */
-  @media respond-to(md) {
+  @include respond-to(md) {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
@@ -184,7 +184,7 @@
     z-index: var(--z-index-fixed);
     transition: transform var(--transition-base);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       transform: translateX(-100%);
 
       &.sidebar-open {
@@ -200,7 +200,7 @@
     flex-direction: column;
     margin-left: 280px;
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       margin-left: 0;
     }
   }
@@ -220,7 +220,7 @@
     padding: var(--space-6);
     overflow-y: auto;
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       padding: var(--space-4);
     }
   }
@@ -237,7 +237,7 @@
   margin: 0 auto;
   padding: 0 var(--space-6);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: 0 var(--space-4);
   }
 
@@ -272,7 +272,7 @@
   &.grid-cols-2 {
     grid-template-columns: repeat(2, 1fr);
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       grid-template-columns: 1fr;
     }
   }
@@ -280,11 +280,11 @@
   &.grid-cols-3 {
     grid-template-columns: repeat(3, 1fr);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       grid-template-columns: 1fr;
     }
   }
@@ -292,11 +292,11 @@
   &.grid-cols-4 {
     grid-template-columns: repeat(4, 1fr);
 
-    @media respond-to(lg) {
+    @include respond-to(lg) {
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       grid-template-columns: 1fr;
     }
   }
@@ -518,7 +518,7 @@
 }
 
 /* Extra small screens (< 375px) */
-@media respond-to(xs) {
+@include respond-to(xs) {
   .content-container {
     padding: 0 var(--space-3);
   }

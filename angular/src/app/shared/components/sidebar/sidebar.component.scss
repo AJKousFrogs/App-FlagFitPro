@@ -354,7 +354,7 @@
 // TABLET: Collapsed sidebar (icons only)
 // Design System: --bp-tablet: 768px, --bp-laptop: 1024px
 // ============================================
-@media respond-to(lg) and (min-width: 769px) {
+@include respond-to(lg) and (min-width: 769px) {
   .sidebar {
     width: 72px;
   }
@@ -415,7 +415,7 @@
 // MOBILE: Hidden sidebar with overlay
 // Design System: --bp-tablet: 768px (≤768px is mobile)
 // ============================================
-@media respond-to(md) {
+@include respond-to(md) {
   .sidebar {
     transform: translateX(-100%);
     width: min(85vw, 320px); /* Responsive width, max 320px */
@@ -456,7 +456,7 @@
 // Samsung Galaxy S24: 1080x2340px (360x780 logical)
 // Samsung Galaxy S24 Ultra: 1440x3088px (480x1029 logical)
 // ============================================
-@media respond-to(md) and (min-height: 700px) {
+@include respond-to(md) and (min-height: 700px) {
   .sidebar {
     /* Ensure full height coverage on tall mobile screens */
     height: 100dvh;
@@ -475,7 +475,7 @@
 // ============================================
 // MOBILE: Prevent content shift and ensure proper layering
 // ============================================
-@media respond-to(md) {
+@include respond-to(md) {
   /* Applied via Renderer2 in component when sidebar opens */
   :host-context(body.sidebar-open) {
     overflow: hidden;

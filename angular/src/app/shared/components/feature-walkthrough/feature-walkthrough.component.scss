@@ -265,7 +265,7 @@
 }
 
 /* Responsive */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .walkthrough-content {
     padding: var(--space-4);
   }

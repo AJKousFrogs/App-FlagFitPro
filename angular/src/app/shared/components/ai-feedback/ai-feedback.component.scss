@@ -142,7 +142,7 @@
   color: var(--color-text-on-primary);
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .feedback-btn {
     width: 28px;
     height: 28px;

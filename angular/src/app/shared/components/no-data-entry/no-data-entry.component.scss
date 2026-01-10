@@ -182,7 +182,7 @@
   flex-shrink: 0;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .no-data-content {
     padding: var(--space-6);
   }

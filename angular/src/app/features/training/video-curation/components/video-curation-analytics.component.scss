@@ -90,7 +90,7 @@
   color: var(--color-text-muted);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .analytics-grid {
     grid-template-columns: 1fr;
     gap: var(--space-3);

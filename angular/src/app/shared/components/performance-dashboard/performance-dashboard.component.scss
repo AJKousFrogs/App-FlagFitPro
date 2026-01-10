@@ -135,7 +135,7 @@
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .metrics-grid {
     grid-template-columns: 1fr;
   }

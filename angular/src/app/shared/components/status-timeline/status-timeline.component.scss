@@ -267,7 +267,7 @@
 }
 
 /* Responsive */
-@media respond-to(sm) {
+@include respond-to(sm) {
   .orientation-horizontal .item-labels {
     display: none;
   }

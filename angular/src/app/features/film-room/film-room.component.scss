@@ -400,7 +400,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .film-room-page {
     padding: var(--space-3);
   }

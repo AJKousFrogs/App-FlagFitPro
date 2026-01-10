@@ -447,7 +447,7 @@
    RESPONSIVE: MOBILE (<768px)
    ================================================================ */
 
-@media respond-to(md) {
+@include respond-to(md) {
   // PrimeNG responsive overrides moved to _exceptions.scss (DS-EXC-004)
   .header-start,
   .header-center,

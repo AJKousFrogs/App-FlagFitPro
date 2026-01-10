@@ -167,7 +167,7 @@
   padding: 0 var(--space-6);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .content-grid {
     grid-template-columns: 1fr;
   }
@@ -305,7 +305,7 @@
   gap: var(--space-6);
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .form-row {
     grid-template-columns: 1fr;
     gap: var(--space-5);
@@ -725,7 +725,7 @@
 }
 
 /* Responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .page-header {
     padding: var(--space-8) var(--space-4);
     margin-bottom: var(--space-6);

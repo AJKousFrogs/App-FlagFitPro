@@ -250,7 +250,7 @@
   font-size: var(--font-size-h4);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .safety-overview {
     grid-template-columns: 1fr;
   }

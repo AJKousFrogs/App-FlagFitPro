@@ -77,7 +77,7 @@
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .team-overview-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -87,7 +87,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .team-overview-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
@@ -102,7 +102,7 @@
   }
 }
 
-@media respond-to(xs) {
+@include respond-to(xs) {
   .team-overview-grid {
     grid-template-columns: 1fr;
   }

@@ -548,7 +548,7 @@
 // RESPONSIVE
 // ============================================================================
 
-@media respond-to(md) {
+@include respond-to(md) {
   .training-grid {
     grid-template-columns: 1fr;
   }
@@ -567,7 +567,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .quick-actions {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -581,7 +581,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .wellness-alert-banner:not(.compact) {
     flex-direction: column;
   }

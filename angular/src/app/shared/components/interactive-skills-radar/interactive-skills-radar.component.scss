@@ -65,7 +65,7 @@
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .radar-container {
     min-height: 300px;
   }

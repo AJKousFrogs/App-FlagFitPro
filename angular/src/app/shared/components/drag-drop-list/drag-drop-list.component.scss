@@ -125,7 +125,7 @@
   outline-offset: 2px;
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .drag-drop-container {
     flex-direction: column;
   }

@@ -173,7 +173,7 @@
   font-size: var(--font-size-badge);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }

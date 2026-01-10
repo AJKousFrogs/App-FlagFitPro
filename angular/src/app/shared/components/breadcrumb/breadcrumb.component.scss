@@ -78,7 +78,7 @@
 }
 
 /* Mobile responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .breadcrumb-nav {
     padding: var(--space-2) 0;
     margin-bottom: var(--space-3);

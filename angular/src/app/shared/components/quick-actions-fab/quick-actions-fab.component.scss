@@ -253,7 +253,7 @@
    RESPONSIVE - Hide on mobile (bottom nav takes over)
    ================================================================ */
 
-@media respond-to(md) {
+@include respond-to(md) {
   .quick-actions-container {
     display: none;
   }

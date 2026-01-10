@@ -371,7 +371,7 @@
 }
 
 /* Responsive */
-@media respond-to(md) {
+@include respond-to(md) {
   .metrics-section {
     grid-template-columns: 1fr;
     gap: var(--space-2);
@@ -400,7 +400,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .player-jersey {
     width: var(--space-10);
     height: var(--space-10);

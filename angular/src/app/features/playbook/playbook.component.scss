@@ -455,7 +455,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .playbook-page {
     padding: var(--space-3);
   }

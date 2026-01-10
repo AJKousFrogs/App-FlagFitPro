@@ -10,11 +10,11 @@
 .advanced-training-page {
   padding: var(--space-4);
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-3);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     padding: var(--space-2);
   }
 }
@@ -30,21 +30,21 @@
   padding: var(--space-6) 0;
 
   // Tablet: Smaller gap, adjust min card size
-  @media respond-to(lg) {
+  @include respond-to(lg) {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: var(--space-3);
     padding: var(--space-4) 0;
   }
 
   // Mobile: 2 columns with smaller cards
-  @media respond-to(md) {
+  @include respond-to(md) {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
     padding: var(--space-3) 0;
   }
 
   // Small mobile: Single column
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
@@ -84,18 +84,18 @@
   }
 
   // Tablet: Reduce padding
-  @media respond-to(lg) {
+  @include respond-to(lg) {
     padding: var(--space-5);
     min-height: 160px;
   }
 
   // Mobile: Further reduce padding and height
-  @media respond-to(md) {
+  @include respond-to(md) {
     padding: var(--space-4);
     min-height: 140px;
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     padding: var(--space-5);
     min-height: 160px;
   }
@@ -108,7 +108,7 @@
     transition: transform var(--transition-fast);
     flex-shrink: 0;
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       font-size: 1.75rem; // 28px on mobile
       margin-bottom: var(--space-3);
     }
@@ -126,7 +126,7 @@
     margin: 0 0 var(--space-2) 0;
     line-height: 1.3;
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       font-size: var(--font-size-body); // 16px on mobile
       margin-bottom: var(--space-1);
     }
@@ -139,7 +139,7 @@
     margin: 0;
     line-height: 1.5;
 
-    @media respond-to(md) {
+    @include respond-to(md) {
       font-size: var(--font-caption-size); // 12px on mobile
       line-height: 1.4;
     }
