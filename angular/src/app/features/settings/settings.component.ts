@@ -686,61 +686,51 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         this.logger.info("Updating users table with:", updateData);
 
-        // First check if user exists in users table
-        const { data: existingUser } = await this.supabaseService.client
-          .from("users")
-          .select("id")
-          .eq("id", user.id)
-          .maybeSingle();
-
-        let upsertedUser;
-        let profileError;
-
-        if (existingUser) {
-          // User exists - use update
-          this.logger.info("User exists in users table, updating...");
-          const result = await this.supabaseService.client
+        // CRITICAL FIX: Only UPDATE existing users to avoid password_hash NOT NULL constraint
+        // Users should be created during onboarding/registration with proper password_hash
+        // Settings page should only update existing user records
+        
+        this.logger.info("Attempting to update user profile with:", updateData);
+        
+        const { data: upsertedUser, error: profileError } =
+          await this.supabaseService.client
             .from("users")
             .update(updateData)
             .eq("id", user.id)
             .select()
-            .single();
-          
-          upsertedUser = result.data;
-          profileError = result.error;
-        } else {
-          // User doesn't exist - use insert
-          this.logger.info("User not in users table, inserting...");
-          const insertData = {
-            ...updateData,
-            id: user.id,
-            created_at: new Date().toISOString(),
-          };
-          
-          const result = await this.supabaseService.client
-            .from("users")
-            .insert(insertData)
-            .select()
-            .single();
-          
-          upsertedUser = result.data;
-          profileError = result.error;
-        }
+            .maybeSingle();
 
         if (profileError) {
           this.logger.error(
-            "User profile save failed:",
+            "User profile update failed:",
             profileError.message,
             profileError,
           );
-          // Show error to user and stop execution
-          this.toastService.error(
-            `Failed to save profile: ${profileError.message}`,
-          );
+          
+          // If user doesn't exist in users table, they need to complete onboarding first
+          if (profileError.message?.includes("password_hash") || 
+              profileError.message?.includes("not-null constraint")) {
+            this.toastService.error(
+              "Please complete your profile setup first. Go to your Profile page to get started.",
+            );
+          } else {
+            this.toastService.error(
+              `Failed to save profile: ${profileError.message}`,
+            );
+          }
           throw profileError;
         }
 
-        this.logger.info("User profile saved successfully:", upsertedUser);
+        if (!upsertedUser) {
+          // User doesn't exist in users table yet - they need to complete onboarding
+          this.logger.warn("User not found in users table - onboarding may not be complete");
+          this.toastService.info(
+            "Profile setup incomplete. Please visit your Profile page to complete setup.",
+          );
+          // Don't throw error - allow other settings to save
+        } else {
+          this.logger.info("User profile updated successfully:", upsertedUser);
+        }
 
         // ALWAYS update team_members if user has an existing membership
         // This ensures position/jersey/team stay in sync
@@ -890,21 +880,58 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         this.logger.info("Upserting user_settings:", settingsData);
 
-        const { data: settingsResult, error: settingsError } =
-          await this.supabaseService.client
+        // Check if settings record exists first
+        const { data: existingSettings } = await this.supabaseService.client
+          .from("user_settings")
+          .select("user_id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        let settingsResult;
+        let settingsError;
+
+        if (existingSettings) {
+          // Settings exist - UPDATE
+          this.logger.info("User settings exist, updating...");
+          const result = await this.supabaseService.client
             .from("user_settings")
-            .upsert(settingsData, { onConflict: 'user_id' })
+            .update({
+              email_notifications: settings.notifications.emailNotifications,
+              push_notifications: settings.notifications.pushNotifications,
+              training_reminders: settings.notifications.trainingReminders,
+              profile_visibility: settings.privacy.profileVisibility,
+              show_stats: settings.privacy.showStats,
+              theme: settings.preferences.theme,
+              language: settings.preferences.language,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("user_id", user.id)
             .select()
             .maybeSingle();
+          
+          settingsResult = result.data;
+          settingsError = result.error;
+        } else {
+          // Settings don't exist - INSERT
+          this.logger.info("User settings don't exist, inserting...");
+          const result = await this.supabaseService.client
+            .from("user_settings")
+            .insert(settingsData)
+            .select()
+            .maybeSingle();
+          
+          settingsResult = result.data;
+          settingsError = result.error;
+        }
 
         if (settingsError) {
           this.logger.warn(
-            "Settings table not available:",
+            "Settings table update failed:",
             settingsError.message,
           );
         } else {
           this.logger.info(
-            "User settings upserted successfully:",
+            "User settings saved successfully:",
             settingsResult,
           );
         }
