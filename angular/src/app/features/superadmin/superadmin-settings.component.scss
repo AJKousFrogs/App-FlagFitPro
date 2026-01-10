@@ -378,7 +378,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .settings-content {
     padding: var(--space-4);
   }

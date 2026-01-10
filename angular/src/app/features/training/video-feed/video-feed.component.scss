@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ================================================================
    VIDEO FEED COMPONENT STYLES
    Design System Compliant - January 2, 2026
@@ -1005,7 +1007,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .feed-header {
     padding: var(--space-8) var(--space-4);
   }

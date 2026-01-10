@@ -725,7 +725,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .page-header {
     padding: var(--space-8) var(--space-4);
     margin-bottom: var(--space-6);

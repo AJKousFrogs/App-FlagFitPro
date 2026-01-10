@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * PrimeNG Brand Overrides
  * =======================
@@ -937,7 +939,7 @@
   // MOBILE RESPONSIVE FIXES
   // ============================================
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     .p-dialog {
       max-height: 90vh;
       max-width: 95vw;

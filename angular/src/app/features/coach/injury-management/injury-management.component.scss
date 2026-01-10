@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 .injury-management-page {
   padding: var(--space-4);
   max-width: 1200px;
@@ -435,7 +437,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .injury-management-page {
     padding: var(--space-3);
   }

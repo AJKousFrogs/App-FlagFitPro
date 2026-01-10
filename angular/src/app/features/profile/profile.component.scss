@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ================================================================
    PROFILE COMPONENT STYLES
    BEM Naming | Modern CSS | Standalone Component
@@ -796,7 +798,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .profile-page {
     padding: var(--space-4);
     gap: var(--space-5);

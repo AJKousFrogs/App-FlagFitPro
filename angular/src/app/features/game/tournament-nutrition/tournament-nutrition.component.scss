@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 @use "app/shared/styles/animations" as *;
 
 // ============================================================================
@@ -1555,7 +1557,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .tournament-nutrition-page {
     padding: var(--space-4);
   }

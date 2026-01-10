@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 .film-room-page {
   padding: var(--space-4);
   max-width: 1200px;
@@ -324,7 +326,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .film-room-page {
     padding: var(--space-3);
   }

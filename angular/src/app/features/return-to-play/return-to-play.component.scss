@@ -559,7 +559,7 @@
 }
 
 // ===== Responsive =====
-@media (max-width: 768px) {
+@media respond-to(md) {
   .return-to-play-page {
     padding: var(--space-4);
   }

@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Table Primitives
  * =================
@@ -322,7 +324,7 @@
   // RESPONSIVE TABLE (Decision 35)
   // ============================================
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-tablet));
       padding: 0 var(--page-padding-tablet);

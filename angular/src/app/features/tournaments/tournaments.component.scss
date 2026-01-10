@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ================================================================
    TOURNAMENTS COMPONENT STYLES
    Design System Compliant - January 2, 2026
@@ -770,7 +772,7 @@
 }
 
 /* Tablet Portrait (768px) */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .header-actions {
     flex-direction: column;
     width: 100%;

@@ -279,7 +279,7 @@
   margin-bottom: var(--space-1);
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .visibility-stats {
     grid-template-columns: 1fr;
   }

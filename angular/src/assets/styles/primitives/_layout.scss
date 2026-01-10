@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Layout Primitives
  * =================
@@ -54,7 +56,7 @@
   }
 
   // Responsive container padding
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     .container {
       padding-left: var(--page-padding-tablet);
       padding-right: var(--page-padding-tablet);
@@ -218,7 +220,7 @@
     }
   }
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     .bento {
       grid-template-columns: repeat(1, 1fr);
     }
@@ -454,7 +456,7 @@
   // RESPONSIVE VISIBILITY
   // ============================================
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     .hide-mobile {
       display: none;
     }
@@ -476,7 +478,7 @@
   // RESPONSIVE GRID OVERRIDES
   // ============================================
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     .grid-cols-2,
     .grid-cols-3,
     .grid-cols-4 {

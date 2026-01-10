@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Quick Actions FAB Component Styles
  * ─────────────────────────────────────────────────────────────
@@ -251,7 +253,7 @@
    RESPONSIVE - Hide on mobile (bottom nav takes over)
    ================================================================ */
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .quick-actions-container {
     display: none;
   }

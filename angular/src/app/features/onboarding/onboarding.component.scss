@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ============================================
    ONBOARDING - MODERN UI/UX STYLES
    Design System Compliant
@@ -1909,7 +1911,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .form-grid {
     grid-template-columns: 1fr;
 

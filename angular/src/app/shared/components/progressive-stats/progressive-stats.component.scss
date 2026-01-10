@@ -156,7 +156,7 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .stats-overview {
     grid-template-columns: 1fr;
   }

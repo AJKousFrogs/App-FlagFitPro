@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 .tournament-management-page {
   padding: var(--space-4);
   max-width: 1200px;
@@ -546,7 +548,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .tournament-management-page {
     padding: var(--space-3);
   }

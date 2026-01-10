@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 .ai-scheduler-page {
   padding: var(--space-4);
   max-width: 1000px;
@@ -445,7 +447,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .ai-scheduler-page {
     padding: var(--space-3);
   }

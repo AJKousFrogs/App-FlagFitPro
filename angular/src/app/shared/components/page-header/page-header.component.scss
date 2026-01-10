@@ -62,7 +62,7 @@
   margin: 0;
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .page-header {
     flex-direction: column;
     align-items: flex-start;

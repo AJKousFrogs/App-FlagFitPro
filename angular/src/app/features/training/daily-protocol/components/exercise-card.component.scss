@@ -119,7 +119,7 @@
   padding-top: var(--space-4, 16px);
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .video-prescription-row {
     grid-template-columns: 1fr;
   }

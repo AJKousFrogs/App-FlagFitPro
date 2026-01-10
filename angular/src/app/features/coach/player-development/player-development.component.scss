@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 .player-development-page {
   padding: var(--space-4);
   max-width: 1200px;
@@ -381,7 +383,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .player-development-page {
     padding: var(--space-3);
   }

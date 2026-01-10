@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Design System Exceptions Layer
  * ==============================
@@ -401,7 +403,7 @@
       }
     }
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       padding: 0 var(--space-4);
       height: 56px;
       min-height: 56px;
@@ -556,7 +558,7 @@
       display: none;
     }
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       width: var(--space-10);
       height: var(--space-10);
       min-width: var(--space-10);
@@ -586,7 +588,7 @@
     box-shadow: none;
     border-radius: 50%;
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       width: var(--space-8);
       height: var(--space-8);
       min-width: var(--space-8);
@@ -622,7 +624,7 @@
       display: none;
     }
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       width: var(--space-8);
       height: var(--space-8);
       min-width: var(--space-8);
@@ -1472,7 +1474,7 @@
         }
       }
 
-      @media (max-width: 768px) {
+      @media respond-to(md) {
         .p-steps {
           ul.p-steps-list {
             overflow-x: auto;
@@ -1606,7 +1608,7 @@
       color: var(--color-text-on-primary);
     }
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       width: 100%;
     }
   }

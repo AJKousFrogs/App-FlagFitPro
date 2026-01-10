@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Form Primitives
  * ================
@@ -231,7 +233,7 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     .form-row,
     .form-row--2,
     .form-row--3 {

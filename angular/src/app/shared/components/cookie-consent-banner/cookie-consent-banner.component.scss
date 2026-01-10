@@ -228,7 +228,7 @@
 /* ================================
  RESPONSIVE
  ================================ */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .cookie-content {
     padding: var(--space-5) var(--space-4);
     gap: var(--space-4);

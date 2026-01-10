@@ -55,7 +55,7 @@
   }
 
   // Mobile adjustments
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     bottom: var(--space-4, 16px);
     right: var(--space-4, 16px);
     width: 44px; // WCAG touch target minimum

@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 .psychology-reports {
   padding: var(--ds-spacing-lg);
   max-width: 1200px;
@@ -527,7 +529,7 @@
 // @see docs/CARD_SHELL_CONTRACT.md §8
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .psychology-reports {
     padding: var(--ds-spacing-md);
   }

@@ -147,7 +147,7 @@
   border-top: 1px solid var(--color-border-primary);
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .form-grid {
     grid-template-columns: 1fr;
   }

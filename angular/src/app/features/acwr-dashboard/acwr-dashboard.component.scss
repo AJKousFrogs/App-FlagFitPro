@@ -741,7 +741,7 @@
 // MOBILE RESPONSIVE - CHROME & SAFARI OPTIMIZED
 // ================================================================
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   // ================================================================
   // MAIN CONTAINER
   // ================================================================
@@ -1171,7 +1171,7 @@
 // LANDSCAPE MODE ON PHONES
 // ================================================================
 
-@media (max-width: 768px) and (orientation: landscape) {
+@media respond-to(md) and (orientation: landscape) {
   .acwr-ratio-display {
     flex-direction: row;
     justify-content: space-around;

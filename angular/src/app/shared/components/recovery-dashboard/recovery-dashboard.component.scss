@@ -629,7 +629,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .status-overview {
     flex-direction: column;
   }

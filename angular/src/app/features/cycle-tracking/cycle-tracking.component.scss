@@ -271,7 +271,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .cycle-tracking-page {
     padding: var(--space-3);
   }

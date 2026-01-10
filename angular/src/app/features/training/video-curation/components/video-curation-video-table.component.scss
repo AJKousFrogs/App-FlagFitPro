@@ -89,7 +89,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .table-filters {
     flex-direction: column;
     width: 100%;

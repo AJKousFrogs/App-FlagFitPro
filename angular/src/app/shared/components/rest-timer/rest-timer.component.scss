@@ -247,7 +247,7 @@
   color: var(--color-status-error);
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .floating-timer {
     bottom: 140px;
   }

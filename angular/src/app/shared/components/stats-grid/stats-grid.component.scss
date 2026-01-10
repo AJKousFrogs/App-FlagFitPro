@@ -108,7 +108,7 @@
 }
 
 // Responsive: Smaller screens
-@media (max-width: 768px) {
+@media respond-to(md) {
   .stat-card-content {
     flex-wrap: nowrap;
   }

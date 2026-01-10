@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - UI STANDARDIZATION LAYER
    Enterprise / Calm Clinical Style
@@ -166,7 +168,7 @@
   margin: 0 auto;
   padding: 0 var(--space-6);
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     padding: 0 var(--space-4);
   }
 
@@ -895,7 +897,7 @@
    Mobile-friendly spacing and touch targets
    ================================================================ */
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   :root {
     /* Reduce card padding on mobile - maintain 12px minimum */
     --p-card-body-padding: var(--space-3); /* 12px */

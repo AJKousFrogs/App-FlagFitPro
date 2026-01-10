@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - SPACING SYSTEM
    Consistent spacing across all components
@@ -399,7 +401,7 @@ input.input-lg {
    RESPONSIVE SPACING ADJUSTMENTS
    ================================================================ */
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   /* Reduce card padding on mobile */
   .p-card .p-card-body {
     padding: var(--space-4);

@@ -6,7 +6,7 @@
 .roster-skeleton {
   padding: var(--page-padding-desktop);
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     padding: var(--page-padding-tablet);
   }
 }

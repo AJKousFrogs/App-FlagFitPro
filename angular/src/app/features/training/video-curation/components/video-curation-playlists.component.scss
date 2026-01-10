@@ -103,7 +103,7 @@
   justify-content: flex-end;
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .playlists-grid {
     grid-template-columns: 1fr;
     gap: var(--space-3);

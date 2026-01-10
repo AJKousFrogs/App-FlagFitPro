@@ -548,7 +548,7 @@
 // RESPONSIVE
 // ============================================================================
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .training-grid {
     grid-template-columns: 1fr;
   }

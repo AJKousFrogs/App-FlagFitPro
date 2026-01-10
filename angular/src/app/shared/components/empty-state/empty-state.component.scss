@@ -161,7 +161,7 @@ p-button {
   animation: inherit;
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .empty-state {
     padding: var(--space-6);
     min-height: 200px;

@@ -336,7 +336,7 @@
 }
 
 // ===== Responsive =====
-@media (max-width: 768px) {
+@media respond-to(md) {
   .readiness-header {
     flex-direction: column;
   }

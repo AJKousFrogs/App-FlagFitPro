@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Header Component Styles
  * ─────────────────────────────────────────────────────────────
@@ -445,7 +447,7 @@
    RESPONSIVE: MOBILE (<768px)
    ================================================================ */
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   // PrimeNG responsive overrides moved to _exceptions.scss (DS-EXC-004)
   .header-start,
   .header-center,

@@ -198,7 +198,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .stepper-container {
     padding: var(--space-3) 0;
   }

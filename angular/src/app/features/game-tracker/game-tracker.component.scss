@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ================================================================
    GAME TRACKER - Premium Professional Design
    Design System Compliant - January 4, 2026
@@ -650,7 +652,7 @@
 }
 
 /* Mobile breakpoint - PRIMARY (Chrome & Safari) */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .game-tracker-page {
     padding: var(--space-3);
   }
@@ -1030,7 +1032,7 @@
 }
 
 /* Landscape mode on phones */
-@media (max-width: 768px) and (orientation: landscape) {
+@media respond-to(md) and (orientation: landscape) {
   .outcome-buttons {
     grid-template-columns: repeat(4, 1fr);
   }

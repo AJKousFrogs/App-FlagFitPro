@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - LAYOUT SYSTEM
    Reusable layout patterns: page headers, breadcrumbs, dashboard layouts
@@ -88,7 +90,7 @@
   }
 
   /* Responsive */
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
@@ -214,7 +216,7 @@
     padding: var(--space-6);
     overflow-y: auto;
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       padding: var(--space-4);
     }
   }
@@ -231,7 +233,7 @@
   margin: 0 auto;
   padding: 0 var(--space-6);
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     padding: 0 var(--space-4);
   }
 
@@ -266,7 +268,7 @@
   &.grid-cols-2 {
     grid-template-columns: repeat(2, 1fr);
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       grid-template-columns: 1fr;
     }
   }
@@ -278,7 +280,7 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       grid-template-columns: 1fr;
     }
   }
@@ -290,7 +292,7 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
-    @media (max-width: 768px) {
+    @media respond-to(md) {
       grid-template-columns: 1fr;
     }
   }

@@ -23,7 +23,7 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .bottom-nav {
     display: flex;
   }

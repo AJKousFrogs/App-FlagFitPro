@@ -250,7 +250,7 @@
   font-size: var(--font-size-h4);
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .safety-overview {
     grid-template-columns: 1fr;
   }

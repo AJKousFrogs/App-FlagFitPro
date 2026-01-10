@@ -194,7 +194,7 @@
   font-size: var(--font-body-size);
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .heatmap-controls {
     flex-direction: column;
     align-items: stretch;

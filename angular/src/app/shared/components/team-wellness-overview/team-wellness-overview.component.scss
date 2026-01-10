@@ -594,7 +594,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .summary-grid {
     grid-template-columns: 1fr;
   }

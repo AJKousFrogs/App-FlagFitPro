@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 .nutritionist-dashboard {
   padding: var(--ds-spacing-lg);
   max-width: 1400px;
@@ -497,7 +499,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .nutritionist-dashboard {
     padding: var(--ds-spacing-md);
   }

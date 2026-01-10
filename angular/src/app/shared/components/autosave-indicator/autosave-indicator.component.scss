@@ -21,7 +21,7 @@
   pointer-events: none;
 
   // Mobile positioning
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     bottom: calc(var(--space-4) + 60px); // Above bottom nav
     right: var(--space-3);
   }

@@ -6,7 +6,7 @@
 .dashboard-skeleton {
   padding: var(--page-padding-desktop);
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     padding: var(--page-padding-tablet);
   }
 
@@ -30,7 +30,7 @@
   gap: var(--space-4);
   margin-bottom: var(--space-6);
 
-  @media (max-width: 768px) {
+  @media respond-to(md) {
     grid-template-columns: repeat(2, 1fr);
   }
 

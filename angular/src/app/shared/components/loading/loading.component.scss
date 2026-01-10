@@ -99,7 +99,7 @@
   flex-grow: 1;
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .loading-spinner {
     padding: var(--space-6);
   }
