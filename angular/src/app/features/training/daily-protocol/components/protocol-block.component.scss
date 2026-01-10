@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .protocol-block {
   background: var(--surface-primary);
   border: 1px solid var(--color-border-secondary);

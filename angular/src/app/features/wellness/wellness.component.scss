@@ -3,6 +3,8 @@
 // Design System Compliant - All tokens from design-system-tokens.scss
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .wellness-page {
   padding: var(--space-6);
 }

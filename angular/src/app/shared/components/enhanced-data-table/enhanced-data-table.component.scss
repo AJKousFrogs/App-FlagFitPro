@@ -3,6 +3,8 @@
 // Design System Compliant | BEM Naming | Modern CSS
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .enhanced-table-container {
   container-type: inline-size;
   display: flex;

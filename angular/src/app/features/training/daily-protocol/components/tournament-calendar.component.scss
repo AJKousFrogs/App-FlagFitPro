@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .tournament-calendar {
   background: var(--surface-primary, #ffffff);
   border: 1px solid var(--primitive-neutral-200, #e5e5e5);

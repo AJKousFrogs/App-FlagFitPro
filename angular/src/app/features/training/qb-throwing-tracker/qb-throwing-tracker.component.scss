@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .qb-throwing-tracker {
   max-width: 900px;
   margin: 0 auto;

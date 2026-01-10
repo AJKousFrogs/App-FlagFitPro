@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 .calendar-page {
   padding: var(--space-4);
   max-width: 900px;
@@ -398,7 +400,6 @@
 }
 
 // Responsive
-@use "styles/mixins" as *;
 
 @include respond-to(md) {
   .calendar-page {

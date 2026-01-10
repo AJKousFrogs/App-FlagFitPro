@@ -4,6 +4,8 @@
 // @see docs/CARD_SHELL_CONTRACT.md
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .training-page {
   padding: var(--space-4);
   max-width: 900px;

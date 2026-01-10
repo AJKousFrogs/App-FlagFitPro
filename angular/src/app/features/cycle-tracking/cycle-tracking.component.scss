@@ -1,5 +1,7 @@
 // Cycle Tracking Component Styles
 
+@use "styles/mixins" as *;
+
 .cycle-tracking-page {
   padding: var(--space-4);
   max-width: 1200px;

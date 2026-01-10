@@ -4,6 +4,8 @@
 // Evidence-Based: GOV.UK Design System Pattern
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .error-summary {
   background: var(--primitive-error-50);
   border: 3px solid var(--primitive-error-500);

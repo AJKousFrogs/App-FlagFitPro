@@ -4,6 +4,8 @@
 // ============================================================================
 
 // PrimeNG dialog override moved to _exceptions.scss (DS-EXC-031)
+@use "styles/mixins" as *;
+
 .post-training-dialog {
   // Component-specific styles remain here
 }

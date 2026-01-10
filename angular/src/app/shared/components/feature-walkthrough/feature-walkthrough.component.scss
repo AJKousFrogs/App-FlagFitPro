@@ -4,6 +4,8 @@
 // Removed ::ng-deep (deprecated) - Using CSS classes and custom properties
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 

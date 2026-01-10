@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .team-wellness-overview {
   display: flex;
   flex-direction: column;

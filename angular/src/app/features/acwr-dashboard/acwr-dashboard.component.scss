@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .acwr-dashboard {
   max-width: var(--content-max-width-xl); /* 1280px - closest token to 1200px */
   margin: 0 auto;
@@ -1171,7 +1173,7 @@
 // LANDSCAPE MODE ON PHONES
 // ================================================================
 
-@include respond-to(md) and (orientation: landscape) {
+@media (max-width: 768px) and (orientation: landscape) {
   .acwr-ratio-display {
     flex-direction: row;
     justify-content: space-around;

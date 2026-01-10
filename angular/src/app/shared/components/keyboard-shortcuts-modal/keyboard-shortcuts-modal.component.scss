@@ -4,6 +4,8 @@
 // ============================================================================
 
 /* Modal Header */
+@use "styles/mixins" as *;
+
 .modal-header {
   display: flex;
   align-items: center;

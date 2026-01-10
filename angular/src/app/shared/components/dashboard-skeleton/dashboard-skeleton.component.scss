@@ -3,6 +3,8 @@
 // Matches PlayerDashboardComponent layout
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .dashboard-skeleton {
   padding: var(--page-padding-desktop);
 

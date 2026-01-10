@@ -3,6 +3,8 @@
 // Design System Compliant - All tokens from design-system-tokens.scss
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .travel-recovery-page {
   padding: var(--space-6);
   max-width: 1400px;

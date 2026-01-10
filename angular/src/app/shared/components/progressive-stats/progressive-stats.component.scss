@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .progressive-stats {
   margin-bottom: var(--space-6);
 }

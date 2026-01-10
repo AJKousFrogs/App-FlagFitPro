@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .curation-page {
   min-height: 100vh;
   background: var(--surface-primary);

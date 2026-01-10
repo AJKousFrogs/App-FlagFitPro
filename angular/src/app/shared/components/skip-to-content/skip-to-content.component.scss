@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .skip-link {
   /* Hidden off-screen by default */
   position: fixed;

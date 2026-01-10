@@ -442,7 +442,7 @@
 // Viewport: 390-430px width
 // ================================================================
 
-@include respond-to(xs) and (min-width: 375px) {
+@media (max-width: 374px) and (min-width: 375px) {
   // iPhone notch area padding
   .iphone-notch-aware {
     padding-top: max(var(--space-4), env(safe-area-inset-top));
@@ -459,7 +459,7 @@
 // Viewport: 360-412px width
 // ================================================================
 
-@include respond-to(xs) and (min-width: 360px) {
+@media (max-width: 374px) and (min-width: 360px) {
   // Samsung navigation bar area
   .samsung-nav-aware {
     padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));

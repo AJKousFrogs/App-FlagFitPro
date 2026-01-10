@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .safety-warnings-container {
   background: var(--surface-primary);
   border-radius: var(--radius-lg);

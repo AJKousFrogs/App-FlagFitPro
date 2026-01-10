@@ -7,6 +7,8 @@
 /* ========================================================================
    CHECKIN PROMPT (Not Checked In)
    ======================================================================== */
+@use "styles/mixins" as *;
+
 .checkin-prompt {
   display: flex;
   align-items: center;

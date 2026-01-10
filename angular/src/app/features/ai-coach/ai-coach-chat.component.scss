@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 /* ================================================================
    AI COACH CHAT COMPONENT STYLES
    Design System Compliant - January 4, 2026
@@ -1317,7 +1319,6 @@
    RESPONSIVE
    ======================================== */
 
-@use "styles/mixins" as *;
 
 @include respond-to(md) {
   .chat-container {

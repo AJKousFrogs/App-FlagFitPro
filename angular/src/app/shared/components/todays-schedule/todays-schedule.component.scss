@@ -3,6 +3,8 @@
 // Design System Compliant - Premium Edition
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .header-progress {
   display: flex;
   align-items: center;

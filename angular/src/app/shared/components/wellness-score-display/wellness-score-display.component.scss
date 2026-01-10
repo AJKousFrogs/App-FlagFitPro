@@ -4,6 +4,8 @@
 // ============================================================================
 
 /* Ring Variant */
+@use "styles/mixins" as *;
+
 .wellness-ring {
   display: flex;
   flex-direction: column;

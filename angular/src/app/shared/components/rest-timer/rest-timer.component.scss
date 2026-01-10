@@ -4,6 +4,8 @@
 // ============================================================================
 
 /* Floating Timer Button */
+@use "styles/mixins" as *;
+
 .floating-timer {
   position: fixed;
   bottom: 80px;

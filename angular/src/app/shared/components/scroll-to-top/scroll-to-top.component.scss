@@ -4,6 +4,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .scroll-to-top-btn {
   position: fixed;
   bottom: var(--space-6, 32px);

@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .settings-content {
   padding: var(--space-6);
   display: flex;

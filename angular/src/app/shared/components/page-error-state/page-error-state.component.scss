@@ -4,6 +4,8 @@
 // ============================================================================
 
 /* Extends .error-state from ui-standardization.scss */
+@use "styles/mixins" as *;
+
 .error-state {
   display: flex;
   flex-direction: column;

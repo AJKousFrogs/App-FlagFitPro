@@ -7,6 +7,8 @@
 // ============================================================================
 
 /* ===== HERO SECTION ===== */
+@use "styles/mixins" as *;
+
 .hero-section {
   position: relative;
   min-height: 100vh;

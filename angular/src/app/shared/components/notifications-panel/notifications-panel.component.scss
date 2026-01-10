@@ -3,6 +3,8 @@
 // Enhanced Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }

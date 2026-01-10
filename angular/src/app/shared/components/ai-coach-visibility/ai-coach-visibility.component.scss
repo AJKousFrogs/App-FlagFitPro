@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .ai-coach-visibility {
   display: flex;
   flex-direction: column;

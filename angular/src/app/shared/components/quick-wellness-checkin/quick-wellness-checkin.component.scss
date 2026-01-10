@@ -4,6 +4,8 @@
 // ============================================================================
 
 // PrimeNG dialog override moved to _exceptions.scss (DS-EXC-036)
+@use "styles/mixins" as *;
+
 .quick-checkin-dialog {
   // Component-specific styles remain here
 }

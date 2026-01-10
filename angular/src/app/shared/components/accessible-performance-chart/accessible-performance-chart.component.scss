@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .chart-container {
   position: relative;
   padding: var(--space-4);

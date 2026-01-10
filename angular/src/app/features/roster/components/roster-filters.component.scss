@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .search-filter-bar {
   display: flex;
   flex-wrap: wrap;

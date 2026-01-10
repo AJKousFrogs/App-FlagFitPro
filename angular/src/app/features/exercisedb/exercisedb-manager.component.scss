@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 // ============================================================================
 // exercisedb/exercisedb-manager.component Styles
 // Design System Compliant - Refactored January 4, 2026
@@ -643,7 +645,6 @@
 }
 
 /* Responsive */
-@use "styles/mixins" as *;
 
 @include respond-to(md) {
   .exercisedb-manager {

@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .ai-training-scheduler-page {
   padding: var(--space-6);
 }

@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .performance-monitor {
   position: fixed;
   bottom: var(--space-4);

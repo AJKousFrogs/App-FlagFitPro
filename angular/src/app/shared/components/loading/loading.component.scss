@@ -3,6 +3,8 @@
 // Design System Compliant - Premium Edition
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .loading-container {
   width: 100%;
   display: flex;

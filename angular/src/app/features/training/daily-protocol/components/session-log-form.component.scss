@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .session-log-form {
   background: var(--surface-primary);
   border: 1px solid var(--primitive-neutral-200);

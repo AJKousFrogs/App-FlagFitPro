@@ -3,6 +3,8 @@
 // Design System Compliant - Green background, white text
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .announcements-banner {
   display: flex;
   align-items: center;

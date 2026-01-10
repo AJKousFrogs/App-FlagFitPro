@@ -1034,7 +1034,7 @@
 }
 
 /* Landscape mode on phones */
-@include respond-to(md) and (orientation: landscape) {
+@media (max-width: 768px) and (orientation: landscape) {
   .outcome-buttons {
     grid-template-columns: repeat(4, 1fr);
   }

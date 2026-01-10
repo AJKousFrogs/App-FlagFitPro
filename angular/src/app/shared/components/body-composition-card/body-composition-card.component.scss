@@ -4,6 +4,8 @@
 // ============================================================================
 
 /* Content */
+@use "styles/mixins" as *;
+
 .body-comp-content {
   flex: 1;
   display: flex;

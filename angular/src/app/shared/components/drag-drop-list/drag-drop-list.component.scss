@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .drag-drop-container {
   display: flex;
   gap: var(--space-6);

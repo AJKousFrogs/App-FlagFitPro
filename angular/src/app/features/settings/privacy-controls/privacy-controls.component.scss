@@ -1,3 +1,5 @@
+@use "styles/mixins" as *;
+
 // ============================================================================
 // privacy-controls/privacy-controls.component Styles
 // Design System Compliant
@@ -560,7 +562,6 @@
   color: var(--primitive-warning-600);
 }
 
-@use "styles/mixins" as *;
 
 @include respond-to(md) {
   .privacy-grid {

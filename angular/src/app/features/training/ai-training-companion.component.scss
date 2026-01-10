@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .training-companion {
   position: fixed;
   bottom: calc(env(safe-area-inset-bottom, 0px) + var(--space-4));

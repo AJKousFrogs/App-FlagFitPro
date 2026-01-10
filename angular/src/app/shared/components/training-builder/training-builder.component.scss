@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .training-builder {
   max-width: 1000px;
   margin: 0 auto;

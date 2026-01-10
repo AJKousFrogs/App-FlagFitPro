@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .player-card {
   position: relative;
   // Hover transition/transform REMOVED - use app-card-shell with state="interactive"

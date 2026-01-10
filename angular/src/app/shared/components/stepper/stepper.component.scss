@@ -3,6 +3,8 @@
 // Design System Compliant - Premium Navigation Experience
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .stepper-container {
   width: 100%;
   padding: var(--space-4) 0;

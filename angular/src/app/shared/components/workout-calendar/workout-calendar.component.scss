@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .workout-calendar {
   background: var(--surface-primary);
   border-radius: var(--radius-md);

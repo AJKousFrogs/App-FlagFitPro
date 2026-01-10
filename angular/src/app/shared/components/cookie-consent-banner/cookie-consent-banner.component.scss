@@ -6,6 +6,8 @@
 /* ================================
  BANNER CONTAINER
  ================================ */
+@use "styles/mixins" as *;
+
 .cookie-banner {
   position: fixed;
   bottom: 0;

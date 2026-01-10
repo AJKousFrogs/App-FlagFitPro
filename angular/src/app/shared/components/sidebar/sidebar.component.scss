@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 :host {
   display: block;
 }
@@ -354,7 +356,7 @@
 // TABLET: Collapsed sidebar (icons only)
 // Design System: --bp-tablet: 768px, --bp-laptop: 1024px
 // ============================================
-@include respond-to(lg) and (min-width: 769px) {
+@media (max-width: 1024px) and (min-width: 769px) {
   .sidebar {
     width: 72px;
   }
@@ -456,7 +458,7 @@
 // Samsung Galaxy S24: 1080x2340px (360x780 logical)
 // Samsung Galaxy S24 Ultra: 1440x3088px (480x1029 logical)
 // ============================================
-@include respond-to(md) and (min-height: 700px) {
+@media (max-width: 768px) and (min-height: 700px) {
   .sidebar {
     /* Ensure full height coverage on tall mobile screens */
     height: 100dvh;

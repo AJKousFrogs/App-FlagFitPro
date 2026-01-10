@@ -3,6 +3,8 @@
 // Design System Compliant - Premium Edition
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .hydration-display {
   display: flex;
   align-items: center;

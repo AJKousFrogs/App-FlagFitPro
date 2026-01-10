@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .overview-card {
   margin-bottom: var(--space-8);
 }
