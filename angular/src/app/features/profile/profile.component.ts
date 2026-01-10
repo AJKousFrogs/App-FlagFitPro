@@ -760,12 +760,11 @@ export class ProfileComponent implements OnInit {
       }
 
       // Load wellness data for performance score
-      // Using checkin_date (not date) and energy_level (not energy)
       const { data: wellness } = await this.supabaseService.client
-        .from("wellness_checkins")
-        .select("energy_level, motivation_level, sleep_quality, checkin_date")
-        .eq("user_id", user.id)
-        .order("checkin_date", { ascending: false })
+        .from("wellness_entries")
+        .select("energy_level, motivation_level, sleep_quality, date")
+        .eq("athlete_id", user.id)
+        .order("date", { ascending: false })
         .limit(7);
 
       // Calculate performance score based on wellness and training

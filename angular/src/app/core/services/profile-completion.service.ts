@@ -355,17 +355,17 @@ export class ProfileCompletionService {
     if (!user?.id) return null;
 
     try {
-      // First try body_measurements for most recent
+      // Get most recent weight from physical_measurements
       const { data: measurement } = await this.supabaseService.client
-        .from("body_measurements")
-        .select("weight_kg")
+        .from("physical_measurements")
+        .select("weight")
         .eq("user_id", user.id)
-        .order("measurement_date", { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
 
-      if (measurement?.weight_kg) {
-        return measurement.weight_kg;
+      if (measurement?.weight) {
+        return measurement.weight;
       }
 
       // Fallback to users table

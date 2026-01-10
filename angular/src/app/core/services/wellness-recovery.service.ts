@@ -5,8 +5,8 @@
  */
 
 import { Injectable, inject } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 @Injectable({
   providedIn: "root",
@@ -24,15 +24,15 @@ export class WellnessRecoveryService {
       yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-      // Check yesterday's wellness
+      // Check yesterday's wellness from readiness_scores table
       const { data: yesterdayWellness } = await this.supabaseService.client
-        .from("athlete_daily_state")
-        .select("readiness_score")
+        .from("readiness_scores")
+        .select("score")
         .eq("user_id", playerId)
-        .eq("state_date", yesterdayStr)
+        .eq("day", yesterdayStr)
         .maybeSingle();
 
-      if (!yesterdayWellness || yesterdayWellness.readiness_score >= 40) {
+      if (!yesterdayWellness || yesterdayWellness.score >= 40) {
         return; // No recovery needed
       }
 

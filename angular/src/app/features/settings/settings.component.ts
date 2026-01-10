@@ -654,6 +654,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         this.logger.info("Theme applied:", settings.preferences.theme);
       }
 
+      // Track if user exists for later toast message
+      let existingUser: any = null;
+
       // Try to update user data in Supabase users table
       try {
         const nameParts = settings.profile.displayName?.split(" ") || [];
@@ -689,11 +692,13 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         // CRITICAL: Check if user exists, then INSERT or UPDATE accordingly
         // This ensures user record is created if it doesn't exist
-        const { data: existingUser } = await this.supabaseService.client
+        const { data } = await this.supabaseService.client
           .from("users")
           .select("id")
           .eq("id", user.id)
           .maybeSingle();
+        
+        existingUser = data;
 
         this.logger.info("User exists check:", { exists: !!existingUser });
 
@@ -993,7 +998,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       if (!existingUser) {
         this.toastService.info(
           "Profile created! Visit the Roster page to see yourself listed.",
-          5000
+          { life: 5000 }
         );
       }
     } catch (error) {
@@ -1399,10 +1404,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       if (this.exportOptions.wellness) {
         this.exportProgress.set((progress += 100 / totalSteps));
         const { data: wellness } = await this.supabaseService.client
-          .from("wellness_checkins")
+          .from("wellness_entries")
           .select("*")
           .eq("user_id", user.id)
-          .order("checkin_date", { ascending: false })
+          .order("date", { ascending: false })
           .limit(UI_LIMITS.EXPORT_WELLNESS_MAX);
         exportData.wellnessCheckins = wellness || [];
       }

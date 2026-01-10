@@ -245,10 +245,10 @@ export class DirectSupabaseApiService {
 
     // Check for active injuries/rehab
     const { data: activeInjuries } = await this.supabase.client
-      .from("wellness_checkins")
-      .select("injuries")
-      .eq("user_id", userId)
-      .not("injuries", "is", null)
+      .from("wellness_entries")
+      .select("notes")
+      .eq("athlete_id", userId)
+      .not("notes", "is", null)
       .order("created_at", { ascending: false })
       .limit(1);
 

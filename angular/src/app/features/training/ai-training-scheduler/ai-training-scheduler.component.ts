@@ -413,8 +413,8 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
       // Load wellness data
       const { data: wellness } = await this.supabaseService.client
-        .from("wellness_logs")
-        .select("sleep_quality, soreness, fatigue")
+        .from("wellness_entries")
+        .select("sleep_quality, muscle_soreness, energy_level")
         .eq("user_id", userId)
         .order("date", { ascending: false })
         .limit(1)
@@ -425,7 +425,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
         this.athleteMetrics.set({
           readiness_score: readiness?.score ?? null,
           acwr: acwr?.acwr_ratio ?? null,
-          fatigue_level: wellness?.fatigue ?? null,
+          fatigue_level: wellness?.energy_level ?? null,
           sleep_quality: wellness?.sleep_quality ?? null,
           soreness_level: wellness?.soreness ?? null,
         });

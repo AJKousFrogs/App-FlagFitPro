@@ -3430,27 +3430,28 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           ? `Past injuries: ${this.onboardingData.injuryHistory.join(", ")}`
           : null;
 
-      // Create or update wellness checkin for today with current injuries
+      // Create or update wellness entry for today with current injuries
       const today = new Date().toISOString().split("T")[0];
       const { error } = await this.supabaseService.client
-        .from("daily_wellness_checkin")
+        .from("wellness_entries")
         .upsert(
           {
+            athlete_id: userId,
             user_id: userId,
-            checkin_date: today,
-            soreness_areas: sorenessAreas,
+            date: today,
             notes: injuryHistoryNotes || null,
             // Set default values for other required fields if not set
             sleep_quality: 5,
-            sleep_hours: 7,
             energy_level: 5,
             muscle_soreness:
               this.onboardingData.currentInjuries.length > 0 ? 5 : 0,
             stress_level: 5,
-            readiness_score: 50, // Default readiness score
+            motivation_level: 5,
+            mood: 5,
+            hydration_level: 5,
             updated_at: new Date().toISOString(),
           },
-          { onConflict: "user_id,checkin_date" },
+          { onConflict: "athlete_id,date" },
         );
 
       if (error) {

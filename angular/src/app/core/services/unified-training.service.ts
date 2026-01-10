@@ -992,10 +992,10 @@ export class UnifiedTrainingService {
 
   private async checkWellnessForTraining(userId: string) {
     const { data } = await this.supabase.client
-      .from("wellness_checkins")
+      .from("wellness_entries")
       .select("*")
-      .eq("user_id", userId)
-      .order("checkin_date", { ascending: false })
+      .eq("athlete_id", userId)
+      .order("date", { ascending: false })
       .limit(1)
       .single();
 
