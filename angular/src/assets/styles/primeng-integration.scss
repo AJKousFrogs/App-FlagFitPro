@@ -1241,7 +1241,7 @@ p-button[severity="primary"] .p-button {
    MOBILE TOUCH FIXES - CRITICAL for button clicks on mobile
    ================================================================ */
 
-@media respond-to(md) {
+@include respond-to(md) {
   // Ensure all PrimeNG buttons work on mobile
   .p-button,
   .p-button-label,
