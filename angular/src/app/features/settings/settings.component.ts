@@ -686,19 +686,50 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         this.logger.info("Updating users table with:", updateData);
 
-        // Use update to modify existing user profile (user already exists since they're logged in)
-        // IMPORTANT: Use update() instead of upsert() to avoid setting password_hash to null
-        const { data: upsertedUser, error: profileError } =
-          await this.supabaseService.client
+        // First check if user exists in users table
+        const { data: existingUser } = await this.supabaseService.client
+          .from("users")
+          .select("id")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        let upsertedUser;
+        let profileError;
+
+        if (existingUser) {
+          // User exists - use update
+          this.logger.info("User exists in users table, updating...");
+          const result = await this.supabaseService.client
             .from("users")
             .update(updateData)
             .eq("id", user.id)
             .select()
-            .maybeSingle();
+            .single();
+          
+          upsertedUser = result.data;
+          profileError = result.error;
+        } else {
+          // User doesn't exist - use insert
+          this.logger.info("User not in users table, inserting...");
+          const insertData = {
+            ...updateData,
+            id: user.id,
+            created_at: new Date().toISOString(),
+          };
+          
+          const result = await this.supabaseService.client
+            .from("users")
+            .insert(insertData)
+            .select()
+            .single();
+          
+          upsertedUser = result.data;
+          profileError = result.error;
+        }
 
         if (profileError) {
           this.logger.error(
-            "User profile update failed:",
+            "User profile save failed:",
             profileError.message,
             profileError,
           );
@@ -707,12 +738,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             `Failed to save profile: ${profileError.message}`,
           );
           throw profileError;
-        }
-
-        if (!upsertedUser) {
-          this.logger.warn("User profile update returned no data - user may not exist in users table yet");
-          // Don't throw error - settings will still be saved to localStorage and auth metadata
-          // This is expected behavior for new users who haven't completed onboarding
         }
 
         this.logger.info("User profile saved successfully:", upsertedUser);
