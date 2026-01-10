@@ -1,4 +1,4 @@
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 .data-import-page {
   padding: var(--space-4);

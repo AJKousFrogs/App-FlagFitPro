@@ -1,4 +1,4 @@
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 .payments-page {
   padding: var(--space-4);

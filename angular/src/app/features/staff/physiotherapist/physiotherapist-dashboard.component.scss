@@ -1,4 +1,4 @@
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 .physio-dashboard {
   padding: var(--ds-spacing-lg);
