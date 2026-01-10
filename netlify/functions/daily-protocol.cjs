@@ -518,8 +518,9 @@ async function getUserTrainingContext(supabase, userId, date) {
     // Tournament/Taper
     upcomingTournaments: upcomingTournaments || [],
     taperContext,
-    // QB-specific flags
+    // Position-specific flags
     isQB: position === "quarterback",
+    isCenter: position === "center",
     isBlitzer: position === "blitzer" || position === "rusher",
   };
 }
@@ -1176,8 +1177,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
       context.teamActivity.activity.startTimeLocal || "18:00";
     aiRationale = `🏈 Flag practice day (${practiceTime}). `;
 
-    if (context.isQB) {
-      aiRationale += `QB: Practice scheduled. Arm care is light activation only - no heavy throwing before practice.`;
+    if (context.isQB || context.isCenter) {
+      aiRationale += context.isQB 
+        ? `QB: Practice scheduled. Arm care is light activation only - no heavy throwing before practice.`
+        : `Center: Practice scheduled. Arm/wrist care is light activation only - snapping/throwing prep before practice.`;
       trainingFocus = "practice_day_qb";
     } else {
       aiRationale +=
@@ -1270,9 +1273,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
   const protocolExercises = [];
 
-  // 1. Morning Mobility - Day-specific routine (or QB-specific for QBs)
+  // 1. Morning Mobility - Position-specific routines
   if (context.isQB) {
-    // QB gets extra hip flexor and shoulder mobility
+    // QB gets extra hip flexor and shoulder mobility for throwing
     const { data: qbMobilityExercises } = await supabase
       .from("exercises")
       .select("*")
@@ -1298,8 +1301,63 @@ async function generateProtocol(supabase, userId, payload, headers) {
         });
       });
     }
+  } else if (context.isCenter) {
+    // Center gets shoulder/wrist mobility for snapping + some QB exercises for throwing
+    // Centers snap every play and also throw, so they need similar mobility to QBs
+    const { data: centerMobilityExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .or("position_specific.cs.{center},position_specific.cs.{quarterback}")
+      .eq("category", "mobility")
+      .eq("active", true)
+      .limit(6);
+
+    if (centerMobilityExercises && centerMobilityExercises.length > 0) {
+      centerMobilityExercises.forEach((ex, idx) => {
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "morning_mobility",
+          sequence_order: idx + 1,
+          prescribed_sets: ex.default_sets || 1,
+          prescribed_reps: ex.default_reps,
+          prescribed_hold_seconds: ex.default_hold_seconds,
+          prescribed_duration_seconds: ex.default_duration_seconds,
+          load_contribution_au: ex.load_contribution_au || 0,
+          ai_note:
+            "Center Morning Routine - Shoulder/wrist mobility for snapping + throwing mechanics",
+        });
+      });
+    } else {
+      // Fallback: use QB exercises if no center-specific ones exist
+      const { data: qbFallback } = await supabase
+        .from("exercises")
+        .select("*")
+        .contains("position_specific", ["quarterback"])
+        .eq("category", "mobility")
+        .eq("active", true)
+        .limit(5);
+
+      if (qbFallback) {
+        qbFallback.forEach((ex, idx) => {
+          protocolExercises.push({
+            protocol_id: protocol.id,
+            exercise_id: ex.id,
+            block_type: "morning_mobility",
+            sequence_order: idx + 1,
+            prescribed_sets: ex.default_sets || 1,
+            prescribed_reps: ex.default_reps,
+            prescribed_hold_seconds: ex.default_hold_seconds,
+            prescribed_duration_seconds: ex.default_duration_seconds,
+            load_contribution_au: ex.load_contribution_au || 0,
+            ai_note:
+              "Center uses QB mobility routine (snapping + throwing mechanics)",
+          });
+        });
+      }
+    }
   } else {
-    // Standard day-specific morning mobility
+    // Standard day-specific morning mobility for other positions
     const morningMobilitySlug = `morning-mobility-day-${context.dayOfWeek === 0 ? 7 : context.dayOfWeek}`;
     const { data: morningMobility } = await supabase
       .from("exercises")
@@ -1358,20 +1416,22 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .eq("active", true)
     .not("subcategory", "eq", "morning_routine");
 
-  // For QB, include QB-specific warm-up exercises (unless practice day)
+  // For QB and Center, include position-specific warm-up exercises (unless practice day)
   // Note: isPracticeDay and isFilmRoomDay already declared above in training focus section
-  if (context.isQB && !isPracticeDay) {
-    // Add QB pre-throwing warm-up (rotator cuff, scapular)
-    const { data: qbWarmUp } = await supabase
+  if ((context.isQB || context.isCenter) && !isPracticeDay) {
+    // Add QB/Center pre-throwing warm-up (rotator cuff, scapular, wrist)
+    // Centers need similar arm care since they snap and throw
+    const positions = context.isCenter ? ["center", "quarterback"] : ["quarterback"];
+    const { data: throwingWarmUp } = await supabase
       .from("exercises")
       .select("*")
-      .contains("position_specific", ["quarterback"])
+      .or(positions.map(p => `position_specific.cs.{${p}}`).join(","))
       .eq("category", "warm_up")
       .eq("active", true)
       .limit(8);
 
-    if (qbWarmUp && qbWarmUp.length > 0) {
-      qbWarmUp.forEach((ex, idx) => {
+    if (throwingWarmUp && throwingWarmUp.length > 0) {
+      throwingWarmUp.forEach((ex, idx) => {
         protocolExercises.push({
           protocol_id: protocol.id,
           exercise_id: ex.id,
@@ -1380,13 +1440,15 @@ async function generateProtocol(supabase, userId, payload, headers) {
           prescribed_sets: ex.default_sets || 2,
           prescribed_reps: ex.default_reps,
           prescribed_hold_seconds: ex.default_hold_seconds,
-          ai_note: "QB Pre-Throwing Warm-up - 30 min mandatory before throwing",
+          ai_note: context.isCenter 
+            ? "Center Pre-Throwing Warm-up - Shoulder/wrist prep for snapping + throwing"
+            : "QB Pre-Throwing Warm-up - 30 min mandatory before throwing",
           load_contribution_au: ex.load_contribution_au || 0,
         });
       });
     }
   } else {
-    // Standard warm-up for non-QB or practice days
+    // Standard warm-up for other positions or practice days
     const { data: warmUpExercises } = await warmUpQuery.limit(12);
 
     if (warmUpExercises && warmUpExercises.length > 0) {
