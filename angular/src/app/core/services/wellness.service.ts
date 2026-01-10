@@ -331,7 +331,7 @@ export class WellnessService {
         .from("wellness_entries")
         .insert(wellnessEntry)
         .select()
-        .single(),
+        .maybeSingle(),
     ).pipe(
       map(({ data: insertedData, error }) => {
         if (error) {

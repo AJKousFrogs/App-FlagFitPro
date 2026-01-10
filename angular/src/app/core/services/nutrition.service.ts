@@ -390,7 +390,7 @@ export class NutritionService {
           meal_type: this.getMealTypeFromTime(),
         })
         .select()
-        .single(),
+        .maybeSingle(),
     ).pipe(
       map(({ data, error }) => {
         if (error) {
@@ -436,7 +436,7 @@ export class NutritionService {
           .from("nutrition_goals")
           .select("*")
           .eq("user_id", userId)
-          .single(),
+          .maybeSingle(),
       ),
       todayLogs: this.getTodaysNutritionTotals(userId),
     }).pipe(

@@ -573,7 +573,7 @@ export class AthleteDashboardComponent
           .from("team_members")
           .select("team_id")
           .eq("user_id", userId)
-          .single();
+          .maybeSingle();
 
         if (teamMember?.team_id) {
           const { data: teamGames } = await this.supabaseService.client

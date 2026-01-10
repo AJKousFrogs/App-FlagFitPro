@@ -275,7 +275,15 @@ exports.handler = async (event, context) => {
         .eq("log_date", dayStr)
         .maybeSingle();
 
-      if (wellErr || !wellness) {
+      if (wellErr) {
+        console.error("Error fetching wellness log:", wellErr);
+        return createErrorResponse(
+          500,
+          `Failed to fetch wellness log: ${wellErr.message}`,
+        );
+      }
+
+      if (!wellness) {
         return createErrorResponse(
           400,
           "Missing wellness log for this day. Please log wellness data first.",

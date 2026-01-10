@@ -1185,9 +1185,17 @@ export class AcwrService {
         if (status === "SUBSCRIBED") {
           this.logger.success("[ACWR] Realtime subscription active");
         } else if (status === "CHANNEL_ERROR") {
-          this.logger.error("[ACWR] Realtime subscription error");
+          // Channel errors are common during page transitions and network issues
+          // Log as debug instead of error to reduce console noise
+          this.logger.debug(
+            "[ACWR] Realtime subscription channel error (connection may have been lost)",
+          );
         } else if (status === "CLOSED") {
           this.logger.debug("[ACWR] Realtime subscription closed");
+        } else if (status === "TIMED_OUT") {
+          this.logger.debug(
+            "[ACWR] Realtime subscription timed out (will auto-reconnect)",
+          );
         }
       });
   }

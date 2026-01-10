@@ -536,7 +536,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         .from("users")
         .select("*")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (!error && profile) {
         // Patch form with existing data (map users columns to form fields)
@@ -679,7 +679,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             .update(updateData)
             .eq("id", user.id)
             .select()
-            .single();
+            .maybeSingle();
 
         if (profileError) {
           this.logger.error(
@@ -764,7 +764,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             .from("user_settings")
             .upsert(settingsData)
             .select()
-            .single();
+            .maybeSingle();
 
         if (settingsError) {
           this.logger.warn(
@@ -1185,7 +1185,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           .from("users")
           .select("*")
           .eq("id", user.id)
-          .single();
+          .maybeSingle();
         if (profile) {
           exportData.profile = {
             fullName: profile.full_name,
@@ -1437,10 +1437,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             coach_id: user.id,
           })
           .select("id, name")
-          .single();
+          .maybeSingle();
 
       if (teamError) {
         throw new Error(teamError.message);
+      }
+
+      if (!newTeam) {
+        throw new Error("Failed to create team - no data returned");
       }
 
       // Create an approval request record

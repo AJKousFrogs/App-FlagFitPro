@@ -69,7 +69,7 @@ export class DashboardComponent implements OnInit {
         .from("users")
         .select("user_type, staff_role")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (userData) {
         if (userData.user_type === "staff") {

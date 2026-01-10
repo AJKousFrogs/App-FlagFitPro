@@ -290,7 +290,7 @@ export class RecoveryService {
         `,
         )
         .eq("id", sessionId)
-        .single();
+        .maybeSingle();
 
       if (error || !data) {
         return null;
@@ -347,7 +347,7 @@ export class RecoveryService {
           .eq("athlete_id", userId)
           .order("date", { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         if (error || !data) {
           throw new Error("No wellness data available for this athlete");
@@ -560,7 +560,7 @@ export class RecoveryService {
         .from("athlete_recovery_profiles")
         .select("*")
         .eq("athlete_id", userId)
-        .single();
+        .maybeSingle();
 
       if (error || !data) {
         this.logger.debug("[Recovery] No recovery profile found for user");
@@ -763,7 +763,7 @@ export class RecoveryService {
           .from("athlete_recovery_profiles")
           .select("protocol_effectiveness")
           .eq("athlete_id", userId)
-          .single();
+          .maybeSingle();
 
       if (fetchError && fetchError.code !== "PGRST116") {
         this.logger.error(
@@ -830,7 +830,7 @@ export class RecoveryService {
             status: "in_progress",
           })
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) {
           this.logger.error("[Recovery] Error starting session:", error);

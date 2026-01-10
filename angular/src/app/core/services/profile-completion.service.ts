@@ -140,10 +140,19 @@ export class ProfileCompletionService {
         `,
           )
           .eq("id", user.id)
-          .single();
+          .maybeSingle();
 
       if (userError) {
         this.logger.error("[ProfileCompletion] Error loading user:", userError);
+        return null;
+      }
+
+      // If user doesn't exist in users table yet, return null gracefully
+      if (!userData) {
+        this.logger.warn(
+          "[ProfileCompletion] User not found in users table:",
+          user.id,
+        );
         return null;
       }
 
