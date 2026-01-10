@@ -32,6 +32,7 @@ export default defineConfig({
     navigationTimeout: 45000, // 45 seconds for navigation
   },
   projects: [
+    // Desktop browsers
     {
       name: "chromium",
       use: {
@@ -53,6 +54,7 @@ export default defineConfig({
         viewport: { width: 1920, height: 1080 },
       },
     },
+    // Generic mobile (existing)
     {
       name: "Mobile Chrome",
       use: { ...devices["Pixel 5"] },
@@ -60,6 +62,87 @@ export default defineConfig({
     {
       name: "Mobile Safari",
       use: { ...devices["iPhone 12"] },
+    },
+    // =========================================================================
+    // TARGET DEVICES - FlagFit Pro Mobile Responsiveness Audit
+    // iPhone 11-17 (iOS 18+ Safari), Samsung Galaxy S23-S25 (Android 15+ Chrome)
+    // =========================================================================
+    {
+      name: "iPhone 11",
+      use: {
+        viewport: { width: 414, height: 896 },
+        deviceScaleFactor: 2,
+        hasTouch: true,
+        isMobile: true,
+        userAgent:
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
+      },
+    },
+    {
+      name: "iPhone 14 Pro",
+      use: {
+        viewport: { width: 393, height: 852 },
+        deviceScaleFactor: 3,
+        hasTouch: true,
+        isMobile: true,
+        userAgent:
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
+      },
+    },
+    {
+      name: "iPhone 15 Pro Max",
+      use: {
+        viewport: { width: 430, height: 932 },
+        deviceScaleFactor: 3,
+        hasTouch: true,
+        isMobile: true,
+        userAgent:
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1",
+      },
+    },
+    {
+      name: "iPhone 17 Pro Max",
+      use: {
+        viewport: { width: 430, height: 932 },
+        deviceScaleFactor: 3,
+        hasTouch: true,
+        isMobile: true,
+        userAgent:
+          "Mozilla/5.0 (iPhone; CPU iPhone OS 19_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/19.0 Mobile/15E148 Safari/604.1",
+      },
+    },
+    {
+      name: "Samsung Galaxy S23",
+      use: {
+        viewport: { width: 412, height: 915 },
+        deviceScaleFactor: 2.625,
+        hasTouch: true,
+        isMobile: true,
+        userAgent:
+          "Mozilla/5.0 (Linux; Android 15; SM-S911B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      },
+    },
+    {
+      name: "Samsung Galaxy S24 Ultra",
+      use: {
+        viewport: { width: 412, height: 915 },
+        deviceScaleFactor: 3,
+        hasTouch: true,
+        isMobile: true,
+        userAgent:
+          "Mozilla/5.0 (Linux; Android 15; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      },
+    },
+    {
+      name: "Samsung Galaxy S25 Ultra",
+      use: {
+        viewport: { width: 430, height: 1440 },
+        deviceScaleFactor: 3,
+        hasTouch: true,
+        isMobile: true,
+        userAgent:
+          "Mozilla/5.0 (Linux; Android 15; SM-S938B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36",
+      },
     },
   ],
   webServer: {

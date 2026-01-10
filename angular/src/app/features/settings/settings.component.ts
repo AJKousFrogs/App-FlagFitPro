@@ -1,20 +1,20 @@
 import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    inject,
-    OnInit,
-    signal,
-    ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
 } from "@angular/core";
 
 import {
-    FormBuilder,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-    Validators,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -30,7 +30,10 @@ import { ToggleSwitch } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
 import { TIMEOUTS, TOAST, UI_LIMITS } from "../../core/constants";
 import { AuthService } from "../../core/services/auth.service";
-import { LoggerService, toLogContext } from "../../core/services/logger.service";
+import {
+  LoggerService,
+  toLogContext,
+} from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -40,8 +43,8 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-    ButtonComponent,
-    CardComponent,
+  ButtonComponent,
+  CardComponent,
 } from "../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { calculateAge } from "../../shared/utils/date.utils";
@@ -649,9 +652,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           }
         }
 
-        // Prepare update data - NEVER include created_at (it should only be set on insert)
+        // Prepare update data - NEVER include id, created_at, or password_hash
         const updateData = {
-          id: user.id,
           email: user.email || null,
           full_name: settings.profile.displayName,
           first_name: nameParts[0] || null,
@@ -664,43 +666,50 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           weight_kg: settings.profile.weightKg || null,
           phone: settings.profile.phone || null,
           date_of_birth: dateOfBirthStr,
-          updated_at: new Date().toISOString(), // Only update the timestamp
+          updated_at: new Date().toISOString(),
         };
 
-        this.logger.info("Upserting users table with:", updateData);
+        this.logger.info("Updating users table with:", updateData);
 
-        // Use upsert to create or update the user profile
-        const { data: upsertedUser, error: profileError } = await this.supabaseService.client
-          .from("users")
-          .upsert(updateData, {
-            onConflict: 'id',
-            ignoreDuplicates: false,
-          })
-          .select()
-          .single();
+        // Use update to modify existing user profile (user already exists since they're logged in)
+        // IMPORTANT: Use update() instead of upsert() to avoid setting password_hash to null
+        const { data: upsertedUser, error: profileError } =
+          await this.supabaseService.client
+            .from("users")
+            .update(updateData)
+            .eq("id", user.id)
+            .select()
+            .single();
 
         if (profileError) {
           this.logger.error(
-            "User profile upsert failed:",
+            "User profile update failed:",
             profileError.message,
             profileError,
           );
           // Show error to user and stop execution
-          this.toastService.error(`Failed to save profile: ${profileError.message}`);
+          this.toastService.error(
+            `Failed to save profile: ${profileError.message}`,
+          );
           throw profileError;
-        } 
-        
-        if (!upsertedUser) {
-          this.logger.error("User profile upsert returned no data");
-          this.toastService.error("Failed to save profile: No data returned from database");
-          throw new Error("Upsert returned no data");
         }
-        
+
+        if (!upsertedUser) {
+          this.logger.error("User profile update returned no data");
+          this.toastService.error(
+            "Failed to save profile: No data returned from database",
+          );
+          throw new Error("Update returned no data");
+        }
+
         this.logger.info("User profile saved successfully:", upsertedUser);
 
         // Update team membership if team was selected
         if (settings.profile.teamId) {
-          this.logger.info("Updating team membership:", settings.profile.teamId);
+          this.logger.info(
+            "Updating team membership:",
+            settings.profile.teamId,
+          );
           await this.updateTeamMembership(
             user.id,
             settings.profile.teamId,
@@ -715,13 +724,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
       // Also update auth user metadata with display name
       try {
-        const { data: authData, error: authError } = await this.supabaseService.updateUser({
-          data: {
-            full_name: settings.profile.displayName,
-            name: settings.profile.displayName,
-            position: settings.profile.position,
-          },
-        });
+        const { data: authData, error: authError } =
+          await this.supabaseService.updateUser({
+            data: {
+              full_name: settings.profile.displayName,
+              name: settings.profile.displayName,
+              position: settings.profile.position,
+            },
+          });
 
         if (authError) {
           this.logger.warn("Auth metadata update failed:", authError);
@@ -749,11 +759,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         this.logger.info("Upserting user_settings:", settingsData);
 
-        const { data: settingsResult, error: settingsError } = await this.supabaseService.client
-          .from("user_settings")
-          .upsert(settingsData)
-          .select()
-          .single();
+        const { data: settingsResult, error: settingsError } =
+          await this.supabaseService.client
+            .from("user_settings")
+            .upsert(settingsData)
+            .select()
+            .single();
 
         if (settingsError) {
           this.logger.warn(
@@ -761,7 +772,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             settingsError.message,
           );
         } else {
-          this.logger.info("User settings upserted successfully:", settingsResult);
+          this.logger.info(
+            "User settings upserted successfully:",
+            settingsResult,
+          );
         }
       } catch (error) {
         // Table doesn't exist, continue with localStorage save
@@ -967,7 +981,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
       if (error) {
         // Table might not exist, create it or handle gracefully
-        this.logger.warn("Could not save 2FA settings:", toLogContext(error.message));
+        this.logger.warn(
+          "Could not save 2FA settings:",
+          toLogContext(error.message),
+        );
       }
 
       // Generate backup codes
@@ -1481,11 +1498,17 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       );
 
       if (error) {
-        this.logger.warn("Could not send notification email:", toLogContext(error.message));
+        this.logger.warn(
+          "Could not send notification email:",
+          toLogContext(error.message),
+        );
         // Don't throw - the request was still created successfully
       }
     } catch (error) {
-      this.logger.warn("Failed to send team approval notification:", toLogContext(error));
+      this.logger.warn(
+        "Failed to send team approval notification:",
+        toLogContext(error),
+      );
       // Don't throw - the request was still created successfully
     }
   }
@@ -1565,7 +1588,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         }
       }
     } catch (error) {
-      this.logger.warn("Could not update team membership:", toLogContext(error));
+      this.logger.warn(
+        "Could not update team membership:",
+        toLogContext(error),
+      );
       // Don't throw - profile update was still successful
     }
   }
@@ -1580,7 +1606,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       event.preventDefault();
       event.stopPropagation();
     }
-    
+
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });

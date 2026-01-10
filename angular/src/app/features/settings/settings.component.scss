@@ -226,11 +226,6 @@
   flex-direction: column;
 }
 
-// PrimeNG card and field-checkbox overrides moved to _exceptions.scss (DS-EXC-051)
-.settings-grid .settings-section app-card {
-  // Component-specific styles remain here
-}
-
 /* Notification Settings Layout */
 .notification-form {
   display: flex;
@@ -328,10 +323,7 @@
 /* Digest Select Dropdown */
 .digest-select {
   min-width: 180px;
-
-  ::ng-deep .p-select {
-    width: 100%;
-  }
+  width: 100%;
 }
 
 /* Quiet Hours Configuration */
@@ -432,15 +424,78 @@
   margin-bottom: var(--space-4);
 }
 
-// PrimeNG field override moved to _exceptions.scss (DS-EXC-051)
-.form-row.two-columns {
-  // Component-specific styles remain here
-}
+/* ================================================================
+   MOBILE RESPONSIVENESS FIXES
+   Target devices: iPhone 11-17 (414-430px), Samsung S23-S25 (412-430px)
+   ================================================================ */
 
-@media (max-width: 480px) {
+/* iPhone 15-17 Pro Max, Samsung S25 Ultra (430px viewport) */
+@media (max-width: 430px) {
   .form-row.two-columns {
     flex-direction: column;
     gap: var(--space-4);
+
+    .p-field {
+      width: 100%;
+      flex: 1 1 100%;
+    }
+  }
+}
+
+/* iPhone 11-14, Samsung S23/S24 (412-414px viewport) */
+@media (max-width: 414px) {
+  .settings-nav {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .settings-nav-item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .form-row.two-columns {
+    flex-direction: column;
+    gap: var(--space-4);
+
+    .p-field {
+      width: 100%;
+      flex: 1 1 100%;
+    }
+  }
+
+  .security-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+
+    app-button {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    app-button ::ng-deep .btn {
+      width: 100%;
+    }
+  }
+
+  .privacy-controls-link {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dialog-header {
+    padding: var(--space-4);
+    padding-right: 56px;
+  }
+
+  .dialog-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .dialog-title-section h2 {
+    font-size: var(--font-body-size);
   }
 }
 
@@ -1062,9 +1117,6 @@
   cursor: pointer;
 }
 
-// .app-card:hover REMOVED - use app-card-shell with state="interactive"
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
-
 .app-icon {
   width: var(--icon-container-lg); // 48px
   height: var(--icon-container-lg); // 48px
@@ -1167,8 +1219,6 @@
   color: var(--color-text-primary);
 }
 
-/* REMOVED: .copy-btn - Now using app-icon-button component */
-
 .code-input-wrapper {
   max-width: 200px;
   margin: 0 auto var(--space-4);
@@ -1240,8 +1290,6 @@
   color: var(--color-text-primary);
 }
 
-/* REMOVED: .download-btn - Now using app-button component */
-
 /* Sessions Dialog Styles */
 .sessions-content {
   padding: 0 var(--space-6) var(--space-6);
@@ -1278,9 +1326,6 @@
   border-radius: var(--radius-xl);
   transition: border-color var(--transition-fast);
 }
-
-// .session-card:hover REMOVED - use app-card-shell
-// @see docs/CARD_SHELL_CONTRACT.md §2.8
 
 .session-card.current {
   background: var(--ds-primary-green-ultra-subtle);
@@ -1357,8 +1402,6 @@
 .session-meta i {
   font-size: var(--font-size-badge);
 }
-
-/* REMOVED: .revoke-btn - Now using app-icon-button component */
 
 /* Theme Selector Styles */
 .theme-selector {
@@ -1578,8 +1621,6 @@
  * All toggles now use: 44px width, 24px height, green=ON, neutral=OFF
  */
 
-// PrimeNG field, select, and inputtext overrides moved to _exceptions.scss (DS-EXC-051)
-
 /*
  * EXCEPTION: Security Section Button Sizing
  * Reason: Buttons need consistent width in security section
@@ -1593,27 +1634,7 @@
   max-width: 120px;
 }
 
-.security-item app-button ::ng-deep .btn {
-  width: 100%;
-  min-width: 100%;
-  height: var(--button-height-md, 44px);
-  justify-content: center;
-  padding: 0 var(--space-4, 16px);
-  box-sizing: border-box;
-}
-
-// PrimeNG divider overrides moved to _exceptions.scss (DS-EXC-051)
-.security-actions {
-  // Component-specific styles remain here
-}
-
-// PrimeNG dialog overrides moved to _exceptions.scss (DS-EXC-051)
-.password-dialog,
-.delete-dialog,
-.twofa-dialog,
-.sessions-dialog {
-  // Component-specific styles remain here
-}
+/* NOTE: .btn styling handled by global @layer overrides in styles.scss */
 
 .dialog-close-btn {
   position: absolute;
@@ -2034,18 +2055,9 @@
   color: var(--color-text-secondary);
 }
 
-// PrimeNG export dialog override moved to _exceptions.scss (DS-EXC-051)
-.export-dialog {
-  // Component-specific styles remain here
-}
-
 /* ================================================================
    NEW TEAM REQUEST DIALOG
    ================================================================ */
-
-.new-team-dialog {
-  // Component-specific styles
-}
 
 .new-team-content {
   display: flex;

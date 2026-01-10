@@ -1,15 +1,45 @@
 // ============================================================================
 // enhanced-data-table.component Styles
-// Design System Compliant
+// Design System Compliant | BEM Naming | Modern CSS
 // ============================================================================
 
 .enhanced-table-container {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  background: var(--surface-primary);
+  background: var(--surface-primary, var(--surface-0));
   border-radius: var(--radius-lg);
   padding: var(--space-4);
+}
+
+/* ================================
+   PRIMENG TABLE SCROLLABLE FIX
+   Ensures horizontal scroll works on all devices
+   ================================ */
+.enhanced-table-container {
+  // PrimeNG DataTable scrollable wrapper
+  :global(.p-datatable-scrollable) {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  :global(.p-datatable-wrapper) {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+
+  // Sticky first column on scroll
+  :global(.p-datatable-scrollable-header-table),
+  :global(.p-datatable-scrollable-body-table) {
+    min-inline-size: max-content;
+  }
+
+  // Touch-friendly scrolling
+  :global(.p-datatable-scrollable-body) {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
 }
 
 /* Toolbar */
@@ -158,7 +188,29 @@ tr.selected {
   flex: 1;
 }
 
-/* Responsive */
+/* ================================
+   RESPONSIVE - Container Queries
+   ================================ */
+@container (width < 768px) {
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    flex-wrap: wrap;
+  }
+
+  // Force card view on narrow containers
+  .enhanced-table-container:not(.mobile-view) {
+    :global(.p-datatable) {
+      display: none;
+    }
+  }
+}
+
+/* Media Query Fallback */
 @media (max-width: 768px) {
   .table-toolbar {
     flex-direction: column;
@@ -168,5 +220,28 @@ tr.selected {
   .toolbar-left,
   .toolbar-right {
     flex-wrap: wrap;
+  }
+}
+
+/* ================================
+   MOBILE CARD VIEW - Touch Optimized
+   ================================ */
+.mobile-view {
+  .mobile-card {
+    // Touch target compliance
+    min-block-size: var(--touch-target-min, 44px);
+    
+    // Safe area padding for bottom cards
+    &:last-child {
+      margin-block-end: max(var(--space-4), env(safe-area-inset-bottom));
+    }
+  }
+
+  .card-actions {
+    // Ensure buttons are touch-friendly
+    button,
+    app-button {
+      min-block-size: 44px;
+    }
   }
 }

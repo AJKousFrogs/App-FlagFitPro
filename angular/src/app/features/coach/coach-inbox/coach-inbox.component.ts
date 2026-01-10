@@ -111,10 +111,7 @@ interface InboxStats {
           </div>
         </div>
 
-        <p-tabs
-          [value]="activeTabIndex"
-          (valueChange)="onTabChange($any($event))"
-        >
+        <p-tabs [value]="activeTabIndex" (valueChange)="onTabChange($event)">
           <p-tabpanel value="0">
             <ng-template pTemplate="header">
               <span>Safety Alerts</span>
@@ -205,7 +202,7 @@ interface InboxStats {
 export class CoachInboxComponent {
   private toastService = inject(ToastService);
 
-  activeTabIndex = 0;
+  activeTabIndex: string | number = "0";
   loading = signal(false);
   items = signal<InboxItem[]>([]);
   stats = signal<InboxStats>({
@@ -244,11 +241,9 @@ export class CoachInboxComponent {
     }, 500);
   }
 
-  onTabChange(event: number | { index: number }): void {
-    if (typeof event === "number") {
-      this.activeTabIndex = event;
-    } else {
-      this.activeTabIndex = event.index;
+  onTabChange(value: string | number | undefined): void {
+    if (value !== undefined) {
+      this.activeTabIndex = value;
     }
   }
 

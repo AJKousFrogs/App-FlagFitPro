@@ -332,7 +332,8 @@ html {
 body {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  min-height: 100vh; /* Fallback for older browsers */
+  min-height: 100dvh; /* Modern: accounts for mobile browser chrome */
   background-color: var(--surface-primary);
   color: var(--color-text-primary);
   /* Base Typography - Unified System */

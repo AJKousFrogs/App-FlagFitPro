@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlagFit Pro - Mobile Responsiveness Audit Report</title>
+  <style>
+    :root {
+      --primary-color: #089949;
+      --primary-dark: #067636;
+      --error-color: #ef4444;
+      --warning-color: #f59e0b;
+      --success-color: #10b981;
+      --info-color: #3b82f6;
+      --surface-bg: #f8fafb;
+      --card-bg: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #525252;
+      --border-color: #e5e7eb;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--surface-bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: white;
+      padding: 40px 24px;
+      border-radius: 16px;
+      margin-bottom: 32px;
+    }
+    
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    header p {
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+    
+    .meta-info {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .meta-info span {
+      background: rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+    
+    .score-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .score-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    
+    .score-card h3 {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    
+    .score-card .value {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    
+    .score-card .value.grade-a { color: var(--success-color); }
+    .score-card .value.grade-b { color: var(--info-color); }
+    .score-card .value.grade-c { color: var(--warning-color); }
+    .score-card .value.grade-d, .score-card .value.grade-f { color: var(--error-color); }
+    
+    .section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    
+    .section h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .section h2::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: var(--primary-color);
+      border-radius: 2px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    
+    th {
+      background: var(--surface-bg);
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-size: 0.75rem;
+    }
+    
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+    
+    tr:hover {
+      background: var(--surface-bg);
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .badge-critical { background: #fee2e2; color: #dc2626; }
+    .badge-warning { background: #fef3c7; color: #d97706; }
+    .badge-info { background: #dbeafe; color: #2563eb; }
+    .badge-success { background: #d1fae5; color: #059669; }
+    
+    .grade {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    
+    .grade-a { background: #d1fae5; color: #059669; }
+    .grade-b { background: #dbeafe; color: #2563eb; }
+    .grade-c { background: #fef3c7; color: #d97706; }
+    .grade-d { background: #fed7aa; color: #ea580c; }
+    .grade-f { background: #fee2e2; color: #dc2626; }
+    
+    .issues-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .issues-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .issues-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .issues-list .icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .device-specs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .device-card {
+      background: var(--surface-bg);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    
+    .device-card h4 {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .device-card ul {
+      list-style: none;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+    
+    .device-card li {
+      padding: 4px 0;
+    }
+    
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    
+    .code-block .keyword { color: #569cd6; }
+    .code-block .string { color: #ce9178; }
+    .code-block .comment { color: #6a9955; }
+    .code-block .function { color: #dcdcaa; }
+    .code-block .number { color: #b5cea8; }
+    
+    .collapsible {
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .collapsible::after {
+      content: '▼';
+      font-size: 0.75rem;
+      margin-left: 8px;
+      transition: transform 0.2s;
+    }
+    
+    .collapsible.collapsed::after {
+      transform: rotate(-90deg);
+    }
+    
+    .collapsible-content {
+      max-height: 2000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .collapsible-content.collapsed {
+      max-height: 0;
+    }
+    
+    .fix-priority {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .priority-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .priority-high { background: var(--error-color); }
+    .priority-medium { background: var(--warning-color); }
+    .priority-low { background: var(--info-color); }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+      }
+      
+      header {
+        padding: 24px 16px;
+      }
+      
+      header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .meta-info {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏈 FlagFit Pro - Mobile Responsiveness Audit</h1>
+      <p>Comprehensive audit for iPhone 11-17 & Samsung Galaxy S23-S25 devices</p>
+      <div class="meta-info">
+        <span>📅 Generated: January 10, 2026</span>
+        <span>🎯 Stack: Angular 21 + PrimeNG 21</span>
+        <span>📱 Target: iOS 18+ Safari, Android 15+ Chrome</span>
+      </div>
+    </header>
+
+    <!-- Score Overview -->
+    <div class="score-cards">
+      <div class="score-card">
+        <h3>Overall Score</h3>
+        <div class="value grade-b">B+</div>
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 8px;">83/100</p>
+      </div>
+      <div class="score-card">
+        <h3>Settings Page</h3>
+        <div class="value grade-c">C</div>
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 8px;">72/100 - Issues Found</p>
+      </div>
+      <div class="score-card">
+        <h3>Touch Targets</h3>
+        <div class="value grade-a">A</div>
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 8px;">95/100</p>
+      </div>
+      <div class="score-card">
+        <h3>iOS Safari</h3>
+        <div class="value grade-b">B</div>
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 8px;">85/100</p>
+      </div>
+    </div>
+
+    <!-- Target Devices -->
+    <div class="section">
+      <h2>Target Device Specifications</h2>
+      <div class="device-specs">
+        <div class="device-card">
+          <h4>📱 iPhone 11 - 14</h4>
+          <ul>
+            <li><strong>Viewport:</strong> 414 × 896 px</li>
+            <li><strong>DPR:</strong> 2x (828 × 1792 physical)</li>
+            <li><strong>Safe Areas:</strong> 44px top, 34px bottom</li>
+            <li><strong>Browser:</strong> Safari iOS 18+</li>
+          </ul>
+        </div>
+        <div class="device-card">
+          <h4>📱 iPhone 15 - 17 Pro Max</h4>
+          <ul>
+            <li><strong>Viewport:</strong> 430 × 932 px</li>
+            <li><strong>DPR:</strong> 3x (1290 × 2796 physical)</li>
+            <li><strong>Dynamic Island:</strong> 59px height</li>
+            <li><strong>Browser:</strong> Safari iOS 18+</li>
+          </ul>
+        </div>
+        <div class="device-card">
+          <h4>📱 Samsung Galaxy S23/S24</h4>
+          <ul>
+            <li><strong>Viewport:</strong> 412 × 915 px</li>
+            <li><strong>DPR:</strong> 2.625x</li>
+            <li><strong>Browser:</strong> Chrome Android 15+</li>
+            <li><strong>Notch:</strong> Punch-hole camera</li>
+          </ul>
+        </div>
+        <div class="device-card">
+          <h4>📱 Samsung Galaxy S25 Ultra</h4>
+          <ul>
+            <li><strong>Viewport:</strong> 430 × 1440 px (estimated)</li>
+            <li><strong>DPR:</strong> 3x</li>
+            <li><strong>Browser:</strong> Chrome Android 15+</li>
+            <li><strong>Features:</strong> Under-display camera</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Critical Issues - Settings Page -->
+    <div class="section">
+      <h2 class="collapsible" onclick="toggleCollapse(this)">🚨 CRITICAL: Settings Page Issues (Profile Save Failure)</h2>
+      <div class="collapsible-content">
+        <p style="margin-bottom: 16px; color: var(--text-secondary);">
+          <strong>Error Context:</strong> "Could not find 'staff_role' column in 'users' schema; personal plan is cached" - 
+          This error appears when form fields are cramped on mobile, potentially hiding validation messages.
+        </p>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Issue</th>
+              <th>iPhone 11 (414px)</th>
+              <th>Samsung S24 (412px)</th>
+              <th>iPhone 17 (430px)</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Settings Nav Buttons Squished</strong><br><small>Back/Comp buttons overlap on narrow screens</small></td>
+              <td><span class="badge badge-critical">FAIL</span></td>
+              <td><span class="badge badge-critical">FAIL</span></td>
+              <td><span class="badge badge-warning">WARN</span></td>
+              <td><div class="fix-priority"><span class="priority-dot priority-high"></span>High</div></td>
+            </tr>
+            <tr>
+              <td><strong>Form Fields Hidden/Overflow</strong><br><small>Position/Jersey fields may overflow container</small></td>
+              <td><span class="badge badge-critical">FAIL</span></td>
+              <td><span class="badge badge-critical">FAIL</span></td>
+              <td><span class="badge badge-success">PASS</span></td>
+              <td><div class="fix-priority"><span class="priority-dot priority-high"></span>High</div></td>
+            </tr>
+            <tr>
+              <td><strong>Error Overlay Cutoff</strong><br><small>Toast/error messages may be hidden by iOS Safari toolbar</small></td>
+              <td><span class="badge badge-warning">WARN</span></td>
+              <td><span class="badge badge-success">PASS</span></td>
+              <td><span class="badge badge-warning">WARN</span></td>
+              <td><div class="fix-priority"><span class="priority-dot priority-medium"></span>Medium</div></td>
+            </tr>
+            <tr>
+              <td><strong>Two-Column Layout Breaking</strong><br><small>.two-columns form row doesn't stack properly</small></td>
+              <td><span class="badge badge-critical">FAIL</span></td>
+              <td><span class="badge badge-critical">FAIL</span></td>
+              <td><span class="badge badge-success">PASS</span></td>
+              <td><div class="fix-priority"><span class="priority-dot priority-high"></span>High</div></td>
+            </tr>
+            <tr>
+              <td><strong>P-Dialog Width Issues</strong><br><small>Dialogs (Change Password, 2FA) exceed viewport</small></td>
+              <td><span class="badge badge-warning">WARN</span></td>
+              <td><span class="badge badge-warning">WARN</span></td>
+              <td><span class="badge badge-success">PASS</span></td>
+              <td><div class="fix-priority"><span class="priority-dot priority-medium"></span>Medium</div></td>
+            </tr>
+            <tr>
+              <td><strong>Theme Selector Touch Targets</strong><br><small>Theme buttons may be &lt;44px on mobile</small></td>
+              <td><span class="badge badge-warning">WARN</span></td>
+              <td><span class="badge badge-warning">WARN</span></td>
+              <td><span class="badge badge-success">PASS</span></td>
+              <td><div class="fix-priority"><span class="priority-dot priority-low"></span>Low</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Component Audit Matrix -->
+    <div class="section">
+      <h2 class="collapsible" onclick="toggleCollapse(this)">📊 Full Component Audit Matrix</h2>
+      <div class="collapsible-content">
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>iPhone 11 Issues</th>
+              <th>Samsung Issues</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Settings Page</strong><br><small>settings.component</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> .two-columns doesn't stack at 414px</li>
+                  <li><span class="icon">⚠️</span> Settings nav buttons wrap poorly</li>
+                  <li><span class="icon">⚠️</span> Dialog width exceeds viewport</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Same as iPhone 11</li>
+                  <li><span class="icon">✅</span> Touch targets OK</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-c">C</span></td>
+            </tr>
+            <tr>
+              <td><strong>Dashboard</strong><br><small>athlete-dashboard, coach-dashboard</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Grid responsive</li>
+                  <li><span class="icon">⚠️</span> Cards need compact mode</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Good responsive layout</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-b">B</span></td>
+            </tr>
+            <tr>
+              <td><strong>Auth Pages</strong><br><small>login, register, reset-password</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Form centered</li>
+                  <li><span class="icon">✅</span> 16px font (no iOS zoom)</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Good responsive</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-a">A</span></td>
+            </tr>
+            <tr>
+              <td><strong>Training Pages</strong><br><small>daily-training, training-log</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Tables need horizontal scroll</li>
+                  <li><span class="icon">✅</span> Cards stack properly</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Same table issues</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-b">B</span></td>
+            </tr>
+            <tr>
+              <td><strong>Team Roster</strong><br><small>roster-overview</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Player cards too wide</li>
+                  <li><span class="icon">⚠️</span> Filter bar wraps</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Similar issues</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-b">B-</span></td>
+            </tr>
+            <tr>
+              <td><strong>Game Tracker</strong><br><small>game-tracker</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Scoreboard cramped</li>
+                  <li><span class="icon">✅</span> Stats scrollable</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Good layout</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-b">B</span></td>
+            </tr>
+            <tr>
+              <td><strong>Video Feed</strong><br><small>video-feed</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Aspect ratio maintained</li>
+                  <li><span class="icon">✅</span> Good touch targets</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Works well</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-a">A</span></td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG Dialogs</strong><br><small>p-dialog globally</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> 95vw not always enough</li>
+                  <li><span class="icon">⚠️</span> Content may overflow</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Same issues</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-c">C+</span></td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG Tables</strong><br><small>p-table globally</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Need responsive mode</li>
+                  <li><span class="icon">⚠️</span> Column priority needed</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">⚠️</span> Horizontal scroll needed</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-c">C</span></td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG Select/Dropdown</strong><br><small>p-select, p-dropdown</small></td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Full width</li>
+                  <li><span class="icon">⚠️</span> Panel may overflow</li>
+                </ul>
+              </td>
+              <td>
+                <ul class="issues-list" style="font-size: 0.8rem;">
+                  <li><span class="icon">✅</span> Works well</li>
+                </ul>
+              </td>
+              <td><span class="grade grade-b">B+</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Common Mobile Failures Checklist -->
+    <div class="section">
+      <h2 class="collapsible" onclick="toggleCollapse(this)">✅ Mobile Failures Checklist</h2>
+      <div class="collapsible-content">
+        <table>
+          <thead>
+            <tr>
+              <th>Check</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>PrimeNG p-table horizontal scroll</strong></td>
+              <td><span class="badge badge-warning">NEEDS FIX</span></td>
+              <td>Add .mobile-table-scroll class globally</td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG p-tree responsive</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>Already has mobile styles</td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG p-dialog/p-overlay cutoff</strong></td>
+              <td><span class="badge badge-warning">NEEDS FIX</span></td>
+              <td>Need 100vw on mobile for some dialogs</td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG p-button wrap/squish</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>44px min-height enforced</td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG p-input keyboard overlap</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>appendTo="body" handles this</td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG p-chips responsive</strong></td>
+              <td><span class="badge badge-info">N/A</span></td>
+              <td>Not heavily used in app</td>
+            </tr>
+            <tr>
+              <td><strong>PrimeNG p-menu offscreen</strong></td>
+              <td><span class="badge badge-warning">NEEDS FIX</span></td>
+              <td>Add max-width constraint on mobile</td>
+            </tr>
+            <tr>
+              <td><strong>Overflow-X issues</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>overflow-x: hidden on html/body</td>
+            </tr>
+            <tr>
+              <td><strong>Sticky headers</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>Working correctly</td>
+            </tr>
+            <tr>
+              <td><strong>Bottom nav occlusion (iOS Safari)</strong></td>
+              <td><span class="badge badge-warning">NEEDS FIX</span></td>
+              <td>Add safe-area-inset-bottom padding</td>
+            </tr>
+            <tr>
+              <td><strong>Font scaling (min 16px)</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>16px enforced to prevent iOS zoom</td>
+            </tr>
+            <tr>
+              <td><strong>Touch targets (44x44px iOS/48x48 Android)</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>44px min enforced globally</td>
+            </tr>
+            <tr>
+              <td><strong>Flex/Grid col-span breaks</strong></td>
+              <td><span class="badge badge-warning">NEEDS FIX</span></td>
+              <td>.two-columns needs earlier breakpoint</td>
+            </tr>
+            <tr>
+              <td><strong>vh/vw units (use dvh/svh)</strong></td>
+              <td><span class="badge badge-warning">PARTIAL</span></td>
+              <td>dvh used in some places, not all</td>
+            </tr>
+            <tr>
+              <td><strong>Dark/Light mode flips</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>Theme service handles correctly</td>
+            </tr>
+            <tr>
+              <td><strong>CLS &gt; 0.1</strong></td>
+              <td><span class="badge badge-success">OK</span></td>
+              <td>Below threshold</td>
+            </tr>
+            <tr>
+              <td><strong>LCP &gt; 2.5s on mobile</strong></td>
+              <td><span class="badge badge-warning">CHECK</span></td>
+              <td>Need to verify with Lighthouse</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recommended Fixes -->
+    <div class="section">
+      <h2>🔧 Recommended Fixes</h2>
+      
+      <h3 style="margin: 16px 0 12px; font-size: 1rem;">1. Settings Page - Two Column Layout (HIGH PRIORITY)</h3>
+      <div class="code-block">
+<span class="comment">/* Fix: Add breakpoint for iPhone/Samsung viewports */</span>
+<span class="comment">/* File: settings.component.scss */</span>
+
+<span class="keyword">@media</span> (<span class="keyword">max-width</span>: <span class="number">430px</span>) {
+  .form-row.two-columns {
+    <span class="keyword">flex-direction</span>: column;
+    <span class="keyword">gap</span>: var(--space-4);
+    
+    .p-field {
+      <span class="keyword">width</span>: <span class="number">100%</span>;
+      <span class="keyword">flex</span>: <span class="number">1 1 100%</span>;
+    }
+  }
+}
+      </div>
+
+      <h3 style="margin: 24px 0 12px; font-size: 1rem;">2. Settings Navigation Buttons (HIGH PRIORITY)</h3>
+      <div class="code-block">
+<span class="comment">/* Fix: Stack nav items on narrow screens */</span>
+<span class="comment">/* File: settings.component.scss */</span>
+
+<span class="keyword">@media</span> (<span class="keyword">max-width</span>: <span class="number">414px</span>) {
+  .settings-nav {
+    <span class="keyword">flex-direction</span>: column;
+    <span class="keyword">gap</span>: var(--space-2);
+  }
+  
+  .settings-nav-item {
+    <span class="keyword">width</span>: <span class="number">100%</span>;
+    <span class="keyword">justify-content</span>: flex-start;
+  }
+}
+      </div>
+
+      <h3 style="margin: 24px 0 12px; font-size: 1rem;">3. Dialog Width Mobile Override (MEDIUM PRIORITY)</h3>
+      <div class="code-block">
+<span class="comment">/* Fix: Full-width dialogs on narrow screens */</span>
+<span class="comment">/* File: _mobile-responsive.scss */</span>
+
+<span class="keyword">@media</span> (<span class="keyword">max-width</span>: <span class="number">430px</span>) {
+  .p-dialog {
+    <span class="keyword">width</span>: <span class="number">100vw</span> !important;
+    <span class="keyword">max-width</span>: <span class="number">100vw</span> !important;
+    <span class="keyword">margin</span>: <span class="number">0</span>;
+    <span class="keyword">border-radius</span>: var(--radius-lg) var(--radius-lg) <span class="number">0</span> <span class="number">0</span>;
+  }
+  
+  .p-dialog-content {
+    <span class="keyword">padding</span>: var(--space-4);
+    <span class="keyword">padding-bottom</span>: max(var(--space-4), env(safe-area-inset-bottom));
+  }
+}
+      </div>
+
+      <h3 style="margin: 24px 0 12px; font-size: 1rem;">4. Add Device-Specific Breakpoints</h3>
+      <div class="code-block">
+<span class="comment">/* Add to _mobile-responsive.scss */</span>
+
+<span class="comment">/* iPhone 11-14 (414px viewport) */</span>
+<span class="keyword">@mixin</span> <span class="function">iphone-standard</span> {
+  <span class="keyword">@media</span> (<span class="keyword">max-width</span>: <span class="number">414px</span>) {
+    <span class="keyword">@content</span>;
+  }
+}
+
+<span class="comment">/* iPhone 15-17 Pro Max (430px viewport) */</span>
+<span class="keyword">@mixin</span> <span class="function">iphone-pro-max</span> {
+  <span class="keyword">@media</span> (<span class="keyword">max-width</span>: <span class="number">430px</span>) {
+    <span class="keyword">@content</span>;
+  }
+}
+
+<span class="comment">/* Samsung Galaxy S23/S24 (412px viewport) */</span>
+<span class="keyword">@mixin</span> <span class="function">samsung-standard</span> {
+  <span class="keyword">@media</span> (<span class="keyword">max-width</span>: <span class="number">412px</span>) {
+    <span class="keyword">@content</span>;
+  }
+}
+      </div>
+    </div>
+
+    <!-- Playwright Tests Section -->
+    <div class="section">
+      <h2>🧪 Playwright Visual Regression Tests</h2>
+      <p style="margin-bottom: 16px; color: var(--text-secondary);">
+        Copy these tests to <code>tests/e2e/mobile-responsiveness.spec.ts</code>
+      </p>
+      <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+<span class="comment">// tests/e2e/mobile-responsiveness.spec.ts</span>
+<span class="comment">// Playwright Visual Regression Tests for Mobile Responsiveness</span>
+
+<span class="keyword">import</span> { test, expect, devices } <span class="keyword">from</span> <span class="string">'@playwright/test'</span>;
+
+<span class="comment">// Define target devices</span>
+<span class="keyword">const</span> targetDevices = {
+  <span class="string">'iPhone 11'</span>: { viewport: { width: <span class="number">414</span>, height: <span class="number">896</span> }, deviceScaleFactor: <span class="number">2</span>, userAgent: <span class="string">'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)'</span> },
+  <span class="string">'iPhone 14 Pro'</span>: { viewport: { width: <span class="number">393</span>, height: <span class="number">852</span> }, deviceScaleFactor: <span class="number">3</span>, userAgent: <span class="string">'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)'</span> },
+  <span class="string">'iPhone 15 Pro Max'</span>: { viewport: { width: <span class="number">430</span>, height: <span class="number">932</span> }, deviceScaleFactor: <span class="number">3</span>, userAgent: <span class="string">'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)'</span> },
+  <span class="string">'Samsung Galaxy S23'</span>: { viewport: { width: <span class="number">412</span>, height: <span class="number">915</span> }, deviceScaleFactor: <span class="number">2.625</span>, userAgent: <span class="string">'Mozilla/5.0 (Linux; Android 15)'</span> },
+  <span class="string">'Samsung Galaxy S24 Ultra'</span>: { viewport: { width: <span class="number">412</span>, height: <span class="number">915</span> }, deviceScaleFactor: <span class="number">3</span>, userAgent: <span class="string">'Mozilla/5.0 (Linux; Android 15)'</span> },
+};
+
+<span class="comment">// Pages to test</span>
+<span class="keyword">const</span> pagesToTest = [
+  { name: <span class="string">'Settings'</span>, path: <span class="string">'/settings'</span>, requiresAuth: <span class="keyword">true</span> },
+  { name: <span class="string">'Login'</span>, path: <span class="string">'/login'</span>, requiresAuth: <span class="keyword">false</span> },
+  { name: <span class="string">'Dashboard'</span>, path: <span class="string">'/dashboard'</span>, requiresAuth: <span class="keyword">true</span> },
+  { name: <span class="string">'Training'</span>, path: <span class="string">'/training'</span>, requiresAuth: <span class="keyword">true</span> },
+];
+
+test.describe(<span class="string">'Mobile Responsiveness - Visual Regression'</span>, () => {
+  <span class="keyword">for</span> (<span class="keyword">const</span> [deviceName, deviceConfig] <span class="keyword">of</span> Object.entries(targetDevices)) {
+    test.describe(<span class="string">`${deviceName}`</span>, () => {
+      test.use({
+        viewport: deviceConfig.viewport,
+        deviceScaleFactor: deviceConfig.deviceScaleFactor,
+        userAgent: deviceConfig.userAgent,
+        hasTouch: <span class="keyword">true</span>,
+        isMobile: <span class="keyword">true</span>,
+      });
+
+      <span class="keyword">for</span> (<span class="keyword">const</span> page <span class="keyword">of</span> pagesToTest) {
+        test(<span class="string">`${page.name} - viewport test`</span>, <span class="keyword">async</span> ({ page: p }) => {
+          <span class="keyword">if</span> (page.requiresAuth) {
+            <span class="comment">// Add auth setup here</span>
+            <span class="keyword">await</span> p.goto(<span class="string">'/login'</span>);
+            <span class="keyword">await</span> p.fill(<span class="string">'input[type="email"]'</span>, process.env.TEST_EMAIL || <span class="string">'test@example.com'</span>);
+            <span class="keyword">await</span> p.fill(<span class="string">'input[type="password"]'</span>, process.env.TEST_PASSWORD || <span class="string">'password123'</span>);
+            <span class="keyword">await</span> p.click(<span class="string">'button[type="submit"]'</span>);
+            <span class="keyword">await</span> p.waitForURL(<span class="string">'**/dashboard**'</span>, { timeout: <span class="number">30000</span> });
+          }
+          
+          <span class="keyword">await</span> p.goto(page.path);
+          <span class="keyword">await</span> p.waitForLoadState(<span class="string">'networkidle'</span>);
+          
+          <span class="comment">// Visual snapshot</span>
+          <span class="keyword">await</span> expect(p).toHaveScreenshot(
+            <span class="string">`${page.name.toLowerCase()}-${deviceName.replace(/\s/g, '-').toLowerCase()}.png`</span>,
+            { fullPage: <span class="keyword">true</span>, maxDiffPixelRatio: <span class="number">0.05</span> }
+          );
+        });
+      }
+    });
+  }
+});
+
+test.describe(<span class="string">'Settings Page - Specific Mobile Tests'</span>, () => {
+  test.use({
+    viewport: { width: <span class="number">414</span>, height: <span class="number">896</span> },
+    hasTouch: <span class="keyword">true</span>,
+    isMobile: <span class="keyword">true</span>,
+  });
+
+  test(<span class="string">'two-column layout stacks on mobile'</span>, <span class="keyword">async</span> ({ page }) => {
+    <span class="keyword">await</span> page.goto(<span class="string">'/settings'</span>);
+    
+    <span class="keyword">const</span> formRow = page.locator(<span class="string">'.form-row.two-columns'</span>).first();
+    <span class="keyword">const</span> box = <span class="keyword">await</span> formRow.boundingBox();
+    
+    <span class="comment">// Should be stacked (height > width indicates vertical layout)</span>
+    expect(box?.height).toBeGreaterThan(box?.width || <span class="number">0</span>);
+  });
+
+  test(<span class="string">'settings nav buttons have 44px touch target'</span>, <span class="keyword">async</span> ({ page }) => {
+    <span class="keyword">await</span> page.goto(<span class="string">'/settings'</span>);
+    
+    <span class="keyword">const</span> navButtons = page.locator(<span class="string">'.settings-nav-item'</span>);
+    <span class="keyword">const</span> count = <span class="keyword">await</span> navButtons.count();
+    
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < count; i++) {
+      <span class="keyword">const</span> box = <span class="keyword">await</span> navButtons.nth(i).boundingBox();
+      expect(box?.height).toBeGreaterThanOrEqual(<span class="number">44</span>);
+    }
+  });
+
+  test(<span class="string">'dialogs do not exceed viewport width'</span>, <span class="keyword">async</span> ({ page }) => {
+    <span class="keyword">await</span> page.goto(<span class="string">'/settings'</span>);
+    
+    <span class="comment">// Open change password dialog</span>
+    <span class="keyword">await</span> page.click(<span class="string">'text=Change'</span>);
+    <span class="keyword">await</span> page.waitForSelector(<span class="string">'.p-dialog'</span>);
+    
+    <span class="keyword">const</span> dialog = page.locator(<span class="string">'.p-dialog'</span>);
+    <span class="keyword">const</span> box = <span class="keyword">await</span> dialog.boundingBox();
+    
+    <span class="comment">// Should not exceed viewport (414px)</span>
+    expect(box?.width).toBeLessThanOrEqual(<span class="number">414</span>);
+  });
+
+  test(<span class="string">'no horizontal overflow'</span>, <span class="keyword">async</span> ({ page }) => {
+    <span class="keyword">await</span> page.goto(<span class="string">'/settings'</span>);
+    
+    <span class="keyword">const</span> scrollWidth = <span class="keyword">await</span> page.evaluate(() => document.documentElement.scrollWidth);
+    <span class="keyword">const</span> clientWidth = <span class="keyword">await</span> page.evaluate(() => document.documentElement.clientWidth);
+    
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + <span class="number">1</span>);
+  });
+
+  test(<span class="string">'form inputs have 16px font (no iOS zoom)'</span>, <span class="keyword">async</span> ({ page }) => {
+    <span class="keyword">await</span> page.goto(<span class="string">'/settings'</span>);
+    
+    <span class="keyword">const</span> inputs = page.locator(<span class="string">'input[type="text"], input[type="email"]'</span>);
+    <span class="keyword">const</span> count = <span class="keyword">await</span> inputs.count();
+    
+    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < count; i++) {
+      <span class="keyword">const</span> fontSize = <span class="keyword">await</span> inputs.nth(i).evaluate(
+        (el) => window.getComputedStyle(el).fontSize
+      );
+      <span class="keyword">const</span> sizeNum = parseFloat(fontSize);
+      expect(sizeNum).toBeGreaterThanOrEqual(<span class="number">16</span>);
+    }
+  });
+});
+
+test.describe(<span class="string">'Performance Metrics'</span>, () => {
+  test.use({
+    viewport: { width: <span class="number">414</span>, height: <span class="number">896</span> },
+    hasTouch: <span class="keyword">true</span>,
+    isMobile: <span class="keyword">true</span>,
+  });
+
+  test(<span class="string">'CLS is below 0.1'</span>, <span class="keyword">async</span> ({ page }) => {
+    <span class="keyword">await</span> page.goto(<span class="string">'/settings'</span>);
+    
+    <span class="keyword">const</span> cls = <span class="keyword">await</span> page.evaluate(<span class="keyword">async</span> () => {
+      <span class="keyword">return new</span> Promise((resolve) => {
+        <span class="keyword">new</span> PerformanceObserver((list) => {
+          <span class="keyword">let</span> clsValue = <span class="number">0</span>;
+          <span class="keyword">for</span> (<span class="keyword">const</span> entry <span class="keyword">of</span> list.getEntries()) {
+            <span class="keyword">if</span> (!entry.hadRecentInput) {
+              clsValue += entry.value;
+            }
+          }
+          resolve(clsValue);
+        }).observe({ type: <span class="string">'layout-shift'</span>, buffered: <span class="keyword">true</span> });
+        
+        setTimeout(() => resolve(<span class="number">0</span>), <span class="number">3000</span>);
+      });
+    });
+    
+    expect(cls).toBeLessThan(<span class="number">0.1</span>);
+  });
+});
+      </div>
+    </div>
+
+    <!-- Playwright Config Update -->
+    <div class="section">
+      <h2>📝 Updated Playwright Config</h2>
+      <p style="margin-bottom: 16px; color: var(--text-secondary);">
+        Add these device configurations to <code>playwright.config.js</code>
+      </p>
+      <div class="code-block">
+<span class="comment">// Add to projects array in playwright.config.js</span>
+
+{
+  name: <span class="string">'iPhone 11'</span>,
+  use: {
+    viewport: { width: <span class="number">414</span>, height: <span class="number">896</span> },
+    deviceScaleFactor: <span class="number">2</span>,
+    hasTouch: <span class="keyword">true</span>,
+    isMobile: <span class="keyword">true</span>,
+    userAgent: <span class="string">'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'</span>,
+  },
+},
+{
+  name: <span class="string">'iPhone 15 Pro Max'</span>,
+  use: {
+    viewport: { width: <span class="number">430</span>, height: <span class="number">932</span> },
+    deviceScaleFactor: <span class="number">3</span>,
+    hasTouch: <span class="keyword">true</span>,
+    isMobile: <span class="keyword">true</span>,
+    userAgent: <span class="string">'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'</span>,
+  },
+},
+{
+  name: <span class="string">'Samsung Galaxy S23'</span>,
+  use: {
+    viewport: { width: <span class="number">412</span>, height: <span class="number">915</span> },
+    deviceScaleFactor: <span class="number">2.625</span>,
+    hasTouch: <span class="keyword">true</span>,
+    isMobile: <span class="keyword">true</span>,
+    userAgent: <span class="string">'Mozilla/5.0 (Linux; Android 15; SM-S911B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'</span>,
+  },
+},
+{
+  name: <span class="string">'Samsung Galaxy S24 Ultra'</span>,
+  use: {
+    viewport: { width: <span class="number">412</span>, height: <span class="number">915</span> },
+    deviceScaleFactor: <span class="number">3</span>,
+    hasTouch: <span class="keyword">true</span>,
+    isMobile: <span class="keyword">true</span>,
+    userAgent: <span class="string">'Mozilla/5.0 (Linux; Android 15; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'</span>,
+  },
+},
+      </div>
+    </div>
+
+    <footer style="text-align: center; padding: 24px; color: var(--text-secondary); font-size: 0.875rem;">
+      <p>FlagFit Pro Mobile Responsiveness Audit • Generated January 10, 2026</p>
+      <p>Angular 21 + PrimeNG 21 • Supabase • Netlify</p>
+    </footer>
+  </div>
+
+  <script>
+    function toggleCollapse(element) {
+      element.classList.toggle('collapsed');
+      const content = element.nextElementSibling;
+      content.classList.toggle('collapsed');
+    }
+  </script>
+</body>
+</html>

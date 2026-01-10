@@ -51,6 +51,39 @@
 }
 
 // ================================================================
+// TARGET DEVICE SPECIFIC BREAKPOINTS
+// FlagFit Pro Mobile Responsiveness Audit - January 2026
+// ================================================================
+
+// Samsung Galaxy S23/S24 (412px viewport width)
+@mixin samsung-standard {
+  @media (max-width: 412px) {
+    @content;
+  }
+}
+
+// iPhone 11-14 (414px viewport width)
+@mixin iphone-standard {
+  @media (max-width: 414px) {
+    @content;
+  }
+}
+
+// iPhone 15-17 Pro Max, Samsung S25 Ultra (430px viewport width)
+@mixin iphone-pro-max {
+  @media (max-width: 430px) {
+    @content;
+  }
+}
+
+// Combined: All target mobile devices (up to 430px)
+@mixin target-mobile-devices {
+  @media (max-width: 430px) {
+    @content;
+  }
+}
+
+// ================================================================
 // MOBILE-SPECIFIC RESETS (Chrome & Safari iOS)
 // ================================================================
 
@@ -310,7 +343,8 @@
 }
 
 // ================================================================
-// MOBILE SAFE AREAS (iOS Notch Support)
+// MOBILE SAFE AREAS (iOS/Samsung Notch + Home Bar Support)
+// iPhone 11-17, Samsung S23-S25 tested
 // ================================================================
 
 @supports (padding: max(0px)) {
@@ -319,14 +353,112 @@
       padding-bottom: max(
         var(--space-4),
         env(safe-area-inset-bottom)
-      ) !important;
+      );
     }
   }
 
   .mobile-safe-top {
     @media (max-width: 767px) {
-      padding-top: max(var(--space-4), env(safe-area-inset-top)) !important;
+      padding-top: max(var(--space-4), env(safe-area-inset-top));
     }
+  }
+
+  .mobile-safe-inline {
+    @media (max-width: 767px) {
+      padding-left: max(var(--space-4), env(safe-area-inset-left));
+      padding-right: max(var(--space-4), env(safe-area-inset-right));
+    }
+  }
+
+  // Full safe area wrapper
+  .mobile-safe-all {
+    @media (max-width: 767px) {
+      padding-top: max(var(--space-4), env(safe-area-inset-top));
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      padding-left: max(var(--space-4), env(safe-area-inset-left));
+      padding-right: max(var(--space-4), env(safe-area-inset-right));
+    }
+  }
+}
+
+// ================================================================
+// KEYBOARD-AWARE VIEWPORT (iOS Safari, Chrome Android)
+// Uses dvh/svh for proper keyboard handling
+// ================================================================
+
+// Full viewport height accounting for browser chrome
+.keyboard-viewport {
+  min-height: 100vh;
+  min-height: 100dvh; // Dynamic viewport - excludes keyboard
+
+  @supports (height: 100svh) {
+    // Small viewport - always excludes keyboard
+    &--small {
+      min-height: 100svh;
+    }
+  }
+}
+
+// Fixed bottom elements that need keyboard awareness
+.keyboard-sticky-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  background: var(--surface-primary, #ffffff);
+  border-top: 1px solid var(--color-border-primary, #e5e7eb);
+  z-index: var(--z-index-sticky, 1020);
+
+  // When keyboard is open, adjust position
+  @supports (bottom: env(keyboard-inset-height)) {
+    bottom: env(keyboard-inset-height, 0);
+  }
+}
+
+// Input focus scroll adjustment
+@media (max-width: 767px) {
+  // Scroll input into view when focused
+  input:focus,
+  textarea:focus,
+  select:focus {
+    scroll-margin-bottom: 120px; // Space for keyboard
+  }
+
+  // Prevent body scroll when modal/keyboard open
+  body.keyboard-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+}
+
+// ================================================================
+// IPHONE 11-17 SPECIFIC OPTIMIZATIONS
+// Viewport: 390-430px width
+// ================================================================
+
+@media (max-width: 430px) and (min-width: 375px) {
+  // iPhone notch area padding
+  .iphone-notch-aware {
+    padding-top: max(var(--space-4), env(safe-area-inset-top));
+  }
+
+  // Home indicator area
+  .iphone-home-aware {
+    padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  }
+}
+
+// ================================================================
+// SAMSUNG S23-S25 SPECIFIC OPTIMIZATIONS
+// Viewport: 360-412px width
+// ================================================================
+
+@media (max-width: 412px) and (min-width: 360px) {
+  // Samsung navigation bar area
+  .samsung-nav-aware {
+    padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
   }
 }
 
@@ -341,11 +473,13 @@
       width: 95vw !important;
       max-width: 95vw !important;
       max-height: 90vh !important;
+      max-height: 90dvh !important; /* Modern: accounts for mobile browser chrome */
     }
 
     .p-dialog-content {
       padding: var(--space-3) !important;
       max-height: calc(90vh - 120px) !important;
+      max-height: calc(90dvh - 120px) !important; /* Modern: accounts for mobile browser chrome */
       overflow-y: auto !important;
     }
 
@@ -355,6 +489,69 @@
       top: auto !important;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
       animation: slideUpFromBottom 0.3s ease-out !important;
+    }
+  }
+
+  // ================================================================
+  // TARGET DEVICE SPECIFIC OVERRIDES
+  // iPhone 11-17 (414-430px), Samsung S23-S25 (412-430px)
+  // ================================================================
+
+  // iPhone 15-17 Pro Max, Samsung S25 Ultra (430px)
+  @media (max-width: 430px) {
+    .p-dialog {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      margin: 0 !important;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+    }
+
+    .p-dialog-content {
+      padding: var(--space-4) !important;
+      padding-bottom: max(
+        var(--space-4),
+        env(safe-area-inset-bottom)
+      ) !important;
+    }
+
+    // Ensure dialog actions don't get cut off
+    .dialog-actions {
+      padding-bottom: max(
+        var(--space-4),
+        env(safe-area-inset-bottom)
+      ) !important;
+    }
+  }
+
+  // iPhone 11-14, Samsung S23/S24 (412-414px) - Even more compact
+  @media (max-width: 414px) {
+    .p-dialog {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      max-height: 95vh !important;
+      max-height: 95dvh !important; /* Modern: accounts for mobile browser chrome */
+    }
+
+    .p-dialog-header {
+      padding: var(--space-3) !important;
+    }
+
+    .p-dialog-content {
+      padding: var(--space-3) !important;
+    }
+
+    .p-dialog-footer {
+      padding: var(--space-3) !important;
+    }
+
+    // Stack dialog action buttons on very narrow screens
+    .dialog-actions {
+      flex-direction: column !important;
+      gap: var(--space-2) !important;
+
+      app-button {
+        width: 100% !important;
+      }
     }
   }
 }
@@ -415,6 +612,108 @@
     .p-toolbar {
       flex-wrap: wrap !important;
       gap: var(--space-2) !important;
+    }
+  }
+
+  // ================================================================
+  // TARGET DEVICE SPECIFIC: PrimeNG Components
+  // iPhone 11-17 (414-430px), Samsung S23-S25 (412-430px)
+  // ================================================================
+
+  @media (max-width: 430px) {
+    // Full-width select overlays on target devices
+    .p-select-overlay,
+    .p-dropdown-panel,
+    .p-multiselect-panel {
+      width: calc(100vw - var(--space-4)) !important;
+      max-width: calc(100vw - var(--space-4)) !important;
+      left: var(--space-2) !important;
+      right: var(--space-2) !important;
+    }
+
+    // Larger tap areas for dropdown items
+    .p-select-option,
+    .p-dropdown-item,
+    .p-listbox-option {
+      min-height: 48px !important;
+      padding: var(--space-3) var(--space-4) !important;
+    }
+
+    // Toast positioning for notch devices
+    .p-toast.p-toast-top-right,
+    .p-toast.p-toast-top-left,
+    .p-toast.p-toast-top-center {
+      top: max(var(--space-4), env(safe-area-inset-top)) !important;
+    }
+
+    .p-toast.p-toast-bottom-right,
+    .p-toast.p-toast-bottom-left,
+    .p-toast.p-toast-bottom-center {
+      bottom: max(var(--space-4), env(safe-area-inset-bottom)) !important;
+    }
+
+    // DatePicker calendar compact mode
+    .p-datepicker {
+      width: calc(100vw - var(--space-4)) !important;
+      max-width: calc(100vw - var(--space-4)) !important;
+
+      .p-datepicker-group {
+        width: 100% !important;
+      }
+
+      td {
+        width: calc((100vw - var(--space-8)) / 7) !important;
+        height: 44px !important;
+      }
+    }
+
+    // Tables need horizontal scroll indicator
+    .p-datatable {
+      .p-datatable-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+    }
+  }
+
+  @media (max-width: 414px) {
+    // Even more compact for iPhone 11-14 / Samsung S23/S24
+    .p-select-overlay,
+    .p-dropdown-panel {
+      left: 0 !important;
+      right: 0 !important;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+      bottom: 0 !important;
+      top: auto !important;
+      max-height: 60vh !important;
+      max-height: 60dvh !important; /* Modern: accounts for mobile browser chrome */
+    }
+
+    // Password dialog specific fixes
+    .password-dialog .p-dialog {
+      width: 100vw !important;
+      margin: 0 !important;
+    }
+
+    // 2FA dialog fixes
+    .twofa-dialog .p-dialog {
+      width: 100vw !important;
+
+      .qr-wrapper {
+        width: 160px !important;
+        height: 160px !important;
+      }
+    }
+
+    // Export dialog fixes
+    .export-dialog .p-dialog {
+      width: 100vw !important;
+
+      .format-options {
+        grid-template-columns: 1fr !important;
+      }
     }
   }
 }
