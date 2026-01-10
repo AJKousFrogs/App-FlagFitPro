@@ -643,7 +643,9 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@use "styles/mixins" as *;
+
+@include respond-to(md) {
   .exercisedb-manager {
     padding: var(--space-4);
   }

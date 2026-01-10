@@ -1317,7 +1317,9 @@
    RESPONSIVE
    ======================================== */
 
-@media (max-width: 768px) {
+@use "styles/mixins" as *;
+
+@include respond-to(md) {
   .chat-container {
     height: calc(100vh - 60px);
   }

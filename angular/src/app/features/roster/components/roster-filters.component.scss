@@ -92,7 +92,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .search-filter-bar {
     flex-direction: column;
     align-items: stretch;

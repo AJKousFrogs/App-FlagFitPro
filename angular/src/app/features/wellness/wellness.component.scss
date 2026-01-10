@@ -215,7 +215,7 @@
 }
 
 // ===== Responsive =====
-@media (max-width: 768px) {
+@media respond-to(md) {
   .charts-grid {
     grid-template-columns: 1fr;
   }

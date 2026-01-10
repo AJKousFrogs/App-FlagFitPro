@@ -41,7 +41,7 @@
 // PrimeNG tabs overrides moved to _brand-overrides.scss (global tabs styling)
 
 /* Responsive */
-@media (max-width: 768px) {
+@media respond-to(md) {
   .curation-page {
     padding: var(--space-4);
   }

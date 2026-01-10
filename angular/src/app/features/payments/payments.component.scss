@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 .payments-page {
   padding: var(--space-4);
   max-width: 900px;
@@ -368,7 +370,7 @@
 }
 
 // Responsive
-@media (max-width: 768px) {
+@media respond-to(md) {
   .payments-page {
     padding: var(--space-3);
   }

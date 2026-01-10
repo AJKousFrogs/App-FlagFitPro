@@ -686,7 +686,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .hero-section {
     min-height: auto;
     padding: var(--space-20) 0 var(--space-16);

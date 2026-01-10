@@ -84,7 +84,7 @@
   text-decoration: underline;
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .error-code {
     font-size: var(--font-h1-size);
   }

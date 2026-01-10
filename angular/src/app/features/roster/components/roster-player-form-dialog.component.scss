@@ -39,7 +39,7 @@
   width: 100%;
 }
 
-@media (max-width: 768px) {
+@media respond-to(md) {
   .form-row {
     flex-direction: column;
   }

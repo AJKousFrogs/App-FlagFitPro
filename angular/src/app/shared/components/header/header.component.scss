@@ -301,7 +301,7 @@
   transition: background-color var(--motion-fast) var(--ease-standard);
 
   &:hover {
-    background: var(--primitive-neutral-100);
+    background: var(--surface-hover);
   }
 }
 
@@ -312,8 +312,8 @@
   min-width: var(--space-8);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
-  background: var(--primitive-neutral-100);
-  border: 1px solid var(--primitive-neutral-200);
+  background: var(--surface-ground);
+  border: 1px solid var(--surface-border);
 
   // Visual indicator based on theme
   position: relative;
