@@ -448,7 +448,7 @@ router.post(
 // ERROR HANDLING
 // =============================================================================
 
-router.use("*", (req, res) => {
+router.use( (req, res) => {
   res.status(404).json({
     success: false,
     error: "Wellness endpoint not found",

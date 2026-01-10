@@ -704,10 +704,37 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         this.logger.info("User profile saved successfully:", upsertedUser);
 
-        // Update team membership if team was selected
-        if (settings.profile.teamId) {
+        // ALWAYS update team_members if user has an existing membership
+        // This ensures position/jersey stay in sync even without team selection
+        const { data: existingTeamMember } = await this.supabaseService.client
+          .from("team_members")
+          .select("id, team_id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (existingTeamMember) {
+          // User has existing team membership - update position/jersey
+          const parsedJersey = settings.profile.jerseyNumber
+            ? parseInt(settings.profile.jerseyNumber, 10)
+            : null;
+
+          await this.supabaseService.client
+            .from("team_members")
+            .update({
+              position: settings.profile.position || null,
+              jersey_number: parsedJersey,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", existingTeamMember.id);
+
           this.logger.info(
-            "Updating team membership:",
+            "Updated existing team membership:",
+            existingTeamMember.team_id,
+          );
+        } else if (settings.profile.teamId) {
+          // No existing membership but team was selected - create new
+          this.logger.info(
+            "Creating team membership:",
             settings.profile.teamId,
           );
           await this.updateTeamMembership(

@@ -617,7 +617,8 @@ router.post(
 // ERROR HANDLING
 // =============================================================================
 
-router.use("*", (req, res) => {
+// Catch-all 404 handler (must be last route)
+router.use((req, res) => {
   res.status(404).json({
     success: false,
     error: "Training endpoint not found",
