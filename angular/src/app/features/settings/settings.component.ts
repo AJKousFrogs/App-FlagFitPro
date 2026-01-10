@@ -686,50 +686,67 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
         this.logger.info("Updating users table with:", updateData);
 
-        // CRITICAL FIX: Only UPDATE existing users to avoid password_hash NOT NULL constraint
-        // Users should be created during onboarding/registration with proper password_hash
-        // Settings page should only update existing user records
-        
-        this.logger.info("Attempting to update user profile with:", updateData);
-        
-        const { data: upsertedUser, error: profileError } =
-          await this.supabaseService.client
+        // CRITICAL: Check if user exists, then INSERT or UPDATE accordingly
+        // This ensures user record is created if it doesn't exist
+        const { data: existingUser } = await this.supabaseService.client
+          .from("users")
+          .select("id")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        this.logger.info("User exists check:", { exists: !!existingUser });
+
+        let upsertedUser;
+        let profileError;
+
+        if (existingUser) {
+          // User exists - UPDATE
+          this.logger.info("User exists in users table, updating...");
+          const result = await this.supabaseService.client
             .from("users")
             .update(updateData)
             .eq("id", user.id)
             .select()
             .maybeSingle();
+          
+          upsertedUser = result.data;
+          profileError = result.error;
+        } else {
+          // User doesn't exist - INSERT with required fields
+          this.logger.info("User not in users table, inserting...");
+          const insertData = {
+            ...updateData,
+            id: user.id,
+            created_at: new Date().toISOString(),
+            // Don't include password_hash - it's nullable now and managed by Supabase Auth
+          };
+          
+          const result = await this.supabaseService.client
+            .from("users")
+            .insert(insertData)
+            .select()
+            .maybeSingle();
+          
+          upsertedUser = result.data;
+          profileError = result.error;
+        }
 
         if (profileError) {
           this.logger.error(
-            "User profile update failed:",
+            "User profile save failed:",
             profileError.message,
             profileError,
           );
-          
-          // If user doesn't exist in users table, they need to complete onboarding first
-          if (profileError.message?.includes("password_hash") || 
-              profileError.message?.includes("not-null constraint")) {
-            this.toastService.error(
-              "Please complete your profile setup first. Go to your Profile page to get started.",
-            );
-          } else {
-            this.toastService.error(
-              `Failed to save profile: ${profileError.message}`,
-            );
-          }
+          this.toastService.error(
+            `Failed to save profile: ${profileError.message}`,
+          );
           throw profileError;
         }
 
-        if (!upsertedUser) {
-          // User doesn't exist in users table yet - they need to complete onboarding
-          this.logger.warn("User not found in users table - onboarding may not be complete");
-          this.toastService.info(
-            "Profile setup incomplete. Please visit your Profile page to complete setup.",
-          );
-          // Don't throw error - allow other settings to save
+        if (upsertedUser) {
+          this.logger.info("User profile saved successfully:", upsertedUser);
         } else {
-          this.logger.info("User profile updated successfully:", upsertedUser);
+          this.logger.warn("User profile save returned no data");
         }
 
         // ALWAYS update team_members if user has an existing membership
