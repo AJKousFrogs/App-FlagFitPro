@@ -1,6 +1,4 @@
- "styles/mixins" as *;
-
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 /* ================================================================
    FLAGFIT PRO - STANDARDIZED COMPONENT STYLES
@@ -89,7 +87,7 @@
     font-size: var(--font-body-sm-size);
     min-height: 36px;
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       min-height: var(--touch-target-min, 44px);
     }
   }
@@ -122,7 +120,7 @@
       min-width: 36px;
       min-height: 36px;
 
-      @media respond-to(sm) {
+      @include respond-to(sm) {
         min-width: var(--touch-target-min, 44px);
         min-height: var(--touch-target-min, 44px);
       }
@@ -471,7 +469,7 @@
   }
 
   /* Mobile: stack or 2 columns */
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     grid-template-columns: repeat(2, 1fr);
 
     &.cols-1-mobile {
@@ -497,7 +495,7 @@
     width: 100%;
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     grid-template-columns: repeat(2, 1fr);
   }
 }

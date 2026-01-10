@@ -378,7 +378,7 @@
   // RESPONSIVE DESIGN
   // ============================================================================
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     .login-page {
       padding: var(--space-4, 1rem);
       align-items: flex-start;

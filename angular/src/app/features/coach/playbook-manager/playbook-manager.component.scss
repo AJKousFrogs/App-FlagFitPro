@@ -1,4 +1,4 @@
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 .playbook-manager-page {
   padding: var(--space-4);
@@ -498,7 +498,7 @@
 }
 
 // Responsive
-@media respond-to(md) {
+@include respond-to(md) {
   .playbook-manager-page {
     padding: var(--space-3);
   }

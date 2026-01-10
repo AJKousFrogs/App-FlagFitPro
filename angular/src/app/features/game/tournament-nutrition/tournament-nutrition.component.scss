@@ -1,9 +1,4 @@
- "styles/mixins" as *;
-
- "styles/mixins" as *;
-
- "styles/mixins" as *;
-
+@use "styles/mixins" as *;
 @use "app/shared/styles/animations" as *;
 
 // ============================================================================
@@ -1542,7 +1537,7 @@
 }
 
 // ===== RESPONSIVE =====
-@media respond-to(lg) {
+@include respond-to(lg) {
   .packing-list {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-5);
@@ -1561,7 +1556,7 @@
   }
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .tournament-nutrition-page {
     padding: var(--space-4);
   }
@@ -1622,7 +1617,7 @@
   }
 }
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .hydration-buttons {
     grid-template-columns: repeat(2, 1fr);
   }

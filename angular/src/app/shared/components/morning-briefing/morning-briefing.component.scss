@@ -90,11 +90,11 @@
   gap: var(--space-3);
   margin-bottom: var(--space-4);
 
-  @media respond-to(lg) {
+  @include respond-to(lg) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     grid-template-columns: 1fr;
   }
 }

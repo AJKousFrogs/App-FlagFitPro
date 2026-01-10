@@ -277,7 +277,7 @@
     grid-template-columns: 1fr 1fr;
     gap: var(--space-4, 16px);
 
-    @media respond-to(sm) {
+    @include respond-to(sm) {
       grid-template-columns: 1fr;
     }
   }
@@ -304,7 +304,7 @@
   // RESPONSIVE
   // =============================================
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     .supplement-card {
       border-radius: var(--radius-lg, 8px);
     }

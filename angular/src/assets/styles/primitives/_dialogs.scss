@@ -1,4 +1,4 @@
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 /**
  * Dialog / Overlay Primitives
@@ -411,7 +411,7 @@
   // MOBILE RESPONSIVE (Decision 35)
   // ============================================
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     .dialog-sm,
     .dialog-md,
     .dialog-lg {

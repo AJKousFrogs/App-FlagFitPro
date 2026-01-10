@@ -1,6 +1,4 @@
- "styles/mixins" as *;
-
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 /**
  * Table Primitives
@@ -326,7 +324,7 @@
   // RESPONSIVE TABLE (Decision 35)
   // ============================================
 
-  @media respond-to(md) {
+  @include respond-to(md) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-tablet));
       padding: 0 var(--page-padding-tablet);
@@ -361,7 +359,7 @@
     }
   }
 
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     .table-wrapper {
       margin: 0 calc(-1 * var(--page-padding-mobile));
       padding: 0 var(--page-padding-mobile);

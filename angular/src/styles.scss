@@ -1,6 +1,4 @@
- "styles/mixins" as *;
-
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 /* ================================================================
    FLAGFIT PRO - MAIN STYLES
@@ -1122,7 +1120,7 @@ html.no-transitions * {
   }
 
   /* Responsive toast */
-  @media respond-to(sm) {
+  @include respond-to(sm) {
     .p-toast.p-toast-top-right {
       top: 1rem;
       right: 1rem;

@@ -169,7 +169,7 @@
   border-color: var(--ds-primary-green-hover);
 }
 
-@media respond-to(md) {
+@include respond-to(md) {
   .banner-content {
     flex-direction: row;
     text-align: left;

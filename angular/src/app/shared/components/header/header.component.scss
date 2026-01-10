@@ -1,8 +1,4 @@
- "styles/mixins" as *;
-
- "styles/mixins" as *;
-
- "styles/mixins" as *;
+@use "styles/mixins" as *;
 
 /**
  * Header Component Styles
@@ -419,7 +415,7 @@
    RESPONSIVE: TABLET (768px - 1024px)
    ================================================================ */
 
-@media respond-to(lg) {
+@include respond-to(lg) {
   .olympic-countdown {
     padding: 0 var(--space-2);
     height: 30px;
@@ -492,7 +488,7 @@
    RESPONSIVE: SMALL MOBILE (<480px)
    ================================================================ */
 
-@media respond-to(sm) {
+@include respond-to(sm) {
   .header-end {
     gap: var(--space-1);
   }
