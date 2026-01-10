@@ -2,6 +2,8 @@
 
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    TOURNAMENTS COMPONENT STYLES
    Design System Compliant - January 2, 2026
@@ -755,7 +757,7 @@
 }
 
 /* Tablet Landscape (769px - 1023px) */
-@media (min-width: 769px) and (max-width: 1023px) {
+@media (min-width: 769px) and respond-to(lg) {
   .tournaments-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -833,7 +835,7 @@
 }
 
 /* Mobile Large (481px - 767px) */
-@media (min-width: 481px) and (max-width: 767px) {
+@media (min-width: 481px) and respond-to(md) {
   .availability-options {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -881,7 +883,7 @@
 }
 
 /* Extra Small Screens (< 375px) */
-@media (max-width: 374px) {
+@media respond-to(xs) {
   .tournaments-page {
     padding: var(--space-2);
   }

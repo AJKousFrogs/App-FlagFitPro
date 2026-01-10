@@ -2596,7 +2596,7 @@
      Mobile-first responsive table with card layout on small screens
      ================================================================ */
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     /* Scrollable table container */
     .p-datatable-wrapper {
       overflow-x: auto;
@@ -2957,7 +2957,7 @@
      Mobile-optimized with maintained 40px height
      ================================================================ */
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     .p-tabs {
       .p-tablist {
         padding: var(--space-1);
@@ -3671,7 +3671,7 @@ p-button .p-button,
 }
 
 /* Responsive: Smaller screens */
-@media (max-width: 400px) {
+@media respond-to(xs) {
   .p-datepicker-panel,
   .p-datepicker-overlay,
   .p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
@@ -3977,7 +3977,7 @@ p-button .p-button,
 }
 
 /* Responsive: Smaller cells on mobile */
-@media (max-width: 400px) {
+@media respond-to(xs) {
   .p-datepicker-panel .p-datepicker-calendar td > span,
   .p-datepicker-panel .p-datepicker-calendar td > button {
     width: 2.25rem;

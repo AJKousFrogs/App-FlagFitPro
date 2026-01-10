@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Team Workspace - Responsive Design
  * ================================================================
@@ -8,11 +10,11 @@
 .team-workspace-page {
   padding: var(--space-4);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-3);
   }
 
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     padding: var(--space-2);
   }
 }
@@ -28,21 +30,21 @@
   padding: var(--space-6) 0;
 
   // Tablet: Smaller gap, adjust min card size
-  @media (max-width: 1023px) {
+  @media respond-to(lg) {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: var(--space-3);
     padding: var(--space-4) 0;
   }
 
   // Mobile: 2 columns with smaller cards
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
     padding: var(--space-3) 0;
   }
 
   // Small mobile: Single column
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
@@ -82,18 +84,18 @@
   }
 
   // Tablet: Reduce padding
-  @media (max-width: 1023px) {
+  @media respond-to(lg) {
     padding: var(--space-5);
     min-height: 160px;
   }
 
   // Mobile: Further reduce padding and height
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-4);
     min-height: 140px;
   }
 
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     padding: var(--space-5);
     min-height: 160px;
   }
@@ -106,7 +108,7 @@
     transition: transform var(--transition-fast);
     flex-shrink: 0;
 
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       font-size: 1.75rem; // 28px on mobile
       margin-bottom: var(--space-3);
     }
@@ -124,7 +126,7 @@
     margin: 0 0 var(--space-2) 0;
     line-height: 1.3;
 
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       font-size: var(--font-size-body); // 16px on mobile
       margin-bottom: var(--space-1);
     }
@@ -137,7 +139,7 @@
     margin: 0;
     line-height: 1.5;
 
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       font-size: var(--font-caption-size); // 12px on mobile
       line-height: 1.4;
     }
@@ -159,7 +161,7 @@
 :host ::ng-deep {
   // Ensure tabs scroll horizontally on mobile
   .p-tablist {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
@@ -173,7 +175,7 @@
 
   // Adjust tab padding on mobile
   .p-tab {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       padding: var(--space-2) var(--space-3);
       font-size: var(--font-size-h4);
       white-space: nowrap;
@@ -182,7 +184,7 @@
 
   // Ensure tab panel has proper padding
   .p-tabpanel {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       padding: var(--space-3) 0;
     }
   }

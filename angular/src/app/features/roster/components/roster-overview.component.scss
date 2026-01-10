@@ -71,7 +71,7 @@
   }
 }
 
-@media (min-width: 769px) and (max-width: 1023px) {
+@media (min-width: 769px) and respond-to(lg) {
   .team-overview-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -102,7 +102,7 @@
   }
 }
 
-@media (max-width: 374px) {
+@media respond-to(xs) {
   .team-overview-grid {
     grid-template-columns: 1fr;
   }

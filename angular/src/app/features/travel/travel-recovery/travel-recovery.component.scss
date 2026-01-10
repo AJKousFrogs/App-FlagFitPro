@@ -1433,7 +1433,7 @@
   }
 }
 
-@media (min-width: 769px) and (max-width: 1023px) {
+@media (min-width: 769px) and respond-to(lg) {
   .protocol-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1516,7 +1516,7 @@
   }
 }
 
-@media (min-width: 481px) and (max-width: 767px) {
+@media (min-width: 481px) and respond-to(md) {
   .olympic-buttons {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1573,7 +1573,7 @@
   }
 }
 
-@media (max-width: 374px) {
+@media respond-to(xs) {
   .travel-recovery-page {
     padding: var(--space-2);
   }

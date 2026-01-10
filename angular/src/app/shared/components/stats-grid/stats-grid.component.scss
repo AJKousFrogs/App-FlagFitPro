@@ -151,7 +151,7 @@
 }
 
 // iPhone 12 Pro and similar (390px width) - further optimize
-@media (max-width: 390px) {
+@media respond-to(xs) {
   .stats-overview {
     grid-template-columns: 1fr;
     gap: var(--space-2);

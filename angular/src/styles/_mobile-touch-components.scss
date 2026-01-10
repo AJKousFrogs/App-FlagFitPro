@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Mobile Touch-Friendly Components
  * ================================================================
@@ -18,7 +20,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     // All buttons (including PrimeNG)
     button,
     [role="button"],
@@ -112,7 +114,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     // All text inputs
     input[type="text"],
     input[type="email"],
@@ -228,7 +230,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     // Native checkboxes and radios
     input[type="checkbox"],
     input[type="radio"] {
@@ -313,7 +315,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     .p-toggleswitch,
     .toggle-switch {
       width: 48px !important;
@@ -345,7 +347,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     .p-slider,
     input[type="range"] {
       height: 8px !important;
@@ -384,7 +386,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     label,
     .p-field-label,
     .form-label {
@@ -410,7 +412,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     .p-field,
     .form-field,
     .form-group {
@@ -463,7 +465,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     a {
       min-height: 44px !important;
       display: inline-flex !important;
@@ -490,7 +492,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     // Invalid state
     .p-invalid,
     .form-control.invalid,
@@ -523,7 +525,7 @@
 // PREVENT IOS ZOOM ON INPUT FOCUS
 // ================================================================
 
-@media (max-width: 767px) {
+@media respond-to(md) {
   // This is the most important rule for iOS Safari
   input,
   select,

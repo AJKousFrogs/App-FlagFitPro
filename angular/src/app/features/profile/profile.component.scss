@@ -4,6 +4,8 @@
 
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    PROFILE COMPONENT STYLES
    BEM Naming | Modern CSS | Standalone Component
@@ -888,7 +890,7 @@
 }
 
 /* Mobile */
-@media (max-width: 540px) {
+@media respond-to(sm) {
   .profile-page .tab-label {
     display: none;
   }
@@ -920,7 +922,7 @@
 }
 
 /* iPhone 12 Pro and similar (390px) specific fixes */
-@media (max-width: 390px) {
+@media respond-to(xs) {
   .profile-page {
     padding: var(--space-4) var(--space-3);
   }

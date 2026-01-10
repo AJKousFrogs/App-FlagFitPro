@@ -1038,7 +1038,7 @@
 
   // Doughnut chart needs more height when legend is at bottom (mobile)
   &.doughnut {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       height: 380px; // Extra height for bottom legend
     }
   }

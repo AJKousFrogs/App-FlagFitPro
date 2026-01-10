@@ -2,6 +2,8 @@
 
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /**
  * Mobile Responsive Utilities
  * ================================================================
@@ -25,25 +27,25 @@
 // ================================================================
 
 @mixin mobile-xs {
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     @content;
   }
 }
 
 @mixin mobile-sm {
-  @media (max-width: 639px) {
+  @media respond-to(sm) {
     @content;
   }
 }
 
 @mixin mobile-md {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media (max-width: 1023px) {
+  @media respond-to(lg) {
     @content;
   }
 }
@@ -61,7 +63,7 @@
 
 // Samsung Galaxy S23/S24 (412px viewport width)
 @mixin samsung-standard {
-  @media (max-width: 412px) {
+  @media respond-to(xs) {
     @content;
   }
 }
@@ -93,7 +95,7 @@
 
 // Remove iOS Safari input shadows and zoom
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     // Prevent zoom on input focus (iOS Safari)
     input[type="text"],
     input[type="email"],
@@ -146,7 +148,7 @@
 // ================================================================
 
 .mobile-grid-1 {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     display: grid !important;
     grid-template-columns: 1fr !important;
     gap: var(--space-3) !important;
@@ -154,7 +156,7 @@
 }
 
 .mobile-grid-2 {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
     gap: var(--space-3) !important;
@@ -162,7 +164,7 @@
 }
 
 .tablet-grid-2 {
-  @media (max-width: 1023px) {
+  @media respond-to(lg) {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
@@ -172,25 +174,25 @@
 // ================================================================
 
 .mobile-p-2 {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-2) !important;
   }
 }
 
 .mobile-p-3 {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-3) !important;
   }
 }
 
 .mobile-gap-2 {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     gap: var(--space-2) !important;
   }
 }
 
 .mobile-gap-3 {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     gap: var(--space-3) !important;
   }
 }
@@ -200,19 +202,19 @@
 // ================================================================
 
 .mobile-text-sm {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-h4) !important;
   }
 }
 
 .mobile-text-base {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-body) !important;
   }
 }
 
 .mobile-hide {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     display: none !important;
   }
 }
@@ -228,7 +230,7 @@
 // ================================================================
 
 .mobile-card-compact {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     :global(.p-card-body) {
       padding: var(--space-3) !important;
     }
@@ -245,7 +247,7 @@
 // ================================================================
 
 .mobile-table-scroll {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 
@@ -293,7 +295,7 @@
 // ================================================================
 
 .mobile-button-large {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     min-height: 48px !important;
     padding: var(--space-3) var(--space-4) !important;
     font-size: var(--font-size-body) !important;
@@ -309,7 +311,7 @@
 // ================================================================
 
 .mobile-form-stack {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     display: flex !important;
     flex-direction: column !important;
     gap: var(--space-3) !important;
@@ -333,7 +335,7 @@
 // ================================================================
 
 .mobile-chart-responsive {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     canvas {
       max-width: 100% !important;
       height: auto !important;
@@ -353,7 +355,7 @@
 
 @supports (padding: max(0px)) {
   .mobile-safe-bottom {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       padding-bottom: max(
         var(--space-4),
         env(safe-area-inset-bottom)
@@ -362,13 +364,13 @@
   }
 
   .mobile-safe-top {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       padding-top: max(var(--space-4), env(safe-area-inset-top));
     }
   }
 
   .mobile-safe-inline {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       padding-left: max(var(--space-4), env(safe-area-inset-left));
       padding-right: max(var(--space-4), env(safe-area-inset-right));
     }
@@ -376,7 +378,7 @@
 
   // Full safe area wrapper
   .mobile-safe-all {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       padding-top: max(var(--space-4), env(safe-area-inset-top));
       padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
       padding-left: max(var(--space-4), env(safe-area-inset-left));
@@ -421,7 +423,7 @@
 }
 
 // Input focus scroll adjustment
-@media (max-width: 767px) {
+@media respond-to(md) {
   // Scroll input into view when focused
   input:focus,
   textarea:focus,
@@ -459,7 +461,7 @@
 // Viewport: 360-412px width
 // ================================================================
 
-@media (max-width: 412px) and (min-width: 360px) {
+@media respond-to(xs) and (min-width: 360px) {
   // Samsung navigation bar area
   .samsung-nav-aware {
     padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
@@ -471,7 +473,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     // Full-screen dialogs on mobile
     .p-dialog {
       width: 95vw !important;
@@ -642,7 +644,7 @@
 // ================================================================
 
 :global {
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     // DatePicker full width
     .p-datepicker {
       max-width: calc(100vw - var(--space-6)) !important;
@@ -792,7 +794,7 @@
 // MOBILE SCROLLBAR STYLING (Webkit - Chrome & Safari)
 // ================================================================
 
-@media (max-width: 767px) {
+@media respond-to(md) {
   // Thin scrollbars for mobile
   * {
     scrollbar-width: thin;
@@ -823,7 +825,7 @@
 // PERFORMANCE OPTIMIZATIONS FOR MOBILE
 // ================================================================
 
-@media (max-width: 767px) {
+@media respond-to(md) {
   // Use GPU acceleration for animations
   .mobile-gpu-accelerated {
     transform: translateZ(0);

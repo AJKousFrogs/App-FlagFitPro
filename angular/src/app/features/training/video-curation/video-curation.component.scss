@@ -68,7 +68,7 @@
   }
 }
 
-@media (max-width: 374px) {
+@media respond-to(xs) {
   .curation-page {
     padding: var(--space-2);
   }

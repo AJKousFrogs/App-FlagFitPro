@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * QB Hub Composite View Styles
  * ================================================================
@@ -14,11 +16,11 @@
     --page-header-display: block;
   }
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-3);
   }
 
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     padding: var(--space-2);
   }
 }
@@ -34,7 +36,7 @@
    */
   --page-header-display: none;
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-4) 0;
   }
 }
@@ -50,7 +52,7 @@
 :host ::ng-deep {
   // Ensure tabs scroll horizontally on mobile
   .p-tablist {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       overflow-x: auto;
       overflow-y: hidden;
       -webkit-overflow-scrolling: touch;
@@ -64,7 +66,7 @@
 
   // Adjust tab padding on mobile
   .p-tab {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       padding: var(--space-2) var(--space-3);
       font-size: var(--font-size-h4);
       white-space: nowrap;
@@ -73,7 +75,7 @@
 
   // Ensure tab panel has proper padding
   .p-tabpanel {
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       padding: var(--space-3) 0;
     }
   }

@@ -1,3 +1,5 @@
+ "styles/mixins" as *;
+
 /**
  * Training Schedule - Mobile Responsive Styles
  * ================================================================
@@ -14,11 +16,11 @@
   display: block;
   padding: var(--space-4);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-3);
   }
 
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     padding: var(--space-2);
   }
 }
@@ -92,12 +94,12 @@
   align-items: start;
 
   // Tablet: Smaller gap, still 2 columns
-  @media (max-width: 1023px) {
+  @media respond-to(lg) {
     gap: var(--space-4);
   }
 
   // Mobile: Stack vertically
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     grid-template-columns: 1fr;
     gap: var(--space-4);
   }
@@ -117,7 +119,7 @@
     grid-column: 2;
     grid-row: 1 / -1; // Span all rows
 
-    @media (max-width: 767px) {
+    @media respond-to(md) {
       grid-column: 1;
       grid-row: auto;
     }
@@ -159,7 +161,7 @@
   }
 
   // Mobile: Slightly larger markers
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     width: 7px;
     height: 7px;
   }
@@ -171,7 +173,7 @@
 
 .monthly-stats {
   // PrimeNG card body overrides moved to _exceptions.scss (DS-EXC-020)
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     // Mobile: Horizontal stats grid
     .stats-grid {
       display: grid;
@@ -180,7 +182,7 @@
     }
   }
 
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     .stats-grid {
       grid-template-columns: 1fr;
       gap: var(--space-2);
@@ -199,7 +201,7 @@
     margin-bottom: 0;
   }
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-2);
     margin-bottom: 0; // Grid handles spacing
   }
@@ -211,7 +213,7 @@
   font-weight: var(--font-weight-medium);
   margin-bottom: var(--space-1);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-caption-size);
   }
 }
@@ -221,11 +223,11 @@
   font-weight: var(--font-weight-bold);
   color: var(--ds-text-primary);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-h2);
   }
 
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     font-size: var(--font-size-h3);
   }
 }
@@ -235,7 +237,7 @@
   color: var(--ds-text-tertiary);
   margin-top: var(--space-1);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-caption-size); // ~12px (closest to 11px)
   }
 }
@@ -273,7 +275,7 @@
     box-shadow: var(--shadow-sm);
   }
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     flex-direction: column;
     gap: var(--space-3);
     padding: var(--space-3);
@@ -333,7 +335,7 @@
   gap: var(--space-2);
   flex-shrink: 0;
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     width: 100%;
     align-items: stretch;
   }
@@ -403,7 +405,7 @@
 .session-list-container {
   margin-top: var(--space-4);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     margin-top: var(--space-3);
   }
 }
@@ -416,11 +418,11 @@
   flex-wrap: wrap;
   gap: var(--space-2);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     margin-bottom: var(--space-3);
   }
 
-  @media (max-width: 639px) {
+  @media respond-to(sm) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -431,7 +433,7 @@
   font-weight: var(--font-weight-bold);
   color: var(--ds-text-primary);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-h1);
   }
 }
@@ -441,7 +443,7 @@
   gap: var(--space-2);
   flex-wrap: wrap;
 
-  @media (max-width: 639px) {
+  @media respond-to(sm) {
     width: 100%;
 
     app-button {
@@ -464,7 +466,7 @@
   gap: var(--space-4);
 
   // Mobile: Single column
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
@@ -491,7 +493,7 @@
   }
 
   // Mobile: Touch-friendly, compact
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-3);
     min-height: 100px;
   }
@@ -508,7 +510,7 @@
   margin-bottom: var(--space-3);
   gap: var(--space-2);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     margin-bottom: var(--space-2);
   }
 }
@@ -518,7 +520,7 @@
   font-weight: var(--font-weight-semibold);
   color: var(--ds-text-primary);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-h4);
   }
 }
@@ -533,7 +535,7 @@
   color: var(--ds-text-primary);
   margin-bottom: var(--space-2);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-body);
     margin-bottom: var(--space-1);
   }
@@ -545,7 +547,7 @@
   gap: var(--space-3);
   margin-top: var(--space-3);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     gap: var(--space-2);
     margin-top: var(--space-2);
   }
@@ -562,7 +564,7 @@
     color: var(--ds-primary-green);
   }
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-caption-size);
   }
 }
@@ -575,7 +577,7 @@
   border-top: 1px solid var(--surface-border);
 
   // Mobile: Stack buttons vertically for better touch targets
-  @media (max-width: 639px) {
+  @media respond-to(sm) {
     flex-direction: column;
 
     app-button {
@@ -610,7 +612,7 @@
     font-size: var(--font-caption-size); // 12px
   }
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-caption-size); // 10px
     padding: var(--space-1) var(--space-1);
   }
@@ -625,7 +627,7 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--space-4);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
@@ -643,11 +645,11 @@
   text-align: center;
   padding: var(--space-8);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     padding: var(--space-6);
   }
 
-  @media (max-width: 479px) {
+  @media respond-to(sm) {
     padding: var(--space-4);
   }
 }
@@ -664,7 +666,7 @@
   margin: 0 auto var(--space-4);
   font-size: var(--font-h1-size);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     width: 64px;
     height: 64px;
     font-size: var(--font-h1-size);
@@ -677,7 +679,7 @@
   color: var(--ds-text-primary);
   margin-bottom: var(--space-2);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-h1);
   }
 }
@@ -688,7 +690,7 @@
   max-width: 500px;
   margin: 0 auto var(--space-4);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-h4);
   }
 }
@@ -706,7 +708,7 @@
   border-radius: var(--radius-md);
   margin-top: var(--space-4);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     gap: var(--space-3);
     padding: var(--space-3);
     margin-top: var(--space-3);
@@ -745,7 +747,7 @@
   flex-wrap: wrap;
   gap: var(--space-3);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     gap: var(--space-2);
   }
 }
@@ -757,7 +759,7 @@
   font-size: var(--font-size-h4);
   color: var(--ds-text-secondary);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-caption-size);
   }
 
@@ -821,7 +823,7 @@
     background: var(--primitive-warning-500);
   }
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     width: 8px;
     height: 8px;
   }
@@ -838,11 +840,11 @@
   margin-bottom: var(--space-4);
   gap: var(--space-2);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     margin-bottom: var(--space-3);
   }
 
-  @media (max-width: 639px) {
+  @media respond-to(sm) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -853,7 +855,7 @@
   font-weight: var(--font-weight-bold);
   color: var(--ds-text-primary);
 
-  @media (max-width: 767px) {
+  @media respond-to(md) {
     font-size: var(--font-size-h3);
   }
 }
@@ -862,7 +864,7 @@
   display: flex;
   gap: var(--space-2);
 
-  @media (max-width: 639px) {
+  @media respond-to(sm) {
     width: 100%;
     justify-content: space-between;
 

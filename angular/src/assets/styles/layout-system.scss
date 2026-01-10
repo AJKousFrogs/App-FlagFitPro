@@ -2,6 +2,8 @@
 
  "styles/mixins" as *;
 
+ "styles/mixins" as *;
+
 /* ================================================================
    FLAGFIT PRO - LAYOUT SYSTEM
    Reusable layout patterns: page headers, breadcrumbs, dashboard layouts
@@ -516,7 +518,7 @@
 }
 
 /* Extra small screens (< 375px) */
-@media (max-width: 374px) {
+@media respond-to(xs) {
   .content-container {
     padding: 0 var(--space-3);
   }

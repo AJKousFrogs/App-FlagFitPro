@@ -167,7 +167,7 @@
   padding: 0 var(--space-6);
 }
 
-@media (max-width: 900px) {
+@media respond-to(md) {
   .content-grid {
     grid-template-columns: 1fr;
   }
@@ -305,7 +305,7 @@
   gap: var(--space-6);
 }
 
-@media (max-width: 600px) {
+@media respond-to(sm) {
   .form-row {
     grid-template-columns: 1fr;
     gap: var(--space-5);

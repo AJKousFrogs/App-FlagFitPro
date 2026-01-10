@@ -761,7 +761,7 @@
   }
 }
 
-@media (max-width: 380px) {
+@media respond-to(xs) {
   .countdown-value {
     font-size: var(--font-size-metric-lg);
   }
