@@ -487,7 +487,7 @@ describe("WellnessService", () => {
     it("should log wellness entry successfully", async () => {
       const mockInsert = vi.fn(() => ({
         select: vi.fn(() => ({
-          single: vi.fn(() =>
+          maybeSingle: vi.fn(() =>
             Promise.resolve({ data: { id: 1 }, error: null }),
           ),
         })),
@@ -539,7 +539,7 @@ describe("WellnessService", () => {
         capturedInsertData = data;
         return {
           select: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({ data: { id: 1, date: today }, error: null }),
             ),
           })),

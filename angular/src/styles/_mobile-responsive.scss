@@ -474,6 +474,9 @@
       max-width: 95vw !important;
       max-height: 90vh !important;
       max-height: 90dvh !important; /* Modern: accounts for mobile browser chrome */
+      
+      // CRITICAL: Ensure dialog doesn't block touches
+      pointer-events: auto !important;
     }
 
     .p-dialog-content {
@@ -481,6 +484,28 @@
       max-height: calc(90vh - 120px) !important;
       max-height: calc(90dvh - 120px) !important; /* Modern: accounts for mobile browser chrome */
       overflow-y: auto !important;
+      
+      // CRITICAL: Ensure content doesn't block touches
+      pointer-events: auto !important;
+    }
+
+    // CRITICAL: Dialog footer must receive touch events
+    .p-dialog-footer {
+      pointer-events: auto !important;
+      position: relative !important;
+      z-index: 2 !important;
+      
+      // Ensure buttons in footer work
+      button, .p-button, app-button {
+        pointer-events: auto !important;
+        position: relative !important;
+        z-index: 3 !important;
+      }
+    }
+
+    // CRITICAL: Dialog mask should allow clicks through to dialog
+    .p-dialog-mask {
+      pointer-events: auto !important;
     }
 
     // Bottom sheet style for mobile
@@ -504,6 +529,9 @@
       max-width: 100vw !important;
       margin: 0 !important;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+      
+      // CRITICAL: Ensure dialog receives touches
+      pointer-events: auto !important;
     }
 
     .p-dialog-content {
@@ -512,6 +540,19 @@
         var(--space-4),
         env(safe-area-inset-bottom)
       ) !important;
+      
+      // CRITICAL: All form elements must be touchable
+      pointer-events: auto !important;
+      
+      * {
+        pointer-events: auto !important;
+      }
+    }
+
+    .p-dialog-footer {
+      pointer-events: auto !important;
+      position: relative !important;
+      z-index: 10 !important;
     }
 
     // Ensure dialog actions don't get cut off
@@ -520,6 +561,14 @@
         var(--space-4),
         env(safe-area-inset-bottom)
       ) !important;
+      pointer-events: auto !important;
+      
+      // CRITICAL: All action buttons must be touchable
+      button, .p-button, app-button {
+        pointer-events: auto !important;
+        position: relative !important;
+        z-index: 11 !important;
+      }
     }
   }
 
@@ -530,27 +579,44 @@
       max-width: 100vw !important;
       max-height: 95vh !important;
       max-height: 95dvh !important; /* Modern: accounts for mobile browser chrome */
+      
+      // CRITICAL: Ensure dialog receives touches
+      pointer-events: auto !important;
     }
 
     .p-dialog-header {
       padding: var(--space-3) !important;
+      pointer-events: auto !important;
     }
 
     .p-dialog-content {
       padding: var(--space-3) !important;
+      pointer-events: auto !important;
+      
+      // CRITICAL: All interactive elements must be touchable
+      * {
+        pointer-events: auto !important;
+      }
     }
 
     .p-dialog-footer {
       padding: var(--space-3) !important;
+      pointer-events: auto !important;
+      position: relative !important;
+      z-index: 10 !important;
     }
 
     // Stack dialog action buttons on very narrow screens
     .dialog-actions {
       flex-direction: column !important;
       gap: var(--space-2) !important;
+      pointer-events: auto !important;
 
       app-button {
         width: 100% !important;
+        pointer-events: auto !important;
+        position: relative !important;
+        z-index: 11 !important;
       }
     }
   }

@@ -141,6 +141,20 @@
     outline: var(--hover-focus-outline);
     outline-offset: 2px;
   }
+
+  /* Mobile touch feedback - CRITICAL for touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled):not(.p-disabled) {
+      background: linear-gradient(
+        180deg,
+        var(--hover-bg-primary-light) 0%,
+        var(--hover-bg-primary) 100%
+      );
+      border-color: var(--hover-bg-primary);
+      transform: scale(0.98);
+      box-shadow: var(--hover-shadow-sm);
+    }
+  }
 }
 
 /* ================================================================
@@ -362,6 +376,17 @@
     background-color: var(--hover-bg-secondary);
     transform: translateY(0) scale(0.98);
   }
+
+  /* Mobile touch feedback - CRITICAL for touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled):not(.p-disabled) {
+      background-color: var(--hover-bg-tertiary);
+      border-color: var(--hover-border-primary);
+      color: var(--ds-primary-green);
+      box-shadow: var(--hover-shadow-sm);
+      transform: scale(0.98);
+    }
+  }
 }
 
 /* ================================================================
@@ -386,6 +411,15 @@
   &:active:not(:disabled):not(.p-disabled) {
     background-color: var(--hover-bg-secondary);
     transform: translateY(0);
+  }
+
+  /* Mobile touch feedback - CRITICAL for touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled):not(.p-disabled) {
+      background-color: var(--hover-bg-tertiary);
+      color: var(--hover-text-primary);
+      transform: scale(0.98);
+    }
   }
 }
 
@@ -504,17 +538,14 @@
 }
 
 /* ================================
-   p-inputswitch - Toggle switch hover
+   p-toggleswitch - Toggle switch (PrimeNG 21)
    ================================ */
 
-.p-inputswitch {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover:not(.p-disabled) .p-inputswitch-slider::before {
-      transform: scale(1.1);
-    }
-  }
-
-  &.p-inputswitch-checked .p-inputswitch-slider {
+.p-toggleswitch {
+  // Removed scale transform on hover - it breaks the layout and causes overflow
+  // The thumb should stay within the track bounds at all times
+  
+  &.p-toggleswitch-checked .p-toggleswitch-slider {
     background-color: var(--ds-primary-green);
   }
 }

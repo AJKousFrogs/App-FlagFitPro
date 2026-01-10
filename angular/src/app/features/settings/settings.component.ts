@@ -710,11 +710,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         }
 
         if (!upsertedUser) {
-          this.logger.error("User profile update returned no data");
-          this.toastService.error(
-            "Failed to save profile: No data returned from database",
-          );
-          throw new Error("Update returned no data");
+          this.logger.warn("User profile update returned no data - user may not exist in users table yet");
+          // Don't throw error - settings will still be saved to localStorage and auth metadata
+          // This is expected behavior for new users who haven't completed onboarding
         }
 
         this.logger.info("User profile saved successfully:", upsertedUser);

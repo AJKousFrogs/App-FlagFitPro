@@ -32,10 +32,16 @@
       border-radius: var(--radius-md) !important;
       cursor: pointer;
 
+      // CRITICAL: Ensure buttons receive touch events
+      pointer-events: auto !important;
+      position: relative !important;
+      z-index: 1 !important;
+
       // Prevent accidental double-tap zoom
       touch-action: manipulation;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-tap-highlight-color: rgba(8, 153, 73, 0.2);
 
       // Active state feedback for touch
       &:active {

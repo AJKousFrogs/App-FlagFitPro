@@ -697,7 +697,7 @@ p-button[severity="primary"] .p-button {
 .p-radiobutton:focus-visible,
 .p-multiselect:focus-visible,
 .p-calendar:focus-visible,
-.p-inputswitch:focus-visible,
+.p-toggleswitch:focus-visible,
 .p-slider:focus-visible {
   outline: var(--p-focus-ring-width) var(--p-focus-ring-style)
     var(--p-focus-ring-color);
@@ -1059,6 +1059,100 @@ p-button[severity="primary"] .p-button {
    INPUTSWITCH (TOGGLE) NORMALIZATION
    ================================================================ */
 
+/* PrimeNG 21 uses p-toggleswitch, not p-inputswitch */
+.p-toggleswitch {
+  display: inline-flex;
+  align-items: center;
+  width: var(--p-inputswitch-width, 48px);
+  height: var(--p-inputswitch-height, 26px);
+  position: relative;
+}
+
+/* Toggle track (background slider) */
+.p-toggleswitch .p-toggleswitch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--p-inputswitch-background);
+  border-radius: 9999px;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+  border: none;
+  overflow: hidden;
+}
+
+/* Toggle thumb (circle handle) */
+.p-toggleswitch .p-toggleswitch-slider::before {
+  content: "";
+  position: absolute;
+  height: var(--p-inputswitch-handle-size, 20px);
+  width: var(--p-inputswitch-handle-size, 20px);
+  left: 3px;
+  top: 3px;
+  background: var(--p-inputswitch-handle-background);
+  border-radius: 50%;
+  transition: left 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transform: none !important;
+}
+
+/* Hover state - unchecked */
+.p-toggleswitch:hover:not(.p-disabled) .p-toggleswitch-slider:not(.p-toggleswitch-checked) {
+  background: var(--p-inputswitch-hover-background);
+}
+
+/* Checked state (ON) */
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+  background: var(--p-inputswitch-checked-background);
+  border-color: var(--p-inputswitch-checked-background);
+}
+
+/* Move thumb to the right when checked */
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider::before {
+  left: calc(100% - var(--p-inputswitch-handle-size, 20px) - 3px);
+}
+
+/* Hover state - checked */
+.p-toggleswitch.p-toggleswitch-checked:hover .p-toggleswitch-slider {
+  background: var(--p-inputswitch-checked-hover-background);
+}
+
+/* Focus state - accessibility */
+.p-toggleswitch:focus-visible .p-toggleswitch-slider {
+  outline: none;
+  box-shadow:
+    0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.2),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Disabled state */
+.p-toggleswitch.p-disabled {
+  opacity: var(--p-disabled-opacity, 0.6);
+  cursor: not-allowed;
+}
+
+.p-toggleswitch.p-disabled .p-toggleswitch-slider {
+  cursor: not-allowed;
+}
+
+/* Hide the native input */
+.p-toggleswitch .p-toggleswitch-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ================================================================
+   OLD INPUTSWITCH STYLES (Legacy - can be removed if not used)
+   ================================================================ */
+
 .p-inputswitch {
   width: var(--p-inputswitch-width, 50px);
   height: var(--p-inputswitch-height, 28px);
@@ -1072,11 +1166,12 @@ p-button[severity="primary"] .p-button {
   cursor: pointer;
   inset: 0;
   background: var(--p-inputswitch-background);
-  border-radius: var(--p-inputswitch-border-radius, 14px);
+  border-radius: var(--p-inputswitch-border-radius, 13px);
   transition:
     background-color 0.2s ease,
     box-shadow 0.2s ease;
-  border: 1px solid transparent;
+  border: none;
+  overflow: hidden;
 }
 
 /* Toggle thumb (circle handle) */
@@ -1138,4 +1233,45 @@ p-button[severity="primary"] .p-button {
   opacity: 0;
   width: 0;
   height: 0;
+}
+
+/* ================================================================
+   MOBILE TOUCH FIXES - CRITICAL for button clicks on mobile
+   ================================================================ */
+
+@media (max-width: 767px) {
+  // Ensure all PrimeNG buttons work on mobile
+  .p-button,
+  .p-button-label,
+  .p-button-icon {
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+  }
+
+  // Ensure dialog components receive touch events
+  .p-dialog,
+  .p-dialog-content,
+  .p-dialog-footer,
+  .p-dialog-header {
+    pointer-events: auto !important;
+  }
+
+  // Ensure form components work in dialogs
+  .p-inputtext,
+  .p-textarea,
+  .p-select,
+  .p-dropdown,
+  .p-checkbox,
+  .p-radiobutton,
+  .p-toggleswitch,
+  .p-inputnumber {
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+  }
+
+  // Active state for all buttons on touch devices
+  .p-button:active:not(:disabled):not(.p-disabled) {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s ease !important;
+  }
 }

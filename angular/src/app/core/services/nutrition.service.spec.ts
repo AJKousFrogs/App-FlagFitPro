@@ -237,7 +237,7 @@ describe("NutritionService", () => {
     it("should add USDA food to current meal", async () => {
       const mockInsert = vi.fn(() => ({
         select: vi.fn(() => ({
-          single: vi.fn(() =>
+          maybeSingle: vi.fn(() =>
             Promise.resolve({ data: { id: 1 }, error: null }),
           ),
         })),
@@ -266,7 +266,7 @@ describe("NutritionService", () => {
 
       const mockInsert = vi.fn(() => ({
         select: vi.fn(() => ({
-          single: vi.fn(() =>
+          maybeSingle: vi.fn(() =>
             Promise.resolve({ data: { id: 2 }, error: null }),
           ),
         })),
@@ -298,7 +298,7 @@ describe("NutritionService", () => {
       (mockSupabaseService as any).client.from.mockReturnValue({
         insert: vi.fn(() => ({
           select: vi.fn(() => ({
-            single: vi.fn(() =>
+            maybeSingle: vi.fn(() =>
               Promise.resolve({ data: null, error: { message: "DB error" } }),
             ),
           })),
@@ -611,7 +611,7 @@ describe("NutritionService", () => {
 
       const mockInsert = vi.fn(() => ({
         select: vi.fn(() => ({
-          single: vi.fn(() =>
+          maybeSingle: vi.fn(() =>
             Promise.resolve({ data: { id: 1 }, error: null }),
           ),
         })),

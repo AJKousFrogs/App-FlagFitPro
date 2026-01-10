@@ -2134,26 +2134,23 @@
   }
 
   /* ================================================================
-     SWITCH/TOGGLE ENHANCEMENTS
+     TOGGLESWITCH ENHANCEMENTS (PrimeNG 21)
      ================================================================ */
 
-  .p-inputswitch {
-    .p-inputswitch-slider {
-      border-radius: var(--radius-full);
+  .p-toggleswitch {
+    .p-toggleswitch-slider {
+      border-radius: 9999px;
       transition: background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
       &::before {
         border-radius: 50%;
-        transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: left 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        // NO transform - it breaks positioning
       }
     }
 
-    &.p-inputswitch-checked .p-inputswitch-slider {
+    &.p-toggleswitch-checked .p-toggleswitch-slider {
       background: var(--ds-primary-green);
-    }
-
-    &:hover:not(.p-disabled) .p-inputswitch-slider::before {
-      transform: scale(1.1);
     }
   }
 

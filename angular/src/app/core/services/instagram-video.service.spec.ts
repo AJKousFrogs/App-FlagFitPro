@@ -53,7 +53,7 @@ describe("InstagramVideoService", () => {
 
   describe("getVideoById", () => {
     it("should return video when ID exists", () => {
-      const video = service.getVideoById("ig_qb_001");
+      const video = service.getVideoById("ig_real_001");
       expect(video).toBeDefined();
       expect(video?.title).toContain("Quick Release");
     });
@@ -220,7 +220,7 @@ describe("InstagramVideoService", () => {
 
   describe("generateEmbedHtml", () => {
     it("should generate embed HTML with default options", () => {
-      const video = service.getVideoById("ig_qb_001");
+      const video = service.getVideoById("ig_real_001");
       if (video) {
         const html = service.generateEmbedHtml(video);
         expect(html).toContain("iframe");
@@ -229,7 +229,7 @@ describe("InstagramVideoService", () => {
     });
 
     it("should include captioned parameter when enabled", () => {
-      const video = service.getVideoById("ig_qb_001");
+      const video = service.getVideoById("ig_real_001");
       if (video) {
         const html = service.generateEmbedHtml(video, { captioned: true });
         expect(html).toContain("captioned=true");
@@ -237,7 +237,7 @@ describe("InstagramVideoService", () => {
     });
 
     it("should respect custom width", () => {
-      const video = service.getVideoById("ig_qb_001");
+      const video = service.getVideoById("ig_real_001");
       if (video) {
         const html = service.generateEmbedHtml(video, { width: 500 });
         expect(html).toContain('width="500"');
@@ -263,10 +263,13 @@ describe("InstagramVideoService", () => {
     });
 
     it("should get videos by creator", () => {
-      const videos = service.getVideosByCreator("qb_mechanics");
+      // Use a creator that exists in the actual video data
+      const allVideos = service.getAllVideos();
+      const firstVideoCreator = allVideos[0].creator.username;
+      const videos = service.getVideosByCreator(firstVideoCreator);
       expect(videos.length).toBeGreaterThan(0);
       videos.forEach((video) => {
-        expect(video.creator.username).toBe("qb_mechanics");
+        expect(video.creator.username).toBe(firstVideoCreator);
       });
     });
   });
@@ -274,8 +277,8 @@ describe("InstagramVideoService", () => {
   describe("playlist management", () => {
     it("should create custom playlist", () => {
       const playlist = service.createPlaylist("My Playlist", "Test playlist", [
-        "ig_qb_001",
-        "ig_wr_001",
+        "ig_real_001",
+        "ig_real_003",
       ]);
       expect(playlist.name).toBe("My Playlist");
       expect(playlist.videos.length).toBe(2);
@@ -296,15 +299,15 @@ describe("InstagramVideoService", () => {
 
   describe("selection state", () => {
     it("should select video", () => {
-      const video = service.getVideoById("ig_qb_001");
+      const video = service.getVideoById("ig_real_001");
       service.selectVideo(video!);
       expect(service.selectedVideo()).toBe(video);
     });
 
     it("should select video by ID", () => {
-      const result = service.selectVideoById("ig_qb_001");
+      const result = service.selectVideoById("ig_real_001");
       expect(result).toBe(true);
-      expect(service.selectedVideo()?.id).toBe("ig_qb_001");
+      expect(service.selectedVideo()?.id).toBe("ig_real_001");
     });
 
     it("should return false for non-existent ID", () => {
@@ -313,7 +316,7 @@ describe("InstagramVideoService", () => {
     });
 
     it("should clear selection", () => {
-      service.selectVideoById("ig_qb_001");
+      service.selectVideoById("ig_real_001");
       service.selectVideo(null);
       expect(service.selectedVideo()).toBeNull();
     });
@@ -350,7 +353,10 @@ describe("InstagramVideoService", () => {
     });
 
     it("should search by creator", () => {
-      const results = service.searchVideos("qb_mechanics");
+      // Use a creator that exists in the actual video data
+      const allVideos = service.getAllVideos();
+      const firstVideoCreator = allVideos[0].creator.username;
+      const results = service.searchVideos(firstVideoCreator);
       expect(results.length).toBeGreaterThan(0);
     });
 
