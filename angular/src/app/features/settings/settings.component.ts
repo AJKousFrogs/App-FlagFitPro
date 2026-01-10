@@ -720,7 +720,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         this.logger.info("User profile saved successfully:", upsertedUser);
 
         // ALWAYS update team_members if user has an existing membership
-        // This ensures position/jersey stay in sync even without team selection
+        // This ensures position/jersey/team stay in sync
         const { data: existingTeamMember } = await this.supabaseService.client
           .from("team_members")
           .select("id, team_id")
@@ -728,43 +728,90 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           .maybeSingle();
 
         if (existingTeamMember) {
-          // User has existing team membership - update position/jersey
           const parsedJersey = settings.profile.jerseyNumber
             ? parseInt(settings.profile.jerseyNumber, 10)
             : null;
 
+          // Check if team has changed
+          const teamChanged = settings.profile.teamId && 
+                             settings.profile.teamId !== existingTeamMember.team_id;
+
           this.logger.info(
-            "Updating team_members with position/jersey:",
-            { position: settings.profile.position, jersey: parsedJersey },
+            "Updating team_members:",
+            { 
+              position: settings.profile.position, 
+              jersey: parsedJersey,
+              requestedTeamId: settings.profile.teamId,
+              currentTeamId: existingTeamMember.team_id,
+              teamChanged,
+            },
           );
 
-          const { data: updatedMember, error: memberError } =
-            await this.supabaseService.client
+          if (teamChanged) {
+            // Team transfer: Delete old membership and create new one
+            this.logger.info("Team transfer detected, creating new membership");
+            
+            // Delete old membership
+            const { error: deleteError } = await this.supabaseService.client
               .from("team_members")
-              .update({
+              .delete()
+              .eq("id", existingTeamMember.id);
+
+            if (deleteError) {
+              this.logger.error("Failed to delete old team membership:", deleteError);
+              throw new Error(`Failed to transfer teams: ${deleteError.message}`);
+            }
+
+            // Create new membership in new team
+            const { data: newMember, error: insertError } = await this.supabaseService.client
+              .from("team_members")
+              .insert({
+                user_id: user.id,
+                team_id: settings.profile.teamId!,
+                role: "player",
                 position: settings.profile.position || null,
                 jersey_number: parsedJersey,
-                updated_at: new Date().toISOString(),
+                status: "active",
               })
-              .eq("id", existingTeamMember.id)
               .select()
               .maybeSingle();
 
-          if (memberError) {
-            this.logger.error(
-              "Failed to update team_members:",
-              memberError.message,
-              memberError,
-            );
-            throw new Error(
-              `Failed to update team membership: ${memberError.message}`,
+            if (insertError) {
+              this.logger.error("Failed to create new team membership:", insertError);
+              throw new Error(`Failed to join new team: ${insertError.message}`);
+            }
+
+            this.logger.info("Successfully transferred to new team:", newMember);
+          } else {
+            // Same team, just update position/jersey
+            const { data: updatedMember, error: memberError } =
+              await this.supabaseService.client
+                .from("team_members")
+                .update({
+                  position: settings.profile.position || null,
+                  jersey_number: parsedJersey,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq("id", existingTeamMember.id)
+                .select()
+                .maybeSingle();
+
+            if (memberError) {
+              this.logger.error(
+                "Failed to update team_members:",
+                memberError.message,
+                memberError,
+              );
+              throw new Error(
+                `Failed to update team membership: ${memberError.message}`,
+              );
+            }
+
+            this.logger.info(
+              "Successfully updated team membership:",
+              updatedMember,
             );
           }
-
-          this.logger.info(
-            "Successfully updated team membership:",
-            updatedMember,
-          );
         } else if (settings.profile.teamId) {
           // No existing membership but team was selected - create new
           this.logger.info(
