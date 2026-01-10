@@ -681,6 +681,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           weight_kg: settings.profile.weightKg || null,
           phone: settings.profile.phone || null,
           date_of_birth: dateOfBirthStr,
+          onboarding_completed: true, // Mark as onboarded when profile is saved
           updated_at: new Date().toISOString(),
         };
 
@@ -987,6 +988,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("Services refreshed successfully");
 
       this.toastService.success(TOAST.SUCCESS.SETTINGS_SAVED);
+      
+      // Provide helpful guidance if this is first-time setup
+      if (!existingUser) {
+        this.toastService.info(
+          "Profile created! Visit the Roster page to see yourself listed.",
+          5000
+        );
+      }
     } catch (error) {
       this.logger.error("Save settings error:", toLogContext(error));
       const message =
