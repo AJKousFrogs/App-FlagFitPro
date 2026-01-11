@@ -3,9 +3,8 @@
 ## 🎯 Quick Navigation
 
 ### For Beginners
-1. Start with **[SETUP_COMPLETE.md](./SETUP_COMPLETE.md)** - Overview and setup instructions
-2. Follow **[setup-devtools.sh](./setup-devtools.sh)** - Run the setup script
-3. Read **[DEVTOOLS_README.md](./DEVTOOLS_README.md)** - Quick start guide
+1. Follow **[setup-devtools.sh](./setup-devtools.sh)** - Run the setup script
+2. Read **[DEVTOOLS_README.md](./DEVTOOLS_README.md)** - Quick start guide
 
 ### For Developers
 1. Read **[DEBUGGING_GUIDE.md](./DEBUGGING_GUIDE.md)** - Comprehensive debugging techniques
@@ -18,26 +17,15 @@
 ### For Architecture Review
 1. Review **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture and data flow
 
+### For iOS Debugging
+1. Read **[IOS_DEBUGGING_GUIDE.md](./IOS_DEBUGGING_GUIDE.md)** - Safari Web Inspector setup
+2. Use **[IOS_QUICK_REFERENCE.md](./IOS_QUICK_REFERENCE.md)** - Quick iOS commands
+
 ---
 
 ## 📚 Documentation Files
 
-### 1. SETUP_COMPLETE.md
-**Purpose:** Setup summary and success criteria  
-**Size:** 425 lines  
-**What's Inside:**
-- ✅ What was implemented
-- ✅ How to use
-- ✅ Console commands
-- ✅ Learning resources
-- ✅ Common issues
-- ✅ Verification steps
-
-**When to Read:** First thing after installation
-
----
-
-### 2. DEVTOOLS_README.md
+### 1. DEVTOOLS_README.md
 **Purpose:** Main setup and usage guide  
 **Size:** 508 lines  
 **What's Inside:**
@@ -55,7 +43,7 @@
 
 ---
 
-### 3. DEBUGGING_GUIDE.md
+### 2. DEBUGGING_GUIDE.md
 **Purpose:** Comprehensive debugging guide  
 **Size:** 584 lines (14,412 characters)  
 **What's Inside:**
@@ -73,7 +61,7 @@
 
 ---
 
-### 4. DEVTOOLS_QUICK_REFERENCE.md
+### 3. DEVTOOLS_QUICK_REFERENCE.md
 **Purpose:** Quick reference card  
 **Size:** 276 lines (6,574 characters)  
 **What's Inside:**
@@ -90,7 +78,7 @@
 
 ---
 
-### 5. TESTING_CHECKLIST.md
+### 4. TESTING_CHECKLIST.md
 **Purpose:** Verification testing checklist  
 **Size:** 386 lines (7,539 characters)  
 **What's Inside:**
@@ -104,7 +92,7 @@
 
 ---
 
-### 6. ARCHITECTURE.md
+### 5. ARCHITECTURE.md
 **Purpose:** System architecture and design  
 **Size:** 514 lines  
 **What's Inside:**
@@ -210,7 +198,6 @@ provideHttpClient(
 
 | File | Teaches You | Time to Read |
 |------|-------------|--------------|
-| SETUP_COMPLETE.md | What was built, quick commands | 5 min |
 | DEVTOOLS_README.md | How to use everything | 10 min |
 | DEBUGGING_GUIDE.md | Deep debugging techniques | 20 min |
 | DEVTOOLS_QUICK_REFERENCE.md | Quick commands and tips | 3 min |
@@ -218,7 +205,7 @@ provideHttpClient(
 | ARCHITECTURE.md | How the system works | 10 min |
 | debugging-signals-examples.ts | Code patterns | 15 min |
 
-**Total reading time:** ~78 minutes
+**Total reading time:** ~73 minutes
 
 ---
 
@@ -227,31 +214,30 @@ provideHttpClient(
 ### Path 1: Quick Start (15 minutes)
 ```
 1. Run setup-devtools.sh (2 min)
-2. Read SETUP_COMPLETE.md (5 min)
-3. Read DEVTOOLS_QUICK_REFERENCE.md (3 min)
+2. Read DEVTOOLS_QUICK_REFERENCE.md (3 min)
+3. Read DEVTOOLS_README.md (5 min)
 4. Complete TESTING_CHECKLIST.md tests 1-5 (5 min)
 ```
 
 ### Path 2: Complete Setup (45 minutes)
 ```
 1. Run setup-devtools.sh (2 min)
-2. Read SETUP_COMPLETE.md (5 min)
-3. Read DEVTOOLS_README.md (10 min)
-4. Review debugging-signals-examples.ts (10 min)
-5. Read DEVTOOLS_QUICK_REFERENCE.md (3 min)
-6. Complete all TESTING_CHECKLIST.md tests (15 min)
+2. Read DEVTOOLS_README.md (10 min)
+3. Review debugging-signals-examples.ts (10 min)
+4. Read DEVTOOLS_QUICK_REFERENCE.md (3 min)
+5. Complete all TESTING_CHECKLIST.md tests (15 min)
+6. Read ARCHITECTURE.md (5 min)
 ```
 
-### Path 3: Expert Level (90 minutes)
+### Path 3: Expert Level (80 minutes)
 ```
 1. Run setup-devtools.sh (2 min)
-2. Read SETUP_COMPLETE.md (5 min)
-3. Read DEVTOOLS_README.md (10 min)
-4. Read DEBUGGING_GUIDE.md (20 min)
-5. Review debugging-signals-examples.ts (15 min)
-6. Read ARCHITECTURE.md (10 min)
-7. Complete all TESTING_CHECKLIST.md tests (15 min)
-8. Review implementation code (13 min)
+2. Read DEVTOOLS_README.md (10 min)
+3. Read DEBUGGING_GUIDE.md (20 min)
+4. Review debugging-signals-examples.ts (15 min)
+5. Read ARCHITECTURE.md (10 min)
+6. Complete all TESTING_CHECKLIST.md tests (15 min)
+7. Review implementation code (8 min)
 ```
 
 ---
@@ -259,9 +245,9 @@ provideHttpClient(
 ## 📊 File Statistics
 
 ### Documentation
-- **Total docs:** 7 markdown files
-- **Total lines:** 2,179 lines
-- **Total size:** ~50 KB
+- **Total docs:** 8 markdown files
+- **Total lines:** ~2,000 lines
+- **Total size:** ~45 KB
 - **Code examples:** 7 complete examples
 - **Tests:** 15 verification tests
 
@@ -283,7 +269,7 @@ provideHttpClient(
 ### "How do I..."
 
 **...install Angular DevTools?**
-→ Read **SETUP_COMPLETE.md** or **DEVTOOLS_README.md** section 1
+→ Read **DEVTOOLS_README.md** section 1
 
 **...track a signal?**
 → Read **DEBUGGING_GUIDE.md** section "Debugging Signals"  

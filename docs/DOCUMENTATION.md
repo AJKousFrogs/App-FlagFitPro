@@ -16,7 +16,7 @@
 | **Set up database**         | [DATABASE_SETUP.md](./DATABASE_SETUP.md)                   | ⭐⭐     |
 | **Follow UI/design rules**  | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)         | ⭐⭐     |
 | **Understand security**     | [SECURITY.md](./SECURITY.md)                               | ⭐⭐     |
-| **View audit reports**      | [AUDITS.md](./AUDITS.md)                                   | ⭐       |
+| **Debug Supabase**          | [SUPABASE_DEBUG_QUICK_REF.md](./SUPABASE_DEBUG_QUICK_REF.md) | ⭐       |
 | **Troubleshoot issues**     | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)                 | ⭐       |
 
 ---
@@ -100,11 +100,11 @@
 
 ---
 
-### 📋 Audits & Code Quality
+### 📋 Code Quality & Testing
 
 | Document                                     | Description                                           | Type    |
 | -------------------------------------------- | ----------------------------------------------------- | ------- |
-| [AUDITS.md](./AUDITS.md)                     | **CONSOLIDATED** - Audit reports summary              | Summary |
+| [TESTING_GUIDE.md](./TESTING_GUIDE.md)       | Testing setup and patterns                            | Guide   |
 | [MOCK_DATA_POLICY.md](./MOCK_DATA_POLICY.md) | **CRITICAL** - Mock data policy (never in production) | Policy  |
 
 ---
@@ -153,7 +153,7 @@
 | **API & Backend**          | 3         | ✅ Complete |
 | **Database**               | 3         | ✅ Complete |
 | **Security & Privacy**     | 5         | ✅ Complete |
-| **Audits & Code Quality**  | 1         | ✅ Complete |
+| **Code Quality & Testing** | 2         | ✅ Complete |
 | **Operations & Runbooks**  | 8         | ✅ Complete |
 | **Troubleshooting**        | 1         | ✅ Complete |
 | **Legal & Compliance**     | 3         | ✅ Complete |
@@ -177,9 +177,10 @@
 3. **API Reference**: [API.md](./API.md)
 4. **Security**: [ADDING_NEW_FEATURES_SAFELY.md](./ADDING_NEW_FEATURES_SAFELY.md)
 
-### For Code Audits
+### For Testing
 
-1. **Audit Summary**: [AUDITS.md](./AUDITS.md) - Consolidated audit reports summary
+1. **Testing Guide**: [TESTING_GUIDE.md](./TESTING_GUIDE.md) - Testing setup and patterns
+2. **Mock Data Policy**: [MOCK_DATA_POLICY.md](./MOCK_DATA_POLICY.md) - Mock vs production data rules
 
 ### For Operations
 
@@ -204,7 +205,7 @@
 2. Use clear, concise language
 3. Include code examples where applicable
 4. Update this index when adding new documents
-5. Keep audit reports in [AUDITS.md](./AUDITS.md)
+5. Keep documentation files organized by category
 
 ---
 
@@ -219,9 +220,10 @@
 - [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) - UI rules
 - [SECURITY.md](./SECURITY.md) - Security guide
 
-### Audit Reports
+### Debugging & Troubleshooting
 
-- [AUDITS.md](./AUDITS.md) - Consolidated audit summary (all audits completed)
+- [SUPABASE_DEBUG_QUICK_REF.md](./SUPABASE_DEBUG_QUICK_REF.md) - Supabase debugging reference
+- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Common issues and solutions
 
 ---
 
