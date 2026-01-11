@@ -5,8 +5,8 @@
  * Automatically adds platform classes to components via host bindings.
  */
 
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 
 export interface PlatformInfo {
   isIOS: boolean;
@@ -64,8 +64,7 @@ export class PlatformDetectionService {
     // iPad on iOS 13+ detection (reports as Mac)
     const isIPadOS = 
       platform.includes('mac') && 
-      navigator.maxTouchPoints > 1 &&
-      !window.MSStream;
+      navigator.maxTouchPoints > 1;
 
     return isIOSUA || isIPadOS;
   }
