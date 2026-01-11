@@ -11,8 +11,16 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const logger = inject(LoggerService);
 
+  // #region agent log
+  const _dbgLog=(l:string,m:string,d:object)=>{const e={location:l,message:m,data:d,timestamp:Date.now()};console.log('[DBG]',JSON.stringify(e));try{const logs=JSON.parse(sessionStorage.getItem('_dbg_logs')||'[]');logs.push(e);sessionStorage.setItem('_dbg_logs',JSON.stringify(logs.slice(-100)))}catch{}};
+  // #endregion
+
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
+      // #region agent log
+      _dbgLog('error.interceptor.ts:catchError','HTTP error intercepted',{url:error.url||'unknown',status:error.status,statusText:error.statusText,errorMessage:error.message,errorBody:typeof error.error==='string'?error.error:JSON.stringify(error.error)?.substring(0,500)});
+      // #endregion
+
       // Log the error for debugging
       logger.debug(`[ErrorInterceptor] HTTP Error ${error.status}:`, { 
         url: error.url || 'unknown',

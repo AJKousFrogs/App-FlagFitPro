@@ -77,9 +77,15 @@ export class SupabaseService {
   }
 
   private async initializeAuth() {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:initializeAuth:start',message:'Supabase auth initialization starting',data:{timestamp:new Date().toISOString()},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F-supabase-auth'})}).catch(()=>{});
+    // #endregion
     try {
       // Get initial session
       const { data } = await this.supabase.auth.getSession();
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:initializeAuth:session',message:'Supabase session retrieved',data:{hasSession:!!data.session,userId:data.session?.user?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F-supabase-auth'})}).catch(()=>{});
+      // #endregion
       this._session.set(data.session);
       this._currentUser.set(data.session?.user ?? null);
 
@@ -128,9 +134,17 @@ export class SupabaseService {
           }
         },
       );
+    } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:initializeAuth:error',message:'Supabase auth initialization error',data:{errorMessage:error instanceof Error?error.message:String(error),errorStack:error instanceof Error?error.stack:undefined},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F-supabase-auth'})}).catch(()=>{});
+      // #endregion
+      throw error;
     } finally {
       // Mark as initialized even if there's no session
       this._isInitialized.set(true);
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:initializeAuth:complete',message:'Supabase auth initialization complete',data:{isInitialized:true},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F-supabase-auth'})}).catch(()=>{});
+      // #endregion
     }
   }
 

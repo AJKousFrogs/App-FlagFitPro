@@ -28,7 +28,6 @@ import { COLORS } from "../../../core/constants/app.constants";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
-import { EmptyStateV2Component } from "../../../shared/components/ui-components";
 import { getInitials } from "../../../shared/utils/format.utils";
 
 interface OverviewMetrics {
@@ -109,7 +108,6 @@ interface TeamOption {
     TagModule,
     MainLayoutComponent,
     IconButtonComponent,
-    EmptyStateV2Component,
   ],
   template: `
     <app-main-layout>

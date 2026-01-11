@@ -1,0 +1,8 @@
+---
+description: "Enforce DRY code, delete dead code"
+alwaysApply: true
+---
+- NEVER duplicate existing functions/services
+- DELETE unused imports/variables immediately  
+- Scan for repeated logic → consolidate
+- Match existing Angular/Supabase patterns exactly
