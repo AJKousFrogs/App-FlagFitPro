@@ -35,6 +35,7 @@ import {
 } from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
+import { RosterService } from "../roster/roster.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -1607,6 +1608,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private playerProgramService = inject(PlayerProgramService);
+  private rosterService = inject(RosterService);
   private api = inject(ApiService);
 
   currentStep = signal(0);
@@ -3564,41 +3566,28 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       const heightCm = this.getHeightInCm();
       const weightKg = this.getWeightInKg();
 
-      // Check if player already exists in team_players
-      const { data: existingPlayer } = await this.supabaseService.client
-        .from("team_players")
-        .select("id")
-        .eq("team_id", teamId)
-        .eq("user_id", userId)
-        .single();
+      // Use RosterService as single source of truth for team_players operations
+      const result = await this.rosterService.addPlayer({
+        name: this.onboardingData.name,
+        position: this.onboardingData.position,
+        jersey: this.onboardingData.jerseyNumber?.toString() || "0",
+        country: this.onboardingData.country || "Unknown",
+        age,
+        height: heightCm ? `${heightCm} cm` : "N/A",
+        weight: weightKg ? `${weightKg} kg` : "N/A",
+        status: "active",
+        user_id: userId,
+      });
 
-      if (!existingPlayer) {
-        const { error: playerError } = await this.supabaseService.client
-          .from("team_players")
-          .insert({
-            team_id: teamId,
-            user_id: userId,
-            name: this.onboardingData.name,
-            position: this.onboardingData.position,
-            jersey_number: this.onboardingData.jerseyNumber?.toString() || null,
-            country: this.onboardingData.country,
-            age,
-            height: heightCm ? `${heightCm} cm` : null,
-            weight: weightKg ? `${weightKg} kg` : null,
-            status: "active",
-            created_by: userId,
-          });
-
-        if (playerError) {
-          this.logger.warn(
-            "[Onboarding] Failed to add to team_players:",
-            playerError.message,
-          );
-        } else {
-          this.logger.info(
-            `[Onboarding] Added player to team_players: ${this.onboardingData.name}`,
-          );
-        }
+      if (!result.success) {
+        this.logger.warn(
+          "[Onboarding] Failed to add to team_players:",
+          result.error,
+        );
+      } else {
+        this.logger.info(
+          `[Onboarding] Added player to team_players: ${this.onboardingData.name}`,
+        );
       }
     } catch (e) {
       this.logger.warn("[Onboarding] Error adding player to team roster:", toLogContext(e));

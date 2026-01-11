@@ -4,22 +4,7 @@
  */
 
 // getInitials is imported directly from format.utils where needed
-
-/**
- * Get full position name from abbreviation
- */
-export function getPositionFullName(position: string): string {
-  const positionNames: Record<string, string> = {
-    QB: "Quarterback",
-    WR: "Wide Receiver",
-    RB: "Running Back",
-    DB: "Defensive Back",
-    C: "Center",
-    LB: "Linebacker",
-    Rusher: "Rusher",
-  };
-  return positionNames[position] || position;
-}
+// getPositionDisplayName is imported from @core/constants/positions.constants
 
 /**
  * Get position icon class

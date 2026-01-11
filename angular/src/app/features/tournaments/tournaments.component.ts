@@ -28,6 +28,7 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService, toLogContext } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import {
     CreateTournamentDto,
     Tournament,
@@ -1446,6 +1447,7 @@ interface TournamentBudget {
 export class TournamentsComponent implements OnInit {
   tournamentService = inject(TournamentService);
   private authService = inject(AuthService);
+  private teamMembershipService = inject(TeamMembershipService);
   private supabaseService = inject(SupabaseService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
@@ -1575,24 +1577,17 @@ export class TournamentsComponent implements OnInit {
 
   /**
    * Check if current user is a coach, manager, or admin
+   * Use TeamMembershipService as single source of truth
    */
   isCoachOrAdmin(): boolean {
-    const user = this.authService.currentUser();
-    const role = user?.role?.toLowerCase() || "";
-    return [
-      "coach",
-      "manager",
-      "admin",
-      "head_coach",
-      "assistant_coach",
-    ].includes(role);
+    return this.teamMembershipService.canManageRoster();
   }
 
   /**
    * Check if current user is a player (not coach/admin)
    */
   isPlayer(): boolean {
-    return this.isAuthenticated() && !this.isCoachOrAdmin();
+    return this.isAuthenticated() && this.teamMembershipService.isPlayer();
   }
 
   /**

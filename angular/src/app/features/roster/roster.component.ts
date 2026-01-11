@@ -71,13 +71,13 @@ import {
   RosterPlayerFormDialogComponent,
   RosterStaffCardComponent,
 } from "./components";
+import { getPositionDisplayName } from "../../core/constants";
 import {
   formatHeight,
   formatWeight,
   getCountryFlag,
   getJerseyColor,
   getPlayerStats,
-  getPositionFullName,
   getPositionIcon,
   getStatusSeverity,
 } from "./roster-utils";
@@ -96,6 +96,7 @@ import {
   PlayerWithMetrics,
   RiskAssessment,
 } from "./services/player-metrics.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 
 @Component({
   selector: "app-roster",
@@ -427,7 +428,7 @@ import {
                 <div class="details-info">
                   <h2>{{ selectedPlayer()!.name }}</h2>
                   <p class="details-position">
-                    {{ getPositionFullName(selectedPlayer()!.position) }}
+                    {{ getPositionDisplayName(selectedPlayer()!.position) }}
                   </p>
                   <div class="details-tags">
                     <p-tag
@@ -855,7 +856,7 @@ import {
                     <div class="invitation-meta">
                       <p-tag
                         [value]="
-                          rosterService.getRoleDisplayName(invitation.role)
+                          teamMembershipService.getRoleDisplayName(invitation.role as any)
                         "
                         severity="info"
                       ></p-tag>
@@ -918,6 +919,7 @@ export class RosterComponent implements OnInit {
   // Services
   readonly rosterService = inject(RosterService);
   private readonly metricsService = inject(PlayerMetricsService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private confirmationService = inject(ConfirmationService);
 
@@ -963,7 +965,7 @@ export class RosterComponent implements OnInit {
   roleOptions = ROLE_OPTIONS;
 
   // Expose utility functions
-  getPositionFullName = getPositionFullName;
+  getPositionDisplayName = getPositionDisplayName;
   getPositionIcon = getPositionIcon;
   getJerseyColor = getJerseyColor;
   getStatusSeverity = getStatusSeverity;
@@ -1028,7 +1030,7 @@ export class RosterComponent implements OnInit {
     const positionMap = new Map<string, Player[]>();
 
     players.forEach((player) => {
-      const positionName = getPositionFullName(player.position);
+      const positionName = getPositionDisplayName(player.position);
       if (!positionMap.has(positionName)) {
         positionMap.set(positionName, []);
       }

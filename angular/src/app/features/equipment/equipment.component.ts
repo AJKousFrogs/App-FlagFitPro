@@ -28,6 +28,7 @@ import {
     EquipmentSummary,
 } from "../../core/services/equipment.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TeamStatisticsService } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -520,6 +521,7 @@ export class EquipmentComponent implements OnInit {
   private equipmentService = inject(EquipmentService);
   private teamStatsService = inject(TeamStatisticsService);
   private authService = inject(AuthService);
+  private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
@@ -591,12 +593,11 @@ export class EquipmentComponent implements OnInit {
       });
   }
 
+  /**
+   * Check if user is a coach - uses TeamMembershipService as single source of truth
+   */
   isCoach(): boolean {
-    const user = this.authService.getUser();
-    return (
-      user?.user_metadata?.role === "coach" ||
-      user?.user_metadata?.role === "admin"
-    );
+    return this.teamMembershipService.canManageRoster();
   }
 
   getEmptyItem() {

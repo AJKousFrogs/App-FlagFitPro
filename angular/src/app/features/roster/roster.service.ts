@@ -8,6 +8,7 @@ import { TIME } from "../../core/constants/app.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import {
     Player,
     PlayerStatus,
@@ -117,6 +118,7 @@ export class RosterService {
   private supabaseService = inject(SupabaseService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
+  private teamMembershipService = inject(TeamMembershipService);
 
   // State signals
   readonly isLoading = signal(false);
@@ -138,39 +140,10 @@ export class RosterService {
     };
   });
 
-  readonly canManageRoster = computed(() => {
-    const role = this.currentUserRole();
-    const managementRoles = [
-      "owner",
-      "admin",
-      "head_coach",
-      "coach",
-      "offense_coordinator",
-      "defense_coordinator",
-      "assistant_coach",
-    ];
-    return managementRoles.includes(role);
-  });
-
-  readonly canDeletePlayers = computed(() => {
-    const role = this.currentUserRole();
-    return ["owner", "admin", "head_coach", "coach"].includes(role);
-  });
-
-  readonly canViewHealthData = computed(() => {
-    const role = this.currentUserRole();
-    const healthDataRoles = [
-      "owner",
-      "admin",
-      "head_coach",
-      "coach",
-      "physiotherapist",
-      "nutritionist",
-      "psychologist",
-      "strength_conditioning_coach",
-    ];
-    return healthDataRoles.includes(role);
-  });
+  // Use TeamMembershipService as single source of truth for role checks
+  readonly canManageRoster = this.teamMembershipService.canManageRoster;
+  readonly canDeletePlayers = this.teamMembershipService.canDeletePlayers;
+  readonly canViewHealthData = this.teamMembershipService.canViewHealthData;
 
   /**
    * Load all roster data for the current user's team
@@ -823,7 +796,7 @@ export class RosterService {
             m.users?.raw_user_meta_data?.full_name ||
             m.users?.email?.split("@")[0] ||
             "Unknown",
-          position: this.getRoleDisplayName(role),
+          position: this.teamMembershipService.getRoleDisplayName(role as TeamRole),
           role: role,
           roleCategory: category,
           country: m.users?.raw_user_meta_data?.country || "Unknown",
@@ -1012,23 +985,6 @@ export class RosterService {
     return "coaching";
   }
 
-  getRoleDisplayName(role: string): string {
-    const roleNames: Record<string, string> = {
-      owner: "Team Owner",
-      admin: "Administrator",
-      head_coach: "Head Coach",
-      coach: "Head Coach",
-      offense_coordinator: "Offense Coordinator",
-      defense_coordinator: "Defense Coordinator",
-      assistant_coach: "Assistant Coach",
-      physiotherapist: "Physiotherapist",
-      nutritionist: "Nutritionist",
-      strength_conditioning_coach: "Strength & Conditioning Coach",
-      player: "Player",
-      manager: "Team Manager",
-    };
-    return roleNames[role] || role;
-  }
 
   private getErrorMessage(error: unknown): string {
     const err = error as { status?: number };

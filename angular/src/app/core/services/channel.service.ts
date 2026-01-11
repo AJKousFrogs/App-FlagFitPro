@@ -19,6 +19,7 @@ import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { RealtimeService, RealtimeCallback } from "./realtime.service";
+import { TeamMembershipService } from "./team-membership.service";
 import { getInitials } from "../../shared/utils/format.utils";
 
 // ============================================================================
@@ -184,6 +185,7 @@ export class ChannelService {
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private realtimeService = inject(RealtimeService);
+  private teamMembershipService = inject(TeamMembershipService);
 
   // State
   private readonly _channels = signal<Channel[]>([]);
@@ -228,13 +230,8 @@ export class ChannelService {
     this._messages().filter((m) => m.is_important),
   );
 
-  // User role check
-  readonly isCoach = computed(() => {
-    const user = this.authService.getUser();
-    const metadata = (user as { user_metadata?: { role?: string } } | null)
-      ?.user_metadata;
-    return metadata?.role === "coach" || metadata?.role === "assistant_coach";
-  });
+  // User role check - use TeamMembershipService as single source of truth
+  readonly isCoach = this.teamMembershipService.isCoach;
 
   // ============================================================================
   // CHANNEL OPERATIONS
@@ -304,7 +301,10 @@ export class ChannelService {
 
       // Validate permissions for non-DM channels
       if (request.channel_type !== "direct_message") {
-        const isCoach = await this.checkIsCoach(request.team_id);
+        const isCoach = await this.teamMembershipService.isUserCoachForTeam(
+          userId,
+          request.team_id,
+        );
         if (!isCoach) {
           throw new Error("Only coaches can create team channels");
         }
@@ -952,22 +952,6 @@ export class ChannelService {
   // HELPERS
   // ============================================================================
 
-  /**
-   * Check if current user is a coach for the given team
-   */
-  private async checkIsCoach(teamId: string): Promise<boolean> {
-    const userId = this.authService.getUser()?.id;
-    if (!userId) return false;
-
-    const { data } = await this.supabase.client
-      .from("team_members")
-      .select("role")
-      .eq("team_id", teamId)
-      .eq("user_id", userId)
-      .single();
-
-    return data?.role === "coach" || data?.role === "assistant_coach";
-  }
 
   /**
    * Get channel permissions for current user

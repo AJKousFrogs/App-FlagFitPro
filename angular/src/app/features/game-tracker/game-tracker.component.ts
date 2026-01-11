@@ -28,6 +28,7 @@ import { Textarea } from "primeng/textarea";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { formatTimeMMSS } from "../../shared/utils/format.utils";
 import { OfflineQueueService } from "../../core/services/offline-queue.service";
@@ -131,6 +132,7 @@ export class GameTrackerComponent implements OnInit {
   private fb = inject(FormBuilder);
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
+  private teamMembershipService = inject(TeamMembershipService);
   private destroyRef = inject(DestroyRef);
   private toastService = inject(ToastService);
   private offlineQueue = inject(OfflineQueueService);
@@ -149,8 +151,8 @@ export class GameTrackerComponent implements OnInit {
   // Temperature unit preference (stored in localStorage)
   temperatureUnit: "F" | "C" = "F";
 
-  // User role detection
-  isCoachOrAdmin = signal(false);
+  // User role detection - use TeamMembershipService as single source of truth
+  readonly isCoachOrAdmin = this.teamMembershipService.canManageRoster;
   currentUserId = signal<string | null>(null);
 
   // Game type options
@@ -266,20 +268,12 @@ export class GameTrackerComponent implements OnInit {
 
   /**
    * Detect if user is coach/admin or player
+   * Sets currentUserId for tracking who recorded plays
    */
   private detectUserRole(): void {
     const user = this.authService.getUser();
     if (user) {
       this.currentUserId.set(user.id);
-      const role = user.role || "player";
-      const coachRoles = [
-        "coach",
-        "head_coach",
-        "assistant_coach",
-        "manager",
-        "admin",
-      ];
-      this.isCoachOrAdmin.set(coachRoles.includes(role));
     }
   }
 

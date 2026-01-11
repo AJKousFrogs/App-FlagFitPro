@@ -1,17 +1,17 @@
 import {
-  CdkDragDrop,
-  DragDropModule,
-  moveItemInArray,
+    CdkDragDrop,
+    DragDropModule,
+    moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -23,16 +23,17 @@ import { Select } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-  DepthChartEntry,
-  DepthChartService,
-  DepthChartTemplate,
-  DepthChartWithEntries,
+    DepthChartEntry,
+    DepthChartService,
+    DepthChartTemplate,
+    DepthChartWithEntries,
 } from "../../core/services/depth-chart.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -296,6 +297,7 @@ interface PositionGroup {
 export class DepthChartComponent implements OnInit {
   private depthChartService = inject(DepthChartService);
   private authService = inject(AuthService);
+  private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
@@ -358,12 +360,11 @@ export class DepthChartComponent implements OnInit {
     this.loadDepthCharts();
   }
 
+  /**
+   * Check if user is a coach - uses TeamMembershipService as single source of truth
+   */
   isCoach(): boolean {
-    const user = this.authService.getUser();
-    return (
-      user?.user_metadata?.role === "coach" ||
-      user?.user_metadata?.role === "admin"
-    );
+    return this.teamMembershipService.canManageRoster();
   }
 
   loadDepthCharts(): void {

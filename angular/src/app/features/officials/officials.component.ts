@@ -27,6 +27,7 @@ import {
     Official,
     OfficialsService,
 } from "../../core/services/officials.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -465,6 +466,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
 export class OfficialsComponent implements OnInit {
   private officialsService = inject(OfficialsService);
   private authService = inject(AuthService);
+  private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
@@ -559,12 +561,11 @@ export class OfficialsComponent implements OnInit {
       });
   }
 
+  /**
+   * Check if user is a coach - uses TeamMembershipService as single source of truth
+   */
   isCoach(): boolean {
-    const user = this.authService.getUser();
-    return (
-      user?.user_metadata?.role === "coach" ||
-      user?.user_metadata?.role === "admin"
-    );
+    return this.teamMembershipService.canManageRoster();
   }
 
   getEmptyOfficialForm() {

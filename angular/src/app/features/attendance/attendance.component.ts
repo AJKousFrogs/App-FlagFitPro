@@ -30,6 +30,7 @@ import {
     TeamEvent,
 } from "../../core/services/attendance.service";
 import { AuthService } from "../../core/services/auth.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -448,6 +449,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
 export class AttendanceComponent implements OnInit {
   private attendanceService = inject(AttendanceService);
   private authService = inject(AuthService);
+  private teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
 
@@ -525,12 +527,11 @@ export class AttendanceComponent implements OnInit {
     }
   }
 
+  /**
+   * Check if user is a coach - uses TeamMembershipService as single source of truth
+   */
   isCoach(): boolean {
-    const user = this.authService.getUser();
-    return (
-      user?.user_metadata?.role === "coach" ||
-      user?.user_metadata?.role === "admin"
-    );
+    return this.teamMembershipService.canManageRoster();
   }
 
   loadEvents(): void {

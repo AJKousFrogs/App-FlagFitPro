@@ -160,6 +160,16 @@ export class TeamMembershipService {
   });
 
   /**
+   * Check if user can delete players (owners, admins, head coaches, coaches)
+   * Matches database function is_team_owner_or_admin
+   */
+  readonly canDeletePlayers = computed(() => {
+    const role = this._membership()?.role;
+    if (!role) return false;
+    return ["owner", "admin", "head_coach", "coach"].includes(role);
+  });
+
+  /**
    * Check if user has a team
    */
   readonly hasTeam = computed(() => !!this._membership()?.teamId);
