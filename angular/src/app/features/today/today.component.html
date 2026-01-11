@@ -259,22 +259,18 @@
                   </div>
                 } @else {
                   <!-- Empty State -->
-                  <div class="empty-state">
-                    <i class="pi pi-calendar-plus"></i>
-                    <h3>No Training Plan Yet</h3>
-                    <p>
-                      Generate your personalized protocol to see exercises with
-                      videos and instructions.
-                    </p>
-                    <div class="empty-state-actions">
-                      <app-button
-                        iconLeft="pi-sparkles"
-                        [loading]="isGeneratingProtocol()"
-                        (clicked)="generateProtocol()"
-                        >Generate Today's Protocol</app-button
-                      >
-                    </div>
-                  </div>
+                  <app-empty-state
+                    icon="calendar-plus"
+                    heading="No Training Plan Yet"
+                    description="Generate your personalized protocol to see exercises with videos and instructions."
+                  >
+                    <app-button
+                      iconLeft="pi-sparkles"
+                      [loading]="isGeneratingProtocol()"
+                      (clicked)="generateProtocol()"
+                      >Generate Today's Protocol</app-button
+                    >
+                  </app-empty-state>
                 }
               </p-card>
             </section>
@@ -285,14 +281,15 @@
       <!-- No ViewModel - show error -->
       <div class="today-page">
         <p-card styleClass="error-card">
-          <div class="empty-state">
-            <i class="pi pi-exclamation-triangle"></i>
-            <h3>Unable to Load Plan</h3>
-            <p>{{ error() || "Please try refreshing the page." }}</p>
+          <app-empty-state
+            icon="exclamation-triangle"
+            heading="Unable to Load Plan"
+            [description]="error() || 'Please try refreshing the page.'"
+          >
             <app-button iconLeft="pi-refresh" (clicked)="refreshProtocol()"
               >Refresh</app-button
             >
-          </div>
+          </app-empty-state>
         </p-card>
       </div>
     }

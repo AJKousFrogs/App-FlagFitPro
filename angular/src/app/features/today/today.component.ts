@@ -44,6 +44,7 @@ import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { from } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
+import { EmptyStateV2Component } from "../../shared/components/ui-components";
 
 // Layout & Components
 import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acwr-baseline.component";
@@ -128,6 +129,7 @@ interface QuickFormData {
     MainLayoutComponent,
     ProtocolBlockComponent,
     ButtonComponent,
+    EmptyStateV2Component,
     AppBannerComponent,
     AcwrBaselineComponent,
   ],

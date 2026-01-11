@@ -3,6 +3,7 @@
  *
  * Displays latest body composition metrics from smart scale.
  * Shows weight, body fat, muscle mass with trend indicators.
+ * Includes logging dialog for new measurements.
  *
  * Design System Compliant (DESIGN_SYSTEM_RULES.md):
  * - Decision 14: Border-first cards
@@ -17,11 +18,18 @@ import {
   OnInit,
   computed,
   inject,
+  signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { DialogModule } from "primeng/dialog";
+import { InputNumberModule } from "primeng/inputnumber";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
+import { LoggerService } from "../../../core/services/logger.service";
+import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
 
@@ -183,7 +191,7 @@ interface BodyCompositionData {
 
       <!-- Footer -->
       <div footer>
-        <a routerLink="/performance/body-composition" class="view-link">
+        <a routerLink="/performance-tracking" class="view-link">
           View Full History
           <i class="pi pi-arrow-right"></i>
         </a>
