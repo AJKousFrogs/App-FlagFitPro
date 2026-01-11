@@ -286,7 +286,7 @@ exports.handler = async (event, context) => {
 │                   ANALYTICS TABLES                              │
 ├─────────────────────────────────────────────────────────────────┤
 │  load_monitoring          │  Daily load tracking                │
-│  wellness_entries         │  Sleep, mood, stress                │
+│  daily_wellness_checkin   │  Sleep, mood, stress (canonical)    │
 │  injuries                 │  Injury tracking                    │
 │  game_stats               │  Game performance                   │
 │  position_specific_metrics│  Position-based metrics             │

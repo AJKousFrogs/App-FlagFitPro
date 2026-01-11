@@ -250,9 +250,9 @@ For questions or issues:
 
 ## 🔗 **Related Documentation**
 
-- [AI Scheduler Summary](AI_SCHEDULER_SUMMARY.md) - Implementation summary
-- [Comprehensive Offseason Periodization](COMPREHENSIVE_OFFSEASON_PERIODIZATION.md) - Periodization plans
-- [Evidence-Based Configuration Guide](EVIDENCE_BASED_CONFIGURATION_GUIDE.md) - Evidence-based configurations
+- [AI Governance](AI_GOVERNANCE.md) - AI safety and governance specification
+- [Feature Documentation](FEATURE_DOCUMENTATION.md) - Complete feature reference including periodization
+- [Flag Football Training Science](FLAG_FOOTBALL_TRAINING_SCIENCE.md) - Evidence-based training science
 
 ## 📝 **Changelog**
 

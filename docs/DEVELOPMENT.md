@@ -100,14 +100,14 @@ npm run clean:full
 #### **1. Clear Cache** 🧹
 
 ```bash
-# Clear Vite cache only
-npm run clean:cache
+# Clear Angular cache
+rm -rf .angular/cache
 
 # Clear node_modules and reinstall
-npm run clean:node
+rm -rf node_modules && npm install
 
 # Nuclear option - clear everything
-npm run clean:full
+rm -rf node_modules .angular/cache dist && npm install
 ```
 
 #### **2. Check Console** 🔍
@@ -209,7 +209,7 @@ ls -la src/
 
 ```bash
 # Clear development cache
-rm -rf node_modules/.vite
+rm -rf .angular/cache
 rm -rf dist
 
 # Check memory usage
@@ -217,18 +217,18 @@ ps aux | grep node  # Mac/Linux
 tasklist | findstr node  # Windows
 
 # Restart with memory limit (if needed)
-node --max-old-space-size=4096 node_modules/.bin/vite
+node --max-old-space-size=4096 node_modules/@angular/cli/bin/ng serve
 ```
 
 ### Port Conflicts?
 
 ```bash
 # Check what's using your port
-lsof -i :4000  # Mac/Linux
-netstat -ano | findstr :4000  # Windows
+lsof -i :4200  # Mac/Linux
+netstat -ano | findstr :4200  # Windows
 
 # Use different port
-VITE_DEV_PORT=4001 npm run dev
+ng serve --port 4201
 ```
 
 ## 🔧 Development Workflow
@@ -260,13 +260,13 @@ npm run dev
 pwd | grep -E "(OneDrive|Dropbox|Google Drive|iCloud)"
 
 # Check Node.js version
-node --version  # Should be 18+ for this project
+node --version  # Should be 22+ for this project (Angular 21)
 
 # Check npm version
 npm --version
 
-# Verify Vite can start
-npm run dev -- --port 4001 --host localhost
+# Verify Angular dev server can start
+ng serve --port 4201
 ```
 
 ## 📝 Quick Reference Commands
@@ -297,17 +297,17 @@ npm run health:check
 
 ```bash
 # Clear all caches
-npm run clean
+rm -rf .angular/cache dist node_modules/.cache
 
 # Reset development environment
-rm -rf node_modules/.vite dist
+rm -rf .angular/cache dist
 npm install
 
 # Check port availability
-npm run port:info
+lsof -i :4200
 
-# Clean up port locks
-npm run port:cleanup
+# Kill Angular process on port
+npx kill-port 4200
 ```
 
 ## 🎯 Performance Tips
@@ -318,7 +318,7 @@ npm run port:cleanup
 2. **Exclude from antivirus** - Add project folder to exclusions
 3. **Close unused apps** - Free up system resources
 4. **Use dedicated browser profile** - Separate dev from personal browsing
-5. **Enable Fast Refresh** - Already configured in our Vite setup
+5. **Hot Module Replacement** - Angular's HMR enabled automatically
 
 ### VS Code Optimizations:
 

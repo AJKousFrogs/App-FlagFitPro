@@ -159,11 +159,9 @@ angular/
 │   │   └── debugging-signals-examples.ts     📚 Code examples
 │   └── app.config.ts                         🔧 Debug interceptor registered
 │
-├── DEVTOOLS_README.md                        📖 Main setup guide
-├── DEBUGGING_GUIDE.md                        📖 Comprehensive guide
-├── DEVTOOLS_QUICK_REFERENCE.md               📖 Quick reference
+├── DEBUGGING_GUIDE.md                        📖 Comprehensive debugging guide
 ├── TESTING_CHECKLIST.md                      ✅ Testing checklist
-├── SETUP_COMPLETE.md                         ✅ Setup summary
+├── IOS_DEBUGGING_GUIDE.md                    📱 iOS Safari debugging
 └── setup-devtools.sh                         🚀 Setup script
 ```
 
@@ -366,13 +364,9 @@ Possible causes:
 ```
 Start Here:
     ↓
-DEVTOOLS_README.md
-    ↓
 DEBUGGING_GUIDE.md
     ↓
 debugging-signals-examples.ts
-    ↓
-DEVTOOLS_QUICK_REFERENCE.md
     ↓
 TESTING_CHECKLIST.md
     ↓

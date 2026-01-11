@@ -632,7 +632,7 @@ privacy-check:
    };
    ```
 
-3. **Update SAFETY_ACCESS_LAYER.md** (if new protected table)
+3. **Update RLS_POLICY_SPECIFICATION.md** (if new protected table)
    - Add table to protected tables list
    - Document consent view mapping
 
@@ -744,13 +744,13 @@ Print this and keep it visible:
 
 ## Related Documentation
 
-| Document                                                    | Purpose                      |
-| ----------------------------------------------------------- | ---------------------------- |
-| [Safety Access Layer](./SAFETY_ACCESS_LAYER.md)             | Consent enforcement patterns |
-| [UX Privacy Copy Standards](./UX_PRIVACY_SAFETY_COPY.md)    | UI message standards         |
-| [Threat Model](./THREAT_MODEL.md)                           | Security threat analysis     |
-| [Developer Quick Reference](./DEVELOPER_QUICK_REFERENCE.md) | Database patterns            |
-| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md)  | If something goes wrong      |
+| Document                                                           | Purpose                      |
+| ------------------------------------------------------------------ | ---------------------------- |
+| [RLS Policy Specification](./RLS_POLICY_SPECIFICATION.md)          | Consent enforcement patterns |
+| [Security Guide](./SECURITY.md)                                    | Security architecture        |
+| [Threat Model](./THREAT_MODEL.md)                                  | Security threat analysis     |
+| [Database Setup](./DATABASE_SETUP.md)                              | Database patterns            |
+| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md)         | If something goes wrong      |
 
 ---
 

@@ -2277,7 +2277,6 @@ font-family: inherit; // For components inheriting from parent
 | `primeng-theme.scss`                | 6                   |
 | `tournament-nutrition.component.ts` | 15                  |
 | `profile.component.ts`              | 8                   |
-| `game-tracker.component.css`        | 6                   |
 | `ai-coach-chat.component.ts`        | 4                   |
 | Various others                      | ~114                |
 

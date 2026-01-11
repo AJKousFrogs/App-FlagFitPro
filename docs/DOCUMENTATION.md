@@ -16,7 +16,7 @@
 | **Set up database**         | [DATABASE_SETUP.md](./DATABASE_SETUP.md)                   | ⭐⭐     |
 | **Follow UI/design rules**  | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)         | ⭐⭐     |
 | **Understand security**     | [SECURITY.md](./SECURITY.md)                               | ⭐⭐     |
-| **Debug Supabase**          | [SUPABASE_DEBUG_QUICK_REF.md](./SUPABASE_DEBUG_QUICK_REF.md) | ⭐       |
+| **Debug Supabase**          | [SUPABASE_DEBUGGING_GUIDE.md](./SUPABASE_DEBUGGING_GUIDE.md) | ⭐       |
 | **Troubleshoot issues**     | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)                 | ⭐       |
 
 ---
@@ -41,8 +41,7 @@
 | [FLAG_FOOTBALL_TRAINING_SCIENCE.md](./FLAG_FOOTBALL_TRAINING_SCIENCE.md) | Sports science research behind the app                               | -      |
 | [AI_GOVERNANCE.md](./AI_GOVERNANCE.md)                                   | AI Coach safety tiers and governance                                 | -      |
 | [AI_TRAINING_SCHEDULER_GUIDE.md](./AI_TRAINING_SCHEDULER_GUIDE.md)       | AI scheduler feature documentation                                   | -      |
-| [PLAYER_DATA_SAFETY_GUIDE.md](./PLAYER_DATA_SAFETY_GUIDE.md)             | **CRITICAL** - Mock vs real data safety                              | -      |
-| [MOCK_DATA_POLICY.md](./MOCK_DATA_POLICY.md)                             | **CRITICAL** - Mock data policy (never in production)                | -      |
+| [DATA_SAFETY_POLICY.md](./DATA_SAFETY_POLICY.md)                         | **CRITICAL** - Mock vs real data safety policy                       | -      |
 
 ---
 
@@ -102,10 +101,10 @@
 
 ### 📋 Code Quality & Testing
 
-| Document                                     | Description                                           | Type    |
-| -------------------------------------------- | ----------------------------------------------------- | ------- |
-| [TESTING_GUIDE.md](./TESTING_GUIDE.md)       | Testing setup and patterns                            | Guide   |
-| [MOCK_DATA_POLICY.md](./MOCK_DATA_POLICY.md) | **CRITICAL** - Mock data policy (never in production) | Policy  |
+| Document                                       | Description                                         | Type   |
+| ---------------------------------------------- | --------------------------------------------------- | ------ |
+| [TESTING_GUIDE.md](./TESTING_GUIDE.md)         | Testing setup and patterns                          | Guide  |
+| [DATA_SAFETY_POLICY.md](./DATA_SAFETY_POLICY.md) | **CRITICAL** - Mock data policy (never in production) | Policy |
 
 ---
 
@@ -126,9 +125,21 @@
 
 ### 🛠️ Troubleshooting & Support
 
-| Document                                   | Description             | Type  |
-| ------------------------------------------ | ----------------------- | ----- |
-| [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) | Common issues and fixes | Guide |
+| Document                                                     | Description                 | Type  |
+| ------------------------------------------------------------ | --------------------------- | ----- |
+| [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)                   | Common issues and fixes     | Guide |
+| [SUPABASE_DEBUGGING_GUIDE.md](./SUPABASE_DEBUGGING_GUIDE.md) | Supabase debugging guide    | Guide |
+| [AUTH_TROUBLESHOOTING.md](./AUTH_TROUBLESHOOTING.md)         | Authentication debugging    | Guide |
+
+---
+
+### 🏥 Wellness Data Architecture
+
+| Document                                                     | Description                              | Status      |
+| ------------------------------------------------------------ | ---------------------------------------- | ----------- |
+| [WELLNESS_DATA_ARCHITECTURE.md](./WELLNESS_DATA_ARCHITECTURE.md) | Complete wellness data architecture | ✅ Complete |
+
+> **Note:** Phases 1-3 complete. All Angular operations use `daily_wellness_checkin`. Phase 4 (table drop) planned for July 2026+.
 
 ---
 
@@ -155,9 +166,10 @@
 | **Security & Privacy**     | 5         | ✅ Complete |
 | **Code Quality & Testing** | 2         | ✅ Complete |
 | **Operations & Runbooks**  | 8         | ✅ Complete |
-| **Troubleshooting**        | 1         | ✅ Complete |
+| **Troubleshooting**        | 3         | ✅ Complete |
+| **Wellness Architecture**  | 1         | ✅ Complete |
 | **Legal & Compliance**     | 3         | ✅ Complete |
-| **TOTAL**                  | **40**    | ✅ Complete |
+| **TOTAL**                  | **44**    | ✅ Complete |
 
 ---
 
@@ -180,7 +192,7 @@
 ### For Testing
 
 1. **Testing Guide**: [TESTING_GUIDE.md](./TESTING_GUIDE.md) - Testing setup and patterns
-2. **Mock Data Policy**: [MOCK_DATA_POLICY.md](./MOCK_DATA_POLICY.md) - Mock vs production data rules
+2. **Data Safety Policy**: [DATA_SAFETY_POLICY.md](./DATA_SAFETY_POLICY.md) - Mock vs production data rules
 
 ### For Operations
 
@@ -222,11 +234,11 @@
 
 ### Debugging & Troubleshooting
 
-- [SUPABASE_DEBUG_QUICK_REF.md](./SUPABASE_DEBUG_QUICK_REF.md) - Supabase debugging reference
+- [SUPABASE_DEBUGGING_GUIDE.md](./SUPABASE_DEBUGGING_GUIDE.md) - Supabase debugging
 - [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Common issues and solutions
 
 ---
 
-**Last Updated:** January 2026  
+**Last Updated:** 2026-01-11  
 **Maintained By:** Development Team  
 **Status:** ✅ Production Ready

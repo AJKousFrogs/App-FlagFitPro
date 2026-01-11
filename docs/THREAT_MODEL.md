@@ -237,7 +237,7 @@ Coach → API endpoint → Database query → Player data
 
 **Evidence:**
 
-- `docs/SAFETY_ACCESS_LAYER.md` - Approved patterns
+- `docs/RLS_POLICY_SPECIFICATION.md` - Consent enforcement patterns
 - `tests/privacy-safety/consent-gating.test.js` - Automated tests
 - `database/migrations/071_*.sql` - Consent view definitions
 
@@ -264,7 +264,7 @@ User (opted out) → AI endpoint → AI processing → Recommendations
 
 **Evidence:**
 
-- `docs/SECURITY_PRIVACY_OVERVIEW.md` - AI Opt-Out section
+- `docs/AI_GOVERNANCE.md` - AI Opt-Out section
 - `tests/privacy-safety/ai-consent.test.js` - Automated tests
 
 ---
@@ -292,7 +292,7 @@ Minor signs up → Uses features → Data exposed without parent approval
 **Evidence:**
 
 - `database/add_email_verification.sql` - Parental consent schema
-- `docs/UX_PRIVACY_SAFETY_COPY.md` - Parental consent UI states
+- `docs/SECURITY.md` - Security architecture including consent states
 
 ---
 
@@ -435,7 +435,7 @@ Developer → Code change → Bypasses consent → Data exposure
 
 **Evidence:**
 
-- `docs/SAFETY_ACCESS_LAYER.md` - DO/DON'T patterns
+- `docs/RLS_POLICY_SPECIFICATION.md` - Database access patterns
 - `.github/workflows/ci.yml` - CI gates
 
 ---
@@ -558,13 +558,13 @@ Developer → Code change → Bypasses consent → Data exposure
 
 ## Related Documentation
 
-| Document                                                      | Purpose                      |
-| ------------------------------------------------------------- | ---------------------------- |
-| [Security & Privacy Overview](./SECURITY_PRIVACY_OVERVIEW.md) | Executive summary            |
-| [Safety Access Layer](./SAFETY_ACCESS_LAYER.md)               | Consent enforcement patterns |
-| [RLS Policy Specification](./RLS_POLICY_SPECIFICATION.md)     | Database security            |
-| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md)    | Incident response            |
-| [Player Data Safety Guide](./PLAYER_DATA_SAFETY_GUIDE.md)     | Data handling rules          |
+| Document                                                     | Purpose                      |
+| ------------------------------------------------------------ | ---------------------------- |
+| [Security Guide](./SECURITY.md)                              | Security architecture        |
+| [RLS Policy Specification](./RLS_POLICY_SPECIFICATION.md)    | Consent enforcement patterns |
+| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md)   | Incident response            |
+| [Data Safety Policy](./DATA_SAFETY_POLICY.md)                | Data handling rules          |
+| [Adding New Features Safely](./ADDING_NEW_FEATURES_SAFELY.md)| Safe extension playbook      |
 
 ---
 

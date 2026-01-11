@@ -27,7 +27,7 @@ The FlagFit Pro database is organized into the following systems:
 ### 2. Load Monitoring & ACWR (✅ Implemented)
 
 - **Load Tracking**: `load_monitoring`, `load_daily`, `training_load_metrics`
-- **Wellness**: `wellness_entries`, `wellness_logs`, `readiness_scores`
+- **Wellness**: `daily_wellness_checkin` (primary), `wellness_entries` (deprecated - dual-write only), `readiness_scores`
 - **Injury Tracking**: `injury_tracking`, `injury_details`, `athlete_injuries`
 
 ### 3. Nutrition System (✅ Fully Implemented)

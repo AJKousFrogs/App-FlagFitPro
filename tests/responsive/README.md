@@ -94,7 +94,6 @@ scripts/
 └── quick-responsive-check.js       # Quick checker
 
 docs/testing/
-├── MOBILE_RESPONSIVE_TESTING.md    # Full documentation
 └── RESPONSIVE_CHECKLIST.md         # Pre-deployment checklist
 ```
 
@@ -236,9 +235,9 @@ Add to your GitHub Actions:
 
 ## 📚 Documentation
 
-- **Full Guide:** `docs/testing/MOBILE_RESPONSIVE_TESTING.md`
 - **Checklist:** `docs/testing/RESPONSIVE_CHECKLIST.md`
 - **Test Files:** `tests/responsive/`
+- **Main Testing Guide:** `docs/TESTING_GUIDE.md`
 
 ## 🎯 Next Steps
 

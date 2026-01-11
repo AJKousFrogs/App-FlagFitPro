@@ -1,36 +1,43 @@
-# Supabase Backend Debugging Guide
+# Supabase Debugging Guide
 
-## Overview
+**Last Updated:** January 2026  
+**Status:** ✅ Production Ready
 
-This guide provides step-by-step instructions for debugging Supabase backend issues, focusing on RLS policies, schema validation, and realtime conflict resolution.
+---
 
-## Quick Start
+## 📋 Quick Diagnostics
+
+### Run Health Check
+
+```bash
+cd scripts && ./check-backend-health.sh
+```
+
+### Quick Commands
+
+| Issue | SQL Command | Expected |
+|-------|------------|----------|
+| Check RLS | `SELECT * FROM get_table_policies('injuries');` | 4 policies |
+| Check Indexes | `SELECT * FROM check_user_id_index('injuries');` | `idx_injuries_user_id` |
+| Check Schema | `SELECT * FROM get_table_columns('user_profiles');` | All columns |
+| Check Triggers | `SELECT tgname FROM pg_trigger WHERE tgname LIKE '%updated_at%';` | 2+ triggers |
+
+---
+
+## 🚀 Setup
 
 ### 1. Enable Query Logging
 
-In the Supabase Dashboard:
+In Supabase Dashboard SQL Editor:
 
 ```sql
--- Go to SQL Editor and run:
 ALTER DATABASE postgres SET log_statement = 'all';
 ALTER DATABASE postgres SET log_duration = 'on';
 ```
 
-Then check logs in Dashboard > Logs > Postgres Logs
+Check logs: Dashboard > Logs > Postgres Logs
 
-### 2. Install Debug Helper Functions
-
-```bash
-# Run the migration script
-cd scripts
-psql $DATABASE_URL < supabase-debug-migration.sql
-```
-
-Or in Supabase Dashboard SQL Editor:
-- Copy contents of `scripts/supabase-debug-migration.sql`
-- Paste and execute
-
-### 3. Use Debug Service in Angular
+### 2. Import Debug Service
 
 ```typescript
 import { SupabaseDebugService } from '@core/services/supabase-debug.service';
@@ -38,401 +45,325 @@ import { SupabaseDebugService } from '@core/services/supabase-debug.service';
 constructor(private debugService: SupabaseDebugService) {
   this.debugService.enableDebugMode();
 }
-
-// Test upsert with detailed logging
-async testProfileUpdate() {
-  const result = await this.debugService.testUpsert(
-    this.supabase,
-    'user_profiles',
-    {
-      id: this.userId,
-      full_name: 'Test User',
-      role: 'athlete'
-    },
-    { upsert: true, onConflict: 'id' }
-  );
-  
-  if (!result.success) {
-    console.error('Upsert failed:', result.error);
-  }
-}
 ```
 
-## Common Issues & Solutions
+---
 
-### Issue 1: RLS Policy Violation
+## 🔍 Common Errors & Fixes
 
-**Symptoms:**
+### Error: RLS Policy Violation (42501)
+
+**Error:**
 ```
 Error: new row violates row-level security policy
-Error code: 42501
+Code: 42501
 ```
 
-**Debug Steps:**
+**Cause:** `user_id` doesn't match `auth.uid()`
 
-1. **Check current user:**
+**Debug:**
 ```typescript
+// Check current user
 const { data: { user } } = await supabase.auth.getUser();
 console.log('Current user:', user?.id);
+
+// Test policies
+await this.debugService.testRLSPolicies(this.supabase, 'injuries', userId);
 ```
 
-2. **Verify RLS policies:**
-```sql
-SELECT * FROM pg_policies 
-WHERE tablename IN ('user_profiles', 'injuries');
-```
-
-3. **Test with debug service:**
+**Fix:**
 ```typescript
-await this.debugService.testRLSPolicies(
-  this.supabase,
-  'user_profiles',
-  userId
-);
+// ❌ Wrong
+const data = { user_id: someUserId, ... };
+
+// ✅ Correct
+const { data: { user } } = await supabase.auth.getUser();
+const data = { user_id: user.id, ... };
 ```
 
-**Common Causes:**
-- `user_id` in data doesn't match `auth.uid()`
-- Missing INSERT policy with WITH CHECK clause
-- Policy uses wrong column name (e.g., `id` vs `user_id`)
-
-**Fix for user_profiles:**
+**SQL Fix:**
 ```sql
--- Ensure policy uses correct column
-CREATE POLICY "Users can insert own profile"
-  ON user_profiles
-  FOR INSERT
-  WITH CHECK (id = auth.uid());
-  
-CREATE POLICY "Users can update own profile"
-  ON user_profiles
-  FOR UPDATE
-  USING (id = auth.uid());
+-- Ensure INSERT policy with WITH CHECK
+CREATE POLICY "Users can insert own data" ON injuries
+  FOR INSERT WITH CHECK (user_id = auth.uid());
 ```
 
-**Fix for injuries:**
-```sql
-CREATE POLICY "Users can insert own injuries"
-  ON injuries
-  FOR INSERT
-  WITH CHECK (user_id = auth.uid());
-  
-CREATE POLICY "Users can update own injuries"
-  ON injuries
-  FOR UPDATE
-  USING (user_id = auth.uid());
-```
+---
 
-### Issue 2: Column Does Not Exist
+### Error: Column Does Not Exist (42703)
 
-**Symptoms:**
+**Error:**
 ```
 Error: column "pain_level" does not exist
-Error code: 42703
+Code: 42703
 ```
 
-**Debug Steps:**
-
-1. **Check actual schema:**
+**Debug:**
 ```typescript
 const result = await this.debugService.validateSchema(
   this.supabase,
   'daily_wellness_checkin',
   ['pain_level', 'user_id', 'created_at']
 );
-
 console.log('Missing columns:', result.missing);
 ```
 
-2. **Or use SQL:**
+**SQL Check:**
 ```sql
 SELECT column_name, data_type 
 FROM information_schema.columns 
-WHERE table_name = 'daily_wellness_checkin'
-ORDER BY ordinal_position;
+WHERE table_name = 'daily_wellness_checkin';
 ```
 
 **Fix:**
 ```sql
--- Add missing column
-ALTER TABLE daily_wellness_checkin 
-ADD COLUMN pain_level integer;
-
--- Or run a migration
+ALTER TABLE table_name ADD COLUMN column_name type;
 ```
 
-### Issue 3: Missing Indexes
+---
 
-**Symptoms:**
-- Slow queries on `user_id` filters
-- High RLS policy evaluation time
-- Timeout errors
+### Slow Queries (>1s)
 
-**Debug Steps:**
+**Symptoms:** High latency, timeouts, slow RLS evaluation
 
-1. **Check indexes:**
+**Debug:**
 ```typescript
 const indexes = await this.debugService.checkIndexes(
   this.supabase,
-  ['user_profiles', 'injuries', 'daily_wellness_checkin']
+  ['injuries', 'user_profiles', 'daily_wellness_checkin']
 );
-
 console.table(indexes);
 ```
 
-2. **Or use SQL:**
+**SQL Check:**
 ```sql
-SELECT * FROM get_table_indexes('injuries');
+SELECT * FROM check_user_id_index('injuries');
 ```
 
 **Fix:**
 ```sql
--- Add index on user_id for better RLS performance
-CREATE INDEX IF NOT EXISTS idx_injuries_user_id 
-ON injuries(user_id);
-
-CREATE INDEX IF NOT EXISTS idx_wellness_user_id 
-ON daily_wellness_checkin(user_id);
+CREATE INDEX IF NOT EXISTS idx_injuries_user_id ON injuries(user_id);
 ```
 
-### Issue 4: Realtime Conflicts
+---
 
-**Symptoms:**
-- Data gets overwritten by older versions
-- Race conditions between local and remote updates
-- Inconsistent state after network reconnection
+### Realtime Conflicts
 
-**Debug Steps:**
+**Symptoms:** Data overwritten, race conditions, inconsistent state
 
-1. **Set up conflict detection:**
+**Debug & Fix:**
 ```typescript
 const subscription = this.debugService.subscribeWithConflictDetection(
-  this.supabase,
-  'injuries',
-  userId,
-  (data) => {
-    // Handle update
-    console.log('Update received:', data);
-  },
+  this.supabase, 'table', userId,
+  (data) => this.updateUI(data),
   (local, remote) => {
-    // Resolve conflict
-    console.log('Conflict between:', local, remote);
-    
-    // Strategy 1: Last write wins
-    return remote;
-    
-    // Strategy 2: Merge changes
-    // return { ...local, ...remote };
-    
-    // Strategy 3: Keep local if newer
-    // return new Date(local.updated_at) > new Date(remote.updated_at) 
-    //   ? local 
-    //   : remote;
+    // Strategy: Keep newer version
+    return new Date(local.updated_at) > new Date(remote.updated_at) 
+      ? local : remote;
   }
 );
-
-// Later...
-subscription.unsubscribe();
 ```
 
-2. **Add optimistic concurrency control:**
-```sql
--- Already added by debug migration
--- Ensures updated_at is always set
-CREATE TRIGGER update_injuries_updated_at
-  BEFORE UPDATE ON injuries
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
-```
-
-3. **Use version-based updates:**
+**Optimistic Concurrency:**
 ```typescript
-// Include updated_at in WHERE clause
+// Include version check in WHERE
 const { error } = await supabase
   .from('injuries')
   .update({ status: 'recovered' })
-  .eq('id', injuryId)
-  .eq('updated_at', lastKnownUpdatedAt);
+  .eq('id', recordId)
+  .eq('updated_at', lastKnownVersion);
 
 if (error) {
-  // Conflict detected, refresh data
-  console.warn('Conflict: data was updated by another client');
+  // Conflict! Refresh data
+  await this.refreshData();
 }
 ```
 
-### Issue 5: Foreign Key Violations
+---
 
-**Symptoms:**
+### Foreign Key Violations
+
+**Error:**
 ```
 Error: insert or update on table "injuries" violates foreign key constraint
 ```
 
-**Debug Steps:**
-
-1. **Check foreign keys:**
+**Debug:**
 ```sql
-SELECT 
-  tc.table_name, 
-  kcu.column_name, 
-  ccu.table_name AS foreign_table_name,
-  ccu.column_name AS foreign_column_name
+SELECT tc.table_name, kcu.column_name, ccu.table_name AS foreign_table
 FROM information_schema.table_constraints AS tc 
-JOIN information_schema.key_column_usage AS kcu
-  ON tc.constraint_name = kcu.constraint_name
-JOIN information_schema.constraint_column_usage AS ccu
-  ON ccu.constraint_name = tc.constraint_name
-WHERE tc.constraint_type = 'FOREIGN KEY' 
-  AND tc.table_name = 'injuries';
+JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name
+JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name
+WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name = 'injuries';
 ```
 
-2. **Verify referenced data exists:**
-```typescript
-// Check if user exists
-const { data: user } = await supabase
-  .from('user_profiles')
-  .select('id')
-  .eq('id', userId)
-  .single();
+**Fix:** Verify referenced data exists before insert.
 
-if (!user) {
-  console.error('User does not exist:', userId);
-}
-```
+---
 
-## Testing
+## 🛠️ Debug Service API
 
-### Run Automated Tests
-
-```bash
-# Set environment variables
-export SUPABASE_URL="your-project-url"
-export SUPABASE_ANON_KEY="your-anon-key"
-
-# Run tests
-npm test tests/supabase-debug.test.ts
-```
-
-### Manual Testing Checklist
-
-- [ ] Can SELECT own user_profile
-- [ ] Can UPDATE own user_profile
-- [ ] Can INSERT injuries with correct user_id
-- [ ] Cannot UPDATE others' injuries
-- [ ] Realtime subscription receives updates
-- [ ] Conflict resolution works correctly
-- [ ] Indexes exist on user_id columns
-- [ ] Query performance is acceptable (<1s)
-
-## Performance Monitoring
-
-### Get Query Stats
+### Enable/Disable
 
 ```typescript
-const stats = this.debugService.getQueryStats();
-console.log('Query statistics:', stats);
-/*
-{
-  total: 42,
-  successful: 40,
-  failed: 2,
-  avgDuration: 156.3,
-  byTable: {
-    'user_profiles': 15,
-    'injuries': 27
-  }
-}
-*/
+debugService.enableDebugMode();   // Turn on detailed logging
+debugService.disableDebugMode();  // Turn off
 ```
 
-### Export Query Log
+### Test Operations
 
 ```typescript
-const log = this.debugService.exportQueryLog();
-// Save to file or send to analytics
-console.log(log);
+// Test insert/upsert
+await debugService.testUpsert(supabase, 'injuries', data, { upsert: true });
+
+// Test all RLS policies
+await debugService.testRLSPolicies(supabase, 'injuries', userId);
+
+// Check indexes
+await debugService.checkIndexes(supabase, ['injuries', 'user_profiles']);
+
+// Validate schema
+await debugService.validateSchema(supabase, 'injuries', ['id', 'user_id', 'status']);
 ```
 
-## Best Practices
-
-### 1. Always Check Errors
+### Performance Stats
 
 ```typescript
-const { data, error } = await supabase
-  .from('injuries')
-  .insert(injuryData);
+const stats = debugService.getQueryStats();
+console.log(`Total: ${stats.total}, Failed: ${stats.failed}, Avg: ${stats.avgDuration}ms`);
 
+// Export for analysis
+const log = debugService.exportQueryLog();
+```
+
+### Realtime with Conflict Detection
+
+```typescript
+const subscription = debugService.subscribeWithConflictDetection(
+  supabase, 'table', userId,
+  (data) => handleUpdate(data),     // onUpdate callback
+  (local, remote) => remote         // onConflict resolver
+);
+
+// Returns: { channel, updateLocal, unsubscribe }
+subscription.unsubscribe();
+```
+
+---
+
+## 📊 SQL Helper Functions
+
+```sql
+-- Check for user_id index
+SELECT * FROM check_user_id_index('table_name');
+
+-- Get all columns
+SELECT * FROM get_table_columns('table_name');
+
+-- List all indexes
+SELECT * FROM get_table_indexes('table_name');
+
+-- View RLS policies
+SELECT * FROM get_table_policies('table_name');
+```
+
+---
+
+## 🔒 RLS Checklist
+
+- [ ] Table has RLS enabled: `ALTER TABLE name ENABLE ROW LEVEL SECURITY;`
+- [ ] SELECT policy: `USING (user_id = auth.uid())`
+- [ ] INSERT policy: `WITH CHECK (user_id = auth.uid())`
+- [ ] UPDATE policy: `USING (user_id = auth.uid())`
+- [ ] DELETE policy: `USING (user_id = auth.uid())`
+
+---
+
+## ⚡ Performance Checklist
+
+- [ ] Index on `user_id` for RLS performance
+- [ ] Index on foreign keys
+- [ ] Index on frequently filtered columns
+- [ ] `updated_at` trigger for optimistic concurrency
+- [ ] RLS policies don't use nested subqueries
+
+---
+
+## 📝 Best Practices
+
+### Always Check Errors
+
+```typescript
+const { data, error } = await supabase.from('table').insert(data);
 if (error) {
-  console.error('Error details:', {
+  console.error('Error:', {
     code: error.code,
     message: error.message,
     details: error.details,
     hint: error.hint
   });
-  
-  // Handle specific error codes
-  if (error.code === '42501') {
-    // RLS policy violation
-  } else if (error.code === '23505') {
-    // Unique constraint violation
+}
+```
+
+### Filter in Query, Not Code
+
+```typescript
+// ✅ Good
+.select('*').eq('user_id', userId)
+
+// ❌ Bad
+.select('*').then(data => data.filter(row => row.user_id === userId))
+```
+
+### Clean Up Subscriptions
+
+```typescript
+ngOnDestroy() {
+  if (this.subscription) {
+    await supabase.removeChannel(this.subscription);
   }
 }
 ```
 
-### 2. Use Proper Filtering
+---
 
-```typescript
-// ✅ Good: Filter in query
-const { data } = await supabase
-  .from('injuries')
-  .select('*')
-  .eq('user_id', userId);
+## 🆘 Emergency Checklist
 
-// ❌ Bad: Fetch all then filter
-const { data } = await supabase
-  .from('injuries')
-  .select('*');
-const filtered = data.filter(i => i.user_id === userId);
-```
+1. ✅ User authenticated? `await supabase.auth.getUser()`
+2. ✅ RLS policies exist? `SELECT * FROM get_table_policies('table')`
+3. ✅ Indexes present? `SELECT * FROM check_user_id_index('table')`
+4. ✅ Schema correct? `SELECT * FROM get_table_columns('table')`
+5. ✅ Triggers active? `SELECT tgname FROM pg_trigger WHERE tgname LIKE '%table%'`
+6. ✅ Check logs: Supabase Dashboard > Logs > Postgres Logs
+7. ✅ Run health check: `./scripts/check-backend-health.sh`
 
-### 3. Handle Realtime Properly
+---
 
-```typescript
-// ✅ Good: Clean up subscriptions
-const subscription = supabase
-  .channel('injuries')
-  .on('postgres_changes', { ... }, handler)
-  .subscribe();
+## 💡 Pro Tips
 
-// Later, in ngOnDestroy or cleanup:
-await supabase.removeChannel(subscription);
+- **Development:** Always enable debug mode
+- **Testing:** Run `testRLSPolicies()` on component init
+- **Production:** Monitor with `getQueryStats()` - alert on high failure rates
+- **Performance:** Warn if query > 500ms, optimize if > 1s
 
-// ❌ Bad: Memory leaks from unclosed subscriptions
-```
+---
 
-### 4. Use Transactions for Related Updates
+## 🔐 Security Notes
 
-```typescript
-// Multiple related updates
-const { error } = await supabase.rpc('update_injury_with_log', {
-  injury_id: id,
-  new_status: 'recovered',
-  log_entry: 'Fully recovered'
-});
-```
+1. **Never expose debug console in production** - restrict to admin users
+2. **Be careful with query logging** - may log sensitive data
+3. **Clear logs regularly** - don't commit to git
+4. **Test data cleanup** - verify no test data in production
 
-## Additional Resources
+---
+
+## 📚 Additional Resources
 
 - [Supabase RLS Documentation](https://supabase.com/docs/guides/auth/row-level-security)
 - [Realtime Documentation](https://supabase.com/docs/guides/realtime)
-- [Database Linter](https://supabase.com/docs/guides/database/database-linter)
-- [Performance Tuning](https://supabase.com/docs/guides/database/performance)
+- [Database Performance](https://supabase.com/docs/guides/database/performance)
+- `angular/src/app/examples/debugging-signals-examples.ts` - Code examples
 
-## Support
+---
 
-If issues persist:
-
-1. Check Supabase Dashboard > Logs
-2. Run the debug test suite
-3. Export query log for analysis
-4. Review RLS policies with `get_table_policies()`
-5. Check for missing indexes with `get_table_indexes()`
+**Most issues are RLS policy or schema mismatches. Check those first!**

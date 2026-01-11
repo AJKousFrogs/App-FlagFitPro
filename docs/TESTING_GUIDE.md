@@ -168,7 +168,7 @@ npm start
 
 - **URL:** http://localhost:4200
 - **API Mode:** Uses mock data (no backend required)
-- **⚠️ Development Only:** This mode is for testing UI only. Mock data must NEVER be used in production builds or shown to real users. See [PLAYER_DATA_SAFETY_GUIDE.md](./PLAYER_DATA_SAFETY_GUIDE.md) for critical safety information.
+- **⚠️ Development Only:** This mode is for testing UI only. Mock data must NEVER be used in production builds or shown to real users. See [DATA_SAFETY_POLICY.md](./DATA_SAFETY_POLICY.md) for critical safety information.
 
 ### Option B: Full Stack with Netlify Dev
 

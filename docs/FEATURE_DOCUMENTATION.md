@@ -7083,7 +7083,14 @@ const DIFFICULTY_CRITERIA = {
 ### Key Database Tables
 
 ```sql
--- Wellness tracking
+-- Wellness tracking (canonical table)
+daily_wellness_checkin (
+  id, user_id, checkin_date, sleep_hours, sleep_quality,
+  energy_level, muscle_soreness, stress_level,
+  soreness_areas, notes, readiness_score
+)
+
+-- Legacy wellness table (deprecated - backend dual-write only)
 wellness_entries (
   id, athlete_id, date, sleep_hours, sleep_quality,
   energy, soreness, hydration, mood, stress,

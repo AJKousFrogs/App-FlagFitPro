@@ -429,25 +429,30 @@ EWMA Chronic = (Today's Load × λ) + ((1 - λ) × Yesterday's EWMA)
 
 ### 4.1 Daily Wellness Check-in
 
+> **Note:** As of 2026-01-11, `daily_wellness_checkin` is the canonical table. 
+> The `wellness_entries` table is deprecated (backend dual-write only).
+> See `docs/WELLNESS_DATA_ARCHITECTURE.md` for migration status.
+
 **User Flow**: User completes wellness form → Scores calculated → Readiness updated
 
 ```
 [Wellness Check-in Form]
     │
-    └──(POST /api/wellness/checkin)
+    └──(POST /api/wellness-checkin)
            │
-           ├──→ {wellness_entries} [C] - Raw wellness data
+           ├──→ {daily_wellness_checkin} [C/U] - Canonical wellness data
            │    • user_id
-           │    • date
+           │    • checkin_date
            │    • sleep_hours
            │    • sleep_quality (1-10)
            │    • energy_level (1-10)
            │    • muscle_soreness (1-10)
-           │    • mood (1-10)
            │    • stress_level (1-10)
-           │    • motivation (1-10)
-           │    • hydration_glasses
-           │    • resting_heart_rate
+           │    • notes
+           │    • readiness_score (0-100)
+           │
+           ├──→ {wellness_entries} [C/U] - Legacy (dual-write)
+           │    • Deprecated - backend mirrors writes
            │
            ├──→ {readiness_scores} [C/U] - Calculated readiness
            │    • user_id
@@ -455,9 +460,6 @@ EWMA Chronic = (Today's Load × λ) + ((1 - λ) × Yesterday's EWMA)
            │    • readiness_score (0-100)
            │    • status ('excellent' | 'good' | 'moderate' | 'poor')
            │    • factors (JSON breakdown)
-           │
-           ├──→ {daily_wellness_checkin} [C] - Daily snapshot
-           │    • Aggregated wellness state
            │
            └──→ {hrv_readings} [C] (if HRV provided)
                 • user_id
@@ -479,7 +481,7 @@ Wellness Score = Weighted Average of:
   - Hydration: 5% (normalized to 8+ glasses)
 ```
 
-**Tables Involved**: `wellness_entries`, `readiness_scores`, `daily_wellness_checkin`, `hrv_readings`  
+**Tables Involved**: `daily_wellness_checkin` (primary), `wellness_entries` (deprecated), `readiness_scores`, `hrv_readings`  
 **Cross-ref**: [FEATURE_DOCUMENTATION.md §4 Wellness & Recovery](#)
 
 ---
@@ -491,13 +493,11 @@ Wellness Score = Weighted Average of:
 ```
 [Sleep Log Entry]
     │
-    └──(POST /api/wellness/sleep)
+    └──(POST /api/wellness-checkin)
            │
-           ├──→ {wellness_entries} [C/U] - Sleep fields
+           ├──→ {daily_wellness_checkin} [C/U] - Sleep fields
            │    • sleep_hours
            │    • sleep_quality
-           │    • bedtime
-           │    • wake_time
            │
            └──(Background Analysis)
                   │
@@ -506,7 +506,7 @@ Wellness Score = Weighted Average of:
                   └──→ {sleep_optimization_protocols} [R] - Recommendations
 ```
 
-**Tables Involved**: `wellness_entries`, `sleep_guidelines`, `sleep_optimization_protocols`
+**Tables Involved**: `daily_wellness_checkin`, `sleep_guidelines`, `sleep_optimization_protocols`
 
 ---
 
@@ -1047,7 +1047,7 @@ Protein = 1.6-2.2g per kg body weight
            │
            ├──→ {load_monitoring} [R] - Load data
            │
-           ├──→ {wellness_entries} [R] - Wellness trends
+           ├──→ {daily_wellness_checkin} [R] - Wellness trends
            │
            ├──→ {player_game_stats_aggregated} [R] - Game performance
            │
@@ -1063,7 +1063,7 @@ Protein = 1.6-2.2g per kg body weight
                 • completion_rate
 ```
 
-**Tables Involved**: `workout_logs`, `load_monitoring`, `wellness_entries`, `player_game_stats_aggregated`, `performance_metrics`, `training_analytics`  
+**Tables Involved**: `workout_logs`, `load_monitoring`, `daily_wellness_checkin`, `player_game_stats_aggregated`, `performance_metrics`, `training_analytics`  
 **Cross-ref**: [FEATURE_DOCUMENTATION.md §16 Analytics](#)
 
 ---
@@ -1170,7 +1170,7 @@ Protein = 1.6-2.2g per kg body weight
            ├──→ {users} [R]
            ├──→ {user_profiles} [R]
            ├──→ {workout_logs} [R]
-           ├──→ {wellness_entries} [R]
+           ├──→ {daily_wellness_checkin} [R]
            ├──→ {nutrition_logs} [R]
            ├──→ {ai_messages} [R] (user's messages only)
            └──→ {game_plays} [R] (where user involved)
@@ -1194,7 +1194,7 @@ Protein = 1.6-2.2g per kg body weight
                   ├──→ {users} [D] - Cascade delete
                   ├──→ {user_profiles} [D]
                   ├──→ {workout_logs} [D]
-                  ├──→ {wellness_entries} [D]
+                  ├──→ {daily_wellness_checkin} [D]
                   ├──→ {nutrition_logs} [D]
                   ├──→ {ai_messages} [Anonymize]
                   └──→ {gdpr_data_processing_log} [C] - Record deletion
@@ -1225,23 +1225,23 @@ Protein = 1.6-2.2g per kg body weight
 ### Key RLS Policies
 
 ```sql
--- User owns data
-CREATE POLICY "Users can manage own data" ON wellness_entries
+-- User owns data (canonical table)
+CREATE POLICY "Users can manage own data" ON daily_wellness_checkin
   FOR ALL USING (auth.uid() = user_id);
 
--- Coach can view team data
-CREATE POLICY "Coaches can view team wellness" ON wellness_entries
+-- Coach can view team data (canonical table)
+CREATE POLICY "Coaches can view team wellness" ON daily_wellness_checkin
   FOR SELECT USING (
     EXISTS (
       SELECT 1 FROM team_members tm1
       JOIN team_members tm2 ON tm1.team_id = tm2.team_id
       WHERE tm1.user_id = auth.uid()
       AND tm1.role = 'coach'
-      AND tm2.user_id = wellness_entries.user_id
+      AND tm2.user_id = daily_wellness_checkin.user_id
     )
     AND EXISTS (
       SELECT 1 FROM athlete_consent_settings
-      WHERE user_id = wellness_entries.user_id
+      WHERE user_id = daily_wellness_checkin.user_id
       AND coach_can_view_wellness = true
     )
   );
@@ -1250,6 +1250,8 @@ CREATE POLICY "Coaches can view team wellness" ON wellness_entries
 CREATE POLICY "Public read for exercises" ON exercises
   FOR SELECT USING (true);
 ```
+
+> **Note:** Similar policies exist on the legacy `wellness_entries` table for dual-write compatibility.
 
 **Cross-ref**: [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md)
 
@@ -1278,7 +1280,7 @@ CREATE POLICY "Public read for exercises" ON exercises
 | 1   | Dashboard            | `users`, `training_load_metrics`, `readiness_scores`            | ✅       |
 | 2   | Training Schedule    | `training_sessions`, `training_programs`, `workout_logs`        | ✅       |
 | 3   | Today's Practice     | `daily_training_schedule`, `exercises`, `training_videos`       | ✅       |
-| 4   | Wellness             | `wellness_entries`, `readiness_scores`                          | ✅       |
+| 4   | Wellness             | `daily_wellness_checkin`, `readiness_scores`                    | ✅       |
 | 5   | ACWR Dashboard       | `load_monitoring`, `training_load_metrics`, `injury_risk_flags` | ✅       |
 | 6   | Travel Recovery      | `athlete_travel_log`, `travel_protocols`                        | ✅       |
 | 7   | Game Day Readiness   | `competition_readiness`, `game_day_workflows`                   | ✅       |
@@ -1310,7 +1312,7 @@ CREATE POLICY "Public read for exercises" ON exercises
 | Users & Auth    | 15          | `users`, `user_profiles`, `gdpr_consent`                    |
 | Training        | 25          | `workout_logs`, `training_programs`, `exercises`            |
 | Load Monitoring | 8           | `load_monitoring`, `training_load_metrics`                  |
-| Wellness        | 12          | `wellness_entries`, `readiness_scores`                      |
+| Wellness        | 12          | `daily_wellness_checkin`, `readiness_scores`                |
 | AI Coaching     | 10          | `ai_chat_sessions`, `ai_messages`, `knowledge_base_entries` |
 | Teams           | 20          | `teams`, `team_members`, `depth_chart_entries`              |
 | Competition     | 15          | `games`, `tournaments`, `game_plays`                        |
