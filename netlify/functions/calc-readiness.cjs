@@ -187,65 +187,49 @@ exports.handler = async (event, context) => {
       // Get sessions from training_sessions table
       // Include both rpe and intensity_level (fallback for RPE)
       // Note: athlete_id is the canonical user reference column (NOT NULL)
-      let { data: sessions, error: sessErr } = await supabaseAdmin // eslint-disable-line prefer-const
+      // Use session_date as the standardized date column
+      const { data: sessions, error: sessErr } = await supabaseAdmin
         .from("training_sessions")
-        .select("session_date, date, duration_minutes, rpe, intensity_level")
+        .select("session_date, duration_minutes, rpe, workload, intensity_level")
         .eq("athlete_id", athleteId)
         .gte("session_date", startChronic.toISOString().slice(0, 10))
-        .lte("session_date", dayStr);
+        .lte("session_date", dayStr)
+        .order("session_date", { ascending: false });
 
       if (sessErr) {
         console.error("Error fetching sessions:", sessErr);
-        // Try alternative query with date field instead of session_date
-        const { data: altSessions, error: altErr } = await supabaseAdmin
-          .from("training_sessions")
-          .select("session_date, date, duration_minutes, rpe, intensity_level")
-          .eq("athlete_id", athleteId)
-          .gte("date", startChronic.toISOString().slice(0, 10))
-          .lte("date", dayStr);
-
-        if (altErr) {
-          return createErrorResponse(
-            500,
-            `Failed to fetch sessions: ${sessErr.message}`,
-          );
-        }
-        sessions = altSessions;
+        return createErrorResponse(
+          500,
+          `Failed to fetch sessions: ${sessErr.message}`,
+        );
       }
-
-      // Also check sessions table (for imported open data)
-      const { data: sessionsTableData } = await supabaseAdmin
-        .from("sessions")
-        .select("date, duration_minutes, rpe")
-        .eq("athlete_id", athleteId)
-        .gte("date", startChronic.toISOString().slice(0, 10))
-        .lte("date", dayStr);
-
-      // Combine sessions from both tables
-      const allSessions = [...(sessions || []), ...(sessionsTableData || [])];
 
       // Calculate daily loads (session-RPE = RPE × duration)
       // Use rpe if available, fallback to intensity_level (assuming 1-10 scale maps to RPE)
+      // Handle empty sessions gracefully (no crash, degrade to wellness-only scoring)
       const loadsByDay = new Map();
-      for (const s of allSessions) {
-        const sessionDate = s.session_date || s.date;
-        const duration = s.duration_minutes;
-        // Use rpe if available, otherwise use intensity_level as fallback
-        const rpe =
-          s.rpe !== null && s.rpe !== undefined
-            ? s.rpe
-            : s.intensity_level || 0;
+      
+      if (sessions && sessions.length > 0) {
+        for (const s of sessions) {
+          const sessionDate = s.session_date;
+          const duration = s.duration_minutes;
+          // Use rpe if available, otherwise use intensity_level as fallback
+          const rpe =
+            s.rpe !== null && s.rpe !== undefined
+              ? s.rpe
+              : s.intensity_level || 0;
 
-        if (!duration || !sessionDate) {
-          continue;
+          if (!duration || !sessionDate) {
+            continue;
+          }
+          if (rpe === 0 || rpe === null) {
+            continue;
+          } // Skip if no RPE/intensity data
+
+          const load = duration * rpe; // session-RPE
+          const key = sessionDate;
+          loadsByDay.set(key, (loadsByDay.get(key) || 0) + load);
         }
-        if (rpe === 0 || rpe === null) {
-          continue;
-        } // Skip if no RPE/intensity data
-
-        const load = duration * rpe; // session-RPE
-        const key = sessionDate;
-        loadsByDay.set(key, (loadsByDay.get(key) || 0) + load);
       }
 
       // Calculate acute load (7-day sum)

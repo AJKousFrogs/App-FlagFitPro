@@ -1,0 +1,377 @@
+/**
+ * iOS Safari Specific Fixes
+ * ================================================================
+ * Platform-specific styles for iOS Safari to handle:
+ * - Flex overflow issues
+ * - Gap property limitations
+ * - Touch interaction quirks
+ * - WebKit-specific bugs
+ * ================================================================
+ */
+
+// ================================================================
+// FLEX OVERFLOW FIXES FOR IOS
+// ================================================================
+
+/**
+ * iOS Safari has issues with flex containers overflowing
+ * when using gap property with flex-wrap
+ */
+.platform-ios {
+  // Fix: Flex containers with gap and flex-wrap
+  .flex-wrap {
+    // iOS Safari doesn't always respect gap with flex-wrap
+    // Use margin-based spacing instead
+    &.gap-1 {
+      gap: 0 !important;
+      margin: -0.25rem;
+      
+      > * {
+        margin: 0.25rem;
+      }
+    }
+
+    &.gap-2 {
+      gap: 0 !important;
+      margin: -0.5rem;
+      
+      > * {
+        margin: 0.5rem;
+      }
+    }
+
+    &.gap-3 {
+      gap: 0 !important;
+      margin: -0.75rem;
+      
+      > * {
+        margin: 0.75rem;
+      }
+    }
+
+    &.gap-4 {
+      gap: 0 !important;
+      margin: -1rem;
+      
+      > * {
+        margin: 1rem;
+      }
+    }
+  }
+
+  // Fix: Flex containers that overflow on iOS
+  .flex-overflow-fix {
+    // Force proper scrolling on iOS
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    overflow-y: hidden;
+    
+    // Prevent flex items from shrinking
+    > * {
+      flex-shrink: 0;
+    }
+  }
+
+  // Fix: Flex containers with justify-content
+  .flex {
+    // iOS Safari sometimes miscalculates flex item width
+    &.justify-between,
+    &.justify-around,
+    &.justify-evenly {
+      > * {
+        // Prevent flex items from overflowing
+        min-width: 0;
+        flex-shrink: 1;
+      }
+    }
+  }
+}
+
+// ================================================================
+// IOS SAFARI WEBKIT FIXES
+// ================================================================
+
+.browser-safari {
+  // Fix: Safari doesn't support gap on flexbox in older versions
+  @supports not (gap: 1rem) {
+    .gap-1 { gap: 0 !important; margin: -0.25rem; > * { margin: 0.25rem; } }
+    .gap-2 { gap: 0 !important; margin: -0.5rem; > * { margin: 0.5rem; } }
+    .gap-3 { gap: 0 !important; margin: -0.75rem; > * { margin: 0.75rem; } }
+    .gap-4 { gap: 0 !important; margin: -1rem; > * { margin: 1rem; } }
+  }
+
+  // Fix: Safari input zoom prevention
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"] {
+    font-size: max(16px, 1rem);
+  }
+
+  // Fix: Safari sticky position bug
+  .sticky {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+
+  // Fix: Safari transforms on fixed elements
+  .fixed {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+// ================================================================
+// IOS TOUCH INTERACTION FIXES
+// ================================================================
+
+.platform-ios {
+  // Fix: iOS tap highlight
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  // Fix: iOS momentum scrolling
+  .overflow-auto,
+  .overflow-y-auto,
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // Fix: iOS button appearance
+  button,
+  input[type="button"],
+  input[type="submit"] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  // Fix: iOS select appearance
+  select {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
+
+// ================================================================
+// IOS SAFARI SPECIFIC LAYOUT FIXES
+// ================================================================
+
+.platform-ios.browser-safari {
+  // Fix: Safe area insets for notched devices (iPhone X+)
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+
+  // Fix: iOS Safari bottom nav bar height
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+
+  // Fix: iOS viewport height issues
+  .full-height {
+    height: 100vh;
+    height: -webkit-fill-available;
+  }
+}
+
+// ================================================================
+// PRIMENG COMPONENT FIXES FOR IOS
+// ================================================================
+
+.platform-ios {
+  // Fix: PrimeNG dialog overflow on iOS
+  .p-dialog {
+    -webkit-overflow-scrolling: touch;
+    
+    .p-dialog-content {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  // Fix: PrimeNG dropdown on iOS
+  .p-dropdown {
+    -webkit-appearance: none;
+  }
+
+  // Fix: PrimeNG table scrolling on iOS
+  .p-datatable-scrollable {
+    .p-datatable-scrollable-body {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  // Fix: PrimeNG sidebar on iOS
+  .p-sidebar {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+// ================================================================
+// IOS FLEX GAP UTILITY CLASSES
+// ================================================================
+
+/**
+ * Use these utility classes instead of gap-* on iOS
+ * Example: <div class="flex flex-wrap gap-ios-2">
+ */
+.platform-ios {
+  .gap-ios-1 {
+    gap: 0 !important;
+    margin: -0.25rem;
+    > * { margin: 0.25rem; }
+  }
+
+  .gap-ios-2 {
+    gap: 0 !important;
+    margin: -0.5rem;
+    > * { margin: 0.5rem; }
+  }
+
+  .gap-ios-3 {
+    gap: 0 !important;
+    margin: -0.75rem;
+    > * { margin: 0.75rem; }
+  }
+
+  .gap-ios-4 {
+    gap: 0 !important;
+    margin: -1rem;
+    > * { margin: 1rem; }
+  }
+
+  // Flex row gap alternatives
+  .gap-x-ios-1 {
+    column-gap: 0 !important;
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    > * { margin-left: 0.25rem; margin-right: 0.25rem; }
+  }
+
+  .gap-x-ios-2 {
+    column-gap: 0 !important;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    > * { margin-left: 0.5rem; margin-right: 0.5rem; }
+  }
+
+  .gap-x-ios-3 {
+    column-gap: 0 !important;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
+    > * { margin-left: 0.75rem; margin-right: 0.75rem; }
+  }
+
+  .gap-x-ios-4 {
+    column-gap: 0 !important;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    > * { margin-left: 1rem; margin-right: 1rem; }
+  }
+
+  // Flex column gap alternatives
+  .gap-y-ios-1 {
+    row-gap: 0 !important;
+    margin-top: -0.25rem;
+    margin-bottom: -0.25rem;
+    > * { margin-top: 0.25rem; margin-bottom: 0.25rem; }
+  }
+
+  .gap-y-ios-2 {
+    row-gap: 0 !important;
+    margin-top: -0.5rem;
+    margin-bottom: -0.5rem;
+    > * { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+  }
+
+  .gap-y-ios-3 {
+    row-gap: 0 !important;
+    margin-top: -0.75rem;
+    margin-bottom: -0.75rem;
+    > * { margin-top: 0.75rem; margin-bottom: 0.75rem; }
+  }
+
+  .gap-y-ios-4 {
+    row-gap: 0 !important;
+    margin-top: -1rem;
+    margin-bottom: -1rem;
+    > * { margin-top: 1rem; margin-bottom: 1rem; }
+  }
+}
+
+// ================================================================
+// DEBUG UTILITIES FOR IOS TESTING
+// ================================================================
+
+/**
+ * Add this class to elements to debug flex overflow on iOS
+ * Example: <div class="flex flex-wrap gap-2 debug-ios-flex">
+ */
+.platform-ios .debug-ios-flex {
+  outline: 2px dashed #ff6b6b !important;
+  outline-offset: -2px;
+  
+  > * {
+    outline: 1px solid #4ecdc4 !important;
+    outline-offset: -1px;
+  }
+
+  &::before {
+    content: 'iOS Flex Debug';
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #ff6b6b;
+    color: white;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    z-index: 9999;
+  }
+}
+
+// ================================================================
+// IOS SIMULATOR TESTING HELPERS
+// ================================================================
+
+/**
+ * These styles help identify platform-specific issues
+ * during Safari Web Inspector debugging
+ */
+@media (max-width: 767px) {
+  .platform-ios {
+    // Add visual indicator in dev mode
+    &::after {
+      content: 'iOS Safari';
+      position: fixed;
+      top: env(safe-area-inset-top, 0);
+      right: 0;
+      background: #007aff;
+      color: white;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      z-index: 99999;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+  }
+
+  .platform-android {
+    &::after {
+      content: 'Android Chrome';
+      position: fixed;
+      top: 0;
+      right: 0;
+      background: #34a853;
+      color: white;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      z-index: 99999;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+  }
+}

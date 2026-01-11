@@ -37,6 +37,7 @@
 @use "./styles/responsive-utilities" as *;
 @use "./styles/mobile-responsive" as *;
 @use "./styles/mobile-touch-components" as *;
+@use "./styles/ios-safari-fixes" as *;
 
 /* ============================================
    ALL @IMPORT RULES (Must come after @use)

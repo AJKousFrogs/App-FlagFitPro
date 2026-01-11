@@ -27,6 +27,7 @@ import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
 import { cacheInterceptor } from "./core/interceptors/cache.interceptor";
 import { errorInterceptor } from "./core/interceptors/error.interceptor";
+import { debugInterceptor } from "./core/interceptors/debug.interceptor";
 import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
 import { AcwrService } from "./core/services/acwr.service";
 import { CoreWebVitalsService } from "./core/services/core-web-vitals.service";
@@ -36,6 +37,7 @@ import {
 } from "./core/services/error-tracking.service";
 import { LoadMonitoringService } from "./core/services/load-monitoring.service";
 import { ResourceService } from "./core/services/resource.service";
+import { PlatformDetectionService } from "./core/services/platform-detection.service";
 import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
 
 /**
@@ -84,7 +86,12 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(
       withFetch(), // Angular 21: Use fetch API for better performance and streaming support
-      withInterceptors([authInterceptor, cacheInterceptor, errorInterceptor]),
+      withInterceptors([
+        authInterceptor,
+        cacheInterceptor,
+        errorInterceptor,
+        ...(isDevMode() ? [debugInterceptor] : []), // Debug interceptor - only in development
+      ]),
     ),
     MessageService,
     providePrimeNG({
@@ -122,6 +129,7 @@ export const appConfig: ApplicationConfig = {
     AcwrAlertsService,
     CoreWebVitalsService,
     ResourceService,
+    PlatformDetectionService, // Auto-detects iOS, Android, Safari, Chrome
 
     // Error tracking and monitoring (Sentry integration)
     ErrorTrackingService,

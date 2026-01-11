@@ -615,7 +615,19 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   async saveSettings(): Promise<void> {
+    console.trace('🔍 [saveSettings] Invoked');
+    console.log('📋 [saveSettings] Form states:', {
+      profileValid: this.profileForm.valid,
+      notificationValid: this.notificationForm.valid,
+      privacyValid: this.privacyForm.valid,
+      preferencesValid: this.preferencesForm.valid,
+    });
+
     if (this.profileForm.invalid) {
+      console.warn('⚠️ [saveSettings] Profile form invalid, aborting', {
+        errors: this.profileForm.errors,
+        formValue: this.profileForm.value,
+      });
       this.profileForm.markAllAsTouched();
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
@@ -1002,17 +1014,29 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         );
       }
     } catch (error) {
+      console.error('❌ [saveSettings] Failed to save settings:', error);
+      console.trace('Error stack trace:');
       this.logger.error("Save settings error:", toLogContext(error));
       const message =
         error instanceof Error ? error.message : "Failed to save settings";
       this.toastService.error(message);
     } finally {
       this.isSavingSettings.set(false);
+      console.log('🏁 [saveSettings] Completed, loading state reset');
     }
   }
 
   async changePassword(): Promise<void> {
+    console.trace('🔍 [changePassword] Invoked');
+    console.log('📋 [changePassword] Form state:', {
+      formValid: this.passwordForm.valid,
+      formValue: { ...this.passwordForm.value, newPassword: '***', currentPassword: '***', confirmNewPassword: '***' },
+    });
+
     if (this.passwordForm.invalid) {
+      console.warn('⚠️ [changePassword] Form invalid, aborting', {
+        errors: this.passwordForm.errors,
+      });
       this.passwordForm.markAllAsTouched();
       return;
     }
@@ -1033,17 +1057,28 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.toastService.success(TOAST.SUCCESS.PASSWORD_CHANGED);
       this.showChangePasswordDialog = false;
       this.passwordForm.reset();
+      console.log('✅ [changePassword] Password changed successfully');
     } catch (error) {
+      console.error('❌ [changePassword] Failed to change password:', error);
+      console.trace('Error stack trace:');
       const message =
         error instanceof Error ? error.message : "Failed to update password";
       this.toastService.error(message);
     } finally {
       this.isChangingPassword.set(false);
+      console.log('🏁 [changePassword] Completed, loading state reset');
     }
   }
 
   async deleteAccount(): Promise<void> {
+    console.trace('🔍 [deleteAccount] Invoked');
+    console.log('📋 [deleteAccount] Confirm text:', {
+      confirmText: this.deleteConfirmText,
+      isValid: this.deleteConfirmText === "DELETE",
+    });
+
     if (this.deleteConfirmText !== "DELETE") {
+      console.warn('⚠️ [deleteAccount] Confirmation text mismatch, aborting');
       return;
     }
 
@@ -1084,12 +1119,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         "Your account deletion request has been submitted. You will receive a confirmation email.",
       );
       this.showDeleteAccountDialog = false;
+      console.log('✅ [deleteAccount] Deletion request submitted successfully');
     } catch (error) {
+      console.error('❌ [deleteAccount] Failed to delete account:', error);
+      console.trace('Error stack trace:');
       const message =
         error instanceof Error ? error.message : "Failed to delete account";
       this.toastService.error(message);
     } finally {
       this.isDeletingAccount.set(false);
+      console.log('🏁 [deleteAccount] Completed, loading state reset');
     }
   }
 
@@ -1145,7 +1184,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   async verify2FA(): Promise<void> {
-    if (this.twoFAVerificationCode.length !== 6) return;
+    console.trace('🔍 [verify2FA] Invoked');
+    console.log('📋 [verify2FA] Verification code:', {
+      codeLength: this.twoFAVerificationCode.length,
+      isValid: this.twoFAVerificationCode.length === 6,
+    });
+
+    if (this.twoFAVerificationCode.length !== 6) {
+      console.warn('⚠️ [verify2FA] Invalid code length, aborting');
+      return;
+    }
 
     this.isEnabling2FA.set(true);
     this.twoFAError.set("");
@@ -1184,12 +1232,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.twoFAStep.set(4);
       this.is2FAEnabled.set(true);
       this.toastService.success(TOAST.SUCCESS.UPDATED);
+      console.log('✅ [verify2FA] 2FA enabled successfully');
     } catch (error) {
+      console.error('❌ [verify2FA] Verification failed:', error);
+      console.trace('Error stack trace:');
       const message =
         error instanceof Error ? error.message : "Verification failed";
       this.twoFAError.set(message);
     } finally {
       this.isEnabling2FA.set(false);
+      console.log('🏁 [verify2FA] Completed, loading state reset');
     }
   }
 
@@ -1229,7 +1281,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   async disable2FA(): Promise<void> {
-    if (this.disable2FACode.length !== 6) return;
+    console.trace('🔍 [disable2FA] Invoked');
+    console.log('📋 [disable2FA] Code length:', {
+      codeLength: this.disable2FACode.length,
+      isValid: this.disable2FACode.length === 6,
+    });
+
+    if (this.disable2FACode.length !== 6) {
+      console.warn('⚠️ [disable2FA] Invalid code length, aborting');
+      return;
+    }
 
     this.isDisabling2FA.set(true);
 
@@ -1255,12 +1316,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.showDisable2FADialog = false;
       this.disable2FACode = "";
       this.toastService.success(TOAST.SUCCESS.UPDATED);
+      console.log('✅ [disable2FA] 2FA disabled successfully');
     } catch (error) {
+      console.error('❌ [disable2FA] Failed to disable 2FA:', error);
+      console.trace('Error stack trace:');
       const message =
         error instanceof Error ? error.message : "Failed to disable 2FA";
       this.toastService.error(message);
     } finally {
       this.isDisabling2FA.set(false);
+      console.log('🏁 [disable2FA] Completed, loading state reset');
     }
   }
 
@@ -1346,6 +1411,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    * Export user data in selected format
    */
   async exportUserData(): Promise<void> {
+    console.trace('🔍 [exportUserData] Invoked');
+    console.log('📋 [exportUserData] Export options:', {
+      format: this.exportFormat,
+      options: this.exportOptions,
+    });
+
     this.isExportingData.set(true);
     this.exportProgress.set(0);
 
@@ -1456,12 +1527,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
       this.toastService.success(TOAST.SUCCESS.DATA_EXPORTED);
       this.showDataExportDialog = false;
+      console.log('✅ [exportUserData] Data exported successfully');
     } catch (error) {
+      console.error('❌ [exportUserData] Export failed:', error);
+      console.trace('Error stack trace:');
       this.logger.error("Error exporting data:", error);
       this.toastService.error(TOAST.ERROR.EXPORT_FAILED);
     } finally {
       this.isExportingData.set(false);
       this.exportProgress.set(0);
+      console.log('🏁 [exportUserData] Completed, loading state reset');
     }
   }
 
@@ -1601,7 +1676,15 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    * Submit request for a new team
    */
   async submitNewTeamRequest(): Promise<void> {
+    console.trace('🔍 [submitNewTeamRequest] Invoked');
+    console.log('📋 [submitNewTeamRequest] Team details:', {
+      teamName: this.newTeamName,
+      notes: this.newTeamNotes,
+      isValid: this.newTeamName.trim().length > 0,
+    });
+
     if (!this.newTeamName.trim()) {
+      console.warn('⚠️ [submitNewTeamRequest] Team name empty, aborting');
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
@@ -1657,7 +1740,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.showNewTeamDialog = false;
       this.newTeamName = "";
       this.newTeamNotes = "";
+      console.log('✅ [submitNewTeamRequest] Team request submitted successfully');
     } catch (error) {
+      console.error('❌ [submitNewTeamRequest] Failed to submit team request:', error);
+      console.trace('Error stack trace:');
       const message =
         error instanceof Error
           ? error.message
@@ -1666,6 +1752,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.error("Error submitting new team request:", error);
     } finally {
       this.isSubmittingTeamRequest.set(false);
+      console.log('🏁 [submitNewTeamRequest] Completed, loading state reset');
     }
   }
 

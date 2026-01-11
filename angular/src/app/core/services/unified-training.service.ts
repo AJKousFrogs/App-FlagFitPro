@@ -1,52 +1,51 @@
 import {
-  Injectable,
-  inject,
-  computed,
-  signal,
-  DestroyRef,
+    DestroyRef,
+    Injectable,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
-import { Observable, combineLatest, of, from, firstValueFrom } from "rxjs";
-import { map, shareReplay, tap, catchError } from "rxjs/operators";
+import { Observable, combineLatest, firstValueFrom, from, of } from "rxjs";
+import { catchError, map, shareReplay, tap } from "rxjs/operators";
 
-import { AcwrService } from "./acwr.service";
-import { ReadinessService } from "./readiness.service";
-import { TrainingDataService } from "./training-data.service";
-import { WellnessService } from "./wellness.service";
-import {
-  PerformanceDataService,
-  PhysicalMeasurement,
-} from "./performance-data.service";
-import { ApiService } from "./api.service";
-import { AuthService } from "./auth.service";
-import { LoggerService } from "./logger.service";
-import { toLogContext } from "./logger.service";
-import {
-  PlayerProgramService,
-  ProgramAssignment,
-} from "./player-program.service";
-import { SupabaseService } from "./supabase.service";
 import { COLORS } from "../constants/app.constants";
 import { WELLNESS } from "../constants/wellness.constants";
 import {
-  TrainingStatCard,
-  WeeklyScheduleDay,
-  Workout,
-  Achievement,
-  WellnessAlert,
-  ReadinessStatus,
-  TrainingDataResult,
-  SessionType,
-} from "../models/training.models";
-import {
-  UserMetadata,
-  DailyRoutineSlot,
-  TodayScheduleItem,
-  SupplementEntry,
-  TrainingSessionRecord,
-  SmartRecommendationsResponse,
-  TrainingRecommendation,
-  DailyProtocolResponse,
+    DailyProtocolResponse,
+    DailyRoutineSlot,
+    SmartRecommendationsResponse,
+    SupplementEntry,
+    TodayScheduleItem,
+    TrainingRecommendation,
+    TrainingSessionRecord,
+    UserMetadata,
 } from "../models/api.models";
+import {
+    Achievement,
+    ReadinessStatus,
+    SessionType,
+    TrainingDataResult,
+    TrainingStatCard,
+    WeeklyScheduleDay,
+    WellnessAlert,
+    Workout,
+} from "../models/training.models";
+import { AcwrService } from "./acwr.service";
+import { ApiService } from "./api.service";
+import { AuthService } from "./auth.service";
+import { LoggerService, toLogContext } from "./logger.service";
+import {
+    PerformanceDataService,
+    PhysicalMeasurement,
+} from "./performance-data.service";
+import {
+    PlayerProgramService,
+    ProgramAssignment,
+} from "./player-program.service";
+import { ReadinessService } from "./readiness.service";
+import { SupabaseService } from "./supabase.service";
+import { TrainingDataService } from "./training-data.service";
+import { WellnessService } from "./wellness.service";
 // Note: WellnessCheckinData and ApiResponseWrapper are defined locally below
 
 /**
@@ -787,13 +786,27 @@ export class UnifiedTrainingService {
   ): Promise<TrainingSessionRecord[]> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const start = thirtyDaysAgo.toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
 
-    const { data } = await this.supabase.client
+    const { data, error } = await this.supabase.client
       .from("training_sessions")
       .select("*")
       .eq("user_id", userId)
-      .gte("date", thirtyDaysAgo.toISOString())
-      .order("date", { ascending: false });
+      .gte("session_date", start)
+      .order("session_date", { ascending: false });
+
+    if (error) {
+      this.logger.error(
+        "[UnifiedTrainingService] Failed to load training sessions",
+        toLogContext({
+          userId,
+          dateRange: { start },
+          error: error.message,
+          code: error.code,
+        }),
+      );
+      return [];
+    }
 
     return (data as TrainingSessionRecord[]) || [];
   }
@@ -977,14 +990,27 @@ export class UnifiedTrainingService {
     const userId = this.userId();
     if (!userId) return this.getDefaultWorkouts();
 
-    const today = new Date().toISOString().split("T")[0];
-    const { data } = await this.supabase.client
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
+    const { data, error } = await this.supabase.client
       .from("training_sessions")
       .select("*")
-      .eq("athlete_id", userId)
+      .eq("user_id", userId)
       .eq("session_date", today)
       .eq("status", "scheduled")
-      .order("start_time", { ascending: true, nullsFirst: false });
+      .order("created_at", { ascending: true }); // Order by creation time since start_time doesn't exist
+
+    if (error) {
+      this.logger.error(
+        "[UnifiedTrainingService] Failed to load available workouts",
+        toLogContext({
+          userId,
+          today,
+          error: error.message,
+          code: error.code,
+        }),
+      );
+      return this.getDefaultWorkouts();
+    }
 
     if (!data || data.length === 0) return this.getDefaultWorkouts();
     return data.map((w) => this.transformToWorkout(w));
@@ -1318,29 +1344,46 @@ export class UnifiedTrainingService {
       const userId = this.userId();
       if (!userId) return false;
 
+      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
       const { error } = await this.supabase.client
         .from("training_sessions")
         .insert({
           user_id: userId,
-          date: new Date().toISOString(),
+          session_date: today,
           session_type: workout.type,
-          duration: parseInt(workout.duration) || 60,
-          intensity:
+          duration_minutes: parseInt(workout.duration) || 60,
+          intensity_level:
             workout.intensity === "high"
               ? 9
               : workout.intensity === "medium"
                 ? 6
                 : 3,
-          completed: true,
+          status: "completed",
           notes: `Completed: ${workout.title}`,
         });
 
-      if (error) return false;
+      if (error) {
+        this.logger.error(
+          "[UnifiedTrainingService] Failed to mark workout complete",
+          toLogContext({
+            userId,
+            workoutId: workout.id,
+            workoutType: workout.type,
+            error: error.message,
+            code: error.code,
+          }),
+        );
+        return false;
+      }
 
       // Refresh state
       await firstValueFrom(this.getTodayOverview());
       return true;
-    } catch (_error) {
+    } catch (error) {
+      this.logger.error(
+        "[UnifiedTrainingService] Exception in markWorkoutComplete",
+        toLogContext({ error }),
+      );
       return false;
     }
   }
@@ -1354,21 +1397,37 @@ export class UnifiedTrainingService {
 
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowDate = tomorrow.toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
 
       const { error } = await this.supabase.client
         .from("training_sessions")
         .update({
-          session_date: tomorrow.toISOString().split("T")[0],
+          session_date: tomorrowDate,
           notes: "[Postponed]",
         })
         .eq("id", workout.id);
 
-      if (error) return false;
+      if (error) {
+        this.logger.error(
+          "[UnifiedTrainingService] Failed to postpone workout",
+          toLogContext({
+            workoutId: workout.id,
+            newDate: tomorrowDate,
+            error: error.message,
+            code: error.code,
+          }),
+        );
+        return false;
+      }
 
       // Refresh state
       await firstValueFrom(this.getTodayOverview());
       return true;
-    } catch (_error) {
+    } catch (error) {
+      this.logger.error(
+        "[UnifiedTrainingService] Exception in postponeWorkout",
+        toLogContext({ error }),
+      );
       return false;
     }
   }
