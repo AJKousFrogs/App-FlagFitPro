@@ -95,8 +95,7 @@
    ================================================================ */
 
 /* Form Field Group */
-.form-field,
-.p-field {
+.form-field {
   margin-bottom: var(--space-4);
 
   &:last-child {
@@ -105,8 +104,7 @@
 }
 
 /* Form Field Label */
-.form-field label,
-.p-field label {
+.form-field label {
   margin-bottom: var(--space-2);
 }
 

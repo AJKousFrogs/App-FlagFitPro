@@ -17,18 +17,18 @@ import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ChartOptions } from "chart.js";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { EmptyStateV2Component } from "../../../shared/components/ui-components";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { SkeletonModule } from "primeng/skeleton";
-import { COLORS } from "../../../core/constants/app.constants";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { COLORS } from "../../../core/constants/app.constants";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
+import { EmptyStateV2Component } from "../../../shared/components/ui-components";
 import { getInitials } from "../../../shared/utils/format.utils";
 
 interface OverviewMetrics {

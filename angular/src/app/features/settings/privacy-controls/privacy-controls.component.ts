@@ -520,7 +520,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         [style]="dialogStyles.form"
       >
         <div class="contact-form">
-          <div class="p-field">
+          <div class="form-field">
             <label for="contactName">Name</label>
             <input
               id="contactName"
@@ -530,7 +530,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               placeholder="Contact name"
             />
           </div>
-          <div class="p-field">
+          <div class="form-field">
             <label for="contactPhone">Phone</label>
             <input
               id="contactPhone"
@@ -540,7 +540,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               placeholder="+1 234 567 8900"
             />
           </div>
-          <div class="p-field">
+          <div class="form-field">
             <label for="contactRelationship">Relationship</label>
             <p-select
               id="contactRelationship"
@@ -593,7 +593,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               You can cancel this request within 30 days by logging back in.
             </small>
           </div>
-          <div class="p-field">
+          <div class="form-field">
             <label for="deletionReason">Reason for leaving (optional):</label>
             <input
               id="deletionReason"
@@ -603,7 +603,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               placeholder="Help us improve..."
             />
           </div>
-          <div class="p-field">
+          <div class="form-field">
             <label>Type <strong>DELETE</strong> to confirm:</label>
             <input
               type="text"

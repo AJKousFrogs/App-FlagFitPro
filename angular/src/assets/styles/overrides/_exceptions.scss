@@ -2519,7 +2519,7 @@
   }
 
   .privacy-controls {
-    .p-field {
+    .form-field {
       display: flex;
       flex-direction: column;
       gap: var(--space-2);
@@ -2540,7 +2540,7 @@
    * Reason: Field label styling override.
    * ------------------------------------------------ */
   .performance-tracking {
-    .p-field {
+    .form-field {
       label {
         display: block;
         font-size: var(--font-size-h4);
@@ -2657,13 +2657,13 @@
     }
 
     .form-row.two-columns {
-      .p-field {
+      .form-field {
         flex: 1;
         margin-bottom: 0;
       }
     }
 
-    .p-field {
+    .form-field {
       margin-bottom: var(--space-5);
 
       .p-label {

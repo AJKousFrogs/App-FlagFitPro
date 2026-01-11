@@ -408,7 +408,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <!-- Speed Metrics -->
             <h4 class="form-section-title">⚡ Speed Metrics</h4>
             <div class="form-grid">
-              <div class="p-field">
+              <div class="form-field">
                 <label for="sprint10">10m Sprint (sec)</label>
                 <p-inputNumber
                   id="sprint10"
@@ -420,7 +420,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   styleClass="w-full"
                 ></p-inputNumber>
               </div>
-              <div class="p-field">
+              <div class="form-field">
                 <label for="sprint20">20m Sprint (sec)</label>
                 <p-inputNumber
                   id="sprint20"
@@ -432,7 +432,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   styleClass="w-full"
                 ></p-inputNumber>
               </div>
-              <div class="p-field">
+              <div class="form-field">
                 <label for="dash40">40-Yard Dash (sec)</label>
                 <p-inputNumber
                   id="dash40"
@@ -449,7 +449,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <!-- Agility Metrics -->
             <h4 class="form-section-title">🔄 Agility Metrics</h4>
             <div class="form-grid">
-              <div class="p-field">
+              <div class="form-field">
                 <label for="proAgility">Pro Agility 5-10-5 (sec)</label>
                 <p-inputNumber
                   id="proAgility"
@@ -461,7 +461,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   styleClass="w-full"
                 ></p-inputNumber>
               </div>
-              <div class="p-field">
+              <div class="form-field">
                 <label for="lDrill">L-Drill (sec)</label>
                 <p-inputNumber
                   id="lDrill"
@@ -473,7 +473,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   styleClass="w-full"
                 ></p-inputNumber>
               </div>
-              <div class="p-field">
+              <div class="form-field">
                 <label for="reactiveAgility">Reactive Agility (sec)</label>
                 <p-inputNumber
                   id="reactiveAgility"
@@ -490,7 +490,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <!-- Power Metrics -->
             <h4 class="form-section-title">⬆️ Power Metrics</h4>
             <div class="form-grid">
-              <div class="p-field">
+              <div class="form-field">
                 <label for="vertical">Vertical Jump (in)</label>
                 <p-inputNumber
                   id="vertical"
@@ -500,7 +500,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   styleClass="w-full"
                 ></p-inputNumber>
               </div>
-              <div class="p-field">
+              <div class="form-field">
                 <label for="broad">Broad Jump (in)</label>
                 <p-inputNumber
                   id="broad"
@@ -510,7 +510,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   styleClass="w-full"
                 ></p-inputNumber>
               </div>
-              <div class="p-field">
+              <div class="form-field">
                 <label for="rsi">RSI (ratio)</label>
                 <p-inputNumber
                   id="rsi"
@@ -527,7 +527,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <!-- Strength Metrics -->
             <h4 class="form-section-title">💪 Strength Metrics</h4>
             <div class="form-grid">
-              <div class="p-field">
+              <div class="form-field">
                 <label for="bench">Bench Press 1RM (lbs)</label>
                 <p-inputNumber
                   id="bench"
@@ -537,7 +537,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   styleClass="w-full"
                 ></p-inputNumber>
               </div>
-              <div class="p-field">
+              <div class="form-field">
                 <label for="squat">Back Squat 1RM (lbs)</label>
                 <p-inputNumber
                   id="squat"
@@ -547,7 +547,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   styleClass="w-full"
                 ></p-inputNumber>
               </div>
-              <div class="p-field">
+              <div class="form-field">
                 <label for="deadlift">Deadlift 1RM (lbs)</label>
                 <p-inputNumber
                   id="deadlift"
@@ -562,7 +562,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             <!-- Body Weight -->
             <h4 class="form-section-title">📊 Body Info</h4>
             <div class="form-grid">
-              <div class="p-field">
+              <div class="form-field">
                 <label for="bodyWeight">Body Weight (lbs)</label>
                 <p-inputNumber
                   id="bodyWeight"
