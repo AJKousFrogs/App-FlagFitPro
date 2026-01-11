@@ -8,19 +8,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const supabaseService = inject(SupabaseService);
 
-  // DEBUG: Log interceptor entry for API calls
-  if (req.url.includes("/api/") || req.url.includes("supabase.co/rest/")) {
-    console.log("[AuthInterceptor] Processing request:", req.url);
-  }
-
   // For Supabase REST API requests, use apikey header and fetch fresh token
   // Must check this FIRST before skipAuthUrls (which includes supabase.co for auth endpoints)
   if (req.url.includes("supabase.co/rest/")) {
     // Use async getToken() to ensure we have a valid (non-expired) token
     return from(authService.getToken()).pipe(
       switchMap((token) => {
-        // DEBUG: Log token status for Supabase REST calls
-        console.log("[AuthInterceptor] Supabase REST - hasToken:", !!token, "url:", req.url);
         
         const headers: Record<string, string> = {
           apikey: supabaseService.supabaseKey,
@@ -60,9 +53,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // For API endpoints, add Authorization header
   return from(authService.getToken()).pipe(
     switchMap((token) => {
-      // DEBUG: Log token status for API calls
-      console.log("[AuthInterceptor] API call - hasToken:", !!token, "url:", req.url);
-      
       if (token) {
         const clonedReq = req.clone({
           setHeaders: {
@@ -76,7 +66,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       // No token available - proceed without auth header
       // The backend/RLS will handle authorization
-      console.warn("[AuthInterceptor] No token available for:", req.url);
       return next(req);
     }),
   );

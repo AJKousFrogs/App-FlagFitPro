@@ -1,244 +1,188 @@
-# 📚 FlagFit Pro - Master Documentation Index
+# 📚 FlagFit Pro - Documentation Index
 
 **Last Updated:** January 2026  
-**Status:** ✅ Single Source of Truth - Complete Documentation System
+**Status:** ✅ Consolidated & Complete
 
 ---
 
-## 🎯 Quick Navigation
+## 🎯 Quick Start
 
-| I Need To...                | Go To                                                        | Priority |
-| --------------------------- | ------------------------------------------------------------ | -------- |
-| **Start developing**        | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md)   | ⭐⭐⭐   |
-| **Understand features**     | [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)       | ⭐⭐⭐   |
-| **Understand architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md)                         | ⭐⭐⭐   |
-| **Work with API**           | [API.md](./API.md)                                           | ⭐⭐     |
-| **Set up database**         | [DATABASE_SETUP.md](./DATABASE_SETUP.md)                     | ⭐⭐     |
-| **Follow UI/design rules**  | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)           | ⭐⭐     |
-| **Understand security**     | [SECURITY.md](./SECURITY.md)                                 | ⭐⭐     |
-| **Debug Supabase**          | [SUPABASE_DEBUGGING_GUIDE.md](./SUPABASE_DEBUGGING_GUIDE.md) | ⭐       |
-| **Troubleshoot issues**     | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)                   | ⭐       |
+| I Need To... | Document |
+|-------------|----------|
+| **Start developing** | [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) |
+| **Understand features** | [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) |
+| **Understand architecture** | [ARCHITECTURE.md](./ARCHITECTURE.md) |
+| **Follow UI/design rules** | [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) |
+| **Debug issues** | [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) |
+| **Check audit status** | [AUDITS.md](./AUDITS.md) |
 
 ---
 
-## 📖 Documentation Structure
+## 📖 Documentation by Category
 
-### 🚀 Getting Started (Start Here)
+### 🚀 Getting Started
 
-| Document                                                   | Description                                             | Audience       |
-| ---------------------------------------------------------- | ------------------------------------------------------- | -------------- |
-| [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) | **START HERE** - Complete local development setup guide | All Developers |
-| [DEVELOPMENT.md](./DEVELOPMENT.md)                         | Development workflow, best practices, and conventions   | Developers     |
-| [README.md](../README.md)                                  | Project overview, quick start, and key features         | All            |
+| Document | Description |
+|----------|-------------|
+| [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) | **START HERE** - Development environment setup |
+| [DEVELOPMENT.md](./DEVELOPMENT.md) | Development workflow & best practices |
+| [BACKEND_SETUP.md](./BACKEND_SETUP.md) | Backend/Netlify Functions setup |
 
----
+### 🏗️ Architecture & Design
 
-### 🎨 Product & Features
-
-| Document                                                                 | Description                                                          | Lines  |
-| ------------------------------------------------------------------------ | -------------------------------------------------------------------- | ------ |
-| [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)                   | **THE SOURCE OF TRUTH** - All features, business logic, calculations | 7,500+ |
-| [FLAG_FOOTBALL_TRAINING_SCIENCE.md](./FLAG_FOOTBALL_TRAINING_SCIENCE.md) | Sports science research behind the app                               | -      |
-| [AI_GOVERNANCE.md](./AI_GOVERNANCE.md)                                   | AI Coach safety tiers and governance                                 | -      |
-| [AI_TRAINING_SCHEDULER_GUIDE.md](./AI_TRAINING_SCHEDULER_GUIDE.md)       | AI scheduler feature documentation                                   | -      |
-| [DATA_SAFETY_POLICY.md](./DATA_SAFETY_POLICY.md)                         | **CRITICAL** - Mock vs real data safety policy                       | -      |
-
----
-
-### 🏗️ Technical Architecture
-
-| Document                                               | Description                      | Focus             |
-| ------------------------------------------------------ | -------------------------------- | ----------------- |
-| [ARCHITECTURE.md](./ARCHITECTURE.md)                   | System architecture overview     | High-level design |
-| [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG 21 patterns | Frontend          |
-| [STYLE_GUIDE.md](./STYLE_GUIDE.md)                     | Code style and conventions       | Code quality      |
-| [ERROR_HANDLING_GUIDE.md](./ERROR_HANDLING_GUIDE.md)   | Error handling patterns          | Best practices    |
-| [TESTING_GUIDE.md](./TESTING_GUIDE.md)                 | Testing setup and patterns       | Quality assurance |
-| [SERVICES_DEPENDENCIES.md](./SERVICES_DEPENDENCIES.md) | Service dependency mapping       | Architecture      |
-
----
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System architecture overview |
+| [SERVICES_DEPENDENCIES.md](./SERVICES_DEPENDENCIES.md) | Service dependency mapping (86+ services) |
+| [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md) | Angular 21 + PrimeNG 21 patterns |
+| [DATABASE_FLOW.md](./DATABASE_FLOW.md) | Database flow & user action mapping |
 
 ### 🎨 UI & Design System
 
-| Document                                                           | Description                                    | Type      |
-| ------------------------------------------------------------------ | ---------------------------------------------- | --------- |
-| [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)                 | **BINDING RULES** - UI rules and design tokens | Rules     |
-| [PRIMENG_DESIGN_SYSTEM_RULES.md](./PRIMENG_DESIGN_SYSTEM_RULES.md) | PrimeNG component token reference              | Reference |
-
----
+| Document | Description |
+|----------|-------------|
+| [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) | **BINDING RULES** - Design tokens & patterns |
+| [PRIMENG_DESIGN_SYSTEM_RULES.md](./PRIMENG_DESIGN_SYSTEM_RULES.md) | PrimeNG component styling reference |
+| [STYLE_GUIDE.md](./STYLE_GUIDE.md) | Code style conventions |
+| [EMPTY_STATE_USAGE_GUIDE.md](./EMPTY_STATE_USAGE_GUIDE.md) | Empty state component patterns |
 
 ### 🔌 API & Backend
 
-| Document                                   | Description                            | Focus         |
-| ------------------------------------------ | -------------------------------------- | ------------- |
-| [API.md](./API.md)                         | Complete API reference (80+ endpoints) | Reference     |
-| [BACKEND_SETUP.md](./BACKEND_SETUP.md)     | Backend/Netlify Functions setup        | Setup         |
-| [ROUTE_REDIRECTS.md](./ROUTE_REDIRECTS.md) | Route redirect configuration           | Configuration |
-
----
+| Document | Description |
+|----------|-------------|
+| [API.md](./API.md) | Complete API reference (80+ endpoints) |
+| [ROUTE_REDIRECTS.md](./ROUTE_REDIRECTS.md) | Route redirect configuration |
+| [NETLIFY_DEPLOYMENT_GUIDE.md](./NETLIFY_DEPLOYMENT_GUIDE.md) | Netlify deployment guide |
 
 ### 🗄️ Database
 
-| Document                                                     | Description                             | Focus        |
-| ------------------------------------------------------------ | --------------------------------------- | ------------ |
-| [DATABASE_SETUP.md](./DATABASE_SETUP.md)                     | Database setup guide                    | Setup        |
-| [DATABASE_FLOW.md](./DATABASE_FLOW.md)                       | **Database flow & user action mapping** | Architecture |
-| [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md) | Row-Level Security policies             | Security     |
-
----
+| Document | Description |
+|----------|-------------|
+| [DATABASE_SETUP.md](./DATABASE_SETUP.md) | Database setup guide |
+| [RLS_POLICY_SPECIFICATION.md](./RLS_POLICY_SPECIFICATION.md) | Row-Level Security policies |
+| [WELLNESS_DATA_ARCHITECTURE.md](./WELLNESS_DATA_ARCHITECTURE.md) | Wellness data architecture |
 
 ### 🔐 Security & Privacy
 
-| Document                                                         | Description                           | Type         |
-| ---------------------------------------------------------------- | ------------------------------------- | ------------ |
-| [SECURITY.md](./SECURITY.md)                                     | Security architecture (comprehensive) | Architecture |
-| [AUTHENTICATION_PATTERN.md](./AUTHENTICATION_PATTERN.md)         | Auth implementation patterns          | Patterns     |
-| [THREAT_MODEL.md](./THREAT_MODEL.md)                             | Security threat model                 | Analysis     |
-| [ADDING_NEW_FEATURES_SAFELY.md](./ADDING_NEW_FEATURES_SAFELY.md) | Safe extension playbook               | Guide        |
-| [PRIVACY_POLICY.md](./PRIVACY_POLICY.md)                         | Privacy policy (legal)                | Legal        |
+| Document | Description |
+|----------|-------------|
+| [SECURITY.md](./SECURITY.md) | Security architecture |
+| [AUTHENTICATION_PATTERN.md](./AUTHENTICATION_PATTERN.md) | Auth implementation patterns |
+| [THREAT_MODEL.md](./THREAT_MODEL.md) | Security threat model |
+| [ADDING_NEW_FEATURES_SAFELY.md](./ADDING_NEW_FEATURES_SAFELY.md) | Safe extension playbook |
+| [DATA_SAFETY_POLICY.md](./DATA_SAFETY_POLICY.md) | Mock vs real data policy |
+| [PRIVACY_POLICY.md](./PRIVACY_POLICY.md) | Privacy policy (GDPR compliant) |
 
----
+### 🤖 AI & Training
+
+| Document | Description |
+|----------|-------------|
+| [AI_GOVERNANCE.md](./AI_GOVERNANCE.md) | AI Coach safety tiers & governance |
+| [AI_TRAINING_SCHEDULER_GUIDE.md](./AI_TRAINING_SCHEDULER_GUIDE.md) | AI scheduler feature guide |
+| [FLAG_FOOTBALL_TRAINING_SCIENCE.md](./FLAG_FOOTBALL_TRAINING_SCIENCE.md) | Sports science research |
 
 ### 📋 Code Quality & Testing
 
-| Document                                         | Description                                           | Type   |
-| ------------------------------------------------ | ----------------------------------------------------- | ------ |
-| [TESTING_GUIDE.md](./TESTING_GUIDE.md)           | Testing setup and patterns                            | Guide  |
-| [DATA_SAFETY_POLICY.md](./DATA_SAFETY_POLICY.md) | **CRITICAL** - Mock data policy (never in production) | Policy |
+| Document | Description |
+|----------|-------------|
+| [TESTING_GUIDE.md](./TESTING_GUIDE.md) | Testing setup & patterns |
+| [ERROR_HANDLING_GUIDE.md](./ERROR_HANDLING_GUIDE.md) | Error handling patterns |
+| [QUICK_REFERENCE_VALIDATION_LOGGING.md](./QUICK_REFERENCE_VALIDATION_LOGGING.md) | Validation & logging quick reference |
+| [STORAGE_ACCESS_GUIDE.md](./STORAGE_ACCESS_GUIDE.md) | Storage access patterns |
 
----
+### 📊 Audits & Reports
+
+| Document | Description |
+|----------|-------------|
+| [AUDITS.md](./AUDITS.md) | **Consolidated audit report** - Code quality, refactoring, conflicts |
+
+### 🛠️ Troubleshooting
+
+| Document | Description |
+|----------|-------------|
+| [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) | Common issues & fixes |
+| [AUTH_TROUBLESHOOTING.md](./AUTH_TROUBLESHOOTING.md) | Authentication debugging |
+| [SUPABASE_DEBUGGING_GUIDE.md](./SUPABASE_DEBUGGING_GUIDE.md) | Supabase debugging |
+| [SUPABASE_EMAIL_CONFIGURATION.md](./SUPABASE_EMAIL_CONFIGURATION.md) | Supabase email setup |
+| [SUPABASE_REDIRECT_URL_VERIFICATION.md](./SUPABASE_REDIRECT_URL_VERIFICATION.md) | Redirect URL configuration |
 
 ### 📜 Operations & Runbooks
 
-| Document                                                             | Description                        | Type    |
-| -------------------------------------------------------------------- | ---------------------------------- | ------- |
-| [RUNBOOKS/README.md](./RUNBOOKS/README.md)                           | Runbook index                      | Index   |
-| [RUNBOOKS/INCIDENT_RESPONSE.md](./RUNBOOKS/INCIDENT_RESPONSE.md)     | Incident response procedures       | Runbook |
-| [RUNBOOKS/DEPLOYMENT_ROLLBACK.md](./RUNBOOKS/DEPLOYMENT_ROLLBACK.md) | Deployment and rollback procedures | Runbook |
-| [RUNBOOKS/BACKUP_RESTORE.md](./RUNBOOKS/BACKUP_RESTORE.md)           | Database backup/restore procedures | Runbook |
-| [RUNBOOKS/ACCOUNT_DELETION.md](./RUNBOOKS/ACCOUNT_DELETION.md)       | User account deletion procedures   | Runbook |
-| [RUNBOOKS/PRIVACY_INCIDENT.md](./RUNBOOKS/PRIVACY_INCIDENT.md)       | Privacy incident response          | Runbook |
-| [RUNBOOKS/RETENTION_CLEANUP.md](./RUNBOOKS/RETENTION_CLEANUP.md)     | Data retention cleanup             | Runbook |
-| [RUNBOOKS/LOGGING_REDACTION.md](./RUNBOOKS/LOGGING_REDACTION.md)     | Logging redaction procedures       | Runbook |
+| Document | Description |
+|----------|-------------|
+| [RUNBOOKS/README.md](./RUNBOOKS/README.md) | Runbook index |
+| [RUNBOOKS/INCIDENT_RESPONSE.md](./RUNBOOKS/INCIDENT_RESPONSE.md) | Incident response procedures |
+| [RUNBOOKS/DEPLOYMENT_ROLLBACK.md](./RUNBOOKS/DEPLOYMENT_ROLLBACK.md) | Deployment & rollback |
+| [RUNBOOKS/BACKUP_RESTORE.md](./RUNBOOKS/BACKUP_RESTORE.md) | Database backup/restore |
+| [RUNBOOKS/ACCOUNT_DELETION.md](./RUNBOOKS/ACCOUNT_DELETION.md) | Account deletion procedures |
+| [RUNBOOKS/PRIVACY_INCIDENT.md](./RUNBOOKS/PRIVACY_INCIDENT.md) | Privacy incident response |
+| [RUNBOOKS/RETENTION_CLEANUP.md](./RUNBOOKS/RETENTION_CLEANUP.md) | Data retention cleanup |
+| [RUNBOOKS/LOGGING_REDACTION.md](./RUNBOOKS/LOGGING_REDACTION.md) | Logging redaction |
 
----
+### 📜 Legal
 
-### 🛠️ Troubleshooting & Support
-
-| Document                                                     | Description              | Type  |
-| ------------------------------------------------------------ | ------------------------ | ----- |
-| [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)                   | Common issues and fixes  | Guide |
-| [SUPABASE_DEBUGGING_GUIDE.md](./SUPABASE_DEBUGGING_GUIDE.md) | Supabase debugging guide | Guide |
-| [AUTH_TROUBLESHOOTING.md](./AUTH_TROUBLESHOOTING.md)         | Authentication debugging | Guide |
-
----
-
-### 🏥 Wellness Data Architecture
-
-| Document                                                         | Description                         | Status      |
-| ---------------------------------------------------------------- | ----------------------------------- | ----------- |
-| [WELLNESS_DATA_ARCHITECTURE.md](./WELLNESS_DATA_ARCHITECTURE.md) | Complete wellness data architecture | ✅ Complete |
-
-> **Note:** Phases 1-3 complete. All Angular operations use `daily_wellness_checkin`. Phase 4 (table drop) planned for July 2026+.
-
----
-
-### 📜 Legal & Compliance
-
-| Document                                 | Description                     | Type  |
-| ---------------------------------------- | ------------------------------- | ----- |
-| [PRIVACY_POLICY.md](./PRIVACY_POLICY.md) | Privacy policy (GDPR compliant) | Legal |
-| [TERMS_OF_USE.md](./TERMS_OF_USE.md)     | Terms of use                    | Legal |
-| [LICENSE.md](./LICENSE.md)               | Software license (MIT)          | Legal |
+| Document | Description |
+|----------|-------------|
+| [PRIVACY_POLICY.md](./PRIVACY_POLICY.md) | Privacy policy |
+| [TERMS_OF_USE.md](./TERMS_OF_USE.md) | Terms of use |
+| [LICENSE.md](./LICENSE.md) | Software license (MIT) |
 
 ---
 
 ## 📊 Documentation Statistics
 
-| Category                   | Documents | Status      |
-| -------------------------- | --------- | ----------- |
-| **Getting Started**        | 3         | ✅ Complete |
-| **Product & Features**     | 5         | ✅ Complete |
-| **Technical Architecture** | 6         | ✅ Complete |
-| **UI & Design System**     | 2         | ✅ Complete |
-| **API & Backend**          | 3         | ✅ Complete |
-| **Database**               | 3         | ✅ Complete |
-| **Security & Privacy**     | 5         | ✅ Complete |
-| **Code Quality & Testing** | 2         | ✅ Complete |
-| **Operations & Runbooks**  | 8         | ✅ Complete |
-| **Troubleshooting**        | 3         | ✅ Complete |
-| **Wellness Architecture**  | 1         | ✅ Complete |
-| **Legal & Compliance**     | 3         | ✅ Complete |
-| **TOTAL**                  | **44**    | ✅ Complete |
+| Category | Documents | Status |
+|----------|-----------|--------|
+| Getting Started | 3 | ✅ |
+| Architecture | 4 | ✅ |
+| UI/Design | 4 | ✅ |
+| API/Backend | 3 | ✅ |
+| Database | 3 | ✅ |
+| Security | 6 | ✅ |
+| AI/Training | 3 | ✅ |
+| Code Quality | 4 | ✅ |
+| Audits | 1 | ✅ Consolidated |
+| Troubleshooting | 5 | ✅ |
+| Operations | 8 | ✅ |
+| Legal | 3 | ✅ |
+| **Total** | **47** | ✅ |
 
 ---
 
-## 🎯 Documentation Usage Guide
+## 🗂️ Archived Reports
 
-### For New Developers
+The following reports have been consolidated into [AUDITS.md](./AUDITS.md):
 
-1. **Start Here**: [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md)
-2. **Understand Features**: [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)
-3. **Learn Architecture**: [ARCHITECTURE.md](./ARCHITECTURE.md)
-4. **Follow Patterns**: [ANGULAR_PRIMENG_GUIDE.md](./ANGULAR_PRIMENG_GUIDE.md)
+- `PRE_EXISTING_ISSUES_AUDIT.md` → Archived
+- `CODE_DUPLICATION_REPORT.md` → Archived
+- `REFACTORING_AUDIT.md` → Archived
+- `REFACTORING_PROGRESS.md` → Archived
+- `REFACTORING_CODE_DUPLICATION.md` → Archived
+- `DUPLICATE_LOGIC_ANALYSIS.md` → Archived
+- `CONFLICTS_REPORT.md` → Archived
+- `CSS_CONFLICTS_SUMMARY.md` → Archived
+- `API_ROUTING_AUDIT.md` → Archived
+- `AUDIT_ROUTES_DATABASE_ALIGNMENT.md` → Archived
+- `P_TAG_CONSISTENCY_ANALYSIS.md` → Archived
 
-### For Feature Development
-
-1. **Feature Logic**: [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md)
-2. **Design Rules**: [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md)
-3. **API Reference**: [API.md](./API.md)
-4. **Security**: [ADDING_NEW_FEATURES_SAFELY.md](./ADDING_NEW_FEATURES_SAFELY.md)
-
-### For Testing
-
-1. **Testing Guide**: [TESTING_GUIDE.md](./TESTING_GUIDE.md) - Testing setup and patterns
-2. **Data Safety Policy**: [DATA_SAFETY_POLICY.md](./DATA_SAFETY_POLICY.md) - Mock vs production data rules
-
-### For Operations
-
-1. **Runbooks**: [RUNBOOKS/README.md](./RUNBOOKS/README.md)
-2. **Incidents**: [RUNBOOKS/INCIDENT_RESPONSE.md](./RUNBOOKS/INCIDENT_RESPONSE.md)
-3. **Deployment**: [RUNBOOKS/DEPLOYMENT_ROLLBACK.md](./RUNBOOKS/DEPLOYMENT_ROLLBACK.md)
+These files are kept for historical reference but the consolidated [AUDITS.md](./AUDITS.md) should be the primary reference.
 
 ---
 
-## 🔄 Documentation Maintenance
+## 🔄 Maintenance
 
 ### Update Frequency
+- **Core docs:** Updated with each feature release
+- **Audits:** Updated after significant changes
+- **Runbooks:** Updated when procedures change
 
-- **Core Documentation**: Updated with each major feature release
-- **Audit Reports**: Generated automatically or on-demand
-- **Runbooks**: Updated when procedures change
-- **Legal Documents**: Updated as needed for compliance
-
-### Contributing to Documentation
-
-1. Follow the structure outlined in this document
+### Contributing
+1. Follow existing structure
 2. Use clear, concise language
-3. Include code examples where applicable
-4. Update this index when adding new documents
-5. Keep documentation files organized by category
+3. Include code examples
+4. Update this index when adding docs
 
 ---
 
-## 📝 Quick Reference Links
-
-### Most Frequently Used
-
-- [LOCAL_DEVELOPMENT_SETUP.md](./LOCAL_DEVELOPMENT_SETUP.md) - Development setup
-- [FEATURE_DOCUMENTATION.md](./FEATURE_DOCUMENTATION.md) - Feature reference
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - System architecture
-- [API.md](./API.md) - API reference
-- [DESIGN_SYSTEM_RULES.md](./DESIGN_SYSTEM_RULES.md) - UI rules
-- [SECURITY.md](./SECURITY.md) - Security guide
-
-### Debugging & Troubleshooting
-
-- [SUPABASE_DEBUGGING_GUIDE.md](./SUPABASE_DEBUGGING_GUIDE.md) - Supabase debugging
-- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Common issues and solutions
-
----
-
-**Last Updated:** 2026-01-11  
 **Maintained By:** Development Team  
-**Status:** ✅ Production Ready
+**Last Updated:** January 2026

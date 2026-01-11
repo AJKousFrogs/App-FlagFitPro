@@ -220,15 +220,6 @@ export class AuthService {
       const { data, error } =
         await this.supabaseService.client.auth.getSession();
 
-      // DEBUG: Log session state
-      console.log("[Auth.getToken] Session check:", {
-        hasSession: !!data.session,
-        hasError: !!error,
-        errorMsg: error?.message,
-        expiresAt: data.session?.expires_at,
-        now: Math.floor(Date.now() / 1000),
-      });
-
       if (error) {
         this.logger.warn("[Auth] Error getting session:", error);
         return null;
@@ -238,29 +229,13 @@ export class AuthService {
       if (data.session) {
         const expiresAt = data.session.expires_at;
         const now = Math.floor(Date.now() / 1000);
-        const timeUntilExpiry = expiresAt ? expiresAt - now : null;
-
-        // DEBUG: Log expiry check
-        console.log("[Auth.getToken] Token expiry check:", {
-          expiresAt,
-          now,
-          timeUntilExpiry,
-          needsRefresh: timeUntilExpiry !== null && timeUntilExpiry < 60,
-        });
 
         if (expiresAt && expiresAt - now < 60) {
           // Token expired or expiring soon, try to refresh
           this.logger.debug("[Auth] Token expiring soon, attempting refresh");
-          console.log("[Auth.getToken] Attempting token refresh...");
-          
+
           const { data: refreshData, error: refreshError } =
             await this.supabaseService.client.auth.refreshSession();
-
-          // DEBUG: Log refresh result
-          console.log("[Auth.getToken] Refresh result:", {
-            success: !refreshError && !!refreshData.session,
-            errorMsg: refreshError?.message,
-          });
 
           if (!refreshError && refreshData.session) {
             return refreshData.session.access_token;
@@ -275,11 +250,9 @@ export class AuthService {
         return data.session.access_token;
       }
 
-      console.log("[Auth.getToken] No session found");
       return null;
     } catch (error) {
       this.logger.error("[Auth] Exception getting token:", error);
-      console.error("[Auth.getToken] Exception:", error);
       return null;
     }
   }

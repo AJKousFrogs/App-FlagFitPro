@@ -170,7 +170,7 @@
   /* HOVER: White background + green text (inverted) */
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled) {
-      background-color: var(--color-text-on-primary, #ffffff);
+      background-color: var(--color-text-on-primary, #fff);
       color: var(--color-brand-primary);
       border-color: var(--color-brand-primary);
       transform: translateY(-2px);
@@ -2286,7 +2286,7 @@ select {
 /* Bottom navigation safe area */
 @include respond-to(md) {
   .bottom-nav {
-    padding-bottom: var(--safe-area-bottom, 0px);
+    padding-bottom: var(--safe-area-bottom, 0);
   }
 
   /* Ensure main content doesn't get hidden behind bottom nav */

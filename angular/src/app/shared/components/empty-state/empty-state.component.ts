@@ -1,10 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  input,
-  output,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    input,
+    output,
+} from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
@@ -34,9 +34,9 @@ import { ButtonComponent } from "../button/button.component";
           <i [class]="'pi ' + icon()"></i>
         </div>
       }
-      <h3 class="empty-title">{{ title() }}</h3>
-      @if (message()) {
-        <p class="empty-message">{{ message() }}</p>
+      <h3 class="empty-title">{{ heading() || title() }}</h3>
+      @if (description() || message()) {
+        <p class="empty-message">{{ description() || message() }}</p>
       }
 
       <!-- Benefits list (optional) -->
@@ -88,7 +88,18 @@ import { ButtonComponent } from "../button/button.component";
             >
           }
         }
+
+        <!-- Projected content (for ng-content) -->
+        <ng-content></ng-content>
       </div>
+
+      <!-- Tip (optional, from V2 API) -->
+      @if (tip()) {
+        <div class="empty-tip">
+          <i class="pi pi-info-circle"></i>
+          <span>{{ tip() }}</span>
+        </div>
+      }
 
       <!-- Help link (optional) -->
       @if (helpText() && helpLink()) {
@@ -112,6 +123,12 @@ export class EmptyStateComponent {
   icon = input<string | null>(null);
   iconColor = input<string>("var(--text-secondary)");
   compact = input<boolean>(false);
+
+  // V2 API aliases for backward compatibility
+  // These map to the original inputs
+  heading = input<string | null>(null); // Alias for title
+  description = input<string | null>(null); // Alias for message
+  tip = input<string | null>(null); // New input (displays at bottom)
 
   // Benefits list (optional)
   benefits = input<string[] | null>(null);

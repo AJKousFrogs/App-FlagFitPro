@@ -655,11 +655,6 @@
   position: absolute;
   bottom: var(--space-3);
   right: var(--space-3);
-  background: linear-gradient(
-    135deg,
-    var(--primitive-neutral-800) 0%,
-    var(--primitive-neutral-900) 100%
-  );
   color: var(--color-status-warning);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-lg);

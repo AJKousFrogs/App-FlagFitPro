@@ -16,6 +16,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   // FIX: Changed from overflow: hidden to overflow-x: hidden
   // This prevents horizontal scroll from animations while allowing
   // vertical content (scroll indicator) to remain visible
@@ -154,6 +155,7 @@
     var(--ds-primary-green) 100%
   );
   border-radius: var(--radius-full);
+
   // Use design system shadow with brand color tint
   box-shadow: var(--shadow-xl);
   animation: logo-pulse 3s ease-in-out infinite;
@@ -211,6 +213,7 @@
   padding: var(--space-8) var(--space-10);
   background: var(--surface-primary);
   border-radius: var(--radius-2xl);
+
   // Use design system shadow tokens
   box-shadow: var(--shadow-lg);
   flex-wrap: wrap;
@@ -225,7 +228,7 @@
 }
 
 .countdown-label-text {
-  font-family: "Poppins", system-ui, sans-serif;
+  font-family: Poppins, system-ui, sans-serif;
   font-size: clamp(0.625rem, 1.5vw, 0.875rem);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing-wide);
@@ -234,7 +237,7 @@
 }
 
 .countdown-label-event {
-  font-family: "Poppins", system-ui, sans-serif;
+  font-family: Poppins, system-ui, sans-serif;
   font-size: clamp(0.875rem, 2vw, 1.25rem);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.1em;
@@ -273,7 +276,7 @@
 }
 
 .countdown-unit {
-  font-family: "Poppins", system-ui, sans-serif;
+  font-family: Poppins, system-ui, sans-serif;
   font-size: clamp(0.5rem, 1.5vw, 0.875rem);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing-wide);

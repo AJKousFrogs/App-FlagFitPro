@@ -2,37 +2,40 @@ import { CommonModule } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 /**
- * Empty State Component
+ * Empty State V2 Component
  *
- * Reusable empty state display for when no data is available.
+ * Simplified empty state display for when no data is available.
  * Shows icon, heading, optional description, optional tip, and projected action buttons.
+ *
+ * NOTE: This is a simpler version. The enhanced version with RouterLink support,
+ * secondary actions, and benefits list is in `../empty-state/empty-state.component.ts`
  *
  * @example Basic usage
  * ```html
- * <app-empty-state
+ * <app-empty-state-v2
  *   icon="calendar-plus"
  *   heading="No Training Plan Yet"
  *   description="Generate your personalized protocol to see exercises."
  * >
  *   <app-button (clicked)="generateProtocol()">Generate Protocol</app-button>
- * </app-empty-state>
+ * </app-empty-state-v2>
  * ```
  *
  * @example With tip
  * ```html
- * <app-empty-state
+ * <app-empty-state-v2
  *   icon="inbox"
  *   heading="No Games Scheduled"
  *   description="You haven't scheduled any games yet."
  *   tip="Tip: Start by scheduling your first game"
  * >
  *   <app-button (clicked)="scheduleGame()">Schedule Game</app-button>
- * </app-empty-state>
+ * </app-empty-state-v2>
  * ```
  *
  * @example Compact mode
  * ```html
- * <app-empty-state
+ * <app-empty-state-v2
  *   icon="chart-pie"
  *   heading="No data available"
  *   [compact]="true"
@@ -40,7 +43,7 @@ import { ChangeDetectionStrategy, Component, input } from "@angular/core";
  * ```
  */
 @Component({
-  selector: "app-empty-state",
+  selector: "app-empty-state-v2",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],

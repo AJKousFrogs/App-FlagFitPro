@@ -963,6 +963,6 @@
   .tournament-card {
     box-shadow: none;
     border: var(--border-1) solid var(--color-border-secondary);
-    page-break-inside: avoid;
+    break-inside: avoid;
   }
 }

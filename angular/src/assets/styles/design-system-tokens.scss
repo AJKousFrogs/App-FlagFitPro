@@ -130,10 +130,10 @@
   --color-brand-accent: #10c96b;
 
   /* Surface Colors - Neutrals: Whites, blacks, and grays for backgrounds, text, and fine details */
-  --surface-primary: #ffffff; /* White - main backgrounds */
+  --surface-primary: #fff; /* White - main backgrounds */
   --surface-secondary: #f8faf9; /* Off-white - card backgrounds */
   --surface-tertiary: #e9ecef; /* Light gray - subtle backgrounds */
-  --surface-elevated: #ffffff; /* White - elevated cards/modals */
+  --surface-elevated: #fff; /* White - elevated cards/modals */
   --surface-overlay: rgba(0, 0, 0, 0.5);
 
   /* Neutral Grays */
@@ -155,7 +155,7 @@
   --color-text-muted: #525252; /* Medium gray - muted text on white (contrast: 7.5:1) - FIXED from #6b7280 */
   --color-text-tertiary: #6b7280; /* Lighter gray - for large text only (contrast: 5.0:1) */
   --color-text-disabled: #9ca3af; /* Light gray - disabled text (not required to meet contrast) */
-  --color-text-on-primary: #ffffff; /* White - for green backgrounds ONLY (contrast: 4.7:1 on #089949) */
+  --color-text-on-primary: #fff; /* White - for green backgrounds ONLY (contrast: 4.7:1 on #089949) */
   --color-text-on-white: var(
     --ds-primary-green
   ); /* Green - for white backgrounds (contrast: 4.7:1) */
@@ -303,7 +303,7 @@
 
   /* Hover Text Colors */
   --hover-text-primary: #036d35; /* Darker green for links */
-  --hover-text-on-primary: #ffffff; /* White text on green hover */
+  --hover-text-on-primary: #fff; /* White text on green hover */
 
   /* Hover Shadows - Green-tinted for brand consistency */
   --hover-shadow-sm: 0 2px 8px rgba(8, 153, 73, 0.12);
@@ -408,15 +408,12 @@
   --font-h1-size: 2rem; /* 32px */
   --font-h1-line-height: 1.2;
   --font-h1-weight: 700; /* bold */
-
   --font-h2-size: 1.5rem; /* 24px */
   --font-h2-line-height: 1.25;
   --font-h2-weight: 600; /* semibold */
-
   --font-h3-size: 1.25rem; /* 20px */
   --font-h3-line-height: 1.3;
   --font-h3-weight: 400; /* regular */
-
   --font-h4-size: 1rem; /* 16px */
   --font-h4-line-height: 1.35;
   --font-h4-weight: 300; /* light */
@@ -425,7 +422,6 @@
   --font-body-size: 1rem; /* 16px */
   --font-body-line-height: 1.5;
   --font-body-weight: 400; /* regular */
-
   --font-body-sm-size: 0.875rem; /* 14px */
   --font-body-sm-line-height: 1.45;
   --font-body-sm-weight: 400; /* regular */
@@ -625,8 +621,8 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
-  --color-text-on-primary: #ffffff;
-  --color-text-on-inverse: #ffffff;
+  --color-text-on-primary: #fff;
+  --color-text-on-inverse: #fff;
 
   /* Status Color Aliases */
   --color-status-success: var(--ds-primary-green);
@@ -664,7 +660,6 @@
   --page-padding-desktop: var(--space-6); /* 24px */
   --page-padding-tablet: var(--space-4); /* 16px */
   --page-padding-mobile: var(--space-3); /* 12px */
-
   --sidebar-width: 250px;
   --sidebar-collapsed-width: 64px;
   --header-height: 64px;
@@ -780,7 +775,6 @@
   --p-primary-700: var(--primitive-primary-700);
   --p-primary-800: var(--primitive-primary-800);
   --p-primary-900: var(--primitive-primary-900);
-
   --p-surface-0: var(--surface-primary);
   --p-surface-50: var(--surface-secondary);
   --p-surface-100: var(--primitive-neutral-100);
@@ -792,10 +786,8 @@
   --p-surface-700: var(--primitive-neutral-700);
   --p-surface-800: var(--primitive-neutral-800);
   --p-surface-900: var(--primitive-neutral-900);
-
   --p-text-color: var(--color-text-primary);
   --p-text-color-secondary: var(--color-text-secondary);
-
   --p-border-radius: var(--radius-lg);
   --p-focus-ring: var(--shadow-focus);
   --p-transition-duration: var(--transition-base);
@@ -981,7 +973,7 @@
      THIRD-PARTY BRAND COLORS
      External service brand guidelines
      ================================ */
-  --color-brand-youtube: #ff0000;
+  --color-brand-youtube: #f00;
   --color-brand-twitter: #1da1f2;
   --color-brand-instagram-gradient: linear-gradient(
     135deg,
@@ -997,9 +989,9 @@
      Specific use-case colors
      ================================ */
   --color-star-rating: #ffd700;
-  --color-video-background: #000000;
+  --color-video-background: #000;
   --color-field-grass: #2d5016;
-  --color-field-lines: #ffffff;
+  --color-field-lines: #fff;
 
   /* Settings Page Icon Backgrounds (Ad-hoc) */
   --color-icon-bg-profile: rgba(59, 130, 246, 0.15);
@@ -1038,8 +1030,8 @@
 
 /* Semantic token for text on primary (green) - single source of truth */
 :root {
-  --on-primary: #ffffff; /* ALWAYS use this for text on green backgrounds */
-  --green-bg-text: #ffffff; /* Alias for --on-primary */
+  --on-primary: #fff; /* ALWAYS use this for text on green backgrounds */
+  --green-bg-text: #fff; /* Alias for --on-primary */
 }
 
 /* ================================================================
@@ -1054,8 +1046,9 @@
 *[style*="background:#089949"],
 *[style*="background-color: #089949"],
 *[style*="089949"] {
-  color: #ffffff;
-  --text-color: #ffffff;
+  color: #fff;
+
+  --text-color: #fff;
 }
 
 *[style*="background-color: rgb(8, 153, 73)"] *,
@@ -1063,7 +1056,7 @@
 *[style*="background: #089949"] *,
 *[style*="background:#089949"] *,
 *[style*="background-color: #089949"] * {
-  color: #ffffff;
+  color: #fff;
 }
 
 /* Class-based green backgrounds */
@@ -1073,8 +1066,9 @@
 [class*="bg-green"],
 .bg-primary-green,
 .primary-bg {
-  color: #ffffff;
-  --text-color: #ffffff;
+  color: #fff;
+
+  --text-color: #fff;
 }
 
 .p-button-green *,
@@ -1083,7 +1077,7 @@
 [class*="bg-green"] *,
 .bg-primary-green *,
 .primary-bg * {
-  color: #ffffff;
+  color: #fff;
 }
 
 /* PrimeNG components with green backgrounds */
@@ -1100,19 +1094,19 @@
   &.p-button-green,
   &.bg-primary,
   &.p-button-primary {
-    --text-color: #ffffff;
-    --p-button-text-color: #ffffff;
-    color: #ffffff;
+    --text-color: #fff;
+    --p-button-text-color: #fff;
+    color: #fff;
 
     * {
-      color: #ffffff;
+      color: #fff;
     }
 
     .p-button-label,
     .p-button-icon,
     span,
     i {
-      color: #ffffff;
+      color: #fff;
     }
   }
 }
@@ -1143,7 +1137,7 @@
 .black-on-green {
   /* This class exists only to document that this combination is FORBIDDEN */
   /* Automatically corrected to white text */
-  color: #ffffff;
+  color: #fff;
   background-color: var(--ds-primary-green);
 }
 
@@ -1153,14 +1147,14 @@
 .p-button-primary,
 .p-tag-primary,
 .p-badge-primary {
-  color: #ffffff;
+  color: #fff;
 
   // Block common dark colors
   &[style*="color: black"],
   &[style*="color: #000"],
   &[style*="color: #1a1a1a"],
   &[style*="color: rgb(0, 0, 0)"] {
-    color: #ffffff;
+    color: #fff;
   }
 }
 
@@ -1173,11 +1167,11 @@
 [style*="var(--ds-primary-green)"],
 [style*="var(--color-brand-primary)"],
 [style*="var(--p-primary-color)"] {
-  color: #ffffff;
+  color: #fff;
 
   &,
   & * {
-    color: #ffffff;
+    color: #fff;
   }
 }
 
@@ -1185,11 +1179,11 @@
 [style*="linear-gradient"][style*="089949"],
 [style*="linear-gradient"][style*="0ab85a"],
 [style*="linear-gradient"][style*="ds-primary-green"] {
-  color: #ffffff;
+  color: #fff;
 
   &,
   & * {
-    color: #ffffff;
+    color: #fff;
   }
 }
 
@@ -1208,11 +1202,11 @@
     --surface-overlay: rgba(0, 0, 0, 0.7);
 
     /* Text Colors - Dark Mode */
-    --color-text-primary: #ffffff;
+    --color-text-primary: #fff;
     --color-text-secondary: var(--primitive-neutral-400); /* #d4d4d4 */
     --color-text-muted: var(--primitive-neutral-500); /* #a3a3a3 */
     --color-text-disabled: var(--primitive-neutral-600); /* #737373 */
-    --color-text-on-white: #ffffff; /* White text on dark */
+    --color-text-on-white: #fff; /* White text on dark */
 
     /* Warning text color - lighter for dark mode */
     --color-status-warning-text: var(--primitive-warning-300); /* #fcd34d */
@@ -1253,12 +1247,12 @@ body.dark-theme {
   --hover-shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.6);
 
   /* Text Colors - Dark Mode */
-  --color-text-primary: #ffffff;
+  --color-text-primary: #fff;
   --color-text-secondary: var(--primitive-neutral-400);
   --color-text-muted: var(--primitive-neutral-500);
   --color-text-disabled: var(--primitive-neutral-600);
-  --color-text-on-white: #ffffff;
-  --text-primary: #ffffff;
+  --color-text-on-white: #fff;
+  --text-primary: #fff;
   --text-secondary: var(--primitive-neutral-400);
 
   /* Warning text color - lighter for dark mode */
@@ -1279,7 +1273,7 @@ body.dark-theme {
   --p-surface-0: #171717;
   --p-surface-50: #1f1f1f;
   --p-surface-100: #262626;
-  --p-surface-200: #333333;
+  --p-surface-200: #333;
   --p-surface-300: #404040;
   --p-surface-400: #525252;
   --p-surface-500: #737373;
@@ -1287,7 +1281,7 @@ body.dark-theme {
   --p-surface-700: #d4d4d4;
   --p-surface-800: #e5e5e5;
   --p-surface-900: #f5f5f5;
-  --p-text-color: #ffffff;
+  --p-text-color: #fff;
   --p-text-color-secondary: #a3a3a3;
   --p-surface-border: rgba(255, 255, 255, 0.1);
 
@@ -1304,10 +1298,10 @@ body.dark-theme {
 html.light-theme,
 body.light-theme {
   /* Surface Colors - Light Mode */
-  --surface-primary: #ffffff;
+  --surface-primary: #fff;
   --surface-secondary: #f8faf9;
   --surface-tertiary: #e9ecef;
-  --surface-elevated: #ffffff;
+  --surface-elevated: #fff;
   --surface-overlay: rgba(0, 0, 0, 0.5);
 
   /* Text Colors - Light Mode */
@@ -1331,7 +1325,7 @@ body.light-theme {
   --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.15);
 
   /* PrimeNG Surface Variables - Light Mode */
-  --p-surface-0: #ffffff;
+  --p-surface-0: #fff;
   --p-surface-50: #f8faf9;
   --p-surface-100: #f1f5f4;
   --p-surface-200: #e2e8f0;
@@ -1347,8 +1341,8 @@ body.light-theme {
   --p-surface-border: #e2e8f0;
 
   /* Card and Component Backgrounds */
-  --p-card-background: #ffffff;
-  --p-content-background: #ffffff;
+  --p-card-background: #fff;
+  --p-content-background: #fff;
   --p-highlight-background: rgba(16, 201, 107, 0.1);
   --p-highlight-text-color: #089949;
 }

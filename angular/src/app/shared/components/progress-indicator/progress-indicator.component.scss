@@ -99,12 +99,12 @@
 
 .step-item.active .step-marker {
   background: var(--color-brand-primary, #089949);
-  color: var(--color-text-on-primary, #ffffff);
+  color: var(--color-text-on-primary, #fff);
 }
 
 .step-item.completed .step-marker {
   background: var(--color-status-success);
-  color: var(--color-text-on-primary, #ffffff);
+  color: var(--color-text-on-primary, #fff);
 }
 
 .step-number {

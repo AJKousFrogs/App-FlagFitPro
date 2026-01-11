@@ -50,8 +50,6 @@ export class PlatformDetectionService {
       osVersion: this.extractOSVersion(ua),
       browserVersion: this.extractBrowserVersion(ua),
     };
-
-    console.log("🔍 [PlatformDetection] Platform detected:", this.platformInfo);
   }
 
   /**
@@ -115,16 +113,10 @@ export class PlatformDetectionService {
 
     if (this.platformInfo.isIOS) {
       classes.push("platform-ios");
-      console.log(
-        "📱 [PlatformDetection] iOS detected, adding .platform-ios class",
-      );
     }
 
     if (this.platformInfo.isAndroid) {
       classes.push("platform-android");
-      console.log(
-        "🤖 [PlatformDetection] Android detected, adding .platform-android class",
-      );
     }
 
     if (this.platformInfo.isMobile) {
@@ -137,9 +129,6 @@ export class PlatformDetectionService {
 
     if (this.platformInfo.isSafari) {
       classes.push("browser-safari");
-      console.log(
-        "🧭 [PlatformDetection] Safari detected, adding .browser-safari class",
-      );
     }
 
     if (this.platformInfo.isChrome) {
@@ -148,9 +137,6 @@ export class PlatformDetectionService {
 
     // Add classes to body
     document.body.classList.add(...classes);
-
-    // Log for debugging
-    console.log("🎨 [PlatformDetection] Platform classes added:", classes);
   }
 
   /**

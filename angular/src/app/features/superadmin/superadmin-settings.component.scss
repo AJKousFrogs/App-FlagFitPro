@@ -257,7 +257,7 @@
   border-radius: var(--radius-full);
 }
 
-.toggle-slider:before {
+.toggle-slider::before {
   position: absolute;
   content: "";
   height: 20px;
@@ -273,7 +273,7 @@
   background-color: var(--ds-primary-green);
 }
 
-.toggle input:checked + .toggle-slider:before {
+.toggle input:checked + .toggle-slider::before {
   transform: translateX(22px);
 }
 

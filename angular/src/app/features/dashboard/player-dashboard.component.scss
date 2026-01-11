@@ -439,6 +439,7 @@
   @include respond-to(md) {
     margin-bottom: var(--space-3);
   }
+
   // PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
 }
 

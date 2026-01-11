@@ -69,6 +69,7 @@
     --radius-button,
     8px
   ); /* RAISED style - NOT pill */
+
   --p-button-padding-x: var(--space-6); /* 24px */
   --p-button-padding-y: var(--space-3); /* 12px */
   --p-button-icon-only-width: 44px;
@@ -733,10 +734,11 @@
      - Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
      - Disabled: opacity 0.6, not interactive
      ================================ */
-  .p-checkbox,
-  .p-toggleswitch {
+  .p-checkbox {
     flex-shrink: 0;
   }
+
+  /* NOTE: .p-toggleswitch styles consolidated in primeng/_brand-overrides.scss */
 
   .p-checkbox {
     width: var(--p-checkbox-width);
@@ -797,11 +799,7 @@
     outline: none;
   }
 
-  .p-toggleswitch:focus-visible,
-  .p-toggleswitch:focus-visible .p-toggleswitch-slider {
-    box-shadow: var(--p-toggleswitch-focus-ring);
-    outline: none;
-  }
+  /* NOTE: .p-toggleswitch focus styles consolidated in primeng/_brand-overrides.scss */
 
   /* Input focus border */
   .p-inputtext:focus-visible,

@@ -30,6 +30,7 @@
   --p-primary-500: var(
     --ds-primary-green
   ); /* var(--ds-primary-green) - Main brand color */
+
   --p-primary-600: var(
     --color-brand-primary-dark,
     var(--primitive-primary-800)
@@ -44,6 +45,7 @@
   --p-primary-contrast-color: var(
     --color-text-on-primary
   ); /* CRITICAL: White text on green */
+
   --p-primary-hover-color: var(
     --color-brand-primary-dark,
     var(--primitive-primary-800)
@@ -69,6 +71,7 @@
   --p-highlight-text-color: var(
     --color-text-on-primary
   ); /* White text on primary/success/etc */
+
   --p-primary-text-color: var(--ds-primary-green);
 
   /* ================================================================
@@ -87,7 +90,6 @@
   --p-surface-800: var(--primitive-neutral-800);
   --p-surface-900: var(--primitive-neutral-900);
   --p-surface-950: var(--primitive-neutral-950);
-
   --p-content-background: var(--surface-card, var(--color-text-on-primary));
   --p-card-background: var(--surface-card, var(--color-text-on-primary));
   --p-surface-ground: var(--surface-ground, var(--primitive-neutral-50));
@@ -142,6 +144,7 @@
   --p-button-primary-color: var(
     --color-text-on-primary
   ); /* CRITICAL: White text */
+
   --p-button-primary-hover-background: var(
     --color-brand-primary-dark,
     var(--primitive-primary-800)
@@ -154,26 +157,24 @@
   --p-button-primary-active-background: var(--primitive-primary-900);
   --p-button-primary-active-border-color: var(--primitive-primary-900);
   --p-button-primary-active-color: var(--color-text-on-primary);
-
   --p-button-secondary-color: var(--ds-primary-green);
   --p-button-secondary-border-color: var(--ds-primary-green);
   --p-button-secondary-hover-background: rgba(
     var(--ds-primary-green-rgb),
     0.04
   );
-
   --p-button-text-primary-color: var(--ds-primary-green);
   --p-button-text-primary-hover-background: rgba(
     var(--ds-primary-green-rgb),
     0.04
   );
-
   --p-button-padding-y: var(--space-3, 0.75rem);
   --p-button-padding-x: var(--space-4, 1rem);
   --p-button-border-radius: var(
     --radius-lg,
     0.5rem
   ); /* 8px - Design System standard */
+
   --p-button-font-weight: var(--font-weight-medium, 500);
   --p-button-sm-font-size: var(--font-body-sm, 0.875rem);
   --p-button-sm-padding-y: var(--space-2, 0.5rem);
@@ -192,11 +193,13 @@
     --radius-lg,
     0.5rem
   ); /* 8px - Design System standard */
+
   --p-card-body-padding: var(--space-5, 1.25rem);
   --p-card-title-font-size: var(
     --font-h3-size,
     1.25rem
   ); /* 20px - H3 for card titles */
+
   --p-card-title-font-weight: 600; /* semibold for card headers */
   --p-card-subtitle-font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
   --p-card-subtitle-font-weight: var(--font-body-sm-weight, 400);
@@ -228,7 +231,7 @@
   --p-form-control-line-height: 1.5;
 
   /* Input */
-  --p-input-background: var(--surface-primary, #ffffff);
+  --p-input-background: var(--surface-primary, #fff);
   --p-input-border-color: var(
     --color-border-primary,
     var(--primitive-neutral-300)
@@ -328,11 +331,13 @@
     --radius-lg,
     0.5rem
   ); /* 8px - Design System standard */
+
   --p-dialog-header-padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
   --p-dialog-header-font-size: var(
     --font-h2-size,
     1.5rem
   ); /* 24px - H2 for dialog titles */
+
   --p-dialog-header-font-weight: var(--font-h2-weight, 600); /* semibold */
   --p-dialog-header-line-height: var(--font-h2-line-height, 1.25);
   --p-dialog-content-padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
@@ -376,10 +381,12 @@
     --font-label-size,
     0.875rem
   ); /* 14px - label */
+
   --p-datatable-header-font-weight: var(
     --font-label-weight,
     600
   ); /* semibold */
+
   --p-datatable-header-line-height: var(--font-label-line-height, 1.2);
   --p-datatable-body-font-size: var(--font-body-size, 1rem); /* 16px - body */
   --p-datatable-body-font-weight: var(--font-body-weight, 400);
@@ -416,6 +423,7 @@
     --font-body-sm-size,
     0.875rem
   ); /* 14px - body-sm */
+
   --p-tabview-tab-font-weight: 600; /* semibold for tab labels */
   --p-tabview-tab-line-height: var(--font-body-sm-line-height, 1.45);
   --p-tabview-tab-active-border-color: var(--ds-primary-green);
@@ -522,7 +530,6 @@
   --p-surface-800: var(--primitive-neutral-100);
   --p-surface-900: var(--primitive-neutral-50);
   --p-surface-950: var(--color-text-on-primary);
-
   --p-content-background: var(
     --primitive-neutral-800,
     var(--primitive-neutral-800)
@@ -575,137 +582,143 @@
 /* ================================================================
    CRITICAL FIX: White text on green backgrounds
    Applies to ALL PrimeNG components with primary/success styling
+   Wrapped in @layer for proper cascade
    ================================================================ */
 
-/* PrimeNG Button Primary */
-.p-button-primary,
-.p-button.p-button-primary,
-p-button[severity="primary"] .p-button {
-  background: var(--ds-primary-green);
-  border-color: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-
-  .p-button-label,
-  .p-button-icon,
-  span,
-  i {
-    color: var(--color-text-on-primary);
-  }
-
-  &:hover,
-  &:focus-visible {
-    background: var(--color-brand-primary-dark, var(--primitive-primary-800));
-    border-color: var(--color-brand-primary-dark, var(--primitive-primary-800));
-    color: var(--color-text-on-primary);
-  }
-}
-
-/* PrimeNG Card with green background */
-.p-card {
-  &[style*="089949"],
-  &.bg-primary,
-  &.card-primary {
+@layer primeng-brand {
+  /* PrimeNG Button Primary */
+  .p-button-primary,
+  .p-button.p-button-primary,
+  p-button[severity="primary"] .p-button {
     background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
     color: var(--color-text-on-primary);
 
-    .p-card-title,
-    .p-card-subtitle,
-    .p-card-content,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    p,
+    .p-button-label,
+    .p-button-icon,
     span,
-    div {
+    i {
+      color: var(--color-text-on-primary);
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-brand-primary-dark, var(--primitive-primary-800));
+      border-color: var(--color-brand-primary-dark, var(--primitive-primary-800));
       color: var(--color-text-on-primary);
     }
   }
-}
 
-/* PrimeNG Tag/Badge Primary/Success */
-.p-tag-success,
-.p-tag-primary,
-.p-badge-success,
-.p-badge-primary {
-  background: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-}
+  /* PrimeNG Card with green background */
+  .p-card {
+    &[style*="089949"],
+    &.bg-primary,
+    &.card-primary {
+      background: var(--ds-primary-green);
+      color: var(--color-text-on-primary);
 
-/* PrimeNG Chip Primary */
-.p-chip-primary {
-  background: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
+      .p-card-title,
+      .p-card-subtitle,
+      .p-card-content,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p,
+      span,
+      div {
+        color: var(--color-text-on-primary);
+      }
+    }
+  }
 
-  .p-chip-text {
+  /* PrimeNG Tag/Badge Primary/Success */
+  .p-tag-success,
+  .p-tag-primary,
+  .p-badge-success,
+  .p-badge-primary {
+    background: var(--ds-primary-green);
     color: var(--color-text-on-primary);
   }
-}
 
-/* PrimeNG Progress Bar */
-.p-progressbar-value {
-  background: var(--ds-primary-green);
-}
+  /* PrimeNG Chip Primary */
+  .p-chip-primary {
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
 
-/* PrimeNG Datatable Selected Row */
-.p-datatable .p-datatable-tbody > tr.p-highlight {
-  background: rgba(var(--ds-primary-green-rgb), 0.1);
-  color: var(--color-text-primary);
-
-  td {
-    color: inherit;
+    .p-chip-text {
+      color: var(--color-text-on-primary);
+    }
   }
-}
 
-/* PrimeNG Paginator Active Page */
-.p-paginator .p-paginator-page.p-highlight {
-  background: var(--ds-primary-green);
-  border-color: var(--ds-primary-green);
-  color: var(--color-text-on-primary);
-}
+  /* PrimeNG Progress Bar */
+  .p-progressbar-value {
+    background: var(--ds-primary-green);
+  }
 
-/* PrimeNG Menu Item Active */
-.p-menu .p-menuitem.p-highlight {
-  background: rgba(var(--ds-primary-green-rgb), 0.1);
-  color: var(--ds-primary-green);
+  /* PrimeNG Datatable Selected Row */
+  .p-datatable .p-datatable-tbody > tr.p-highlight {
+    background: rgba(var(--ds-primary-green-rgb), 0.1);
+    color: var(--color-text-primary);
 
-  .p-menuitem-text,
-  .p-menuitem-icon {
+    td {
+      color: inherit;
+    }
+  }
+
+  /* PrimeNG Paginator Active Page */
+  .p-paginator .p-paginator-page.p-highlight {
+    background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+  }
+
+  /* PrimeNG Menu Item Active */
+  .p-menu .p-menuitem.p-highlight {
+    background: rgba(var(--ds-primary-green-rgb), 0.1);
+    color: var(--ds-primary-green);
+
+    .p-menuitem-text,
+    .p-menuitem-icon {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  /* PrimeNG Tab Active */
+  .p-tabview .p-tabview-nav .p-tabview-nav-link:not(.p-disabled):focus-visible {
+    box-shadow: inset 0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.5);
+  }
+
+  .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    border-color: var(--ds-primary-green);
     color: var(--ds-primary-green);
   }
-}
-
-/* PrimeNG Tab Active */
-.p-tabview .p-tabview-nav .p-tabview-nav-link:not(.p-disabled):focus-visible {
-  box-shadow: inset 0 0 0 0.2rem rgba(var(--ds-primary-green-rgb), 0.5);
-}
-
-.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
-  border-color: var(--ds-primary-green);
-  color: var(--ds-primary-green);
-}
+} /* End @layer primeng-brand for green background fixes */
 
 /* ================================================================
    FOCUS RING - Accessibility
    All interactive PrimeNG components get consistent focus styling
+   Wrapped in @layer for proper cascade
    ================================================================ */
 
-.p-button:focus-visible,
-.p-inputtext:focus-visible,
-.p-dropdown:focus-visible,
-.p-checkbox:focus-visible,
-.p-radiobutton:focus-visible,
-.p-multiselect:focus-visible,
-.p-calendar:focus-visible,
-.p-toggleswitch:focus-visible,
-.p-slider:focus-visible {
-  outline: var(--p-focus-ring-width) var(--p-focus-ring-style)
-    var(--p-focus-ring-color);
-  outline-offset: var(--p-focus-ring-offset);
-  box-shadow: 0 0 0 var(--p-focus-ring-offset)
-    rgba(var(--ds-primary-green-rgb), 0.2);
+@layer primeng-brand {
+  .p-button:focus-visible,
+  .p-inputtext:focus-visible,
+  .p-dropdown:focus-visible,
+  .p-checkbox:focus-visible,
+  .p-radiobutton:focus-visible,
+  .p-multiselect:focus-visible,
+  .p-calendar:focus-visible,
+  .p-toggleswitch:focus-visible,
+  .p-slider:focus-visible {
+    outline: var(--p-focus-ring-width) var(--p-focus-ring-style)
+      var(--p-focus-ring-color);
+    outline-offset: var(--p-focus-ring-offset);
+    box-shadow: 0 0 0 var(--p-focus-ring-offset)
+      rgba(var(--ds-primary-green-rgb), 0.2);
+  }
 }
 
 /* ================================================================
@@ -1064,16 +1077,18 @@ p-button[severity="primary"] .p-button {
    ================================================================ */
 
 /* Hide the native input - needed for accessibility */
-.p-toggleswitch .p-toggleswitch-input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
+@layer primeng-brand {
+  .p-toggleswitch .p-toggleswitch-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
 }
 
 /* ================================================================

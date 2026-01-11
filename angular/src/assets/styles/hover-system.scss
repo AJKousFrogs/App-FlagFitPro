@@ -38,12 +38,15 @@
   --hover-bg-primary: var(
     --primitive-primary-900
   ); /* Darkened green for solid buttons */
+
   --hover-bg-primary-light: var(
     --primitive-primary-800
   ); /* Slightly darkened green */
+
   --hover-bg-secondary: var(
     --primitive-primary-50
   ); /* Light green tint for cards/lists */
+
   --hover-bg-tertiary: rgba(8, 153, 73, 0.08); /* Very subtle green tint */
   --hover-bg-ultra-light: rgba(
     8,
@@ -60,6 +63,7 @@
   --hover-text-primary: var(
     --primitive-primary-900
   ); /* Darker green for links */
+
   --hover-text-on-primary: var(
     --color-text-on-primary
   ); /* White text on green hover */
@@ -538,36 +542,30 @@
 }
 
 /* ================================
-   p-toggleswitch - Toggle switch (PrimeNG 21)
+   p-toggleswitch - Styles consolidated in primeng/_brand-overrides.scss
    ================================ */
-
-.p-toggleswitch {
-  // Removed scale transform on hover - it breaks the layout and causes overflow
-  // The thumb should stay within the track bounds at all times
-
-  &.p-toggleswitch-checked .p-toggleswitch-slider {
-    background-color: var(--ds-primary-green);
-  }
-}
 
 /* ================================
    p-menu / p-menuitem - Menu hover
+   Wrapped in @layer for proper cascade
    ================================ */
 
-.p-menuitem-link {
-  transition:
-    background-color var(--hover-transition-fast),
-    color var(--hover-transition-fast),
-    padding-left var(--hover-transition-fast);
+@layer primeng-brand {
+  .p-menuitem-link {
+    transition:
+      background-color var(--hover-transition-fast),
+      color var(--hover-transition-fast),
+      padding-left var(--hover-transition-fast);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: var(--hover-bg-tertiary);
-      color: var(--ds-primary-green);
-      padding-left: calc(var(--space-4, 1rem) + 4px);
-
-      .p-menuitem-icon {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--hover-bg-tertiary);
         color: var(--ds-primary-green);
+        padding-left: calc(var(--space-4, 1rem) + 4px);
+
+        .p-menuitem-icon {
+          color: var(--ds-primary-green);
+        }
       }
     }
   }
@@ -584,128 +582,134 @@
 
 /* ================================
    p-datatable - Table row hover
+   Wrapped in @layer for proper cascade
    ================================ */
 
-.p-datatable-tbody > tr {
-  transition:
-    background-color var(--hover-transition-fast),
-    transform var(--hover-transition-fast);
+@layer primeng-brand {
+  .p-datatable-tbody > tr {
+    transition:
+      background-color var(--hover-transition-fast),
+      transform var(--hover-transition-fast);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: var(--hover-bg-ultra-light);
-      transform: translateX(4px);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--hover-bg-ultra-light);
+        transform: translateX(4px);
+      }
+    }
+
+    &.p-highlight {
+      background-color: var(--hover-bg-tertiary);
+      color: var(--ds-primary-green);
     }
   }
 
-  &.p-highlight {
-    background-color: var(--hover-bg-tertiary);
-    color: var(--ds-primary-green);
-  }
-}
+  /* Sortable column header hover */
+  .p-datatable-thead > tr > th.p-sortable-column {
+    transition: background-color var(--hover-transition-fast);
 
-/* Sortable column header hover */
-.p-datatable-thead > tr > th.p-sortable-column {
-  transition: background-color var(--hover-transition-fast);
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: var(--surface-tertiary);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--surface-tertiary);
+      }
     }
   }
 }
 
 /* ================================
    p-accordion - Accordion header hover
+   Wrapped in @layer for proper cascade
    ================================ */
 
-.p-accordion-header .p-accordion-header-link {
-  transition:
-    background-color var(--hover-transition-fast),
-    color var(--hover-transition-fast);
+@layer primeng-brand {
+  .p-accordion-header .p-accordion-header-link {
+    transition:
+      background-color var(--hover-transition-fast),
+      color var(--hover-transition-fast);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: var(--hover-bg-tertiary);
-      color: var(--ds-primary-green);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        background-color: var(--hover-bg-tertiary);
+        color: var(--ds-primary-green);
+      }
     }
   }
-}
 
-/* ================================
-   p-chip - Chip hover
-   ================================ */
+  /* ================================
+     p-chip - Chip hover
+     ================================ */
 
-.p-chip {
-  transition:
-    transform var(--hover-transition-bounce),
-    box-shadow var(--hover-transition-fast);
+  .p-chip {
+    transition:
+      transform var(--hover-transition-bounce),
+      box-shadow var(--hover-transition-fast);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: var(--hover-scale-subtle);
-      box-shadow: var(--hover-shadow-sm);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: var(--hover-scale-subtle);
+        box-shadow: var(--hover-shadow-sm);
+      }
     }
   }
-}
 
-.p-chip-remove-icon {
-  transition:
-    color var(--hover-transition-fast),
-    transform var(--hover-transition-bounce);
+  .p-chip-remove-icon {
+    transition:
+      color var(--hover-transition-fast),
+      transform var(--hover-transition-bounce);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      color: var(--color-status-error);
-      transform: scale(1.2);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        color: var(--color-status-error);
+        transform: scale(1.2);
+      }
     }
   }
-}
 
-/* ================================
-   p-avatar - Avatar hover
-   ================================ */
+  /* ================================
+     p-avatar - Avatar hover
+     ================================ */
 
-.p-avatar {
-  transition: transform var(--hover-transition-bounce);
+  .p-avatar {
+    transition: transform var(--hover-transition-bounce);
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: var(--hover-scale-icon);
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: var(--hover-scale-icon);
+      }
     }
   }
-}
 
-.p-avatar-group .p-avatar {
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: scale(1.15) translateY(-4px);
-      z-index: var(--z-dropdown);
+  .p-avatar-group .p-avatar {
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: scale(1.15) translateY(-4px);
+        z-index: var(--z-dropdown);
+      }
     }
   }
-}
 
-/* ================================
-   p-progressbar - Progress bar hover
-   ================================ */
+  /* ================================
+     p-progressbar - Progress bar hover
+     ================================ */
 
-.p-progressbar-value {
-  transition: width 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  .p-progressbar-value {
+    transition: width 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
-  /* Shine effect on hover */
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.3) 50%,
-      transparent 100%
-    );
-    animation: progress-shine 2s infinite;
+    /* Shine effect on hover */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+      );
+      animation: progress-shine 2s infinite;
+    }
   }
-}
+} /* End @layer primeng-brand */
 
 @keyframes progress-shine {
   0% {

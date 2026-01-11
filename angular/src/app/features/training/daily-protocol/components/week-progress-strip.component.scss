@@ -6,7 +6,7 @@
 @use "styles/mixins" as *;
 
 .week-progress-strip {
-  background: var(--surface-primary, #ffffff);
+  background: var(--surface-primary, #fff);
   border: 1px solid var(--primitive-neutral-200, #e5e5e5);
   border-radius: var(--radius-xl, 12px);
   padding: var(--space-4, 16px) var(--space-5, 20px);

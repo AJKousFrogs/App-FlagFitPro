@@ -126,7 +126,8 @@ export function extractApiData<T>() {
 
 /**
  * Log values for debugging (non-destructive)
- * 
+ * NOTE: Only logs when a logger is provided. Use LoggerService.debug() in production.
+ *
  * @example
  * source$.pipe(
  *   logValues('Debug:', logger)
@@ -137,10 +138,9 @@ export function logValues<T>(
   logger?: { debug: (msg: string, data: T) => void },
 ) {
   return tap<T>((value) => {
+    // Only log if a logger is provided - no console.log in production
     if (logger) {
       logger.debug(prefix, value);
-    } else {
-      console.log(prefix, value);
     }
   });
 }

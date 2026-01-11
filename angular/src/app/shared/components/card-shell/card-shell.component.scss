@@ -113,10 +113,13 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
+
   // CANONICAL: tighter header padding (top/sides/bottom)
   padding: var(--space-3) var(--space-4) var(--space-2);
+
   // NO background - transparent
   background: transparent;
+
   // NO separator
   border-bottom: none;
 }

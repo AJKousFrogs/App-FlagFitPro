@@ -15,6 +15,7 @@
     border-radius: var(--radius-2xl);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     overflow: hidden;
+
     // p-card border/shadow/padding overrides REMOVED
     // Use app-card-shell component instead
     // @see docs/CARD_SHELL_CONTRACT.md

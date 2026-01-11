@@ -438,9 +438,11 @@ $touch-target-large: 56px;
  */
 @mixin bottom-nav-item {
   flex: 1;
+
   @include flex-center;
   flex-direction: column;
   gap: space(1);
+
   @include touch-target;
   color: var(--color-text-secondary);
   text-decoration: none;

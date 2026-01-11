@@ -297,7 +297,7 @@
   left: 0;
   right: 0;
   padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
-  background: var(--surface-primary, #ffffff);
+  background: var(--surface-primary, #fff);
   border-top: 1px solid var(--color-border-primary, #e5e7eb);
   z-index: var(--z-index-sticky, 1020);
 
