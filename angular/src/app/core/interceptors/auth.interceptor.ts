@@ -27,7 +27,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (req.url.includes('supabase.co/rest/')) {
     const session = supabaseService.getSession();
     const headers: Record<string, string> = {
-      'apikey': supabaseService.client.supabaseKey,
+      'apikey': supabaseService.supabaseKey,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Prefer': 'return=representation'

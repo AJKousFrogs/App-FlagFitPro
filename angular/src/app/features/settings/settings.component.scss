@@ -190,6 +190,9 @@
 .settings-nav-item i {
   font-size: var(--font-size-body);
   color: var(--ds-primary-green);
+  /* ALIGNMENT FIX: Icon font metrics stabilization */
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 /* Settings Section Headers */
@@ -290,8 +293,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  /* ALIGNMENT FIX: Ensure consistent baseline */
-  justify-content: center;
+  /* ALIGNMENT FIX: Top-align text to prevent drift when wrapping */
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .notification-label {
@@ -348,6 +352,22 @@
 .digest-select {
   min-width: 180px;
   width: 100%;
+  /* ALIGNMENT FIX: Lock height to match toggle row height */
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure PrimeNG select within digest-select aligns properly */
+.digest-select ::ng-deep .p-select {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.digest-select ::ng-deep .p-select-label {
+  display: flex;
+  align-items: center;
+  line-height: 1.3;
 }
 
 /* Quiet Hours Configuration */
@@ -439,6 +459,16 @@
 
 .toggle-status.active {
   color: var(--ds-primary-green);
+}
+
+/* Control Row Right Column Alignment Lock */
+.control-row__control {
+  flex-shrink: 0;
+  /* ALIGNMENT FIX: Lock min-width to prevent toggle row zig-zag */
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Two Column Form Row */
@@ -545,11 +575,22 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
     transform var(--transition-fast);
+  /* ALIGNMENT FIX: Lock min-height for visual rhythm */
+  min-height: 80px;
 }
 
 .security-item:hover {
   background: var(--surface-secondary);
   /* HOVER FIX: Border stays 2px, no layout shift */
+}
+
+.security-info {
+  display: flex;
+  flex-direction: column;
+  /* ALIGNMENT FIX: Top-align to establish consistent baseline */
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex: 1;
 }
 
 .security-info h4 {
@@ -581,21 +622,6 @@
   background: var(--color-status-error-light);
 }
 
-.delete-warning {
-  text-align: center;
-  padding: var(--space-4);
-}
-
-.warning-icon {
-  font-size: var(--font-size-h1);
-  color: var(--color-status-error);
-  margin-bottom: var(--space-4);
-}
-
-.delete-warning p {
-  margin-bottom: var(--space-2);
-  color: var(--color-text-secondary);
-}
 
 .status-badge {
   display: inline-flex;
@@ -607,210 +633,8 @@
   font-weight: var(--font-weight-medium);
 }
 
-.status-badge.enabled {
-  background: var(--color-status-success-light);
-  color: var(--color-status-success);
-}
 
-/* 2FA Setup Styles */
-.twofa-setup {
-  padding: var(--space-2);
-}
 
-.step-content h4 {
-  margin: 0 0 var(--space-3) 0;
-  color: var(--color-text-primary);
-}
-
-.step-content p {
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-3);
-}
-
-.app-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.app-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-}
-
-.qr-container {
-  display: flex;
-  justify-content: center;
-  padding: var(--space-4);
-  background: var(--surface-primary);
-  border-radius: var(--radius-lg);
-  margin: var(--space-4) 0;
-}
-
-.qr-code {
-  width: 200px;
-  height: 200px;
-}
-
-.qr-placeholder {
-  width: 200px;
-  height: 200px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  color: var(--color-text-secondary);
-}
-
-.manual-entry {
-  text-align: center;
-  padding: var(--space-3);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-}
-
-.secret-code {
-  display: inline-block;
-  padding: var(--space-2) var(--space-3);
-  background: var(--surface-primary);
-  border-radius: var(--radius-lg);
-  font-family: var(--font-family-mono);
-  font-size: var(--font-size-body);
-  letter-spacing: 0.1em;
-  margin: var(--space-2) 0;
-}
-
-.verification-input {
-  display: flex;
-  justify-content: center;
-  margin: var(--space-4) 0;
-}
-
-.code-input {
-  text-align: center;
-  font-size: var(--font-size-metric-md);
-  letter-spacing: 0.5em;
-  font-family: var(--font-family-mono);
-  max-width: 200px;
-}
-
-.step-content.success {
-  text-align: center;
-}
-
-.success-icon {
-  font-size: var(--font-h1-size);
-  color: var(--color-status-success);
-  margin-bottom: var(--space-4);
-}
-
-.backup-codes {
-  margin-top: var(--space-4);
-  padding: var(--space-4);
-  background: var(--surface-secondary);
-  border-radius: var(--radius-lg);
-  text-align: left;
-}
-
-.backup-codes h5 {
-  margin: 0 0 var(--space-2) 0;
-  color: var(--color-text-primary);
-}
-
-.codes-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-2);
-  margin: var(--space-3) 0;
-}
-
-.backup-code {
-  padding: var(--space-2);
-  background: var(--surface-primary);
-  border-radius: var(--radius-lg);
-  font-family: var(--font-family-mono);
-  text-align: center;
-}
-
-/* Sessions Styles */
-.sessions-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.loading-sessions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  padding: var(--space-6);
-  color: var(--color-text-secondary);
-}
-
-.session-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-lg);
-  border: var(--border-1) solid var(--color-border-muted);
-}
-
-.session-item.current {
-  background: var(--color-brand-primary-subtle);
-  border-color: var(--color-brand-primary);
-}
-
-.session-icon {
-  width: var(--icon-container-md); // 40px
-  height: var(--icon-container-md); // 40px
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface-secondary);
-  border-radius: var(--radius-full);
-}
-
-.session-icon i {
-  font-size: var(--icon-lg);
-  color: var(--color-text-secondary);
-}
-
-.session-info {
-  flex: 1;
-}
-
-.session-device {
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-primary);
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.current-badge {
-  font-size: var(--font-size-badge);
-  padding: var(--space-1) var(--space-2);
-  background: var(--color-brand-primary);
-  color: var(--color-text-on-primary);
-  border-radius: var(--radius-md);
-}
-
-.session-details {
-  font-size: var(--font-size-h4);
-  color: var(--color-text-secondary);
-}
-
-.disable-2fa {
-  text-align: center;
-  padding: var(--space-4);
-}
 
 /* Dialog Container */
 .dialog-container {
@@ -969,10 +793,13 @@
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: var(--space-3);
   padding: var(--space-4) var(--space-6);
   background: var(--surface-secondary);
   border-top: 1px solid var(--color-border-muted);
+  /* ALIGNMENT FIX: Lock min-height for consistency across all dialogs */
+  min-height: 72px;
 }
 
 .dialog-actions app-button {

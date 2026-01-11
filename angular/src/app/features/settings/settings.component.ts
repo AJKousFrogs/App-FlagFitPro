@@ -104,7 +104,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   showDisable2FADialog = false;
   showSessionsDialog = false;
   deleteConfirmText = "";
-  deleteAccountReason = "";
 
   // 2FA state
   twoFAStep = signal(1);
@@ -156,7 +155,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   newTeamName = "";
   newTeamNotes = "";
   isSubmittingTeamRequest = signal(false);
-  currentTeamMemberId = signal<string | null>(null);
 
   visibilityOptions = [
     {
@@ -571,7 +569,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           jerseyNumber: membership.jerseyNumber,
         });
 
-        this.currentTeamMemberId.set(membership.id);
         this.profileForm.patchValue({
           teamId: membership.teamId,
           // team_members is authoritative for position/jersey, override users table values
@@ -1100,7 +1097,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         .from("account_deletion_requests")
         .insert({
           user_id: user.id,
-          reason: this.deleteAccountReason || "User requested deletion",
+          reason: "User requested deletion",
           status: "pending",
           created_at: new Date().toISOString(),
         });
