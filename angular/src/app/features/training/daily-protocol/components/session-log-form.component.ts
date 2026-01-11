@@ -13,11 +13,11 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    input,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { InputNumberModule } from "primeng/inputnumber";

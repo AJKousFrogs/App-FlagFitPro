@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnDestroy,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -27,11 +27,14 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
-import { LoggerService, toLogContext } from "../../core/services/logger.service";
 import {
-    PlayerProgramService,
-    getProgramIdForPosition,
-    normalizePositionForModifiers,
+  LoggerService,
+  toLogContext,
+} from "../../core/services/logger.service";
+import {
+  PlayerProgramService,
+  getProgramIdForPosition,
+  normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -228,14 +231,18 @@ interface InjuryEntry {
                     @if (isEmailVerified()) {
                       <div class="email-verification-banner verified">
                         <i class="pi pi-check-circle"></i>
-                        <span>Email verified! You can proceed to the next step.</span>
+                        <span
+                          >Email verified! You can proceed to the next
+                          step.</span
+                        >
                       </div>
                     } @else {
                       <div class="email-verification-banner pending">
                         <i class="pi pi-envelope"></i>
                         <div class="verification-content">
                           <span class="verification-message">
-                            Please verify your email to continue. Check your inbox for a verification link.
+                            Please verify your email to continue. Check your
+                            inbox for a verification link.
                           </span>
                           <div class="verification-actions">
                             <app-button
@@ -244,13 +251,15 @@ interface InjuryEntry {
                               iconLeft="pi-refresh"
                               [loading]="isResendingVerification()"
                               (clicked)="resendVerificationEmail()"
-                            >Resend Email</app-button>
+                              >Resend Email</app-button
+                            >
                             <app-button
                               variant="text"
                               size="sm"
                               iconLeft="pi-sync"
                               (clicked)="refreshVerificationStatus()"
-                            >I've Verified</app-button>
+                              >I've Verified</app-button
+                            >
                           </div>
                         </div>
                       </div>
@@ -1277,9 +1286,12 @@ interface InjuryEntry {
                         </div>
                         <div class="summary-row">
                           <span class="label">App Access</span>
-                          <span class="value">{{
-                            onboardingData.staffVisibility.length
-                          }} section(s)</span>
+                          <span class="value"
+                            >{{
+                              onboardingData.staffVisibility.length
+                            }}
+                            section(s)</span
+                          >
                         </div>
                       </div>
                     </div>
@@ -1350,7 +1362,10 @@ interface InjuryEntry {
                             @if (onboardingData.currentInjuries.length === 0) {
                               None 👍
                             } @else {
-                              {{ onboardingData.currentInjuries.length }} area(s)
+                              {{
+                                onboardingData.currentInjuries.length
+                              }}
+                              area(s)
                             }
                           </span>
                         </div>
@@ -1440,7 +1455,9 @@ interface InjuryEntry {
                           inputId="consent-terms"
                           name="consentTermsOfService"
                           (ngModelChange)="
-                            onConsentChange('Terms of Service', { checked: $event })
+                            onConsentChange('Terms of Service', {
+                              checked: $event,
+                            })
                           "
                         />
                         <label for="consent-terms" class="consent-label">
@@ -1465,7 +1482,11 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-privacy"
                           name="consentPrivacyPolicy"
-                          (ngModelChange)="onConsentChange('Privacy Policy', { checked: $event })"
+                          (ngModelChange)="
+                            onConsentChange('Privacy Policy', {
+                              checked: $event,
+                            })
+                          "
                         />
                         <label for="consent-privacy" class="consent-label">
                           I accept the
@@ -1489,7 +1510,9 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-data"
                           name="consentDataUsage"
-                          (ngModelChange)="onConsentChange('Data Usage', { checked: $event })"
+                          (ngModelChange)="
+                            onConsentChange('Data Usage', { checked: $event })
+                          "
                         />
                         <label for="consent-data" class="consent-label">
                           I consent to my data being used to personalize my
@@ -1511,7 +1534,9 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-ai"
                           name="consentAICoach"
-                          (ngModelChange)="onConsentChange('AI Coach', { checked: $event })"
+                          (ngModelChange)="
+                            onConsentChange('AI Coach', { checked: $event })
+                          "
                         />
                         <label for="consent-ai" class="consent-label">
                           I consent to AI Coach (Merlin) providing personalized
@@ -1529,7 +1554,11 @@ interface InjuryEntry {
                           variant="filled"
                           inputId="consent-email"
                           name="consentEmailUpdates"
-                          (ngModelChange)="onConsentChange('Email Updates', { checked: $event })"
+                          (ngModelChange)="
+                            onConsentChange('Email Updates', {
+                              checked: $event,
+                            })
+                          "
                         />
                         <label for="consent-email" class="consent-label">
                           I want to receive email updates about new features and
@@ -2321,7 +2350,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       const { data, error } = await this.supabaseService.client.auth.getUser();
 
       if (error) {
-        this.logger.error("[Onboarding] Error checking email verification:", error);
+        this.logger.error(
+          "[Onboarding] Error checking email verification:",
+          error,
+        );
         return;
       }
 
@@ -2334,7 +2366,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         this.logger.info("[Onboarding] Email not yet verified");
       }
     } catch (error) {
-      this.logger.error("[Onboarding] Error checking email verification:", error);
+      this.logger.error(
+        "[Onboarding] Error checking email verification:",
+        error,
+      );
     }
   }
 
@@ -2346,7 +2381,9 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     try {
       const user = this.supabaseService.currentUser();
       if (!user?.email) {
-        this.toastService.error("No email address found. Please try logging in again.");
+        this.toastService.error(
+          "No email address found. Please try logging in again.",
+        );
         return;
       }
 
@@ -2364,7 +2401,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         "Email Sent",
       );
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to resend verification email";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to resend verification email";
       this.toastService.error(message);
     } finally {
       this.isResendingVerification.set(false);
@@ -2377,9 +2417,14 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   async refreshVerificationStatus(): Promise<void> {
     await this.checkEmailVerification();
     if (this.isEmailVerified()) {
-      this.toastService.success("Email verified! You can now continue.", "Verified");
+      this.toastService.success(
+        "Email verified! You can now continue.",
+        "Verified",
+      );
     } else {
-      this.toastService.info("Email not yet verified. Please check your inbox and click the verification link.");
+      this.toastService.info(
+        "Email not yet verified. Please check your inbox and click the verification link.",
+      );
     }
   }
 
@@ -2396,10 +2441,15 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       this.authChannel = new BroadcastChannel("flagfit-auth");
       this.authChannel.onmessage = async (event) => {
         if (event.data?.type === "EMAIL_VERIFIED") {
-          this.logger.info("[Onboarding] Received email verification broadcast");
+          this.logger.info(
+            "[Onboarding] Received email verification broadcast",
+          );
           await this.checkEmailVerification();
           if (this.isEmailVerified()) {
-            this.toastService.success("Email verified! You can now continue.", "Verified");
+            this.toastService.success(
+              "Email verified! You can now continue.",
+              "Verified",
+            );
           }
         }
       };
@@ -2410,10 +2460,15 @@ export class OnboardingComponent implements OnInit, OnDestroy {
     // Also listen to localStorage changes as fallback
     this.storageListener = async (event: StorageEvent) => {
       if (event.key === "flagfit_email_verified" && event.newValue) {
-        this.logger.info("[Onboarding] Detected email verification via storage");
+        this.logger.info(
+          "[Onboarding] Detected email verification via storage",
+        );
         await this.checkEmailVerification();
         if (this.isEmailVerified()) {
-          this.toastService.success("Email verified! You can now continue.", "Verified");
+          this.toastService.success(
+            "Email verified! You can now continue.",
+            "Verified",
+          );
         }
         // Clear the flag
         localStorage.removeItem("flagfit_email_verified");
@@ -2735,7 +2790,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         if (!this.isEmailVerified()) {
           return {
             valid: false,
-            message: "Please verify your email address before continuing. Check your inbox for a verification link.",
+            message:
+              "Please verify your email address before continuing. Check your inbox for a verification link.",
           };
         }
         return { valid: true };
@@ -3126,10 +3182,14 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         // Staff-specific fields
         user_type: this.onboardingData.userType,
         staff_role: isStaffUser ? this.onboardingData.staffRole : null,
-        staff_visibility: isStaffUser ? this.onboardingData.staffVisibility : null,
+        staff_visibility: isStaffUser
+          ? this.onboardingData.staffVisibility
+          : null,
         // Player-specific fields (null for staff)
         position: isStaffUser ? null : this.onboardingData.position,
-        secondary_position: isStaffUser ? null : this.onboardingData.secondaryPosition,
+        secondary_position: isStaffUser
+          ? null
+          : this.onboardingData.secondaryPosition,
         throwing_arm: isStaffUser ? null : this.onboardingData.throwingArm,
         experience_level: isStaffUser ? null : this.onboardingData.experience,
         jersey_number: isStaffUser ? null : this.onboardingData.jerseyNumber,
@@ -3244,10 +3304,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         ? "Your staff profile has been set up!"
         : "Your profile and training preferences have been set up!";
 
-      this.toastService.success(
-        successMessage,
-        "Welcome to FlagFit Pro!",
-      );
+      this.toastService.success(successMessage, "Welcome to FlagFit Pro!");
 
       setTimeout(() => {
         // Check for post-onboarding redirect (e.g., team invitation)
@@ -3311,7 +3368,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         .upsert(preferences, { onConflict: "email" });
 
       if (error) {
-        this.logger.info("Saving preferences to localStorage:", toLogContext(error.message));
+        this.logger.info(
+          "Saving preferences to localStorage:",
+          toLogContext(error.message),
+        );
         localStorage.setItem(
           "flagfit_preferences",
           JSON.stringify(preferences),
@@ -3407,7 +3467,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    * Save current injuries to daily_wellness_checkin via API
    * This ensures injuries are properly tracked for training modifications
    */
-  private async saveCurrentInjuries(userId: string): Promise<void> {
+  private async saveCurrentInjuries(_userId: string): Promise<void> {
     try {
       // Only save if there are current injuries
       if (
@@ -3431,8 +3491,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         sleepQuality: 5,
         sleepHours: 7,
         energyLevel: 5,
-        muscleSoreness:
-          this.onboardingData.currentInjuries.length > 0 ? 5 : 0,
+        muscleSoreness: this.onboardingData.currentInjuries.length > 0 ? 5 : 0,
         stressLevel: 5,
         sorenessAreas: this.onboardingData.currentInjuries.map(
           (injury) => injury.area,
@@ -3455,7 +3514,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         );
       }
     } catch (e) {
-      this.logger.warn("[Onboarding] Error saving current injuries:", toLogContext(e));
+      this.logger.warn(
+        "[Onboarding] Error saving current injuries:",
+        toLogContext(e),
+      );
       // Non-blocking - continue with onboarding
     }
   }
@@ -3569,7 +3631,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       // Use RosterService as single source of truth for team_players operations
       const result = await this.rosterService.addPlayer({
         name: this.onboardingData.name,
-        position: this.onboardingData.position,
+        position: this.onboardingData.position || "Unassigned",
         jersey: this.onboardingData.jerseyNumber?.toString() || "0",
         country: this.onboardingData.country || "Unknown",
         age,
@@ -3590,7 +3652,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         );
       }
     } catch (e) {
-      this.logger.warn("[Onboarding] Error adding player to team roster:", toLogContext(e));
+      this.logger.warn(
+        "[Onboarding] Error adding player to team roster:",
+        toLogContext(e),
+      );
       // Non-blocking - continue with onboarding
     }
   }
@@ -3800,7 +3865,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           {
             position: position,
             programId: programId,
-            reason: "API returned null - possible causes: program not found in DB, RLS policy blocking, or API error",
+            reason:
+              "API returned null - possible causes: program not found in DB, RLS policy blocking, or API error",
           },
         );
         return false;
@@ -3814,8 +3880,14 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           programId: programId,
           error: error,
           errorMessage: error instanceof Error ? error.message : String(error),
-          errorCode: typeof error === 'object' && error !== null && 'code' in error ? (error as { code: unknown }).code : undefined,
-          errorDetails: typeof error === 'object' && error !== null && 'details' in error ? (error as { details: unknown }).details : undefined,
+          errorCode:
+            typeof error === "object" && error !== null && "code" in error
+              ? (error as { code: unknown }).code
+              : undefined,
+          errorDetails:
+            typeof error === "object" && error !== null && "details" in error
+              ? (error as { details: unknown }).details
+              : undefined,
           stack: error instanceof Error ? error.stack : undefined,
         },
       );

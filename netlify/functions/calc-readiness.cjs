@@ -211,7 +211,9 @@ exports.handler = async (event, context) => {
 
       const { data: sessions, error: sessErr } = await supabaseAdmin
         .from("training_sessions")
-        .select("session_date, duration_minutes, rpe, workload, intensity_level")
+        .select(
+          "session_date, duration_minutes, rpe, workload, intensity_level",
+        )
         .eq("athlete_id", athleteId)
         .gte("session_date", startChronic.toISOString().slice(0, 10))
         .lte("session_date", dayStr)
@@ -225,15 +227,13 @@ exports.handler = async (event, context) => {
         );
       }
 
-      console.log(
-        `[calc-readiness] Fetched ${sessions?.length || 0} sessions`,
-      );
+      console.log(`[calc-readiness] Fetched ${sessions?.length || 0} sessions`);
 
       // Calculate daily loads (session-RPE = RPE × duration)
       // Use rpe if available, fallback to intensity_level (assuming 1-10 scale maps to RPE)
       // Handle empty sessions gracefully (no crash, degrade to wellness-only scoring)
       const loadsByDay = new Map();
-      
+
       if (sessions && sessions.length > 0) {
         for (const s of sessions) {
           const sessionDate = s.session_date;

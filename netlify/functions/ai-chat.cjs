@@ -395,7 +395,9 @@ async function getUserContext(userId) {
       .maybeSingle();
 
     if (yesterdayWellness && yesterdayWellness.calculated_readiness < 40) {
-      context.yesterdayWellness = { readiness_score: yesterdayWellness.calculated_readiness };
+      context.yesterdayWellness = {
+        readiness_score: yesterdayWellness.calculated_readiness,
+      };
     }
 
     // 6b. Get recent games (last 7 days) for temporal context

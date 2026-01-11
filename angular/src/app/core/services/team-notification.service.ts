@@ -261,7 +261,10 @@ export class TeamNotificationService {
    * Handle incoming notification
    */
   private handleNewNotification(notification: AppNotification): void {
-    this.logger.info("📬 New notification:", toLogContext(notification.message));
+    this.logger.info(
+      "📬 New notification:",
+      toLogContext(notification.message),
+    );
 
     // Add to state
     this.notificationState.addNotification(notification);

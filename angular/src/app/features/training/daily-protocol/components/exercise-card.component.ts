@@ -17,6 +17,7 @@ import {
   output,
   signal,
   computed,
+  inject,
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -276,6 +277,8 @@ import {
   styleUrl: "./exercise-card.component.scss",
 })
 export class ExerciseCardComponent {
+  private sanitizer = inject(DomSanitizer);
+
   // Inputs
   exercise = input.required<PrescribedExercise>();
   sequenceNumber = input<number>(1);
@@ -287,8 +290,6 @@ export class ExerciseCardComponent {
   // Local state
   isExpanded = signal(false);
   isCompleting = signal(false);
-
-  constructor(private sanitizer: DomSanitizer) {}
 
   // Computed
   prescriptionText = computed(() => formatPrescription(this.exercise()));

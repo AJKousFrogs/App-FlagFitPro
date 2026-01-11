@@ -1,9 +1,9 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -27,14 +27,14 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-    StatItem,
-    StatsGridComponent,
+  StatItem,
+  StatsGridComponent,
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
-    AppLoadingComponent,
-    ButtonComponent,
-    CardComponent,
+  AppLoadingComponent,
+  ButtonComponent,
+  CardComponent,
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -125,9 +125,7 @@ interface WellnessMetric {
                 ></app-confidence-indicator>
                 <p class="confidence-message">
                   Your wellness score is calculated from
-                  {{ completedMetricsCount() }}/{{
-                    totalMetricsCount()
-                  }}
+                  {{ completedMetricsCount() }}/{{ totalMetricsCount() }}
                   metrics. Complete all fields for a more accurate score.
                 </p>
               </div>

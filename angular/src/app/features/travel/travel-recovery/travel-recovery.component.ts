@@ -18,11 +18,11 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -51,13 +51,13 @@ import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
-    BloodCirculationRisk,
-    CarTravelProtocol,
-    CirculationExercise,
-    MassageGunProtocol,
-    RecoveryProtocol,
-    TravelChecklist,
-    TravelRecoveryService,
+  BloodCirculationRisk,
+  CarTravelProtocol,
+  CirculationExercise,
+  MassageGunProtocol,
+  RecoveryProtocol,
+  TravelChecklist,
+  TravelRecoveryService,
 } from "../../../core/services/travel-recovery.service";
 
 // Layout & Components
@@ -1369,7 +1369,7 @@ export class TravelRecoveryComponent implements OnInit {
   Math = Math;
 
   ngOnInit(): void {
-    this.logger.debug('[TravelRecovery] Component initialized');
+    this.logger.debug("[TravelRecovery] Component initialized");
     this.timezones = this.travelService.getAvailableTimezones();
     this.travelChecklist = this.travelService.getTravelChecklist();
 
@@ -1378,10 +1378,10 @@ export class TravelRecoveryComponent implements OnInit {
     this.massageGunProtocols = this.travelService.getMassageGunProtocol();
     this.carTravelChecklist = this.travelService.getCarTravelChecklist();
     this.researchSummary = this.travelService.getCarTravelResearchSummary();
-    
-    this.logger.debug('[TravelRecovery] State', {
+
+    this.logger.debug("[TravelRecovery] State", {
       hasActivePlan: this.hasActivePlan(),
-      currentPlan: this.currentPlan()
+      currentPlan: this.currentPlan(),
     });
   }
 
@@ -1534,28 +1534,33 @@ export class TravelRecoveryComponent implements OnInit {
   }
 
   createPlan(): void {
-    this.logger.debug('[TravelRecovery] createPlan() called', {
+    this.logger.debug("[TravelRecovery] createPlan() called", {
       formData: this.tripForm,
-      canCreate: this.canCreatePlan()
+      canCreate: this.canCreatePlan(),
     });
-    
+
     if (!this.canCreatePlan()) {
-      this.logger.warn('[TravelRecovery] Cannot create plan - validation failed');
+      this.logger.warn(
+        "[TravelRecovery] Cannot create plan - validation failed",
+      );
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
 
     const departureDate = this.tripForm.departureDate;
     const arrivalDate = this.tripForm.arrivalDate;
-    
+
     if (!departureDate || !arrivalDate) {
-      this.logger.warn('[TravelRecovery] Missing dates', { departureDate, arrivalDate });
+      this.logger.warn("[TravelRecovery] Missing dates", {
+        departureDate,
+        arrivalDate,
+      });
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
 
     try {
-      this.logger.debug('[TravelRecovery] Creating travel plan...');
+      this.logger.debug("[TravelRecovery] Creating travel plan...");
       const plan = this.travelService.createTravelPlan({
         tripName: this.tripForm.tripName,
         departureDate: departureDate,
@@ -1567,17 +1572,19 @@ export class TravelRecoveryComponent implements OnInit {
         layovers: this.tripForm.layovers,
       });
 
-      this.logger.debug('[TravelRecovery] Plan created successfully', {
+      this.logger.debug("[TravelRecovery] Plan created successfully", {
         plan,
         hasActivePlan: this.hasActivePlan(),
         currentPlan: this.currentPlan(),
-        recoveryProtocol: this.recoveryProtocol()
+        recoveryProtocol: this.recoveryProtocol(),
       });
-      
+
       this.toastService.success(TOAST.SUCCESS.RECOVERY_PROTOCOL_GENERATED);
     } catch (error) {
-      this.logger.error('[TravelRecovery] Error creating plan', { error });
-      this.toastService.error('Failed to generate recovery protocol. Please try again.');
+      this.logger.error("[TravelRecovery] Error creating plan", { error });
+      this.toastService.error(
+        "Failed to generate recovery protocol. Please try again.",
+      );
     }
   }
 

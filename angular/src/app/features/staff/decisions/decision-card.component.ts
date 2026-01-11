@@ -6,11 +6,11 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    input,
-    output,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import type { DecisionLedgerEntry } from "@core/models/decision-ledger.models";

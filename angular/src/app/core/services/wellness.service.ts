@@ -345,7 +345,10 @@ export class WellnessService {
     );
 
     return this.api
-      .post<{ success: boolean; data?: unknown }>("/api/wellness-checkin", payload)
+      .post<{
+        success: boolean;
+        data?: unknown;
+      }>("/api/wellness-checkin", payload)
       .pipe(
         map((response) => {
           if (response.success) {
@@ -629,7 +632,9 @@ export class WellnessService {
   /**
    * Transform daily_wellness_checkin entry to WellnessData
    */
-  private transformCheckinEntry(entry: DailyWellnessCheckinEntry): WellnessData {
+  private transformCheckinEntry(
+    entry: DailyWellnessCheckinEntry,
+  ): WellnessData {
     return {
       id: entry.id,
       userId: entry.user_id,

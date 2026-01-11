@@ -1,20 +1,20 @@
 import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    inject,
-    OnInit,
-    signal,
-    ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
 } from "@angular/core";
 
 import {
-    FormBuilder,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-    Validators,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -31,8 +31,8 @@ import { TooltipModule } from "primeng/tooltip";
 import { TIMEOUTS, TOAST, UI_LIMITS } from "../../core/constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    LoggerService,
-    toLogContext,
+  LoggerService,
+  toLogContext,
 } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -43,11 +43,11 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-    ButtonComponent,
-    CardComponent,
-    ControlRowComponent,
-    DialogFooterComponent,
-    DialogHeaderComponent,
+  ButtonComponent,
+  CardComponent,
+  ControlRowComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
 } from "../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { calculateAge } from "../../shared/utils/date.utils";
@@ -570,10 +570,13 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       const membership = this.teamMembershipService.membership();
 
       if (membership) {
-        this.logger.debug("[Settings] Loaded team membership (authoritative):", {
-          position: membership.position,
-          jerseyNumber: membership.jerseyNumber,
-        });
+        this.logger.debug(
+          "[Settings] Loaded team membership (authoritative):",
+          {
+            position: membership.position,
+            jerseyNumber: membership.jerseyNumber,
+          },
+        );
 
         this.profileForm.patchValue({
           teamId: membership.teamId,
@@ -618,8 +621,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   async saveSettings(): Promise<void> {
-    console.trace('🔍 [saveSettings] Invoked');
-    console.log('📋 [saveSettings] Form states:', {
+    console.trace("🔍 [saveSettings] Invoked");
+    console.log("📋 [saveSettings] Form states:", {
       profileValid: this.profileForm.valid,
       notificationValid: this.notificationForm.valid,
       privacyValid: this.privacyForm.valid,
@@ -627,7 +630,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     });
 
     if (this.profileForm.invalid) {
-      console.warn('⚠️ [saveSettings] Profile form invalid, aborting', {
+      console.warn("⚠️ [saveSettings] Profile form invalid, aborting", {
         errors: this.profileForm.errors,
         formValue: this.profileForm.value,
       });
@@ -712,7 +715,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
           .select("id")
           .eq("id", user.id)
           .maybeSingle();
-        
+
         existingUser = data;
 
         this.logger.info("User exists check:", { exists: !!existingUser });
@@ -729,7 +732,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             .eq("id", user.id)
             .select()
             .maybeSingle();
-          
+
           upsertedUser = result.data;
           profileError = result.error;
         } else {
@@ -741,13 +744,13 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             created_at: new Date().toISOString(),
             // Don't include password_hash - it's nullable now and managed by Supabase Auth
           };
-          
+
           const result = await this.supabaseService.client
             .from("users")
             .insert(insertData)
             .select()
             .maybeSingle();
-          
+
           upsertedUser = result.data;
           profileError = result.error;
         }
@@ -784,24 +787,22 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             : null;
 
           // Check if team has changed
-          const teamChanged = settings.profile.teamId && 
-                             settings.profile.teamId !== existingTeamMember.team_id;
+          const teamChanged =
+            settings.profile.teamId &&
+            settings.profile.teamId !== existingTeamMember.team_id;
 
-          this.logger.info(
-            "Updating team_members:",
-            { 
-              position: settings.profile.position, 
-              jersey: parsedJersey,
-              requestedTeamId: settings.profile.teamId,
-              currentTeamId: existingTeamMember.team_id,
-              teamChanged,
-            },
-          );
+          this.logger.info("Updating team_members:", {
+            position: settings.profile.position,
+            jersey: parsedJersey,
+            requestedTeamId: settings.profile.teamId,
+            currentTeamId: existingTeamMember.team_id,
+            teamChanged,
+          });
 
           if (teamChanged) {
             // Team transfer: Delete old membership and create new one
             this.logger.info("Team transfer detected, creating new membership");
-            
+
             // Delete old membership
             const { error: deleteError } = await this.supabaseService.client
               .from("team_members")
@@ -809,30 +810,44 @@ export class SettingsComponent implements OnInit, AfterViewInit {
               .eq("id", existingTeamMember.id);
 
             if (deleteError) {
-              this.logger.error("Failed to delete old team membership:", deleteError);
-              throw new Error(`Failed to transfer teams: ${deleteError.message}`);
+              this.logger.error(
+                "Failed to delete old team membership:",
+                deleteError,
+              );
+              throw new Error(
+                `Failed to transfer teams: ${deleteError.message}`,
+              );
             }
 
             // Create new membership in new team
-            const { data: newMember, error: insertError } = await this.supabaseService.client
-              .from("team_members")
-              .insert({
-                user_id: user.id,
-                team_id: settings.profile.teamId!,
-                role: "player",
-                position: settings.profile.position || null,
-                jersey_number: parsedJersey,
-                status: "active",
-              })
-              .select()
-              .maybeSingle();
+            const { data: newMember, error: insertError } =
+              await this.supabaseService.client
+                .from("team_members")
+                .insert({
+                  user_id: user.id,
+                  team_id: settings.profile.teamId!,
+                  role: "player",
+                  position: settings.profile.position || null,
+                  jersey_number: parsedJersey,
+                  status: "active",
+                })
+                .select()
+                .maybeSingle();
 
             if (insertError) {
-              this.logger.error("Failed to create new team membership:", insertError);
-              throw new Error(`Failed to join new team: ${insertError.message}`);
+              this.logger.error(
+                "Failed to create new team membership:",
+                insertError,
+              );
+              throw new Error(
+                `Failed to join new team: ${insertError.message}`,
+              );
             }
 
-            this.logger.info("Successfully transferred to new team:", newMember);
+            this.logger.info(
+              "Successfully transferred to new team:",
+              newMember,
+            );
           } else {
             // Same team, just update position/jersey
             const { data: updatedMember, error: memberError } =
@@ -946,7 +961,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             .eq("user_id", user.id)
             .select()
             .maybeSingle();
-          
+
           settingsResult = result.data;
           settingsError = result.error;
         } else {
@@ -957,7 +972,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             .insert(settingsData)
             .select()
             .maybeSingle();
-          
+
           settingsResult = result.data;
           settingsError = result.error;
         }
@@ -968,10 +983,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
             settingsError.message,
           );
         } else {
-          this.logger.info(
-            "User settings saved successfully:",
-            settingsResult,
-          );
+          this.logger.info("User settings saved successfully:", settingsResult);
         }
       } catch (error) {
         // Table doesn't exist, continue with localStorage save
@@ -1008,36 +1020,41 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("Services refreshed successfully");
 
       this.toastService.success(TOAST.SUCCESS.SETTINGS_SAVED);
-      
+
       // Provide helpful guidance if this is first-time setup
       if (!existingUser) {
         this.toastService.info(
           "Profile created! Visit the Roster page to see yourself listed.",
-          { life: 5000 }
+          { life: 5000 },
         );
       }
     } catch (error) {
-      console.error('❌ [saveSettings] Failed to save settings:', error);
-      console.trace('Error stack trace:');
+      console.error("❌ [saveSettings] Failed to save settings:", error);
+      console.trace("Error stack trace:");
       this.logger.error("Save settings error:", toLogContext(error));
       const message =
         error instanceof Error ? error.message : "Failed to save settings";
       this.toastService.error(message);
     } finally {
       this.isSavingSettings.set(false);
-      console.log('🏁 [saveSettings] Completed, loading state reset');
+      console.log("🏁 [saveSettings] Completed, loading state reset");
     }
   }
 
   async changePassword(): Promise<void> {
-    console.trace('🔍 [changePassword] Invoked');
-    console.log('📋 [changePassword] Form state:', {
+    console.trace("🔍 [changePassword] Invoked");
+    console.log("📋 [changePassword] Form state:", {
       formValid: this.passwordForm.valid,
-      formValue: { ...this.passwordForm.value, newPassword: '***', currentPassword: '***', confirmNewPassword: '***' },
+      formValue: {
+        ...this.passwordForm.value,
+        newPassword: "***",
+        currentPassword: "***",
+        confirmNewPassword: "***",
+      },
     });
 
     if (this.passwordForm.invalid) {
-      console.warn('⚠️ [changePassword] Form invalid, aborting', {
+      console.warn("⚠️ [changePassword] Form invalid, aborting", {
         errors: this.passwordForm.errors,
       });
       this.passwordForm.markAllAsTouched();
@@ -1060,28 +1077,28 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.toastService.success(TOAST.SUCCESS.PASSWORD_CHANGED);
       this.showChangePasswordDialog = false;
       this.passwordForm.reset();
-      console.log('✅ [changePassword] Password changed successfully');
+      console.log("✅ [changePassword] Password changed successfully");
     } catch (error) {
-      console.error('❌ [changePassword] Failed to change password:', error);
-      console.trace('Error stack trace:');
+      console.error("❌ [changePassword] Failed to change password:", error);
+      console.trace("Error stack trace:");
       const message =
         error instanceof Error ? error.message : "Failed to update password";
       this.toastService.error(message);
     } finally {
       this.isChangingPassword.set(false);
-      console.log('🏁 [changePassword] Completed, loading state reset');
+      console.log("🏁 [changePassword] Completed, loading state reset");
     }
   }
 
   async deleteAccount(): Promise<void> {
-    console.trace('🔍 [deleteAccount] Invoked');
-    console.log('📋 [deleteAccount] Confirm text:', {
+    console.trace("🔍 [deleteAccount] Invoked");
+    console.log("📋 [deleteAccount] Confirm text:", {
       confirmText: this.deleteConfirmText,
       isValid: this.deleteConfirmText === "DELETE",
     });
 
     if (this.deleteConfirmText !== "DELETE") {
-      console.warn('⚠️ [deleteAccount] Confirmation text mismatch, aborting');
+      console.warn("⚠️ [deleteAccount] Confirmation text mismatch, aborting");
       return;
     }
 
@@ -1122,16 +1139,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         "Your account deletion request has been submitted. You will receive a confirmation email.",
       );
       this.showDeleteAccountDialog = false;
-      console.log('✅ [deleteAccount] Deletion request submitted successfully');
+      console.log("✅ [deleteAccount] Deletion request submitted successfully");
     } catch (error) {
-      console.error('❌ [deleteAccount] Failed to delete account:', error);
-      console.trace('Error stack trace:');
+      console.error("❌ [deleteAccount] Failed to delete account:", error);
+      console.trace("Error stack trace:");
       const message =
         error instanceof Error ? error.message : "Failed to delete account";
       this.toastService.error(message);
     } finally {
       this.isDeletingAccount.set(false);
-      console.log('🏁 [deleteAccount] Completed, loading state reset');
+      console.log("🏁 [deleteAccount] Completed, loading state reset");
     }
   }
 
@@ -1187,14 +1204,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   async verify2FA(): Promise<void> {
-    console.trace('🔍 [verify2FA] Invoked');
-    console.log('📋 [verify2FA] Verification code:', {
+    console.trace("🔍 [verify2FA] Invoked");
+    console.log("📋 [verify2FA] Verification code:", {
       codeLength: this.twoFAVerificationCode.length,
       isValid: this.twoFAVerificationCode.length === 6,
     });
 
     if (this.twoFAVerificationCode.length !== 6) {
-      console.warn('⚠️ [verify2FA] Invalid code length, aborting');
+      console.warn("⚠️ [verify2FA] Invalid code length, aborting");
       return;
     }
 
@@ -1235,16 +1252,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.twoFAStep.set(4);
       this.is2FAEnabled.set(true);
       this.toastService.success(TOAST.SUCCESS.UPDATED);
-      console.log('✅ [verify2FA] 2FA enabled successfully');
+      console.log("✅ [verify2FA] 2FA enabled successfully");
     } catch (error) {
-      console.error('❌ [verify2FA] Verification failed:', error);
-      console.trace('Error stack trace:');
+      console.error("❌ [verify2FA] Verification failed:", error);
+      console.trace("Error stack trace:");
       const message =
         error instanceof Error ? error.message : "Verification failed";
       this.twoFAError.set(message);
     } finally {
       this.isEnabling2FA.set(false);
-      console.log('🏁 [verify2FA] Completed, loading state reset');
+      console.log("🏁 [verify2FA] Completed, loading state reset");
     }
   }
 
@@ -1284,14 +1301,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   async disable2FA(): Promise<void> {
-    console.trace('🔍 [disable2FA] Invoked');
-    console.log('📋 [disable2FA] Code length:', {
+    console.trace("🔍 [disable2FA] Invoked");
+    console.log("📋 [disable2FA] Code length:", {
       codeLength: this.disable2FACode.length,
       isValid: this.disable2FACode.length === 6,
     });
 
     if (this.disable2FACode.length !== 6) {
-      console.warn('⚠️ [disable2FA] Invalid code length, aborting');
+      console.warn("⚠️ [disable2FA] Invalid code length, aborting");
       return;
     }
 
@@ -1319,16 +1336,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.showDisable2FADialog = false;
       this.disable2FACode = "";
       this.toastService.success(TOAST.SUCCESS.UPDATED);
-      console.log('✅ [disable2FA] 2FA disabled successfully');
+      console.log("✅ [disable2FA] 2FA disabled successfully");
     } catch (error) {
-      console.error('❌ [disable2FA] Failed to disable 2FA:', error);
-      console.trace('Error stack trace:');
+      console.error("❌ [disable2FA] Failed to disable 2FA:", error);
+      console.trace("Error stack trace:");
       const message =
         error instanceof Error ? error.message : "Failed to disable 2FA";
       this.toastService.error(message);
     } finally {
       this.isDisabling2FA.set(false);
-      console.log('🏁 [disable2FA] Completed, loading state reset');
+      console.log("🏁 [disable2FA] Completed, loading state reset");
     }
   }
 
@@ -1414,8 +1431,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    * Export user data in selected format
    */
   async exportUserData(): Promise<void> {
-    console.trace('🔍 [exportUserData] Invoked');
-    console.log('📋 [exportUserData] Export options:', {
+    console.trace("🔍 [exportUserData] Invoked");
+    console.log("📋 [exportUserData] Export options:", {
       format: this.exportFormat,
       options: this.exportOptions,
     });
@@ -1530,16 +1547,16 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
       this.toastService.success(TOAST.SUCCESS.DATA_EXPORTED);
       this.showDataExportDialog = false;
-      console.log('✅ [exportUserData] Data exported successfully');
+      console.log("✅ [exportUserData] Data exported successfully");
     } catch (error) {
-      console.error('❌ [exportUserData] Export failed:', error);
-      console.trace('Error stack trace:');
+      console.error("❌ [exportUserData] Export failed:", error);
+      console.trace("Error stack trace:");
       this.logger.error("Error exporting data:", error);
       this.toastService.error(TOAST.ERROR.EXPORT_FAILED);
     } finally {
       this.isExportingData.set(false);
       this.exportProgress.set(0);
-      console.log('🏁 [exportUserData] Completed, loading state reset');
+      console.log("🏁 [exportUserData] Completed, loading state reset");
     }
   }
 
@@ -1679,15 +1696,15 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    * Submit request for a new team
    */
   async submitNewTeamRequest(): Promise<void> {
-    console.trace('🔍 [submitNewTeamRequest] Invoked');
-    console.log('📋 [submitNewTeamRequest] Team details:', {
+    console.trace("🔍 [submitNewTeamRequest] Invoked");
+    console.log("📋 [submitNewTeamRequest] Team details:", {
       teamName: this.newTeamName,
       notes: this.newTeamNotes,
       isValid: this.newTeamName.trim().length > 0,
     });
 
     if (!this.newTeamName.trim()) {
-      console.warn('⚠️ [submitNewTeamRequest] Team name empty, aborting');
+      console.warn("⚠️ [submitNewTeamRequest] Team name empty, aborting");
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
       return;
     }
@@ -1743,10 +1760,15 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.showNewTeamDialog = false;
       this.newTeamName = "";
       this.newTeamNotes = "";
-      console.log('✅ [submitNewTeamRequest] Team request submitted successfully');
+      console.log(
+        "✅ [submitNewTeamRequest] Team request submitted successfully",
+      );
     } catch (error) {
-      console.error('❌ [submitNewTeamRequest] Failed to submit team request:', error);
-      console.trace('Error stack trace:');
+      console.error(
+        "❌ [submitNewTeamRequest] Failed to submit team request:",
+        error,
+      );
+      console.trace("Error stack trace:");
       const message =
         error instanceof Error
           ? error.message
@@ -1755,7 +1777,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.error("Error submitting new team request:", error);
     } finally {
       this.isSubmittingTeamRequest.set(false);
-      console.log('🏁 [submitNewTeamRequest] Completed, loading state reset');
+      console.log("🏁 [submitNewTeamRequest] Completed, loading state reset");
     }
   }
 

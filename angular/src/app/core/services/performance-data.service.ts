@@ -489,10 +489,7 @@ export class PerformanceDataService {
           .range((page - 1) * limit, page * limit - 1);
 
         if (error) {
-          this.logger.error(
-            "[Performance] Error fetching measurements",
-            error,
-          );
+          this.logger.error("[Performance] Error fetching measurements", error);
           throw error;
         }
 

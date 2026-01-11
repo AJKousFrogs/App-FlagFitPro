@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnDestroy,
-    computed,
-    input,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  computed,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DialogModule } from "primeng/dialog";

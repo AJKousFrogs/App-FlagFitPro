@@ -8,7 +8,14 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, OnInit, signal, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";

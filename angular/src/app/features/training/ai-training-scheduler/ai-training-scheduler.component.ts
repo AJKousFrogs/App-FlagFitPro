@@ -416,14 +416,20 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
       // Load wellness data via API
       const today = new Date().toISOString().split("T")[0];
-      let wellness: { sleepQuality?: number; muscleSoreness?: number; energyLevel?: number } | null = null;
+      let wellness: {
+        sleepQuality?: number;
+        muscleSoreness?: number;
+        energyLevel?: number;
+      } | null = null;
       try {
         const response = await firstValueFrom(
-          this.api.get<{ sleepQuality?: number; muscleSoreness?: number; energyLevel?: number }>(
-            `/api/wellness-checkin?date=${today}`,
-          ),
+          this.api.get<{
+            sleepQuality?: number;
+            muscleSoreness?: number;
+            energyLevel?: number;
+          }>(`/api/wellness-checkin?date=${today}`),
         );
-        wellness = response.success ? response.data ?? null : null;
+        wellness = response.success ? (response.data ?? null) : null;
       } catch {
         // Wellness API failed, continue with null
       }
@@ -442,7 +448,10 @@ export class AiTrainingSchedulerComponent implements OnInit {
         this.athleteMetrics.set(null);
       }
     } catch (error) {
-      this.logger.warn("Could not load all athlete metrics:", toLogContext(error));
+      this.logger.warn(
+        "Could not load all athlete metrics:",
+        toLogContext(error),
+      );
       // No defaults - show empty state
       this.athleteMetrics.set(null);
     }

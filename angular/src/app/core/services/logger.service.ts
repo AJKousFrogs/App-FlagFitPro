@@ -7,8 +7,11 @@
  * @version 2.0.0
  */
 
-import { Injectable } from "@angular/core";
-import { isDevMode } from "@angular/core";
+import { Injectable, isDevMode } from "@angular/core";
+
+// Re-export toError from centralized location for backward compatibility
+// The canonical implementation is in core/utils/error-utils.ts
+export { toError } from "../utils/error-utils";
 
 export interface LogContext {
   component?: string;
@@ -20,37 +23,23 @@ export interface LogContext {
 }
 
 /**
- * Helper to safely convert unknown to Error
- * @param error - Unknown error value
- * @returns Error instance
- */
-export function toError(error: unknown): Error {
-  if (error instanceof Error) return error;
-  if (typeof error === 'string') return new Error(error);
-  if (error && typeof error === 'object' && 'message' in error) {
-    return new Error(String(error.message));
-  }
-  return new Error(String(error));
-}
-
-/**
  * Helper to convert any value to LogContext
  * @param value - Value to convert
  * @returns LogContext object
  */
 export function toLogContext(value: unknown): LogContext {
   if (!value) return {};
-  if (typeof value === 'string') return { message: value };
-  if (typeof value === 'object' && value !== null) {
+  if (typeof value === "string") return { message: value };
+  if (typeof value === "object" && value !== null) {
     // If it's already a plain object, try to use it
     if (Object.getPrototypeOf(value) === Object.prototype) {
       return value as LogContext;
     }
     // For complex objects (errors, etc.), extract useful info
     const ctx: LogContext = {};
-    if ('message' in value) ctx.message = String(value.message);
-    if ('code' in value) ctx.code = String(value.code);
-    if ('name' in value) ctx.name = String(value.name);
+    if ("message" in value) ctx.message = String(value.message);
+    if ("code" in value) ctx.code = String(value.code);
+    if ("name" in value) ctx.name = String(value.name);
     return ctx;
   }
   return { value: String(value) };
@@ -224,7 +213,11 @@ export class LoggerService {
     }
 
     // Wrap primitive values
-    if (typeof context === "string" || typeof context === "number" || typeof context === "boolean") {
+    if (
+      typeof context === "string" ||
+      typeof context === "number" ||
+      typeof context === "boolean"
+    ) {
       return { data: context };
     }
 
@@ -419,12 +412,9 @@ export class LoggerService {
 
     if (!this.shouldLog(level)) return;
 
-    this.createLog(
-      level,
-      `Performance: ${operationName}`,
-      context,
-      { durationMs },
-    );
+    this.createLog(level, `Performance: ${operationName}`, context, {
+      durationMs,
+    });
 
     if (this.isDevelopment || level === "warn") {
       const emoji = durationMs > 1000 ? "🐌" : "⚡";

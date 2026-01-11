@@ -1,12 +1,12 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -23,9 +23,9 @@ import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
-    GameOfficial,
-    Official,
-    OfficialsService,
+  GameOfficial,
+  Official,
+  OfficialsService,
 } from "../../core/services/officials.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";

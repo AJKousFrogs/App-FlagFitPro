@@ -6,21 +6,21 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 import type {
-    CreateDecisionRequest,
-    DecisionFilters,
-    DecisionLedgerEntry,
-    ReviewDecisionRequest,
+  CreateDecisionRequest,
+  DecisionFilters,
+  DecisionLedgerEntry,
+  ReviewDecisionRequest,
 } from "@core/models/decision-ledger.models";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";

@@ -222,7 +222,8 @@ interface BodyCompositionData {
     >
       <div class="measurement-form">
         <p class="form-description">
-          Enter your body composition measurements. Weight is required, other fields are optional.
+          Enter your body composition measurements. Weight is required, other
+          fields are optional.
         </p>
 
         <!-- Weight (Required) -->
@@ -405,7 +406,10 @@ export class BodyCompositionCardComponent implements OnInit {
     }
 
     this.isSaving.set(true);
-    this.logger.info("[BodyComposition] Saving measurement:", this.measurementForm);
+    this.logger.info(
+      "[BodyComposition] Saving measurement:",
+      this.measurementForm,
+    );
 
     try {
       const result = await this.trainingService.logBodyComp({
@@ -413,7 +417,8 @@ export class BodyCompositionCardComponent implements OnInit {
         bodyFat: this.measurementForm.bodyFat ?? undefined,
         muscleMass: this.measurementForm.muscleMass ?? undefined,
         bodyWaterPercentage: this.measurementForm.bodyWater ?? undefined,
-        basalMetabolicRate: this.measurementForm.basalMetabolicRate ?? undefined,
+        basalMetabolicRate:
+          this.measurementForm.basalMetabolicRate ?? undefined,
       });
 
       this.isSaving.set(false);
@@ -422,7 +427,9 @@ export class BodyCompositionCardComponent implements OnInit {
         this.showLogDialog = false;
         // Data is refreshed internally by logBodyComp
       } else {
-        this.toastService.error("Failed to save measurement. Please try again.");
+        this.toastService.error(
+          "Failed to save measurement. Please try again.",
+        );
       }
     } catch (err) {
       this.isSaving.set(false);

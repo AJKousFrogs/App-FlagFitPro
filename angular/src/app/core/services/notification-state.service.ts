@@ -354,7 +354,10 @@ export class NotificationStateService implements OnDestroy {
       this.notifications.update((notifications) =>
         notifications.filter((n) => n.id !== deletedId),
       );
-      this.logger.debug("[NotificationState] Notification deleted:", toLogContext(deletedId));
+      this.logger.debug(
+        "[NotificationState] Notification deleted:",
+        toLogContext(deletedId),
+      );
     }
   }
 
@@ -695,7 +698,10 @@ export class NotificationStateService implements OnDestroy {
 
       this.lastOpenedAt.set(new Date().toISOString());
     } catch (error) {
-      this.logger.warn("Error updating last opened timestamp:", toLogContext(error));
+      this.logger.warn(
+        "Error updating last opened timestamp:",
+        toLogContext(error),
+      );
       // Non-critical error, don't throw
     }
   }

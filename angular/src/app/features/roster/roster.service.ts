@@ -9,6 +9,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
+import { normalizePlayerName } from "../../shared/utils/format.utils";
 import {
     Player,
     PlayerStatus,
@@ -95,8 +96,9 @@ interface PlayerMemberRecord {
 
 /**
  * Invitation record from database
+ * @internal Reserved for future use - maps directly to DB schema
  */
-interface InvitationRecord {
+interface _InvitationRecord {
   id: string;
   email: string;
   role: string;
@@ -584,6 +586,7 @@ export class RosterService {
           id,
           email,
           role,
+          message,
           status,
           invited_by,
           expires_at,
@@ -796,7 +799,9 @@ export class RosterService {
             m.users?.raw_user_meta_data?.full_name ||
             m.users?.email?.split("@")[0] ||
             "Unknown",
-          position: this.teamMembershipService.getRoleDisplayName(role as TeamRole),
+          position: this.teamMembershipService.getRoleDisplayName(
+            role as TeamRole,
+          ),
           role: role,
           roleCategory: category,
           country: m.users?.raw_user_meta_data?.country || "Unknown",
@@ -869,18 +874,24 @@ export class RosterService {
         const weight = user?.weight_kg ? `${user.weight_kg} kg` : "N/A";
 
         // Build name from first_name + last_name or full_name
-        const name =
-          user?.full_name ||
-          [user?.first_name, user?.last_name].filter(Boolean).join(" ") ||
-          user?.email?.split("@")[0] ||
-          "Unknown";
+        const name = normalizePlayerName(
+          {
+            full_name: user?.full_name,
+            first_name: user?.first_name,
+            last_name: user?.last_name,
+            email: user?.email,
+          },
+          "Unknown",
+        );
 
         // PRIORITY: team_members fields > users fields (team_members is the authoritative source)
         const position = m.position || user?.position || "Unknown";
         const jerseyNumber = m.jersey_number ?? user?.jersey_number;
 
         // Set status based on onboarding completion
-        const status: PlayerStatus = user?.onboarding_completed ? "active" : "inactive";
+        const status: PlayerStatus = user?.onboarding_completed
+          ? "active"
+          : "inactive";
 
         return {
           id: m.id, // Use team_member id as the player id
@@ -925,7 +936,9 @@ export class RosterService {
   }
 
   private loadFallbackData(members: Array<{ role: string }> | null): void {
-    const staff = this.processStaffMembers(members as TeamMemberRecord[] | null);
+    const staff = this.processStaffMembers(
+      members as TeamMemberRecord[] | null,
+    );
     this.coachingStaff.set(staff);
     this.allPlayers.set([]);
     this.teamStats.set([
@@ -984,7 +997,6 @@ export class RosterService {
     if (performanceRoles.includes(role)) return "performance";
     return "coaching";
   }
-
 
   private getErrorMessage(error: unknown): string {
     const err = error as { status?: number };

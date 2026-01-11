@@ -140,7 +140,8 @@ router.get("/checkins", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     let query = supabase
       .from("daily_wellness_checkin")
-      .select(`
+      .select(
+        `
         id,
         user_id,
         checkin_date,
@@ -152,7 +153,8 @@ router.get("/checkins", rateLimit("READ"), optionalAuth, async (req, res) => {
         mood,
         notes,
         created_at
-      `)
+      `,
+      )
       .gte("checkin_date", startDate.toISOString().split("T")[0])
       .order("checkin_date", { ascending: false });
 
@@ -227,7 +229,8 @@ router.get(
       // Get user's supplement regimen
       let query = supabase
         .from("supplement_regimens")
-        .select(`
+        .select(
+          `
           id,
           user_id,
           supplement_name,
@@ -237,7 +240,8 @@ router.get(
           is_active,
           notes,
           created_at
-        `)
+        `,
+        )
         .eq("is_active", true);
 
       if (userId && isValidUUID(userId)) {
@@ -448,7 +452,7 @@ router.post(
 // ERROR HANDLING
 // =============================================================================
 
-router.use( (req, res) => {
+router.use((req, res) => {
   res.status(404).json({
     success: false,
     error: "Wellness endpoint not found",

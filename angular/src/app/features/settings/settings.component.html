@@ -6,8 +6,8 @@
       subtitle="Manage your account and application preferences"
       icon="pi-cog"
     >
-      <app-button 
-        iconLeft="pi-save" 
+      <app-button
+        iconLeft="pi-save"
         [loading]="isSavingSettings()"
         (clicked)="saveSettings()"
         >Save Changes</app-button
@@ -17,19 +17,35 @@
     <!-- Settings Navigation / Quick Links -->
     <p-card styleClass="settings-nav-card">
       <div class="settings-nav">
-        <button type="button" (click)="scrollToSection('account-settings', $event)" class="settings-nav-item">
+        <button
+          type="button"
+          (click)="scrollToSection('account-settings', $event)"
+          class="settings-nav-item"
+        >
           <i class="pi pi-user"></i>
           <span>Account</span>
         </button>
-        <button type="button" (click)="scrollToSection('notifications-settings', $event)" class="settings-nav-item">
+        <button
+          type="button"
+          (click)="scrollToSection('notifications-settings', $event)"
+          class="settings-nav-item"
+        >
           <i class="pi pi-bell"></i>
           <span>Notifications</span>
         </button>
-        <button type="button" (click)="scrollToSection('privacy-settings', $event)" class="settings-nav-item">
+        <button
+          type="button"
+          (click)="scrollToSection('privacy-settings', $event)"
+          class="settings-nav-item"
+        >
           <i class="pi pi-lock"></i>
           <span>Privacy & Security</span>
         </button>
-        <button type="button" (click)="scrollToSection('preferences-settings', $event)" class="settings-nav-item">
+        <button
+          type="button"
+          (click)="scrollToSection('preferences-settings', $event)"
+          class="settings-nav-item"
+        >
           <i class="pi pi-sliders-h"></i>
           <span>Preferences</span>
         </button>
@@ -304,9 +320,7 @@
               title="Coach Messages"
               description="Direct messages from your coach"
             >
-              <p-toggleswitch
-                formControlName="coachMessages"
-              ></p-toggleswitch>
+              <p-toggleswitch formControlName="coachMessages"></p-toggleswitch>
             </app-control-row>
 
             <app-control-row

@@ -296,7 +296,10 @@ export class PushNotificationService {
 
       if (error) {
         // Table might not exist yet
-        this.logger.warn("Could not save push subscription:", toLogContext(error.message));
+        this.logger.warn(
+          "Could not save push subscription:",
+          toLogContext(error.message),
+        );
       }
     } catch (error) {
       this.logger.error("Error saving subscription:", error);
@@ -322,7 +325,10 @@ export class PushNotificationService {
         .eq("endpoint", subscriptionJson.endpoint);
 
       if (error) {
-        this.logger.warn("Could not remove push subscription:", toLogContext(error.message));
+        this.logger.warn(
+          "Could not remove push subscription:",
+          toLogContext(error.message),
+        );
       }
     } catch (error) {
       this.logger.error("Error removing subscription:", error);

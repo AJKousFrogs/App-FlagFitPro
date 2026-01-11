@@ -15,12 +15,12 @@ cd scripts && ./check-backend-health.sh
 
 ### Quick Commands
 
-| Issue | SQL Command | Expected |
-|-------|------------|----------|
-| Check RLS | `SELECT * FROM get_table_policies('injuries');` | 4 policies |
-| Check Indexes | `SELECT * FROM check_user_id_index('injuries');` | `idx_injuries_user_id` |
-| Check Schema | `SELECT * FROM get_table_columns('user_profiles');` | All columns |
-| Check Triggers | `SELECT tgname FROM pg_trigger WHERE tgname LIKE '%updated_at%';` | 2+ triggers |
+| Issue          | SQL Command                                                       | Expected               |
+| -------------- | ----------------------------------------------------------------- | ---------------------- |
+| Check RLS      | `SELECT * FROM get_table_policies('injuries');`                   | 4 policies             |
+| Check Indexes  | `SELECT * FROM check_user_id_index('injuries');`                  | `idx_injuries_user_id` |
+| Check Schema   | `SELECT * FROM get_table_columns('user_profiles');`               | All columns            |
+| Check Triggers | `SELECT tgname FROM pg_trigger WHERE tgname LIKE '%updated_at%';` | 2+ triggers            |
 
 ---
 
@@ -54,6 +54,7 @@ constructor(private debugService: SupabaseDebugService) {
 ### Error: RLS Policy Violation (42501)
 
 **Error:**
+
 ```
 Error: new row violates row-level security policy
 Code: 42501
@@ -62,16 +63,20 @@ Code: 42501
 **Cause:** `user_id` doesn't match `auth.uid()`
 
 **Debug:**
+
 ```typescript
 // Check current user
-const { data: { user } } = await supabase.auth.getUser();
-console.log('Current user:', user?.id);
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+console.log("Current user:", user?.id);
 
 // Test policies
-await this.debugService.testRLSPolicies(this.supabase, 'injuries', userId);
+await this.debugService.testRLSPolicies(this.supabase, "injuries", userId);
 ```
 
 **Fix:**
+
 ```typescript
 // ❌ Wrong
 const data = { user_id: someUserId, ... };
@@ -82,6 +87,7 @@ const data = { user_id: user.id, ... };
 ```
 
 **SQL Fix:**
+
 ```sql
 -- Ensure INSERT policy with WITH CHECK
 CREATE POLICY "Users can insert own data" ON injuries
@@ -93,29 +99,33 @@ CREATE POLICY "Users can insert own data" ON injuries
 ### Error: Column Does Not Exist (42703)
 
 **Error:**
+
 ```
 Error: column "pain_level" does not exist
 Code: 42703
 ```
 
 **Debug:**
+
 ```typescript
 const result = await this.debugService.validateSchema(
   this.supabase,
-  'daily_wellness_checkin',
-  ['pain_level', 'user_id', 'created_at']
+  "daily_wellness_checkin",
+  ["pain_level", "user_id", "created_at"],
 );
-console.log('Missing columns:', result.missing);
+console.log("Missing columns:", result.missing);
 ```
 
 **SQL Check:**
+
 ```sql
-SELECT column_name, data_type 
-FROM information_schema.columns 
+SELECT column_name, data_type
+FROM information_schema.columns
 WHERE table_name = 'daily_wellness_checkin';
 ```
 
 **Fix:**
+
 ```sql
 ALTER TABLE table_name ADD COLUMN column_name type;
 ```
@@ -127,20 +137,24 @@ ALTER TABLE table_name ADD COLUMN column_name type;
 **Symptoms:** High latency, timeouts, slow RLS evaluation
 
 **Debug:**
+
 ```typescript
-const indexes = await this.debugService.checkIndexes(
-  this.supabase,
-  ['injuries', 'user_profiles', 'daily_wellness_checkin']
-);
+const indexes = await this.debugService.checkIndexes(this.supabase, [
+  "injuries",
+  "user_profiles",
+  "daily_wellness_checkin",
+]);
 console.table(indexes);
 ```
 
 **SQL Check:**
+
 ```sql
 SELECT * FROM check_user_id_index('injuries');
 ```
 
 **Fix:**
+
 ```sql
 CREATE INDEX IF NOT EXISTS idx_injuries_user_id ON injuries(user_id);
 ```
@@ -152,26 +166,31 @@ CREATE INDEX IF NOT EXISTS idx_injuries_user_id ON injuries(user_id);
 **Symptoms:** Data overwritten, race conditions, inconsistent state
 
 **Debug & Fix:**
+
 ```typescript
 const subscription = this.debugService.subscribeWithConflictDetection(
-  this.supabase, 'table', userId,
+  this.supabase,
+  "table",
+  userId,
   (data) => this.updateUI(data),
   (local, remote) => {
     // Strategy: Keep newer version
-    return new Date(local.updated_at) > new Date(remote.updated_at) 
-      ? local : remote;
-  }
+    return new Date(local.updated_at) > new Date(remote.updated_at)
+      ? local
+      : remote;
+  },
 );
 ```
 
 **Optimistic Concurrency:**
+
 ```typescript
 // Include version check in WHERE
 const { error } = await supabase
-  .from('injuries')
-  .update({ status: 'recovered' })
-  .eq('id', recordId)
-  .eq('updated_at', lastKnownVersion);
+  .from("injuries")
+  .update({ status: "recovered" })
+  .eq("id", recordId)
+  .eq("updated_at", lastKnownVersion);
 
 if (error) {
   // Conflict! Refresh data
@@ -184,14 +203,16 @@ if (error) {
 ### Foreign Key Violations
 
 **Error:**
+
 ```
 Error: insert or update on table "injuries" violates foreign key constraint
 ```
 
 **Debug:**
+
 ```sql
 SELECT tc.table_name, kcu.column_name, ccu.table_name AS foreign_table
-FROM information_schema.table_constraints AS tc 
+FROM information_schema.table_constraints AS tc
 JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name
 JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name
 WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name = 'injuries';
@@ -206,31 +227,37 @@ WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name = 'injuries';
 ### Enable/Disable
 
 ```typescript
-debugService.enableDebugMode();   // Turn on detailed logging
-debugService.disableDebugMode();  // Turn off
+debugService.enableDebugMode(); // Turn on detailed logging
+debugService.disableDebugMode(); // Turn off
 ```
 
 ### Test Operations
 
 ```typescript
 // Test insert/upsert
-await debugService.testUpsert(supabase, 'injuries', data, { upsert: true });
+await debugService.testUpsert(supabase, "injuries", data, { upsert: true });
 
 // Test all RLS policies
-await debugService.testRLSPolicies(supabase, 'injuries', userId);
+await debugService.testRLSPolicies(supabase, "injuries", userId);
 
 // Check indexes
-await debugService.checkIndexes(supabase, ['injuries', 'user_profiles']);
+await debugService.checkIndexes(supabase, ["injuries", "user_profiles"]);
 
 // Validate schema
-await debugService.validateSchema(supabase, 'injuries', ['id', 'user_id', 'status']);
+await debugService.validateSchema(supabase, "injuries", [
+  "id",
+  "user_id",
+  "status",
+]);
 ```
 
 ### Performance Stats
 
 ```typescript
 const stats = debugService.getQueryStats();
-console.log(`Total: ${stats.total}, Failed: ${stats.failed}, Avg: ${stats.avgDuration}ms`);
+console.log(
+  `Total: ${stats.total}, Failed: ${stats.failed}, Avg: ${stats.avgDuration}ms`,
+);
 
 // Export for analysis
 const log = debugService.exportQueryLog();
@@ -240,9 +267,11 @@ const log = debugService.exportQueryLog();
 
 ```typescript
 const subscription = debugService.subscribeWithConflictDetection(
-  supabase, 'table', userId,
-  (data) => handleUpdate(data),     // onUpdate callback
-  (local, remote) => remote         // onConflict resolver
+  supabase,
+  "table",
+  userId,
+  (data) => handleUpdate(data), // onUpdate callback
+  (local, remote) => remote, // onConflict resolver
 );
 
 // Returns: { channel, updateLocal, unsubscribe }
@@ -294,13 +323,13 @@ SELECT * FROM get_table_policies('table_name');
 ### Always Check Errors
 
 ```typescript
-const { data, error } = await supabase.from('table').insert(data);
+const { data, error } = await supabase.from("table").insert(data);
 if (error) {
-  console.error('Error:', {
+  console.error("Error:", {
     code: error.code,
     message: error.message,
     details: error.details,
-    hint: error.hint
+    hint: error.hint,
   });
 }
 ```

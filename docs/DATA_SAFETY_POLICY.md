@@ -85,6 +85,7 @@ if (!environment.production && USE_MOCK_DATA) {
 ```
 
 **Requirements:**
+
 - Must check `environment.production` first
 - Must show clear warning in console/logs
 - Must never be accessible in production builds
@@ -180,12 +181,12 @@ calculateACWR(sessions: TrainingSession[]): number | null {
 
 ```html
 @if (isFirstTimeUser()) {
-  <app-no-data-entry
-    context="training"
-    [showMinimumInfo]="true"
-    [minimumEntries]="28"
-    metricName="ACWR"
-  ></app-no-data-entry>
+<app-no-data-entry
+  context="training"
+  [showMinimumInfo]="true"
+  [minimumEntries]="28"
+  metricName="ACWR"
+></app-no-data-entry>
 }
 ```
 
@@ -193,13 +194,13 @@ calculateACWR(sessions: TrainingSession[]): number | null {
 
 ```html
 @if (!hasEnoughData() && !isFirstTimeUser()) {
-  <div class="insufficient-data-warning">
-    <i class="pi pi-info-circle"></i>
-    <span>
-      {{ remainingEntries }} more entries needed for reliable {{ metricName }}
-      calculations
-    </span>
-  </div>
+<div class="insufficient-data-warning">
+  <i class="pi pi-info-circle"></i>
+  <span>
+    {{ remainingEntries }} more entries needed for reliable {{ metricName }}
+    calculations
+  </span>
+</div>
 }
 ```
 
@@ -242,11 +243,11 @@ export class MyDashboard {
 
 ## 📊 When Can Athletes Start Using the App?
 
-| Timeline | Available Features | Restrictions |
-|----------|-------------------|--------------|
-| **Day 1** | Log training, wellness, measurements, view history | ❌ ACWR, ❌ Trends |
-| **Week 1** | Weekly load totals, basic wellness patterns | ⚠️ Preliminary readiness (with warning) |
-| **Week 4+** | All features: ACWR, trends, personalized recommendations, injury risk | ✅ Full functionality |
+| Timeline    | Available Features                                                    | Restrictions                            |
+| ----------- | --------------------------------------------------------------------- | --------------------------------------- |
+| **Day 1**   | Log training, wellness, measurements, view history                    | ❌ ACWR, ❌ Trends                      |
+| **Week 1**  | Weekly load totals, basic wellness patterns                           | ⚠️ Preliminary readiness (with warning) |
+| **Week 4+** | All features: ACWR, trends, personalized recommendations, injury risk | ✅ Full functionality                   |
 
 ---
 

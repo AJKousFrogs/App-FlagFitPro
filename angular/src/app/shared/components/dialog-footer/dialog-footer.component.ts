@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    input,
-    output,
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
 } from "@angular/core";
 import type { ButtonVariant } from "../button/button.component";
 import { ButtonComponent } from "../button/button.component";
@@ -41,11 +41,11 @@ import { ButtonComponent } from "../button/button.component";
  * ```
  */
 @Component({
-    selector: "app-dialog-footer",
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, ButtonComponent],
-    template: `
+  selector: "app-dialog-footer",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, ButtonComponent],
+  template: `
     <div class="dialog-actions">
       <app-button variant="text" (clicked)="cancel.emit()">
         {{ cancelLabel() }}
@@ -62,53 +62,53 @@ import { ButtonComponent } from "../button/button.component";
       </app-button>
     </div>
   `,
-    styles: [],
+  styles: [],
 })
 export class DialogFooterComponent {
-    /**
-     * Cancel button label text
-     */
-    cancelLabel = input<string>("Cancel");
+  /**
+   * Cancel button label text
+   */
+  cancelLabel = input<string>("Cancel");
 
-    /**
-     * Primary action button label text (required)
-     */
-    primaryLabel = input.required<string>();
+  /**
+   * Primary action button label text (required)
+   */
+  primaryLabel = input.required<string>();
 
-    /**
-     * Optional icon for primary button (PrimeIcon name without 'pi-' prefix)
-     * Example: 'check', 'trash', 'send'
-     */
-    primaryIcon = input<string>("");
+  /**
+   * Optional icon for primary button (PrimeIcon name without 'pi-' prefix)
+   * Example: 'check', 'trash', 'send'
+   */
+  primaryIcon = input<string>("");
 
-    /**
-     * Visual variant for primary button
-     * Defaults to 'primary' (filled blue button)
-     */
-    primaryVariant = input<ButtonVariant>("primary");
+  /**
+   * Visual variant for primary button
+   * Defaults to 'primary' (filled blue button)
+   */
+  primaryVariant = input<ButtonVariant>("primary");
 
-    /**
-     * Loading state for primary button
-     */
-    loading = input<boolean>(false);
+  /**
+   * Loading state for primary button
+   */
+  loading = input<boolean>(false);
 
-    /**
-     * Disabled state for primary button
-     */
-    disabled = input<boolean>(false);
+  /**
+   * Disabled state for primary button
+   */
+  disabled = input<boolean>(false);
 
-    /**
-     * Make primary button full width (useful for mobile)
-     */
-    fullWidthPrimary = input<boolean>(false);
+  /**
+   * Make primary button full width (useful for mobile)
+   */
+  fullWidthPrimary = input<boolean>(false);
 
-    /**
-     * Emits when cancel button is clicked
-     */
-    cancel = output<void>();
+  /**
+   * Emits when cancel button is clicked
+   */
+  cancel = output<void>();
 
-    /**
-     * Emits when primary button is clicked
-     */
-    primary = output<void>();
+  /**
+   * Emits when primary button is clicked
+   */
+  primary = output<void>();
 }

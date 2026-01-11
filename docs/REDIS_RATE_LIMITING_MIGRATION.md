@@ -9,12 +9,14 @@
 ## When to Migrate to Redis
 
 ### Current Implementation is Adequate If:
+
 - ✅ Running single server instance
 - ✅ Not using load balancer
 - ✅ Rate limits reset on server restart is acceptable
 - ✅ Vertical scaling is sufficient
 
 ### Migrate to Redis When:
+
 - ❌ Deploying multiple server instances
 - ❌ Using horizontal scaling / load balancer
 - ❌ Rate limits need to persist across restarts
@@ -28,12 +30,14 @@
 **File**: `routes/utils/rate-limiter.js`
 
 **How It Works**:
+
 - In-memory Map stores rate limit counters per IP/user
 - Counters reset after time window expires
 - Simple, fast, no external dependencies
 - Perfect for development and single-instance production
 
 **Limitations**:
+
 - Counters don't persist across server restarts
 - Each server instance has its own counters (not shared)
 - Not suitable for load-balanced deployments
@@ -53,8 +57,8 @@ npm install redis rate-limit-redis
 Create `routes/utils/redis-client.js`:
 
 ```javascript
-import { createClient } from 'redis';
-import { serverLogger } from './server-logger.js';
+import { createClient } from "redis";
+import { serverLogger } from "./server-logger.js";
 
 let redisClient = null;
 
@@ -63,8 +67,8 @@ export async function getRedisClient() {
     return redisClient;
   }
 
-  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-  
+  const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+
   try {
     redisClient = createClient({
       url: redisUrl,
@@ -72,26 +76,26 @@ export async function getRedisClient() {
         connectTimeout: 5000,
         reconnectStrategy: (retries) => {
           if (retries > 10) {
-            serverLogger.error('[Redis] Max retries reached, giving up');
-            return new Error('Max retries reached');
+            serverLogger.error("[Redis] Max retries reached, giving up");
+            return new Error("Max retries reached");
           }
           return Math.min(retries * 100, 3000);
         },
       },
     });
 
-    redisClient.on('error', (err) => {
-      serverLogger.error('[Redis] Connection error:', err);
+    redisClient.on("error", (err) => {
+      serverLogger.error("[Redis] Connection error:", err);
     });
 
-    redisClient.on('connect', () => {
-      serverLogger.info('[Redis] Connected successfully');
+    redisClient.on("connect", () => {
+      serverLogger.info("[Redis] Connected successfully");
     });
 
     await redisClient.connect();
     return redisClient;
   } catch (error) {
-    serverLogger.error('[Redis] Failed to connect:', error);
+    serverLogger.error("[Redis] Failed to connect:", error);
     throw error;
   }
 }
@@ -109,9 +113,9 @@ export async function closeRedisClient() {
 Update `routes/utils/rate-limiter.js`:
 
 ```javascript
-import { getRedisClient } from './redis-client.js';
-import { RedisStore } from 'rate-limit-redis';
-import { serverLogger } from './server-logger.js';
+import { getRedisClient } from "./redis-client.js";
+import { RedisStore } from "rate-limit-redis";
+import { serverLogger } from "./server-logger.js";
 
 // Try to use Redis, fall back to in-memory
 let store = null;
@@ -125,13 +129,13 @@ async function getStore() {
     const redisClient = await getRedisClient();
     store = new RedisStore({
       client: redisClient,
-      prefix: 'rl:', // Rate limit key prefix
+      prefix: "rl:", // Rate limit key prefix
       sendCommand: (...args) => redisClient.sendCommand(args),
     });
-    serverLogger.info('[RateLimit] Using Redis store');
+    serverLogger.info("[RateLimit] Using Redis store");
     return store;
   } catch (error) {
-    serverLogger.warn('[RateLimit] Redis unavailable, using memory store');
+    serverLogger.warn("[RateLimit] Redis unavailable, using memory store");
     // Fall back to in-memory (current implementation)
     return null;
   }
@@ -139,10 +143,10 @@ async function getStore() {
 
 export function rateLimit(type = "READ") {
   const config = RATE_LIMITS[type];
-  
+
   return async (req, res, next) => {
     const rateLimitStore = await getStore();
-    
+
     // If Redis available, use express-rate-limit with RedisStore
     if (rateLimitStore) {
       const limiter = expressRateLimit({
@@ -157,12 +161,12 @@ export function rateLimit(type = "READ") {
         },
         standardHeaders: true,
         legacyHeaders: false,
-        skip: (req) => req.ip === '127.0.0.1' || req.ip === '::1',
+        skip: (req) => req.ip === "127.0.0.1" || req.ip === "::1",
       });
-      
+
       return limiter(req, res, next);
     }
-    
+
     // Otherwise use in-memory implementation (current code)
     // ... existing in-memory logic ...
   };
@@ -189,7 +193,7 @@ REDIS_URL=redis://localhost:6379
 Add Redis to `docker-compose.yml`:
 
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   app:
     # ... existing app config ...
@@ -220,14 +224,14 @@ volumes:
 In `server.js`, add graceful Redis shutdown:
 
 ```javascript
-import { closeRedisClient } from './routes/utils/redis-client.js';
+import { closeRedisClient } from "./routes/utils/redis-client.js";
 
 // Graceful shutdown
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, closing server...');
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM received, closing server...");
   await closeRedisClient(); // Close Redis connection
   server.close(() => {
-    console.log('Server closed');
+    console.log("Server closed");
     process.exit(0);
   });
 });
@@ -238,6 +242,7 @@ process.on('SIGTERM', async () => {
 ## Production Deployment Options
 
 ### Option 1: Redis Cloud (Recommended)
+
 **Best for**: Serverless, multi-region deployments
 
 - Sign up: https://redis.com/try-free/
@@ -251,6 +256,7 @@ REDIS_URL=rediss://default:password@redis-12345.c123.us-east-1-1.ec2.cloud.redis
 ```
 
 ### Option 2: Upstash (Serverless Redis)
+
 **Best for**: Vercel, Netlify, edge deployments
 
 - Sign up: https://upstash.com/
@@ -265,6 +271,7 @@ REDIS_TOKEN=your-token-here
 ```
 
 ### Option 3: Self-Hosted Redis
+
 **Best for**: AWS EC2, DigitalOcean, dedicated servers
 
 - Install Redis on server
@@ -287,6 +294,7 @@ sudo systemctl restart redis-server
 ```
 
 ### Option 4: Managed Redis (AWS ElastiCache, Google MemoryStore)
+
 **Best for**: Cloud-native deployments
 
 - Use cloud provider's managed Redis
@@ -385,13 +393,13 @@ redis-cli INFO stats
 
 ## Cost Comparison
 
-| Option | Free Tier | Paid (Small) | Paid (Medium) |
-|--------|-----------|--------------|---------------|
-| **In-Memory (Current)** | ✅ Free | ✅ Free | ✅ Free |
-| **Redis Cloud** | 30MB free | $5/mo (250MB) | $10/mo (1GB) |
-| **Upstash** | 10K cmds/day | $0.20/100K cmds | $2/1M cmds |
-| **AWS ElastiCache** | None | $15/mo (t4g.micro) | $30/mo (t4g.small) |
-| **Self-Hosted** | Server cost only | $5-10/mo | $10-20/mo |
+| Option                  | Free Tier        | Paid (Small)       | Paid (Medium)      |
+| ----------------------- | ---------------- | ------------------ | ------------------ |
+| **In-Memory (Current)** | ✅ Free          | ✅ Free            | ✅ Free            |
+| **Redis Cloud**         | 30MB free        | $5/mo (250MB)      | $10/mo (1GB)       |
+| **Upstash**             | 10K cmds/day     | $0.20/100K cmds    | $2/1M cmds         |
+| **AWS ElastiCache**     | None             | $15/mo (t4g.micro) | $30/mo (t4g.small) |
+| **Self-Hosted**         | Server cost only | $5-10/mo           | $10-20/mo          |
 
 **For this app**: Redis Cloud free tier (30MB) is more than enough for rate limiting.
 
@@ -399,13 +407,13 @@ redis-cli INFO stats
 
 ## Decision Matrix
 
-| Scenario | Recommendation |
-|----------|---------------|
-| **Single server, < 1000 users** | ✅ Keep in-memory (current) |
-| **Multiple servers, load balanced** | 🔄 Migrate to Redis Cloud |
-| **Serverless (Vercel/Netlify)** | 🔄 Migrate to Upstash |
-| **High traffic (>100K req/day)** | 🔄 Migrate to Redis Cloud or ElastiCache |
-| **Enterprise, dedicated infra** | 🔄 Self-hosted or Managed Redis |
+| Scenario                            | Recommendation                           |
+| ----------------------------------- | ---------------------------------------- |
+| **Single server, < 1000 users**     | ✅ Keep in-memory (current)              |
+| **Multiple servers, load balanced** | 🔄 Migrate to Redis Cloud                |
+| **Serverless (Vercel/Netlify)**     | 🔄 Migrate to Upstash                    |
+| **High traffic (>100K req/day)**    | 🔄 Migrate to Redis Cloud or ElastiCache |
+| **Enterprise, dedicated infra**     | 🔄 Self-hosted or Managed Redis          |
 
 ---
 
@@ -414,6 +422,7 @@ redis-cli INFO stats
 **Keep the current in-memory implementation.**
 
 **Reasons**:
+
 1. ✅ Current grade is A+ (96%)
 2. ✅ Single server deployment adequate
 3. ✅ No immediate scaling needs
@@ -421,6 +430,7 @@ redis-cli INFO stats
 5. ✅ Easy to migrate later if needed
 
 **Migrate when**:
+
 - Deploying to multiple servers
 - Adding load balancer
 - Moving to serverless
@@ -440,12 +450,14 @@ redis-cli INFO stats
 ---
 
 **Related Files**:
+
 - Current implementation: `routes/utils/rate-limiter.js`
 - Redis client (to create): `routes/utils/redis-client.js`
 - Server config: `server.js`
 - Environment: `.env`
 
 **External Resources**:
+
 - Redis Cloud: https://redis.com/try-free/
 - Upstash: https://upstash.com/
 - rate-limit-redis: https://www.npmjs.com/package/rate-limit-redis

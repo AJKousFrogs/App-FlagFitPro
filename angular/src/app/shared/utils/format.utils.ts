@@ -321,6 +321,56 @@ export function wordCount(str: string): number {
 }
 
 /**
+ * Normalize player/user name from various formats
+ * Handles full_name, first_name + last_name, email fallback
+ * 
+ * @example
+ * normalizePlayerName({ full_name: 'John Doe' }) // 'John Doe'
+ * normalizePlayerName({ first_name: 'John', last_name: 'Doe' }) // 'John Doe'
+ * normalizePlayerName({ email: 'john@example.com' }) // 'john'
+ * normalizePlayerName({}) // 'Unknown'
+ */
+export function normalizePlayerName(
+  data: {
+    full_name?: string | null;
+    fullName?: string | null;
+    first_name?: string | null;
+    firstName?: string | null;
+    last_name?: string | null;
+    lastName?: string | null;
+    email?: string | null;
+  },
+  fallback: string = "Unknown",
+): string {
+  // Try full_name first (snake_case or camelCase)
+  if (data.full_name?.trim()) {
+    return data.full_name.trim();
+  }
+  if (data.fullName?.trim()) {
+    return data.fullName.trim();
+  }
+
+  // Build from first_name + last_name
+  const firstName = data.first_name || data.firstName || "";
+  const lastName = data.last_name || data.lastName || "";
+  const combined = [firstName, lastName].filter(Boolean).join(" ").trim();
+  
+  if (combined) {
+    return combined;
+  }
+
+  // Fallback to email username
+  if (data.email) {
+    const emailUsername = data.email.split("@")[0];
+    if (emailUsername) {
+      return emailUsername;
+    }
+  }
+
+  return fallback;
+}
+
+/**
  * Mask string (e.g., credit card, email)
  * @example
  * mask('1234567890', 6, '*') // '123456****'
@@ -342,9 +392,7 @@ export function mask(
  * formatTimeMMSS(90) // '1:30'
  * formatTimeMMSS(null) // '--'
  */
-export function formatTimeMMSS(
-  seconds: number | null | undefined,
-): string {
+export function formatTimeMMSS(seconds: number | null | undefined): string {
   if (seconds === null || seconds === undefined) return "--";
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);

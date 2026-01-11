@@ -428,7 +428,10 @@ export class TournamentModeService {
         updated_at: new Date().toISOString(),
       });
     } catch (error) {
-      this.logger.warn("Could not save tournament to database:", toLogContext(error));
+      this.logger.warn(
+        "Could not save tournament to database:",
+        toLogContext(error),
+      );
     }
   }
 

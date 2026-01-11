@@ -23,7 +23,10 @@ import { TooltipModule } from "primeng/tooltip";
 import { AccountDeletionService } from "../../core/services/account-deletion.service";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
-import { LoggerService, toLogContext } from "../../core/services/logger.service";
+import {
+  LoggerService,
+  toLogContext,
+} from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -782,16 +785,20 @@ export class ProfileComponent implements OnInit {
 
         if (validRecords.length > 0) {
           const avgEnergy =
-            validRecords.reduce((a: number, w: { energy_level?: number }) => a + (w.energy_level || 0), 0) /
-            validRecords.length;
+            validRecords.reduce(
+              (a: number, w: { energy_level?: number }) =>
+                a + (w.energy_level || 0),
+              0,
+            ) / validRecords.length;
           const avgSleep =
-            validRecords.reduce((a: number, w: { sleep_quality?: number }) => a + (w.sleep_quality || 0), 0) /
-            validRecords.length;
+            validRecords.reduce(
+              (a: number, w: { sleep_quality?: number }) =>
+                a + (w.sleep_quality || 0),
+              0,
+            ) / validRecords.length;
           // Score out of 100 based on averages (each is 1-10 scale)
           // Using energy and sleep (2 metrics instead of 3)
-          performanceScore = Math.round(
-            ((avgEnergy + avgSleep) / 20) * 100,
-          );
+          performanceScore = Math.round(((avgEnergy + avgSleep) / 20) * 100);
         }
       }
 
@@ -1264,7 +1271,10 @@ export class ProfileComponent implements OnInit {
         }
       }
     } catch (error) {
-      this.logger.warn("Could not load extended profile data:", toLogContext(error));
+      this.logger.warn(
+        "Could not load extended profile data:",
+        toLogContext(error),
+      );
       // Non-critical error, continue with basic profile
     }
   }
@@ -1358,7 +1368,9 @@ export class ProfileComponent implements OnInit {
     } catch (error) {
       this.logger.error("Error accepting invitation:", error);
       this.toastService.error(
-        error instanceof Error ? error.message : TOAST.ERROR.INVITATION_ACCEPT_FAILED,
+        error instanceof Error
+          ? error.message
+          : TOAST.ERROR.INVITATION_ACCEPT_FAILED,
       );
     } finally {
       this.processingInvitation.set(null);
@@ -1386,7 +1398,9 @@ export class ProfileComponent implements OnInit {
     } catch (error) {
       this.logger.error("Error declining invitation:", error);
       this.toastService.error(
-        error instanceof Error ? error.message : TOAST.ERROR.INVITATION_DECLINE_FAILED,
+        error instanceof Error
+          ? error.message
+          : TOAST.ERROR.INVITATION_DECLINE_FAILED,
       );
     } finally {
       this.processingInvitation.set(null);

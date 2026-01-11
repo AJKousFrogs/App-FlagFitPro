@@ -373,16 +373,18 @@ export class TravelRecoveryService {
       "id" | "userId" | "createdAt" | "timezonesEast" | "travelDirection"
     >,
   ): TravelPlan {
-    this.logger.debug('[TravelRecoveryService] createTravelPlan called', { planData });
+    this.logger.debug("[TravelRecoveryService] createTravelPlan called", {
+      planData,
+    });
     const userId = this.authService.getUser()?.id || "anonymous";
 
     // Calculate timezone difference
     const depTz = MAJOR_TIMEZONES[planData.departureTimezone];
     const arrTz = MAJOR_TIMEZONES[planData.arrivalTimezone];
 
-    this.logger.debug('[TravelRecoveryService] Timezone data', { 
-      departure: depTz, 
-      arrival: arrTz 
+    this.logger.debug("[TravelRecoveryService] Timezone data", {
+      departure: depTz,
+      arrival: arrTz,
     });
 
     let timezonesEast = 0;
@@ -402,9 +404,9 @@ export class TravelRecoveryService {
       }
     }
 
-    this.logger.debug('[TravelRecoveryService] Travel calculation', {
+    this.logger.debug("[TravelRecoveryService] Travel calculation", {
       timezonesEast,
-      travelDirection
+      travelDirection,
     });
 
     const plan: TravelPlan = {
@@ -416,12 +418,12 @@ export class TravelRecoveryService {
       createdAt: new Date(),
     };
 
-    this.logger.debug('[TravelRecoveryService] Created plan object', { plan });
+    this.logger.debug("[TravelRecoveryService] Created plan object", { plan });
     this._currentPlan.set(plan);
-    this.logger.debug('[TravelRecoveryService] Current plan signal set');
-    
+    this.logger.debug("[TravelRecoveryService] Current plan signal set");
+
     this.generateRecoveryProtocol(plan);
-    this.logger.debug('[TravelRecoveryService] Recovery protocol generated');
+    this.logger.debug("[TravelRecoveryService] Recovery protocol generated");
 
     this.logger.info("[TravelRecovery] Created travel plan:", {
       direction: travelDirection,

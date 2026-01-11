@@ -678,7 +678,10 @@ export class AthleteDashboardComponent
     // Subscribe to training sessions updates
     const trainingUnsub = this.realtimeService.subscribeToTrainingSessions(
       (event) => {
-        this.logger.debug("🔴 LIVE: Training session updated", toLogContext(event));
+        this.logger.debug(
+          "🔴 LIVE: Training session updated",
+          toLogContext(event),
+        );
         // Reload today's workload when training data changes
         this.loadTodayWorkload(userId);
         this.loadNextSession(userId);
@@ -702,7 +705,10 @@ export class AthleteDashboardComponent
     // Subscribe to performance metrics updates
     const performanceUnsub = this.realtimeService.subscribeToPerformance(
       (event) => {
-        this.logger.debug("🔴 LIVE: Performance metrics updated", toLogContext(event));
+        this.logger.debug(
+          "🔴 LIVE: Performance metrics updated",
+          toLogContext(event),
+        );
         // Reload trends when performance data changes
         this.loadTrends(userId);
       },

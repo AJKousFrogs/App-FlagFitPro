@@ -22,6 +22,7 @@ import { AuthDebugPanelComponent } from '../../shared/components/auth-debug-pane
 ```
 
 Then add to your template:
+
 ```html
 <!-- Add at the top of your dashboard for debugging -->
 <app-auth-debug-panel></app-auth-debug-panel>
@@ -30,6 +31,7 @@ Then add to your template:
 ### Step 2: Check Browser Console
 
 Open browser console (F12) and look for:
+
 - Red errors with 401 or 406 status codes
 - Authentication warnings
 - Supabase session information
@@ -37,6 +39,7 @@ Open browser console (F12) and look for:
 ### Step 3: Run Auth Check
 
 Use the debug panel buttons:
+
 1. **Check Auth Status** - Logs detailed auth information to console
 2. **Refresh Session** - Manually refreshes your auth token
 3. **Force Re-authenticate** - Revalidates your session
@@ -46,34 +49,40 @@ Use the debug panel buttons:
 ### Issue 1: Session Expired
 
 **Symptoms:**
+
 - 401 Unauthorized errors
 - "Your session has expired" messages
 - Token expires_at shows past time
 
 **Fix:**
+
 ```typescript
 // The app should auto-refresh, but you can manually refresh:
 await this.supabase.client.auth.refreshSession();
 ```
 
 **Prevention:**
+
 - Session auto-refresh is now enabled in auth.interceptor.ts
 - Tokens refresh automatically 60 seconds before expiry
 
 ### Issue 2: Missing Authentication Headers
 
 **Symptoms:**
+
 - 401 errors on API requests
 - Requests work in Postman but not in app
 - Network tab shows no Authorization header
 
 **Fix:**
 The auth interceptor has been updated to:
+
 1. Automatically add Authorization header to all API requests
 2. Handle Supabase REST API requests specially
 3. Skip auth for public endpoints
 
 **Verify:**
+
 ```typescript
 // Check if token is being sent (in browser Network tab)
 // Look for: Authorization: Bearer eyJhbGc...
@@ -82,11 +91,13 @@ The auth interceptor has been updated to:
 ### Issue 3: RLS (Row Level Security) Policies
 
 **Symptoms:**
+
 - 403 Forbidden errors
 - Can log in but can't access data
 - Postgres error code PGRST116 or 42501
 
 **Fix:**
+
 ```sql
 -- Check RLS policies in Supabase dashboard
 -- Ensure policies exist for your tables:
@@ -100,12 +111,14 @@ USING (auth.uid() = user_id);
 ### Issue 4: 406 Not Acceptable Errors
 
 **Symptoms:**
+
 - 406 status code
 - "Not Acceptable" errors
 - Supabase REST API calls failing
 
 **Fix:**
 The auth interceptor now automatically adds correct headers for Supabase:
+
 - `Accept: application/json`
 - `Content-Type: application/json`
 - `Prefer: return=representation`
@@ -113,12 +126,14 @@ The auth interceptor now automatically adds correct headers for Supabase:
 ### Issue 5: CORS Errors
 
 **Symptoms:**
+
 - Network errors with status 0
 - "CORS policy" error messages
 - Requests blocked by browser
 
 **Fix:**
 Check your Supabase dashboard:
+
 1. Go to Settings > API
 2. Add your domain to "URL Configuration"
 3. For local dev, add: `http://localhost:4200` and `http://localhost:8888`
@@ -126,28 +141,31 @@ Check your Supabase dashboard:
 ## Manual Testing Commands
 
 ### Check Current Session
+
 ```typescript
 // Open browser console and run:
 const { data, error } = await supabase.auth.getSession();
-console.log('Session:', data.session);
-console.log('Expires at:', new Date(data.session?.expires_at * 1000));
+console.log("Session:", data.session);
+console.log("Expires at:", new Date(data.session?.expires_at * 1000));
 ```
 
 ### Test Authenticated Query
+
 ```typescript
 // Test if RLS is working:
 const { data, error } = await supabase
-  .from('users')
-  .select('id, email')
+  .from("users")
+  .select("id, email")
   .single();
-console.log('User data:', data);
-console.log('Error:', error);
+console.log("User data:", data);
+console.log("Error:", error);
 ```
 
 ### Manually Refresh Token
+
 ```typescript
 const { data, error } = await supabase.auth.refreshSession();
-console.log('New session:', data.session);
+console.log("New session:", data.session);
 ```
 
 ## Environment Configuration
@@ -155,24 +173,27 @@ console.log('New session:', data.session);
 Verify your environment variables are set correctly:
 
 ### Local Development (environment.ts)
+
 ```typescript
 export const environment = {
   production: false,
   supabase: {
-    url: 'https://pvziciccwxgftcielknm.supabase.co',
-    anonKey: 'eyJhbGc...' // Your anon key
-  }
+    url: "https://pvziciccwxgftcielknm.supabase.co",
+    anonKey: "eyJhbGc...", // Your anon key
+  },
 };
 ```
 
 ### Production (environment.prod.ts)
+
 ```typescript
 export const environment = {
   production: true,
   supabase: {
-    url: process.env['SUPABASE_URL'] || 'https://pvziciccwxgftcielknm.supabase.co',
-    anonKey: process.env['SUPABASE_ANON_KEY'] || ''
-  }
+    url:
+      process.env["SUPABASE_URL"] || "https://pvziciccwxgftcielknm.supabase.co",
+    anonKey: process.env["SUPABASE_ANON_KEY"] || "",
+  },
 };
 ```
 
@@ -229,6 +250,7 @@ export const environment = {
 ### Enable Detailed Logging
 
 Add to your component:
+
 ```typescript
 import { inject } from '@angular/core';
 import { LoggerService } from './core/services/logger.service';
@@ -251,6 +273,7 @@ ngOnInit() {
 ### Contact Support
 
 If issues persist, provide:
+
 1. Browser console logs (with sensitive data redacted)
 2. Network tab screenshot showing failed request
 3. Current auth status from debug panel
@@ -259,6 +282,7 @@ If issues persist, provide:
 ## Cleanup
 
 Once auth is working, remove the debug panel:
+
 1. Remove `<app-auth-debug-panel>` from templates
 2. Remove import from components
 3. Keep auth-debug.service.ts for future troubleshooting

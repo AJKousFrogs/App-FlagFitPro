@@ -74,7 +74,7 @@ body.sidebar-open {
   position: fixed !important;
   width: 100% !important;
   height: 100% !important;
-  
+
   /* Prevent any touch scroll behavior on mobile */
   @include respond-to(md) {
     touch-action: none;
@@ -153,7 +153,9 @@ body > * {
    - .p-radiobutton-input (radio buttons)
    ================================================================ */
 
-input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input),
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ),
 select,
 textarea {
   /* Reset */
@@ -181,7 +183,9 @@ textarea {
 }
 
 /* Single-line inputs: 44px height */
-input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input),
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+    [type="file"]
+  ):not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input),
 select {
   height: 44px;
   min-height: 44px;
@@ -204,14 +208,18 @@ textarea::placeholder {
 }
 
 /* Hover state */
-input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input):hover:not(:disabled):not(:focus-visible):not(.ng-invalid.ng-touched),
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ):hover:not(:disabled):not(:focus-visible):not(.ng-invalid.ng-touched),
 select:hover:not(:disabled):not(:focus-visible),
 textarea:hover:not(:disabled):not(:focus-visible):not(.ng-invalid.ng-touched) {
   border-color: var(--primitive-neutral-400, #a3a3a3);
 }
 
 /* Focus state - green border + green ring */
-input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input):focus-visible,
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ):focus-visible,
 select:focus-visible,
 textarea:focus-visible {
   border-color: var(--ds-primary-green, #089949);
@@ -220,22 +228,30 @@ textarea:focus-visible {
 }
 
 /* Invalid/Error state */
-input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input).ng-invalid.ng-touched,
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ).ng-invalid.ng-touched,
 textarea.ng-invalid.ng-touched,
-input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input):invalid,
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ):invalid,
 select:invalid,
 textarea:invalid {
   border-color: var(--color-status-error, #ef4444);
 }
 
-input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input).ng-invalid.ng-touched:focus-visible,
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ).ng-invalid.ng-touched:focus-visible,
 textarea.ng-invalid.ng-touched:focus-visible {
   border-color: var(--color-status-error, #ef4444);
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
 }
 
 /* Disabled state */
-input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(.p-radiobutton-input):disabled,
+input:not(.p-toggleswitch-input):not(.p-checkbox-input):not(
+    .p-radiobutton-input
+  ):disabled,
 select:disabled,
 textarea:disabled {
   background: var(--surface-secondary, #f8faf9);
@@ -525,7 +541,6 @@ html.no-transitions * {
    ================================================================ */
 
 @layer overrides {
-
   /* ================================================================
      FORM CONTROL OVERRIDES - Design Contract Enforcement
      Height: 44px | Radius: 8px | NO pill shapes

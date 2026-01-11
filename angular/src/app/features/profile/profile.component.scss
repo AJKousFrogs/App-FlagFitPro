@@ -1,7 +1,4 @@
 @use "styles/mixins" as *;
-@use "styles/mixins" as *;
-@use "styles/mixins" as *;
-@use "styles/mixins" as *;
 
 /* ================================================================
    PROFILE COMPONENT STYLES
@@ -927,7 +924,7 @@
   .profile-page .profile-header-actions {
     flex-direction: column;
     width: 100%;
-    
+
     app-button,
     app-icon-button {
       width: 100%;

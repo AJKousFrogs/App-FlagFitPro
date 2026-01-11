@@ -99,7 +99,10 @@ export class EvidenceConfigService {
         });
       } catch (error) {
         // Silently fail if table doesn't exist
-        this.logger.debug("Activity log table not available:", toLogContext(error));
+        this.logger.debug(
+          "Activity log table not available:",
+          toLogContext(error),
+        );
       }
     }
   }

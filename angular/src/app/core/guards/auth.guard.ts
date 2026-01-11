@@ -21,11 +21,16 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
   // If no session in signal but user should be authenticated, try to refresh from Supabase
   if (!hasSession && !isAuthenticated) {
-    logger.debug("[AuthGuard] No immediate session found, checking Supabase directly...");
-    
+    logger.debug(
+      "[AuthGuard] No immediate session found, checking Supabase directly...",
+    );
+
     try {
-      const { data: { session }, error } = await supabaseService.client.auth.getSession();
-      
+      const {
+        data: { session },
+        error,
+      } = await supabaseService.client.auth.getSession();
+
       if (error) {
         logger.warn("[AuthGuard] Error getting session:", error.message);
       } else if (session) {

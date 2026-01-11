@@ -13,16 +13,16 @@
 
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
-    AfterViewChecked,
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    ElementRef,
-    HostListener,
-    ViewChild,
-    computed,
-    inject,
-    signal,
+  AfterViewChecked,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  ViewChild,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -41,15 +41,18 @@ import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
-import { LoggerService, toLogContext } from "../../core/services/logger.service";
+import {
+  LoggerService,
+  toLogContext,
+} from "../../core/services/logger.service";
 import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import {
-    AIModeExplanationComponent,
-    AIModeStatus,
+  AIModeExplanationComponent,
+  AIModeStatus,
 } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";

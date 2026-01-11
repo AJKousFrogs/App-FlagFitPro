@@ -15,10 +15,10 @@
  */
 
 import { computed, inject, Injectable, OnDestroy, signal } from "@angular/core";
-import { LoggerService } from "./logger.service";
-import { toLogContext } from "./logger.service";
-import { SupabaseService } from "./supabase.service";
+import { normalizePlayerName } from "../../shared/utils/format.utils";
 import { TIMEOUTS, UI_LIMITS } from "../constants/app.constants";
+import { LoggerService, toLogContext } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 export interface SearchResult {
   id: string;
@@ -441,7 +441,14 @@ export class SearchService implements OnDestroy {
 
       return (data || []).map((player) => {
         const name =
-          player.full_name || `${player.first_name} ${player.last_name}`;
+          normalizePlayerName(
+            {
+              full_name: player.full_name,
+              first_name: player.first_name,
+              last_name: player.last_name,
+            },
+            "Unknown",
+          );
         return {
           id: player.id,
           type: "player" as const,

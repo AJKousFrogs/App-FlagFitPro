@@ -1,9 +1,9 @@
 import {
-    DestroyRef,
-    Injectable,
-    computed,
-    inject,
-    signal,
+  DestroyRef,
+  Injectable,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { Observable, combineLatest, firstValueFrom, from, of } from "rxjs";
 import { catchError, map, shareReplay, tap } from "rxjs/operators";
@@ -11,36 +11,36 @@ import { catchError, map, shareReplay, tap } from "rxjs/operators";
 import { COLORS } from "../constants/app.constants";
 import { WELLNESS } from "../constants/wellness.constants";
 import {
-    DailyProtocolResponse,
-    DailyRoutineSlot,
-    SmartRecommendationsResponse,
-    SupplementEntry,
-    TodayScheduleItem,
-    TrainingRecommendation,
-    TrainingSessionRecord,
-    UserMetadata,
+  DailyProtocolResponse,
+  DailyRoutineSlot,
+  SmartRecommendationsResponse,
+  SupplementEntry,
+  TodayScheduleItem,
+  TrainingRecommendation,
+  TrainingSessionRecord,
+  UserMetadata,
 } from "../models/api.models";
 import {
-    Achievement,
-    ReadinessStatus,
-    SessionType,
-    TrainingDataResult,
-    TrainingStatCard,
-    WeeklyScheduleDay,
-    WellnessAlert,
-    Workout,
+  Achievement,
+  ReadinessStatus,
+  SessionType,
+  TrainingDataResult,
+  TrainingStatCard,
+  WeeklyScheduleDay,
+  WellnessAlert,
+  Workout,
 } from "../models/training.models";
 import { AcwrService } from "./acwr.service";
 import { ApiService } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import {
-    PerformanceDataService,
-    PhysicalMeasurement,
+  PerformanceDataService,
+  PhysicalMeasurement,
 } from "./performance-data.service";
 import {
-    PlayerProgramService,
-    ProgramAssignment,
+  PlayerProgramService,
+  ProgramAssignment,
 } from "./player-program.service";
 import { ReadinessService } from "./readiness.service";
 import { SupabaseService } from "./supabase.service";
@@ -503,7 +503,10 @@ export class UnifiedTrainingService {
 
       return { data: data as DailyProtocolResponse };
     } catch (err) {
-      this.logger.warn("[UnifiedTraining] Failed to load daily protocol:", toLogContext(err));
+      this.logger.warn(
+        "[UnifiedTraining] Failed to load daily protocol:",
+        toLogContext(err),
+      );
       return { data: null };
     }
   }
@@ -1026,7 +1029,7 @@ export class UnifiedTrainingService {
     return data.map((w) => this.transformToWorkout(w));
   }
 
-  private async checkWellnessForTraining(userId: string) {
+  private async checkWellnessForTraining(_userId: string) {
     try {
       const today = new Date().toISOString().split("T")[0];
       const response = await firstValueFrom(
@@ -1063,7 +1066,10 @@ export class UnifiedTrainingService {
         readinessStatus: status,
       };
     } catch (error) {
-      this.logger.error("[Training] Failed to get wellness for training:", toLogContext(error));
+      this.logger.error(
+        "[Training] Failed to get wellness for training:",
+        toLogContext(error),
+      );
       return {
         alert: null,
         readinessScore: 0,
@@ -1166,7 +1172,7 @@ export class UnifiedTrainingService {
 
   private calculateStreak(sessions: TrainingSessionRecord[]): number {
     if (sessions.length === 0) return 0;
-    
+
     // Extract valid dates from sessions, supporting both 'date' and 'session_date' fields
     const validDates = sessions
       .map((s) => s.session_date || s.date)
@@ -1179,13 +1185,11 @@ export class UnifiedTrainingService {
         const dateObj = new Date(d);
         return dateObj.toISOString().split("T")[0];
       });
-    
+
     if (validDates.length === 0) return 0;
-    
-    const uniqueDates = [...new Set(validDates)]
-      .sort()
-      .reverse();
-    
+
+    const uniqueDates = [...new Set(validDates)].sort().reverse();
+
     const today = new Date().toISOString().split("T")[0];
     const yesterday = new Date(Date.now() - 86400000)
       .toISOString()
@@ -1328,7 +1332,10 @@ export class UnifiedTrainingService {
         const dateStr = s.session_date || s.date;
         if (!dateStr) return false;
         const sessionDate = new Date(dateStr);
-        return !isNaN(sessionDate.getTime()) && sessionDate.toDateString() === d.toDateString();
+        return (
+          !isNaN(sessionDate.getTime()) &&
+          sessionDate.toDateString() === d.toDateString()
+        );
       });
       return {
         name,

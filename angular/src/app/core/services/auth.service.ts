@@ -215,34 +215,35 @@ export class AuthService {
   async getToken(): Promise<string | null> {
     try {
       // Force refresh session to ensure we have the latest token
-      const { data, error } = await this.supabaseService.client.auth.getSession();
-      
+      const { data, error } =
+        await this.supabaseService.client.auth.getSession();
+
       if (error) {
         this.logger.warn("[Auth] Error getting session:", error);
         return null;
       }
-      
+
       // Check if token is expired or about to expire (within 60 seconds)
       if (data.session) {
         const expiresAt = data.session.expires_at;
         const now = Math.floor(Date.now() / 1000);
-        
-        if (expiresAt && (expiresAt - now) < 60) {
+
+        if (expiresAt && expiresAt - now < 60) {
           // Token expired or expiring soon, try to refresh
           this.logger.debug("[Auth] Token expiring soon, attempting refresh");
-          const { data: refreshData, error: refreshError } = 
+          const { data: refreshData, error: refreshError } =
             await this.supabaseService.client.auth.refreshSession();
-          
+
           if (!refreshError && refreshData.session) {
             return refreshData.session.access_token;
           } else {
             this.logger.warn("[Auth] Failed to refresh session:", refreshError);
           }
         }
-        
+
         return data.session.access_token;
       }
-      
+
       return null;
     } catch (error) {
       this.logger.error("[Auth] Exception getting token:", error);
@@ -301,8 +302,11 @@ export class AuthService {
    */
   async refreshUser(): Promise<void> {
     try {
-      const { data: { user }, error } = await this.supabaseService.client.auth.getUser();
-      
+      const {
+        data: { user },
+        error,
+      } = await this.supabaseService.client.auth.getUser();
+
       if (error) {
         this.logger.warn("[Auth] Error refreshing user:", error);
         return;

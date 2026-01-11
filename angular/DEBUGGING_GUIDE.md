@@ -7,6 +7,7 @@ This guide shows you how to debug Angular 21 signals, effects, and unresponsive 
 ## 📦 What's Installed
 
 ### 1. Angular DevTools (Browser Extension)
+
 You need to install the **Angular DevTools** browser extension:
 
 - **Chrome**: [Angular DevTools - Chrome Web Store](https://chrome.google.com/webstore/detail/angular-devtools/ienfalfjdbdpebioblfackkekamfmbnh)
@@ -18,6 +19,7 @@ After installation, open DevTools (F12) and look for the **Angular** tab.
 ### 2. Custom Debug Service
 
 We've created a custom `DebugService` with these features:
+
 - ✅ Signal tracking and logging
 - ✅ Effect monitoring
 - ✅ API call tracing
@@ -35,22 +37,23 @@ Automatically logs all HTTP requests/responses in development mode.
 In development mode, open the browser console and type:
 
 ```javascript
-window.angularDebug
+window.angularDebug;
 ```
 
 Available commands:
+
 ```javascript
 // Get all signal updates
-window.angularDebug.getSignalLogs()
+window.angularDebug.getSignalLogs();
 
 // Get all effect executions
-window.angularDebug.getEffectLogs()
+window.angularDebug.getEffectLogs();
 
 // Get all API calls
-window.angularDebug.getApiLogs()
+window.angularDebug.getApiLogs();
 
 // Clear all logs
-window.angularDebug.clearLogs()
+window.angularDebug.clearLogs();
 
 // Update debug configuration
 window.angularDebug.setConfig({
@@ -58,11 +61,11 @@ window.angularDebug.setConfig({
   enableEffectLogging: true,
   enableApiLogging: true,
   enablePerformanceLogging: true,
-  logStackTraces: false
-})
+  logStackTraces: false,
+});
 
 // Get current configuration
-window.angularDebug.getConfig()
+window.angularDebug.getConfig();
 ```
 
 ## 📊 Debugging Signals
@@ -70,36 +73,32 @@ window.angularDebug.getConfig()
 ### Method 1: Using DebugService in Your Component
 
 ```typescript
-import { Component, signal, effect, inject } from '@angular/core';
-import { DebugService } from '../../core/services/debug.service';
+import { Component, signal, effect, inject } from "@angular/core";
+import { DebugService } from "../../core/services/debug.service";
 
 @Component({
-  selector: 'app-my-component',
-  template: `...`
+  selector: "app-my-component",
+  template: `...`,
 })
 export class MyComponent {
   private readonly debugService = inject(DebugService);
 
   // Create a signal
-  profileSig = signal({ name: 'John', age: 30 });
+  profileSig = signal({ name: "John", age: 30 });
 
   constructor() {
     // Track this signal automatically
-    this.debugService.trackSignal(
-      this.profileSig,
-      'profileSig',
-      'MyComponent'
-    );
+    this.debugService.trackSignal(this.profileSig, "profileSig", "MyComponent");
 
     // Manual effect with logging
     effect(() => {
       const profile = this.profileSig();
-      console.log('Profile updated:', profile);
+      console.log("Profile updated:", profile);
     });
   }
 
   updateProfile() {
-    this.profileSig.update(p => ({ ...p, age: p.age + 1 }));
+    this.profileSig.update((p) => ({ ...p, age: p.age + 1 }));
     // Console will show: 📊 Signal Update [MyComponent] profileSig { name: 'John', age: 31 }
   }
 }
@@ -140,17 +139,17 @@ constructor() {
 ### Track Effect Execution
 
 ```typescript
-import { effect, inject } from '@angular/core';
-import { DebugService } from '../../core/services/debug.service';
+import { effect, inject } from "@angular/core";
+import { DebugService } from "../../core/services/debug.service";
 
 export class MyComponent {
   private readonly debugService = inject(DebugService);
 
   constructor() {
     // Log effect execution with timing
-    this.debugService.logEffect('profileUpdate', 'MyComponent', () => {
+    this.debugService.logEffect("profileUpdate", "MyComponent", () => {
       const profile = this.profileSig();
-      console.log('Effect triggered by profile change:', profile);
+      console.log("Effect triggered by profile change:", profile);
     });
   }
 }
@@ -255,28 +254,28 @@ providePrimeNG({
   theme: {
     preset: Aura,
     options: {
-      prefix: 'p',
-      darkModeSelector: '.dark-theme'
-    }
-  }
-})
+      prefix: "p",
+      darkModeSelector: ".dark-theme",
+    },
+  },
+});
 ```
 
 ### Check PrimeNG Component Props
 
 ```typescript
 // In your component
-import { ViewChild } from '@angular/core';
-import { Table } from 'primeng/table';
+import { ViewChild } from "@angular/core";
+import { Table } from "primeng/table";
 
 export class MyComponent {
   @ViewChild(Table) table?: Table;
 
   ngAfterViewInit() {
     // Log PrimeNG component instance
-    console.log('PrimeNG Table instance:', this.table);
-    console.log('Table value:', this.table?.value);
-    console.log('Table selection:', this.table?.selection);
+    console.log("PrimeNG Table instance:", this.table);
+    console.log("Table value:", this.table?.value);
+    console.log("Table selection:", this.table?.selection);
   }
 }
 ```
@@ -312,8 +311,8 @@ onFilter(event: any) {
 ### Measure Performance
 
 ```typescript
-import { inject } from '@angular/core';
-import { DebugService } from '../../core/services/debug.service';
+import { inject } from "@angular/core";
+import { DebugService } from "../../core/services/debug.service";
 
 export class MyComponent {
   private readonly debugService = inject(DebugService);
@@ -321,21 +320,21 @@ export class MyComponent {
   loadData() {
     // Synchronous measurement
     const result = this.debugService.measurePerformance(
-      'Load dashboard data',
+      "Load dashboard data",
       () => {
         // Your code here
         return this.processData();
       },
-      1000 // Warn if > 1000ms
+      1000, // Warn if > 1000ms
     );
 
     // Async measurement
     await this.debugService.measurePerformanceAsync(
-      'Fetch user data',
+      "Fetch user data",
       async () => {
         return await this.apiService.getUser();
       },
-      500 // Warn if > 500ms
+      500, // Warn if > 500ms
     );
   }
 }
@@ -344,7 +343,7 @@ export class MyComponent {
 ### Check Component Rendering Performance
 
 ```typescript
-import { AfterViewInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, OnDestroy } from "@angular/core";
 
 export class MyComponent implements AfterViewInit, OnDestroy {
   private renderStart = performance.now();
@@ -354,12 +353,12 @@ export class MyComponent implements AfterViewInit, OnDestroy {
     console.log(`⏱️ Component render time: ${renderTime.toFixed(2)}ms`);
 
     if (renderTime > 100) {
-      console.warn('⚠️ Slow component render detected');
+      console.warn("⚠️ Slow component render detected");
     }
   }
 
   ngOnDestroy() {
-    console.log('🗑️ Component destroyed');
+    console.log("🗑️ Component destroyed");
   }
 }
 ```
@@ -369,27 +368,31 @@ export class MyComponent implements AfterViewInit, OnDestroy {
 ### Issue 1: Signals Not Updating
 
 **Check:**
+
 1. Are you using `.set()` or `.update()` to modify signals?
 2. Is the signal being read inside an effect or computed?
 3. Check Angular DevTools to see current signal value
 
 **Solution:**
+
 ```typescript
 // ❌ Wrong - direct mutation doesn't trigger updates
 this.profileSig().age = 31;
 
 // ✅ Correct - use .update() or .set()
-this.profileSig.update(p => ({ ...p, age: 31 }));
+this.profileSig.update((p) => ({ ...p, age: 31 }));
 ```
 
 ### Issue 2: Effects Not Running
 
 **Check:**
+
 1. Is the effect reading any signals?
 2. Is the component destroyed before effect runs?
 3. Check console for effect execution logs
 
 **Solution:**
+
 ```typescript
 // ❌ Wrong - effect doesn't read any signals
 effect(() => {
@@ -406,12 +409,14 @@ effect(() => {
 ### Issue 3: Buttons Not Responding
 
 **Check:**
+
 1. Network tab for failed API calls
 2. Console for JavaScript errors
 3. Button disabled state
 4. Event handler binding
 
 **Debug:**
+
 ```typescript
 // Add comprehensive logging
 onButtonClick() {
@@ -439,23 +444,23 @@ Check the debug interceptor logs or add explicit error handling:
 
 ```typescript
 this.apiService.getData().subscribe({
-  next: (data) => console.log('✅ Success:', data),
+  next: (data) => console.log("✅ Success:", data),
   error: (error) => {
-    console.error('❌ Error:', error);
-    console.log('Error details:', {
+    console.error("❌ Error:", error);
+    console.log("Error details:", {
       status: error.status,
       message: error.message,
-      url: error.url
+      url: error.url,
     });
-  }
+  },
 });
 ```
 
 ## 📝 Example: Debugging Player Dashboard
 
 ```typescript
-import { Component, signal, effect, computed, inject } from '@angular/core';
-import { DebugService } from '../../core/services/debug.service';
+import { Component, signal, effect, computed, inject } from "@angular/core";
+import { DebugService } from "../../core/services/debug.service";
 
 export class PlayerDashboardComponent {
   private readonly debugService = inject(DebugService);
@@ -474,47 +479,59 @@ export class PlayerDashboardComponent {
 
   constructor() {
     // Track all signals
-    this.debugService.trackSignal(this.profileSig, 'profileSig', 'PlayerDashboard');
-    this.debugService.trackSignal(this.wellnessSig, 'wellnessSig', 'PlayerDashboard');
-    this.debugService.trackSignal(this.isReadySig, 'isReadySig', 'PlayerDashboard');
+    this.debugService.trackSignal(
+      this.profileSig,
+      "profileSig",
+      "PlayerDashboard",
+    );
+    this.debugService.trackSignal(
+      this.wellnessSig,
+      "wellnessSig",
+      "PlayerDashboard",
+    );
+    this.debugService.trackSignal(
+      this.isReadySig,
+      "isReadySig",
+      "PlayerDashboard",
+    );
 
     // Log when dashboard is ready
     effect(() => {
       if (this.isReadySig()) {
-        console.log('✅ Dashboard ready to display');
+        console.log("✅ Dashboard ready to display");
       }
     });
 
     // Log profile changes
     effect(() => {
       const profile = this.profileSig();
-      console.log('📊 Profile updated:', profile);
+      console.log("📊 Profile updated:", profile);
     });
   }
 
   loadData() {
-    this.debugService.logLifecycle('PlayerDashboard', 'loadData started');
+    this.debugService.logLifecycle("PlayerDashboard", "loadData started");
 
     this.isLoadingSig.set(true);
 
     // Measure API call performance
-    this.debugService.measurePerformanceAsync(
-      'Load dashboard data',
-      async () => {
+    this.debugService
+      .measurePerformanceAsync("Load dashboard data", async () => {
         const profile = await this.loadProfile();
         const wellness = await this.loadWellness();
         return { profile, wellness };
-      }
-    ).then(({ profile, wellness }) => {
-      this.profileSig.set(profile);
-      this.wellnessSig.set(wellness);
-      this.isLoadingSig.set(false);
+      })
+      .then(({ profile, wellness }) => {
+        this.profileSig.set(profile);
+        this.wellnessSig.set(wellness);
+        this.isLoadingSig.set(false);
 
-      this.debugService.logLifecycle('PlayerDashboard', 'loadData completed');
-    }).catch(error => {
-      console.error('❌ Failed to load dashboard:', error);
-      this.isLoadingSig.set(false);
-    });
+        this.debugService.logLifecycle("PlayerDashboard", "loadData completed");
+      })
+      .catch((error) => {
+        console.error("❌ Failed to load dashboard:", error);
+        this.isLoadingSig.set(false);
+      });
   }
 }
 ```
@@ -560,23 +577,23 @@ window.angularDebug.setConfig({
   enableEffectLogging: true,
   enableApiLogging: true,
   enablePerformanceLogging: true,
-  logStackTraces: true
-})
+  logStackTraces: true,
+});
 
 // View recent signal changes
-window.angularDebug.getSignalLogs().slice(-10)
+window.angularDebug.getSignalLogs().slice(-10);
 
 // View recent API calls
-window.angularDebug.getApiLogs().slice(-5)
+window.angularDebug.getApiLogs().slice(-5);
 
 // Find slow API calls
-window.angularDebug.getApiLogs().filter(log => log.duration > 1000)
+window.angularDebug.getApiLogs().filter((log) => log.duration > 1000);
 
 // Find failed API calls
-window.angularDebug.getApiLogs().filter(log => log.status >= 400)
+window.angularDebug.getApiLogs().filter((log) => log.status >= 400);
 
 // Clear everything
-window.angularDebug.clearLogs()
+window.angularDebug.clearLogs();
 ```
 
 ---

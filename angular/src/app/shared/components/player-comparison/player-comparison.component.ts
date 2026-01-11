@@ -1,12 +1,12 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    input,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";
@@ -17,34 +17,12 @@ import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { getInitials } from "../../utils/format.utils";
+import { PlayerWithStats } from "../../../core/models/player.models";
 
-export interface PlayerStats {
-  id: string;
-  name: string;
-  position: string;
-  avatarUrl?: string;
-  jerseyNumber?: number;
-  stats: {
-    [key: string]: number | string;
-  };
-  // Common football stats
-  touchdowns?: number;
-  receptions?: number;
-  rushingYards?: number;
-  passingYards?: number;
-  interceptions?: number;
-  tackles?: number;
-  flagPulls?: number;
-  completionRate?: number;
-  // Training stats
-  trainingHours?: number;
-  workoutsCompleted?: number;
-  attendanceRate?: number;
-  // Physical stats
-  speed40yd?: number;
-  verticalJump?: number;
-  agility?: number;
-}
+/**
+ * @deprecated Use PlayerWithStats from core/models/player.models instead
+ */
+export type PlayerStats = PlayerWithStats;
 
 interface StatComparison {
   label: string;

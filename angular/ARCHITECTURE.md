@@ -168,6 +168,7 @@ angular/
 ## 🎯 Debug Service API
 
 ### Signal Tracking
+
 ```typescript
 debugService.trackSignal(
   signal: Signal<T>,
@@ -177,6 +178,7 @@ debugService.trackSignal(
 ```
 
 ### Effect Logging
+
 ```typescript
 debugService.logEffect(
   effectName: string,
@@ -186,6 +188,7 @@ debugService.logEffect(
 ```
 
 ### API Call Logging
+
 ```typescript
 debugService.logApiCall(
   url: string,
@@ -197,6 +200,7 @@ debugService.logApiCall(
 ```
 
 ### Performance Measurement
+
 ```typescript
 debugService.measurePerformance<T>(
   label: string,
@@ -212,6 +216,7 @@ debugService.measurePerformanceAsync<T>(
 ```
 
 ### Lifecycle Logging
+
 ```typescript
 debugService.logLifecycle(
   componentName: string,
@@ -223,33 +228,37 @@ debugService.logLifecycle(
 ## 🌐 Browser Console API
 
 ### View Logs
+
 ```javascript
-window.angularDebug.getSignalLogs()  // All signal updates
-window.angularDebug.getEffectLogs()  // All effect executions
-window.angularDebug.getApiLogs()     // All API calls
+window.angularDebug.getSignalLogs(); // All signal updates
+window.angularDebug.getEffectLogs(); // All effect executions
+window.angularDebug.getApiLogs(); // All API calls
 ```
 
 ### Filter Logs
+
 ```javascript
 // Last 10 signal updates
-window.angularDebug.getSignalLogs().slice(-10)
+window.angularDebug.getSignalLogs().slice(-10);
 
 // Failed API calls
-window.angularDebug.getApiLogs().filter(log => log.status >= 400)
+window.angularDebug.getApiLogs().filter((log) => log.status >= 400);
 
 // Slow API calls (> 1 second)
-window.angularDebug.getApiLogs().filter(log => log.duration > 1000)
+window.angularDebug.getApiLogs().filter((log) => log.duration > 1000);
 ```
 
 ### Clear Logs
+
 ```javascript
-window.angularDebug.clearLogs()
+window.angularDebug.clearLogs();
 ```
 
 ### Configuration
+
 ```javascript
 // View config
-window.angularDebug.getConfig()
+window.angularDebug.getConfig();
 
 // Update config
 window.angularDebug.setConfig({
@@ -257,8 +266,8 @@ window.angularDebug.setConfig({
   enableEffectLogging: true,
   enableApiLogging: true,
   enablePerformanceLogging: true,
-  logStackTraces: false
-})
+  logStackTraces: false,
+});
 ```
 
 ## 🔍 HTTP Interceptor Flow
@@ -298,22 +307,26 @@ HTTP Request
 ## 📊 Console Output Examples
 
 ### Signal Update
+
 ```
 📊 Signal Update [PlayerDashboard] profileSig { name: 'John', age: 30 }
 ```
 
 ### Effect Execution
+
 ```
 ⚡ Effect Executed [PlayerDashboard] syncProfileSettings (12.34ms)
 ```
 
 ### API Call (Success)
+
 ```
 🌐 API Call GET [200]
   { url: "https://api.example.com/profile", duration: "123.45ms" }
 ```
 
 ### API Call (Error)
+
 ```
 ❌ Network Error: Request failed to reach server
 Possible causes:
@@ -323,11 +336,13 @@ Possible causes:
 ```
 
 ### Performance Warning
+
 ```
 ⚠️ Slow API call detected: https://api.example.com/data (2345.67ms)
 ```
 
 ### Performance Measurement
+
 ```
 ⏱️ Performance: Load dashboard data (123.45ms)
 ```
@@ -337,22 +352,22 @@ Possible causes:
 ```
 1. Run setup script
    $ ./setup-devtools.sh
-   
+
 2. Install Angular DevTools extension
    (Chrome, Firefox, or Edge)
-   
+
 3. Start dev server
    $ npm start
-   
+
 4. Open browser
    → http://localhost:4200
-   
+
 5. Open DevTools
    Press F12 or Cmd+Option+I
-   
+
 6. Access debug utilities
    Type: window.angularDebug
-   
+
 7. Start debugging!
    - View signal logs
    - Monitor API calls
@@ -376,34 +391,38 @@ You're now an expert! 🎉
 ## 🔗 Integration Points
 
 ### Component → Debug Service
+
 ```typescript
 class MyComponent {
   private debugService = inject(DebugService);
-  
+
   mySignal = signal(0);
-  
+
   constructor() {
-    this.debugService.trackSignal(this.mySignal, 'mySignal', 'MyComponent');
+    this.debugService.trackSignal(this.mySignal, "mySignal", "MyComponent");
   }
 }
 ```
 
 ### HTTP Service → Debug Interceptor
+
 ```typescript
 // Automatic - no code changes needed
 // All HTTP requests automatically logged
 ```
 
 ### Component → Console Utilities
+
 ```typescript
 // In component or console
-window.angularDebug.getSignalLogs()
-window.angularDebug.getApiLogs()
+window.angularDebug.getSignalLogs();
+window.angularDebug.getApiLogs();
 ```
 
 ---
 
 **Architecture designed for:**
+
 - ✅ Zero production impact (tree-shaken)
 - ✅ Minimal development overhead
 - ✅ Easy to use

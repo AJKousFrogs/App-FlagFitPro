@@ -3,6 +3,7 @@
 ## Quick Setup (1 minute)
 
 ### Enable Chrome DevTools Overlays
+
 1. Open Chrome DevTools (`F12` or `Cmd+Option+I`)
 2. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
 3. Type and enable:
@@ -17,6 +18,7 @@
 ### 1. Settings Page (`/settings`)
 
 #### Settings Navigation Cards
+
 - [ ] Hover over "Account" card → **Should**: Smooth color change, no green flash cascade, no layout shift
 - [ ] Hover over "Notifications" card → **Should**: Same as above
 - [ ] Hover over "Privacy & Security" card → **Should**: Same as above
@@ -27,6 +29,7 @@
 ---
 
 #### Theme Selector (Preferences Section)
+
 - [ ] Hover over "Light" button → **Should**: Border color changes smoothly, no size change
 - [ ] Hover over "Dark" button → **Should**: Same as above
 - [ ] Hover over "Auto (System)" button → **Should**: Same as above
@@ -37,6 +40,7 @@
 ---
 
 #### Notification Settings
+
 - [ ] Hover over "Email Notifications" row → **Should**: Background lightens smoothly
 - [ ] Hover over "Push Notifications" row → **Should**: Same as above
 - [ ] Hover over "Training Reminders" row → **Should**: Same as above
@@ -47,6 +51,7 @@
 ---
 
 #### Security Section
+
 - [ ] Hover over "Change Password" row → **Should**: Background changes, button stays same size
 - [ ] Hover over "Enable/Disable 2FA" row → **Should**: Same as above
 - [ ] Hover over "View Sessions" row → **Should**: Same as above
@@ -59,6 +64,7 @@
 ### 2. Player Dashboard (`/dashboard`)
 
 #### Metric Cards
+
 - [ ] Hover over any metric card → **Should**: Subtle lift, no excessive paint flashing
 - [ ] Check "Sharing: 0/6 metrics" card → **Should**: Badge stays aligned, no shift
 
@@ -69,6 +75,7 @@
 ### 3. Tooltips (App-wide)
 
 #### Settings Tooltips
+
 - [ ] Hover over any info icon with tooltip → **Should**: Max-width 280px, text wraps properly
 - [ ] Check tooltip padding → **Should**: Consistent padding (8px vertical, 12px horizontal)
 - [ ] Check tooltip readability → **Should**: Line-height 1.5, clear text
@@ -82,16 +89,19 @@
 ### What to Look For
 
 #### Paint Flashing (Green Overlay)
+
 ✅ **Good**: Only the hovered element flashes green  
 ❌ **Bad**: Multiple elements flash, cascading to parent/siblings  
 ❌ **Bad**: Entire screen flashes on small interactions
 
 #### Layout Shift Regions (Blue/Purple Overlay)
+
 ✅ **Good**: No overlay appears on hover  
 ❌ **Bad**: Blue/purple regions appear when hovering  
 ❌ **Bad**: Text or buttons shift position
 
 #### Button Consistency
+
 ✅ **Good**: All buttons same height in a row  
 ✅ **Good**: Buttons don't grow/shrink on hover  
 ✅ **Good**: Text stays vertically centered  
@@ -100,6 +110,7 @@
 ❌ **Bad**: Text shifts up/down
 
 #### Text Alignment
+
 ✅ **Good**: Labels and descriptions align consistently  
 ✅ **Good**: Icons align with first line of text  
 ✅ **Good**: Text doesn't shift when hovering nearby elements  
@@ -110,16 +121,16 @@
 
 ## Issues Fixed (Verify These)
 
-| Issue | Location | Verification |
-|-------|----------|-------------|
-| Settings nav hover jitter | Settings page → Navigation cards | No layout shift, only color change |
-| Theme selector border jump | Settings → Preferences → Theme buttons | Border stays 2px, only color changes |
-| Notification row transitions | Settings → Notifications → Any row | Smooth background transition |
-| Security row transitions | Settings → Security → Any action row | Smooth background transition |
-| Button baseline alignment | All buttons across app | Same height, vertically centered text |
-| Text baseline misalignment | Notification/security rows | Text doesn't shift between rows |
-| Tooltip inconsistency | Hover any info icon | Max-width 280px, proper padding, text wraps |
-| Non-standard spacing | Check for 15px/18px/25px/30px values | Should use 8-point grid (8/16/24/32px) |
+| Issue                        | Location                               | Verification                                |
+| ---------------------------- | -------------------------------------- | ------------------------------------------- |
+| Settings nav hover jitter    | Settings page → Navigation cards       | No layout shift, only color change          |
+| Theme selector border jump   | Settings → Preferences → Theme buttons | Border stays 2px, only color changes        |
+| Notification row transitions | Settings → Notifications → Any row     | Smooth background transition                |
+| Security row transitions     | Settings → Security → Any action row   | Smooth background transition                |
+| Button baseline alignment    | All buttons across app                 | Same height, vertically centered text       |
+| Text baseline misalignment   | Notification/security rows             | Text doesn't shift between rows             |
+| Tooltip inconsistency        | Hover any info icon                    | Max-width 280px, proper padding, text wraps |
+| Non-standard spacing         | Check for 15px/18px/25px/30px values   | Should use 8-point grid (8/16/24/32px)      |
 
 ---
 
@@ -159,6 +170,7 @@ Test on actual devices or Chrome DevTools device emulation:
 - Samsung S25 Ultra (430x934)
 
 **Check**:
+
 - [ ] Buttons maintain consistent height on mobile
 - [ ] Touch feedback works (active state on tap)
 - [ ] No layout shifts on touch interactions
@@ -203,23 +215,23 @@ If any of the following occur:
 
 ### Settings Navigation Cards
 - Status: [ ] Pass / [ ] Fail
-- Notes: 
+- Notes:
 
 ### Theme Selector
 - Status: [ ] Pass / [ ] Fail
-- Notes: 
+- Notes:
 
 ### Notification Rows
 - Status: [ ] Pass / [ ] Fail
-- Notes: 
+- Notes:
 
 ### Security Rows
 - Status: [ ] Pass / [ ] Fail
-- Notes: 
+- Notes:
 
 ### Tooltips
 - Status: [ ] Pass / [ ] Fail
-- Notes: 
+- Notes:
 
 ### Overall Result
 - Status: [ ] PASS / [ ] FAIL
@@ -231,12 +243,14 @@ If any of the following occur:
 ## Next Actions
 
 ### If Tests Pass ✅
+
 1. Commit changes with message: `fix(ui): eliminate hover jitter and layout shifts`
 2. Create PR with link to `docs/UI_CONSISTENCY_FIXES.md`
 3. Deploy to staging for QA review
 4. Monitor for any regressions
 
 ### If Tests Fail ❌
+
 1. Document which specific test failed
 2. Capture screenshot/video showing the issue
 3. Check browser console for errors

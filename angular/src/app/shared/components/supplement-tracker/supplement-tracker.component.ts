@@ -13,12 +13,12 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CheckboxModule } from "primeng/checkbox";
@@ -245,21 +245,23 @@ export class SupplementTrackerComponent implements OnInit {
     return Math.round((this.takenCount() / total) * 100);
   });
 
-  // Group by timing
-  morningSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "morning"),
-  );
-  preWorkoutSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "pre-workout"),
-  );
-  postWorkoutSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "post-workout"),
-  );
-  eveningSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "evening"),
-  );
-  anytimeSupplements = computed(() =>
-    this.supplements().filter((s) => s.timing === "anytime"),
+  // Timing group configuration for template
+  readonly timingGroupsConfig = [
+    { key: "morning", label: "Morning", icon: "pi-sun" },
+    { key: "pre-workout", label: "Pre-Workout", icon: "pi-bolt" },
+    { key: "post-workout", label: "Post-Workout", icon: "pi-heart" },
+    { key: "evening", label: "Evening", icon: "pi-moon" },
+    { key: "anytime", label: "Anytime", icon: "pi-clock" },
+  ] as const;
+
+  // Group supplements by timing - single computed for all groups
+  timingGroups = computed(() =>
+    this.timingGroupsConfig
+      .map((config) => ({
+        ...config,
+        supplements: this.supplements().filter((s) => s.timing === config.key),
+      }))
+      .filter((group) => group.supplements.length > 0),
   );
 
   ngOnInit(): void {

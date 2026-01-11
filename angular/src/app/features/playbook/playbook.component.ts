@@ -725,9 +725,7 @@ export class PlaybookComponent implements OnInit {
     // Record user answer
     this.quizQuestions.update((questions) =>
       questions.map((q, i) =>
-        i === this.currentQuestionIndex()
-          ? { ...q, userAnswer: answer }
-          : q,
+        i === this.currentQuestionIndex() ? { ...q, userAnswer: answer } : q,
       ),
     );
 

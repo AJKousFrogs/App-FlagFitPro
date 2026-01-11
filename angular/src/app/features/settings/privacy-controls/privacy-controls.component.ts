@@ -1,10 +1,10 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AccordionModule } from "primeng/accordion";
@@ -23,10 +23,10 @@ import { AccountDeletionService } from "../../../core/services/account-deletion.
 import { AuthService } from "../../../core/services/auth.service";
 import { DataExportService } from "../../../core/services/data-export.service";
 import {
-    EmergencyContact,
-    EmergencySharingLevel,
-    METRIC_CATEGORIES,
-    PrivacySettingsService,
+  EmergencyContact,
+  EmergencySharingLevel,
+  METRIC_CATEGORIES,
+  PrivacySettingsService,
 } from "../../../core/services/privacy-settings.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
@@ -336,7 +336,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select level"
-                          (ngModelChange)="onEmergencyLevelChange($event)"
+                    (ngModelChange)="onEmergencyLevelChange($event)"
                   ></p-select>
                 </div>
               </div>

@@ -1,12 +1,12 @@
 /**
  * Platform Detection Service
- * 
+ *
  * Detects iOS, Android, and other platforms for platform-specific styling and behavior.
  * Automatically adds platform classes to components via host bindings.
  */
 
-import { isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from "@angular/common";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 
 export interface PlatformInfo {
   isIOS: boolean;
@@ -20,7 +20,7 @@ export interface PlatformInfo {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class PlatformDetectionService {
   private platformId = inject(PLATFORM_ID);
@@ -38,11 +38,11 @@ export class PlatformDetectionService {
    */
   private detectPlatform(): void {
     const ua = navigator.userAgent.toLowerCase();
-    const platform = navigator.platform?.toLowerCase() || '';
+    const platform = navigator.platform?.toLowerCase() || "";
 
     this.platformInfo = {
       isIOS: this.detectIOS(ua, platform),
-      isAndroid: ua.includes('android'),
+      isAndroid: ua.includes("android"),
       isMobile: /mobile|android|iphone|ipod/i.test(ua),
       isTablet: /ipad|android(?!.*mobile)/i.test(ua),
       isSafari: /safari/i.test(ua) && !/chrome/i.test(ua),
@@ -51,7 +51,7 @@ export class PlatformDetectionService {
       browserVersion: this.extractBrowserVersion(ua),
     };
 
-    console.log('🔍 [PlatformDetection] Platform detected:', this.platformInfo);
+    console.log("🔍 [PlatformDetection] Platform detected:", this.platformInfo);
   }
 
   /**
@@ -60,11 +60,9 @@ export class PlatformDetectionService {
   private detectIOS(ua: string, platform: string): boolean {
     // Standard iOS detection
     const isIOSUA = /iphone|ipad|ipod/.test(ua);
-    
+
     // iPad on iOS 13+ detection (reports as Mac)
-    const isIPadOS = 
-      platform.includes('mac') && 
-      navigator.maxTouchPoints > 1;
+    const isIPadOS = platform.includes("mac") && navigator.maxTouchPoints > 1;
 
     return isIOSUA || isIPadOS;
   }
@@ -76,7 +74,7 @@ export class PlatformDetectionService {
     // iOS version (e.g., "OS 17_2_1")
     const iosMatch = ua.match(/os (\d+)[._](\d+)(?:[._](\d+))?/i);
     if (iosMatch) {
-      return `iOS ${iosMatch[1]}.${iosMatch[2]}${iosMatch[3] ? '.' + iosMatch[3] : ''}`;
+      return `iOS ${iosMatch[1]}.${iosMatch[2]}${iosMatch[3] ? "." + iosMatch[3] : ""}`;
     }
 
     // Android version
@@ -116,53 +114,61 @@ export class PlatformDetectionService {
     const classes: string[] = [];
 
     if (this.platformInfo.isIOS) {
-      classes.push('platform-ios');
-      console.log('📱 [PlatformDetection] iOS detected, adding .platform-ios class');
+      classes.push("platform-ios");
+      console.log(
+        "📱 [PlatformDetection] iOS detected, adding .platform-ios class",
+      );
     }
 
     if (this.platformInfo.isAndroid) {
-      classes.push('platform-android');
-      console.log('🤖 [PlatformDetection] Android detected, adding .platform-android class');
+      classes.push("platform-android");
+      console.log(
+        "🤖 [PlatformDetection] Android detected, adding .platform-android class",
+      );
     }
 
     if (this.platformInfo.isMobile) {
-      classes.push('platform-mobile');
+      classes.push("platform-mobile");
     }
 
     if (this.platformInfo.isTablet) {
-      classes.push('platform-tablet');
+      classes.push("platform-tablet");
     }
 
     if (this.platformInfo.isSafari) {
-      classes.push('browser-safari');
-      console.log('🧭 [PlatformDetection] Safari detected, adding .browser-safari class');
+      classes.push("browser-safari");
+      console.log(
+        "🧭 [PlatformDetection] Safari detected, adding .browser-safari class",
+      );
     }
 
     if (this.platformInfo.isChrome) {
-      classes.push('browser-chrome');
+      classes.push("browser-chrome");
     }
 
     // Add classes to body
     document.body.classList.add(...classes);
 
     // Log for debugging
-    console.log('🎨 [PlatformDetection] Platform classes added:', classes);
+    console.log("🎨 [PlatformDetection] Platform classes added:", classes);
   }
 
   /**
    * Get platform info
    */
   getPlatformInfo(): PlatformInfo {
-    return this.platformInfo || {
-      isIOS: false,
-      isAndroid: false,
-      isMobile: false,
-      isTablet: false,
-      isSafari: false,
-      isChrome: false,
-      osVersion: null,
-      browserVersion: null,
-    };
+    return (
+      this.platformInfo || {
+        isIOS: false,
+        isAndroid: false,
+        isMobile: false,
+        isTablet: false,
+        isSafari: false,
+        isChrome: false,
+        osVersion: null,
+        browserVersion: null,
+      }
+    );
   }
 
   /**
@@ -214,12 +220,12 @@ export class PlatformDetectionService {
     if (!this.platformInfo) return {};
 
     return {
-      'platform-ios': this.platformInfo.isIOS,
-      'platform-android': this.platformInfo.isAndroid,
-      'platform-mobile': this.platformInfo.isMobile,
-      'platform-tablet': this.platformInfo.isTablet,
-      'browser-safari': this.platformInfo.isSafari,
-      'browser-chrome': this.platformInfo.isChrome,
+      "platform-ios": this.platformInfo.isIOS,
+      "platform-android": this.platformInfo.isAndroid,
+      "platform-mobile": this.platformInfo.isMobile,
+      "platform-tablet": this.platformInfo.isTablet,
+      "browser-safari": this.platformInfo.isSafari,
+      "browser-chrome": this.platformInfo.isChrome,
     };
   }
 }

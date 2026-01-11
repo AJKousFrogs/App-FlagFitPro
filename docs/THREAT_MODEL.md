@@ -558,13 +558,13 @@ Developer → Code change → Bypasses consent → Data exposure
 
 ## Related Documentation
 
-| Document                                                     | Purpose                      |
-| ------------------------------------------------------------ | ---------------------------- |
-| [Security Guide](./SECURITY.md)                              | Security architecture        |
-| [RLS Policy Specification](./RLS_POLICY_SPECIFICATION.md)    | Consent enforcement patterns |
-| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md)   | Incident response            |
-| [Data Safety Policy](./DATA_SAFETY_POLICY.md)                | Data handling rules          |
-| [Adding New Features Safely](./ADDING_NEW_FEATURES_SAFELY.md)| Safe extension playbook      |
+| Document                                                      | Purpose                      |
+| ------------------------------------------------------------- | ---------------------------- |
+| [Security Guide](./SECURITY.md)                               | Security architecture        |
+| [RLS Policy Specification](./RLS_POLICY_SPECIFICATION.md)     | Consent enforcement patterns |
+| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md)    | Incident response            |
+| [Data Safety Policy](./DATA_SAFETY_POLICY.md)                 | Data handling rules          |
+| [Adding New Features Safely](./ADDING_NEW_FEATURES_SAFELY.md) | Safe extension playbook      |
 
 ---
 

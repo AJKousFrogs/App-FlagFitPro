@@ -35,26 +35,26 @@ export { ControlRowComponent } from "./control-row/control-row.component";
 export { AvatarComponent } from "./avatar/avatar.component";
 export { BadgeComponent } from "./badge/badge.component";
 export {
-    QuickStatsBarComponent,
-    type QuickStat
+  QuickStatsBarComponent,
+  type QuickStat,
 } from "./quick-stats-bar/quick-stats-bar.component";
 export { SkeletonComponent } from "./skeleton/skeleton.component";
 export {
-    StatsGridComponent,
-    type StatItem
+  StatsGridComponent,
+  type StatItem,
 } from "./stats-grid/stats-grid.component";
 export {
-    TrendCardComponent,
-    type TrendData
+  TrendCardComponent,
+  type TrendData,
 } from "./trend-card/trend-card.component";
 
 // ============================================================================
 // WELLNESS & HEALTH COMPONENTS (Single Source of Truth)
 // ============================================================================
 export {
-    WellnessScoreDisplayComponent,
-    type WellnessDisplayVariant,
-    type WellnessMetric
+  WellnessScoreDisplayComponent,
+  type WellnessDisplayVariant,
+  type WellnessMetric,
 } from "./wellness-score-display/wellness-score-display.component";
 
 // ============================================================================
@@ -62,31 +62,33 @@ export {
 // ============================================================================
 export { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
 export {
-    MetricRingComponent,
-    type MetricRingThresholds
+  MetricRingComponent,
+  type MetricRingThresholds,
 } from "./metric-ring/metric-ring.component";
 
 // ============================================================================
 // STATUS & INDICATOR COMPONENTS
 // ============================================================================
 export {
-    PulseIndicatorComponent,
-    type PulseStatus
+  PulseIndicatorComponent,
+  type PulseStatus,
 } from "./pulse-indicator/pulse-indicator.component";
 export {
-    StatusTagComponent,
-    type StatusTagSeverity
+  StatusTagComponent,
+  type StatusTagSeverity,
 } from "./status-tag/status-tag.component";
 export {
-    StatusTimelineComponent,
-    type TimelineItem
+  StatusTimelineComponent,
+  type TimelineItem,
 } from "./status-timeline/status-timeline.component";
 
 // ============================================================================
 // GAMIFICATION COMPONENTS
 // ============================================================================
 export {
-    AchievementBadgeComponent, type BadgeRarity, type BadgeTier
+  AchievementBadgeComponent,
+  type BadgeRarity,
+  type BadgeTier,
 } from "./achievement-badge/achievement-badge.component";
 
 // ============================================================================
@@ -132,8 +134,8 @@ export { TournamentModeWidgetComponent } from "./tournament-mode-widget/tourname
 // ANALYTICS & INSIGHTS COMPONENTS
 // ============================================================================
 export {
-    ActionableInsightsComponent,
-    type Insight
+  ActionableInsightsComponent,
+  type Insight,
 } from "./actionable-insights/actionable-insights.component";
 
 // ============================================================================
@@ -145,8 +147,8 @@ export { TeamWellnessOverviewComponent } from "./team-wellness-overview/team-wel
 // CONNECTIVITY COMPONENTS
 // ============================================================================
 export {
-    OfflineBadgeComponent,
-    type OfflineCapability
+  OfflineBadgeComponent,
+  type OfflineCapability,
 } from "./offline-badge/offline-badge.component";
 
 // ============================================================================
@@ -158,9 +160,9 @@ export { KeyboardShortcutsModalComponent } from "./keyboard-shortcuts-modal/keyb
 // SUCCESS & FEEDBACK COMPONENTS
 // ============================================================================
 export {
-    SuccessCheckmarkComponent,
-    type SuccessSize,
-    type SuccessVariant
+  SuccessCheckmarkComponent,
+  type SuccessSize,
+  type SuccessVariant,
 } from "./success-checkmark/success-checkmark.component";
 
 // ============================================================================
@@ -170,8 +172,7 @@ export { EmptyStateComponent as EmptyStateV2Component } from "./empty-state-v2/e
 export { EmptyStateComponent } from "./empty-state/empty-state.component";
 export { AppLoadingComponent } from "./loading/loading.component";
 export {
-    SkeletonLoaderComponent,
-    SkeletonRepeatComponent,
-    type SkeletonVariant
+  SkeletonLoaderComponent,
+  SkeletonRepeatComponent,
+  type SkeletonVariant,
 } from "./skeleton-loader/skeleton-loader.component";
-

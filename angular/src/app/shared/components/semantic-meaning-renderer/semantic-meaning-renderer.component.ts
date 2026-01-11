@@ -145,8 +145,10 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
       }
 
       // Create component instance
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      this.componentRef = this.renderTarget.createComponent(componentClass as any);
+       
+      this.componentRef = this.renderTarget.createComponent(
+        componentClass as any,
+      );
 
       // Set component inputs using setInput() for signal input compatibility
       Object.keys(decision.props).forEach((key) => {

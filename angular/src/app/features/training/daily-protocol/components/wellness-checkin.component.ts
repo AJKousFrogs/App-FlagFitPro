@@ -495,7 +495,7 @@ export class WellnessCheckinComponent implements OnInit {
 
       if (response?.success && response.data) {
         this.wellnessData.set(response.data as WellnessData);
-        this.formData.set({ ...response.data as WellnessData });
+        this.formData.set({ ...(response.data as WellnessData) });
       }
     } catch (_err) {
       // No existing checkin - that's ok

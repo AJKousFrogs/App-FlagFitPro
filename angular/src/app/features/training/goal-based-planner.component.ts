@@ -50,237 +50,264 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
         </app-page-header>
 
         <div class="goal-planner-content">
-
-      <!-- Goal Selection -->
-      <div class="goal-selection mb-6 p-4 bg-surface-secondary rounded-lg">
-        <label class="block text-sm font-semibold text-text-primary mb-3"
-          >Select Training Goal</label
-        >
-        <p-select
-          [(ngModel)]="selectedGoal"
-          [options]="goalOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Choose your primary goal"
-          class="w-full"
-          (onValueChange)="onGoalChange()"
-        >
-        </p-select>
-        <p class="text-xs text-text-secondary mt-2">
-          The plan will auto-adjust based on your ACWR and readiness scores
-        </p>
-      </div>
-
-      <!-- Current Status -->
-      @if (selectedGoal()) {
-        <div class="status-section mb-6 p-4 bg-surface-secondary rounded-lg">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="stat-item">
-              <div class="stat-label text-xs text-text-secondary">
-                Current ACWR
-              </div>
-              <div
-                class="stat-value text-lg font-bold"
-                [class]="getACWRColorClass()"
-              >
-                {{ currentACWR() | number: "1.2-2" }}
-              </div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label text-xs text-text-secondary">
-                Readiness
-              </div>
-              <div class="stat-value text-lg font-bold">
-                <p-tag
-                  [severity]="getReadinessSeverity()"
-                  [value]="readinessLevel() | titlecase"
-                ></p-tag>
-              </div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label text-xs text-text-secondary">
-                Progression Rule
-              </div>
-              <div class="stat-value text-sm font-semibold">
-                {{ getProgressionRule() }}
-              </div>
-            </div>
+          <!-- Goal Selection -->
+          <div class="goal-selection mb-6 p-4 bg-surface-secondary rounded-lg">
+            <label class="block text-sm font-semibold text-text-primary mb-3"
+              >Select Training Goal</label
+            >
+            <p-select
+              [(ngModel)]="selectedGoal"
+              [options]="goalOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Choose your primary goal"
+              class="w-full"
+              (onValueChange)="onGoalChange()"
+            >
+            </p-select>
+            <p class="text-xs text-text-secondary mt-2">
+              The plan will auto-adjust based on your ACWR and readiness scores
+            </p>
           </div>
-          <app-traffic-light-risk
-            [riskZone]="currentRiskZone()"
-            [acwrValue]="currentACWR()"
-          >
-          </app-traffic-light-risk>
-        </div>
 
-        <!-- Weekly Plan -->
-        @if (weeklyPlan()) {
-          <div class="weekly-plan-section">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xl font-semibold text-text-primary">
-                Weekly Training Plan - {{ getGoalLabel() }}
-              </h3>
-              <p-tag
-                [value]="weeklyPlan()?.phase || '' | titlecase"
-                severity="info"
-              ></p-tag>
-            </div>
-
-            <div class="sessions-grid grid grid-cols-1 md:grid-cols-7 gap-4">
-              @for (session of weeklyPlan()?.sessions; track session.day) {
-                <div
-                  class="session-card p-4 rounded-lg border-2 bg-white"
-                  [class]="getSessionCardClass(session)"
-                >
-                  <div class="session-header mb-3">
-                    <div class="day-name font-bold text-lg">
-                      {{ getDayName(session.day) }}
-                    </div>
-                    <p-tag
-                      [value]="session.sessionType | titlecase"
-                      [severity]="getSessionTypeSeverity(session.sessionType)"
-                    ></p-tag>
-                  </div>
-
-                  <div class="session-details">
-                    <div class="focus-area mb-2">
-                      <div class="text-xs text-text-secondary mb-1">Focus</div>
-                      <div class="text-sm font-semibold">
-                        {{ session.focus.join(", ") }}
-                      </div>
-                    </div>
-
-                    <div class="exercises mb-2">
-                      <div class="text-xs text-text-secondary mb-1">
-                        Exercises
-                      </div>
-                      <ul class="text-xs list-disc list-inside">
-                        @for (
-                          exercise of session.exercises.slice(0, 3);
-                          track exercise
-                        ) {
-                          <li>{{ exercise }}</li>
-                        }
-                        @if (session.exercises.length > 3) {
-                          <li class="text-text-secondary">
-                            +{{ session.exercises.length - 3 }} more
-                          </li>
-                        }
-                      </ul>
-                    </div>
-
-                    <div
-                      class="session-metrics grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-200"
-                    >
-                      <div>
-                        <div class="text-xs text-text-secondary">Duration</div>
-                        <div class="font-semibold">
-                          {{ session.duration }} min
-                        </div>
-                      </div>
-                      <div>
-                        <div class="text-xs text-text-secondary">Intensity</div>
-                        <div
-                          class="font-semibold"
-                          [class]="
-                            'text-' + getIntensityColor(session.intensity)
-                          "
-                        >
-                          {{ session.intensity | titlecase }}
-                        </div>
-                      </div>
-                      <div>
-                        <div class="text-xs text-text-secondary">Volume</div>
-                        <div class="font-semibold">{{ session.volume }}</div>
-                      </div>
-                      <div>
-                        <div class="text-xs text-text-secondary">Rest</div>
-                        <div class="font-semibold text-xs">
-                          {{ session.restPeriods }}
-                        </div>
-                      </div>
-                    </div>
-
-                    @if (session.notes) {
-                      <div class="notes mt-2 pt-2 border-t border-gray-100">
-                        <div class="text-xs text-text-secondary italic">
-                          {{ session.notes }}
-                        </div>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-
-            <!-- Plan Summary -->
-            <div class="plan-summary mt-6 p-4 bg-surface-secondary rounded-lg">
-              <h4 class="font-semibold text-text-primary mb-3">Plan Summary</h4>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <div class="text-xs text-text-secondary">Total Volume</div>
-                  <div class="text-lg font-bold">
-                    {{ weeklyPlan()?.totalVolume }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-xs text-text-secondary">Training Days</div>
-                  <div class="text-lg font-bold">{{ getTrainingDays() }}</div>
-                </div>
-                <div>
-                  <div class="text-xs text-text-secondary">ACWR Target</div>
-                  <div class="text-lg font-bold">
-                    {{
-                      weeklyPlan()?.progressionRules?.acwrThreshold
-                        | number: "1.2-2"
-                    }}
-                  </div>
-                </div>
-                <div>
-                  <div class="text-xs text-text-secondary">
-                    Volume Adjustment
+          <!-- Current Status -->
+          @if (selectedGoal()) {
+            <div
+              class="status-section mb-6 p-4 bg-surface-secondary rounded-lg"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="stat-item">
+                  <div class="stat-label text-xs text-text-secondary">
+                    Current ACWR
                   </div>
                   <div
-                    class="text-lg font-bold"
-                    [class]="
-                      (weeklyPlan()?.progressionRules?.volumeAdjustment ?? 0) >
-                      0
-                        ? 'text-green-600'
-                        : 'text-red-600'
-                    "
+                    class="stat-value text-lg font-bold"
+                    [class]="getACWRColorClass()"
                   >
-                    {{
-                      (weeklyPlan()?.progressionRules?.volumeAdjustment ?? 0) >
-                      0
-                        ? "+"
-                        : ""
-                    }}{{ weeklyPlan()?.progressionRules?.volumeAdjustment }}%
+                    {{ currentACWR() | number: "1.2-2" }}
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label text-xs text-text-secondary">
+                    Readiness
+                  </div>
+                  <div class="stat-value text-lg font-bold">
+                    <p-tag
+                      [severity]="getReadinessSeverity()"
+                      [value]="readinessLevel() | titlecase"
+                    ></p-tag>
+                  </div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label text-xs text-text-secondary">
+                    Progression Rule
+                  </div>
+                  <div class="stat-value text-sm font-semibold">
+                    {{ getProgressionRule() }}
                   </div>
                 </div>
               </div>
+              <app-traffic-light-risk
+                [riskZone]="currentRiskZone()"
+                [acwrValue]="currentACWR()"
+              >
+              </app-traffic-light-risk>
             </div>
-          </div>
-        }
-      }
 
-      <!-- Generate Button -->
-      @if (selectedGoal()) {
-        <div class="actions mt-6 flex justify-end gap-3">
-          <app-button
-            variant="outlined"
-            iconLeft="pi-save"
-            [loading]="saving()"
-            (clicked)="savePlan()"
-            >Save to Schedule</app-button
-          >
-          <app-button
-            iconLeft="pi-calculator"
-            [loading]="loading()"
-            (clicked)="generatePlan()"
-            >Generate Plan</app-button
-          >
-        </div>
-      }
+            <!-- Weekly Plan -->
+            @if (weeklyPlan()) {
+              <div class="weekly-plan-section">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-xl font-semibold text-text-primary">
+                    Weekly Training Plan - {{ getGoalLabel() }}
+                  </h3>
+                  <p-tag
+                    [value]="weeklyPlan()?.phase || '' | titlecase"
+                    severity="info"
+                  ></p-tag>
+                </div>
+
+                <div
+                  class="sessions-grid grid grid-cols-1 md:grid-cols-7 gap-4"
+                >
+                  @for (session of weeklyPlan()?.sessions; track session.day) {
+                    <div
+                      class="session-card p-4 rounded-lg border-2 bg-white"
+                      [class]="getSessionCardClass(session)"
+                    >
+                      <div class="session-header mb-3">
+                        <div class="day-name font-bold text-lg">
+                          {{ getDayName(session.day) }}
+                        </div>
+                        <p-tag
+                          [value]="session.sessionType | titlecase"
+                          [severity]="
+                            getSessionTypeSeverity(session.sessionType)
+                          "
+                        ></p-tag>
+                      </div>
+
+                      <div class="session-details">
+                        <div class="focus-area mb-2">
+                          <div class="text-xs text-text-secondary mb-1">
+                            Focus
+                          </div>
+                          <div class="text-sm font-semibold">
+                            {{ session.focus.join(", ") }}
+                          </div>
+                        </div>
+
+                        <div class="exercises mb-2">
+                          <div class="text-xs text-text-secondary mb-1">
+                            Exercises
+                          </div>
+                          <ul class="text-xs list-disc list-inside">
+                            @for (
+                              exercise of session.exercises.slice(0, 3);
+                              track exercise
+                            ) {
+                              <li>{{ exercise }}</li>
+                            }
+                            @if (session.exercises.length > 3) {
+                              <li class="text-text-secondary">
+                                +{{ session.exercises.length - 3 }} more
+                              </li>
+                            }
+                          </ul>
+                        </div>
+
+                        <div
+                          class="session-metrics grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-gray-200"
+                        >
+                          <div>
+                            <div class="text-xs text-text-secondary">
+                              Duration
+                            </div>
+                            <div class="font-semibold">
+                              {{ session.duration }} min
+                            </div>
+                          </div>
+                          <div>
+                            <div class="text-xs text-text-secondary">
+                              Intensity
+                            </div>
+                            <div
+                              class="font-semibold"
+                              [class]="
+                                'text-' + getIntensityColor(session.intensity)
+                              "
+                            >
+                              {{ session.intensity | titlecase }}
+                            </div>
+                          </div>
+                          <div>
+                            <div class="text-xs text-text-secondary">
+                              Volume
+                            </div>
+                            <div class="font-semibold">
+                              {{ session.volume }}
+                            </div>
+                          </div>
+                          <div>
+                            <div class="text-xs text-text-secondary">Rest</div>
+                            <div class="font-semibold text-xs">
+                              {{ session.restPeriods }}
+                            </div>
+                          </div>
+                        </div>
+
+                        @if (session.notes) {
+                          <div class="notes mt-2 pt-2 border-t border-gray-100">
+                            <div class="text-xs text-text-secondary italic">
+                              {{ session.notes }}
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                <!-- Plan Summary -->
+                <div
+                  class="plan-summary mt-6 p-4 bg-surface-secondary rounded-lg"
+                >
+                  <h4 class="font-semibold text-text-primary mb-3">
+                    Plan Summary
+                  </h4>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <div class="text-xs text-text-secondary">
+                        Total Volume
+                      </div>
+                      <div class="text-lg font-bold">
+                        {{ weeklyPlan()?.totalVolume }}
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-xs text-text-secondary">
+                        Training Days
+                      </div>
+                      <div class="text-lg font-bold">
+                        {{ getTrainingDays() }}
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-xs text-text-secondary">ACWR Target</div>
+                      <div class="text-lg font-bold">
+                        {{
+                          weeklyPlan()?.progressionRules?.acwrThreshold
+                            | number: "1.2-2"
+                        }}
+                      </div>
+                    </div>
+                    <div>
+                      <div class="text-xs text-text-secondary">
+                        Volume Adjustment
+                      </div>
+                      <div
+                        class="text-lg font-bold"
+                        [class]="
+                          (weeklyPlan()?.progressionRules?.volumeAdjustment ??
+                            0) > 0
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        "
+                      >
+                        {{
+                          (weeklyPlan()?.progressionRules?.volumeAdjustment ??
+                            0) > 0
+                            ? "+"
+                            : ""
+                        }}{{
+                          weeklyPlan()?.progressionRules?.volumeAdjustment
+                        }}%
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+
+          <!-- Generate Button -->
+          @if (selectedGoal()) {
+            <div class="actions mt-6 flex justify-end gap-3">
+              <app-button
+                variant="outlined"
+                iconLeft="pi-save"
+                [loading]="saving()"
+                (clicked)="savePlan()"
+                >Save to Schedule</app-button
+              >
+              <app-button
+                iconLeft="pi-calculator"
+                [loading]="loading()"
+                (clicked)="generatePlan()"
+                >Generate Plan</app-button
+              >
+            </div>
+          }
         </div>
       </div>
     </app-main-layout>

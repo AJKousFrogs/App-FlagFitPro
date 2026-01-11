@@ -235,7 +235,8 @@ router.get("/sessions", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     let query = supabase
       .from("training_sessions")
-      .select(`
+      .select(
+        `
         id,
         user_id,
         session_date,
@@ -245,7 +246,8 @@ router.get("/sessions", rateLimit("READ"), optionalAuth, async (req, res) => {
         status,
         notes,
         created_at
-      `)
+      `,
+      )
       .order("session_date", { ascending: false })
       .limit(limit);
 

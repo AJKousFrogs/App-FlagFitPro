@@ -33,8 +33,10 @@ const logError = (message, error) => {
  * This allows team-scoped posts visibility
  */
 async function getUserTeams(userId) {
-  if (!supabase) {return [];}
-  
+  if (!supabase) {
+    return [];
+  }
+
   const { data: teams } = await supabase
     .from("team_members")
     .select("team_id")
@@ -51,7 +53,7 @@ async function getUserTeams(userId) {
 async function getCommunityFeed(req, res) {
   try {
     logRequest(req, "GET /api/community?feed=true");
-    const {userId} = req;
+    const { userId } = req;
     const limit = parseInt(req.query.limit) || 20;
     const offset = parseInt(req.query.offset) || 0;
 
@@ -95,7 +97,9 @@ async function getCommunityFeed(req, res) {
 
     const { data: posts, error } = await query;
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     // Check if current user liked each post
     const postsWithLikes = await Promise.all(
@@ -152,7 +156,7 @@ async function getCommunityFeed(req, res) {
 async function createCommunityPost(req, res) {
   try {
     logRequest(req, "POST /api/community");
-    const {userId} = req;
+    const { userId } = req;
     const { content, location, media_url, media_type, post_type } = req.body;
 
     if (!supabase) {
@@ -198,7 +202,9 @@ async function createCommunityPost(req, res) {
       )
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     res.json({
       success: true,
@@ -225,8 +231,8 @@ async function createCommunityPost(req, res) {
 async function togglePostLike(req, res) {
   try {
     logRequest(req, "POST /api/community?like=true");
-    const {userId} = req;
-    const {postId} = req.query;
+    const { userId } = req;
+    const { postId } = req.query;
 
     if (!supabase || !postId) {
       return res.json({
@@ -245,10 +251,7 @@ async function togglePostLike(req, res) {
 
     if (existingLike) {
       // Unlike
-      await supabase
-        .from("post_likes")
-        .delete()
-        .eq("id", existingLike.id);
+      await supabase.from("post_likes").delete().eq("id", existingLike.id);
     } else {
       // Like
       await supabase.from("post_likes").insert({
@@ -271,8 +274,8 @@ async function togglePostLike(req, res) {
 async function togglePostBookmark(req, res) {
   try {
     logRequest(req, "POST /api/community?bookmark=true");
-    const {userId} = req;
-    const {postId} = req.query;
+    const { userId } = req;
+    const { postId } = req.query;
 
     if (!supabase || !postId) {
       return res.json({
@@ -320,7 +323,7 @@ async function togglePostBookmark(req, res) {
 async function getPostComments(req, res) {
   try {
     logRequest(req, "GET /api/community?comment=true");
-    const {postId} = req.query;
+    const { postId } = req.query;
 
     if (!supabase || !postId) {
       return res.json({
@@ -344,7 +347,9 @@ async function getPostComments(req, res) {
       .eq("post_id", postId)
       .order("created_at", { ascending: true });
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     const formattedComments = (comments || []).map((c) => ({
       id: c.id,
@@ -375,8 +380,8 @@ async function getPostComments(req, res) {
 async function addPostComment(req, res) {
   try {
     logRequest(req, "POST /api/community?comment=true");
-    const {userId} = req;
-    const {postId} = req.query;
+    const { userId } = req;
+    const { postId } = req.query;
     const { content } = req.body;
 
     if (!supabase || !postId || !content) {
@@ -403,7 +408,9 @@ async function addPostComment(req, res) {
       )
       .single();
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     res.json({
       success: true,
@@ -428,8 +435,8 @@ async function addPostComment(req, res) {
 async function toggleCommentLike(req, res) {
   try {
     logRequest(req, "POST /api/community?commentLike=true");
-    const {userId} = req;
-    const {commentId} = req.query;
+    const { userId } = req;
+    const { commentId } = req.query;
 
     if (!supabase || !commentId) {
       return res.json({
@@ -448,10 +455,7 @@ async function toggleCommentLike(req, res) {
 
     if (existingLike) {
       // Unlike
-      await supabase
-        .from("comment_likes")
-        .delete()
-        .eq("id", existingLike.id);
+      await supabase.from("comment_likes").delete().eq("id", existingLike.id);
 
       // Decrement count
       await supabase.rpc("decrement_comment_likes_count", {
@@ -577,7 +581,9 @@ async function getTrendingTopics(req, res) {
       .order("count", { ascending: false })
       .limit(5);
 
-    if (error) {throw error;}
+    if (error) {
+      throw error;
+    }
 
     res.json({
       success: true,
@@ -616,8 +622,8 @@ async function getTrendingTopics(req, res) {
 async function votePoll(req, res) {
   try {
     logRequest(req, "POST /api/community?pollVote=true");
-    const {userId} = req;
-    const {optionId} = req.query;
+    const { userId } = req;
+    const { optionId } = req.query;
 
     if (!supabase || !optionId) {
       return res.json({
@@ -705,8 +711,12 @@ function getRelativeTime(date) {
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const days = Math.floor(hours / 24);
 
-  if (days > 0) {return `${days}d ago`;}
-  if (hours > 0) {return `${hours}h ago`;}
+  if (days > 0) {
+    return `${days}d ago`;
+  }
+  if (hours > 0) {
+    return `${hours}h ago`;
+  }
   return "Just now";
 }
 

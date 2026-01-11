@@ -9,11 +9,11 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -35,8 +35,8 @@ import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import {
-    RTPPhaseCelebrationComponent,
-    RTPPhaseInfo,
+  RTPPhaseCelebrationComponent,
+  RTPPhaseInfo,
 } from "../../shared/components/rtp-phase-celebration/rtp-phase-celebration.component";
 
 import { UI_LIMITS } from "../../core/constants/app.constants";
@@ -44,8 +44,8 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
-    LazyChartComponent,
-    LazyChartData,
+  LazyChartComponent,
+  LazyChartData,
 } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 

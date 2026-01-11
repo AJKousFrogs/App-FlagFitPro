@@ -35,7 +35,9 @@ import { CommonModule } from "@angular/common";
           </div>
         }
         <div class="notification-text">
-          <span class="notification-label control-row__title">{{ title() }}</span>
+          <span class="notification-label control-row__title">{{
+            title()
+          }}</span>
           @if (description()) {
             <span class="notification-desc control-row__description">
               {{ description() }}

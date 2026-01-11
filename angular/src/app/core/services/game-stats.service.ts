@@ -5,6 +5,7 @@ import { catchError, delay, retryWhen, take } from "rxjs/operators";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
+import { GamePlayerStats } from "../models/player.models";
 
 /**
  * Game Stats Service
@@ -29,19 +30,8 @@ export interface GamePlay {
   missReason?: string;
 }
 
-export interface PlayerStats {
-  passAttempts: number;
-  completions: number;
-  interceptions: number;
-  drops: number;
-  targets: number;
-  receptions: number;
-  rushingAttempts: number;
-  rushingYards: number;
-  flagPullAttempts: number;
-  flagPulls: number;
-  missedFlagPulls: number;
-}
+// Re-export for backward compatibility
+export type PlayerStats = GamePlayerStats;
 
 @Injectable({
   providedIn: "root",

@@ -3,6 +3,7 @@
 ## 🎯 Objective
 
 Debug mobile-specific issues on iOS Safari, particularly:
+
 - Flex overflow issues with `gap-2` and `flex-wrap`
 - Platform-specific styling
 - Touch interactions
@@ -15,6 +16,7 @@ Debug mobile-specific issues on iOS Safari, particularly:
 ### 1. Install Platform Detection Service
 
 Already created:
+
 - **`platform-detection.service.ts`** - Detects iOS, Android, Safari, Chrome
 - **`platform-host.directive.ts`** - Adds platform classes to components
 - **`_ios-safari-fixes.scss`** - iOS-specific CSS fixes
@@ -23,7 +25,7 @@ Already created:
 
 ```scss
 // Add to your main styles.scss
-@import 'ios-safari-fixes';
+@import "ios-safari-fixes";
 ```
 
 ### 3. Initialize Platform Detection
@@ -31,14 +33,14 @@ Already created:
 The service auto-initializes. To use in components:
 
 ```typescript
-import { PlatformDetectionService } from './core/services/platform-detection.service';
+import { PlatformDetectionService } from "./core/services/platform-detection.service";
 
 export class MyComponent {
   private platformService = inject(PlatformDetectionService);
 
   ngOnInit() {
     if (this.platformService.isIOS()) {
-      console.log('Running on iOS');
+      console.log("Running on iOS");
     }
   }
 }
@@ -51,6 +53,7 @@ export class MyComponent {
 ### Option 1: Xcode Simulator (Mac Only)
 
 1. **Open Xcode**
+
    ```bash
    open -a Xcode
    ```
@@ -86,12 +89,14 @@ export class MyComponent {
 ### 1. Connect to Simulator/Device
 
 **On Mac Safari:**
+
 1. Open Safari (desktop)
 2. Go to `Develop` menu
 3. Look for your simulator/device name
 4. Click on `localhost:4200` (or your app URL)
 
 **Web Inspector opens with:**
+
 - Elements tab (inspect DOM)
 - Console tab (view logs)
 - Network tab (API calls)
@@ -104,16 +109,16 @@ export class MyComponent {
 // In Web Inspector Console:
 
 // Check if platform classes are applied
-document.body.classList
+document.body.classList;
 
 // Should see:
 // ['platform-ios', 'platform-mobile', 'browser-safari']
 
 // Find elements with flex-wrap
-document.querySelectorAll('.flex-wrap')
+document.querySelectorAll(".flex-wrap");
 
 // Check computed styles
-getComputedStyle(document.querySelector('.flex-wrap'))
+getComputedStyle(document.querySelector(".flex-wrap"));
 ```
 
 ### 3. Debug Flex Overflow
@@ -124,7 +129,7 @@ getComputedStyle(document.querySelector('.flex-wrap'))
 // In Web Inspector Console:
 
 // Find all flex-wrap containers
-const flexWraps = document.querySelectorAll('.flex-wrap');
+const flexWraps = document.querySelectorAll(".flex-wrap");
 console.log(`Found ${flexWraps.length} flex-wrap containers`);
 
 // Check each for overflow
@@ -136,16 +141,16 @@ flexWraps.forEach((el, i) => {
     flexWrap: styles.flexWrap,
     width: el.offsetWidth,
     scrollWidth: el.scrollWidth,
-    isOverflowing: el.scrollWidth > el.offsetWidth
+    isOverflowing: el.scrollWidth > el.offsetWidth,
   });
 });
 
 // Find elements with gap-2
-const gap2Elements = document.querySelectorAll('.gap-2');
+const gap2Elements = document.querySelectorAll(".gap-2");
 console.log(`Found ${gap2Elements.length} .gap-2 elements`);
 
 // Add debug class to visualize
-gap2Elements.forEach(el => el.classList.add('debug-ios-flex'));
+gap2Elements.forEach((el) => el.classList.add("debug-ios-flex"));
 ```
 
 ### 4. Check Platform Detection
@@ -154,14 +159,14 @@ gap2Elements.forEach(el => el.classList.add('debug-ios-flex'));
 // In Web Inspector Console:
 
 // Check platform info (from window after service runs)
-console.log('Is iOS:', document.body.classList.contains('platform-ios'));
-console.log('Is Safari:', document.body.classList.contains('browser-safari'));
-console.log('Is Mobile:', document.body.classList.contains('platform-mobile'));
+console.log("Is iOS:", document.body.classList.contains("platform-ios"));
+console.log("Is Safari:", document.body.classList.contains("browser-safari"));
+console.log("Is Mobile:", document.body.classList.contains("platform-mobile"));
 
 // Check user agent
-console.log('User Agent:', navigator.userAgent);
-console.log('Platform:', navigator.platform);
-console.log('Touch points:', navigator.maxTouchPoints);
+console.log("User Agent:", navigator.userAgent);
+console.log("Platform:", navigator.platform);
+console.log("Touch points:", navigator.maxTouchPoints);
 ```
 
 ---
@@ -175,12 +180,12 @@ console.log('Touch points:', navigator.maxTouchPoints);
 .my-component {
   display: flex;
   gap: 0.5rem;
-  
+
   // iOS-specific fix
   .platform-ios & {
     gap: 0; // Disable gap on iOS
     margin: -0.5rem;
-    
+
     > * {
       margin: 0.5rem; // Use margins instead
     }
@@ -191,17 +196,17 @@ console.log('Touch points:', navigator.maxTouchPoints);
 ### Method 2: Use Host Binding
 
 ```typescript
-import { Component, inject } from '@angular/core';
-import { PlatformDetectionService } from './core/services/platform-detection.service';
+import { Component, inject } from "@angular/core";
+import { PlatformDetectionService } from "./core/services/platform-detection.service";
 
 @Component({
-  selector: 'app-my-component',
+  selector: "app-my-component",
   template: `...`,
   host: {
-    '[class.platform-ios]': 'platformService.isIOS()',
-    '[class.platform-android]': 'platformService.isAndroid()',
-    '[class.browser-safari]': 'platformService.isSafari()',
-  }
+    "[class.platform-ios]": "platformService.isIOS()",
+    "[class.platform-android]": "platformService.isAndroid()",
+    "[class.browser-safari]": "platformService.isSafari()",
+  },
 })
 export class MyComponent {
   platformService = inject(PlatformDetectionService);
@@ -211,13 +216,13 @@ export class MyComponent {
 ### Method 3: Use Platform Host Directive
 
 ```typescript
-import { PlatformHostDirective } from './shared/directives/platform-host.directive';
+import { PlatformHostDirective } from "./shared/directives/platform-host.directive";
 
 @Component({
-  selector: 'app-my-component',
+  selector: "app-my-component",
   standalone: true,
   hostDirectives: [PlatformHostDirective],
-  template: `...`
+  template: `...`,
 })
 export class MyComponent {
   // Platform classes automatically added to host element
@@ -231,6 +236,7 @@ export class MyComponent {
 ### Issue 1: Flex Gap Not Working with Flex-Wrap
 
 **Problem:**
+
 ```html
 <div class="flex flex-wrap gap-2">
   <div>Item 1</div>
@@ -242,6 +248,7 @@ export class MyComponent {
 iOS Safari doesn't properly handle `gap` with `flex-wrap`.
 
 **Solution 1 - Use iOS utility class:**
+
 ```html
 <div class="flex flex-wrap gap-ios-2">
   <div>Item 1</div>
@@ -251,16 +258,17 @@ iOS Safari doesn't properly handle `gap` with `flex-wrap`.
 ```
 
 **Solution 2 - Platform-specific CSS:**
+
 ```scss
 .my-container {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  
+
   .platform-ios & {
     gap: 0;
     margin: -0.5rem;
-    
+
     > * {
       margin: 0.5rem;
     }
@@ -274,23 +282,25 @@ iOS Safari doesn't properly handle `gap` with `flex-wrap`.
 Flex container scrolls horizontally on iOS but not on desktop.
 
 **Debug:**
+
 ```javascript
 // In Web Inspector:
-const container = document.querySelector('.flex-wrap');
+const container = document.querySelector(".flex-wrap");
 console.log({
   width: container.offsetWidth,
   scrollWidth: container.scrollWidth,
-  isOverflowing: container.scrollWidth > container.offsetWidth
+  isOverflowing: container.scrollWidth > container.offsetWidth,
 });
 ```
 
 **Fix:**
+
 ```scss
 .platform-ios {
   .flex-overflow-fix {
     -webkit-overflow-scrolling: touch;
     overflow-x: auto;
-    
+
     > * {
       flex-shrink: 0;
     }
@@ -304,6 +314,7 @@ console.log({
 iOS Safari zooms in when focusing inputs with font-size < 16px.
 
 **Fix:**
+
 ```scss
 .platform-ios {
   input[type="text"],
@@ -320,6 +331,7 @@ iOS Safari zooms in when focusing inputs with font-size < 16px.
 `100vh` includes Safari's bottom toolbar on iOS.
 
 **Fix:**
+
 ```scss
 .platform-ios.browser-safari {
   .full-height {
@@ -335,6 +347,7 @@ iOS Safari zooms in when focusing inputs with font-size < 16px.
 Content hidden behind iPhone notch or home indicator.
 
 **Fix:**
+
 ```scss
 .platform-ios.browser-safari {
   padding-top: env(safe-area-inset-top);
@@ -395,6 +408,7 @@ Content hidden behind iPhone notch or home indicator.
 ### 2. Platform Indicator
 
 On mobile, you'll see a badge in top-right corner:
+
 - Blue "iOS Safari" badge on iOS
 - Green "Android Chrome" badge on Android
 
@@ -402,14 +416,14 @@ On mobile, you'll see a badge in top-right corner:
 
 ```javascript
 // Enable detailed logging
-localStorage.setItem('debug-platform', 'true');
+localStorage.setItem("debug-platform", "true");
 
 // Check flex containers
-document.querySelectorAll('.flex-wrap').forEach((el, i) => {
+document.querySelectorAll(".flex-wrap").forEach((el, i) => {
   console.log(`Flex container ${i}:`, {
     classes: Array.from(el.classList),
     gap: getComputedStyle(el).gap,
-    isOverflowing: el.scrollWidth > el.offsetWidth
+    isOverflowing: el.scrollWidth > el.offsetWidth,
   });
 });
 ```
@@ -422,7 +436,7 @@ document.querySelectorAll('.flex-wrap').forEach((el, i) => {
 
 ```javascript
 // Test if browser supports gap on flexbox
-CSS.supports('gap', '1rem')
+CSS.supports("gap", "1rem");
 // true on modern browsers, false on older Safari
 ```
 
@@ -430,9 +444,9 @@ CSS.supports('gap', '1rem')
 
 ```javascript
 // Find all elements using gap
-const gapElements = Array.from(document.querySelectorAll('*')).filter(el => {
+const gapElements = Array.from(document.querySelectorAll("*")).filter((el) => {
   const gap = getComputedStyle(el).gap;
-  return gap !== 'normal' && gap !== '0px';
+  return gap !== "normal" && gap !== "0px";
 });
 
 console.log(`Found ${gapElements.length} elements with gap:`, gapElements);
@@ -442,9 +456,11 @@ console.log(`Found ${gapElements.length} elements with gap:`, gapElements);
 
 ```javascript
 // Find overflowing flex containers
-const overflowing = Array.from(document.querySelectorAll('.flex-wrap')).filter(el => {
-  return el.scrollWidth > el.offsetWidth || el.scrollHeight > el.offsetHeight;
-});
+const overflowing = Array.from(document.querySelectorAll(".flex-wrap")).filter(
+  (el) => {
+    return el.scrollWidth > el.offsetWidth || el.scrollHeight > el.offsetHeight;
+  },
+);
 
 console.log(`Found ${overflowing.length} overflowing containers:`, overflowing);
 ```
@@ -453,13 +469,21 @@ console.log(`Found ${overflowing.length} overflowing containers:`, overflowing);
 
 ```javascript
 // Log all touch events
-document.addEventListener('touchstart', (e) => {
-  console.log('Touch start:', e.touches.length, 'touches');
-}, { passive: true });
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    console.log("Touch start:", e.touches.length, "touches");
+  },
+  { passive: true },
+);
 
-document.addEventListener('touchmove', (e) => {
-  console.log('Touch move:', e.touches[0].clientX, e.touches[0].clientY);
-}, { passive: true });
+document.addEventListener(
+  "touchmove",
+  (e) => {
+    console.log("Touch move:", e.touches[0].clientX, e.touches[0].clientY);
+  },
+  { passive: true },
+);
 ```
 
 ---
@@ -497,39 +521,43 @@ Copy-paste these into Safari Web Inspector Console:
 
 ```javascript
 // === PLATFORM DETECTION ===
-console.log('iOS:', document.body.classList.contains('platform-ios'));
-console.log('Safari:', document.body.classList.contains('browser-safari'));
-console.log('Mobile:', document.body.classList.contains('platform-mobile'));
+console.log("iOS:", document.body.classList.contains("platform-ios"));
+console.log("Safari:", document.body.classList.contains("browser-safari"));
+console.log("Mobile:", document.body.classList.contains("platform-mobile"));
 
 // === FLEX CONTAINERS ===
-document.querySelectorAll('.flex-wrap').forEach((el, i) => {
+document.querySelectorAll(".flex-wrap").forEach((el, i) => {
   const s = getComputedStyle(el);
   console.log(`Flex ${i}:`, {
     gap: s.gap,
     overflow: el.scrollWidth > el.offsetWidth,
-    width: `${el.offsetWidth}/${el.scrollWidth}px`
+    width: `${el.offsetWidth}/${el.scrollWidth}px`,
   });
 });
 
 // === GAP ELEMENTS ===
-Array.from(document.querySelectorAll('[class*="gap-"]')).forEach(el => {
-  console.log('Gap element:', el.className, getComputedStyle(el).gap);
+Array.from(document.querySelectorAll('[class*="gap-"]')).forEach((el) => {
+  console.log("Gap element:", el.className, getComputedStyle(el).gap);
 });
 
 // === ADD DEBUG OUTLINE ===
-document.querySelectorAll('.flex-wrap').forEach(el => {
-  el.classList.add('debug-ios-flex');
+document.querySelectorAll(".flex-wrap").forEach((el) => {
+  el.classList.add("debug-ios-flex");
 });
 
 // === VIEWPORT INFO ===
-console.log('Viewport:', {
+console.log("Viewport:", {
   width: window.innerWidth,
   height: window.innerHeight,
   devicePixelRatio: window.devicePixelRatio,
   safeArea: {
-    top: getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-top)'),
-    bottom: getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-bottom)')
-  }
+    top: getComputedStyle(document.documentElement).getPropertyValue(
+      "env(safe-area-inset-top)",
+    ),
+    bottom: getComputedStyle(document.documentElement).getPropertyValue(
+      "env(safe-area-inset-bottom)",
+    ),
+  },
 });
 ```
 
@@ -556,21 +584,23 @@ console.log('Viewport:', {
 ### Platform Classes Not Applied
 
 1. Check service is initialized:
+
    ```javascript
-   console.log('Service initialized:', window.angularDebug);
+   console.log("Service initialized:", window.angularDebug);
    ```
 
 2. Check body classes:
    ```javascript
-   console.log('Body classes:', Array.from(document.body.classList));
+   console.log("Body classes:", Array.from(document.body.classList));
    ```
 
 ### Flex Still Overflowing
 
 1. Add `.debug-ios-flex` class
 2. Check actual computed values:
+
    ```javascript
-   const el = document.querySelector('.flex-wrap');
+   const el = document.querySelector(".flex-wrap");
    console.log(getComputedStyle(el));
    ```
 
@@ -579,7 +609,9 @@ console.log('Viewport:', {
    .platform-ios .my-flex {
      gap: 0 !important;
      margin: -0.5rem;
-     > * { margin: 0.5rem; }
+     > * {
+       margin: 0.5rem;
+     }
    }
    ```
 

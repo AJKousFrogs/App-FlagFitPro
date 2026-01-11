@@ -176,6 +176,7 @@ Use this checklist before deploying any responsive updates.
 ## Device-Specific Checks
 
 ### iPhone
+
 - [ ] Works on iPhone SE (375px)
 - [ ] Works on iPhone 14 Pro (390px)
 - [ ] Works on iPhone 15 Pro Max (430px)
@@ -184,6 +185,7 @@ Use this checklist before deploying any responsive updates.
 - [ ] Safe areas respected
 
 ### Samsung
+
 - [ ] Works on Galaxy S8 (360px)
 - [ ] Works on Galaxy S23 (360px)
 - [ ] Works on Galaxy A52 (360px)
@@ -192,6 +194,7 @@ Use this checklist before deploying any responsive updates.
 - [ ] Edge panels don't interfere
 
 ### Xiaomi
+
 - [ ] Works on Mi 11 (360px)
 - [ ] Works on Redmi Note 10 (360px)
 - [ ] Works on Xiaomi 13 (360px)
@@ -221,22 +224,27 @@ npx playwright test --headed --grep "Samsung"
 ## Fixing Common Issues
 
 ### Horizontal Scroll
+
 ```scss
-html, body {
+html,
+body {
   overflow-x: hidden;
   max-width: 100vw;
 }
 ```
 
 ### Small Touch Targets
+
 ```scss
-button, a {
+button,
+a {
   min-height: 44px;
   min-width: 44px;
 }
 ```
 
 ### Font Too Small
+
 ```scss
 body {
   font-size: 16px;
@@ -244,6 +252,7 @@ body {
 ```
 
 ### iOS Safe Areas
+
 ```scss
 .header {
   padding-top: env(safe-area-inset-top);
@@ -259,8 +268,8 @@ body {
 - [ ] Performance metrics acceptable
 - [ ] Accessibility audit passed
 
-**Developer:** ________________  **Date:** __________
+**Developer:** ******\_\_\_\_****** **Date:** ****\_\_****
 
-**QA:** ____________________  **Date:** __________
+**QA:** ********\_\_\_\_******** **Date:** ****\_\_****
 
-**Approved:** ______________  **Date:** __________
+**Approved:** ******\_\_****** **Date:** ****\_\_****

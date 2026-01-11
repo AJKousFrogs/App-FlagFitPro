@@ -96,7 +96,10 @@ import {
   PlayerWithMetrics,
   RiskAssessment,
 } from "./services/player-metrics.service";
-import { TeamMembershipService } from "../../core/services/team-membership.service";
+import {
+  TeamMembershipService,
+  TeamRole,
+} from "../../core/services/team-membership.service";
 
 @Component({
   selector: "app-roster",
@@ -855,9 +858,7 @@ import { TeamMembershipService } from "../../core/services/team-membership.servi
                     </div>
                     <div class="invitation-meta">
                       <p-tag
-                        [value]="
-                          teamMembershipService.getRoleDisplayName(invitation.role as any)
-                        "
+                        [value]="getRoleDisplayName(invitation.role)"
                         severity="info"
                       ></p-tag>
                       <span class="invited-by">
@@ -973,6 +974,13 @@ export class RosterComponent implements OnInit {
   formatHeight = formatHeight;
   formatWeight = formatWeight;
   getCountryFlag = getCountryFlag;
+
+  /**
+   * Get display name for a role (for template use)
+   */
+  getRoleDisplayName(role: string): string {
+    return this.teamMembershipService.getRoleDisplayName(role as TeamRole);
+  }
 
   // Phase 1: Enriched player computed signals
   enrichedSelectedPlayer = computed<PlayerWithMetrics | null>(() => {

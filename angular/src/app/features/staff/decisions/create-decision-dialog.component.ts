@@ -6,21 +6,21 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    input,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { TIME } from "@core/constants";
 import type {
-    CreateDecisionRequest,
-    DecisionCategory,
-    DecisionType,
-    ReviewTrigger,
+  CreateDecisionRequest,
+  DecisionCategory,
+  DecisionType,
+  ReviewTrigger,
 } from "@core/models/decision-ledger.models";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { RosterService } from "@features/roster/roster.service";

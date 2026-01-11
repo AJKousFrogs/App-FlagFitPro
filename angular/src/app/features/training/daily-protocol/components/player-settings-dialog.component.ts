@@ -11,13 +11,13 @@
  */
 
 import {
-    ChangeDetectionStrategy,
-    Component,
-    effect,
-    inject,
-    model,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  model,
+  output,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Checkbox } from "primeng/checkbox";
@@ -31,7 +31,10 @@ import { ButtonComponent } from "../../../../shared/components/button/button.com
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 
 import { ApiService } from "../../../../core/services/api.service";
-import { LoggerService, toLogContext } from "../../../../core/services/logger.service";
+import {
+  LoggerService,
+  toLogContext,
+} from "../../../../core/services/logger.service";
 
 export interface FlagPracticeSlot {
   day: number; // 0-6 (Sunday-Saturday)
@@ -562,7 +565,8 @@ export class PlayerSettingsDialogComponent {
         birthDate: this.settings.birthDate?.toISOString().split("T")[0],
       };
       // Remove flagPracticeSchedule from payload (API expects availabilitySchedule)
-      const { flagPracticeSchedule: _flagPracticeSchedule, ...finalPayload } = payload as typeof payload & { flagPracticeSchedule?: unknown };
+      const { flagPracticeSchedule: _flagPracticeSchedule, ...finalPayload } =
+        payload as typeof payload & { flagPracticeSchedule?: unknown };
 
       await firstValueFrom(this.api.post("/api/player-settings", finalPayload));
 

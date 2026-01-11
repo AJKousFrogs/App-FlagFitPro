@@ -4,21 +4,21 @@
  * Generate a comprehensive responsive testing report
  */
 
-import { existsSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
+import { existsSync, readdirSync, statSync } from "fs";
+import { join } from "path";
 
 const colors = {
-  reset: '\x1b[0m',
-  green: '\x1b[32m',
-  blue: '\x1b[34m',
-  yellow: '\x1b[33m',
-  red: '\x1b[31m',
-  bold: '\x1b[1m',
+  reset: "\x1b[0m",
+  green: "\x1b[32m",
+  blue: "\x1b[34m",
+  yellow: "\x1b[33m",
+  red: "\x1b[31m",
+  bold: "\x1b[1m",
 };
 
 function printHeader(text) {
   console.log(`\n${colors.bold}${colors.blue}${text}${colors.reset}`);
-  console.log('='.repeat(text.length));
+  console.log("=".repeat(text.length));
 }
 
 function printSuccess(text) {
@@ -44,22 +44,24 @@ function checkFile(filePath, description) {
 }
 
 function getFileCount(dirPath, extension) {
-  if (!existsSync(dirPath)) return 0;
-  
+  if (!existsSync(dirPath)) {
+    return 0;
+  }
+
   let count = 0;
   const files = readdirSync(dirPath);
-  
-  files.forEach(file => {
+
+  files.forEach((file) => {
     const filePath = join(dirPath, file);
     const stat = statSync(filePath);
-    
+
     if (stat.isDirectory()) {
       count += getFileCount(filePath, extension);
     } else if (file.endsWith(extension)) {
       count++;
     }
   });
-  
+
   return count;
 }
 
@@ -75,149 +77,159 @@ ${colors.reset}
 `);
 
 // Check test files
-printHeader('📋 Test Files');
+printHeader("📋 Test Files");
 const testFiles = [
-  ['tests/responsive/mobile-devices.test.js', 'Main responsive test suite'],
-  ['tests/responsive/visual-regression.test.js', 'Visual regression tests'],
-  ['tests/responsive/README.md', 'Test documentation'],
+  ["tests/responsive/mobile-devices.test.js", "Main responsive test suite"],
+  ["tests/responsive/visual-regression.test.js", "Visual regression tests"],
+  ["tests/responsive/README.md", "Test documentation"],
 ];
 
 let testFilesOk = 0;
 testFiles.forEach(([path, desc]) => {
-  if (checkFile(path, desc)) testFilesOk++;
+  if (checkFile(path, desc)) {
+    testFilesOk++;
+  }
 });
 
 // Check scripts
-printHeader('🔧 Scripts & Tools');
+printHeader("🔧 Scripts & Tools");
 const scripts = [
-  ['scripts/test-mobile-responsive.sh', 'Test runner script'],
-  ['scripts/quick-responsive-check.js', 'Quick check utility'],
+  ["scripts/test-mobile-responsive.sh", "Test runner script"],
+  ["scripts/quick-responsive-check.js", "Quick check utility"],
 ];
 
 let scriptsOk = 0;
 scripts.forEach(([path, desc]) => {
-  if (checkFile(path, desc)) scriptsOk++;
+  if (checkFile(path, desc)) {
+    scriptsOk++;
+  }
 });
 
 // Check documentation
-printHeader('📚 Documentation');
+printHeader("📚 Documentation");
 const docs = [
-  ['docs/testing/MOBILE_RESPONSIVE_TESTING.md', 'Full testing guide'],
-  ['docs/testing/RESPONSIVE_CHECKLIST.md', 'Pre-deployment checklist'],
+  ["docs/testing/MOBILE_RESPONSIVE_TESTING.md", "Full testing guide"],
+  ["docs/testing/RESPONSIVE_CHECKLIST.md", "Pre-deployment checklist"],
 ];
 
 let docsOk = 0;
 docs.forEach(([path, desc]) => {
-  if (checkFile(path, desc)) docsOk++;
+  if (checkFile(path, desc)) {
+    docsOk++;
+  }
 });
 
 // Check configurations
-printHeader('⚙️  Configuration Files');
+printHeader("⚙️  Configuration Files");
 const configs = [
-  ['playwright.config.js', 'Playwright configuration'],
-  ['.lighthouserc.json', 'Lighthouse CI config'],
-  ['.github/workflows/mobile-responsive.yml', 'CI/CD workflow'],
+  ["playwright.config.js", "Playwright configuration"],
+  [".lighthouserc.json", "Lighthouse CI config"],
+  [".github/workflows/mobile-responsive.yml", "CI/CD workflow"],
 ];
 
 let configsOk = 0;
 configs.forEach(([path, desc]) => {
-  if (checkFile(path, desc)) configsOk++;
+  if (checkFile(path, desc)) {
+    configsOk++;
+  }
 });
 
 // Check responsive styles
-printHeader('🎨 Responsive Styles');
+printHeader("🎨 Responsive Styles");
 const styles = [
-  ['angular/src/styles.scss', 'Main styles'],
-  ['angular/src/assets/styles/index.scss', 'Design system index'],
-  ['tailwind.config.js', 'Tailwind configuration'],
+  ["angular/src/styles.scss", "Main styles"],
+  ["angular/src/assets/styles/index.scss", "Design system index"],
+  ["tailwind.config.js", "Tailwind configuration"],
 ];
 
 let stylesOk = 0;
 styles.forEach(([path, desc]) => {
-  if (checkFile(path, desc)) stylesOk++;
+  if (checkFile(path, desc)) {
+    stylesOk++;
+  }
 });
 
 // Device coverage
-printHeader('📱 Device Coverage');
-console.log('\nTested Devices:');
+printHeader("📱 Device Coverage");
+console.log("\nTested Devices:");
 
 const devices = {
-  'iPhone': [
-    'iPhone SE (3rd gen) - 375×667',
-    'iPhone 12/13/14 - 390×844',
-    'iPhone 14 Pro Max - 430×932',
-    'iPhone 15 Pro - 393×852',
-    'iPhone 15 Pro Max - 430×932',
+  iPhone: [
+    "iPhone SE (3rd gen) - 375×667",
+    "iPhone 12/13/14 - 390×844",
+    "iPhone 14 Pro Max - 430×932",
+    "iPhone 15 Pro - 393×852",
+    "iPhone 15 Pro Max - 430×932",
   ],
-  'Samsung Galaxy': [
-    'Galaxy S8 - 360×740',
-    'Galaxy S20 - 360×800',
-    'Galaxy S21 - 360×800',
-    'Galaxy S22 - 360×780',
-    'Galaxy S23 - 360×780',
-    'Galaxy S24 - 360×780',
-    'Galaxy A52 - 360×800',
-    'Galaxy Z Fold 4 - 375×772',
+  "Samsung Galaxy": [
+    "Galaxy S8 - 360×740",
+    "Galaxy S20 - 360×800",
+    "Galaxy S21 - 360×800",
+    "Galaxy S22 - 360×780",
+    "Galaxy S23 - 360×780",
+    "Galaxy S24 - 360×780",
+    "Galaxy A52 - 360×800",
+    "Galaxy Z Fold 4 - 375×772",
   ],
-  'Xiaomi': [
-    'Mi 11 - 360×800',
-    'Redmi Note 10 - 360×800',
-    'Redmi Note 11 - 360×800',
-    'Xiaomi 12 - 360×800',
-    'Xiaomi 13 - 360×800',
-    'Poco X3 - 393×851',
+  Xiaomi: [
+    "Mi 11 - 360×800",
+    "Redmi Note 10 - 360×800",
+    "Redmi Note 11 - 360×800",
+    "Xiaomi 12 - 360×800",
+    "Xiaomi 13 - 360×800",
+    "Poco X3 - 393×851",
   ],
 };
 
 let totalDevices = 0;
 Object.entries(devices).forEach(([brand, deviceList]) => {
   console.log(`\n${colors.bold}${brand}:${colors.reset}`);
-  deviceList.forEach(device => {
+  deviceList.forEach((device) => {
     printSuccess(device);
     totalDevices++;
   });
 });
 
 // Test scenarios
-printHeader('🧪 Test Scenarios');
+printHeader("🧪 Test Scenarios");
 const scenarios = [
-  'Viewport configuration',
-  'Horizontal scroll prevention',
-  'Header rendering',
-  'Font size readability',
-  'Touch target sizes',
-  'Form element sizing',
-  'Navigation functionality',
-  'Card/panel layout',
-  'Touch interactions',
-  'iOS safe areas',
-  'Modal/dialog fitting',
-  'Performance metrics',
-  'Accessibility compliance',
+  "Viewport configuration",
+  "Horizontal scroll prevention",
+  "Header rendering",
+  "Font size readability",
+  "Touch target sizes",
+  "Form element sizing",
+  "Navigation functionality",
+  "Card/panel layout",
+  "Touch interactions",
+  "iOS safe areas",
+  "Modal/dialog fitting",
+  "Performance metrics",
+  "Accessibility compliance",
 ];
 
 console.log(`\n${colors.bold}Per-device tests:${colors.reset}`);
-scenarios.forEach(scenario => printSuccess(scenario));
+scenarios.forEach((scenario) => printSuccess(scenario));
 
 // NPM scripts
-printHeader('🚀 Available Commands');
+printHeader("🚀 Available Commands");
 const commands = [
-  ['npm run test:responsive', 'Run all responsive tests'],
-  ['npm run test:responsive:quick', 'Quick responsive check'],
-  ['npm run test:responsive:visual', 'Visual regression tests'],
-  ['npm run test:responsive:iphone', 'Test iPhone devices only'],
-  ['npm run test:responsive:samsung', 'Test Samsung devices only'],
-  ['npm run test:responsive:xiaomi', 'Test Xiaomi devices only'],
+  ["npm run test:responsive", "Run all responsive tests"],
+  ["npm run test:responsive:quick", "Quick responsive check"],
+  ["npm run test:responsive:visual", "Visual regression tests"],
+  ["npm run test:responsive:iphone", "Test iPhone devices only"],
+  ["npm run test:responsive:samsung", "Test Samsung devices only"],
+  ["npm run test:responsive:xiaomi", "Test Xiaomi devices only"],
 ];
 
-console.log('');
+console.log("");
 commands.forEach(([cmd, desc]) => {
   console.log(`  ${colors.green}${cmd}${colors.reset}`);
   console.log(`    ${desc}\n`);
 });
 
 // Statistics
-printHeader('📊 Statistics');
+printHeader("📊 Statistics");
 console.log(`
   ${colors.bold}Test Coverage:${colors.reset}
     • Total devices: ${colors.green}${totalDevices}${colors.reset}
@@ -238,7 +250,7 @@ console.log(`
 `);
 
 // Recommendations
-printHeader('💡 Next Steps');
+printHeader("💡 Next Steps");
 console.log(`
   1. ${colors.blue}Run quick check:${colors.reset}
      npm run test:responsive:quick
@@ -258,9 +270,14 @@ console.log(`
 
 // Status summary
 const allChecks = testFilesOk + scriptsOk + docsOk + configsOk + stylesOk;
-const totalChecks = testFiles.length + scripts.length + docs.length + configs.length + styles.length;
+const totalChecks =
+  testFiles.length +
+  scripts.length +
+  docs.length +
+  configs.length +
+  styles.length;
 
-printHeader('✅ Status');
+printHeader("✅ Status");
 if (allChecks === totalChecks) {
   console.log(`
   ${colors.bold}${colors.green}All systems ready!${colors.reset}
@@ -279,4 +296,4 @@ if (allChecks === totalChecks) {
   `);
 }
 
-console.log('');
+console.log("");

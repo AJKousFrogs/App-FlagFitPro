@@ -322,7 +322,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
         energy_level: energyLevel,
         stress_level: stressLevel,
         muscle_soreness: muscleSoreness,
-        notes: notes,
+        notes,
         updated_at: new Date().toISOString(),
       },
       {

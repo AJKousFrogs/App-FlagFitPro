@@ -870,14 +870,14 @@ export class VideoFeedComponent {
 
   scrollToVideos(): void {
     this.hapticService.light();
-    const videoSection = document.querySelector('.video-grid-section');
-    videoSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const videoSection = document.querySelector(".video-grid-section");
+    videoSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   scrollToCreators(): void {
     this.hapticService.light();
-    const creatorsSection = document.querySelector('.creators-section');
-    creatorsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const creatorsSection = document.querySelector(".creators-section");
+    creatorsSection?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   // Bookmark persistence

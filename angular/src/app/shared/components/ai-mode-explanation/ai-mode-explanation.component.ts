@@ -40,7 +40,10 @@ export interface AIModeStatus {
               Providing cautious recommendations due to incomplete data
             </p>
           </div>
-          <span class="mode-badge" pTooltip="AI is being cautious because data confidence is below 70%">
+          <span
+            class="mode-badge"
+            pTooltip="AI is being cautious because data confidence is below 70%"
+          >
             Conservative
           </span>
         </div>
@@ -64,13 +67,14 @@ export interface AIModeStatus {
                     [style.width.%]="modeStatus()!.confidence * 100"
                     [class.low]="modeStatus()!.confidence < 0.5"
                     [class.moderate]="
-                      modeStatus()!.confidence >= 0.5 && modeStatus()!.confidence < 0.7
+                      modeStatus()!.confidence >= 0.5 &&
+                      modeStatus()!.confidence < 0.7
                     "
                   ></div>
                 </div>
               </div>
               <span class="confidence-value">
-                {{ modeStatus()!.confidence * 100 | number : "1.0-0" }}%
+                {{ modeStatus()!.confidence * 100 | number: "1.0-0" }}%
               </span>
             </div>
             <p class="confidence-note">
@@ -108,11 +112,7 @@ export interface AIModeStatus {
             <div class="section-label">Improve data quality:</div>
             <div class="action-buttons">
               @if (hasMissingWellness()) {
-                <button
-                  class="action-btn"
-                  [routerLink]="['/wellness']"
-                  pRipple
-                >
+                <button class="action-btn" [routerLink]="['/wellness']" pRipple>
                   <i class="pi pi-heart"></i>
                   <span>Complete Wellness Check-in</span>
                 </button>
@@ -214,7 +214,8 @@ export interface AIModeStatus {
           rgba(var(--primitive-warning-500-rgb), 0.15) 0%,
           rgba(var(--primitive-warning-500-rgb), 0.08) 100%
         );
-        border: var(--border-1) solid rgba(var(--primitive-warning-500-rgb), 0.3);
+        border: var(--border-1) solid
+          rgba(var(--primitive-warning-500-rgb), 0.3);
         border-radius: var(--radius-full);
         font-size: var(--font-size-h4);
         font-weight: var(--font-weight-semibold);

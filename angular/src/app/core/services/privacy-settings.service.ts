@@ -678,7 +678,10 @@ export class PrivacySettingsService {
       if (error) throw error;
       return data === true;
     } catch (err) {
-      this.logger.warn(`Error checking ${dataType} sharing:`, toLogContext(err));
+      this.logger.warn(
+        `Error checking ${dataType} sharing:`,
+        toLogContext(err),
+      );
       return false; // Privacy-first: deny access on error
     }
   }

@@ -9,12 +9,12 @@
 
 **All wellness operations now use `daily_wellness_checkin` table.**
 
-| Phase | Status | Description |
-|-------|--------|-------------|
+| Phase   | Status      | Description                                    |
+| ------- | ----------- | ---------------------------------------------- |
 | Phase 1 | ✅ Complete | All Angular writes use `/api/wellness-checkin` |
-| Phase 2 | ✅ Complete | Backend dual-writes to both tables |
+| Phase 2 | ✅ Complete | Backend dual-writes to both tables             |
 | Phase 3 | ✅ Complete | All Angular reads use `daily_wellness_checkin` |
-| Phase 4 | 🔲 Planned | Drop `wellness_entries` table (July 2026+) |
+| Phase 4 | 🔲 Planned  | Drop `wellness_entries` table (July 2026+)     |
 
 ---
 
@@ -26,10 +26,10 @@
 
 ## Data Tables
 
-| Table | Purpose | Status |
-|-------|---------|--------|
-| `daily_wellness_checkin` | All wellness data | ✅ Canonical source |
-| `wellness_entries` | Legacy (dual-write only) | 🔄 Deprecated - backend writes only |
+| Table                    | Purpose                  | Status                              |
+| ------------------------ | ------------------------ | ----------------------------------- |
+| `daily_wellness_checkin` | All wellness data        | ✅ Canonical source                 |
+| `wellness_entries`       | Legacy (dual-write only) | 🔄 Deprecated - backend writes only |
 
 **Unique Constraint:** `daily_wellness_checkin (user_id, checkin_date)` - ensures one entry per user per day.
 
@@ -42,6 +42,7 @@
 Save or update today's wellness check-in (UPSERT).
 
 **Request:**
+
 ```json
 {
   "date": "2026-01-11",
@@ -57,6 +58,7 @@ Save or update today's wellness check-in (UPSERT).
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -74,6 +76,7 @@ Save or update today's wellness check-in (UPSERT).
 ```
 
 **Backend Actions:**
+
 - ✅ UPSERT to `daily_wellness_checkin`
 - ✅ Calculate readiness score if not provided
 - ✅ Trigger safety override if `muscleSoreness > 3`
@@ -86,11 +89,13 @@ Save or update today's wellness check-in (UPSERT).
 Retrieve wellness check-in for a specific date.
 
 **Response (entry exists):**
+
 ```json
 { "success": true, "data": { ... } }
 ```
 
 **Response (no entry):**
+
 ```json
 { "success": true, "data": null }
 ```
@@ -127,7 +132,7 @@ saveWellness() {
 // Check if entry exists
 checkIfAlreadyCheckedIn() {
   const today = new Date().toISOString().split('T')[0];
-  
+
   this.api.get(`/api/wellness-checkin?date=${today}`).subscribe({
     next: (response) => {
       if (response?.data) {
@@ -158,18 +163,19 @@ const { error } = await supabase
 
 ## Field Mapping
 
-| UI Field | API Field | Mapping |
-|----------|-----------|---------|
-| `pain_level` (0-10, 10=severe) | `muscleSoreness` | Direct |
-| `fatigue_level` (0-10, 10=exhausted) | `energyLevel` | **INVERTED:** `10 - fatigue_level` |
-| `sleep_quality` (0-10) | `sleepQuality` | Direct |
-| `motivation_level` (0-10) | `notes` | Store in notes field |
+| UI Field                             | API Field        | Mapping                            |
+| ------------------------------------ | ---------------- | ---------------------------------- |
+| `pain_level` (0-10, 10=severe)       | `muscleSoreness` | Direct                             |
+| `fatigue_level` (0-10, 10=exhausted) | `energyLevel`    | **INVERTED:** `10 - fatigue_level` |
+| `sleep_quality` (0-10)               | `sleepQuality`   | Direct                             |
+| `motivation_level` (0-10)            | `notes`          | Store in notes field               |
 
 ---
 
 ## Common Pitfalls
 
 ### ❌ Writing to Wrong Table
+
 ```typescript
 // ❌ WRONG
 await supabase.from('wellness_entries').insert({ ... });
@@ -179,22 +185,26 @@ this.api.post('/api/wellness-checkin', { ... }).subscribe();
 ```
 
 ### ❌ Forgetting Observable Subscription
+
 ```typescript
 // ❌ WRONG (won't execute)
-this.api.post('/api/wellness-checkin', payload);
+this.api.post("/api/wellness-checkin", payload);
 
 // ✅ CORRECT
-this.api.post('/api/wellness-checkin', payload).subscribe();
+this.api.post("/api/wellness-checkin", payload).subscribe();
 ```
 
 ### ❌ Using async/await with Observables
+
 ```typescript
 // ❌ WRONG
-const response = await this.api.post('/api/wellness-checkin', payload);
+const response = await this.api.post("/api/wellness-checkin", payload);
 
 // ✅ CORRECT
-this.api.post('/api/wellness-checkin', payload).subscribe({
-  next: (response) => { /* handle */ }
+this.api.post("/api/wellness-checkin", payload).subscribe({
+  next: (response) => {
+    /* handle */
+  },
 });
 ```
 
@@ -227,15 +237,15 @@ CREATE TABLE daily_wellness_checkin (
 
 ## Related Services
 
-| Service | Reads From | Writes To |
-|---------|-----------|-----------|
-| `ApiService` | N/A | `/api/wellness-checkin` |
-| `WellnessService` | `daily_wellness_checkin` | `/api/wellness-checkin` |
-| `DailyReadinessComponent` | `/api/wellness-checkin` | `/api/wellness-checkin` |
-| `RecoveryService` | `/api/wellness-checkin` | N/A |
-| `SettingsComponent` | `daily_wellness_checkin` | N/A |
-| `ProfileComponent` | `daily_wellness_checkin` | N/A |
-| `DataExportService` | `daily_wellness_checkin` | N/A |
+| Service                   | Reads From               | Writes To               |
+| ------------------------- | ------------------------ | ----------------------- |
+| `ApiService`              | N/A                      | `/api/wellness-checkin` |
+| `WellnessService`         | `daily_wellness_checkin` | `/api/wellness-checkin` |
+| `DailyReadinessComponent` | `/api/wellness-checkin`  | `/api/wellness-checkin` |
+| `RecoveryService`         | `/api/wellness-checkin`  | N/A                     |
+| `SettingsComponent`       | `daily_wellness_checkin` | N/A                     |
+| `ProfileComponent`        | `daily_wellness_checkin` | N/A                     |
+| `DataExportService`       | `daily_wellness_checkin` | N/A                     |
 
 ---
 
@@ -254,11 +264,13 @@ If wellness data isn't persisting:
 ## Adding New Wellness Features
 
 **✅ DO:**
+
 - Use `/api/wellness-checkin` for writes
 - Read from `daily_wellness_checkin` table
 - Follow patterns in `DailyReadinessComponent`
 
 **❌ DON'T:**
+
 - Write directly to any wellness table
 - Read from `wellness_entries` (deprecated)
 
@@ -281,10 +293,10 @@ If migrating old data:
 
 ```sql
 INSERT INTO daily_wellness_checkin (
-  user_id, checkin_date, sleep_quality, energy_level, 
+  user_id, checkin_date, sleep_quality, energy_level,
   muscle_soreness, stress_level, notes
 )
-SELECT 
+SELECT
   athlete_id, date, sleep_quality, energy_level,
   muscle_soreness, stress_level, notes
 FROM wellness_entries

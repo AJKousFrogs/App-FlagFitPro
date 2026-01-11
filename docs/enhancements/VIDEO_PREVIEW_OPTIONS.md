@@ -3,17 +3,20 @@
 ## ✅ Current Implementation (Basic - DONE)
 
 **Real Instagram Thumbnails**
+
 - Shows actual Instagram thumbnail images from each video
 - Lightweight and fast loading
 - Play button overlay on hover
 - Lazy loading for performance
 
 ### Files Modified:
+
 - `angular/src/app/features/training/video-feed/video-feed.component.ts`
 - `angular/src/app/features/training/video-feed/video-feed.component.scss`
 - `angular/src/app/core/services/instagram-video.service.ts`
 
 ### How It Works:
+
 ```typescript
 // Generates Instagram thumbnail URL from shortcode
 getInstagramThumbnail(video: InstagramVideo): string {
@@ -27,14 +30,17 @@ getInstagramThumbnail(video: InstagramVideo): string {
 ## 🚀 Future Enhancement Options
 
 ### Option 1: Hover to Auto-Play Preview (Medium Complexity)
+
 **Description:** On desktop, when user hovers over a video card for 1+ seconds, replace thumbnail with auto-playing muted video preview.
 
 **Benefits:**
+
 - ✅ More engaging user experience
 - ✅ Users see actual video content before clicking
 - ✅ Similar to Netflix/YouTube preview behavior
 
 **Implementation:**
+
 ```typescript
 // Component method
 onVideoCardHover(video: InstagramVideo): void {
@@ -52,27 +58,29 @@ onVideoCardLeave(): void {
 ```
 
 **Template:**
+
 ```html
-<div 
+<div
   class="video-thumbnail"
   (mouseenter)="onVideoCardHover(video)"
   (mouseleave)="onVideoCardLeave()"
 >
   @if (previewingVideo() === video.id) {
-    <!-- Auto-playing iframe embed -->
-    <iframe 
-      [src]="video.embedUrl + '?autoplay=1&muted=1'"
-      frameborder="0"
-      allowfullscreen
-    ></iframe>
+  <!-- Auto-playing iframe embed -->
+  <iframe
+    [src]="video.embedUrl + '?autoplay=1&muted=1'"
+    frameborder="0"
+    allowfullscreen
+  ></iframe>
   } @else {
-    <!-- Static thumbnail -->
-    <img [src]="getVideoThumbnail(video)" />
+  <!-- Static thumbnail -->
+  <img [src]="getVideoThumbnail(video)" />
   }
 </div>
 ```
 
 **Considerations:**
+
 - 📊 Increases bandwidth usage
 - ⏱️ May slow down on slower connections
 - 📱 Should be disabled on mobile to save data
@@ -80,15 +88,18 @@ onVideoCardLeave(): void {
 ---
 
 ### Option 2: Inline Auto-Play on Scroll (Advanced - TikTok/Reels Style)
+
 **Description:** Videos auto-play (muted) when scrolled into viewport, creating a TikTok/Instagram Reels-like feed experience.
 
 **Benefits:**
+
 - ✅ Maximum engagement
 - ✅ True Gen Z experience
 - ✅ Players immediately see video content
 - ✅ Modern, familiar UX pattern
 
 **Implementation:**
+
 ```typescript
 import { IntersectionObserverDirective } from '@shared/directives';
 
@@ -112,14 +123,11 @@ ngAfterViewInit() {
 ```
 
 **Template:**
+
 ```html
-<article 
-  #videoCard
-  class="video-card"
-  [attr.data-video-id]="video.id"
->
+<article #videoCard class="video-card" [attr.data-video-id]="video.id">
   <div class="video-thumbnail">
-    <iframe 
+    <iframe
       [id]="'video-' + video.id"
       [src]="sanitizer.bypassSecurityTrustResourceUrl(video.embedUrl + '?autoplay=0&muted=1')"
       frameborder="0"
@@ -131,6 +139,7 @@ ngAfterViewInit() {
 ```
 
 **Considerations:**
+
 - 📊 High bandwidth usage
 - 🔋 Battery drain on mobile
 - 🎯 Best for WiFi/desktop users
@@ -140,15 +149,18 @@ ngAfterViewInit() {
 ---
 
 ### Option 3: Hybrid Approach (Recommended)
+
 **Description:** Combine thumbnail previews with smart loading
 
 **Strategy:**
+
 1. **Default:** Show thumbnail images (current implementation)
 2. **Desktop + Hover:** Auto-play preview after 1.5s hover
 3. **Mobile:** Keep thumbnails only (data saving)
 4. **User Preference:** Settings toggle for "Always auto-play" vs "Thumbnails only"
 
 **Implementation:**
+
 ```typescript
 // Settings service
 autoPlayVideos = signal<'always' | 'hover' | 'never'>('hover');
@@ -157,7 +169,7 @@ autoPlayVideos = signal<'always' | 'hover' | 'never'>('hover');
 get shouldAutoPlay(): boolean {
   const setting = this.settingsService.autoPlayVideos();
   const isDesktop = window.innerWidth > 768;
-  
+
   return setting === 'always' || (setting === 'hover' && isDesktop);
 }
 ```
@@ -167,10 +179,12 @@ get shouldAutoPlay(): boolean {
 ## 📱 Mobile Considerations
 
 ### Data Usage Optimization
+
 ```typescript
 // Detect connection type
 const connection = (navigator as any).connection;
-const slowConnection = connection?.effectiveType === '2g' || connection?.effectiveType === '3g';
+const slowConnection =
+  connection?.effectiveType === "2g" || connection?.effectiveType === "3g";
 
 if (slowConnection) {
   // Force thumbnail-only mode
@@ -179,6 +193,7 @@ if (slowConnection) {
 ```
 
 ### Progressive Loading
+
 ```typescript
 // Load thumbnails first, then upgrade to video on WiFi
 if (this.isOnWiFi()) {
@@ -220,15 +235,18 @@ enableHoverPreview = signal(true); // Toggle this to enable/disable
 ## 📊 Performance Metrics
 
 ### Current Implementation (Thumbnails)
+
 - **Initial Load:** ~50KB per video (thumbnail image)
 - **Total for 12 videos:** ~600KB
 - **Load Time:** < 2s on 3G
 
 ### Hover Preview
+
 - **Per Preview:** ~2-3MB (Instagram embed)
 - **Only loads on hover:** Bandwidth efficient
 
 ### Full Auto-Play
+
 - **Initial Load:** ~30-40MB (12 embeds)
 - **Load Time:** 5-10s on 3G, < 3s on WiFi
 - **Best for:** Desktop + WiFi users only
@@ -237,13 +255,13 @@ enableHoverPreview = signal(true); // Toggle this to enable/disable
 
 ## 🎨 UX Comparison
 
-| Feature | Thumbnails | Hover Preview | Full Auto-Play |
-|---------|-----------|---------------|----------------|
-| **Engagement** | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **Performance** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ |
-| **Data Usage** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐ |
-| **Mobile Friendly** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-| **Gen Z Appeal** | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| Feature             | Thumbnails | Hover Preview | Full Auto-Play |
+| ------------------- | ---------- | ------------- | -------------- |
+| **Engagement**      | ⭐⭐⭐     | ⭐⭐⭐⭐      | ⭐⭐⭐⭐⭐     |
+| **Performance**     | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐      | ⭐⭐           |
+| **Data Usage**      | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐      | ⭐             |
+| **Mobile Friendly** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐        | ⭐⭐           |
+| **Gen Z Appeal**    | ⭐⭐⭐     | ⭐⭐⭐⭐      | ⭐⭐⭐⭐⭐     |
 
 ---
 
@@ -251,7 +269,8 @@ enableHoverPreview = signal(true); // Toggle this to enable/disable
 
 **Implemented:** Real Instagram thumbnail previews with lazy loading
 
-**Next Steps:** 
+**Next Steps:**
+
 1. Test thumbnail loading across different videos
 2. Monitor error rates for failed thumbnail loads
 3. Gather user feedback on preview experience

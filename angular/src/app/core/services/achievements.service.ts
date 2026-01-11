@@ -174,7 +174,10 @@ export class AchievementsService {
             // Reload achievements to get updated state
             this.loadAchievements().subscribe();
           }
-          this.logger.info("[Achievements] Unlock result", toLogContext(result));
+          this.logger.info(
+            "[Achievements] Unlock result",
+            toLogContext(result),
+          );
         }),
         catchError((error) => {
           this.logger.error(
@@ -230,7 +233,10 @@ export class AchievementsService {
             };
           }),
           tap((result) => {
-            this.logger.info("[Achievements] Synced from localStorage", toLogContext(result));
+            this.logger.info(
+              "[Achievements] Synced from localStorage",
+              toLogContext(result),
+            );
             // Reload to get fresh data
             this.loadAchievements().subscribe();
           }),

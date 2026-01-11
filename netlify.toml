@@ -1335,6 +1335,305 @@
   force = true
 
 # ============================================================================
+# MISSING API ROUTES - Added January 2026
+# These routes were used in code but missing from netlify.toml
+# ============================================================================
+
+# Coach Alerts API - Coach alert acknowledgment and management
+[[redirects]]
+  from = "/api/coach-alerts/*"
+  to = "/.netlify/functions/coach-alerts"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/coach-alerts"
+  to = "/.netlify/functions/coach-alerts"
+  status = 200
+  force = true
+
+# Coach Inbox API - Coach inbox for player notifications
+[[redirects]]
+  from = "/api/coach-inbox/*"
+  to = "/.netlify/functions/coach-inbox"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/coach-inbox"
+  to = "/.netlify/functions/coach-inbox"
+  status = 200
+  force = true
+
+# Coach Analytics API
+[[redirects]]
+  from = "/api/coach-analytics/*"
+  to = "/.netlify/functions/coach-analytics"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/coach-analytics"
+  to = "/.netlify/functions/coach-analytics"
+  status = 200
+  force = true
+
+# Coach Calendar API
+[[redirects]]
+  from = "/api/coach/calendar/*"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/coach/calendar"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+# ExerciseDB API - Exercise database manager
+[[redirects]]
+  from = "/api/exercisedb/*"
+  to = "/.netlify/functions/exercisedb"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/exercisedb"
+  to = "/.netlify/functions/exercisedb"
+  status = 200
+  force = true
+
+# Micro Sessions API - Quick training sessions
+[[redirects]]
+  from = "/api/micro-sessions/*"
+  to = "/.netlify/functions/micro-sessions"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/micro-sessions"
+  to = "/.netlify/functions/micro-sessions"
+  status = 200
+  force = true
+
+# Season Archive API - Season archival and reports
+[[redirects]]
+  from = "/api/season/*"
+  to = "/.netlify/functions/season-archive"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/season"
+  to = "/.netlify/functions/season-archive"
+  status = 200
+  force = true
+
+# Season Reports API
+[[redirects]]
+  from = "/api/season-reports/*"
+  to = "/.netlify/functions/season-reports"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/season-reports"
+  to = "/.netlify/functions/season-reports"
+  status = 200
+  force = true
+
+# Account Pause API - Player account pause/resume
+[[redirects]]
+  from = "/api/account/pause"
+  to = "/.netlify/functions/account-pause"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/account/resume"
+  to = "/.netlify/functions/account-pause"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/account/*"
+  to = "/.netlify/functions/account-pause"
+  status = 200
+  force = true
+
+# Account Deletion API
+[[redirects]]
+  from = "/api/account/delete"
+  to = "/.netlify/functions/account-deletion"
+  status = 200
+  force = true
+
+# Inactive Player Notify API
+[[redirects]]
+  from = "/api/player/notify-inactive"
+  to = "/.netlify/functions/inactive-player-notify"
+  status = 200
+  force = true
+
+# Film Room API - Player film review
+[[redirects]]
+  from = "/api/film-room/*"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/film-room"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+# Playbook API - Player playbook access
+[[redirects]]
+  from = "/api/playbook/*"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/playbook"
+  to = "/.netlify/functions/coach"
+  status = 200
+  force = true
+
+# Isometrics API - Isometric exercise tracking
+[[redirects]]
+  from = "/api/isometrics/*"
+  to = "/.netlify/functions/isometrics"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/isometrics"
+  to = "/.netlify/functions/isometrics"
+  status = 200
+  force = true
+
+# Plyometrics API - Plyometric exercise tracking
+[[redirects]]
+  from = "/api/plyometrics/*"
+  to = "/.netlify/functions/plyometrics"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/plyometrics"
+  to = "/.netlify/functions/plyometrics"
+  status = 200
+  force = true
+
+# Privacy Settings API
+[[redirects]]
+  from = "/api/privacy-settings/*"
+  to = "/.netlify/functions/privacy-settings"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/privacy-settings"
+  to = "/.netlify/functions/privacy-settings"
+  status = 200
+  force = true
+
+# Data Export API
+[[redirects]]
+  from = "/api/data-export/*"
+  to = "/.netlify/functions/data-export"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/data-export"
+  to = "/.netlify/functions/data-export"
+  status = 200
+  force = true
+
+# Send Email API
+[[redirects]]
+  from = "/api/send-email"
+  to = "/.netlify/functions/send-email"
+  status = 200
+  force = true
+
+# Payments API
+[[redirects]]
+  from = "/api/payments/*"
+  to = "/.netlify/functions/payments"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/payments"
+  to = "/.netlify/functions/payments"
+  status = 200
+  force = true
+
+# Sponsors API
+[[redirects]]
+  from = "/api/sponsors/*"
+  to = "/.netlify/functions/sponsors"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/sponsors"
+  to = "/.netlify/functions/sponsors"
+  status = 200
+  force = true
+
+# Sponsor Logo API
+[[redirects]]
+  from = "/api/sponsor-logo/*"
+  to = "/.netlify/functions/sponsor-logo"
+  status = 200
+  force = true
+
+# Team Templates API
+[[redirects]]
+  from = "/api/team-templates/*"
+  to = "/.netlify/functions/team-templates"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/team-templates"
+  to = "/.netlify/functions/team-templates"
+  status = 200
+  force = true
+
+# Response Feedback API (AI response feedback)
+[[redirects]]
+  from = "/api/response-feedback/*"
+  to = "/.netlify/functions/response-feedback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/response-feedback"
+  to = "/.netlify/functions/response-feedback"
+  status = 200
+  force = true
+
+# AI Review API
+[[redirects]]
+  from = "/api/ai-review/*"
+  to = "/.netlify/functions/ai-review"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/ai-review"
+  to = "/.netlify/functions/ai-review"
+  status = 200
+  force = true
+
+# ============================================================================
 # SPA FALLBACK (200 Rewrite)
 # All non-asset, non-API paths → Angular index.html for Angular Router
 # Netlify automatically excludes /api/* and static assets

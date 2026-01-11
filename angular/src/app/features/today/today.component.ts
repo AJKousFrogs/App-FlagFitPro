@@ -16,20 +16,20 @@
  */
 
 import {
-    animate,
-    keyframes,
-    style,
-    transition,
-    trigger,
+  animate,
+  keyframes,
+  style,
+  transition,
+  trigger,
 } from "@angular/animations";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    computed,
-    effect,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  computed,
+  effect,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
@@ -51,18 +51,18 @@ import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acw
 import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
-    ProtocolJson,
-    TodayViewModel,
-    resolveTodayState,
+  ProtocolJson,
+  TodayViewModel,
+  resolveTodayState,
 } from "../../today/resolution/today-state.resolver";
 import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import { WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
 import {
-    BlockType,
-    DailyProtocol,
-    ExerciseCategory,
-    PrescribedExercise,
-    ProtocolBlock,
+  BlockType,
+  DailyProtocol,
+  ExerciseCategory,
+  PrescribedExercise,
+  ProtocolBlock,
 } from "../training/daily-protocol/daily-protocol.models";
 
 // Services
@@ -79,8 +79,8 @@ import { environment } from "../../../environments/environment";
 // Constants
 import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
 import {
-    WELLNESS,
-    computeQuickReadiness,
+  WELLNESS,
+  computeQuickReadiness,
 } from "../../core/constants/wellness.constants";
 
 // Types

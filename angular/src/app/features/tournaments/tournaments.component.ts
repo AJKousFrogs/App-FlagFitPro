@@ -1,10 +1,10 @@
 import { CommonModule, DecimalPipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
@@ -26,14 +26,17 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
 import { AuthService } from "../../core/services/auth.service";
-import { LoggerService, toLogContext } from "../../core/services/logger.service";
+import {
+  LoggerService,
+  toLogContext,
+} from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import {
-    CreateTournamentDto,
-    Tournament,
-    TournamentService,
-    TournamentVisibilityScope,
+  CreateTournamentDto,
+  Tournament,
+  TournamentService,
+  TournamentVisibilityScope,
 } from "../../core/services/tournament.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";

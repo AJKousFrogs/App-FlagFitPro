@@ -1,12 +1,12 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -22,10 +22,10 @@ import { TooltipModule } from "primeng/tooltip";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    EquipmentAssignment,
-    EquipmentItem,
-    EquipmentService,
-    EquipmentSummary,
+  EquipmentAssignment,
+  EquipmentItem,
+  EquipmentService,
+  EquipmentSummary,
 } from "../../core/services/equipment.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";

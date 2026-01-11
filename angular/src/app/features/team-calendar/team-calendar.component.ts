@@ -568,7 +568,7 @@ export class TeamCalendarComponent implements OnInit {
     // Optimistically update local state
     const rsvpStatus = this.rsvpForm.status;
     if (!rsvpStatus) return;
-    
+
     this.events.update((events) =>
       events.map((e) =>
         e.id === event.id

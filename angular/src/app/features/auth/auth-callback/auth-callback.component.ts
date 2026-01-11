@@ -1,9 +1,9 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
@@ -340,7 +340,9 @@ export class AuthCallbackComponent implements OnInit {
       // Also set localStorage flag for tabs that might not support BroadcastChannel
       localStorage.setItem("flagfit_email_verified", Date.now().toString());
     } catch (_error) {
-      this.logger.debug("[Auth] BroadcastChannel not supported, using localStorage only");
+      this.logger.debug(
+        "[Auth] BroadcastChannel not supported, using localStorage only",
+      );
       localStorage.setItem("flagfit_email_verified", Date.now().toString());
     }
   }

@@ -133,7 +133,10 @@ export class PerformanceMonitorService {
         this.logger.debug("CLS observation not supported");
       }
     } catch (error) {
-      this.logger.warn("PerformanceObserver not fully supported", toLogContext(error));
+      this.logger.warn(
+        "PerformanceObserver not fully supported",
+        toLogContext(error),
+      );
     }
 
     // Regular metrics collection using RxJS timer with automatic cleanup
@@ -364,7 +367,10 @@ export class PerformanceMonitorService {
         this.logger.info(`Compressed ${compressedCount} images on page`);
       }
     } catch (error) {
-      this.logger.warn("Image compression optimization failed:", toLogContext(error));
+      this.logger.warn(
+        "Image compression optimization failed:",
+        toLogContext(error),
+      );
     }
   }
 

@@ -13,14 +13,14 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    input,
-    output,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { TagModule } from "primeng/tag";

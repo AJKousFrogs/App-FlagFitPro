@@ -638,7 +638,9 @@ export class GameTrackerComponent implements OnInit {
           if (response && typeof response === "object") {
             const respObj = response as Record<string, unknown>;
             // Backend returns { success: true, data: {...} } structure
-            const gameData = respObj["data"] as Record<string, unknown> | undefined;
+            const gameData = respObj["data"] as
+              | Record<string, unknown>
+              | undefined;
             if (gameData && typeof gameData === "object") {
               const respId = gameData["id"];
               const respGameId = gameData["game_id"];

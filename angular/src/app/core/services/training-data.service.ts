@@ -293,7 +293,10 @@ export class TrainingDataService {
           this.logger.error("Error creating training session:", error);
           throw error;
         }
-        this.logger.info("Training session created successfully:", toLogContext(data.id));
+        this.logger.info(
+          "Training session created successfully:",
+          toLogContext(data.id),
+        );
 
         // Log warning if late or retroactive
         if (detection.logStatus === "late") {

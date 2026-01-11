@@ -2,9 +2,9 @@ name: Mobile Responsive Testing
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   workflow_dispatch:
 
 jobs:
@@ -12,12 +12,12 @@ jobs:
     name: Test Mobile Devices
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    
+
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2, 3]
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,8 +25,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -41,7 +41,7 @@ jobs:
         run: |
           npm run start &
           npx wait-on http://localhost:4200 --timeout 120000
-        
+
       - name: Run responsive tests (shard ${{ matrix.shard }}/3)
         run: npx playwright test tests/responsive/mobile-devices.test.js --shard=${{ matrix.shard }}/3 --reporter=html,json
 
@@ -65,7 +65,7 @@ jobs:
     name: Visual Regression Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -73,8 +73,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -114,7 +114,7 @@ jobs:
     needs: [responsive-tests, visual-regression]
     runs-on: ubuntu-latest
     if: always()
-    
+
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -173,7 +173,7 @@ jobs:
     name: Mobile Performance Check
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -181,8 +181,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -197,7 +197,7 @@ jobs:
             http://localhost:4200
             http://localhost:4200/dashboard
             http://localhost:4200/training
-          configPath: './.lighthouserc.json'
+          configPath: "./.lighthouserc.json"
           uploadArtifacts: true
           temporaryPublicStorage: true
 

@@ -141,7 +141,10 @@ export class TrainingStatsCalculationService {
       const { data: sessions, error } = await query;
 
       if (error || !sessions) {
-        this.logger.warn("[TrainingStats] Error loading sessions:", toLogContext(error));
+        this.logger.warn(
+          "[TrainingStats] Error loading sessions:",
+          toLogContext(error),
+        );
         return this.getEmptyStats();
       }
 

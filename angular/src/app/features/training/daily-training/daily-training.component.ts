@@ -250,7 +250,9 @@ interface ScheduleBlock {
                     [(ngModel)]="block.completed"
                     [binary]="true"
                     variant="filled"
-                    (onValueChange)="markBlockComplete(block.block, block.completed)"
+                    (onValueChange)="
+                      markBlockComplete(block.block, block.completed)
+                    "
                   ></p-checkbox>
                   @if (block.completed) {
                     <i class="pi pi-check-circle completed-icon"></i>
@@ -1278,7 +1280,10 @@ export class DailyTrainingComponent implements OnInit {
         next: (data) => {
           this.trainingData.set(data);
           this.loading.set(false);
-          this.logger.info("[DailyTraining] Loaded training plan", toLogContext(data));
+          this.logger.info(
+            "[DailyTraining] Loaded training plan",
+            toLogContext(data),
+          );
         },
         error: (error) => {
           this.logger.error(

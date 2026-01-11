@@ -774,47 +774,8 @@
     pointer-events: none;
   }
 
-  .p-toggleswitch {
-    width: var(--p-toggleswitch-width);
-    height: var(--p-toggleswitch-height);
-    min-width: var(--p-toggleswitch-width);
-    min-height: var(--p-toggleswitch-height);
-  }
-
-  .p-toggleswitch .p-toggleswitch-slider {
-    width: var(--p-toggleswitch-width);
-    height: var(--p-toggleswitch-height);
-    border-radius: var(--radius-full, 9999px);
-    background: var(--color-border-default, #d1d5db);
-    transition:
-      background-color 200ms ease,
-      box-shadow 200ms ease;
-  }
-
-  .p-toggleswitch .p-toggleswitch-slider::before {
-    width: 18px;
-    height: 18px;
-    top: 3px;
-    left: 3px;
-    background: var(--color-surface-primary, white);
-    border-radius: var(--radius-full, 9999px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: transform 200ms ease;
-  }
-
-  .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
-    background: var(--ds-primary-green, #089949);
-  }
-
-  .p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider::before {
-    transform: translateX(20px);
-  }
-
-  .p-toggleswitch.p-disabled {
-    opacity: var(--p-control-disabled-opacity);
-    cursor: not-allowed;
-    pointer-events: none;
-  }
+  /* NOTE: p-toggleswitch styles are defined in primeng/_brand-overrides.scss
+     using CSS custom properties from primeng/_token-mapping.scss */
 
   /* ================================
      FOCUS RING - Calm, consistent

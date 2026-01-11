@@ -1170,7 +1170,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     aiRationale = `🏈 Flag practice day (${practiceTime}). `;
 
     if (context.isQB || context.isCenter) {
-      aiRationale += context.isQB 
+      aiRationale += context.isQB
         ? `QB: Practice scheduled. Arm care is light activation only - no heavy throwing before practice.`
         : `Center: Practice scheduled. Arm/wrist care is light activation only - snapping/throwing prep before practice.`;
       trainingFocus = "practice_day_qb";
@@ -1413,11 +1413,13 @@ async function generateProtocol(supabase, userId, payload, headers) {
   if ((context.isQB || context.isCenter) && !isPracticeDay) {
     // Add QB/Center pre-throwing warm-up (rotator cuff, scapular, wrist)
     // Centers need similar arm care since they snap and throw
-    const positions = context.isCenter ? ["center", "quarterback"] : ["quarterback"];
+    const positions = context.isCenter
+      ? ["center", "quarterback"]
+      : ["quarterback"];
     const { data: throwingWarmUp } = await supabase
       .from("exercises")
       .select("*")
-      .or(positions.map(p => `position_specific.cs.{${p}}`).join(","))
+      .or(positions.map((p) => `position_specific.cs.{${p}}`).join(","))
       .eq("category", "warm_up")
       .eq("active", true)
       .limit(8);
@@ -1432,7 +1434,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
           prescribed_sets: ex.default_sets || 2,
           prescribed_reps: ex.default_reps,
           prescribed_hold_seconds: ex.default_hold_seconds,
-          ai_note: context.isCenter 
+          ai_note: context.isCenter
             ? "Center Pre-Throwing Warm-up - Shoulder/wrist prep for snapping + throwing"
             : "QB Pre-Throwing Warm-up - 30 min mandatory before throwing",
           load_contribution_au: ex.load_contribution_au || 0,

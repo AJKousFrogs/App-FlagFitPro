@@ -7,10 +7,10 @@
 
 import { Injectable, effect, inject, signal } from "@angular/core";
 import {
-    REALTIME_LISTEN_TYPES,
-    REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
-    RealtimeChannel,
-    RealtimePostgresChangesPayload,
+  REALTIME_LISTEN_TYPES,
+  REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";

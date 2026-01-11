@@ -232,7 +232,7 @@ tr.selected {
   .mobile-card {
     // Touch target compliance
     min-block-size: var(--touch-target-min, 44px);
-    
+
     // Safe area padding for bottom cards
     &:last-child {
       margin-block-end: max(var(--space-4), env(safe-area-inset-bottom));

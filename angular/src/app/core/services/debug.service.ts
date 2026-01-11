@@ -10,9 +10,9 @@
  * - Performance monitoring
  */
 
-import { Injectable, effect, Signal, inject } from '@angular/core';
-import { LoggerService } from './logger.service';
-import { environment } from '../../../environments/environment';
+import { Injectable, effect, Signal, inject } from "@angular/core";
+import { LoggerService } from "./logger.service";
+import { environment } from "../../../environments/environment";
 
 export interface DebugConfig {
   enableSignalLogging: boolean;
@@ -46,7 +46,7 @@ export interface ApiLogEntry {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class DebugService {
   private readonly logger = inject(LoggerService);
@@ -76,7 +76,7 @@ export class DebugService {
    * Initialize debug mode - expose debug utilities to window object
    */
   private initializeDebugMode(): void {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       (window as any).angularDebug = {
         getSignalLogs: () => this.getSignalLogs(),
         getEffectLogs: () => this.getEffectLogs(),
@@ -87,19 +87,19 @@ export class DebugService {
       };
 
       console.log(
-        '%c🔧 Angular Debug Mode Enabled',
-        'color: #00ff00; font-weight: bold; font-size: 14px;'
+        "%c🔧 Angular Debug Mode Enabled",
+        "color: #00ff00; font-weight: bold; font-size: 14px;",
       );
       console.log(
-        '%cAccess debug utilities via window.angularDebug',
-        'color: #00aaff; font-size: 12px;'
+        "%cAccess debug utilities via window.angularDebug",
+        "color: #00aaff; font-size: 12px;",
       );
-      console.log('Available commands:');
-      console.log('  - window.angularDebug.getSignalLogs()');
-      console.log('  - window.angularDebug.getEffectLogs()');
-      console.log('  - window.angularDebug.getApiLogs()');
-      console.log('  - window.angularDebug.clearLogs()');
-      console.log('  - window.angularDebug.setConfig({ ... })');
+      console.log("Available commands:");
+      console.log("  - window.angularDebug.getSignalLogs()");
+      console.log("  - window.angularDebug.getEffectLogs()");
+      console.log("  - window.angularDebug.getApiLogs()");
+      console.log("  - window.angularDebug.clearLogs()");
+      console.log("  - window.angularDebug.setConfig({ ... })");
     }
   }
 
@@ -109,7 +109,7 @@ export class DebugService {
   trackSignal<T>(
     signal: Signal<T>,
     signalName: string,
-    componentName?: string
+    componentName?: string,
   ): void {
     if (!this.config.enableSignalLogging) return;
 
@@ -124,15 +124,15 @@ export class DebugService {
 
       this.addSignalLog(entry);
 
-      const componentPrefix = componentName ? `[${componentName}]` : '';
+      const componentPrefix = componentName ? `[${componentName}]` : "";
       console.log(
         `%c📊 Signal Update ${componentPrefix} ${signalName}`,
-        'color: #ff9800; font-weight: bold;',
-        value
+        "color: #ff9800; font-weight: bold;",
+        value,
       );
 
       if (this.config.logStackTraces) {
-        console.trace('Signal update stack trace');
+        console.trace("Signal update stack trace");
       }
     });
   }
@@ -143,7 +143,7 @@ export class DebugService {
   logEffect(
     effectName: string,
     componentName?: string,
-    callback?: () => void
+    callback?: () => void,
   ): void {
     if (!this.config.enableEffectLogging) return;
 
@@ -162,15 +162,15 @@ export class DebugService {
 
       this.addEffectLog(entry);
 
-      const componentPrefix = componentName ? `[${componentName}]` : '';
+      const componentPrefix = componentName ? `[${componentName}]` : "";
       console.log(
         `%c⚡ Effect Executed ${componentPrefix} ${effectName}`,
-        'color: #9c27b0; font-weight: bold;',
-        `(${duration.toFixed(2)}ms)`
+        "color: #9c27b0; font-weight: bold;",
+        `(${duration.toFixed(2)}ms)`,
       );
 
       if (this.config.logStackTraces) {
-        console.trace('Effect execution stack trace');
+        console.trace("Effect execution stack trace");
       }
     });
   }
@@ -183,7 +183,7 @@ export class DebugService {
     method: string,
     status?: number,
     duration?: number,
-    error?: any
+    error?: any,
   ): void {
     if (!this.config.enableApiLogging) return;
 
@@ -198,21 +198,22 @@ export class DebugService {
 
     this.addApiLog(entry);
 
-    const statusColor = status && status >= 200 && status < 300 ? '#4caf50' : '#f44336';
-    const statusText = status ? `[${status}]` : error ? '[ERROR]' : '[PENDING]';
+    const statusColor =
+      status && status >= 200 && status < 300 ? "#4caf50" : "#f44336";
+    const statusText = status ? `[${status}]` : error ? "[ERROR]" : "[PENDING]";
 
     console.log(
       `%c🌐 API Call ${method} ${statusText}`,
       `color: ${statusColor}; font-weight: bold;`,
       {
         url,
-        duration: duration ? `${duration.toFixed(2)}ms` : 'N/A',
+        duration: duration ? `${duration.toFixed(2)}ms` : "N/A",
         error,
-      }
+      },
     );
 
     if (error && this.config.logStackTraces) {
-      console.trace('API error stack trace');
+      console.trace("API error stack trace");
     }
   }
 
@@ -224,8 +225,8 @@ export class DebugService {
 
     console.log(
       `%c🔄 Lifecycle [${componentName}] ${event}`,
-      'color: #2196f3; font-weight: bold;',
-      data || ''
+      "color: #2196f3; font-weight: bold;",
+      data || "",
     );
   }
 
@@ -236,13 +237,13 @@ export class DebugService {
     if (!this.config.enablePerformanceLogging) return;
 
     const isWarning = threshold && duration > threshold;
-    const color = isWarning ? '#ff9800' : '#4caf50';
-    const prefix = isWarning ? '⚠️' : '⏱️';
+    const color = isWarning ? "#ff9800" : "#4caf50";
+    const prefix = isWarning ? "⚠️" : "⏱️";
 
     console.log(
       `%c${prefix} Performance: ${label}`,
       `color: ${color}; font-weight: bold;`,
-      `${duration.toFixed(2)}ms`
+      `${duration.toFixed(2)}ms`,
     );
 
     if (isWarning) {
@@ -253,11 +254,7 @@ export class DebugService {
   /**
    * Create a performance measurement wrapper
    */
-  measurePerformance<T>(
-    label: string,
-    fn: () => T,
-    threshold?: number
-  ): T {
+  measurePerformance<T>(label: string, fn: () => T, threshold?: number): T {
     const start = performance.now();
     const result = fn();
     const duration = performance.now() - start;
@@ -273,7 +270,7 @@ export class DebugService {
   async measurePerformanceAsync<T>(
     label: string,
     fn: () => Promise<T>,
-    threshold?: number
+    threshold?: number,
   ): Promise<T> {
     const start = performance.now();
     const result = await fn();
@@ -289,7 +286,7 @@ export class DebugService {
    */
   updateConfig(config: Partial<DebugConfig>): void {
     this.config = { ...this.config, ...config };
-    console.log('Debug config updated:', this.config);
+    console.log("Debug config updated:", this.config);
   }
 
   /**
@@ -320,7 +317,7 @@ export class DebugService {
     this.signalLogs = [];
     this.effectLogs = [];
     this.apiLogs = [];
-    console.log('All debug logs cleared');
+    console.log("All debug logs cleared");
   }
 
   /**
@@ -365,7 +362,7 @@ export class DebugService {
         timestamp: Date.now(),
       },
       null,
-      2
+      2,
     );
   }
 
@@ -373,12 +370,13 @@ export class DebugService {
    * Download logs as a file
    */
   downloadLogs(): void {
-    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    if (typeof window === "undefined" || typeof document === "undefined")
+      return;
 
     const logs = this.exportLogs();
-    const blob = new Blob([logs], { type: 'application/json' });
+    const blob = new Blob([logs], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `angular-debug-logs-${Date.now()}.json`;
     document.body.appendChild(a);
@@ -386,6 +384,6 @@ export class DebugService {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    console.log('Debug logs downloaded');
+    console.log("Debug logs downloaded");
   }
 }

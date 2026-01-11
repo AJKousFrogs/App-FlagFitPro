@@ -5,7 +5,7 @@
  *
  * Usage:
  * ```typescript
- * constructor(private platform: PlatformService) {}
+ * private platform = inject(PlatformService);
  *
  * // Instead of: localStorage.setItem('key', 'value')
  * this.platform.setLocalStorage('key', 'value');

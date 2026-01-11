@@ -13,14 +13,13 @@
  * - direct_message: 1:1 or group DMs
  */
 
-import { Injectable, inject, signal, computed } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
+import { Injectable, computed, inject, signal } from "@angular/core";
+import { getInitials, normalizePlayerName } from "../../shared/utils/format.utils";
 import { AuthService } from "./auth.service";
-import { LoggerService } from "./logger.service";
-import { toLogContext } from "./logger.service";
-import { RealtimeService, RealtimeCallback } from "./realtime.service";
+import { LoggerService, toLogContext } from "./logger.service";
+import { RealtimeCallback, RealtimeService } from "./realtime.service";
+import { SupabaseService } from "./supabase.service";
 import { TeamMembershipService } from "./team-membership.service";
-import { getInitials } from "../../shared/utils/format.utils";
 
 // ============================================================================
 // TYPES
@@ -952,7 +951,6 @@ export class ChannelService {
   // HELPERS
   // ============================================================================
 
-
   /**
    * Get channel permissions for current user
    */
@@ -1120,12 +1118,21 @@ export class ChannelService {
         throw error;
       }
 
-      const members = ((data as ChannelMemberDetails[]) || []).map((m) => ({
-        ...m,
-        full_name: m.full_name || m.email?.split("@")[0] || "Unknown",
-        initials: this.getInitialsFromName(m.full_name || m.email || "U"),
-        is_online: false, // Will be populated by presence system
-      }));
+      const members = ((data as ChannelMemberDetails[]) || []).map((m) => {
+        const normalizedName = normalizePlayerName(
+          {
+            full_name: m.full_name,
+            email: m.email,
+          },
+          "Unknown",
+        );
+        return {
+          ...m,
+          full_name: normalizedName,
+          initials: this.getInitialsFromName(normalizedName || m.email || "U"),
+          is_online: false, // Will be populated by presence system
+        };
+      });
 
       // Separate coaches and athletes
       const coaches = members.filter((m) =>
@@ -1216,7 +1223,10 @@ export class ChannelService {
         .in("id", userIds);
 
       if (usersError) {
-        this.logger.warn("Error fetching user details:", toLogContext(usersError));
+        this.logger.warn(
+          "Error fetching user details:",
+          toLogContext(usersError),
+        );
       }
 
       // Create a map for quick user lookup
@@ -1226,8 +1236,13 @@ export class ChannelService {
       const members = teamMembersData
         .map((m) => {
           const user = usersMap.get(m.user_id);
-          const fullName =
-            user?.full_name || user?.email?.split("@")[0] || "Unknown";
+            const fullName = normalizePlayerName(
+              {
+                full_name: user?.full_name,
+                email: user?.email,
+              },
+              "Unknown",
+            );
           return {
             user_id: m.user_id,
             email: user?.email || "",

@@ -11,26 +11,33 @@ import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import { rateLimit } from "express-rate-limit";
-import helmet from "helmet";
 import fs from "fs";
+import helmet from "helmet";
 import http from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { WebSocketServer } from "ws";
 
 // Import modular routes
+import analyticsRoutes from "./routes/analytics.routes.js";
+import communityRoutes from "./routes/community.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+import notificationsRoutes from "./routes/notifications.routes.js";
 import trainingRoutes from "./routes/training.routes.js";
 import wellnessRoutes from "./routes/wellness.routes.js";
-import analyticsRoutes from "./routes/analytics.routes.js";
-import notificationsRoutes from "./routes/notifications.routes.js";
-import dashboardRoutes from "./routes/dashboard.routes.js";
-import communityRoutes from "./routes/community.routes.js";
 
 // Import monitoring middleware
 import {
-  requestLogger,
-  getMetrics,
+    getMetrics,
+    requestLogger,
 } from "./routes/middleware/request-logger.middleware.js";
+
+// Import auth middleware (centralized - avoids duplication)
+import {
+    authenticateToken,
+    authorizeUserAccess,
+    optionalAuth,
+} from "./routes/middleware/auth.middleware.js";
 
 // Initialize Supabase client for real data
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -148,146 +155,9 @@ const writeLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-/**
- * Authentication middleware - validates Bearer token via Supabase
- * Use for protected endpoints that require a logged-in user
- */
-const authenticateToken = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({
-      success: false,
-      error: "Access token required",
-      code: "MISSING_TOKEN",
-    });
-  }
-
-  if (!supabase) {
-    return res.status(503).json({
-      success: false,
-      error: "Authentication service unavailable",
-      code: "AUTH_SERVICE_ERROR",
-    });
-  }
-
-  try {
-    const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
-
-    if (error || !user) {
-      return res.status(401).json({
-        success: false,
-        error: "Invalid or expired token",
-        code: "INVALID_TOKEN",
-      });
-    }
-
-    // Attach user info to request
-    req.user = {
-      id: user.id,
-      email: user.email,
-      role: user.user_metadata?.role || "player",
-      name: user.user_metadata?.name || user.email,
-    };
-    req.userId = user.id;
-    next();
-  } catch (error) {
-    console.error("[Auth Middleware] Error:", error);
-    return res.status(401).json({
-      success: false,
-      error: "Authentication failed",
-      code: "AUTH_ERROR",
-    });
-  }
-};
-
-/**
- * Authorization middleware - validates userId query/param matches authenticated user
- * Coaches/admins can access team members' data
- */
-const authorizeUserAccess = async (req, res, next) => {
-  const requestedUserId = req.query.userId || req.params.userId;
-
-  // If no userId requested, allow (will use authenticated user's ID)
-  if (!requestedUserId) {
-    return next();
-  }
-
-  // Users can always access their own data
-  if (req.userId === requestedUserId) {
-    return next();
-  }
-
-  // Coaches and admins can access team members' data
-  if (req.user?.role === "coach" || req.user?.role === "admin") {
-    if (supabase) {
-      try {
-        // Check if coach and requested user are on same team
-        const { data: coachTeam } = await supabase
-          .from("team_members")
-          .select("team_id")
-          .eq("user_id", req.userId)
-          .single();
-
-        if (coachTeam?.team_id) {
-          const { data: playerTeam } = await supabase
-            .from("team_members")
-            .select("team_id")
-            .eq("user_id", requestedUserId)
-            .single();
-
-          if (playerTeam?.team_id === coachTeam.team_id) {
-            return next();
-          }
-        }
-      } catch (error) {
-        console.error("[Authorization] Team check error:", error);
-      }
-    }
-  }
-
-  return res.status(403).json({
-    success: false,
-    error: "You do not have permission to access this user's data",
-    code: "UNAUTHORIZED_ACCESS",
-  });
-};
-
-/**
- * Optional auth middleware - attaches user if token provided, but doesn't require it
- * Use for endpoints that have different behavior for authenticated vs anonymous users
- */
-const optionalAuth = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ") || !supabase) {
-    return next();
-  }
-
-  try {
-    const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-    } = await supabase.auth.getUser(token);
-
-    if (user) {
-      req.user = {
-        id: user.id,
-        email: user.email,
-        role: user.user_metadata?.role || "player",
-        name: user.user_metadata?.name || user.email,
-      };
-      req.userId = user.id;
-    }
-  } catch {
-    // Ignore auth errors for optional auth
-  }
-  next();
-};
+// NOTE: Auth middleware (authenticateToken, authorizeUserAccess, optionalAuth) 
+// is now imported from ./routes/middleware/auth.middleware.js to avoid duplication.
+// See imports at top of file.
 
 // Enable CORS - dynamically allow localhost and local network for development
 app.use(
@@ -1537,20 +1407,25 @@ app.get("/api/roster/players", async (req, res) => {
       .order("jersey_number");
 
     // Transform to expected format
-    const formattedPlayers = (players || []).map((p) => ({
-      id: p.id,
-      userId: p.user?.id,
-      name:
+    const formattedPlayers = (players || []).map((p) => {
+      // Normalize player name
+      const name =
         p.user?.full_name ||
-        `${p.user?.first_name || ""} ${p.user?.last_name || ""}`.trim() ||
-        "Unknown",
-      email: p.user?.email,
-      position: p.position,
-      jerseyNumber: p.jersey_number,
-      role: p.role,
-      status: p.status,
-      joinedAt: p.joined_at,
-    }));
+        [p.user?.first_name, p.user?.last_name].filter(Boolean).join(" ").trim() ||
+        "Unknown";
+      
+      return {
+        id: p.id,
+        userId: p.user?.id,
+        name,
+        email: p.user?.email,
+        position: p.position,
+        jerseyNumber: p.jersey_number,
+        role: p.role,
+        status: p.status,
+        joinedAt: p.joined_at,
+      };
+    });
 
     res.json({ success: true, data: formattedPlayers });
   } catch (error) {

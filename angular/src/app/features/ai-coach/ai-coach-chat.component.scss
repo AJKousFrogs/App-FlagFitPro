@@ -1319,7 +1319,6 @@
    RESPONSIVE
    ======================================== */
 
-
 @include respond-to(md) {
   .chat-container {
     height: calc(100vh - 60px);

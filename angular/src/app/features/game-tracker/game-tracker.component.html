@@ -191,9 +191,7 @@
             <label>Opponent:</label>
             <p-inputNumber
               [ngModel]="opponentScore()"
-              (ngModelChange)="
-                opponentScore.set($event ?? 0); updateScore()
-              "
+              (ngModelChange)="opponentScore.set($event ?? 0); updateScore()"
               [min]="0"
               [showButtons]="true"
               styleClass="score-input"
@@ -690,12 +688,16 @@
         <app-empty-state
           icon="calendar-times"
           heading="No Games Scheduled"
-          [description]="isCoachOrAdmin() 
-            ? 'You haven\'t scheduled any games yet. Create your first game to start tracking team performance.' 
-            : 'You haven\'t logged any games yet. Log your personal or team games to track your performance.'"
-          [tip]="isCoachOrAdmin()
-            ? 'Track plays, stats, and player performance in real-time'
-            : 'Keep a record of all your domestic league and pickup games'"
+          [description]="
+            isCoachOrAdmin()
+              ? 'You haven\'t scheduled any games yet. Create your first game to start tracking team performance.'
+              : 'You haven\'t logged any games yet. Log your personal or team games to track your performance.'
+          "
+          [tip]="
+            isCoachOrAdmin()
+              ? 'Track plays, stats, and player performance in real-time'
+              : 'Keep a record of all your domestic league and pickup games'
+          "
         >
           @if (isCoachOrAdmin()) {
             <app-button iconLeft="pi-plus" (clicked)="openNewGame()">

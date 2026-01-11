@@ -60,8 +60,7 @@ const formatError = (error) => {
     return {
       name: error.name,
       message: error.message,
-      stack:
-        process.env.NODE_ENV === "development" ? error.stack : undefined,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
       ...error,
     };
   }
@@ -301,12 +300,10 @@ class ServerLogger {
       return;
     }
 
-    const log = this.createLog(
-      level,
-      `Performance: ${operation}`,
-      context,
-      { durationMs, operation },
-    );
+    const log = this.createLog(level, `Performance: ${operation}`, context, {
+      durationMs,
+      operation,
+    });
 
     const emoji = durationMs > 1000 ? "🐌" : "⚡";
     console.log(`${emoji} [PERF] ${operation}: ${durationMs}ms`);

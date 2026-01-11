@@ -1,5 +1,4 @@
 @use "styles/mixins" as *;
-@use "styles/mixins" as *;
 
 /* ================================================================
    EXERCISE LIBRARY COMPONENT STYLES
@@ -598,7 +597,10 @@
   border-radius: var(--radius-lg);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
-  transition: all var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .video-link:hover {
@@ -739,7 +741,7 @@
   .card-actions {
     flex-direction: column;
   }
-  
+
   .action-btn {
     width: 100%;
   }

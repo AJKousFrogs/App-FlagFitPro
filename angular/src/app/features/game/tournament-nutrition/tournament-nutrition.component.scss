@@ -43,7 +43,7 @@
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(20px);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -82,7 +82,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   50% {
@@ -146,11 +147,13 @@
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(var(--ds-primary-green-rgb), 0.3),
     0 1px 4px rgba(0, 0, 0, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
 
   &::before {
     content: "";
@@ -169,7 +172,7 @@
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 
+    box-shadow:
       0 8px 24px rgba(var(--ds-primary-green-rgb), 0.4),
       0 2px 8px rgba(0, 0, 0, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
@@ -207,7 +210,7 @@
     rgba(var(--ds-primary-green-rgb), 0.03) 0%,
     var(--surface-primary) 100%
   );
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -299,7 +302,7 @@
     border-color: var(--ds-primary-green);
     background: rgba(var(--ds-primary-green-rgb), 0.08);
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 
+    box-shadow:
       0 8px 20px rgba(0, 0, 0, 0.08),
       0 2px 8px rgba(var(--ds-primary-green-rgb), 0.15);
 
@@ -319,7 +322,7 @@
       rgba(var(--ds-primary-green-rgb), 0.15) 0%,
       rgba(var(--ds-primary-green-rgb), 0.08) 100%
     );
-    box-shadow: 
+    box-shadow:
       0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2),
       0 4px 12px rgba(var(--ds-primary-green-rgb), 0.2);
     transform: scale(1.05);
@@ -444,7 +447,7 @@
   display: flex;
   gap: var(--space-4);
   margin-bottom: var(--space-5);
-  transition: all var(--transition-fast);
+  transition: margin-bottom var(--transition-fast);
 
   &.collapsed {
     margin-bottom: var(--space-3);
@@ -466,7 +469,7 @@
 
   &.current .marker-dot {
     background: var(--ds-primary-green);
-    box-shadow: 
+    box-shadow:
       0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.2),
       0 0 0 8px rgba(var(--ds-primary-green-rgb), 0.1);
 
@@ -477,7 +480,7 @@
 
   &.completed .marker-dot {
     background: var(--ds-primary-green);
-    box-shadow: 
+    box-shadow:
       0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.2),
       0 2px 8px rgba(var(--ds-primary-green-rgb), 0.3);
   }
@@ -488,14 +491,14 @@
       var(--primitive-error-500) 0%,
       var(--primitive-error-600, #dc2626) 100%
     );
-    box-shadow: 
+    box-shadow:
       0 0 0 4px rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.2),
       0 2px 8px rgba(var(--primitive-error-500-rgb, 239, 68, 68), 0.3);
   }
 
   &.current .timeline-content {
     border-color: var(--ds-primary-green);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.1),
       0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15),
       0 4px 12px rgba(var(--ds-primary-green-rgb), 0.2);
@@ -542,11 +545,14 @@
   border-radius: var(--radius-full);
   background: var(--color-border-secondary);
   border: 3px solid var(--surface-primary);
-  box-shadow: 
+  box-shadow:
     0 0 0 2px var(--color-border-secondary),
     0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 1;
-  transition: all var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .marker-line {
@@ -567,12 +573,15 @@
   border: 1px solid var(--color-border-secondary);
   border-radius: 20px;
   padding: var(--space-6);
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.06),
     0 1px 4px rgba(0, 0, 0, 0.04);
   position: relative;
   overflow: hidden;
-  transition: all var(--transition-fast);
+  transition:
+    padding var(--transition-fast),
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
 
   &::before {
     content: "";
@@ -594,7 +603,7 @@
   margin-bottom: var(--space-4);
   cursor: pointer;
   user-select: none;
-  transition: all var(--transition-fast);
+  transition: opacity var(--transition-fast);
 
   &:hover {
     opacity: 0.8;
@@ -640,13 +649,17 @@
   border: 1px solid var(--color-border-secondary);
   border-radius: 8px;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
   flex-shrink: 0;
 
   i {
     color: var(--color-text-secondary);
     font-size: var(--font-size-h4);
-    transition: transform var(--transition-fast);
+    transition:
+      transform var(--transition-fast),
+      color var(--transition-fast);
   }
 
   &:hover {
@@ -708,7 +721,9 @@
   border: 1px solid var(--color-border-secondary);
   position: relative;
   overflow: hidden;
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
   &::before {
@@ -723,10 +738,10 @@
 
   &:hover {
     transform: translateX(4px);
-    box-shadow: 
+    box-shadow:
       0 8px 24px rgba(0, 0, 0, 0.08),
       0 2px 8px rgba(0, 0, 0, 0.04);
-    
+
     &::before {
       width: 8px;
     }
@@ -734,7 +749,11 @@
 
   &.food {
     &::before {
-      background: linear-gradient(180deg, var(--primitive-amber-500), var(--primitive-amber-600, #d97706));
+      background: linear-gradient(
+        180deg,
+        var(--primitive-amber-500),
+        var(--primitive-amber-600, #d97706)
+      );
     }
     background: linear-gradient(
       135deg,
@@ -745,7 +764,11 @@
 
   &.drink {
     &::before {
-      background: linear-gradient(180deg, var(--ds-primary-green), rgba(var(--ds-primary-green-rgb), 0.7));
+      background: linear-gradient(
+        180deg,
+        var(--ds-primary-green),
+        rgba(var(--ds-primary-green-rgb), 0.7)
+      );
     }
     background: linear-gradient(
       135deg,
@@ -756,7 +779,11 @@
 
   &.supplement {
     &::before {
-      background: linear-gradient(180deg, var(--primitive-purple-500), var(--primitive-purple-600, #7c3aed));
+      background: linear-gradient(
+        180deg,
+        var(--primitive-purple-500),
+        var(--primitive-purple-600, #7c3aed)
+      );
     }
     background: linear-gradient(
       135deg,
@@ -767,7 +794,11 @@
 
   &.action {
     &::before {
-      background: linear-gradient(180deg, var(--primitive-success-500), var(--primitive-success-600, #059669));
+      background: linear-gradient(
+        180deg,
+        var(--primitive-success-500),
+        var(--primitive-success-600, #059669)
+      );
     }
     background: linear-gradient(
       135deg,
@@ -787,7 +818,7 @@
   justify-content: center;
   background: var(--surface-primary);
   border-radius: 12px;
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: transform var(--transition-fast);
@@ -881,7 +912,7 @@
   border-radius: 24px;
   padding: var(--space-8);
   margin-bottom: var(--space-6);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -927,7 +958,7 @@
   );
   border-radius: 16px;
   flex-shrink: 0;
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(var(--ds-primary-green-rgb), 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
@@ -961,7 +992,7 @@
       rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.15) 0%,
       rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.08) 100%
     );
-    box-shadow: 
+    box-shadow:
       0 4px 12px rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
@@ -1007,7 +1038,7 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
     transform var(--transition-fast);
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.06),
     0 1px 4px rgba(0, 0, 0, 0.04);
   animation: fadeInUp 400ms ease-out backwards;
@@ -1050,7 +1081,7 @@
 
   &:hover {
     border-color: var(--ds-primary-green);
-    box-shadow: 
+    box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.12),
       0 4px 12px rgba(var(--ds-primary-green-rgb), 0.2);
     transform: translateY(-6px) scale(1.02);
@@ -1065,7 +1096,7 @@
 
     .supp-icon {
       transform: scale(1.15) rotate(-8deg);
-      box-shadow: 
+      box-shadow:
         0 8px 24px rgba(0, 0, 0, 0.15),
         0 2px 8px rgba(var(--ds-primary-green-rgb), 0.2);
     }
@@ -1109,10 +1140,10 @@
   );
   border-radius: 16px;
   flex-shrink: 0;
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: 
+  transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
   position: relative;
@@ -1265,7 +1296,7 @@
   background: var(--surface-primary);
   border-radius: 20px;
   border: 1px solid var(--color-border-secondary);
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.06),
     0 1px 4px rgba(0, 0, 0, 0.04);
   transition:
@@ -1295,7 +1326,7 @@
 
   &:hover {
     border-color: var(--ds-primary-green);
-    box-shadow: 
+    box-shadow:
       0 12px 32px rgba(0, 0, 0, 0.1),
       0 4px 12px rgba(var(--ds-primary-green-rgb), 0.15);
     transform: translateY(-4px) scale(1.02);
@@ -1306,7 +1337,7 @@
 
     .tip-icon {
       transform: scale(1.15) rotate(-8deg);
-      box-shadow: 
+      box-shadow:
         0 6px 20px rgba(0, 0, 0, 0.12),
         0 2px 8px rgba(var(--ds-primary-green-rgb), 0.15);
     }
@@ -1333,10 +1364,10 @@
     rgba(var(--ds-primary-green-rgb), 0.1) 100%
   );
   border-radius: 16px;
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: 
+  transition:
     transform var(--transition-fast),
     box-shadow var(--transition-fast);
   position: relative;
@@ -1419,7 +1450,7 @@
     rgba(var(--ds-primary-green-rgb), 0.03) 0%,
     var(--surface-primary) 100%
   );
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.04);
 }
@@ -1441,11 +1472,14 @@
   );
   border-radius: 16px;
   border: 1px solid rgba(var(--ds-primary-green-rgb), 0.1);
-  transition: all var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 
+    box-shadow:
       0 8px 24px rgba(0, 0, 0, 0.08),
       0 2px 8px rgba(var(--ds-primary-green-rgb), 0.1);
     border-color: rgba(var(--ds-primary-green-rgb), 0.3);
@@ -1463,10 +1497,11 @@
     padding-bottom: var(--space-3);
     border-bottom: 3px solid transparent;
     border-image: linear-gradient(
-      90deg,
-      var(--ds-primary-green) 0%,
-      rgba(var(--ds-primary-green-rgb), 0.3) 100%
-    ) 1;
+        90deg,
+        var(--ds-primary-green) 0%,
+        rgba(var(--ds-primary-green-rgb), 0.3) 100%
+      )
+      1;
     position: relative;
 
     &::after {
@@ -1498,7 +1533,9 @@
     font-weight: var(--font-weight-medium);
     position: relative;
     padding-left: var(--space-4);
-    transition: all var(--transition-fast);
+    transition:
+      padding-left var(--transition-fast),
+      color var(--transition-fast);
 
     &::before {
       content: "";
@@ -1514,7 +1551,9 @@
         rgba(var(--ds-primary-green-rgb), 0.7) 100%
       );
       border-radius: var(--radius-full);
-      transition: all var(--transition-fast);
+      transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
       box-shadow: 0 0 0 0 rgba(var(--ds-primary-green-rgb), 0);
     }
 

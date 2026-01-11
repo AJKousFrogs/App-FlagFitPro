@@ -1,16 +1,16 @@
 import { isPlatformBrowser } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    effect,
-    HostListener,
-    inject,
-    OnDestroy,
-    OnInit,
-    PLATFORM_ID,
-    Renderer2,
-    signal
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+  Renderer2,
+  signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { BadgeModule } from "primeng/badge";

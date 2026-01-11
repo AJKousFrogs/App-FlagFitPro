@@ -1,10 +1,10 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -305,7 +305,9 @@ interface Category {
                   selectedExercise()!.category
                 }}</span>
                 @if (selectedExercise()!.subcategory) {
-                  <span class="subcategory-label"> - {{ selectedExercise()!.subcategory }}</span>
+                  <span class="subcategory-label">
+                    - {{ selectedExercise()!.subcategory }}</span
+                  >
                 }
               </div>
             </div>
@@ -323,7 +325,11 @@ interface Category {
                     ></iframe>
                   </div>
                 } @else {
-                  <a [href]="selectedExercise()!.video_url" target="_blank" class="video-link">
+                  <a
+                    [href]="selectedExercise()!.video_url"
+                    target="_blank"
+                    class="video-link"
+                  >
                     <i class="pi pi-external-link"></i> Watch Video
                   </a>
                 }
@@ -351,7 +357,10 @@ interface Category {
 
             @if (selectedExercise()!.compensation_text) {
               <div class="detail-section warning-section">
-                <h3><i class="pi pi-exclamation-triangle"></i> Common Mistakes to Avoid</h3>
+                <h3>
+                  <i class="pi pi-exclamation-triangle"></i> Common Mistakes to
+                  Avoid
+                </h3>
                 <p>{{ selectedExercise()!.compensation_text }}</p>
               </div>
             }
@@ -366,11 +375,17 @@ interface Category {
               </span>
             </div>
 
-            @if (selectedExercise()!.muscleGroups && selectedExercise()!.muscleGroups.length > 0) {
+            @if (
+              selectedExercise()!.muscleGroups &&
+              selectedExercise()!.muscleGroups.length > 0
+            ) {
               <div class="detail-section">
                 <h3><i class="pi pi-heart-fill"></i> Target Muscle Groups</h3>
                 <div class="muscle-tags-large">
-                  @for (group of selectedExercise()!.muscleGroups; track group) {
+                  @for (
+                    group of selectedExercise()!.muscleGroups;
+                    track group
+                  ) {
                     <span class="muscle-tag-large">{{ group }}</span>
                   }
                 </div>
@@ -391,22 +406,38 @@ interface Category {
               </div>
             }
 
-            @if (selectedExercise()!.default_sets || selectedExercise()!.default_reps || 
-                 selectedExercise()!.default_hold_seconds || selectedExercise()!.default_duration_seconds) {
+            @if (
+              selectedExercise()!.default_sets ||
+              selectedExercise()!.default_reps ||
+              selectedExercise()!.default_hold_seconds ||
+              selectedExercise()!.default_duration_seconds
+            ) {
               <div class="detail-section">
                 <h3><i class="pi pi-list"></i> Recommended Prescription</h3>
                 <div class="prescription-info">
                   @if (selectedExercise()!.default_sets) {
-                    <p><strong>Sets:</strong> {{ selectedExercise()!.default_sets }}</p>
+                    <p>
+                      <strong>Sets:</strong>
+                      {{ selectedExercise()!.default_sets }}
+                    </p>
                   }
                   @if (selectedExercise()!.default_reps) {
-                    <p><strong>Reps:</strong> {{ selectedExercise()!.default_reps }}</p>
+                    <p>
+                      <strong>Reps:</strong>
+                      {{ selectedExercise()!.default_reps }}
+                    </p>
                   }
                   @if (selectedExercise()!.default_hold_seconds) {
-                    <p><strong>Hold Time:</strong> {{ selectedExercise()!.default_hold_seconds }}s</p>
+                    <p>
+                      <strong>Hold Time:</strong>
+                      {{ selectedExercise()!.default_hold_seconds }}s
+                    </p>
                   }
                   @if (selectedExercise()!.default_duration_seconds) {
-                    <p><strong>Duration:</strong> {{ selectedExercise()!.default_duration_seconds }}s</p>
+                    <p>
+                      <strong>Duration:</strong>
+                      {{ selectedExercise()!.default_duration_seconds }}s
+                    </p>
                   }
                 </div>
               </div>
@@ -416,7 +447,10 @@ interface Category {
               <div class="detail-section">
                 <h3><i class="pi pi-users"></i> Position Specific</h3>
                 <div class="position-tags">
-                  @for (position of selectedExercise()!.position_specific; track position) {
+                  @for (
+                    position of selectedExercise()!.position_specific;
+                    track position
+                  ) {
                     <span class="position-tag">{{ position }}</span>
                   }
                 </div>
@@ -471,7 +505,18 @@ export class ExerciseLibraryComponent implements OnInit {
     { name: "cool_down", icon: "pi-moon", color: COLORS.PURPLE_LIGHT },
   ];
 
-  categories = ["all", "mobility", "foam_roll", "warm_up", "strength", "skill", "conditioning", "plyometric", "recovery", "cool_down"];
+  categories = [
+    "all",
+    "mobility",
+    "foam_roll",
+    "warm_up",
+    "strength",
+    "skill",
+    "conditioning",
+    "plyometric",
+    "recovery",
+    "cool_down",
+  ];
 
   exercises = signal<Exercise[]>([]);
   filteredExercises = signal<Exercise[]>([]);
@@ -507,10 +552,14 @@ export class ExerciseLibraryComponent implements OnInit {
             slug: ex.slug,
             category: ex.category || "strength",
             subcategory: ex.subcategory,
-            difficulty: (ex.difficulty_level || "beginner") as "beginner" | "intermediate" | "advanced",
+            difficulty: (ex.difficulty_level || "beginner") as
+              | "beginner"
+              | "intermediate"
+              | "advanced",
             muscleGroups: ex.target_muscles || [],
             equipment: ex.equipment_required || ["None"],
-            description: ex.how_text || ex.description || "No description available",
+            description:
+              ex.how_text || ex.description || "No description available",
             video_url: ex.video_url,
             video_id: ex.video_id,
             how_text: ex.how_text,
@@ -522,9 +571,9 @@ export class ExerciseLibraryComponent implements OnInit {
             default_duration_seconds: ex.default_duration_seconds,
             position_specific: ex.position_specific,
             load_contribution_au: ex.load_contribution_au,
-            is_high_intensity: ex.is_high_intensity
+            is_high_intensity: ex.is_high_intensity,
           }));
-          
+
           this.exercises.set(mappedExercises);
           this.applyFilters();
         } else {
@@ -544,7 +593,7 @@ export class ExerciseLibraryComponent implements OnInit {
           detail: "Failed to load exercises from database",
           life: 3000,
         });
-      }
+      },
     });
   }
 
@@ -630,18 +679,19 @@ export class ExerciseLibraryComponent implements OnInit {
     const sessionData = {
       session_type: exercise.category,
       title: exercise.name,
-      duration: exercise.default_duration_seconds 
-        ? Math.ceil(exercise.default_duration_seconds / 60) 
-        : exercise.default_sets 
-          ? exercise.default_sets * (exercise.default_reps || 1) 
+      duration: exercise.default_duration_seconds
+        ? Math.ceil(exercise.default_duration_seconds / 60)
+        : exercise.default_sets
+          ? exercise.default_sets * (exercise.default_reps || 1)
           : 30, // Default 30 minutes
-      intensity: exercise.difficulty === "advanced" 
-        ? 8 
-        : exercise.difficulty === "intermediate" 
-          ? 6 
-          : 4,
+      intensity:
+        exercise.difficulty === "advanced"
+          ? 8
+          : exercise.difficulty === "intermediate"
+            ? 6
+            : 4,
       completed: true,
-      notes: `Exercise from library: ${exercise.description || exercise.how_text || ''}`,
+      notes: `Exercise from library: ${exercise.description || exercise.how_text || ""}`,
       exercise_details: {
         exercise_id: exercise.id,
         sets: exercise.default_sets,
@@ -650,7 +700,7 @@ export class ExerciseLibraryComponent implements OnInit {
         duration_seconds: exercise.default_duration_seconds,
         equipment: exercise.equipment,
         target_muscles: exercise.muscleGroups,
-      }
+      },
     };
 
     this.trainingService

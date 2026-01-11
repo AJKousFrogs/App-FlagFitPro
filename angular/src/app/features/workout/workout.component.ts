@@ -227,7 +227,10 @@ export class WorkoutComponent implements OnInit {
         .limit(20);
 
       if (error) {
-        this.logger.warn("[Workout] Error loading workouts:", toLogContext(error));
+        this.logger.warn(
+          "[Workout] Error loading workouts:",
+          toLogContext(error),
+        );
         this.isLoading.set(false);
         return;
       }

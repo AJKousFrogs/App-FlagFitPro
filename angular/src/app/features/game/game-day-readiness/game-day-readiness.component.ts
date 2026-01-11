@@ -10,15 +10,15 @@
 
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    DestroyRef,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
-import { } from "@angular/core/rxjs-interop";
+import {} from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
@@ -36,7 +36,10 @@ import { ConfidenceIndicatorComponent } from "../../../shared/components/confide
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AuthService } from "../../../core/services/auth.service";
-import { LoggerService, toLogContext } from "../../../core/services/logger.service";
+import {
+  LoggerService,
+  toLogContext,
+} from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -609,7 +612,10 @@ export class GameDayReadinessComponent implements OnInit {
 
       this.logger.info("[GameDayReadiness] Coach notification sent");
     } catch (error) {
-      this.logger.warn("[GameDayReadiness] Could not notify coach:", toLogContext(error));
+      this.logger.warn(
+        "[GameDayReadiness] Could not notify coach:",
+        toLogContext(error),
+      );
     }
   }
 

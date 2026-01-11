@@ -5,6 +5,10 @@
 
 import { logger } from "../../logger.js";
 
+// Re-export debounce and throttle from shared.js to avoid duplication
+// These are the canonical implementations for the vanilla JS codebase
+export { debounce, throttle } from "./shared.js";
+
 /**
  * Set up event delegation on a container
  * @param {HTMLElement|string} container - Container element or selector
@@ -60,38 +64,5 @@ export function delegateMultiple(container, delegations) {
   // Return cleanup function for all delegations
   return () => {
     cleanupFunctions.forEach((cleanup) => cleanup());
-  };
-}
-
-/**
- * Create a debounced event handler
- * @param {Function} func - Function to debounce
- * @param {number} wait - Wait time in milliseconds
- */
-export function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
-/**
- * Create a throttled event handler
- * @param {Function} func - Function to throttle
- * @param {number} limit - Time limit in milliseconds
- */
-export function throttle(func, limit) {
-  let inThrottle;
-  return function executedFunction(...args) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
   };
 }

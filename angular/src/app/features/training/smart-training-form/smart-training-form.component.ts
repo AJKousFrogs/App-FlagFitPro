@@ -1,19 +1,19 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    computed,
-    inject,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
-    FormBuilder,
-    FormGroup,
-    ReactiveFormsModule,
-    Validators,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
@@ -26,16 +26,19 @@ import { ToastModule } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
-    AIService,
-    TrainingSuggestion,
+  AIService,
+  TrainingSuggestion,
 } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
-import { LoggerService, toLogContext } from "../../../core/services/logger.service";
+import {
+  LoggerService,
+  toLogContext,
+} from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
-    WeatherData,
-    WeatherService,
+  WeatherData,
+  WeatherService,
 } from "../../../core/services/weather.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
@@ -312,7 +315,10 @@ export class SmartTrainingFormComponent implements OnInit {
         }));
       }
     } catch (error) {
-      this.logger.warn("Could not load recent performance:", toLogContext(error));
+      this.logger.warn(
+        "Could not load recent performance:",
+        toLogContext(error),
+      );
     }
 
     // Load upcoming games/events

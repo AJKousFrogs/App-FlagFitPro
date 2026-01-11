@@ -148,12 +148,10 @@ export default defineConfig({
   webServer: {
     command: "npm run dev",
     url: "http://localhost:4200",
-    reuseExistingServer: !process.env.CI, // Always reuse in local dev
+    reuseExistingServer: !process.env.CI, // Always reuse in local dev, force start in CI
     timeout: 180 * 1000, // 3 minutes for server startup
     stdout: "ignore",
     stderr: "pipe",
-    // Add retry logic for server startup
-    reuseExistingServer: true,
   },
   globalSetup: undefined,
   globalTeardown: undefined,

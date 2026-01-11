@@ -1,5 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, input, ChangeDetectionStrategy } from "@angular/core";
+import {
+  Component,
+  effect,
+  inject,
+  input,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { TagModule } from "primeng/tag";
 import { SkeletonModule } from "primeng/skeleton";
 import { ReadinessService } from "../../../core/services/readiness.service";

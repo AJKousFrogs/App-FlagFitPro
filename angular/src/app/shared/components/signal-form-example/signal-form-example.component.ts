@@ -328,7 +328,10 @@ export class SignalFormExampleComponent {
 
   onReactiveSubmit(): void {
     if (this.reactiveForm.valid) {
-      this.logger.debug("Reactive Form Submitted:", toLogContext(this.reactiveForm.value));
+      this.logger.debug(
+        "Reactive Form Submitted:",
+        toLogContext(this.reactiveForm.value),
+      );
       // Handle submission
     } else {
       this.reactiveForm.markAllAsTouched();

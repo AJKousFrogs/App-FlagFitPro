@@ -1,13 +1,13 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
 import {
-    AuthChangeEvent,
-    createClient,
-    RealtimeChannel,
-    RealtimePostgresChangesPayload,
-    Session,
-    SupabaseClient,
-    User,
-    UserAttributes,
+  AuthChangeEvent,
+  createClient,
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+  Session,
+  SupabaseClient,
+  User,
+  UserAttributes,
 } from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
 import { LoggerService, toLogContext } from "./logger.service";

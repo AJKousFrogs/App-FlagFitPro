@@ -487,7 +487,10 @@ export class TrainingBuilderComponent {
         }));
       }
     } catch (error) {
-      this.logger.warn("Could not load recent performance:", toLogContext(error));
+      this.logger.warn(
+        "Could not load recent performance:",
+        toLogContext(error),
+      );
     }
 
     // Load upcoming games/events

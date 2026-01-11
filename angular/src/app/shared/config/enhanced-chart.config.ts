@@ -176,7 +176,7 @@ export const ENHANCED_CHART_OPTIONS: ChartOptions<ChartType> = {
       ) => {
         const index = legendItem.datasetIndex;
         if (index === undefined) return;
-        
+
         const chart = legend.chart;
 
         if (chart.isDatasetVisible(index)) {

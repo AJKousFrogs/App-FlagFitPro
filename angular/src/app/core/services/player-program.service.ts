@@ -227,7 +227,7 @@ export class PlayerProgramService {
               url: error.url,
             },
           );
-          
+
           // Return null instead of throwing to prevent blocking
           return of(null);
         }),

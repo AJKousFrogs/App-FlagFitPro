@@ -1,8 +1,8 @@
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, computed, inject, signal } from "@angular/core";
+import { normalizePlayerName } from "../../shared/utils/format.utils";
 import { AuthService } from "./auth.service";
+import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { LoggerService } from "./logger.service";
-import { toLogContext } from "./logger.service";
 
 /**
  * Team membership data structure
@@ -238,10 +238,10 @@ export class TeamMembershipService {
 
       this._membership.set(membership);
       this._lastUpdated.set(new Date());
-      this.logger.debug(
-        "[TeamMembership] Membership loaded:",
-        { role: membership.role, teamName },
-      );
+      this.logger.debug("[TeamMembership] Membership loaded:", {
+        role: membership.role,
+        teamName,
+      });
 
       return membership;
     } catch (error) {
@@ -286,7 +286,10 @@ export class TeamMembershipService {
         .maybeSingle();
 
       if (error || !coach) {
-        this.logger.warn("[TeamMembership] No coach found for team:", toLogContext(teamId));
+        this.logger.warn(
+          "[TeamMembership] No coach found for team:",
+          toLogContext(teamId),
+        );
         return null;
       }
 
@@ -294,10 +297,14 @@ export class TeamMembershipService {
       const userData = coach.users as any;
       const firstName = userData?.first_name || null;
       const lastName = userData?.last_name || null;
-      const fullName =
-        userData?.full_name ||
-        [firstName, lastName].filter(Boolean).join(" ") ||
-        "Coach";
+      const fullName = normalizePlayerName(
+        {
+          full_name: userData?.full_name,
+          first_name: firstName,
+          last_name: lastName,
+        },
+        "Coach",
+      );
 
       return {
         userId: coach.user_id,
@@ -345,10 +352,14 @@ export class TeamMembershipService {
         const userData = coach.users as any;
         const firstName = userData?.first_name || null;
         const lastName = userData?.last_name || null;
-        const fullName =
-          userData?.full_name ||
-          [firstName, lastName].filter(Boolean).join(" ") ||
-          "Coach";
+        const fullName = normalizePlayerName(
+          {
+            full_name: userData?.full_name,
+            first_name: firstName,
+            last_name: lastName,
+          },
+          "Coach",
+        );
 
         return {
           userId: coach.user_id,

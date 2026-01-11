@@ -429,7 +429,7 @@ EWMA Chronic = (Today's Load × λ) + ((1 - λ) × Yesterday's EWMA)
 
 ### 4.1 Daily Wellness Check-in
 
-> **Note:** As of 2026-01-11, `daily_wellness_checkin` is the canonical table. 
+> **Note:** As of 2026-01-11, `daily_wellness_checkin` is the canonical table.
 > The `wellness_entries` table is deprecated (backend dual-write only).
 > See `docs/WELLNESS_DATA_ARCHITECTURE.md` for migration status.
 

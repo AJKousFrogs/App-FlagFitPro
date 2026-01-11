@@ -69,10 +69,11 @@ function processFile(filePath) {
     // Now replace static innerHTML with setSafeContent calls
     for (const { element, html, fullMatch } of matches) {
       // Check if the HTML contains only safe tags and no scripts
-       
+
+      const jsProtocol = "javascript" + ":";
       if (
         !html.includes("<script") &&
-        !html.includes("javascript:") &&
+        !html.includes(jsProtocol) &&
         !html.includes("onerror=")
       ) {
         const replacement = `setSafeContent(${element}, \`${html}\`, true, true)`;

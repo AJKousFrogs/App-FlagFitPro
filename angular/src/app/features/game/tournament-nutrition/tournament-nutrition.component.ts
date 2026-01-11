@@ -308,7 +308,9 @@ interface HydrationLog {
               <div
                 class="timeline-item"
                 [class.completed]="window.completed"
-                [class.collapsed]="window.completed && !isWindowExpanded(window.id)"
+                [class.collapsed]="
+                  window.completed && !isWindowExpanded(window.id)
+                "
                 [class.current]="isCurrentWindow(window)"
                 [class.critical]="window.priority === 'critical'"
               >
@@ -321,7 +323,10 @@ interface HydrationLog {
                 </div>
 
                 <div class="timeline-content">
-                  <div class="window-header" (click)="toggleWindowExpanded(window.id)">
+                  <div
+                    class="window-header"
+                    (click)="toggleWindowExpanded(window.id)"
+                  >
                     <div class="window-time">
                       <span class="time"
                         >{{ window.startTime }} - {{ window.endTime }}</span
@@ -338,12 +343,18 @@ interface HydrationLog {
                     <div class="header-row">
                       <h4>{{ window.title }}</h4>
                       @if (window.completed) {
-                        <button 
+                        <button
                           class="expand-toggle"
                           [class.expanded]="isWindowExpanded(window.id)"
                           type="button"
                         >
-                          <i class="pi" [class.pi-chevron-down]="!isWindowExpanded(window.id)" [class.pi-chevron-up]="isWindowExpanded(window.id)"></i>
+                          <i
+                            class="pi"
+                            [class.pi-chevron-down]="
+                              !isWindowExpanded(window.id)
+                            "
+                            [class.pi-chevron-up]="isWindowExpanded(window.id)"
+                          ></i>
                         </button>
                       }
                     </div>
@@ -353,7 +364,10 @@ interface HydrationLog {
                     <div class="window-details">
                       <div class="recommendations-grid">
                         @for (rec of window.recommendations; track rec.item) {
-                          <div class="recommendation-card" [class]="rec.category">
+                          <div
+                            class="recommendation-card"
+                            [class]="rec.category"
+                          >
                             <div class="rec-icon">{{ rec.icon }}</div>
                             <div class="rec-content">
                               <div class="rec-item">{{ rec.item }}</div>
@@ -1347,7 +1361,11 @@ export class TournamentNutritionComponent implements OnInit, OnDestroy {
   }
 
   clearAllData(): void {
-    if (confirm('Are you sure you want to clear all tournament data? This will remove your schedule, nutrition windows, and hydration logs.')) {
+    if (
+      confirm(
+        "Are you sure you want to clear all tournament data? This will remove your schedule, nutrition windows, and hydration logs.",
+      )
+    ) {
       // Clear all data
       this.games.set([]);
       this.nutritionWindows.set([]);

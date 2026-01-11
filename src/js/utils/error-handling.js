@@ -3,6 +3,19 @@ import { logger } from "../../logger.js";
 /**
  * FlagFit Pro - Standardized Error Handling Utilities
  * Provides consistent error handling patterns across the application
+ * 
+ * @deprecated This module is deprecated. Use unified-error-handler.js instead.
+ * 
+ * The unified-error-handler.js provides:
+ * - All the same functionality (ErrorType, AppError, handleError, etc.)
+ * - Additional features (Sentry integration, error severity levels, retry support)
+ * - User notifications and global error handlers
+ * 
+ * Migration:
+ * - Replace: import { handleError, AppError } from './error-handling.js'
+ * - With:    import { handleError, AppError } from './unified-error-handler.js'
+ * 
+ * This file is kept for backward compatibility but will be removed in a future release.
  */
 
 /**

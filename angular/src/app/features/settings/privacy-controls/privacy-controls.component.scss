@@ -562,7 +562,6 @@
   color: var(--primitive-warning-600);
 }
 
-
 @include respond-to(md) {
   .privacy-grid {
     grid-template-columns: 1fr;

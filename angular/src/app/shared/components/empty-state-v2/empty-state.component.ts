@@ -1,9 +1,5 @@
 import { CommonModule } from "@angular/common";
-import {
-    ChangeDetectionStrategy,
-    Component,
-    input,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 
 /**
  * Empty State Component
@@ -44,11 +40,11 @@ import {
  * ```
  */
 @Component({
-    selector: "app-empty-state",
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule],
-    template: `
+  selector: "app-empty-state",
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule],
+  template: `
     <div class="empty-state" [class.empty-state--compact]="compact()">
       <i [class]="'pi pi-' + icon()"></i>
       <h3>{{ heading() }}</h3>
@@ -68,38 +64,38 @@ import {
       }
     </div>
   `,
-    styles: [],
+  styles: [],
 })
 export class EmptyStateComponent {
-    /**
-     * PrimeIcon name (without 'pi-' prefix)
-     * Example: 'calendar-plus', 'inbox', 'chart-pie'
-     */
-    icon = input.required<string>();
+  /**
+   * PrimeIcon name (without 'pi-' prefix)
+   * Example: 'calendar-plus', 'inbox', 'chart-pie'
+   */
+  icon = input.required<string>();
 
-    /**
-     * Heading text
-     */
-    heading = input.required<string>();
+  /**
+   * Heading text
+   */
+  heading = input.required<string>();
 
-    /**
-     * Optional description text
-     */
-    description = input<string>("");
+  /**
+   * Optional description text
+   */
+  description = input<string>("");
 
-    /**
-     * Optional tip/hint text (displays at bottom with info icon)
-     */
-    tip = input<string>("");
+  /**
+   * Optional tip/hint text (displays at bottom with info icon)
+   */
+  tip = input<string>("");
 
-    /**
-     * Compact mode for smaller areas (reduces padding, smaller icon)
-     */
-    compact = input<boolean>(false);
+  /**
+   * Compact mode for smaller areas (reduces padding, smaller icon)
+   */
+  compact = input<boolean>(false);
 
-    /**
-     * Check if actions slot has content
-     * Used to conditionally render actions wrapper
-     */
-    hasActions = true; // Simplified - wrapper will handle empty content
+  /**
+   * Check if actions slot has content
+   * Used to conditionally render actions wrapper
+   */
+  hasActions = true; // Simplified - wrapper will handle empty content
 }

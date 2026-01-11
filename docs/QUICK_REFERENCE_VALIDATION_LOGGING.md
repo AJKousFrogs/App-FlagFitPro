@@ -10,24 +10,26 @@
 ### Client-Side (TypeScript)
 
 ```typescript
-import { 
-  isEmail, 
-  isStrongPassword, 
+import {
+  isEmail,
+  isStrongPassword,
   getPasswordStrength,
   sanitizeString,
   isUUID,
-  isValidPlayerName
-} from '@shared/utils/validation.utils';
+  isValidPlayerName,
+} from "@shared/utils/validation.utils";
 
 // Email validation
 if (!isEmail(email)) {
-  showError('Invalid email');
+  showError("Invalid email");
 }
 
 // Password validation with strength check
 const strength = getPasswordStrength(password);
 if (!isStrongPassword(password)) {
-  showError('Password must be 8+ chars with uppercase, lowercase, number, and special char');
+  showError(
+    "Password must be 8+ chars with uppercase, lowercase, number, and special char",
+  );
 }
 
 // XSS prevention
@@ -35,12 +37,12 @@ const safeName = sanitizeString(userInput);
 
 // UUID validation
 if (!isUUID(playerId)) {
-  showError('Invalid player ID');
+  showError("Invalid player ID");
 }
 
 // Name validation
 if (!isValidPlayerName(name)) {
-  showError('Name must be 2-100 characters, letters only');
+  showError("Name must be 2-100 characters, letters only");
 }
 ```
 
@@ -91,8 +93,8 @@ import {
   validateRPE,
   validateDuration,
   sanitizeText,
-  sanitizeFields
-} from './utils/validation.js';
+  sanitizeFields,
+} from "./utils/validation.js";
 
 // User ID validation
 const userIdValidation = validateUserId(req.params.userId);
@@ -104,7 +106,11 @@ if (!userIdValidation.isValid) {
 const sanitizedNotes = sanitizeText(req.body.notes);
 
 // Sanitize multiple fields
-const sanitized = sanitizeFields(req.body, ['notes', 'description', 'feedback']);
+const sanitized = sanitizeFields(req.body, [
+  "notes",
+  "description",
+  "feedback",
+]);
 
 // Pagination
 const pagination = validatePagination(req.query.page, req.query.limit, 100);
@@ -181,63 +187,73 @@ console.table(recentLogs);
 ### Server-Side (Node.js)
 
 ```javascript
-import { serverLogger } from './utils/server-logger.js';
+import { serverLogger } from "./utils/server-logger.js";
 
 // Set global context
 serverLogger.setGlobalContext({
-  service: 'training-api',
-  version: '1.0.0'
+  service: "training-api",
+  version: "1.0.0",
 });
 
 // Info logging
-serverLogger.info('Training session created', {
-  userId: req.user.id,
-  endpoint: '/training/sessions'
-}, {
-  sessionId: session.id,
-  duration: session.duration
-});
+serverLogger.info(
+  "Training session created",
+  {
+    userId: req.user.id,
+    endpoint: "/training/sessions",
+  },
+  {
+    sessionId: session.id,
+    duration: session.duration,
+  },
+);
 
 // Request logging helper
-serverLogger.request(req, 'Processing training request', {
-  sessionId: session.id
+serverLogger.request(req, "Processing training request", {
+  sessionId: session.id,
 });
 
 // Warning logging
-serverLogger.warn('High training load detected', {
-  userId: req.user.id
-}, {
-  load: trainingLoad,
-  threshold: 1000
-});
+serverLogger.warn(
+  "High training load detected",
+  {
+    userId: req.user.id,
+  },
+  {
+    load: trainingLoad,
+    threshold: 1000,
+  },
+);
 
 // Error logging
 try {
   await saveSession(data);
 } catch (error) {
   serverLogger.error(
-    'Failed to save session',
+    "Failed to save session",
     error,
     { userId: req.user.id, endpoint: req.path },
-    { sessionData: data }
+    { sessionData: data },
   );
 }
 
 // Performance logging
 const start = Date.now();
 await processData();
-serverLogger.performance(
-  'Data Processing',
-  Date.now() - start,
-  { userId: req.user.id }
-);
+serverLogger.performance("Data Processing", Date.now() - start, {
+  userId: req.user.id,
+});
 
 // Debug logging (dev only)
-serverLogger.debug('Query executed', {
-  query: 'SELECT * FROM sessions'
-}, {
-  rowCount: results.length
-});
+serverLogger.debug(
+  "Query executed",
+  {
+    query: "SELECT * FROM sessions",
+  },
+  {
+    rowCount: results.length,
+  },
+);
 ```
 
 ---
@@ -248,7 +264,7 @@ serverLogger.debug('Query executed', {
 
 ```sql
 -- List all indexes on a table
-SELECT 
+SELECT
   indexname,
   indexdef
 FROM pg_indexes
@@ -256,7 +272,7 @@ WHERE schemaname = 'public'
   AND tablename = 'training_sessions';
 
 -- Check index usage statistics
-SELECT 
+SELECT
   schemaname,
   tablename,
   indexname,
@@ -273,7 +289,7 @@ ORDER BY idx_scan DESC;
 
 ```sql
 -- Find tables with high sequential scans
-SELECT 
+SELECT
   schemaname,
   tablename,
   seq_scan as sequential_scans,
@@ -293,7 +309,7 @@ LIMIT 10;
 \i database/validate_indexes.sql
 
 -- Or check specific indexes
-SELECT 
+SELECT
   indexname,
   indexdef,
   pg_size_pretty(pg_relation_size(indexrelid)) as size
@@ -373,7 +389,7 @@ async onSubmit() {
     };
 
     await this.save(sanitizedData);
-    
+
     this.logger.success('Form submitted successfully', {
       component: 'MyForm',
       action: 'submit'
@@ -392,8 +408,13 @@ async onSubmit() {
 
 ```javascript
 // routes/my-route.js
-import { serverLogger } from './utils/server-logger.js';
-import { validateUserId, sanitizeText, sendError, sendSuccess } from './utils/validation.js';
+import { serverLogger } from "./utils/server-logger.js";
+import {
+  validateUserId,
+  sanitizeText,
+  sendError,
+  sendSuccess,
+} from "./utils/validation.js";
 
 export default async function handler(req, res) {
   const startTime = Date.now();
@@ -402,45 +423,46 @@ export default async function handler(req, res) {
     // Validate input
     const userIdValidation = validateUserId(req.params.userId);
     if (!userIdValidation.isValid) {
-      serverLogger.warn('Invalid user ID', {
-        endpoint: req.path,
-        userId: req.params.userId
-      }, {
-        error: userIdValidation.error
-      });
-      return sendError(res, userIdValidation.error, 'VALIDATION_ERROR', 400);
+      serverLogger.warn(
+        "Invalid user ID",
+        {
+          endpoint: req.path,
+          userId: req.params.userId,
+        },
+        {
+          error: userIdValidation.error,
+        },
+      );
+      return sendError(res, userIdValidation.error, "VALIDATION_ERROR", 400);
     }
 
     // Sanitize input
     const sanitizedData = {
       notes: sanitizeText(req.body.notes),
-      description: sanitizeText(req.body.description)
+      description: sanitizeText(req.body.description),
     };
 
     // Process request
     const result = await processData(sanitizedData);
 
     // Log success
-    serverLogger.request(req, 'Request processed successfully', {
-      resultId: result.id
+    serverLogger.request(req, "Request processed successfully", {
+      resultId: result.id,
     });
 
     // Log performance
-    serverLogger.performance(
-      'API Request',
-      Date.now() - startTime,
-      { endpoint: req.path, userId: userIdValidation.userId }
-    );
+    serverLogger.performance("API Request", Date.now() - startTime, {
+      endpoint: req.path,
+      userId: userIdValidation.userId,
+    });
 
     return sendSuccess(res, result);
-
   } catch (error) {
-    serverLogger.error(
-      'Request failed',
-      error,
-      { endpoint: req.path, userId: req.params.userId }
-    );
-    return sendError(res, 'Internal server error', 'SERVER_ERROR', 500);
+    serverLogger.error("Request failed", error, {
+      endpoint: req.path,
+      userId: req.params.userId,
+    });
+    return sendError(res, "Internal server error", "SERVER_ERROR", 500);
   }
 }
 ```
@@ -478,14 +500,14 @@ export default async function handler(req, res) {
 
 ```typescript
 // Check if validators are applied
-console.log(this.form.get('email')?.validator);
+console.log(this.form.get("email")?.validator);
 
 // Check validation errors
-console.log(this.form.get('email')?.errors);
+console.log(this.form.get("email")?.errors);
 
 // Manual validation
 const result = isEmail(emailValue);
-console.log('Email valid?', result);
+console.log("Email valid?", result);
 ```
 
 ### Index Not Being Used
@@ -493,8 +515,8 @@ console.log('Email valid?', result);
 ```sql
 -- Check query plan
 EXPLAIN ANALYZE
-SELECT * FROM training_sessions 
-WHERE user_id = 'xxx' 
+SELECT * FROM training_sessions
+WHERE user_id = 'xxx'
   AND status = 'completed'
 ORDER BY session_date DESC;
 
@@ -512,7 +534,7 @@ ANALYZE training_sessions;
 console.log(logger.getLogLevel());
 
 // Try setting to debug
-logger.setLevel('debug');
+logger.setLevel("debug");
 
 // Check if logs are in buffer
 const logs = logger.getRecentLogs(10);

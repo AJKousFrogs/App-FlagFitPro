@@ -226,7 +226,10 @@ export class AcwrAlertsService {
         // Refresh notification badge
         this.notificationService.refreshBadgeCount();
       } catch (error) {
-        this.logger.warn("Failed to save notification to database:", toLogContext(error));
+        this.logger.warn(
+          "Failed to save notification to database:",
+          toLogContext(error),
+        );
       }
     }
 
@@ -248,7 +251,10 @@ export class AcwrAlertsService {
    * Uses TeamMembershipService for centralized team queries
    */
   private async notifyCoach(alert: LoadAlert): Promise<void> {
-    this.logger.info("📧 Notifying coach of critical alert:", toLogContext(alert.message));
+    this.logger.info(
+      "📧 Notifying coach of critical alert:",
+      toLogContext(alert.message),
+    );
 
     const user = this.authService.getUser();
     if (!user?.id) return;

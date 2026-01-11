@@ -50,8 +50,9 @@
   padding: var(--space-4) var(--space-3);
   border: 2px solid transparent;
   border-radius: var(--radius-xl);
-  transition: background-color var(--transition-fast),
-              border-color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .list-item:hover {
@@ -120,6 +121,7 @@
 ## Button Usage Rules
 
 ### ✅ DO
+
 ```html
 <!-- Use app-button component with standard variants -->
 <app-button variant="primary">Save</app-button>
@@ -128,6 +130,7 @@
 ```
 
 ### ❌ DON'T
+
 ```scss
 /* NEVER override button geometry */
 app-button {
@@ -151,7 +154,7 @@ app-button {
     align-items: flex-start;
     gap: var(--space-3);
   }
-  
+
   .control-row__control {
     width: 100%;
     justify-content: flex-start; /* Left-align on mobile */
@@ -164,6 +167,7 @@ app-button {
 ## Common Pitfalls
 
 ### ❌ Pitfall 1: Centering multi-line text
+
 ```scss
 /* BAD - causes drift when text wraps */
 .text-block {
@@ -178,6 +182,7 @@ app-button {
 ```
 
 ### ❌ Pitfall 2: Forgetting icon line-height
+
 ```scss
 /* BAD - icon drifts relative to text */
 .icon {
@@ -193,6 +198,7 @@ app-button {
 ```
 
 ### ❌ Pitfall 3: Variable row heights
+
 ```scss
 /* BAD - rows feel inconsistent */
 .row-item {
@@ -207,6 +213,7 @@ app-button {
 ```
 
 ### ❌ Pitfall 4: Hover layout shifts
+
 ```scss
 /* BAD - border appears on hover, causes shift */
 .button {
@@ -243,12 +250,14 @@ app-button {
 ## Testing Quick Check
 
 ### Visual Test
+
 1. Open Settings page
 2. Hover over all interactive rows → should see **zero layout shift**
 3. Open all dialogs → footers should be **identical height**
 4. Resize to mobile → rows should **stack cleanly**
 
 ### Code Review Test
+
 ```bash
 # Search for anti-patterns
 rg "height.*!important" --type scss

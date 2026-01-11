@@ -1001,7 +1001,10 @@ export class CommunityComponent implements OnInit {
   }
 
   onAnnouncementAcknowledged(announcementId: string): void {
-    this.logger.info("Announcement acknowledged:", toLogContext(announcementId));
+    this.logger.info(
+      "Announcement acknowledged:",
+      toLogContext(announcementId),
+    );
   }
 
   loadCommunityData(): void {

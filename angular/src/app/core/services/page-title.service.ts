@@ -7,11 +7,13 @@
  * and browser tab identification.
  *
  * Usage:
- * constructor(private pageTitleService: PageTitleService) {}
+ * ```typescript
+ * private pageTitleService = inject(PageTitleService);
  *
  * ngOnInit() {
  *   this.pageTitleService.setTitle('Dashboard');
  * }
+ * ```
  */
 
 import { Injectable, inject } from "@angular/core";

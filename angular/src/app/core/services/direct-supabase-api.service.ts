@@ -255,9 +255,17 @@ export class DirectSupabaseApiService {
       if (wellnessResponse.success && wellnessResponse.data?.notes) {
         // Parse notes to check for injury keywords
         const notes = wellnessResponse.data.notes.toLowerCase();
-        const injuryKeywords = ['injury', 'injured', 'pain', 'rehab', 'rehabilitation'];
-        const hasInjuryNote = injuryKeywords.some(keyword => notes.includes(keyword));
-        
+        const injuryKeywords = [
+          "injury",
+          "injured",
+          "pain",
+          "rehab",
+          "rehabilitation",
+        ];
+        const hasInjuryNote = injuryKeywords.some((keyword) =>
+          notes.includes(keyword),
+        );
+
         if (hasInjuryNote) {
           override = {
             type: "rehab_protocol",
@@ -416,13 +424,13 @@ export class DirectSupabaseApiService {
     const exercisesByCategory = new Map<string, typeof allExercises>();
     allExercises.forEach((ex) => {
       const category = (ex.category || "").toLowerCase();
-    if (!exercisesByCategory.has(category)) {
-      exercisesByCategory.set(category, []);
-    }
-    const categoryExercises = exercisesByCategory.get(category);
-    if (categoryExercises) {
-      categoryExercises.push(ex);
-    }
+      if (!exercisesByCategory.has(category)) {
+        exercisesByCategory.set(category, []);
+      }
+      const categoryExercises = exercisesByCategory.get(category);
+      if (categoryExercises) {
+        categoryExercises.push(ex);
+      }
     });
 
     const protocolExercises: Array<{

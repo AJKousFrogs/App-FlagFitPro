@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import {
-    booleanAttribute,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    input,
-    output,
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { RippleModule } from "primeng/ripple";
@@ -167,9 +167,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
       .icon-btn:focus-visible {
         outline: 3px solid var(--focus-ring-color);
         outline-offset: 2px;
-        box-shadow:
-          var(--shadow-md),
-          var(--focus-ring-shadow);
+        box-shadow: var(--shadow-md), var(--focus-ring-shadow);
       }
 
       .icon-btn:focus:not(:focus-visible) {

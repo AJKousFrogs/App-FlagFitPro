@@ -740,7 +740,10 @@ export class PlayerStatisticsService {
       );
       return result.percentage;
     } catch (error) {
-      this.logger.warn("Error calculating completion percentage:", toLogContext(error));
+      this.logger.warn(
+        "Error calculating completion percentage:",
+        toLogContext(error),
+      );
       return attempts > 0 ? (completions / attempts) * 100 : 0;
     }
   }
@@ -772,7 +775,10 @@ export class PlayerStatisticsService {
       );
       return result.rate;
     } catch (error) {
-      this.logger.warn("Error calculating flag pull success rate:", toLogContext(error));
+      this.logger.warn(
+        "Error calculating flag pull success rate:",
+        toLogContext(error),
+      );
       return attempts > 0 ? (successes / attempts) * 100 : 0;
     }
   }

@@ -13,16 +13,16 @@
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CommonModule } from "@angular/common";
 import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    inject,
-    OnDestroy,
-    OnInit,
-    signal,
-    ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";
@@ -40,19 +40,19 @@ import { COLORS, TIMEOUTS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    Channel,
-    ChannelMemberDetails,
-    ChannelMembersResponse,
-    ChannelService,
-    ChannelType,
-    ChatMessage,
+  Channel,
+  ChannelMemberDetails,
+  ChannelMembersResponse,
+  ChannelService,
+  ChannelType,
+  ChatMessage,
 } from "../../core/services/channel.service";
 import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
 import {
-    DIALOG_STYLES,
-    DROPDOWN_WIDTHS,
+  DIALOG_STYLES,
+  DROPDOWN_WIDTHS,
 } from "../../core/utils/design-tokens.util";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";

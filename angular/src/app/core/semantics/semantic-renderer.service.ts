@@ -57,10 +57,9 @@ export class SemanticRendererService {
     // Validate meaning follows semantic rules
     const validation = validateMeaning(meaning);
     if (!validation.valid) {
-      this.logger.warn(
-        "[SemanticRenderer] Meaning validation failed:",
-        { errors: validation.errors },
-      );
+      this.logger.warn("[SemanticRenderer] Meaning validation failed:", {
+        errors: validation.errors,
+      });
       // Continue rendering but log warning
     }
 

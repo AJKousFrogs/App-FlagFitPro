@@ -744,13 +744,13 @@ Print this and keep it visible:
 
 ## Related Documentation
 
-| Document                                                           | Purpose                      |
-| ------------------------------------------------------------------ | ---------------------------- |
-| [RLS Policy Specification](./RLS_POLICY_SPECIFICATION.md)          | Consent enforcement patterns |
-| [Security Guide](./SECURITY.md)                                    | Security architecture        |
-| [Threat Model](./THREAT_MODEL.md)                                  | Security threat analysis     |
-| [Database Setup](./DATABASE_SETUP.md)                              | Database patterns            |
-| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md)         | If something goes wrong      |
+| Document                                                   | Purpose                      |
+| ---------------------------------------------------------- | ---------------------------- |
+| [RLS Policy Specification](./RLS_POLICY_SPECIFICATION.md)  | Consent enforcement patterns |
+| [Security Guide](./SECURITY.md)                            | Security architecture        |
+| [Threat Model](./THREAT_MODEL.md)                          | Security threat analysis     |
+| [Database Setup](./DATABASE_SETUP.md)                      | Database patterns            |
+| [Privacy Incident Runbook](./RUNBOOKS/PRIVACY_INCIDENT.md) | If something goes wrong      |
 
 ---
 

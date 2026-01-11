@@ -544,7 +544,7 @@
 .p-toggleswitch {
   // Removed scale transform on hover - it breaks the layout and causes overflow
   // The thumb should stay within the track bounds at all times
-  
+
   &.p-toggleswitch-checked .p-toggleswitch-slider {
     background-color: var(--ds-primary-green);
   }
