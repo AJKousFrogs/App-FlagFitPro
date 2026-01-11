@@ -11,8 +11,8 @@
  * @version 1.0.0
  */
 
-import { Injectable, ErrorHandler, inject } from "@angular/core";
-import { Router, NavigationError } from "@angular/router";
+import { ErrorHandler, inject, Injectable } from "@angular/core";
+import { NavigationError, Router } from "@angular/router";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 
@@ -383,10 +383,6 @@ export class GlobalErrorHandler implements ErrorHandler {
   private errorTracking = inject(ErrorTrackingService);
 
   handleError(error: unknown): void {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'error-tracking.service.ts:handleError',message:'GlobalErrorHandler caught unhandled error',data:{errorMessage:error instanceof Error?error.message:String(error),errorStack:error instanceof Error?error.stack:undefined,errorType:error?.constructor?.name},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A-global-error'})}).catch(()=>{});
-    // #endregion
-
     // Capture the error
     this.errorTracking.captureError(error, {
       component: "GlobalErrorHandler",

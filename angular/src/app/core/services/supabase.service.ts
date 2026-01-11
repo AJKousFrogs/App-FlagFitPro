@@ -1,17 +1,16 @@
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import {
-  createClient,
-  SupabaseClient,
-  User,
-  Session,
-  AuthChangeEvent,
-  UserAttributes,
-  RealtimeChannel,
-  RealtimePostgresChangesPayload,
+    AuthChangeEvent,
+    createClient,
+    RealtimeChannel,
+    RealtimePostgresChangesPayload,
+    Session,
+    SupabaseClient,
+    User,
+    UserAttributes,
 } from "@supabase/supabase-js";
 import { environment } from "../../../environments/environment";
-import { LoggerService } from "./logger.service";
-import { toLogContext } from "./logger.service";
+import { LoggerService, toLogContext } from "./logger.service";
 
 export interface UserMetadata {
   firstName?: string;
@@ -77,15 +76,9 @@ export class SupabaseService {
   }
 
   private async initializeAuth() {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:initializeAuth:start',message:'Supabase auth initialization starting',data:{timestamp:new Date().toISOString()},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F-supabase-auth'})}).catch(()=>{});
-    // #endregion
     try {
       // Get initial session
       const { data } = await this.supabase.auth.getSession();
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:initializeAuth:session',message:'Supabase session retrieved',data:{hasSession:!!data.session,userId:data.session?.user?.id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F-supabase-auth'})}).catch(()=>{});
-      // #endregion
       this._session.set(data.session);
       this._currentUser.set(data.session?.user ?? null);
 
@@ -135,16 +128,11 @@ export class SupabaseService {
         },
       );
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:initializeAuth:error',message:'Supabase auth initialization error',data:{errorMessage:error instanceof Error?error.message:String(error),errorStack:error instanceof Error?error.stack:undefined},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F-supabase-auth'})}).catch(()=>{});
-      // #endregion
+      this.logger.error("[Supabase] Auth initialization error", { error });
       throw error;
     } finally {
       // Mark as initialized even if there's no session
       this._isInitialized.set(true);
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/540f856a-2658-42ab-a243-d3baa18dd615',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:initializeAuth:complete',message:'Supabase auth initialization complete',data:{isInitialized:true},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'F-supabase-auth'})}).catch(()=>{});
-      // #endregion
     }
   }
 
@@ -338,7 +326,7 @@ export class SupabaseService {
         {
           event: "INSERT",
           schema: "public",
-          table: "athlete_daily_state",
+          table: "daily_wellness_checkin",
         },
         (payload) => {
           // Client-side filter
@@ -356,7 +344,7 @@ export class SupabaseService {
         {
           event: "UPDATE",
           schema: "public",
-          table: "athlete_daily_state",
+          table: "daily_wellness_checkin",
         },
         (payload) => {
           const userId = (payload.new as { user_id?: string })?.user_id;
@@ -369,7 +357,7 @@ export class SupabaseService {
 
     channel.subscribe((status) => {
       this.logger.debug(
-        `[SupabaseService] Athlete daily state subscription status: ${status}`,
+        `[SupabaseService] Daily wellness checkin subscription status: ${status}`,
       );
     });
 

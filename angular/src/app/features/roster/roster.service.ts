@@ -611,7 +611,6 @@ export class RosterService {
           id,
           email,
           role,
-          message,
           status,
           invited_by,
           expires_at,

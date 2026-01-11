@@ -141,18 +141,18 @@ async function generateAthleteDigest(
 
   // Readiness Trend
   const { data: dailyStates } = await supabaseAdmin
-    .from("athlete_daily_state")
-    .select("readiness_score, pain_level")
+    .from("daily_wellness_checkin")
+    .select("calculated_readiness, muscle_soreness")
     .eq("user_id", userId)
-    .gte("state_date", periodStart.toISOString().split("T")[0])
-    .lte("state_date", periodEnd.toISOString().split("T")[0])
-    .order("state_date", { ascending: true });
+    .gte("checkin_date", periodStart.toISOString().split("T")[0])
+    .lte("checkin_date", periodEnd.toISOString().split("T")[0])
+    .order("checkin_date", { ascending: true });
 
   if (dailyStates && dailyStates.length > 0) {
     const avgReadiness =
       dailyStates
-        .filter((s) => s.readiness_score !== null)
-        .reduce((sum, s) => sum + parseFloat(s.readiness_score), 0) /
+        .filter((s) => s.calculated_readiness !== null)
+        .reduce((sum, s) => sum + parseFloat(s.calculated_readiness), 0) /
       dailyStates.length;
 
     content.sections.push({

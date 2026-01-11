@@ -126,7 +126,7 @@ async function generateTeamReport(supabase, season, players) {
   // Aggregate team statistics
   const { data: wellness } = await supabase
     .from("daily_wellness_checkin")
-    .select("readiness_score")
+    .select("calculated_readiness")
     .in(
       "user_id",
       players.map((p) => p.user_id),
@@ -145,7 +145,7 @@ async function generateTeamReport(supabase, season, players) {
     .lte("session_date", season.end_date);
 
   const avgReadiness =
-    wellness?.reduce((sum, w) => sum + (w.readiness_score || 0), 0) /
+    wellness?.reduce((sum, w) => sum + (w.calculated_readiness || 0), 0) /
       (wellness?.length || 1) || 0;
   const totalTrainingHours =
     training?.reduce((sum, t) => sum + (t.duration_minutes || 0), 0) / 60 || 0;
@@ -193,7 +193,7 @@ async function generateCoachReport(supabase, season, players) {
 async function generatePlayerReport(supabase, season, playerId) {
   const { data: wellness } = await supabase
     .from("daily_wellness_checkin")
-    .select("readiness_score, checkin_date")
+    .select("calculated_readiness, checkin_date")
     .eq("user_id", playerId)
     .gte("checkin_date", season.start_date)
     .lte("checkin_date", season.end_date)
@@ -216,7 +216,7 @@ async function generatePlayerReport(supabase, season, playerId) {
     .limit(1);
 
   const avgReadiness =
-    wellness?.reduce((sum, w) => sum + (w.readiness_score || 0), 0) /
+    wellness?.reduce((sum, w) => sum + (w.calculated_readiness || 0), 0) /
       (wellness?.length || 1) || 0;
   const totalTrainingHours =
     training?.reduce((sum, t) => sum + (t.duration_minutes || 0), 0) / 60 || 0;
@@ -239,7 +239,7 @@ async function generatePlayerReport(supabase, season, playerId) {
       readiness_trend:
         wellness?.map((w) => ({
           date: w.checkin_date,
-          readiness: w.readiness_score,
+          readiness: w.calculated_readiness,
         })) || [],
     },
   };

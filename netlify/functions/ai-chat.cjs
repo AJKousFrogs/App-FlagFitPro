@@ -374,10 +374,10 @@ async function getUserContext(userId) {
 
     // 6. Get latest wellness entry
     const { data: wellness } = await supabaseAdmin
-      .from("athlete_daily_state")
+      .from("daily_wellness_checkin")
       .select("*")
       .eq("user_id", userId)
-      .eq("state_date", today)
+      .eq("checkin_date", today)
       .single();
 
     context.latestWellness = wellness;
@@ -388,14 +388,14 @@ async function getUserContext(userId) {
     const yesterdayStr = yesterday.toISOString().split("T")[0];
 
     const { data: yesterdayWellness } = await supabaseAdmin
-      .from("athlete_daily_state")
-      .select("readiness_score")
+      .from("daily_wellness_checkin")
+      .select("calculated_readiness")
       .eq("user_id", userId)
-      .eq("state_date", yesterdayStr)
+      .eq("checkin_date", yesterdayStr)
       .maybeSingle();
 
-    if (yesterdayWellness && yesterdayWellness.readiness_score < 40) {
-      context.yesterdayWellness = yesterdayWellness;
+    if (yesterdayWellness && yesterdayWellness.calculated_readiness < 40) {
+      context.yesterdayWellness = { readiness_score: yesterdayWellness.calculated_readiness };
     }
 
     // 6b. Get recent games (last 7 days) for temporal context
@@ -1247,10 +1247,10 @@ async function buildAthleteStateGates(userId) {
     // 4. Today's daily state (readiness check)
     const today = new Date().toISOString().split("T")[0];
     const { data: dailyState } = await supabaseAdmin
-      .from("athlete_daily_state")
-      .select("*")
+      .from("daily_wellness_checkin")
+      .select("*, readiness_score:calculated_readiness")
       .eq("user_id", userId)
-      .eq("state_date", today)
+      .eq("checkin_date", today)
       .single();
     gates.dailyState = dailyState;
 

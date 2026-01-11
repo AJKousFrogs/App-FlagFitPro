@@ -113,7 +113,7 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
     stressLevel: data.stress_level,
     sorenessAreas: data.soreness_areas || [],
     notes: data.notes,
-    readinessScore: data.readiness_score,
+    readinessScore: data.calculated_readiness,
   };
 
   if (isCoach && targetAthleteId !== userId) {
@@ -292,7 +292,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
         stress_level: stressLevel,
         soreness_areas: sorenessAreas || [],
         notes,
-        readiness_score: calculatedReadiness,
+        calculated_readiness: calculatedReadiness,
       },
       {
         onConflict: "user_id,checkin_date",
@@ -643,7 +643,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
         stressLevel: data.stress_level,
         sorenessAreas: data.soreness_areas || [],
         notes: data.notes,
-        readinessScore: data.readiness_score,
+        readinessScore: data.calculated_readiness,
       },
     }),
   };
