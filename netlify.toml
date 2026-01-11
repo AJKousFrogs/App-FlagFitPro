@@ -44,8 +44,8 @@
     # Force HTTPS (HSTS)
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
-    # Permissions policy - disable unnecessary features
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
+    # Permissions policy - disable unnecessary features, allow geolocation for weather
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
 
     # Cross-Origin policies for additional isolation
     # Using credentialless instead of require-corp to allow external resources
