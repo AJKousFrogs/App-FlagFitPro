@@ -160,22 +160,37 @@ exports.handler = async (event, context) => {
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
     handler: async (event, _context, { userId }) => {
+      console.log("[calc-readiness] Starting function execution", {
+        userId,
+        bodyLength: event.body?.length,
+      });
+
       let body;
       try {
         body = JSON.parse(event.body || "{}");
+        console.log("[calc-readiness] Parsed body:", body);
       } catch (_e) {
+        console.error("[calc-readiness] JSON parse error:", _e);
         return handleValidationError("Invalid JSON in request body");
       }
 
       // If athleteId not provided, use authenticated user's ID
       const { athleteId = userId, day } = body;
 
+      console.log("[calc-readiness] Request parameters:", {
+        athleteId,
+        day,
+        userId,
+      });
+
       if (!athleteId) {
+        console.error("[calc-readiness] Missing athleteId");
         return handleValidationError("athleteId is required");
       }
 
       const targetDate = day ? new Date(day) : new Date();
       const dayStr = targetDate.toISOString().slice(0, 10);
+      console.log("[calc-readiness] Target date:", dayStr);
 
       // 1) Load training sessions for ACWR calculation (session-RPE: RPE × minutes)
       const startChronic = new Date(targetDate);
@@ -188,6 +203,12 @@ exports.handler = async (event, context) => {
       // Include both rpe and intensity_level (fallback for RPE)
       // Note: athlete_id is the canonical user reference column (NOT NULL)
       // Use session_date as the standardized date column
+      console.log("[calc-readiness] Fetching sessions:", {
+        athleteId,
+        startChronic: startChronic.toISOString().slice(0, 10),
+        endDate: dayStr,
+      });
+
       const { data: sessions, error: sessErr } = await supabaseAdmin
         .from("training_sessions")
         .select("session_date, duration_minutes, rpe, workload, intensity_level")
@@ -197,12 +218,16 @@ exports.handler = async (event, context) => {
         .order("session_date", { ascending: false });
 
       if (sessErr) {
-        console.error("Error fetching sessions:", sessErr);
+        console.error("[calc-readiness] Error fetching sessions:", sessErr);
         return createErrorResponse(
           500,
           `Failed to fetch sessions: ${sessErr.message}`,
         );
       }
+
+      console.log(
+        `[calc-readiness] Fetched ${sessions?.length || 0} sessions`,
+      );
 
       // Calculate daily loads (session-RPE = RPE × duration)
       // Use rpe if available, fallback to intensity_level (assuming 1-10 scale maps to RPE)
@@ -252,6 +277,11 @@ exports.handler = async (event, context) => {
       const acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : 0;
 
       // 2) Get wellness log for the day
+      console.log("[calc-readiness] Fetching wellness log for:", {
+        athleteId,
+        dayStr,
+      });
+
       const { data: wellness, error: wellErr } = await supabaseAdmin
         .from("wellness_logs")
         .select("*")
@@ -260,14 +290,20 @@ exports.handler = async (event, context) => {
         .maybeSingle();
 
       if (wellErr) {
-        console.error("Error fetching wellness log:", wellErr);
+        console.error("[calc-readiness] Error fetching wellness log:", wellErr);
         return createErrorResponse(
           500,
           `Failed to fetch wellness log: ${wellErr.message}`,
         );
       }
 
+      console.log("[calc-readiness] Wellness log found:", !!wellness);
+
       if (!wellness) {
+        console.error(
+          "[calc-readiness] No wellness log found for date:",
+          dayStr,
+        );
         return createErrorResponse(
           400,
           "Missing wellness log for this day. Please log wellness data first.",
@@ -428,7 +464,18 @@ exports.handler = async (event, context) => {
 
       // Safety override: Check ACWR danger zone
       if (acwr > 1.5 || acwr < 0.8) {
-        await detectACWRTrigger(athleteId);
+        console.log("[calc-readiness] ACWR in danger zone, triggering check:", {
+          acwr,
+        });
+        try {
+          await detectACWRTrigger(athleteId);
+        } catch (triggerError) {
+          console.error(
+            "[calc-readiness] Error in detectACWRTrigger:",
+            triggerError,
+          );
+          // Don't fail the whole request if safety override check fails
+        }
       }
 
       // Calibration note for teams
@@ -436,6 +483,12 @@ exports.handler = async (event, context) => {
         `Readiness thresholds (Low: <${LOW_MAX}, Moderate: ${LOW_MAX}-${MODERATE_MAX}, High: >${MODERATE_MAX}) ` +
         `are evidence-based starting points. Teams should calibrate these thresholds using their own ` +
         `injury and performance history over time for optimal accuracy.`;
+
+      console.log("[calc-readiness] Calculation complete:", {
+        score,
+        level,
+        acwr: Math.round(acwr * 100) / 100,
+      });
 
       return createSuccessResponse({
         score,
