@@ -12,22 +12,16 @@
  * - OpenAlex: https://docs.openalex.org/
  */
 
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
 // API Base URLs (all free, no API key required for basic usage)
 const PUBMED_BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 const EUROPE_PMC_BASE_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest";
 const OPENALEX_BASE_URL = "https://api.openalex.org";
 
-// Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
+// Use shared Supabase admin client
 function getSupabaseAdmin() {
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error("Missing Supabase credentials");
-  }
-  return createClient(supabaseUrl, supabaseServiceKey);
+  return supabaseAdmin;
 }
 
 // =============================================================================

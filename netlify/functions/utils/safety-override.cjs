@@ -3,12 +3,7 @@
  * Contract: Data Consent & Visibility Contract v1, Section 4
  */
 
-const { createClient } = require("@supabase/supabase-js");
-
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-);
+const { supabaseAdmin } = require("../supabase-client.cjs");
 
 /**
  * Check if safety override applies for athlete data

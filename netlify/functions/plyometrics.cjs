@@ -3,12 +3,9 @@
  * Provides plyometric exercises from the database for training plans
  */
 
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-);
+const supabase = supabaseAdmin;
 
 const headers = {
   "Access-Control-Allow-Origin": "*",

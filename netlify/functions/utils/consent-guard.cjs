@@ -3,12 +3,7 @@
  * Checks consent before returning data to coaches
  */
 
-const { createClient } = require("@supabase/supabase-js");
-
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-);
+const { supabaseAdmin } = require("../supabase-client.cjs");
 
 /**
  * Check if coach can view athlete's readiness score

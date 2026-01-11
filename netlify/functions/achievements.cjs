@@ -1,7 +1,4 @@
-const { createClient } = require("@supabase/supabase-js");
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
 exports.handler = async (event) => {
   const headers = {
@@ -27,7 +24,7 @@ exports.handler = async (event) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = supabaseAdmin;
 
     const {
       data: { user },

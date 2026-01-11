@@ -2,23 +2,16 @@
 // Searches the evidence-based knowledge database
 // Updated to work with actual knowledge_base_entries schema
 
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
-
+// Use shared Supabase admin client
 function getSupabase() {
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error("Missing Supabase credentials");
-  }
-  return createClient(supabaseUrl, supabaseKey);
+  return supabaseAdmin;
 }
 
 // SECURITY: Whitelist of allowed categories to prevent injection

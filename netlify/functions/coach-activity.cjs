@@ -9,22 +9,15 @@
  * - POST /api/coach-activity/read-all - Mark all as read
  */
 
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-let supabaseAdmin;
+// Use shared Supabase admin client
 function getSupabase() {
-  if (!supabaseAdmin) {
-    supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
-  }
   return supabaseAdmin;
 }
 

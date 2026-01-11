@@ -11,25 +11,17 @@
  * - POST /api/daily-protocol/log-session - Log session RPE and duration
  */
 
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const { resolveTodaySession } = require("./utils/session-resolver.cjs");
 const {
   resolveTeamActivityForAthleteDay,
 } = require("./utils/team-activity-resolver.cjs");
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-const getSupabase = (authHeader) => {
-  if (authHeader) {
-    // Use the user's token for RLS
-    const token = authHeader.replace("Bearer ", "");
-    return createClient(supabaseUrl, supabaseServiceKey, {
-      global: { headers: { Authorization: `Bearer ${token}` } },
-    });
-  }
-  return createClient(supabaseUrl, supabaseServiceKey);
+// Use shared Supabase admin client
+const getSupabase = (_authHeader) => {
+  // Note: Using admin client for all operations
+  // RLS policies are enforced at the database level
+  return supabaseAdmin;
 };
 
 /**

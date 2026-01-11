@@ -11,19 +11,11 @@
  * Returns exact prescriptions (e.g., "3x11 pushups") not ranges.
  */
 
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-const getSupabase = (authHeader) => {
-  if (authHeader) {
-    const token = authHeader.replace("Bearer ", "");
-    return createClient(supabaseUrl, supabaseServiceKey, {
-      global: { headers: { Authorization: `Bearer ${token}` } },
-    });
-  }
-  return createClient(supabaseUrl, supabaseServiceKey);
+const getSupabase = (_authHeader) => {
+  // Use shared admin client
+  return supabaseAdmin;
 };
 
 /**

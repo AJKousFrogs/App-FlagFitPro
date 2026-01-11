@@ -1,13 +1,10 @@
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 const {
   canCoachViewWellness,
   filterWellnessDataForCoach,
 } = require("./utils/consent-guard.cjs");
 const { detectPainTrigger } = require("./utils/safety-override.cjs");
 const { getUserRole } = require("./utils/authorization-guard.cjs");
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 exports.handler = async (event) => {
   const headers = {
@@ -33,7 +30,7 @@ exports.handler = async (event) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = supabaseAdmin;
 
     const {
       data: { user },

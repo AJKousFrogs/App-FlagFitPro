@@ -9,12 +9,9 @@
  * POST /api/exercisedb/approve - Approve an exercise for use (coach only)
  */
 
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("./supabase-client.cjs");
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-);
+const supabase = supabaseAdmin;
 
 // ExerciseDB API configuration
 const EXERCISEDB_API_URL = "https://exercisedb-api.vercel.app/api/v1";
