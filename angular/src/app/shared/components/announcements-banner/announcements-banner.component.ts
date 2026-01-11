@@ -11,23 +11,23 @@
  * - Visual priority for important messages
  */
 
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-  input,
-  output,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    computed,
+    inject,
+    input,
+    output,
+    signal,
+} from "@angular/core";
 import { RouterModule } from "@angular/router";
+import { TagModule } from "primeng/tag";
 import { TeamNotificationService } from "../../../core/services/team-notification.service";
+import { getTimeAgo } from "../../utils/date.utils";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { formatDate, getTimeAgo } from "../../utils/date.utils";
-import { TagModule } from "primeng/tag";
 
 @Component({
   selector: "app-announcements-banner",

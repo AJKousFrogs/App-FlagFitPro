@@ -11,22 +11,22 @@
 
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TooltipModule } from "primeng/tooltip";
-import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { ButtonComponent, CardComponent } from "../ui-components";
+import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
 import { formatTimeOfDay } from "../../utils/format.utils";
+import { ButtonComponent, CardComponent } from "../ui-components";
 
 interface HydrationLog {
   id: string;

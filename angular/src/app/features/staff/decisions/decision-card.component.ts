@@ -4,22 +4,22 @@
  * Displays a single decision in card format
  */
 
-import {
-  Component,
-  input,
-  output,
-  computed,
-  ChangeDetectionStrategy,
-} from "@angular/core";
 import { CommonModule } from "@angular/common";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    input,
+    output,
+} from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { TagModule } from "primeng/tag";
+import type { DecisionLedgerEntry } from "@core/models/decision-ledger.models";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
-import type { DecisionLedgerEntry } from "@core/models/decision-ledger.models";
 import { formatDate, getTimeAgo } from "@shared/utils/date.utils";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { TagModule } from "primeng/tag";
 
 @Component({
   selector: "app-decision-card",

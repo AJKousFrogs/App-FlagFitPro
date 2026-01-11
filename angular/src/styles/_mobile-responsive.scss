@@ -138,88 +138,6 @@
 }
 
 // ================================================================
-// RESPONSIVE GRID UTILITIES
-// ================================================================
-
-.mobile-grid-1 {
-  @media (max-width: 767px) {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: var(--space-3) !important;
-  }
-}
-
-.mobile-grid-2 {
-  @media (max-width: 767px) {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: var(--space-3) !important;
-  }
-}
-
-.tablet-grid-2 {
-  @media (max-width: 1023px) {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-// ================================================================
-// RESPONSIVE SPACING UTILITIES
-// ================================================================
-
-.mobile-p-2 {
-  @media (max-width: 767px) {
-    padding: var(--space-2) !important;
-  }
-}
-
-.mobile-p-3 {
-  @media (max-width: 767px) {
-    padding: var(--space-3) !important;
-  }
-}
-
-.mobile-gap-2 {
-  @media (max-width: 767px) {
-    gap: var(--space-2) !important;
-  }
-}
-
-.mobile-gap-3 {
-  @media (max-width: 767px) {
-    gap: var(--space-3) !important;
-  }
-}
-
-// ================================================================
-// RESPONSIVE TEXT UTILITIES
-// ================================================================
-
-.mobile-text-sm {
-  @media (max-width: 767px) {
-    font-size: var(--font-size-h4) !important;
-  }
-}
-
-.mobile-text-base {
-  @media (max-width: 767px) {
-    font-size: var(--font-size-body) !important;
-  }
-}
-
-.mobile-hide {
-  @media (max-width: 767px) {
-    display: none !important;
-  }
-}
-
-.desktop-hide {
-  @media (min-width: 768px) {
-    display: none !important;
-  }
-}
-
-// ================================================================
 // MOBILE-OPTIMIZED CARD STYLES
 // ================================================================
 
@@ -296,30 +214,6 @@
 
     i {
       font-size: var(--font-size-h3) !important;
-    }
-  }
-}
-
-// ================================================================
-// MOBILE-OPTIMIZED FORM STYLES
-// ================================================================
-
-.mobile-form-stack {
-  @media (max-width: 767px) {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: var(--space-3) !important;
-
-    .form-field,
-    .p-field {
-      width: 100% !important;
-      margin-bottom: 0 !important;
-    }
-
-    .form-row {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--space-3) !important;
     }
   }
 }

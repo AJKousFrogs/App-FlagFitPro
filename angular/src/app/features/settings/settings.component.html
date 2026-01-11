@@ -843,23 +843,12 @@
 >
   <div class="dialog-container">
     <!-- Custom Header -->
-    <div class="dialog-header">
-      <div class="dialog-icon">
-        <i class="pi pi-lock"></i>
-      </div>
-      <div class="dialog-title-section">
-        <h2>Change Password</h2>
-        <p>Update your account password</p>
-      </div>
-      <app-button
-        icon="times"
-        variant="text"
-        ariaLabel="Close dialog"
-        severity="secondary"
-        class="dialog-close-btn"
-        (clicked)="showChangePasswordDialog = false"
-      ></app-button>
-    </div>
+    <app-dialog-header
+      icon="lock"
+      title="Change Password"
+      subtitle="Update your account password"
+      (close)="showChangePasswordDialog = false"
+    />
 
     <!-- Form Content -->
     <form [formGroup]="passwordForm" class="password-form">
@@ -975,18 +964,15 @@
       </div>
     </form>
 
-    <div class="dialog-actions">
-      <app-button variant="text" (clicked)="showChangePasswordDialog = false"
-        >Cancel</app-button
-      >
-      <app-button
-        icon="check"
-        [loading]="isChangingPassword()"
-        [disabled]="passwordForm.invalid"
-        (clicked)="changePassword()"
-        >Update Password</app-button
-      >
-    </div>
+    <app-dialog-footer
+      cancelLabel="Cancel"
+      primaryLabel="Update Password"
+      primaryIcon="check"
+      [loading]="isChangingPassword()"
+      [disabled]="passwordForm.invalid"
+      (cancel)="showChangePasswordDialog = false"
+      (primary)="changePassword()"
+    />
   </div>
 </p-dialog>
 
@@ -1000,23 +986,13 @@
 >
   <div class="dialog-container">
     <!-- Custom Header -->
-    <div class="dialog-header danger-header">
-      <div class="dialog-icon danger-icon">
-        <i class="pi pi-trash"></i>
-      </div>
-      <div class="dialog-title-section">
-        <h2>Delete Account</h2>
-        <p>This action is permanent and irreversible</p>
-      </div>
-      <app-button
-        icon="times"
-        variant="text"
-        ariaLabel="Close dialog"
-        severity="secondary"
-        class="dialog-close-btn"
-        (clicked)="showDeleteAccountDialog = false"
-      ></app-button>
-    </div>
+    <app-dialog-header
+      icon="trash"
+      title="Delete Account"
+      subtitle="This action is permanent and irreversible"
+      [danger]="true"
+      (close)="showDeleteAccountDialog = false"
+    />
 
     <!-- Warning Content -->
     <div class="delete-content">
@@ -1058,19 +1034,16 @@
     </div>
 
     <!-- Footer Actions -->
-    <div class="dialog-actions">
-      <app-button variant="text" (clicked)="showDeleteAccountDialog = false"
-        >Cancel</app-button
-      >
-      <app-button
-        variant="danger"
-        icon="trash"
-        [loading]="isDeletingAccount()"
-        [disabled]="deleteConfirmText !== 'DELETE'"
-        (clicked)="deleteAccount()"
-        >Delete My Account</app-button
-      >
-    </div>
+    <app-dialog-footer
+      cancelLabel="Cancel"
+      primaryLabel="Delete My Account"
+      primaryIcon="trash"
+      primaryVariant="danger"
+      [loading]="isDeletingAccount()"
+      [disabled]="deleteConfirmText !== 'DELETE'"
+      (cancel)="showDeleteAccountDialog = false"
+      (primary)="deleteAccount()"
+    />
   </div>
 </p-dialog>
 
@@ -1084,23 +1057,12 @@
 >
   <div class="dialog-container">
     <!-- Custom Header -->
-    <div class="dialog-header">
-      <div class="dialog-icon">
-        <i class="pi pi-shield"></i>
-      </div>
-      <div class="dialog-title-section">
-        <h2>Two-Factor Authentication</h2>
-        <p>Step {{ twoFAStep() }} of 4 — Add extra security</p>
-      </div>
-      <app-button
-        icon="times"
-        variant="text"
-        ariaLabel="Close dialog"
-        severity="secondary"
-        class="dialog-close-btn"
-        (clicked)="close2FASetup()"
-      ></app-button>
-    </div>
+    <app-dialog-header
+      icon="shield"
+      title="Two-Factor Authentication"
+      [subtitle]="'Step ' + twoFAStep() + ' of 4 — Add extra security'"
+      (close)="close2FASetup()"
+    />
 
     <!-- Step Progress -->
     <div class="step-progress">
@@ -1297,23 +1259,13 @@
 >
   <div class="dialog-container">
     <!-- Custom Header -->
-    <div class="dialog-header danger-header">
-      <div class="dialog-icon danger-icon">
-        <i class="pi pi-shield-slash"></i>
-      </div>
-      <div class="dialog-title-section">
-        <h2>Disable 2FA</h2>
-        <p>Remove the extra layer of security</p>
-      </div>
-      <app-button
-        icon="times"
-        variant="text"
-        ariaLabel="Close dialog"
-        severity="secondary"
-        class="dialog-close-btn"
-        (clicked)="showDisable2FADialog = false"
-      ></app-button>
-    </div>
+    <app-dialog-header
+      icon="shield-slash"
+      title="Disable 2FA"
+      subtitle="Remove the extra layer of security"
+      [danger]="true"
+      (close)="showDisable2FADialog = false"
+    />
 
     <div class="twofa-content">
       <div class="step-section">
@@ -1342,19 +1294,16 @@
     </div>
 
     <!-- Footer Actions -->
-    <div class="dialog-actions">
-      <app-button variant="text" (clicked)="showDisable2FADialog = false"
-        >Cancel</app-button
-      >
-      <app-button
-        variant="danger"
-        icon="times"
-        [loading]="isDisabling2FA()"
-        [disabled]="disable2FACode.length !== 6"
-        (clicked)="disable2FA()"
-        >Disable 2FA</app-button
-      >
-    </div>
+    <app-dialog-footer
+      cancelLabel="Cancel"
+      primaryLabel="Disable 2FA"
+      primaryIcon="times"
+      primaryVariant="danger"
+      [loading]="isDisabling2FA()"
+      [disabled]="disable2FACode.length !== 6"
+      (cancel)="showDisable2FADialog = false"
+      (primary)="disable2FA()"
+    />
   </div>
 </p-dialog>
 
@@ -1368,23 +1317,12 @@
 >
   <div class="dialog-container">
     <!-- Custom Header -->
-    <div class="dialog-header">
-      <div class="dialog-icon">
-        <i class="pi pi-desktop"></i>
-      </div>
-      <div class="dialog-title-section">
-        <h2>Active Sessions</h2>
-        <p>Manage your logged-in devices</p>
-      </div>
-      <app-button
-        icon="times"
-        variant="text"
-        ariaLabel="Close dialog"
-        severity="secondary"
-        class="dialog-close-btn"
-        (clicked)="showSessionsDialog = false"
-      ></app-button>
-    </div>
+    <app-dialog-header
+      icon="desktop"
+      title="Active Sessions"
+      subtitle="Manage your logged-in devices"
+      (close)="showSessionsDialog = false"
+    />
 
     <!-- Sessions Content -->
     <div class="sessions-content">
@@ -1437,18 +1375,15 @@
     </div>
 
     <!-- Footer Actions -->
-    <div class="dialog-actions">
-      <app-button variant="text" (clicked)="showSessionsDialog = false"
-        >Close</app-button
-      >
-      <app-button
-        variant="danger"
-        icon="sign-out"
-        [loading]="isRevokingAll()"
-        (clicked)="revokeAllSessions()"
-        >Sign out all others</app-button
-      >
-    </div>
+    <app-dialog-footer
+      cancelLabel="Close"
+      primaryLabel="Sign out all others"
+      primaryIcon="sign-out"
+      primaryVariant="danger"
+      [loading]="isRevokingAll()"
+      (cancel)="showSessionsDialog = false"
+      (primary)="revokeAllSessions()"
+    />
   </div>
 </p-dialog>
 
@@ -1462,23 +1397,12 @@
 >
   <div class="dialog-container">
     <!-- Custom Header -->
-    <div class="dialog-header">
-      <div class="dialog-icon">
-        <i class="pi pi-download"></i>
-      </div>
-      <div class="dialog-title-section">
-        <h2>Export Your Data</h2>
-        <p>Download a copy of your FlagFit Pro data</p>
-      </div>
-      <app-button
-        icon="times"
-        variant="text"
-        ariaLabel="Close dialog"
-        severity="secondary"
-        class="dialog-close-btn"
-        (clicked)="showDataExportDialog = false"
-      ></app-button>
-    </div>
+    <app-dialog-header
+      icon="download"
+      title="Export Your Data"
+      subtitle="Download a copy of your FlagFit Pro data"
+      (close)="showDataExportDialog = false"
+    />
 
     <!-- Export Options -->
     <div class="export-content">
@@ -1571,17 +1495,14 @@
     </div>
 
     <!-- Footer Actions -->
-    <div class="dialog-actions">
-      <app-button variant="text" (clicked)="showDataExportDialog = false"
-        >Cancel</app-button
-      >
-      <app-button
-        icon="download"
-        [loading]="isExportingData()"
-        (clicked)="exportUserData()"
-        >Export Data</app-button
-      >
-    </div>
+    <app-dialog-footer
+      cancelLabel="Cancel"
+      primaryLabel="Export Data"
+      primaryIcon="download"
+      [loading]="isExportingData()"
+      (cancel)="showDataExportDialog = false"
+      (primary)="exportUserData()"
+    />
   </div>
 </p-dialog>
 
@@ -1595,23 +1516,12 @@
 >
   <div class="dialog-container">
     <!-- Custom Header -->
-    <div class="dialog-header">
-      <div class="dialog-icon">
-        <i class="pi pi-users"></i>
-      </div>
-      <div class="dialog-title-section">
-        <h2>Request New Team</h2>
-        <p>Submit a request to create a new team</p>
-      </div>
-      <app-button
-        icon="times"
-        variant="text"
-        ariaLabel="Close dialog"
-        severity="secondary"
-        class="dialog-close-btn"
-        (clicked)="showNewTeamDialog = false"
-      ></app-button>
-    </div>
+    <app-dialog-header
+      icon="users"
+      title="Request New Team"
+      subtitle="Submit a request to create a new team"
+      (close)="showNewTeamDialog = false"
+    />
 
     <!-- Form Content -->
     <div class="new-team-content">
@@ -1658,17 +1568,14 @@
     </div>
 
     <!-- Footer Actions -->
-    <div class="dialog-actions">
-      <app-button variant="text" (clicked)="showNewTeamDialog = false"
-        >Cancel</app-button
-      >
-      <app-button
-        icon="send"
-        [loading]="isSubmittingTeamRequest()"
-        [disabled]="!newTeamName.trim()"
-        (clicked)="submitNewTeamRequest()"
-        >Submit Request</app-button
-      >
-    </div>
+    <app-dialog-footer
+      cancelLabel="Cancel"
+      primaryLabel="Submit Request"
+      primaryIcon="send"
+      [loading]="isSubmittingTeamRequest()"
+      [disabled]="!newTeamName.trim()"
+      (cancel)="showNewTeamDialog = false"
+      (primary)="submitNewTeamRequest()"
+    />
   </div>
 </p-dialog>

@@ -525,49 +525,11 @@ html.no-transitions * {
    ================================================================ */
 
 @layer overrides {
-  /* ================================================================
-     CRITICAL FIX: Button Text Color
-     Force white text on ALL green buttons
-     NOTE: !important removed - CSS layers handle specificity
-     ================================================================ */
-  .p-button:not(.p-button-outlined):not(.p-button-text) {
-    color: var(--color-text-on-primary);
-
-    * {
-      color: var(--color-text-on-primary);
-    }
-  }
-
-  /* Force green background on primary buttons */
-  .p-button:not(.p-button-outlined):not(.p-button-text):not(
-      .p-button-secondary
-    ) {
-    background: var(--ds-primary-green);
-  }
-
-  /* CRITICAL FIX: Consistent card padding */
-  .p-card .p-card-body {
-    padding: var(--space-4);
-    gap: var(--space-3);
-  }
 
   /* ================================================================
      FORM CONTROL OVERRIDES - Design Contract Enforcement
      Height: 44px | Radius: 8px | NO pill shapes
      ================================================================ */
-  .p-inputtext,
-  .p-select,
-  .p-dropdown,
-  .p-multiselect,
-  .p-calendar .p-inputtext,
-  .p-datepicker .p-inputtext,
-  .p-inputnumber .p-inputtext {
-    height: 44px;
-    min-height: 44px;
-    border-radius: var(--radius-lg);
-    padding: var(--space-3) var(--space-4);
-    font-size: var(--font-body-size);
-  }
 
   /* Dropdown/Select label alignment */
   .p-select .p-select-label,
@@ -676,31 +638,9 @@ html.no-transitions * {
 }
 
 /* Base Select Input Styling - Design Contract: 44px height, 8px radius */
-/* NOTE: !important removed - CSS layers handle specificity via @layer overrides */
+/* NOTE: Height rules moved to _brand-overrides.scss for single source of truth */
+/* Styling rules below remain in @layer overrides for specificity */
 @layer overrides {
-  .p-select {
-    height: 44px;
-    min-height: 44px;
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-lg);
-    background: var(--surface-primary);
-    padding: 0 16px;
-    transition:
-      border-color 0.15s ease,
-      box-shadow 0.15s ease;
-  }
-
-  .p-select:hover:not(.p-disabled):not(.p-focus) {
-    border-color: var(--primitive-neutral-400, #a3a3a3);
-  }
-
-  .p-select.p-focus,
-  .p-select:focus-visible {
-    border-color: var(--ds-primary-green);
-    box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
-    outline: none;
-  }
-
   .p-select .p-select-label {
     padding: 0;
     font-size: var(--font-body-size);

@@ -1,6 +1,6 @@
 import { HttpInterceptorFn } from "@angular/common/http";
 import { inject } from "@angular/core";
-import { from, switchMap, of } from "rxjs";
+import { from, switchMap } from "rxjs";
 import { AuthService } from "../services/auth.service";
 import { SupabaseService } from "../services/supabase.service";
 

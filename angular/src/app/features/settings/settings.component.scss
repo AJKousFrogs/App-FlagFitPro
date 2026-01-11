@@ -9,47 +9,6 @@
   padding: var(--space-6);
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-6);
-  padding: var(--space-5);
-  background: var(--surface-primary);
-  border-radius: var(--radius-lg);
-}
-
-.page-title-section h1 {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--space-2);
-  color: var(--color-text-primary);
-}
-
-.page-title-section p {
-  font-size: var(--font-size-h4);
-  color: var(--color-text-secondary);
-  margin: 0;
-}
-
-.settings-grid {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-}
-
-/* Utility Classes */
-.mb-4 {
-  margin-bottom: var(--space-4);
-}
-
-/* Card Stack - Vertical card layout */
-.card-stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
 /* Control Row - Standard form control layout */
 .control-row {
   display: flex;
@@ -62,13 +21,6 @@
 
 .control-row:last-child {
   border-bottom: none;
-}
-
-.control-row__label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex: 1;
 }
 
 .control-row__title {
@@ -88,12 +40,6 @@
 }
 
 /* Language Selector Styles */
-.lang-selected {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
 .lang-item {
   display: flex;
   align-items: center;
@@ -262,31 +208,6 @@
   background: var(--surface-secondary);
   /* HOVER FIX: Border stays 2px, no layout shift */
   /* Border color stays transparent unless you want to add a subtle border */
-}
-
-.notification-info {
-  display: flex;
-  flex-direction: row; /* Override control-row__label column direction */
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.notification-icon {
-  width: 48px; /* Increased from 40px for better visual weight */
-  height: 48px;
-  border-radius: var(--radius-lg);
-  background: var(--surface-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.notification-icon i {
-  font-size: var(--font-h3-size); /* 20px - larger icon */
-  color: var(--color-text-secondary);
-  /* ALIGNMENT FIX: Ensure icon doesn't shift */
-  line-height: 1;
 }
 
 .notification-text {

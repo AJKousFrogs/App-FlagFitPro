@@ -13,22 +13,20 @@
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { CommonModule } from "@angular/common";
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  OnDestroy,
-  OnInit,
-  signal,
-  ViewChild,
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    ElementRef,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
+    ViewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -39,26 +37,28 @@ import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { COLORS, TIMEOUTS } from "../../core/constants/app.constants";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-  Channel,
-  ChannelMemberDetails,
-  ChannelMembersResponse,
-  ChannelService,
-  ChannelType,
-  ChatMessage,
+    Channel,
+    ChannelMemberDetails,
+    ChannelMembersResponse,
+    ChannelService,
+    ChannelType,
+    ChatMessage,
 } from "../../core/services/channel.service";
 import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
-import { TOAST } from "../../core/constants/toast-messages.constants";
 import {
-  DIALOG_STYLES,
-  DROPDOWN_WIDTHS,
+    DIALOG_STYLES,
+    DROPDOWN_WIDTHS,
 } from "../../core/utils/design-tokens.util";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
-import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
 
 @Component({
   selector: "app-chat",

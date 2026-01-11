@@ -240,6 +240,8 @@
 
   .p-inputtext,
   .p-textarea {
+    height: 44px;
+    min-height: 44px;
     font-family: var(--p-inputtext-font-family, var(--font-family-sans));
     font-size: var(--p-inputtext-font-size);
     border-radius: var(--p-inputtext-border-radius);
@@ -281,6 +283,8 @@
   // ============================================
 
   .p-select {
+    height: 44px;
+    min-height: 44px;
     border-radius: var(--p-select-border-radius);
     border-color: var(--p-select-border-color);
 
@@ -312,6 +316,20 @@
         background: var(--p-select-option-selected-background);
       }
     }
+  }
+
+  // Additional form controls with 44px height
+  .p-dropdown,
+  .p-multiselect {
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .p-calendar .p-inputtext,
+  .p-datepicker .p-inputtext,
+  .p-inputnumber .p-inputtext {
+    height: 44px;
+    min-height: 44px;
   }
 
   // ============================================

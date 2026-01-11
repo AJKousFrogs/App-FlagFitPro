@@ -15,8 +15,8 @@ export { ButtonComponent } from "./button/button.component";
 // ============================================================================
 // CARD COMPONENTS
 // ============================================================================
-export { CardComponent } from "./card/card.component";
 export { ActionCardComponent } from "./action-card/action-card.component";
+export { CardComponent } from "./card/card.component";
 
 // ============================================================================
 // FORM COMPONENTS
@@ -31,70 +31,68 @@ export { TextareaComponent } from "./textarea/textarea.component";
 // DATA DISPLAY COMPONENTS
 // ============================================================================
 // TableComponent removed - use PrimeNG p-table or p-datatable directly
-export { BadgeComponent } from "./badge/badge.component";
 export { AvatarComponent } from "./avatar/avatar.component";
+export { BadgeComponent } from "./badge/badge.component";
+export {
+    QuickStatsBarComponent,
+    type QuickStat
+} from "./quick-stats-bar/quick-stats-bar.component";
 export { SkeletonComponent } from "./skeleton/skeleton.component";
 export {
-  TrendCardComponent,
-  type TrendData,
-} from "./trend-card/trend-card.component";
-export {
-  StatsGridComponent,
-  type StatItem,
+    StatsGridComponent,
+    type StatItem
 } from "./stats-grid/stats-grid.component";
 export {
-  QuickStatsBarComponent,
-  type QuickStat,
-} from "./quick-stats-bar/quick-stats-bar.component";
+    TrendCardComponent,
+    type TrendData
+} from "./trend-card/trend-card.component";
 
 // ============================================================================
 // WELLNESS & HEALTH COMPONENTS (Single Source of Truth)
 // ============================================================================
 export {
-  WellnessScoreDisplayComponent,
-  type WellnessDisplayVariant,
-  type WellnessMetric,
+    WellnessScoreDisplayComponent,
+    type WellnessDisplayVariant,
+    type WellnessMetric
 } from "./wellness-score-display/wellness-score-display.component";
 
 // ============================================================================
 // METRIC & PROGRESS COMPONENTS
 // ============================================================================
-export {
-  MetricRingComponent,
-  type MetricRingThresholds,
-} from "./metric-ring/metric-ring.component";
 export { CountdownTimerComponent } from "./countdown-timer/countdown-timer.component";
+export {
+    MetricRingComponent,
+    type MetricRingThresholds
+} from "./metric-ring/metric-ring.component";
 
 // ============================================================================
 // STATUS & INDICATOR COMPONENTS
 // ============================================================================
 export {
-  StatusTagComponent,
-  type StatusTagSeverity,
-} from "./status-tag/status-tag.component";
-export {
-  PulseIndicatorComponent,
-  type PulseStatus,
+    PulseIndicatorComponent,
+    type PulseStatus
 } from "./pulse-indicator/pulse-indicator.component";
 export {
-  StatusTimelineComponent,
-  type TimelineItem,
+    StatusTagComponent,
+    type StatusTagSeverity
+} from "./status-tag/status-tag.component";
+export {
+    StatusTimelineComponent,
+    type TimelineItem
 } from "./status-timeline/status-timeline.component";
 
 // ============================================================================
 // GAMIFICATION COMPONENTS
 // ============================================================================
 export {
-  AchievementBadgeComponent,
-  type BadgeTier,
-  type BadgeRarity,
+    AchievementBadgeComponent, type BadgeRarity, type BadgeTier
 } from "./achievement-badge/achievement-badge.component";
 
 // ============================================================================
 // NAVIGATION & LAYOUT COMPONENTS
 // ============================================================================
-export { TabsComponent, type TabItem } from "./tabs/tabs.component";
 export { SwipeableCardsComponent } from "./swipeable-cards/swipeable-cards.component";
+export { TabsComponent, type TabItem } from "./tabs/tabs.component";
 
 // ============================================================================
 // FEEDBACK COMPONENTS
@@ -105,6 +103,12 @@ export { ToastComponent } from "./toast/toast.component";
 // SpinnerComponent removed - use PrimeNG p-progressSpinner directly
 
 // ============================================================================
+// DIALOG COMPONENTS
+// ============================================================================
+export { DialogFooterComponent } from "./dialog-footer/dialog-footer.component";
+export { DialogHeaderComponent } from "./dialog-header/dialog-header.component";
+
+// ============================================================================
 // UTILITY COMPONENTS
 // ============================================================================
 export { TooltipComponent } from "./tooltip/tooltip.component";
@@ -112,9 +116,9 @@ export { TooltipComponent } from "./tooltip/tooltip.component";
 // ============================================================================
 // UX FLOW COMPONENTS (New for improved athlete experience)
 // ============================================================================
+export { FeatureWalkthroughComponent } from "./feature-walkthrough/feature-walkthrough.component";
 export { MorningBriefingComponent } from "./morning-briefing/morning-briefing.component";
 export { PostTrainingRecoveryComponent } from "./post-training-recovery/post-training-recovery.component";
-export { FeatureWalkthroughComponent } from "./feature-walkthrough/feature-walkthrough.component";
 export { QuickWellnessCheckinComponent } from "./quick-wellness-checkin/quick-wellness-checkin.component";
 
 // ============================================================================
@@ -127,8 +131,8 @@ export { TournamentModeWidgetComponent } from "./tournament-mode-widget/tourname
 // ANALYTICS & INSIGHTS COMPONENTS
 // ============================================================================
 export {
-  ActionableInsightsComponent,
-  type Insight,
+    ActionableInsightsComponent,
+    type Insight
 } from "./actionable-insights/actionable-insights.component";
 
 // ============================================================================
@@ -140,8 +144,8 @@ export { TeamWellnessOverviewComponent } from "./team-wellness-overview/team-wel
 // CONNECTIVITY COMPONENTS
 // ============================================================================
 export {
-  OfflineBadgeComponent,
-  type OfflineCapability,
+    OfflineBadgeComponent,
+    type OfflineCapability
 } from "./offline-badge/offline-badge.component";
 
 // ============================================================================
@@ -153,18 +157,19 @@ export { KeyboardShortcutsModalComponent } from "./keyboard-shortcuts-modal/keyb
 // SUCCESS & FEEDBACK COMPONENTS
 // ============================================================================
 export {
-  SuccessCheckmarkComponent,
-  type SuccessSize,
-  type SuccessVariant,
+    SuccessCheckmarkComponent,
+    type SuccessSize,
+    type SuccessVariant
 } from "./success-checkmark/success-checkmark.component";
 
 // ============================================================================
 // LOADING & SKELETON COMPONENTS
 // ============================================================================
+export { EmptyStateComponent } from "./empty-state/empty-state.component";
 export { AppLoadingComponent } from "./loading/loading.component";
 export {
-  SkeletonLoaderComponent,
-  SkeletonRepeatComponent,
-  type SkeletonVariant,
+    SkeletonLoaderComponent,
+    SkeletonRepeatComponent,
+    type SkeletonVariant
 } from "./skeleton-loader/skeleton-loader.component";
-export { EmptyStateComponent } from "./empty-state/empty-state.component";
+

@@ -45,6 +45,8 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import {
     ButtonComponent,
     CardComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
 } from "../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { calculateAge } from "../../shared/utils/date.utils";
@@ -65,6 +67,8 @@ import { calculateAge } from "../../shared/utils/date.utils";
     ButtonComponent,
     IconButtonComponent,
     CardComponent,
+    DialogFooterComponent,
+    DialogHeaderComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
