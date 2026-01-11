@@ -6,6 +6,7 @@ import {
   ChangeDetectionStrategy,
   OnInit,
 } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
@@ -23,6 +24,7 @@ import { SupabaseService } from "../../../core/services/supabase.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
 import { PrivacySettingsService } from "../../../core/services/privacy-settings.service";
@@ -338,6 +340,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private privacyService = inject(PrivacySettingsService);
+  private api = inject(ApiService);
 
   // AI consent check - shows banner when disabled
   readonly aiEnabled = this.privacyService.aiProcessingEnabled;
@@ -411,23 +414,28 @@ export class AiTrainingSchedulerComponent implements OnInit {
         .limit(1)
         .single();
 
-      // Load wellness data
-      const { data: wellness } = await this.supabaseService.client
-        .from("wellness_entries")
-        .select("sleep_quality, muscle_soreness, energy_level")
-        .eq("user_id", userId)
-        .order("date", { ascending: false })
-        .limit(1)
-        .single();
+      // Load wellness data via API
+      const today = new Date().toISOString().split("T")[0];
+      let wellness: { sleepQuality?: number; muscleSoreness?: number; energyLevel?: number } | null = null;
+      try {
+        const response = await firstValueFrom(
+          this.api.get<{ sleepQuality?: number; muscleSoreness?: number; energyLevel?: number }>(
+            `/api/wellness-checkin?date=${today}`,
+          ),
+        );
+        wellness = response.success ? response.data ?? null : null;
+      } catch {
+        // Wellness API failed, continue with null
+      }
 
       // Only set metrics if we have real data - no defaults to avoid wrong calculations
       if (readiness || acwr || wellness) {
         this.athleteMetrics.set({
           readiness_score: readiness?.score ?? null,
           acwr: acwr?.acwr_ratio ?? null,
-          fatigue_level: wellness?.energy_level ?? null,
-          sleep_quality: wellness?.sleep_quality ?? null,
-          soreness_level: wellness?.muscle_soreness ?? null,
+          fatigue_level: wellness?.energyLevel ?? null,
+          sleep_quality: wellness?.sleepQuality ?? null,
+          soreness_level: wellness?.muscleSoreness ?? null,
         });
       } else {
         // No data available - show empty state

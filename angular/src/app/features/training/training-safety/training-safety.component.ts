@@ -39,6 +39,7 @@ import { AgeAdjustedRecoveryService } from "../../../core/services/age-adjusted-
 import { SleepDebtService } from "../../../core/services/sleep-debt.service";
 import { TrainingLimitsService } from "../../../core/services/training-limits.service";
 import { ReturnToPlayService } from "../../../core/services/return-to-play.service";
+import { ApiService } from "../../../core/services/api.service";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
@@ -369,6 +370,7 @@ export class TrainingSafetyComponent implements OnInit {
   private logger = inject(LoggerService);
   private supabaseService = inject(SupabaseService);
   private destroyRef = inject(DestroyRef);
+  private api = inject(ApiService);
 
   // ACWR signals
   acwrValue = this.trainingService.acwrRatio;
@@ -511,15 +513,16 @@ export class TrainingSafetyComponent implements OnInit {
   private async loadSleepDebtData(userId: string): Promise<void> {
     try {
       // Get last 7 days of wellness entries for sleep data
+      // Read directly from daily_wellness_checkin (the canonical table)
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       const { data: wellnessEntries } = await this.supabaseService.client
-        .from("wellness_entries")
-        .select("sleep_quality, date")
-        .or(`athlete_id.eq.${userId},user_id.eq.${userId}`)
-        .gte("date", sevenDaysAgo.toISOString().split("T")[0])
-        .order("date", { ascending: false });
+        .from("daily_wellness_checkin")
+        .select("sleep_quality, checkin_date")
+        .eq("user_id", userId)
+        .gte("checkin_date", sevenDaysAgo.toISOString().split("T")[0])
+        .order("checkin_date", { ascending: false });
 
       if (wellnessEntries && wellnessEntries.length > 0) {
         // Calculate sleep debt (assuming 8 hours is optimal)

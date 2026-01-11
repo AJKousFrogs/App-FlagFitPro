@@ -2,6 +2,7 @@ import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { Observable, from, of } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
 import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
+import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeEvent, RealtimeService } from "./realtime.service";
 import { SupabaseService } from "./supabase.service";
@@ -61,6 +62,23 @@ interface DatabaseWellnessEntry {
   created_at: string;
 }
 
+// Interface for daily_wellness_checkin table (canonical source)
+interface DailyWellnessCheckinEntry {
+  id: number;
+  user_id: string;
+  checkin_date: string;
+  sleep_quality?: number;
+  sleep_hours?: number;
+  energy_level?: number;
+  stress_level?: number;
+  muscle_soreness?: number;
+  soreness_areas?: string[];
+  notes?: string;
+  readiness_score?: number;
+  created_at: string;
+  updated_at?: string;
+}
+
 // RealtimeEvent is now imported from realtime.service.ts
 
 interface WellnessTrend {
@@ -76,6 +94,7 @@ export class WellnessService {
   private supabaseService = inject(SupabaseService);
   private logger = inject(LoggerService);
   private realtimeService = inject(RealtimeService);
+  private api = inject(ApiService);
 
   // Get current user ID reactively
   private userId = computed(() => this.supabaseService.userId());
@@ -109,7 +128,7 @@ export class WellnessService {
       } else {
         this.logger.info("[Wellness] User logged out, cleaning up");
         this.clearCache();
-        this.realtimeService.unsubscribe("wellness_entries");
+        this.realtimeService.unsubscribe("daily_wellness_checkin");
       }
     });
   }
@@ -134,13 +153,13 @@ export class WellnessService {
 
     return from(
       (async () => {
-        // Query using user_id
+        // Query from daily_wellness_checkin (canonical source)
         const { data, error } = await this.supabaseService.client
-          .from("wellness_entries")
+          .from("daily_wellness_checkin")
           .select("*")
           .eq("user_id", userId)
-          .gte("date", cutoffDate.toISOString().split("T")[0])
-          .order("date", { ascending: false });
+          .gte("checkin_date", cutoffDate.toISOString().split("T")[0])
+          .order("checkin_date", { ascending: false });
 
         if (error) {
           this.logger.error("[Wellness] Error fetching data:", error);
@@ -148,17 +167,15 @@ export class WellnessService {
         }
 
         const wellnessData: WellnessData[] = (data || []).map(
-          (entry: DatabaseWellnessEntry) => ({
+          (entry: DailyWellnessCheckinEntry) => ({
             id: entry.id,
-            userId: entry.athlete_id,
-            date: entry.date,
+            userId: entry.user_id,
+            date: entry.checkin_date,
             sleep: entry.sleep_quality,
+            sleepHours: entry.sleep_hours,
             energy: entry.energy_level,
             stress: entry.stress_level,
             soreness: entry.muscle_soreness,
-            motivation: entry.motivation_level,
-            mood: entry.mood,
-            hydration: entry.hydration_level,
             notes: entry.notes,
             timestamp: entry.created_at,
           }),
@@ -292,8 +309,13 @@ export class WellnessService {
   }
 
   /**
-   * Log wellness entry for today or specific date
-   * Saves directly to Supabase wellness_entries table
+   * Log wellness entry for today or specific date.
+   * Routes to /api/wellness-checkin endpoint which writes to daily_wellness_checkin table.
+   *
+   * @param data Wellness data to log
+   * @returns Observable with success status and data
+   *
+   * @see DailyReadinessComponent for example usage
    */
   logWellness(
     data: Partial<WellnessData>,
@@ -305,82 +327,64 @@ export class WellnessService {
       return of({ success: false, error: "Not authenticated" });
     }
 
-    // Map to database columns - table uses athlete_id (NOT user_id)
-    // and doesn't have sleep_hours/sleep_score columns
-    const wellnessEntry = {
-      athlete_id: userId,
-      user_id: userId, // Keep for backwards compatibility if column exists
+    // Map to API format (camelCase for API, snake_case in database)
+    const payload = {
       date: data.date || new Date().toISOString().split("T")[0],
-      sleep_quality: data.sleep, // Map from interface field
-      energy_level: data.energy,
-      stress_level: data.stress,
-      muscle_soreness: data.soreness,
-      motivation_level: data.motivation,
-      mood: data.mood,
-      hydration_level: data.hydration,
+      sleepQuality: data.sleep,
+      sleepHours: data.sleepHours,
+      energyLevel: data.energy,
+      stressLevel: data.stress,
+      muscleSoreness: data.soreness,
       notes: data.notes,
+      sorenessAreas: [] as string[],
     };
 
     this.logger.info(
-      "[Wellness] Inserting wellness entry:",
-      JSON.stringify(wellnessEntry),
+      "[Wellness] Posting wellness via API:",
+      JSON.stringify(payload),
     );
 
-    return from(
-      this.supabaseService.client
-        .from("wellness_entries")
-        .insert(wellnessEntry)
-        .select()
-        .maybeSingle(),
-    ).pipe(
-      map(({ data: insertedData, error }) => {
-        if (error) {
+    return this.api
+      .post<{ success: boolean; data?: unknown }>("/api/wellness-checkin", payload)
+      .pipe(
+        map((response) => {
+          if (response.success) {
+            this.logger.success("[Wellness] Entry saved via API");
+            return { success: true, data: response.data };
+          }
+          throw new Error(response.error || "Failed to save wellness");
+        }),
+        tap((result) => {
+          // Refresh wellness data after successful post
+          this.getWellnessData("30d").subscribe();
+
+          // Dispatch wellnessSubmitted event for achievements integration
+          if (result.success) {
+            document.dispatchEvent(
+              new CustomEvent("wellnessSubmitted", {
+                detail: {
+                  date: payload.date,
+                  sleep: payload.sleepQuality,
+                  energy: payload.energyLevel,
+                  stress: payload.stressLevel,
+                  soreness: payload.muscleSoreness,
+                },
+              }),
+            );
+            this.logger.info("[Wellness] Dispatched wellnessSubmitted event");
+          }
+        }),
+        catchError((error) => {
           const errorMessage =
             error?.message || error?.details || JSON.stringify(error);
           this.logger.error(
-            "[Wellness] Error logging entry:",
+            "[Wellness] Failed to log entry via API:",
             errorMessage,
             error,
           );
-          throw new Error(errorMessage);
-        }
-        this.logger.success("[Wellness] Entry logged:", insertedData?.id);
-        return { success: true, data: insertedData };
-      }),
-      tap((result) => {
-        // Refresh wellness data after successful post
-        this.getWellnessData("30d").subscribe();
-
-        // Dispatch wellnessSubmitted event for achievements integration
-        if (result.success) {
-          document.dispatchEvent(
-            new CustomEvent("wellnessSubmitted", {
-              detail: {
-                date: wellnessEntry.date,
-                sleep: wellnessEntry.sleep_quality,
-                energy: wellnessEntry.energy_level,
-                stress: wellnessEntry.stress_level,
-                soreness: wellnessEntry.muscle_soreness,
-                motivation: wellnessEntry.motivation_level,
-                mood: wellnessEntry.mood,
-                hydration: wellnessEntry.hydration_level,
-              },
-            }),
-          );
-          this.logger.info("[Wellness] Dispatched wellnessSubmitted event");
-        }
-      }),
-      catchError((error) => {
-        const errorMessage =
-          error?.message || error?.details || JSON.stringify(error);
-        this.logger.error(
-          "[Wellness] Failed to log entry:",
-          errorMessage,
-          error,
-        );
-        return of({ success: false, error: errorMessage });
-      }),
-    );
+          return of({ success: false, error: errorMessage });
+        }),
+      );
   }
 
   /**
@@ -561,15 +565,15 @@ export class WellnessService {
    * Subscribe to realtime wellness updates
    */
   private subscribeToWellnessUpdates(userId: string): void {
-    // Subscribe to changes for both athlete_id and user_id
+    // Subscribe to changes for daily_wellness_checkin (canonical table)
     this.realtimeService.subscribe(
-      "wellness_entries",
-      `or(athlete_id.eq.${userId},user_id.eq.${userId})`,
+      "daily_wellness_checkin",
+      `user_id=eq.${userId}`,
       {
         onInsert: (payload: RealtimeEvent) => {
           this.logger.info("[Wellness] New entry received via realtime");
-          const newEntry = this.transformEntry(
-            payload.new as unknown as DatabaseWellnessEntry,
+          const newEntry = this.transformCheckinEntry(
+            payload.new as unknown as DailyWellnessCheckinEntry,
           );
           const current = this._wellnessData();
           this._wellnessData.set([newEntry, ...current]);
@@ -577,8 +581,8 @@ export class WellnessService {
         },
         onUpdate: (payload: RealtimeEvent) => {
           this.logger.info("[Wellness] Entry updated via realtime");
-          const updatedEntry = this.transformEntry(
-            payload.new as unknown as DatabaseWellnessEntry,
+          const updatedEntry = this.transformCheckinEntry(
+            payload.new as unknown as DailyWellnessCheckinEntry,
           );
           const current = this._wellnessData();
           const index = current.findIndex((e) => e.id === updatedEntry.id);
@@ -593,7 +597,7 @@ export class WellnessService {
         onDelete: (payload: RealtimeEvent) => {
           this.logger.info("[Wellness] Entry deleted via realtime");
           const current = this._wellnessData();
-          const oldEntry = payload.old as unknown as DatabaseWellnessEntry;
+          const oldEntry = payload.old as unknown as DailyWellnessCheckinEntry;
           const filtered = current.filter((e) => e.id !== oldEntry.id);
           this._wellnessData.set(filtered);
           this._averages.set(this.calculateAverages(filtered));
@@ -603,7 +607,7 @@ export class WellnessService {
   }
 
   /**
-   * Transform database entry to WellnessData
+   * Transform database entry to WellnessData (legacy format)
    */
   private transformEntry(entry: DatabaseWellnessEntry): WellnessData {
     return {
@@ -617,6 +621,24 @@ export class WellnessService {
       motivation: entry.motivation_level,
       mood: entry.mood,
       hydration: entry.hydration_level,
+      notes: entry.notes,
+      timestamp: entry.created_at,
+    };
+  }
+
+  /**
+   * Transform daily_wellness_checkin entry to WellnessData
+   */
+  private transformCheckinEntry(entry: DailyWellnessCheckinEntry): WellnessData {
+    return {
+      id: entry.id,
+      userId: entry.user_id,
+      date: entry.checkin_date,
+      sleep: entry.sleep_quality,
+      sleepHours: entry.sleep_hours,
+      energy: entry.energy_level,
+      stress: entry.stress_level,
+      soreness: entry.muscle_soreness,
       notes: entry.notes,
       timestamp: entry.created_at,
     };

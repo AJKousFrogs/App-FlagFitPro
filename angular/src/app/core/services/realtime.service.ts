@@ -5,15 +5,15 @@
  * Provides a centralized way to subscribe to database changes.
  */
 
-import { Injectable, inject, signal, effect } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
+import { Injectable, effect, inject, signal } from "@angular/core";
 import {
-  RealtimeChannel,
-  RealtimePostgresChangesPayload,
-  REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
-  REALTIME_LISTEN_TYPES,
+    REALTIME_LISTEN_TYPES,
+    REALTIME_POSTGRES_CHANGES_LISTEN_EVENT,
+    RealtimeChannel,
+    RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 export interface RealtimeEvent<
   T extends Record<string, unknown> = Record<string, unknown>,
@@ -179,8 +179,8 @@ export class RealtimeService {
 
     return this.createSubscription(
       "wellness",
-      "wellness_entries",
-      `athlete_id=eq.${userId}`,
+      "daily_wellness_checkin",
+      `user_id=eq.${userId}`,
       callback,
     );
   }

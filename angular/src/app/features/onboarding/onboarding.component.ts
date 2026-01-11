@@ -22,9 +22,10 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
-import { Subject, Subscription, debounceTime } from "rxjs";
+import { firstValueFrom, Subject, Subscription, debounceTime } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
+import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService, toLogContext } from "../../core/services/logger.service";
 import {
@@ -1606,6 +1607,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
   private playerProgramService = inject(PlayerProgramService);
+  private api = inject(ApiService);
 
   currentStep = signal(0);
   isCompleting = signal(false);
@@ -3400,7 +3402,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Save current injuries to wellness_checkins table
+   * Save current injuries to daily_wellness_checkin via API
    * This ensures injuries are properly tracked for training modifications
    */
   private async saveCurrentInjuries(userId: string): Promise<void> {
@@ -3419,39 +3421,35 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           ? `Past injuries: ${this.onboardingData.injuryHistory.join(", ")}`
           : null;
 
-      // Create or update wellness entry for today with current injuries
+      // Create or update wellness entry for today with current injuries via API
       const today = new Date().toISOString().split("T")[0];
-      const { error } = await this.supabaseService.client
-        .from("wellness_entries")
-        .upsert(
-          {
-            athlete_id: userId,
-            user_id: userId,
-            date: today,
-            notes: injuryHistoryNotes || null,
-            // Set default values for other required fields if not set
-            sleep_quality: 5,
-            energy_level: 5,
-            muscle_soreness:
-              this.onboardingData.currentInjuries.length > 0 ? 5 : 0,
-            stress_level: 5,
-            motivation_level: 5,
-            mood: 5,
-            hydration_level: 5,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "athlete_id,date" },
-        );
+      const payload = {
+        date: today,
+        notes: injuryHistoryNotes || null,
+        sleepQuality: 5,
+        sleepHours: 7,
+        energyLevel: 5,
+        muscleSoreness:
+          this.onboardingData.currentInjuries.length > 0 ? 5 : 0,
+        stressLevel: 5,
+        sorenessAreas: this.onboardingData.currentInjuries.map(
+          (injury) => injury.area,
+        ),
+      };
 
-      if (error) {
+      const response = await firstValueFrom(
+        this.api.post("/api/wellness-checkin", payload),
+      );
+
+      if (!response.success) {
         this.logger.warn(
-          "[Onboarding] Failed to save current injuries to wellness_checkin:",
-          error.message,
+          "[Onboarding] Failed to save current injuries via API:",
+          response.error,
         );
         // Non-blocking - continue with onboarding
       } else {
         this.logger.info(
-          `[Onboarding] Saved ${this.onboardingData.currentInjuries.length} current injuries to wellness_checkin`,
+          `[Onboarding] Saved ${this.onboardingData.currentInjuries.length} current injuries via wellness-checkin API`,
         );
       }
     } catch (e) {

@@ -297,10 +297,10 @@ export class DataExportService {
   ): Promise<Array<Record<string, unknown>>> {
     try {
       const { data } = await this.supabase.client
-        .from("wellness_entries")
+        .from("daily_wellness_checkin")
         .select("*")
         .eq("user_id", userId)
-        .order("date", { ascending: false });
+        .order("checkin_date", { ascending: false });
 
       return data || [];
     } catch {

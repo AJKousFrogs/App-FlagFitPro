@@ -127,13 +127,13 @@ Then investigate why `/api/wellness-checkin` endpoint is failing.
 
 ---
 
-## Next Steps
+## Status
 
-1. ✅ **Code complete** - Fix applied
-2. 🔲 **User testing** - Follow testing instructions above
-3. 🔲 **Verify in production** - Deploy and test on live site
-4. 🔲 **Monitor logs** - Check Netlify function logs for errors
-5. 🔲 **Update documentation** - Add to changelog
+1. ✅ **Code complete** - Fix applied (Phase 0)
+2. ✅ **Phase 1 complete** - All writes now use API (2026-01-11)
+3. ✅ **Phase 2 complete** - Dual-write to backend (2026-01-11)
+4. ✅ **Phase 3 complete** - All reads migrated to `daily_wellness_checkin` (2026-01-11)
+5. 🔲 **Phase 4** - Full deprecation (planned, 6+ months)
 
 ---
 

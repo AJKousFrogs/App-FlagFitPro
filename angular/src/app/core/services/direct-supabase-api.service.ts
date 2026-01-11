@@ -12,8 +12,9 @@
  */
 
 import { Injectable, inject } from "@angular/core";
-import { Observable, from, of } from "rxjs";
+import { firstValueFrom, Observable, from, of } from "rxjs";
 import { map, catchError } from "rxjs/operators";
+import { ApiService } from "./api.service";
 import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
@@ -83,6 +84,7 @@ export class DirectSupabaseApiService {
   private supabase = inject(SupabaseService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
+  private api = inject(ApiService);
 
   constructor() {
     this.logger.info(
@@ -243,28 +245,29 @@ export class DirectSupabaseApiService {
     // Determine if there's an override based on conditions
     let override = null;
 
-    // Check for active injuries/rehab from notes field
-    const { data: activeInjuries } = await this.supabase.client
-      .from("wellness_entries")
-      .select("notes")
-      .eq("athlete_id", userId)
-      .not("notes", "is", null)
-      .order("created_at", { ascending: false })
-      .limit(1);
+    // Check for active injuries/rehab from notes field via API
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      const wellnessResponse = await firstValueFrom(
+        this.api.get<{ notes?: string }>(`/api/wellness-checkin?date=${today}`),
+      );
 
-    if (activeInjuries?.[0]?.notes) {
-      // Parse notes to check for injury keywords
-      const notes = activeInjuries[0].notes.toLowerCase();
-      const injuryKeywords = ['injury', 'injured', 'pain', 'rehab', 'rehabilitation'];
-      const hasInjuryNote = injuryKeywords.some(keyword => notes.includes(keyword));
-      
-      if (hasInjuryNote) {
-        override = {
-          type: "rehab_protocol",
-          reason: `Active injury protocol: ${activeInjuries[0].notes}`,
-          replaceSession: true,
-        };
+      if (wellnessResponse.success && wellnessResponse.data?.notes) {
+        // Parse notes to check for injury keywords
+        const notes = wellnessResponse.data.notes.toLowerCase();
+        const injuryKeywords = ['injury', 'injured', 'pain', 'rehab', 'rehabilitation'];
+        const hasInjuryNote = injuryKeywords.some(keyword => notes.includes(keyword));
+        
+        if (hasInjuryNote) {
+          override = {
+            type: "rehab_protocol",
+            reason: `Active injury protocol: ${wellnessResponse.data.notes}`,
+            replaceSession: true,
+          };
+        }
       }
+    } catch {
+      // Wellness API failed, continue without override
     }
 
     return {

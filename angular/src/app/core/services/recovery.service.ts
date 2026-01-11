@@ -1,5 +1,5 @@
 import { Injectable, computed, effect, inject, signal } from "@angular/core";
-import { Observable, from, of } from "rxjs";
+import { firstValueFrom, Observable, from, of } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import {
   getInvertedStatusHexColor,
@@ -328,7 +328,7 @@ export class RecoveryService {
 
   /**
    * Get current recovery metrics from wellness data
-   * Calculates recovery score based on latest wellness entry
+   * Calculates recovery score based on latest wellness entry via API
    */
   getRecoveryMetrics(): Observable<RecoveryData> {
     const userId = this.userId();
@@ -340,24 +340,28 @@ export class RecoveryService {
 
     return from(
       (async () => {
-        // Get latest wellness entry
-        const { data, error } = await this.supabaseService.client
-          .from("wellness_entries")
-          .select("*")
-          .eq("athlete_id", userId)
-          .order("date", { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        // Get latest wellness entry via API
+        const today = new Date().toISOString().split("T")[0];
+        const response = await firstValueFrom(
+          this.apiService.get<{
+            sleepQuality?: number;
+            energyLevel?: number;
+            stressLevel?: number;
+            muscleSoreness?: number;
+          }>(`/api/wellness-checkin?date=${today}`),
+        );
 
-        if (error || !data) {
+        if (!response.success || !response.data) {
           throw new Error("No wellness data available for this athlete");
         }
 
+        const data = response.data;
+
         // Calculate recovery metrics from wellness data
-        const sleepQuality = data.sleep_quality || 5;
-        const energyLevel = data.energy_level || 5;
-        const stressLevel = data.stress_level || 5;
-        const soreness = data.muscle_soreness || 5;
+        const sleepQuality = data.sleepQuality || 5;
+        const energyLevel = data.energyLevel || 5;
+        const stressLevel = data.stressLevel || 5;
+        const soreness = data.muscleSoreness || 5;
 
         // Overall score (0-100)
         const overallScore = Math.round(

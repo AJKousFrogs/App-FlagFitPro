@@ -761,10 +761,10 @@ export class ProfileComponent implements OnInit {
 
       // Load wellness data for performance score
       const { data: wellness } = await this.supabaseService.client
-        .from("wellness_entries")
-        .select("energy_level, motivation_level, sleep_quality, date")
-        .eq("athlete_id", user.id)
-        .order("date", { ascending: false })
+        .from("daily_wellness_checkin")
+        .select("energy_level, sleep_quality, checkin_date")
+        .eq("user_id", user.id)
+        .order("checkin_date", { ascending: false })
         .limit(7);
 
       // Calculate performance score based on wellness and training
@@ -773,28 +773,24 @@ export class ProfileComponent implements OnInit {
       if (wellness && wellness.length > 0) {
         // Filter to only records that have at least one actual value (not null/undefined)
         const validRecords = wellness.filter(
-          (w) =>
+          (w: { energy_level?: number; sleep_quality?: number }) =>
             w.energy_level !== null &&
             w.energy_level !== undefined &&
-            w.motivation_level !== null &&
-            w.motivation_level !== undefined &&
             w.sleep_quality !== null &&
             w.sleep_quality !== undefined,
         );
 
         if (validRecords.length > 0) {
           const avgEnergy =
-            validRecords.reduce((a, w) => a + w.energy_level, 0) /
-            validRecords.length;
-          const avgMotivation =
-            validRecords.reduce((a, w) => a + w.motivation_level, 0) /
+            validRecords.reduce((a: number, w: { energy_level?: number }) => a + (w.energy_level || 0), 0) /
             validRecords.length;
           const avgSleep =
-            validRecords.reduce((a, w) => a + w.sleep_quality, 0) /
+            validRecords.reduce((a: number, w: { sleep_quality?: number }) => a + (w.sleep_quality || 0), 0) /
             validRecords.length;
           // Score out of 100 based on averages (each is 1-10 scale)
+          // Using energy and sleep (2 metrics instead of 3)
           performanceScore = Math.round(
-            ((avgEnergy + avgMotivation + avgSleep) / 30) * 100,
+            ((avgEnergy + avgSleep) / 20) * 100,
           );
         }
       }

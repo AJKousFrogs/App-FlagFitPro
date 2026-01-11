@@ -1478,10 +1478,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       if (this.exportOptions.wellness) {
         this.exportProgress.set((progress += 100 / totalSteps));
         const { data: wellness } = await this.supabaseService.client
-          .from("wellness_entries")
+          .from("daily_wellness_checkin")
           .select("*")
           .eq("user_id", user.id)
-          .order("date", { ascending: false })
+          .order("checkin_date", { ascending: false })
           .limit(UI_LIMITS.EXPORT_WELLNESS_MAX);
         exportData.wellnessCheckins = wellness || [];
       }

@@ -281,22 +281,29 @@ const { data, error } = await this.supabaseService.client
 
 ## Migration Checklist
 
-### ✅ Phase 1: Stop New Writes (CURRENT)
+### ✅ Phase 1: Stop New Writes (COMPLETE - 2026-01-11)
 - [x] ✅ `DailyReadinessComponent` uses `/api/wellness-checkin`
-- [ ] 🔲 Deprecate `WellnessService.logWellness()` (route to API)
-- [ ] 🔲 Update `OnboardingComponent` to use `/api/wellness-checkin`
-- [ ] 🔲 Update "latest wellness" reads to use `/api/wellness-checkin`
+- [x] ✅ `WellnessService.logWellness()` routes to API
+- [x] ✅ `OnboardingComponent` uses `/api/wellness-checkin`
+- [x] ✅ `UnifiedTrainingService.checkWellnessForTraining()` uses API
+- [x] ✅ `AiTrainingSchedulerComponent` uses API
+- [x] ✅ `RecoveryService.getRecoveryMetrics()` uses API
+- [x] ✅ `DirectSupabaseApiService` uses API
+- [x] ✅ `TrainingSafetyComponent` reads from `daily_wellness_checkin`
+- [x] ✅ `MissingDataDetectionService` reads from `daily_wellness_checkin`
 
-### 🔲 Phase 2: Dual-Write (1-2 weeks)
-- [ ] Add dual-write to `wellness-checkin.cjs` backend
-- [ ] Test dual-write doesn't cause conflicts
-- [ ] Monitor for errors
+### ✅ Phase 2: Dual-Write (COMPLETE - 2026-01-11)
+- [x] ✅ Add dual-write to `wellness-checkin.cjs` backend
+- [x] ✅ Dual-write uses upsert with `onConflict: "athlete_id,date"`
+- [x] ✅ Non-fatal error handling (primary write succeeds even if dual-write fails)
 
-### 🔲 Phase 3: Migrate Reads (2-4 weeks)
-- [ ] Update `WellnessService.getWellnessData()` to read from `daily_wellness_checkin`
-- [ ] Update all export services
-- [ ] Update all "latest wellness" reads still using direct queries
-- [ ] Update historical trend calculations
+### ✅ Phase 3: Migrate Reads (COMPLETE - 2026-01-11)
+- [x] ✅ Update `WellnessService.getWellnessData()` to read from `daily_wellness_checkin`
+- [x] ✅ Update `SettingsComponent` export to `daily_wellness_checkin`
+- [x] ✅ Update `AdminService` record counts to `daily_wellness_checkin`
+- [x] ✅ Update `PerformanceDataService` to `daily_wellness_checkin`
+- [x] ✅ Update `ProfileComponent` to `daily_wellness_checkin`
+- [x] ✅ Update `DataExportService` to `daily_wellness_checkin`
 
 ### 🔲 Phase 4: Deprecate Table (6+ months)
 - [ ] Backfill all historical data to `daily_wellness_checkin`
@@ -320,11 +327,11 @@ const { data, error } = await this.supabaseService.client
 
 ## Recommendation Summary
 
-**DO NOW (This Week):**
-1. ✅ Keep `daily_wellness_checkin` as single source of truth for NEW check-ins
-2. 🔲 Deprecate `WellnessService.logWellness()` - route to `/api/wellness-checkin`
-3. 🔲 Update onboarding to use `/api/wellness-checkin`
-4. 🔲 Update 5-6 "latest wellness" queries to use API instead of direct DB reads
+**COMPLETED (2026-01-11):**
+1. ✅ `daily_wellness_checkin` is single source of truth for NEW check-ins
+2. ✅ `WellnessService.logWellness()` routes to `/api/wellness-checkin`
+3. ✅ Onboarding uses `/api/wellness-checkin`
+4. ✅ All "latest wellness" reads migrated to API or `daily_wellness_checkin`
 
 **DO LATER (2-8 weeks):**
 - Add dual-write to backend (ensures historical continuity)
@@ -344,9 +351,9 @@ const { data, error } = await this.supabaseService.client
 
 ## Conclusion
 
-**`wellness_entries` should NOT be fully deprecated yet**, but we should:
-1. ✅ Stop NEW writes (except via dual-write strategy)
-2. Gradually migrate reads to `daily_wellness_checkin`
+**`wellness_entries` should NOT be fully deprecated yet**, but we have:
+1. ✅ Stopped NEW writes from Angular app (Phase 1 complete)
+2. 🔲 Next: Migrate historical reads to `daily_wellness_checkin` (Phase 3)
 3. Maintain historical data integrity
 4. Plan for eventual deprecation after 6+ months
 

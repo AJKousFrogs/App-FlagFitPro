@@ -919,11 +919,11 @@ export class PerformanceDataService {
             .gte("created_at", startDate.toISOString())
             .order("created_at", { ascending: true }),
           this.supabaseService.client
-            .from("wellness_entries")
+            .from("daily_wellness_checkin")
             .select("*")
             .eq("user_id", user.id)
             .gte("created_at", startDate.toISOString())
-            .order("created_at", { ascending: true }),
+            .order("checkin_date", { ascending: true }),
           this.supabaseService.client
             .from("physical_measurements")
             .select("*")

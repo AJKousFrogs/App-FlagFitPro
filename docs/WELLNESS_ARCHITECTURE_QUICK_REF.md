@@ -285,8 +285,15 @@ CREATE TABLE daily_wellness_checkin (
 |---------|-----------|-----------|---------|
 | `ApiService` | N/A | `/api/wellness-checkin` | HTTP client wrapper |
 | `UnifiedTrainingService` | `/api/wellness-checkin` | N/A | Reads wellness for today |
-| `WellnessService` | `wellness_entries` (legacy) | `wellness_entries` (legacy) | Historical trends only |
+| `WellnessService` | `daily_wellness_checkin` | `/api/wellness-checkin` | Historical trends + daily logging |
 | `DailyReadinessComponent` | `/api/wellness-checkin` | `/api/wellness-checkin` | Daily check-in UI |
+| `RecoveryService` | `/api/wellness-checkin` | N/A | Recovery metrics |
+| `AiTrainingSchedulerComponent` | `/api/wellness-checkin` | N/A | Athlete metrics |
+| `TrainingSafetyComponent` | `daily_wellness_checkin` | N/A | Sleep debt analysis |
+| `MissingDataDetectionService` | `daily_wellness_checkin` | N/A | Missing data alerts |
+| `SettingsComponent` | `daily_wellness_checkin` | N/A | Export wellness history |
+| `ProfileComponent` | `daily_wellness_checkin` | N/A | Performance score |
+| `DataExportService` | `daily_wellness_checkin` | N/A | User data exports |
 
 ---
 

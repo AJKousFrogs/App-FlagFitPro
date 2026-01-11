@@ -1027,29 +1027,49 @@ export class UnifiedTrainingService {
   }
 
   private async checkWellnessForTraining(userId: string) {
-    const { data } = await this.supabase.client
-      .from("wellness_entries")
-      .select("*")
-      .eq("athlete_id", userId)
-      .order("date", { ascending: false })
-      .limit(1)
-      .single();
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      const response = await firstValueFrom(
+        this.api.get<{
+          sleepQuality?: number;
+          energyLevel?: number;
+          stressLevel?: number;
+          muscleSoreness?: number;
+          readinessScore?: number;
+        }>(`/api/wellness-checkin?date=${today}`),
+      );
 
-    if (!data)
+      if (!response.success || !response.data) {
+        return {
+          alert: null,
+          readinessScore: 0,
+          readinessStatus: "good" as ReadinessStatus,
+        };
+      }
+
+      // Map API response to expected format
+      const wellnessData: WellnessCheckinRecord = {
+        sleep_quality: response.data.sleepQuality,
+        energy_level: response.data.energyLevel,
+        stress_level: response.data.stressLevel,
+        soreness_level: response.data.muscleSoreness,
+      };
+
+      const score = this.calculateReadinessScore(wellnessData);
+      const status = this.getReadinessStatus(score);
+      return {
+        alert: this.generateWellnessAlert(score, status),
+        readinessScore: score,
+        readinessStatus: status,
+      };
+    } catch (error) {
+      this.logger.error("[Training] Failed to get wellness for training:", toLogContext(error));
       return {
         alert: null,
         readinessScore: 0,
         readinessStatus: "good" as ReadinessStatus,
       };
-
-    const wellnessData = data as WellnessCheckinRecord;
-    const score = this.calculateReadinessScore(wellnessData);
-    const status = this.getReadinessStatus(score);
-    return {
-      alert: this.generateWellnessAlert(score, status),
-      readinessScore: score,
-      readinessStatus: status,
-    };
+    }
   }
 
   private calculateReadinessScore(wellness: WellnessCheckinRecord): number {

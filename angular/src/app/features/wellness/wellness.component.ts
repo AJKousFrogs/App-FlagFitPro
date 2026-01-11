@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -11,33 +11,33 @@ import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { InputNumberModule } from "primeng/inputnumber";
 import { MessageModule } from "primeng/message";
-import { LoggerService } from "../../core/services/logger.service";
-import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
+import { DataConfidenceService } from "../../core/services/data-confidence.service";
+import { LoggerService } from "../../core/services/logger.service";
+import { OfflineQueueService } from "../../core/services/offline-queue.service";
+import { ProfileCompletionService } from "../../core/services/profile-completion.service";
+import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { WellnessService } from "../../core/services/wellness.service";
 import { BodyCompositionCardComponent } from "../../shared/components/body-composition-card/body-composition-card.component";
+import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 import { HydrationTrackerComponent } from "../../shared/components/hydration-tracker/hydration-tracker.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-  StatItem,
-  StatsGridComponent,
+    StatItem,
+    StatsGridComponent,
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
-  AppLoadingComponent,
-  ButtonComponent,
-  CardComponent,
+    AppLoadingComponent,
+    ButtonComponent,
+    CardComponent,
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
-import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
-import { DataConfidenceService } from "../../core/services/data-confidence.service";
-import { OfflineQueueService } from "../../core/services/offline-queue.service";
-import { ProfileCompletionService } from "../../core/services/profile-completion.service";
-import { ConfidenceIndicatorComponent } from "../../shared/components/confidence-indicator/confidence-indicator.component";
 
 interface WellnessAlert {
   id: string;
@@ -791,8 +791,8 @@ export class WellnessComponent {
       stress: this.checkInData.stress, // 1-10 rating
       motivation: this.checkInData.motivation, // 1-10 rating
       date: new Date().toISOString().split("T")[0],
-      // Note: sleepHours, restingHR, and readiness are not stored in wellness_entries table
-      // They could be added via notes or a future schema update
+      // Note: sleepHours, restingHR, and readiness are stored via notes field
+      // The daily_wellness_checkin table supports sleep_hours natively
       notes: this.checkInData.sleepHours
         ? `Sleep: ${this.checkInData.sleepHours}h${this.checkInData.restingHR ? `, RHR: ${this.checkInData.restingHR}bpm` : ""}${this.checkInData.readiness ? `, Readiness: ${this.checkInData.readiness}/10` : ""}`
         : undefined,

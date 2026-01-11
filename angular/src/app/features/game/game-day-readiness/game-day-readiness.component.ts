@@ -542,7 +542,7 @@ export class GameDayReadinessComponent implements OnInit {
         game_info: this.gameInfo(),
       };
 
-      // Save to game_day_readiness table (or wellness_entries if table doesn't exist)
+      // Save to game_day_readiness table
       const { error } = await this.supabaseService.client
         .from("game_day_readiness")
         .insert(readinessData);

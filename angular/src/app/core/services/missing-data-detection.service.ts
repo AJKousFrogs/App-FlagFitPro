@@ -6,8 +6,8 @@
  */
 
 import { Injectable, inject } from "@angular/core";
-import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 export interface MissingDataStatus {
   missing: boolean;
@@ -39,12 +39,12 @@ export class MissingDataDetectionService {
    */
   async checkMissingWellness(playerId: string): Promise<MissingDataStatus> {
     try {
-      // Try wellness_entries first (primary wellness table)
+      // Check daily_wellness_checkin (canonical wellness table)
       const { data, error } = await this.supabaseService.client
-        .from("wellness_entries")
-        .select("date")
-        .eq("athlete_id", playerId)
-        .order("date", { ascending: false })
+        .from("daily_wellness_checkin")
+        .select("checkin_date")
+        .eq("user_id", playerId)
+        .order("checkin_date", { ascending: false })
         .limit(1)
         .maybeSingle();
 
@@ -58,7 +58,7 @@ export class MissingDataDetectionService {
         };
       }
 
-      if (!data || !data.date) {
+      if (!data || !data.checkin_date) {
         return {
           missing: true,
           daysMissing: 999,
@@ -66,7 +66,7 @@ export class MissingDataDetectionService {
         };
       }
 
-      const lastCheckin = new Date(data.date);
+      const lastCheckin = new Date(data.checkin_date);
       const now = new Date();
       const daysDiff = Math.floor(
         (now.getTime() - lastCheckin.getTime()) / (1000 * 60 * 60 * 24),
@@ -83,7 +83,7 @@ export class MissingDataDetectionService {
         missing: daysDiff >= 3,
         daysMissing: daysDiff,
         severity,
-        lastCheckin: data.date,
+        lastCheckin: data.checkin_date,
       };
     } catch (error) {
       this.logger.error("[MissingData] Error checking wellness:", error);

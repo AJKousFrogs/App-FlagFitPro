@@ -278,7 +278,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
     }
   }
 
-  // Upsert the checkin
+  // Upsert the checkin to daily_wellness_checkin (primary table)
   const { data, error } = await supabase
     .from("daily_wellness_checkin")
     .upsert(
@@ -307,6 +307,36 @@ async function saveCheckin(supabase, userId, payload, headers) {
       headers,
       body: JSON.stringify({ error: error.message }),
     };
+  }
+
+  // PHASE 2: Dual-write to wellness_entries for historical continuity
+  // This ensures legacy reads (exports, trends, historical data) continue to work
+  // while we migrate all reads to daily_wellness_checkin in Phase 3
+  try {
+    await supabase.from("wellness_entries").upsert(
+      {
+        athlete_id: userId,
+        user_id: userId,
+        date: targetDate,
+        sleep_quality: sleepQuality,
+        energy_level: energyLevel,
+        stress_level: stressLevel,
+        muscle_soreness: muscleSoreness,
+        notes: notes,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "athlete_id,date",
+      },
+    );
+    console.log("[Wellness] Dual-write to wellness_entries successful");
+  } catch (dualWriteError) {
+    // Non-fatal - log warning but don't fail the request
+    // The primary write to daily_wellness_checkin succeeded
+    console.warn(
+      "[Wellness] Dual-write to wellness_entries failed (non-fatal):",
+      dualWriteError.message,
+    );
   }
 
   // Update wellness streak

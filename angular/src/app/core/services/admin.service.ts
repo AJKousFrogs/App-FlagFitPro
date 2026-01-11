@@ -294,7 +294,7 @@ export class AdminService {
         .from("training_sessions")
         .select("*", { count: "exact", head: true }),
       this.supabaseService.client
-        .from("wellness_entries")
+        .from("daily_wellness_checkin")
         .select("*", { count: "exact", head: true }),
     ]);
 
