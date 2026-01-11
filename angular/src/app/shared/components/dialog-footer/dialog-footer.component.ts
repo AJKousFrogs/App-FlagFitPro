@@ -51,7 +51,7 @@ import { ButtonComponent } from "../button/button.component";
         {{ cancelLabel() }}
       </app-button>
       <app-button
-        [icon]="primaryIcon()"
+        [iconLeft]="primaryIcon()"
         [variant]="primaryVariant()"
         [loading]="loading()"
         [disabled]="disabled()"

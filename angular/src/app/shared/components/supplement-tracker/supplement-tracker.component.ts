@@ -30,6 +30,7 @@ import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
+import { EmptyStateV2Component } from "../ui-components";
 
 import { API_ENDPOINTS, ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -193,6 +194,7 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
     SelectModule,
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateV2Component,
   ],
   templateUrl: "./supplement-tracker.component.html",
   styleUrls: ["./supplement-tracker.component.scss"],

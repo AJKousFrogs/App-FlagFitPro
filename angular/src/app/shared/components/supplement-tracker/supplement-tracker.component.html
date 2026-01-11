@@ -291,13 +291,14 @@
 
     <!-- Empty State -->
     @if (totalCount() === 0) {
-      <div class="supplement-empty">
-        <i class="pi pi-inbox"></i>
-        <p>No supplements configured</p>
+      <app-empty-state
+        icon="inbox"
+        heading="No supplements configured"
+      >
         <app-button iconLeft="pi-plus" size="sm" (clicked)="openAddDialog()"
           >Add Your First Supplement</app-button
         >
-      </div>
+      </app-empty-state>
     }
   }
 </div>

@@ -696,49 +696,33 @@
 
       <!-- Empty State -->
       @if (games().length === 0) {
-        <div class="empty-state-container">
-          <div class="empty-state-icon">
-            <i class="pi pi-calendar-times"></i>
-          </div>
-          <h3>No Games Scheduled</h3>
+        <app-empty-state
+          icon="calendar-times"
+          heading="No Games Scheduled"
+          [description]="isCoachOrAdmin() 
+            ? 'You haven\'t scheduled any games yet. Create your first game to start tracking team performance.' 
+            : 'You haven\'t logged any games yet. Log your personal or team games to track your performance.'"
+          [tip]="isCoachOrAdmin()
+            ? 'Track plays, stats, and player performance in real-time'
+            : 'Keep a record of all your domestic league and pickup games'"
+        >
           @if (isCoachOrAdmin()) {
-            <p>
-              You haven't scheduled any games yet. Create your first game to
-              start tracking team performance.
-            </p>
-            <div class="empty-state-actions">
-              <app-button iconLeft="pi-plus" (clicked)="openNewGame()">
-                Schedule a Game
-              </app-button>
-            </div>
+            <app-button iconLeft="pi-plus" (clicked)="openNewGame()">
+              Schedule a Game
+            </app-button>
           } @else {
-            <p>
-              You haven't logged any games yet. Log your personal or team games
-              to track your performance.
-            </p>
-            <div class="empty-state-actions">
-              <app-button iconLeft="pi-plus" (clicked)="openNewGame()">
-                Log a Game
-              </app-button>
-              <app-button
-                variant="outlined"
-                iconLeft="pi-calendar"
-                (clicked)="viewPracticeSchedule()"
-              >
-                View Practice Schedule
-              </app-button>
-            </div>
+            <app-button iconLeft="pi-plus" (clicked)="openNewGame()">
+              Log a Game
+            </app-button>
+            <app-button
+              variant="outlined"
+              iconLeft="pi-calendar"
+              (clicked)="viewPracticeSchedule()"
+            >
+              View Practice Schedule
+            </app-button>
           }
-
-          <div class="empty-state-tip">
-            <i class="pi pi-info-circle"></i>
-            <span>{{
-              isCoachOrAdmin()
-                ? "Track plays, stats, and player performance in real-time"
-                : "Keep a record of all your domestic league and pickup games"
-            }}</span>
-          </div>
-        </div>
+        </app-empty-state>
       }
 
       <!-- Games Table -->

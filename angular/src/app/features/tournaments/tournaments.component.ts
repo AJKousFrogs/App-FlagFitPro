@@ -1735,9 +1735,19 @@ export class TournamentsComponent implements OnInit {
     }
 
     // Convert date objects to strings
+    const startDate = this.formatDate(this.formData.start_date_obj);
+    if (!startDate) {
+      this.messageService.add({
+        severity: "error",
+        summary: "Error",
+        detail: "Start date is required",
+      });
+      return;
+    }
+
     const data: CreateTournamentDto = {
       ...this.formData,
-      start_date: this.formatDate(this.formData.start_date_obj),
+      start_date: startDate,
       end_date: this.formData.end_date_obj
         ? this.formatDate(this.formData.end_date_obj)
         : undefined,

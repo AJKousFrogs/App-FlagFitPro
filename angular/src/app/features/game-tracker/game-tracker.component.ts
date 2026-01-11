@@ -33,6 +33,7 @@ import { OfflineQueueService } from "../../core/services/offline-queue.service";
 import { NetworkStatusService } from "../../core/services/network-status.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { EmptyStateV2Component } from "../../shared/components/ui-components";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { formatDate } from "../../shared/utils/date.utils";
@@ -119,6 +120,7 @@ interface Play {
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
+    EmptyStateV2Component,
   ],
   templateUrl: "./game-tracker.component.html",
   styleUrl: "./game-tracker.component.scss",

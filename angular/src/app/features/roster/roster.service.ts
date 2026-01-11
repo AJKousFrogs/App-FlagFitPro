@@ -868,10 +868,12 @@ export class RosterService {
   /**
    * Process team_members with role='player' into Player objects
    * Uses user profile data from the users table
+   * Note: Includes ALL players regardless of onboarding status
+   * Players without completed onboarding will show with "pending" status
    */
   private processPlayerMembers(members: PlayerMemberRecord[] | null): Player[] {
     return (members || [])
-      .filter((m) => m.users?.onboarding_completed) // Only include onboarded users
+      .filter((m) => m.users) // Only exclude if no user record at all
       .map((m) => {
         const user = m.users;
 
@@ -905,6 +907,9 @@ export class RosterService {
         const position = m.position || user?.position || "Unknown";
         const jerseyNumber = m.jersey_number ?? user?.jersey_number;
 
+        // Set status based on onboarding completion
+        const status: PlayerStatus = user?.onboarding_completed ? "active" : "inactive";
+
         return {
           id: m.id, // Use team_member id as the player id
           name,
@@ -916,7 +921,7 @@ export class RosterService {
           weight,
           email: user?.email || "",
           phone: "",
-          status: "active" as PlayerStatus,
+          status,
           stats: {},
           created_at: new Date().toISOString(),
           user_id: m.user_id,

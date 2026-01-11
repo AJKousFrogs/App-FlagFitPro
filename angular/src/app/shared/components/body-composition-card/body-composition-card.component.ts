@@ -20,7 +20,6 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { DialogModule } from "primeng/dialog";
@@ -53,11 +52,14 @@ interface BodyCompositionData {
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     ButtonComponent,
     CardComponent,
     TagModule,
     TooltipModule,
     DecimalPipe,
+    DialogModule,
+    InputNumberModule,
   ],
   template: `
     <app-card
@@ -83,8 +85,8 @@ interface BodyCompositionData {
           <app-button
             variant="primary"
             size="md"
-            icon="plus"
-            routerLink="/wellness"
+            iconLeft="pi-plus"
+            (clicked)="openLogDialog()"
           >
             Log Measurement
           </app-button>
@@ -186,6 +188,18 @@ interface BodyCompositionData {
               </div>
             }
           </div>
+
+          <!-- Log New Measurement Button -->
+          <div class="log-button-container">
+            <app-button
+              variant="outlined"
+              size="sm"
+              iconLeft="pi-plus"
+              (clicked)="openLogDialog()"
+            >
+              Log New Measurement
+            </app-button>
+          </div>
         </div>
       }
 
@@ -197,6 +211,109 @@ interface BodyCompositionData {
         </a>
       </div>
     </app-card>
+
+    <!-- Log Measurement Dialog -->
+    <p-dialog
+      header="Log Body Composition"
+      [(visible)]="showLogDialog"
+      [modal]="true"
+      [style]="{ width: '450px' }"
+      [closable]="true"
+    >
+      <div class="measurement-form">
+        <p class="form-description">
+          Enter your body composition measurements. Weight is required, other fields are optional.
+        </p>
+
+        <!-- Weight (Required) -->
+        <div class="form-field">
+          <label for="weight">Weight (kg) *</label>
+          <p-inputNumber
+            id="weight"
+            [(ngModel)]="measurementForm.weight"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="1"
+            mode="decimal"
+            placeholder="e.g., 75.5"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+
+        <!-- Body Fat -->
+        <div class="form-field">
+          <label for="bodyFat">Body Fat (%)</label>
+          <p-inputNumber
+            id="bodyFat"
+            [(ngModel)]="measurementForm.bodyFat"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="1"
+            mode="decimal"
+            [min]="1"
+            [max]="60"
+            placeholder="e.g., 15.0"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+
+        <!-- Muscle Mass -->
+        <div class="form-field">
+          <label for="muscleMass">Muscle Mass (kg)</label>
+          <p-inputNumber
+            id="muscleMass"
+            [(ngModel)]="measurementForm.muscleMass"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="1"
+            mode="decimal"
+            placeholder="e.g., 35.0"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+
+        <!-- Body Water -->
+        <div class="form-field">
+          <label for="bodyWater">Body Water (%)</label>
+          <p-inputNumber
+            id="bodyWater"
+            [(ngModel)]="measurementForm.bodyWater"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="1"
+            mode="decimal"
+            [min]="30"
+            [max]="80"
+            placeholder="e.g., 55.0"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+
+        <!-- BMR -->
+        <div class="form-field">
+          <label for="bmr">Basal Metabolic Rate (kcal)</label>
+          <p-inputNumber
+            id="bmr"
+            [(ngModel)]="measurementForm.basalMetabolicRate"
+            mode="decimal"
+            [min]="800"
+            [max]="4000"
+            placeholder="e.g., 1800"
+            styleClass="w-full"
+          ></p-inputNumber>
+        </div>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <app-button variant="text" (clicked)="showLogDialog = false">
+          Cancel
+        </app-button>
+        <app-button
+          iconLeft="pi-check"
+          [loading]="isSaving()"
+          [disabled]="!measurementForm.weight"
+          (clicked)="saveMeasurement()"
+        >
+          Save Measurement
+        </app-button>
+      </ng-template>
+    </p-dialog>
   `,
   styleUrl: "./body-composition-card.component.scss",
 })
@@ -204,11 +321,24 @@ export class BodyCompositionCardComponent implements OnInit {
   private trainingService = inject(UnifiedTrainingService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+  private logger = inject(LoggerService);
+  private toastService = inject(ToastService);
 
   // Use unified service signals
   latestMeasurement = this.trainingService.latestMeasurement;
   recentMeasurements = this.trainingService.recentMeasurements;
   isLoading = this.trainingService.isRefreshing;
+
+  // Dialog state
+  showLogDialog = false;
+  readonly isSaving = signal(false);
+  measurementForm = {
+    weight: null as number | null,
+    bodyFat: null as number | null,
+    muscleMass: null as number | null,
+    bodyWater: null as number | null,
+    basalMetabolicRate: null as number | null,
+  };
 
   // Computed display data
   displayData = computed<BodyCompositionData>(() => {
@@ -254,6 +384,51 @@ export class BodyCompositionCardComponent implements OnInit {
 
   ngOnInit(): void {
     // Data is automatically loaded/refreshed by UnifiedTrainingService
+  }
+
+  openLogDialog(): void {
+    // Reset form
+    this.measurementForm = {
+      weight: null,
+      bodyFat: null,
+      muscleMass: null,
+      bodyWater: null,
+      basalMetabolicRate: null,
+    };
+    this.showLogDialog = true;
+  }
+
+  async saveMeasurement(): Promise<void> {
+    if (!this.measurementForm.weight) {
+      this.toastService.warn("Please enter your weight");
+      return;
+    }
+
+    this.isSaving.set(true);
+    this.logger.info("[BodyComposition] Saving measurement:", this.measurementForm);
+
+    try {
+      const result = await this.trainingService.logBodyComp({
+        weight: this.measurementForm.weight,
+        bodyFat: this.measurementForm.bodyFat ?? undefined,
+        muscleMass: this.measurementForm.muscleMass ?? undefined,
+        bodyWaterPercentage: this.measurementForm.bodyWater ?? undefined,
+        basalMetabolicRate: this.measurementForm.basalMetabolicRate ?? undefined,
+      });
+
+      this.isSaving.set(false);
+      if (result?.success) {
+        this.toastService.success("Body composition saved!");
+        this.showLogDialog = false;
+        // Data is refreshed internally by logBodyComp
+      } else {
+        this.toastService.error("Failed to save measurement. Please try again.");
+      }
+    } catch (err) {
+      this.isSaving.set(false);
+      this.logger.error("[BodyComposition] Error saving measurement:", err);
+      this.toastService.error("Failed to save measurement. Please try again.");
+    }
   }
 
   private calculateTrend(

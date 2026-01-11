@@ -18,6 +18,7 @@ import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ChartOptions } from "chart.js";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { EmptyStateV2Component } from "../../../shared/components/ui-components";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -108,6 +109,7 @@ interface TeamOption {
     TagModule,
     MainLayoutComponent,
     IconButtonComponent,
+    EmptyStateV2Component,
   ],
   template: `
     <app-main-layout>

@@ -165,8 +165,8 @@ export {
 // ============================================================================
 // LOADING & SKELETON COMPONENTS
 // ============================================================================
-export { EmptyStateComponent } from "./empty-state/empty-state.component";
 export { EmptyStateComponent as EmptyStateV2Component } from "./empty-state-v2/empty-state.component";
+export { EmptyStateComponent } from "./empty-state/empty-state.component";
 export { AppLoadingComponent } from "./loading/loading.component";
 export {
     SkeletonLoaderComponent,

@@ -158,10 +158,11 @@
                 [options]="doughnutOptions"
               ></p-chart>
             } @else {
-              <div class="empty-chart">
-                <i class="pi pi-chart-pie"></i>
-                <p>No data available</p>
-              </div>
+              <app-empty-state
+                icon="chart-pie"
+                heading="No data available"
+                [compact]="true"
+              />
             }
 
             @if (classification()) {
@@ -200,10 +201,11 @@
                 [options]="barOptions"
               ></p-chart>
             } @else {
-              <div class="empty-chart">
-                <i class="pi pi-chart-bar"></i>
-                <p>No data available</p>
-              </div>
+              <app-empty-state
+                icon="chart-bar"
+                heading="No data available"
+                [compact]="true"
+              />
             }
           </p-card>
         </div>
@@ -238,10 +240,11 @@
               [style]="{ height: '350px' }"
             ></p-chart>
           } @else {
-            <div class="empty-chart large">
-              <i class="pi pi-chart-line"></i>
-              <p>No trend data available</p>
-            </div>
+            <app-empty-state
+              icon="chart-line"
+              heading="No trend data available"
+              [compact]="true"
+            />
           }
         </div>
       </p-tabpanel>
@@ -381,10 +384,11 @@
                   [options]="pieOptions"
                 ></p-chart>
               } @else {
-                <div class="empty-chart">
-                  <i class="pi pi-chart-pie"></i>
-                  <p>No feedback data</p>
-                </div>
+                <app-empty-state
+                  icon="chart-pie"
+                  heading="No feedback data"
+                  [compact]="true"
+                />
               }
             </p-card>
           </div>
