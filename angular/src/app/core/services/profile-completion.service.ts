@@ -1,7 +1,7 @@
-import { Injectable, inject, signal, computed } from "@angular/core";
+import { Injectable, computed, inject, signal } from "@angular/core";
 import { AuthService } from "./auth.service";
-import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 /**
  * Profile field definition for completion tracking
@@ -385,20 +385,14 @@ export class ProfileCompletionService {
     if (!user?.id) return false;
 
     try {
-      const today = new Date().toISOString().split("T")[0];
-
-      // Upsert to physical_measurements for daily tracking
-      // Table has: user_id (UUID), measurement_date (DATE), weight_kg (NUMERIC)
+      // Insert to physical_measurements for daily tracking
+      // Table has: user_id (UUID), weight (NUMERIC), created_at (TIMESTAMP)
       const { error: measurementError } = await this.supabaseService.client
         .from("physical_measurements")
-        .upsert(
-          {
-            user_id: user.id,
-            measurement_date: today,
-            weight_kg: weightKg,
-          },
-          { onConflict: "user_id,measurement_date" },
-        );
+        .insert({
+          user_id: user.id,
+          weight: weightKg,
+        });
 
       if (measurementError) {
         this.logger.error(

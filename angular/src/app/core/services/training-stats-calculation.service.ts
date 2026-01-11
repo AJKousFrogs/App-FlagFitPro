@@ -8,14 +8,13 @@
  */
 
 import { Injectable, inject } from "@angular/core";
-import { Observable, of, from } from "rxjs";
+import { Observable, from, of } from "rxjs";
 import { catchError } from "rxjs/operators";
-import { TrainingDataService, TrainingSession } from "./training-data.service";
-import { LoggerService } from "./logger.service";
-import { toLogContext } from "./logger.service";
 import { AcwrService } from "./acwr.service";
-import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
+import { LoggerService, toLogContext } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
+import { TrainingDataService, TrainingSession } from "./training-data.service";
 
 export interface ACWRData {
   acwr: number | null;
@@ -225,6 +224,11 @@ export class TrainingStatsCalculationService {
         sessions
           .map((s) => s.session_date || s.date)
           .filter((d): d is string => Boolean(d))
+          .filter((d) => {
+            // Validate date is parseable
+            const dateObj = new Date(d);
+            return !isNaN(dateObj.getTime());
+          })
           .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()),
       ),
     ];

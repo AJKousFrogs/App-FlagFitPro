@@ -150,10 +150,17 @@ export class PlayerProgramService {
           return null;
         }),
         catchError((error) => {
-          this.logger.error(
-            "[PlayerProgramService] Error fetching assignment:",
-            error,
-          );
+          // Don't log 401 errors as errors - they're expected when not authenticated
+          if (error.status === 401) {
+            this.logger.info(
+              "[PlayerProgramService] User not authenticated or session expired",
+            );
+          } else {
+            this.logger.error(
+              "[PlayerProgramService] Error fetching assignment:",
+              error,
+            );
+          }
           return of(null);
         }),
       );

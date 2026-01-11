@@ -3,21 +3,21 @@
  * Handles all roster-related data operations and business logic
  * Extracted from roster.component.ts for better separation of concerns
  */
-import { Injectable, inject, signal, computed } from "@angular/core";
-import { SupabaseService } from "../../core/services/supabase.service";
+import { Injectable, computed, inject, signal } from "@angular/core";
+import { TIME } from "../../core/constants/app.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { SupabaseService } from "../../core/services/supabase.service";
 import {
-  Player,
-  StaffMember,
-  TeamStat,
-  TeamInvitation,
-  TeamRole,
-  StaffCategory,
-  StaffByCategory,
-  PlayerStatus,
+    Player,
+    PlayerStatus,
+    StaffByCategory,
+    StaffCategory,
+    StaffMember,
+    TeamInvitation,
+    TeamRole,
+    TeamStat,
 } from "./roster.models";
-import { TIME } from "../../core/constants/app.constants";
 
 /**
  * Team member record from database
@@ -603,7 +603,8 @@ export class RosterService {
     if (!teamId) return;
 
     try {
-      const { data, error } = await this.supabaseService.client
+      // Fetch invitations without trying to embed auth.users (PostgREST can't follow that relationship)
+      const { data: invitations, error } = await this.supabaseService.client
         .from("team_invitations")
         .select(
           `
@@ -614,8 +615,7 @@ export class RosterService {
           status,
           invited_by,
           expires_at,
-          created_at,
-          inviter:invited_by(raw_user_meta_data)
+          created_at
         `,
         )
         .eq("team_id", teamId)
@@ -627,22 +627,46 @@ export class RosterService {
         return;
       }
 
+      // Fetch inviter details separately from users table
+      const inviterIds = [
+        ...new Set(
+          (invitations || [])
+            .map((inv) => inv.invited_by)
+            .filter(Boolean) as string[],
+        ),
+      ];
+
+      let invitersMap = new Map<string, string>();
+      if (inviterIds.length > 0) {
+        const { data: users } = await this.supabaseService.client
+          .from("users")
+          .select("id, full_name, first_name, last_name")
+          .in("id", inviterIds);
+
+        if (users) {
+          invitersMap = new Map(
+            users.map((u) => [
+              u.id,
+              u.full_name ||
+                [u.first_name, u.last_name].filter(Boolean).join(" ") ||
+                "Unknown",
+            ]),
+          );
+        }
+      }
+
       this.pendingInvitations.set(
-        (data || []).map((inv) => {
-          const invRecord = inv as InvitationRecord;
-          return {
-            id: invRecord.id,
-            email: invRecord.email,
-            role: invRecord.role,
-            message: invRecord.message,
-            status: invRecord.status as TeamInvitation["status"],
-            invitedBy:
-              invRecord.inviter?.raw_user_meta_data?.full_name || "Unknown",
-            expiresAt: invRecord.expires_at,
-            createdAt: invRecord.created_at,
-            isExpired: new Date(invRecord.expires_at) < new Date(),
-          };
-        }),
+        (invitations || []).map((inv) => ({
+          id: inv.id,
+          email: inv.email,
+          role: inv.role,
+          message: inv.message,
+          status: inv.status as TeamInvitation["status"],
+          invitedBy: invitersMap.get(inv.invited_by) || "Unknown",
+          expiresAt: inv.expires_at,
+          createdAt: inv.created_at,
+          isExpired: new Date(inv.expires_at) < new Date(),
+        })),
       );
     } catch (error: unknown) {
       this.logger.error("[RosterService] Error loading invitations:", error);

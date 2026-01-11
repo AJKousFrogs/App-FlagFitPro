@@ -641,6 +641,16 @@ export class UnifiedTrainingService {
    * Updates _programAssignment and _hasProgramAssignment signals
    */
   loadProgramAssignment(): void {
+    // Only attempt to load if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      this.logger.info(
+        "[UnifiedTrainingService] Skipping program load - user not authenticated",
+      );
+      this._programAssignment.set(null);
+      this._hasProgramAssignment.set(false);
+      return;
+    }
+
     this.playerProgramService.getMyProgramAssignment().subscribe({
       next: (assignment) => {
         this._programAssignment.set(assignment);

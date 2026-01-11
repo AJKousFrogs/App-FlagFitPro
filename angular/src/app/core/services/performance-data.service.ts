@@ -1,10 +1,10 @@
-import { Injectable, inject, computed, signal, effect } from "@angular/core";
+import { Injectable, computed, effect, inject, signal } from "@angular/core";
 import { Observable, from, of } from "rxjs";
-import { map, catchError } from "rxjs/operators";
-import { SupabaseService } from "./supabase.service";
+import { catchError, map } from "rxjs/operators";
+import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
-import { AuthService } from "./auth.service";
+import { SupabaseService } from "./supabase.service";
 
 // Physical Measurements Interfaces
 export interface PhysicalMeasurement {
@@ -116,13 +116,26 @@ interface PaginationInfo {
 interface DatabaseMeasurement {
   id: string;
   user_id: string;
-  weight_kg: number;
-  height_cm: number;
-  body_fat_percentage?: number;
-  muscle_mass_kg?: number;
+  weight: number; // in kg
+  height: number; // in cm
+  body_fat?: number; // percentage
+  muscle_mass?: number; // in kg
+  body_water_mass?: number;
+  fat_mass?: number;
+  protein_mass?: number;
+  bone_mineral_content?: number;
+  skeletal_muscle_mass?: number;
+  muscle_percentage?: number;
+  body_water_percentage?: number;
+  protein_percentage?: number;
+  bone_mineral_percentage?: number;
+  visceral_fat_rating?: number;
+  basal_metabolic_rate?: number;
+  waist_to_hip_ratio?: number;
+  body_age?: number;
   notes?: string;
-  measurement_date: string;
   created_at?: string;
+  updated_at?: string;
   [key: string]: unknown; // Allow additional properties for Record<string, unknown> compatibility
 }
 
@@ -386,12 +399,25 @@ export class PerformanceDataService {
     return {
       id: data.id,
       userId: data.user_id,
-      weight: data.weight_kg,
-      height: data.height_cm,
-      bodyFat: data.body_fat_percentage,
-      muscleMass: data.muscle_mass_kg,
+      weight: data.weight,
+      height: data.height,
+      bodyFat: data.body_fat,
+      muscleMass: data.muscle_mass,
+      bodyWaterMass: data.body_water_mass,
+      fatMass: data.fat_mass,
+      proteinMass: data.protein_mass,
+      boneMineralContent: data.bone_mineral_content,
+      skeletalMuscleMass: data.skeletal_muscle_mass,
+      musclePercentage: data.muscle_percentage,
+      bodyWaterPercentage: data.body_water_percentage,
+      proteinPercentage: data.protein_percentage,
+      boneMineralPercentage: data.bone_mineral_percentage,
+      visceralFatRating: data.visceral_fat_rating,
+      basalMetabolicRate: data.basal_metabolic_rate,
+      waistToHipRatio: data.waist_to_hip_ratio,
+      bodyAge: data.body_age,
       notes: data.notes,
-      timestamp: (data.measurement_date as string) || new Date().toISOString(),
+      timestamp: data.created_at || new Date().toISOString(),
     };
   }
 
@@ -458,30 +484,20 @@ export class PerformanceDataService {
           .from("physical_measurements")
           .select("*")
           .eq("user_id", userId)
-          .gte("measurement_date", cutoffDate.toISOString().split("T")[0])
-          .order("measurement_date", { ascending: false })
+          .gte("created_at", cutoffDate.toISOString())
+          .order("created_at", { ascending: false })
           .range((page - 1) * limit, page * limit - 1);
 
         if (error) {
           this.logger.error(
-            "[Performance] Error fetching measurements:",
+            "[Performance] Error fetching measurements",
             error,
           );
           throw error;
         }
 
         const measurements: PhysicalMeasurement[] = (data || []).map(
-          (m: DatabaseMeasurement) => ({
-            id: m.id,
-            userId: m.user_id,
-            weight: m.weight_kg,
-            height: m.height_cm,
-            bodyFat: m.body_fat_percentage,
-            muscleMass: m.muscle_mass_kg,
-            notes: m.notes,
-            timestamp:
-              m.measurement_date || m.created_at || new Date().toISOString(),
-          }),
+          (m: DatabaseMeasurement) => this.transformMeasurement(m),
         );
 
         const summary: MeasurementsSummary = {};
@@ -507,7 +523,7 @@ export class PerformanceDataService {
       })(),
     ).pipe(
       catchError((error) => {
-        this.logger.error("[Performance] Failed to fetch measurements:", error);
+        this.logger.error("[Performance] Failed to fetch measurements", error);
         return of({
           data: [] as PhysicalMeasurement[],
           summary: {} as MeasurementsSummary,
