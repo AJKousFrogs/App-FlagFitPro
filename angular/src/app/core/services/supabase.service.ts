@@ -160,6 +160,13 @@ export class SupabaseService {
   }
 
   /**
+   * Get the Supabase anon key for direct API calls
+   */
+  get supabaseKey(): string {
+    return environment.supabase.anonKey;
+  }
+
+  /**
    * Get current user (synchronous access)
    */
   getCurrentUser(): User | null {

@@ -1104,7 +1104,12 @@ export class UnifiedTrainingService {
   private calculateTrainingStats(
     sessions: TrainingSessionRecord[],
   ): TrainingStatCard[] {
-    const thisWeek = sessions.filter((s) => this.isThisWeek(new Date(s.date)));
+    const thisWeek = sessions.filter((s) => {
+      const dateStr = s.session_date || s.date;
+      if (!dateStr) return false;
+      const date = new Date(dateStr);
+      return !isNaN(date.getTime()) && this.isThisWeek(date);
+    });
     const totalDuration = thisWeek.reduce(
       (sum, s) => sum + (s.duration ?? 0),
       0,
@@ -1141,13 +1146,26 @@ export class UnifiedTrainingService {
 
   private calculateStreak(sessions: TrainingSessionRecord[]): number {
     if (sessions.length === 0) return 0;
-    const uniqueDates = [
-      ...new Set(
-        sessions.map((s) => new Date(s.date).toISOString().split("T")[0]),
-      ),
-    ]
+    
+    // Extract valid dates from sessions, supporting both 'date' and 'session_date' fields
+    const validDates = sessions
+      .map((s) => s.session_date || s.date)
+      .filter((d): d is string => {
+        if (!d) return false;
+        const dateObj = new Date(d);
+        return !isNaN(dateObj.getTime());
+      })
+      .map((d) => {
+        const dateObj = new Date(d);
+        return dateObj.toISOString().split("T")[0];
+      });
+    
+    if (validDates.length === 0) return 0;
+    
+    const uniqueDates = [...new Set(validDates)]
       .sort()
       .reverse();
+    
     const today = new Date().toISOString().split("T")[0];
     const yesterday = new Date(Date.now() - 86400000)
       .toISOString()
@@ -1286,9 +1304,12 @@ export class UnifiedTrainingService {
     return days.map((name, i) => {
       const d = new Date(start);
       d.setDate(d.getDate() + i);
-      const daySessions = sessions.filter(
-        (s) => new Date(s.date).toDateString() === d.toDateString(),
-      );
+      const daySessions = sessions.filter((s) => {
+        const dateStr = s.session_date || s.date;
+        if (!dateStr) return false;
+        const sessionDate = new Date(dateStr);
+        return !isNaN(sessionDate.getTime()) && sessionDate.toDateString() === d.toDateString();
+      });
       return {
         name,
         date: d,

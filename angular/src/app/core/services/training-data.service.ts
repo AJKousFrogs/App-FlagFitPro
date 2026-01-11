@@ -1,10 +1,9 @@
-import { Injectable, inject, computed } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Injectable, computed, inject } from "@angular/core";
 import { Observable, from, of } from "rxjs";
-import { map, catchError } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
+import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
-import { LoggerService } from "./logger.service";
-import { toLogContext } from "./logger.service";
 
 export interface TrainingSession {
   id?: string;
@@ -544,8 +543,19 @@ export class TrainingDataService {
       return 0;
     }
 
+    // Filter out sessions with invalid dates
+    const validSessions = sessions.filter((s) => {
+      if (!s.session_date) return false;
+      const date = new Date(s.session_date);
+      return !isNaN(date.getTime());
+    });
+
+    if (validSessions.length === 0) {
+      return 0;
+    }
+
     // Sort sessions by date descending (most recent first)
-    const sortedSessions = [...sessions].sort(
+    const sortedSessions = [...validSessions].sort(
       (a, b) =>
         new Date(b.session_date).getTime() - new Date(a.session_date).getTime(),
     );

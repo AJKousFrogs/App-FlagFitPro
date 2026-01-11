@@ -53,24 +53,29 @@ export default {
         },
       },
       spacing: {
-        // Use your 8-point grid spacing
+        // STANDARD 8-POINT GRID (PREFERRED)
+        // Use these values for consistent spacing across the app
         0: "var(--primitive-space-0)",
-        2: "var(--primitive-space-2)",
-        4: "var(--primitive-space-4)",
-        6: "var(--primitive-space-6)",
-        8: "var(--primitive-space-8)",
-        12: "var(--primitive-space-12)",
-        15: "0.9375rem", // 15px
-        16: "var(--primitive-space-16)",
-        18: "1.125rem", // 18px
-        20: "1.25rem", // 20px
-        24: "var(--primitive-space-24)",
-        25: "1.5625rem", // 25px
-        30: "1.875rem", // 30px
-        32: "var(--primitive-space-32)",
-        40: "var(--primitive-space-40)",
-        48: "var(--primitive-space-48)",
-        64: "var(--primitive-space-64)",
+        2: "var(--primitive-space-2)",   // 8px - Minimum spacing
+        4: "var(--primitive-space-4)",   // 16px
+        6: "var(--primitive-space-6)",   // 24px
+        8: "var(--primitive-space-8)",   // 32px
+        12: "var(--primitive-space-12)", // 48px
+        16: "var(--primitive-space-16)", // 64px
+        24: "var(--primitive-space-24)", // 96px
+        32: "var(--primitive-space-32)", // 128px
+        40: "var(--primitive-space-40)", // 160px
+        48: "var(--primitive-space-48)", // 192px
+        64: "var(--primitive-space-64)", // 256px
+        
+        // NON-STANDARD VALUES (LEGACY - AVOID IN NEW CODE)
+        // These break the 8-point grid and cause visual inconsistency
+        // TODO: Remove these after migrating existing usage to standard values
+        15: "0.9375rem", // 15px - Use spacing-4 (16px) instead
+        18: "1.125rem",  // 18px - Use spacing-4 (16px) or spacing-6 (24px) instead
+        20: "1.25rem",   // 20px - Use spacing-6 (24px) instead
+        25: "1.5625rem", // 25px - Use spacing-6 (24px) or spacing-8 (32px) instead
+        30: "1.875rem",  // 30px - Use spacing-8 (32px) instead
       },
       borderRadius: {
         sm: "var(--radius-component-sm)",

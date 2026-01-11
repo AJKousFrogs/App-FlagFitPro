@@ -157,13 +157,15 @@
   color: var(--color-text-primary);
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
+  /* HOVER FIX: Keep border-width constant to prevent layout shift */
+  border: 2px solid transparent;
+  /* HOVER FIX: Transition only safe properties (no layout-affecting props) */
   transition:
-    opacity var(--transition-fast),
-    transform var(--transition-fast),
     background-color var(--transition-fast),
     border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-  border: var(--border-1) solid transparent;
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
   cursor: pointer;
   font-family: inherit;
   width: auto;
@@ -180,6 +182,7 @@
 
 .settings-nav-item:hover {
   background: var(--surface-tertiary);
+  /* HOVER FIX: Border width stays 2px, only color changes */
   border-color: var(--ds-primary-green);
   color: var(--ds-primary-green);
 }
@@ -242,11 +245,20 @@
   padding: var(--space-4);
   margin: 0 calc(var(--space-3) * -1);
   border-radius: var(--radius-xl);
-  transition: background-color var(--transition-fast);
+  /* HOVER FIX: Keep border-width constant to prevent layout shift */
+  border: 2px solid transparent;
+  /* HOVER FIX: Transition all safe properties that might change on hover */
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .notification-item:hover {
   background: var(--surface-secondary);
+  /* HOVER FIX: Border stays 2px, no layout shift */
+  /* Border color stays transparent unless you want to add a subtle border */
 }
 
 .notification-info {
@@ -270,26 +282,36 @@
 .notification-icon i {
   font-size: var(--font-h3-size); /* 20px - larger icon */
   color: var(--color-text-secondary);
+  /* ALIGNMENT FIX: Ensure icon doesn't shift */
+  line-height: 1;
 }
 
 .notification-text {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  /* ALIGNMENT FIX: Ensure consistent baseline */
+  justify-content: center;
 }
 
 .notification-label {
   font-size: var(--font-body-size); /* 16px - clear title size */
   font-weight: 600; /* Semibold for emphasis */
   color: var(--color-text-primary);
+  /* ALIGNMENT FIX: Consistent line-height prevents text shift */
   line-height: 1.3;
+  margin: 0;
+  padding: 0;
 }
 
 .notification-desc {
   font-size: var(--font-compact-lg); /* 13px - smaller for description */
   font-weight: 400; /* Regular weight */
   color: var(--color-text-muted);
+  /* ALIGNMENT FIX: Consistent line-height */
   line-height: 1.4;
+  margin: 0;
+  padding: 0;
 }
 
 /* Warning type icon (for injury risk alerts) */
@@ -515,11 +537,19 @@
   padding: var(--space-4) var(--space-3);
   margin: 0 calc(var(--space-3) * -1);
   border-radius: var(--radius-xl);
-  transition: background-color var(--transition-fast);
+  /* HOVER FIX: Keep border-width constant */
+  border: 2px solid transparent;
+  /* HOVER FIX: Transition safe properties only */
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .security-item:hover {
   background: var(--surface-secondary);
+  /* HOVER FIX: Border stays 2px, no layout shift */
 }
 
 .security-info h4 {
@@ -527,8 +557,10 @@
   font-size: var(--font-body-size); /* 16px - clear title size */
   font-weight: 600; /* Semibold for emphasis */
   color: var(--color-text-primary);
+  /* ALIGNMENT FIX: Consistent line-height prevents text shift */
   line-height: 1.3;
   letter-spacing: -0.01em;
+  padding: 0;
 }
 
 .security-info p {
@@ -536,7 +568,9 @@
   font-size: var(--font-compact-lg); /* 13px - smaller for description */
   font-weight: 400; /* Regular weight */
   color: var(--color-text-muted);
+  /* ALIGNMENT FIX: Consistent line-height */
   line-height: 1.4;
+  padding: 0;
 }
 
 .security-item.danger .security-info h4 {
@@ -1421,22 +1455,25 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   background: transparent; /* Outlined style - transparent background */
+  /* HOVER FIX: Border width stays constant (2px) */
   border: 2px solid var(--color-border-primary);
   border-radius: var(--radius-lg); /* 8px */
   cursor: pointer;
+  /* HOVER FIX: Only transition safe properties (no width/height/font changes) */
   transition:
     background-color var(--motion-fast) var(--ease-standard),
     border-color var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard),
     color var(--motion-fast) var(--ease-standard);
   color: var(--color-text-primary);
-  min-height: var(--touch-target-md); /* 44px */
+  min-height: var(--touch-target-md); /* 44px - locked height */
 }
 
 .theme-option:hover {
   background: var(--surface-secondary);
+  /* HOVER FIX: Border stays 2px, only color changes */
   border-color: var(--ds-primary-green);
-  border-radius: var(--radius-lg); /* 8px */
+  /* No need to re-specify border-radius - it's inherited */
 }
 
 .theme-option.active {
@@ -1444,8 +1481,8 @@
     var(--ds-primary-green-rgb),
     0.08
   ); /* Subtle tint instead of solid */
-  border: 2px solid var(--ds-primary-green);
-  border-radius: var(--radius-lg); /* 8px */
+  /* HOVER FIX: Border width stays 2px, only color changes */
+  border-color: var(--ds-primary-green);
   color: var(--ds-primary-green);
 }
 
