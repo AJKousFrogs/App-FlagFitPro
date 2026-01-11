@@ -21,10 +21,7 @@
 
     <!-- Game Setup Form -->
     @if (showGameForm()) {
-      <p-card class="game-form-card">
-        <ng-template pTemplate="header">
-          <h3>{{ getFormTitle() }}</h3>
-        </ng-template>
+      <app-card [title]="getFormTitle()" class="game-form-card">
         <!-- Visibility Info Banner -->
         <div
           class="visibility-info-banner"
@@ -168,44 +165,42 @@
             >
           </div>
         </form>
-      </p-card>
+      </app-card>
     }
 
     <!-- Active Game Play Tracker -->
     @if (activeGameId()) {
-      <p-card class="play-tracker-card">
-        <ng-template pTemplate="header">
-          <div class="game-header-content">
-            <h3>Track Play - {{ getActiveGameOpponent() }}</h3>
-            <div class="score-display">
-              <div class="score-group">
-                <label>Our Score:</label>
-                <p-inputNumber
-                  [ngModel]="teamScore()"
-                  (ngModelChange)="teamScore.set($event ?? 0); updateScore()"
-                  [min]="0"
-                  [showButtons]="true"
-                  styleClass="score-input"
-                >
-                </p-inputNumber>
-              </div>
-              <span class="score-separator">-</span>
-              <div class="score-group">
-                <label>Opponent:</label>
-                <p-inputNumber
-                  [ngModel]="opponentScore()"
-                  (ngModelChange)="
-                    opponentScore.set($event ?? 0); updateScore()
-                  "
-                  [min]="0"
-                  [showButtons]="true"
-                  styleClass="score-input"
-                >
-                </p-inputNumber>
-              </div>
-            </div>
+      <app-card
+        [title]="'Track Play - ' + getActiveGameOpponent()"
+        class="play-tracker-card"
+      >
+        <div header-actions class="score-display">
+          <div class="score-group">
+            <label>Our Score:</label>
+            <p-inputNumber
+              [ngModel]="teamScore()"
+              (ngModelChange)="teamScore.set($event ?? 0); updateScore()"
+              [min]="0"
+              [showButtons]="true"
+              styleClass="score-input"
+            >
+            </p-inputNumber>
           </div>
-        </ng-template>
+          <span class="score-separator">-</span>
+          <div class="score-group">
+            <label>Opponent:</label>
+            <p-inputNumber
+              [ngModel]="opponentScore()"
+              (ngModelChange)="
+                opponentScore.set($event ?? 0); updateScore()
+              "
+              [min]="0"
+              [showButtons]="true"
+              styleClass="score-input"
+            >
+            </p-inputNumber>
+          </div>
+        </div>
         <!-- Quick Stats Summary -->
         <div class="quick-stats-grid">
           <div class="stat-box">
@@ -643,15 +638,12 @@
             >
           </div>
         </form>
-      </p-card>
+      </app-card>
     }
 
     <!-- Recent Plays -->
     @if (activeGameId() && plays().length > 0) {
-      <p-card class="plays-list-card">
-        <ng-template pTemplate="header">
-          <h3>Recent Plays</h3>
-        </ng-template>
+      <app-card title="Recent Plays" class="plays-list-card">
         <p-table [value]="plays()" [paginator]="true" [rows]="10">
           <ng-template pTemplate="header">
             <tr>
@@ -685,15 +677,14 @@
             </tr>
           </ng-template>
         </p-table>
-      </p-card>
+      </app-card>
     }
 
     <!-- Games List -->
-    <p-card class="games-list-card">
-      <ng-template pTemplate="header">
-        <h3>{{ isCoachOrAdmin() ? "Team & Personal Games" : "My Games" }}</h3>
-      </ng-template>
-
+    <app-card
+      [title]="isCoachOrAdmin() ? 'Team & Personal Games' : 'My Games'"
+      class="games-list-card"
+    >
       <!-- Empty State -->
       @if (games().length === 0) {
         <app-empty-state
@@ -784,6 +775,6 @@
           </ng-template>
         </p-table>
       }
-    </p-card>
+    </app-card>
   </div>
 </app-main-layout>

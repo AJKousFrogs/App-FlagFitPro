@@ -16,6 +16,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { CardModule } from "primeng/card";
+import { CardComponent } from "../../shared/components/card/card.component";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
@@ -108,6 +109,7 @@ interface Play {
     ReactiveFormsModule,
     FormsModule,
     CardModule,
+    CardComponent,
     InputTextModule,
     Textarea,
     InputNumberModule,
