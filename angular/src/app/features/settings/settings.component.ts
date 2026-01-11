@@ -45,6 +45,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import {
     ButtonComponent,
     CardComponent,
+    ControlRowComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
 } from "../../shared/components/ui-components";
@@ -67,6 +68,7 @@ import { calculateAge } from "../../shared/utils/date.utils";
     ButtonComponent,
     IconButtonComponent,
     CardComponent,
+    ControlRowComponent,
     DialogFooterComponent,
     DialogHeaderComponent,
     MainLayoutComponent,

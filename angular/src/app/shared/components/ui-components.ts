@@ -26,6 +26,7 @@ export { InputComponent } from "./input/input.component";
 export { CheckboxComponent } from "./checkbox/checkbox.component";
 export { RadioComponent } from "./radio/radio.component";
 export { TextareaComponent } from "./textarea/textarea.component";
+export { ControlRowComponent } from "./control-row/control-row.component";
 
 // ============================================================================
 // DATA DISPLAY COMPONENTS
