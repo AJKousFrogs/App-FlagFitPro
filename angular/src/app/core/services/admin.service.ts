@@ -3,6 +3,7 @@ import { Observable, from, of } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { STATUS_HEX_COLORS } from "../utils/design-tokens.util";
 import { SupabaseService } from "./supabase.service";
+import { getTimeAgo } from "../../shared/utils/date.utils";
 
 export interface HealthMetric {
   name: string;
@@ -309,16 +310,7 @@ export class AdminService {
   }
 
   // Helper methods
-  private formatTimeAgo(date: Date): string {
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-
-    if (hours < 1) return "Just now";
-    if (hours < 24) return `${hours}h ago`;
-    if (hours < 48) return "Yesterday";
-    return `${Math.floor(hours / 24)} days ago`;
-  }
+  private formatTimeAgo = (date: Date): string => getTimeAgo(date);
 
   private getDefaultHealthMetrics(): HealthMetric[] {
     return [

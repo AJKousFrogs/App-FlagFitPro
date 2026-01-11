@@ -18,6 +18,7 @@ import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { timer, Subscription } from "rxjs";
+import { formatTimeMMSS } from "../../utils/format.utils";
 
 // YouTube IFrame Player API Type Definitions
 interface YTPlayerVars {
@@ -366,9 +367,5 @@ export class YoutubePlayerComponent implements OnDestroy {
     }
   }
 
-  formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  }
+  formatTime = formatTimeMMSS;
 }

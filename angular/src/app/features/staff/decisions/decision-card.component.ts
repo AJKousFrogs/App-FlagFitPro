@@ -19,7 +19,7 @@ import { TagModule } from "primeng/tag";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
 import type { DecisionLedgerEntry } from "@core/models/decision-ledger.models";
-import { formatDate } from "@shared/utils/date.utils";
+import { formatDate, getTimeAgo } from "@shared/utils/date.utils";
 
 @Component({
   selector: "app-decision-card",
@@ -250,17 +250,7 @@ export class DecisionCardComponent {
     return severityMap[priority];
   }
 
-  formatTimeAgo(date: Date): string {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "Today";
-    if (diffDays === 1) return "Yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return `${Math.floor(diffDays / 30)} months ago`;
-  }
+  formatTimeAgo = getTimeAgo;
 
   formatReviewDate(date: Date): string {
     const now = new Date();

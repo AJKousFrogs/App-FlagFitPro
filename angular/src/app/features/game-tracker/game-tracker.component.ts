@@ -28,6 +28,7 @@ import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
+import { formatTimeMMSS } from "../../shared/utils/format.utils";
 import { OfflineQueueService } from "../../core/services/offline-queue.service";
 import { NetworkStatusService } from "../../core/services/network-status.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -884,12 +885,7 @@ export class GameTrackerComponent implements OnInit {
     return game?.opponent || "Unknown";
   }
 
-  formatTime(seconds: number | null | undefined): string {
-    if (seconds === null || seconds === undefined) return "--";
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs.toString().padStart(2, "0")}`;
-  }
+  formatTime = formatTimeMMSS;
 
   /**
    * Format play type for display

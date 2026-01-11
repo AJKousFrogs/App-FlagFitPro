@@ -26,7 +26,7 @@ import { RouterModule } from "@angular/router";
 import { TeamNotificationService } from "../../../core/services/team-notification.service";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { formatDate } from "../../utils/date.utils";
+import { formatDate, getTimeAgo } from "../../utils/date.utils";
 import { TagModule } from "primeng/tag";
 
 @Component({
@@ -166,20 +166,8 @@ export class AnnouncementsBannerComponent implements OnInit {
     }
   }
 
-  formatTime(timestamp: string): string {
+  formatTime = (timestamp: string): string => {
     if (!timestamp) return "";
-
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-
-    const diffHours = Math.floor(diffMs / 3600000);
-    if (diffHours < 24) return `${diffHours}h ago`;
-
-    return formatDate(date, "P");
-  }
+    return getTimeAgo(timestamp);
+  };
 }

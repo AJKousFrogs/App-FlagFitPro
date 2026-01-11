@@ -283,3 +283,16 @@ export function getTimeAgo(date: Date | string | null | undefined): string {
 
   return formatDistanceToNow(dateObj, { addSuffix: true });
 }
+
+/**
+ * Format date as ISO date string (YYYY-MM-DD) for API submission
+ * @example
+ * formatDateISO(new Date('2025-01-11')) // '2025-01-11'
+ */
+export function formatDateISO(
+  date: Date | string | undefined,
+): string | undefined {
+  if (!date) return undefined;
+  if (typeof date === "string") return date;
+  return date.toISOString().split("T")[0];
+}

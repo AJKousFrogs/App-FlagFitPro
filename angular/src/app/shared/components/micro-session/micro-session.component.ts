@@ -38,6 +38,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ButtonComponent } from "../button/button.component";
+import { formatTimeMMSS } from "../../utils/format.utils";
 
 export interface MicroSessionStep {
   order: number;
@@ -687,11 +688,7 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
   }
 
   // Utility methods
-  formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  }
+  formatTime = formatTimeMMSS;
 
   getSessionTypeLabel(type: string): string {
     const labels: Record<string, string> = {

@@ -335,3 +335,32 @@ export function mask(
     str.slice(0, visibleChars) + maskChar.repeat(str.length - visibleChars)
   );
 }
+
+/**
+ * Format seconds as MM:SS for display
+ * @example
+ * formatTimeMMSS(90) // '1:30'
+ * formatTimeMMSS(null) // '--'
+ */
+export function formatTimeMMSS(
+  seconds: number | null | undefined,
+): string {
+  if (seconds === null || seconds === undefined) return "--";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
+/**
+ * Format date/timestamp as time of day
+ * @example
+ * formatTimeOfDay('2025-01-11T14:30:00Z') // '2:30 PM'
+ */
+export function formatTimeOfDay(date: Date | string): string {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(dateObj);
+}

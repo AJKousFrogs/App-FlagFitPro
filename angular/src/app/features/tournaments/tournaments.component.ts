@@ -28,6 +28,7 @@ import { ToastModule } from "primeng/toast";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
+import { formatDateISO } from "../../shared/utils/date.utils";
 import { SupabaseService } from "../../core/services/supabase.service";
 import {
   CreateTournamentDto,
@@ -1832,9 +1833,7 @@ export class TournamentsComponent implements OnInit {
     }
   }
 
-  private formatDate(date: Date): string {
-    return date.toISOString().split("T")[0];
-  }
+  private formatDate = (date: Date): string | undefined => formatDateISO(date);
 
   private getCountryCode(country: string): string {
     // Simple mapping for common countries

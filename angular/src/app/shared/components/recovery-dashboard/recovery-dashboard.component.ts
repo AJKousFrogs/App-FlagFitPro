@@ -24,6 +24,7 @@ import { firstValueFrom, Subscription, timer } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
+import { formatTimeMMSS } from "../../utils/format.utils";
 import {
   AthleteRecoveryProfile,
   RecoveryService,
@@ -737,11 +738,7 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  }
+  formatTime = formatTimeMMSS;
 
   openStudy(doi: string) {
     window.open(`https://doi.org/${doi}`, "_blank");

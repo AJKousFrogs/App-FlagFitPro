@@ -26,6 +26,7 @@ import { UnifiedTrainingService } from "../../../core/services/unified-training.
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
+import { formatTimeOfDay } from "../../utils/format.utils";
 
 interface HydrationLog {
   id: string;
@@ -266,8 +267,5 @@ export class HydrationTrackerComponent implements OnInit {
   /**
    * Format time for display
    */
-  formatTime(timestamp: string): string {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  }
+  formatTime = formatTimeOfDay;
 }

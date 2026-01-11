@@ -58,7 +58,7 @@ import {
 } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { getInitials } from "../../shared/utils/format.utils";
-import { formatDate } from "../../shared/utils/date.utils";
+import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
 
 @Component({
   selector: "app-chat",
@@ -1301,20 +1301,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     return content.replace(/@(\w+\s?\w*)/g, '<span class="mention">@$1</span>');
   }
 
-  formatTime(timestamp: string): string {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-
-    const diffHours = Math.floor(diffMs / 3600000);
-    if (diffHours < 24) return `${diffHours}h ago`;
-
-    return formatDate(date, "P");
-  }
+  formatTime = (timestamp: string): string => getTimeAgo(timestamp);
 
   /**
    * Get initials from name using centralized utility
