@@ -2146,13 +2146,12 @@
 
       &::before {
         border-radius: 50%;
-        transition: left 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
-        // NO transform - it breaks positioning
+        transition: transform 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
       }
     }
 
     &.p-toggleswitch-checked .p-toggleswitch-slider {
-      background: var(--ds-primary-green);
+      background: var(--ds-primary-green, #089949);
     }
   }
 
@@ -2210,8 +2209,8 @@
     height: var(--touch-target-sm);
     min-height: var(--touch-target-sm);
 
-    /* Padding: 16px horizontal for breathing room */
-    padding: 0 var(--space-4);
+    /* Padding: vertical and horizontal for breathing room */
+    padding: var(--space-1) var(--space-4);
 
     /* Typography - Semibold */
     font-family: var(--font-family-sans);

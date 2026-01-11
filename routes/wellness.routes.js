@@ -7,31 +7,24 @@
  */
 
 import express from "express";
-import { supabase } from "./utils/database.js";
-import { serverLogger } from "./utils/server-logger.js";
-import { rateLimit } from "./utils/rate-limiter.js";
-import { createHealthCheckHandler } from "./utils/health-check.js";
 import {
-  authenticateToken,
-  optionalAuth,
+    authenticateToken,
+    optionalAuth,
 } from "./middleware/auth.middleware.js";
+import { supabase } from "./utils/database.js";
+import { createHealthCheckHandler } from "./utils/health-check.js";
+import { rateLimit } from "./utils/rate-limiter.js";
+import { serverLogger } from "./utils/server-logger.js";
 import {
-  sendError,
-  sendSuccess,
-  validateHydrationAmount,
-  sanitizeText,
-  sanitizeFields,
+    isValidUUID,
+    sanitizeText,
+    sendError,
+    sendSuccess,
+    validateHydrationAmount
 } from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "wellness";
-
-// Helper to validate UUID
-const isValidUUID = (uuid) => {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-};
 
 // =============================================================================
 // HEALTH CHECK

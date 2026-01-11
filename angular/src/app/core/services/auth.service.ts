@@ -2,8 +2,9 @@ import { Injectable, effect, inject, signal, untracked } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable, from, of, throwError } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
-import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { PlatformService } from "./platform.service";
+import { SupabaseService } from "./supabase.service";
 
 export interface UserMetadata {
   full_name?: string;
@@ -58,6 +59,7 @@ export class AuthService {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   private logger = inject(LoggerService);
+  private platform = inject(PlatformService);
 
   private readonly TOKEN_KEY = "authToken";
   private readonly USER_KEY = "user";
@@ -218,6 +220,15 @@ export class AuthService {
       const { data, error } =
         await this.supabaseService.client.auth.getSession();
 
+      // DEBUG: Log session state
+      console.log("[Auth.getToken] Session check:", {
+        hasSession: !!data.session,
+        hasError: !!error,
+        errorMsg: error?.message,
+        expiresAt: data.session?.expires_at,
+        now: Math.floor(Date.now() / 1000),
+      });
+
       if (error) {
         this.logger.warn("[Auth] Error getting session:", error);
         return null;
@@ -227,26 +238,48 @@ export class AuthService {
       if (data.session) {
         const expiresAt = data.session.expires_at;
         const now = Math.floor(Date.now() / 1000);
+        const timeUntilExpiry = expiresAt ? expiresAt - now : null;
+
+        // DEBUG: Log expiry check
+        console.log("[Auth.getToken] Token expiry check:", {
+          expiresAt,
+          now,
+          timeUntilExpiry,
+          needsRefresh: timeUntilExpiry !== null && timeUntilExpiry < 60,
+        });
 
         if (expiresAt && expiresAt - now < 60) {
           // Token expired or expiring soon, try to refresh
           this.logger.debug("[Auth] Token expiring soon, attempting refresh");
+          console.log("[Auth.getToken] Attempting token refresh...");
+          
           const { data: refreshData, error: refreshError } =
             await this.supabaseService.client.auth.refreshSession();
+
+          // DEBUG: Log refresh result
+          console.log("[Auth.getToken] Refresh result:", {
+            success: !refreshError && !!refreshData.session,
+            errorMsg: refreshError?.message,
+          });
 
           if (!refreshError && refreshData.session) {
             return refreshData.session.access_token;
           } else {
             this.logger.warn("[Auth] Failed to refresh session:", refreshError);
+            // CRITICAL FIX: If refresh fails, the token is invalid - return null
+            // This prevents sending an expired token that will fail with 401
+            return null;
           }
         }
 
         return data.session.access_token;
       }
 
+      console.log("[Auth.getToken] No session found");
       return null;
     } catch (error) {
       this.logger.error("[Auth] Exception getting token:", error);
+      console.error("[Auth.getToken] Exception:", error);
       return null;
     }
   }
@@ -281,19 +314,19 @@ export class AuthService {
     // Just clear our local state
     this.currentUser.set(null);
     this.isAuthenticated.set(false);
-    sessionStorage.removeItem(this.CSRF_KEY);
+    this.platform.removeSessionStorage(this.CSRF_KEY);
   }
 
   generateCsrfToken(): string {
     const token = Array.from(crypto.getRandomValues(new Uint8Array(32)))
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
-    sessionStorage.setItem(this.CSRF_KEY, token);
+    this.platform.setSessionStorage(this.CSRF_KEY, token);
     return token;
   }
 
   getCsrfToken(): string | null {
-    return sessionStorage.getItem(this.CSRF_KEY);
+    return this.platform.getSessionStorage(this.CSRF_KEY);
   }
 
   /**

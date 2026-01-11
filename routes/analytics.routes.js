@@ -7,36 +7,27 @@
  */
 
 import express from "express";
-import { supabase } from "./utils/database.js";
-import { serverLogger } from "./utils/server-logger.js";
-import { rateLimit } from "./utils/rate-limiter.js";
-import { withCache } from "./utils/cache.js";
-import { createHealthCheckHandler } from "./utils/health-check.js";
 import {
-  authenticateToken,
-  optionalAuth,
-  authorizeUserAccess,
+    optionalAuth
 } from "./middleware/auth.middleware.js";
-import {
-  validateUserId,
-  validateWeeks,
-  validatePeriod,
-  sendError,
-  sendSuccess,
-  safeParseFloat,
-  safeAverage,
-} from "./utils/validation.js";
+import { withCache } from "./utils/cache.js";
+import { supabase } from "./utils/database.js";
+import { createHealthCheckHandler } from "./utils/health-check.js";
 import { safeParseInt } from "./utils/query-helper.js";
+import { rateLimit } from "./utils/rate-limiter.js";
+import { serverLogger } from "./utils/server-logger.js";
+import {
+    isValidUUID,
+    safeAverage,
+    safeParseFloat,
+    sendError,
+    sendSuccess,
+    validatePeriod,
+    validateWeeks
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "analytics";
-
-// Helper to validate UUID
-const isValidUUID = (uuid) => {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-};
 
 // =============================================================================
 // HEALTH CHECK

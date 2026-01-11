@@ -14,6 +14,28 @@ import { safeFormatDate } from "./query-helper.js";
 // =============================================================================
 
 /**
+ * UUID validation regex - matches standard UUID format
+ * @constant {RegExp}
+ */
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * Default fallback UUID for demo/test purposes
+ * @constant {string}
+ */
+export const DEMO_USER_ID = "00000000-0000-0000-0000-000000000000";
+
+/**
+ * Validate if a string is a valid UUID
+ * @param {string} uuid - String to validate
+ * @returns {boolean} True if valid UUID
+ */
+export function isValidUUID(uuid) {
+  return typeof uuid === "string" && UUID_REGEX.test(uuid);
+}
+
+/**
  * Validate user ID parameter
  * @param {string} userId - User ID to validate
  * @returns {object} Validation result with isValid and sanitized userId

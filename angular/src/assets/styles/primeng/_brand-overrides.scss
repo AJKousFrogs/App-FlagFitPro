@@ -664,13 +664,11 @@
       height: var(--p-toggleswitch-height);
       border-radius: var(--p-toggleswitch-border-radius);
       background: var(--p-toggleswitch-background);
+      border: none;
       transition:
-        background-color var(--p-transition-duration)
-          var(--p-transition-timing-function),
-        box-shadow var(--p-transition-duration)
-          var(--p-transition-timing-function);
+        background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
-      // Thumb/handle
+      // Thumb/handle - white circle with subtle shadow
       &::before {
         content: "";
         position: absolute;
@@ -678,17 +676,16 @@
         left: var(--p-toggleswitch-handle-offset);
         width: var(--p-toggleswitch-handle-size);
         height: var(--p-toggleswitch-handle-size);
-        background: var(--p-toggleswitch-handle-background);
-        border-radius: var(--radius-full);
-        box-shadow: var(--p-toggleswitch-handle-shadow);
-        transition: transform var(--p-transition-duration)
-          var(--p-transition-timing-function);
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
       }
     }
 
-    // Checked state - green background, thumb moves right
+    // Checked state - green background (#089949), thumb moves right
     &.p-toggleswitch-checked .p-toggleswitch-slider {
-      background: var(--p-toggleswitch-checked-background);
+      background: var(--ds-primary-green, #089949);
 
       &::before {
         // Move thumb to the right: width - handle-size - (2 * offset)

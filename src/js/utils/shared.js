@@ -7,16 +7,27 @@ import { escapeHtml } from "./sanitize.js";
 // DOM UTILITIES
 // ================================================================
 
-export function getInitials(name) {
-  if (!name) {
+/**
+ * Get initials from a name
+ * @param {string} name - Full name
+ * @param {number} maxLength - Maximum number of initials (default: 2)
+ * @returns {string} Uppercase initials
+ * @example
+ * getInitials('John Doe') // 'JD'
+ * getInitials('John') // 'J'
+ * getInitials('') // '??'
+ */
+export function getInitials(name, maxLength = 2) {
+  if (!name || !name.trim()) {
     return "??";
   }
   return name
+    .trim()
     .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+    .filter((word) => word.length > 0)
+    .map((word) => word.charAt(0).toUpperCase())
+    .slice(0, maxLength)
+    .join("");
 }
 
 export function scrollToBottom(containerId, delay = 100) {
@@ -169,8 +180,18 @@ export function createElementWithClass(tag, className, content = "") {
 
 // ================================================================
 // TIME AND DATE UTILITIES
+// Note: For Angular apps, use angular/src/app/shared/utils/date.utils.ts
+// which provides typed utilities with date-fns.
 // ================================================================
 
+/**
+ * Format timestamp as time (if today) or date (if not today)
+ * @param {string|number|Date} timestamp - Timestamp to format
+ * @returns {string} Formatted time or date string
+ * @example
+ * formatTime(Date.now()) // "2:30 PM" (if today)
+ * formatTime('2025-01-01') // "1/1/2025" (if not today)
+ */
 export function formatTime(timestamp) {
   const date = new Date(timestamp);
   const now = new Date();
@@ -185,10 +206,26 @@ export function formatTime(timestamp) {
   }
 }
 
+/**
+ * Format timestamp as full date and time string
+ * @param {string|number|Date} timestamp - Timestamp to format
+ * @returns {string} Formatted datetime string
+ * @example
+ * formatDateTime(Date.now()) // "1/11/2025, 2:30:00 PM"
+ */
 export function formatDateTime(timestamp) {
   return new Date(timestamp).toLocaleString();
 }
 
+/**
+ * Get human-readable "time ago" string
+ * @param {string|number|Date} timestamp - Timestamp to format
+ * @returns {string} Relative time string (e.g., "5m ago", "2h ago")
+ * @example
+ * getTimeAgo(fiveMinutesAgo) // "5m ago"
+ * getTimeAgo(twoHoursAgo) // "2h ago"
+ * getTimeAgo(threeDaysAgo) // "3d ago"
+ */
 export function getTimeAgo(timestamp) {
   const now = new Date();
   const date = new Date(timestamp);
@@ -198,12 +235,20 @@ export function getTimeAgo(timestamp) {
     return "Just now";
   }
   if (diffInSeconds < 3600) {
-    return `${Math.floor(diffInSeconds / 60)}m ago`;
+    const mins = Math.floor(diffInSeconds / 60);
+    return `${mins}m ago`;
   }
   if (diffInSeconds < 86400) {
-    return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    const hours = Math.floor(diffInSeconds / 3600);
+    return `${hours}h ago`;
   }
-  return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  if (diffInSeconds < 604800) {
+    // Less than 7 days
+    const days = Math.floor(diffInSeconds / 86400);
+    return `${days}d ago`;
+  }
+  const weeks = Math.floor(diffInSeconds / 604800);
+  return `${weeks}w ago`;
 }
 
 // ================================================================
@@ -331,19 +376,51 @@ export function groupBy(array, key) {
 
 // ================================================================
 // STRING UTILITIES
+// Note: For Angular apps, use angular/src/app/shared/utils/format.utils.ts
 // ================================================================
 
+/**
+ * Capitalize first letter of string
+ * @param {string} str - String to capitalize
+ * @returns {string} Capitalized string
+ * @example
+ * capitalize('hello') // 'Hello'
+ * capitalize('HELLO') // 'Hello' (lowercases rest)
+ */
 export function capitalize(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+/**
+ * Convert string to kebab-case
+ * Handles spaces, underscores, and camelCase
+ * @param {string} str - String to convert
+ * @returns {string} Kebab-cased string
+ * @example
+ * kebabCase('Hello World') // 'hello-world'
+ * kebabCase('helloWorld') // 'hello-world'
+ * kebabCase('hello_world') // 'hello-world'
+ */
 export function kebabCase(str) {
-  return str.toLowerCase().replace(/\s+/g, "-");
+  return str
+    .replace(/([a-z])([A-Z])/g, "$1-$2") // Handle camelCase
+    .replace(/[\s_]+/g, "-") // Handle spaces and underscores
+    .toLowerCase();
 }
 
+/**
+ * Truncate string to specified length
+ * @param {string} str - String to truncate
+ * @param {number} length - Maximum length (default: 50)
+ * @param {string} suffix - Suffix to add (default: "...")
+ * @returns {string} Truncated string
+ * @example
+ * truncate('Hello World', 5) // 'Hello...'
+ */
 export function truncate(str, length = 50, suffix = "...") {
-  if (str.length <= length) {
-    return str;
+  if (!str || str.length <= length) {
+    return str || "";
   }
   return str.substring(0, length) + suffix;
 }

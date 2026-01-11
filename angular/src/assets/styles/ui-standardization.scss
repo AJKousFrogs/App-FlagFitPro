@@ -848,7 +848,7 @@
     border-radius: var(--radius-md);
     height: var(--touch-target-sm); /* 36px for breathing room */
     min-height: var(--touch-target-sm);
-    padding: 0 var(--space-4); /* 16px horizontal */
+    padding: var(--space-1) var(--space-4); /* 4px vertical, 16px horizontal */
     box-shadow: var(--shadow-sm);
   }
 } /* End @layer overrides */

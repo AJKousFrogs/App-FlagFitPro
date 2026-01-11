@@ -7,35 +7,27 @@
  */
 
 import express from "express";
-import { supabase } from "./utils/database.js";
-import { serverLogger } from "./utils/server-logger.js";
-import { rateLimit } from "./utils/rate-limiter.js";
-import { withCache, invalidateCacheOn } from "./utils/cache.js";
-import { createHealthCheckHandler } from "./utils/health-check.js";
 import {
-  authenticateToken,
-  optionalAuth,
+    authenticateToken,
+    optionalAuth,
 } from "./middleware/auth.middleware.js";
+import { invalidateCacheOn, withCache } from "./utils/cache.js";
+import { supabase } from "./utils/database.js";
+import { createHealthCheckHandler } from "./utils/health-check.js";
+import { rateLimit } from "./utils/rate-limiter.js";
+import { serverLogger } from "./utils/server-logger.js";
 import {
-  validateUserId,
-  validateRPE,
-  validateDuration,
-  validateDate,
-  sanitizeText,
-  sanitizeFields,
-  sendError,
-  sendSuccess,
+    isValidUUID,
+    sanitizeText,
+    sendError,
+    sendSuccess,
+    validateDate,
+    validateDuration,
+    validateRPE
 } from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "training";
-
-// Helper to validate UUID
-const isValidUUID = (uuid) => {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-};
 
 // =============================================================================
 // HEALTH CHECK
@@ -578,23 +570,95 @@ router.delete(
 
 /**
  * GET /suggestions
- * Get training suggestions
+ * Get training suggestions based on user's training history
  */
-router.get("/suggestions", rateLimit("READ"), async (req, res) => {
-  return sendSuccess(res, {
-    suggestions: [
-      {
-        type: "recovery",
-        message: "Based on your recent training load, consider a recovery day",
-        priority: "medium",
-      },
-      {
-        type: "intensity",
-        message: "Your RPE has been consistent - ready to increase intensity",
+router.get("/suggestions", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendSuccess(res, {
+      suggestions: [
+        {
+          type: "recovery",
+          message: "Based on your recent training load, consider a recovery day",
+          priority: "medium",
+        },
+      ],
+    });
+  }
+
+  try {
+    const userId = req.userId || req.query.userId;
+    const suggestions = [];
+
+    if (userId && isValidUUID(userId)) {
+      // Get recent training data to generate smart suggestions
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { data: recentSessions } = await supabase
+        .from("training_sessions")
+        .select("session_date, rpe, duration_minutes, session_type")
+        .eq("user_id", userId)
+        .eq("status", "completed")
+        .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
+        .order("session_date", { ascending: false });
+
+      const sessionCount = recentSessions?.length || 0;
+      const avgRpe = sessionCount > 0
+        ? recentSessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessionCount
+        : 0;
+
+      // Generate suggestions based on data
+      if (sessionCount === 0) {
+        suggestions.push({
+          type: "motivation",
+          message: "You haven't trained in a while. Start with a light session to get back on track!",
+          priority: "high",
+        });
+      } else if (avgRpe > 7) {
+        suggestions.push({
+          type: "recovery",
+          message: "Your average RPE is high. Consider a recovery or deload session.",
+          priority: "high",
+        });
+      } else if (avgRpe < 5 && sessionCount >= 3) {
+        suggestions.push({
+          type: "intensity",
+          message: "Your RPE has been low - you may be ready to increase intensity.",
+          priority: "medium",
+        });
+      }
+
+      if (sessionCount >= 5) {
+        suggestions.push({
+          type: "consistency",
+          message: "Great consistency this week! Keep up the momentum.",
+          priority: "low",
+        });
+      }
+    }
+
+    // Add default suggestion if none generated
+    if (suggestions.length === 0) {
+      suggestions.push({
+        type: "general",
+        message: "Log your training sessions to receive personalized suggestions.",
         priority: "low",
-      },
-    ],
-  });
+      });
+    }
+
+    return sendSuccess(res, { suggestions });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Suggestions error:`, error);
+    return sendSuccess(res, {
+      suggestions: [
+        {
+          type: "general",
+          message: "Keep training consistently for best results.",
+          priority: "low",
+        },
+      ],
+    });
+  }
 });
 
 /**
@@ -616,6 +680,394 @@ router.post(
 );
 
 // =============================================================================
+// TRAINING PROGRAMS (Annual/Periodized Programs)
+// =============================================================================
+
+/**
+ * GET /programs
+ * Get all training programs (optionally filtered by position)
+ */
+router.get("/programs", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { position_id, active_only } = req.query;
+
+    let query = supabase
+      .from("training_programs")
+      .select(`
+        id,
+        name,
+        description,
+        start_date,
+        end_date,
+        is_active,
+        position_id,
+        positions(name, display_name),
+        created_at
+      `)
+      .order("start_date", { ascending: false });
+
+    if (position_id && isValidUUID(position_id)) {
+      query = query.eq("position_id", position_id);
+    }
+
+    if (active_only === "true") {
+      query = query.eq("is_active", true);
+    }
+
+    const { data: programs, error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    return sendSuccess(res, { programs: programs || [] });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Get programs error:`, error);
+    return sendError(res, "Failed to load programs", "FETCH_ERROR", 500);
+  }
+});
+
+/**
+ * GET /programs/:id
+ * Get a specific training program with full details
+ */
+router.get("/programs/:id", rateLimit("READ"), async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { id } = req.params;
+
+    if (!isValidUUID(id)) {
+      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+    }
+
+    const { data: program, error } = await supabase
+      .from("training_programs")
+      .select(`
+        *,
+        positions(name, display_name),
+        training_phases(
+          id, name, description, start_date, end_date, phase_order, focus_areas
+        )
+      `)
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    if (!program) {
+      return sendError(res, "Program not found", "NOT_FOUND", 404);
+    }
+
+    return sendSuccess(res, { program });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Get program error:`, error);
+    return sendError(res, "Failed to load program", "FETCH_ERROR", 500);
+  }
+});
+
+/**
+ * GET /programs/:id/phases
+ * Get phases for a training program
+ */
+router.get("/programs/:id/phases", rateLimit("READ"), async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { id } = req.params;
+
+    if (!isValidUUID(id)) {
+      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+    }
+
+    const { data: phases, error } = await supabase
+      .from("training_phases")
+      .select("*")
+      .eq("program_id", id)
+      .order("phase_order", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return sendSuccess(res, { phases: phases || [] });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Get phases error:`, error);
+    return sendError(res, "Failed to load phases", "FETCH_ERROR", 500);
+  }
+});
+
+/**
+ * GET /programs/:id/weeks
+ * Get all weeks for a training program (across all phases)
+ */
+router.get("/programs/:id/weeks", rateLimit("READ"), async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { id } = req.params;
+    const { phase_id } = req.query;
+
+    if (!isValidUUID(id)) {
+      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+    }
+
+    // First get phases for this program
+    let phasesQuery = supabase
+      .from("training_phases")
+      .select("id")
+      .eq("program_id", id);
+
+    if (phase_id && isValidUUID(phase_id)) {
+      phasesQuery = phasesQuery.eq("id", phase_id);
+    }
+
+    const { data: phases } = await phasesQuery;
+    const phaseIds = phases?.map(p => p.id) || [];
+
+    if (phaseIds.length === 0) {
+      return sendSuccess(res, { weeks: [] });
+    }
+
+    const { data: weeks, error } = await supabase
+      .from("training_weeks")
+      .select(`
+        *,
+        training_phases(name, phase_order)
+      `)
+      .in("phase_id", phaseIds)
+      .order("start_date", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return sendSuccess(res, { weeks: weeks || [] });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Get weeks error:`, error);
+    return sendError(res, "Failed to load weeks", "FETCH_ERROR", 500);
+  }
+});
+
+/**
+ * GET /programs/current-week
+ * Get the current week's training plan for the user
+ */
+router.get("/programs/current-week", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const userId = req.userId || req.query.userId;
+    const today = new Date().toISOString().split("T")[0];
+
+    // Find active program assignment for user
+    let programId = null;
+
+    if (userId && isValidUUID(userId)) {
+      const { data: assignment } = await supabase
+        .from("player_programs")
+        .select("program_id")
+        .eq("player_id", userId)
+        .eq("is_active", true)
+        .single();
+
+      programId = assignment?.program_id;
+    }
+
+    // Fallback to any active program
+    if (!programId) {
+      const { data: activeProgram } = await supabase
+        .from("training_programs")
+        .select("id")
+        .eq("is_active", true)
+        .single();
+
+      programId = activeProgram?.id;
+    }
+
+    if (!programId) {
+      return sendSuccess(res, {
+        currentWeek: null,
+        message: "No active training program found",
+      });
+    }
+
+    // Get phases for program
+    const { data: phases } = await supabase
+      .from("training_phases")
+      .select("id")
+      .eq("program_id", programId);
+
+    const phaseIds = phases?.map(p => p.id) || [];
+
+    if (phaseIds.length === 0) {
+      return sendSuccess(res, {
+        currentWeek: null,
+        message: "No phases defined for program",
+      });
+    }
+
+    // Find current week
+    const { data: currentWeek, error } = await supabase
+      .from("training_weeks")
+      .select(`
+        *,
+        training_phases(name, phase_order, focus_areas)
+      `)
+      .in("phase_id", phaseIds)
+      .lte("start_date", today)
+      .gte("end_date", today)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      throw error;
+    }
+
+    return sendSuccess(res, {
+      currentWeek: currentWeek || null,
+      message: currentWeek ? null : "No training week scheduled for today",
+    });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Get current week error:`, error);
+    return sendError(res, "Failed to load current week", "FETCH_ERROR", 500);
+  }
+});
+
+/**
+ * GET /programs/:programId/sessions
+ * Get training sessions for a program (templates)
+ */
+router.get("/programs/:programId/sessions", rateLimit("READ"), async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { programId } = req.params;
+    const { week_id } = req.query;
+
+    if (!isValidUUID(programId)) {
+      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+    }
+
+    // Get phases for program
+    const { data: phases } = await supabase
+      .from("training_phases")
+      .select("id")
+      .eq("program_id", programId);
+
+    const phaseIds = phases?.map(p => p.id) || [];
+
+    if (phaseIds.length === 0) {
+      return sendSuccess(res, { sessions: [] });
+    }
+
+    // Get weeks for phases
+    let weeksQuery = supabase
+      .from("training_weeks")
+      .select("id")
+      .in("phase_id", phaseIds);
+
+    if (week_id && isValidUUID(week_id)) {
+      weeksQuery = weeksQuery.eq("id", week_id);
+    }
+
+    const { data: weeks } = await weeksQuery;
+    const weekIds = weeks?.map(w => w.id) || [];
+
+    if (weekIds.length === 0) {
+      return sendSuccess(res, { sessions: [] });
+    }
+
+    const { data: sessions, error } = await supabase
+      .from("training_sessions")
+      .select(`
+        *,
+        training_weeks(week_number, focus)
+      `)
+      .in("week_id", weekIds)
+      .order("day_of_week", { ascending: true })
+      .order("session_order", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return sendSuccess(res, { sessions: sessions || [] });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Get program sessions error:`, error);
+    return sendError(res, "Failed to load sessions", "FETCH_ERROR", 500);
+  }
+});
+
+/**
+ * GET /programs/:programId/exercises
+ * Get exercises for a program's sessions
+ */
+router.get("/programs/:programId/exercises", rateLimit("READ"), async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { programId } = req.params;
+    const { session_id } = req.query;
+
+    if (!isValidUUID(programId)) {
+      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+    }
+
+    // If session_id provided, get exercises for that session
+    if (session_id && isValidUUID(session_id)) {
+      const { data: exercises, error } = await supabase
+        .from("session_exercises")
+        .select(`
+          *,
+          exercises(name, category, movement_pattern, description, video_url)
+        `)
+        .eq("session_id", session_id)
+        .order("exercise_order", { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, { exercises: exercises || [] });
+    }
+
+    // Otherwise get all exercises in the exercises library
+    const { data: exercises, error } = await supabase
+      .from("exercises")
+      .select("*")
+      .order("category", { ascending: true })
+      .order("name", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return sendSuccess(res, { exercises: exercises || [] });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Get program exercises error:`, error);
+    return sendError(res, "Failed to load exercises", "FETCH_ERROR", 500);
+  }
+});
+
+// =============================================================================
 // ERROR HANDLING
 // =============================================================================
 
@@ -628,5 +1080,50 @@ router.use((req, res) => {
     path: req.originalUrl,
   });
 });
+
+// =============================================================================
+// EXERCISE LIBRARY
+// =============================================================================
+
+/**
+ * GET /exercises
+ * Get exercise library with optional filtering
+ */
+router.get(
+  "/exercises",
+  rateLimit("READ"),
+  optionalAuth,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
+    }
+
+    try {
+      const { category, position, search } = req.query;
+
+      let query = supabase.from("exercises").select("*").eq("active", true);
+
+      if (category && category !== "all") {
+        query = query.eq("category", category);
+      }
+      if (position) {
+        query = query.contains("position_specific", [position]);
+      }
+      if (search) {
+        query = query.ilike("name", `%${search}%`);
+      }
+
+      const { data: exercises, error } = await query.order("name").limit(200);
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, exercises || []);
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Exercises error:`, error);
+      return sendError(res, "Failed to load exercises", "FETCH_ERROR", 500);
+    }
+  },
+);
 
 export default router;

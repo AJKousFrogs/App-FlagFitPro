@@ -7,10 +7,10 @@
  */
 
 import express from "express";
-import { supabase } from "./utils/database.js";
-import { serverLogger } from "./utils/server-logger.js";
 import { authenticateToken } from "./middleware/auth.middleware.js";
+import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
+import { serverLogger } from "./utils/server-logger.js";
 
 const router = express.Router();
 const ROUTE_NAME = "community";
@@ -721,14 +721,74 @@ function getRelativeTime(date) {
 }
 
 // =============================================================================
-// ROUTE DEFINITIONS
+// ROUTE DEFINITIONS - RESTful API (v2.0.0)
 // =============================================================================
 
 // Health check
-router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
+router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.0.0"));
 
-// GET /api/community
+// =============================================================================
+// RESTful Routes (Primary - Use these)
+// =============================================================================
+
+// GET /api/community/posts - Get community feed
+router.get("/posts", authenticateToken, getCommunityFeed);
+
+// POST /api/community/posts - Create new post
+router.post("/posts", authenticateToken, createCommunityPost);
+
+// POST /api/community/posts/:postId/like - Toggle like on a post
+router.post("/posts/:postId/like", authenticateToken, async (req, res) => {
+  req.query.postId = req.params.postId;
+  return togglePostLike(req, res);
+});
+
+// POST /api/community/posts/:postId/bookmark - Toggle bookmark on a post
+router.post("/posts/:postId/bookmark", authenticateToken, async (req, res) => {
+  req.query.postId = req.params.postId;
+  return togglePostBookmark(req, res);
+});
+
+// GET /api/community/posts/:postId/comments - Get comments for a post
+router.get("/posts/:postId/comments", authenticateToken, async (req, res) => {
+  req.query.postId = req.params.postId;
+  return getPostComments(req, res);
+});
+
+// POST /api/community/posts/:postId/comments - Add comment to a post
+router.post("/posts/:postId/comments", authenticateToken, async (req, res) => {
+  req.query.postId = req.params.postId;
+  return addPostComment(req, res);
+});
+
+// POST /api/community/comments/:commentId/like - Toggle like on a comment
+router.post("/comments/:commentId/like", authenticateToken, async (req, res) => {
+  req.query.commentId = req.params.commentId;
+  return toggleCommentLike(req, res);
+});
+
+// POST /api/community/polls/:optionId/vote - Vote on a poll option
+router.post("/polls/:optionId/vote", authenticateToken, async (req, res) => {
+  req.query.optionId = req.params.optionId;
+  return votePoll(req, res);
+});
+
+// GET /api/community/leaderboard - Get leaderboard
+router.get("/leaderboard", authenticateToken, getLeaderboard);
+
+// GET /api/community/trending - Get trending topics
+router.get("/trending", authenticateToken, getTrendingTopics);
+
+// =============================================================================
+// Legacy Routes (Deprecated - For backwards compatibility)
+// Query parameter-based routes will be removed in v3.0.0
+// =============================================================================
+
+// GET /api/community (with query params) - DEPRECATED
 router.get("/", authenticateToken, async (req, res) => {
+  // Log deprecation warning
+  serverLogger.warn(`[${ROUTE_NAME}] DEPRECATED: Use RESTful routes instead of query params. Path: ${req.originalUrl}`);
+
   if (req.query.feed === "true") {
     return getCommunityFeed(req, res);
   }
@@ -742,16 +802,21 @@ router.get("/", authenticateToken, async (req, res) => {
     return getPostComments(req, res);
   }
 
-  // Default: return health check
+  // Default: return API status with migration notice
   res.json({
     success: true,
     status: "Community API is running",
+    version: "2.0.0",
+    migration_notice: "Query parameter routes are deprecated. Use RESTful routes: /posts, /posts/:id/like, /leaderboard, etc.",
     timestamp: new Date().toISOString(),
   });
 });
 
-// POST /api/community
+// POST /api/community (with query params) - DEPRECATED
 router.post("/", authenticateToken, async (req, res) => {
+  // Log deprecation warning
+  serverLogger.warn(`[${ROUTE_NAME}] DEPRECATED: Use RESTful routes instead of query params. Path: ${req.originalUrl}`);
+
   if (req.query.postId && req.query.like === "true") {
     return togglePostLike(req, res);
   }
@@ -772,9 +837,7 @@ router.post("/", authenticateToken, async (req, res) => {
   return createCommunityPost(req, res);
 });
 
-// Legacy routes for backwards compatibility
+// Legacy route aliases (for backwards compatibility)
 router.get("/feed", authenticateToken, getCommunityFeed);
-router.get("/leaderboard", authenticateToken, getLeaderboard);
-router.post("/posts", authenticateToken, createCommunityPost);
 
 export default router;

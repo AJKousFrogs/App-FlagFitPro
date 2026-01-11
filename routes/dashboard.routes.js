@@ -7,29 +7,18 @@
  */
 
 import express from "express";
-import { supabase } from "./utils/database.js";
-import { serverLogger } from "./utils/server-logger.js";
-import { rateLimit } from "./utils/rate-limiter.js";
-import { withCache } from "./utils/cache.js";
-import { createHealthCheckHandler } from "./utils/health-check.js";
 import {
-  authenticateToken,
-  optionalAuth,
+    optionalAuth
 } from "./middleware/auth.middleware.js";
-import { sendError, sendSuccess } from "./utils/validation.js";
+import { withCache } from "./utils/cache.js";
+import { supabase } from "./utils/database.js";
+import { createHealthCheckHandler } from "./utils/health-check.js";
+import { rateLimit } from "./utils/rate-limiter.js";
+import { serverLogger } from "./utils/server-logger.js";
+import { DEMO_USER_ID, isValidUUID, sendError, sendSuccess } from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "dashboard";
-
-// Helper to validate UUID
-const isValidUUID = (uuid) => {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-};
-
-// Default fallback UUID for demo/test purposes
-const DEMO_USER_ID = "00000000-0000-0000-0000-000000000000";
 
 // =============================================================================
 // HEALTH CHECK
@@ -365,83 +354,11 @@ router.get("/daily-quote", rateLimit("READ"), async (req, res) => {
 });
 
 // =============================================================================
-// NOTIFICATIONS (Dashboard subset)
+// NOTIFICATIONS - DEPRECATED
 // =============================================================================
-
-/**
- * GET /notifications
- * Get dashboard notifications
- */
-router.get(
-  "/notifications",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendSuccess(res, []);
-    }
-
-    try {
-      const userId = req.userId || req.query.userId;
-
-      let query = supabase
-        .from("notifications")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(10);
-
-      if (userId && isValidUUID(userId)) {
-        query = query.eq("user_id", userId);
-      }
-
-      const { data: notifications, error } = await query;
-
-      if (error) {
-        throw error;
-      }
-
-      return sendSuccess(res, notifications || []);
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Notifications error:`, error);
-      return sendSuccess(res, []);
-    }
-  },
-);
-
-/**
- * GET /notifications/count
- * Get notification count for dashboard badge
- */
-router.get(
-  "/notifications/count",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendSuccess(res, { count: 0, unread: 0 });
-    }
-
-    try {
-      const userId = req.userId || req.query.userId;
-
-      let query = supabase
-        .from("notifications")
-        .select("*", { count: "exact", head: true })
-        .eq("read", false);
-
-      if (userId && isValidUUID(userId)) {
-        query = query.eq("user_id", userId);
-      }
-
-      const { count } = await query;
-
-      return sendSuccess(res, { count: count || 0, unread: count || 0 });
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Notification count error:`, error);
-      return sendSuccess(res, { count: 0, unread: 0 });
-    }
-  },
-);
+// NOTE: Notification endpoints have been consolidated to /api/notifications
+// Use notificationsRoutes instead. These endpoints are removed to avoid duplication.
+// Frontend should use: /api/notifications and /api/notifications/count
 
 // =============================================================================
 // HEALTH ENDPOINTS (Component-specific)

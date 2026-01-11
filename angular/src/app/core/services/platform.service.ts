@@ -17,8 +17,8 @@
  * ```
  */
 
-import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { isPlatformBrowser, isPlatformServer } from "@angular/common";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 
 @Injectable({
   providedIn: "root",
@@ -144,6 +144,22 @@ export class PlatformService {
       return true;
     } catch (error) {
       console.warn(`Failed to write to sessionStorage: ${key}`, error);
+      return false;
+    }
+  }
+
+  /**
+   * Safely remove sessionStorage item
+   */
+  removeSessionStorage(key: string): boolean {
+    if (!this.isBrowser) {
+      return false;
+    }
+    try {
+      sessionStorage.removeItem(key);
+      return true;
+    } catch (error) {
+      console.warn(`Failed to remove from sessionStorage: ${key}`, error);
       return false;
     }
   }

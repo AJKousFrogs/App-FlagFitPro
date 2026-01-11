@@ -18,6 +18,7 @@ import { computed, inject, Injectable, OnDestroy, signal } from "@angular/core";
 import { normalizePlayerName } from "../../shared/utils/format.utils";
 import { TIMEOUTS, UI_LIMITS } from "../constants/app.constants";
 import { LoggerService, toLogContext } from "./logger.service";
+import { PlatformService } from "./platform.service";
 import { SupabaseService } from "./supabase.service";
 
 export interface SearchResult {
@@ -57,6 +58,7 @@ const MAX_CACHE_SIZE = 50; // Maximum number of cached queries
 export class SearchService implements OnDestroy {
   private supabase = inject(SupabaseService);
   private logger = inject(LoggerService);
+  private platform = inject(PlatformService);
 
   // State signals
   private readonly _query = signal<string>("");
@@ -551,24 +553,20 @@ export class SearchService implements OnDestroy {
    */
   clearRecentSearches(): void {
     this._recentSearches.set([]);
-    if (typeof localStorage !== "undefined") {
-      localStorage.removeItem("recentSearches");
-    }
+    this.platform.removeLocalStorage("recentSearches");
   }
 
   /**
    * Load recent searches from localStorage
    */
   private loadRecentSearches(): void {
-    if (typeof localStorage !== "undefined") {
-      try {
-        const saved = localStorage.getItem("recentSearches");
-        if (saved) {
-          this._recentSearches.set(JSON.parse(saved));
-        }
-      } catch {
-        // Ignore parse errors
+    try {
+      const saved = this.platform.getLocalStorage("recentSearches");
+      if (saved) {
+        this._recentSearches.set(JSON.parse(saved));
       }
+    } catch {
+      // Ignore parse errors
     }
   }
 
@@ -576,12 +574,10 @@ export class SearchService implements OnDestroy {
    * Save recent searches to localStorage
    */
   private saveRecentSearches(): void {
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem(
-        "recentSearches",
-        JSON.stringify(this._recentSearches()),
-      );
-    }
+    this.platform.setLocalStorage(
+      "recentSearches",
+      JSON.stringify(this._recentSearches()),
+    );
   }
 
   /**

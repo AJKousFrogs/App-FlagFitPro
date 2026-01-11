@@ -36,6 +36,51 @@ This report identifies duplicate code patterns across the codebase. Some duplica
 - **Updated** `angular/src/app/core/services/logger.service.ts` to re-export `toError` from centralized location
 - **Impact**: Eliminated duplicate `getErrorMessage` and `toError` implementations
 
+### 5. UUID Validation Consolidation ✅
+- **Added** `isValidUUID` to `routes/utils/validation.js` as centralized implementation
+- **Removed** duplicate `isValidUUID` from 6 files:
+  - `server.js`
+  - `routes/wellness.routes.js`
+  - `routes/training.routes.js`
+  - `routes/notifications.routes.js`
+  - `routes/dashboard.routes.js`
+  - `routes/analytics.routes.js`
+- **Impact**: ~30 lines of duplicate code eliminated
+
+### 6. DEMO_USER_ID Constant ✅
+- **Added** `DEMO_USER_ID` to `routes/utils/validation.js`
+- **Removed** duplicates from `server.js` and `dashboard.routes.js`
+
+### 7. Date/Time Utility Improvements ✅
+- **Improved** `src/js/utils/shared.js` date functions with:
+  - Better JSDoc documentation
+  - Week support in `getTimeAgo()`
+  - Consistency with Angular `date.utils.ts`
+- **Added** cross-reference comments to Angular date utilities
+
+### 8. String Utility Alignment ✅
+- **Updated** `capitalize()` in `shared.js` to lowercase rest of string (consistent with TS)
+- **Updated** `kebabCase()` to handle camelCase and underscores (consistent with TS)
+- **Updated** `getInitials()` to accept maxLength parameter (consistent with TS)
+- **Added** comprehensive JSDoc comments
+
+### 9. Shell Script Utility Library ✅
+- **Created** `scripts/lib/common.sh` with:
+  - Color constants and print functions
+  - Server check and wait utilities
+  - Dependency check functions
+  - Platform detection (macOS/Linux)
+  - Cleanup registration
+- **Updated** `scripts/test-mobile-responsive.sh` to use common library
+
+### 10. Storage Access Documentation ✅
+- **Created** `docs/STORAGE_ACCESS_GUIDE.md` with:
+  - Centralized storage service documentation
+  - Migration patterns and examples
+  - Storage keys reference
+  - Files requiring migration list
+  - Best practices
+
 ---
 
 ## 1. Error Handling Duplications
@@ -474,9 +519,10 @@ print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 ### After Fixes (2025-01-11)
 
-- **Lines Removed**: ~200+ lines of duplicate code
-- **Files Modified**: 5 files
-- **Consolidations Applied**: 4 major duplications fixed
+- **Lines Removed/Improved**: ~300+ lines of duplicate code
+- **Files Modified**: 16 files
+- **New Files Created**: 2 (common.sh, STORAGE_ACCESS_GUIDE.md)
+- **Consolidations Applied**: 10 major items addressed
 
 ### Remaining Work
 

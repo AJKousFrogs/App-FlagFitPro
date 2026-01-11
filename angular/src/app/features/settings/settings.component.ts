@@ -34,6 +34,7 @@ import {
   LoggerService,
   toLogContext,
 } from "../../core/services/logger.service";
+import { PlatformService } from "../../core/services/platform.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -663,7 +664,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         ...settings,
         updatedAt: new Date().toISOString(),
       };
-      localStorage.setItem("user_settings", JSON.stringify(localSettings));
+      this.platform.setLocalStorage("user_settings", JSON.stringify(localSettings));
       this.logger.info("Settings saved to localStorage");
 
       // Apply theme immediately
@@ -1515,7 +1516,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       if (this.exportOptions.settings) {
         this.exportProgress.set((progress += 100 / totalSteps));
         // Get settings from localStorage
-        const localSettings = localStorage.getItem("user_settings");
+        const localSettings = this.platform.getLocalStorage("user_settings");
         exportData.settings = localSettings ? JSON.parse(localSettings) : {};
       }
 

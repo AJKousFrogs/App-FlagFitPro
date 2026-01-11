@@ -36,6 +36,7 @@ import {
   getProgramIdForPosition,
   normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
+import { PlatformService } from "../../core/services/platform.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { RosterService } from "../roster/roster.service";
@@ -1639,6 +1640,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   private playerProgramService = inject(PlayerProgramService);
   private rosterService = inject(RosterService);
   private api = inject(ApiService);
+  private platform = inject(PlatformService);
 
   currentStep = signal(0);
   isCompleting = signal(false);
@@ -2471,7 +2473,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           );
         }
         // Clear the flag
-        localStorage.removeItem("flagfit_email_verified");
+        this.platform.removeLocalStorage("flagfit_email_verified");
       }
     };
     window.addEventListener("storage", this.storageListener);
@@ -2568,7 +2570,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   // Clear draft after successful completion
   private clearDraft(): void {
-    localStorage.removeItem(this.STORAGE_KEY);
+    this.platform.removeLocalStorage(this.STORAGE_KEY);
   }
 
   private async loadUserProfile(): Promise<void> {
@@ -3273,7 +3275,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           );
 
           // Set flag for dashboard to show program assignment prompt
-          sessionStorage.setItem("programAssignmentPending", "true");
+          this.platform.setSessionStorage("programAssignmentPending", "true");
 
           // Log error details for debugging but don't block onboarding
           this.logger.error(
@@ -3289,7 +3291,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
         // Always set flag to refresh program assignment on dashboard
         // This ensures the dashboard checks for the program even if assignment had issues
-        sessionStorage.setItem("refreshProgramAssignment", "true");
+        this.platform.setSessionStorage("refreshProgramAssignment", "true");
       } else {
         // Staff-only: Add staff member to team roster with appropriate role
         if (this.onboardingData.team) {
@@ -3308,11 +3310,11 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       setTimeout(() => {
         // Check for post-onboarding redirect (e.g., team invitation)
-        const postOnboardingRedirect = sessionStorage.getItem(
+        const postOnboardingRedirect = this.platform.getSessionStorage(
           "postOnboardingRedirect",
         );
         if (postOnboardingRedirect) {
-          sessionStorage.removeItem("postOnboardingRedirect");
+          this.platform.removeSessionStorage("postOnboardingRedirect");
           this.router.navigateByUrl(postOnboardingRedirect);
         } else {
           // Redirect based on user type
@@ -3372,7 +3374,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           "Saving preferences to localStorage:",
           toLogContext(error.message),
         );
-        localStorage.setItem(
+        this.platform.setLocalStorage(
           "flagfit_preferences",
           JSON.stringify(preferences),
         );
@@ -3391,7 +3393,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         currentInjuries: this.onboardingData.currentInjuries,
         injuryHistory: this.onboardingData.injuryHistory,
       };
-      localStorage.setItem("flagfit_preferences", JSON.stringify(preferences));
+      this.platform.setLocalStorage("flagfit_preferences", JSON.stringify(preferences));
     }
   }
 

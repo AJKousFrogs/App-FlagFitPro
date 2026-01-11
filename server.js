@@ -20,10 +20,20 @@ import { WebSocketServer } from "ws";
 
 // Import modular routes
 import analyticsRoutes from "./routes/analytics.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import coachRoutes from "./routes/coach.routes.js";
 import communityRoutes from "./routes/community.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import gamesRoutes from "./routes/games.routes.js";
+import knowledgeRoutes from "./routes/knowledge.routes.js";
+import loadManagementRoutes from "./routes/load-management.routes.js";
 import notificationsRoutes from "./routes/notifications.routes.js";
+import performanceRoutes from "./routes/performance.routes.js";
+import playerProgramsRoutes from "./routes/player-programs.routes.js";
+import rosterRoutes from "./routes/roster.routes.js";
+import teamsRoutes from "./routes/teams.routes.js";
 import trainingRoutes from "./routes/training.routes.js";
+import weatherRoutes from "./routes/weather.routes.js";
 import wellnessRoutes from "./routes/wellness.routes.js";
 
 // Import monitoring middleware
@@ -34,10 +44,11 @@ import {
 
 // Import auth middleware (centralized - avoids duplication)
 import {
-    authenticateToken,
-    authorizeUserAccess,
-    optionalAuth,
+    authenticateToken
 } from "./routes/middleware/auth.middleware.js";
+
+// Import validation utilities (centralized - avoids duplication)
+import { DEMO_USER_ID, isValidUUID } from "./routes/utils/validation.js";
 
 // Initialize Supabase client for real data
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -49,16 +60,6 @@ const supabaseKey =
 
 const supabase =
   supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
-
-// Helper to validate UUID
-const isValidUUID = (uuid) => {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-};
-
-// Default fallback UUID for demo/test purposes
-const DEMO_USER_ID = "00000000-0000-0000-0000-000000000000";
 
 if (supabase) {
   console.log("✅ Supabase client initialized - using REAL data");
@@ -268,6 +269,16 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/community", communityRoutes);
+app.use("/api/player-programs", playerProgramsRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/performance", performanceRoutes);
+app.use("/api/games", gamesRoutes);
+app.use("/api/load-management", loadManagementRoutes);
+app.use("/api/knowledge", knowledgeRoutes);
+app.use("/api/coach", coachRoutes);
+app.use("/api/roster", rosterRoutes);
+app.use("/api/teams", teamsRoutes);
+app.use("/api/weather", weatherRoutes);
 
 // Versioned paths for explicit version targeting
 app.use("/api/v2/training", trainingRoutes);
@@ -276,6 +287,16 @@ app.use("/api/v2/analytics", analyticsRoutes);
 app.use("/api/v2/notifications", notificationsRoutes);
 app.use("/api/v2/dashboard", dashboardRoutes);
 app.use("/api/v2/community", communityRoutes);
+app.use("/api/v2/player-programs", playerProgramsRoutes);
+app.use("/api/v2/auth", authRoutes);
+app.use("/api/v2/performance", performanceRoutes);
+app.use("/api/v2/games", gamesRoutes);
+app.use("/api/v2/load-management", loadManagementRoutes);
+app.use("/api/v2/knowledge", knowledgeRoutes);
+app.use("/api/v2/coach", coachRoutes);
+app.use("/api/v2/roster", rosterRoutes);
+app.use("/api/v2/teams", teamsRoutes);
+app.use("/api/v2/weather", weatherRoutes);
 
 // =============================================================================
 // STATIC FILES & LEGACY ROUTES
@@ -610,116 +631,10 @@ app.get("/api/training-programs", async (_req, res) => {
 // MOCK API ENDPOINTS FOR DEVELOPMENT
 // ============================================
 
-// ============================================
-// AUTHENTICATION - REAL DATA
-// ============================================
-
-app.post("/api/auth/login", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { email, password } = req.body;
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({
-      success: true,
-      data: {
-        token: data.session.access_token,
-        user: data.user,
-      },
-    });
-  } catch (error) {
-    console.error("[Login] Error:", error);
-    res.status(401).json({ success: false, error: error.message });
-  }
-});
-
-app.post("/api/auth/register", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { email, password, name } = req.body;
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name },
-      },
-    });
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({
-      success: true,
-      data: {
-        token: data.session?.access_token,
-        user: data.user,
-      },
-    });
-  } catch (error) {
-    console.error("[Register] Error:", error);
-    res.status(400).json({ success: false, error: error.message });
-  }
-});
-
-app.get("/api/auth/me", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      return res
-        .status(401)
-        .json({ success: false, error: "No token provided" });
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser(token);
-
-    if (error || !user) {
-      throw error || new Error("User not found");
-    }
-
-    res.json({
-      success: true,
-      data: user,
-    });
-  } catch (error) {
-    console.error("[Auth Me] Error:", error);
-    res.status(401).json({ success: false, error: "Not authenticated" });
-  }
-});
-
-app.post("/api/auth/logout", async (req, res) => {
-  if (supabase) {
-    await supabase.auth.signOut();
-  }
-  res.json({ success: true, message: "Logged out successfully" });
-});
+// =============================================================================
+// AUTHENTICATION ENDPOINTS - Now handled by modular routes at /api/auth/*
+// See: routes/auth.routes.js
+// =============================================================================
 
 // ============================================
 // LEGACY ENDPOINTS REMOVED (January 2026)
@@ -809,72 +724,20 @@ app.get("/api/dashboard/notifications/count", async (req, res) => {
 
 // Legacy notifications-count redirect removed (January 2026)
 
-// Performance Endpoints
-app.get("/api/performance/metrics", async (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      speed: 85,
-      agility: 78,
-      power: 92,
-      endurance: 80,
-      readiness: 88,
-    },
-  });
-});
-
-app.get("/api/performance/heatmap", async (req, res) => {
-  res.json({
-    success: true,
-    data: {
-      zones: [
-        { name: "Field Left", value: 65 },
-        { name: "Field Center", value: 88 },
-        { name: "Field Right", value: 45 },
-      ],
-    },
-  });
-});
+// =============================================================================
+// PERFORMANCE ENDPOINTS - Now handled by modular routes at /api/performance/*
+// See: routes/performance.routes.js
+// =============================================================================
 
 // =============================================================================
 // TRAINING ENDPOINTS - Now handled by modular routes at /api/training/*
 // See: routes/training.routes.js
 // =============================================================================
 
-// Exercise Library - REAL DATA
-app.get("/api/exercises", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { category, position, search } = req.query;
-
-    let query = supabase.from("exercises").select("*").eq("active", true);
-
-    if (category && category !== "all") {
-      query = query.eq("category", category);
-    }
-    if (position) {
-      query = query.contains("position_specific", [position]);
-    }
-    if (search) {
-      query = query.ilike("name", `%${search}%`);
-    }
-
-    const { data: exercises, error } = await query.order("name").limit(200);
-    if (error) {
-      throw error;
-    }
-
-    res.json({ success: true, data: exercises || [] });
-  } catch (error) {
-    console.error("[Exercises] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load exercises" });
-  }
-});
+// =============================================================================
+// EXERCISES ENDPOINT - Now handled by modular routes at /api/training/exercises
+// See: routes/training.routes.js
+// =============================================================================
 
 // =============================================================================
 // ANALYTICS ENDPOINTS - Now handled by modular routes at /api/analytics/*
@@ -1001,229 +864,20 @@ app.get("/api/load-management/acwr", async (req, res) => {
   }
 });
 
-// Player Stats endpoint
-app.get("/api/player-stats", async (req, res) => {
-  const { playerId } = req.query;
-  const { season } = req.query;
+// =============================================================================
+// PLAYER STATS ENDPOINT - TODO: Move to routes/player-stats.routes.js
+// Currently handled inline but should be extracted
+// =============================================================================
 
-  if (!supabase) {
-    return res.json({
-      success: true,
-      data: {
-        playerId,
-        season,
-        gamesPlayed: 0,
-        touchdowns: 0,
-        receptions: 0,
-        yards: 0,
-        flagPulls: 0,
-      },
-    });
-  }
+// =============================================================================
+// GAMES & TOURNAMENTS ENDPOINTS - Now handled by modular routes at /api/games/*
+// See: routes/games.routes.js
+// =============================================================================
 
-  try {
-    // Get player statistics from game_stats or player_stats table if exists
-    const { data: stats } = await supabase
-      .from("game_stats")
-      .select("*")
-      .eq("player_id", playerId)
-      .order("game_date", { ascending: false })
-      .limit(50);
-
-    if (stats && stats.length > 0) {
-      const totals = stats.reduce(
-        (acc, s) => ({
-          gamesPlayed: acc.gamesPlayed + 1,
-          touchdowns: acc.touchdowns + (s.touchdowns || 0),
-          receptions: acc.receptions + (s.receptions || 0),
-          yards: acc.yards + (s.yards || 0),
-          flagPulls: acc.flagPulls + (s.flag_pulls || 0),
-        }),
-        {
-          gamesPlayed: 0,
-          touchdowns: 0,
-          receptions: 0,
-          yards: 0,
-          flagPulls: 0,
-        },
-      );
-
-      res.json({ success: true, data: { playerId, season, ...totals } });
-    } else {
-      res.json({
-        success: true,
-        data: {
-          playerId,
-          season,
-          gamesPlayed: 0,
-          touchdowns: 0,
-          receptions: 0,
-          yards: 0,
-          flagPulls: 0,
-          message: "No stats recorded yet",
-        },
-      });
-    }
-  } catch (error) {
-    console.error("[Player Stats] Error:", error);
-    res.json({
-      success: true,
-      data: {
-        playerId,
-        season,
-        gamesPlayed: 0,
-        touchdowns: 0,
-        receptions: 0,
-        yards: 0,
-        flagPulls: 0,
-      },
-    });
-  }
-});
-
-// Games endpoint
-app.get("/api/games", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { startDate, endDate, limit } = req.query;
-    let query = supabase.from("games").select("*");
-
-    if (startDate) {
-      query = query.gte("game_date", startDate);
-    }
-    if (endDate) {
-      query = query.lte("game_date", endDate);
-    }
-
-    const { data: games } = await query
-      .order("game_date", { ascending: true })
-      .limit(parseInt(limit) || 50);
-
-    res.json({ success: true, data: games || [] });
-  } catch (error) {
-    console.error("[Games] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
-
-// Tournaments endpoints - REAL DATA
-app.get("/api/tournaments", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { data: tournaments } = await supabase
-      .from("tournaments")
-      .select("*")
-      .order("start_date", { ascending: true });
-
-    res.json({ success: true, data: tournaments || [] });
-  } catch (error) {
-    console.error("[Tournaments] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
-
-app.get("/api/tournaments/:id", async (req, res) => {
-  if (!supabase) {
-    return res.json({ success: true, data: null });
-  }
-
-  try {
-    const { data: tournament } = await supabase
-      .from("tournaments")
-      .select(
-        `
-        *,
-        games:tournament_games (*)
-      `,
-      )
-      .eq("id", req.params.id)
-      .single();
-
-    res.json({ success: true, data: tournament });
-  } catch (error) {
-    console.error("[Tournament Details] Error:", error);
-    res.json({ success: true, data: null });
-  }
-});
-
-app.post("/api/tournaments/createGame", async (req, res) => {
-  if (!supabase) {
-    return res.json({
-      success: true,
-      data: {
-        id: Date.now().toString(),
-        ...req.body,
-        createdAt: new Date().toISOString(),
-      },
-    });
-  }
-
-  try {
-    const { data: game, error } = await supabase
-      .from("tournament_games")
-      .insert(req.body)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({ success: true, data: game });
-  } catch (error) {
-    console.error("[Create Game] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to create game" });
-  }
-});
-
-// Knowledge Base Search - REAL DATA
-app.get("/api/knowledge-search", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { query, topic, category, limit = 10 } = req.query;
-
-    let dbQuery = supabase
-      .from("knowledge_base_entries")
-      .select(
-        "id, title, content, category, subcategory, source_type, evidence_grade",
-      )
-      .eq("is_active", true);
-
-    if (query) {
-      dbQuery = dbQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`);
-    }
-    if (topic) {
-      dbQuery = dbQuery.ilike("title", `%${topic}%`);
-    }
-    if (category) {
-      dbQuery = dbQuery.eq("category", category);
-    }
-
-    const { data: entries } = await dbQuery
-      .order("source_quality_score", { ascending: false, nullsFirst: false })
-      .limit(parseInt(limit));
-
-    res.json({ success: true, data: entries || [] });
-  } catch (error) {
-    console.error("[Knowledge Search] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
+// =============================================================================
+// KNOWLEDGE BASE ENDPOINTS - Now handled by modular routes at /api/knowledge/*
+// See: routes/knowledge.routes.js
+// =============================================================================
 
 // =============================================================================
 // COMMUNITY ENDPOINTS - Now handled by modular routes at /api/community/*
@@ -1237,267 +891,25 @@ app.get("/api/knowledge-search", async (req, res) => {
 // Legacy /api/wellness-checkin redirect removed (January 2026)
 // =============================================================================
 
-// Coach endpoints - REAL DATA
-app.get("/api/coach/dashboard", async (req, res) => {
-  if (!supabase) {
-    return res.json({ success: true, data: { teamMembers: [], stats: {} } });
-  }
+// =============================================================================
+// COACH ENDPOINTS - Now handled by modular routes at /api/coach/*
+// See: routes/coach.routes.js
+// =============================================================================
 
-  try {
-    // Get team members
-    const { data: members } = await supabase
-      .from("team_members")
-      .select(
-        `
-        id, role, jersey_number, position, status,
-        users:user_id (id, email, full_name)
-      `,
-      )
-      .eq("status", "active")
-      .limit(50);
+// =============================================================================
+// ROSTER ENDPOINTS - Now handled by modular routes at /api/roster/*
+// See: routes/roster.routes.js
+// =============================================================================
 
-    // Get recent training sessions
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+// =============================================================================
+// TEAMS ENDPOINTS - Now handled by modular routes at /api/teams/*
+// See: routes/teams.routes.js
+// =============================================================================
 
-    const { data: _sessions, count: sessionCount } = await supabase
-      .from("training_sessions")
-      .select("*", { count: "exact" })
-      .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
-      .eq("status", "completed");
-
-    res.json({
-      success: true,
-      data: {
-        teamMembers: members || [],
-        stats: {
-          totalPlayers: members?.length || 0,
-          sessionsThisWeek: sessionCount || 0,
-          avgAttendance: 85, // Would calculate from attendance table
-        },
-      },
-    });
-  } catch (error) {
-    console.error("[Coach Dashboard] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load coach dashboard" });
-  }
-});
-
-// Roster endpoints - REAL DATA
-app.get("/api/roster", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { data: roster } = await supabase
-      .from("team_members")
-      .select(
-        `
-        id, role, jersey_number, position, status, joined_at,
-        users:user_id (id, email, full_name, avatar_url)
-      `,
-      )
-      .order("jersey_number");
-
-    res.json({ success: true, data: roster || [] });
-  } catch (error) {
-    console.error("[Roster] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load roster" });
-  }
-});
-
-// Team endpoints - REAL DATA
-app.get("/api/teams", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { data: teams } = await supabase
-      .from("teams")
-      .select("*")
-      .eq("is_active", true)
-      .order("name");
-
-    res.json({ success: true, data: teams || [] });
-  } catch (error) {
-    console.error("[Teams] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load teams" });
-  }
-});
-
-app.get("/api/teams/:id", async (req, res) => {
-  if (!supabase) {
-    return res.json({ success: true, data: null });
-  }
-
-  try {
-    const { data: team } = await supabase
-      .from("teams")
-      .select(
-        `
-        *,
-        members:team_members (
-          id, role, jersey_number, position,
-          users:user_id (id, email, full_name)
-        )
-      `,
-      )
-      .eq("id", req.params.id)
-      .single();
-
-    res.json({ success: true, data: team });
-  } catch (error) {
-    console.error("[Team Details] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to load team" });
-  }
-});
-
-// ============================================
-// COACH ENDPOINTS - REAL DATA
-// ============================================
-
-// Coach Games endpoint
-app.get("/api/coach/games", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { data: games } = await supabase
-      .from("games")
-      .select("*")
-      .order("game_date", { ascending: false })
-      .limit(50);
-
-    res.json({ success: true, data: games || [] });
-  } catch (error) {
-    console.error("[Coach Games] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
-
-// Roster Players endpoint
-app.get("/api/roster/players", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured", data: [] });
-  }
-
-  try {
-    const { data: players } = await supabase
-      .from("team_members")
-      .select(
-        `
-        id, role, jersey_number, position, status, joined_at,
-        user:user_id (id, email, full_name, first_name, last_name)
-      `,
-      )
-      .eq("status", "active")
-      .order("jersey_number");
-
-    // Transform to expected format
-    const formattedPlayers = (players || []).map((p) => {
-      // Normalize player name
-      const name =
-        p.user?.full_name ||
-        [p.user?.first_name, p.user?.last_name].filter(Boolean).join(" ").trim() ||
-        "Unknown";
-      
-      return {
-        id: p.id,
-        userId: p.user?.id,
-        name,
-        email: p.user?.email,
-        position: p.position,
-        jerseyNumber: p.jersey_number,
-        role: p.role,
-        status: p.status,
-        joinedAt: p.joined_at,
-      };
-    });
-
-    res.json({ success: true, data: formattedPlayers });
-  } catch (error) {
-    console.error("[Roster Players] Error:", error);
-    res.json({ success: true, data: [], message: "No data available" });
-  }
-});
-
-// ============================================
-// WEATHER ENDPOINT - REAL DATA (OR ERROR)
-// ============================================
-
-app.get("/api/weather/current", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { location = "Training Ground" } = req.query;
-
-    // Check if we have a weather table
-    const { data: weather, error } = await supabase
-      .from("weather_data")
-      .select("*")
-      .ilike("location", `%${location}%`)
-      .order("timestamp", { ascending: false })
-      .limit(1)
-      .single();
-
-    if (error && error.code !== "PGRST116") {
-      throw error;
-    }
-
-    if (!weather) {
-      return res.json({
-        success: true,
-        data: null,
-        message: "Real-time weather data not available for this location",
-      });
-    }
-
-    res.json({
-      success: true,
-      data: {
-        temperature: weather.temperature,
-        temperatureUnit: weather.unit || "C",
-        humidity: weather.humidity,
-        conditions: weather.conditions,
-        windSpeed: weather.wind_speed,
-        windUnit: "km/h",
-        uvIndex: weather.uv_index,
-        precipitation: weather.precipitation,
-        feelsLike: weather.feels_like,
-        icon: weather.icon,
-        location: weather.location,
-        lastUpdated: weather.timestamp,
-        recommendations: weather.recommendations || {
-          hydration: "normal",
-          sunProtection: "standard",
-          warmUp: "standard",
-        },
-      },
-    });
-  } catch (error) {
-    console.error("[Weather] Error:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Failed to load weather data" });
-  }
-});
+// =============================================================================
+// WEATHER ENDPOINTS - Now handled by modular routes at /api/weather/*
+// See: routes/weather.routes.js
+// =============================================================================
 
 // ============================================
 // TRAINING SUGGESTIONS ENDPOINT - REAL DATA
@@ -2005,237 +1417,12 @@ app.get("/api/trends/game-performance", async (req, res) => {
   }
 });
 
-// ============================================
-// SUPPLEMENTS ENDPOINTS - REAL DATA
-// ============================================
+// =============================================================================
+// SUPPLEMENTS & HYDRATION ENDPOINTS - Now handled by modular routes at /api/wellness/*
+// See: routes/wellness.routes.js
+// =============================================================================
 
-app.get("/api/supplements", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    let userId = req.query.userId || req.headers["x-user-id"] || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {
-      userId = DEMO_USER_ID;
-    }
-    const today = new Date().toISOString().split("T")[0];
-
-    // Get user's supplements (if they have a custom list)
-    const { data: userSupplements } = await supabase
-      .from("user_supplements")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("active", true);
-
-    // Get today's logs
-    const { data: todayLogs } = await supabase
-      .from("supplement_logs")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("date", today);
-
-    // If user has custom supplements, use those
-    if (userSupplements && userSupplements.length > 0) {
-      const supplements = userSupplements.map((s) => {
-        const takenToday = todayLogs?.some(
-          (log) => log.supplement_name?.toLowerCase() === s.name?.toLowerCase(),
-        );
-        return {
-          id: s.id,
-          name: s.name,
-          dosage: s.dosage,
-          timing: s.timing || "anytime",
-          category: s.category || "other",
-          taken: takenToday || false,
-          takenAt: takenToday
-            ? todayLogs.find(
-                (log) =>
-                  log.supplement_name?.toLowerCase() === s.name?.toLowerCase(),
-              )?.created_at
-            : null,
-        };
-      });
-
-      return res.json({
-        success: true,
-        data: { supplements, todayLogs: todayLogs || [] },
-      });
-    }
-
-    // Return empty - frontend will use defaults
-    res.json({
-      success: true,
-      data: { supplements: [], todayLogs: todayLogs || [] },
-    });
-  } catch (error) {
-    console.error("[Supplements] Error:", error);
-    res.json({ success: true, data: { supplements: [], todayLogs: [] } });
-  }
-});
-
-app.post("/api/supplements/log", authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { userId } = req; // Use authenticated user's ID
-    const { supplement, dosage, taken = true, notes } = req.body;
-    const today = new Date().toISOString().split("T")[0];
-
-    const { data, error } = await supabase
-      .from("supplement_logs")
-      .insert({
-        user_id: userId,
-        supplement_name: supplement,
-        dosage,
-        taken,
-        date: today,
-        notes: notes || null,
-        created_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error("[Supplements Log] Error:", error);
-    res.status(500).json({ success: false, error: "Failed to log supplement" });
-  }
-});
-
-app.get("/api/supplements/logs", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    let userId = req.query.userId || req.headers["x-user-id"] || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {
-      userId = DEMO_USER_ID;
-    }
-    const limit = parseInt(req.query.limit) || 30;
-
-    const { data, error } = await supabase
-      .from("supplement_logs")
-      .select("*")
-      .eq("user_id", userId)
-      .order("date", { ascending: false })
-      .limit(limit);
-
-    if (error) {
-      throw error;
-    }
-
-    res.json({ success: true, data: { logs: data || [] } });
-  } catch (error) {
-    console.error("[Supplements Logs] Error:", error);
-    res.json({ success: true, data: { logs: [] } });
-  }
-});
-
-// ============================================
-// HYDRATION ENDPOINTS - REAL DATA
-// ============================================
-
-app.get("/api/hydration", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    let userId = req.query.userId || req.headers["x-user-id"] || DEMO_USER_ID;
-    if (!isValidUUID(userId)) {
-      userId = DEMO_USER_ID;
-    }
-    const today = new Date().toISOString().split("T")[0];
-
-    // Get today's hydration logs
-    const { data: logs, error } = await supabase
-      .from("hydration_logs")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("timestamp", `${today}T00:00:00`)
-      .order("timestamp", { ascending: true });
-
-    if (error && error.code !== "42P01") {
-      // 42P01 = table doesn't exist
-      console.warn("[Hydration] Query error:", error.message);
-    }
-
-    res.json({ success: true, data: { logs: logs || [] } });
-  } catch (error) {
-    console.error("[Hydration] Error:", error);
-    res.json({ success: true, data: { logs: [] } });
-  }
-});
-
-app.post("/api/hydration/log", authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    const { userId } = req; // Use authenticated user's ID
-    const { amount, type = "water" } = req.body;
-
-    const { data, error } = await supabase
-      .from("hydration_logs")
-      .insert({
-        user_id: userId,
-        amount,
-        type,
-        timestamp: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    if (error) {
-      // If table doesn't exist, return mock response
-      if (error.code === "42P01") {
-        return res.json({
-          success: true,
-          data: {
-            id: Date.now().toString(),
-            amount,
-            type,
-            timestamp: new Date().toISOString(),
-          },
-        });
-      }
-      throw error;
-    }
-
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error("[Hydration Log] Error:", error);
-    // Return mock response even on error for better UX
-    res.json({
-      success: true,
-      data: {
-        id: Date.now().toString(),
-        amount: req.body.amount,
-        type: req.body.type || "water",
-        timestamp: new Date().toISOString(),
-      },
-    });
-  }
-});
+// Legacy endpoints removed - use /api/wellness/supplements and /api/wellness/hydration instead
 
 // =============================================================================
 // NOTIFICATIONS ENDPOINTS - Now handled by modular routes at /api/notifications/*
@@ -2909,304 +2096,6 @@ app.post("/api/ai-chat", authenticateToken, async (req, res) => {
       success: false,
       error: "Failed to process chat request",
       message: error.message,
-    });
-  }
-});
-
-// ============================================
-// Player Programs API Endpoints
-// ============================================
-
-// GET /api/player-programs/me - Get current active assignment
-app.get("/api/player-programs/me", async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    // Get user from auth header
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        error: "Authorization required",
-      });
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return res.status(401).json({
-        success: false,
-        error: "Invalid authentication",
-      });
-    }
-
-    // Get active assignment
-    const { data, error } = await supabase
-      .from("player_programs")
-      .select(
-        `
-        id,
-        player_id,
-        program_id,
-        status,
-        start_date,
-        end_date,
-        current_week,
-        current_phase_id,
-        completion_percentage,
-        modifications,
-        notes,
-        created_at,
-        updated_at,
-        training_programs!inner (
-          id,
-          name
-        )
-      `,
-      )
-      .eq("player_id", user.id)
-      .eq("status", "active")
-      .maybeSingle();
-
-    if (error) {
-      console.error("[player-programs] Error fetching assignment:", error);
-      return res.status(500).json({
-        success: false,
-        error: error.message,
-      });
-    }
-
-    if (!data) {
-      return res.json({
-        success: true,
-        data: {
-          assignment: null,
-          message: "No active program assigned",
-        },
-      });
-    }
-
-    // Transform to expected shape
-    const assignment = {
-      id: data.id,
-      player_id: data.player_id,
-      program_id: data.program_id,
-      status: data.status,
-      start_date: data.start_date,
-      end_date: data.end_date,
-      current_week: data.current_week,
-      current_phase_id: data.current_phase_id,
-      completion_percentage: data.completion_percentage,
-      modifications: data.modifications,
-      notes: data.notes,
-      created_at: data.created_at,
-      updated_at: data.updated_at,
-      program: {
-        id: data.training_programs.id,
-        name: data.training_programs.name,
-      },
-    };
-
-    return res.json({
-      success: true,
-      data: { assignment },
-    });
-  } catch (error) {
-    console.error("[player-programs] Error:", error);
-    return res.status(500).json({
-      success: false,
-      error: error.message || "Internal server error",
-    });
-  }
-});
-
-// POST /api/player-programs - Assign user to a program
-app.post("/api/player-programs", authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return res
-      .status(503)
-      .json({ success: false, error: "Database not configured" });
-  }
-
-  try {
-    // User already authenticated via middleware
-    const user = { id: req.userId };
-
-    const {
-      program_id,
-      start_date,
-      status = "active",
-      force = false,
-    } = req.body;
-
-    if (!program_id) {
-      return res.status(400).json({
-        success: false,
-        error: "program_id is required",
-      });
-    }
-
-    // Check if program exists
-    const { data: programExists, error: programError } = await supabase
-      .from("training_programs")
-      .select("id, name")
-      .eq("id", program_id)
-      .single();
-
-    if (programError || !programExists) {
-      return res.status(404).json({
-        success: false,
-        error: "Training program not found",
-      });
-    }
-
-    // Check for existing active assignment
-    const { data: existingAssignment } = await supabase
-      .from("player_programs")
-      .select(
-        `
-        id,
-        program_id,
-        training_programs!inner (id, name)
-      `,
-      )
-      .eq("player_id", user.id)
-      .eq("status", "active")
-      .maybeSingle();
-
-    if (existingAssignment) {
-      // Same program - idempotent success
-      if (existingAssignment.program_id === program_id) {
-        const { data: fullAssignment } = await supabase
-          .from("player_programs")
-          .select(
-            `
-            id,
-            player_id,
-            program_id,
-            status,
-            start_date,
-            end_date,
-            current_week,
-            current_phase_id,
-            completion_percentage,
-            modifications,
-            notes,
-            created_at,
-            updated_at,
-            training_programs!inner (id, name)
-          `,
-          )
-          .eq("id", existingAssignment.id)
-          .single();
-
-        return res.json({
-          success: true,
-          data: {
-            assignment: {
-              ...fullAssignment,
-              program: {
-                id: fullAssignment.training_programs.id,
-                name: fullAssignment.training_programs.name,
-              },
-            },
-          },
-          message: "Program already assigned",
-        });
-      }
-
-      // Different program - check force flag
-      if (!force) {
-        return res.status(409).json({
-          success: false,
-          error: `User already has active program "${existingAssignment.training_programs.name}". Use force=true to switch programs.`,
-        });
-      }
-
-      // Force switch: inactivate previous
-      const today = new Date().toISOString().split("T")[0];
-      await supabase
-        .from("player_programs")
-        .update({
-          status: "inactive",
-          end_date: today,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", existingAssignment.id);
-    }
-
-    // Create new assignment
-    const newAssignment = {
-      player_id: user.id,
-      program_id,
-      status,
-      start_date: start_date || new Date().toISOString().split("T")[0],
-      current_week: 1,
-      completion_percentage: 0,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    const { data: created, error: createError } = await supabase
-      .from("player_programs")
-      .insert(newAssignment)
-      .select(
-        `
-        id,
-        player_id,
-        program_id,
-        status,
-        start_date,
-        end_date,
-        current_week,
-        current_phase_id,
-        completion_percentage,
-        modifications,
-        notes,
-        created_at,
-        updated_at,
-        training_programs!inner (id, name)
-      `,
-      )
-      .single();
-
-    if (createError) {
-      console.error(
-        "[player-programs] Error creating assignment:",
-        createError,
-      );
-      return res.status(500).json({
-        success: false,
-        error: createError.message,
-      });
-    }
-
-    return res.json({
-      success: true,
-      data: {
-        assignment: {
-          ...created,
-          program: {
-            id: created.training_programs.id,
-            name: created.training_programs.name,
-          },
-        },
-      },
-      message: "Program assigned successfully",
-    });
-  } catch (error) {
-    console.error("[player-programs] Error:", error);
-    return res.status(500).json({
-      success: false,
-      error: error.message || "Internal server error",
     });
   }
 });

@@ -78,13 +78,29 @@ export class SupabaseService {
   private async initializeAuth() {
     try {
       // Get initial session
+      console.log("[SupabaseService] Initializing auth...");
       const { data } = await this.supabase.auth.getSession();
+      
+      // DEBUG: Log initial session state
+      console.log("[SupabaseService] Initial session:", {
+        hasSession: !!data.session,
+        userId: data.session?.user?.id,
+        expiresAt: data.session?.expires_at,
+      });
+      
       this._session.set(data.session);
       this._currentUser.set(data.session?.user ?? null);
 
       // Listen for auth changes
       this.supabase.auth.onAuthStateChange(
         (event: AuthChangeEvent, session: Session | null) => {
+          // DEBUG: Log auth state changes
+          console.log("[SupabaseService] Auth state changed:", {
+            event,
+            hasSession: !!session,
+            userId: session?.user?.id,
+          });
+          
           this.logger.debug("Auth state changed:", toLogContext(event));
           this._session.set(session);
           this._currentUser.set(session?.user ?? null);

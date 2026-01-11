@@ -2,11 +2,11 @@
 // Handles different environments (development, production, Netlify)
 
 import { config } from "./config/environment.js";
-import { logger } from "./logger.js";
+import { NETWORK } from "./js/config/app-constants.js";
 import { csrfProtection } from "./js/security/csrf-protection.js";
 import { cacheService } from "./js/services/cache-service.js";
-import { NETWORK } from "./js/config/app-constants.js";
 import { storageService } from "./js/services/storage-service-unified.js";
+import { logger } from "./logger.js";
 
 const getApiBaseUrl = () => {
   // Use environment configuration for API base URL
@@ -96,16 +96,18 @@ export const API_ENDPOINTS = {
     sponsorRewards: normalizeEndpoint("/api/dashboard/sponsor-rewards"),
     wearables: normalizeEndpoint("/api/dashboard/wearables"),
     teamChemistry: normalizeEndpoint("/api/dashboard/team-chemistry"),
-    notifications: normalizeEndpoint("/api/dashboard/notifications"),
-    notificationsCount: normalizeEndpoint("/api/dashboard/notifications/count"),
-    notificationsCreate: normalizeEndpoint(
-      "/api/dashboard/notifications/create",
-    ),
-    notificationsPreferences: normalizeEndpoint(
-      "/api/dashboard/notifications/preferences",
-    ),
     dailyQuote: normalizeEndpoint("/api/dashboard/daily-quote"),
     health: normalizeEndpoint("/api/dashboard/health"),
+    // NOTE: Notifications moved to dedicated /api/notifications routes
+  },
+
+  // Notifications (dedicated routes - consolidated from dashboard)
+  notifications: {
+    list: normalizeEndpoint("/api/notifications"),
+    count: normalizeEndpoint("/api/notifications/count"),
+    markRead: normalizeEndpoint("/api/notifications/mark-read"),
+    delete: (id) => normalizeEndpoint(`/api/notifications/${id}`),
+    preferences: normalizeEndpoint("/api/notifications/preferences"),
   },
 
   // Training endpoints
@@ -115,6 +117,14 @@ export const API_ENDPOINTS = {
     sessions: normalizeEndpoint("/api/training/sessions"),
     complete: normalizeEndpoint("/api/training/complete"),
     suggestions: normalizeEndpoint("/api/training/suggestions"),
+    // Training Programs (Database-driven)
+    programs: normalizeEndpoint("/api/training/programs"),
+    programDetails: (id) => normalizeEndpoint(`/api/training/programs/${id}`),
+    programPhases: (id) => normalizeEndpoint(`/api/training/programs/${id}/phases`),
+    programWeeks: (id) => normalizeEndpoint(`/api/training/programs/${id}/weeks`),
+    programSessions: (id) => normalizeEndpoint(`/api/training/programs/${id}/sessions`),
+    programExercises: (id) => normalizeEndpoint(`/api/training/programs/${id}/exercises`),
+    programCurrentWeek: normalizeEndpoint("/api/training/programs/current-week"),
   },
 
   // Analytics

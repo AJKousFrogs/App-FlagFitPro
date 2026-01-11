@@ -7,39 +7,17 @@
 
 set -e
 
-echo "🏈 FlagFit Pro - Mobile Responsive Testing"
-echo "=========================================="
-echo ""
+# Load common utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
 
-# Colors for output
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m' # No Color
+print_header "🏈 FlagFit Pro - Mobile Responsive Testing"
 
-# Function to print colored output
-print_status() {
-  echo -e "${BLUE}[INFO]${NC} $1"
-}
-
-print_success() {
-  echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
-
-print_warning() {
-  echo -e "${YELLOW}[WARNING]${NC} $1"
-}
-
-print_error() {
-  echo -e "${RED}[ERROR]${NC} $1"
-}
-
-# Check if server is running
-check_server() {
+# Check if server is running (override to add custom message)
+check_dev_server() {
   print_status "Checking if development server is running..."
   
-  if curl -s http://localhost:4200 > /dev/null; then
+  if check_server 4200; then
     print_success "Development server is running"
     return 0
   else
@@ -50,23 +28,15 @@ check_server() {
 
 # Start development server in background if not running
 start_server() {
-  if ! check_server; then
+  if ! check_dev_server; then
     print_status "Starting development server..."
     npm run dev &
     SERVER_PID=$!
     
     # Wait for server to be ready (max 3 minutes)
-    print_status "Waiting for server to be ready..."
-    for i in {1..60}; do
-      if curl -s http://localhost:4200 > /dev/null; then
-        print_success "Server is ready!"
-        return 0
-      fi
-      sleep 3
-    done
-    
-    print_error "Server failed to start within 3 minutes"
-    return 1
+    if ! wait_for_server 4200 60 3; then
+      return 1
+    fi
   fi
 }
 
@@ -113,7 +83,7 @@ generate_report() {
     print_success "Test report generated at: playwright-report/index.html"
     
     # Open report in browser (macOS)
-    if [[ "$OSTYPE" == "darwin"* ]]; then
+    if is_macos; then
       print_status "Opening report in browser..."
       open playwright-report/index.html
     fi
@@ -122,23 +92,22 @@ generate_report() {
 
 # Cleanup
 cleanup() {
-  if [ ! -z "$SERVER_PID" ]; then
+  if [ -n "$SERVER_PID" ]; then
     print_status "Stopping development server..."
     kill $SERVER_PID 2>/dev/null || true
   fi
 }
 
-# Trap cleanup on exit
-trap cleanup EXIT
+# Register cleanup handler
+register_cleanup cleanup
 
 # Main execution
 main() {
   echo ""
   print_status "Step 1/4: Checking dependencies..."
   
-  # Check if playwright is installed
-  if ! command -v npx &> /dev/null; then
-    print_error "npx not found. Please install Node.js and npm"
+  # Check if required commands are available
+  if ! require_command npx "Install Node.js and npm"; then
     exit 1
   fi
   

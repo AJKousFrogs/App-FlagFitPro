@@ -199,9 +199,17 @@ export const API_ENDPOINTS = {
     sponsorRewards: "/api/dashboard/sponsor-rewards",
     wearables: "/api/dashboard/wearables",
     teamChemistry: "/api/dashboard/team-chemistry",
-    notifications: "/api/dashboard/notifications",
     dailyQuote: "/api/dashboard/daily-quote",
     health: "/api/dashboard/health",
+    // NOTE: Notifications moved to dedicated /api/notifications routes
+  },
+  // Notifications (dedicated routes - consolidated from dashboard)
+  notifications: {
+    list: "/api/notifications",
+    count: "/api/notifications/count",
+    markRead: "/api/notifications/mark-read",
+    delete: (id: string) => `/api/notifications/${id}`,
+    preferences: "/api/notifications/preferences",
   },
   training: {
     stats: "/api/training/stats",
@@ -211,12 +219,13 @@ export const API_ENDPOINTS = {
     sessions: "/api/training/sessions",
     createSession: "/api/training/sessions",
     // Annual Training Programs (Database-driven)
-    programs: "/api/training-programs",
-    programPhases: "/api/training-programs/phases",
-    programWeeks: "/api/training-programs/weeks",
-    programSessions: "/api/training-programs/sessions",
-    programExercises: "/api/training-programs/exercises",
-    programCurrentWeek: "/api/training-programs/current-week",
+    programs: "/api/training/programs",
+    programDetails: (id: string) => `/api/training/programs/${id}`,
+    programPhases: (id: string) => `/api/training/programs/${id}/phases`,
+    programWeeks: (id: string) => `/api/training/programs/${id}/weeks`,
+    programSessions: (id: string) => `/api/training/programs/${id}/sessions`,
+    programExercises: (id: string) => `/api/training/programs/${id}/exercises`,
+    programCurrentWeek: "/api/training/programs/current-week",
   },
   performance: {
     metrics: "/api/performance/metrics",
@@ -251,11 +260,18 @@ export const API_ENDPOINTS = {
     health: "/api/coach/health",
   },
   community: {
-    feed: "/api/community/feed",
+    // RESTful endpoints (v2.0.0)
+    feed: "/api/community/posts", // Changed from /feed to /posts
+    posts: "/api/community/posts",
     createPost: "/api/community/posts",
     getComments: (postId: string) => `/api/community/posts/${postId}/comments`,
+    addComment: (postId: string) => `/api/community/posts/${postId}/comments`,
     likePost: (postId: string) => `/api/community/posts/${postId}/like`,
+    bookmarkPost: (postId: string) => `/api/community/posts/${postId}/bookmark`,
+    likeComment: (commentId: string) => `/api/community/comments/${commentId}/like`,
+    votePoll: (optionId: string) => `/api/community/polls/${optionId}/vote`,
     leaderboard: "/api/community/leaderboard",
+    trending: "/api/community/trending",
     challenges: "/api/community/challenges",
     health: "/api/community/health",
   },
