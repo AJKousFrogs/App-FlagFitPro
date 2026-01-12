@@ -16,7 +16,7 @@ import {
 import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import {
   FormValidators,
   combineValidators,
@@ -40,7 +40,7 @@ import { toLogContext } from "../../../core/services/logger.service";
     CardModule,
     ButtonModule,
     InputTextModule,
-    MessageModule,
+    Message,
   ],
   template: `
     <p-card header="Angular 21 Forms Example">

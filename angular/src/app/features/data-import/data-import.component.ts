@@ -24,7 +24,7 @@ import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { FileUploadModule } from "primeng/fileupload";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
@@ -187,7 +187,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     DialogModule,
     FileUploadModule,
     InputTextModule,
-    MessageModule,
+    Message,
     ProgressBarModule,
     Select,
     StepperModule,
@@ -307,11 +307,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   </div>
                 </div>
 
-                <p-message
-                  severity="info"
-                  text="💡 Tip: Ask your coach for an export file in the supported format"
-                  styleClass="tip-message"
-                ></p-message>
+                <p-message severity="info" styleClass="tip-message">
+                  💡 Tip: Ask your coach for an export file in the supported format
+                </p-message>
               </p-card>
             }
 

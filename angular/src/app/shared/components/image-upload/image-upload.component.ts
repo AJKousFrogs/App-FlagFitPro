@@ -11,7 +11,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { LoggerService } from "../../../core/services/logger.service";
 import { timer } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -36,7 +36,7 @@ export interface ImageUploadResult {
   imports: [
     CommonModule,
     ProgressBarModule,
-    MessageModule,
+    Message,
     ButtonComponent,
     MobileOptimizedImageDirective,
   ],
@@ -160,7 +160,7 @@ export interface ImageUploadResult {
 
       <!-- Error Message -->
       @if (errorMessage()) {
-        <p-message severity="error" [text]="errorMessage()!"></p-message>
+        <p-message severity="error">{{ errorMessage() }}</p-message>
       }
     </div>
   `,

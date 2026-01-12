@@ -19,7 +19,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
@@ -83,7 +83,7 @@ const DEBT_THRESHOLDS = {
     CardModule,
 
     LazyChartComponent,
-    MessageModule,
+    Message,
     ProgressBarModule,
     TagModule,
     ToastModule,

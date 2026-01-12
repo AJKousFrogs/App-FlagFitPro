@@ -23,7 +23,7 @@ import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
@@ -288,7 +288,7 @@ const SEVERITY_LEVELS = [
     DialogModule,
     InputNumberModule,
     InputTextModule,
-    MessageModule,
+    Message,
     ProgressBarModule,
     RadioButton,
     Select,

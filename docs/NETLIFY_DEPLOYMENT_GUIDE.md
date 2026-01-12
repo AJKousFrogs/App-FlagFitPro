@@ -545,5 +545,28 @@ Check these endpoints:
 
 ---
 
-**Last Updated:** January 9, 2026  
-**Document Version:** 1.0
+**Last Updated:** January 12, 2026  
+**Document Version:** 1.1
+
+---
+
+## Recent Changes (January 2026)
+
+### API Route Updates
+The following API routes have been corrected or added:
+
+| Endpoint | Change |
+|----------|--------|
+| `/api/wellness-checkin` | New route (replaces `/api/wellness/checkin`) |
+| `/api/exercises` | Added unified exercise library endpoint |
+| `/api/coach-alerts` | New coach alerts management |
+| `/api/coach-inbox` | New coach inbox for player notifications |
+| `/api/micro-sessions` | New quick training sessions |
+| `/api/team-templates` | New reusable training templates |
+
+### Database Schema Updates
+17 new tables were added. Ensure migrations are applied:
+- `supabase/migrations/20260112_fix_missing_schema_elements.sql`
+- `supabase/migrations/20260112_add_missing_tables_for_frontend.sql`
+
+See `docs/RELEASE_NOTES_2026-01-12.md` for full details.

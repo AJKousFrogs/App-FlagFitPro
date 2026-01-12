@@ -17,7 +17,7 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ToastModule } from "primeng/toast";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -41,7 +41,7 @@ import {
     CardModule,
     ButtonComponent,
     InputTextModule,
-    MessageModule,
+    Message,
     ToastModule,
     CheckboxModule,
   ],

@@ -10,7 +10,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { FileUploadModule } from "primeng/fileupload";
 import { HttpClient } from "@angular/common/http";
 import { timer } from "rxjs";
@@ -38,7 +38,7 @@ export interface UploadedFile {
   imports: [
     CommonModule,
     ProgressBarModule,
-    MessageModule,
+    Message,
     FileUploadModule,
     MobileOptimizedImageDirective,
     ButtonComponent,
@@ -115,7 +115,7 @@ export interface UploadedFile {
 
       <!-- Error Message -->
       @if (errorMessage()) {
-        <p-message severity="error" [text]="errorMessage()!"></p-message>
+        <p-message severity="error">{{ errorMessage() }}</p-message>
       }
 
       <!-- File Preview -->

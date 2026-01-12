@@ -10,7 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { InputNumberModule } from "primeng/inputnumber";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -67,7 +67,7 @@ interface WellnessMetric {
 
     LazyChartComponent,
     InputNumberModule,
-    MessageModule,
+    Message,
     AppLoadingComponent,
     ButtonComponent,
     CardComponent,

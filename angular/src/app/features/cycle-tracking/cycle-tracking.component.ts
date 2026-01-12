@@ -25,7 +25,7 @@ import { CardModule } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
@@ -294,7 +294,7 @@ const RETENTION_OPTIONS = [
     Checkbox,
     DatePicker,
     DialogModule,
-    MessageModule,
+    Message,
     ProgressBarModule,
     RadioButton,
     Select,
@@ -320,19 +320,17 @@ const RETENTION_OPTIONS = [
 
         <!-- Privacy Notice -->
         <p-message severity="info" styleClass="privacy-notice">
-          <ng-template pTemplate>
-            <div class="privacy-content">
-              <i class="pi pi-lock"></i>
-              <div>
-                <strong>Privacy First:</strong> This data is private by default.
-                Coaches only see "recovery day recommended" - never cycle
-                details.
-                <a routerLink="/settings/privacy" class="privacy-link"
-                  >Manage settings</a
-                >
-              </div>
+          <div class="privacy-content">
+            <i class="pi pi-lock"></i>
+            <div>
+              <strong>Privacy First:</strong> This data is private by default.
+              Coaches only see "recovery day recommended" - never cycle
+              details.
+              <a routerLink="/settings/privacy" class="privacy-link"
+                >Manage settings</a
+              >
             </div>
-          </ng-template>
+          </div>
         </p-message>
 
         <!-- Current Cycle Status -->
@@ -536,9 +534,7 @@ const RETENTION_OPTIONS = [
             </div>
 
             <p-message severity="info" styleClass="nutrition-tip">
-              <ng-template pTemplate>
-                <span>💡 {{ getNutritionTip() }}</span>
-              </ng-template>
+              <span>💡 {{ getNutritionTip() }}</span>
             </p-message>
           </p-card>
         </div>
@@ -571,9 +567,7 @@ const RETENTION_OPTIONS = [
                 [severity]="getAcwrStatus().severity"
                 styleClass="acwr-status"
               >
-                <ng-template pTemplate>
-                  <span>{{ getAcwrStatus().message }}</span>
-                </ng-template>
+                <span>{{ getAcwrStatus().message }}</span>
               </p-message>
             </div>
           } @else {

@@ -33,7 +33,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ProgressBar } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
@@ -132,7 +132,7 @@ interface AnnouncementBanner {
     DashboardSkeletonComponent,
     TooltipModule,
     ProgressBar,
-    MessageModule,
+    Message,
     TimelineModule,
     MainLayoutComponent,
     PageErrorStateComponent,
@@ -316,12 +316,7 @@ interface AnnouncementBanner {
           <!-- Only shows when message content exists (from backend) -->
           @if (announcement()?.message && !announcementDismissed()) {
             <section class="announcement-section">
-              <p-message
-                severity="info"
-                [closable]="true"
-                (onClose)="dismissAnnouncement()"
-                styleClass="announcement-banner"
-              >
+              <div class="announcement-banner">
                 <div class="announcement-content">
                   <div class="announcement-text">
                     <i
@@ -341,7 +336,15 @@ interface AnnouncementBanner {
                     {{ getTimeAgoStr(announcement()?.postedAt) }}
                   </span>
                 </div>
-              </p-message>
+                <button
+                  type="button"
+                  class="announcement-close-btn"
+                  (click)="dismissAnnouncement()"
+                  aria-label="Dismiss announcement"
+                >
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
             </section>
           }
 
@@ -803,7 +806,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 </div>
               } @else {
                 <div class="empty-schedule">
-                  <p-message severity="info" styleClass="empty-message">
+                  <p-message severity="info">
                     <div class="empty-content">
                       <i class="pi pi-calendar empty-icon"></i>
                       <span>No training scheduled for today</span>
@@ -871,7 +874,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 </div>
               } @else {
                 <div class="empty-chart">
-                  <p-message severity="info" styleClass="empty-message">
+                  <p-message severity="info">
                     <div class="empty-content">
                       <i class="pi pi-chart-line empty-icon"></i>
                       <span>Complete more sessions to see your trend</span>
@@ -1253,30 +1256,32 @@ Keep logging sessions to unlock this injury prevention metric!'
         margin-bottom: 0;
       }
 
-      /* Override PrimeNG p-message to use brand green */
-      .announcement-banner.p-message {
+      .announcement-banner {
         background: var(--ds-primary-green);
         border: none;
         border-radius: var(--radius-lg);
         padding: var(--space-3) var(--space-4);
         color: var(--color-text-on-primary);
-      }
-
-      .announcement-banner .p-message-wrapper {
-        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         gap: var(--space-3);
       }
 
-      .announcement-banner .p-message-icon {
-        display: none; /* Hide default icon, we use custom */
-      }
-
-      .announcement-banner .p-message-close-button {
+      .announcement-close-btn {
+        background: transparent;
+        border: none;
         color: var(--color-text-on-primary);
         opacity: 0.8;
+        cursor: pointer;
+        padding: var(--space-2);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
-      .announcement-banner .p-message-close-button:hover {
+      .announcement-close-btn:hover {
         background: rgba(255, 255, 255, 0.15);
         opacity: 1;
       }

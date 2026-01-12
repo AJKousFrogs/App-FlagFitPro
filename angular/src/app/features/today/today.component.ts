@@ -36,7 +36,7 @@ import { Router, RouterModule } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { SkeletonModule } from "primeng/skeleton";
 import { TagModule } from "primeng/tag";
@@ -120,7 +120,7 @@ interface QuickFormData {
     RouterModule,
     CardModule,
     DialogModule,
-    MessageModule,
+    Message,
     ProgressBarModule,
     SkeletonModule,
     TagModule,

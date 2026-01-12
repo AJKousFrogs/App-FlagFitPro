@@ -361,3 +361,30 @@ npx kill-port 4200
 ---
 
 Following these practices will ensure a **smooth, fast development experience** with minimal interruptions and maximum productivity! 🎉
+
+---
+
+## 📅 Recent Updates (January 2026)
+
+### API Endpoint Changes
+If you encounter 500 or 404 errors, ensure you're using correct endpoints:
+
+| Old Endpoint | New Endpoint |
+|--------------|--------------|
+| `/api/wellness/checkin` | `/api/wellness-checkin` |
+| `/api/coach/games` | `/api/games` |
+
+### Database Schema Updates
+Before testing locally, apply latest migrations:
+```bash
+# Run migrations via Supabase CLI
+supabase db push
+
+# Or apply manually in Supabase Dashboard SQL Editor
+```
+
+See `docs/RELEASE_NOTES_2026-01-12.md` for complete list of changes.
+
+---
+
+_Last Updated: January 12, 2026_

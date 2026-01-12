@@ -10,7 +10,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { CardModule } from "primeng/card";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { interval } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { AuthDebugService } from "../../../core/services/auth-debug.service";
@@ -30,7 +30,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-auth-debug-panel",
   standalone: true,
-  imports: [CommonModule, DatePipe, CardModule, MessageModule, ButtonComponent],
+  imports: [CommonModule, DatePipe, CardModule, Message, ButtonComponent],
   template: `
     <p-card
       header="🔍 Authentication Debug Panel"
@@ -120,19 +120,17 @@ import { ButtonComponent } from "../button/button.component";
         <!-- Last Check Result -->
         @if (lastCheckMessage()) {
           <div class="col-12">
-            <p-message
-              [severity]="lastCheckSeverity()"
-              styleClass="w-full"
-            >{{ lastCheckMessage() }}</p-message>
+            <p-message [severity]="lastCheckSeverity()">
+              {{ lastCheckMessage() }}
+            </p-message>
           </div>
         }
 
         <!-- Console Notice -->
         <div class="col-12">
-          <p-message
-            severity="info"
-            styleClass="w-full"
-          >Detailed logs are available in the browser console (press F12)</p-message>
+          <p-message severity="info">
+            Detailed logs are available in the browser console (press F12)
+          </p-message>
         </div>
       </div>
     </p-card>

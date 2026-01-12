@@ -3,6 +3,10 @@
  * =====================
  * Dynamically loads Chart.js only when a chart needs to be rendered
  * This prevents Chart.js (~200 KB) from being in the initial bundle
+ *
+ * PrimeNG 21 Update:
+ * - Uses direct UIChart import instead of dynamic createComponent
+ * - Fixes "t.clear is not a function" and "createComponent is not a function" errors
  */
 
 import {
@@ -13,9 +17,9 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
   signal,
+  effect,
+  ElementRef,
   viewChild,
-  ViewContainerRef,
-  ComponentRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ChartSkeletonComponent } from "../chart-skeleton/chart-skeleton.component";
@@ -63,6 +67,15 @@ export type LazyChartOptionsInput =
   | Record<string, unknown>
   | null;
 
+// Chart.js instance type
+interface ChartInstance {
+  destroy: () => void;
+  update: (mode?: string) => void;
+  render: () => void;
+  data: unknown;
+  options: unknown;
+}
+
 @Component({
   selector: "app-lazy-chart",
   standalone: true,
@@ -73,7 +86,15 @@ export type LazyChartOptionsInput =
       @if (loading()) {
         <app-chart-skeleton [type]="type()" [height]="height()" />
       }
-      <ng-container #chartContainer></ng-container>
+      @if (!loading() && !hasError()) {
+        <canvas #chartCanvas [style.width]="width()" [style.height]="height()"></canvas>
+      }
+      @if (hasError()) {
+        <div class="chart-error">
+          <i class="pi pi-exclamation-triangle"></i>
+          <span>Failed to load chart</span>
+        </div>
+      }
     </div>
   `,
   styles: [
@@ -82,12 +103,27 @@ export type LazyChartOptionsInput =
         position: relative;
         width: 100%;
       }
+      .chart-error {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 2rem;
+        color: var(--text-color-secondary, #6c757d);
+        font-size: 0.875rem;
+      }
+      .chart-error i {
+        color: var(--yellow-500, #f59e0b);
+      }
+      canvas {
+        display: block;
+      }
     `,
   ],
 })
 export class LazyChartComponent implements OnInit, OnDestroy {
-  // Angular 21: Use viewChild() signal instead of @ViewChild()
-  chartContainer = viewChild.required<ViewContainerRef>("chartContainer");
+  // Canvas reference for Chart.js
+  chartCanvas = viewChild<ElementRef<HTMLCanvasElement>>("chartCanvas");
 
   // Angular 21: Use input() signals instead of @Input()
   type = input<"line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea">(
@@ -103,52 +139,95 @@ export class LazyChartComponent implements OnInit, OnDestroy {
   chartHover = output<unknown>();
 
   loading = signal(true);
-  private chartComponentRef: ComponentRef<unknown> | null = null;
+  hasError = signal(false);
+
+  private chartInstance: ChartInstance | null = null;
+  private ChartJS: typeof import("chart.js").Chart | null = null;
+
+  constructor() {
+    // Effect to update chart when data or options change
+    effect(() => {
+      const currentData = this.data();
+      const currentOptions = this.options();
+      const canvas = this.chartCanvas();
+
+      if (this.chartInstance && currentData && canvas) {
+        this.chartInstance.data = currentData;
+        if (currentOptions) {
+          this.chartInstance.options = currentOptions;
+        }
+        this.chartInstance.update();
+      }
+    });
+  }
 
   async ngOnInit() {
-    // Only load Chart.js when this component is actually rendered
     try {
-      // Dynamically import PrimeNG's UIChart component (the actual component class)
-      const chartModule = await import("primeng/chart");
-      const Chart = chartModule.UIChart || chartModule.default;
-
-      if (!Chart) {
-        throw new Error(
-          "Could not find Chart component in primeng/chart module",
-        );
-      }
-
-      // Create the chart component dynamically
-      const container = this.chartContainer();
-      this.chartComponentRef = container.createComponent(Chart);
-
-      // Set inputs
-      if (this.chartComponentRef) {
-        this.chartComponentRef.setInput("type", this.type());
-        this.chartComponentRef.setInput("data", this.data());
-        this.chartComponentRef.setInput("options", this.options());
-        this.chartComponentRef.setInput("width", this.width());
-        this.chartComponentRef.setInput("height", this.height());
-
-        // Wire up outputs
-        const instance = this.chartComponentRef.instance as {
-          onDataSelect?: { subscribe: (fn: (event: unknown) => void) => void };
-        };
-        instance.onDataSelect?.subscribe((event: unknown) => {
-          this.chartClick.emit(event);
-        });
-      }
+      // Dynamically import Chart.js
+      const { Chart, registerables } = await import("chart.js");
+      Chart.register(...registerables);
+      this.ChartJS = Chart;
 
       this.loading.set(false);
+
+      // Wait for canvas to be available in next tick
+      setTimeout(() => this.initChart(), 0);
     } catch (error) {
-      console.error("Failed to load Chart component:", error);
+      console.error("Failed to load Chart.js:", error);
       this.loading.set(false);
+      this.hasError.set(true);
+    }
+  }
+
+  private initChart(): void {
+    const canvas = this.chartCanvas();
+    const chartData = this.data();
+
+    if (!canvas?.nativeElement || !chartData || !this.ChartJS) {
+      return;
+    }
+
+    try {
+      const ctx = canvas.nativeElement.getContext("2d");
+      if (!ctx) {
+        throw new Error("Could not get canvas 2D context");
+      }
+
+      // Destroy existing chart if any
+      if (this.chartInstance) {
+        this.chartInstance.destroy();
+      }
+
+      // Create new chart instance
+      this.chartInstance = new this.ChartJS(ctx, {
+        type: this.type() as "line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea",
+        data: chartData as import("chart.js").ChartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          ...(this.options() || {}),
+          onClick: (_event: unknown, elements: unknown[]) => {
+            if (elements.length > 0) {
+              this.chartClick.emit(elements);
+            }
+          },
+          onHover: (_event: unknown, elements: unknown[]) => {
+            if (elements.length > 0) {
+              this.chartHover.emit(elements);
+            }
+          },
+        } as import("chart.js").ChartOptions,
+      }) as unknown as ChartInstance;
+    } catch (error) {
+      console.error("Failed to initialize chart:", error);
+      this.hasError.set(true);
     }
   }
 
   ngOnDestroy() {
-    if (this.chartComponentRef) {
-      this.chartComponentRef.destroy();
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+      this.chartInstance = null;
     }
   }
 
@@ -156,8 +235,9 @@ export class LazyChartComponent implements OnInit, OnDestroy {
    * Update chart data dynamically
    */
   updateData(newData: LazyChartData) {
-    if (this.chartComponentRef) {
-      this.chartComponentRef.setInput("data", newData);
+    if (this.chartInstance) {
+      this.chartInstance.data = newData;
+      this.chartInstance.update();
     }
   }
 
@@ -165,8 +245,9 @@ export class LazyChartComponent implements OnInit, OnDestroy {
    * Update chart options dynamically
    */
   updateOptions(newOptions: LazyChartOptions) {
-    if (this.chartComponentRef) {
-      this.chartComponentRef.setInput("options", newOptions);
+    if (this.chartInstance) {
+      this.chartInstance.options = newOptions;
+      this.chartInstance.update();
     }
   }
 
@@ -174,11 +255,8 @@ export class LazyChartComponent implements OnInit, OnDestroy {
    * Refresh the chart
    */
   refresh() {
-    if (this.chartComponentRef) {
-      const instance = this.chartComponentRef.instance as {
-        refresh?: () => void;
-      };
-      instance.refresh?.();
+    if (this.chartInstance) {
+      this.chartInstance.update();
     }
   }
 }

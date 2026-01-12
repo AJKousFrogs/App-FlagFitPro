@@ -18,7 +18,7 @@ import { FormsModule } from "@angular/forms";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import {
   FormValidators,
   combineValidators,
@@ -36,7 +36,7 @@ import { toLogContext } from "../../../core/services/logger.service";
     FormsModule,
     CardModule,
     InputTextModule,
-    MessageModule,
+    Message,
 
     ButtonComponent,
   ],

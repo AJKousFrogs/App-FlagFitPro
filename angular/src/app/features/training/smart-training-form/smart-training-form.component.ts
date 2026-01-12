@@ -213,6 +213,7 @@ export class SmartTrainingFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   isSubmitting = signal(false);
+  durationValue = signal(45);
 
   aiSuggestions = signal<TrainingSuggestion[]>([]);
   weatherData = signal<WeatherData | null>(null);
@@ -229,6 +230,12 @@ export class SmartTrainingFormComponent implements OnInit {
   trainingForm: FormGroup;
 
   sessionTypes: SessionTypeOption[] = [
+    {
+      label: "Flag Football Practice",
+      value: "flag_football",
+      icon: "pi pi-flag",
+      description: "Full team practice with plays and scrimmage",
+    },
     {
       label: "Speed Training",
       value: "speed",
@@ -268,7 +275,7 @@ export class SmartTrainingFormComponent implements OnInit {
   ];
 
   durationDisplay = computed(() => {
-    const duration = this.trainingForm?.get("duration")?.value || 45;
+    const duration = this.durationValue();
     const hours = Math.floor(duration / 60);
     const minutes = duration % 60;
     if (hours > 0) {
@@ -385,10 +392,24 @@ export class SmartTrainingFormComponent implements OnInit {
       .subscribe((type) => {
         this.updateRecommendedEquipment(type);
       });
+
+    // Update duration signal when form value changes
+    this.trainingForm
+      .get("duration")
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((duration) => {
+        this.durationValue.set(duration);
+      });
   }
 
   private updateRecommendedEquipment(sessionType: string) {
     const equipmentMap: Record<string, EquipmentOption[]> = {
+      flag_football: [
+        { id: "football", name: "Football", icon: "pi pi-circle" },
+        { id: "flags", name: "Flag Belts", icon: "pi pi-flag" },
+        { id: "cones", name: "Cones", icon: "pi pi-circle" },
+        { id: "markers", name: "Field Markers", icon: "pi pi-map" },
+      ],
       speed: [
         { id: "cones", name: "Cones", icon: "pi pi-circle" },
         { id: "ladder", name: "Agility Ladder", icon: "pi pi-th-large" },
@@ -469,6 +490,11 @@ export class SmartTrainingFormComponent implements OnInit {
       this.logger.debug("Creating training session:", toLogContext(formValue));
 
       // Save to Supabase
+      // Note: 'equipment' is stored in notes as JSON since column doesn't exist in schema
+      const equipmentList = formValue.equipment?.length > 0 
+        ? `Equipment: ${formValue.equipment.join(', ')}`
+        : '';
+      
       const { error } = await this.supabaseService.client
         .from("training_sessions")
         .insert({
@@ -477,10 +503,9 @@ export class SmartTrainingFormComponent implements OnInit {
           duration_minutes: formValue.duration,
           intensity: this.getIntensityFromDuration(formValue.duration),
           is_outdoor: formValue.outdoorSession,
-          equipment: formValue.equipment,
           scheduled_date: new Date().toISOString(),
           status: "scheduled",
-          notes: `Created via Smart Training Form`,
+          notes: `Created via Smart Training Form${equipmentList ? '. ' + equipmentList : ''}`,
         })
         .select()
         .single();

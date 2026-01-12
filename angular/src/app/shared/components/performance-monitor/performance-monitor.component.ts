@@ -10,7 +10,7 @@ import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { ProgressBarModule } from "primeng/progressbar";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { PerformanceMonitorService } from "../../../core/services/performance-monitor.service";
 import { MessageService } from "primeng/api";
 import { timer } from "rxjs";
@@ -23,7 +23,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   imports: [
     CommonModule,
     ProgressBarModule,
-    MessageModule,
+    Message,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -72,11 +72,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
         @if (hasIssues()) {
           <div class="performance-actions">
-            <p-message
-              severity="warn"
-              text="Performance issues detected"
-              [closable]="false"
-            >
+            <p-message severity="warn">
+              Performance issues detected
             </p-message>
             <div class="action-buttons">
               <app-button

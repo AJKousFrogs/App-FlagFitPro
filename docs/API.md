@@ -1,8 +1,8 @@
 # FlagFit Pro API Documentation
 
-**Version**: 2.1  
-**Last Updated**: 29. December 2025  
-**Last Verified Against Codebase**: 2025-12-28  
+**Version**: 2.2  
+**Last Updated**: 12 January 2026  
+**Last Verified Against Codebase**: 2026-01-12  
 **Status**: ✅ Production Ready
 
 ---
@@ -132,11 +132,13 @@ Based on 87 peer-reviewed studies with 12,453 athletes.
 
 ### Wellness
 
-| Method | Endpoint                 | Auth | Description              |
-| ------ | ------------------------ | ---- | ------------------------ |
-| GET    | `/api/wellness/latest`   | Yes  | Latest wellness check-in |
-| GET    | `/api/wellness/checkins` | Yes  | Wellness history         |
-| POST   | `/api/wellness/checkin`  | Yes  | Submit wellness check-in |
+| Method | Endpoint                  | Auth | Description              |
+| ------ | ------------------------- | ---- | ------------------------ |
+| GET    | `/api/wellness/latest`    | Yes  | Latest wellness check-in |
+| GET    | `/api/wellness/checkins`  | Yes  | Wellness history         |
+| POST   | `/api/wellness-checkin`   | Yes  | Submit wellness check-in |
+
+> **Note**: The wellness check-in POST endpoint uses a hyphen (`/api/wellness-checkin`) not a slash (`/api/wellness/checkin`).
 
 ### Performance
 
@@ -283,7 +285,9 @@ Based on 87 peer-reviewed studies with 12,453 athletes.
 | GET    | `/api/coach/team`               | Yes  | Team overview       |
 | GET    | `/api/coach/training-analytics` | Yes  | Training analytics  |
 | POST   | `/api/coach/training-session`   | Yes  | Create team session |
-| GET    | `/api/coach/games`              | Yes  | Team games          |
+| GET    | `/api/games`                    | Yes  | Team games          |
+
+> **Note**: Coach games endpoint uses the main `/api/games` route (not `/api/coach/games`). Role-based filtering is handled server-side.
 
 ### Coach Activity Feed
 
@@ -506,4 +510,42 @@ All API endpoints are implemented as Netlify Functions in `/netlify/functions/`:
 
 ---
 
-_Last Updated: December 28, 2025_
+### Exercise Library (Unified)
+
+| Method | Endpoint                       | Auth | Description                        |
+| ------ | ------------------------------ | ---- | ---------------------------------- |
+| GET    | `/api/exercises`               | Yes  | All exercises (unified library)    |
+| GET    | `/api/exercises?category={cat}`| Yes  | Filter by category                 |
+| GET    | `/api/exercises?search={term}` | Yes  | Search exercises                   |
+
+The unified exercise endpoint combines data from:
+- `exercises` table (main exercise library)
+- `plyometrics_exercises` table (90 plyometric exercises)
+- `isometrics_exercises` table (23 isometric exercises)
+
+---
+
+## Recent Changes (v2.2 - January 2026)
+
+### API Endpoint Updates
+- **Wellness check-in**: Changed from `/api/wellness/checkin` to `/api/wellness-checkin`
+- **Coach games**: Now uses `/api/games` instead of `/api/coach/games`
+
+### New Tables Added
+- `coach_inbox_items` - Coach alerts and notifications
+- `ai_followups` - AI scheduled follow-ups
+- `user_ai_preferences` - AI interaction preferences
+- `parent_guardian_links` - Youth athlete parent links
+- `acwr_history` - ACWR calculation history
+- `micro_sessions` - Quick training sessions
+- `team_templates` - Reusable training templates
+
+### Schema Updates
+- Added `target_muscles`, `equipment_required` to `exercises`
+- Added `is_outdoor`, `scheduled_date`, `intensity` to `training_sessions`
+- Added `message` column to `team_invitations`
+- Added `protocol_id` relationship from `recovery_sessions` to `recovery_protocols`
+
+---
+
+_Last Updated: January 12, 2026_

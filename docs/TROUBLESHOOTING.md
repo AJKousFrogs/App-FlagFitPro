@@ -111,6 +111,53 @@ VITE_DEV_PORT=4001 npm run dev     # Use different port
 - **After package changes**: Always restart dev server
 - **Avoid**: Developing in cloud-synced folders (OneDrive, Dropbox)
 
+## 🗃️ **Database Schema Errors**
+
+### Column/Table Not Found Errors
+
+If you see errors like:
+- `Could not find the 'equipment' column of 'training_sessions'`
+- `column team_invitations.message does not exist`
+- `Could not find a relationship between 'recovery_sessions' and 'recovery_protocols'`
+
+**Solution**: Run the latest database migrations:
+```bash
+# Via Supabase CLI
+supabase db push
+
+# Or apply migrations manually in Supabase Dashboard
+# Files in: supabase/migrations/20260112_*.sql
+```
+
+### Common Schema Fixes (Jan 2026)
+
+| Error | Table | Fix |
+|-------|-------|-----|
+| Missing `message` column | `team_invitations` | Run migration `20260112_fix_missing_schema_elements.sql` |
+| Missing `target_muscles` | `exercises` | Run migration `20260112_add_missing_tables_for_frontend.sql` |
+| Missing `recovery_protocols` relationship | `recovery_sessions` | Run migration `20260112_fix_missing_schema_elements.sql` |
+
+## 🔌 **API Endpoint Errors**
+
+### 500 Errors on Wellness Check-in
+
+**Wrong**: `/api/wellness/checkin` → 500 error  
+**Correct**: `/api/wellness-checkin` (with hyphen)
+
+### 404 Errors on Coach Games
+
+**Wrong**: `/api/coach/games` → 404  
+**Correct**: `/api/games` (main games endpoint, role-based filtering server-side)
+
+## 📊 **Chart Component Errors**
+
+### "t.clear is not a function" or "createComponent is not a function"
+
+These errors indicate PrimeNG 21 Chart component issues.
+
+**Solution**: The `LazyChartComponent` has been updated to use Chart.js directly instead of dynamic PrimeNG component loading. Ensure you have the latest version of:
+- `angular/src/app/shared/components/lazy-chart/lazy-chart.component.ts`
+
 ## 📞 **When to Ask for Help**
 
 If these don't work:
@@ -123,3 +170,7 @@ If these don't work:
 ---
 
 **💡 Pro Tip**: Most issues are solved by `npm run troubleshoot` - try it first!
+
+---
+
+_Last Updated: January 12, 2026_

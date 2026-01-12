@@ -1,8 +1,8 @@
 # Backend API Setup Guide
 
-**Version**: 2.0  
-**Last Updated**: 29. December 2025  
-**Last Verified Against Codebase**: 2025-12-28  
+**Version**: 2.1  
+**Last Updated**: 12 January 2026  
+**Last Verified Against Codebase**: 2026-01-12  
 **Status**: ✅ Production Ready
 
 ---
@@ -11,7 +11,7 @@
 
 FlagFit Pro uses **Netlify Functions** (serverless) as the backend API layer, connecting to **Supabase PostgreSQL** for data storage and authentication. This guide covers setup for both local development and production deployment.
 
-> **Note**: This project does NOT use Express.js. All 80 API functions are implemented as Netlify serverless functions in `/netlify/functions/`.
+> **Note**: This project does NOT use Express.js. All 95+ API functions are implemented as Netlify serverless functions in `/netlify/functions/`.
 
 ### Prerequisites Checklist
 

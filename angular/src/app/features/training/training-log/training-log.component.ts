@@ -37,7 +37,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
@@ -69,7 +69,7 @@ interface SessionType {
     Textarea,
     TagModule,
     ToastModule,
-    MessageModule,
+    Message,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -457,20 +457,18 @@ interface SessionType {
             >
               <div class="conflict-warning">
                 @for (conflict of conflicts(); track conflict.type) {
-                  <p-message severity="warn" [closable]="false">
-                    <ng-template pTemplate>
-                      <div class="warning-content">
-                        <i class="pi pi-info-circle"></i>
-                        <div>
-                          <strong>Conflict: {{ conflict.type }}</strong>
-                          <p>{{ conflict.message }}</p>
-                          <p class="conflict-detail">
-                            RPE: {{ conflict.playerValue }} vs Session Type:
-                            {{ conflict.coachValue }}
-                          </p>
-                        </div>
+                  <p-message severity="warn">
+                    <div class="warning-content">
+                      <i class="pi pi-info-circle"></i>
+                      <div>
+                        <strong>Conflict: {{ conflict.type }}</strong>
+                        <p>{{ conflict.message }}</p>
+                        <p class="conflict-detail">
+                          RPE: {{ conflict.playerValue }} vs Session Type:
+                          {{ conflict.coachValue }}
+                        </p>
                       </div>
-                    </ng-template>
+                    </div>
                   </p-message>
                 }
                 <small

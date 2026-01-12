@@ -8,7 +8,7 @@ import {
 
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ToastModule } from "primeng/toast";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -35,7 +35,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     RouterModule,
     CardModule,
     ButtonComponent,
-    MessageModule,
+    Message,
     ToastModule,
   ],
 

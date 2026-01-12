@@ -23,7 +23,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
@@ -93,7 +93,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     CardModule,
     DialogModule,
     InputTextModule,
-    MessageModule,
+    Message,
     ProgressBarModule,
     Select,
     TagModule,
@@ -400,16 +400,14 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
 
                 @if (answerSubmitted()) {
                   <p-message
-                    [severity]="
-                      selectedAnswer() === q.correctIndex ? 'success' : 'error'
-                    "
-                    [text]="
+                    [severity]="selectedAnswer() === q.correctIndex ? 'success' : 'error'"
+                  >
+                    {{
                       selectedAnswer() === q.correctIndex
                         ? 'Correct!'
-                        : 'Incorrect. The correct answer is: ' +
-                          q.options[q.correctIndex]
-                    "
-                  ></p-message>
+                        : 'Incorrect. The correct answer is: ' + q.options[q.correctIndex]
+                    }}
+                  </p-message>
                 }
               </div>
             }
@@ -456,20 +454,17 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             </p>
 
             @if (quizScore() >= 80) {
-              <p-message
-                severity="success"
-                text="Great job! You know your plays well."
-              ></p-message>
+              <p-message severity="success">
+                Great job! You know your plays well.
+              </p-message>
             } @else if (quizScore() >= 60) {
-              <p-message
-                severity="warn"
-                text="Good effort! Keep studying to improve."
-              ></p-message>
+              <p-message severity="warn">
+                Good effort! Keep studying to improve.
+              </p-message>
             } @else {
-              <p-message
-                severity="info"
-                text="Keep studying! Review the plays you missed."
-              ></p-message>
+              <p-message severity="info">
+                Keep studying! Review the plays you missed.
+              </p-message>
             }
 
             <div class="results-actions">

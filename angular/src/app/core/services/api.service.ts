@@ -256,7 +256,7 @@ export const API_ENDPOINTS = {
     team: "/api/coach/team",
     trainingAnalytics: "/api/coach/training-analytics",
     createTrainingSession: "/api/coach/training-session",
-    games: "/api/coach/games",
+    games: "/api/games", // Uses main games endpoint - coach role handled server-side
     health: "/api/coach/health",
   },
   community: {
@@ -290,7 +290,7 @@ export const API_ENDPOINTS = {
     articles: "/api/knowledge-search",
   },
   wellness: {
-    checkin: "/api/wellness/checkin",
+    checkin: "/api/wellness-checkin",
     latest: "/api/wellness/latest",
     checkins: "/api/wellness/checkins",
     get: "/api/performance-data/wellness",

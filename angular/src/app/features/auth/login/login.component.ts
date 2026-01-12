@@ -21,7 +21,7 @@ import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { PasswordModule } from "primeng/password";
 import { ToastModule } from "primeng/toast";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -47,7 +47,7 @@ import {
     ButtonComponent,
     InputTextModule,
     CheckboxModule,
-    MessageModule,
+    Message,
     ToastModule,
     PasswordModule,
   ],

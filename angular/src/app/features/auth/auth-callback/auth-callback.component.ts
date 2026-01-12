@@ -8,7 +8,7 @@ import {
 
 import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -40,7 +40,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     RouterModule,
     CardModule,
     ButtonComponent,
-    MessageModule,
+    Message,
     ProgressSpinnerModule,
     ToastModule,
   ],
@@ -63,7 +63,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
               <i class="pi pi-times-circle"></i>
             </div>
             <h2>Authentication Failed</h2>
-            <p-message severity="error" [text]="error()"></p-message>
+            <p-message severity="error">{{ error() }}</p-message>
             <div class="error-actions">
               <app-button
                 iconLeft="pi-refresh"

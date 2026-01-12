@@ -166,14 +166,27 @@
   }
 
   // ============================================
-  // TAGS
+  // TAGS - Design Contract: min-height 28px, proper padding
   // ============================================
 
   .p-tag {
-    padding: var(--p-tag-padding-y) var(--p-tag-padding-x);
-    border-radius: var(--p-tag-border-radius);
-    font-size: var(--p-tag-font-size);
-    font-weight: var(--p-tag-font-weight);
+    // Geometry - ensure proper padding and touch targets
+    padding: var(--space-2) var(--space-3); // 8px 12px
+    min-height: 28px;
+    border-radius: var(--p-tag-border-radius, var(--radius-md));
+    font-size: var(--p-tag-font-size, var(--font-body-sm-size));
+    font-weight: var(--p-tag-font-weight, var(--font-weight-semibold));
+    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+
+    // Icon within tag
+    .p-tag-icon,
+    i,
+    .pi {
+      font-size: 0.875em;
+    }
 
     &.p-tag-success {
       background: var(--p-tag-success-background);
@@ -193,6 +206,27 @@
     &.p-tag-danger {
       background: var(--p-tag-danger-background);
       color: var(--p-tag-danger-color);
+    }
+
+    // Secondary/neutral variant
+    &.p-tag-secondary {
+      background: var(--surface-secondary);
+      color: var(--color-text-secondary);
+    }
+
+    // Confidence badge variant (used in confidence indicator)
+    &.confidence-badge {
+      padding: var(--space-1) var(--space-3); // 4px 12px - slightly smaller
+      min-height: 24px;
+      font-size: var(--font-caption-size);
+    }
+
+    // Stat tag variant (used in dashboards)
+    &.stat-tag,
+    &.event-type-tag {
+      padding: var(--space-1) var(--space-2); // 4px 8px
+      min-height: 22px;
+      font-size: var(--font-caption-size);
     }
   }
 
@@ -790,7 +824,7 @@
   }
 
   // ============================================
-  // TABS
+  // TABS - Design Contract: 44px min-height, proper padding
   // ============================================
 
   .p-tabs {
@@ -801,8 +835,8 @@
 
     .p-tablist {
       display: flex;
-      gap: var(--space-1);
-      padding: var(--space-2);
+      gap: var(--space-2);
+      padding: var(--space-3);
       background: var(--surface-secondary);
       border-bottom: 1px solid var(--color-border-muted);
       overflow-x: auto;
@@ -817,12 +851,12 @@
     }
 
     .p-tab {
-      padding: var(--space-3) var(--space-5);
+      padding: var(--space-3) var(--space-4); // 12px 16px
       background: transparent;
       border: none;
       border-radius: var(--radius-md);
       color: var(--color-text-secondary);
-      font-size: var(--font-size-body);
+      font-size: var(--font-body-sm-size);
       font-weight: var(--font-weight-medium);
       cursor: pointer;
       transition:
@@ -834,8 +868,9 @@
       white-space: nowrap;
       outline: none;
       min-height: 44px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: var(--space-2);
       position: relative;
 
@@ -896,7 +931,7 @@
       }
 
       i {
-        font-size: var(--font-size-body);
+        font-size: var(--font-body-sm-size);
         transition: transform var(--transition-base);
       }
 
@@ -906,24 +941,24 @@
     }
 
     .p-tabpanels {
-      padding: var(--space-6);
+      padding: var(--space-5);
       background: var(--surface-primary);
     }
 
     // Mobile responsive overrides
     @include respond-to(md) {
       .p-tablist {
-        padding: var(--space-1);
-        gap: 0;
+        padding: var(--space-2);
+        gap: var(--space-1);
       }
 
       .p-tab {
         padding: var(--space-2) var(--space-3);
-        font-size: var(--font-size-h4);
+        font-size: var(--font-caption-size);
         min-height: 40px;
 
         i {
-          font-size: var(--font-size-h4);
+          font-size: var(--font-caption-size);
         }
       }
 
@@ -938,12 +973,12 @@
     .p-tablist {
       background: var(--surface-secondary);
       border-radius: var(--radius-lg);
-      padding: var(--space-2);
+      padding: var(--space-3);
       margin-bottom: var(--space-4);
     }
 
     .p-tab {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: var(--space-2);
     }
@@ -1363,6 +1398,220 @@
     .p-card.action-card:hover {
       border-color: var(--color-brand-primary);
       background: var(--hover-bg-secondary);
+    }
+  }
+
+  // ============================================
+  // INPUT GROUP - Search inputs with icons
+  // Design Contract: 44px height, proper icon padding
+  // ============================================
+
+  .p-inputgroup {
+    display: flex;
+    align-items: stretch;
+
+    .p-inputgroup-addon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 var(--space-3);
+      background: var(--surface-secondary);
+      border: 1px solid var(--color-border-primary);
+      color: var(--color-text-secondary);
+      min-width: 44px;
+
+      // First addon gets left radius
+      &:first-child {
+        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+        border-right: none;
+      }
+
+      // Last addon gets right radius
+      &:last-child {
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+        border-left: none;
+      }
+
+      i {
+        font-size: var(--font-body-size);
+      }
+    }
+
+    // Input inside group
+    .p-inputtext {
+      flex: 1;
+      border-radius: 0;
+      min-height: 44px;
+
+      // If first child (no left addon)
+      &:first-child {
+        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+      }
+
+      // If last child (no right addon)
+      &:last-child {
+        border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      }
+
+      // If only child
+      &:only-child {
+        border-radius: var(--radius-lg);
+      }
+    }
+  }
+
+  // ============================================
+  // ICON FIELD - Input with icon inside
+  // Design Contract: Icon inside input, proper padding
+  // ============================================
+
+  .p-iconfield,
+  .p-icon-field {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+
+    .p-inputicon,
+    .p-input-icon {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-secondary);
+      z-index: 1;
+      pointer-events: none;
+
+      i {
+        font-size: var(--font-body-size);
+      }
+    }
+
+    // Left icon positioning
+    .p-inputicon-left,
+    &.p-iconfield-left .p-inputicon,
+    &.p-icon-field-left .p-input-icon {
+      left: var(--space-4);
+    }
+
+    // Right icon positioning
+    .p-inputicon-right,
+    &.p-iconfield-right .p-inputicon,
+    &.p-icon-field-right .p-input-icon {
+      right: var(--space-4);
+    }
+
+    // Input with left icon
+    &.p-iconfield-left .p-inputtext,
+    &.p-icon-field-left .p-inputtext,
+    .p-inputtext.p-icon-field-left {
+      padding-left: calc(var(--space-4) + 24px);
+    }
+
+    // Input with right icon
+    &.p-iconfield-right .p-inputtext,
+    &.p-icon-field-right .p-inputtext,
+    .p-inputtext.p-icon-field-right {
+      padding-right: calc(var(--space-4) + 24px);
+    }
+
+    .p-inputtext {
+      width: 100%;
+    }
+  }
+
+  // ============================================
+  // GLOBAL MESSAGE BANNER - Announcements
+  // Design Contract: Proper padding, rounded corners
+  // ============================================
+
+  .p-message {
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    .p-message-wrapper {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      width: 100%;
+    }
+
+    .p-message-icon {
+      font-size: var(--font-h3-size);
+      flex-shrink: 0;
+    }
+
+    .p-message-text {
+      flex: 1;
+      font-size: var(--font-body-size);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .p-message-close-button,
+    .p-message-close {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color var(--motion-fast) var(--ease-standard);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    // Info severity (default for announcements)
+    &.p-message-info {
+      background: var(--color-status-info-surface);
+      border: 1px solid var(--color-status-info);
+      color: var(--color-status-info);
+
+      .p-message-icon {
+        color: var(--color-status-info);
+      }
+
+      .p-message-text {
+        color: var(--color-text-primary);
+      }
+    }
+
+    // Warning severity
+    &.p-message-warn {
+      background: var(--color-status-warning-surface);
+      border: 1px solid var(--color-status-warning);
+      color: var(--color-status-warning);
+
+      .p-message-text {
+        color: var(--color-text-primary);
+      }
+    }
+
+    // Success severity
+    &.p-message-success {
+      background: var(--color-status-success-surface);
+      border: 1px solid var(--color-status-success);
+      color: var(--color-status-success);
+
+      .p-message-text {
+        color: var(--color-text-primary);
+      }
+    }
+
+    // Error severity
+    &.p-message-error {
+      background: var(--color-status-error-surface);
+      border: 1px solid var(--color-status-error);
+      color: var(--color-status-error);
+
+      .p-message-text {
+        color: var(--color-text-primary);
+      }
     }
   }
 }

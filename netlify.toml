@@ -1427,6 +1427,19 @@
   status = 200
   force = true
 
+# Exercises API - Exercise library for training
+[[redirects]]
+  from = "/api/exercises/*"
+  to = "/.netlify/functions/exercises"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/exercises"
+  to = "/.netlify/functions/exercises"
+  status = 200
+  force = true
+
 # Micro Sessions API - Quick training sessions
 [[redirects]]
   from = "/api/micro-sessions/*"

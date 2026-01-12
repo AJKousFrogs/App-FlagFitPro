@@ -1,8 +1,8 @@
 # FlagFit Pro Database Setup Guide
 
-**Version**: 2.1  
-**Last Updated**: January 2026  
-**Last Verified Against Supabase**: January 2026  
+**Version**: 2.4  
+**Last Updated**: 12 January 2026  
+**Last Verified Against Supabase**: 12 January 2026  
 **Status**: ✅ Production Ready
 
 ---
@@ -65,11 +65,12 @@ The FlagFit Pro database is organized into the following systems:
 - `GET/POST /api/nutrition/supplements` - Supplement calculations
 - `GET/POST /api/nutrition/profile` - Athlete nutrition profile
 
-### 4. Recovery System (✅ Partially Implemented)
+### 4. Recovery System (✅ Fully Implemented)
 
 **Implemented Tables:**
 
-- `recovery_sessions` - Recovery protocol session tracking
+- `recovery_sessions` - Recovery protocol session tracking (with `protocol_id` FK)
+- `recovery_protocols` - Generic recovery protocols (added Jan 2026)
 - `sleep_optimization_protocols` (3 entries)
 - `sprint_recovery_protocols` (4 entries)
 - `environmental_recovery_protocols` (3 entries)
@@ -78,14 +79,13 @@ The FlagFit Pro database is organized into the following systems:
 
 **NOT Implemented:**
 
-- ~~`recovery_protocols`~~ (generic)
 - ~~`cryotherapy_protocols`~~
 - ~~`compression_protocols`~~
 - ~~`manual_therapy_protocols`~~
 - ~~`heat_therapy_protocols`~~
 - ~~`athlete_recovery_profiles`~~
 
-### 5. AI Coaching System (✅ Implemented)
+### 5. AI Coaching System (✅ Fully Implemented)
 
 **Implemented Tables:**
 
@@ -94,6 +94,11 @@ The FlagFit Pro database is organized into the following systems:
 - `ai_recommendations` - Actionable AI recommendations
 - `ai_feedback` - User feedback on AI responses
 - `ai_coach_visibility` - Coach visibility into player AI interactions
+- `ai_followups` - AI scheduled follow-up messages (added Jan 2026)
+- `ai_review_queue` - Queue for AI responses needing human review (added Jan 2026)
+- `user_ai_preferences` - User preferences for AI interactions (added Jan 2026)
+- `classification_history` - AI intent classification history (added Jan 2026)
+- `conversation_context` - AI conversation context storage (added Jan 2026)
 - `knowledge_base_entries` (27 entries) - Evidence-based knowledge base
 - `chatbot_user_context`, `chatbot_user_state`, `chatbot_response_filters`
 
@@ -177,12 +182,16 @@ The FlagFit Pro database is organized into the following systems:
 
 ### 7. Team Management (✅ Implemented)
 
-- `teams`, `team_members`, `team_invitations`, `team_players`
+- `teams`, `team_members`, `team_invitations` (with `message` column), `team_players`
 - `team_events`, `attendance_records`, `absence_requests`
 - `channels`, `channel_members`, `chat_messages`
 - `depth_chart_templates`, `depth_chart_entries`
 - `player_evaluations`, `coach_observations`
 - `equipment_inventory`, `jersey_assignments`
+- `team_templates` - Reusable training templates (added Jan 2026)
+- `template_assignments` - Template assignments to players (added Jan 2026)
+- `coach_inbox_items` - Coach alerts, recommendations, and requests (added Jan 2026)
+- `coach_alert_acknowledgments` - Alert acknowledgment tracking (added Jan 2026)
 
 ### 8. Competition & Tournaments (✅ Implemented)
 
@@ -196,6 +205,17 @@ The FlagFit Pro database is organized into the following systems:
 - `user_preferences`, `user_achievements`, `user_notification_preferences`
 - `notification_preferences`, `push_notification_tokens`
 - `gdpr_consent`, `gdpr_data_processing_log`
+- `user_age_groups` - Age group classification (added Jan 2026)
+- `youth_athlete_settings` - Youth athlete specific settings (added Jan 2026)
+- `parent_guardian_links` - Parent/guardian to athlete links (added Jan 2026)
+- `parent_notifications` - Notifications for parents (added Jan 2026)
+
+### 10. Training Analytics (✅ Implemented - Jan 2026)
+
+- `acwr_history` - Historical ACWR calculations
+- `digest_history` - Daily/weekly training digest history
+- `micro_sessions` - Short training/recovery sessions
+- `micro_session_analytics` - Analytics for micro sessions
 
 ## Prerequisites
 
@@ -374,6 +394,19 @@ The following scripts mentioned in previous documentation do NOT exist:
 
 ## Changelog
 
+- **v2.4 (2026-01-12)**: Schema Alignment with Frontend
+  - Added missing columns to `exercises`: `target_muscles`, `equipment_required`
+  - Added missing columns to `isometrics_exercises`: `target_muscles`, `instructions`, `hold_duration_seconds`, `sets`, `reps`
+  - Added missing columns to `plyometrics_exercises`: `target_muscles`, `coaching_cues`
+  - Added missing columns to `training_sessions`: `is_outdoor`, `scheduled_date`, `intensity`
+  - Added `message` column to `team_invitations`
+  - Created `recovery_protocols` table and linked to `recovery_sessions`
+  - Created 17 new tables for AI, coaching, youth athletes, and analytics:
+    - AI System: `ai_followups`, `user_ai_preferences`, `classification_history`, `conversation_context`, `ai_review_queue`
+    - Coach System: `coach_inbox_items`, `coach_alert_acknowledgments`, `team_templates`, `template_assignments`
+    - Youth Athletes: `user_age_groups`, `youth_athlete_settings`, `parent_guardian_links`, `parent_notifications`
+    - Analytics: `acwr_history`, `digest_history`, `micro_sessions`, `micro_session_analytics`
+  - All new tables include RLS policies and proper indexes
 - **v2.3 (2025-12-29)**: Knowledge Base Upgrade with API Integrations
   - Expanded `knowledge_base_entries` from 7 to 27 entries
   - Added nutrition knowledge: Athletes Plate Method, hydration, tournament protocols

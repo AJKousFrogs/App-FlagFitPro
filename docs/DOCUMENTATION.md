@@ -50,9 +50,10 @@
 
 | Document | Description |
 |----------|-------------|
-| [API.md](./API.md) | Complete API reference (80+ endpoints) |
+| [API.md](./API.md) | Complete API reference (95+ endpoints) |
 | [ROUTE_REDIRECTS.md](./ROUTE_REDIRECTS.md) | Route redirect configuration |
 | [NETLIFY_DEPLOYMENT_GUIDE.md](./NETLIFY_DEPLOYMENT_GUIDE.md) | Netlify deployment guide |
+| [RELEASE_NOTES_2026-01-12.md](./RELEASE_NOTES_2026-01-12.md) | Latest release notes (Jan 2026) |
 
 ### 🗄️ Database
 
@@ -195,4 +196,26 @@ These files are kept for historical reference but the consolidated [AUDITS.md](.
 ---
 
 **Maintained By:** Development Team  
-**Last Updated:** January 2026
+**Last Updated:** January 12, 2026
+
+---
+
+## 📋 Recent Changes (January 2026)
+
+### Release Notes
+See [RELEASE_NOTES_2026-01-12.md](./RELEASE_NOTES_2026-01-12.md) for:
+- Chart component fixes (PrimeNG 21 compatibility)
+- API endpoint corrections (`/api/wellness-checkin`, `/api/games`)
+- 17 new database tables added
+- Database migration instructions
+
+### Updated Documents
+| Document | Changes |
+|----------|---------|
+| [API.md](./API.md) | v2.2 - Corrected endpoints, added exercises API |
+| [DATABASE_SETUP.md](./DATABASE_SETUP.md) | v2.4 - 17 new tables, updated changelog |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | v2.3 - Updated status to 88% complete |
+| [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) | Added schema errors, API errors, Chart fixes |
+| [BACKEND_SETUP.md](./BACKEND_SETUP.md) | v2.1 - Updated function count |
+| [NETLIFY_DEPLOYMENT_GUIDE.md](./NETLIFY_DEPLOYMENT_GUIDE.md) | v1.1 - Added recent API route changes |
+| [DEVELOPMENT.md](./DEVELOPMENT.md) | Added recent updates section |

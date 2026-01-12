@@ -422,7 +422,7 @@ export class OfficialsService {
       opponent_name?: string;
     }
     return this.apiService
-      .get<GameResponse[]>(`/api/coach/games`, { teamId, limit: 50 })
+      .get<GameResponse[]>(`/api/games`, { teamId, limit: 50 })
       .pipe(
         map((response) => {
           if (response.success && response.data) {

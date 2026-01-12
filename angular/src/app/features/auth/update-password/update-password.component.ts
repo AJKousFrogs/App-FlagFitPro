@@ -16,7 +16,7 @@ import {
 import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
-import { MessageModule } from "primeng/message";
+import { Message } from "primeng/message";
 import { PasswordModule } from "primeng/password";
 import { ToastModule } from "primeng/toast";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -44,7 +44,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     ButtonComponent,
     InputTextModule,
     PasswordModule,
-    MessageModule,
+    Message,
     ToastModule,
   ],
   template: `
@@ -129,12 +129,10 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
           </div>
         } @else {
           <div class="invalid-session">
-            <p-message
-              severity="error"
-              text="This password reset link is invalid or has expired."
-              styleClass="w-full mb-4"
-            ></p-message>
-            <p class="mb-4">Please request a new password reset link.</p>
+            <p-message severity="error">
+              This password reset link is invalid or has expired.
+            </p-message>
+            <p class="mb-4 mt-4">Please request a new password reset link.</p>
             <a [routerLink]="['/reset-password']" class="update-password-link">
               Request New Reset Link
             </a>
