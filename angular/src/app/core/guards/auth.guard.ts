@@ -17,7 +17,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
   // Check both the auth service signal AND the supabase session directly
   // This handles the race condition where the signal hasn't updated yet
   let hasSession = !!supabaseService.session();
-  const isAuthenticated = authService.isAuthenticated();
+  let isAuthenticated = authService.isAuthenticated();
 
   logger.debug("[AuthGuard] Checking access", {
     url: state.url,
@@ -26,13 +26,14 @@ export const authGuard: CanActivateFn = async (route, state) => {
     isInitialized: supabaseService.isInitialized(),
   });
 
-  // If no session in signal but user should be authenticated, try to refresh from Supabase
+  // If no session found, try multiple methods to verify authentication
   if (!hasSession && !isAuthenticated) {
     logger.debug(
       "[AuthGuard] No immediate session found, checking Supabase directly...",
     );
 
     try {
+      // Method 1: Try getSession() - checks localStorage and refreshes if needed
       const {
         data: { session },
         error,
@@ -41,8 +42,23 @@ export const authGuard: CanActivateFn = async (route, state) => {
       if (error) {
         logger.warn("[AuthGuard] Error getting session:", error.message);
       } else if (session) {
-        logger.debug("[AuthGuard] Found session via direct check");
+        logger.debug("[AuthGuard] Found session via getSession()");
         hasSession = true;
+        isAuthenticated = true;
+      } else {
+        // Method 2: Try getUser() - validates current token
+        const {
+          data: { user },
+          error: userError,
+        } = await supabaseService.client.auth.getUser();
+
+        if (!userError && user) {
+          logger.debug("[AuthGuard] Found user via getUser(), session may be expired but user exists");
+          // User exists but session might be expired - allow access for now
+          // The app will handle token refresh automatically
+          hasSession = true;
+          isAuthenticated = true;
+        }
       }
     } catch (err) {
       logger.error("[AuthGuard] Exception checking session:", err);

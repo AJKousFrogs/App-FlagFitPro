@@ -9,7 +9,7 @@ import {
 
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { SkeletonModule } from "primeng/skeleton";
@@ -345,6 +345,7 @@ export class TrainingScheduleComponent implements OnInit {
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private logger = inject(LoggerService);
 
   selectedDate = signal<Date>(new Date());
@@ -374,26 +375,39 @@ export class TrainingScheduleComponent implements OnInit {
     "Failed to load training sessions. Please try again.",
   );
 
-  // Sessions filtered to show upcoming sessions starting from tomorrow
+  // Sessions filtered based on selected date
   filteredSessions = computed(() => {
     const allSessions = this.sessions();
+    const selected = this.selectedDate();
 
-    // Calculate tomorrow's date (start of day)
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    if (!selected) {
+      return [];
+    }
 
-    // Filter to sessions from tomorrow onwards and limit to 5
-    const upcomingSessions = allSessions
+    // Get selected date string (YYYY-MM-DD)
+    const selectedDateStr = selected.toISOString().split("T")[0];
+
+    // Filter sessions for the selected date
+    const dateSessions = allSessions
       .filter((session) => {
         const sessionDateStr = session.date.toISOString().split("T")[0];
-        return sessionDateStr >= tomorrowStr;
+        return sessionDateStr === selectedDateStr;
       })
-      .sort((a, b) => a.date.getTime() - b.date.getTime())
-      .slice(0, UI_LIMITS.UPCOMING_SESSIONS_COUNT);
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-    return upcomingSessions;
+    // If no sessions for selected date, show upcoming sessions from selected date onwards
+    if (dateSessions.length === 0) {
+      const upcomingSessions = allSessions
+        .filter((session) => {
+          const sessionDateStr = session.date.toISOString().split("T")[0];
+          return sessionDateStr >= selectedDateStr;
+        })
+        .sort((a, b) => a.date.getTime() - b.date.getTime())
+        .slice(0, UI_LIMITS.UPCOMING_SESSIONS_COUNT);
+      return upcomingSessions;
+    }
+
+    return dateSessions;
   });
 
   // Computed: Get session type color for calendar markers
@@ -425,6 +439,22 @@ export class TrainingScheduleComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Check for date query parameter
+    const dateParam = this.route.snapshot.queryParams["date"];
+    if (dateParam) {
+      try {
+        const parsedDate = new Date(dateParam);
+        if (!isNaN(parsedDate.getTime())) {
+          this.selectedDate.set(parsedDate);
+          this.logger.debug("Initialized with date from query param", {
+            date: dateParam,
+          });
+        }
+      } catch (error) {
+        this.logger.warn("Invalid date query parameter", { date: dateParam });
+      }
+    }
+
     this.loadSessions();
     this.loadMonthlyStats();
     this.loadDateMarkers();
@@ -442,17 +472,31 @@ export class TrainingScheduleComponent implements OnInit {
         return;
       }
 
-      // Calculate date range: from tomorrow to 2 weeks out (to ensure we have enough sessions)
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+      // Calculate date range based on selected date
+      // If selected date is in the future, load from selected date to 2 weeks out
+      // If selected date is today or in the past, load from selected date to 2 weeks out
+      const selected = this.selectedDate();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      const twoWeeksOut = new Date(tomorrow);
-      twoWeeksOut.setDate(tomorrow.getDate() + 14);
+      // Use selected date or default to tomorrow
+      const startDate = selected && selected >= today 
+        ? new Date(selected)
+        : new Date(today);
+      startDate.setHours(0, 0, 0, 0);
+
+      // If selected date is in the past, include it and load sessions around it
+      if (selected && selected < today) {
+        startDate.setTime(selected.getTime());
+        startDate.setHours(0, 0, 0, 0);
+      }
+
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 14);
 
       // Alias for backward compatibility
-      const startOfWeek = tomorrow;
-      const endOfWeek = twoWeeksOut;
+      const startOfWeek = startDate;
+      const endOfWeek = endDate;
 
       // 1. Fetch actual training sessions (logged/completed sessions)
       const { data: actualSessions, error: sessionsError } =
@@ -644,32 +688,28 @@ export class TrainingScheduleComponent implements OnInit {
     if (!date) return;
 
     const previousDate = this.selectedDate();
-    this.logger.debug("Date selected", { date });
-
-    // Check if the week changed
-    const prevWeekStart = new Date(previousDate);
-    prevWeekStart.setDate(previousDate.getDate() - previousDate.getDay());
-    prevWeekStart.setHours(0, 0, 0, 0);
-
-    const newWeekStart = new Date(date);
-    newWeekStart.setDate(date.getDate() - date.getDay());
-    newWeekStart.setHours(0, 0, 0, 0);
+    this.logger.debug("Date selected", { 
+      date: date.toISOString().split("T")[0],
+      previousDate: previousDate?.toISOString().split("T")[0]
+    });
 
     // Update the selected date
     this.selectedDate.set(date);
 
-    // Always reload sessions when date changes (not just week)
-    // This allows filtering by specific dates
-    const weekChanged = prevWeekStart.getTime() !== newWeekStart.getTime();
-    this.logger.debug("Week changed check", { weekChanged });
+    // Check if date changed significantly (more than 7 days difference)
+    const dateDiff = Math.abs(
+      (date.getTime() - (previousDate?.getTime() || 0)) / (1000 * 60 * 60 * 24)
+    );
 
-    // Reload if week changed OR if in month view (to show relevant sessions)
-    if (weekChanged || this.viewMode() === "month") {
+    // Always reload sessions when date changes significantly or when in month view
+    // This ensures we load sessions for the selected date range
+    if (dateDiff > 7 || this.viewMode() === "month" || !previousDate) {
+      this.logger.debug("Reloading sessions for new date range", { dateDiff });
       this.loadSessions();
     } else {
-      // In week view, just update the filter without reloading
-      // The filtered sessions will automatically update based on selectedDate
-      this.logger.debug("Same week, sessions already loaded");
+      // For small date changes in week view, sessions are already loaded
+      // The filteredSessions computed will automatically filter to the selected date
+      this.logger.debug("Small date change, using existing sessions");
     }
   }
 

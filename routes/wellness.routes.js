@@ -88,23 +88,38 @@ router.post(
     try {
       const targetUserId = req.userId;
       const checkinDate =
-        req.body.checkin_date || new Date().toISOString().split("T")[0];
+        req.body.checkin_date || req.body.date || new Date().toISOString().split("T")[0];
+
+      // Map camelCase from frontend to snake_case for database
+      const checkinData = {
+        user_id: targetUserId,
+        checkin_date: checkinDate,
+        sleep_quality: req.body.sleepQuality || req.body.sleep_quality,
+        sleep_hours: req.body.sleepHours || req.body.sleep_hours,
+        energy_level: req.body.energyLevel || req.body.energy_level,
+        stress_level: req.body.stressLevel || req.body.stress_level,
+        muscle_soreness: req.body.muscleSoreness || req.body.muscle_soreness || req.body.soreness,
+        soreness_areas: req.body.sorenessAreas || req.body.soreness_areas || [],
+        notes: req.body.notes,
+        calculated_readiness: req.body.readinessScore || req.body.calculated_readiness,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Remove undefined values
+      Object.keys(checkinData).forEach((key) => {
+        if (checkinData[key] === undefined) {
+          delete checkinData[key];
+        }
+      });
 
       const { data, error } = await supabase
         .from("daily_wellness_checkin")
-        .upsert(
-          {
-            user_id: targetUserId,
-            checkin_date: checkinDate,
-            ...req.body,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id,checkin_date" },
-        )
+        .upsert(checkinData, { onConflict: "user_id,checkin_date" })
         .select()
         .single();
 
       if (error) {
+        serverLogger.error(`[${ROUTE_NAME}] Database error:`, error);
         throw error;
       }
 
