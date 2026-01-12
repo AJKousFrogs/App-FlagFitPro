@@ -12,9 +12,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Must check this FIRST before skipAuthUrls (which includes supabase.co for auth endpoints)
   if (req.url.includes("supabase.co/rest/")) {
     // Use async getToken() to ensure we have a valid (non-expired) token
-    return from(authService.getToken()).pipe(
+    return from(
+      supabaseService.waitForInit().then(() => authService.getToken()),
+    ).pipe(
       switchMap((token) => {
-        
         const headers: Record<string, string> = {
           apikey: supabaseService.supabaseKey,
           "Content-Type": "application/json",
@@ -50,8 +51,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  // For API endpoints, add Authorization header
-  return from(authService.getToken()).pipe(
+  // For API endpoints, wait for auth initialization and add Authorization header
+  return from(
+    supabaseService.waitForInit().then(() => authService.getToken()),
+  ).pipe(
     switchMap((token) => {
       if (token) {
         const clonedReq = req.clone({
@@ -64,8 +67,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         return next(clonedReq);
       }
 
-      // No token available - proceed without auth header
-      // The backend/RLS will handle authorization
+      // No token available - check if user should be authenticated
+      // If we have a session but no token, there's an auth issue
+      const hasSession = !!supabaseService.session();
+      if (hasSession) {
+        // Session exists but token retrieval failed - this is an error condition
+        // Log warning but proceed - backend will return 401 which error interceptor handles
+        console.warn(
+          "[AuthInterceptor] Session exists but token unavailable - request may fail",
+        );
+      }
+
+      // Proceed without auth header - backend will return 401 if auth required
+      // Error interceptor will handle redirect to login
       return next(req);
     }),
   );

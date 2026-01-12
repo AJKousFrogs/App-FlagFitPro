@@ -152,7 +152,8 @@ export class AuthDebugPanelComponent {
       this.lastCheckSeverity.set("success");
       this.updateExpiryTime();
     } catch (error) {
-      this.lastCheckMessage.set(`❌ Error: ${error}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.lastCheckMessage.set(`❌ Error: ${errorMessage}`);
       this.lastCheckSeverity.set("error");
     } finally {
       this.checking.set(false);
@@ -175,7 +176,8 @@ export class AuthDebugPanelComponent {
         this.updateExpiryTime();
       }
     } catch (error) {
-      this.lastCheckMessage.set(`❌ Error: ${error}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.lastCheckMessage.set(`❌ Error: ${errorMessage}`);
       this.lastCheckSeverity.set("error");
     } finally {
       this.refreshing.set(false);
@@ -193,7 +195,8 @@ export class AuthDebugPanelComponent {
       this.lastCheckSeverity.set("success");
       this.updateExpiryTime();
     } catch (error) {
-      this.lastCheckMessage.set(`❌ Error: ${error}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.lastCheckMessage.set(`❌ Error: ${errorMessage}`);
       this.lastCheckSeverity.set("error");
     } finally {
       this.reauthing.set(false);

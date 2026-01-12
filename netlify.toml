@@ -15,11 +15,16 @@
   VITE_APP_NAME = "FlagFit Pro"
   VITE_APP_VERSION = "1.0.7"
   # Supabase Configuration
-  # These variables are injected into HTML files during build via scripts/inject-env-into-html.js
-  # IMPORTANT: Also set these in Netlify UI (Site Settings → Environment Variables) for redundancy
-  # This ensures they're available even if netlify.toml is not read properly
-  VITE_SUPABASE_URL = "https://pvziciccwxgftcielknm.supabase.co"
-  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2emljaWNjd3hnZnRjaWVsa25tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MzcwNTgsImV4cCI6MjA3NTExMzA1OH0.1nfJrtWPl6DrAwvjGvM1-CZBeyYgCaV9oDdaadpqhLU"
+  # IMPORTANT: These should be set in Netlify UI (Site Settings → Environment Variables)
+  # Hardcoded values below are for reference only - Netlify UI takes precedence
+  # Required variables:
+  #   - VITE_SUPABASE_URL (or SUPABASE_URL)
+  #   - VITE_SUPABASE_ANON_KEY (or SUPABASE_ANON_KEY)
+  #   - SUPABASE_SERVICE_ROLE_KEY (backend only, NEVER expose to frontend)
+  # 
+  # For production, set these in Netlify UI to avoid committing secrets
+  # VITE_SUPABASE_URL = "https://pvziciccwxgftcielknm.supabase.co"
+  # VITE_SUPABASE_ANON_KEY = "your-anon-key-here"
   VITE_ENABLE_ANALYTICS = "false"
   # Sentry Error Monitoring - Set VITE_SENTRY_DSN in Netlify UI for production
   # To enable: Set VITE_SENTRY_DSN to your Sentry DSN in Netlify Environment Variables

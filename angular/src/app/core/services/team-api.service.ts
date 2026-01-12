@@ -137,7 +137,13 @@ export class TeamApiService {
         throw error;
       }
 
-      return (data || []) as TeamMemberWithUser[];
+      // Type guard: ensure data is an array, not a parser error
+      if (!data || !Array.isArray(data)) {
+        this.logger.error("[TeamApi] Invalid data format received");
+        return [];
+      }
+
+      return data as TeamMemberWithUser[];
     } catch (error) {
       this.logger.error("[TeamApi] Error in getTeamMembers:", error);
       throw error;

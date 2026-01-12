@@ -229,16 +229,22 @@ export class RosterService {
       let playerMembers: PlayerMemberRecord[] = [];
       if (playerMemberIds && playerMemberIds.length > 0) {
         const userIds = playerMemberIds.map((m) => m.user_id).filter(Boolean);
-        const { data: userData } = await this.supabaseService.client
+        const { data: userData, error: userError } = await this.supabaseService.client
           .from("users")
           .select(
             "id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed",
           )
           .in("id", userIds);
 
-        this.logger.warn(
-          `[RosterService] User data:`,
-          JSON.stringify(userData),
+        if (userError) {
+          this.logger.warn(
+            `[RosterService] Error fetching user data:`,
+            JSON.stringify(userError),
+          );
+        }
+
+        this.logger.debug(
+          `[RosterService] Found ${playerMemberIds.length} team members, ${userData?.length || 0} user records`,
         );
 
         // Combine member and user data - team_members fields take priority
@@ -252,6 +258,15 @@ export class RosterService {
           jersey_number: m.jersey_number, // From team_members (primary source)
           users: userMap.get(m.user_id) || undefined,
         }));
+
+        // Log players without user records for debugging
+        const playersWithoutUsers = playerMembers.filter((m) => !m.users);
+        if (playersWithoutUsers.length > 0) {
+          this.logger.warn(
+            `[RosterService] Found ${playersWithoutUsers.length} players without user records:`,
+            playersWithoutUsers.map((m) => ({ id: m.id, user_id: m.user_id })),
+          );
+        }
       }
 
       this.logger.info(
@@ -850,8 +865,13 @@ export class RosterService {
    */
   private processPlayerMembers(members: PlayerMemberRecord[] | null): Player[] {
     return (members || [])
-      .filter((m) => m.users) // Only exclude if no user record at all
       .map((m) => {
+        // Include players even without user records (show placeholder data)
+        if (!m.users) {
+          this.logger.debug(
+            `[RosterService] Processing player without user record: team_member_id=${m.id}, user_id=${m.user_id}`,
+          );
+        }
         const user = m.users;
 
         // Calculate age from date of birth
@@ -874,15 +894,18 @@ export class RosterService {
         const weight = user?.weight_kg ? `${user.weight_kg} kg` : "N/A";
 
         // Build name from first_name + last_name or full_name
-        const name = normalizePlayerName(
-          {
-            full_name: user?.full_name,
-            first_name: user?.first_name,
-            last_name: user?.last_name,
-            email: user?.email,
-          },
-          "Unknown",
-        );
+        // Fallback to user_id if no user record exists
+        const name = user
+          ? normalizePlayerName(
+              {
+                full_name: user.full_name,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+              },
+              "Unknown",
+            )
+          : `Player ${m.user_id?.substring(0, 8) || "Unknown"}`;
 
         // PRIORITY: team_members fields > users fields (team_members is the authoritative source)
         const position = m.position || user?.position || "Unknown";

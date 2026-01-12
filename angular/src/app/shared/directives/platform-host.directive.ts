@@ -22,7 +22,7 @@
  */
 
 import { Directive, HostBinding, inject } from "@angular/core";
-import { PlatformDetectionService } from "../services/platform-detection.service";
+import { PlatformDetectionService } from "../../core/services/platform-detection.service";
 
 @Directive({
   selector: "[appPlatformHost]",
