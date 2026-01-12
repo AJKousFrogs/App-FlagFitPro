@@ -24,10 +24,16 @@ const supabaseUrl =
 const supabaseAnonKey =
   process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "";
 
+// Get Sentry configuration from environment
+const sentryDsn = process.env.VITE_SENTRY_DSN || "";
+const sentryEnabled = process.env.VITE_ENABLE_SENTRY || "false";
+
 console.log("🔧 Injecting environment variables into Angular build...");
 console.log(`   Source: ${indexHtmlPath}`);
 console.log(`   SUPABASE_URL: ${supabaseUrl ? "✓ Set" : "✗ Missing"}`);
 console.log(`   SUPABASE_ANON_KEY: ${supabaseAnonKey ? "✓ Set" : "✗ Missing"}`);
+console.log(`   SENTRY_DSN: ${sentryDsn ? "✓ Set" : "✗ Not configured"}`);
+console.log(`   SENTRY_ENABLED: ${sentryEnabled}`);
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn(
@@ -36,6 +42,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn("   The app will not be able to connect to the database.");
   console.warn(
     "   Make sure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in Netlify.",
+  );
+}
+
+if (sentryEnabled === "true" && !sentryDsn) {
+  console.warn(
+    "⚠️  Warning: Sentry is enabled but VITE_SENTRY_DSN is not set",
+  );
+  console.warn("   Error tracking will not work in production.");
+  console.warn(
+    "   Set VITE_SENTRY_DSN in Netlify environment variables or disable Sentry.",
   );
 }
 
@@ -65,6 +81,8 @@ const envScript = `
       window._env.SUPABASE_ANON_KEY = '${supabaseAnonKey}';
       window._env.VITE_SUPABASE_URL = '${supabaseUrl}';
       window._env.VITE_SUPABASE_ANON_KEY = '${supabaseAnonKey}';
+      window._env.VITE_SENTRY_DSN = '${sentryDsn}';
+      window._env.VITE_ENABLE_SENTRY = '${sentryEnabled}';
     </script>`;
 
 // Insert the script right before </head>

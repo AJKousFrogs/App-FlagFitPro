@@ -6,7 +6,7 @@ import {
   computed,
   ChangeDetectionStrategy,
   ElementRef,
-  ViewChild,
+  viewChild,
   OnDestroy,
   inject,
   afterNextRender,
@@ -62,7 +62,8 @@ export class PullToRefreshComponent implements OnDestroy {
   private document = inject(DOCUMENT);
   private injector = inject(Injector);
 
-  @ViewChild("container") container!: ElementRef<HTMLDivElement>;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  container = viewChild.required<ElementRef<HTMLDivElement>>("container");
 
   // Angular 21: Use input() signal API
   threshold = input<number>(80); // Pull distance to trigger refresh
@@ -122,7 +123,8 @@ export class PullToRefreshComponent implements OnDestroy {
   onTouchStart(event: TouchEvent): void {
     if (this.disabled() || this.isRefreshing()) return;
 
-    const scrollTop = this.container?.nativeElement?.scrollTop || 0;
+    const containerEl = this.container();
+    const scrollTop = containerEl?.nativeElement?.scrollTop || 0;
 
     // Only start pull if at top of scroll
     if (scrollTop <= 0) {

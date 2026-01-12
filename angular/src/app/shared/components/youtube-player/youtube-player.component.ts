@@ -4,7 +4,7 @@ import {
   signal,
   ChangeDetectionStrategy,
   ElementRef,
-  ViewChild,
+  viewChild,
   inject,
   effect,
   DestroyRef,
@@ -158,8 +158,8 @@ export class YoutubePlayerComponent implements OnDestroy {
   stateChange = output<string>();
   error = output<string>();
 
-  @ViewChild("youtubeContainer", { static: true })
-  youtubeContainer!: ElementRef<HTMLDivElement>;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  youtubeContainer = viewChild.required<ElementRef<HTMLDivElement>>("youtubeContainer");
 
   private youtubeApiLoaded = signal<boolean>(false);
   playerReady = signal<boolean>(false);
@@ -230,7 +230,8 @@ export class YoutubePlayerComponent implements OnDestroy {
   }
 
   private initializePlayer(): void {
-    if (!this.youtubeContainer || !this.youtubeApiLoaded()) {
+    const container = this.youtubeContainer();
+    if (!container || !this.youtubeApiLoaded()) {
       return;
     }
 
@@ -251,7 +252,7 @@ export class YoutubePlayerComponent implements OnDestroy {
       playerVars.end = this.endSeconds();
     }
 
-    this.player = new YT.Player(this.youtubeContainer.nativeElement, {
+    this.player = new YT.Player(container.nativeElement, {
       videoId: videoId,
       width: this.width(),
       height: this.height(),

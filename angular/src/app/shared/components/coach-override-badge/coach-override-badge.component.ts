@@ -74,7 +74,7 @@ export type CoachOverridePlacement =
         letter-spacing: 0;
         line-height: var(--line-height-tight);
         min-height: var(--space-8);
-        transition: all 0.2s ease;
+        transition: all var(--motion-fast) var(--ease-standard);
         background: var(--color-status-info-subtle);
         color: var(--color-status-info);
         border-left: 3px solid var(--color-status-info);
@@ -107,7 +107,7 @@ export type CoachOverridePlacement =
       }
 
       .override-icon {
-        font-size: var(--font-size-badge);
+        font-size: var(--font-caption-size);
         color: var(--color-status-info);
       }
 

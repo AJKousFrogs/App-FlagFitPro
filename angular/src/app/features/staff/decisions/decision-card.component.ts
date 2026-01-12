@@ -146,10 +146,10 @@ import { TagModule } from "primeng/tag";
       }
 
       .role-badge {
-        padding: 2px 6px;
-        background: var(--surface-ground);
+        padding: var(--space-1) var(--space-2);
+        background: var(--surface-secondary);
         border-radius: var(--radius-sm);
-        font-size: 0.75rem;
+        font-size: var(--font-caption-size);
         margin-left: var(--space-1);
       }
 

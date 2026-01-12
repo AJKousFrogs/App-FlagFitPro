@@ -20,7 +20,7 @@ import {
   inject,
   OnDestroy,
   signal,
-  ViewChild,
+  viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -59,7 +59,8 @@ const SUGGESTION_DEBOUNCE_MS = 150;
   styleUrl: "./search-panel.component.scss",
 })
 export class SearchPanelComponent implements OnDestroy {
-  @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  searchInput = viewChild.required<ElementRef<HTMLInputElement>>("searchInput");
 
   readonly searchService = inject(SearchService);
   private readonly router = inject(Router);
@@ -197,8 +198,9 @@ export class SearchPanelComponent implements OnDestroy {
   }
 
   private focusInput(): void {
-    if (this.searchInput?.nativeElement) {
-      this.searchInput.nativeElement.focus();
+    const input = this.searchInput();
+    if (input?.nativeElement) {
+      input.nativeElement.focus();
     }
   }
 

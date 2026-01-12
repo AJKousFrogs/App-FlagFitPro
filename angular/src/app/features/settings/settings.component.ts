@@ -6,7 +6,7 @@ import {
     inject,
     OnInit,
     signal,
-    ViewChild,
+    viewChild,
 } from "@angular/core";
 
 import {
@@ -96,8 +96,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   private teamMembershipService = inject(TeamMembershipService);
   private platform = inject(PlatformService);
 
-  @ViewChild("dobDatePicker", { read: ElementRef })
-  dobDatePickerRef?: ElementRef<HTMLElement>;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  dobDatePickerRef = viewChild<ElementRef<HTMLElement>>("dobDatePicker");
 
   profileForm!: FormGroup;
   notificationForm!: FormGroup;
@@ -321,7 +321,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    * to detect manual typing and provide suggestions
    */
   private setupBirthdayInputListener(): void {
-    if (!this.dobDatePickerRef?.nativeElement) {
+    const ref = this.dobDatePickerRef();
+    if (!ref?.nativeElement) {
       // Retry after a short delay if element not found
       if (this.retryCount < this.MAX_RETRIES) {
         this.retryCount++;
@@ -335,12 +336,12 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
     // Find the input element within the datepicker
     // PrimeNG datepicker wraps input in .p-datepicker or .p-calendar
-    const datepickerWrapper = this.dobDatePickerRef.nativeElement.querySelector(
+    const datepickerWrapper = ref.nativeElement.querySelector(
       ".p-datepicker, .p-calendar",
     );
     const inputElement = datepickerWrapper
       ? (datepickerWrapper.querySelector("input") as HTMLInputElement)
-      : (this.dobDatePickerRef.nativeElement.querySelector(
+      : (ref.nativeElement.querySelector(
           "input",
         ) as HTMLInputElement);
 

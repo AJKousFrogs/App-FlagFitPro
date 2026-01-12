@@ -5,7 +5,7 @@ import {
   Component,
   HostListener,
   QueryList,
-  ViewChildren,
+  viewChildren,
   inject,
   signal,
 } from "@angular/core";
@@ -1063,7 +1063,8 @@ interface DevelopmentGoal {
   styleUrls: ["./analytics.component.scss"],
 })
 export class AnalyticsComponent implements AfterViewInit {
-  @ViewChildren(UIChart) chartRefs!: QueryList<UIChart>;
+  // Angular 21: Use viewChildren() signal instead of @ViewChildren()
+  chartRefs = viewChildren<UIChart>(UIChart);
   private readonly apiService = inject(ApiService);
   private readonly playerStatsService = inject(PlayerStatisticsService);
   private readonly authService = inject(AuthService);
@@ -1191,7 +1192,7 @@ export class AnalyticsComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     // Store chart instances for export/zoom functionality
     setTimeout(() => {
-      this.chartRefs.forEach((chartRef, index) => {
+      this.chartRefs().forEach((chartRef, index) => {
         if (chartRef.chart) {
           // Map chart instances by type
           const chartTypes = [

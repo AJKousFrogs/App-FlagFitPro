@@ -4,7 +4,7 @@ import {
   computed,
   ElementRef,
   OnInit,
-  ViewChild,
+  viewChild,
   inject,
   signal,
 } from "@angular/core";
@@ -540,7 +540,8 @@ export class ProfileComponent implements OnInit {
   private profileCompletionService = inject(ProfileCompletionService);
   private teamMembershipService = inject(TeamMembershipService);
 
-  @ViewChild("fileInput") fileInput!: ElementRef<HTMLInputElement>;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  fileInput = viewChild.required<ElementRef<HTMLInputElement>>("fileInput");
 
   // Expose UI_LIMITS for template usage
   readonly UI_LIMITS = UI_LIMITS;
@@ -1099,7 +1100,8 @@ export class ProfileComponent implements OnInit {
    * Trigger file input click
    */
   triggerFileUpload(): void {
-    this.fileInput?.nativeElement?.click();
+    const input = this.fileInput();
+    input?.nativeElement?.click();
   }
 
   /**
@@ -1190,8 +1192,9 @@ export class ProfileComponent implements OnInit {
     } finally {
       this.isUploadingAvatar.set(false);
       // Reset file input
-      if (this.fileInput?.nativeElement) {
-        this.fileInput.nativeElement.value = "";
+      const input = this.fileInput();
+      if (input?.nativeElement) {
+        input.nativeElement.value = "";
       }
     }
   }

@@ -10,7 +10,7 @@ import {
   OnInit,
   output,
   signal,
-  ViewChild,
+  viewChild,
 } from "@angular/core";
 
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -78,10 +78,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private trainingStatsService = inject(TrainingStatsCalculationService);
   private weatherService = inject(WeatherService);
 
-  @ViewChild("notificationsPanel")
-  notificationsPanel!: NotificationsPanelComponent;
-
-  @ViewChild("userMenu") userMenu!: import("primeng/menu").Menu;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  notificationsPanel = viewChild<NotificationsPanelComponent>("notificationsPanel");
+  userMenu = viewChild<import("primeng/menu").Menu>("userMenu");
 
   // Close user menu on Escape
   @HostListener("document:keydown.escape")
@@ -285,8 +284,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleNotifications(): void {
     // Toggle notifications panel
-    if (this.notificationsPanel) {
-      this.notificationsPanel.toggle();
+    const panel = this.notificationsPanel();
+    if (panel) {
+      panel.toggle();
     }
   }
 
@@ -304,15 +304,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // User Menu Methods
   toggleUserMenu(event: Event): void {
-    if (this.userMenu) {
-      this.userMenu.toggle(event);
+    const menu = this.userMenu();
+    if (menu) {
+      menu.toggle(event);
     }
     this.isUserMenuOpen.update((v) => !v);
   }
 
   closeUserMenu(): void {
-    if (this.userMenu) {
-      this.userMenu.hide();
+    const menu = this.userMenu();
+    if (menu) {
+      menu.hide();
     }
     this.isUserMenuOpen.set(false);
   }

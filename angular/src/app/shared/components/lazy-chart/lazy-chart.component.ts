@@ -13,7 +13,7 @@ import {
   OnDestroy,
   ChangeDetectionStrategy,
   signal,
-  ViewChild,
+  viewChild,
   ViewContainerRef,
   ComponentRef,
 } from "@angular/core";
@@ -86,8 +86,8 @@ export type LazyChartOptionsInput =
   ],
 })
 export class LazyChartComponent implements OnInit, OnDestroy {
-  @ViewChild("chartContainer", { read: ViewContainerRef })
-  chartContainer!: ViewContainerRef;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  chartContainer = viewChild.required<ViewContainerRef>("chartContainer");
 
   // Angular 21: Use input() signals instead of @Input()
   type = input<"line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea">(
@@ -119,7 +119,8 @@ export class LazyChartComponent implements OnInit, OnDestroy {
       }
 
       // Create the chart component dynamically
-      this.chartComponentRef = this.chartContainer.createComponent(Chart);
+      const container = this.chartContainer();
+      this.chartComponentRef = container.createComponent(Chart);
 
       // Set inputs
       if (this.chartComponentRef) {

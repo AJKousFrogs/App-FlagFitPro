@@ -46,11 +46,11 @@
     }
 
     .badge {
-      padding: var(--space-1) 8px;
-      border-radius: var(--radius-full);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-md);
       background: var(--ds-primary-green);
-      color: white;
-      font-size: var(--font-size-badge);
+      color: var(--color-text-on-primary);
+      font-size: var(--font-caption-size);
     }
   }
 }

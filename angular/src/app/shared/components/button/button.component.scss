@@ -63,24 +63,24 @@ a.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2, 8px);
+  gap: var(--space-2);
 
   // FIXED HEIGHT - exactly 44px, not min-height
-  height: var(--button-height-md); /* 44px */
+  height: var(--button-height-md);
 
   // FIXED PADDING - identical for all variants
-  padding: 0 var(--space-6, 24px);
+  padding: 0 var(--space-6);
 
   // FIXED TYPOGRAPHY - identical for all variants
-  font-size: var(--font-body-md, 16px);
-  font-weight: var(--font-weight-semibold, 600);
-  font-family: var(--font-family-sans, system-ui, sans-serif);
+  font-size: var(--font-body-size);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-family-sans);
   line-height: 1;
   text-decoration: none;
   text-align: center;
 
-  // FIXED SHAPE - identical for all variants
-  border-radius: var(--radius-button, 8px);
+  // FIXED SHAPE - identical for all variants (default: --radius-lg per DESIGN_SYSTEM_RULES.md)
+  border-radius: var(--radius-lg);
 
   // FIXED INTERACTION PROPERTIES
   cursor: pointer;
@@ -97,17 +97,17 @@ a.btn {
   // ─────────────────────────────────────────
   background-color: var(--ds-primary-green);
   color: var(--color-text-on-primary);
-  border: 2px solid transparent;
+  border: var(--border-2) solid transparent;
   box-shadow: var(--shadow-md);
 
   // Transition
   transition:
-    transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    opacity 150ms ease;
+    transform var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-fast) var(--ease-standard);
   will-change: transform, box-shadow;
 
   // Ensure icons inherit color
@@ -328,16 +328,16 @@ a.btn {
 
 .btn.btn-sm {
   height: var(--button-height-sm); /* 36px */
-  padding: 0 var(--space-4, 16px);
-  font-size: var(--font-body-sm, 14px);
-  gap: var(--space-1, 4px);
+  padding: 0 var(--space-4);
+  font-size: var(--font-body-sm-size);
+  gap: var(--space-1);
 }
 
 .btn.btn-lg {
   height: var(--button-height-lg); /* 52px */
-  padding: 0 var(--space-8, 32px);
-  font-size: var(--font-body-lg, 18px);
-  gap: var(--space-3, 12px);
+  padding: 0 var(--space-8);
+  font-size: var(--font-h3-size);
+  gap: var(--space-3);
 }
 
 // ============================================
@@ -375,18 +375,18 @@ a.btn {
 // ============================================
 
 .btn-icon {
-  font-size: var(--font-body-lg, 18px);
+  font-size: var(--font-h3-size);
   line-height: 1;
   flex-shrink: 0;
   color: inherit;
 }
 
 .btn.btn-sm .btn-icon {
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size);
 }
 
 .btn.btn-lg .btn-icon {
-  font-size: var(--font-heading-sm, 18px);
+  font-size: var(--font-h3-size);
 }
 
 // ============================================
@@ -397,7 +397,7 @@ a.btn {
   display: inline-flex;
   align-items: center;
   color: inherit;
-  transition: opacity 150ms ease;
+  transition: opacity var(--motion-fast) var(--ease-standard);
 }
 
 .btn-content-loading {
@@ -427,9 +427,9 @@ a.btn {
 }
 
 .spinner-svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  animation: spinner-rotate 0.8s linear infinite;
+  width: var(--space-5);
+  height: var(--space-5);
+  animation: spinner-rotate var(--motion-base) linear infinite;
 }
 
 .spinner-svg circle {

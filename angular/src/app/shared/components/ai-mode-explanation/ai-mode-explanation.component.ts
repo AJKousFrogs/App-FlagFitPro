@@ -8,7 +8,12 @@
  */
 
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, input } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  signal,
+} from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { RippleModule } from "primeng/ripple";
 import { TooltipModule } from "primeng/tooltip";
@@ -29,7 +34,7 @@ export interface AIModeStatus {
   template: `
     @if (modeStatus() && modeStatus()!.isConservative) {
       <div class="ai-mode-card">
-        <!-- Header with Icon, Title, and Badge -->
+        <!-- Header with Icon, Title, Badge, and Controls -->
         <div class="mode-header">
           <div class="mode-icon-wrapper">
             <i class="pi pi-shield mode-icon"></i>
@@ -40,16 +45,34 @@ export interface AIModeStatus {
               Providing cautious recommendations due to incomplete data
             </p>
           </div>
-          <span
-            class="mode-badge"
-            pTooltip="AI is being cautious because data confidence is below 70%"
-          >
-            Conservative
-          </span>
+          <div class="mode-header-actions">
+            <span
+              class="mode-badge"
+              pTooltip="AI is being cautious because data confidence is below 70%"
+            >
+              Conservative
+            </span>
+            <div class="mode-controls">
+              <button
+                class="mode-control-btn"
+                (click)="toggleCollapsed()"
+                [pTooltip]="isCollapsed() ? 'Expand details' : 'Collapse'"
+                aria-label="Toggle details"
+                pRipple
+              >
+                <i
+                  class="pi"
+                  [class.pi-chevron-down]="isCollapsed()"
+                  [class.pi-chevron-up]="!isCollapsed()"
+                ></i>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <!-- Details Section -->
-        <div class="mode-details">
+        <!-- Details Section (collapsible) -->
+        @if (!isCollapsed()) {
+          <div class="mode-details">
           <!-- Why Conservative Mode -->
           <div class="detail-section">
             <div class="section-label">Why conservative mode:</div>
@@ -129,7 +152,8 @@ export interface AIModeStatus {
               }
             </div>
           </div>
-        </div>
+          </div>
+        }
       </div>
     }
   `,
@@ -161,7 +185,47 @@ export interface AIModeStatus {
         display: flex;
         align-items: flex-start;
         gap: var(--space-4);
-        margin-bottom: var(--space-5);
+        margin-bottom: var(--space-4);
+      }
+
+      .mode-header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        flex-shrink: 0;
+      }
+
+      .mode-controls {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+      }
+
+      .mode-control-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: var(--border-1) solid var(--color-border-secondary);
+        border-radius: var(--radius-lg);
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        transition:
+          background-color var(--transition-fast),
+          border-color var(--transition-fast),
+          color var(--transition-fast);
+      }
+
+      .mode-control-btn:hover {
+        background: var(--ds-primary-green-ultra-subtle);
+        border-color: var(--ds-primary-green);
+        color: var(--ds-primary-green);
+      }
+
+      .mode-control-btn i {
+        font-size: var(--font-size-h4);
       }
 
       .mode-icon-wrapper {
@@ -388,6 +452,11 @@ export interface AIModeStatus {
           gap: var(--space-3);
         }
 
+        .mode-header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+
         .mode-badge {
           align-self: flex-start;
         }
@@ -419,6 +488,11 @@ export interface AIModeStatus {
 })
 export class AIModeExplanationComponent {
   modeStatus = input<AIModeStatus | null>(null);
+  isCollapsed = signal(false);
+
+  toggleCollapsed(): void {
+    this.isCollapsed.update((value) => !value);
+  }
 
   getConfidenceClass(): string {
     const confidence = this.modeStatus()?.confidence || 0;

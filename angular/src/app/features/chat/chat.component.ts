@@ -22,7 +22,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  ViewChild,
+  viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";
@@ -346,7 +346,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                             'background-color': getAvatarColor(
                               message.author?.full_name || ''
                             ),
-                            color: '#fff',
+                            color: 'var(--color-text-on-primary)',
                           }"
                         ></p-avatar>
 
@@ -681,7 +681,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                         size="large"
                         [style]="{
                           'background-color': getAvatarColor(member.full_name),
-                          color: '#fff',
+                          color: 'var(--color-text-on-primary)',
                         }"
                       ></p-avatar>
                       @if (member.is_online) {
@@ -737,7 +737,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                         size="large"
                         [style]="{
                           'background-color': getAvatarColor(member.full_name),
-                          color: '#fff',
+                          color: 'var(--color-text-on-primary)',
                         }"
                       ></p-avatar>
                       @if (member.is_online) {
@@ -796,7 +796,8 @@ import { getInitials } from "../../shared/utils/format.utils";
   styleUrl: "./chat.component.scss",
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild("scrollViewport") scrollViewport!: ElementRef;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  scrollViewport = viewChild.required<ElementRef>("scrollViewport");
 
   // Services
   private toastService = inject(ToastService);

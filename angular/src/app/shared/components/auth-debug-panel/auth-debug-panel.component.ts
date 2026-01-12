@@ -27,22 +27,15 @@ import { SupabaseService } from "../../core/services/supabase.service";
           <div class="flex flex-col gap-2">
             <div>
               <strong>Authenticated:</strong>
-              <span
-                [class]="
-                  authService.isAuthenticated()
-                    ? 'text-green-600'
-                    : 'text-red-600'
-                "
-              >
-                {{ authService.isAuthenticated() ? "✅ Yes" : "❌ No" }}
+              <span [class]="getAuthClass()">
+                {{ getAuthStatus() }}
               </span>
             </div>
             <div>
-              <strong>User ID:</strong> {{ supabase.userId() || "N/A" }}
+              <strong>User ID:</strong> {{ getUserId() }}
             </div>
             <div>
-              <strong>Email:</strong>
-              {{ supabase.getCurrentUser()?.email || "N/A" }}
+              <strong>Email:</strong> {{ getUserEmail() }}
             </div>
             <div>
               <strong>Session Expires:</strong>
@@ -81,7 +74,7 @@ import { SupabaseService } from "../../core/services/supabase.service";
             <p-button
               label="Force Re-authenticate"
               icon="pi pi-sign-in"
-              severity="warning"
+              severity="warn"
               (onClick)="forceReauth()"
               [loading]="reauthing()"
               styleClass="w-full"
@@ -242,5 +235,25 @@ export class AuthDebugPanelComponent {
     if (minutes < 5) return "text-red-600"; // Less than 5 minutes
     if (minutes < 30) return "text-orange-600"; // Less than 30 minutes
     return "text-green-600"; // Good
+  }
+
+  getUserId(): string {
+    const userId = this.supabase.userId();
+    return userId ?? "N/A";
+  }
+
+  getUserEmail(): string {
+    const user = this.supabase.getCurrentUser();
+    return user?.email ?? "N/A";
+  }
+
+  getAuthStatus(): string {
+    return this.authService.isAuthenticated() ? "✅ Yes" : "❌ No";
+  }
+
+  getAuthClass(): string {
+    return this.authService.isAuthenticated()
+      ? "text-green-600"
+      : "text-red-600";
   }
 }

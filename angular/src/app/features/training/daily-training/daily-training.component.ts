@@ -576,7 +576,7 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: 0.95rem;
+        font-size: var(--font-body-size);
         max-width: 400px;
       }
 
@@ -676,8 +676,8 @@ interface ScheduleBlock {
       }
 
       .seasonal-notes {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
+        font-size: var(--font-body-sm-size);
+        color: var(--color-text-secondary);
         line-height: 1.4;
       }
 
@@ -685,12 +685,12 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        background: var(--p-blue-100);
-        color: var(--p-blue-700);
+        background: var(--primitive-info-100);
+        color: var(--primitive-info-700);
         padding: var(--space-2) var(--space-4);
-        border-radius: var(--radius-full);
-        font-size: 0.85rem;
-        font-weight: 500;
+        border-radius: var(--radius-md);
+        font-size: var(--font-body-sm-size);
+        font-weight: var(--font-weight-medium);
       }
 
       .weather-warning i {
@@ -769,21 +769,21 @@ interface ScheduleBlock {
       }
 
       .status-label {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: var(--font-caption-size);
+        color: var(--color-text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
 
       .status-value {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text-primary);
+        font-size: var(--font-h3-size);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
       }
 
       .status-subtitle {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: var(--font-caption-size);
+        color: var(--color-text-secondary);
       }
 
       /* Progress Section */
@@ -804,8 +804,8 @@ interface ScheduleBlock {
       }
 
       .progress-text {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--font-body-sm-size);
+        color: var(--color-text-secondary);
       }
 
       /* Focus Section */
@@ -878,8 +878,8 @@ interface ScheduleBlock {
       }
 
       .block-duration {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--font-body-sm-size);
+        color: var(--color-text-secondary);
       }
 
       .block-actions {
@@ -919,19 +919,19 @@ interface ScheduleBlock {
       }
 
       .detail-badge {
-        background: var(--p-surface-200);
-        padding: 2px 8px;
+        background: var(--surface-secondary);
+        padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-sm);
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: var(--font-caption-size);
+        color: var(--color-text-secondary);
       }
 
       .focus-badge {
-        background: var(--p-primary-100);
-        color: var(--p-primary-700);
-        padding: 2px 8px;
+        background: var(--primitive-primary-100);
+        color: var(--ds-primary-green);
+        padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-sm);
-        font-size: 0.75rem;
+        font-size: var(--font-caption-size);
       }
 
       .variations,
@@ -943,16 +943,16 @@ interface ScheduleBlock {
       }
 
       .variation-tag {
-        background: var(--p-blue-50);
-        color: var(--p-blue-700);
-        padding: 2px 6px;
+        background: var(--primitive-info-50);
+        color: var(--primitive-info-700);
+        padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-sm);
-        font-size: 0.7rem;
+        font-size: var(--font-compact-md);
       }
 
       .breakdown-item {
-        font-size: 0.75rem;
-        color: var(--text-secondary);
+        font-size: var(--font-caption-size);
+        color: var(--color-text-secondary);
       }
 
       /* Block Summary */
@@ -979,8 +979,8 @@ interface ScheduleBlock {
       }
 
       .summary-note {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
+        font-size: var(--font-body-sm-size);
+        color: var(--color-text-secondary);
         font-style: italic;
       }
 
@@ -1004,11 +1004,11 @@ interface ScheduleBlock {
       }
 
       .meta-item {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        background: var(--p-surface-100);
-        padding: 4px 12px;
-        border-radius: var(--radius-full);
+        font-size: var(--font-body-sm-size);
+        color: var(--color-text-secondary);
+        background: var(--surface-secondary);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-md);
       }
 
       .instructions,
@@ -1021,9 +1021,9 @@ interface ScheduleBlock {
       .setup h4,
       .cues h4,
       .safety-notes h4 {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--text-primary);
+        font-size: var(--font-body-sm-size);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
         margin-bottom: var(--space-2);
       }
 
@@ -1064,11 +1064,11 @@ interface ScheduleBlock {
       }
 
       .cue-tag {
-        background: var(--p-primary-50);
-        color: var(--p-primary-700);
-        padding: 4px 12px;
-        border-radius: var(--radius-full);
-        font-size: 0.8rem;
+        background: var(--primitive-primary-50);
+        color: var(--ds-primary-green);
+        padding: var(--space-1) var(--space-3);
+        border-radius: var(--radius-md);
+        font-size: var(--font-body-sm-size);
       }
 
       /* Main Session Content */
@@ -1089,8 +1089,8 @@ interface ScheduleBlock {
       }
 
       .session-focus h4 {
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--font-body-sm-size);
+        font-weight: var(--font-weight-semibold);
         margin-bottom: var(--space-3);
       }
 
@@ -1104,12 +1104,12 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
       }
 
       .focus-item i {
-        color: var(--p-green-500);
-        font-size: 0.75rem;
+        color: var(--color-status-success);
+        font-size: var(--font-caption-size);
       }
 
       /* Cool-Down Content */
@@ -1127,12 +1127,12 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
       }
 
       .activity-item i {
-        font-size: 0.5rem;
-        color: var(--p-teal-500);
+        font-size: var(--font-compact-md);
+        color: var(--primitive-primary-500);
       }
 
       /* Loading State */

@@ -384,10 +384,10 @@ import type {
       }
 
       .role-badge {
-        padding: 2px 8px;
-        background: var(--surface-ground);
+        padding: var(--space-1) var(--space-2);
+        background: var(--surface-secondary);
         border-radius: var(--radius-sm);
-        font-size: 0.75rem;
+        font-size: var(--font-caption-size);
       }
 
       .maker-date {

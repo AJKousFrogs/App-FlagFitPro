@@ -15,20 +15,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-2, 0.5rem);
+  margin-bottom: var(--space-2);
 }
 
 .progress-label {
-  font-size: var(--font-body-md, 1rem);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-medium);
-  color: var(--text-primary, #1a1a1a);
+  color: var(--color-text-primary);
   margin: 0;
 }
 
 .progress-value {
-  font-size: var(--font-body-md, 1rem);
+  font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-brand-primary, #089949);
+  color: var(--ds-primary-green);
 }
 
 .progress-bar-wrapper {
@@ -52,7 +52,7 @@
 }
 
 .circular-progress-circle {
-  transition: stroke-dashoffset 0.3s ease;
+  transition: stroke-dashoffset var(--motion-fast) var(--ease-standard);
 }
 
 .circular-value {
@@ -60,9 +60,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: var(--font-heading-md, 1.25rem);
+  font-size: var(--font-h3-size);
   font-weight: var(--font-weight-semibold);
-  color: var(--text-primary, #1a1a1a);
+  color: var(--color-text-primary);
 }
 
 /* Steps Progress */
@@ -82,53 +82,53 @@
 }
 
 .step-marker {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
+  width: var(--space-10);
+  height: var(--space-10);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-border-secondary);
-  color: var(--text-secondary, #6b7280);
+  color: var(--color-text-secondary);
   font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--space-2, 0.5rem);
+  margin-bottom: var(--space-2);
   transition:
     color var(--motion-slow) var(--ease-standard),
     transform var(--motion-slow) var(--ease-standard);
 }
 
 .step-item.active .step-marker {
-  background: var(--color-brand-primary, #089949);
-  color: var(--color-text-on-primary, #fff);
+  background: var(--ds-primary-green);
+  color: var(--color-text-on-primary);
 }
 
 .step-item.completed .step-marker {
   background: var(--color-status-success);
-  color: var(--color-text-on-primary, #fff);
+  color: var(--color-text-on-primary);
 }
 
 .step-number {
-  font-size: var(--font-body-sm, 0.875rem);
+  font-size: var(--font-body-sm-size);
 }
 
 .step-label {
-  font-size: var(--font-body-sm, 0.875rem);
-  color: var(--text-secondary, #6b7280);
+  font-size: var(--font-body-sm-size);
+  color: var(--color-text-secondary);
   text-align: center;
-  max-width: 100px;
+  max-width: var(--space-24);
 }
 
 .step-item.active .step-label {
-  color: var(--text-primary, #1a1a1a);
+  color: var(--color-text-primary);
   font-weight: var(--font-weight-medium);
 }
 
 .step-connector {
   position: absolute;
-  top: 1.25rem;
-  left: calc(50% + 1.25rem);
-  right: calc(-50% + 1.25rem);
-  height: 2px;
+  top: var(--space-5);
+  left: calc(50% + var(--space-5));
+  right: calc(-50% + var(--space-5));
+  height: var(--border-1);
   background: var(--color-border-secondary);
   z-index: -1;
 }
@@ -138,43 +138,43 @@
 }
 
 .progress-helper {
-  margin-top: var(--space-2, 0.5rem);
-  font-size: var(--font-body-sm, 0.875rem);
-  color: var(--text-secondary, #6b7280);
+  margin-top: var(--space-2);
+  font-size: var(--font-body-sm-size);
+  color: var(--color-text-secondary);
 }
 
 /* Time Estimate */
 .time-estimate {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 0.5rem);
-  margin-top: var(--space-2, 0.5rem);
-  padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-  background: var(--surface-secondary, #f9fafb);
-  border-radius: var(--radius-md, 0.5rem);
-  font-size: var(--font-body-sm, 0.875rem);
-  color: var(--color-text-secondary, #6b7280);
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-body-sm-size);
+  color: var(--color-text-secondary);
   font-weight: var(--font-weight-medium);
 }
 
 .time-estimate i {
-  color: var(--ds-primary-green, #089949);
-  font-size: var(--font-body-md, 1rem);
+  color: var(--ds-primary-green);
+  font-size: var(--font-body-size);
 }
 
 /* Size variants */
 .progress-sm .progress-label {
-  font-size: var(--font-body-sm, 0.875rem);
+  font-size: var(--font-body-sm-size);
 }
 
 .progress-sm .circular-value {
-  font-size: var(--font-body-md, 1rem);
+  font-size: var(--font-body-size);
 }
 
 .progress-lg .progress-label {
-  font-size: var(--font-body-lg, 1.125rem);
+  font-size: var(--font-h3-size);
 }
 
 .progress-lg .circular-value {
-  font-size: var(--font-heading-lg, 1.5rem);
+  font-size: var(--font-h2-size);
 }

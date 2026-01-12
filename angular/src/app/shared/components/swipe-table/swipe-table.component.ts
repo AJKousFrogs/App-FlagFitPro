@@ -1,6 +1,6 @@
 import {
   Component,
-  ViewChild,
+  viewChild,
   ElementRef,
   ChangeDetectionStrategy,
   signal,
@@ -8,13 +8,12 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
-import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-swipe-table",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TableModule, ButtonComponent],
+  imports: [CommonModule, TableModule],
   template: `
     <div
       class="swipe-table-container"
@@ -124,7 +123,8 @@ export class SwipeTableComponent<T = Record<string, unknown>> {
   onDelete = input<(row: T) => void>();
   tableLabel = input<string>("Data table");
 
-  @ViewChild("tableContainer") tableContainer!: ElementRef;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  tableContainer = viewChild.required<ElementRef>("tableContainer");
 
   // Unique ID for accessibility
   tableId = Math.random().toString(36).substr(2, 9);

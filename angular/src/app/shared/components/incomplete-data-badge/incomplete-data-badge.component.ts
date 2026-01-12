@@ -76,20 +76,20 @@ export type IncompleteDataPlacement =
         letter-spacing: 0;
         line-height: var(--line-height-tight);
         min-height: var(--space-8);
-        transition: all 0.2s ease;
+        transition: all var(--motion-fast) var(--ease-standard);
       }
 
       /* Severity Colors - SEMANTIC RULE: Incomplete Data MUST be orange/amber ONLY */
       .incomplete-data-badge.severity-warning {
-        background: var(--ds-primary-orange-subtle, rgba(249, 115, 22, 0.1));
-        color: var(--ds-primary-orange, #f97316);
-        border-left: 3px solid var(--ds-primary-orange, #f97316);
+        background: var(--ds-primary-orange-subtle);
+        color: var(--ds-primary-orange);
+        border-left: var(--border-2) solid var(--ds-primary-orange);
       }
 
       .incomplete-data-badge.severity-critical {
-        background: var(--ds-primary-orange-subtle, rgba(249, 115, 22, 0.15));
-        color: var(--ds-primary-orange, #f97316);
-        border-left: 3px solid var(--ds-primary-orange, #f97316);
+        background: var(--ds-primary-orange-subtle);
+        color: var(--ds-primary-orange);
+        border-left: var(--border-2) solid var(--ds-primary-orange);
         font-weight: var(--font-weight-bold); /* Intensity difference */
       }
 
@@ -132,7 +132,7 @@ export type IncompleteDataPlacement =
       }
 
       .badge-icon {
-        font-size: var(--font-size-badge);
+        font-size: var(--font-caption-size);
       }
 
       .badge-label {

@@ -27,7 +27,7 @@ import {
   computed,
   effect,
   ChangeDetectionStrategy,
-  ContentChild,
+  contentChild,
   TemplateRef,
   ElementRef,
   inject,
@@ -71,7 +71,7 @@ import { CommonModule } from "@angular/common";
             [attr.aria-label]="'Slide ' + (i + 1) + ' of ' + cards().length"
           >
             <ng-container
-              [ngTemplateOutlet]="cardTemplate"
+              [ngTemplateOutlet]="cardTemplate()"
               [ngTemplateOutletContext]="{ $implicit: card, index: i }"
             ></ng-container>
           </div>
@@ -130,11 +130,8 @@ import { CommonModule } from "@angular/common";
 export class SwipeableCardsComponent<T> implements OnDestroy {
   private elementRef = inject(ElementRef);
 
-  // Content
-  @ContentChild(TemplateRef) cardTemplate!: TemplateRef<{
-    $implicit: T;
-    index: number;
-  }>;
+  // Angular 21: Use contentChild() signal instead of @ContentChild()
+  cardTemplate = contentChild.required<TemplateRef<{ $implicit: T; index: number }>>(TemplateRef);
 
   // Inputs
   cards = input<T[]>([]);

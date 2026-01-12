@@ -6,7 +6,7 @@ import {
   computed,
   effect,
   ChangeDetectionStrategy,
-  ViewChild,
+  viewChild,
   ElementRef,
   HostListener,
 } from "@angular/core";
@@ -374,7 +374,8 @@ export class EnhancedDataTableComponent {
   onBulkDelete = output<TableRow[]>();
   onExport = output<TableRow[]>();
 
-  @ViewChild("editInput") editInput?: ElementRef<HTMLInputElement>;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  editInput = viewChild<ElementRef<HTMLInputElement>>("editInput");
 
   // State
   selectAll = signal<boolean>(false);
@@ -523,8 +524,9 @@ export class EnhancedDataTableComponent {
     this.editingValue.set(this.getCellValue(row, field));
 
     setTimeout(() => {
-      this.editInput?.nativeElement.focus();
-      this.editInput?.nativeElement.select();
+      const input = this.editInput();
+      input?.nativeElement.focus();
+      input?.nativeElement.select();
     }, 50);
   }
 

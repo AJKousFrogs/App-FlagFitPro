@@ -61,7 +61,7 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
         letter-spacing: 0;
         line-height: var(--line-height-tight);
         min-height: var(--space-8);
-        transition: all 0.2s ease;
+        transition: all var(--motion-fast) var(--ease-standard);
       }
 
       /* Risk Level Colors - SEMANTIC RULE: Risk MUST be red ONLY */
@@ -129,7 +129,7 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
       }
 
       .risk-icon {
-        font-size: var(--font-size-badge);
+        font-size: var(--font-caption-size);
       }
 
       .risk-label {

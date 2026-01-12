@@ -19,7 +19,7 @@ import {
   DestroyRef,
   ElementRef,
   HostListener,
-  ViewChild,
+  viewChild,
   computed,
   inject,
   signal,
@@ -837,8 +837,9 @@ export class AiCoachChatComponent implements AfterViewChecked {
   // User role check
   isCoach = computed(() => this.authService.getUser()?.role === "coach");
 
-  @ViewChild("messagesContainer") messagesContainer!: ElementRef;
-  @ViewChild("messageInput") messageInput!: ElementRef;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  messagesContainer = viewChild.required<ElementRef>("messagesContainer");
+  messageInput = viewChild.required<ElementRef>("messageInput");
 
   messages = signal<ChatMessage[]>([]);
   isLoading = signal(false);
@@ -1372,8 +1373,9 @@ export class AiCoachChatComponent implements AfterViewChecked {
     this.autocompleteSuggestions.set([]);
 
     // Reset textarea height
-    if (this.messageInput?.nativeElement) {
-      this.messageInput.nativeElement.style.height = "auto";
+    const input = this.messageInput();
+    if (input?.nativeElement) {
+      input.nativeElement.style.height = "auto";
     }
 
     // Call AI Chat API
@@ -1666,15 +1668,17 @@ export class AiCoachChatComponent implements AfterViewChecked {
   }
 
   scrollToBottom(): void {
-    if (this.messagesContainer?.nativeElement) {
-      const element = this.messagesContainer.nativeElement;
+    const container = this.messagesContainer();
+    if (container?.nativeElement) {
+      const element = container.nativeElement;
       element.scrollTop = element.scrollHeight;
     }
   }
 
   private checkScrollPosition(): void {
-    if (this.messagesContainer?.nativeElement) {
-      const element = this.messagesContainer.nativeElement;
+    const container = this.messagesContainer();
+    if (container?.nativeElement) {
+      const element = container.nativeElement;
       const isAtBottom =
         element.scrollHeight - element.scrollTop - element.clientHeight < 100;
       this.showScrollButton.set(!isAtBottom && this.messages().length > 2);
@@ -1744,8 +1748,9 @@ export class AiCoachChatComponent implements AfterViewChecked {
     this.triggerHaptic("selection");
 
     // Focus back on input
-    if (this.messageInput?.nativeElement) {
-      this.messageInput.nativeElement.focus();
+    const input = this.messageInput();
+    if (input?.nativeElement) {
+      input.nativeElement.focus();
     }
   }
 

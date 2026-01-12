@@ -78,9 +78,9 @@ This audit identifies pre-existing issues in the codebase that should be address
 **Impact**: Code maintainability
 
 **Related Files**:
-- `src/js/utils/error-handling.js` (deprecated)
+- `src/js/utils/error-handling.js` (deprecated - deleted)
 - `src/js/utils/unified-error-handler.js` (preferred)
-- `angular/src/app/core/utils/error-handler.util.ts` (also deprecated)
+- `angular/src/app/core/utils/error-handler.util.ts` (deprecated - deleted Jan 2026)
 
 ---
 

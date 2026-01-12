@@ -76,43 +76,43 @@ export type ActionType =
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-md);
         font-family: var(--font-family-sans);
-        font-size: var(--font-size-body);
+        font-size: var(--font-body-sm-size);
         font-weight: var(--font-weight-semibold);
         text-transform: none;
         letter-spacing: 0;
         line-height: var(--line-height-tight);
         min-height: var(--space-8);
-        transition: all 0.2s ease;
+        transition: all var(--motion-fast) var(--ease-standard);
         cursor: pointer;
       }
 
       /* Urgency Colors - SEMANTIC RULE: Action Required MUST be white surface + strong border */
       /* Urgency handled by border color/intensity, NOT background color */
       .action-required-badge.urgency-low {
-        background: var(--surface-primary, #ffffff);
+        background: var(--surface-primary);
         color: var(--color-text-primary);
-        border: 2px solid var(--color-status-info);
+        border: var(--border-2) solid var(--color-status-info);
       }
 
       .action-required-badge.urgency-medium {
-        background: var(--surface-primary, #ffffff);
+        background: var(--surface-primary);
         color: var(--color-text-primary);
-        border: 2px solid var(--ds-primary-orange, #f97316);
+        border: var(--border-2) solid var(--ds-primary-orange);
       }
 
       .action-required-badge.urgency-high {
-        background: var(--surface-primary, #ffffff);
+        background: var(--surface-primary);
         color: var(--color-text-primary);
-        border: 3px solid var(--ds-primary-orange, #f97316);
+        border: var(--border-2) solid var(--ds-primary-orange);
         font-weight: var(--font-weight-semibold);
       }
 
       .action-required-badge.urgency-critical {
-        background: var(--surface-primary, #ffffff);
+        background: var(--surface-primary);
         color: var(--color-text-primary);
-        border: 3px solid var(--color-status-error);
+        border: var(--border-2) solid var(--color-status-error);
         font-weight: var(--font-weight-bold);
-        animation: pulse-action 2s infinite;
+        animation: pulse-action var(--motion-slow) infinite;
       }
 
       @keyframes pulse-action {
@@ -146,7 +146,7 @@ export type ActionType =
       }
 
       .action-icon {
-        font-size: var(--font-size-badge);
+        font-size: var(--font-caption-size);
       }
 
       .action-label {
@@ -177,7 +177,7 @@ export type ActionType =
       /* Responsive */
       @media (max-width: 768px) {
         .action-required-badge {
-          font-size: var(--font-size-h4);
+          font-size: var(--font-h4-size);
           padding: var(--space-2) var(--space-3);
         }
       }

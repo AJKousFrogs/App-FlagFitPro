@@ -95,6 +95,9 @@
 | Document | Description |
 |----------|-------------|
 | [AUDITS.md](./AUDITS.md) | **Consolidated audit report** - Code quality, refactoring, conflicts |
+| [CODEBASE_AUDIT_FINDINGS.md](./CODEBASE_AUDIT_FINDINGS.md) | Angular patterns, loading states, API routing |
+| [UI_DESIGN_CONSISTENCY_AUDIT.md](./UI_DESIGN_CONSISTENCY_AUDIT.md) | Design token compliance audit |
+| [DESIGN_SYSTEM_COMPLIANCE_CHECK.md](./DESIGN_SYSTEM_COMPLIANCE_CHECK.md) | Design system rules compliance check |
 
 ### 🛠️ Troubleshooting
 
@@ -166,6 +169,13 @@ The following reports have been consolidated into [AUDITS.md](./AUDITS.md):
 - `P_TAG_CONSISTENCY_ANALYSIS.md` → Archived
 
 These files are kept for historical reference but the consolidated [AUDITS.md](./AUDITS.md) should be the primary reference.
+
+**Recent Audit Reports:**
+- [UI_DESIGN_CONSISTENCY_AUDIT.md](./UI_DESIGN_CONSISTENCY_AUDIT.md) - Design token compliance (Jan 2026)
+- [UI_DESIGN_CONSISTENCY_AUDIT_SWEEP_2.md](./UI_DESIGN_CONSISTENCY_AUDIT_SWEEP_2.md) - Second sweep findings
+- [UI_DESIGN_CONSISTENCY_AUDIT_SWEEP_3.md](./UI_DESIGN_CONSISTENCY_AUDIT_SWEEP_3.md) - Third sweep findings
+- [UI_DESIGN_CONSISTENCY_AUDIT_SWEEP_4.md](./UI_DESIGN_CONSISTENCY_AUDIT_SWEEP_4.md) - Final verification
+- [DESIGN_SYSTEM_COMPLIANCE_CHECK.md](./DESIGN_SYSTEM_COMPLIANCE_CHECK.md) - Design system rules compliance
 
 ---
 

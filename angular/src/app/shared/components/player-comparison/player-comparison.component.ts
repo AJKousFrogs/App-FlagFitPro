@@ -19,11 +19,6 @@ import { TooltipModule } from "primeng/tooltip";
 import { getInitials } from "../../utils/format.utils";
 import { PlayerWithStats } from "../../../core/models/player.models";
 
-/**
- * @deprecated Use PlayerWithStats from core/models/player.models instead
- */
-export type PlayerStats = PlayerWithStats;
-
 interface StatComparison {
   label: string;
   key: string;

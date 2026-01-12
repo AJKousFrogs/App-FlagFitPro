@@ -5,12 +5,13 @@
  * across the entire application.
  *
  * Reference Design:
- * - Solid green background (#63ad0e for success)
- * - White text (#ffffff)
- * - Semibold font weight (600)
- * - Fixed height: 32px
- * - Horizontal padding: 12px
- * - RAISED RECTANGULAR shape: border-radius 8px
+ * - Uses design tokens from design-system-tokens.scss
+ * - Background: var(--color-status-success) for success
+ * - Text: var(--color-text-on-primary) white on colored backgrounds
+ * - Font weight: var(--font-weight-semibold) (600)
+ * - Fixed height: var(--touch-target-sm) (36px)
+ * - Horizontal padding: var(--space-3) (12px)
+ * - RAISED RECTANGULAR shape: var(--radius-md) (8px)
  * - Subtle shadow for depth
  * - Text vertically centered
  * - text-transform: none
@@ -78,44 +79,42 @@ export type StatusTagSeverity =
         height: var(--touch-target-sm);
         min-height: var(--touch-target-sm);
 
-        /* Padding: 16px horizontal for breathing room */
-        padding: 0 var(--space-4);
+        /* Padding: 12px horizontal for breathing room */
+        padding: 0 var(--space-3);
 
-        /* Typography */
+        /* Typography - using design tokens */
         font-family: var(--font-family-sans);
-        font-size: 14px;
-        font-weight: 600;
+        font-size: var(--font-body-sm-size);
+        font-weight: var(--font-weight-semibold);
         line-height: 1;
         white-space: nowrap;
         text-transform: none;
         text-decoration: none;
 
         /* Shape: RAISED RECTANGULAR (not pill) */
-        border-radius: var(--radius-md, 8px);
+        border-radius: var(--radius-md);
 
         /* Raised effect with shadow */
         border: none;
-        box-shadow:
-          0 1px 3px rgba(0, 0, 0, 0.1),
-          0 1px 2px rgba(0, 0, 0, 0.06);
+        box-shadow: var(--shadow-1);
         outline: none;
 
-        /* Default: Success (green) */
-        background-color: #63ad0e;
-        color: #ffffff;
+        /* Default: Success (green) - using design tokens */
+        background-color: var(--color-status-success);
+        color: var(--color-text-on-primary);
 
         /* Prevent flex row stretching */
         flex-shrink: 0;
 
         /* Smooth transitions */
         transition:
-          box-shadow 0.15s ease,
-          transform 0.15s ease;
+          box-shadow var(--motion-fast) var(--ease-standard),
+          transform var(--motion-fast) var(--ease-standard);
       }
 
       /* Icon styling */
       .status-tag i {
-        font-size: 12px;
+        font-size: var(--font-caption-size);
         line-height: 1;
         text-decoration: none;
       }
@@ -127,43 +126,43 @@ export type StatusTagSeverity =
       }
 
       /* ================================================================
-       SEVERITY VARIANTS
+       SEVERITY VARIANTS - Using Design Tokens
        ================================================================ */
 
       /* Success - Solid green (matches "Good" reference) */
       .status-tag-success {
-        background-color: #63ad0e;
-        color: #ffffff;
+        background-color: var(--color-status-success);
+        color: var(--color-text-on-primary);
       }
 
       /* Primary - Brand green */
       .status-tag-primary {
-        background-color: var(--ds-primary-green, #089949);
-        color: #ffffff;
+        background-color: var(--ds-primary-green);
+        color: var(--color-text-on-primary);
       }
 
       /* Warning - Amber/yellow with dark text for contrast */
       .status-tag-warning {
-        background-color: #ffc000;
-        color: #78350f;
+        background-color: var(--color-status-warning);
+        color: var(--primitive-warning-800);
       }
 
       /* Danger - Red */
       .status-tag-danger {
-        background-color: #ff003c;
-        color: #ffffff;
+        background-color: var(--color-status-error);
+        color: var(--color-text-on-primary);
       }
 
       /* Info - Blue */
       .status-tag-info {
-        background-color: #0ea5e9;
-        color: #ffffff;
+        background-color: var(--color-status-info);
+        color: var(--color-text-on-primary);
       }
 
       /* Secondary - Neutral gray */
       .status-tag-secondary {
-        background-color: #e5e7eb;
-        color: #525252;
+        background-color: var(--surface-tertiary);
+        color: var(--color-text-secondary);
       }
 
       /* ================================================================
@@ -172,10 +171,10 @@ export type StatusTagSeverity =
 
       /* Small - More compact */
       .status-tag-sm {
-        height: var(--space-7); /* 28px */
-        min-height: var(--space-7);
-        padding: 0 var(--space-3);
-        font-size: var(--font-size-badge);
+        height: var(--space-6); /* 24px */
+        min-height: var(--space-6);
+        padding: 0 var(--space-2);
+        font-size: var(--font-caption-size);
         border-radius: var(--radius-sm);
       }
 
@@ -189,14 +188,14 @@ export type StatusTagSeverity =
       }
 
       /* ================================================================
-       DARK MODE
+       DARK MODE - Using Design Tokens
        ================================================================ */
 
       :host-context([data-theme="dark"]),
       :host-context(.dark-theme) {
         .status-tag-secondary {
-          background-color: #404040;
-          color: #e5e5e5;
+          background-color: var(--primitive-neutral-700);
+          color: var(--primitive-neutral-200);
         }
       }
     `,

@@ -22,7 +22,7 @@ import {
   inject,
   ChangeDetectionStrategy,
   ViewContainerRef,
-  ViewChild,
+  viewChild,
   ComponentRef,
   OnDestroy,
   OnInit,
@@ -62,8 +62,8 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
   meaning = input.required<SemanticMeaning>();
   context = input.required<MeaningMetadata["context"]>();
 
-  @ViewChild("renderTarget", { read: ViewContainerRef })
-  renderTarget!: ViewContainerRef;
+  // Angular 21: Use viewChild() signal instead of @ViewChild()
+  renderTarget = viewChild.required<ViewContainerRef>("renderTarget");
 
   private rendererService = inject(SemanticRendererService);
   private logger = inject(LoggerService);
@@ -99,14 +99,15 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
   }
 
   private render(): void {
-    if (!this.renderTarget) {
+    const target = this.renderTarget();
+    if (!target) {
       return;
     }
 
     const decision = this.renderDecision();
 
     // Clear previous render
-    this.renderTarget.clear();
+    target.clear();
     if (this.componentRef) {
       this.componentRef.destroy();
     }
@@ -146,7 +147,7 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
 
       // Create component instance
        
-      this.componentRef = this.renderTarget.createComponent(
+      this.componentRef = target.createComponent(
         componentClass as any,
       );
 
