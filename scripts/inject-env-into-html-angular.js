@@ -28,8 +28,14 @@ const supabaseAnonKey =
 const sentryDsn = process.env.VITE_SENTRY_DSN || "";
 const sentryEnabled = process.env.VITE_ENABLE_SENTRY || "false";
 
+// Generate build timestamp for cache-busting
+const buildTimestamp = new Date().toISOString();
+const buildId = Date.now().toString(36);
+
 console.log("🔧 Injecting environment variables into Angular build...");
 console.log(`   Source: ${indexHtmlPath}`);
+console.log(`   Build ID: ${buildId}`);
+console.log(`   Build Time: ${buildTimestamp}`);
 console.log(`   SUPABASE_URL: ${supabaseUrl ? "✓ Set" : "✗ Missing"}`);
 console.log(`   SUPABASE_ANON_KEY: ${supabaseAnonKey ? "✓ Set" : "✗ Missing"}`);
 console.log(`   SENTRY_DSN: ${sentryDsn ? "✓ Set" : "✗ Not configured"}`);
@@ -75,6 +81,7 @@ if (content.includes("window._env = window._env || {};")) {
 // This needs to run BEFORE the Angular main.js script
 const envScript = `
     <!-- Environment Variables (injected at build time by scripts/inject-env-into-html-angular.js) -->
+    <!-- Build: ${buildId} @ ${buildTimestamp} -->
     <script>
       window._env = window._env || {};
       window._env.SUPABASE_URL = '${supabaseUrl}';
@@ -83,6 +90,8 @@ const envScript = `
       window._env.VITE_SUPABASE_ANON_KEY = '${supabaseAnonKey}';
       window._env.VITE_SENTRY_DSN = '${sentryDsn}';
       window._env.VITE_ENABLE_SENTRY = '${sentryEnabled}';
+      window._env.BUILD_ID = '${buildId}';
+      window._env.BUILD_TIMESTAMP = '${buildTimestamp}';
     </script>`;
 
 // Insert the script right before </head>

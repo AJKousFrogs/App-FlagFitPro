@@ -3,6 +3,10 @@
   command = "cd angular && npm ci --legacy-peer-deps && npm run build && cd .. && node scripts/inject-env-into-html-angular.js"
   publish = "angular/dist/flagfit-pro/browser"
 
+# Cache purge plugin - ensures fresh content on every deploy
+[[plugins]]
+  package = "./netlify/plugins/cache-purge"
+
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
@@ -81,16 +85,28 @@
 
 # Legacy src/ headers removed (January 2026) - src/ directory is legacy code
 
-# PWA Service Worker - no caching
+# PWA Service Worker - NEVER cache (critical for updates)
 [[headers]]
   for = "/ngsw-worker.js"
   [headers.values]
-    Cache-Control = "no-cache"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
 
 [[headers]]
   for = "/ngsw.json"
   [headers.values]
-    Cache-Control = "no-cache"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+
+# Service worker hash file - never cache
+[[headers]]
+  for = "/ngsw-*.json"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
 
 # PWA Manifest
 [[headers]]
@@ -151,11 +167,21 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# HTML - short cache for SPA
+# HTML - NO caching for SPA (always fresh on every deploy)
 [[headers]]
   for = "/index.html"
   [headers.values]
-    Cache-Control = "no-cache"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+
+# All HTML files - no cache
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
 
 # API Routes for Dashboard (must come before page redirects)
 [[redirects]]
