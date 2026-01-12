@@ -143,7 +143,8 @@ export class TeamApiService {
         return [];
       }
 
-      return data as TeamMemberWithUser[];
+      // Explicitly cast after type guard to satisfy TypeScript
+      return data as unknown as TeamMemberWithUser[];
     } catch (error) {
       this.logger.error("[TeamApi] Error in getTeamMembers:", error);
       throw error;

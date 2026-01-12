@@ -774,7 +774,8 @@ describe("EnhancedDataTableComponent", () => {
       const mockInput = document.createElement("input");
       const focusSpy = vi.spyOn(mockInput, "focus");
       const selectSpy = vi.spyOn(mockInput, "select");
-      component.editInput = { nativeElement: mockInput } as any;
+      // Mock the signal function to return the mock ElementRef
+      component.editInput = vi.fn(() => ({ nativeElement: mockInput })) as any;
 
       // Manually trigger what the setTimeout would do
       mockInput.focus();

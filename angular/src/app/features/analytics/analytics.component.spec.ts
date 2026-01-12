@@ -194,7 +194,8 @@ describe("AnalyticsComponent", () => {
         }),
       } as unknown as QueryList<UIChart>;
 
-      component.chartRefs = mockChartRefs;
+      // Mock the signal function to return the mock QueryList
+      component.chartRefs = vi.fn(() => mockChartRefs) as any;
 
       // Trigger ngAfterViewInit
       component.ngAfterViewInit();
@@ -237,7 +238,8 @@ describe("AnalyticsComponent", () => {
         }),
       } as unknown as QueryList<UIChart>;
 
-      component.chartRefs = mockChartRefs;
+      // Mock the signal function to return the mock QueryList
+      component.chartRefs = vi.fn(() => mockChartRefs) as any;
       component.ngAfterViewInit();
 
       // Advance timers past the 500ms setTimeout

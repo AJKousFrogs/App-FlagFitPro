@@ -52,6 +52,13 @@
     "**/coverage": true,
     "**/.playwright": true
   },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.angular/**": true,
+    "**/coverage/**": true,
+    "**/.playwright/**": true
+  },
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true,

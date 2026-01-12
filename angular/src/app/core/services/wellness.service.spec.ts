@@ -9,11 +9,12 @@
 
 import { TestBed } from "@angular/core/testing";
 import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, of } from "rxjs";
 import { WellnessService, WellnessData } from "./wellness.service";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { RealtimeService } from "./realtime.service";
+import { ApiService } from "./api.service";
 
 // Mock data
 const MOCK_WELLNESS_ENTRY: WellnessData = {
@@ -103,6 +104,10 @@ const mockRealtimeService = {
   unsubscribe: vi.fn(),
 };
 
+const mockApiService = {
+  post: vi.fn(),
+};
+
 describe("WellnessService", () => {
   let service: WellnessService;
 
@@ -115,6 +120,7 @@ describe("WellnessService", () => {
         { provide: SupabaseService, useValue: mockSupabaseService },
         { provide: LoggerService, useValue: mockLoggerService },
         { provide: RealtimeService, useValue: mockRealtimeService },
+        { provide: ApiService, useValue: mockApiService },
       ],
     });
 
@@ -485,24 +491,9 @@ describe("WellnessService", () => {
 
   describe("Log Wellness", () => {
     it("should log wellness entry successfully", async () => {
-      const mockInsert = vi.fn(() => ({
-        select: vi.fn(() => ({
-          maybeSingle: vi.fn(() =>
-            Promise.resolve({ data: { id: 1 }, error: null }),
-          ),
-        })),
-      }));
-
-      (mockSupabaseService as any).client.from.mockReturnValue({
-        insert: mockInsert,
-        select: vi.fn(() => ({
-          or: vi.fn(() => ({
-            gte: vi.fn(() => ({
-              order: vi.fn(() => Promise.resolve({ data: [], error: null })),
-            })),
-          })),
-        })),
-      });
+      mockApiService.post.mockReturnValue(
+        of({ success: true, data: { id: 1 } }),
+      );
 
       const result = await firstValueFrom(
         service.logWellness({
@@ -534,33 +525,16 @@ describe("WellnessService", () => {
       // Reset userId to valid user
       (mockSupabaseService as any).userId.mockReturnValue("user-123");
 
-      let capturedInsertData: unknown = null;
-      const mockInsert = vi.fn((data: unknown) => {
-        capturedInsertData = data;
-        return {
-          select: vi.fn(() => ({
-            maybeSingle: vi.fn(() =>
-              Promise.resolve({ data: { id: 1, date: today }, error: null }),
-            ),
-          })),
-        };
-      });
-
-      (mockSupabaseService as any).client.from.mockReturnValue({
-        insert: mockInsert,
-        select: vi.fn(() => ({
-          or: vi.fn(() => ({
-            gte: vi.fn(() => ({
-              order: vi.fn(() => Promise.resolve({ data: [], error: null })),
-            })),
-          })),
-        })),
+      let capturedPayload: unknown = null;
+      mockApiService.post.mockImplementation((url: string, payload: unknown) => {
+        capturedPayload = payload;
+        return of({ success: true, data: { id: 1, date: today } });
       });
 
       await firstValueFrom(service.logWellness({ sleep: 8 }));
 
-      expect(mockInsert).toHaveBeenCalled();
-      expect(capturedInsertData).toMatchObject({
+      expect(mockApiService.post).toHaveBeenCalled();
+      expect(capturedPayload).toMatchObject({
         date: today,
       });
     });

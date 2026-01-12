@@ -27,7 +27,12 @@ const mockSupabaseService = {
   signIn: vi.fn(),
   signUp: vi.fn(),
   signOut: vi.fn(),
-  getToken: vi.fn(),
+  client: {
+    auth: {
+      getSession: vi.fn(),
+      refreshSession: vi.fn(),
+    },
+  },
 } as unknown as SupabaseService;
 
 // Mock Router
@@ -350,7 +355,14 @@ describe("AuthService", () => {
     });
 
     it("should get token from Supabase", async () => {
-      (mockSupabaseService as any).getToken.mockResolvedValue("mock-jwt-token");
+      const mockSession = {
+        access_token: "mock-jwt-token",
+        expires_at: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
+      };
+      (mockSupabaseService.client.auth.getSession as any).mockResolvedValue({
+        data: { session: mockSession },
+        error: null,
+      });
 
       const token = await service.getToken();
 
@@ -358,7 +370,10 @@ describe("AuthService", () => {
     });
 
     it("should return null token when not authenticated", async () => {
-      (mockSupabaseService as any).getToken.mockResolvedValue(null);
+      (mockSupabaseService.client.auth.getSession as any).mockResolvedValue({
+        data: { session: null },
+        error: null,
+      });
 
       const token = await service.getToken();
 

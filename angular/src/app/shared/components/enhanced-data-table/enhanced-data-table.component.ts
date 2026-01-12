@@ -409,7 +409,9 @@ export class EnhancedDataTableComponent {
         return aIndex - bIndex;
       });
     }
-
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'enhanced-data-table.component.ts:394',message:'visibleColumns computed',data:{totalColumns:cols.length,visibleCount:visible.length,dataRows:this.data().length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
     return visible;
   });
 

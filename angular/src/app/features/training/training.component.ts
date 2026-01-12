@@ -439,9 +439,18 @@ export class TrainingComponent {
    * Refactored: Delegates to unified training service
    */
   private async loadData(): Promise<void> {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training.component.ts:441',message:'loadData entry',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+    // #endregion
     try {
       await firstValueFrom(this.trainingService.getTodayOverview());
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training.component.ts:444',message:'loadData success',data:{workoutsCount:this.workouts().length,statsCount:this.trainingStats().length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
     } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training.component.ts:446',message:'loadData error',data:{errorMessage:error instanceof Error?error.message:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
       console.error("Error loading training data:", error);
       this.toastService.error(TOAST.ERROR.LOAD_FAILED);
     }

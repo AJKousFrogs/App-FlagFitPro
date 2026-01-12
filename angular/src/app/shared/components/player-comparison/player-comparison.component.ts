@@ -301,7 +301,7 @@ interface StatComparison {
   styleUrl: "./player-comparison.component.scss",
 })
 export class PlayerComparisonComponent {
-  readonly players = input<PlayerStats[]>([]);
+  readonly players = input<PlayerWithStats[]>([]);
   readonly initialPlayer1Id = input<string>();
   readonly initialPlayer2Id = input<string>();
   readonly comparisonChanged = output<{
@@ -312,9 +312,9 @@ export class PlayerComparisonComponent {
   selectedPlayer1: string | null = null;
   selectedPlayer2: string | null = null;
 
-  availablePlayers = signal<PlayerStats[]>([]);
-  player1 = signal<PlayerStats | null>(null);
-  player2 = signal<PlayerStats | null>(null);
+  availablePlayers = signal<PlayerWithStats[]>([]);
+  player1 = signal<PlayerWithStats | null>(null);
+  player2 = signal<PlayerWithStats | null>(null);
 
   constructor() {
     // Use effects to react to input changes
@@ -592,7 +592,7 @@ export class PlayerComparisonComponent {
     );
   }
 
-  private getStatValue(player: PlayerStats, key: string): number | string {
+  private getStatValue(player: PlayerWithStats, key: string): number | string {
     // Check direct property first
     const playerRecord = player as unknown as Record<string, unknown>;
     if (key in player && playerRecord[key] !== undefined) {

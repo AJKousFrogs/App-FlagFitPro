@@ -224,7 +224,9 @@ export class StatusTagComponent {
     if (this.size() !== "md") {
       classes.push(`status-tag-${this.size()}`);
     }
-
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'status-tag.component.ts:221',message:'Status tag computed class',data:{value:this.value(),severity:this.severity(),size:this.size(),classes:classes.join(' ')},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
     return classes.join(" ");
   });
 }

@@ -106,3 +106,4 @@ node_modules.bak.*
 
 # Hot reload development files
 flagfit-pro-deploy.tar.gz
+.pnpm-store

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "noEmit": true,
-    "types": []
+    "types": [],
+    "moduleResolution": "bundler"
   },
   "exclude": [
     "../src/**/*.spec.ts",
