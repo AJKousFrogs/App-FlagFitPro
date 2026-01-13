@@ -7,6 +7,11 @@
  * - Touch interactions
  * - Small screens (320px - 768px)
  * 
+ * UPDATED January 2026:
+ * - Migrated to @layer mobile for proper cascade
+ * - Consolidated breakpoint mixins
+ * - Removed redundant Safari gap workarounds
+ * 
  * Breakpoints:
  * - xs: 0-479px (Small phones)
  * - sm: 480-639px (Phones)
@@ -84,331 +89,299 @@
 }
 
 // ================================================================
-// MOBILE-SPECIFIC RESETS (Chrome & Safari iOS)
+// MOBILE LAYER - Higher specificity than base styles
 // ================================================================
 
-// Remove iOS Safari input shadows and zoom
-:global {
-  @media (max-width: 767px) {
-    // Prevent zoom on input focus (iOS Safari)
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="number"],
-    input[type="tel"],
-    input[type="url"],
-    input[type="search"],
-    textarea,
-    select {
-      font-size: 16px !important; // iOS Safari zooms on < 16px
-    }
+@layer mobile {
+  // ================================================================
+  // MOBILE-SPECIFIC RESETS (Chrome & Safari iOS)
+  // ================================================================
 
-    // Better tap targets (44px minimum - Apple HIG & Material Design)
-    button,
-    [role="button"],
-    a,
-    input[type="checkbox"],
-    input[type="radio"] {
-      min-height: 44px;
-      min-width: 44px;
-    }
+  @media (max-width: 767px) {
+    // Note: Input font-size: 16px and touch targets (44px)
+    // are defined in _mobile-touch-components.scss
 
     // Disable pull-to-refresh in Chrome on Android
     body {
       overscroll-behavior-y: contain;
-    }
-
-    // Smooth scrolling for iOS
-    * {
-      -webkit-overflow-scrolling: touch;
-    }
-
-    // Remove iOS Safari callout menu
-    * {
-      -webkit-touch-callout: none;
-    }
-
-    // Better text rendering on mobile
-    body {
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
+    }
+
+    // Note: -webkit-overflow-scrolling and -webkit-touch-callout
+    // are handled in _ios-safari-fixes.scss for platform-specific scoping
+  }
+
+  // ================================================================
+  // MOBILE-OPTIMIZED CARD STYLES
+  // ================================================================
+
+  .mobile-card-compact {
+    @media (max-width: 767px) {
+      .p-card-body {
+        padding: var(--space-3);
+      }
+
+      .p-card-title {
+        font-size: var(--font-size-h3);
+        margin-bottom: var(--space-2);
+      }
     }
   }
-}
 
-// ================================================================
-// MOBILE-OPTIMIZED CARD STYLES
-// ================================================================
+  // ================================================================
+  // MOBILE-OPTIMIZED TABLE STYLES
+  // ================================================================
 
-.mobile-card-compact {
-  @media (max-width: 767px) {
-    :global(.p-card-body) {
-      padding: var(--space-3) !important;
-    }
+  .mobile-table-scroll {
+    @media (max-width: 767px) {
+      overflow-x: auto;
 
-    :global(.p-card-title) {
-      font-size: var(--font-size-h3) !important;
-      margin-bottom: var(--space-2) !important;
-    }
-  }
-}
-
-// ================================================================
-// MOBILE-OPTIMIZED TABLE STYLES
-// ================================================================
-
-.mobile-table-scroll {
-  @media (max-width: 767px) {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-
-    // Scroll shadow indicators
-    background:
-      linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
-      linear-gradient(to right, rgba(255, 255, 255, 0), white 70%) 0 100%,
-      radial-gradient(
-        farthest-side at 0% 50%,
-        rgba(0, 0, 0, 0.2),
-        rgba(0, 0, 0, 0)
-      ),
-      radial-gradient(
-          farthest-side at 100% 50%,
+      // Scroll shadow indicators
+      background:
+        linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+        linear-gradient(to right, rgba(255, 255, 255, 0), white 70%) 0 100%,
+        radial-gradient(
+          farthest-side at 0% 50%,
           rgba(0, 0, 0, 0.2),
           rgba(0, 0, 0, 0)
-        )
-        0 100%;
-    background-repeat: no-repeat;
-    background-color: white;
-    background-size:
-      40px 100%,
-      40px 100%,
-      14px 100%,
-      14px 100%;
-    background-attachment: local, local, scroll, scroll;
+        ),
+        radial-gradient(
+            farthest-side at 100% 50%,
+            rgba(0, 0, 0, 0.2),
+            rgba(0, 0, 0, 0)
+          )
+          0 100%;
+      background-repeat: no-repeat;
+      background-color: white;
+      background-size:
+        40px 100%,
+        40px 100%,
+        14px 100%,
+        14px 100%;
+      background-attachment: local, local, scroll, scroll;
 
-    table {
-      min-width: 600px; // Force horizontal scroll
-    }
+      table {
+        min-width: 600px; // Force horizontal scroll
+      }
 
-    // Sticky first column on mobile
-    th:first-child,
-    td:first-child {
-      position: sticky;
-      left: 0;
-      background: var(--surface-card);
-      z-index: 1;
-    }
-  }
-}
-
-// ================================================================
-// TOUCH-FRIENDLY BUTTON STYLES
-// ================================================================
-
-.mobile-button-large {
-  @media (max-width: 767px) {
-    min-height: 48px !important;
-    padding: var(--space-3) var(--space-4) !important;
-    font-size: var(--font-size-body) !important;
-
-    i {
-      font-size: var(--font-size-h3) !important;
+      // Sticky first column on mobile
+      th:first-child,
+      td:first-child {
+        position: sticky;
+        left: 0;
+        background: var(--surface-card);
+        z-index: 1;
+      }
     }
   }
-}
 
-// ================================================================
-// MOBILE-OPTIMIZED CHART CONTAINERS
-// ================================================================
+  // ================================================================
+  // TOUCH-FRIENDLY BUTTON STYLES
+  // ================================================================
 
-.mobile-chart-responsive {
-  @media (max-width: 767px) {
-    canvas {
-      max-width: 100% !important;
-      height: auto !important;
-    }
-
-    // Reduce chart padding on mobile
-    :global(.p-chart) {
-      padding: var(--space-2) !important;
-    }
-  }
-}
-
-// ================================================================
-// MOBILE SAFE AREAS (iOS/Samsung Notch + Home Bar Support)
-// iPhone 11-17, Samsung S23-S25 tested
-// ================================================================
-
-@supports (padding: max(0px)) {
-  .mobile-safe-bottom {
+  .mobile-button-large {
     @media (max-width: 767px) {
-      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      min-height: 48px;
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--font-size-body);
+
+      i {
+        font-size: var(--font-size-h3);
+      }
     }
   }
 
-  .mobile-safe-top {
+  // ================================================================
+  // MOBILE-OPTIMIZED CHART CONTAINERS
+  // ================================================================
+
+  .mobile-chart-responsive {
     @media (max-width: 767px) {
-      padding-top: max(var(--space-4), env(safe-area-inset-top));
+      canvas {
+        max-width: 100%;
+        height: auto;
+      }
+
+      // Reduce chart padding on mobile
+      .p-chart {
+        padding: var(--space-2);
+      }
     }
   }
 
-  .mobile-safe-inline {
-    @media (max-width: 767px) {
-      padding-left: max(var(--space-4), env(safe-area-inset-left));
-      padding-right: max(var(--space-4), env(safe-area-inset-right));
+  // ================================================================
+  // MOBILE SAFE AREAS (iOS/Samsung Notch + Home Bar Support)
+  // iPhone 11-17, Samsung S23-S25 tested
+  // ================================================================
+
+  @supports (padding: max(0px)) {
+    .mobile-safe-bottom {
+      @media (max-width: 767px) {
+        padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      }
+    }
+
+    .mobile-safe-top {
+      @media (max-width: 767px) {
+        padding-top: max(var(--space-4), env(safe-area-inset-top));
+      }
+    }
+
+    .mobile-safe-inline {
+      @media (max-width: 767px) {
+        padding-left: max(var(--space-4), env(safe-area-inset-left));
+        padding-right: max(var(--space-4), env(safe-area-inset-right));
+      }
+    }
+
+    // Full safe area wrapper
+    .mobile-safe-all {
+      @media (max-width: 767px) {
+        padding-top: max(var(--space-4), env(safe-area-inset-top));
+        padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+        padding-left: max(var(--space-4), env(safe-area-inset-left));
+        padding-right: max(var(--space-4), env(safe-area-inset-right));
+      }
     }
   }
 
-  // Full safe area wrapper
-  .mobile-safe-all {
-    @media (max-width: 767px) {
-      padding-top: max(var(--space-4), env(safe-area-inset-top));
-      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
-      padding-left: max(var(--space-4), env(safe-area-inset-left));
-      padding-right: max(var(--space-4), env(safe-area-inset-right));
+  // ================================================================
+  // KEYBOARD-AWARE VIEWPORT (iOS Safari, Chrome Android)
+  // Uses dvh/svh for proper keyboard handling
+  // ================================================================
+
+  // Full viewport height accounting for browser chrome
+  .keyboard-viewport {
+    min-height: 100vh;
+    min-height: 100dvh; // Dynamic viewport - excludes keyboard
+
+    @supports (height: 100svh) {
+      // Small viewport - always excludes keyboard
+      &--small {
+        min-height: 100svh;
+      }
     }
   }
-}
 
-// ================================================================
-// KEYBOARD-AWARE VIEWPORT (iOS Safari, Chrome Android)
-// Uses dvh/svh for proper keyboard handling
-// ================================================================
-
-// Full viewport height accounting for browser chrome
-.keyboard-viewport {
-  min-height: 100vh;
-  min-height: 100dvh; // Dynamic viewport - excludes keyboard
-
-  @supports (height: 100svh) {
-    // Small viewport - always excludes keyboard
-    &--small {
-      min-height: 100svh;
-    }
-  }
-}
-
-// Fixed bottom elements that need keyboard awareness
-.keyboard-sticky-bottom {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
-  background: var(--surface-primary, #fff);
-  border-top: 1px solid var(--color-border-primary, #e5e7eb);
-  z-index: var(--z-index-sticky, 1020);
-
-  // When keyboard is open, adjust position
-  @supports (bottom: env(keyboard-inset-height)) {
-    bottom: env(keyboard-inset-height, 0);
-  }
-}
-
-// Input focus scroll adjustment
-@media (max-width: 767px) {
-  // Scroll input into view when focused
-  input:focus,
-  textarea:focus,
-  select:focus {
-    scroll-margin-bottom: 120px; // Space for keyboard
-  }
-
-  // Prevent body scroll when modal/keyboard open
-  body.keyboard-open {
-    overflow: hidden;
+  // Fixed bottom elements that need keyboard awareness
+  .keyboard-sticky-bottom {
     position: fixed;
-    width: 100%;
-  }
-}
-
-// ================================================================
-// IPHONE 11-17 SPECIFIC OPTIMIZATIONS
-// Viewport: 390-430px width
-// ================================================================
-
-@media (max-width: 430px) and (min-width: 375px) {
-  // iPhone notch area padding
-  .iphone-notch-aware {
-    padding-top: max(var(--space-4), env(safe-area-inset-top));
-  }
-
-  // Home indicator area
-  .iphone-home-aware {
+    bottom: 0;
+    left: 0;
+    right: 0;
     padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+    background: var(--surface-primary, #fff);
+    border-top: 1px solid var(--color-border-primary, #e5e7eb);
+    z-index: var(--z-index-sticky, 1020);
+
+    // When keyboard is open, adjust position
+    @supports (bottom: env(keyboard-inset-height)) {
+      bottom: env(keyboard-inset-height, 0);
+    }
   }
-}
 
-// ================================================================
-// SAMSUNG S23-S25 SPECIFIC OPTIMIZATIONS
-// Viewport: 360-412px width
-// ================================================================
+  // Input focus scroll adjustment
+  @media (max-width: 767px) {
+    // Scroll input into view when focused
+    input:focus,
+    textarea:focus,
+    select:focus {
+      scroll-margin-bottom: 120px; // Space for keyboard
+    }
 
-@media (max-width: 412px) and (min-width: 360px) {
-  // Samsung navigation bar area
-  .samsung-nav-aware {
-    padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+    // Prevent body scroll when modal/keyboard open
+    body.keyboard-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
   }
-}
 
-// ================================================================
-// MOBILE-OPTIMIZED DIALOG/MODAL
-// ================================================================
+  // ================================================================
+  // IPHONE 11-17 SPECIFIC OPTIMIZATIONS
+  // Viewport: 390-430px width
+  // ================================================================
 
-:global {
+  @media (max-width: 430px) and (min-width: 375px) {
+    // iPhone notch area padding
+    .iphone-notch-aware {
+      padding-top: max(var(--space-4), env(safe-area-inset-top));
+    }
+
+    // Home indicator area
+    .iphone-home-aware {
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+    }
+  }
+
+  // ================================================================
+  // SAMSUNG S23-S25 SPECIFIC OPTIMIZATIONS
+  // Viewport: 360-412px width
+  // ================================================================
+
+  @media (max-width: 412px) and (min-width: 360px) {
+    // Samsung navigation bar area
+    .samsung-nav-aware {
+      padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+    }
+  }
+
+  // ================================================================
+  // MOBILE-OPTIMIZED DIALOG/MODAL
+  // ================================================================
+
   @media (max-width: 767px) {
     // Full-screen dialogs on mobile
     .p-dialog {
-      width: 95vw !important;
-      max-width: 95vw !important;
-      max-height: 90vh !important;
-      max-height: 90dvh !important; /* Modern: accounts for mobile browser chrome */
+      width: 95vw;
+      max-width: 95vw;
+      max-height: 90vh;
+      max-height: 90dvh; /* Modern: accounts for mobile browser chrome */
 
       // CRITICAL: Ensure dialog doesn't block touches
-      pointer-events: auto !important;
+      pointer-events: auto;
     }
 
     .p-dialog-content {
-      padding: var(--space-3) !important;
-      max-height: calc(90vh - 120px) !important;
+      padding: var(--space-3);
+      max-height: calc(90vh - 120px);
       max-height: calc(
         90dvh - 120px
-      ) !important; /* Modern: accounts for mobile browser chrome */
-      overflow-y: auto !important;
+      ); /* Modern: accounts for mobile browser chrome */
+      overflow-y: auto;
 
       // CRITICAL: Ensure content doesn't block touches
-      pointer-events: auto !important;
+      pointer-events: auto;
     }
 
     // CRITICAL: Dialog footer must receive touch events
     .p-dialog-footer {
-      pointer-events: auto !important;
-      position: relative !important;
-      z-index: 2 !important;
+      pointer-events: auto;
+      position: relative;
+      z-index: 2;
 
       // Ensure buttons in footer work
       button,
       .p-button,
       app-button {
-        pointer-events: auto !important;
-        position: relative !important;
-        z-index: 3 !important;
+        pointer-events: auto;
+        position: relative;
+        z-index: 3;
       }
     }
 
     // CRITICAL: Dialog mask should allow clicks through to dialog
     .p-dialog-mask {
-      pointer-events: auto !important;
+      pointer-events: auto;
     }
 
     // Bottom sheet style for mobile
     .p-dialog.mobile-bottom-sheet {
-      bottom: 0 !important;
-      top: auto !important;
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
-      animation: slideUpFromBottom 0.3s ease-out !important;
+      bottom: 0;
+      top: auto;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      animation: slideUpFromBottom 0.3s ease-out;
     }
   }
 
@@ -420,51 +393,45 @@
   // iPhone 15-17 Pro Max, Samsung S25 Ultra (430px)
   @media (max-width: 430px) {
     .p-dialog {
-      width: 100vw !important;
-      max-width: 100vw !important;
-      margin: 0 !important;
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
+      width: 100vw;
+      max-width: 100vw;
+      margin: 0;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 
       // CRITICAL: Ensure dialog receives touches
-      pointer-events: auto !important;
+      pointer-events: auto;
     }
 
     .p-dialog-content {
-      padding: var(--space-4) !important;
-      padding-bottom: max(
-        var(--space-4),
-        env(safe-area-inset-bottom)
-      ) !important;
+      padding: var(--space-4);
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
 
       // CRITICAL: All form elements must be touchable
-      pointer-events: auto !important;
+      pointer-events: auto;
 
       * {
-        pointer-events: auto !important;
+        pointer-events: auto;
       }
     }
 
     .p-dialog-footer {
-      pointer-events: auto !important;
-      position: relative !important;
-      z-index: 10 !important;
+      pointer-events: auto;
+      position: relative;
+      z-index: 10;
     }
 
     // Ensure dialog actions don't get cut off
     .dialog-actions {
-      padding-bottom: max(
-        var(--space-4),
-        env(safe-area-inset-bottom)
-      ) !important;
-      pointer-events: auto !important;
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      pointer-events: auto;
 
       // CRITICAL: All action buttons must be touchable
       button,
       .p-button,
       app-button {
-        pointer-events: auto !important;
-        position: relative !important;
-        z-index: 11 !important;
+        pointer-events: auto;
+        position: relative;
+        z-index: 11;
       }
     }
   }
@@ -472,48 +439,48 @@
   // iPhone 11-14, Samsung S23/S24 (412-414px) - Even more compact
   @media (max-width: 414px) {
     .p-dialog {
-      width: 100vw !important;
-      max-width: 100vw !important;
-      max-height: 95vh !important;
-      max-height: 95dvh !important; /* Modern: accounts for mobile browser chrome */
+      width: 100vw;
+      max-width: 100vw;
+      max-height: 95vh;
+      max-height: 95dvh; /* Modern: accounts for mobile browser chrome */
 
       // CRITICAL: Ensure dialog receives touches
-      pointer-events: auto !important;
+      pointer-events: auto;
     }
 
     .p-dialog-header {
-      padding: var(--space-3) !important;
-      pointer-events: auto !important;
+      padding: var(--space-3);
+      pointer-events: auto;
     }
 
     .p-dialog-content {
-      padding: var(--space-3) !important;
-      pointer-events: auto !important;
+      padding: var(--space-3);
+      pointer-events: auto;
 
       // CRITICAL: All interactive elements must be touchable
       * {
-        pointer-events: auto !important;
+        pointer-events: auto;
       }
     }
 
     .p-dialog-footer {
-      padding: var(--space-3) !important;
-      pointer-events: auto !important;
-      position: relative !important;
-      z-index: 10 !important;
+      padding: var(--space-3);
+      pointer-events: auto;
+      position: relative;
+      z-index: 10;
     }
 
     // Stack dialog action buttons on very narrow screens
     .dialog-actions {
-      flex-direction: column !important;
-      gap: var(--space-2) !important;
-      pointer-events: auto !important;
+      flex-direction: column;
+      gap: var(--space-2);
+      pointer-events: auto;
 
       app-button {
-        width: 100% !important;
-        pointer-events: auto !important;
-        position: relative !important;
-        z-index: 11 !important;
+        width: 100%;
+        pointer-events: auto;
+        position: relative;
+        z-index: 11;
       }
     }
   }
@@ -531,50 +498,50 @@
 }
 
 // ================================================================
-// MOBILE-OPTIMIZED PRIMENG OVERRIDES
+// MOBILE-OPTIMIZED PRIMENG OVERRIDES (within layer)
 // ================================================================
 
-:global {
+@layer mobile {
   @media (max-width: 767px) {
     // DatePicker full width
     .p-datepicker {
-      max-width: calc(100vw - var(--space-6)) !important;
+      max-width: calc(100vw - var(--space-6));
 
       .p-datepicker-calendar {
-        font-size: var(--font-size-h4) !important;
+        font-size: var(--font-size-h4);
       }
 
       td,
       th {
-        padding: var(--space-2) !important;
+        padding: var(--space-2);
       }
     }
 
     // Select dropdown full width
     .p-select-overlay {
-      max-width: calc(100vw - var(--space-6)) !important;
+      max-width: calc(100vw - var(--space-6));
     }
 
     // Toast notifications
     .p-toast {
-      width: calc(100vw - var(--space-6)) !important;
-      left: var(--space-3) !important;
-      right: var(--space-3) !important;
+      width: calc(100vw - var(--space-6));
+      left: var(--space-3);
+      right: var(--space-3);
 
       .p-toast-message {
-        margin: var(--space-2) 0 !important;
+        margin: var(--space-2) 0;
       }
     }
 
     // Menu/Dropdown
     .p-menu {
-      max-width: calc(100vw - var(--space-6)) !important;
+      max-width: calc(100vw - var(--space-6));
     }
 
     // Toolbar
     .p-toolbar {
-      flex-wrap: wrap !important;
-      gap: var(--space-2) !important;
+      flex-wrap: wrap;
+      gap: var(--space-2);
     }
   }
 
@@ -588,53 +555,53 @@
     .p-select-overlay,
     .p-dropdown-panel,
     .p-multiselect-panel {
-      width: calc(100vw - var(--space-4)) !important;
-      max-width: calc(100vw - var(--space-4)) !important;
-      left: var(--space-2) !important;
-      right: var(--space-2) !important;
+      width: calc(100vw - var(--space-4));
+      max-width: calc(100vw - var(--space-4));
+      left: var(--space-2);
+      right: var(--space-2);
     }
 
     // Larger tap areas for dropdown items
     .p-select-option,
     .p-dropdown-item,
     .p-listbox-option {
-      min-height: 48px !important;
-      padding: var(--space-3) var(--space-4) !important;
+      min-height: 48px;
+      padding: var(--space-3) var(--space-4);
     }
 
     // Toast positioning for notch devices
     .p-toast.p-toast-top-right,
     .p-toast.p-toast-top-left,
     .p-toast.p-toast-top-center {
-      top: max(var(--space-4), env(safe-area-inset-top)) !important;
+      top: max(var(--space-4), env(safe-area-inset-top));
     }
 
     .p-toast.p-toast-bottom-right,
     .p-toast.p-toast-bottom-left,
     .p-toast.p-toast-bottom-center {
-      bottom: max(var(--space-4), env(safe-area-inset-bottom)) !important;
+      bottom: max(var(--space-4), env(safe-area-inset-bottom));
     }
 
     // DatePicker calendar compact mode
     .p-datepicker {
-      width: calc(100vw - var(--space-4)) !important;
-      max-width: calc(100vw - var(--space-4)) !important;
+      width: calc(100vw - var(--space-4));
+      max-width: calc(100vw - var(--space-4));
 
       .p-datepicker-group {
-        width: 100% !important;
+        width: 100%;
       }
 
       td {
-        width: calc((100vw - var(--space-8)) / 7) !important;
-        height: 44px !important;
+        width: calc((100vw - var(--space-8)) / 7);
+        height: 44px;
       }
     }
 
     // Tables need horizontal scroll indicator
     .p-datatable {
       .p-datatable-wrapper {
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
     }
   }
@@ -643,39 +610,39 @@
     // Even more compact for iPhone 11-14 / Samsung S23/S24
     .p-select-overlay,
     .p-dropdown-panel {
-      left: 0 !important;
-      right: 0 !important;
-      width: 100vw !important;
-      max-width: 100vw !important;
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
-      bottom: 0 !important;
-      top: auto !important;
-      max-height: 60vh !important;
-      max-height: 60dvh !important; /* Modern: accounts for mobile browser chrome */
+      left: 0;
+      right: 0;
+      width: 100vw;
+      max-width: 100vw;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      bottom: 0;
+      top: auto;
+      max-height: 60vh;
+      max-height: 60dvh; /* Modern: accounts for mobile browser chrome */
     }
 
     // Password dialog specific fixes
     .password-dialog .p-dialog {
-      width: 100vw !important;
-      margin: 0 !important;
+      width: 100vw;
+      margin: 0;
     }
 
     // 2FA dialog fixes
     .twofa-dialog .p-dialog {
-      width: 100vw !important;
+      width: 100vw;
 
       .qr-wrapper {
-        width: 160px !important;
-        height: 160px !important;
+        width: 160px;
+        height: 160px;
       }
     }
 
     // Export dialog fixes
     .export-dialog .p-dialog {
-      width: 100vw !important;
+      width: 100vw;
 
       .format-options {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr;
       }
     }
   }
@@ -689,7 +656,7 @@
   // Thin scrollbars for mobile
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--ds-border-default) transparent;
+    scrollbar-color: var(--color-border-primary, #e5e7eb) transparent;
   }
 
   // Webkit scrollbar (Chrome, Safari, Edge)
@@ -703,12 +670,12 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background: var(--ds-border-default);
+    background: var(--color-border-primary, #e5e7eb);
     border-radius: var(--radius-sm);
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    background: var(--ds-border-strong);
+    background: var(--color-text-muted, #525252);
   }
 }
 
@@ -728,31 +695,9 @@
     *,
     *::before,
     *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms;
+      animation-iteration-count: 1;
+      transition-duration: 0.01ms;
     }
   }
 }
-
-// ================================================================
-// MOBILE DEBUGGING UTILITIES (Remove in production)
-// ================================================================
-
-// Uncomment to see breakpoints while developing
-// body::before {
-//   content: 'xs';
-//   position: fixed;
-//   top: 0;
-//   right: 0;
-//   padding: var(--space-1) var(--space-2);
-//   background: red;
-//   color: white;
-//   z-index: 99999;
-//   font-size: var(--font-caption-size);
-//
-//   @media (min-width: 480px) { content: 'sm'; background: orange; }
-//   @media (min-width: 640px) { content: 'md'; background: yellow; color: black; }
-//   @media (min-width: 768px) { content: 'lg'; background: green; }
-//   @media (min-width: 1024px) { content: 'xl'; background: blue; }
-// }

@@ -164,13 +164,15 @@ export class ReadinessService {
 
   /**
    * Calculate readiness score for today
+   * Server uses authenticated user from token - no need to send userId in body
    */
-  calculateToday(athleteId: string): Observable<ReadinessResponse> {
+  calculateToday(_athleteId?: string): Observable<ReadinessResponse> {
     this.loading.set(true);
     this.error.set(null);
 
+    // Let the backend derive userId from the auth token (single source of truth)
     return this.apiService
-      .post<ReadinessResponse>("/api/calc-readiness", { athleteId })
+      .post<ReadinessResponse>("/api/calc-readiness", {})
       .pipe(
         map((res) => res.data || ({} as ReadinessResponse)),
         tap({
@@ -193,16 +195,18 @@ export class ReadinessService {
 
   /**
    * Calculate readiness for a specific day
+   * Server uses authenticated user from token - no need to send userId in body
    */
   calculateForDay(
-    athleteId: string,
+    _athleteId: string,
     day: string,
   ): Observable<ReadinessResponse> {
     this.loading.set(true);
     this.error.set(null);
 
+    // Let the backend derive userId from the auth token (single source of truth)
     return this.apiService
-      .post<ReadinessResponse>("/api/calc-readiness", { athleteId, day })
+      .post<ReadinessResponse>("/api/calc-readiness", { day })
       .pipe(
         map((res) => res.data || ({} as ReadinessResponse)),
         tap({

@@ -44,9 +44,12 @@
    * Scope: Global legacy styles
    * Remove by: 2026-Q2
    * Reason: Legacy PrimeNG overrides predating design system.
-   *         Contains 294 !important declarations.
+   *         Originally contained 294 !important declarations.
    *         Gradually migrate to token-mapping.scss.
-   * Status: IN PROGRESS - Phase B tokenization complete
+   * Status: MOSTLY COMPLETE - Jan 2026
+   *         - Migrated sidebar-open to @layer mobile
+   *         - Migrated reduced-motion to @layer overrides
+   *         - Remaining !important are in @layer overrides (documented)
    * ------------------------------------------------ */
 
   /* ------------------------------------------------
@@ -71,6 +74,20 @@
    *         Contains 86 !important declarations.
    *         Should merge with _brand-overrides.scss.
    * Status: IN PROGRESS - Hex colors fixed
+   * ------------------------------------------------ */
+
+  /* ------------------------------------------------
+   * LEGACY FILES: Mobile responsive styles
+   * Ticket: DS-MOBILE-001
+   * Owner: @design-system-team
+   * Scope: _mobile-responsive.scss, _mobile-touch-components.scss, _ios-safari-fixes.scss
+   * Remove by: COMPLETED 2026-01-13
+   * Reason: Mobile styles required !important to override desktop styles.
+   * Status: ✅ RESOLVED - Jan 2026
+   *         - Created @layer mobile in CSS cascade
+   *         - Migrated ~250 !important to proper layer cascade
+   *         - Removed outdated Safari gap workarounds (Safari 15+ supports gap)
+   *         - iOS Safari fixes reduced from 434 lines to 147 lines
    * ------------------------------------------------ */
 
   /* ------------------------------------------------

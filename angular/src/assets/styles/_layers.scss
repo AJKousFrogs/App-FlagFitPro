@@ -6,13 +6,14 @@
  * See DESIGN_SYSTEM_RULES.md for full documentation.
  * 
  * LAYER ORDER (lowest to highest specificity):
- *   1. reset      - CSS reset, normalize
- *   2. tokens     - Design system tokens (CSS custom properties)
+ *   1. reset       - CSS reset, normalize
+ *   2. tokens      - Design system tokens (CSS custom properties)
  *   3. primeng-base - PrimeNG default styles
  *   4. primeng-brand - PrimeNG token mapping and brand overrides
- *   5. primitives - Reusable UI patterns (cards, forms, tables, etc.)
- *   6. features   - Feature/component-specific styles
- *   7. overrides  - Documented exceptions only
+ *   5. primitives  - Reusable UI patterns (cards, forms, tables, etc.)
+ *   6. features    - Feature/component-specific styles
+ *   7. mobile      - Mobile-specific responsive styles (replaces !important)
+ *   8. overrides   - Documented exceptions only
  * 
  * USAGE:
  *   Import this file FIRST in styles.scss to establish layer order.
@@ -22,6 +23,11 @@
  *   - All styles MUST be inside a @layer block
  *   - No styles outside layers (except CSS custom properties in :root)
  *   - Overrides layer requires documented exceptions (Decision 10)
+ *   - Mobile layer eliminates need for !important in responsive styles
+ * 
+ * UPDATED January 2026:
+ *   - Added 'mobile' layer to properly cascade responsive styles
+ *   - Eliminated ~250 !important declarations from mobile styles
  */
 
 // ============================================
@@ -29,7 +35,7 @@
 // ============================================
 // This establishes the cascade order - DO NOT CHANGE without approval
 
-@layer reset, tokens, primeng-base, primeng-brand, primitives, features, overrides;
+@layer reset, tokens, primeng-base, primeng-brand, primitives, features, mobile, overrides;
 
 // ============================================
 // RESET LAYER
@@ -189,6 +195,19 @@
 
 @layer features {
   // Feature styles come from component .scss files
+}
+
+// ============================================
+// MOBILE LAYER
+// ============================================
+// Mobile-specific responsive styles - higher specificity than features
+// This layer replaces !important declarations in mobile styles
+
+@layer mobile {
+  // Mobile responsive styles imported from:
+  // - styles/_mobile-responsive.scss
+  // - styles/_mobile-touch-components.scss
+  // - styles/_ios-safari-fixes.scss
 }
 
 // ============================================

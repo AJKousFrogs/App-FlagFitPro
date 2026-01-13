@@ -27,9 +27,9 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
-import { ChartModule } from "primeng/chart";
 import { firstValueFrom } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
+import { LazyChartComponent } from "../lazy-chart/lazy-chart.component";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -70,7 +70,7 @@ interface AnalyticsData {
     TagModule,
     SkeletonModule,
     TooltipModule,
-    ChartModule,
+    LazyChartComponent,
   ],
   template: `
     <div class="session-analytics">
@@ -149,12 +149,12 @@ interface AnalyticsData {
             </div>
           </ng-template>
           <div class="chart-container">
-            <p-chart
+            <app-lazy-chart
               type="bar"
               [data]="chartData()"
               [options]="chartOptions"
-              [height]="'200px'"
-            ></p-chart>
+              height="200px"
+            ></app-lazy-chart>
           </div>
         </p-card>
       }

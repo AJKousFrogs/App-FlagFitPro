@@ -7,6 +7,10 @@
  * Optimized for Chrome Mobile & Safari iOS
  * Apple HIG & Material Design Guidelines compliant
  * 
+ * UPDATED January 2026:
+ * - Migrated to @layer mobile for proper cascade
+ * - CSS layers handle specificity properly
+ * 
  * Key Requirements:
  * - Minimum 44x44px touch targets (Apple HIG)
  * - 16px font size to prevent iOS zoom
@@ -16,10 +20,14 @@
  */
 
 // ================================================================
-// TOUCH-FRIENDLY BUTTONS
+// TOUCH-FRIENDLY COMPONENTS (within mobile layer)
 // ================================================================
 
-:global {
+@layer mobile {
+  // ================================================================
+  // TOUCH-FRIENDLY BUTTONS
+  // ================================================================
+
   @include respond-to(md) {
     // All buttons (including PrimeNG)
     button,
@@ -27,17 +35,17 @@
     .p-button,
     .action-btn,
     .btn {
-      min-height: 44px !important;
-      min-width: 44px !important;
-      padding: var(--space-2) var(--space-4) !important;
-      font-size: var(--font-size-h4) !important;
-      border-radius: var(--radius-md) !important;
+      min-height: 44px;
+      min-width: 44px;
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--font-size-h4);
+      border-radius: var(--radius-md);
       cursor: pointer;
 
       // CRITICAL: Ensure buttons receive touch events
-      pointer-events: auto !important;
-      position: relative !important;
-      z-index: 1 !important;
+      pointer-events: auto;
+      position: relative;
+      z-index: 1;
 
       // Prevent accidental double-tap zoom
       touch-action: manipulation;
@@ -61,59 +69,57 @@
     // Icon-only buttons - ensure square
     button.icon-only,
     .p-button.p-button-icon-only {
-      width: 44px !important;
-      height: 44px !important;
-      padding: var(--space-2) !important;
+      width: 44px;
+      height: 44px;
+      padding: var(--space-2);
 
       i {
-        font-size: var(--font-size-h3) !important;
+        font-size: var(--font-size-h3);
       }
     }
 
     // Small buttons still need minimum touch target
     button.small,
     .p-button.p-button-sm {
-      min-height: 40px !important;
-      min-width: 40px !important;
-      padding: var(--space-1) var(--space-3) !important;
-      font-size: var(--font-caption-size) !important;
+      min-height: 40px;
+      min-width: 40px;
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--font-caption-size);
     }
 
     // Full-width buttons on mobile (common pattern)
     button.full-width,
     .p-button.full-width {
-      width: 100% !important;
-      justify-content: center !important;
+      width: 100%;
+      justify-content: center;
     }
 
     // Floating action button (FAB) - ensure proper size
     .fab,
     .floating-action-button {
-      width: 56px !important;
-      height: 56px !important;
-      border-radius: var(--radius-full) !important;
-      padding: 0 !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      box-shadow: var(--shadow-2) !important;
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-2);
 
       i {
-        font-size: var(--font-size-h2) !important;
+        font-size: var(--font-size-h2);
       }
 
       &:active {
-        box-shadow: var(--shadow-1) !important;
+        box-shadow: var(--shadow-1);
       }
     }
   }
-}
 
-// ================================================================
-// TOUCH-FRIENDLY FORM INPUTS
-// ================================================================
+  // ================================================================
+  // TOUCH-FRIENDLY FORM INPUTS
+  // ================================================================
 
-:global {
   @include respond-to(md) {
     // All text inputs
     input[type="text"],
@@ -132,57 +138,56 @@
     .p-select,
     .p-textarea,
     .p-inputnumber-input {
-      min-height: 44px !important;
-      font-size: 16px !important; // CRITICAL: Prevents iOS zoom
-      padding: var(--space-2) var(--space-3) !important;
-      border-radius: var(--radius-md) !important;
-      border: 1px solid var(--surface-border) !important;
-      background: var(--surface-card) !important;
-      color: var(--text-color) !important;
+      min-height: 44px;
+      font-size: 16px; // CRITICAL: Prevents iOS zoom
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--surface-border);
+      background: var(--surface-card);
+      color: var(--text-color);
 
       // Smooth transitions
       transition:
         border-color 0.2s ease,
-        box-shadow 0.2s ease !important;
+        box-shadow 0.2s ease;
 
       // Focus state - clear visual feedback
-      &:focus-visible,
       &:focus-visible {
-        outline: none !important;
-        border-color: var(--ds-primary-green) !important;
-        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15) !important;
+        outline: none;
+        border-color: var(--ds-primary-green);
+        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
       }
 
       // Disabled state
       &:disabled {
-        opacity: 0.5 !important;
-        cursor: not-allowed !important;
-        background: var(--surface-ground) !important;
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: var(--surface-ground);
       }
 
       // Placeholder
       &::placeholder {
-        color: var(--text-color-secondary) !important;
-        opacity: 0.7 !important;
+        color: var(--text-color-secondary);
+        opacity: 0.7;
       }
     }
 
     // Textarea specific
     textarea,
     .p-textarea {
-      min-height: 88px !important; // 2x button height
-      resize: vertical !important;
-      line-height: 1.5 !important;
+      min-height: 88px; // 2x button height
+      resize: vertical;
+      line-height: 1.5;
     }
 
     // Select dropdowns
     select,
     .p-select {
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
-      background-repeat: no-repeat !important;
-      background-position: right var(--space-3) center !important;
-      padding-right: var(--space-8) !important; // Space for dropdown arrow
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right var(--space-3) center;
+      padding-right: var(--space-8); // Space for dropdown arrow
     }
 
     // Number input - hide spinners (too small for touch)
@@ -223,63 +228,61 @@
       }
     }
   }
-}
 
-// ================================================================
-// TOUCH-FRIENDLY CHECKBOXES & RADIOS
-// ================================================================
+  // ================================================================
+  // TOUCH-FRIENDLY CHECKBOXES & RADIOS
+  // ================================================================
 
-:global {
   @include respond-to(md) {
     // Native checkboxes and radios
     input[type="checkbox"],
     input[type="radio"] {
-      min-width: 24px !important;
-      min-height: 24px !important;
-      width: 24px !important;
-      height: 24px !important;
-      margin: var(--space-2) !important;
-      cursor: pointer !important;
-      accent-color: var(--ds-primary-green) !important;
+      min-width: 24px;
+      min-height: 24px;
+      width: 24px;
+      height: 24px;
+      margin: var(--space-2);
+      cursor: pointer;
+      accent-color: var(--ds-primary-green);
 
       // Ensure proper spacing with label
       & + label {
-        margin-left: var(--space-2) !important;
-        cursor: pointer !important;
-        user-select: none !important;
+        margin-left: var(--space-2);
+        cursor: pointer;
+        user-select: none;
       }
     }
 
     // PrimeNG checkboxes
     .p-checkbox {
-      width: 24px !important;
-      height: 24px !important;
+      width: 24px;
+      height: 24px;
 
       .p-checkbox-box {
-        width: 24px !important;
-        height: 24px !important;
-        border-width: 2px !important;
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
       }
 
       .p-checkbox-icon {
-        font-size: 16px !important;
+        font-size: 16px;
       }
     }
 
     // PrimeNG radio buttons
     .p-radiobutton {
-      width: 24px !important;
-      height: 24px !important;
+      width: 24px;
+      height: 24px;
 
       .p-radiobutton-box {
-        width: 24px !important;
-        height: 24px !important;
-        border-width: 2px !important;
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
       }
 
       .p-radiobutton-icon {
-        width: 12px !important;
-        height: 12px !important;
+        width: 12px;
+        height: 12px;
       }
     }
 
@@ -287,49 +290,47 @@
     .p-checkbox-group,
     .p-radiobutton-group,
     .form-check-group {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--space-3) !important;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
 
       .p-field-checkbox,
       .p-field-radiobutton,
       .form-check {
-        display: flex !important;
-        align-items: center !important;
-        gap: var(--space-2) !important;
-        min-height: 44px !important; // Touch target
-        padding: var(--space-2) !important;
-        border-radius: var(--radius-md) !important;
-        transition: background 0.2s ease !important;
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        min-height: 44px; // Touch target
+        padding: var(--space-2);
+        border-radius: var(--radius-md);
+        transition: background 0.2s ease;
 
         &:active {
-          background: var(--surface-ground) !important;
+          background: var(--surface-ground);
         }
       }
     }
   }
-}
 
-// ================================================================
-// TOUCH-FRIENDLY TOGGLES / SWITCHES
-// ================================================================
+  // ================================================================
+  // TOUCH-FRIENDLY TOGGLES / SWITCHES
+  // ================================================================
 
-:global {
   @include respond-to(md) {
     .p-toggleswitch,
     .toggle-switch {
-      width: 48px !important;
-      height: 28px !important;
+      width: 48px;
+      height: 28px;
 
       .p-toggleswitch-slider,
       .toggle-slider {
-        border-radius: var(--radius-full) !important;
+        border-radius: var(--radius-full);
       }
 
       .p-toggleswitch-handle,
       .toggle-handle {
-        width: 24px !important;
-        height: 24px !important;
+        width: 24px;
+        height: 24px;
       }
 
       // Increase touch area
@@ -340,32 +341,30 @@
       }
     }
   }
-}
 
-// ================================================================
-// TOUCH-FRIENDLY SLIDERS
-// ================================================================
+  // ================================================================
+  // TOUCH-FRIENDLY SLIDERS
+  // ================================================================
 
-:global {
   @include respond-to(md) {
     .p-slider,
     input[type="range"] {
-      height: 8px !important;
+      height: 8px;
 
       // Larger thumb for touch
       .p-slider-handle,
       &::-webkit-slider-thumb {
-        width: 24px !important;
-        height: 24px !important;
-        border-radius: var(--radius-full) !important;
-        cursor: pointer !important;
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-full);
+        cursor: pointer;
       }
 
       &::-moz-range-thumb {
-        width: 24px !important;
-        height: 24px !important;
-        border-radius: var(--radius-full) !important;
-        cursor: pointer !important;
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-full);
+        cursor: pointer;
       }
 
       // Increase touch area
@@ -379,119 +378,111 @@
       }
     }
   }
-}
 
-// ================================================================
-// TOUCH-FRIENDLY FORM LABELS
-// ================================================================
+  // ================================================================
+  // TOUCH-FRIENDLY FORM LABELS
+  // ================================================================
 
-:global {
   @include respond-to(md) {
     label,
     .p-field-label,
     .form-label {
-      font-size: var(--font-size-h4) !important;
-      font-weight: var(--font-weight-medium) !important;
-      color: var(--text-color-secondary) !important;
-      margin-bottom: var(--space-2) !important;
-      display: block !important;
-      cursor: pointer !important;
+      font-size: var(--font-size-h4);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-color-secondary);
+      margin-bottom: var(--space-2);
+      display: block;
+      cursor: pointer;
 
       // Required indicator
       &.required::after,
       &[required]::after {
         content: " *";
-        color: var(--primitive-error-500) !important;
+        color: var(--primitive-error-500);
       }
     }
   }
-}
 
-// ================================================================
-// TOUCH-FRIENDLY FORM GROUPS
-// ================================================================
+  // ================================================================
+  // TOUCH-FRIENDLY FORM GROUPS
+  // ================================================================
 
-:global {
   @include respond-to(md) {
     .p-field,
     .form-field,
     .form-group {
-      margin-bottom: var(--space-4) !important;
+      margin-bottom: var(--space-4);
 
       // Stack labels above inputs
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--space-2) !important;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
     }
 
     // Form rows - stack on mobile
     .form-row,
     .p-formgroup-row {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: var(--space-4) !important;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
     }
 
     // Helper text
     .p-field-helper,
     .form-helper,
     small.helper-text {
-      font-size: var(--font-caption-size) !important;
-      color: var(--text-color-secondary) !important;
-      margin-top: var(--space-1) !important;
+      font-size: var(--font-caption-size);
+      color: var(--text-color-secondary);
+      margin-top: var(--space-1);
     }
 
     // Error messages
     .p-error,
     .form-error,
     small.error-text {
-      font-size: var(--font-caption-size) !important;
-      color: var(--primitive-error-500) !important;
-      margin-top: var(--space-1) !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: var(--space-1) !important;
+      font-size: var(--font-caption-size);
+      color: var(--primitive-error-500);
+      margin-top: var(--space-1);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
 
       &::before {
         content: "⚠";
-        font-size: var(--font-size-h4) !important;
+        font-size: var(--font-size-h4);
       }
     }
   }
-}
 
-// ================================================================
-// TOUCH-FRIENDLY LINKS
-// ================================================================
+  // ================================================================
+  // TOUCH-FRIENDLY LINKS
+  // ================================================================
 
-:global {
   @include respond-to(md) {
     a {
-      min-height: 44px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      padding: var(--space-1) 0 !important;
-      touch-action: manipulation !important;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-1) 0;
+      touch-action: manipulation;
 
       // Active state
       &:active {
-        opacity: 0.7 !important;
+        opacity: 0.7;
       }
     }
 
     // Text links (not buttons)
     a:not(.btn):not(.p-button) {
-      text-decoration: underline !important;
-      text-underline-offset: 2px !important;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
   }
-}
 
-// ================================================================
-// MOBILE FORM VALIDATION
-// ================================================================
+  // ================================================================
+  // MOBILE FORM VALIDATION
+  // ================================================================
 
-:global {
   @include respond-to(md) {
     // Invalid state
     .p-invalid,
@@ -499,10 +490,10 @@
     input:invalid,
     textarea:invalid,
     select:invalid {
-      border-color: var(--primitive-error-500) !important;
+      border-color: var(--primitive-error-500);
 
       &:focus-visible {
-        box-shadow: 0 0 0 3px rgba(var(--primitive-error-500-rgb), 0.15) !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
       }
     }
 
@@ -512,29 +503,29 @@
     input:valid:not(:placeholder-shown),
     textarea:valid:not(:placeholder-shown),
     select:valid:not(:placeholder-shown) {
-      border-color: var(--primitive-success-500) !important;
+      border-color: var(--primitive-success-500);
 
       &:focus-visible {
-        box-shadow: 0 0 0 3px rgba(var(--primitive-success-500-rgb), 0.15) !important;
+        box-shadow: 0 0 0 3px rgba(99, 173, 14, 0.15);
       }
     }
   }
-}
 
-// ================================================================
-// PREVENT IOS ZOOM ON INPUT FOCUS
-// ================================================================
+  // ================================================================
+  // PREVENT IOS ZOOM ON INPUT FOCUS
+  // ================================================================
 
-@include respond-to(md) {
-  // This is the most important rule for iOS Safari
-  input,
-  select,
-  textarea {
-    font-size: 16px !important; // Prevents iOS zoom
-  }
+  @include respond-to(md) {
+    // This is the most important rule for iOS Safari
+    input,
+    select,
+    textarea {
+      font-size: 16px; // Prevents iOS zoom
+    }
 
-  // Prevent viewport zoom
-  :root {
-    touch-action: pan-x pan-y;
+    // Prevent viewport zoom
+    :root {
+      touch-action: pan-x pan-y;
+    }
   }
 }

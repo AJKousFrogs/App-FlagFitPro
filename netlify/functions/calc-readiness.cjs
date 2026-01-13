@@ -209,12 +209,13 @@ exports.handler = async (event, context) => {
         endDate: dayStr,
       });
 
+      // Query training_sessions - handle both user_id (new) and athlete_id (legacy) columns
       const { data: sessions, error: sessErr } = await supabaseAdmin
         .from("training_sessions")
         .select(
           "session_date, duration_minutes, rpe, workload, intensity_level",
         )
-        .eq("athlete_id", athleteId)
+        .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
         .gte("session_date", startChronic.toISOString().slice(0, 10))
         .lte("session_date", dayStr)
         .order("session_date", { ascending: false });
@@ -282,10 +283,11 @@ exports.handler = async (event, context) => {
         dayStr,
       });
 
+      // Query wellness_logs - handle both user_id (new) and athlete_id (legacy) columns
       const { data: wellness, error: wellErr } = await supabaseAdmin
         .from("wellness_logs")
         .select("*")
-        .eq("athlete_id", athleteId)
+        .or(`user_id.eq.${athleteId},athlete_id.eq.${athleteId}`)
         .eq("log_date", dayStr)
         .maybeSingle();
 

@@ -67,6 +67,7 @@ import {
 
 // Services
 import { ApiService } from "../../core/services/api.service";
+import { AuthService } from "../../core/services/auth.service";
 import { DataSourceService } from "../../core/services/data-source.service";
 import { DirectSupabaseApiService } from "../../core/services/direct-supabase-api.service";
 import { HeaderService } from "../../core/services/header.service";
@@ -1173,6 +1174,7 @@ interface QuickFormData {
 export class TodayComponent {
   // Dependency Injection (Angular 21 pattern)
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
   private readonly trainingService = inject(UnifiedTrainingService);
   private readonly headerService = inject(HeaderService);
   private readonly logger = inject(LoggerService);
@@ -1184,6 +1186,12 @@ export class TodayComponent {
 
   // Environment flag for API routing
   private readonly useDirectSupabase = environment.useDirectSupabase;
+
+  // Guard to prevent duplicate initial loads
+  private _initialLoadDone = false;
+
+  // Computed userId from auth service
+  private readonly userId = computed(() => this.authService.getUser()?.id);
 
   // ============================================================================
   // STATE SIGNALS
@@ -1444,8 +1452,20 @@ export class TodayComponent {
   // ============================================================================
   constructor() {
     this.headerService.setDashboardHeader();
-    this.loadTodayData();
-    this.loadTomorrowProtocol();
+
+    // CRITICAL: Wait for auth to be ready before loading protected data
+    // This prevents 401 errors from firing API calls before token exists
+    effect(() => {
+      const id = this.userId();
+      if (!id) return; // Auth not ready yet
+
+      if (this._initialLoadDone) return; // Already loaded
+      this._initialLoadDone = true;
+
+      this.logger.info("[TodayComponent] Auth ready, loading data for user:", id);
+      this.loadTodayData();
+      this.loadTomorrowProtocol();
+    });
 
     // Update time every minute
     const interval = setInterval(

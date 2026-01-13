@@ -69,16 +69,18 @@ body {
 }
 
 /* Mobile-specific: Prevent scroll when sidebar is open */
-body.sidebar-open {
-  overflow: hidden !important;
-  position: fixed !important;
-  width: 100% !important;
-  height: 100% !important;
+@layer mobile {
+  body.sidebar-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 
-  /* Prevent any touch scroll behavior on mobile */
-  @include respond-to(md) {
-    touch-action: none;
-    overscroll-behavior: contain;
+    /* Prevent any touch scroll behavior on mobile */
+    @include respond-to(md) {
+      touch-action: none;
+      overscroll-behavior: contain;
+    }
   }
 }
 
@@ -394,9 +396,11 @@ body {
 }
 
 /* Disable transitions during initial load to prevent flash */
-html.no-transitions,
-html.no-transitions * {
-  transition: none !important;
+@layer overrides {
+  html.no-transitions,
+  html.no-transitions * {
+    transition: none;
+  }
 }
 
 /* ================================================================
@@ -527,12 +531,14 @@ html.no-transitions * {
 }
 
 /* Reduced Motion Support for View Transitions */
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
+@layer overrides {
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation-duration: 0.01ms;
+      animation-delay: 0ms;
+    }
   }
 }
 

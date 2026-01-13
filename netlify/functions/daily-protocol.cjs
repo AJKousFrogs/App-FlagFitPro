@@ -195,12 +195,12 @@ async function getUserTrainingContext(supabase, userId, date) {
   const dayOfWeek = new Date(date).getDay();
   const dayName = DAY_NAMES[dayOfWeek];
 
-  // 1. Get user config (position, age, practice schedule)
+  // 1. Get user config (position, age, practice schedule) - may not exist yet
   const { data: config } = await supabase
     .from("athlete_training_config")
     .select("*")
     .eq("user_id", userId)
-    .single();
+    .maybeSingle();
 
   // 2. Get user's birth date and position from users table if not in config
   let birthDate = config?.birth_date;
@@ -211,7 +211,7 @@ async function getUserTrainingContext(supabase, userId, date) {
     .from("users")
     .select("date_of_birth, birth_date, position")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
   if (!birthDate) {
     birthDate = userData?.date_of_birth || userData?.birth_date;
@@ -234,11 +234,11 @@ async function getUserTrainingContext(supabase, userId, date) {
       .select("*")
       .lte("age_min", age)
       .gte("age_max", age)
-      .single();
+      .maybeSingle();
     ageModifier = modifier;
   }
 
-  // 4. Get assigned program and current phase/week
+  // 4. Get assigned program and current phase/week - may not have one yet
   const { data: playerProgram } = await supabase
     .from("player_programs")
     .select(
@@ -251,20 +251,20 @@ async function getUserTrainingContext(supabase, userId, date) {
     )
     .eq("player_id", userId)
     .eq("status", "active")
-    .single();
+    .maybeSingle();
 
   // 5. Get current week based on date
   let currentWeek = null;
   let currentPhase = null;
   if (playerProgram?.training_programs?.id) {
-    // Get phase for this date
+    // Get phase for this date - may not match any phase
     const { data: phase } = await supabase
       .from("training_phases")
       .select("*")
       .eq("program_id", playerProgram.training_programs.id)
       .lte("start_date", date)
       .gte("end_date", date)
-      .single();
+      .maybeSingle();
     currentPhase = phase;
 
     // Get week for this date
@@ -275,7 +275,7 @@ async function getUserTrainingContext(supabase, userId, date) {
         .eq("phase_id", phase.id)
         .lte("start_date", date)
         .gte("end_date", date)
-        .single();
+        .maybeSingle();
       currentWeek = week;
     }
   }
@@ -398,13 +398,13 @@ async function getUserTrainingContext(supabase, userId, date) {
       hasCheckin: true,
     };
   } else {
-    // Fallback to old readiness_scores table
+    // Fallback to old readiness_scores table - may not have entry for this day
     const { data: oldReadiness } = await supabase
       .from("readiness_scores")
       .select("*")
       .eq("user_id", userId)
       .eq("day", date)
-      .single();
+      .maybeSingle();
 
     if (oldReadiness) {
       readiness = {
@@ -683,7 +683,7 @@ async function getProtocol(supabase, userId, params, headers) {
       .from("users")
       .select("name")
       .eq("id", protocol.modified_by_coach_id)
-      .single();
+      .maybeSingle();
     if (coach) {
       coachName = coach.name;
     }
@@ -1089,7 +1089,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .select("id")
     .eq("user_id", userId)
     .eq("protocol_date", date)
-    .single();
+    .maybeSingle();
 
   if (existing) {
     await supabase
@@ -1356,7 +1356,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .select("*")
       .eq("slug", morningMobilitySlug)
       .eq("active", true)
-      .single();
+      .maybeSingle();
 
     if (morningMobility) {
       protocolExercises.push({
@@ -2044,7 +2044,7 @@ async function logSession(supabase, userId, payload, headers) {
         .select("team_id")
         .eq("user_id", userId)
         .eq("role", "player")
-        .single();
+        .maybeSingle();
 
       if (teamMember) {
         const { data: coaches } = await supabase
@@ -2150,7 +2150,7 @@ async function logSession(supabase, userId, payload, headers) {
         "id, total_sessions, total_training_minutes, total_load_au, month_sessions, month_load_au, current_month",
       )
       .eq("user_id", userId)
-      .single();
+      .maybeSingle();
 
     if (existingStats) {
       const monthReset = existingStats.current_month !== currentMonth;
@@ -2190,7 +2190,7 @@ async function logSession(supabase, userId, payload, headers) {
       .from("player_training_stats")
       .select("total_sessions")
       .eq("user_id", userId)
-      .single();
+      .maybeSingle();
 
     if (stats) {
       const sessionsCount = stats.total_sessions;
