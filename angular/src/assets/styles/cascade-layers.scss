@@ -1,0 +1,156 @@
+/**
+ * CSS Cascade Layers System
+ * ========================
+ * 
+ * This file establishes layer order to prevent legacy CSS from overriding
+ * the new design system. Layers are ordered from lowest to highest priority:
+ * 
+ * 1. @layer base - Legacy CSS (lowest priority)
+ * 2. @layer design-system - New design system (higher priority)
+ * 3. Unlayered CSS - Highest priority (use sparingly)
+ * 
+ * Usage:
+ *   @use "./assets/styles/cascade-layers.scss" as *;
+ *   
+ *   @layer base {
+ *     // Legacy overrides go here
+ *   }
+ *   
+ *   @layer design-system {
+ *     // New design system rules go here
+ *   }
+ */
+
+/* ================================================================
+   LAYER DECLARATIONS
+   Declare layers in order (first = lowest priority)
+   ================================================================ */
+
+@layer base, design-system, overrides;
+
+/* ================================================================
+   BASE LAYER - Legacy CSS
+   Lowest priority - will be overridden by design-system layer
+   ================================================================ */
+
+@layer base {
+  /* Legacy button overrides - low priority */
+  .p-button {
+    /* Legacy styles will be overridden by design-system layer */
+  }
+
+  /* Note: Legacy --dark-* variables should be replaced with semantic tokens
+   * Use --surface-primary, --color-text-primary, --color-border-primary instead
+   */
+}
+
+/* ================================================================
+   DESIGN SYSTEM LAYER - New System
+   Higher priority - overrides base layer
+   ================================================================ */
+
+@layer design-system {
+  /* Design system tokens take precedence */
+  :root {
+    /* Primary brand color - single source of truth */
+    --ds-primary-green: #089949;
+    --ds-primary-green-rgb: 8, 153, 73;
+
+    /* Text on primary (green) - ALWAYS white */
+    --color-text-on-primary: #ffffff;
+
+    /* Spacing tokens - 8px grid */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-6: 24px;
+    --space-8: 32px;
+
+    /* Border radius */
+    --radius-lg: 12px;
+  }
+
+  /* PrimeNG button overrides - design system compliant */
+  .p-button {
+    border-radius: var(--radius-lg);
+    min-height: 44px; /* Touch target */
+  }
+
+  /* Primary buttons - GREEN background, WHITE text */
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ) {
+    background: var(--ds-primary-green);
+    color: var(--color-text-on-primary);
+    border: none;
+  }
+
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(
+      .p-button-secondary
+    ):hover {
+    background: var(--ds-primary-green-hover, #036d35);
+  }
+
+  /* Outlined buttons - GREEN border & text */
+  .p-button.p-button-outlined {
+    background: transparent;
+    border: 2px solid var(--ds-primary-green);
+    color: var(--ds-primary-green);
+  }
+
+  /* Text buttons - GREEN text */
+  .p-button.p-button-text {
+    background: transparent;
+    border: none;
+    color: var(--ds-primary-green);
+  }
+}
+
+/* ================================================================
+   OVERRIDES LAYER - Critical Fixes
+   Highest priority - use sparingly for critical fixes only
+   ================================================================ */
+
+@layer overrides {
+  /* Critical: Force white text on green buttons */
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary)
+    * {
+    color: var(--color-text-on-primary) !important;
+  }
+
+  /* Critical: Prevent black text on green */
+  [style*="background-color: #089949"],
+  [style*="background-color: rgb(8, 153, 73)"],
+  .bg-primary-green,
+  .p-button-primary {
+    color: var(--color-text-on-primary) !important;
+
+    * {
+      color: var(--color-text-on-primary) !important;
+    }
+  }
+}
+
+/* ================================================================
+   IMPORT INSTRUCTIONS
+   ================================================================
+   
+   Import this file BEFORE other stylesheets in styles.scss:
+   
+   @use "./assets/styles/cascade-layers.scss" as *;
+   @use "./assets/styles/design-system-tokens.scss" as *;
+   @use "./assets/styles/primeng-integration.scss" as *;
+   
+   Then wrap legacy CSS in @layer base:
+   
+   @layer base {
+     // Legacy styles here
+   }
+   
+   And wrap new design system CSS in @layer design-system:
+   
+   @layer design-system {
+     // New design system styles here
+   }
+   */

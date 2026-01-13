@@ -1,0 +1,138 @@
+# FlagFit Pro - Cursor AI Rules
+
+## Project Overview
+FlagFit Pro is a flag football training application built with Angular 21 and Supabase.
+
+## ⚠️ CRITICAL: Local Development Setup
+
+### Always Run Both Servers Together
+The app requires **TWO servers** running simultaneously for local development:
+
+1. **API Server** (port 4000) - Handles all `/api/*` requests, connects to Supabase
+2. **Angular Dev Server** (port 4200) - Serves the frontend
+
+**ALWAYS use this command to start local development:**
+```bash
+npm run dev:full
+```
+
+This runs both servers via `concurrently`. **Never run just `npm start` or `npm run dev` alone** - the app will not fetch data without the API server.
+
+### Alternative Commands:
+- `npm run dev:netlify` - Simulates full Netlify environment locally
+- Manual: Run `npm run start:api` AND `npm run dev` in separate terminals
+
+### Environment Variables
+- `.env` file must have valid `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_KEY`
+- Angular frontend reads from `environment.ts` (dev) or `window._env` (prod)
+- API server reads from `.env` via `dotenv`
+
+### Data Flow (Local Development)
+```
+Browser (localhost:4200)
+    ↓ API calls to localhost:4000/api/*
+API Server (localhost:4000)
+    ↓ Queries via Supabase client
+Supabase Cloud (pvziciccwxgftcielknm.supabase.co)
+```
+
+## Tech Stack
+- **Frontend**: Angular 21 (standalone components, signals, zoneless change detection)
+- **UI Library**: PrimeNG v21 (CSS animations, no @angular/animations needed)
+- **Backend/Database**: Supabase (PostgreSQL, Auth, Realtime, Edge Functions)
+- **Styling**: SCSS with CSS custom properties (design tokens)
+- **Build**: Vite
+- **Testing**: Vitest, Playwright
+
+## Angular 21 Patterns (CRITICAL)
+
+### Always Use:
+1. **Standalone components** - No NgModules
+2. **`inject()` function** - Not constructor injection
+3. **Signals** for reactive state - `signal()`, `computed()`, `effect()`
+4. **Control flow syntax** - `@if`, `@for`, `@switch` (not *ngIf, *ngFor)
+5. **OnPush change detection** - `changeDetection: ChangeDetectionStrategy.OnPush`
+6. **Signal inputs/outputs** - `input()`, `output()` when possible
+
+### Example Component Pattern:
+```typescript
+import { Component, ChangeDetectionStrategy, signal, computed, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+
+@Component({
+  selector: "app-example",
+  standalone: true,
+  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    @if (isLoading()) {
+      <div>Loading...</div>
+    }
+    @for (item of items(); track item.id) {
+      <div>{{ item.name }}</div>
+    }
+  `,
+})
+export class ExampleComponent {
+  private myService = inject(MyService);
+  
+  isLoading = signal(false);
+  items = signal<Item[]>([]);
+  hasItems = computed(() => this.items().length > 0);
+}
+```
+
+## Service Pattern:
+```typescript
+@Injectable({ providedIn: "root" })
+export class MyService {
+  private http = inject(HttpClient);
+  private supabase = inject(SupabaseService);
+  
+  private readonly _data = signal<Data | null>(null);
+  readonly data = this._data.asReadonly();
+}
+```
+
+## File Naming Conventions
+- Components: `kebab-case.component.ts`
+- Services: `kebab-case.service.ts`
+- Guards: `kebab-case.guard.ts`
+- Models/Interfaces: `kebab-case.model.ts` or `kebab-case.interface.ts`
+
+## Directory Structure
+```
+angular/src/app/
+├── core/           # Services, guards, interceptors, models
+├── shared/         # Reusable components, directives, pipes
+├── features/       # Feature modules (dashboard, training, analytics)
+└── app.config.ts   # App configuration
+```
+
+## Styling Rules
+- **Always use design tokens** (CSS custom properties)
+- Never hardcode colors, spacing, or typography values
+- Use `var(--space-*)`, `var(--color-*)`, `var(--text-*)`, `var(--radius-*)`
+
+## Database (Supabase)
+- All database operations go through Supabase client
+- Use RLS (Row Level Security) policies
+- Migrations in `database/migrations/` or `supabase/migrations/`
+- Edge Functions in `supabase/functions/`
+
+## Code Quality
+- TypeScript strict mode enabled
+- Use explicit types (avoid `any`)
+- Double quotes for strings
+- 2-space indentation
+- Semicolons required
+- Trailing commas in multi-line structures
+
+## Don't:
+- Don't use NgModules
+- Don't use constructor injection (use inject())
+- Don't use BehaviorSubject when signals work
+- Don't use *ngIf/*ngFor (use @if/@for)
+- Don't hardcode style values
+- Don't use Zone.js (app is zoneless)
+

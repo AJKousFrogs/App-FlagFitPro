@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Test - FlagFit Pro</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏈</text></svg>"
+    >
+    <!-- New Modular CSS Architecture -->
+    <link rel="stylesheet" href="./src/css/main.css">
+    <!-- Page-specific styles -->
+    <link rel="stylesheet" href="./src/css/pages/ui-test.css">
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <style>
+      .color-swatch {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        vertical-align: middle;
+        margin-left: 5px;
+      }
+      .color-swatch-brand {
+        background: var(--color-brand-primary);
+      }
+      .color-swatch-surface-primary {
+        background: var(--surface-primary);
+        border: 1px solid var(--color-border-secondary);
+      }
+      .color-swatch-surface-secondary {
+        background: var(--surface-secondary);
+        border: 1px solid var(--color-border-secondary);
+      }
+      .text-primary-demo {
+        color: var(--color-text-primary);
+        font-weight: bold;
+      }
+      .text-secondary-demo {
+        color: var(--color-text-secondary);
+      }
+      .btn-primary-demo {
+        background: var(--color-brand-primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: var(--radius-component-md);
+        margin: 5px;
+      }
+      .btn-secondary-demo {
+        background: var(--surface-tertiary);
+        color: var(--color-text-primary);
+        border: 1px solid var(--color-border-secondary);
+        padding: 12px 24px;
+        border-radius: var(--radius-component-md);
+        margin: 5px;
+      }
+      .grid-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-component-md);
+      }
+      .card-demo {
+        background: var(--surface-primary);
+        padding: var(--spacing-component-lg);
+        border: 1px solid var(--color-border-secondary);
+        border-radius: var(--radius-component-md);
+      }
+      .icon-demo {
+        width: 24px;
+        height: 24px;
+      }
+      .icon-success {
+        color: var(--color-success);
+      }
+      .icon-brand {
+        color: var(--color-brand-primary);
+      }
+      .icon-text-primary {
+        color: var(--color-text-primary);
+      }
+      .icon-text-secondary {
+        color: var(--color-text-secondary);
+      }
+      .btn-dashboard-link {
+        display: inline-block;
+        background: var(--color-brand-primary);
+        color: white;
+        padding: 15px 30px;
+        text-decoration: none;
+        border-radius: var(--radius-component-md);
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1><i data-lucide="check-circle"></i> UI Design System Test</h1>
+      <p>Testing if the comprehensive design system is working properly.</p>
+
+      <div class="test-section">
+        <h2>🎨 Color System Test</h2>
+        <p>
+          Primary Brand Color:
+          <span class="color-swatch color-swatch-brand"></span>
+        </p>
+        <p>
+          Surface Primary:
+          <span class="color-swatch color-swatch-surface-primary"></span>
+        </p>
+        <p>
+          Surface Secondary:
+          <span class="color-swatch color-swatch-surface-secondary"></span>
+        </p>
+        <p>
+          Text Primary:
+          <span class="text-primary-demo">This text should be clearly visible</span>
+        </p>
+        <p>
+          Text Secondary:
+          <span class="text-secondary-demo">This text should be slightly muted</span>
+        </p>
+      </div>
+
+      <div class="test-section">
+        <h2>🔲 Button System Test</h2>
+        <button type="button" class="btn-primary-demo">Primary Button</button>
+        <button type="button" class="btn-secondary-demo">Secondary Button</button>
+      </div>
+
+      <div class="test-section">
+        <h2>🏗️ Layout Test</h2>
+        <div class="grid-demo">
+          <div class="card-demo">
+            <h3>Card 1</h3>
+            <p>This is a test card with proper spacing and colors.</p>
+          </div>
+          <div class="card-demo">
+            <h3>Card 2</h3>
+            <p>Another test card to verify grid layout.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h2>🎯 Icon System Test</h2>
+        <p>If you can see these icons clearly, Lucide is working:</p>
+        <i data-lucide="check-circle" class="icon-demo icon-success"></i>
+        <i data-lucide="home" class="icon-demo icon-brand"></i>
+        <i data-lucide="settings" class="icon-demo icon-text-primary"></i>
+        <i data-lucide="user" class="icon-demo icon-text-secondary"></i>
+      </div>
+
+      <div class="test-section">
+        <h2>📊 Status Check</h2>
+        <div id="status-results">
+          <p>✅ Design System CSS: <span id="css-status">Loading...</span></p>
+          <p>✅ Lucide Icons: <span id="icon-status">Loading...</span></p>
+          <p>✅ Color Variables: <span id="color-status">Loading...</span></p>
+          <p>✅ Spacing System: <span id="spacing-status">Loading...</span></p>
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h2>🏈 Quick Dashboard Preview</h2>
+        <a href="/dashboard.html" class="btn-dashboard-link">
+          <i data-lucide="external-link"></i> Open Dashboard
+        </a>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Test Lucide icons
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+          document.getElementById("icon-status").textContent = "✅ Working";
+          document.getElementById("icon-status").style.color =
+            "var(--color-success)";
+        } else {
+          document.getElementById("icon-status").textContent = "❌ Failed";
+          document.getElementById("icon-status").style.color =
+            "var(--color-error)";
+        }
+
+        // Test CSS variables
+        const testEl = document.createElement("div");
+        testEl.style.color = "var(--color-brand-primary)";
+        document.body.appendChild(testEl);
+        const computedColor = window.getComputedStyle(testEl).color;
+        document.body.removeChild(testEl);
+
+        if (computedColor && computedColor !== "var(--color-brand-primary)") {
+          document.getElementById("css-status").textContent = "✅ Working";
+          document.getElementById("css-status").style.color =
+            "var(--color-success)";
+          document.getElementById("color-status").textContent = "✅ Working";
+          document.getElementById("color-status").style.color =
+            "var(--color-success)";
+          document.getElementById("spacing-status").textContent = "✅ Working";
+          document.getElementById("spacing-status").style.color =
+            "var(--color-success)";
+        } else {
+          document.getElementById("css-status").textContent = "❌ Failed";
+          document.getElementById("css-status").style.color =
+            "var(--color-error)";
+          document.getElementById("color-status").textContent = "❌ Failed";
+          document.getElementById("color-status").style.color =
+            "var(--color-error)";
+          document.getElementById("spacing-status").textContent = "❌ Failed";
+          document.getElementById("spacing-status").style.color =
+            "var(--color-error)";
+        }
+      });
+    </script>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>FlagFit Pro</h3>
+          <p>Professional flag football training and analytics platform</p>
+        </div>
+        <div class="footer-section">
+          <h4>Quick Links</h4>
+          <nav aria-label="Footer navigation">
+            <ul>
+              <li><a href="/dashboard.html">Dashboard</a></li>
+              <li><a href="/training.html">Training</a></li>
+              <li><a href="/roster.html">Roster</a></li>
+              <li><a href="/analytics.html">Analytics</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <nav aria-label="Support links">
+            <ul>
+              <li><a href="/settings.html">Settings</a></li>
+              <li><a href="/community.html">Community</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FlagFit Pro. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
