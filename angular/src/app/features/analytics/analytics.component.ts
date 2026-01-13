@@ -1191,9 +1191,14 @@ export class AnalyticsComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     // Store chart instances for export/zoom functionality
+    // Use setTimeout to ensure PrimeNG charts are fully initialized
     setTimeout(() => {
       this.chartRefs().forEach((chartRef, index) => {
-        if (chartRef.chart) {
+        // Defensive guard: ensure chart ref and internal Chart.js instance exist
+        // This prevents "t.clear is not a function" errors
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const chartInstance = (chartRef as any)?.chart;
+        if (chartInstance && typeof chartInstance.update === "function") {
           // Map chart instances by type
           const chartTypes = [
             "performance",
@@ -1203,7 +1208,7 @@ export class AnalyticsComponent implements AfterViewInit {
             "speed",
           ];
           if (chartTypes[index]) {
-            this.chartInstances.set(chartTypes[index], chartRef.chart);
+            this.chartInstances.set(chartTypes[index], chartInstance);
           }
         }
       });
@@ -1213,9 +1218,13 @@ export class AnalyticsComponent implements AfterViewInit {
   @HostListener("window:resize")
   onWindowResize(): void {
     this.chartInstances.forEach((chart) => {
+      // Defensive guard: ensure chart exists and has the internal Chart.js instance
+      // This prevents "t.clear is not a function" when PrimeNG chart isn't fully initialized
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const instance = (chart as any).chart;
-      if (instance) updateChartFontSizes(instance);
+      const instance = (chart as any)?.chart;
+      if (instance && typeof instance.update === "function") {
+        updateChartFontSizes(instance);
+      }
     });
   }
 

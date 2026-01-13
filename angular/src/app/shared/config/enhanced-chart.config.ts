@@ -574,6 +574,11 @@ export function exportChartAsPNG(
   chart: Chart,
   filename: string = "chart",
 ): void {
+  // Defensive guard: ensure chart and canvas exist
+  if (!chart?.canvas) {
+    console.warn("[exportChartAsPNG] Chart or canvas not available");
+    return;
+  }
   const canvas = chart.canvas;
   const url = canvas.toDataURL("image/png");
 
@@ -599,6 +604,11 @@ export function resetChartZoom(chart: Chart): void {
  * @param datasetIndex - Index of dataset to toggle
  */
 export function toggleDataset(chart: Chart, datasetIndex: number): void {
+  // Defensive guard: ensure chart methods exist
+  if (!chart || typeof chart.isDatasetVisible !== "function") {
+    console.warn("[toggleDataset] Chart instance not properly initialized");
+    return;
+  }
   if (chart.isDatasetVisible(datasetIndex)) {
     chart.hide(datasetIndex);
   } else {
@@ -612,9 +622,15 @@ export function toggleDataset(chart: Chart, datasetIndex: number): void {
  * @param chart - Chart.js instance
  */
 export function updateChartFontSizes(chart: Chart): void {
+  // Defensive guard: ensure chart and its methods exist
+  // This prevents "t.clear is not a function" when chart isn't fully initialized
+  if (!chart || typeof chart.update !== "function") {
+    console.warn("[updateChartFontSizes] Chart instance not properly initialized");
+    return;
+  }
   const options = chart.options;
 
-  if (!options.plugins || !options.scales) return;
+  if (!options?.plugins || !options?.scales) return;
 
   // Update legend font size
   const legendFont = options.plugins.legend?.labels?.font;
