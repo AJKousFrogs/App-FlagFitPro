@@ -412,7 +412,7 @@ describe("ApiService", () => {
     });
 
     it("should have wellness endpoints", () => {
-      expect(API_ENDPOINTS.wellness.checkin).toBe("/api/wellness/checkin");
+      expect(API_ENDPOINTS.wellness.checkin).toBe("/api/wellness-checkin");
       expect(API_ENDPOINTS.wellness.latest).toBe("/api/wellness/latest");
     });
 

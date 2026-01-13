@@ -1193,6 +1193,11 @@ export class AnalyticsComponent implements AfterViewInit {
     // Store chart instances for export/zoom functionality
     // Use setTimeout to ensure PrimeNG charts are fully initialized
     setTimeout(() => {
+      // Guard: ensure chartRefs signal exists and is callable
+      // This prevents errors in test environments where component may be destroyed
+      if (!this.chartRefs || typeof this.chartRefs !== "function") {
+        return;
+      }
       this.chartRefs().forEach((chartRef, index) => {
         // Defensive guard: ensure chart ref and internal Chart.js instance exist
         // This prevents "t.clear is not a function" errors
