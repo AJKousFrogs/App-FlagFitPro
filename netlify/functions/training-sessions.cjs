@@ -237,13 +237,39 @@ async function updateTrainingSession(
     return authCheck.error;
   }
 
+  // Prepare state transition metadata if state is being changed
+  const { prepareStateTransition } = require("./utils/session-state-helper.cjs");
+  const { getUserRole } = require("./utils/authorization-guard.cjs");
+  
+  let updatePayload = {
+    ...updates,
+    updated_at: new Date().toISOString(),
+  };
+
+  // If session_state is being updated, add transition metadata
+  if (updates.session_state) {
+    const role = await getUserRole(userId);
+    const actorRole = role === "coach" ? "coach" : role === "admin" ? "admin" : "athlete";
+    
+    const stateTransition = prepareStateTransition({
+      newState: updates.session_state,
+      actorRole,
+      actorId: userId,
+      reason: updates.transition_reason || "Session state updated",
+      metadata: updates.metadata || {},
+    });
+    
+    updatePayload = {
+      ...updatePayload,
+      session_state: stateTransition.session_state,
+      metadata: stateTransition.metadata,
+    };
+  }
+
   // Proceed with update
   const { data: session, error } = await supabaseAdmin
     .from("training_sessions")
-    .update({
-      ...updates,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updatePayload)
     .eq("id", sessionId)
     .select()
     .single();

@@ -2949,10 +2949,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
   /**
    * Navigate to a specific step when user clicks on a step number
    * Only allows navigation to completed steps or the next step
+   * Note: PrimeNG Stepper valueChange emits the step value directly (number | undefined)
    */
-  goToStep(event: number | undefined): void {
-    if (event === undefined) return;
-    const targetIndex = event;
+  goToStep(event: number | Event | undefined): void {
+    // Handle both direct number value and Event wrapper for template type safety
+    const targetIndex = typeof event === 'number' ? event : undefined;
+    if (targetIndex === undefined) return;
     const currentIndex = this.currentStep();
 
     // Allow navigation to any previous step or the immediate next step
@@ -3008,9 +3010,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
   /**
    * Search teams for autocomplete
+   * Note: PrimeNG AutoComplete completeMethod emits AutoCompleteCompleteEvent
+   * Using union type for template type safety with strictTemplates
    */
-  searchTeams(event: { query: string }): void {
-    const query = event.query.toLowerCase();
+  searchTeams(event: { query: string } | Event): void {
+    // Handle AutoCompleteCompleteEvent which has query property
+    const query = ('query' in event ? event.query : '').toLowerCase();
     const allTeams = this.teams();
 
     if (!query) {
