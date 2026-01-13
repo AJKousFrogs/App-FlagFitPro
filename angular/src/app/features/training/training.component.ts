@@ -44,6 +44,7 @@ import {
   SwipeEvent,
 } from "../../shared/directives/swipe-gesture.directive";
 import { HeaderService } from "../../core/services/header.service";
+import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ApiService } from "../../core/services/api.service";
 import {
@@ -363,6 +364,7 @@ export class TrainingComponent {
   private readonly headerService = inject(HeaderService);
   private readonly router = inject(Router);
   private readonly api = inject(ApiService);
+  private readonly logger = inject(LoggerService);
 
   // Expose constants to template
   protected readonly UI_LIMITS = UI_LIMITS;
@@ -439,19 +441,10 @@ export class TrainingComponent {
    * Refactored: Delegates to unified training service
    */
   private async loadData(): Promise<void> {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training.component.ts:441',message:'loadData entry',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-    // #endregion
     try {
       await firstValueFrom(this.trainingService.getTodayOverview());
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training.component.ts:444',message:'loadData success',data:{workoutsCount:this.workouts().length,statsCount:this.trainingStats().length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-      // #endregion
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'training.component.ts:446',message:'loadData error',data:{errorMessage:error instanceof Error?error.message:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-      // #endregion
-      console.error("Error loading training data:", error);
+      this.logger.error("Error loading training data", error);
       this.toastService.error(TOAST.ERROR.LOAD_FAILED);
     }
   }
@@ -507,7 +500,7 @@ export class TrainingComponent {
         this.streakCount.set(trainingStreak?.current_streak || 0);
       }
     } catch (error) {
-      console.error("Error loading achievements data:", error);
+      this.logger.error("Error loading achievements data", error);
     }
   }
 
@@ -546,7 +539,7 @@ export class TrainingComponent {
         this.configurePositionUI("athlete");
       }
     } catch (error) {
-      console.error("Error loading player position:", error);
+      this.logger.error("Error loading player position", error);
       this.configurePositionUI("athlete");
     }
   }

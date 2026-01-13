@@ -20,6 +20,7 @@ import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -1018,6 +1019,7 @@ interface ScoutingReport {
 export class ScoutingReportsComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
+  private logger = inject(LoggerService);
 
   // State
   loading = signal(true);
@@ -1215,7 +1217,7 @@ export class ScoutingReportsComponent implements OnInit {
       // Initialize empty tendencies map
       this.tendenciesMap.set(new Map());
     } catch (error) {
-      console.error("Failed to load scouting data:", error);
+      this.logger.error("Failed to load scouting data", error);
       this.toast.error("Failed to load scouting data");
     } finally {
       this.loading.set(false);
@@ -1287,7 +1289,7 @@ export class ScoutingReportsComponent implements OnInit {
         this.tendenciesMap.set(currentTendencies);
       }
     } catch (error) {
-      console.error("Failed to load tendencies:", error);
+      this.logger.error("Failed to load tendencies", error);
     }
   }
 

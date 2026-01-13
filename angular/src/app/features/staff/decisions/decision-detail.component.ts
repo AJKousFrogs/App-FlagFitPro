@@ -23,6 +23,7 @@ import { CardShellComponent } from "@shared/components/card-shell/card-shell.com
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
 import { ReviewDecisionDialogComponent } from "./review-decision-dialog.component";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
+import { LoggerService } from "@core/services/logger.service";
 import type {
   DecisionLedgerEntry,
   ReviewDecisionRequest,
@@ -468,6 +469,7 @@ export class DecisionDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   decisionService = inject(DecisionLedgerService);
+  private logger = inject(LoggerService);
 
   // State
   decision = signal<DecisionLedgerEntry | null>(null);
@@ -555,7 +557,7 @@ export class DecisionDetailComponent implements OnInit {
       this.showReviewDialog.set(false);
       await this.loadDecision(decisionId); // Reload decision
     } catch (error) {
-      console.error("Error reviewing decision:", error);
+      this.logger.error("Error reviewing decision", error);
     }
   }
 

@@ -5,40 +5,16 @@
  * SECURITY: Uses Supabase auth instead of JWT_SECRET
  */
 
-const { createClient } = require("@supabase/supabase-js");
+const { supabaseAdmin } = require("../supabase-client.cjs");
 const { handleAuthenticationError } = require("./error-handler.cjs");
 
-// Singleton Supabase client
-let supabaseClient;
-
 /**
- * Get or create Supabase client with service role key
+ * Get Supabase client with service role key
+ * Uses shared client from supabase-client.cjs
  * @returns {object} Supabase client instance
  */
 function getSupabaseClient() {
-  if (supabaseClient) {
-    return supabaseClient;
-  }
-
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
-
-  if (!supabaseUrl || !supabaseServiceKey) {
-    console.error("CRITICAL: Missing Supabase configuration");
-    console.error("Required environment variables:");
-    console.error("  - SUPABASE_URL");
-    console.error("  - SUPABASE_SERVICE_KEY");
-    throw new Error("Supabase configuration is required for authentication");
-  }
-
-  supabaseClient = createClient(supabaseUrl, supabaseServiceKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  });
-
-  return supabaseClient;
+  return supabaseAdmin;
 }
 
 /**

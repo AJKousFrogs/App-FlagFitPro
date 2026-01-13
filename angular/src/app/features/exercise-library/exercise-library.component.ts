@@ -23,6 +23,7 @@ import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
+import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -486,6 +487,7 @@ export class ExerciseLibraryComponent implements OnInit {
   private messageService = inject(MessageService);
   private trainingService = inject(UnifiedTrainingService);
   private sanitizer = inject(DomSanitizer);
+  private logger = inject(LoggerService);
 
   searchQuery = "";
   selectedCategory = signal<string>("all");
@@ -586,7 +588,7 @@ export class ExerciseLibraryComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error("Failed to load exercises:", err);
+        this.logger.error("Failed to load exercises", err);
         this.messageService.add({
           severity: "error",
           summary: "Error",
@@ -714,7 +716,7 @@ export class ExerciseLibraryComponent implements OnInit {
         });
       })
       .catch((err) => {
-        console.error("Failed to add exercise:", err);
+        this.logger.error("Failed to add exercise", err);
         this.messageService.add({
           severity: "error",
           summary: "Error",

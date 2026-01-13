@@ -14,6 +14,7 @@ import {
 import { AuthService } from "../../../core/services/auth.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   PlayerSuggestion,
@@ -35,6 +36,7 @@ export class VideoCurationService {
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
   private toastService = inject(ToastService);
+  private logger = inject(LoggerService);
 
   // State signals
   readonly videoStatuses = signal<Map<string, VideoStatus>>(new Map());
@@ -236,7 +238,7 @@ export class VideoCurationService {
         `"${suggestion.title}" approved and added to library`,
       );
     } catch (error) {
-      console.error("Failed to approve suggestion:", error);
+      this.logger.error("Failed to approve suggestion", error);
       this.toastService.error(TOAST.ERROR.VIDEO_APPROVE_FAILED);
     }
   }
@@ -263,7 +265,7 @@ export class VideoCurationService {
       );
       this.toastService.info(`"${suggestion.title}" rejected`);
     } catch (error) {
-      console.error("Failed to reject suggestion:", error);
+      this.logger.error("Failed to reject suggestion", error);
       this.toastService.error(TOAST.ERROR.VIDEO_REJECT_FAILED);
     }
   }
@@ -300,7 +302,7 @@ export class VideoCurationService {
         this.videoStatuses.set(statuses);
       }
     } catch (error) {
-      console.error("Failed to load video statuses:", error);
+      this.logger.error("Failed to load video statuses", error);
     }
   }
 
@@ -325,7 +327,7 @@ export class VideoCurationService {
       if (error) throw error;
       this.playerSuggestions.set((data as PlayerSuggestion[]) || []);
     } catch (error) {
-      console.error("Failed to load player suggestions:", error);
+      this.logger.error("Failed to load player suggestions", error);
     }
   }
 
@@ -346,7 +348,7 @@ export class VideoCurationService {
         updated_at: new Date().toISOString(),
       });
     } catch (error) {
-      console.error("Failed to save video status:", error);
+      this.logger.error("Failed to save video status", error);
     }
   }
 

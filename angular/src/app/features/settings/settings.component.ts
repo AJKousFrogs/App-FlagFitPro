@@ -229,9 +229,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   ];
 
   ngOnInit(): void {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:231',message:'ngOnInit entry',data:{windowWidth:window.innerWidth,windowHeight:window.innerHeight},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-    // #endregion
     const user = this.authService.getUser();
 
     this.profileForm = this.fb.group({
@@ -245,9 +242,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       teamId: [null as string | null],
       phone: [""],
     });
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:244',message:'Profile form initialized',data:{dateOfBirthInitial:this.profileForm.get('dateOfBirth')?.value},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
 
     // Load existing profile data and available teams
     this.loadProfileData();
@@ -630,9 +624,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   async saveSettings(): Promise<void> {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:626',message:'saveSettings entry',data:{profileValid:this.profileForm.valid,profileErrors:this.profileForm.errors,dateOfBirth:this.profileForm.get('dateOfBirth')?.value},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
     this.logger.debug("[saveSettings] Form states:", toLogContext({
       profileValid: this.profileForm.valid,
       notificationValid: this.notificationForm.valid,
@@ -641,9 +632,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     }));
 
     if (this.profileForm.invalid) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:634',message:'Profile form invalid',data:{errors:this.profileForm.errors,controls:Object.keys(this.profileForm.controls).map(k=>({key:k,valid:this.profileForm.get(k)?.valid,errors:this.profileForm.get(k)?.errors}))},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       this.logger.warn("[saveSettings] Profile form invalid, aborting");
       this.profileForm.markAllAsTouched();
       this.toastService.warn(TOAST.WARN.REQUIRED_FIELDS);
@@ -658,9 +646,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       privacy: this.privacyForm.value,
       preferences: this.preferencesForm.value,
     };
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:648',message:'Settings object created',data:{profileDateOfBirth:settings.profile.dateOfBirth,profileDateOfBirthType:typeof settings.profile.dateOfBirth},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
 
     try {
       const user = this.supabaseService.getCurrentUser();
@@ -696,19 +681,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         // Format date of birth for database (YYYY-MM-DD)
         let dateOfBirthStr: string | null = null;
         if (settings.profile.dateOfBirth) {
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:683',message:'Processing dateOfBirth',data:{rawValue:settings.profile.dateOfBirth,type:typeof settings.profile.dateOfBirth,isDate:settings.profile.dateOfBirth instanceof Date},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-          // #endregion
           const dob = new Date(settings.profile.dateOfBirth);
           if (!isNaN(dob.getTime())) {
             dateOfBirthStr = dob.toISOString().split("T")[0];
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:686',message:'DateOfBirth formatted',data:{formatted:dateOfBirthStr},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-            // #endregion
-          } else {
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:688',message:'DateOfBirth invalid',data:{dobValue:dob.toString()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-            // #endregion
           }
         }
 
@@ -1044,9 +1019,6 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("Services refreshed successfully");
 
       this.toastService.success(TOAST.SUCCESS.SETTINGS_SAVED);
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:1021',message:'saveSettings success',data:{existingUser:!!existingUser},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
 
       // Provide helpful guidance if this is first-time setup
       if (!existingUser) {
@@ -1056,12 +1028,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         );
       }
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'settings.component.ts:1030',message:'saveSettings error',data:{errorMessage:error instanceof Error?error.message:String(error)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
-      console.error("❌ [saveSettings] Failed to save settings:", error);
-      console.trace("Error stack trace:");
-      this.logger.error("Save settings error:", toLogContext(error));
+      this.logger.error("Save settings error", error, { context: "saveSettings" });
       const message =
         error instanceof Error ? error.message : "Failed to save settings";
       this.toastService.error(message);

@@ -28,7 +28,12 @@
               "src/favicon.ico",
               "src/assets",
               "src/manifest.webmanifest",
-              "src/manifest.json"
+              "src/manifest.json",
+              {
+                "glob": "robots.txt",
+                "input": "src/assets",
+                "output": "/"
+              }
             ],
             "serviceWorker": "ngsw-config.json",
             "styles": ["src/styles.scss"],

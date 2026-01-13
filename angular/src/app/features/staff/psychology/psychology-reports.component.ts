@@ -22,6 +22,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -1106,6 +1107,7 @@ interface ReportPrivacySettings {
 export class PsychologyReportsComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
+  private logger = inject(LoggerService);
   protected insightFeedService = inject(SharedInsightFeedService);
 
   // State
@@ -1270,7 +1272,7 @@ export class PsychologyReportsComponent implements OnInit {
         this.processWellnessData(response.data);
       }
     } catch (error) {
-      console.error("Failed to load psychology data:", error);
+      this.logger.error("Failed to load psychology data", error);
       this.toast.error("Failed to load psychology data");
     } finally {
       this.loading.set(false);

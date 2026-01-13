@@ -170,7 +170,7 @@ export class CookieConsentService {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(preferences));
     } catch {
       // localStorage not available (e.g., private browsing)
-      console.warn("Could not save cookie preferences to localStorage");
+      this.logger.warn("Could not save cookie preferences to localStorage");
     }
   }
 }

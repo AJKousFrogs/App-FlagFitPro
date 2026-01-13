@@ -398,6 +398,7 @@ a.btn {
   align-items: center;
   color: inherit;
   transition: opacity var(--motion-fast) var(--ease-standard);
+  /* Ensure sufficient contrast - inherits from parent button which uses --color-text-on-primary on green bg */
 }
 
 .btn-content-loading {

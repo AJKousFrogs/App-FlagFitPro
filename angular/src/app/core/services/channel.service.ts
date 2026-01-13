@@ -15,6 +15,7 @@
 
 import { Injectable, computed, inject, signal } from "@angular/core";
 import { getInitials, normalizePlayerName } from "../../shared/utils/format.utils";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
 import { RealtimeCallback, RealtimeService } from "./realtime.service";
@@ -277,8 +278,7 @@ export class ChannelService {
 
       return channels;
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Failed to load channels";
+      const message = getErrorMessage(error, "Failed to load channels");
       this._error.set(message);
       this.logger.error("Error loading channels:", error);
       throw error;
@@ -357,8 +357,7 @@ export class ChannelService {
       this.logger.success(`Created channel: ${channel.name}`);
       return channel;
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Failed to create channel";
+      const message = getErrorMessage(error, "Failed to create channel");
       this._error.set(message);
       this.logger.error("Error creating channel:", error);
       throw error;

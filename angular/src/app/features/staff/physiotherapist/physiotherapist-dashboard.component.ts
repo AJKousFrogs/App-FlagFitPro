@@ -29,6 +29,7 @@ import {
   SharedInsight,
   SharedInsightFeedService,
 } from "../../../core/services/shared-insight-feed.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -1127,6 +1128,7 @@ const RTP_PHASES = [
 export class PhysiotherapistDashboardComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
+  private logger = inject(LoggerService);
   protected insightFeedService = inject(SharedInsightFeedService);
 
   // Constants exposed to template
@@ -1297,7 +1299,7 @@ export class PhysiotherapistDashboardComponent implements OnInit {
       // Load injury history for each athlete
       await this.loadAllInjuryHistory();
     } catch (error) {
-      console.error("Failed to load physiotherapy data:", error);
+      this.logger.error("Failed to load physiotherapy data", error);
       this.toast.error("Failed to load physiotherapy data");
     } finally {
       this.loading.set(false);

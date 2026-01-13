@@ -97,9 +97,6 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   onDateChange(): void {
     const value = this.dateValue();
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'date-picker.component.ts:98',message:'onDateChange called',data:{value:value,valueType:typeof value,isDate:value instanceof Date},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
     this.onChangeFn(value);
     this.changed.emit(value);
   }
@@ -110,9 +107,6 @@ export class DatePickerComponent implements ControlValueAccessor {
 
   // ControlValueAccessor implementation
   writeValue(value: Date | null): void {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'date-picker.component.ts:109',message:'writeValue called',data:{value:value,valueType:typeof value,isDate:value instanceof Date,currentValue:this.dateValue()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
     this.dateValue.set(value || null);
   }
 

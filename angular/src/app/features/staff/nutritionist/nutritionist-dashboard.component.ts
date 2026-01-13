@@ -23,6 +23,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
@@ -794,6 +795,7 @@ interface TournamentNutritionBrief {
 export class NutritionistDashboardComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
+  private logger = inject(LoggerService);
   private insightFeedService = inject(SharedInsightFeedService);
 
   // State
@@ -994,7 +996,7 @@ export class NutritionistDashboardComponent implements OnInit {
         this.loadWellnessFromAthletes(response.data.athletes);
       }
     } catch (error) {
-      console.error("Failed to load nutrition data:", error);
+      this.logger.error("Failed to load nutrition data", error);
       this.toast.error("Failed to load nutrition data");
     } finally {
       this.loading.set(false);

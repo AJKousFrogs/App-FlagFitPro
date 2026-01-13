@@ -3,7 +3,8 @@
 // Supports team games (coach/admin) and personal games (player domestic leagues)
 
 const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const { validate: _validate, sanitize } = require("./validation.cjs");
+const { validate: _validate } = require("./validation.cjs");
+const { sanitizeObject } = require("./utils/input-validator.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -67,7 +68,7 @@ const createGame = async (userId, gameData) => {
     const isCoach = isCoachOrAdmin(userRole);
 
     // Sanitize input
-    const sanitizedData = sanitize(gameData);
+    const sanitizedData = sanitizeObject(gameData);
 
     // Get user's team ID
     const teamId = await getUserTeamId(userId);
@@ -396,7 +397,7 @@ const updateGame = async (userId, gameId, updates) => {
     }
 
     // Sanitize updates
-    const sanitizedUpdates = sanitize(updates);
+    const sanitizedUpdates = sanitizeObject(updates);
 
     // Build update object
     const updateObj = {

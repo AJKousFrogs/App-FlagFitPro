@@ -27,6 +27,7 @@ import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
+import { LoggerService } from "../../core/services/logger.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -137,6 +138,7 @@ export class GameTrackerComponent implements OnInit {
   private toastService = inject(ToastService);
   private offlineQueue = inject(OfflineQueueService);
   private networkStatus = inject(NetworkStatusService);
+  private logger = inject(LoggerService);
 
   showGameForm = signal(false);
   games = signal<Game[]>([]);
@@ -578,7 +580,7 @@ export class GameTrackerComponent implements OnInit {
           this.games.set(games);
         },
         error: (err) => {
-          console.error("Error loading games:", err);
+          this.logger.error("Error loading games", err);
           // Set empty array on error
           this.games.set([]);
         },
@@ -672,7 +674,7 @@ export class GameTrackerComponent implements OnInit {
             this.showGameForm.set(false);
             this.gameForm.reset();
           } else {
-            console.error("Error creating game:", err);
+            this.logger.error("Error creating game", err);
             this.toastService.error(TOAST.ERROR.GAME_CREATE_FAILED);
           }
         },

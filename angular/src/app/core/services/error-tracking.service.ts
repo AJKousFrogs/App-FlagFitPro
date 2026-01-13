@@ -391,7 +391,7 @@ export class GlobalErrorHandler implements ErrorHandler {
 
     // Re-throw in development for debugging
     if (!environment.production) {
-      console.error("Unhandled error:", error);
+      this.logger.error("Unhandled error:", error);
     }
   }
 }

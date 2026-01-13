@@ -2,6 +2,7 @@ import { Injectable, inject } from "@angular/core";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Observable, of } from "rxjs";
 import { catchError, delay, retryWhen, take } from "rxjs/operators";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
@@ -30,8 +31,6 @@ export interface GamePlay {
   missReason?: string;
 }
 
-// Re-export for backward compatibility
-export type PlayerStats = GamePlayerStats;
 
 @Injectable({
   providedIn: "root",
@@ -56,7 +55,7 @@ export class GameStatsService {
     playerId: string,
     gameId: string,
     maxRetries = this.MAX_RETRIES,
-  ): Promise<PlayerStats | null> {
+  ): Promise<GamePlayerStats | null> {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         const { data, error } = await this.supabase
@@ -91,7 +90,7 @@ export class GameStatsService {
           error,
         );
         throw new Error(
-          `Unable to fetch player statistics: ${this.getErrorMessage(error)}`,
+          `Unable to fetch player statistics: ${getErrorMessage(error)}`,
         );
       }
     }
@@ -105,9 +104,9 @@ export class GameStatsService {
   getPlayerStatsObservable(
     playerId: string,
     gameId: string,
-  ): Observable<PlayerStats | null> {
+  ): Observable<GamePlayerStats | null> {
     // Convert promise to observable with retry logic
-    return new Observable<PlayerStats | null>((subscriber) => {
+    return new Observable<GamePlayerStats | null>((subscriber) => {
       this.getPlayerStats(playerId, gameId)
         .then((stats) => {
           subscriber.next(stats);
@@ -130,8 +129,8 @@ export class GameStatsService {
   /**
    * Aggregate plays into statistics with data integrity checks
    */
-  private aggregatePlayerStats(plays: GamePlay[]): PlayerStats {
-    const stats: PlayerStats = {
+  private aggregatePlayerStats(plays: GamePlay[]): GamePlayerStats {
+    const stats: GamePlayerStats = {
       passAttempts: 0,
       completions: 0,
       interceptions: 0,
@@ -201,8 +200,8 @@ export class GameStatsService {
   async getMultiplePlayerStats(
     playerIds: string[],
     gameId: string,
-  ): Promise<Map<string, PlayerStats | null>> {
-    const results = new Map<string, PlayerStats | null>();
+  ): Promise<Map<string, GamePlayerStats | null>> {
+    const results = new Map<string, GamePlayerStats | null>();
 
     // Process in parallel with concurrency limit
     const batchSize = 10;
@@ -229,17 +228,5 @@ export class GameStatsService {
    */
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
-  /**
-   * Extract error message from various error types
-   */
-  private getErrorMessage(error: unknown): string {
-    if (error instanceof Error) return error.message;
-    if (error && typeof error === "object" && "status" in error) {
-      return `HTTP ${(error as { status: number }).status}`;
-    }
-    if (typeof error === "string") return error;
-    return "Unknown error";
   }
 }

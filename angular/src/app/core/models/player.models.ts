@@ -54,8 +54,3 @@ export interface PlayerWithStats {
   agility?: number;
 }
 
-/**
- * Legacy PlayerStats interface - use GamePlayerStats or PlayerWithStats instead
- * @deprecated Use GamePlayerStats for game statistics or PlayerWithStats for player display
- */
-export type PlayerStats = GamePlayerStats | PlayerWithStats;

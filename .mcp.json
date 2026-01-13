@@ -23,6 +23,10 @@
       },
       "description": "Sequential Thought MCP Server - Chain-of-thought reasoning framework for complex sports coaching decision making",
       "alwaysAllow": []
+    },
+    "primeng": {
+      "command": "npx",
+      "args": ["-y", "@primeng/mcp"]
     }
   }
 }

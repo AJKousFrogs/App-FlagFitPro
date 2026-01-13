@@ -24,6 +24,7 @@ import { DatePicker } from "primeng/datepicker";
 import { TagModule } from "primeng/tag";
 import { ModalComponent } from "@shared/components/modal/modal.component";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
+import { LoggerService } from "@core/services/logger.service";
 import type {
   DecisionLedgerEntry,
   ReviewDecisionRequest,
@@ -272,6 +273,7 @@ export class ReviewDecisionDialogComponent {
 
   // Services
   private decisionService = inject(DecisionLedgerService);
+  private logger = inject(LoggerService);
 
   // State
   isSubmitting = signal(false);
@@ -343,7 +345,7 @@ export class ReviewDecisionDialogComponent {
       this.reviewed.emit({ ...this.formData });
       this.reset();
     } catch (error) {
-      console.error("Error submitting review:", error);
+      this.logger.error("Error submitting review", error);
     } finally {
       this.isSubmitting.set(false);
     }

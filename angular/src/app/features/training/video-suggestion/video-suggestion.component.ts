@@ -61,6 +61,7 @@ import { CardShellComponent } from "../../../shared/components/card-shell/card-s
 import { AuthService } from "../../../core/services/auth.service";
 import { HapticFeedbackService } from "../../../core/services/haptic-feedback.service";
 import { InstagramVideoService } from "../../../core/services/instagram-video.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -614,6 +615,7 @@ export class VideoSuggestionComponent implements OnInit {
   private hapticService = inject(HapticFeedbackService);
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
+  private logger = inject(LoggerService);
 
   // Expose constants to template
   protected readonly UI_LIMITS = UI_LIMITS;
@@ -798,7 +800,7 @@ export class VideoSuggestionComponent implements OnInit {
       this.hapticService.success();
       this.toastService.success(TOAST.SUCCESS.VIDEO_SUBMITTED);
     } catch (error) {
-      console.error("Failed to submit suggestion:", error);
+      this.logger.error("Failed to submit suggestion", error);
       this.toastService.error(TOAST.ERROR.VIDEO_SUBMIT_FAILED);
       this.hapticService.error();
     } finally {
@@ -824,7 +826,7 @@ export class VideoSuggestionComponent implements OnInit {
       if (error) throw error;
       this.mySuggestions.set((data as VideoSuggestion[]) || []);
     } catch (error) {
-      console.error("Failed to load suggestions:", error);
+      this.logger.error("Failed to load suggestions", error);
     } finally {
       this.isLoadingSuggestions.set(false);
     }
@@ -842,7 +844,7 @@ export class VideoSuggestionComponent implements OnInit {
       if (error) throw error;
       this.teamApprovedVideos.set((data as VideoSuggestion[]) || []);
     } catch (error) {
-      console.error("Failed to load team approved videos:", error);
+      this.logger.error("Failed to load team approved videos", error);
     }
   }
 
@@ -873,7 +875,7 @@ export class VideoSuggestionComponent implements OnInit {
       );
       this.toastService.info(TOAST.INFO.SUGGESTION_DELETED);
     } catch (error) {
-      console.error("Failed to delete suggestion:", error);
+      this.logger.error("Failed to delete suggestion", error);
       this.toastService.error(TOAST.ERROR.VIDEO_DELETE_FAILED);
     }
   }

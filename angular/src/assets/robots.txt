@@ -1,0 +1,20 @@
+# robots.txt for FlagFit Pro
+# Professional flag football training and performance tracking platform
+
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /api/
+Disallow: /admin/
+Disallow: /.netlify/
+
+# Allow important pages
+Allow: /dashboard
+Allow: /training
+Allow: /analytics
+Allow: /roster
+Allow: /community
+
+# Sitemap location (if you add one later)
+# Sitemap: https://webflagfootballfrogs.netlify.app/sitemap.xml

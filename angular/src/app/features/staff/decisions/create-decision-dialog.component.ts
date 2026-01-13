@@ -23,6 +23,7 @@ import type {
   ReviewTrigger,
 } from "@core/models/decision-ledger.models";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
+import { LoggerService } from "@core/services/logger.service";
 import { RosterService } from "@features/roster/roster.service";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
 import { ModalComponent } from "@shared/components/modal/modal.component";
@@ -394,6 +395,7 @@ export class CreateDecisionDialogComponent {
   // Services
   private decisionService = inject(DecisionLedgerService);
   private rosterService = inject(RosterService);
+  private logger = inject(LoggerService);
 
   // State
   currentStep = signal(0);
@@ -701,7 +703,7 @@ export class CreateDecisionDialogComponent {
       this.created.emit({ ...this.formData });
       this.reset();
     } catch (error) {
-      console.error("Error creating decision:", error);
+      this.logger.error("Error creating decision", error);
     } finally {
       this.isCreating.set(false);
     }

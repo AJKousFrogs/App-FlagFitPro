@@ -19,12 +19,14 @@
 
 import { isPlatformBrowser, isPlatformServer } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { LoggerService } from "./logger.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class PlatformService {
   private platformId = inject(PLATFORM_ID);
+  private logger = inject(LoggerService);
 
   /**
    * Check if code is running in browser
@@ -64,7 +66,7 @@ export class PlatformService {
     try {
       return localStorage.getItem(key);
     } catch (error) {
-      console.warn(`Failed to read from localStorage: ${key}`, error);
+      this.logger.warn(`Failed to read from localStorage: ${key}`, error);
       return null;
     }
   }
@@ -80,7 +82,7 @@ export class PlatformService {
       localStorage.setItem(key, value);
       return true;
     } catch (error) {
-      console.warn(`Failed to write to localStorage: ${key}`, error);
+      this.logger.warn(`Failed to write to localStorage: ${key}`, error);
       return false;
     }
   }
@@ -96,7 +98,7 @@ export class PlatformService {
       localStorage.removeItem(key);
       return true;
     } catch (error) {
-      console.warn(`Failed to remove from localStorage: ${key}`, error);
+      this.logger.warn(`Failed to remove from localStorage: ${key}`, error);
       return false;
     }
   }
@@ -112,7 +114,7 @@ export class PlatformService {
       localStorage.clear();
       return true;
     } catch (error) {
-      console.warn("Failed to clear localStorage", error);
+      this.logger.warn("Failed to clear localStorage", error);
       return false;
     }
   }
@@ -127,7 +129,7 @@ export class PlatformService {
     try {
       return sessionStorage.getItem(key);
     } catch (error) {
-      console.warn(`Failed to read from sessionStorage: ${key}`, error);
+      this.logger.warn(`Failed to read from sessionStorage: ${key}`, error);
       return null;
     }
   }
@@ -143,7 +145,7 @@ export class PlatformService {
       sessionStorage.setItem(key, value);
       return true;
     } catch (error) {
-      console.warn(`Failed to write to sessionStorage: ${key}`, error);
+      this.logger.warn(`Failed to write to sessionStorage: ${key}`, error);
       return false;
     }
   }
@@ -159,7 +161,7 @@ export class PlatformService {
       sessionStorage.removeItem(key);
       return true;
     } catch (error) {
-      console.warn(`Failed to remove from sessionStorage: ${key}`, error);
+      this.logger.warn(`Failed to remove from sessionStorage: ${key}`, error);
       return false;
     }
   }
@@ -259,7 +261,7 @@ export class PlatformService {
       await navigator.clipboard.writeText(text);
       return true;
     } catch (error) {
-      console.warn("Failed to copy to clipboard", error);
+      this.logger.warn("Failed to copy to clipboard", error);
       // Fallback for older browsers
       try {
         const textArea = document.createElement("textarea");
@@ -272,7 +274,7 @@ export class PlatformService {
         document.body.removeChild(textArea);
         return success;
       } catch (fallbackError) {
-        console.warn("Fallback copy failed", fallbackError);
+        this.logger.warn("Fallback copy failed", fallbackError);
         return false;
       }
     }

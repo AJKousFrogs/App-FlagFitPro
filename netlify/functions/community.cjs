@@ -2,7 +2,7 @@
 // Returns community feed, posts, and leaderboard data
 
 const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const { sanitize } = require("./validation.cjs");
+const { sanitizeObject } = require("./utils/input-validator.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -198,7 +198,7 @@ const createPost = async (userId, postData) => {
     checkEnvVars();
 
     // SECURITY: Sanitize input to prevent XSS
-    const sanitizedData = sanitize(postData);
+    const sanitizedData = sanitizeObject(postData);
 
     // SECURITY: Validate required fields
     if (!sanitizedData.content && !sanitizedData.text) {

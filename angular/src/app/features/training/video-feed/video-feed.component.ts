@@ -51,6 +51,7 @@ import {
   InstagramVideo,
   InstagramVideoService,
 } from "../../../core/services/instagram-video.service";
+import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -542,6 +543,7 @@ export class VideoFeedComponent {
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   // State
   searchQuery = signal("");
@@ -895,7 +897,7 @@ export class VideoFeedComponent {
         this.bookmarkedIds.set(new Set(data.map((b) => b.video_id)));
       }
     } catch (error) {
-      console.error("Failed to load bookmarks:", error);
+      this.logger.error("Failed to load bookmarks", error);
     }
   }
 
@@ -913,7 +915,7 @@ export class VideoFeedComponent {
         saved_at: new Date().toISOString(),
       });
     } catch (error) {
-      console.error("Failed to save bookmark:", error);
+      this.logger.error("Failed to save bookmark", error);
     }
   }
 
@@ -928,7 +930,7 @@ export class VideoFeedComponent {
         .eq("user_id", user.id)
         .eq("video_id", videoId);
     } catch (error) {
-      console.error("Failed to remove bookmark:", error);
+      this.logger.error("Failed to remove bookmark", error);
     }
   }
 

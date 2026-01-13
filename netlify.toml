@@ -1670,6 +1670,16 @@
   force = true
 
 # ============================================================================
+# STATIC FILES - Serve before SPA fallback
+# ============================================================================
+# robots.txt - Must be served before SPA fallback
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+  force = true
+
+# ============================================================================
 # SPA FALLBACK (200 Rewrite)
 # All non-asset, non-API paths → Angular index.html for Angular Router
 # Netlify automatically excludes /api/* and static assets

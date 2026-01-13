@@ -23,6 +23,7 @@ import type {
   ReviewDecisionRequest,
 } from "@core/models/decision-ledger.models";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
+import { LoggerService } from "@core/services/logger.service";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { ButtonModule } from "primeng/button";
@@ -336,6 +337,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
 })
 export class DecisionLedgerDashboardComponent implements OnInit {
   decisionService = inject(DecisionLedgerService);
+  private logger = inject(LoggerService);
 
   // State
   filters = signal<DecisionFilters>({});
@@ -417,7 +419,7 @@ export class DecisionLedgerDashboardComponent implements OnInit {
       this.selectedDecisionForReview.set(null);
       await this.loadData();
     } catch (error) {
-      console.error("Error reviewing decision:", error);
+      this.logger.error("Error reviewing decision", error);
     }
   }
 
@@ -439,7 +441,7 @@ export class DecisionLedgerDashboardComponent implements OnInit {
       this.showCreateDialog.set(false);
       await this.loadData();
     } catch (error) {
-      console.error("Error creating decision:", error);
+      this.logger.error("Error creating decision", error);
     }
   }
 }
