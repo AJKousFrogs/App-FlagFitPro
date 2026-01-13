@@ -17,6 +17,7 @@
     "moduleResolution": "bundler",
     "resolvePackageJsonExports": true,
     "resolvePackageJsonImports": true,
+    "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,

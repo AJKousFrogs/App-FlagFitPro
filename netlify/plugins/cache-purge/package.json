@@ -1,0 +1,7 @@
+{
+  "name": "cache-purge",
+  "version": "1.0.0",
+  "description": "Netlify Build Plugin to ensure cache is purged on deploy",
+  "main": "index.cjs",
+  "type": "commonjs"
+}

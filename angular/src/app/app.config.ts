@@ -3,8 +3,7 @@ import {
   ErrorHandler,
   isDevMode,
   provideZonelessChangeDetection,
-  APP_INITIALIZER,
-  inject,
+  LOCALE_ID,
 } from "@angular/core";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import {
@@ -30,7 +29,6 @@ import { errorInterceptor } from "./core/interceptors/error.interceptor";
 import { debugInterceptor } from "./core/interceptors/debug.interceptor";
 import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
 import { AcwrService } from "./core/services/acwr.service";
-import { CoreWebVitalsService } from "./core/services/core-web-vitals.service";
 import {
   ErrorTrackingService,
   GlobalErrorHandler,
@@ -40,30 +38,11 @@ import { ResourceService } from "./core/services/resource.service";
 import { PlatformDetectionService } from "./core/services/platform-detection.service";
 import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
 
-/**
- * PERFORMANCE OPTIMIZATION: Initialize Core Web Vitals monitoring
- * Using APP_INITIALIZER with inject() in factory context ensures proper DI
- */
-function initializeCoreWebVitals() {
-  // inject() is valid here because this factory runs in injection context
-  // The service auto-initializes on construction, we just need to inject it
-  const _webVitalsService = inject(CoreWebVitalsService);
-
-  return () => {
-    // Defer actual monitoring to avoid blocking initial render
-    if (typeof window !== "undefined") {
-      const scheduleInit =
-        window.requestIdleCallback || ((cb: () => void) => setTimeout(cb, 100));
-      scheduleInit(() => {
-        // Service is already injected, just trigger initialization if needed
-        // The service will auto-initialize on construction
-      });
-    }
-  };
-}
-
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Locale configuration for i18n (date/number formatting)
+    { provide: LOCALE_ID, useValue: "en-US" },
+
     // - No Zone.js overhead (smaller bundle, faster change detection)
     // - Better DevTools integration with real-time change detection tracing
     // - Automatic change detection on signal updates and DOM events
@@ -124,23 +103,16 @@ export const appConfig: ApplicationConfig = {
 
     // DEFERRED SERVICES: These are initialized lazily when needed
     // They are tree-shakeable and won't add to initial bundle if not used
+    // Note: CoreWebVitalsService auto-initializes in constructor when provided in root
     AcwrService,
     LoadMonitoringService,
     AcwrAlertsService,
-    CoreWebVitalsService,
     ResourceService,
     PlatformDetectionService, // Auto-detects iOS, Android, Safari, Chrome
 
     // Error tracking and monitoring (Sentry integration)
     ErrorTrackingService,
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
-
-    // PERFORMANCE: Initialize Core Web Vitals monitoring after app is stable
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeCoreWebVitals,
-      multi: true,
-    },
 
     // Service Worker for PWA support (offline caching, push notifications)
     // PERFORMANCE: Delay registration to not block initial render
