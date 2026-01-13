@@ -110,7 +110,8 @@ export class UnifiedTrainingService {
   // CORE REACTIVE STATE (Signals)
   // ============================================================================
 
-  private userId = computed(() => this.authService.getUser()?.id);
+  // Per audit: use currentUser() signal for reactivity, not getUser() method
+  private userId = computed(() => this.authService.currentUser()?.id);
 
   // Expose key metrics as signals (facade pattern)
   readonly acwrRatio = this.acwrService.acwrRatio;
@@ -829,12 +830,13 @@ export class UnifiedTrainingService {
   ): Promise<WeeklyScheduleDay[]> {
     try {
       // 1. Get user's assigned program
+      // Per audit: use maybeSingle() since new users may not have a program yet (avoids 406)
       const { data: playerProgram } = await this.supabase.client
         .from("player_programs")
         .select("*, training_programs (id, name)")
         .eq("player_id", userId)
         .eq("status", "active")
-        .single();
+        .maybeSingle();
 
       if (!playerProgram) {
         this.logger.info(
@@ -1231,11 +1233,12 @@ export class UnifiedTrainingService {
   }
 
   private async getUserDisplayName(userId: string): Promise<string> {
+    // Per audit: use maybeSingle() to gracefully handle user not found (avoids 406)
     const { data } = await this.supabase.client
       .from("users")
       .select("first_name")
       .eq("id", userId)
-      .single();
+      .maybeSingle();
     return (data as { first_name?: string } | null)?.first_name || "Athlete";
   }
 

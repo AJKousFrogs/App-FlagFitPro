@@ -1190,8 +1190,9 @@ export class TodayComponent {
   // Guard to prevent duplicate initial loads
   private _initialLoadDone = false;
 
-  // Computed userId from auth service
-  private readonly userId = computed(() => this.authService.getUser()?.id);
+  // Computed userId from auth service - uses signal for reactivity
+  // Per audit: use currentUser() signal, not getUser() method
+  private readonly userId = computed(() => this.authService.currentUser()?.id);
 
   // ============================================================================
   // STATE SIGNALS

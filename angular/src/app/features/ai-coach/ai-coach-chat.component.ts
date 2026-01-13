@@ -834,8 +834,8 @@ export class AiCoachChatComponent implements AfterViewChecked {
   // Design system tokens
   protected readonly dialogStyles = DIALOG_STYLES;
 
-  // User role check
-  isCoach = computed(() => this.authService.getUser()?.role === "coach");
+  // User role check - per audit: use currentUser() signal for reactivity
+  isCoach = computed(() => this.authService.currentUser()?.role === "coach");
 
   // Angular 21: Use viewChild() signal instead of @ViewChild()
   messagesContainer = viewChild.required<ElementRef>("messagesContainer");

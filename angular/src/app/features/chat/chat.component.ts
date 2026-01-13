@@ -932,8 +932,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.presenceService.getChannelOnlineCount(channelId);
   }
 
-  // Current user
-  readonly currentUserId = computed(() => this.authService.getUser()?.id);
+  // Current user - per audit: use currentUser() signal for reactivity
+  readonly currentUserId = computed(() => this.authService.currentUser()?.id);
   readonly isCoach = this.channelService.isCoach;
 
   // New features

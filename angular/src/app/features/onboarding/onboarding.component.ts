@@ -2582,11 +2582,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         return;
       }
 
+      // Per audit: use maybeSingle() since user profile may not exist yet (avoids 406)
       const { data, error } = await this.supabaseService.client
         .from("users")
         .select("full_name, first_name, last_name, position, experience_level")
         .eq("email", user.email)
-        .single();
+        .maybeSingle();
 
       if (data && !error) {
         this.onboardingData.name =
@@ -3542,11 +3543,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       let teamId: string | null = null;
 
       // First, try to find existing team by name
+      // Per audit: use maybeSingle() since team may not exist yet (avoids 406)
       const { data: existingTeam } = await this.supabaseService.client
         .from("teams")
         .select("id")
         .ilike("name", teamName)
-        .single();
+        .maybeSingle();
 
       if (existingTeam) {
         teamId = existingTeam.id;
@@ -3554,7 +3556,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           `[Onboarding] Found existing team: ${teamName} (${teamId})`,
         );
       } else {
-        // Create new team
+        // Create new team - single() is OK here since we're inserting and expect exactly one row back
         const { data: newTeam, error: teamError } =
           await this.supabaseService.client
             .from("teams")
@@ -3585,12 +3587,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
 
       // 2. Add user to team_members with role='player'
       // Check if already a member
+      // Per audit: use maybeSingle() since membership may not exist yet (avoids 406)
       const { data: existingMember } = await this.supabaseService.client
         .from("team_members")
         .select("id")
         .eq("team_id", teamId)
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
       if (!existingMember) {
         const { error: memberError } = await this.supabaseService.client
@@ -3679,11 +3682,12 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       let teamId: string | null = null;
 
       // First, try to find existing team by name
+      // Per audit: use maybeSingle() since team may not exist yet (avoids 406)
       const { data: existingTeam } = await this.supabaseService.client
         .from("teams")
         .select("id")
         .ilike("name", teamName)
-        .single();
+        .maybeSingle();
 
       if (existingTeam) {
         teamId = existingTeam.id;
@@ -3691,7 +3695,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
           `[Onboarding] Found existing team for staff: ${teamName} (${teamId})`,
         );
       } else {
-        // Create new team with staff member as creator
+        // Create new team with staff member as creator - single() OK for insert
         const { data: newTeam, error: teamError } =
           await this.supabaseService.client
             .from("teams")
@@ -3742,12 +3746,13 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         staffRoleToMemberRole[this.onboardingData.staffRole || ""] || "staff";
 
       // Check if already a member
+      // Per audit: use maybeSingle() since membership may not exist yet (avoids 406)
       const { data: existingMember } = await this.supabaseService.client
         .from("team_members")
         .select("id")
         .eq("team_id", teamId)
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
       if (!existingMember) {
         const { error: memberError } = await this.supabaseService.client

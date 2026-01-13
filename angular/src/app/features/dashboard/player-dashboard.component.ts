@@ -1960,7 +1960,8 @@ export class PlayerDashboardComponent {
 
   // User info
   userName = signal("Athlete");
-  currentUserId = computed(() => this.authService.getUser()?.id || "");
+  // Per audit: use currentUser() signal for reactivity, not getUser() method
+  currentUserId = computed(() => this.authService.currentUser()?.id ?? "");
 
   // Announcement
   announcement = signal<AnnouncementBanner | null>(null);
