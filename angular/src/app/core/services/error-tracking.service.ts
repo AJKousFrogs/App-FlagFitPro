@@ -381,6 +381,7 @@ export class ErrorTrackingService {
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
   private errorTracking = inject(ErrorTrackingService);
+  private logger = inject(LoggerService);
 
   handleError(error: unknown): void {
     // Capture the error
