@@ -11,6 +11,12 @@ import { authenticateToken } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { serverLogger } from "./utils/server-logger.js";
+import {
+  getErrorMessage,
+  sendError,
+  sendErrorResponse,
+  validatePagination,
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "community";
@@ -54,8 +60,12 @@ async function getCommunityFeed(req, res) {
   try {
     logRequest(req, "GET /api/community?feed=true");
     const { userId } = req;
-    const limit = parseInt(req.query.limit) || 20;
-    const offset = parseInt(req.query.offset) || 0;
+    const pagination = validatePagination(1, req.query.limit, 100);
+    if (!pagination.isValid) {
+      return sendError(res, pagination.error, "INVALID_PAGINATION", 400);
+    }
+    const limit = pagination.limit;
+    const offset = Math.max(0, parseInt(req.query.offset, 10) || 0);
 
     if (!supabase) {
       return res.json({
@@ -101,51 +111,69 @@ async function getCommunityFeed(req, res) {
       throw error;
     }
 
-    // Check if current user liked each post
-    const postsWithLikes = await Promise.all(
-      (posts || []).map(async (post) => {
-        const { data: userLike } = await supabase
-          .from("post_likes")
-          .select("id")
-          .eq("post_id", post.id)
-          .eq("user_id", userId)
-          .single();
+    const postIds = (posts || []).map((post) => post.id);
+    let likedPostIds = new Set();
+    let bookmarkedPostIds = new Set();
 
-        const { data: userBookmark } = await supabase
-          .from("post_bookmarks")
-          .select("id")
-          .eq("post_id", post.id)
-          .eq("user_id", userId)
-          .single();
+    if (postIds.length > 0) {
+      const { data: likes, error: likesError } = await supabase
+        .from("post_likes")
+        .select("post_id")
+        .eq("user_id", userId)
+        .in("post_id", postIds);
 
-        return {
-          id: post.id,
-          content: post.content,
-          location: post.location,
-          mediaUrl: post.media_url,
-          mediaType: post.media_type,
-          timestamp: post.created_at,
-          authorName: post.users?.full_name || post.users?.email || "Unknown",
-          likes: post.post_likes?.[0]?.count || 0,
-          comments: post.post_comments?.[0]?.count || 0,
-          shares: 0,
-          isLiked: !!userLike,
-          isBookmarked: !!userBookmark,
-        };
-      }),
-    );
+      if (likesError) {
+        throw likesError;
+      }
+
+      const { data: bookmarks, error: bookmarksError } = await supabase
+        .from("post_bookmarks")
+        .select("post_id")
+        .eq("user_id", userId)
+        .in("post_id", postIds);
+
+      if (bookmarksError) {
+        throw bookmarksError;
+      }
+
+      likedPostIds = new Set((likes || []).map((like) => like.post_id));
+      bookmarkedPostIds = new Set(
+        (bookmarks || []).map((bookmark) => bookmark.post_id),
+      );
+    }
+
+    const postsWithLikes = (posts || []).map((post) => ({
+      id: post.id,
+      content: post.content,
+      location: post.location,
+      mediaUrl: post.media_url,
+      mediaType: post.media_type,
+      timestamp: post.created_at,
+      authorName: post.users?.full_name || post.users?.email || "Unknown",
+      likes: post.post_likes?.[0]?.count || 0,
+      comments: post.post_comments?.[0]?.count || 0,
+      shares: 0,
+      isLiked: likedPostIds.has(post.id),
+      isBookmarked: bookmarkedPostIds.has(post.id),
+    }));
 
     res.json({
       success: true,
       data: { posts: postsWithLikes },
     });
   } catch (error) {
-    logError("Error fetching community feed", error);
-    res.json({
-      success: true,
-      data: { posts: [] },
-      message: "No data available",
-    });
+    const errorMessage = getErrorMessage(
+      error,
+      "Failed to fetch community feed",
+    );
+    logError(`Error fetching community feed: ${errorMessage}`, error);
+    return sendErrorResponse(
+      res,
+      error,
+      "Failed to fetch community feed",
+      "FETCH_ERROR",
+      500,
+    );
   }
 }
 

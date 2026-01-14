@@ -169,6 +169,18 @@ describe("API Integration Tests", () => {
   });
 
   describe("Error Handling", () => {
+    it("GET /api/notifications - should require auth", async () => {
+      await request(app).get("/api/notifications").expect(401);
+    });
+
+    it("GET /api/training/stats - should reject userId without auth", async () => {
+      await request(app)
+        .get(
+          "/api/training/stats?userId=00000000-0000-0000-0000-000000000000",
+        )
+        .expect(403);
+    });
+
     it("should handle malformed JSON gracefully", async () => {
       const response = await request(app)
         .post("/api/auth/login")

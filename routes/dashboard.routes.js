@@ -8,14 +8,15 @@
 
 import express from "express";
 import {
-    optionalAuth
+    optionalAuth,
+    authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import { DEMO_USER_ID, isValidUUID, sendError, sendSuccess } from "./utils/validation.js";
+import { DEMO_USER_ID, resolveUserId, sendError, sendSuccess } from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "dashboard";
@@ -38,15 +39,17 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.3.0"));
 router.get(
   "/overview",
   rateLimit("READ"),
-  withCache("DASHBOARD"),
   optionalAuth,
+  authorizeUserAccess,
+  withCache("DASHBOARD"),
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
     try {
-      const userId = req.userId || req.query.userId;
+      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
+      const userId = userIdValidation.userId;
 
       // Get training sessions count (last 30 days)
       const thirtyDaysAgo = new Date();
@@ -60,9 +63,7 @@ router.get(
         .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
         .eq("status", "completed");
 
-      if (userId && isValidUUID(userId)) {
-        sessionsQuery = sessionsQuery.eq("user_id", userId);
-      }
+      sessionsQuery = sessionsQuery.eq("user_id", userId);
 
       const {
         data: sessions,
@@ -109,6 +110,7 @@ router.get(
         .select("id, session_date, session_type, title")
         .gte("session_date", new Date().toISOString().split("T")[0])
         .eq("status", "scheduled")
+        .eq("user_id", userId)
         .order("session_date", { ascending: true })
         .limit(5);
 
@@ -153,15 +155,20 @@ router.get(
   "/training-calendar",
   rateLimit("READ"),
   optionalAuth,
+  authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
     try {
+      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
+      const userId = userIdValidation.userId;
+
       const { data: sessions } = await supabase
         .from("training_sessions")
         .select("id, workout_type, session_date, duration_minutes")
+        .eq("user_id", userId)
         .order("session_date", { ascending: true });
 
       return sendSuccess(res, {
@@ -187,16 +194,15 @@ router.get(
   "/olympic-qualification",
   rateLimit("READ"),
   optionalAuth,
+  authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
     try {
-      let userId = req.userId || req.query.userId || DEMO_USER_ID;
-      if (!isValidUUID(userId)) {
-        userId = DEMO_USER_ID;
-      }
+      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
+      const userId = userIdValidation.userId;
 
       const { data: qual } = await supabase
         .from("olympic_qualification")
@@ -236,16 +242,15 @@ router.get(
   "/sponsor-rewards",
   rateLimit("READ"),
   optionalAuth,
+  authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
     try {
-      let userId = req.userId || req.query.userId || DEMO_USER_ID;
-      if (!isValidUUID(userId)) {
-        userId = DEMO_USER_ID;
-      }
+      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
+      const userId = userIdValidation.userId;
 
       const { data: rewards } = await supabase
         .from("sponsor_rewards")
@@ -282,16 +287,15 @@ router.get(
   "/team-chemistry",
   rateLimit("READ"),
   optionalAuth,
+  authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
     try {
-      let userId = req.userId || req.query.userId || DEMO_USER_ID;
-      if (!isValidUUID(userId)) {
-        userId = DEMO_USER_ID;
-      }
+      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
+      const userId = userIdValidation.userId;
 
       const { data: chem } = await supabase
         .from("team_chemistry")

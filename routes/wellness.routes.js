@@ -10,6 +10,7 @@ import express from "express";
 import {
     authenticateToken,
     optionalAuth,
+    authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
@@ -18,7 +19,9 @@ import { serverLogger } from "./utils/server-logger.js";
 import {
     isValidUUID,
     sanitizeText,
+    getErrorMessage,
     sendError,
+    sendErrorResponse,
     sendSuccess,
     validateHydrationAmount
 } from "./utils/validation.js";
@@ -40,7 +43,12 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.2.0"));
  * GET /checkin
  * Get latest wellness check-in for a user
  */
-router.get("/checkin", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/checkin",
+  rateLimit("READ"),
+  optionalAuth,
+  authorizeUserAccess,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
@@ -67,8 +75,18 @@ router.get("/checkin", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     return sendSuccess(res, checkin);
   } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get checkin error:`, error);
-    return sendSuccess(res, null);
+    const errorMessage = getErrorMessage(
+      error,
+      "Failed to load wellness check-in",
+    );
+    serverLogger.error(`[${ROUTE_NAME}] Get checkin error: ${errorMessage}`, error);
+    return sendErrorResponse(
+      res,
+      error,
+      "Failed to load wellness check-in",
+      "FETCH_ERROR",
+      500,
+    );
   }
 });
 
@@ -125,8 +143,18 @@ router.post(
 
       return sendSuccess(res, data, "Wellness check-in recorded");
     } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Checkin error:`, error);
-      return sendError(res, "Failed to save check-in", "SAVE_ERROR", 500);
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to save check-in",
+      );
+      serverLogger.error(`[${ROUTE_NAME}] Checkin error: ${errorMessage}`, error);
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to save check-in",
+        "SAVE_ERROR",
+        500,
+      );
     }
   },
 );
@@ -135,13 +163,21 @@ router.post(
  * GET /checkins
  * Get wellness check-in history
  */
-router.get("/checkins", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/checkins",
+  rateLimit("READ"),
+  optionalAuth,
+  authorizeUserAccess,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
 
   try {
     const userId = req.userId || req.query.userId;
+    if (!userId || !isValidUUID(userId)) {
+      return sendSuccess(res, []);
+    }
     const days = parseInt(req.query.days) || 7;
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
@@ -166,9 +202,7 @@ router.get("/checkins", rateLimit("READ"), optionalAuth, async (req, res) => {
       .gte("checkin_date", startDate.toISOString().split("T")[0])
       .order("checkin_date", { ascending: false });
 
-    if (userId && isValidUUID(userId)) {
-      query = query.eq("user_id", userId);
-    }
+    query = query.eq("user_id", userId);
 
     const { data: checkins, error } = await query;
 
@@ -187,13 +221,21 @@ router.get("/checkins", rateLimit("READ"), optionalAuth, async (req, res) => {
  * GET /latest
  * Get the most recent wellness check-in
  */
-router.get("/latest", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/latest",
+  rateLimit("READ"),
+  optionalAuth,
+  authorizeUserAccess,
+  async (req, res) => {
   if (!supabase) {
     return sendSuccess(res, null);
   }
 
   try {
     const userId = req.userId || req.query.userId;
+    if (!userId || !isValidUUID(userId)) {
+      return sendSuccess(res, null);
+    }
 
     let query = supabase
       .from("daily_wellness_checkin")
@@ -201,16 +243,24 @@ router.get("/latest", rateLimit("READ"), optionalAuth, async (req, res) => {
       .order("checkin_date", { ascending: false })
       .limit(1);
 
-    if (userId && isValidUUID(userId)) {
-      query = query.eq("user_id", userId);
-    }
+    query = query.eq("user_id", userId);
 
     const { data: checkin } = await query.single();
 
     return sendSuccess(res, checkin);
   } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Latest error:`, error);
-    return sendSuccess(res, null);
+    const errorMessage = getErrorMessage(
+      error,
+      "Failed to load latest check-in",
+    );
+    serverLogger.error(`[${ROUTE_NAME}] Latest error: ${errorMessage}`, error);
+    return sendErrorResponse(
+      res,
+      error,
+      "Failed to load latest check-in",
+      "FETCH_ERROR",
+      500,
+    );
   }
 });
 
@@ -226,6 +276,7 @@ router.get(
   "/supplements",
   rateLimit("READ"),
   optionalAuth,
+  authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
@@ -233,6 +284,9 @@ router.get(
 
     try {
       const userId = req.userId || req.query.userId;
+      if (!userId || !isValidUUID(userId)) {
+        return sendSuccess(res, { supplements: [] });
+      }
 
       // Get user's supplement regimen
       let query = supabase
@@ -252,9 +306,7 @@ router.get(
         )
         .eq("is_active", true);
 
-      if (userId && isValidUUID(userId)) {
-        query = query.eq("user_id", userId);
-      }
+      query = query.eq("user_id", userId);
 
       const { data: regimen, error } = await query;
 
@@ -264,8 +316,18 @@ router.get(
 
       return sendSuccess(res, { supplements: regimen || [] });
     } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Supplements error:`, error);
-      return sendSuccess(res, { supplements: [] });
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to load supplements",
+      );
+      serverLogger.error(`[${ROUTE_NAME}] Supplements error: ${errorMessage}`, error);
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to load supplements",
+        "FETCH_ERROR",
+        500,
+      );
     }
   },
 );
@@ -311,8 +373,21 @@ router.post(
 
       return sendSuccess(res, data, "Supplement logged");
     } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Log supplement error:`, error);
-      return sendError(res, "Failed to log supplement", "LOG_ERROR", 500);
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to log supplement",
+      );
+      serverLogger.error(
+        `[${ROUTE_NAME}] Log supplement error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to log supplement",
+        "LOG_ERROR",
+        500,
+      );
     }
   },
 );
@@ -325,6 +400,7 @@ router.get(
   "/supplements/logs",
   rateLimit("READ"),
   optionalAuth,
+  authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
@@ -332,6 +408,9 @@ router.get(
 
     try {
       const userId = req.userId || req.query.userId;
+      if (!userId || !isValidUUID(userId)) {
+        return sendSuccess(res, { logs: [] });
+      }
       const limit = parseInt(req.query.limit) || 30;
 
       let query = supabase
@@ -340,9 +419,7 @@ router.get(
         .order("date", { ascending: false })
         .limit(limit);
 
-      if (userId && isValidUUID(userId)) {
-        query = query.eq("user_id", userId);
-      }
+      query = query.eq("user_id", userId);
 
       const { data, error } = await query;
 
@@ -352,8 +429,21 @@ router.get(
 
       return sendSuccess(res, { logs: data || [] });
     } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Supplement logs error:`, error);
-      return sendSuccess(res, { logs: [] });
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to load supplement logs",
+      );
+      serverLogger.error(
+        `[${ROUTE_NAME}] Supplement logs error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to load supplement logs",
+        "FETCH_ERROR",
+        500,
+      );
     }
   },
 );
@@ -366,13 +456,21 @@ router.get(
  * GET /hydration
  * Get hydration data for today
  */
-router.get("/hydration", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/hydration",
+  rateLimit("READ"),
+  optionalAuth,
+  authorizeUserAccess,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
 
   try {
     const userId = req.userId || req.query.userId;
+    if (!userId || !isValidUUID(userId)) {
+      return sendSuccess(res, { logs: [] });
+    }
     const today = new Date().toISOString().split("T")[0];
 
     let query = supabase
@@ -381,9 +479,7 @@ router.get("/hydration", rateLimit("READ"), optionalAuth, async (req, res) => {
       .gte("timestamp", `${today}T00:00:00`)
       .order("timestamp", { ascending: true });
 
-    if (userId && isValidUUID(userId)) {
-      query = query.eq("user_id", userId);
-    }
+    query = query.eq("user_id", userId);
 
     const { data: logs, error } = await query;
 
@@ -393,8 +489,18 @@ router.get("/hydration", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     return sendSuccess(res, { logs: logs || [] });
   } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Hydration error:`, error);
-    return sendSuccess(res, { logs: [] });
+    const errorMessage = getErrorMessage(
+      error,
+      "Failed to load hydration logs",
+    );
+    serverLogger.error(`[${ROUTE_NAME}] Hydration error: ${errorMessage}`, error);
+    return sendErrorResponse(
+      res,
+      error,
+      "Failed to load hydration logs",
+      "FETCH_ERROR",
+      500,
+    );
   }
 });
 
@@ -450,8 +556,21 @@ router.post(
 
       return sendSuccess(res, data, "Hydration logged");
     } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Log hydration error:`, error);
-      return sendError(res, "Failed to log hydration", "LOG_ERROR", 500);
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to log hydration",
+      );
+      serverLogger.error(
+        `[${ROUTE_NAME}] Log hydration error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to log hydration",
+        "LOG_ERROR",
+        500,
+      );
     }
   },
 );

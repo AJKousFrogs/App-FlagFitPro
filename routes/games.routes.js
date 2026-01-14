@@ -12,7 +12,13 @@ import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import { isValidUUID, sendError, sendSuccess } from "./utils/validation.js";
+import {
+  getErrorMessage,
+  isValidUUID,
+  sendError,
+  sendErrorResponse,
+  sendSuccess,
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "games";
@@ -61,8 +67,15 @@ router.get(
 
       return sendSuccess(res, games || []);
     } catch (error) {
-      serverLogger.error("[Games] Error:", error);
-      return sendSuccess(res, [], "No data available");
+      const errorMessage = getErrorMessage(error, "Failed to fetch games");
+      serverLogger.error(`[Games] Error: ${errorMessage}`, error);
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch games",
+        "FETCH_ERROR",
+        500,
+      );
     }
   },
 );
@@ -96,8 +109,18 @@ router.get(
 
       return sendSuccess(res, tournaments || []);
     } catch (error) {
-      serverLogger.error("[Tournaments] Error:", error);
-      return sendSuccess(res, [], "No data available");
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to fetch tournaments",
+      );
+      serverLogger.error(`[Tournaments] Error: ${errorMessage}`, error);
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch tournaments",
+        "FETCH_ERROR",
+        500,
+      );
     }
   },
 );
@@ -139,8 +162,18 @@ router.get(
 
       return sendSuccess(res, tournament);
     } catch (error) {
-      serverLogger.error("[Tournament Details] Error:", error);
-      return sendSuccess(res, null);
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to fetch tournament details",
+      );
+      serverLogger.error(`[Tournament Details] Error: ${errorMessage}`, error);
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch tournament details",
+        "FETCH_ERROR",
+        500,
+      );
     }
   },
 );
@@ -175,8 +208,15 @@ router.post(
 
       return sendSuccess(res, game);
     } catch (error) {
-      serverLogger.error("[Create Game] Error:", error);
-      return sendError(res, "Failed to create game", "CREATE_ERROR", 500);
+      const errorMessage = getErrorMessage(error, "Failed to create game");
+      serverLogger.error(`[Create Game] Error: ${errorMessage}`, error);
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to create game",
+        "CREATE_ERROR",
+        500,
+      );
     }
   },
 );

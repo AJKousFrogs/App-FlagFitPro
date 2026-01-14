@@ -8,7 +8,8 @@
 
 import express from "express";
 import {
-    optionalAuth
+    optionalAuth,
+    authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
@@ -17,10 +18,12 @@ import { safeParseInt } from "./utils/query-helper.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
-    isValidUUID,
     safeAverage,
     safeParseFloat,
+    getErrorMessage,
+    resolveUserId,
     sendError,
+    sendErrorResponse,
     sendSuccess,
     validatePeriod,
     validateWeeks
@@ -47,15 +50,21 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.2.0"));
 router.get(
   "/performance-trends",
   rateLimit("READ"),
-  withCache("ANALYTICS"),
   optionalAuth,
+  authorizeUserAccess,
+  withCache("ANALYTICS"),
   async (req, res) => {
     try {
-      const userId = req.userId || req.query.userId;
-
-      if (!userId) {
-        return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+      const userIdValidation = resolveUserId(req);
+      if (!userIdValidation.isValid) {
+        return sendError(
+          res,
+          userIdValidation.error,
+          userIdValidation.code,
+          400,
+        );
       }
+      const userId = userIdValidation.userId;
 
       const weeksValidation = validateWeeks(req.query.weeks, 1, 52);
       if (!weeksValidation.isValid) {
@@ -65,7 +74,7 @@ router.get(
       const weeks = weeksValidation.weeks || 7;
       let performanceData = [];
 
-      if (supabase && isValidUUID(userId)) {
+      if (supabase) {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - weeks * 7);
 
@@ -139,9 +148,17 @@ router.get(
             : 0,
       });
     } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Performance trends error:`, error);
-      return sendError(
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to fetch performance trends",
+      );
+      serverLogger.error(
+        `[${ROUTE_NAME}] Performance trends error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
         res,
+        error,
         "Failed to fetch performance trends",
         "FETCH_ERROR",
         500,
@@ -162,19 +179,25 @@ router.get(
 router.get(
   "/team-chemistry",
   rateLimit("READ"),
-  withCache("ANALYTICS"),
   optionalAuth,
+  authorizeUserAccess,
+  withCache("ANALYTICS"),
   async (req, res) => {
     try {
-      const userId = req.userId || req.query.userId;
-
-      if (!userId) {
-        return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+      const userIdValidation = resolveUserId(req);
+      if (!userIdValidation.isValid) {
+        return sendError(
+          res,
+          userIdValidation.error,
+          userIdValidation.code,
+          400,
+        );
       }
+      const userId = userIdValidation.userId;
 
       let chemistryData = null;
 
-      if (supabase && isValidUUID(userId)) {
+      if (supabase) {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - 30);
 
@@ -292,15 +315,21 @@ router.get(
 router.get(
   "/training-distribution",
   rateLimit("READ"),
-  withCache("ANALYTICS"),
   optionalAuth,
+  authorizeUserAccess,
+  withCache("ANALYTICS"),
   async (req, res) => {
     try {
-      const userId = req.userId || req.query.userId;
-
-      if (!userId) {
-        return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+      const userIdValidation = resolveUserId(req);
+      if (!userIdValidation.isValid) {
+        return sendError(
+          res,
+          userIdValidation.error,
+          userIdValidation.code,
+          400,
+        );
       }
+      const userId = userIdValidation.userId;
 
       const periodValidation = validatePeriod(req.query.period);
       if (!periodValidation.isValid) {
@@ -310,7 +339,7 @@ router.get(
       const { period, days } = periodValidation;
       let trainingData = [];
 
-      if (supabase && isValidUUID(userId)) {
+      if (supabase) {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
 
@@ -400,15 +429,21 @@ router.get(
 router.get(
   "/summary",
   rateLimit("READ"),
-  withCache("ANALYTICS"),
   optionalAuth,
+  authorizeUserAccess,
+  withCache("ANALYTICS"),
   async (req, res) => {
     try {
-      const userId = req.userId || req.query.userId;
-
-      if (!userId) {
-        return sendError(res, "User ID is required", "MISSING_USER_ID", 400);
+      const userIdValidation = resolveUserId(req);
+      if (!userIdValidation.isValid) {
+        return sendError(
+          res,
+          userIdValidation.error,
+          userIdValidation.code,
+          400,
+        );
       }
+      const userId = userIdValidation.userId;
 
       const summary = {
         weekly_sessions: 0,
@@ -417,7 +452,7 @@ router.get(
         avg_load_time: 1000,
       };
 
-      if (supabase && isValidUUID(userId)) {
+      if (supabase) {
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
         const monthAgo = new Date();

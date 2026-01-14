@@ -10,6 +10,7 @@ import express from "express";
 import {
     authenticateToken,
     optionalAuth,
+    authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { invalidateCacheOn, withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
@@ -19,10 +20,14 @@ import { serverLogger } from "./utils/server-logger.js";
 import {
     isValidUUID,
     sanitizeText,
+    getErrorMessage,
+    resolveUserId,
     sendError,
+    sendErrorResponse,
     sendSuccess,
     validateDate,
     validateDuration,
+    validatePagination,
     validateRPE
 } from "./utils/validation.js";
 
@@ -47,15 +52,25 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.2.0"));
 router.get(
   "/stats",
   rateLimit("READ"),
-  withCache("STATS"),
   optionalAuth,
+  authorizeUserAccess,
+  withCache("STATS"),
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
     try {
-      const userId = req.userId || req.query.userId;
+      const userIdValidation = resolveUserId(req);
+      if (!userIdValidation.isValid) {
+        return sendError(
+          res,
+          userIdValidation.error,
+          userIdValidation.code,
+          400,
+        );
+      }
+      const userId = userIdValidation.userId;
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -69,9 +84,7 @@ router.get(
         .order("session_date", { ascending: false })
         .limit(50);
 
-      if (userId && isValidUUID(userId)) {
-        query = query.eq("user_id", userId);
-      }
+      query = query.eq("user_id", userId);
 
       const { data: sessions, error } = await query;
 
@@ -103,9 +116,11 @@ router.get(
         recentSessions: sessions?.slice(0, 5) || [],
       });
     } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Stats error:`, error);
-      return sendError(
+      const errorMessage = getErrorMessage(error, "Failed to load training stats");
+      serverLogger.error(`[${ROUTE_NAME}] Stats error: ${errorMessage}`, error);
+      return sendErrorResponse(
         res,
+        error,
         "Failed to load training stats",
         "FETCH_ERROR",
         500,
@@ -122,15 +137,25 @@ router.get(
 router.get(
   "/stats-enhanced",
   rateLimit("READ"),
-  withCache("STATS"),
   optionalAuth,
+  authorizeUserAccess,
+  withCache("STATS"),
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
     try {
-      const userId = req.userId || req.query.userId;
+      const userIdValidation = resolveUserId(req);
+      if (!userIdValidation.isValid) {
+        return sendError(
+          res,
+          userIdValidation.error,
+          userIdValidation.code,
+          400,
+        );
+      }
+      const userId = userIdValidation.userId;
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -141,9 +166,7 @@ router.get(
         .eq("status", "completed")
         .order("session_date");
 
-      if (userId && isValidUUID(userId)) {
-        query = query.eq("user_id", userId);
-      }
+      query = query.eq("user_id", userId);
 
       const { data: sessions, error } = await query;
 
@@ -197,9 +220,17 @@ router.get(
         })),
       });
     } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Enhanced stats error:`, error);
-      return sendError(
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to load enhanced stats",
+      );
+      serverLogger.error(
+        `[${ROUTE_NAME}] Enhanced stats error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
         res,
+        error,
         "Failed to load enhanced stats",
         "FETCH_ERROR",
         500,
@@ -216,14 +247,32 @@ router.get(
  * GET /sessions
  * Get training sessions for a user
  */
-router.get("/sessions", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/sessions",
+  rateLimit("READ"),
+  optionalAuth,
+  authorizeUserAccess,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
 
   try {
-    const userId = req.userId || req.query.userId;
-    const limit = parseInt(req.query.limit) || 20;
+    const userIdValidation = resolveUserId(req);
+    if (!userIdValidation.isValid) {
+      return sendError(
+        res,
+        userIdValidation.error,
+        userIdValidation.code,
+        400,
+      );
+    }
+    const userId = userIdValidation.userId;
+    const pagination = validatePagination(1, req.query.limit, 100);
+    if (!pagination.isValid) {
+      return sendError(res, pagination.error, "INVALID_PAGINATION", 400);
+    }
+    const limit = pagination.limit;
 
     let query = supabase
       .from("training_sessions")
@@ -243,9 +292,7 @@ router.get("/sessions", rateLimit("READ"), optionalAuth, async (req, res) => {
       .order("session_date", { ascending: false })
       .limit(limit);
 
-    if (userId && isValidUUID(userId)) {
-      query = query.eq("user_id", userId);
-    }
+    query = query.eq("user_id", userId);
 
     const { data: sessions, error } = await query;
 
@@ -572,7 +619,12 @@ router.delete(
  * GET /suggestions
  * Get training suggestions based on user's training history
  */
-router.get("/suggestions", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/suggestions",
+  rateLimit("READ"),
+  optionalAuth,
+  authorizeUserAccess,
+  async (req, res) => {
   if (!supabase) {
     return sendSuccess(res, {
       suggestions: [
@@ -687,7 +739,12 @@ router.post(
  * GET /programs
  * Get all training programs (optionally filtered by position)
  */
-router.get("/programs", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/programs",
+  rateLimit("READ"),
+  optionalAuth,
+  authorizeUserAccess,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
@@ -865,7 +922,12 @@ router.get("/programs/:id/weeks", rateLimit("READ"), async (req, res) => {
  * GET /programs/current-week
  * Get the current week's training plan for the user
  */
-router.get("/programs/current-week", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/programs/current-week",
+  rateLimit("READ"),
+  optionalAuth,
+  authorizeUserAccess,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
@@ -1068,20 +1130,6 @@ router.get("/programs/:programId/exercises", rateLimit("READ"), async (req, res)
 });
 
 // =============================================================================
-// ERROR HANDLING
-// =============================================================================
-
-// Catch-all 404 handler (must be last route)
-router.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: "Training endpoint not found",
-    code: "NOT_FOUND",
-    path: req.originalUrl,
-  });
-});
-
-// =============================================================================
 // EXERCISE LIBRARY
 // =============================================================================
 
@@ -1125,5 +1173,19 @@ router.get(
     }
   },
 );
+
+// =============================================================================
+// ERROR HANDLING
+// =============================================================================
+
+// Catch-all 404 handler (must be last route)
+router.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    error: "Training endpoint not found",
+    code: "NOT_FOUND",
+    path: req.originalUrl,
+  });
+});
 
 export default router;

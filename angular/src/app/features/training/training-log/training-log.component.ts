@@ -677,12 +677,13 @@ export class TrainingLogComponent {
     try {
       const formValue = this.sessionForm.value;
       const user = this.authService.getUser();
+      const sessionDate =
+        formValue.sessionDate || new Date().toISOString().split("T")[0];
 
       const sessionData = {
         athlete_id: user?.id,
         session_type: formValue.sessionType,
-        session_date:
-          formValue.sessionDate || new Date().toISOString().split("T")[0],
+        session_date: sessionDate,
         duration_minutes: formValue.durationMinutes,
         rpe: formValue.rpe,
         training_load: formValue.durationMinutes * formValue.rpe,
@@ -713,7 +714,7 @@ export class TrainingLogComponent {
       // Update ACWR calculations
       this.acwrService.addSession({
         playerId: user?.id || "",
-        date: new Date(),
+        date: new Date(sessionDate),
         sessionType: this.mapSessionType(sessionData.session_type),
         metrics: {
           type: "internal",

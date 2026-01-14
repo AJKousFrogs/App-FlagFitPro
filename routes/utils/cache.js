@@ -49,7 +49,8 @@ function generateETag(data) {
  * @returns {string} Cache key
  */
 function generateCacheKey(req, prefix = "") {
-  const userId = req.userId || req.query.userId || "anonymous";
+  const requestedUserId = req.query?.userId || req.params?.userId;
+  const userId = requestedUserId || req.userId || "anonymous";
   const queryString = JSON.stringify(req.query);
   const path = req.baseUrl + req.path;
   return `${prefix}:${path}:${userId}:${queryString}`;

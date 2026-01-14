@@ -9,13 +9,17 @@
 import express from "express";
 import {
     authenticateToken,
-    optionalAuth,
 } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import { isValidUUID, sendError, sendSuccess } from "./utils/validation.js";
+import {
+  getErrorMessage,
+  sendError,
+  sendErrorResponse,
+  sendSuccess,
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "notifications";
@@ -34,13 +38,13 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.2.0"));
  * GET /
  * Get notifications for a user
  */
-router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendSuccess(res, []);
   }
 
   try {
-    const userId = req.userId || req.query.userId;
+    const { userId } = req;
     const limit = parseInt(req.query.limit) || 20;
 
     let query = supabase
@@ -49,9 +53,7 @@ router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
       .order("created_at", { ascending: false })
       .limit(limit);
 
-    if (userId && isValidUUID(userId)) {
-      query = query.eq("user_id", userId);
-    }
+    query = query.eq("user_id", userId);
 
     const { data: notifications, error } = await query;
 
@@ -61,8 +63,21 @@ router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     return sendSuccess(res, notifications || []);
   } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get notifications error:`, error);
-    return sendSuccess(res, []);
+    const errorMessage = getErrorMessage(
+      error,
+      "Failed to fetch notifications",
+    );
+    serverLogger.error(
+      `[${ROUTE_NAME}] Get notifications error: ${errorMessage}`,
+      error,
+    );
+    return sendErrorResponse(
+      res,
+      error,
+      "Failed to fetch notifications",
+      "FETCH_ERROR",
+      500,
+    );
   }
 });
 
@@ -70,13 +85,13 @@ router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
  * GET /count
  * Get notification counts
  */
-router.get("/count", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/count", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendSuccess(res, { count: 0, unread: 0 });
   }
 
   try {
-    const userId = req.userId || req.query.userId;
+    const { userId } = req;
 
     let totalQuery = supabase
       .from("notifications")
@@ -87,10 +102,8 @@ router.get("/count", rateLimit("READ"), optionalAuth, async (req, res) => {
       .select("*", { count: "exact", head: true })
       .eq("read", false);
 
-    if (userId && isValidUUID(userId)) {
-      totalQuery = totalQuery.eq("user_id", userId);
-      unreadQuery = unreadQuery.eq("user_id", userId);
-    }
+    totalQuery = totalQuery.eq("user_id", userId);
+    unreadQuery = unreadQuery.eq("user_id", userId);
 
     const [{ count: total }, { count: unread }] = await Promise.all([
       totalQuery,
@@ -102,8 +115,21 @@ router.get("/count", rateLimit("READ"), optionalAuth, async (req, res) => {
       unread: unread || 0,
     });
   } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Count error:`, error);
-    return sendSuccess(res, { count: 0, unread: 0 });
+    const errorMessage = getErrorMessage(
+      error,
+      "Failed to fetch notification counts",
+    );
+    serverLogger.error(
+      `[${ROUTE_NAME}] Count error: ${errorMessage}`,
+      error,
+    );
+    return sendErrorResponse(
+      res,
+      error,
+      "Failed to fetch notification counts",
+      "FETCH_ERROR",
+      500,
+    );
   }
 });
 

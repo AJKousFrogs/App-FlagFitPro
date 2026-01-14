@@ -207,10 +207,10 @@ export class EnhancedAnalyticsComponent implements OnInit {
 
       const { data: sessions, error } = await this.supabaseService.client
         .from("training_sessions")
-        .select("scheduled_date, status, duration_minutes, intensity")
+        .select("session_date, status, duration_minutes, intensity_level")
         .eq("user_id", user.id)
-        .gte("scheduled_date", startDate.toISOString())
-        .order("scheduled_date", { ascending: true });
+        .gte("session_date", startDate.toISOString().split("T")[0])
+        .order("session_date", { ascending: true });
 
       if (error) {
         this.logger.warn("Error loading sessions:", toLogContext(error));
@@ -243,7 +243,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
 
   private calculateWeeklyPerformance(
     sessions: {
-      scheduled_date: string;
+      session_date: string;
       status: string;
       duration_minutes?: number;
     }[],
@@ -264,7 +264,7 @@ export class EnhancedAnalyticsComponent implements OnInit {
     > = new Map();
 
     sessions.forEach((session) => {
-      const date = new Date(session.scheduled_date);
+      const date = new Date(session.session_date);
       const weekNum = this.getWeekNumber(date);
 
       if (!weeks.has(weekNum)) {
@@ -328,14 +328,14 @@ export class EnhancedAnalyticsComponent implements OnInit {
 
   private calculateInjuryRisk(
     sessions: {
-      scheduled_date: string;
+      session_date: string;
       status: string;
       intensity_level?: string;
     }[],
   ): void {
     // Simple injury risk calculation based on training intensity and frequency
     const recentSessions = sessions.filter((s) => {
-      const date = new Date(s.scheduled_date);
+      const date = new Date(s.session_date);
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
       return date >= weekAgo;

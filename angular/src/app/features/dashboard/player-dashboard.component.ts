@@ -27,6 +27,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   inject,
   signal,
 } from "@angular/core";
@@ -2238,6 +2239,15 @@ export class PlayerDashboardComponent {
 
     this.loadData();
 
+    effect(() => {
+      const schedule = this.unifiedTrainingService.weeklySchedule();
+      const planned = schedule.reduce(
+        (sum, day) => sum + (day.sessions?.length || 0),
+        0,
+      );
+      this.weeklySessionsPlanned.set(planned);
+    });
+
     // Check if we need to refresh program assignment (e.g., after onboarding)
     const refreshProgramAssignment = sessionStorage.getItem(
       "refreshProgramAssignment",
@@ -2352,7 +2362,9 @@ export class PlayerDashboardComponent {
     const latestWellness = this.wellnessService.latestWellnessEntry();
     if (latestWellness) {
       const score = this.wellnessService.getWellnessScore(latestWellness);
-      this.readinessScore.set(score);
+      // Wellness score is 0-10; dashboard readiness uses 0-100 scale.
+      const normalizedScore = Math.round(score * 10);
+      this.readinessScore.set(normalizedScore);
     } else {
       // No wellness data - set to null (show empty state)
       this.readinessScore.set(null);

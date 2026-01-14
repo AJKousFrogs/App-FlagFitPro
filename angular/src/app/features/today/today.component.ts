@@ -1331,11 +1331,12 @@ export class TodayComponent {
     const streak =
       stats.find((s) => s.label === "Current Streak")?.value || "0";
     const compliance = stats.find((s) => s.label === "This Week")?.value || "0";
+    const weeklyLoad = this.trainingService.weeklyProgression().currentWeek;
 
     return {
       completedDays: parseInt(compliance, 10),
       totalTrainingDays: 7,
-      weeklyLoadAu: 0,
+      weeklyLoadAu: weeklyLoad,
       targetLoadAu: TRAINING.TARGET_LOAD_AU,
       currentStreak: parseInt(streak, 10),
     };

@@ -68,6 +68,55 @@ export function validateUserId(userId) {
 }
 
 /**
+ * Resolve and validate a user ID from request
+ * @param {object} req - Express request
+ * @param {object} options - Validation options
+ * @returns {object} Validation result with userId or error
+ */
+export function resolveUserId(
+  req,
+  {
+    allowDemoUser = false,
+    requireUuid = true,
+    queryParam = "userId",
+    demoUserId = DEMO_USER_ID,
+  } = {},
+) {
+  const raw =
+    req?.userId ||
+    (req?.query && typeof req.query[queryParam] !== "undefined"
+      ? req.query[queryParam]
+      : null);
+  const value = Array.isArray(raw) ? raw[0] : raw;
+
+  if (!value || typeof value !== "string" || value.trim().length === 0) {
+    if (allowDemoUser) {
+      return { isValid: true, userId: demoUserId, isDemo: true };
+    }
+    return {
+      isValid: false,
+      error: "User ID is required",
+      code: "MISSING_USER_ID",
+    };
+  }
+
+  const userId = value.trim();
+
+  if (requireUuid && !isValidUUID(userId)) {
+    if (allowDemoUser) {
+      return { isValid: true, userId: demoUserId, isDemo: true };
+    }
+    return {
+      isValid: false,
+      error: "Invalid user ID",
+      code: "INVALID_USER_ID",
+    };
+  }
+
+  return { isValid: true, userId };
+}
+
+/**
  * Validate weeks parameter for time-based queries
  * @param {any} weeks - Number of weeks to validate
  * @param {number} min - Minimum weeks (default: 1)
@@ -340,6 +389,36 @@ export function sanitizeRichText(html) {
 // =============================================================================
 
 /**
+ * Normalize error objects to a readable message
+ * @param {any} error - Error-like value to normalize
+ * @param {string} fallback - Fallback message when no details exist
+ * @returns {string} Normalized error message
+ */
+export function getErrorMessage(error, fallback = "Unexpected error") {
+  if (!error) {
+    return fallback;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (error instanceof Error && typeof error.message === "string") {
+    return error.message;
+  }
+
+  if (typeof error.message === "string") {
+    return error.message;
+  }
+
+  try {
+    return JSON.stringify(error);
+  } catch (_error) {
+    return fallback;
+  }
+}
+
+/**
  * Create standardized error response
  * @param {string} message - Error message
  * @param {string} code - Error code
@@ -427,6 +506,25 @@ export function sendError(
 }
 
 /**
+ * Send standardized error response using error details
+ * @param {Response} res - Express response object
+ * @param {any} error - Error-like object
+ * @param {string} message - Error message
+ * @param {string} code - Error code
+ * @param {number} statusCode - HTTP status code
+ */
+export function sendErrorResponse(
+  res,
+  error,
+  message,
+  code,
+  statusCode = 500,
+) {
+  const details = getErrorMessage(error, message);
+  return sendError(res, message, code, statusCode, details);
+}
+
+/**
  * Send success response to client
  * @param {Response} res - Express response object
  * @param {any} data - Response data
@@ -495,6 +593,7 @@ export function safeAverage(values, defaultValue = 0) {
 
 export default {
   validateUserId,
+  resolveUserId,
   validateWeeks,
   validatePeriod,
   validatePagination,
@@ -507,7 +606,9 @@ export default {
   sanitizeRichText,
   createErrorResponse,
   createSuccessResponse,
+  getErrorMessage,
   sendError,
+  sendErrorResponse,
   sendSuccess,
   sendValidationError,
   safeParseFloat,

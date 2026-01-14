@@ -298,6 +298,9 @@ export class TrainingDataService {
           toLogContext(data.id),
         );
 
+        // Best-effort sync for ACWR: create workout_log entry aligned to session_date.
+        void this.syncWorkoutLog(data);
+
         // Log warning if late or retroactive
         if (detection.logStatus === "late") {
           this.logger.warn(
@@ -324,6 +327,38 @@ export class TrainingDataService {
         throw error;
       }),
     );
+  }
+
+  private async syncWorkoutLog(session: TrainingSession): Promise<void> {
+    try {
+      if (!session.user_id) {
+        return;
+      }
+
+      const sessionDate = session.session_date || session.date;
+      const completedAt = sessionDate
+        ? new Date(sessionDate).toISOString()
+        : new Date().toISOString();
+      const duration = session.duration_minutes || session.duration || 0;
+      const rpe = session.rpe ?? session.intensity_level ?? 5;
+
+      const { error } = await this.supabaseService.client
+        .from("workout_logs")
+        .insert({
+          player_id: session.user_id,
+          session_id: session.id || null,
+          completed_at: completedAt,
+          rpe,
+          duration_minutes: duration,
+          notes: session.notes || null,
+        });
+
+      if (error) {
+        this.logger.warn("[TrainingLog] Workout log sync failed:", error);
+      }
+    } catch (error) {
+      this.logger.warn("[TrainingLog] Workout log sync error:", error);
+    }
   }
 
   /**
@@ -487,6 +522,10 @@ export class TrainingDataService {
           0,
         );
         const weekly_sessions = weeklySessions.length;
+        const weekly_load = weeklySessions.reduce(
+          (sum, s) => sum + (s.rpe || 0) * (s.duration_minutes || 0),
+          0,
+        );
         const weekly_avg_intensity =
           weekly_sessions > 0
             ? weeklySessions.reduce(
@@ -520,7 +559,7 @@ export class TrainingDataService {
           acute_load: loadData?.acute_load || undefined,
           chronic_load: loadData?.chronic_load || undefined,
           acwr_risk_zone: loadData?.injury_risk_level || undefined,
-          weekly_volume: total_load, // Could be more specific
+          weekly_volume: Math.round(weekly_load),
           weekly_duration,
           weekly_sessions,
           weekly_avg_intensity,
