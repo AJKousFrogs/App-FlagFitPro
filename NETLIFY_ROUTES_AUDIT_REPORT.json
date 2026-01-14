@@ -1,0 +1,160 @@
+{
+  "timestamp": "2026-01-14T08:29:47.924Z",
+  "statistics": {
+    "routes": 240,
+    "functions": 106
+  },
+  "issues": {
+    "routesToNonExistentFunctions": [],
+    "functionsWithoutRoutes": [
+      "cache",
+      "supabase-client",
+      "test-email",
+      "update-chatbot-stats",
+      "validation"
+    ],
+    "frontendCallsWithoutRoutes": [],
+    "inconsistentPatterns": [
+      {
+        "function": "dashboard",
+        "patterns": [
+          "/api/dashboard/*",
+          "/api/dashboard",
+          "/api/dashboard/overview"
+        ]
+      },
+      {
+        "function": "games",
+        "patterns": [
+          "/games",
+          "/games/*",
+          "/api/games/*",
+          "/api/games"
+        ]
+      },
+      {
+        "function": "training-stats",
+        "patterns": [
+          "/training-stats",
+          "/api/training/stats"
+        ]
+      },
+      {
+        "function": "weather",
+        "patterns": [
+          "/api/weather/current",
+          "/api/weather/*"
+        ]
+      },
+      {
+        "function": "coach",
+        "patterns": [
+          "/api/coach/*",
+          "/api/coach",
+          "/api/coach/calendar/*",
+          "/api/coach/calendar",
+          "/api/film-room/*",
+          "/api/film-room",
+          "/api/playbook/*",
+          "/api/playbook"
+        ]
+      },
+      {
+        "function": "notifications",
+        "patterns": [
+          "/notifications",
+          "/notifications/*",
+          "/api/dashboard/notifications",
+          "/api/dashboard/notifications/*"
+        ]
+      },
+      {
+        "function": "notifications-count",
+        "patterns": [
+          "/notifications-count",
+          "/api/dashboard/notifications/count"
+        ]
+      },
+      {
+        "function": "notifications-create",
+        "patterns": [
+          "/notifications-create",
+          "/api/dashboard/notifications/create"
+        ]
+      },
+      {
+        "function": "notifications-preferences",
+        "patterns": [
+          "/notifications-preferences",
+          "/api/dashboard/notifications/preferences"
+        ]
+      },
+      {
+        "function": "knowledge-search",
+        "patterns": [
+          "/knowledge-search",
+          "/knowledge-search/*",
+          "/api/knowledge-search",
+          "/api/knowledge-search/*"
+        ]
+      },
+      {
+        "function": "performance-data",
+        "patterns": [
+          "/api/performance-data/measurements",
+          "/api/performance-data/performance-tests",
+          "/api/performance-data/wellness",
+          "/api/performance-data/supplements",
+          "/api/performance-data/injuries",
+          "/api/performance-data/injuries/*",
+          "/api/performance-data/trends",
+          "/api/performance-data/export"
+        ]
+      },
+      {
+        "function": "trends",
+        "patterns": [
+          "/api/trends/*",
+          "/api/trends",
+          "/api/performance/trends",
+          "/api/performance/trends/*"
+        ]
+      },
+      {
+        "function": "training-plan",
+        "patterns": [
+          "/api/training-plan",
+          "/api/training-plan/*",
+          "/api/training/plan",
+          "/api/training/plan/*"
+        ]
+      },
+      {
+        "function": "training-stats-enhanced",
+        "patterns": [
+          "/api/training/stats-enhanced",
+          "/training-stats-enhanced"
+        ]
+      },
+      {
+        "function": "ai-chat",
+        "patterns": [
+          "/api/ai/chat",
+          "/api/ai/chat/*",
+          "/api/ai-chat",
+          "/api/ai-chat/*",
+          "/api/ai/analyze-context",
+          "/api/ai/process-command"
+        ]
+      },
+      {
+        "function": "account-pause",
+        "patterns": [
+          "/api/account/pause",
+          "/api/account/resume",
+          "/api/account/*"
+        ]
+      }
+    ]
+  }
+}

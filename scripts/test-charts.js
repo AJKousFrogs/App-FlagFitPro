@@ -23,7 +23,7 @@ try {
 const requiredFiles = [
   "src/chart-manager.js",
   "src/analytics-data-service.js",
-  "routes/analyticsRoutes.js",
+  "routes/analytics.routes.js",
   "analytics-dashboard.html",
 ];
 

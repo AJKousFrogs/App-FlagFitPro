@@ -1,0 +1,1506 @@
+{
+  "timestamp": "2026-01-14T08:24:00.713Z",
+  "endpoints": [
+    "/api/accept/invitation",
+    "/api/account/deletion",
+    "/api/account/pause",
+    "/api/achievements",
+    "/api/admin",
+    "/api/ai/analyze-context",
+    "/api/ai/chat",
+    "/api/ai/chat/session/",
+    "/api/ai/chat/session/:sessionId",
+    "/api/ai/feedback",
+    "/api/ai/review",
+    "/api/analytics",
+    "/api/api-docs",
+    "/api/api/docs",
+    "/api/attendance",
+    "/api/auth-login",
+    "/api/auth-me",
+    "/api/auth/login",
+    "/api/auth/me",
+    "/api/auth/reset/password",
+    "/api/cache",
+    "/api/calc-readiness",
+    "/api/calc/readiness",
+    "/api/calibration-logs",
+    "/api/calibration-logs/outcome",
+    "/api/calibration-logs/preset-stats/",
+    "/api/calibration-logs/stats/",
+    "/api/calibration/logs",
+    "/api/chat",
+    "/api/chat/channels",
+    "/api/chat/channels/",
+    "/api/chat/messages/",
+    "/api/coach",
+    "/api/coach-activity",
+    "/api/coach-activity/",
+    "/api/coach-activity/read-all",
+    "/api/coach-alerts/",
+    "/api/coach-analytics/classification",
+    "/api/coach-analytics/intents",
+    "/api/coach-analytics/leaderboard/",
+    "/api/coach-analytics/overview",
+    "/api/coach-analytics/refresh",
+    "/api/coach-analytics/team/",
+    "/api/coach-analytics/trends",
+    "/api/coach-inbox",
+    "/api/coach-inbox/",
+    "/api/coach-inbox/stats",
+    "/api/coach/activity",
+    "/api/coach/alerts",
+    "/api/coach/analytics",
+    "/api/coach/inbox",
+    "/api/coach/payments",
+    "/api/coach/payments/fees",
+    "/api/coach/payments/record",
+    "/api/community",
+    "/api/compute-acwr",
+    "/api/compute/acwr",
+    "/api/daily-protocol",
+    "/api/daily-protocol/complete",
+    "/api/daily-protocol/complete-block",
+    "/api/daily-protocol/generate",
+    "/api/daily-protocol/log-session",
+    "/api/daily-protocol/skip",
+    "/api/daily-protocol/skip-block",
+    "/api/daily/protocol",
+    "/api/daily/training",
+    "/api/dashboard",
+    "/api/data/export",
+    "/api/decisions",
+    "/api/decisions/",
+    "/api/decisions/reminders",
+    "/api/decisions/stats",
+    "/api/depth/chart",
+    "/api/equipment",
+    "/api/exercise/progression",
+    "/api/exercisedb",
+    "/api/exercisedb/approve",
+    "/api/exercisedb/approve/",
+    "/api/exercisedb/filters",
+    "/api/exercisedb/import",
+    "/api/exercisedb/logs",
+    "/api/exercisedb/search",
+    "/api/exercises",
+    "/api/fixtures",
+    "/api/games",
+    "/api/health",
+    "/api/hydration",
+    "/api/hydration/history",
+    "/api/hydration/log",
+    "/api/import-open-data",
+    "/api/import/open/data",
+    "/api/inactive/player/notify",
+    "/api/isometrics",
+    "/api/knowledge/search",
+    "/api/load-management",
+    "/api/load/management",
+    "/api/micro-sessions",
+    "/api/micro-sessions/",
+    "/api/micro-sessions/analytics",
+    "/api/micro-sessions/today",
+    "/api/micro/sessions",
+    "/api/notification-digest/history",
+    "/api/notification-digest/preferences",
+    "/api/notification-digest/preview",
+    "/api/notification-digest/send",
+    "/api/notification/digest",
+    "/api/notifications",
+    "/api/notifications/count",
+    "/api/notifications/create",
+    "/api/notifications/preferences",
+    "/api/nutrition",
+    "/api/officials",
+    "/api/parent-dashboard/approvals",
+    "/api/parent-dashboard/approvals/",
+    "/api/parent-dashboard/children",
+    "/api/parent-dashboard/children/",
+    "/api/parent-dashboard/link",
+    "/api/parent-dashboard/notifications",
+    "/api/parent-dashboard/notifications/",
+    "/api/parent-dashboard/settings/",
+    "/api/parent/dashboard",
+    "/api/parental/consent",
+    "/api/payments",
+    "/api/performance/heatmap",
+    "/api/performance/metrics",
+    "/api/player-programs",
+    "/api/player-programs/",
+    "/api/player-programs/me",
+    "/api/player-settings",
+    "/api/player-stats",
+    "/api/player/programs",
+    "/api/player/settings",
+    "/api/player/stats",
+    "/api/plyometrics",
+    "/api/privacy/settings",
+    "/api/program/cycles",
+    "/api/push",
+    "/api/qb-throwing",
+    "/api/qb-throwing/arm-care",
+    "/api/qb/throwing",
+    "/api/readiness-history",
+    "/api/readiness/history",
+    "/api/recovery",
+    "/api/research/institution",
+    "/api/research/sync",
+    "/api/response-feedback",
+    "/api/response-feedback/coach",
+    "/api/response-feedback/message/",
+    "/api/response-feedback/stats",
+    "/api/response/feedback",
+    "/api/scouting",
+    "/api/season/archive",
+    "/api/season/reports",
+    "/api/send/email",
+    "/api/smart/training/recommendations",
+    "/api/sponsor/logo",
+    "/api/sponsors",
+    "/api/staff/nutritionist",
+    "/api/staff/physiotherapist",
+    "/api/staff/psychology",
+    "/api/supabase/client",
+    "/api/supplements",
+    "/api/supplements/log",
+    "/api/supplements/logs",
+    "/api/supplements/recent",
+    "/api/team-templates",
+    "/api/team-templates/",
+    "/api/team-templates/from-inbox",
+    "/api/team/invite",
+    "/api/team/templates",
+    "/api/test/email",
+    "/api/tournament-calendar",
+    "/api/tournament-calendar/delete",
+    "/api/tournament/calendar",
+    "/api/tournaments",
+    "/api/training-metrics",
+    "/api/training-sessions",
+    "/api/training/complete",
+    "/api/training/metrics",
+    "/api/training/plan",
+    "/api/training/programs",
+    "/api/training/sessions",
+    "/api/training/stats",
+    "/api/training/stats/enhanced",
+    "/api/training/suggestions",
+    "/api/trends",
+    "/api/trends/",
+    "/api/update/chatbot/stats",
+    "/api/upload",
+    "/api/usda/sync",
+    "/api/user-context",
+    "/api/user-profile",
+    "/api/user/context",
+    "/api/user/profile",
+    "/api/v1",
+    "/api/validate/invitation",
+    "/api/validation",
+    "/api/weather",
+    "/api/wellness",
+    "/api/wellness/checkin",
+    "/api/wellness/checkins",
+    "/api/wellness/latest"
+  ],
+  "tables": [
+    "account_pause_requests",
+    "achievement_definitions",
+    "acwr_calculations",
+    "acwr_history",
+    "ai_chat_sessions",
+    "ai_coach_visibility",
+    "ai_feedback",
+    "ai_followups",
+    "ai_messages",
+    "ai_recommendations",
+    "ai_response_feedback",
+    "ai_review_queue",
+    "analytics_aggregates",
+    "announcement_reads",
+    "approval_requests",
+    "archetype_training_programs",
+    "archived_acwr_history",
+    "archived_game_events",
+    "archived_training_sessions",
+    "archived_wellness_checkins",
+    "article_search_index",
+    "athlete_achievements",
+    "athlete_consent_settings",
+    "athlete_daily_state",
+    "athlete_drill_assignments",
+    "athlete_performance_tests",
+    "athlete_training_assignments",
+    "authorization_violations",
+    "channel_members",
+    "channels",
+    "chatbot_user_context",
+    "classification_history",
+    "coach_activity_log",
+    "coach_alert_acknowledgments",
+    "coach_analytics_cache",
+    "coach_athlete_assignments",
+    "coach_inbox_items",
+    "coach_overrides",
+    "cognitive_assessments",
+    "comment_likes",
+    "community_poll_options",
+    "community_poll_votes",
+    "community_polls",
+    "community_posts",
+    "consent_access_log",
+    "consent_change_log",
+    "conversation_context",
+    "conversation_summaries",
+    "daily_protocols",
+    "decision_ledger",
+    "decision_review_reminders",
+    "digest_history",
+    "execution_logs",
+    "exercise_library",
+    "exercise_logs",
+    "exercise_performance_logs",
+    "exercise_prescriptions",
+    "exercise_progressions",
+    "exercise_registry",
+    "exercisedb_exercises",
+    "exercisedb_import_logs",
+    "exercises",
+    "ff_exercise_mappings",
+    "fixtures",
+    "flag_pull_stats",
+    "game_events",
+    "games",
+    "injuries",
+    "injury_risk_factors",
+    "injury_tracking",
+    "intent_classifications",
+    "isometrics_exercises",
+    "knowledge_base_entries",
+    "knowledge_base_governance_log",
+    "knowledge_entry_performance",
+    "knowledge_search_index",
+    "learned_user_preferences",
+    "load_caps",
+    "load_daily",
+    "load_management_research",
+    "load_metrics",
+    "load_monitoring",
+    "long_term_injury_tracking",
+    "merlin_violation_log",
+    "message_read_receipts",
+    "metric_definitions",
+    "metric_entries",
+    "micro_session_analytics",
+    "micro_sessions",
+    "ml_training_data",
+    "multi_sport_athlete_tracking",
+    "notification_preferences",
+    "nutrition_goals",
+    "nutrition_logs",
+    "opponent_analysis",
+    "ownership_transitions",
+    "parent_guardian_links",
+    "parent_notifications",
+    "passing_stats",
+    "performance_test_protocols",
+    "performance_tests",
+    "periodization_phases",
+    "physical_assessment_protocols",
+    "physical_measurements",
+    "player_activity_tracking",
+    "player_archetypes",
+    "player_cognitive_assessments",
+    "player_game_summary",
+    "player_payments",
+    "player_performance_analytics",
+    "player_physical_assessments",
+    "player_profiles",
+    "player_programs",
+    "player_talent_evaluations",
+    "player_technical_assessments",
+    "player_tournament_availability",
+    "player_training_prescriptions",
+    "player_training_sessions",
+    "plyometrics_exercises",
+    "position_requirements",
+    "position_specific_metrics",
+    "position_specific_metrics_backup",
+    "position_training_requirements",
+    "post_bookmarks",
+    "post_comments",
+    "post_likes",
+    "proactive_checkins",
+    "program_assignments",
+    "protocol_completions",
+    "protocol_exercises",
+    "push_subscriptions",
+    "query_understanding_cache",
+    "readiness_scores",
+    "receiving_stats",
+    "recovery_blocks",
+    "recovery_protocols",
+    "recovery_sessions",
+    "research_articles",
+    "role_change_audit",
+    "roster_audit_log",
+    "safety_override_log",
+    "scout_evaluation_protocols",
+    "season_summary_reports",
+    "seasons",
+    "session_exercise_structure",
+    "session_rpe_data",
+    "session_version_history",
+    "sessions",
+    "shared_insights",
+    "situational_stats",
+    "sponsor_contributions",
+    "sponsors",
+    "sports_crossover_analysis",
+    "staff_roles",
+    "state_transition_history",
+    "superadmins",
+    "supplement_logs",
+    "supplements_data",
+    "talent_identification_criteria",
+    "team_activities",
+    "team_activity_attendance",
+    "team_activity_audit",
+    "team_insights",
+    "team_invitations",
+    "team_members",
+    "team_players",
+    "team_templates",
+    "teams",
+    "technical_skill_assessments",
+    "template_assignments",
+    "tournament_budgets",
+    "training_effectiveness_analytics",
+    "training_load_metrics",
+    "training_load_monitoring",
+    "training_session_completions",
+    "training_session_templates",
+    "training_sessions",
+    "training_stress_balance",
+    "training_suggestions",
+    "training_videos",
+    "trending_topics",
+    "user_age_groups",
+    "user_ai_preferences",
+    "user_notification_preferences",
+    "user_security",
+    "user_settings",
+    "users",
+    "video_assignments",
+    "video_bookmarks",
+    "video_curation_status",
+    "video_playlists",
+    "video_watch_history",
+    "weather_data",
+    "weekly_training_analysis",
+    "wellness_data",
+    "wellness_entries",
+    "wellness_logs",
+    "workout_logs",
+    "youth_athlete_settings"
+  ],
+  "frontendCalls": [
+    "/api/account/pause",
+    "/api/account/resume",
+    "/api/achievements",
+    "/api/admin/create-backup",
+    "/api/admin/health-metrics",
+    "/api/admin/research-stats",
+    "/api/admin/sync-research",
+    "/api/admin/sync-status",
+    "/api/admin/sync-usda",
+    "/api/admin/usda-stats",
+    "/api/ai/analyze-context",
+    "/api/ai/chat",
+    "/api/ai/chat/session/${sessionId}",
+    "/api/ai/chat/session/session-123",
+    "/api/ai/feedback",
+    "/api/ai/process-command",
+    "/api/analytics/health",
+    "/api/analytics/injury-risk",
+    "/api/analytics/performance-trends",
+    "/api/analytics/position-performance",
+    "/api/analytics/speed-development",
+    "/api/analytics/summary",
+    "/api/analytics/team-chemistry",
+    "/api/analytics/training-distribution",
+    "/api/analytics/user-engagement",
+    "/api/api-docs",
+    "/api/attendance/absence-request",
+    "/api/attendance/absence-request/${requestId}",
+    "/api/attendance/absence-requests",
+    "/api/attendance/events",
+    "/api/attendance/events/${eventId}",
+    "/api/attendance/events/${eventId}/attendance",
+    "/api/attendance/record",
+    "/api/attendance/record/bulk",
+    "/api/attendance/stats/player/${playerId}",
+    "/api/attendance/stats/team/${teamId}",
+    "/api/calc-readiness",
+    "/api/calibration-logs",
+    "/api/calibration-logs/outcome",
+    "/api/calibration-logs/preset-stats/${presetId}",
+    "/api/calibration-logs/stats/${athleteId}",
+    "/api/coach/calendar",
+    "/api/coach/calendar?id=${eventId}",
+    "/api/coach/dashboard",
+    "/api/coach/health",
+    "/api/coach/team",
+    "/api/coach/training-analytics",
+    "/api/coach/training-session",
+    "/api/community/challenges",
+    "/api/community/comments/${commentId}/like",
+    "/api/community/health",
+    "/api/community/leaderboard",
+    "/api/community/polls/${optionId}/vote",
+    "/api/community/posts",
+    "/api/community/posts/${postId}/bookmark",
+    "/api/community/posts/${postId}/comments",
+    "/api/community/posts/${postId}/like",
+    "/api/community/posts/123/comments",
+    "/api/community/trending",
+    "/api/compute-acwr",
+    "/api/daily-protocol/generate",
+    "/api/daily-protocol?date=${date}",
+    "/api/dashboard/daily-quote",
+    "/api/dashboard/health",
+    "/api/dashboard/notifications",
+    "/api/dashboard/notifications/count",
+    "/api/dashboard/notifications/last-opened",
+    "/api/dashboard/olympic-qualification",
+    "/api/dashboard/overview",
+    "/api/dashboard/sponsor-rewards",
+    "/api/dashboard/team-chemistry",
+    "/api/dashboard/training-calendar",
+    "/api/dashboard/wearables",
+    "/api/decisions",
+    "/api/decisions/${decisionId}",
+    "/api/decisions/${decisionId}/review",
+    "/api/decisions/reminders",
+    "/api/decisions/stats",
+    "/api/depth-chart/entries",
+    "/api/depth-chart/entries/${entryId}",
+    "/api/depth-chart/entries/swap",
+    "/api/depth-chart/initialize",
+    "/api/depth-chart/player/${playerId}/preferences",
+    "/api/depth-chart/preferences/${preferenceId}",
+    "/api/depth-chart/templates",
+    "/api/depth-chart/templates/${templateId}",
+    "/api/depth-chart/templates/${templateId}/history",
+    "/api/depth-chart/templates/${templateId}/unassigned",
+    "/api/equipment/alerts/${teamId}",
+    "/api/equipment/assignments",
+    "/api/equipment/checkout",
+    "/api/equipment/checkout/bulk",
+    "/api/equipment/items",
+    "/api/equipment/items/${equipmentId}/history",
+    "/api/equipment/items/${itemId}",
+    "/api/equipment/items/${itemId}/history",
+    "/api/equipment/player/${playerId}/assignments",
+    "/api/equipment/return",
+    "/api/equipment/summary/${teamId}",
+    "/api/film-room",
+    "/api/film-room/reply",
+    "/api/film-room/watched",
+    "/api/fixtures",
+    "/api/games",
+    "/api/games/${gameId}",
+    "/api/games/${gameId}/plays",
+    "/api/games/${gameId}/stats",
+    "/api/games/789/stats",
+    "/api/health",
+    "/api/import-open-data",
+    "/api/knowledge-search",
+    "/api/knowledge-search?topic=${topic}",
+    "/api/load-management/acwr",
+    "/api/load-management/injury-risk",
+    "/api/load-management/monotony",
+    "/api/load-management/training-loads",
+    "/api/load-management/tsb",
+    "/api/notifications",
+    "/api/notifications/${id}",
+    "/api/notifications/count",
+    "/api/notifications/mark-read",
+    "/api/notifications/preferences",
+    "/api/nutrition/add-food",
+    "/api/nutrition/ai-suggestions",
+    "/api/nutrition/goals",
+    "/api/nutrition/meals",
+    "/api/nutrition/performance-insights",
+    "/api/nutrition/search-foods",
+    "/api/officials",
+    "/api/officials/${officialId}",
+    "/api/officials/${officialId}/availability",
+    "/api/officials/${officialId}/games",
+    "/api/officials/assignments/${assignmentId}",
+    "/api/officials/assignments/${assignmentId}/notify",
+    "/api/officials/available",
+    "/api/officials/game/${gameId}",
+    "/api/officials/payments/summary",
+    "/api/officials/schedule",
+    "/api/performance-data/export",
+    "/api/performance-data/injuries",
+    "/api/performance-data/measurements",
+    "/api/performance-data/performance-tests",
+    "/api/performance-data/supplements",
+    "/api/performance-data/trends",
+    "/api/performance-data/wellness",
+    "/api/performance/heatmap",
+    "/api/performance/metrics",
+    "/api/performance/trends",
+    "/api/playbook",
+    "/api/playbook/memorized",
+    "/api/playbook/study",
+    "/api/player-programs",
+    "/api/player-stats",
+    "/api/player-stats/date-range",
+    "/api/player/notify-inactive",
+    "/api/push/devices",
+    "/api/push/devices/${tokenId}",
+    "/api/push/preferences",
+    "/api/push/register",
+    "/api/push/test",
+    "/api/push/unregister",
+    "/api/readiness-history",
+    "/api/recovery/complete-session",
+    "/api/recovery/metrics",
+    "/api/recovery/protocol-effectiveness",
+    "/api/recovery/protocols",
+    "/api/recovery/research-insights",
+    "/api/recovery/start-session",
+    "/api/recovery/stop-session",
+    "/api/recovery/weekly-trends",
+    "/api/scouting/opponents",
+    "/api/scouting/reports",
+    "/api/scouting/reports/${reportId}",
+    "/api/scouting/reports/${reportId}/share",
+    "/api/scouting/tendencies/${encodeURIComponent(opponent)}",
+    "/api/season/archive",
+    "/api/season/generate-reports",
+    "/api/staff-nutritionist/athletes",
+    "/api/staff-nutritionist/athletes/${athleteId}/trends",
+    "/api/staff-nutritionist/hydration",
+    "/api/staff-nutritionist/reports/${athleteId}",
+    "/api/staff-nutritionist/summary",
+    "/api/staff-nutritionist/supplements",
+    "/api/staff-physiotherapist/athletes",
+    "/api/staff-physiotherapist/athletes/${athlete.id}",
+    "/api/staff-physiotherapist/athletes/${athleteId}",
+    "/api/staff-physiotherapist/injuries",
+    "/api/staff-physiotherapist/rtp",
+    "/api/staff-physiotherapist/rtp/${injuryId}",
+    "/api/staff-physiotherapist/summary",
+    "/api/staff-psychology/assessments",
+    "/api/staff-psychology/athletes/${athleteId}",
+    "/api/staff-psychology/my-data",
+    "/api/staff-psychology/my-data/log",
+    "/api/staff-psychology/reports/pre-competition",
+    "/api/staff-psychology/reports/wellness",
+    "/api/staff-psychology/team",
+    "/api/supplements/log",
+    "/api/tournaments",
+    "/api/tournaments/${tournamentId}",
+    "/api/tournaments/${tournamentId}/bracket",
+    "/api/tournaments/${tournamentId}/register",
+    "/api/tournaments/456",
+    "/api/tournaments/health",
+    "/api/tournaments?id=${id}",
+    "/api/training-metrics",
+    "/api/training-programs",
+    "/api/training-programs/current-week",
+    "/api/training-programs/exercises",
+    "/api/training-programs/phases",
+    "/api/training-programs/sessions",
+    "/api/training-programs/weeks",
+    "/api/training/complete",
+    "/api/training/plan",
+    "/api/training/plan/${planId}",
+    "/api/training/plan/history",
+    "/api/training/programs",
+    "/api/training/programs/${id}",
+    "/api/training/programs/${id}/exercises",
+    "/api/training/programs/${id}/phases",
+    "/api/training/programs/${id}/sessions",
+    "/api/training/programs/${id}/weeks",
+    "/api/training/programs/current-week",
+    "/api/training/sessions",
+    "/api/training/stats",
+    "/api/training/stats-enhanced",
+    "/api/training/suggestions",
+    "/api/trends/change-of-direction",
+    "/api/trends/game-performance",
+    "/api/trends/sprint-volume",
+    "/api/users/${this.userId()}",
+    "/api/weather/current",
+    "/api/wellness-checkin",
+    "/api/wellness-checkin?date=${date}",
+    "/api/wellness-checkin?date=${today}",
+    "/api/wellness/checkins",
+    "/api/wellness/latest",
+    "/auth-me"
+  ],
+  "analysis": {
+    "endpointsWithoutTables": [
+      {
+        "endpoint": "/api/account/deletion",
+        "expectedTable": "deletion"
+      },
+      {
+        "endpoint": "/api/ai/analyze-context",
+        "expectedTable": "analyze_context"
+      },
+      {
+        "endpoint": "/api/ai/chat/session/:sessionId",
+        "expectedTable": ":sessionId"
+      },
+      {
+        "endpoint": "/api/api-docs",
+        "expectedTable": "api_docs"
+      },
+      {
+        "endpoint": "/api/api/docs",
+        "expectedTable": "docs"
+      },
+      {
+        "endpoint": "/api/auth-login",
+        "expectedTable": "auth_login"
+      },
+      {
+        "endpoint": "/api/auth-me",
+        "expectedTable": "auth_me"
+      },
+      {
+        "endpoint": "/api/auth/login",
+        "expectedTable": "login"
+      },
+      {
+        "endpoint": "/api/auth/reset/password",
+        "expectedTable": "password"
+      },
+      {
+        "endpoint": "/api/calc-readiness",
+        "expectedTable": "calc_readiness"
+      },
+      {
+        "endpoint": "/api/calibration-logs",
+        "expectedTable": "calibration_logs"
+      },
+      {
+        "endpoint": "/api/calibration-logs/outcome",
+        "expectedTable": "outcome"
+      },
+      {
+        "endpoint": "/api/coach-activity/read-all",
+        "expectedTable": "read_all"
+      },
+      {
+        "endpoint": "/api/coach-analytics/intents",
+        "expectedTable": "intents"
+      },
+      {
+        "endpoint": "/api/coach-analytics/overview",
+        "expectedTable": "overview"
+      },
+      {
+        "endpoint": "/api/coach-analytics/refresh",
+        "expectedTable": "refresh"
+      },
+      {
+        "endpoint": "/api/coach-analytics/trends",
+        "expectedTable": "trends"
+      },
+      {
+        "endpoint": "/api/coach/alerts",
+        "expectedTable": "alerts"
+      },
+      {
+        "endpoint": "/api/coach/payments/fees",
+        "expectedTable": "fees"
+      },
+      {
+        "endpoint": "/api/coach/payments/record",
+        "expectedTable": "record"
+      },
+      {
+        "endpoint": "/api/compute-acwr",
+        "expectedTable": "compute_acwr"
+      },
+      {
+        "endpoint": "/api/daily-protocol/complete",
+        "expectedTable": "complete"
+      },
+      {
+        "endpoint": "/api/daily-protocol/complete-block",
+        "expectedTable": "complete_block"
+      },
+      {
+        "endpoint": "/api/daily-protocol/generate",
+        "expectedTable": "generate"
+      },
+      {
+        "endpoint": "/api/daily-protocol/log-session",
+        "expectedTable": "log_session"
+      },
+      {
+        "endpoint": "/api/daily-protocol/skip",
+        "expectedTable": "skip"
+      },
+      {
+        "endpoint": "/api/daily-protocol/skip-block",
+        "expectedTable": "skip_block"
+      },
+      {
+        "endpoint": "/api/dashboard",
+        "expectedTable": "dashboard"
+      },
+      {
+        "endpoint": "/api/data/export",
+        "expectedTable": "export"
+      },
+      {
+        "endpoint": "/api/decisions",
+        "expectedTable": "decisions"
+      },
+      {
+        "endpoint": "/api/depth/chart",
+        "expectedTable": "chart"
+      },
+      {
+        "endpoint": "/api/equipment",
+        "expectedTable": "equipment"
+      },
+      {
+        "endpoint": "/api/exercisedb/approve",
+        "expectedTable": "approve"
+      },
+      {
+        "endpoint": "/api/exercisedb/filters",
+        "expectedTable": "filters"
+      },
+      {
+        "endpoint": "/api/health",
+        "expectedTable": "health"
+      },
+      {
+        "endpoint": "/api/hydration",
+        "expectedTable": "hydration"
+      },
+      {
+        "endpoint": "/api/import-open-data",
+        "expectedTable": "import_open_data"
+      },
+      {
+        "endpoint": "/api/inactive/player/notify",
+        "expectedTable": "notify"
+      },
+      {
+        "endpoint": "/api/micro-sessions/today",
+        "expectedTable": "today"
+      },
+      {
+        "endpoint": "/api/notification-digest/preview",
+        "expectedTable": "preview"
+      },
+      {
+        "endpoint": "/api/notification-digest/send",
+        "expectedTable": "send"
+      },
+      {
+        "endpoint": "/api/notifications/create",
+        "expectedTable": "create"
+      },
+      {
+        "endpoint": "/api/officials",
+        "expectedTable": "officials"
+      },
+      {
+        "endpoint": "/api/parent-dashboard/approvals",
+        "expectedTable": "approvals"
+      },
+      {
+        "endpoint": "/api/parent-dashboard/children",
+        "expectedTable": "children"
+      },
+      {
+        "endpoint": "/api/parent/dashboard",
+        "expectedTable": "dashboard"
+      },
+      {
+        "endpoint": "/api/performance/heatmap",
+        "expectedTable": "heatmap"
+      },
+      {
+        "endpoint": "/api/player-settings",
+        "expectedTable": "player_settings"
+      },
+      {
+        "endpoint": "/api/player-stats",
+        "expectedTable": "player_stats"
+      },
+      {
+        "endpoint": "/api/program/cycles",
+        "expectedTable": "cycles"
+      },
+      {
+        "endpoint": "/api/qb-throwing",
+        "expectedTable": "qb_throwing"
+      },
+      {
+        "endpoint": "/api/qb-throwing/arm-care",
+        "expectedTable": "arm_care"
+      },
+      {
+        "endpoint": "/api/qb/throwing",
+        "expectedTable": "throwing"
+      },
+      {
+        "endpoint": "/api/readiness-history",
+        "expectedTable": "readiness_history"
+      },
+      {
+        "endpoint": "/api/research/institution",
+        "expectedTable": "institution"
+      },
+      {
+        "endpoint": "/api/research/sync",
+        "expectedTable": "sync"
+      },
+      {
+        "endpoint": "/api/scouting",
+        "expectedTable": "scouting"
+      },
+      {
+        "endpoint": "/api/send/email",
+        "expectedTable": "email"
+      },
+      {
+        "endpoint": "/api/sponsor/logo",
+        "expectedTable": "logo"
+      },
+      {
+        "endpoint": "/api/staff/nutritionist",
+        "expectedTable": "nutritionist"
+      },
+      {
+        "endpoint": "/api/staff/physiotherapist",
+        "expectedTable": "physiotherapist"
+      },
+      {
+        "endpoint": "/api/staff/psychology",
+        "expectedTable": "psychology"
+      },
+      {
+        "endpoint": "/api/supabase/client",
+        "expectedTable": "client"
+      },
+      {
+        "endpoint": "/api/supplements/recent",
+        "expectedTable": "recent"
+      },
+      {
+        "endpoint": "/api/team-templates/from-inbox",
+        "expectedTable": "from_inbox"
+      },
+      {
+        "endpoint": "/api/team/invite",
+        "expectedTable": "invite"
+      },
+      {
+        "endpoint": "/api/test/email",
+        "expectedTable": "email"
+      },
+      {
+        "endpoint": "/api/tournament-calendar",
+        "expectedTable": "tournament_calendar"
+      },
+      {
+        "endpoint": "/api/tournament-calendar/delete",
+        "expectedTable": "delete"
+      },
+      {
+        "endpoint": "/api/tournament/calendar",
+        "expectedTable": "calendar"
+      },
+      {
+        "endpoint": "/api/tournaments",
+        "expectedTable": "tournaments"
+      },
+      {
+        "endpoint": "/api/training-metrics",
+        "expectedTable": "training_metrics"
+      },
+      {
+        "endpoint": "/api/training/complete",
+        "expectedTable": "complete"
+      },
+      {
+        "endpoint": "/api/training/plan",
+        "expectedTable": "plan"
+      },
+      {
+        "endpoint": "/api/training/stats/enhanced",
+        "expectedTable": "enhanced"
+      },
+      {
+        "endpoint": "/api/trends",
+        "expectedTable": "trends"
+      },
+      {
+        "endpoint": "/api/upload",
+        "expectedTable": "upload"
+      },
+      {
+        "endpoint": "/api/usda/sync",
+        "expectedTable": "sync"
+      },
+      {
+        "endpoint": "/api/user-profile",
+        "expectedTable": "user_profile"
+      },
+      {
+        "endpoint": "/api/validation",
+        "expectedTable": "validation"
+      },
+      {
+        "endpoint": "/api/wellness/latest",
+        "expectedTable": "latest"
+      }
+    ],
+    "tablesWithoutEndpoints": [],
+    "frontendCallsWithoutEndpoints": [
+      {
+        "frontendCall": "/api/account/resume"
+      },
+      {
+        "frontendCall": "/api/ai/process-command"
+      },
+      {
+        "frontendCall": "/api/depth-chart/entries"
+      },
+      {
+        "frontendCall": "/api/depth-chart/entries/${entryId}"
+      },
+      {
+        "frontendCall": "/api/depth-chart/entries/swap"
+      },
+      {
+        "frontendCall": "/api/depth-chart/initialize"
+      },
+      {
+        "frontendCall": "/api/depth-chart/player/${playerId}/preferences"
+      },
+      {
+        "frontendCall": "/api/depth-chart/preferences/${preferenceId}"
+      },
+      {
+        "frontendCall": "/api/depth-chart/templates"
+      },
+      {
+        "frontendCall": "/api/depth-chart/templates/${templateId}"
+      },
+      {
+        "frontendCall": "/api/depth-chart/templates/${templateId}/history"
+      },
+      {
+        "frontendCall": "/api/depth-chart/templates/${templateId}/unassigned"
+      },
+      {
+        "frontendCall": "/api/film-room"
+      },
+      {
+        "frontendCall": "/api/film-room/reply"
+      },
+      {
+        "frontendCall": "/api/film-room/watched"
+      },
+      {
+        "frontendCall": "/api/knowledge-search"
+      },
+      {
+        "frontendCall": "/api/knowledge-search?topic=${topic}"
+      },
+      {
+        "frontendCall": "/api/performance-data/injuries"
+      },
+      {
+        "frontendCall": "/api/performance-data/measurements"
+      },
+      {
+        "frontendCall": "/api/performance-data/performance-tests"
+      },
+      {
+        "frontendCall": "/api/playbook"
+      },
+      {
+        "frontendCall": "/api/playbook/memorized"
+      },
+      {
+        "frontendCall": "/api/playbook/study"
+      },
+      {
+        "frontendCall": "/api/player/notify-inactive"
+      },
+      {
+        "frontendCall": "/api/season/generate-reports"
+      },
+      {
+        "frontendCall": "/api/staff-physiotherapist/athletes"
+      },
+      {
+        "frontendCall": "/api/staff-physiotherapist/athletes/${athlete.id}"
+      },
+      {
+        "frontendCall": "/api/staff-physiotherapist/athletes/${athleteId}"
+      },
+      {
+        "frontendCall": "/api/staff-physiotherapist/injuries"
+      },
+      {
+        "frontendCall": "/api/staff-physiotherapist/rtp"
+      },
+      {
+        "frontendCall": "/api/staff-physiotherapist/rtp/${injuryId}"
+      },
+      {
+        "frontendCall": "/api/staff-physiotherapist/summary"
+      },
+      {
+        "frontendCall": "/api/staff-psychology/assessments"
+      },
+      {
+        "frontendCall": "/api/staff-psychology/athletes/${athleteId}"
+      },
+      {
+        "frontendCall": "/api/staff-psychology/my-data"
+      },
+      {
+        "frontendCall": "/api/staff-psychology/my-data/log"
+      },
+      {
+        "frontendCall": "/api/staff-psychology/reports/pre-competition"
+      },
+      {
+        "frontendCall": "/api/staff-psychology/team"
+      },
+      {
+        "frontendCall": "/api/training-programs"
+      },
+      {
+        "frontendCall": "/api/training-programs/current-week"
+      },
+      {
+        "frontendCall": "/api/training-programs/phases"
+      },
+      {
+        "frontendCall": "/api/training-programs/sessions"
+      },
+      {
+        "frontendCall": "/api/training-programs/weeks"
+      },
+      {
+        "frontendCall": "/api/users/${this.userId()}"
+      }
+    ],
+    "endpointsWithoutFrontendCalls": [
+      {
+        "endpoint": "/api/accept/invitation"
+      },
+      {
+        "endpoint": "/api/account/deletion"
+      },
+      {
+        "endpoint": "/api/ai/review"
+      },
+      {
+        "endpoint": "/api/api/docs"
+      },
+      {
+        "endpoint": "/api/auth-login"
+      },
+      {
+        "endpoint": "/api/auth/login"
+      },
+      {
+        "endpoint": "/api/auth/me"
+      },
+      {
+        "endpoint": "/api/auth/reset/password"
+      },
+      {
+        "endpoint": "/api/cache"
+      },
+      {
+        "endpoint": "/api/calc/readiness"
+      },
+      {
+        "endpoint": "/api/calibration/logs"
+      },
+      {
+        "endpoint": "/api/chat"
+      },
+      {
+        "endpoint": "/api/chat/channels"
+      },
+      {
+        "endpoint": "/api/chat/channels/"
+      },
+      {
+        "endpoint": "/api/chat/messages/"
+      },
+      {
+        "endpoint": "/api/coach-activity"
+      },
+      {
+        "endpoint": "/api/coach-activity/"
+      },
+      {
+        "endpoint": "/api/coach-activity/read-all"
+      },
+      {
+        "endpoint": "/api/coach-alerts/"
+      },
+      {
+        "endpoint": "/api/coach-analytics/classification"
+      },
+      {
+        "endpoint": "/api/coach-analytics/intents"
+      },
+      {
+        "endpoint": "/api/coach-analytics/leaderboard/"
+      },
+      {
+        "endpoint": "/api/coach-analytics/overview"
+      },
+      {
+        "endpoint": "/api/coach-analytics/refresh"
+      },
+      {
+        "endpoint": "/api/coach-analytics/team/"
+      },
+      {
+        "endpoint": "/api/coach-analytics/trends"
+      },
+      {
+        "endpoint": "/api/coach-inbox"
+      },
+      {
+        "endpoint": "/api/coach-inbox/"
+      },
+      {
+        "endpoint": "/api/coach-inbox/stats"
+      },
+      {
+        "endpoint": "/api/coach/activity"
+      },
+      {
+        "endpoint": "/api/coach/alerts"
+      },
+      {
+        "endpoint": "/api/coach/analytics"
+      },
+      {
+        "endpoint": "/api/coach/inbox"
+      },
+      {
+        "endpoint": "/api/coach/payments"
+      },
+      {
+        "endpoint": "/api/coach/payments/fees"
+      },
+      {
+        "endpoint": "/api/coach/payments/record"
+      },
+      {
+        "endpoint": "/api/compute/acwr"
+      },
+      {
+        "endpoint": "/api/daily-protocol/complete"
+      },
+      {
+        "endpoint": "/api/daily-protocol/complete-block"
+      },
+      {
+        "endpoint": "/api/daily-protocol/log-session"
+      },
+      {
+        "endpoint": "/api/daily-protocol/skip"
+      },
+      {
+        "endpoint": "/api/daily-protocol/skip-block"
+      },
+      {
+        "endpoint": "/api/daily/protocol"
+      },
+      {
+        "endpoint": "/api/daily/training"
+      },
+      {
+        "endpoint": "/api/data/export"
+      },
+      {
+        "endpoint": "/api/depth/chart"
+      },
+      {
+        "endpoint": "/api/exercise/progression"
+      },
+      {
+        "endpoint": "/api/exercisedb"
+      },
+      {
+        "endpoint": "/api/exercisedb/approve"
+      },
+      {
+        "endpoint": "/api/exercisedb/approve/"
+      },
+      {
+        "endpoint": "/api/exercisedb/filters"
+      },
+      {
+        "endpoint": "/api/exercisedb/import"
+      },
+      {
+        "endpoint": "/api/exercisedb/logs"
+      },
+      {
+        "endpoint": "/api/exercisedb/search"
+      },
+      {
+        "endpoint": "/api/exercises"
+      },
+      {
+        "endpoint": "/api/hydration"
+      },
+      {
+        "endpoint": "/api/hydration/history"
+      },
+      {
+        "endpoint": "/api/hydration/log"
+      },
+      {
+        "endpoint": "/api/import/open/data"
+      },
+      {
+        "endpoint": "/api/inactive/player/notify"
+      },
+      {
+        "endpoint": "/api/isometrics"
+      },
+      {
+        "endpoint": "/api/knowledge/search"
+      },
+      {
+        "endpoint": "/api/load/management"
+      },
+      {
+        "endpoint": "/api/micro-sessions"
+      },
+      {
+        "endpoint": "/api/micro-sessions/"
+      },
+      {
+        "endpoint": "/api/micro-sessions/analytics"
+      },
+      {
+        "endpoint": "/api/micro-sessions/today"
+      },
+      {
+        "endpoint": "/api/micro/sessions"
+      },
+      {
+        "endpoint": "/api/notification-digest/history"
+      },
+      {
+        "endpoint": "/api/notification-digest/preferences"
+      },
+      {
+        "endpoint": "/api/notification-digest/preview"
+      },
+      {
+        "endpoint": "/api/notification-digest/send"
+      },
+      {
+        "endpoint": "/api/notification/digest"
+      },
+      {
+        "endpoint": "/api/parent-dashboard/approvals"
+      },
+      {
+        "endpoint": "/api/parent-dashboard/approvals/"
+      },
+      {
+        "endpoint": "/api/parent-dashboard/children"
+      },
+      {
+        "endpoint": "/api/parent-dashboard/children/"
+      },
+      {
+        "endpoint": "/api/parent-dashboard/link"
+      },
+      {
+        "endpoint": "/api/parent-dashboard/settings/"
+      },
+      {
+        "endpoint": "/api/parent/dashboard"
+      },
+      {
+        "endpoint": "/api/parental/consent"
+      },
+      {
+        "endpoint": "/api/payments"
+      },
+      {
+        "endpoint": "/api/player-settings"
+      },
+      {
+        "endpoint": "/api/player/programs"
+      },
+      {
+        "endpoint": "/api/player/settings"
+      },
+      {
+        "endpoint": "/api/player/stats"
+      },
+      {
+        "endpoint": "/api/plyometrics"
+      },
+      {
+        "endpoint": "/api/privacy/settings"
+      },
+      {
+        "endpoint": "/api/program/cycles"
+      },
+      {
+        "endpoint": "/api/qb-throwing"
+      },
+      {
+        "endpoint": "/api/qb-throwing/arm-care"
+      },
+      {
+        "endpoint": "/api/qb/throwing"
+      },
+      {
+        "endpoint": "/api/readiness/history"
+      },
+      {
+        "endpoint": "/api/research/institution"
+      },
+      {
+        "endpoint": "/api/research/sync"
+      },
+      {
+        "endpoint": "/api/response-feedback"
+      },
+      {
+        "endpoint": "/api/response-feedback/coach"
+      },
+      {
+        "endpoint": "/api/response-feedback/message/"
+      },
+      {
+        "endpoint": "/api/response-feedback/stats"
+      },
+      {
+        "endpoint": "/api/response/feedback"
+      },
+      {
+        "endpoint": "/api/season/reports"
+      },
+      {
+        "endpoint": "/api/send/email"
+      },
+      {
+        "endpoint": "/api/smart/training/recommendations"
+      },
+      {
+        "endpoint": "/api/sponsor/logo"
+      },
+      {
+        "endpoint": "/api/sponsors"
+      },
+      {
+        "endpoint": "/api/staff/nutritionist"
+      },
+      {
+        "endpoint": "/api/staff/physiotherapist"
+      },
+      {
+        "endpoint": "/api/staff/psychology"
+      },
+      {
+        "endpoint": "/api/supabase/client"
+      },
+      {
+        "endpoint": "/api/supplements/recent"
+      },
+      {
+        "endpoint": "/api/team-templates"
+      },
+      {
+        "endpoint": "/api/team-templates/"
+      },
+      {
+        "endpoint": "/api/team-templates/from-inbox"
+      },
+      {
+        "endpoint": "/api/team/invite"
+      },
+      {
+        "endpoint": "/api/team/templates"
+      },
+      {
+        "endpoint": "/api/test/email"
+      },
+      {
+        "endpoint": "/api/tournament-calendar"
+      },
+      {
+        "endpoint": "/api/tournament-calendar/delete"
+      },
+      {
+        "endpoint": "/api/tournament/calendar"
+      },
+      {
+        "endpoint": "/api/training-sessions"
+      },
+      {
+        "endpoint": "/api/training/metrics"
+      },
+      {
+        "endpoint": "/api/update/chatbot/stats"
+      },
+      {
+        "endpoint": "/api/upload"
+      },
+      {
+        "endpoint": "/api/usda/sync"
+      },
+      {
+        "endpoint": "/api/user-context"
+      },
+      {
+        "endpoint": "/api/user-profile"
+      },
+      {
+        "endpoint": "/api/user/context"
+      },
+      {
+        "endpoint": "/api/user/profile"
+      },
+      {
+        "endpoint": "/api/v1"
+      },
+      {
+        "endpoint": "/api/validate/invitation"
+      },
+      {
+        "endpoint": "/api/validation"
+      }
+    ]
+  }
+}

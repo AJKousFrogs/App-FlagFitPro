@@ -1669,6 +1669,58 @@
   status = 200
   force = true
 
+# Upload API - File uploads (images/videos)
+[[redirects]]
+  from = "/api/upload"
+  to = "/.netlify/functions/upload"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/upload/*"
+  to = "/.netlify/functions/upload"
+  status = 200
+  force = true
+
+# Parent Dashboard API - Parent management of youth athletes
+[[redirects]]
+  from = "/api/parent-dashboard/*"
+  to = "/.netlify/functions/parent-dashboard"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/parent-dashboard"
+  to = "/.netlify/functions/parent-dashboard"
+  status = 200
+  force = true
+
+# Parental Consent API - Consent management
+[[redirects]]
+  from = "/api/parental-consent/*"
+  to = "/.netlify/functions/parental-consent"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/parental-consent"
+  to = "/.netlify/functions/parental-consent"
+  status = 200
+  force = true
+
+# Notification Digest API - Scheduled digest generation
+[[redirects]]
+  from = "/api/notification-digest/*"
+  to = "/.netlify/functions/notification-digest"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/notification-digest"
+  to = "/.netlify/functions/notification-digest"
+  status = 200
+  force = true
+
 # ============================================================================
 # STATIC FILES - Serve before SPA fallback
 # ============================================================================
