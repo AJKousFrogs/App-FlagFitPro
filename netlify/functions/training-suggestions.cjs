@@ -10,9 +10,17 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
  */
 async function analyzeTrainingHistory(userId) {
   try {
+    // #region agent log
+    console.log("[training-suggestions] analyzeTrainingHistory called with userId:", userId);
+    // #endregion
+
     // Get recent training sessions (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // #region agent log
+    console.log("[training-suggestions] Querying training_sessions table...");
+    // #endregion
 
     const { data: sessions, error } = await supabaseAdmin
       .from("training_sessions")
@@ -24,9 +32,15 @@ async function analyzeTrainingHistory(userId) {
       .order("session_date", { ascending: false });
 
     if (error) {
-      console.error("Error fetching training sessions:", error);
+      // #region agent log
+      console.error("[training-suggestions] Database error:", error.message, error.code, error.details);
+      // #endregion
       return { sessions: [], error };
     }
+
+    // #region agent log
+    console.log("[training-suggestions] Found sessions:", sessions?.length || 0);
+    // #endregion
 
     // Analyze session types
     const sessionTypes = {};
@@ -280,6 +294,10 @@ function generateSuggestions(analysis, params = {}) {
  * Main handler function
  */
 async function handleRequest(event, context, { userId }) {
+  // #region agent log
+  console.log("[training-suggestions] handleRequest called, userId:", userId, "method:", event.httpMethod);
+  // #endregion
+
   try {
     let params = {};
 
@@ -287,8 +305,13 @@ async function handleRequest(event, context, { userId }) {
     if (event.httpMethod === "POST" && event.body) {
       try {
         params = JSON.parse(event.body);
+        // #region agent log
+        console.log("[training-suggestions] Parsed params:", JSON.stringify(params));
+        // #endregion
       } catch (e) {
-        console.error("Error parsing request body:", e);
+        // #region agent log
+        console.error("[training-suggestions] Error parsing request body:", e.message);
+        // #endregion
       }
     }
 
@@ -298,10 +321,21 @@ async function handleRequest(event, context, { userId }) {
     }
 
     // Analyze user's training history
+    // #region agent log
+    console.log("[training-suggestions] Calling analyzeTrainingHistory...");
+    // #endregion
     const analysis = await analyzeTrainingHistory(userId);
+
+    // #region agent log
+    console.log("[training-suggestions] Analysis complete, totalSessions:", analysis.totalSessions);
+    // #endregion
 
     // Generate suggestions
     const suggestions = generateSuggestions(analysis, params);
+
+    // #region agent log
+    console.log("[training-suggestions] Generated suggestions:", suggestions.length);
+    // #endregion
 
     return createSuccessResponse({
       suggestions,
@@ -312,7 +346,9 @@ async function handleRequest(event, context, { userId }) {
       },
     });
   } catch (error) {
-    console.error("Error in training-suggestions handler:", error);
+    // #region agent log
+    console.error("[training-suggestions] CRITICAL ERROR:", error.message, error.stack);
+    // #endregion
     throw error;
   }
 }

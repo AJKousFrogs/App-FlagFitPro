@@ -328,29 +328,32 @@ export class SmartTrainingFormComponent implements OnInit {
       );
     }
 
-    // Load upcoming games/events
+    // Load upcoming games/events - this is optional, don't block on failure
     let upcomingGames: Array<{
       date: string;
       opponent?: string;
       importance?: string;
     }> = [];
     try {
-      const { data: events } = await this.supabaseService.client
+      // Note: team_events requires team_id filter via RLS, this query may return empty
+      // if the user is not part of a team. We gracefully handle this case.
+      const { data: events, error: eventsError } = await this.supabaseService.client
         .from("team_events")
-        .select("event_date, event_name, event_type")
-        .gte("event_date", new Date().toISOString())
+        .select("event_date, title, event_type")
+        .gte("event_date", new Date().toISOString().split("T")[0])
         .order("event_date", { ascending: true })
         .limit(5);
 
-      if (events) {
+      if (!eventsError && events) {
         upcomingGames = events.map((e) => ({
           date: e.event_date,
-          opponent: e.event_name,
+          opponent: e.title,
           importance: e.event_type === "game" ? "high" : "medium",
         }));
       }
     } catch (error) {
-      this.logger.warn("Could not load upcoming games:", toLogContext(error));
+      // Non-critical: upcoming games are optional for suggestions
+      this.logger.debug("Could not load upcoming games (optional):", toLogContext(error));
     }
 
     this.aiService
