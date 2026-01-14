@@ -33,8 +33,9 @@ function mapPlyometricExercise(ex) {
     difficulty_level: ex.difficulty_level?.toLowerCase() || "intermediate",
     how_text: ex.description,
     description: ex.description,
-    feel_text: ex.coaching_cues?.join(" ") || null,
-    compensation_text: ex.common_mistakes?.join(" ") || null,
+    // Handle both string and array formats for backward compatibility
+    feel_text: Array.isArray(ex.coaching_cues) ? ex.coaching_cues.join(" ") : (ex.coaching_cues || null),
+    compensation_text: Array.isArray(ex.common_mistakes) ? ex.common_mistakes.join(" ") : (ex.common_mistakes || null),
     target_muscles: ex.target_muscles || [],
     equipment_required: ex.equipment_needed || [],
     video_url: ex.video_url,
@@ -60,8 +61,9 @@ function mapIsometricExercise(ex) {
     difficulty_level: ex.difficulty_level?.toLowerCase() || "intermediate",
     how_text: ex.description,
     description: ex.description,
-    feel_text: ex.instructions?.join(" ") || null,
-    compensation_text: ex.safety_notes?.join(" ") || null,
+    // Handle both string and array formats for backward compatibility
+    feel_text: Array.isArray(ex.instructions) ? ex.instructions.join(" ") : (ex.instructions || null),
+    compensation_text: Array.isArray(ex.safety_notes) ? ex.safety_notes.join(" ") : (ex.safety_notes || null),
     target_muscles: ex.target_muscles || [],
     equipment_required: [],
     video_url: ex.video_url,

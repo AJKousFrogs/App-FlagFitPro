@@ -109,7 +109,7 @@ exports.handler = async (event) => {
     };
   }
 
-  if (!authHeader) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return {
       statusCode: 401,
       headers: corsHeaders,
@@ -117,14 +117,18 @@ exports.handler = async (event) => {
     };
   }
 
+  // Extract the JWT token from "Bearer <token>"
+  const token = authHeader.substring(7);
   const supabase = getSupabase(authHeader);
 
+  // Get user from token - MUST pass token to getUser() when using admin client
   const {
     data: { user },
     error: authError,
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser(token);
 
   if (authError || !user) {
+    console.error("[exercise-progression] Auth error:", authError?.message);
     return {
       statusCode: 401,
       headers: corsHeaders,
