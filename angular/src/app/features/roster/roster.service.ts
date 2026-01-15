@@ -247,7 +247,14 @@ export class RosterService {
           }));
         }
       } else {
-        members = membersData;
+        // Supabase returns users as an array due to the foreign key syntax, extract first element
+        members = (membersData || []).map((m) => ({
+          id: m.id,
+          team_id: m.team_id,
+          user_id: m.user_id,
+          role: m.role,
+          users: Array.isArray(m.users) ? m.users[0] : m.users,
+        }));
       }
 
       // Load team members with player role and their user profile data
