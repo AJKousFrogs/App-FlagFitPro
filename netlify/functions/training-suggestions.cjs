@@ -9,6 +9,28 @@ const { supabaseAdmin } = require("./supabase-client.cjs");
  * Analyze user's training history to identify gaps and opportunities
  */
 async function analyzeTrainingHistory(userId) {
+  // Default values to return on error or no data
+  const defaultAnalysis = {
+    sessions: [],
+    sessionTypes: {},
+    totalDuration: {
+      speed: 0,
+      strength: 0,
+      conditioning: 0,
+      skill: 0,
+      recovery: 0,
+    },
+    avgScoreByCategory: {},
+    totalSessions: 0,
+    error: null,
+  };
+
+  // Validate userId
+  if (!userId) {
+    console.warn("[training-suggestions] analyzeTrainingHistory called without userId");
+    return { ...defaultAnalysis, error: "No user ID provided" };
+  }
+
   try {
     // #region agent log
     console.log("[training-suggestions] analyzeTrainingHistory called with userId:", userId);
@@ -21,6 +43,12 @@ async function analyzeTrainingHistory(userId) {
     // #region agent log
     console.log("[training-suggestions] Querying training_sessions table...");
     // #endregion
+
+    // Check if supabaseAdmin is available
+    if (!supabaseAdmin) {
+      console.error("[training-suggestions] Supabase client not initialized");
+      return { ...defaultAnalysis, error: "Database connection unavailable" };
+    }
 
     const { data: sessions, error } = await supabaseAdmin
       .from("training_sessions")
@@ -35,7 +63,8 @@ async function analyzeTrainingHistory(userId) {
       // #region agent log
       console.error("[training-suggestions] Database error:", error.message, error.code, error.details);
       // #endregion
-      return { sessions: [], error };
+      // Return default structure with error info instead of throwing
+      return { ...defaultAnalysis, error: error.message };
     }
 
     // #region agent log
@@ -68,10 +97,11 @@ async function analyzeTrainingHistory(userId) {
 
       // Categorize by type
       const category = categorizeSessionType(type);
-      if (session.duration_minutes) {
-        totalDuration[category] += session.duration_minutes;
+      if (category && session.duration_minutes) {
+        totalDuration[category] = (totalDuration[category] || 0) + session.duration_minutes;
       }
-      if (session.score) {
+      if (category && session.score) {
+        if (!avgScores[category]) avgScores[category] = [];
         avgScores[category].push(session.score);
       }
     });
@@ -79,7 +109,7 @@ async function analyzeTrainingHistory(userId) {
     // Calculate averages
     const avgScoreByCategory = {};
     Object.keys(avgScores).forEach((cat) => {
-      if (avgScores[cat].length > 0) {
+      if (avgScores[cat] && avgScores[cat].length > 0) {
         avgScoreByCategory[cat] =
           avgScores[cat].reduce((a, b) => a + b, 0) / avgScores[cat].length;
       }
@@ -91,10 +121,11 @@ async function analyzeTrainingHistory(userId) {
       totalDuration,
       avgScoreByCategory,
       totalSessions: (sessions || []).length,
+      error: null,
     };
   } catch (error) {
-    console.error("Error analyzing training history:", error);
-    return { sessions: [], error: error.message };
+    console.error("[training-suggestions] Error analyzing training history:", error.message, error.stack);
+    return { ...defaultAnalysis, error: error.message };
   }
 }
 
@@ -146,12 +177,21 @@ function categorizeSessionType(sessionType) {
  */
 function generateSuggestions(analysis, params = {}) {
   const suggestions = [];
-  const { totalDuration, totalSessions } = analysis;
+  
+  // Safely extract values with defaults
+  const totalDuration = analysis?.totalDuration || {
+    speed: 0,
+    strength: 0,
+    conditioning: 0,
+    skill: 0,
+    recovery: 0,
+  };
+  const totalSessions = analysis?.totalSessions || 0;
 
   // Check for missing training types
-  const hasSpeedTraining = totalDuration.speed > 0;
-  const hasStrengthTraining = totalDuration.strength > 0;
-  const hasRecovery = totalDuration.recovery > 0;
+  const hasSpeedTraining = (totalDuration.speed || 0) > 0;
+  const hasStrengthTraining = (totalDuration.strength || 0) > 0;
+  const hasRecovery = (totalDuration.recovery || 0) > 0;
 
   // Suggestion 1: Speed training gap
   if (!hasSpeedTraining && totalSessions > 0) {
@@ -211,7 +251,7 @@ function generateSuggestions(analysis, params = {}) {
   }
 
   // Suggestion 4: Skill work if low
-  if (totalDuration.skill < totalDuration.speed && totalSessions > 2) {
+  if ((totalDuration.skill || 0) < (totalDuration.speed || 0) && totalSessions > 2) {
     suggestions.push({
       id: `skill-${Date.now()}`,
       title: "Skill Development",
@@ -229,7 +269,7 @@ function generateSuggestions(analysis, params = {}) {
   }
 
   // Suggestion 5: Conditioning if low volume
-  if (totalDuration.conditioning < 120 && totalSessions > 0) {
+  if ((totalDuration.conditioning || 0) < 120 && totalSessions > 0) {
     suggestions.push({
       id: `conditioning-${Date.now()}`,
       title: "Conditioning Work",

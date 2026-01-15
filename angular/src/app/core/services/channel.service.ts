@@ -777,19 +777,31 @@ export class ChannelService {
           full_name: string | null;
         } | null;
       }
-      const { data: members } = (await this.supabase.client
-        .from("team_members")
-        .select(
-          `
-          user_id,
-          users:user_id(id, email, full_name)
-        `,
-        )
-        .eq("team_id", channel.team_id)
-        .eq("status", "active")) as {
-        data: TeamMemberWithUser[] | null;
-        error: unknown;
-      };
+      
+      // Validate team_id before querying
+      let members: TeamMemberWithUser[] = [];
+      if (channel.team_id) {
+        const { data: membersData, error: membersError } = (await this.supabase.client
+          .from("team_members")
+          .select(
+            `
+            user_id,
+            users:user_id(id, email, full_name)
+          `,
+          )
+          .eq("team_id", channel.team_id)
+          .eq("status", "active")) as {
+          data: TeamMemberWithUser[] | null;
+          error: { code?: string; message?: string } | null;
+        };
+        
+        if (membersError) {
+          // Log but don't throw - gracefully handle RLS errors
+          this.logger.warn("Could not fetch team members for announcement status:", toLogContext(membersError));
+        } else {
+          members = membersData || [];
+        }
+      }
 
       // Get read receipts
       const { data: reads } = await this.supabase.client
@@ -1199,6 +1211,12 @@ export class ChannelService {
     teamId: string,
     query: string,
   ): Promise<ChannelMemberDetails[]> {
+    // Validate teamId
+    if (!teamId || teamId === 'undefined' || teamId === 'null') {
+      this.logger.warn("searchTeamMembers called with invalid teamId:", teamId);
+      return [];
+    }
+
     try {
       // First get team members
       const { data: teamMembersData, error: teamError } =
@@ -1208,7 +1226,14 @@ export class ChannelService {
           .eq("team_id", teamId)
           .eq("status", "active");
 
-      if (teamError) throw teamError;
+      if (teamError) {
+        // Handle RLS policy denial gracefully
+        if (teamError.code === 'PGRST301' || teamError.message?.includes('permission')) {
+          this.logger.warn("User not authorized to search team members for team:", teamId);
+          return [];
+        }
+        throw teamError;
+      }
 
       if (!teamMembersData || teamMembersData.length === 0) {
         return [];

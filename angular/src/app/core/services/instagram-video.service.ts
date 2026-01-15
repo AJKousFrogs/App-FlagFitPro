@@ -760,6 +760,7 @@ export class InstagramVideoService {
   /**
    * Generate embed HTML for an Instagram video
    * Falls back to iframe if oEmbed fails
+   * Includes error handling for timeout/load failures
    */
   generateEmbedHtml(
     video: InstagramVideo,
@@ -776,9 +777,54 @@ export class InstagramVideoService {
       ? `${video.embedUrl}?captioned=true`
       : video.embedUrl;
 
+    // Generate a unique ID for this embed
+    const embedId = `ig-embed-${video.id}-${Date.now()}`;
+
     return `
-      <div class="instagram-embed-container" style="max-width: ${maxWidth}; margin: 0 auto;">
+      <div class="instagram-embed-container" style="max-width: ${maxWidth}; margin: 0 auto; position: relative;">
+        <div id="${embedId}-loading" style="
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--surface-ground, #1a1a2e);
+          border-radius: var(--radius-xl, 16px);
+          z-index: 1;
+        ">
+          <div style="text-align: center; color: var(--text-color-secondary, #888);">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+            <span style="font-size: 0.875rem;">Loading video...</span>
+          </div>
+        </div>
+        <div id="${embedId}-error" style="
+          display: none;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          align-items: center;
+          justify-content: center;
+          background: var(--surface-ground, #1a1a2e);
+          border-radius: var(--radius-xl, 16px);
+          z-index: 2;
+        ">
+          <div style="text-align: center; color: var(--text-color-secondary, #888); padding: 2rem;">
+            <i class="pi pi-video" style="font-size: 2.5rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+            <p style="margin: 0 0 1rem 0; font-size: 0.875rem;">Video temporarily unavailable</p>
+            <a href="${video.url}" target="_blank" rel="noopener noreferrer" 
+               style="color: var(--primary-color, #3b82f6); text-decoration: none; font-size: 0.875rem;">
+              <i class="pi pi-external-link" style="margin-right: 0.25rem;"></i>
+              Watch on Instagram
+            </a>
+          </div>
+        </div>
         <iframe
+          id="${embedId}"
           src="${embedUrl}"
           width="${width}"
           height="${Math.round(width * 1.25)}"
@@ -787,9 +833,41 @@ export class InstagramVideoService {
           allowtransparency="true"
           allowfullscreen="true"
           loading="lazy"
-          style="max-width: 100%; border-radius: var(--radius-xl); background: transparent;"
+          style="max-width: 100%; border-radius: var(--radius-xl); background: transparent; position: relative; z-index: 3;"
+          onload="
+            var loading = document.getElementById('${embedId}-loading');
+            if (loading) loading.style.display = 'none';
+          "
+          onerror="
+            var loading = document.getElementById('${embedId}-loading');
+            var error = document.getElementById('${embedId}-error');
+            if (loading) loading.style.display = 'none';
+            if (error) error.style.display = 'flex';
+          "
         ></iframe>
       </div>
+      <script>
+        (function() {
+          // Set a timeout to show error state if iframe doesn't load
+          var timeout = setTimeout(function() {
+            var iframe = document.getElementById('${embedId}');
+            var loading = document.getElementById('${embedId}-loading');
+            var error = document.getElementById('${embedId}-error');
+            if (loading && loading.style.display !== 'none') {
+              if (loading) loading.style.display = 'none';
+              if (error) error.style.display = 'flex';
+            }
+          }, 15000); // 15 second timeout
+          
+          // Clear timeout if iframe loads successfully
+          var iframe = document.getElementById('${embedId}');
+          if (iframe) {
+            iframe.addEventListener('load', function() {
+              clearTimeout(timeout);
+            });
+          }
+        })();
+      </script>
     `;
   }
 

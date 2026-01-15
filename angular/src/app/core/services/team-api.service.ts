@@ -82,6 +82,12 @@ export class TeamApiService {
       includeUserData?: boolean;
     } = {},
   ): Promise<TeamMemberWithUser[]> {
+    // Validate teamId to prevent unnecessary API calls
+    if (!teamId || teamId === 'undefined' || teamId === 'null') {
+      this.logger.warn("[TeamApi] getTeamMembers called with invalid teamId:", teamId);
+      return [];
+    }
+
     try {
       const { role, status, includeUserData = true } = options;
 
@@ -133,19 +139,30 @@ export class TeamApiService {
       const { data, error } = await query;
 
       if (error) {
+        // Handle RLS policy denial gracefully (400 error means user not in team)
+        if (error.code === 'PGRST301' || error.message?.includes('permission denied')) {
+          this.logger.warn("[TeamApi] User not authorized to view team members for team:", teamId);
+          return [];
+        }
         this.logger.error("[TeamApi] Error fetching team members:", error);
         throw error;
       }
 
       // Type guard: ensure data is an array, not a parser error
       if (!data || !Array.isArray(data)) {
-        this.logger.error("[TeamApi] Invalid data format received");
+        this.logger.warn("[TeamApi] No team members found or invalid data format");
         return [];
       }
 
       // Explicitly cast after type guard to satisfy TypeScript
       return data as unknown as TeamMemberWithUser[];
     } catch (error) {
+      // Don't throw for common RLS/permission errors, just return empty
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('permission') || errorMessage.includes('policy')) {
+        this.logger.warn("[TeamApi] Permission error in getTeamMembers:", errorMessage);
+        return [];
+      }
       this.logger.error("[TeamApi] Error in getTeamMembers:", error);
       throw error;
     }

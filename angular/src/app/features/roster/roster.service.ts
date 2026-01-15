@@ -203,6 +203,7 @@ export class RosterService {
           .select(
             `
           id,
+          team_id,
           user_id,
           role,
           users:user_id (
@@ -223,7 +224,7 @@ export class RosterService {
         const { data: membersFallback, error: fallbackError } =
           await this.supabaseService.client
             .from("team_members")
-            .select("id, user_id, role")
+            .select("id, team_id, user_id, role")
             .eq("team_id", teamMember.team_id);
         
         if (fallbackError) {
@@ -238,8 +239,11 @@ export class RosterService {
           );
           // Map fallback data to expected structure
           members = (membersFallback || []).map((m) => ({
-            ...m,
-            users: null, // No user data available
+            id: m.id,
+            team_id: m.team_id,
+            user_id: m.user_id,
+            role: m.role,
+            users: undefined, // No user data available
           }));
         }
       } else {
