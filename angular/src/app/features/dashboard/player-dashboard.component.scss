@@ -38,7 +38,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-4);
-  margin-bottom: var(--space-6);
   align-items: stretch; /* Ensure equal card heights */
 
   // Tablet: 2 columns
@@ -149,12 +148,7 @@
 // ================================================================
 
 .welcome-card {
-  margin-bottom: var(--space-4);
-
-  // Mobile: Compact
-  @include respond-to(md) {
-    margin-bottom: var(--space-3);
-  }
+  margin-bottom: 0;
 }
 
 .welcome-wrapper {
@@ -250,11 +244,7 @@
 // ================================================================
 
 .weekly-progress-card {
-  margin-bottom: var(--space-4);
-
-  @include respond-to(md) {
-    margin-bottom: var(--space-3);
-  }
+  margin-bottom: 0;
 }
 
 .chart-container {
@@ -283,11 +273,7 @@
 // ================================================================
 
 .schedule-card {
-  margin-bottom: var(--space-4);
-
-  @include respond-to(md) {
-    margin-bottom: var(--space-3);
-  }
+  margin-bottom: 0;
 }
 
 .schedule-timeline {
@@ -336,7 +322,6 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
-  margin-bottom: var(--space-4);
 
   // Tablet: 2 columns
   @include respond-to(lg) {
@@ -347,7 +332,6 @@
   @include respond-to(sm) {
     grid-template-columns: 1fr;
     gap: var(--space-2);
-    margin-bottom: var(--space-3);
   }
 }
 
@@ -434,11 +418,7 @@
 // ================================================================
 
 .announcement-banner {
-  margin-bottom: var(--space-4);
-
-  @include respond-to(md) {
-    margin-bottom: var(--space-3);
-  }
+  margin-bottom: 0;
 
   // PrimeNG overrides moved to _exceptions.scss (DS-EXC-002)
 }
@@ -448,11 +428,7 @@
 // ================================================================
 
 .no-program-section {
-  margin: var(--space-6) 0;
-
-  @include respond-to(md) {
-    margin: var(--space-4) 0;
-  }
+  margin: 0;
 }
 
 .no-program-content {
@@ -636,7 +612,7 @@
 
 .missing-data-section {
   position: relative; /* Required for absolute positioned badges */
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
 }
 
 // ================================================================
@@ -645,7 +621,7 @@
 
 .override-notifications-section {
   position: relative; /* Required for absolute positioned badges */
-  margin-bottom: var(--space-4);
+  margin-bottom: 0;
 }
 
 // ================================================================

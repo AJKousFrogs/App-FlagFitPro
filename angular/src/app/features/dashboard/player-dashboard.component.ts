@@ -36,7 +36,7 @@ import { Router, RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { Message } from "primeng/message";
 import { ProgressBar } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TimelineModule } from "primeng/timeline";
 import { TooltipModule } from "primeng/tooltip";
 import { of } from "rxjs";
@@ -125,7 +125,7 @@ interface AnnouncementBanner {
     RouterModule,
     DecimalPipe,
     CardModule,
-    TagModule,
+    StatusTagComponent,
     ButtonComponent,
 
     LazyChartComponent,
@@ -412,7 +412,7 @@ interface AnnouncementBanner {
                     </h2>
                     <!-- Privacy Status Badge -->
                     @if (privacySharingStatus().totalMetrics > 0) {
-                      <p-tag
+                      <app-status-tag
                         [value]="
                           'Sharing: ' +
                           privacySharingStatus().sharedMetrics +
@@ -421,14 +421,14 @@ interface AnnouncementBanner {
                           ' metrics'
                         "
                         severity="info"
-                        styleClass="privacy-status-badge"
+                        size="sm"
                         [pTooltip]="
                           'Manage your data sharing preferences in Settings'
                         "
                         tooltipPosition="bottom"
                         [routerLink]="['/settings/privacy']"
                         style="cursor: pointer;"
-                      ></p-tag>
+                      ></app-status-tag>
                     }
                   </div>
                   <p class="merlin-insight">{{ merlinInsight() }}</p>
@@ -468,11 +468,11 @@ interface AnnouncementBanner {
                     <span class="stat-value">{{ readinessScore() }}%</span>
                     <span class="stat-label">Readiness</span>
                   </div>
-                  <p-tag
+                  <app-status-tag
                     [value]="getReadinessStatus()"
                     [severity]="getReadinessSeverity()"
-                    styleClass="stat-tag"
-                  ></p-tag>
+                    size="sm"
+                  ></app-status-tag>
                 </div>
               } @else {
                 <div class="stat-card-content">
@@ -483,11 +483,11 @@ interface AnnouncementBanner {
                     <span class="stat-value">--</span>
                     <span class="stat-label">Readiness</span>
                   </div>
-                  <p-tag
+                  <app-status-tag
                     value="No data"
                     severity="info"
-                    styleClass="stat-tag"
-                  ></p-tag>
+                    size="sm"
+                  ></app-status-tag>
                 </div>
               }
 
@@ -555,11 +555,11 @@ Keep logging sessions to unlock this injury prevention metric!'
                     }}</span>
                     <span class="stat-label">ACWR</span>
                   </div>
-                  <p-tag
+                  <app-status-tag
                     [value]="getAcwrStatus()"
                     [severity]="getAcwrSeverity()"
-                    styleClass="stat-tag"
-                  ></p-tag>
+                    size="sm"
+                  ></app-status-tag>
                 </div>
               } @else if (trainingDaysLogged() !== null) {
                 <!-- Progress Tracking (< MIN_DAYS_FOR_CHRONIC days) -->
@@ -591,20 +591,22 @@ Keep logging sessions to unlock this injury prevention metric!'
                       trainingDaysLogged()! >= TRAINING.ACUTE_LOAD_DAYS &&
                       trainingDaysLogged()! < 14
                     ) {
-                      <p-tag
+                      <app-status-tag
                         value="7-day milestone! 🎉"
                         severity="success"
-                        styleClass="milestone-tag"
-                      ></p-tag>
+                        size="sm"
+                        class="milestone-tag"
+                      ></app-status-tag>
                     } @else if (
                       trainingDaysLogged()! >= 14 &&
                       trainingDaysLogged()! < TRAINING.MIN_DAYS_FOR_CHRONIC
                     ) {
-                      <p-tag
+                      <app-status-tag
                         value="Halfway there!"
                         severity="info"
-                        styleClass="milestone-tag"
-                      ></p-tag>
+                        size="sm"
+                        class="milestone-tag"
+                      ></app-status-tag>
                     } @else if (
                       trainingDaysLogged()! < TRAINING.ACUTE_LOAD_DAYS
                     ) {
@@ -624,11 +626,11 @@ Keep logging sessions to unlock this injury prevention metric!'
                     <span class="stat-value">--</span>
                     <span class="stat-label">ACWR</span>
                   </div>
-                  <p-tag
+                  <app-status-tag
                     value="Log training sessions"
                     severity="info"
-                    styleClass="stat-tag"
-                  ></p-tag>
+                    size="sm"
+                  ></app-status-tag>
                 </div>
               }
 
@@ -907,20 +909,22 @@ Keep logging sessions to unlock this injury prevention metric!'
                           event.daysRemaining !== undefined &&
                           event.daysRemaining > 0
                         ) {
-                          <p-tag
+                          <app-status-tag
                             [value]="event.daysRemaining + ' day(s) remaining'"
                             severity="info"
-                            styleClass="event-tag"
-                          ></p-tag>
+                            size="sm"
+                            class="event-tag"
+                          ></app-status-tag>
                         }
                         @if (event.sessionsRemaining !== undefined) {
-                          <p-tag
+                          <app-status-tag
                             [value]="
                               event.sessionsRemaining + ' sessions remaining'
                             "
-                            severity="warn"
-                            styleClass="event-tag"
-                          ></p-tag>
+                            severity="warning"
+                            size="sm"
+                            class="event-tag"
+                          ></app-status-tag>
                         }
                       </div>
                     </div>
@@ -1010,11 +1014,12 @@ Keep logging sessions to unlock this injury prevention metric!'
                       </div>
                       <div class="event-info">
                         <span class="event-title">{{ event.title }}</span>
-                        <p-tag
+                        <app-status-tag
                           [value]="event.typeLabel"
                           [severity]="getEventSeverity(event.type)"
-                          styleClass="event-type-tag"
-                        ></p-tag>
+                          size="sm"
+                          class="event-tag"
+                        ></app-status-tag>
                       </div>
                     </div>
                   </p-card>
@@ -1061,7 +1066,7 @@ Keep logging sessions to unlock this injury prevention metric!'
        NO PROGRAM ASSIGNED FALLBACK
        ========================================== */
       .no-program-section {
-        margin-bottom: var(--space-4);
+        margin-bottom: 0;
       }
 
       .no-program-card {
@@ -1758,7 +1763,7 @@ Keep logging sessions to unlock this injury prevention metric!'
        Continuity Section
        ========================================== */
       .continuity-section {
-        margin-top: var(--space-6);
+        margin-top: 0;
       }
 
       .continuity-events {
@@ -2770,14 +2775,15 @@ export class PlayerDashboardComponent {
 
   getReadinessSeverity():
     | "success"
-    | "warn"
+    | "warning"
     | "danger"
     | "info"
     | "secondary"
-    | "contrast" {
+    | "primary" {
     const score = this.readinessScore();
     if (score === null) return "info";
-    return getReadinessLevel(score).severity;
+    const severity = getReadinessLevel(score).severity;
+    return severity === "warn" ? "warning" : severity;
   }
 
   getAcwrStatus(): string {
@@ -2790,26 +2796,26 @@ export class PlayerDashboardComponent {
 
   getAcwrSeverity():
     | "success"
-    | "warn"
+    | "warning"
     | "danger"
     | "info"
     | "secondary"
-    | "contrast" {
+    | "primary" {
     const value = this.acwr();
     if (value === null) return "info";
     if (value <= 1.0) return "success";
-    if (value <= 1.3) return "warn";
+    if (value <= 1.3) return "warning";
     return "danger";
   }
 
   getEventSeverity(
     type: string,
-  ): "success" | "warn" | "danger" | "info" | "secondary" | "contrast" {
+  ): "success" | "warning" | "danger" | "info" | "secondary" | "primary" {
     switch (type) {
       case "game":
         return "danger";
       case "tournament":
-        return "warn";
+        return "warning";
       default:
         return "success";
     }

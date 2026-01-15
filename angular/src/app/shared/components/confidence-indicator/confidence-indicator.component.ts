@@ -12,7 +12,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { TagModule } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { TooltipModule } from "primeng/tooltip";
 import { ButtonModule } from "primeng/button";
 
@@ -20,7 +20,13 @@ import { ButtonModule } from "primeng/button";
   selector: "app-confidence-indicator",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, TagModule, TooltipModule, ButtonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    StatusTagComponent,
+    TooltipModule,
+    ButtonModule,
+  ],
   template: `
     <div
       class="confidence-indicator"
@@ -33,11 +39,11 @@ import { ButtonModule } from "primeng/button";
           >
           <span class="score-label">{{ confidenceLevel() }} Confidence</span>
         </div>
-        <p-tag
+        <app-status-tag
           [value]="confidenceLevel()"
           [severity]="getSeverity()"
-          styleClass="confidence-badge"
-        ></p-tag>
+          size="sm"
+        ></app-status-tag>
       </div>
 
       <div class="confidence-bar">
@@ -187,10 +193,6 @@ import { ButtonModule } from "primeng/button";
         margin-bottom: var(--space-2);
       }
 
-      .confidence-badge {
-        font-size: var(--font-size-h4);
-      }
-
       .confidence-explanation {
         margin-top: var(--space-3);
         padding-top: var(--space-3);
@@ -245,22 +247,24 @@ import { ButtonModule } from "primeng/button";
       }
 
       /* Visual degradation states */
+      .confidence-indicator.confidence-moderate,
+      .confidence-indicator.confidence-low,
+      .confidence-indicator.confidence-very-low {
+        padding: var(--space-3);
+        border-radius: var(--radius-md);
+      }
+
       .confidence-indicator.confidence-moderate {
         border-left: 3px solid var(--ds-primary-yellow);
-        padding-left: var(--space-2);
       }
 
       .confidence-indicator.confidence-low {
         border-left: 3px solid var(--ds-primary-orange);
-        padding-left: var(--space-2);
       }
 
       .confidence-indicator.confidence-very-low {
         border-left: 3px solid var(--ds-primary-red);
-        padding-left: var(--space-2);
         background: var(--color-status-error-subtle);
-        padding: var(--space-3);
-        border-radius: var(--radius-md);
       }
     `,
   ],
@@ -294,13 +298,13 @@ export class ConfidenceIndicatorComponent {
     | "secondary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
-    | "contrast" {
+    | "primary" {
     const s = this.score();
     if (s >= 0.9) return "success";
-    if (s >= 0.7) return "warn";
-    if (s >= 0.5) return "warn";
+    if (s >= 0.7) return "warning";
+    if (s >= 0.5) return "warning";
     return "danger";
   }
 
