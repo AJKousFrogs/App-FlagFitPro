@@ -98,26 +98,9 @@ async function generateAthleteDigest(
     content.summary.sessionsTotal = sessions.length;
   }
 
-  // Streak Update
-  const { data: user } = await supabaseAdmin
-    .from("users")
-    .select("current_streak, longest_streak, achievement_points")
-    .eq("id", userId)
-    .single();
-
-  if (user && user.current_streak > 0) {
-    content.sections.push({
-      title: "Your Streak",
-      icon: "pi-bolt",
-      items: [
-        `🔥 ${user.current_streak} day streak!`,
-        user.current_streak === user.longest_streak
-          ? "This is your best streak yet!"
-          : null,
-      ].filter(Boolean),
-    });
-    content.summary.currentStreak = user.current_streak;
-  }
+  // Streak Update - Note: streak columns don't exist in users table yet
+  // TODO: Add current_streak, longest_streak columns to users table if streak feature is needed
+  // For now, skip streak section as the data isn't available
 
   // Achievements
   const { data: achievements } = await supabaseAdmin

@@ -41,18 +41,19 @@ async function verifyCoachRole(authHeader) {
     return { authorized: false, error: "Invalid token" };
   }
 
-  // Use 'users' table (profiles table doesn't exist)
-  const { data: userData } = await supabase
-    .from("users")
+  // Get role from team_members table (not users table)
+  const { data: memberData } = await supabase
+    .from("team_members")
     .select("role")
-    .eq("id", user.id)
-    .single();
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-  if (!userData || !["coach", "admin"].includes(userData.role)) {
+  const role = memberData?.role || "player";
+  if (!["coach", "admin", "head_coach", "assistant_coach"].includes(role)) {
     return { authorized: false, error: "Insufficient permissions" };
   }
 
-  return { authorized: true, user, role: userData.role };
+  return { authorized: true, user, role };
 }
 
 /**
