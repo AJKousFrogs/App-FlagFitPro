@@ -197,11 +197,13 @@ interface StatComparison {
             </div>
           </ng-template>
           <div class="chart-container">
-            <p-chart
-              type="radar"
-              [data]="radarChartData()"
-              [options]="radarChartOptions"
-            ></p-chart>
+            @if (radarChartData().datasets.length > 0) {
+              <p-chart
+                type="radar"
+                [data]="radarChartData()"
+                [options]="radarChartOptions"
+              ></p-chart>
+            }
           </div>
         </p-card>
 
@@ -226,7 +228,7 @@ interface StatComparison {
                     [class.winner-player2]="stat.winner === 'player2'"
                   >
                     <div
-                      class="stat-value player1"
+                      class="stat-block__value player1"
                       [class.winner]="stat.winner === 'player1'"
                     >
                       <span class="value">{{
@@ -236,7 +238,7 @@ interface StatComparison {
                         <i class="pi pi-crown winner-icon"></i>
                       }
                     </div>
-                    <div class="stat-label">
+                    <div class="stat-block__label">
                       <span>{{ stat.label }}</span>
                       <div class="comparison-bar">
                         <div
@@ -250,7 +252,7 @@ interface StatComparison {
                       </div>
                     </div>
                     <div
-                      class="stat-value player2"
+                      class="stat-block__value player2"
                       [class.winner]="stat.winner === 'player2'"
                     >
                       @if (stat.winner === "player2") {

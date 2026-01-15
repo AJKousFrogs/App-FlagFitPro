@@ -196,7 +196,7 @@ export class RosterService {
       this.currentUserRole.set(teamMember.role as TeamRole);
 
       // Load team members (coaches/staff)
-      let members = null;
+      let members: TeamMemberRecord[] | null = null;
       const { data: membersData, error: membersError } =
         await this.supabaseService.client
           .from("team_members")

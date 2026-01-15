@@ -454,13 +454,13 @@ export class ChannelService {
       ];
       let usersMap = new Map<
         string,
-        { id: string; email: string; full_name: string; avatar_url: string }
+        { id: string; email: string; full_name: string; profile_photo_url: string }
       >();
 
       if (senderIds.length > 0) {
         const { data: usersData } = await this.supabase.client
           .from("users")
-          .select("id, email, full_name, avatar_url")
+          .select("id, email, full_name, profile_photo_url")
           .in("id", senderIds);
 
         if (usersData) {
@@ -477,7 +477,7 @@ export class ChannelService {
                 id: author.id,
                 email: author.email,
                 full_name: author.full_name || author.email,
-                avatar_url: author.avatar_url,
+                avatar_url: author.profile_photo_url, // Map profile_photo_url to avatar_url
               }
             : undefined,
         };
@@ -529,7 +529,7 @@ export class ChannelService {
       // Fetch author details
       const { data: authorData } = await this.supabase.client
         .from("users")
-        .select("id, email, full_name, avatar_url")
+        .select("id, email, full_name, profile_photo_url")
         .eq("id", userId)
         .single();
 
@@ -540,7 +540,7 @@ export class ChannelService {
               id: authorData.id,
               email: authorData.email,
               full_name: authorData.full_name || authorData.email,
-              avatar_url: authorData.avatar_url,
+              avatar_url: authorData.profile_photo_url, // Map profile_photo_url to avatar_url
             }
           : undefined,
       } as ChatMessage;
@@ -768,13 +768,13 @@ export class ChannelService {
 
       if (!channel) throw new Error("Channel not found");
 
-      // Get all team members - using type assertion due to Supabase's auth.users join limitation
+      // Get all team members with user data from public users table
       interface TeamMemberWithUser {
         user_id: string;
         users: {
           id: string;
           email: string;
-          raw_user_meta_data: Record<string, unknown>;
+          full_name: string | null;
         } | null;
       }
       const { data: members } = (await this.supabase.client
@@ -782,7 +782,7 @@ export class ChannelService {
         .select(
           `
           user_id,
-          users:auth.users(id, email, raw_user_meta_data)
+          users:user_id(id, email, full_name)
         `,
         )
         .eq("team_id", channel.team_id)
@@ -804,7 +804,7 @@ export class ChannelService {
         return {
           user_id: r.user_id,
           full_name:
-            (member?.users?.raw_user_meta_data?.["full_name"] as string) ||
+            member?.users?.full_name ||
             member?.users?.email ||
             "Unknown",
           read_at: r.read_at,
@@ -817,7 +817,7 @@ export class ChannelService {
         .map((m) => ({
           user_id: m.user_id,
           full_name:
-            (m.users?.raw_user_meta_data?.["full_name"] as string) ||
+            m.users?.full_name ||
             m.users?.email ||
             "Unknown",
         }));
@@ -1218,7 +1218,7 @@ export class ChannelService {
       const userIds = teamMembersData.map((m) => m.user_id);
       const { data: usersData, error: usersError } = await this.supabase.client
         .from("users")
-        .select("id, email, full_name, avatar_url")
+        .select("id, email, full_name, profile_photo_url")
         .in("id", userIds);
 
       if (usersError) {
@@ -1246,7 +1246,7 @@ export class ChannelService {
             user_id: m.user_id,
             email: user?.email || "",
             full_name: fullName,
-            avatar_url: user?.avatar_url || null,
+            avatar_url: user?.profile_photo_url || null, // Map profile_photo_url to avatar_url
             role: m.role as ChannelMemberDetails["role"],
             position: m.position,
             jersey_number: m.jersey_number,

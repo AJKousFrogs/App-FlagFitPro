@@ -42,7 +42,7 @@ export interface TeamMemberWithUser {
     weight_kg?: number | null;
     date_of_birth?: string | null;
     onboarding_completed?: boolean;
-    avatar_url?: string | null;
+    profile_photo_url?: string | null;
   };
 }
 
@@ -111,7 +111,7 @@ export class TeamApiService {
               weight_kg,
               date_of_birth,
               onboarding_completed,
-              avatar_url
+              profile_photo_url
             )
           `
             : "id, team_id, user_id, role, position, jersey_number, status, joined_at",

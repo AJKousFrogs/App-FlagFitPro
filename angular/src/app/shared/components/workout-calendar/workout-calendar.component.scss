@@ -5,6 +5,8 @@
 
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .workout-calendar {
   background: var(--surface-primary);
   border-radius: var(--radius-md);
@@ -282,14 +284,14 @@
   text-align: center;
 }
 
-.stat-value {
+.stat-block__value {
   display: block;
   font-size: var(--font-size-h2);
   font-weight: var(--font-weight-bold);
   color: var(--color-brand-primary);
 }
 
-.stat-label {
+.stat-block__label {
   font-size: var(--font-size-badge);
   color: var(--color-text-secondary);
 }

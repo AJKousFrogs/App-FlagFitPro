@@ -187,20 +187,22 @@ export interface WorkoutEntry {
       <!-- Stats Summary -->
       <div class="month-stats">
         <div class="stat">
-          <span class="stat-value">{{ monthStats().totalWorkouts }}</span>
-          <span class="stat-label">Workouts</span>
+          <span class="stat-block__value">{{ monthStats().totalWorkouts }}</span>
+          <span class="stat-block__label">Workouts</span>
         </div>
         <div class="stat">
-          <span class="stat-value">{{ monthStats().completedWorkouts }}</span>
-          <span class="stat-label">Completed</span>
+          <span class="stat-block__value">
+            {{ monthStats().completedWorkouts }}
+          </span>
+          <span class="stat-block__label">Completed</span>
         </div>
         <div class="stat">
-          <span class="stat-value">{{ monthStats().totalMinutes }}</span>
-          <span class="stat-label">Minutes</span>
+          <span class="stat-block__value">{{ monthStats().totalMinutes }}</span>
+          <span class="stat-block__label">Minutes</span>
         </div>
         <div class="stat">
-          <span class="stat-value">{{ monthStats().streakDays }}</span>
-          <span class="stat-label">Day Streak</span>
+          <span class="stat-block__value">{{ monthStats().streakDays }}</span>
+          <span class="stat-block__label">Day Streak</span>
         </div>
       </div>
     </div>

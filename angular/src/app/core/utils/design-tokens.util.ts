@@ -101,6 +101,11 @@ export const BLOCK_COLORS = {
   morning_mobility: "var(--primitive-warning-500)", // amber #f59e0b
   foam_roll: "var(--primitive-error-500)", // red #ef4444
   warm_up: "var(--color-workout-cardio)", // orange #f59e0b
+  isometrics: "var(--ds-primary-green)", // green - strength work
+  plyometrics: "var(--color-workout-cardio)", // orange - explosive work
+  strength: "var(--ds-primary-green)", // green - strength work (incl. Nordic curls)
+  conditioning: "var(--primitive-error-500)", // red - cardio/conditioning
+  skill_drills: "var(--color-chart-tertiary)", // blue - skill/twitching
   main_session: "var(--ds-primary-green)", // brand green #089949
   cool_down: "var(--color-chart-tertiary)", // blue #3b82f6
   evening_recovery: "var(--color-status-help)", // purple #8b5cf6

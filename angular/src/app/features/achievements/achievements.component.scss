@@ -1,7 +1,7 @@
 @use "styles/mixins" as *;
 
 .achievements-page {
-  @include page-container(1200px);
+  @include page-container(var(--content-max-width-xl));
   display: flex;
   flex-direction: column;
   gap: var(--space-4);

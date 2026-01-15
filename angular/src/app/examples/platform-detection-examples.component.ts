@@ -301,16 +301,16 @@ export class ExampleServiceLogicComponent {
         <!-- Stats grid with platform-aware gap -->
         <div [class]="getStatsGridClass()">
           <div class="stat">
-            <div class="stat-label">Sessions</div>
-            <div class="stat-value">24</div>
+            <div class="stat-block__label">Sessions</div>
+            <div class="stat-block__value">24</div>
           </div>
           <div class="stat">
-            <div class="stat-label">Minutes</div>
-            <div class="stat-value">480</div>
+            <div class="stat-block__label">Minutes</div>
+            <div class="stat-block__value">480</div>
           </div>
           <div class="stat">
-            <div class="stat-label">Load</div>
-            <div class="stat-value">3.2k</div>
+            <div class="stat-block__label">Load</div>
+            <div class="stat-block__value">3.2k</div>
           </div>
         </div>
 
@@ -362,13 +362,13 @@ export class ExampleServiceLogicComponent {
         border-radius: 0.5rem;
         text-align: center;
 
-        .stat-label {
+        .stat-block__label {
           font-size: 0.875rem;
           color: var(--text-color-secondary);
           margin-bottom: 0.25rem;
         }
 
-        .stat-value {
+        .stat-block__value {
           font-size: 1.5rem;
           font-weight: 600;
           color: var(--primary-color);

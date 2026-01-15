@@ -111,7 +111,7 @@
 
 // CANONICAL: Uses stat-block pattern tokens
 // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
-.stat-value {
+.stat-block__value {
   font-size: var(--font-size-metric-md); // 24px - canonical
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
@@ -119,7 +119,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.compact .stat-value {
+.compact .stat-block__value {
   font-size: var(--font-size-h2); // 18px - compact variant
 }
 
@@ -130,7 +130,7 @@
 }
 
 // CANONICAL: Uses stat-block label pattern
-.stat-label {
+.stat-block__label {
   font-size: var(--font-size-caption); // 13px - canonical
   font-weight: var(--font-weight-regular);
   color: var(--color-text-muted);

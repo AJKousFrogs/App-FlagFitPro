@@ -7,7 +7,7 @@
 
 .onboarding-page {
   padding: var(--space-6);
-  max-width: 1000px;
+  max-width: var(--content-max-width-lg);
   margin: 0 auto;
 
   .onboarding-card {

@@ -111,7 +111,7 @@
 .hero-container {
   position: relative;
   z-index: calc(var(--z-index-base, 1) + 1);
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   width: 100%;
   padding: var(--space-6);
 }
@@ -446,7 +446,7 @@
 }
 
 .features-container {
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: 0 auto;
 }
 
@@ -593,7 +593,7 @@
 }
 
 .footer-container {
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: 0 auto;
 }
 

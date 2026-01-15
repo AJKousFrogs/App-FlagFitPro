@@ -315,14 +315,14 @@ type SessionStatus =
 
             <div class="completion-stats">
               <div class="stat">
-                <span class="stat-value">{{ session().steps.length }}</span>
-                <span class="stat-label">Steps</span>
+                <span class="stat-block__value">{{ session().steps.length }}</span>
+                <span class="stat-block__label">Steps</span>
               </div>
               <div class="stat">
-                <span class="stat-value">{{
+                <span class="stat-block__value">{{
                   Math.round(totalElapsedTime() / 60)
                 }}</span>
-                <span class="stat-label">Minutes</span>
+                <span class="stat-block__label">Minutes</span>
               </div>
             </div>
 

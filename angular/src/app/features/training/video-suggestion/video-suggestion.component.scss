@@ -30,7 +30,7 @@
 }
 
 .header-content {
-  max-width: 800px;
+  max-width: var(--content-max-width-lg);
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -98,7 +98,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-8);
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: 0 auto;
 }
 
@@ -482,7 +482,7 @@
 
 /* Team Approved Section */
 .team-approved-section {
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: var(--space-12) auto 0;
   padding: 0 var(--space-6);
 
@@ -603,7 +603,7 @@
 
 /* Tips Section - Now using app-card-shell */
 .tips-section {
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: var(--space-12) auto 0;
   padding: 0 var(--space-6);
 }

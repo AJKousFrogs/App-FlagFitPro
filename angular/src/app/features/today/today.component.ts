@@ -1673,7 +1673,7 @@ export class TodayComponent {
 
   /**
    * Map DirectSupabaseApiService response to ProtocolJson format
-   * Only includes fields that exist in the ProtocolJson interface
+   * Includes confidence_metadata for proper resolver state detection
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapDirectResponseToProtocolJson(data: any): ProtocolJson {
@@ -1682,6 +1682,7 @@ export class TodayComponent {
       protocol_date: data.date,
       readiness_score: data.readinessScore,
       acwr_value: data.acwrValue ?? null,
+      confidence_metadata: data.confidenceMetadata,
       blocks:
         data.blocks?.map((block: { type: string; title?: string }) => ({
           type: block.type,
@@ -1846,14 +1847,36 @@ export class TodayComponent {
       "pi-sun",
     );
     const foamRoll = getBlock("foam_roll", "Foam Rolling", "pi-circle");
-    const mainSession = getBlock("main_session", "Main Session", "pi-bolt");
+    const warmUp = getBlock("warm_up", "Warm-Up (15 min)", "pi-bolt");
+    
+    // Evidence-based training blocks (1.5h gym structure)
+    const isometrics = getBlock("isometrics", "Isometrics (15 min)", "pi-pause-circle");
+    const plyometrics = getBlock("plyometrics", "Plyometrics (15 min)", "pi-arrow-up");
+    const strength = getBlock("strength", "Strength (15 min)", "pi-heart");
+    const conditioning = getBlock("conditioning", "Conditioning (15 min)", "pi-directions-run");
+    const skillDrills = getBlock("skill_drills", "Skill Drills (15 min)", "pi-bolt");
+    
+    const mainSession = getBlock("main_session", "Main Session", "pi-play");
+    const coolDown = getBlock("cool_down", "Cool-Down (15 min)", "pi-stop");
     const eveningRecovery = getBlock(
       "evening_recovery",
       "Evening Recovery",
       "pi-moon",
     );
 
-    const allBlocks = [morningMobility, foamRoll, mainSession, eveningRecovery];
+    const allBlocks = [
+      morningMobility, 
+      foamRoll, 
+      warmUp, 
+      isometrics, 
+      plyometrics, 
+      strength, 
+      conditioning, 
+      skillDrills,
+      mainSession, 
+      coolDown, 
+      eveningRecovery
+    ];
     const totalExercises = allBlocks.reduce((sum, b) => sum + b.totalCount, 0);
     const completedExercises = allBlocks.reduce(
       (sum, b) => sum + b.completedCount,
@@ -1868,7 +1891,14 @@ export class TodayComponent {
       trainingFocus: data.trainingFocus,
       morningMobility,
       foamRoll,
+      warmUp,
+      isometrics,
+      plyometrics,
+      strength,
+      conditioning,
+      skillDrills,
       mainSession,
+      coolDown,
       eveningRecovery,
       overallProgress:
         totalExercises > 0
@@ -2371,10 +2401,19 @@ export class TodayComponent {
   ): ProtocolBlock | null {
     if (!protocol) return null;
 
+    // Map database block types to DailyProtocol property names
+    // Evidence-based 1.5h training structure with new blocks
     const blockMap: Record<string, keyof DailyProtocol> = {
       morning_mobility: "morningMobility",
       foam_roll: "foamRoll",
+      warm_up: "warmUp",
+      isometrics: "isometrics",
+      plyometrics: "plyometrics",
+      strength: "strength",
+      conditioning: "conditioning",
+      skill_drills: "skillDrills",
       main_session: "mainSession",
+      cool_down: "coolDown",
       recovery: "eveningRecovery",
       evening_recovery: "eveningRecovery",
     };

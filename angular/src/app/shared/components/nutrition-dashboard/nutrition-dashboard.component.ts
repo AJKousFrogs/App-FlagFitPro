@@ -214,14 +214,16 @@ interface Meal {
 
               <!-- Nutrition breakdown chart -->
               <div class="meal-nutrition">
-                <p-chart
-                  type="doughnut"
-                  [data]="getMealNutritionChart(meal)"
-                  [options]="doughnutOptions"
-                  [width]="'150px'"
-                  [height]="'150px'"
-                >
-                </p-chart>
+                @if (meal.carbs || meal.protein || meal.fat) {
+                  <p-chart
+                    type="doughnut"
+                    [data]="getMealNutritionChart(meal)"
+                    [options]="doughnutOptions"
+                    [width]="'150px'"
+                    [height]="'150px'"
+                  >
+                  </p-chart>
+                }
               </div>
             </div>
           </ng-template>

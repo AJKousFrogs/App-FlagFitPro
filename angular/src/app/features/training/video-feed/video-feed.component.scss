@@ -44,7 +44,7 @@
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -243,7 +243,7 @@
 .filter-section {
   padding: 0 var(--space-6);
   margin-bottom: var(--space-8);
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin-left: auto;
   margin-right: auto;
 }
@@ -466,7 +466,7 @@
 /* Video Grid */
 .video-grid-section {
   padding: 0 var(--space-6);
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: 0 auto var(--space-10);
 }
 
@@ -821,7 +821,7 @@
 }
 
 .section-header {
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: 0 auto var(--space-6);
 }
 
@@ -845,7 +845,7 @@
   gap: var(--space-4);
   overflow-x: auto;
   padding: var(--space-2) 0;
-  max-width: 1200px;
+  max-width: var(--content-max-width-xl);
   margin: 0 auto;
   -webkit-overflow-scrolling: touch;
 }

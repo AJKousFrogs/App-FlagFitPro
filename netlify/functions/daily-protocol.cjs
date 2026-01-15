@@ -117,15 +117,207 @@ function computeOverride({
   return null;
 }
 
-// Block type configuration
+// ============================================================================
+// EVIDENCE-BASED BLOCK CONFIGURATION
+// Based on VALD Practitioner's Guides (Isometrics, Hamstrings, Preseason, etc.)
+// ============================================================================
+
+// Block type configuration for 1.5h structured training
 const BLOCK_TYPES = {
   morning_mobility: { category: "mobility", estimatedMinutes: 10 },
   foam_roll: { category: "foam_roll", estimatedMinutes: 8 },
-  warm_up: { category: "warm_up", estimatedMinutes: 10 },
-  main_session: { category: "strength", estimatedMinutes: 45 },
-  cool_down: { category: "cool_down", estimatedMinutes: 8 },
+  warm_up: { category: "warm_up", estimatedMinutes: 15 },
+  isometrics: { category: "isometric", estimatedMinutes: 15 },
+  plyometrics: { category: "plyometric", estimatedMinutes: 15 },
+  strength: { category: "strength", estimatedMinutes: 15 },
+  conditioning: { category: "conditioning", estimatedMinutes: 15 },
+  skill_drills: { category: "skill", estimatedMinutes: 15 },
+  main_session: { category: "strength", estimatedMinutes: 45 }, // Legacy - kept for backwards compatibility
+  cool_down: { category: "cool_down", estimatedMinutes: 15 },
   evening_recovery: { category: "recovery", estimatedMinutes: 10 },
 };
+
+// ============================================================================
+// EVIDENCE-BASED PERIODIZATION CONFIGURATION
+// Source: VALD Practitioner's Guide to Isometrics, Hamstrings, Preseason
+// ============================================================================
+
+/**
+ * Evidence-based training protocols from VALD research
+ */
+const EVIDENCE_BASED_PROTOCOLS = {
+  // Isometric Training Protocol (Practitioner's Guide to Isometrics)
+  // "3-5 sets of 3-6 second maximal contractions with 30-60 seconds rest"
+  isometrics: {
+    sets: { min: 3, max: 5 },
+    holdSeconds: { min: 3, max: 6 },
+    restSeconds: { min: 30, max: 60 },
+    frequencyPerWeek: { min: 2, max: 3 },
+    asymmetryThreshold: 0.10, // <10% ideal
+    asymmetryWarning: 0.15, // >15% requires attention
+  },
+  
+  // Nordic Curl Protocol (Practitioner's Guide to Hamstrings)
+  // "2-3x weekly reduces injury risk by 50-70%"
+  // "Progress from 1x5 to 3x12 over 6-8 weeks"
+  nordicCurls: {
+    frequencyPerWeek: { min: 2, max: 3 },
+    beginner: { sets: 1, reps: 5 },
+    intermediate: { sets: 2, reps: 8 },
+    advanced: { sets: 3, reps: 12 },
+    injuryRiskReduction: 0.60, // 50-70%
+    eccentricHQRatioTarget: 0.8,
+  },
+  
+  // Plyometric Contacts (Multiple guides)
+  // Phase-appropriate weekly contacts
+  plyometrics: {
+    contactsPerWeek: {
+      off_season_rest: { min: 0, max: 0 },
+      foundation: { min: 40, max: 80 },
+      strength_accumulation: { min: 60, max: 120 },
+      power_development: { min: 80, max: 150 },
+      speed_development: { min: 100, max: 180 },
+      competition_prep: { min: 60, max: 100 },
+      in_season_maintenance: { min: 40, max: 80 },
+      mid_season_reload: { min: 60, max: 120 },
+      peak: { min: 50, max: 100 },
+      taper: { min: 20, max: 40 },
+      active_recovery: { min: 0, max: 20 },
+    },
+    intensityLevels: {
+      low: ["pogo_jumps", "ankle_hops", "box_step_ups", "low_hurdle_hops"],
+      medium: ["box_jumps", "broad_jumps", "single_leg_bounds", "lateral_bounds"],
+      high: ["depth_jumps", "reactive_bounds", "hurdle_hops", "single_leg_depth_jumps"],
+      very_high: ["depth_jumps_to_sprint", "reactive_agility_bounds", "multi_directional_bounds"],
+    },
+  },
+  
+  // ACWR Safe Zones (Practitioner's Guide to Preseason + Gabbett 2016)
+  // "ACWR 0.8-1.3 is optimal; >1.5 increases injury risk 2-4x"
+  acwr: {
+    optimal: { min: 0.8, max: 1.3 },
+    elevated: { min: 1.3, max: 1.5 },
+    danger: { min: 1.5, max: 2.0 },
+    weeklyLoadIncreaseMax: 0.10, // 10% max per week
+  },
+  
+  // Hip/Groin Balance (Practitioner's Guide to Hip and Groin)
+  hipGroin: {
+    adductorAbductorRatioTarget: { min: 0.8, max: 1.2 },
+    asymmetryThreshold: 0.10,
+  },
+  
+  // Calf/Achilles Return to Sport (Practitioner's Guide to Calf & Achilles)
+  calfAchilles: {
+    returnToSportStrengthThreshold: 0.90, // >90% bilateral symmetry
+    progressionPhases: ["isometric", "heavy_slow_resistance", "eccentric", "plyometric", "return_to_sport"],
+  },
+};
+
+/**
+ * Get periodization phase based on current month
+ * Based on 52-week flag football periodization model
+ */
+function getCurrentPeriodizationPhase(date = new Date()) {
+  const month = date.getMonth() + 1; // 1-12
+  
+  switch (month) {
+    case 11: return "off_season_rest";       // November - Active Recovery
+    case 12: return "foundation";            // December - Foundation Building
+    case 1:  return "strength_accumulation"; // January - Strength Accumulation
+    case 2:  return "power_development";     // February - Power Development
+    case 3:  return "speed_development";     // March - Speed & Explosive
+    case 4:  
+    case 5:  
+    case 6:  return "in_season_maintenance"; // Apr-Jun - Competition Season
+    case 7:  return "mid_season_reload";     // July - Mid-Season Reload
+    case 8:  return "peak";                  // August - Championship Peak
+    case 9:  
+    case 10: return "in_season_maintenance"; // Sep-Oct - Late Season
+    default: return "foundation";
+  }
+}
+
+/**
+ * Get plyometric intensity level based on phase and readiness
+ */
+function getPlyometricIntensity(phase, readinessScore) {
+  // Safety first: Low readiness = low intensity regardless of phase
+  if (readinessScore && readinessScore < 50) return "low";
+  if (readinessScore && readinessScore < 70) return "medium";
+  
+  const phaseIntensityMap = {
+    off_season_rest: "low",
+    foundation: "low",
+    strength_accumulation: "medium",
+    power_development: "high",
+    speed_development: "very_high",
+    competition_prep: "high",
+    in_season_maintenance: "medium",
+    mid_season_reload: "medium",
+    peak: "high",
+    taper: "low",
+    active_recovery: "low",
+  };
+  
+  return phaseIntensityMap[phase] || "medium";
+}
+
+/**
+ * Calculate safe conditioning intensity based on ACWR and training history
+ * SAFETY RULE: No 80%+ sprinting on day 1 - must build progressively
+ */
+function getSafeConditioningIntensity(acwr, daysSinceLastSession, phase) {
+  // Critical safety: First day back or no recent training = low intensity
+  if (daysSinceLastSession === null || daysSinceLastSession > 7) {
+    return { maxIntensity: 50, note: "⚠️ Returning to training - start at 50% intensity max" };
+  }
+  
+  // ACWR danger zone: Reduce load significantly
+  if (acwr && acwr > 1.5) {
+    return { maxIntensity: 40, note: "🚨 ACWR >1.5 - reduce load to prevent injury" };
+  }
+  
+  // ACWR elevated: Moderate reduction
+  if (acwr && acwr > 1.3) {
+    return { maxIntensity: 60, note: "⚠️ ACWR elevated - moderate intensity recommended" };
+  }
+  
+  // Phase-based max intensity
+  const phaseIntensityMax = {
+    off_season_rest: 40,
+    foundation: 60,
+    strength_accumulation: 75,
+    power_development: 85,
+    speed_development: 95,
+    competition_prep: 90,
+    in_season_maintenance: 80,
+    mid_season_reload: 75,
+    peak: 95,
+    taper: 60,
+    active_recovery: 40,
+  };
+  
+  return { 
+    maxIntensity: phaseIntensityMax[phase] || 70, 
+    note: null 
+  };
+}
+
+/**
+ * Check if Nordic curls should be included today
+ * Evidence: 2-3x per week reduces hamstring injury by 50-70%
+ */
+function shouldIncludeNordicCurls(dayOfWeek, trainingFocus) {
+  // Nordic curls recommended on strength/power days: Mon, Wed, Fri
+  const nordicDays = [1, 3, 5]; // Monday, Wednesday, Friday
+  
+  // Also include on any strength-focused day
+  const strengthFocusDays = ["strength", "power", "strength_accumulation", "power_development"];
+  
+  return nordicDays.includes(dayOfWeek) || strengthFocusDays.includes(trainingFocus);
+}
 
 // Day names for schedule matching
 const DAY_NAMES = [
@@ -160,6 +352,7 @@ function calculateAge(birthDate) {
  * Maps onboarding position values to position_exercise_modifiers.position values
  */
 const POSITION_TO_MODIFIER_KEY = {
+  // Standard abbreviations
   QB: "quarterback",
   WR: "wr_db",
   DB: "wr_db",
@@ -168,6 +361,13 @@ const POSITION_TO_MODIFIER_KEY = {
   Blitzer: "blitzer",
   LB: "linebacker",
   Hybrid: "hybrid",
+  // Full names (from user profile)
+  Quarterback: "quarterback",
+  "Wide Receiver": "wr_db",
+  "Defensive Back": "wr_db",
+  Safety: "wr_db",
+  Cornerback: "wr_db",
+  Linebacker: "linebacker",
   // Lowercase variants (from athlete_training_config)
   quarterback: "quarterback",
   wr_db: "wr_db",
@@ -176,6 +376,11 @@ const POSITION_TO_MODIFIER_KEY = {
   blitzer: "blitzer",
   linebacker: "linebacker",
   hybrid: "hybrid",
+  // Additional lowercase variants
+  "wide receiver": "wr_db",
+  "defensive back": "wr_db",
+  safety: "wr_db",
+  cornerback: "wr_db",
 };
 
 /**
@@ -684,11 +889,11 @@ async function getProtocol(supabase, userId, params, headers) {
   if (protocol.modified_by_coach_id) {
     const { data: coach } = await supabase
       .from("users")
-      .select("name")
+      .select("full_name, first_name, last_name")
       .eq("id", protocol.modified_by_coach_id)
       .maybeSingle();
     if (coach) {
-      coachName = coach.name;
+      coachName = coach.full_name || `${coach.first_name || ''} ${coach.last_name || ''}`.trim() || 'Coach';
     }
   }
 
@@ -881,15 +1086,44 @@ async function generateReturnToPlayProtocol(
   // ============================================================================
   // 1. MORNING MOBILITY - Always included, gentle version
   // ============================================================================
+  // Get the day-specific morning mobility video first
+  const rtpDayOfWeek = new Date(date).getDay();
+  const rtpMobilitySlug = `morning-mobility-day-${rtpDayOfWeek === 0 ? 7 : rtpDayOfWeek}`;
+  const { data: dayMobility } = await supabase
+    .from("exercises")
+    .select("*")
+    .eq("slug", rtpMobilitySlug)
+    .eq("active", true)
+    .maybeSingle();
+
+  // Get general mobility exercises
   const { data: mobilityExercises } = await supabase
     .from("exercises")
     .select("*")
     .eq("category", "mobility")
-    .eq("subcategory", "morning_routine")
+    .is("position_specific", null)
     .eq("active", true)
-    .order("default_order")
-    .limit(5);
+    .limit(4);
 
+  // Add day-specific mobility video first
+  if (dayMobility) {
+    protocolExercises.push({
+      protocol_id: protocol.id,
+      exercise_id: dayMobility.id,
+      block_type: "morning_mobility",
+      block_order: 1,
+      sequence_order: sequenceOrder++,
+      prescribed_sets: 1,
+      prescribed_reps: dayMobility.default_reps,
+      prescribed_hold_seconds: dayMobility.default_hold_seconds,
+      prescribed_duration_seconds: dayMobility.default_duration_seconds,
+      rest_seconds: 30,
+      notes: "RTP: Follow along with the gentle mobility video",
+      load_contribution_au: 0,
+    });
+  }
+
+  // Add general mobility exercises
   if (mobilityExercises && mobilityExercises.length > 0) {
     mobilityExercises.forEach((ex) => {
       protocolExercises.push({
@@ -977,15 +1211,13 @@ async function generateReturnToPlayProtocol(
   }
 
   // ============================================================================
-  // 4. EVENING MOBILITY & FOAM ROLLING - Always included
+  // 4. EVENING RECOVERY - Always included
   // ============================================================================
   const { data: eveningMobility } = await supabase
     .from("exercises")
     .select("*")
-    .eq("category", "mobility")
-    .eq("subcategory", "evening_routine")
+    .eq("category", "recovery")
     .eq("active", true)
-    .order("default_order")
     .limit(4);
 
   if (eveningMobility && eveningMobility.length > 0) {
@@ -1233,6 +1465,29 @@ async function generateProtocol(supabase, userId, payload, headers) {
   if (context.currentPhase) {
     aiRationale += ` 📅 Phase: ${context.currentPhase.name}.`;
   }
+  
+  // Add evidence-based periodization info
+  const periodizationPhase = getCurrentPeriodizationPhase(new Date(date));
+  const phaseNames = {
+    off_season_rest: "Active Recovery",
+    foundation: "Foundation Building",
+    strength_accumulation: "Strength Accumulation",
+    power_development: "Power Development",
+    speed_development: "Speed & Explosive",
+    competition_prep: "Competition Prep",
+    in_season_maintenance: "In-Season Maintenance",
+    mid_season_reload: "Mid-Season Reload",
+    peak: "Championship Peak",
+    taper: "Taper",
+    active_recovery: "Active Recovery",
+  };
+  
+  aiRationale += ` 📊 Periodization: ${phaseNames[periodizationPhase] || periodizationPhase}.`;
+  
+  // Add ACWR safety note if elevated
+  if (acwrForLogic > 1.3) {
+    aiRationale += ` ⚠️ ACWR elevated (${acwrForLogic.toFixed(2)}) - load auto-adjusted for safety.`;
+  }
 
   // Calculate load target (adjusted by age AND taper)
   const baseLoadTarget = Math.round(readinessForLogic * 15);
@@ -1268,7 +1523,37 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
   const protocolExercises = [];
 
-  // 1. Morning Mobility - Position-specific routines
+  // 1. Morning Mobility - ALL PLAYERS get the day-specific video routine FIRST
+  // This ensures everyone sees the daily YouTube video for morning mobility
+  const morningMobilitySlug = `morning-mobility-day-${context.dayOfWeek === 0 ? 7 : context.dayOfWeek}`;
+  const { data: morningMobility } = await supabase
+    .from("exercises")
+    .select("*")
+    .eq("slug", morningMobilitySlug)
+    .eq("active", true)
+    .maybeSingle();
+
+  let mobilitySequence = 0;
+
+  if (morningMobility) {
+    mobilitySequence++;
+    protocolExercises.push({
+      protocol_id: protocol.id,
+      exercise_id: morningMobility.id,
+      block_type: "morning_mobility",
+      sequence_order: mobilitySequence,
+      prescribed_sets: morningMobility.default_sets || 1,
+      prescribed_reps: morningMobility.default_reps,
+      prescribed_hold_seconds: morningMobility.default_hold_seconds,
+      prescribed_duration_seconds: morningMobility.default_duration_seconds,
+      load_contribution_au: morningMobility.load_contribution_au || 0,
+      ai_note: "Daily Morning Mobility Routine - Follow along with the video",
+    });
+  }
+
+  // 2. Position-specific mobility exercises (in addition to the daily video)
+  const normalizedPosition = normalizePosition(context.position);
+
   if (context.isQB) {
     // QB gets extra hip flexor and shoulder mobility for throwing
     const { data: qbMobilityExercises } = await supabase
@@ -1277,38 +1562,122 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .contains("position_specific", ["quarterback"])
       .eq("category", "mobility")
       .eq("active", true)
-      .limit(6);
+      .limit(5);
 
     if (qbMobilityExercises && qbMobilityExercises.length > 0) {
-      qbMobilityExercises.forEach((ex, idx) => {
+      qbMobilityExercises.forEach((ex) => {
+        mobilitySequence++;
         protocolExercises.push({
           protocol_id: protocol.id,
           exercise_id: ex.id,
           block_type: "morning_mobility",
-          sequence_order: idx + 1,
+          sequence_order: mobilitySequence,
           prescribed_sets: ex.default_sets || 1,
           prescribed_reps: ex.default_reps,
           prescribed_hold_seconds: ex.default_hold_seconds,
           prescribed_duration_seconds: ex.default_duration_seconds,
           load_contribution_au: ex.load_contribution_au || 0,
           ai_note:
-            "QB Morning Routine - Hip flexor flexibility supports throwing velocity",
+            "QB Arm Care - Hip flexor flexibility supports throwing velocity",
         });
       });
     }
   } else if (context.isCenter) {
     // Center gets shoulder/wrist mobility for snapping + some QB exercises for throwing
-    // Centers snap every play and also throw, so they need similar mobility to QBs
     const { data: centerMobilityExercises } = await supabase
       .from("exercises")
       .select("*")
       .or("position_specific.cs.{center},position_specific.cs.{quarterback}")
       .eq("category", "mobility")
       .eq("active", true)
-      .limit(6);
+      .limit(5);
 
     if (centerMobilityExercises && centerMobilityExercises.length > 0) {
-      centerMobilityExercises.forEach((ex, idx) => {
+      centerMobilityExercises.forEach((ex) => {
+        mobilitySequence++;
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "morning_mobility",
+          sequence_order: mobilitySequence,
+          prescribed_sets: ex.default_sets || 1,
+          prescribed_reps: ex.default_reps,
+          prescribed_hold_seconds: ex.default_hold_seconds,
+          prescribed_duration_seconds: ex.default_duration_seconds,
+          load_contribution_au: ex.load_contribution_au || 0,
+          ai_note:
+            "Center Arm Care - Shoulder/wrist mobility for snapping + throwing",
+        });
+      });
+    }
+  } else if (normalizedPosition === "wr_db") {
+    // WR/DB gets hip, ankle, and thoracic mobility for route running and coverage
+    const { data: wrDbMobility } = await supabase
+      .from("exercises")
+      .select("*")
+      .contains("position_specific", ["wr_db"])
+      .eq("category", "mobility")
+      .eq("active", true)
+      .limit(5);
+
+    if (wrDbMobility && wrDbMobility.length > 0) {
+      wrDbMobility.forEach((ex) => {
+        mobilitySequence++;
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "morning_mobility",
+          sequence_order: mobilitySequence,
+          prescribed_sets: ex.default_sets || 1,
+          prescribed_reps: ex.default_reps,
+          prescribed_hold_seconds: ex.default_hold_seconds,
+          prescribed_duration_seconds: ex.default_duration_seconds,
+          load_contribution_au: ex.load_contribution_au || 0,
+          ai_note: "WR/DB Mobility - Hip and ankle prep for cuts and routes",
+        });
+      });
+    }
+  } else if (normalizedPosition === "blitzer" || normalizedPosition === "rusher") {
+    // Blitzer/Rusher gets explosive movement mobility
+    const { data: rushMobility } = await supabase
+      .from("exercises")
+      .select("*")
+      .or("position_specific.cs.{blitzer},position_specific.cs.{rusher}")
+      .eq("category", "mobility")
+      .eq("active", true)
+      .limit(5);
+
+    if (rushMobility && rushMobility.length > 0) {
+      rushMobility.forEach((ex) => {
+        mobilitySequence++;
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "morning_mobility",
+          sequence_order: mobilitySequence,
+          prescribed_sets: ex.default_sets || 1,
+          prescribed_reps: ex.default_reps,
+          prescribed_hold_seconds: ex.default_hold_seconds,
+          prescribed_duration_seconds: ex.default_duration_seconds,
+          load_contribution_au: ex.load_contribution_au || 0,
+          ai_note: "Rusher Mobility - Explosive movement prep",
+        });
+      });
+    }
+  }
+
+  // Fallback: if no morning mobility at all, add general mobility exercises
+  if (protocolExercises.filter((e) => e.block_type === "morning_mobility").length === 0) {
+    const { data: generalMobility } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "mobility")
+      .is("position_specific", null)
+      .eq("active", true)
+      .limit(5);
+
+    if (generalMobility && generalMobility.length > 0) {
+      generalMobility.slice(0, 4).forEach((ex, idx) => {
         protocolExercises.push({
           protocol_id: protocol.id,
           exercise_id: ex.id,
@@ -1319,59 +1688,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
           prescribed_hold_seconds: ex.default_hold_seconds,
           prescribed_duration_seconds: ex.default_duration_seconds,
           load_contribution_au: ex.load_contribution_au || 0,
-          ai_note:
-            "Center Morning Routine - Shoulder/wrist mobility for snapping + throwing mechanics",
         });
-      });
-    } else {
-      // Fallback: use QB exercises if no center-specific ones exist
-      const { data: qbFallback } = await supabase
-        .from("exercises")
-        .select("*")
-        .contains("position_specific", ["quarterback"])
-        .eq("category", "mobility")
-        .eq("active", true)
-        .limit(5);
-
-      if (qbFallback) {
-        qbFallback.forEach((ex, idx) => {
-          protocolExercises.push({
-            protocol_id: protocol.id,
-            exercise_id: ex.id,
-            block_type: "morning_mobility",
-            sequence_order: idx + 1,
-            prescribed_sets: ex.default_sets || 1,
-            prescribed_reps: ex.default_reps,
-            prescribed_hold_seconds: ex.default_hold_seconds,
-            prescribed_duration_seconds: ex.default_duration_seconds,
-            load_contribution_au: ex.load_contribution_au || 0,
-            ai_note:
-              "Center uses QB mobility routine (snapping + throwing mechanics)",
-          });
-        });
-      }
-    }
-  } else {
-    // Standard day-specific morning mobility for other positions
-    const morningMobilitySlug = `morning-mobility-day-${context.dayOfWeek === 0 ? 7 : context.dayOfWeek}`;
-    const { data: morningMobility } = await supabase
-      .from("exercises")
-      .select("*")
-      .eq("slug", morningMobilitySlug)
-      .eq("active", true)
-      .maybeSingle();
-
-    if (morningMobility) {
-      protocolExercises.push({
-        protocol_id: protocol.id,
-        exercise_id: morningMobility.id,
-        block_type: "morning_mobility",
-        sequence_order: 1,
-        prescribed_sets: morningMobility.default_sets || 1,
-        prescribed_reps: morningMobility.default_reps,
-        prescribed_hold_seconds: morningMobility.default_hold_seconds,
-        prescribed_duration_seconds: morningMobility.default_duration_seconds,
-        load_contribution_au: morningMobility.load_contribution_au || 0,
       });
     }
   }
@@ -1468,7 +1785,412 @@ async function generateProtocol(supabase, userId, payload, headers) {
     }
   }
 
-  // 4. Main Session - From structured program templates
+  // ============================================================================
+  // EVIDENCE-BASED TRAINING BLOCKS (1.5h Gym Session Structure)
+  // Based on VALD Practitioner's Guides
+  // ============================================================================
+  
+  // Get current periodization phase for evidence-based programming
+  const currentPhase = getCurrentPeriodizationPhase(new Date(date));
+  const plyoIntensity = getPlyometricIntensity(currentPhase, readinessForLogic);
+  const safeConditioning = getSafeConditioningIntensity(acwrForLogic, null, currentPhase);
+  const includeNordics = shouldIncludeNordicCurls(context.dayOfWeek, trainingFocus);
+  
+  console.log("[daily-protocol] Evidence-based config:", {
+    phase: currentPhase,
+    plyoIntensity,
+    safeConditioning,
+    includeNordics,
+    dayOfWeek: context.dayOfWeek,
+  });
+
+  // Skip gym blocks on practice days, film room days, or recovery days
+  const isGymTrainingDay = !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
+  
+  if (isGymTrainingDay) {
+    // ============================================================================
+    // 4. ISOMETRICS BLOCK (15 min)
+    // Evidence: 3-5 sets × 3-6 sec maximal contractions, 30-60s rest
+    // Source: VALD Practitioner's Guide to Isometrics
+    // ============================================================================
+    
+    // Query from both exercises table (isometric category) and isometrics_exercises table
+    const { data: isometricExercisesMain } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "isometric")
+      .eq("active", true)
+      .limit(15);
+    
+    const { data: isometricExercisesSpecialized } = await supabase
+      .from("isometrics_exercises")
+      .select("*")
+      .limit(15);
+    
+    // Combine and format exercises
+    let allIsometrics = [];
+    
+    if (isometricExercisesMain && isometricExercisesMain.length > 0) {
+      allIsometrics = allIsometrics.concat(isometricExercisesMain.map(ex => ({
+        ...ex,
+        source: "exercises",
+      })));
+    }
+    
+    if (isometricExercisesSpecialized && isometricExercisesSpecialized.length > 0) {
+      allIsometrics = allIsometrics.concat(isometricExercisesSpecialized.map(ex => ({
+        id: ex.id,
+        name: ex.name,
+        description: ex.description,
+        video_url: ex.video_url,
+        category: ex.category,
+        source: "isometrics_exercises",
+        default_sets: EVIDENCE_BASED_PROTOCOLS.isometrics.sets.min,
+        default_hold_seconds: EVIDENCE_BASED_PROTOCOLS.isometrics.holdSeconds.max,
+        load_contribution_au: 15, // Moderate load for isometrics
+      })));
+    }
+    
+    if (allIsometrics.length > 0) {
+      // Select 4-5 isometric exercises for ~15 min block
+      const selectedIsometrics = allIsometrics
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5);
+      
+      selectedIsometrics.forEach((ex, idx) => {
+        const sets = EVIDENCE_BASED_PROTOCOLS.isometrics.sets.min + 
+          (readinessForLogic >= 70 ? 1 : 0); // Extra set if high readiness
+        const holdSeconds = EVIDENCE_BASED_PROTOCOLS.isometrics.holdSeconds.max;
+        
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.source === "exercises" ? ex.id : null,
+          block_type: "isometrics",
+          sequence_order: idx + 1,
+          prescribed_sets: sets,
+          prescribed_hold_seconds: holdSeconds,
+          rest_seconds: EVIDENCE_BASED_PROTOCOLS.isometrics.restSeconds.min,
+          load_contribution_au: ex.load_contribution_au || 15,
+          ai_note: `📊 Isometric Protocol: ${sets} sets × ${holdSeconds}s hold. Focus on maximal tension. Evidence: Builds strength at specific joint angles, safe for all fitness levels.`,
+        });
+      });
+      
+      console.log(`[daily-protocol] Added ${selectedIsometrics.length} isometric exercises`);
+    }
+
+    // ============================================================================
+    // 5. PLYOMETRICS BLOCK (15 min)
+    // Evidence: Phase-appropriate contacts, landing emphasis first
+    // Source: VALD Practitioner's Guides (Hamstrings, Calf & Achilles)
+    // ============================================================================
+    
+    const plyoContactsConfig = EVIDENCE_BASED_PROTOCOLS.plyometrics.contactsPerWeek[currentPhase] || 
+      { min: 40, max: 80 };
+    const allowedPlyoTypes = EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels[plyoIntensity] || 
+      EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels.medium;
+    
+    // Query from both exercises table and plyometrics_exercises table
+    const { data: plyoExercisesMain } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "plyometric")
+      .eq("active", true)
+      .limit(20);
+    
+    const { data: plyoExercisesSpecialized } = await supabase
+      .from("plyometrics_exercises")
+      .select("*")
+      .limit(20);
+    
+    let allPlyometrics = [];
+    
+    if (plyoExercisesMain && plyoExercisesMain.length > 0) {
+      allPlyometrics = allPlyometrics.concat(plyoExercisesMain.map(ex => ({
+        ...ex,
+        source: "exercises",
+      })));
+    }
+    
+    if (plyoExercisesSpecialized && plyoExercisesSpecialized.length > 0) {
+      allPlyometrics = allPlyometrics.concat(plyoExercisesSpecialized.map(ex => ({
+        id: ex.id,
+        name: ex.exercise_name || ex.name,
+        description: ex.description,
+        video_url: ex.video_url,
+        category: ex.exercise_category,
+        intensity_level: ex.intensity_level,
+        source: "plyometrics_exercises",
+        default_sets: 3,
+        default_reps: 6,
+        load_contribution_au: 20, // Higher load for plyometrics
+      })));
+    }
+    
+    if (allPlyometrics.length > 0) {
+      // Calculate contacts per session (divide weekly target by ~3 sessions)
+      const contactsPerSession = Math.round((plyoContactsConfig.min + plyoContactsConfig.max) / 2 / 3);
+      const repsPerExercise = 6;
+      const exerciseCount = Math.min(5, Math.ceil(contactsPerSession / repsPerExercise));
+      
+      // Filter by intensity if possible
+      let filteredPlyos = allPlyometrics;
+      if (plyoIntensity === "low") {
+        // Prefer lower intensity exercises
+        filteredPlyos = allPlyometrics.filter(ex => 
+          !ex.name?.toLowerCase().includes("depth") && 
+          !ex.name?.toLowerCase().includes("reactive")
+        );
+      } else if (plyoIntensity === "very_high") {
+        // Include higher intensity
+        filteredPlyos = allPlyometrics.filter(ex => 
+          ex.name?.toLowerCase().includes("depth") || 
+          ex.name?.toLowerCase().includes("reactive") ||
+          ex.name?.toLowerCase().includes("bound")
+        );
+      }
+      
+      // Fallback to all if filter too restrictive
+      if (filteredPlyos.length < 3) filteredPlyos = allPlyometrics;
+      
+      const selectedPlyos = filteredPlyos
+        .sort(() => Math.random() - 0.5)
+        .slice(0, exerciseCount);
+      
+      selectedPlyos.forEach((ex, idx) => {
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.source === "exercises" ? ex.id : null,
+          block_type: "plyometrics",
+          sequence_order: idx + 1,
+          prescribed_sets: 3,
+          prescribed_reps: repsPerExercise,
+          rest_seconds: 60,
+          load_contribution_au: ex.load_contribution_au || 20,
+          ai_note: `⚡ Plyometric Phase: ${currentPhase}. Intensity: ${plyoIntensity.toUpperCase()}. Weekly contacts target: ${plyoContactsConfig.min}-${plyoContactsConfig.max}. Focus on LANDING MECHANICS first.`,
+        });
+      });
+      
+      console.log(`[daily-protocol] Added ${selectedPlyos.length} plyometric exercises (${plyoIntensity} intensity)`);
+    }
+
+    // ============================================================================
+    // 6. STRENGTH BLOCK (15 min)
+    // Evidence: Nordic curls 2-3x/week reduce hamstring injury by 50-70%
+    // Source: VALD Practitioner's Guide to Hamstrings
+    // ============================================================================
+    
+    const { data: strengthExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "strength")
+      .eq("active", true)
+      .limit(30);
+    
+    if (strengthExercises && strengthExercises.length > 0) {
+      let selectedStrength = [];
+      
+      // MANDATORY: Include Nordic Curls on designated days (2-3x per week)
+      // Evidence: Reduces hamstring injury risk by 50-70%
+      if (includeNordics) {
+        const nordicExercise = strengthExercises.find(ex => 
+          ex.name?.toLowerCase().includes("nordic") ||
+          ex.slug?.includes("nordic")
+        );
+        
+        if (nordicExercise) {
+          const nordicProtocol = readinessForLogic >= 70 
+            ? EVIDENCE_BASED_PROTOCOLS.nordicCurls.advanced 
+            : EVIDENCE_BASED_PROTOCOLS.nordicCurls.intermediate;
+          
+          protocolExercises.push({
+            protocol_id: protocol.id,
+            exercise_id: nordicExercise.id,
+            block_type: "strength",
+            sequence_order: 1, // Nordic curls FIRST in strength block
+            prescribed_sets: nordicProtocol.sets,
+            prescribed_reps: nordicProtocol.reps,
+            rest_seconds: 90,
+            load_contribution_au: nordicExercise.load_contribution_au || 25,
+            ai_note: `🏋️ MANDATORY: Nordic Curls - Evidence shows 50-70% reduction in hamstring injuries when performed 2-3x/week. Focus on slow, controlled eccentric lowering.`,
+          });
+          
+          console.log("[daily-protocol] Added mandatory Nordic Curls");
+        }
+      }
+      
+      // Add hip adductor/abductor work for groin injury prevention
+      // Evidence: Add:Abd ratio should be 0.8-1.2 (VALD Hip & Groin Guide)
+      const hipExercises = strengthExercises.filter(ex =>
+        ex.name?.toLowerCase().includes("adduct") ||
+        ex.name?.toLowerCase().includes("copenhagen") ||
+        ex.name?.toLowerCase().includes("hip thrust") ||
+        ex.name?.toLowerCase().includes("glute")
+      );
+      
+      if (hipExercises.length > 0) {
+        const selectedHip = hipExercises
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 2);
+        
+        selectedHip.forEach((ex, idx) => {
+          protocolExercises.push({
+            protocol_id: protocol.id,
+            exercise_id: ex.id,
+            block_type: "strength",
+            sequence_order: (includeNordics ? 2 : 1) + idx,
+            prescribed_sets: 3,
+            prescribed_reps: 10,
+            rest_seconds: 60,
+            load_contribution_au: ex.load_contribution_au || 20,
+            ai_note: `🦵 Hip Strength: Targets Add:Abd ratio (target 0.8-1.2). Prevents groin injuries common in cutting sports.`,
+          });
+        });
+      }
+      
+      // Add 2-3 general strength exercises
+      const generalStrength = strengthExercises
+        .filter(ex => 
+          !ex.name?.toLowerCase().includes("nordic") &&
+          !ex.name?.toLowerCase().includes("adduct") &&
+          !ex.name?.toLowerCase().includes("copenhagen")
+        )
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+      
+      generalStrength.forEach((ex, idx) => {
+        const sequenceStart = (includeNordics ? 2 : 1) + (hipExercises.length > 0 ? 2 : 0);
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "strength",
+          sequence_order: sequenceStart + idx,
+          prescribed_sets: 3,
+          prescribed_reps: 8,
+          rest_seconds: 90,
+          load_contribution_au: ex.load_contribution_au || 20,
+          ai_note: `💪 Strength Phase: ${currentPhase}. Focus on quality movement over load.`,
+        });
+      });
+      
+      console.log(`[daily-protocol] Added strength block with ${includeNordics ? "Nordic curls + " : ""}hip work + general strength`);
+    }
+
+    // ============================================================================
+    // 7. CONDITIONING BLOCK (15 min)
+    // Evidence: ACWR 0.8-1.3 optimal, >1.5 = 2-4x injury risk
+    // SAFETY: No 80%+ sprinting on day 1 - progressive build required
+    // Source: VALD Practitioner's Guide to Preseason, Gabbett 2016
+    // ============================================================================
+    
+    const { data: conditioningExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "conditioning")
+      .eq("active", true)
+      .limit(20);
+    
+    if (conditioningExercises && conditioningExercises.length > 0) {
+      // Filter based on safe intensity
+      let filteredConditioning = conditioningExercises;
+      
+      // If max intensity is low, exclude high-intensity exercises
+      if (safeConditioning.maxIntensity <= 60) {
+        filteredConditioning = conditioningExercises.filter(ex =>
+          !ex.name?.toLowerCase().includes("sprint") &&
+          !ex.name?.toLowerCase().includes("100m") &&
+          !ex.name?.toLowerCase().includes("max velocity")
+        );
+      }
+      
+      // Fallback if filter too restrictive
+      if (filteredConditioning.length < 3) filteredConditioning = conditioningExercises;
+      
+      const selectedConditioning = filteredConditioning
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 4);
+      
+      selectedConditioning.forEach((ex, idx) => {
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "conditioning",
+          sequence_order: idx + 1,
+          prescribed_sets: 2,
+          prescribed_duration_seconds: 30,
+          rest_seconds: 45,
+          load_contribution_au: Math.round((ex.load_contribution_au || 15) * (safeConditioning.maxIntensity / 100)),
+          ai_note: safeConditioning.note || 
+            `🏃 Conditioning Phase: ${currentPhase}. Max intensity: ${safeConditioning.maxIntensity}%. ACWR-safe progression.`,
+        });
+      });
+      
+      console.log(`[daily-protocol] Added ${selectedConditioning.length} conditioning exercises (max ${safeConditioning.maxIntensity}% intensity)`);
+    }
+
+    // ============================================================================
+    // 8. SKILL/TWITCHING DRILLS BLOCK (15 min)
+    // Position-specific reactive drills for neural activation
+    // Source: VALD Speed Testing Guide, Flag Football Periodization
+    // ============================================================================
+    
+    // Combine skill and agility exercises
+    const { data: skillExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .or("category.eq.skill,category.eq.agility")
+      .eq("active", true)
+      .limit(20);
+    
+    if (skillExercises && skillExercises.length > 0) {
+      // Filter for position-specific where available
+      let filteredSkill = skillExercises;
+      
+      if (context.isQB) {
+        const qbSkills = skillExercises.filter(ex =>
+          ex.position_specific?.includes("quarterback") ||
+          ex.name?.toLowerCase().includes("throwing") ||
+          ex.name?.toLowerCase().includes("footwork")
+        );
+        if (qbSkills.length >= 2) filteredSkill = qbSkills;
+      } else if (normalizedPosition === "wr_db") {
+        const wrDbSkills = skillExercises.filter(ex =>
+          ex.position_specific?.includes("wr_db") ||
+          ex.name?.toLowerCase().includes("route") ||
+          ex.name?.toLowerCase().includes("cut") ||
+          ex.name?.toLowerCase().includes("backpedal")
+        );
+        if (wrDbSkills.length >= 2) filteredSkill = wrDbSkills;
+      }
+      
+      const selectedSkills = filteredSkill
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 4);
+      
+      selectedSkills.forEach((ex, idx) => {
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "skill_drills",
+          sequence_order: idx + 1,
+          prescribed_sets: 3,
+          prescribed_reps: 5,
+          rest_seconds: 30,
+          load_contribution_au: ex.load_contribution_au || 10,
+          ai_note: `⚡ Skill Drill: Fast-twitch activation. Focus on speed and precision. Position: ${normalizedPosition}.`,
+        });
+      });
+      
+      console.log(`[daily-protocol] Added ${selectedSkills.length} skill/twitching drills`);
+    }
+  } else {
+    console.log("[daily-protocol] Skipping gym blocks - practice/recovery day");
+  }
+
+  // ============================================================================
+  // END OF EVIDENCE-BASED BLOCKS
+  // ============================================================================
+
+  // 9. Main Session - From structured program templates (Legacy - kept for existing programs)
   // Note: isPracticeDay and isFilmRoomDay already declared above in training focus section
   if (context.sessionTemplate && !isPracticeDay && !isFilmRoomDay) {
     // Get exercises from session_exercises table
@@ -1574,46 +2296,45 @@ async function generateProtocol(supabase, userId, payload, headers) {
       });
     }
   } else if (!isPracticeDay && !isFilmRoomDay) {
-    // BREACH FIX #2: NO GENERIC FALLBACK (Blocker A violation)
-    // DEPRECATED: availability is informational only; team_activities is authority.
-    // If no session template, this is a truthful failure - return explicit error
-    console.error(
-      "[daily-protocol] BLOCKER A VIOLATION: No session template found",
-      {
-        hasProgram: !!context.playerProgram,
-        hasSessionTemplate: !!context.sessionTemplate,
-        sessionResolution: context.sessionResolution,
-      },
-    );
-
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        error: "Cannot generate protocol",
-        details: {
-          reason:
-            context.sessionResolution?.reason ||
-            "No session template available for this date",
+    // No session template - this could be a recovery day or external program
+    // For recovery days (trainingFocus === "recovery"), skip main session but continue with other blocks
+    // For other cases, log a warning but still generate supporting blocks
+    if (trainingFocus === "recovery") {
+      console.log(
+        "[daily-protocol] Recovery day - skipping main session, generating recovery-focused protocol",
+      );
+      // Recovery days don't need main session - continue to cool_down and evening_recovery
+    } else {
+      // No session template and not a recovery day - log warning but still provide supporting blocks
+      console.warn(
+        "[daily-protocol] No session template found, generating supporting blocks only",
+        {
+          hasProgram: !!context.playerProgram,
+          hasSessionTemplate: !!context.sessionTemplate,
           sessionResolution: context.sessionResolution,
+          trainingFocus,
         },
-      }),
-    };
+      );
+      // Continue - users should still get mobility, foam roll, warm-up, cool-down, recovery
+    }
   }
 
-  // 6. Cool-down
+  // ============================================================================
+  // 10. Cool-down (15 min)
+  // Evidence: Essential for recovery, reduces DOMS, promotes parasympathetic state
+  // ============================================================================
   const { data: coolDownExercises } = await supabase
     .from("exercises")
     .select("*")
     .eq("category", "cool_down")
     .eq("active", true)
-    .limit(6);
+    .limit(10);
 
   if (coolDownExercises && coolDownExercises.length > 0) {
+    // More exercises for 15-minute cool-down
     const shuffled = coolDownExercises
       .sort(() => Math.random() - 0.5)
-      .slice(0, 3);
+      .slice(0, 5);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         protocol_id: protocol.id,
@@ -1622,25 +2343,28 @@ async function generateProtocol(supabase, userId, payload, headers) {
         sequence_order: idx + 1,
         prescribed_sets: ex.default_sets || 1,
         prescribed_reps: ex.default_reps,
-        prescribed_hold_seconds: ex.default_hold_seconds,
+        prescribed_hold_seconds: ex.default_hold_seconds || 30,
         prescribed_duration_seconds: ex.default_duration_seconds,
         load_contribution_au: ex.load_contribution_au || 0,
+        ai_note: "🧘 Cool-down: Promotes recovery, reduces muscle soreness, activates parasympathetic nervous system.",
       });
     });
   }
 
   // 7. Evening Recovery
+  // For recovery days, include more recovery modalities; for normal days, include fewer
+  const recoveryCount = trainingFocus === "recovery" ? 6 : 3;
   const { data: recoveryExercises } = await supabase
     .from("exercises")
     .select("*")
     .eq("category", "recovery")
     .eq("active", true)
-    .limit(4);
+    .limit(15);
 
   if (recoveryExercises && recoveryExercises.length > 0) {
     const shuffled = recoveryExercises
       .sort(() => Math.random() - 0.5)
-      .slice(0, 2);
+      .slice(0, recoveryCount);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
         protocol_id: protocol.id,
@@ -1652,6 +2376,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
         prescribed_hold_seconds: ex.default_hold_seconds,
         prescribed_duration_seconds: ex.default_duration_seconds,
         load_contribution_au: ex.load_contribution_au || 0,
+        ai_note:
+          trainingFocus === "recovery"
+            ? "Recovery Day - Focus on these modalities to enhance recovery"
+            : null,
       });
     });
   }
@@ -1828,8 +2556,8 @@ async function completeBlock(supabase, userId, payload, headers) {
   }
 
   // Update block status
-  const blockStatusField = `${blockType.replace("_", "_")}_status`;
-  const blockCompletedField = `${blockType.replace("_", "_")}_completed_at`;
+  const blockStatusField = `${blockType}_status`;
+  const blockCompletedField = `${blockType}_completed_at`;
 
   await supabase
     .from("daily_protocols")
@@ -2246,12 +2974,17 @@ function transformProtocolResponse(
   teamActivity = null,
   sessionResolution = null,
 ) {
-  // Group exercises by block type
+  // Group exercises by block type (including new evidence-based blocks)
   const blocks = {
     morning_mobility: [],
     foam_roll: [],
     warm_up: [],
-    main_session: [],
+    isometrics: [],        // NEW: Evidence-based isometric training
+    plyometrics: [],       // NEW: Phase-appropriate plyometric work
+    strength: [],          // NEW: Strength incl. mandatory Nordic curls
+    conditioning: [],      // NEW: ACWR-adjusted conditioning
+    skill_drills: [],      // NEW: Position-specific skill/twitching
+    main_session: [],      // Legacy - kept for backwards compatibility
     cool_down: [],
     evening_recovery: [],
   };
@@ -2286,7 +3019,7 @@ function transformProtocolResponse(
     };
   };
 
-  // Build blocks array for resolver
+  // Build blocks array for resolver (including new evidence-based blocks)
   const blocksArray = [];
   if (blocks.morning_mobility.length > 0) {
     blocksArray.push({ type: "morning_mobility", title: "Morning Mobility" });
@@ -2295,13 +3028,29 @@ function transformProtocolResponse(
     blocksArray.push({ type: "foam_roll", title: "Pre-Training: Foam Roll" });
   }
   if (blocks.warm_up.length > 0) {
-    blocksArray.push({ type: "warm_up", title: "Warm Up" });
+    blocksArray.push({ type: "warm_up", title: "Warm-Up (15 min)" });
+  }
+  // Evidence-based training blocks
+  if (blocks.isometrics.length > 0) {
+    blocksArray.push({ type: "isometrics", title: "Isometrics (15 min)" });
+  }
+  if (blocks.plyometrics.length > 0) {
+    blocksArray.push({ type: "plyometrics", title: "Plyometrics (15 min)" });
+  }
+  if (blocks.strength.length > 0) {
+    blocksArray.push({ type: "strength", title: "Strength (15 min)" });
+  }
+  if (blocks.conditioning.length > 0) {
+    blocksArray.push({ type: "conditioning", title: "Conditioning (15 min)" });
+  }
+  if (blocks.skill_drills.length > 0) {
+    blocksArray.push({ type: "skill_drills", title: "Skill Drills (15 min)" });
   }
   if (blocks.main_session.length > 0) {
     blocksArray.push({ type: "main_session", title: "Main Session" });
   }
   if (blocks.cool_down.length > 0) {
-    blocksArray.push({ type: "cool_down", title: "Cool Down" });
+    blocksArray.push({ type: "cool_down", title: "Cool-Down (15 min)" });
   }
   if (blocks.evening_recovery.length > 0) {
     blocksArray.push({ type: "evening_recovery", title: "Evening Recovery" });
@@ -2326,7 +3075,15 @@ function transformProtocolResponse(
       "Pre-Training: Foam Roll",
       "pi-circle-fill",
     ),
+    warmUp: createBlock("warm_up", "Warm-Up (15 min)", "pi-bolt"),
+    // Evidence-based training blocks
+    isometrics: createBlock("isometrics", "Isometrics (15 min)", "pi-pause-circle"),
+    plyometrics: createBlock("plyometrics", "Plyometrics (15 min)", "pi-arrow-up"),
+    strength: createBlock("strength", "Strength (15 min)", "pi-heart"),
+    conditioning: createBlock("conditioning", "Conditioning (15 min)", "pi-directions-run"),
+    skillDrills: createBlock("skill_drills", "Skill Drills (15 min)", "pi-bolt"),
     mainSession: createBlock("main_session", "Main Session", "pi-play"),
+    coolDown: createBlock("cool_down", "Cool-Down (15 min)", "pi-stop"),
     eveningRecovery: createBlock(
       "evening_recovery",
       "Evening Recovery",

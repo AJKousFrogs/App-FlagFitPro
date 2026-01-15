@@ -45,16 +45,39 @@ interface ProtocolExercise {
   videoId?: string;
 }
 
+interface ConfidenceMetadata {
+  readiness?: {
+    hasData?: boolean;
+    source?: string;
+    daysStale?: number | null;
+    confidence?: "none" | "stale" | "measured" | "high";
+  };
+  acwr?: {
+    hasData?: boolean;
+    source?: string;
+    trainingDaysLogged?: number | null;
+    confidence?: "none" | "building_baseline" | "high";
+  };
+  sessionResolution?: {
+    success?: boolean;
+    status?: string;
+    hasProgram?: boolean;
+    hasSessionTemplate?: boolean;
+  };
+}
+
 interface DailyProtocolData {
   id: string;
   date: string;
   userId: string;
   readinessScore: number | null;
+  acwrValue?: number | null;
   trainingFocus: string;
   blocks: ProtocolBlock[];
   overallProgress: number;
   totalExercises: number;
   completedExercises: number;
+  confidenceMetadata?: ConfidenceMetadata;
   override?: {
     type: string;
     reason: string;
@@ -283,6 +306,7 @@ export class DirectSupabaseApiService {
       date: protocol.protocol_date,
       userId: protocol.user_id,
       readinessScore: protocol.readiness_score,
+      acwrValue: protocol.acwr_value,
       trainingFocus: protocol.training_focus || "general",
       blocks,
       overallProgress: protocol.overall_progress || 0,
@@ -290,6 +314,7 @@ export class DirectSupabaseApiService {
         protocol.total_exercises ||
         blocks.reduce((sum, b) => sum + b.exercises.length, 0),
       completedExercises: protocol.completed_exercises || 0,
+      confidenceMetadata: protocol.confidence_metadata,
       override,
     };
   }

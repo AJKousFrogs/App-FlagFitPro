@@ -41,8 +41,8 @@ export interface StatItem {
               </div>
             }
             <div class="stat-details">
-              <span class="stat-value">{{ formatStatValue(stat) }}</span>
-              <span class="stat-label">{{ stat.label }}</span>
+              <span class="stat-block__value">{{ formatStatValue(stat) }}</span>
+              <span class="stat-block__label">{{ stat.label }}</span>
             </div>
             @if (stat.trend) {
               <p-tag

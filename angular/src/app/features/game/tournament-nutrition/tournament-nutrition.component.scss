@@ -7,7 +7,7 @@
 // ============================================================================
 
 .tournament-nutrition-page {
-  @include page-container(1200px);
+  @include page-container(var(--content-max-width-xl));
 }
 
 @include stat-block;

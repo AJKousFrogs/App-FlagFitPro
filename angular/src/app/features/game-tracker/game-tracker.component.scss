@@ -9,7 +9,7 @@
 @include stat-block;
 
 .game-tracker-page {
-  @include page-container(1400px);
+  @include page-container(var(--content-max-width-2xl));
 
   /* ================================================================
      PRIMENG COMPONENT STYLING VIA CSS CUSTOM PROPERTIES

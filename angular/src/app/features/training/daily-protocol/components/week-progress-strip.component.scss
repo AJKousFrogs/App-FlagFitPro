@@ -5,6 +5,8 @@
 
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .week-progress-strip {
   background: var(--surface-primary, #fff);
   border: 1px solid var(--primitive-neutral-200, #e5e5e5);
@@ -107,10 +109,6 @@
   color: var(--ds-primary-green, #089949);
   letter-spacing: 0.5px;
 }
-
-@use "styles/mixins" as *;
-
-@include stat-block;
 
 /* Week Stats */
 .week-stats {

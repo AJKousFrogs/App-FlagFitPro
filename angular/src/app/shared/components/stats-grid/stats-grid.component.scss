@@ -7,6 +7,8 @@
 // Grid layout - matches Dashboard .stats-overview EXACTLY
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .stats-overview {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -82,8 +84,8 @@
   gap: var(--space-1);
 }
 
-// Value text - matches Dashboard .stat-value
-.stat-value {
+// Value text - matches Dashboard .stat-block__value
+.stat-block__value {
   font-size: var(--font-size-metric-md); // 24px
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
@@ -91,8 +93,8 @@
   overflow-wrap: break-word;
 }
 
-// Label text - matches Dashboard .stat-label
-.stat-label {
+// Label text - matches Dashboard .stat-block__label
+.stat-block__label {
   font-size: var(--font-size-caption); // 13px
   font-weight: var(--font-weight-regular);
   color: var(--color-text-muted);
@@ -121,7 +123,7 @@
     padding: var(--space-1) var(--space-2);
   }
 
-  .stat-value {
+  .stat-block__value {
     font-size: var(--font-size-metric-sm, 20px);
   }
 }
@@ -142,7 +144,7 @@
     min-width: 0;
   }
 
-  .stat-value {
+  .stat-block__value {
     font-size: var(--font-size-metric-sm, 18px);
   }
 
@@ -170,11 +172,11 @@
     font-size: var(--font-body-sm-size);
   }
 
-  .stat-value {
+  .stat-block__value {
     font-size: var(--font-size-h4);
   }
 
-  .stat-label {
+  .stat-block__label {
     font-size: var(--font-size-badge);
   }
 }

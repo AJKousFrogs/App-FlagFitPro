@@ -3,9 +3,7 @@
 @include stat-block;
 
 .psychology-reports {
-  padding: var(--ds-spacing-lg);
-  max-width: 1200px;
-  margin: 0 auto;
+  @include page-container(var(--content-max-width-xl));
 }
 
 // Privacy Notice

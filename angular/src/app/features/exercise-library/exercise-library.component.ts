@@ -506,6 +506,7 @@ export class ExerciseLibraryComponent implements OnInit {
     { name: "foam_roll", icon: "pi-circle", color: COLORS.BLUE },
     { name: "warm_up", icon: "pi-sun", color: COLORS.AMBER },
     { name: "strength", icon: "pi-bolt", color: COLORS.ERROR },
+    { name: "isometric", icon: "pi-pause", color: COLORS.AMBER },
     { name: "skill", icon: "pi-star", color: COLORS.SUCCESS },
     { name: "conditioning", icon: "pi-heart", color: COLORS.ERROR },
     { name: "plyometric", icon: "pi-forward", color: COLORS.BLUE },
@@ -519,6 +520,7 @@ export class ExerciseLibraryComponent implements OnInit {
     "foam_roll",
     "warm_up",
     "strength",
+    "isometric",
     "skill",
     "conditioning",
     "plyometric",
@@ -619,10 +621,11 @@ export class ExerciseLibraryComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.exercises()];
 
-    // Filter by category
+    // Filter by category (case-insensitive)
     if (this.selectedCategory() !== "all") {
+      const selectedCat = this.selectedCategory().toLowerCase();
       filtered = filtered.filter(
-        (ex) => ex.category === this.selectedCategory(),
+        (ex) => ex.category.toLowerCase() === selectedCat,
       );
     }
 
@@ -644,7 +647,11 @@ export class ExerciseLibraryComponent implements OnInit {
   onPageChange(event: { page?: number; rows?: number; first?: number }): void {
     this.currentPage = event.page ?? 0;
     this.itemsPerPage = event.rows ?? 8;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Scroll to the exercises grid, not the top of the page
+    const grid = document.querySelector('.exercises-grid');
+    if (grid) {
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   getCategoryIcon(category: string): string {
@@ -653,6 +660,7 @@ export class ExerciseLibraryComponent implements OnInit {
       foam_roll: "pi-circle",
       warm_up: "pi-sun",
       strength: "pi-bolt",
+      isometric: "pi-pause",
       skill: "pi-star",
       conditioning: "pi-heart",
       plyometric: "pi-forward",

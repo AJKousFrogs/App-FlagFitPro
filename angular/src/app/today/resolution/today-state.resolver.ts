@@ -723,12 +723,11 @@ export function resolveTodayState(
   }
 
   // Determine blocks (normal training day)
-  const blocksDisplayed: string[] = [
-    "morning_mobility",
-    "foam_roll",
-    "main_session",
-    "recovery",
-  ];
+  // Use blocks from protocol if available, otherwise default list
+  // This ensures we show whatever blocks the backend generated (warm_up, main_session, cool_down, etc.)
+  const blocksDisplayed: string[] = protocolJson.blocks?.length
+    ? protocolJson.blocks.map((b) => b.type)
+    : ["morning_mobility", "foam_roll", "main_session", "recovery"];
 
   // ACWR baseline info
   const acwrBaseline =

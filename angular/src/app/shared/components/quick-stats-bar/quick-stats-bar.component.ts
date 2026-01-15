@@ -65,7 +65,7 @@ export interface QuickStat {
             <!-- Content -->
             <div class="stat-content">
               <div class="stat-value-row">
-                <span class="stat-value">
+                <span class="stat-block__value">
                   {{ formatValue(stat.value) }}
                 </span>
                 @if (stat.unit) {
@@ -80,7 +80,7 @@ export interface QuickStat {
                   </span>
                 }
               </div>
-              <span class="stat-label">{{ stat.label }}</span>
+              <span class="stat-block__label">{{ stat.label }}</span>
             </div>
 
             <!-- Status indicator bar -->

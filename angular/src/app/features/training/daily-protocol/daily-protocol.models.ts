@@ -109,6 +109,11 @@ export type BlockType =
   | "morning_mobility"
   | "foam_roll"
   | "warm_up"
+  | "isometrics"
+  | "plyometrics"
+  | "strength"
+  | "conditioning"
+  | "skill_drills"
   | "main_session"
   | "cool_down"
   | "evening_recovery";
@@ -151,10 +156,17 @@ export interface DailyProtocol {
   aiRationale?: string;
   trainingFocus?: string;
 
-  // Blocks
+  // Blocks - Evidence-based 1.5h training structure
   morningMobility: ProtocolBlock;
   foamRoll: ProtocolBlock;
-  mainSession: ProtocolBlock;
+  warmUp?: ProtocolBlock;
+  isometrics?: ProtocolBlock;      // NEW: 15 min isometric training
+  plyometrics?: ProtocolBlock;     // NEW: 15 min plyometric training
+  strength?: ProtocolBlock;        // NEW: 15 min strength (incl. Nordic curls)
+  conditioning?: ProtocolBlock;    // NEW: 15 min ACWR-adjusted conditioning
+  skillDrills?: ProtocolBlock;     // NEW: 15 min skill/twitching drills
+  mainSession: ProtocolBlock;      // Legacy - kept for backwards compatibility
+  coolDown?: ProtocolBlock;
   eveningRecovery: ProtocolBlock;
 
   // Overall progress
@@ -199,9 +211,34 @@ export const BLOCK_CONFIG: Record<
     color: BLOCK_COLORS.foam_roll, // --primitive-error-500 (red)
   },
   warm_up: {
-    title: "Warm-Up",
+    title: "Warm-Up (15 min)",
     icon: "pi-bolt",
     color: BLOCK_COLORS.warm_up, // --color-workout-cardio (orange)
+  },
+  isometrics: {
+    title: "Isometrics (15 min)",
+    icon: "pi-pause-circle",
+    color: BLOCK_COLORS.main_session, // Uses green for strength work
+  },
+  plyometrics: {
+    title: "Plyometrics (15 min)",
+    icon: "pi-arrow-up",
+    color: BLOCK_COLORS.warm_up, // Uses orange for explosive work
+  },
+  strength: {
+    title: "Strength (15 min)",
+    icon: "pi-heart",
+    color: BLOCK_COLORS.main_session, // Uses green for strength work
+  },
+  conditioning: {
+    title: "Conditioning (15 min)",
+    icon: "pi-directions-run",
+    color: BLOCK_COLORS.foam_roll, // Uses red for cardio/conditioning
+  },
+  skill_drills: {
+    title: "Skill Drills (15 min)",
+    icon: "pi-bolt",
+    color: BLOCK_COLORS.cool_down, // Uses blue for skill work
   },
   main_session: {
     title: "Main Session",
@@ -209,7 +246,7 @@ export const BLOCK_CONFIG: Record<
     color: BLOCK_COLORS.main_session, // --ds-primary-green (brand green)
   },
   cool_down: {
-    title: "Cool-Down",
+    title: "Cool-Down (15 min)",
     icon: "pi-stop",
     color: BLOCK_COLORS.cool_down, // --color-chart-tertiary (blue)
   },

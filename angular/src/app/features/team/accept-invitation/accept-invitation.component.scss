@@ -3,6 +3,8 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
 .accept-invitation-page {
   display: flex;
   align-items: center;
@@ -10,11 +12,19 @@
   min-height: 100vh;
   padding: var(--space-6);
   background: var(--surface-secondary);
+
+  @include respond-to(md) {
+    padding: var(--space-4);
+  }
+
+  @include respond-to(sm) {
+    padding: var(--space-3);
+  }
 }
 
 .accept-invitation-card {
   width: 100%;
-  max-width: 500px;
+  max-width: var(--content-max-width-sm);
 }
 
 .accept-invitation-logo {

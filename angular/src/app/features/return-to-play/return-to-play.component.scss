@@ -5,6 +5,8 @@
 
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .return-to-play-page {
   padding: var(--space-6);
 }

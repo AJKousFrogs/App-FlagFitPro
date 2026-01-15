@@ -109,8 +109,8 @@ interface CoachVisibilityRecord {
             <i class="pi pi-exclamation-triangle"></i>
           </div>
           <div class="stat-content">
-            <span class="stat-value">{{ highRiskCount() }}</span>
-            <span class="stat-label">High Risk Queries</span>
+            <span class="stat-block__value">{{ highRiskCount() }}</span>
+            <span class="stat-block__label">High Risk Queries</span>
           </div>
         </div>
         <div class="stat-card pending">
@@ -118,8 +118,8 @@ interface CoachVisibilityRecord {
             <i class="pi pi-clock"></i>
           </div>
           <div class="stat-content">
-            <span class="stat-value">{{ pendingRecommendations() }}</span>
-            <span class="stat-label">Pending Actions</span>
+            <span class="stat-block__value">{{ pendingRecommendations() }}</span>
+            <span class="stat-block__label">Pending Actions</span>
           </div>
         </div>
         <div class="stat-card total">
@@ -127,8 +127,8 @@ interface CoachVisibilityRecord {
             <i class="pi pi-comments"></i>
           </div>
           <div class="stat-content">
-            <span class="stat-value">{{ totalInteractions() }}</span>
-            <span class="stat-label">AI Interactions</span>
+            <span class="stat-block__value">{{ totalInteractions() }}</span>
+            <span class="stat-block__label">AI Interactions</span>
           </div>
         </div>
       </div>

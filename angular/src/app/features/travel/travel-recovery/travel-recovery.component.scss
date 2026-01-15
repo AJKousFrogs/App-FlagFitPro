@@ -6,7 +6,7 @@
 @use "styles/mixins" as *;
 
 .travel-recovery-page {
-  @include page-container(1400px);
+  @include page-container(var(--content-max-width-2xl));
 }
 
 @include stat-block;

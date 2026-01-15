@@ -84,10 +84,10 @@ interface AnalyticsData {
               <i class="pi pi-check-circle"></i>
             </div>
             <div class="stat-content">
-              <span class="stat-value"
+              <span class="stat-block__value"
                 >{{ analytics()?.totals?.completion_rate || 0 }}%</span
               >
-              <span class="stat-label">Completion Rate</span>
+              <span class="stat-block__label">Completion Rate</span>
             </div>
             <p-progressBar
               [value]="analytics()?.totals?.completion_rate || 0"
@@ -105,10 +105,10 @@ interface AnalyticsData {
               <i class="pi pi-bolt"></i>
             </div>
             <div class="stat-content">
-              <span class="stat-value">{{
+              <span class="stat-block__value">{{
                 analytics()?.streaks?.current || 0
               }}</span>
-              <span class="stat-label">Current Streak</span>
+              <span class="stat-block__label">Current Streak</span>
             </div>
             <div class="streak-info">
               <span>Best: {{ analytics()?.streaks?.best || 0 }} days</span>
@@ -124,10 +124,10 @@ interface AnalyticsData {
               <i class="pi pi-flag-fill"></i>
             </div>
             <div class="stat-content">
-              <span class="stat-value">{{
+              <span class="stat-block__value">{{
                 analytics()?.totals?.total_completed || 0
               }}</span>
-              <span class="stat-label">Sessions Completed</span>
+              <span class="stat-block__label">Sessions Completed</span>
             </div>
             <div class="total-info">
               <span
