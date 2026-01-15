@@ -165,36 +165,42 @@ interface TournamentNutritionBrief {
               <div class="stat-icon athletes">
                 <i class="pi pi-users"></i>
               </div>
-              <div class="stat-content">
-                <span class="stat-value">{{ athletes().length }}</span>
-                <span class="stat-label">Athletes Monitored</span>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ athletes().length }}</span>
+                <span class="stat-block__label">Athletes Monitored</span>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon compliance">
                 <i class="pi pi-check-circle"></i>
               </div>
-              <div class="stat-content">
-                <span class="stat-value">{{ avgSupplementCompliance() }}%</span>
-                <span class="stat-label">Avg Supplement Compliance</span>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value"
+                  >{{ avgSupplementCompliance() }}%</span
+                >
+                <span class="stat-block__label"
+                  >Avg Supplement Compliance</span
+                >
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon alerts">
                 <i class="pi pi-exclamation-triangle"></i>
               </div>
-              <div class="stat-content">
-                <span class="stat-value">{{ alertCount() }}</span>
-                <span class="stat-label">Active Alerts</span>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ alertCount() }}</span>
+                <span class="stat-block__label">Active Alerts</span>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon hydration">
                 <i class="pi pi-bolt"></i>
               </div>
-              <div class="stat-content">
-                <span class="stat-value">{{ avgHydrationScore() }}</span>
-                <span class="stat-label">Avg Hydration Status</span>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{
+                  avgHydrationScore()
+                }}</span>
+                <span class="stat-block__label">Avg Hydration Status</span>
               </div>
             </div>
           </div>

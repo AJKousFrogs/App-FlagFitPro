@@ -201,24 +201,32 @@
         </div>
         <!-- Quick Stats Summary -->
         <div class="quick-stats-grid">
-          <div class="stat-box">
-            <div class="stat-label">Total Plays</div>
-            <div class="stat-value">{{ getTotalPlays() }}</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">Completions</div>
-            <div class="stat-value">{{ getTotalCompletions() }}</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">Drops</div>
-            <div class="stat-value stat-value-danger">
-              {{ getTotalDrops() }}
+          <div class="stat-box stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <div class="stat-block__label">Total Plays</div>
+              <div class="stat-block__value">{{ getTotalPlays() }}</div>
             </div>
           </div>
-          <div class="stat-box">
-            <div class="stat-label">Flag Pulls</div>
-            <div class="stat-value stat-value-success">
-              {{ getTotalFlagPulls() }}
+          <div class="stat-box stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <div class="stat-block__label">Completions</div>
+              <div class="stat-block__value">{{ getTotalCompletions() }}</div>
+            </div>
+          </div>
+          <div class="stat-box stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <div class="stat-block__label">Drops</div>
+              <div class="stat-block__value stat-value-danger">
+                {{ getTotalDrops() }}
+              </div>
+            </div>
+          </div>
+          <div class="stat-box stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <div class="stat-block__label">Flag Pulls</div>
+              <div class="stat-block__value stat-value-success">
+                {{ getTotalFlagPulls() }}
+              </div>
             </div>
           </div>
         </div>

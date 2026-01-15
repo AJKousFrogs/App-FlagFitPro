@@ -196,10 +196,12 @@ export class RosterService {
       this.currentUserRole.set(teamMember.role as TeamRole);
 
       // Load team members (coaches/staff)
-      const { data: members } = await this.supabaseService.client
-        .from("team_members")
-        .select(
-          `
+      let members = null;
+      const { data: membersData, error: membersError } =
+        await this.supabaseService.client
+          .from("team_members")
+          .select(
+            `
           id,
           user_id,
           role,
@@ -209,16 +211,58 @@ export class RosterService {
             raw_user_meta_data
           )
         `,
-        )
-        .eq("team_id", teamMember.team_id);
+          )
+          .eq("team_id", teamMember.team_id);
+
+      if (membersError) {
+        this.logger.warn(
+          `[RosterService] Error loading team members with relationship:`,
+          JSON.stringify(membersError),
+        );
+        // Try fallback query without user relationship
+        const { data: membersFallback, error: fallbackError } =
+          await this.supabaseService.client
+            .from("team_members")
+            .select("id, user_id, role")
+            .eq("team_id", teamMember.team_id);
+        
+        if (fallbackError) {
+          this.logger.error(
+            `[RosterService] Fallback query also failed:`,
+            JSON.stringify(fallbackError),
+          );
+          members = [];
+        } else {
+          this.logger.warn(
+            `[RosterService] Using fallback query, loaded ${membersFallback?.length || 0} members`,
+          );
+          // Map fallback data to expected structure
+          members = (membersFallback || []).map((m) => ({
+            ...m,
+            users: null, // No user data available
+          }));
+        }
+      } else {
+        members = membersData;
+      }
 
       // Load team members with player role and their user profile data
       // First get team members with role='player' - include position and jersey_number from team_members
-      const { data: playerMemberIds } = await this.supabaseService.client
+      const {
+        data: playerMemberIds,
+        error: playerMemberIdsError,
+      } = await this.supabaseService.client
         .from("team_members")
         .select("id, team_id, user_id, role, position, jersey_number")
         .eq("team_id", teamMember.team_id)
         .eq("role", "player");
+
+      if (playerMemberIdsError) {
+        this.logger.warn(
+          `[RosterService] Error loading player member IDs:`,
+          JSON.stringify(playerMemberIdsError),
+        );
+      }
 
       this.logger.warn(
         `[RosterService] Player member IDs:`,
@@ -227,14 +271,23 @@ export class RosterService {
 
       // Then fetch user data for those members
       let playerMembers: PlayerMemberRecord[] = [];
-      if (playerMemberIds && playerMemberIds.length > 0) {
+      if (playerMemberIds && Array.isArray(playerMemberIds) && playerMemberIds.length > 0) {
         const userIds = playerMemberIds.map((m) => m.user_id).filter(Boolean);
-        const { data: userData, error: userError } = await this.supabaseService.client
-          .from("users")
-          .select(
-            "id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed",
-          )
-          .in("id", userIds);
+        
+        let userData = null;
+        let userError = null;
+        
+        if (userIds.length > 0) {
+          const userQueryResult = await this.supabaseService.client
+            .from("users")
+            .select(
+              "id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed",
+            )
+            .in("id", userIds);
+          
+          userData = userQueryResult.data;
+          userError = userQueryResult.error;
+        }
 
         if (userError) {
           this.logger.warn(
@@ -291,17 +344,21 @@ export class RosterService {
       }
 
       // Process coaching staff
-      const staff = this.processStaffMembers(
-        members as TeamMemberRecord[] | null,
-      );
+      const staff = this.processStaffMembers(members);
       this.coachingStaff.set(staff);
 
       // Process players from team_players table
       const playersFromTable = this.processPlayers(players);
+      this.logger.warn(
+        `[RosterService] Processed ${playersFromTable.length} players from team_players table`,
+      );
 
       // Process players from team_members with role='player'
       const playersFromMembers = this.processPlayerMembers(
         playerMembers as PlayerMemberRecord[] | null,
+      );
+      this.logger.warn(
+        `[RosterService] Processed ${playersFromMembers.length} players from team_members`,
       );
 
       // Merge both player lists, avoiding duplicates by user_id
@@ -317,17 +374,26 @@ export class RosterService {
       }
 
       // Then add players from team_members who don't already exist in team_players
+      let skippedCount = 0;
       for (const player of playersFromMembers) {
         if (player.user_id && seenUserIds.has(player.user_id)) {
+          skippedCount++;
           continue; // Skip if already in team_players
         }
         allPlayersList.push(player);
       }
 
+      this.logger.warn(
+        `[RosterService] Merged players: ${playersFromTable.length} from team_players, ${playersFromMembers.length} from team_members, ${skippedCount} skipped (duplicates), total: ${allPlayersList.length}`,
+      );
+
       this.allPlayers.set(allPlayersList);
 
       // Calculate team stats
       this.calculateTeamStats(allPlayersList, staff);
+      this.logger.warn(
+        `[RosterService] Team stats calculated with ${allPlayersList.length} total players`,
+      );
     } catch (error: unknown) {
       this.logger.error("[RosterService] Error loading roster:", error);
       this.error.set(this.getErrorMessage(error));

@@ -7,10 +7,10 @@
 // ============================================================================
 
 .tournament-nutrition-page {
-  padding: var(--space-6);
-  max-width: 1200px;
-  margin: 0 auto;
+  @include page-container(1200px);
 }
+
+@include stat-block;
 
 .supplements-section {
   display: flex;
@@ -179,7 +179,7 @@
   }
 }
 
-.stat-value {
+.stat .stat-block__value {
   font-size: var(--font-size-metric-md);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-on-primary);
@@ -189,7 +189,7 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.stat-label {
+.stat .stat-block__label {
   font-size: var(--font-size-badge);
   font-weight: var(--font-weight-semibold);
   color: rgba(255, 255, 255, 0.9);

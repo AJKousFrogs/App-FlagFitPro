@@ -9,23 +9,23 @@
 @use "styles/mixins" as *;
 
 .dashboard-content {
-  padding: var(--space-4);
+  padding: var(--space-6);
   background: var(--surface-ground);
   min-height: 100vh;
 
   // Tablet
   @include respond-to(lg) {
-    padding: var(--space-4);
+    padding: var(--space-5);
   }
 
   // Mobile
   @include respond-to(md) {
-    padding: var(--space-3);
+    padding: var(--space-4);
   }
 
   // Small mobile
   @include respond-to(xs) {
-    padding: var(--space-2);
+    padding: var(--space-3);
   }
 
   /* ============================================
@@ -33,7 +33,7 @@
    ============================================ */
 
   .priority-command-center {
-    margin-bottom: var(--space-8); /* space(6) = 32px */
+    margin-bottom: var(--space-6);
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
@@ -943,8 +943,8 @@
    ============================================ */
 
   .active-protocols-section {
-    margin-top: var(--space-8); /* space(6) = 32px */
-    margin-bottom: var(--space-8); /* space(6) = 32px */
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-6);
 
     .section-title {
       font-size: var(--font-size-h3);

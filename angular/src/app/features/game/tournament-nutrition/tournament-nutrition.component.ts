@@ -152,21 +152,29 @@ interface HydrationLog {
             </div>
           </div>
           <div class="banner-stats">
-            <div class="stat">
-              <span class="stat-value"
-                >{{ totalHydration() | number: "1.0-0" }}ml</span
-              >
-              <span class="stat-label">Hydration Today</span>
+            <div class="stat stat-block stat-block--large">
+              <div class="stat-block__content">
+                <span class="stat-block__value"
+                  >{{ totalHydration() | number: "1.0-0" }}ml</span
+                >
+                <span class="stat-block__label">Hydration Today</span>
+              </div>
             </div>
-            <div class="stat">
-              <span class="stat-value"
-                >{{ completedWindows() }}/{{ nutritionWindows().length }}</span
-              >
-              <span class="stat-label">Nutrition Windows</span>
+            <div class="stat stat-block stat-block--large">
+              <div class="stat-block__content">
+                <span class="stat-block__value"
+                  >{{ completedWindows() }}/{{
+                    nutritionWindows().length
+                  }}</span
+                >
+                <span class="stat-block__label">Nutrition Windows</span>
+              </div>
             </div>
-            <div class="stat">
-              <span class="stat-value">{{ nextGameIn() }}</span>
-              <span class="stat-label">Next Game</span>
+            <div class="stat stat-block stat-block--large">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ nextGameIn() }}</span>
+                <span class="stat-block__label">Next Game</span>
+              </div>
             </div>
           </div>
         </div>

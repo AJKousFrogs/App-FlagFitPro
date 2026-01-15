@@ -76,33 +76,33 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
               class="status-section mb-6 p-4 bg-surface-secondary rounded-lg"
             >
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div class="stat-item">
-                  <div class="stat-label text-xs text-text-secondary">
+                <div class="stat-item stat-block stat-block--compact">
+                  <div class="stat-block__label text-xs text-text-secondary">
                     Current ACWR
                   </div>
                   <div
-                    class="stat-value text-lg font-bold"
+                    class="stat-block__value text-lg font-bold"
                     [class]="getACWRColorClass()"
                   >
                     {{ currentACWR() | number: "1.2-2" }}
                   </div>
                 </div>
-                <div class="stat-item">
-                  <div class="stat-label text-xs text-text-secondary">
+                <div class="stat-item stat-block stat-block--compact">
+                  <div class="stat-block__label text-xs text-text-secondary">
                     Readiness
                   </div>
-                  <div class="stat-value text-lg font-bold">
+                  <div class="stat-block__value text-lg font-bold">
                     <p-tag
                       [severity]="getReadinessSeverity()"
                       [value]="readinessLevel() | titlecase"
                     ></p-tag>
                   </div>
                 </div>
-                <div class="stat-item">
-                  <div class="stat-label text-xs text-text-secondary">
+                <div class="stat-item stat-block stat-block--compact">
+                  <div class="stat-block__label text-xs text-text-secondary">
                     Progression Rule
                   </div>
-                  <div class="stat-value text-sm font-semibold">
+                  <div class="stat-block__value text-sm font-semibold">
                     {{ getProgressionRule() }}
                   </div>
                 </div>

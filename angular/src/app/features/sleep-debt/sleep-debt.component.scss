@@ -1,5 +1,7 @@
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .sleep-debt-page {
   padding: var(--space-4);
   max-width: 1200px;

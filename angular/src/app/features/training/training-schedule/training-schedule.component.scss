@@ -1,5 +1,7 @@
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 /**
  * Training Schedule - Mobile Responsive Styles
  * ================================================================
@@ -77,12 +79,6 @@
 }
 
 /* Completion Rate */
-.stat-item.completion {
-  .stat-value {
-    color: var(--ds-primary-green);
-  }
-}
-
 // ================================================================
 // SCHEDULE CONTENT LAYOUT - RESPONSIVE GRID
 // ================================================================
@@ -207,18 +203,17 @@
   }
 }
 
-.stat-label {
+.stat-item .stat-block__label {
   font-size: var(--font-size-h4);
   color: var(--ds-text-secondary);
   font-weight: var(--font-weight-medium);
-  margin-bottom: var(--space-1);
 
   @include respond-to(md) {
     font-size: var(--font-caption-size);
   }
 }
 
-.stat-value {
+.stat-item .stat-block__value {
   font-size: var(--font-h1-size);
   font-weight: var(--font-weight-bold);
   color: var(--ds-text-primary);
@@ -230,6 +225,10 @@
   @include respond-to(sm) {
     font-size: var(--font-size-h3);
   }
+}
+
+.stat-item.completion .stat-block__value {
+  color: var(--ds-primary-green);
 }
 
 .stat-subtitle {

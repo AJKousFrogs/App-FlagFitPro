@@ -1,13 +1,13 @@
 @use "styles/mixins" as *;
 
 .film-room-page {
-  padding: var(--space-4);
-  max-width: 1200px;
-  margin: 0 auto;
+  @include page-container(1200px);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
+
+@include stat-block;
 
 // Progress Card
 .progress-card {
@@ -21,6 +21,10 @@
     display: flex;
     align-items: center;
     gap: var(--space-4);
+  }
+
+  .stat-block__content {
+    align-items: center;
   }
 
   // .stat-item/.stat-value/.stat-label REMOVED

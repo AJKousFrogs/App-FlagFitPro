@@ -3,6 +3,10 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
+@include stat-block;
+
 .microcycle-planner-page {
   display: flex;
   flex-direction: column;
@@ -37,7 +41,7 @@
   text-align: center;
 }
 
-.stat-label {
+.stat-block__label {
   font-size: var(--font-size-badge);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -45,7 +49,7 @@
   margin-bottom: var(--space-1);
 }
 
-.stat-value {
+.stat-block__value {
   font-size: var(--font-body-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);

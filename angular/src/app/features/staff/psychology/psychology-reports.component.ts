@@ -417,31 +417,37 @@ interface ReportPrivacySettings {
                     <div class="dual-cards">
                       <p-card header="Sleep Patterns">
                         <div class="sleep-stats">
-                          <div class="sleep-stat">
-                            <span class="stat-value"
-                              >{{
-                                currentWellnessData()!.sleepPatterns.avgSleepHours.toFixed(
-                                  1
-                                )
-                              }}h</span
-                            >
-                            <span class="stat-label">Avg Sleep</span>
+                          <div class="sleep-stat stat-block stat-block--compact">
+                            <div class="stat-block__content">
+                              <span class="stat-block__value"
+                                >{{
+                                  currentWellnessData()!.sleepPatterns.avgSleepHours.toFixed(
+                                    1
+                                  )
+                                }}h</span
+                              >
+                              <span class="stat-block__label">Avg Sleep</span>
+                            </div>
                           </div>
-                          <div class="sleep-stat">
-                            <span class="stat-value"
-                              >{{
-                                currentWellnessData()!.sleepPatterns.sleepQualityAvg.toFixed(
-                                  1
-                                )
-                              }}/10</span
-                            >
-                            <span class="stat-label">Quality</span>
+                          <div class="sleep-stat stat-block stat-block--compact">
+                            <div class="stat-block__content">
+                              <span class="stat-block__value"
+                                >{{
+                                  currentWellnessData()!.sleepPatterns.sleepQualityAvg.toFixed(
+                                    1
+                                  )
+                                }}/10</span
+                              >
+                              <span class="stat-block__label">Quality</span>
+                            </div>
                           </div>
-                          <div class="sleep-stat">
-                            <span class="stat-value">{{
-                              currentWellnessData()!.sleepPatterns.sleepDebtDays
-                            }}</span>
-                            <span class="stat-label">Debt Days</span>
+                          <div class="sleep-stat stat-block stat-block--compact">
+                            <div class="stat-block__content">
+                              <span class="stat-block__value">{{
+                                currentWellnessData()!.sleepPatterns.sleepDebtDays
+                              }}</span>
+                              <span class="stat-block__label">Debt Days</span>
+                            </div>
                           </div>
                         </div>
                         <div class="sleep-indicators">
@@ -489,22 +495,34 @@ interface ReportPrivacySettings {
 
                       <p-card header="Recovery Behaviors">
                         <div class="recovery-stats">
-                          <div class="recovery-stat">
-                            <span class="stat-value"
-                              >{{
-                                currentWellnessData()!.recoveryBehaviors.avgRecoveryScore.toFixed(
-                                  1
-                                )
-                              }}/10</span
-                            >
-                            <span class="stat-label">Avg Recovery Score</span>
+                          <div
+                            class="recovery-stat stat-block stat-block--compact"
+                          >
+                            <div class="stat-block__content">
+                              <span class="stat-block__value"
+                                >{{
+                                  currentWellnessData()!.recoveryBehaviors.avgRecoveryScore.toFixed(
+                                    1
+                                  )
+                                }}/10</span
+                              >
+                              <span class="stat-block__label"
+                                >Avg Recovery Score</span
+                              >
+                            </div>
                           </div>
-                          <div class="recovery-stat">
-                            <span class="stat-value">{{
-                              currentWellnessData()!.recoveryBehaviors
-                                .socialRecoveryActivities
-                            }}</span>
-                            <span class="stat-label">Social Activities</span>
+                          <div
+                            class="recovery-stat stat-block stat-block--compact"
+                          >
+                            <div class="stat-block__content">
+                              <span class="stat-block__value">{{
+                                currentWellnessData()!.recoveryBehaviors
+                                  .socialRecoveryActivities
+                              }}</span>
+                              <span class="stat-block__label"
+                                >Social Activities</span
+                              >
+                            </div>
                           </div>
                         </div>
                         <div class="screen-time">

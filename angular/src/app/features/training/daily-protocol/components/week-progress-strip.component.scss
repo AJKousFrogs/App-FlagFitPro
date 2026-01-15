@@ -108,6 +108,10 @@
   letter-spacing: 0.5px;
 }
 
+@use "styles/mixins" as *;
+
+@include stat-block;
+
 /* Week Stats */
 .week-stats {
   display: flex;
@@ -123,17 +127,17 @@
   gap: var(--space-1, 4px);
 }
 
-.stat-value {
+.stat-block__value {
   font-size: var(--font-body-md, 16px);
   font-weight: var(--font-weight-bold, 700);
   color: var(--color-text-primary, #171717);
 }
 
-.stat-item.streak .stat-value {
+.stat-item.streak .stat-block__value {
   color: var(--primitive-warning-600, #d97706);
 }
 
-.stat-label {
+.stat-block__label {
   font-size: var(--font-body-xs, 12px);
   color: var(--color-text-secondary, #737373);
 }

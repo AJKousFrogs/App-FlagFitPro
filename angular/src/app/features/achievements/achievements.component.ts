@@ -292,9 +292,11 @@ const CATEGORY_LABELS: Record<
               <div class="stat-icon-wrapper">
                 <i class="pi pi-trophy stat-icon"></i>
               </div>
-              <div class="stat-details">
-                <span class="stat-label">Total Points</span>
-                <span class="stat-value">{{ totalPoints() | number }}</span>
+              <div class="stat-details stat-block__content">
+                <span class="stat-block__label">Total Points</span>
+                <span class="stat-block__value">{{
+                  totalPoints() | number
+                }}</span>
                 <p-tag
                   [value]="'Top ' + userRankPercentile() + '%'"
                   severity="info"
@@ -308,9 +310,9 @@ const CATEGORY_LABELS: Record<
               <div class="stat-icon-wrapper">
                 <span class="stat-emoji">🎖️</span>
               </div>
-              <div class="stat-details">
-                <span class="stat-label">Achievements Unlocked</span>
-                <span class="stat-value"
+              <div class="stat-details stat-block__content">
+                <span class="stat-block__label">Achievements Unlocked</span>
+                <span class="stat-block__value"
                   >{{ unlockedCount() }} / {{ totalAchievements() }}</span
                 >
               </div>
@@ -322,9 +324,11 @@ const CATEGORY_LABELS: Record<
               <div class="stat-icon-wrapper">
                 <i class="pi pi-chart-line stat-icon"></i>
               </div>
-              <div class="stat-details">
-                <span class="stat-label">Progress</span>
-                <span class="stat-value">{{ progressPercent() }}%</span>
+              <div class="stat-details stat-block__content">
+                <span class="stat-block__label">Progress</span>
+                <span class="stat-block__value">{{
+                  progressPercent()
+                }}%</span>
                 <p-progressBar
                   [value]="progressPercent()"
                   [showValue]="false"
@@ -339,9 +343,9 @@ const CATEGORY_LABELS: Record<
               <div class="stat-icon-wrapper">
                 <i class="pi pi-bolt stat-icon"></i>
               </div>
-              <div class="stat-details">
-                <span class="stat-label">Recent Unlock</span>
-                <span class="stat-value recent">{{
+              <div class="stat-details stat-block__content">
+                <span class="stat-block__label">Recent Unlock</span>
+                <span class="stat-block__value recent">{{
                   recentUnlock() ? recentUnlock()!.name : "None yet"
                 }}</span>
                 @if (recentUnlock()) {

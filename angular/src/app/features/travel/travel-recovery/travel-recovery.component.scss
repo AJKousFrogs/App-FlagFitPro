@@ -6,10 +6,10 @@
 @use "styles/mixins" as *;
 
 .travel-recovery-page {
-  padding: var(--space-6);
-  max-width: 1400px;
-  margin: 0 auto;
+  @include page-container(1400px);
 }
+
+@include stat-block;
 
 /* Protocol Dashboard */
 .protocol-dashboard {
@@ -170,17 +170,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
 
-  .stat-value {
-    font-size: var(--font-size-metric-lg);
-    font-weight: var(--font-weight-bold);
-    color: var(--color-brand-primary);
-  }
+.impact-stat .stat-block__value {
+  color: var(--color-brand-primary);
+}
 
-  .stat-label {
-    font-size: var(--font-size-h4);
-    color: var(--color-text-secondary);
-  }
+.impact-stat .stat-block__label {
+  font-size: var(--font-size-h4);
 }
 
 // ===== Form Grid =====
@@ -1570,7 +1567,7 @@
     font-size: var(--font-size-badge);
   }
 
-  .impact-stat .stat-value {
+  .impact-stat .stat-block__value {
     font-size: var(--font-size-metric-md);
   }
 }

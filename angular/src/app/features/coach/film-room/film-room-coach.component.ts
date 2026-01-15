@@ -168,32 +168,32 @@ const TAG_TYPES = [
           <div class="stat-card">
             <span class="stat-icon">🎬</span>
             <div class="stat-content">
-              <span class="stat-value">{{ totalFilmCount() }}</span>
-              <span class="stat-label">Total Film Sessions</span>
+              <span class="stat-block__value">{{ totalFilmCount() }}</span>
+              <span class="stat-block__label">Total Film Sessions</span>
               <span class="stat-sub">This season</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon">⏱️</span>
             <div class="stat-content">
-              <span class="stat-value">{{ totalDuration() }}</span>
-              <span class="stat-label">Total Duration</span>
+              <span class="stat-block__value">{{ totalDuration() }}</span>
+              <span class="stat-block__label">Total Duration</span>
               <span class="stat-sub">All film</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon">📋</span>
             <div class="stat-content">
-              <span class="stat-value">{{ assignedThisWeek() }}</span>
-              <span class="stat-label">Assigned This Week</span>
+              <span class="stat-block__value">{{ assignedThisWeek() }}</span>
+              <span class="stat-block__label">Assigned This Week</span>
               <span class="stat-sub">Active</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon">👀</span>
             <div class="stat-content">
-              <span class="stat-value">{{ avgWatchRate() }}%</span>
-              <span class="stat-label">Watch Rate</span>
+              <span class="stat-block__value">{{ avgWatchRate() }}%</span>
+              <span class="stat-block__label">Watch Rate</span>
               <span class="stat-sub">Team average</span>
             </div>
           </div>

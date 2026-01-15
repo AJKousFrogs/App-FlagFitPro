@@ -438,21 +438,21 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
             >
               <div class="progression-stats">
                 <div class="stat">
-                  <div class="stat-label">Current Week</div>
-                  <div class="stat-value">
+                  <div class="stat-block__label">Current Week</div>
+                  <div class="stat-block__value">
                     {{ weeklyProgression().currentWeek | number: "1.0-0" }} AU
                   </div>
                 </div>
                 <div class="stat">
-                  <div class="stat-label">Previous Week</div>
-                  <div class="stat-value">
+                  <div class="stat-block__label">Previous Week</div>
+                  <div class="stat-block__value">
                     {{ weeklyProgression().previousWeek | number: "1.0-0" }} AU
                   </div>
                 </div>
                 <div class="stat">
-                  <div class="stat-label">Change</div>
+                  <div class="stat-block__label">Change</div>
                   <div
-                    class="stat-value"
+                    class="stat-block__value"
                     [class.positive]="weeklyProgression().changePercent > 0"
                   >
                     {{ weeklyProgression().changePercent > 0 ? "+" : ""

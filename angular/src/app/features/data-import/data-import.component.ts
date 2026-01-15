@@ -330,9 +330,15 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   </div>
                   <div class="summary-stats">
                     @for (stat of getPreviewStats(); track stat.label) {
-                      <div class="stat-item">
-                        <span class="stat-value">{{ stat.value }}</span>
-                        <span class="stat-label">{{ stat.label }}</span>
+                      <div class="stat-item stat-block stat-block--compact">
+                        <div class="stat-block__content">
+                          <span class="stat-block__value">{{
+                            stat.value
+                          }}</span>
+                          <span class="stat-block__label">{{
+                            stat.label
+                          }}</span>
+                        </div>
                       </div>
                     }
                   </div>

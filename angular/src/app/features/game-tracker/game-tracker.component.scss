@@ -6,10 +6,10 @@
    Refactored: Removed ::ng-deep (deprecated)
    ================================================================ */
 
+@include stat-block;
+
 .game-tracker-page {
-  padding: var(--space-6);
-  max-width: 1400px;
-  margin: 0 auto;
+  @include page-container(1400px);
 
   /* ================================================================
      PRIMENG COMPONENT STYLING VIA CSS CUSTOM PROPERTIES
@@ -355,6 +355,18 @@
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
+}
+
+.stat-box .stat-block__content {
+  align-items: center;
+}
+
+.stat-box .stat-block__label {
+  font-size: var(--font-size-badge);
+}
+
+.stat-box .stat-block__value {
+  font-size: var(--font-size-h2);
 }
 
 .stat-box:hover {
@@ -800,11 +812,11 @@
   .stat-box {
     padding: var(--space-3);
 
-    .stat-label {
+    .stat-block__label {
       font-size: var(--font-caption-size);
     }
 
-    .stat-value {
+    .stat-block__value {
       font-size: var(--font-size-h3);
     }
   }

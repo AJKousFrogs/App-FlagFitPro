@@ -3,6 +3,10 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
+@include stat-block;
+
 .goal-planner-page {
   display: flex;
   flex-direction: column;
@@ -35,7 +39,7 @@
   border: 1px solid var(--color-border-secondary);
 }
 
-.stat-label {
+.stat-block__label {
   margin-bottom: var(--space-1);
   font-size: var(--font-size-badge);
   font-weight: var(--font-weight-semibold);
@@ -43,7 +47,7 @@
   color: var(--color-text-secondary);
 }
 
-.stat-value {
+.stat-block__value {
   font-size: var(--font-body-size);
   font-weight: var(--font-weight-bold);
 }

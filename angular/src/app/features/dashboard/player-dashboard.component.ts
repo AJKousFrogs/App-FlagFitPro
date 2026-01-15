@@ -465,8 +465,10 @@ interface AnnouncementBanner {
                     <i class="pi pi-heart"></i>
                   </div>
                   <div class="stat-details">
-                    <span class="stat-value">{{ readinessScore() }}%</span>
-                    <span class="stat-label">Readiness</span>
+                    <span class="stat-block__value">
+                      {{ readinessScore() }}%
+                    </span>
+                    <span class="stat-block__label">Readiness</span>
                   </div>
                   <app-status-tag
                     [value]="getReadinessStatus()"
@@ -480,8 +482,8 @@ interface AnnouncementBanner {
                     <i class="pi pi-heart"></i>
                   </div>
                   <div class="stat-details">
-                    <span class="stat-value">--</span>
-                    <span class="stat-label">Readiness</span>
+                    <span class="stat-block__value">--</span>
+                    <span class="stat-block__label">Readiness</span>
                   </div>
                   <app-status-tag
                     value="No data"
@@ -550,10 +552,10 @@ Keep logging sessions to unlock this injury prevention metric!'
                     <i class="pi pi-chart-line"></i>
                   </div>
                   <div class="stat-details">
-                    <span class="stat-value">{{
+                    <span class="stat-block__value">{{
                       acwr() | number: "1.2-2"
                     }}</span>
-                    <span class="stat-label">ACWR</span>
+                    <span class="stat-block__label">ACWR</span>
                   </div>
                   <app-status-tag
                     [value]="getAcwrStatus()"
@@ -623,8 +625,8 @@ Keep logging sessions to unlock this injury prevention metric!'
                     <i class="pi pi-chart-line"></i>
                   </div>
                   <div class="stat-details">
-                    <span class="stat-value">--</span>
-                    <span class="stat-label">ACWR</span>
+                    <span class="stat-block__value">--</span>
+                    <span class="stat-block__label">ACWR</span>
                   </div>
                   <app-status-tag
                     value="Log training sessions"
@@ -675,8 +677,8 @@ Keep logging sessions to unlock this injury prevention metric!'
                   <i class="pi pi-bolt"></i>
                 </div>
                 <div class="stat-details">
-                  <span class="stat-value">{{ currentStreak() }}</span>
-                  <span class="stat-label">Day Streak</span>
+                  <span class="stat-block__value">{{ currentStreak() }}</span>
+                  <span class="stat-block__label">Day Streak</span>
                 </div>
               </div>
             </p-card>
@@ -691,12 +693,12 @@ Keep logging sessions to unlock this injury prevention metric!'
                   <i class="pi pi-calendar-plus"></i>
                 </div>
                 <div class="stat-details">
-                  <span class="stat-value"
+                  <span class="stat-block__value"
                     >{{ weeklySessionsCompleted() }}/{{
                       weeklySessionsPlanned()
                     }}</span
                   >
-                  <span class="stat-label">This Week</span>
+                  <span class="stat-block__label">This Week</span>
                 </div>
               </div>
             </p-card>
@@ -1455,14 +1457,14 @@ Keep logging sessions to unlock this injury prevention metric!'
         gap: var(--space-1);
       }
 
-      .stat-value {
+      .stat-block__value {
         font-size: var(--font-size-metric-md);
         font-weight: var(--font-weight-bold);
         color: var(--color-text-primary);
         line-height: var(--line-height-tight);
       }
 
-      .stat-label {
+      .stat-block__label {
         font-size: var(--font-caption-size);
         font-weight: var(--font-caption-weight);
         color: var(--color-text-muted);

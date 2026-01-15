@@ -3,6 +3,10 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
+@include stat-block;
+
 .roadmap-panel {
   .summary-card {
     background: linear-gradient(135deg, var(--primary-50), var(--surface-card));
@@ -167,18 +171,21 @@
 
     .stat-item {
       text-align: center;
+    }
 
-      .stat-value {
-        display: block;
-        font-size: var(--font-size-metric-md);
-        font-weight: var(--font-weight-bold);
-        color: var(--primary-700);
-      }
+    .stat-block__content {
+      align-items: center;
+    }
 
-      .stat-label {
-        font-size: var(--font-size-h4);
-        color: var(--color-text-secondary);
-      }
+    .stat-block__value {
+      font-size: var(--font-size-metric-md);
+      font-weight: var(--font-weight-bold);
+      color: var(--primary-700);
+    }
+
+    .stat-block__label {
+      font-size: var(--font-size-h4);
+      color: var(--color-text-secondary);
     }
   }
 

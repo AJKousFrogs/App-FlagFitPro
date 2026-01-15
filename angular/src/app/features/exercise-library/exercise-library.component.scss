@@ -8,18 +8,18 @@
 @use "app/shared/styles/animations" as *;
 
 .exercise-library-page {
-  padding: var(--space-6);
-  max-width: 1400px;
-  margin: 0 auto;
+  @include page-container(1400px);
 }
+
+@include stat-block;
 
 /* ===== HERO SECTION ===== */
 .page-hero {
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
   background: var(--surface-primary);
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-xl);
-  padding: var(--space-8);
+  padding: var(--space-6);
   box-shadow: var(--shadow-3);
   animation: fadeInDown 400ms ease-out;
   position: relative;
@@ -77,7 +77,9 @@
   gap: var(--space-6);
 }
 
-.stat-item {
+.hero-stats .stat-block {
+  flex-direction: column;
+  align-items: center;
   text-align: center;
   padding: var(--space-3) var(--space-5);
   background: var(--ds-primary-green-ultra-subtle);
@@ -85,28 +87,9 @@
   border-radius: var(--radius-lg);
 }
 
-// Temporary exception for exercise-library until migration to card-shell
-.stat-value {
-  display: block;
-  font-size: var(--font-size-metric-lg);
-  font-weight: var(--font-weight-bold);
-  color: var(--ds-primary-green);
-  line-height: 1;
-  margin-bottom: var(--space-1);
+.hero-stats .stat-block__content {
+  align-items: center;
 }
-
-.stat-label {
-  display: block;
-  font-size: var(--font-size-badge);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
-  font-weight: var(--font-weight-medium);
-}
-
-// .stat-value/.stat-label REMOVED
-// Use .stat-block classes from card-shell instead
-// @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 
 /* ===== SEARCH & FILTERS ===== */
 .search-filters-section {

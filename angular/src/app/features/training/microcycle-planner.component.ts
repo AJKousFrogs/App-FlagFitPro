@@ -69,22 +69,31 @@ interface DayPlan {
               </app-traffic-light-risk>
             </div>
             <div class="grid grid-cols-3 gap-4">
-              <div class="stat-card">
-                <div class="stat-label">Acute Load</div>
-                <div class="stat-value">
-                  {{ acuteLoad() | number: "1.0-0" }} AU
+              <div class="stat-card stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <div class="stat-block__label">Acute Load</div>
+                  <div class="stat-block__value">
+                    {{ acuteLoad() | number: "1.0-0" }} AU
+                  </div>
                 </div>
               </div>
-              <div class="stat-card">
-                <div class="stat-label">Chronic Load</div>
-                <div class="stat-value">
-                  {{ chronicLoad() | number: "1.0-0" }} AU
+              <div class="stat-card stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <div class="stat-block__label">Chronic Load</div>
+                  <div class="stat-block__value">
+                    {{ chronicLoad() | number: "1.0-0" }} AU
+                  </div>
                 </div>
               </div>
-              <div class="stat-card">
-                <div class="stat-label">ACWR Ratio</div>
-                <div class="stat-value" [class]="'text-' + getRiskColor()">
-                  {{ currentACWR() | number: "1.2-2" }}
+              <div class="stat-card stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <div class="stat-block__label">ACWR Ratio</div>
+                  <div
+                    class="stat-block__value"
+                    [class]="'text-' + getRiskColor()"
+                  >
+                    {{ currentACWR() | number: "1.2-2" }}
+                  </div>
                 </div>
               </div>
             </div>

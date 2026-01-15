@@ -166,35 +166,45 @@ interface MonthlyStats {
           @if (viewMode() === "month" && monthlyStats().totalSessions > 0) {
             <app-card-shell title="Monthly Summary" headerIcon="pi-chart-bar">
               <div class="monthly-stats">
-                <div class="stat-item">
-                  <span class="stat-value">{{
-                    monthlyStats().totalSessions
-                  }}</span>
-                  <span class="stat-label">Total Sessions</span>
+                <div class="stat-item stat-block stat-block--large">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      monthlyStats().totalSessions
+                    }}</span>
+                    <span class="stat-block__label">Total Sessions</span>
+                  </div>
                 </div>
-                <div class="stat-item completed">
-                  <span class="stat-value">{{
-                    monthlyStats().completedSessions
-                  }}</span>
-                  <span class="stat-label">Completed</span>
+                <div class="stat-item completed stat-block stat-block--large">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      monthlyStats().completedSessions
+                    }}</span>
+                    <span class="stat-block__label">Completed</span>
+                  </div>
                 </div>
-                <div class="stat-item missed">
-                  <span class="stat-value">{{
-                    monthlyStats().missedSessions
-                  }}</span>
-                  <span class="stat-label">Missed</span>
+                <div class="stat-item missed stat-block stat-block--large">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      monthlyStats().missedSessions
+                    }}</span>
+                    <span class="stat-block__label">Missed</span>
+                  </div>
                 </div>
-                <div class="stat-item">
-                  <span class="stat-value"
-                    >{{ monthlyStats().totalDuration }}m</span
-                  >
-                  <span class="stat-label">Total Duration</span>
+                <div class="stat-item stat-block stat-block--large">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value"
+                      >{{ monthlyStats().totalDuration }}m</span
+                    >
+                    <span class="stat-block__label">Total Duration</span>
+                  </div>
                 </div>
-                <div class="stat-item completion">
-                  <span class="stat-value"
-                    >{{ monthlyStats().completionRate }}%</span
-                  >
-                  <span class="stat-label">Completion Rate</span>
+                <div class="stat-item completion stat-block stat-block--large">
+                  <div class="stat-block__content">
+                    <span class="stat-block__value"
+                      >{{ monthlyStats().completionRate }}%</span
+                    >
+                    <span class="stat-block__label">Completion Rate</span>
+                  </div>
                 </div>
               </div>
             </app-card-shell>

@@ -206,30 +206,30 @@ const ROUTES = [
         <div class="stats-summary">
           <div class="stat-card">
             <span class="stat-icon">📋</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ totalPlays() }}</span>
-              <span class="stat-label">Total Plays</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ totalPlays() }}</span>
+              <span class="stat-block__label">Total Plays</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon">⚔️</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ offensePlays() }}</span>
-              <span class="stat-label">Offense</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ offensePlays() }}</span>
+              <span class="stat-block__label">Offense</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon">🛡️</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ defensePlays() }}</span>
-              <span class="stat-label">Defense</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ defensePlays() }}</span>
+              <span class="stat-block__label">Defense</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon">📊</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ avgMemorized() }}%</span>
-              <span class="stat-label">Team Memorized</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ avgMemorized() }}%</span>
+              <span class="stat-block__label">Team Memorized</span>
             </div>
           </div>
         </div>

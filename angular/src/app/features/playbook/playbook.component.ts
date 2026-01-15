@@ -119,19 +119,27 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
         <p-card styleClass="progress-card">
           <div class="progress-header">
             <div class="progress-stats">
-              <div class="stat-item">
-                <span class="stat-value">{{ memorizedCount() }}</span>
-                <span class="stat-label">Memorized</span>
+              <div class="stat-item stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <span class="stat-block__value">{{ memorizedCount() }}</span>
+                  <span class="stat-block__label">Memorized</span>
+                </div>
               </div>
               <div class="stat-divider"></div>
-              <div class="stat-item">
-                <span class="stat-value">{{ totalPlays() }}</span>
-                <span class="stat-label">Total Plays</span>
+              <div class="stat-item stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <span class="stat-block__value">{{ totalPlays() }}</span>
+                  <span class="stat-block__label">Total Plays</span>
+                </div>
               </div>
               <div class="stat-divider"></div>
-              <div class="stat-item">
-                <span class="stat-value">{{ progressPercent() }}%</span>
-                <span class="stat-label">Complete</span>
+              <div class="stat-item stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <span class="stat-block__value"
+                    >{{ progressPercent() }}%</span
+                  >
+                  <span class="stat-block__label">Complete</span>
+                </div>
               </div>
             </div>
             <app-button

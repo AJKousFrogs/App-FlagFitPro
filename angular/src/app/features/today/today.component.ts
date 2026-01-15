@@ -192,7 +192,7 @@ interface QuickFormData {
         display: flex;
         flex-direction: column;
         gap: var(--space-6);
-        padding: var(--space-5) var(--space-4);
+        padding: var(--space-6);
         max-width: 1200px;
         margin: 0 auto;
         width: 100%;
@@ -348,7 +348,7 @@ interface QuickFormData {
         flex-wrap: wrap;
       }
 
-      .stat-value {
+      .stat-block__value {
         font-size: var(--font-size-metric-md); /* Metric: KPI numbers - 24px */
         font-weight: var(--font-weight-bold); /* Metric: Bold (700) */
         line-height: var(--line-height-tight); /* Metric: 1.2 */
@@ -367,19 +367,19 @@ interface QuickFormData {
         font-size: var(--icon-sm); /* 14px - small icon */
       }
 
-      .stat-value.optimal,
-      .stat-value.high {
+      .stat-block__value.optimal,
+      .stat-block__value.high {
         color: var(--color-brand-primary);
       }
-      .stat-value.moderate {
+      .stat-block__value.moderate {
         color: var(--color-status-warning);
       }
-      .stat-value.risk,
-      .stat-value.low {
+      .stat-block__value.risk,
+      .stat-block__value.low {
         color: var(--color-status-error);
       }
 
-      .stat-label {
+      .stat-block__label {
         font-size: var(--font-size-caption); /* Caption: Helper text - 13px */
         font-weight: var(--font-weight-regular); /* Caption: Regular (400) */
         color: var(--color-text-muted);
@@ -958,7 +958,7 @@ interface QuickFormData {
         color: var(--color-brand-primary);
       }
 
-      .celebration-stats .stat-label {
+      .celebration-stats .stat-block__label {
         font-size: var(--font-body-xs);
         color: var(--color-text-secondary);
         text-transform: uppercase;
@@ -1044,11 +1044,11 @@ interface QuickFormData {
       }
 
       .banners-section {
-        margin-bottom: var(--space-4);
+        margin: 0;
       }
 
       .acwr-section {
-        margin-bottom: var(--space-4);
+        margin: 0;
       }
 
       .welcome-stats {
@@ -1065,17 +1065,21 @@ interface QuickFormData {
         font-size: var(--font-body-sm);
       }
 
-      .stat-item .stat-label {
+      .stat-item .stat-block__label {
         color: var(--color-text-secondary);
       }
 
-      .stat-item .stat-value {
+      .stat-item .stat-block__value {
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
       }
 
-      .stat-item .stat-value.logged {
+      .stat-item .stat-block__value.logged {
         color: var(--ds-primary-green);
+      }
+
+      .stat-check-icon {
+        margin-left: var(--space-1);
       }
 
       /* --------------------------------------------------------------------------

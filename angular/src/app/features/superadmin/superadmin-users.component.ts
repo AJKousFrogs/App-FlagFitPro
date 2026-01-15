@@ -192,27 +192,27 @@ interface User {
         <!-- Stats Summary -->
         <div class="stats-row">
           <p-card styleClass="stat-card">
-            <div class="stat-content">
-              <span class="stat-value">{{ totalUsers }}</span>
-              <span class="stat-label">Total Users</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ totalUsers }}</span>
+              <span class="stat-block__label">Total Users</span>
             </div>
           </p-card>
           <p-card styleClass="stat-card">
-            <div class="stat-content">
-              <span class="stat-value">{{ playerCount }}</span>
-              <span class="stat-label">Players</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ playerCount }}</span>
+              <span class="stat-block__label">Players</span>
             </div>
           </p-card>
           <p-card styleClass="stat-card">
-            <div class="stat-content">
-              <span class="stat-value">{{ coachCount }}</span>
-              <span class="stat-label">Coaches</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ coachCount }}</span>
+              <span class="stat-block__label">Coaches</span>
             </div>
           </p-card>
           <p-card styleClass="stat-card">
-            <div class="stat-content">
-              <span class="stat-value">{{ adminCount }}</span>
-              <span class="stat-label">Admins</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ adminCount }}</span>
+              <span class="stat-block__label">Admins</span>
             </div>
           </p-card>
         </div>
@@ -257,13 +257,13 @@ interface User {
         text-align: center;
       }
 
-      .stat-value {
+      .stat-block__value {
         font-size: 1.5rem;
         font-weight: 600;
         color: var(--primary-color);
       }
 
-      .stat-label {
+      .stat-block__label {
         font-size: 0.875rem;
         color: var(--text-secondary);
       }

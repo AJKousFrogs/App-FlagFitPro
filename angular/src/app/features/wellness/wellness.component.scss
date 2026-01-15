@@ -7,32 +7,14 @@
 
 .wellness-page {
   padding: var(--space-6);
-}
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-6);
-  padding: var(--space-5);
-  background: var(--surface-primary);
-  border-radius: var(--radius-md);
-}
+  @include respond-to(md) {
+    padding: var(--space-4);
+  }
 
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--font-size-metric-lg);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--space-2);
-  color: var(--color-text-primary);
-}
-
-.page-subtitle {
-  font-size: var(--font-size-h4);
-  color: var(--color-text-secondary);
-  margin: 0;
+  @include respond-to(sm) {
+    padding: var(--space-3);
+  }
 }
 
 .charts-grid {

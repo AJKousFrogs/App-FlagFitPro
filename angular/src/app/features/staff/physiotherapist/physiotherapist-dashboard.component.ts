@@ -242,36 +242,36 @@ const RTP_PHASES = [
               <div class="stat-icon athletes">
                 <i class="pi pi-users"></i>
               </div>
-              <div class="stat-content">
-                <span class="stat-value">{{ athletes().length }}</span>
-                <span class="stat-label">Athletes Monitored</span>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ athletes().length }}</span>
+                <span class="stat-block__label">Athletes Monitored</span>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon injuries">
                 <i class="pi pi-exclamation-circle"></i>
               </div>
-              <div class="stat-content">
-                <span class="stat-value">{{ activeInjuryCount() }}</span>
-                <span class="stat-label">Active Injuries</span>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ activeInjuryCount() }}</span>
+                <span class="stat-block__label">Active Injuries</span>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon rtp">
                 <i class="pi pi-sync"></i>
               </div>
-              <div class="stat-content">
-                <span class="stat-value">{{ rtpCount() }}</span>
-                <span class="stat-label">In RTP Protocol</span>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ rtpCount() }}</span>
+                <span class="stat-block__label">In RTP Protocol</span>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon risk">
                 <i class="pi pi-exclamation-triangle"></i>
               </div>
-              <div class="stat-content">
-                <span class="stat-value">{{ highRiskCount() }}</span>
-                <span class="stat-label">High Risk Athletes</span>
+              <div class="stat-content stat-block__content">
+                <span class="stat-block__value">{{ highRiskCount() }}</span>
+                <span class="stat-block__label">High Risk Athletes</span>
               </div>
             </div>
           </div>
@@ -731,24 +731,34 @@ const RTP_PHASES = [
 
                   @if (selectedHistoryAthlete && currentInjuryHistory()) {
                     <div class="history-content">
-                      <div class="history-stats">
-                        <div class="stat">
-                          <span class="stat-value">{{
-                            currentInjuryHistory()!.totalInjuries
-                          }}</span>
-                          <span class="stat-label">Total Injuries</span>
+                    <div class="history-stats">
+                        <div class="stat stat-block stat-block--compact">
+                          <div class="stat-block__content">
+                            <span class="stat-block__value">{{
+                              currentInjuryHistory()!.totalInjuries
+                            }}</span>
+                            <span class="stat-block__label">Total Injuries</span>
+                          </div>
                         </div>
-                        <div class="stat">
-                          <span class="stat-value">{{
-                            currentInjuryHistory()!.daysSinceLastInjury
-                          }}</span>
-                          <span class="stat-label">Days Since Last Injury</span>
+                        <div class="stat stat-block stat-block--compact">
+                          <div class="stat-block__content">
+                            <span class="stat-block__value">{{
+                              currentInjuryHistory()!.daysSinceLastInjury
+                            }}</span>
+                            <span class="stat-block__label"
+                              >Days Since Last Injury</span
+                            >
+                          </div>
                         </div>
-                        <div class="stat">
-                          <span class="stat-value">{{
-                            currentInjuryHistory()!.recurrentInjuries.length
-                          }}</span>
-                          <span class="stat-label">Recurrent Issues</span>
+                        <div class="stat stat-block stat-block--compact">
+                          <div class="stat-block__content">
+                            <span class="stat-block__value">{{
+                              currentInjuryHistory()!.recurrentInjuries.length
+                            }}</span>
+                            <span class="stat-block__label"
+                              >Recurrent Issues</span
+                            >
+                          </div>
                         </div>
                       </div>
 

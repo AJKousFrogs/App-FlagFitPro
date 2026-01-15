@@ -86,6 +86,63 @@
   gap: $gap;
 }
 
+// Standard page container with tokenized padding and responsive scale.
+@mixin page-container($max-width: 1400px) {
+  padding: var(--space-6);
+  max-width: $max-width;
+  margin: 0 auto;
+  width: 100%;
+
+  @include respond-to(md) {
+    padding: var(--space-4);
+  }
+
+  @include respond-to(sm) {
+    padding: var(--space-3);
+  }
+}
+
+// Canonical stat block pattern (value + label).
+@mixin stat-block {
+  .stat-block {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .stat-block__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: var(--space-1);
+  }
+
+  .stat-block__value {
+    font-size: var(--font-size-metric-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
+  }
+
+  .stat-block__label {
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-muted);
+    line-height: var(--line-height-base);
+    letter-spacing: var(--letter-spacing-caption);
+    text-transform: uppercase;
+  }
+
+  .stat-block--large .stat-block__value {
+    font-size: var(--font-size-metric-lg);
+  }
+
+  .stat-block--compact .stat-block__value {
+    font-size: var(--font-size-h2);
+  }
+}
+
 // Container with max-width
 @mixin container($size: xl) {
   width: 100%;

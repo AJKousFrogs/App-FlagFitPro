@@ -4,7 +4,7 @@
 // ============================================================================
 
 .team-create-page {
-  padding: var(--space-6);
+  @include page-container(1400px);
 }
 
 .team-create-card {

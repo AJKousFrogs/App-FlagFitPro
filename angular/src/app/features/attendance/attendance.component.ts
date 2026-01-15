@@ -96,9 +96,11 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             <p-card styleClass="stat-card">
               <div class="stat-content">
                 <i class="pi pi-calendar stat-icon"></i>
-                <div class="stat-info">
-                  <span class="stat-value">{{ upcomingEvents().length }}</span>
-                  <span class="stat-label">Upcoming Events</span>
+                <div class="stat-info stat-block__content">
+                  <span class="stat-block__value">{{
+                    upcomingEvents().length
+                  }}</span>
+                  <span class="stat-block__label">Upcoming Events</span>
                 </div>
               </div>
             </p-card>
@@ -106,9 +108,11 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             <p-card styleClass="stat-card">
               <div class="stat-content">
                 <i class="pi pi-check-circle stat-icon success"></i>
-                <div class="stat-info">
-                  <span class="stat-value">{{ teamAttendanceRate() }}%</span>
-                  <span class="stat-label">Team Attendance Rate</span>
+                <div class="stat-info stat-block__content">
+                  <span class="stat-block__value">{{
+                    teamAttendanceRate()
+                  }}%</span>
+                  <span class="stat-block__label">Team Attendance Rate</span>
                 </div>
               </div>
             </p-card>
@@ -116,9 +120,11 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
             <p-card styleClass="stat-card">
               <div class="stat-content">
                 <i class="pi pi-users stat-icon"></i>
-                <div class="stat-info">
-                  <span class="stat-value">{{ playerStats().length }}</span>
-                  <span class="stat-label">Players Tracked</span>
+                <div class="stat-info stat-block__content">
+                  <span class="stat-block__value">{{
+                    playerStats().length
+                  }}</span>
+                  <span class="stat-block__label">Players Tracked</span>
                 </div>
               </div>
             </p-card>

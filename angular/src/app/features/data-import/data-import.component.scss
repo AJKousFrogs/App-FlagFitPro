@@ -9,6 +9,8 @@
   gap: var(--space-4);
 }
 
+@include stat-block;
+
 // Import Types Grid
 .import-types-grid {
   display: grid;
@@ -213,14 +215,13 @@
     flex-wrap: wrap;
 
     .stat-item {
-      .stat-value {
-        display: block;
+      .stat-block__value {
         font-size: var(--font-body-size);
         font-weight: var(--font-weight-semibold);
         color: var(--ds-text-primary);
       }
 
-      .stat-label {
+      .stat-block__label {
         font-size: var(--font-size-h4);
         color: var(--ds-text-secondary);
       }

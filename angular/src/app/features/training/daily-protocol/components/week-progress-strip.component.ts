@@ -70,24 +70,34 @@ export interface WeekStats {
 
       <!-- Week Stats -->
       <div class="week-stats">
-        <div class="stat-item">
-          <span class="stat-value"
-            >{{ stats().completedDays }}/{{ stats().totalTrainingDays }}</span
-          >
-          <span class="stat-label">Training Days</span>
+        <div class="stat-item stat-block stat-block--compact">
+          <div class="stat-block__content">
+            <span class="stat-block__value"
+              >{{ stats().completedDays }}/{{
+                stats().totalTrainingDays
+              }}</span
+            >
+            <span class="stat-block__label">Training Days</span>
+          </div>
         </div>
         @if (stats().currentStreak > 0) {
-          <div class="stat-item streak">
-            <span class="stat-value">{{ stats().currentStreak }} 🔥</span>
-            <span class="stat-label">Day Streak</span>
+          <div class="stat-item streak stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <span class="stat-block__value"
+                >{{ stats().currentStreak }} 🔥</span
+              >
+              <span class="stat-block__label">Day Streak</span>
+            </div>
           </div>
         }
         @if (stats().weeklyLoadAu > 0) {
-          <div class="stat-item">
-            <span class="stat-value">{{
-              formatLoad(stats().weeklyLoadAu)
-            }}</span>
-            <span class="stat-label">Weekly Load</span>
+          <div class="stat-item stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <span class="stat-block__value">{{
+                formatLoad(stats().weeklyLoadAu)
+              }}</span>
+              <span class="stat-block__label">Weekly Load</span>
+            </div>
           </div>
         }
       </div>

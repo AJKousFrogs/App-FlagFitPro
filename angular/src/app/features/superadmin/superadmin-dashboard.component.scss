@@ -5,6 +5,8 @@
 
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .dashboard-content {
   padding: var(--space-6);
 }

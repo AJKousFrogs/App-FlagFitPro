@@ -216,7 +216,7 @@
   line-height: 1;
 }
 
-.stat-label {
+.stat-block__label {
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
   text-transform: uppercase;
@@ -1043,7 +1043,7 @@
     font-size: var(--font-size-h3);
   }
 
-  .stat-label {
+  .stat-block__label {
     font-size: var(--font-size-badge);
   }
 
@@ -1142,7 +1142,7 @@
     font-size: var(--font-size-h3);
   }
 
-  .stat-label {
+  .stat-block__label {
     font-size: var(--font-size-badge);
   }
 

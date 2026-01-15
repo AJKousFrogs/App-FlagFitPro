@@ -5,6 +5,8 @@
 
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .progressive-stats {
   margin-bottom: var(--space-6);
 }
@@ -75,7 +77,7 @@
   margin: 0 0 var(--space-2) 0;
 }
 
-.stat-value {
+.stat-block__value {
   font-size: var(--font-size-metric-md);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
@@ -163,7 +165,7 @@
     grid-template-columns: 1fr;
   }
 
-  .stat-value {
+  .stat-block__value {
     font-size: var(--font-size-h2);
   }
 

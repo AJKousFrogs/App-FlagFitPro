@@ -68,29 +68,45 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
       <!-- Stats Cards -->
       <div class="stats-grid">
         <app-card-shell title="Active Decisions" headerIcon="pi-check-circle">
-          <div class="stat-value">{{ stats()?.active || 0 }}</div>
-          <div class="stat-label">Currently active</div>
+          <div class="stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <div class="stat-block__value">{{ stats()?.active || 0 }}</div>
+              <div class="stat-block__label">Currently active</div>
+            </div>
+          </div>
         </app-card-shell>
 
         <app-card-shell title="Due for Review" headerIcon="pi-clock">
-          <div class="stat-value stat-value--warning">
-            {{ stats()?.dueForReview || 0 }}
+          <div class="stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <div class="stat-block__value stat-value--warning">
+                {{ stats()?.dueForReview || 0 }}
+              </div>
+              <div class="stat-block__label">Requires attention</div>
+            </div>
           </div>
-          <div class="stat-label">Requires attention</div>
         </app-card-shell>
 
         <app-card-shell title="Overdue" headerIcon="pi-exclamation-triangle">
-          <div class="stat-value stat-value--danger">
-            {{ stats()?.overdue || 0 }}
+          <div class="stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <div class="stat-block__value stat-value--danger">
+                {{ stats()?.overdue || 0 }}
+              </div>
+              <div class="stat-block__label">Past review date</div>
+            </div>
           </div>
-          <div class="stat-label">Past review date</div>
         </app-card-shell>
 
         <app-card-shell title="Low Confidence" headerIcon="pi-info-circle">
-          <div class="stat-value stat-value--warning">
-            {{ stats()?.lowConfidence || 0 }}
+          <div class="stat-block stat-block--compact">
+            <div class="stat-block__content">
+              <div class="stat-block__value stat-value--warning">
+                {{ stats()?.lowConfidence || 0 }}
+              </div>
+              <div class="stat-block__label">Need more data</div>
+            </div>
           </div>
-          <div class="stat-label">Need more data</div>
         </app-card-shell>
       </div>
 
@@ -262,7 +278,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
         margin-bottom: var(--space-6);
       }
 
-      .stat-value {
+      .stat-block__value {
         font-size: 2rem;
         font-weight: 700;
         color: var(--color-text-primary);
@@ -277,7 +293,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
         color: var(--ds-primary-red);
       }
 
-      .stat-label {
+      .stat-block__label {
         font-size: 0.875rem;
         color: var(--color-text-secondary);
       }

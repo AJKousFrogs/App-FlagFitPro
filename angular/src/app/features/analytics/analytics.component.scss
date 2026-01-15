@@ -9,6 +9,8 @@
 // Modern Horizontal Step Navigation (for multi-step forms/flows)
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .modern-step-nav {
   display: flex;
   align-items: center;
@@ -171,20 +173,7 @@
   // ================================================================
 
   .analytics-page {
-    padding: var(--space-3);
-  }
-
-  .page-header {
-    margin-bottom: var(--space-4);
-  }
-
-  .page-title {
-    font-size: var(--font-size-h2);
-    gap: var(--space-2);
-  }
-
-  .page-subtitle {
-    font-size: var(--font-size-h4);
+    padding: var(--space-4);
   }
 
   // ================================================================
@@ -739,11 +728,7 @@
 
 @include respond-to(sm) {
   .analytics-page {
-    padding: var(--space-2);
-  }
-
-  .page-title {
-    font-size: var(--font-size-h3);
+    padding: var(--space-3);
   }
 
   .metrics-grid {
@@ -857,37 +842,13 @@
 .analytics-page {
   padding: var(--space-6);
   min-height: 100vh; /* Ensure page has height for viewport detection */
-
-  // Mobile fix: ensure content is visible
-  @include respond-to(sm) {
-    padding: var(--space-3);
-  }
-}
-
-.page-header {
-  margin-bottom: var(--space-8);
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-bold);
-  margin-bottom: var(--space-2);
-  color: var(--color-text-primary);
-}
-
-.page-subtitle {
-  font-size: var(--font-body-size);
-  color: var(--color-text-secondary);
 }
 
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-4);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
 }
 
 .metric-card {

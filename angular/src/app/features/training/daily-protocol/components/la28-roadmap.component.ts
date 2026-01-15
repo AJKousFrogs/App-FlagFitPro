@@ -141,19 +141,25 @@ interface Milestone {
         <div class="roadmap-full">
           <!-- Stats Header -->
           <div class="stats-header">
-            <div class="stat-item">
-              <span class="stat-value">{{ daysUntilOlympics() }}</span>
-              <span class="stat-label">Days Until LA28</span>
+            <div class="stat-item stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ daysUntilOlympics() }}</span>
+                <span class="stat-block__label">Days Until LA28</span>
+              </div>
             </div>
-            <div class="stat-item">
-              <span class="stat-value"
-                >{{ completedCycles() }}/{{ totalCycles() }}</span
-              >
-              <span class="stat-label">Cycles Completed</span>
+            <div class="stat-item stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value"
+                  >{{ completedCycles() }}/{{ totalCycles() }}</span
+                >
+                <span class="stat-block__label">Cycles Completed</span>
+              </div>
             </div>
-            <div class="stat-item">
-              <span class="stat-value">{{ overallProgress() }}%</span>
-              <span class="stat-label">Overall Progress</span>
+            <div class="stat-item stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ overallProgress() }}%</span>
+                <span class="stat-block__label">Overall Progress</span>
+              </div>
             </div>
           </div>
 

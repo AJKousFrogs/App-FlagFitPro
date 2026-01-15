@@ -1143,28 +1143,28 @@ interface TournamentBudget {
             <!-- Summary Stats -->
             <div class="availability-summary">
               <div class="summary-stat confirmed">
-                <div class="stat-value">
+                <div class="stat-block__value">
                   {{ teamAvailabilitySummary().confirmed }}
                 </div>
-                <div class="stat-label">Confirmed</div>
+                <div class="stat-block__label">Confirmed</div>
               </div>
               <div class="summary-stat tentative">
-                <div class="stat-value">
+                <div class="stat-block__value">
                   {{ teamAvailabilitySummary().tentative }}
                 </div>
-                <div class="stat-label">Tentative</div>
+                <div class="stat-block__label">Tentative</div>
               </div>
               <div class="summary-stat declined">
-                <div class="stat-value">
+                <div class="stat-block__value">
                   {{ teamAvailabilitySummary().declined }}
                 </div>
-                <div class="stat-label">Declined</div>
+                <div class="stat-block__label">Declined</div>
               </div>
               <div class="summary-stat pending">
-                <div class="stat-value">
+                <div class="stat-block__value">
                   {{ teamAvailabilitySummary().pending }}
                 </div>
-                <div class="stat-label">No Response</div>
+                <div class="stat-block__label">No Response</div>
               </div>
             </div>
 

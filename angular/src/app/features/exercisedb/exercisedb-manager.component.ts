@@ -83,38 +83,38 @@ import { capitalize } from "../../shared/utils/format.utils";
         <!-- Stats Overview -->
         <div class="stats-grid">
           <p-card styleClass="stat-card">
-            <div class="stat-content">
+              <div class="stat-content">
               <i class="pi pi-database stat-icon"></i>
-              <div class="stat-details">
-                <span class="stat-value">{{ totalExercises() }}</span>
-                <span class="stat-label">Total Exercises</span>
+              <div class="stat-details stat-block__content">
+                <span class="stat-block__value">{{ totalExercises() }}</span>
+                <span class="stat-block__label">Total Exercises</span>
               </div>
             </div>
           </p-card>
           <p-card styleClass="stat-card approved">
             <div class="stat-content">
               <i class="pi pi-check-circle stat-icon"></i>
-              <div class="stat-details">
-                <span class="stat-value">{{ approvedCount() }}</span>
-                <span class="stat-label">Approved</span>
+              <div class="stat-details stat-block__content">
+                <span class="stat-block__value">{{ approvedCount() }}</span>
+                <span class="stat-block__label">Approved</span>
               </div>
             </div>
           </p-card>
           <p-card styleClass="stat-card pending">
             <div class="stat-content">
               <i class="pi pi-clock stat-icon"></i>
-              <div class="stat-details">
-                <span class="stat-value">{{ pendingCount() }}</span>
-                <span class="stat-label">Pending Review</span>
+              <div class="stat-details stat-block__content">
+                <span class="stat-block__value">{{ pendingCount() }}</span>
+                <span class="stat-block__label">Pending Review</span>
               </div>
             </div>
           </p-card>
           <p-card styleClass="stat-card curated">
             <div class="stat-content">
               <i class="pi pi-star stat-icon"></i>
-              <div class="stat-details">
-                <span class="stat-value">{{ curatedCount() }}</span>
-                <span class="stat-label">Curated</span>
+              <div class="stat-details stat-block__content">
+                <span class="stat-block__value">{{ curatedCount() }}</span>
+                <span class="stat-block__label">Curated</span>
               </div>
             </div>
           </p-card>

@@ -1,5 +1,7 @@
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .payment-management-page {
   padding: var(--space-4);
   max-width: 1200px;
@@ -84,13 +86,13 @@
     display: flex;
     flex-direction: column;
 
-    .stat-value {
+    .stat-block__value {
       font-size: var(--font-size-h2);
       font-weight: var(--font-weight-bold);
       color: var(--ds-text-primary);
     }
 
-    .stat-label {
+    .stat-block__label {
       font-size: var(--font-size-h4);
       font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);

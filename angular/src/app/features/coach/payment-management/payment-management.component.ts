@@ -191,32 +191,36 @@ const BALANCE_FILTERS = [
               <div class="stat-card balance">
                 <span class="stat-icon">💰</span>
                 <div class="stat-content">
-                  <span class="stat-value">\${{ totalOutstanding() }}</span>
-                  <span class="stat-label">Outstanding Balance</span>
+                  <span class="stat-block__value"
+                    >\${{ totalOutstanding() }}</span
+                  >
+                  <span class="stat-block__label">Outstanding Balance</span>
                   <span class="stat-sub">{{ playersOwing() }} players owe</span>
                 </div>
               </div>
               <div class="stat-card collected">
                 <span class="stat-icon">✅</span>
                 <div class="stat-content">
-                  <span class="stat-value">\${{ totalCollected() }}</span>
-                  <span class="stat-label">Collected This Month</span>
+                  <span class="stat-block__value"
+                    >\${{ totalCollected() }}</span
+                  >
+                  <span class="stat-block__label">Collected This Month</span>
                   <span class="stat-sub">Season total</span>
                 </div>
               </div>
               <div class="stat-card due">
                 <span class="stat-icon">📅</span>
                 <div class="stat-content">
-                  <span class="stat-value">\${{ dueThisMonth() }}</span>
-                  <span class="stat-label">Due This Month</span>
+                  <span class="stat-block__value">\${{ dueThisMonth() }}</span>
+                  <span class="stat-block__label">Due This Month</span>
                   <span class="stat-sub">{{ playersDueCount() }} players</span>
                 </div>
               </div>
               <div class="stat-card overdue">
                 <span class="stat-icon">⚠️</span>
                 <div class="stat-content">
-                  <span class="stat-value">\${{ totalOverdue() }}</span>
-                  <span class="stat-label">Overdue</span>
+                  <span class="stat-block__value">\${{ totalOverdue() }}</span>
+                  <span class="stat-block__label">Overdue</span>
                   <span class="stat-sub">{{ playersOverdue() }} players</span>
                 </div>
               </div>

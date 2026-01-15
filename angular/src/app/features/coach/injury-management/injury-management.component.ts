@@ -262,32 +262,32 @@ const RTP_STAGES: RtpStage[] = [
           <div class="stat-card danger">
             <div class="stat-icon">🔴</div>
             <div class="stat-content">
-              <span class="stat-value">{{ activeCount() }}</span>
-              <span class="stat-label">Active Injuries</span>
+              <span class="stat-block__value">{{ activeCount() }}</span>
+              <span class="stat-block__label">Active Injuries</span>
               <span class="stat-sub">Needs eval</span>
             </div>
           </div>
           <div class="stat-card warning">
             <div class="stat-icon">🟡</div>
             <div class="stat-content">
-              <span class="stat-value">{{ rtpCount() }}</span>
-              <span class="stat-label">In RTP Protocol</span>
+              <span class="stat-block__value">{{ rtpCount() }}</span>
+              <span class="stat-block__label">In RTP Protocol</span>
               <span class="stat-sub">Progressing</span>
             </div>
           </div>
           <div class="stat-card success">
             <div class="stat-icon">🟢</div>
             <div class="stat-content">
-              <span class="stat-value">{{ clearedCount() }}</span>
-              <span class="stat-label">Cleared This Month</span>
+              <span class="stat-block__value">{{ clearedCount() }}</span>
+              <span class="stat-block__label">Cleared This Month</span>
               <span class="stat-sub">Back to full</span>
             </div>
           </div>
           <div class="stat-card info">
             <div class="stat-icon">📊</div>
             <div class="stat-content">
-              <span class="stat-value">{{ totalSeasonCount() }}</span>
-              <span class="stat-label">This Season</span>
+              <span class="stat-block__value">{{ totalSeasonCount() }}</span>
+              <span class="stat-block__label">This Season</span>
               <span class="stat-sub">Total injuries</span>
             </div>
           </div>

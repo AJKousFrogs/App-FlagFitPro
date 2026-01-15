@@ -3,6 +3,10 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
+@include stat-block;
+
 .attendance-page {
   padding: var(--space-6);
 }

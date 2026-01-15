@@ -5,6 +5,8 @@
 
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .acwr-dashboard {
   max-width: var(--content-max-width-xl); /* 1280px - closest token to 1200px */
   margin: 0 auto;
@@ -693,19 +695,19 @@
   text-align: center;
 }
 
-.stat-label {
+.stat-block__label {
   font-size: var(--font-size-h4);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-2);
 }
 
-.stat-value {
+.stat-block__value {
   font-size: var(--font-size-metric-md);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
 }
 
-.stat-value.positive {
+.stat-block__value.positive {
   color: var(--color-status-success);
 }
 

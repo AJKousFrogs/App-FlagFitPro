@@ -182,22 +182,22 @@ const COMPARE_OPTIONS = [
             <div class="stat-card">
               <span class="stat-icon">📊</span>
               <div class="stat-content">
-                <span class="stat-value"
+                <span class="stat-block__value"
                   >{{ selectedPlayer()?.overallProgress }}%</span
                 >
-                <span class="stat-label">Overall Progress</span>
+                <span class="stat-block__label">Overall Progress</span>
                 <span class="stat-sub">vs benchmarks</span>
               </div>
             </div>
             <div class="stat-card">
               <span class="stat-icon">🎯</span>
               <div class="stat-content">
-                <span class="stat-value"
+                <span class="stat-block__value"
                   >{{ selectedPlayer()?.goalsCompleted }}/{{
                     selectedPlayer()?.goalsTotal
                   }}</span
                 >
-                <span class="stat-label">Goals Completed</span>
+                <span class="stat-block__label">Goals Completed</span>
                 <span class="stat-sub">Active goals</span>
               </div>
             </div>
@@ -205,7 +205,7 @@ const COMPARE_OPTIONS = [
               <span class="stat-icon">📈</span>
               <div class="stat-content">
                 <span
-                  class="stat-value"
+                  class="stat-block__value"
                   [class.positive]="
                     (selectedPlayer()?.improvementThisMonth ?? 0) > 0
                   "
@@ -216,17 +216,17 @@ const COMPARE_OPTIONS = [
                       : ""
                   }}{{ selectedPlayer()?.improvementThisMonth }}%
                 </span>
-                <span class="stat-label">Improvement</span>
+                <span class="stat-block__label">Improvement</span>
                 <span class="stat-sub">This month</span>
               </div>
             </div>
             <div class="stat-card">
               <span class="stat-icon">🏆</span>
               <div class="stat-content">
-                <span class="stat-value">{{
+                <span class="stat-block__value">{{
                   selectedPlayer()?.achievements
                 }}</span>
-                <span class="stat-label">Achievements</span>
+                <span class="stat-block__label">Achievements</span>
                 <span class="stat-sub">Unlocked</span>
               </div>
             </div>

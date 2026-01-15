@@ -3,6 +3,10 @@
 // Design System Compliant
 // ============================================================================
 
+@use "styles/mixins" as *;
+
+@include stat-block;
+
 .achievements-panel {
   .summary-card {
     background: var(--surface-card);
@@ -33,18 +37,18 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-
-      .stat-value {
-        font-size: var(--font-size-h2);
-        font-weight: var(--font-weight-bold);
-        color: var(--primary-color);
-      }
-
-      .stat-label {
-        font-size: var(--font-size-badge);
-        color: var(--color-text-secondary);
-      }
     }
+  }
+
+  .summary-stats .stat-block__value {
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+  }
+
+  .summary-stats .stat-block__label {
+    font-size: var(--font-size-badge);
+    color: var(--color-text-secondary);
   }
 
   .active-streaks {
@@ -344,13 +348,17 @@
       margin-bottom: var(--space-2);
     }
 
-    .stat-value {
+    .stat-block__content {
+      align-items: center;
+    }
+
+    .stat-block__value {
       font-size: var(--font-size-h2);
       font-weight: var(--font-weight-bold);
       color: var(--primary-color);
     }
 
-    .stat-label {
+    .stat-block__label {
       font-size: var(--font-size-badge);
       color: var(--color-text-secondary);
     }

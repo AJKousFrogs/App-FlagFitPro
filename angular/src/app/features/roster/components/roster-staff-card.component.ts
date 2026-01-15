@@ -37,15 +37,19 @@ import { getYears } from "../roster-utils";
         </div>
       </div>
       <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-value">
-            {{ getYears(member().experience) }}
+        <div class="stat-item stat-block stat-block--compact">
+          <div class="stat-block__content">
+            <div class="stat-block__value">
+              {{ getYears(member().experience) }}
+            </div>
+            <div class="stat-block__label">Years Exp.</div>
           </div>
-          <div class="stat-label">Years Exp.</div>
         </div>
-        <div class="stat-item">
-          <div class="stat-value">{{ member().country }}</div>
-          <div class="stat-label">Country</div>
+        <div class="stat-item stat-block stat-block--compact">
+          <div class="stat-block__content">
+            <div class="stat-block__value">{{ member().country }}</div>
+            <div class="stat-block__label">Country</div>
+          </div>
         </div>
       </div>
       @if (member().achievements && member().achievements!.length > 0) {

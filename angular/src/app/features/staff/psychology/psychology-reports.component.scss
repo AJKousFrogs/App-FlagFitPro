@@ -1,5 +1,7 @@
 @use "styles/mixins" as *;
 
+@include stat-block;
+
 .psychology-reports {
   padding: var(--ds-spacing-lg);
   max-width: 1200px;
@@ -192,18 +194,20 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-
-      .stat-value {
-        font-size: var(--font-size-h2);
-        font-weight: var(--font-weight-bold);
-        color: var(--primary-color);
-      }
-
-      .stat-label {
-        font-size: var(--font-size-badge);
-        color: var(--text-color-secondary);
-      }
     }
+  }
+
+  .sleep-stat .stat-block__value,
+  .recovery-stat .stat-block__value {
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+  }
+
+  .sleep-stat .stat-block__label,
+  .recovery-stat .stat-block__label {
+    font-size: var(--font-size-badge);
+    color: var(--text-color-secondary);
   }
 
   .sleep-indicators {

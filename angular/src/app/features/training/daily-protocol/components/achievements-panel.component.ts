@@ -86,17 +86,27 @@ interface Stats {
           </div>
         } @else {
           <div class="summary-stats">
-            <div class="stat">
-              <span class="stat-value">{{ summary()?.totalEarned || 0 }}</span>
-              <span class="stat-label">Earned</span>
+            <div class="stat stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{
+                  summary()?.totalEarned || 0
+                }}</span>
+                <span class="stat-block__label">Earned</span>
+              </div>
             </div>
-            <div class="stat">
-              <span class="stat-value">{{ stats()?.total_points || 0 }}</span>
-              <span class="stat-label">Points</span>
+            <div class="stat stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{
+                  stats()?.total_points || 0
+                }}</span>
+                <span class="stat-block__label">Points</span>
+              </div>
             </div>
-            <div class="stat">
-              <span class="stat-value">{{ currentStreak() }}</span>
-              <span class="stat-label">🔥 Streak</span>
+            <div class="stat stat-block stat-block--compact">
+              <div class="stat-block__content">
+                <span class="stat-block__value">{{ currentStreak() }}</span>
+                <span class="stat-block__label">🔥 Streak</span>
+              </div>
             </div>
           </div>
 
@@ -284,45 +294,61 @@ interface Stats {
               <div class="stats-grid">
                 <div class="stat-card">
                   <span class="stat-icon">🏃</span>
-                  <span class="stat-value">{{
-                    stats()?.total_sessions || 0
-                  }}</span>
-                  <span class="stat-label">Training Sessions</span>
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      stats()?.total_sessions || 0
+                    }}</span>
+                    <span class="stat-block__label">Training Sessions</span>
+                  </div>
                 </div>
                 <div class="stat-card">
                   <span class="stat-icon">💪</span>
-                  <span class="stat-value">{{
-                    stats()?.total_exercises || 0
-                  }}</span>
-                  <span class="stat-label">Exercises Completed</span>
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      stats()?.total_exercises || 0
+                    }}</span>
+                    <span class="stat-block__label"
+                      >Exercises Completed</span
+                    >
+                  </div>
                 </div>
                 <div class="stat-card">
                   <span class="stat-icon">⏱️</span>
-                  <span class="stat-value">{{
-                    formatMinutes(stats()?.total_training_minutes || 0)
-                  }}</span>
-                  <span class="stat-label">Training Time</span>
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      formatMinutes(stats()?.total_training_minutes || 0)
+                    }}</span>
+                    <span class="stat-block__label">Training Time</span>
+                  </div>
                 </div>
                 <div class="stat-card">
                   <span class="stat-icon">📈</span>
-                  <span class="stat-value">{{
-                    stats()?.total_load_au || 0
-                  }}</span>
-                  <span class="stat-label">Total Load (AU)</span>
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      stats()?.total_load_au || 0
+                    }}</span>
+                    <span class="stat-block__label">Total Load (AU)</span>
+                  </div>
                 </div>
                 @if (stats()?.total_throws && stats()!.total_throws > 0) {
                   <div class="stat-card highlight">
                     <span class="stat-icon">🎯</span>
-                    <span class="stat-value">{{ stats()?.total_throws }}</span>
-                    <span class="stat-label">Career Throws</span>
+                    <div class="stat-block__content">
+                      <span class="stat-block__value">{{
+                        stats()?.total_throws
+                      }}</span>
+                      <span class="stat-block__label">Career Throws</span>
+                    </div>
                   </div>
                 }
                 <div class="stat-card">
                   <span class="stat-icon">🏆</span>
-                  <span class="stat-value">{{
-                    stats()?.tournaments_completed || 0
-                  }}</span>
-                  <span class="stat-label">Tournaments</span>
+                  <div class="stat-block__content">
+                    <span class="stat-block__value">{{
+                      stats()?.tournaments_completed || 0
+                    }}</span>
+                    <span class="stat-block__label">Tournaments</span>
+                  </div>
                 </div>
               </div>
 

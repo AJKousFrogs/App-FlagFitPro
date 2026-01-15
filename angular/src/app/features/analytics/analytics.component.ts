@@ -634,16 +634,20 @@ interface DevelopmentGoal {
               <p-tabpanel header="Per Game Stats">
                 <div class="stats-summary">
                   <div class="stat-summary-item">
-                    <div class="stat-label">Games Played</div>
-                    <div class="stat-value">{{ playerGameStats().length }}</div>
+                    <div class="stat-block__label">Games Played</div>
+                    <div class="stat-block__value">
+                      {{ playerGameStats().length }}
+                    </div>
                   </div>
                   <div class="stat-summary-item">
-                    <div class="stat-label">Games Missed</div>
-                    <div class="stat-value error">{{ gamesMissed() }}</div>
+                    <div class="stat-block__label">Games Missed</div>
+                    <div class="stat-block__value error">{{ gamesMissed() }}</div>
                   </div>
                   <div class="stat-summary-item">
-                    <div class="stat-label">Attendance Rate</div>
-                    <div class="stat-value">{{ attendanceRate() }}%</div>
+                    <div class="stat-block__label">Attendance Rate</div>
+                    <div class="stat-block__value">
+                      {{ attendanceRate() }}%
+                    </div>
                   </div>
                 </div>
                 <p-table
@@ -694,26 +698,26 @@ interface DevelopmentGoal {
                   <div class="season-stats">
                     <div class="stats-summary">
                       <div class="stat-summary-item">
-                        <div class="stat-label">Season</div>
-                        <div class="stat-value">
+                        <div class="stat-block__label">Season</div>
+                        <div class="stat-block__value">
                           {{ playerSeasonStats()?.season }}
                         </div>
                       </div>
                       <div class="stat-summary-item">
-                        <div class="stat-label">Games Played</div>
-                        <div class="stat-value">
+                        <div class="stat-block__label">Games Played</div>
+                        <div class="stat-block__value">
                           {{ playerSeasonStats()?.gamesPlayed }}
                         </div>
                       </div>
                       <div class="stat-summary-item">
-                        <div class="stat-label">Games Missed</div>
-                        <div class="stat-value error">
+                        <div class="stat-block__label">Games Missed</div>
+                        <div class="stat-block__value error">
                           {{ playerSeasonStats()?.gamesMissed }}
                         </div>
                       </div>
                       <div class="stat-summary-item">
-                        <div class="stat-label">Attendance Rate</div>
-                        <div class="stat-value">
+                        <div class="stat-block__label">Attendance Rate</div>
+                        <div class="stat-block__value">
                           {{
                             playerSeasonStats()?.attendanceRate
                               | number: "1.1-1"
@@ -839,26 +843,26 @@ interface DevelopmentGoal {
                   <div class="multi-season-stats">
                     <div class="stats-summary">
                       <div class="stat-summary-item">
-                        <div class="stat-label">Total Seasons</div>
-                        <div class="stat-value">
+                        <div class="stat-block__label">Total Seasons</div>
+                        <div class="stat-block__value">
                           {{ playerMultiSeasonStats()?.totalSeasons }}
                         </div>
                       </div>
                       <div class="stat-summary-item">
-                        <div class="stat-label">Total Games Played</div>
-                        <div class="stat-value">
+                        <div class="stat-block__label">Total Games Played</div>
+                        <div class="stat-block__value">
                           {{ playerMultiSeasonStats()?.totalGamesPlayed }}
                         </div>
                       </div>
                       <div class="stat-summary-item">
-                        <div class="stat-label">Total Games Missed</div>
-                        <div class="stat-value error">
+                        <div class="stat-block__label">Total Games Missed</div>
+                        <div class="stat-block__value error">
                           {{ playerMultiSeasonStats()?.totalGamesMissed }}
                         </div>
                       </div>
                       <div class="stat-summary-item">
-                        <div class="stat-label">Overall Attendance</div>
-                        <div class="stat-value">
+                        <div class="stat-block__label">Overall Attendance</div>
+                        <div class="stat-block__value">
                           {{
                             playerMultiSeasonStats()?.overallAttendanceRate
                               | number: "1.1-1"

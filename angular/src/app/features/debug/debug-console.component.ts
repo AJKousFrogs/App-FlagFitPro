@@ -117,22 +117,24 @@ interface DebugLog {
           <h3>Performance Statistics</h3>
           <div class="stats-grid">
             <div class="stat-card">
-              <div class="stat-value">{{ stats?.total || 0 }}</div>
-              <div class="stat-label">Total Queries</div>
+              <div class="stat-block__value">{{ stats?.total || 0 }}</div>
+              <div class="stat-block__label">Total Queries</div>
             </div>
             <div class="stat-card">
-              <div class="stat-value success">{{ stats?.successful || 0 }}</div>
-              <div class="stat-label">Successful</div>
+              <div class="stat-block__value success">
+                {{ stats?.successful || 0 }}
+              </div>
+              <div class="stat-block__label">Successful</div>
             </div>
             <div class="stat-card">
-              <div class="stat-value error">{{ stats?.failed || 0 }}</div>
-              <div class="stat-label">Failed</div>
+              <div class="stat-block__value error">{{ stats?.failed || 0 }}</div>
+              <div class="stat-block__label">Failed</div>
             </div>
             <div class="stat-card">
-              <div class="stat-value">
+              <div class="stat-block__value">
                 {{ stats?.avgDuration?.toFixed(2) || 0 }}ms
               </div>
-              <div class="stat-label">Avg Duration</div>
+              <div class="stat-block__label">Avg Duration</div>
             </div>
           </div>
 
@@ -349,21 +351,21 @@ interface DebugLog {
         text-align: center;
       }
 
-      .stat-value {
+      .stat-block__value {
         font-size: 32px;
         font-weight: bold;
         color: #569cd6;
         margin-bottom: 5px;
       }
 
-      .stat-value.success {
+      .stat-block__value.success {
         color: #4ec9b0;
       }
-      .stat-value.error {
+      .stat-block__value.error {
         color: #f48771;
       }
 
-      .stat-label {
+      .stat-block__label {
         font-size: 12px;
         color: #808080;
         text-transform: uppercase;

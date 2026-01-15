@@ -142,9 +142,9 @@ const DEBT_THRESHOLDS = {
             <p-card styleClass="stat-card">
               <div class="stat-content">
                 <i class="pi pi-moon stat-icon"></i>
-                <div class="stat-details">
-                  <span class="stat-label">7-Day Avg Sleep</span>
-                  <span class="stat-value"
+                <div class="stat-details stat-block__content">
+                  <span class="stat-block__label">7-Day Avg Sleep</span>
+                  <span class="stat-block__value"
                     >{{ analysis.sevenDayAvg | number: "1.1-1" }} hrs</span
                   >
                   <p-tag
@@ -166,9 +166,9 @@ const DEBT_THRESHOLDS = {
             <p-card styleClass="stat-card">
               <div class="stat-content">
                 <i class="pi pi-chart-bar stat-icon"></i>
-                <div class="stat-details">
-                  <span class="stat-label">14-Day Avg Sleep</span>
-                  <span class="stat-value"
+                <div class="stat-details stat-block__content">
+                  <span class="stat-block__label">14-Day Avg Sleep</span>
+                  <span class="stat-block__value"
                     >{{ analysis.fourteenDayAvg | number: "1.1-1" }} hrs</span
                   >
                   <p-tag
@@ -190,9 +190,9 @@ const DEBT_THRESHOLDS = {
             <p-card styleClass="stat-card">
               <div class="stat-content">
                 <i class="pi pi-bullseye stat-icon"></i>
-                <div class="stat-details">
-                  <span class="stat-label">Optimal Target</span>
-                  <span class="stat-value"
+                <div class="stat-details stat-block__content">
+                  <span class="stat-block__label">Optimal Target</span>
+                  <span class="stat-block__value"
                     >{{ analysis.optimalTarget }} hrs</span
                   >
                   <span class="stat-hint">(for age {{ userAge() }})</span>
@@ -203,9 +203,9 @@ const DEBT_THRESHOLDS = {
             <p-card styleClass="stat-card">
               <div class="stat-content">
                 <i class="pi pi-clock stat-icon"></i>
-                <div class="stat-details">
-                  <span class="stat-label">Recovery Timeline</span>
-                  <span class="stat-value"
+                <div class="stat-details stat-block__content">
+                  <span class="stat-block__label">Recovery Timeline</span>
+                  <span class="stat-block__value"
                     >{{ analysis.recoveryDays }} days</span
                   >
                   <span class="stat-hint">to clear debt</span>

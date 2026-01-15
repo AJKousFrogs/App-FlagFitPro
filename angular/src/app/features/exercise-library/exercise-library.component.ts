@@ -97,13 +97,19 @@ interface Category {
               </p>
             </div>
             <div class="hero-stats">
-              <div class="stat-item">
-                <span class="stat-value">{{ totalExercises() }}</span>
-                <span class="stat-label">Exercises</span>
+              <div class="stat-block stat-block--large">
+                <div class="stat-block__content">
+                  <span class="stat-block__value">{{ totalExercises() }}</span>
+                  <span class="stat-block__label">Exercises</span>
+                </div>
               </div>
-              <div class="stat-item">
-                <span class="stat-value">{{ categories.length - 1 }}</span>
-                <span class="stat-label">Categories</span>
+              <div class="stat-block stat-block--large">
+                <div class="stat-block__content">
+                  <span class="stat-block__value">{{
+                    categories.length - 1
+                  }}</span>
+                  <span class="stat-block__label">Categories</span>
+                </div>
               </div>
             </div>
           </div>

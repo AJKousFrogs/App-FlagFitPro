@@ -184,23 +184,29 @@ interface TimezoneOption {
 
               @if (selectedOlympicVenue && olympicImpact()) {
                 <div class="olympic-impact">
-                  <div class="impact-stat">
-                    <span class="stat-value">{{
-                      Math.abs(olympicImpact()!.timezonesDifference)
-                    }}</span>
-                    <span class="stat-label">Time Zones</span>
+                  <div class="impact-stat stat-block stat-block--large">
+                    <div class="stat-block__content">
+                      <span class="stat-block__value">{{
+                        Math.abs(olympicImpact()!.timezonesDifference)
+                      }}</span>
+                      <span class="stat-block__label">Time Zones</span>
+                    </div>
                   </div>
-                  <div class="impact-stat">
-                    <span class="stat-value">{{
-                      olympicImpact()!.direction
-                    }}</span>
-                    <span class="stat-label">Direction</span>
+                  <div class="impact-stat stat-block stat-block--large">
+                    <div class="stat-block__content">
+                      <span class="stat-block__value">{{
+                        olympicImpact()!.direction
+                      }}</span>
+                      <span class="stat-block__label">Direction</span>
+                    </div>
                   </div>
-                  <div class="impact-stat">
-                    <span class="stat-value">{{
-                      olympicImpact()!.estimatedRecoveryDays
-                    }}</span>
-                    <span class="stat-label">Recovery Days</span>
+                  <div class="impact-stat stat-block stat-block--large">
+                    <div class="stat-block__content">
+                      <span class="stat-block__value">{{
+                        olympicImpact()!.estimatedRecoveryDays
+                      }}</span>
+                      <span class="stat-block__label">Recovery Days</span>
+                    </div>
                   </div>
                 </div>
               }

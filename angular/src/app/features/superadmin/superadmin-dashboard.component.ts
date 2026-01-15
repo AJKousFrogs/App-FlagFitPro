@@ -65,9 +65,11 @@ import {
               <div class="stat-icon pending">
                 <i class="pi pi-clock"></i>
               </div>
-              <div class="stat-info">
-                <span class="stat-value">{{ stats().pendingTeams }}</span>
-                <span class="stat-label">Pending Teams</span>
+              <div class="stat-info stat-block__content">
+                <span class="stat-block__value">{{
+                  stats().pendingTeams
+                }}</span>
+                <span class="stat-block__label">Pending Teams</span>
               </div>
             </div>
           </p-card>
@@ -77,9 +79,11 @@ import {
               <div class="stat-icon roles">
                 <i class="pi pi-users"></i>
               </div>
-              <div class="stat-info">
-                <span class="stat-value">{{ stats().pendingRoles }}</span>
-                <span class="stat-label">Pending Roles</span>
+              <div class="stat-info stat-block__content">
+                <span class="stat-block__value">{{
+                  stats().pendingRoles
+                }}</span>
+                <span class="stat-block__label">Pending Roles</span>
               </div>
             </div>
           </p-card>
@@ -89,9 +93,11 @@ import {
               <div class="stat-icon approved">
                 <i class="pi pi-check-circle"></i>
               </div>
-              <div class="stat-info">
-                <span class="stat-value">{{ stats().approvedTeams }}</span>
-                <span class="stat-label">Active Teams</span>
+              <div class="stat-info stat-block__content">
+                <span class="stat-block__value">{{
+                  stats().approvedTeams
+                }}</span>
+                <span class="stat-block__label">Active Teams</span>
               </div>
             </div>
           </p-card>
@@ -101,9 +107,11 @@ import {
               <div class="stat-icon users">
                 <i class="pi pi-user"></i>
               </div>
-              <div class="stat-info">
-                <span class="stat-value">{{ stats().totalUsers }}</span>
-                <span class="stat-label">Total Athletes</span>
+              <div class="stat-info stat-block__content">
+                <span class="stat-block__value">{{
+                  stats().totalUsers
+                }}</span>
+                <span class="stat-block__label">Total Athletes</span>
               </div>
             </div>
           </p-card>

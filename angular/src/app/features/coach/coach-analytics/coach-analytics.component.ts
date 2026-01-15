@@ -233,15 +233,17 @@ interface TeamOption {
               } @else {
                 <div class="classification-stats">
                   <div class="stat-group">
-                    <div class="stat-item">
-                      <span class="stat-label">Total Classified</span>
-                      <span class="stat-value">{{
-                        classification()?.total || 0
-                      }}</span>
+                    <div class="stat-item stat-block stat-block--compact">
+                      <div class="stat-block__content">
+                        <span class="stat-block__value">{{
+                          classification()?.total || 0
+                        }}</span>
+                        <span class="stat-block__label">Total Classified</span>
+                      </div>
                     </div>
-                    <div class="stat-item">
-                      <span class="stat-label">Avg. Confidence</span>
-                      <span class="stat-value">
+                    <div class="stat-item stat-block stat-block--compact">
+                      <div class="stat-block__content">
+                        <span class="stat-block__value">
                         {{
                           classification()?.avgConfidence
                             ? (
@@ -250,6 +252,8 @@ interface TeamOption {
                             : "N/A"
                         }}
                       </span>
+                        <span class="stat-block__label">Avg. Confidence</span>
+                      </div>
                     </div>
                   </div>
 

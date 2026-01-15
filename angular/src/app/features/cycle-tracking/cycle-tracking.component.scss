@@ -76,18 +76,6 @@
     padding: var(--space-3);
     background: var(--ds-surface-base);
     border-radius: var(--radius-md);
-
-    .stat-value {
-      font-size: var(--font-size-h2);
-      font-weight: var(--font-weight-semibold);
-      color: var(--ds-primary-green);
-    }
-
-    .stat-label {
-      font-size: var(--font-size-h4);
-      color: var(--ds-text-secondary);
-      margin-top: var(--space-1);
-    }
   }
 }
 

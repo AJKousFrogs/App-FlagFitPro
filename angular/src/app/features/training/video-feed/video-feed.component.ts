@@ -118,7 +118,7 @@ interface FilterChip {
                 >
                   <i class="pi pi-video"></i>
                   <span class="stat-number">{{ totalVideos() }}</span>
-                  <span class="stat-label">Videos</span>
+                  <span class="stat-block__label">Videos</span>
                   <i class="pi pi-chevron-down stat-action-icon"></i>
                 </button>
                 <button
@@ -130,7 +130,7 @@ interface FilterChip {
                 >
                   <i class="pi pi-star"></i>
                   <span class="stat-number">{{ totalCreators() }}</span>
-                  <span class="stat-label">Creators</span>
+                  <span class="stat-block__label">Creators</span>
                   <i class="pi pi-chevron-down stat-action-icon"></i>
                 </button>
               </div>

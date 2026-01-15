@@ -6,6 +6,8 @@
 // Removed ::ng-deep (deprecated) - Using CSS custom properties and classes
 // ============================================================================
 
+@include stat-block;
+
 .exercisedb-manager {
   padding: var(--space-6);
   min-height: 100vh;

@@ -106,19 +106,27 @@ interface DiscussionMessage {
         <p-card styleClass="progress-card">
           <div class="progress-header">
             <div class="progress-stats">
-              <div class="stat-item">
-                <span class="stat-value">{{ watchedCount() }}</span>
-                <span class="stat-label">Watched</span>
+              <div class="stat-item stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <span class="stat-block__value">{{ watchedCount() }}</span>
+                  <span class="stat-block__label">Watched</span>
+                </div>
               </div>
               <div class="stat-divider"></div>
-              <div class="stat-item">
-                <span class="stat-value">{{ totalFilms() }}</span>
-                <span class="stat-label">Assigned</span>
+              <div class="stat-item stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <span class="stat-block__value">{{ totalFilms() }}</span>
+                  <span class="stat-block__label">Assigned</span>
+                </div>
               </div>
               <div class="stat-divider"></div>
-              <div class="stat-item">
-                <span class="stat-value">{{ totalTaggedMoments() }}</span>
-                <span class="stat-label">Tags to Review</span>
+              <div class="stat-item stat-block stat-block--compact">
+                <div class="stat-block__content">
+                  <span class="stat-block__value">{{
+                    totalTaggedMoments()
+                  }}</span>
+                  <span class="stat-block__label">Tags to Review</span>
+                </div>
               </div>
             </div>
           </div>

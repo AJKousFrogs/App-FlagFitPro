@@ -1,13 +1,13 @@
 @use "styles/mixins" as *;
 
 .playbook-page {
-  padding: var(--space-4);
-  max-width: 1200px;
-  margin: 0 auto;
+  @include page-container(1200px);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
+
+@include stat-block;
 
 // Progress Card
 .progress-card {
@@ -26,18 +26,20 @@
 
   .stat-item {
     text-align: center;
+  }
 
-    .stat-value {
-      display: block;
-      font-size: var(--font-size-h2);
-      font-weight: var(--font-weight-bold);
-      color: var(--ds-text-primary);
-    }
+  .stat-block__content {
+    align-items: center;
+  }
 
-    .stat-label {
-      font-size: var(--font-size-h4);
-      color: var(--ds-text-secondary);
-    }
+  .stat-block__value {
+    font-size: var(--font-size-h2);
+    color: var(--ds-text-primary);
+  }
+
+  .stat-block__label {
+    font-size: var(--font-size-h4);
+    color: var(--ds-text-secondary);
   }
 
   .stat-divider {

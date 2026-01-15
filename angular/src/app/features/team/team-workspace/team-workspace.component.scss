@@ -8,15 +8,7 @@
  */
 
 .team-workspace-page {
-  padding: var(--space-4);
-
-  @include respond-to(md) {
-    padding: var(--space-3);
-  }
-
-  @include respond-to(sm) {
-    padding: var(--space-2);
-  }
+  @include page-container(1400px);
 }
 
 // ================================================================

@@ -81,7 +81,7 @@ export interface ProgressiveStatItem extends StatItem {
                 }
                 <div class="stat-info">
                   <h4 class="stat-title">{{ stat.label }}</h4>
-                  <div class="stat-value">{{ stat.value }}</div>
+                  <div class="stat-block__value">{{ stat.value }}</div>
                   @if (stat.trend) {
                     <div class="stat-trend">
                       <p-tag

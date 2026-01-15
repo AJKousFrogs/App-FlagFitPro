@@ -362,25 +362,27 @@ const SEVERITY_LEVELS = [
 
             <div class="protocol-stats">
               <div class="stat">
-                <span class="stat-label">Severity</span>
+                <span class="stat-block__label">Severity</span>
                 <p-tag
                   [value]="formatSeverity(protocol.severity)"
                   [severity]="getSeverityColor(protocol.severity)"
                 ></p-tag>
               </div>
               <div class="stat">
-                <span class="stat-label">Day of Recovery</span>
-                <span class="stat-value">{{ protocol.daysInRecovery }}</span>
+                <span class="stat-block__label">Day of Recovery</span>
+                <span class="stat-block__value">
+                  {{ protocol.daysInRecovery }}
+                </span>
               </div>
               <div class="stat">
-                <span class="stat-label">Est. Recovery</span>
-                <span class="stat-value"
+                <span class="stat-block__label">Est. Recovery</span>
+                <span class="stat-block__value"
                   >{{ getEstimatedDays(protocol.severity) }} days</span
                 >
               </div>
               <div class="stat">
-                <span class="stat-label">Target Return</span>
-                <span class="stat-value">{{
+                <span class="stat-block__label">Target Return</span>
+                <span class="stat-block__value">{{
                   protocol.targetReturnDate | date: "MMM d"
                 }}</span>
               </div>

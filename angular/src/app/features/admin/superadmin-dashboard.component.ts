@@ -111,9 +111,11 @@ interface AdminTeam {
         <div class="stats-grid">
           <div class="stat-card">
             <span class="stat-icon">👥</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ stats().totalUsers | number }}</span>
-              <span class="stat-label">Total Users</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{
+                stats().totalUsers | number
+              }}</span>
+              <span class="stat-block__label">Total Users</span>
               <span class="stat-change positive"
                 >▲ +{{ stats().usersGrowth }} this mo</span
               >
@@ -121,9 +123,9 @@ interface AdminTeam {
           </div>
           <div class="stat-card">
             <span class="stat-icon">🏈</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ stats().activeTeams }}</span>
-              <span class="stat-label">Active Teams</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ stats().activeTeams }}</span>
+              <span class="stat-block__label">Active Teams</span>
               <span class="stat-change positive"
                 >▲ +{{ stats().teamsGrowth }} this mo</span
               >
@@ -131,9 +133,9 @@ interface AdminTeam {
           </div>
           <div class="stat-card">
             <span class="stat-icon">📊</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ stats().dailyActive }}</span>
-              <span class="stat-label">Daily Active</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ stats().dailyActive }}</span>
+              <span class="stat-block__label">Daily Active</span>
               <span class="stat-sub"
                 >{{ stats().dailyActivePercent }}% of users</span
               >
@@ -141,9 +143,9 @@ interface AdminTeam {
           </div>
           <div class="stat-card" [class.warning]="stats().openIssues > 0">
             <span class="stat-icon">⚠️</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ stats().openIssues }}</span>
-              <span class="stat-label">Open Issues</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ stats().openIssues }}</span>
+              <span class="stat-block__label">Open Issues</span>
               <span class="stat-sub">Support tix</span>
             </div>
           </div>
@@ -152,9 +154,9 @@ interface AdminTeam {
         <div class="stats-grid">
           <div class="stat-card">
             <span class="stat-icon">💾</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ stats().dbSize }}</span>
-              <span class="stat-label">DB Size</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{ stats().dbSize }}</span>
+              <span class="stat-block__label">DB Size</span>
               <span class="stat-sub" [class.warning]="stats().dbPercent > 70"
                 >{{ stats().dbPercent }}% of limit</span
               >
@@ -162,9 +164,11 @@ interface AdminTeam {
           </div>
           <div class="stat-card">
             <span class="stat-icon">🔄</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ stats().apiRequests | number }}</span>
-              <span class="stat-label">API Requests (24h)</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{
+                stats().apiRequests | number
+              }}</span>
+              <span class="stat-block__label">API Requests (24h)</span>
               <span class="stat-change positive"
                 >▲ +{{ stats().apiGrowth }}% vs avg</span
               >
@@ -172,17 +176,21 @@ interface AdminTeam {
           </div>
           <div class="stat-card">
             <span class="stat-icon">⚡</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ stats().avgResponse }}ms</span>
-              <span class="stat-label">Avg Response</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value"
+                >{{ stats().avgResponse }}ms</span
+              >
+              <span class="stat-block__label">Avg Response</span>
               <span class="stat-sub healthy">🟢 Healthy</span>
             </div>
           </div>
           <div class="stat-card">
             <span class="stat-icon">🔴</span>
-            <div class="stat-content">
-              <span class="stat-value">{{ stats().errorsLast24h }}</span>
-              <span class="stat-label">Errors (24h)</span>
+            <div class="stat-content stat-block__content">
+              <span class="stat-block__value">{{
+                stats().errorsLast24h
+              }}</span>
+              <span class="stat-block__label">Errors (24h)</span>
               <span class="stat-sub">{{ stats().errorRate }}% rate</span>
             </div>
           </div>
