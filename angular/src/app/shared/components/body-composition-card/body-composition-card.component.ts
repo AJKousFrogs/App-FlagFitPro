@@ -427,9 +427,11 @@ export class BodyCompositionCardComponent implements OnInit {
         this.showLogDialog = false;
         // Data is refreshed internally by logBodyComp
       } else {
-        this.toastService.error(
-          "Failed to save measurement. Please try again.",
-        );
+        const errorMsg = result?.error 
+          ? `Failed to save: ${typeof result.error === 'string' ? result.error : (result.error as { message?: string })?.message || 'Unknown error'}`
+          : "Failed to save measurement. Are you logged in?";
+        this.logger.error("[BodyComposition] Save failed:", result?.error);
+        this.toastService.error(errorMsg);
       }
     } catch (err) {
       this.isSaving.set(false);

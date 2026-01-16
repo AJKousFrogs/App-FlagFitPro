@@ -590,9 +590,9 @@ interface ApiPollVoteResponse {
                                     comment.authorInitials
                                   ),
                                   color: '#fff',
-                                  width: '32px',
-                                  height: '32px',
-                                  'font-size': '0.75rem',
+                                  width: 'var(--space-8)',
+                                  height: 'var(--space-8)',
+                                  'font-size': 'var(--font-caption-size)',
                                 }"
                               ></p-avatar>
                               <div class="comment-body">
@@ -632,9 +632,9 @@ interface ApiPollVoteResponse {
                           [label]="currentUserInitials()"
                           shape="circle"
                           [style]="{
-                            width: '32px',
-                            height: '32px',
-                            'font-size': '0.75rem',
+                            width: 'var(--space-8)',
+                            height: 'var(--space-8)',
+                            'font-size': 'var(--font-caption-size)',
                           }"
                         ></p-avatar>
                         <div class="comment-input-wrapper">
@@ -727,8 +727,8 @@ interface ApiPollVoteResponse {
                       [style]="{
                         background: getAvatarColor(entry.initials),
                         color: '#fff',
-                        width: '36px',
-                        height: '36px',
+                        width: 'var(--touch-target-sm)',
+                        height: 'var(--touch-target-sm)',
                       }"
                     ></p-avatar>
                     <div class="player-info">

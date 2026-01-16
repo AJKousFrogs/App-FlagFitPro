@@ -205,8 +205,8 @@ import {
               ></p-checkbox>
               <label for="termsAccepted" class="terms-label">
                 I agree to the
-                <a href="/docs/terms" target="_blank">Terms of Service</a> and
-                <a href="/docs/privacy" target="_blank">Privacy Policy</a>
+                <a href="/terms" target="_blank">Terms of Service</a> and
+                <a href="/privacy-policy" target="_blank">Privacy Policy</a>
               </label>
             </div>
             @if (isFieldInvalid("termsAccepted")) {

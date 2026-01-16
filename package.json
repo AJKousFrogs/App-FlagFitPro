@@ -10,7 +10,7 @@
   "scripts": {
     "start": "concurrently --kill-others-on-fail \"npm run dev:api\" \"npm run dev:angular\"",
     "dev": "concurrently --kill-others-on-fail \"npm run dev:api\" \"npm run dev:angular\"",
-    "dev:api": "nodemon server.js --watch . --ext js,json --ignore node_modules/ --ignore *.backup --ignore angular/ --delay 1000ms",
+    "dev:api": "node node_modules/nodemon/bin/nodemon.js server.js --watch . --ext js,json --ignore node_modules/ --ignore *.backup --ignore angular/ --delay 1000ms",
     "dev:angular": "cd angular && npx ng serve --port 4200 --host 0.0.0.0 --live-reload --poll 2000",
     "dev:full": "concurrently --kill-others-on-fail \"npm run dev:api\" \"npm run dev:angular\"",
     "dev:angular-only": "cd angular && npx ng serve --port 4200 --host 0.0.0.0 --live-reload --poll 2000",

@@ -251,8 +251,8 @@
 
 .toggle-thumb {
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: calc(var(--space-1) / 2);
+  left: calc(var(--space-1) / 2);
   width: var(--space-5);
   height: var(--space-5);
   background: var(--color-text-on-primary);
@@ -304,7 +304,7 @@
 .game-header-content h3::before {
   content: "";
   display: block;
-  width: 4px;
+  width: var(--space-1);
   height: var(--space-5);
   background: var(--ds-primary-green);
   border-radius: var(--radius-sm);
@@ -442,7 +442,7 @@
 .play-details-section h4::before {
   content: "";
   display: block;
-  width: 3px;
+  width: var(--space-1);
   height: var(--space-4);
   background: var(--ds-primary-green);
   border-radius: var(--radius-full); /* Pill shape for thin accent bars */
@@ -491,12 +491,12 @@
 }
 
 .outcome-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(calc(-1 * var(--space-1) / 2));
   box-shadow: var(--shadow-2);
 }
 
 .outcome-btn.active {
-  border-width: 2px;
+  border-width: var(--border-2);
 }
 
 .outcome-btn.outcome-success {
@@ -545,7 +545,7 @@
   padding: var(--space-5);
   background: var(--color-error-bg);
   border-radius: var(--radius-md);
-  border-left: 4px solid var(--color-status-error);
+  border-left: var(--space-1) solid var(--color-status-error);
 }
 
 /* ================================================================
@@ -680,7 +680,7 @@
       button {
         width: 100%;
         justify-content: center;
-        min-height: 44px; // Apple HIG touch target
+        min-height: var(--touch-target-md); // Apple HIG touch target
       }
     }
   }
@@ -712,7 +712,7 @@
     :global(input),
     :global(select),
     :global(textarea) {
-      min-height: 44px;
+      min-height: var(--touch-target-md);
       padding: var(--space-2) var(--space-3);
     }
   }
@@ -729,7 +729,7 @@
       button {
         width: 100%;
         justify-content: center;
-        min-height: 44px;
+        min-height: var(--touch-target-md);
       }
     }
   }
@@ -749,7 +749,7 @@
 
     .play-type-option {
       padding: var(--space-2);
-      min-height: 44px; // Touch-friendly
+      min-height: var(--touch-target-md); // Touch-friendly
 
       // PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-003)
 
@@ -787,10 +787,10 @@
       }
 
       :global(input) {
-        width: 60px;
+        width: calc(var(--space-12) + var(--space-3));
         text-align: center;
         font-size: var(--font-size-h2);
-        min-height: 48px;
+        min-height: var(--space-12);
       }
     }
 
@@ -835,7 +835,7 @@
   }
 
   .outcome-btn {
-    min-height: 56px; // Larger for touch
+    min-height: var(--touch-target-lg); // Larger for touch
     padding: var(--space-3);
     font-size: var(--font-size-h4);
 
@@ -879,8 +879,8 @@
       gap: var(--space-1);
 
       .action-btn {
-        min-width: 40px;
-        min-height: 40px;
+        min-width: var(--space-10);
+        min-height: var(--space-10);
         padding: var(--space-2);
       }
     }
@@ -916,13 +916,13 @@
     }
 
     .toggle-track {
-      width: 48px;
-      height: 28px;
+      width: var(--space-12);
+      height: calc(var(--space-6) + var(--space-1));
     }
 
     .toggle-thumb {
-      width: 24px;
-      height: 24px;
+      width: var(--space-6);
+      height: var(--space-6);
     }
   }
 
@@ -971,7 +971,7 @@
   justify-content: center;
   padding: var(--space-8);
   text-align: center;
-  min-height: 300px;
+  min-height: calc(var(--space-20) * 3 + var(--space-6));
 }
 
 .empty-state-container i {
@@ -994,7 +994,7 @@
 
   .empty-state-container {
     padding: var(--space-6);
-    min-height: 200px;
+    min-height: calc(var(--space-10) * 5);
   }
 
   .game-header-content {

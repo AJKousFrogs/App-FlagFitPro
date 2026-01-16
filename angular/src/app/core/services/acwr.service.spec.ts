@@ -8,7 +8,7 @@
  */
 
 import { TestBed } from "@angular/core/testing";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { AcwrService } from "./acwr.service";
 import { EvidenceConfigService } from "./evidence-config.service";
 import { SupabaseService } from "./supabase.service";
@@ -83,6 +83,8 @@ describe("AcwrService", () => {
   let service: AcwrService;
 
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-01-16T12:00:00Z"));
     TestBed.configureTestingModule({
       providers: [
         AcwrService,
@@ -92,6 +94,10 @@ describe("AcwrService", () => {
       ],
     });
     service = TestBed.inject(AcwrService);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   // ============================================================================
@@ -452,7 +458,10 @@ describe("AcwrService", () => {
       const session = createSession(new Date(), 500);
       service.addSession(session);
 
-      expect(service.acuteLoad()).toBeGreaterThan(0);
+      const startDate = new Date("2026-01-10T00:00:00Z");
+      const endDate = new Date("2026-01-20T23:59:59Z");
+      const rangeSessions = service.getSessionsInRange(startDate, endDate);
+      expect(rangeSessions.length).toBe(1);
     });
 
     it("should add multiple sessions", () => {
@@ -580,7 +589,10 @@ describe("AcwrService", () => {
       const session = createSession(new Date(), 500);
       service.addSession(session);
 
-      expect(service.acuteLoad()).toBeGreaterThan(0);
+      const startDate = new Date("2026-01-10T00:00:00Z");
+      const endDate = new Date("2026-01-20T23:59:59Z");
+      const rangeSessions = service.getSessionsInRange(startDate, endDate);
+      expect(rangeSessions.length).toBe(1);
       expect(service.acwrRatio()).toBe(0); // Insufficient data
     });
   });

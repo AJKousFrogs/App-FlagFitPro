@@ -99,6 +99,33 @@ export const publicRoutes: Routes = [
       ),
     data: { preload: false }, // On-demand - rarely accessed
   },
+  {
+    path: "terms",
+    loadComponent: () =>
+      import("../../features/legal/legal-doc.component").then(
+        (m) => m.LegalDocComponent,
+      ),
+    data: { preload: false, legalDoc: "terms" },
+    title: "Terms of Use - FlagFit Pro",
+  },
+  {
+    path: "privacy",
+    loadComponent: () =>
+      import("../../features/legal/legal-doc.component").then(
+        (m) => m.LegalDocComponent,
+      ),
+    data: { preload: false, legalDoc: "privacy" },
+    title: "Privacy Policy - FlagFit Pro",
+  },
+  {
+    path: "privacy-policy",
+    loadComponent: () =>
+      import("../../features/legal/legal-doc.component").then(
+        (m) => m.LegalDocComponent,
+      ),
+    data: { preload: false, legalDoc: "privacy-policy" },
+    title: "Privacy Policy - FlagFit Pro",
+  },
 ];
 
 /**
@@ -335,6 +362,11 @@ export const trainingRoutes: Routes = [
       ),
     canActivate: [authGuard],
     data: { preload: false }, // Advanced feature
+  },
+  {
+    path: "goals",
+    redirectTo: "training/goal-planner",
+    pathMatch: "full",
   },
   {
     path: "training/microcycle",

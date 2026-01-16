@@ -12,7 +12,7 @@ import { TrainingStatsCalculationService } from "../../core/services/training-st
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
-import { MessageService } from "primeng/api";
+import { ConfirmationService, MessageService } from "primeng/api";
 // Chart utility imports for mocking (prefixed to indicate mock usage)
 import type {
   exportChartAsPNG as _exportChartAsPNG,
@@ -132,6 +132,7 @@ describe("AnalyticsComponent", () => {
         { provide: LoggerService, useValue: mockLoggerService },
         { provide: SupabaseService, useValue: mockSupabaseService },
         { provide: MessageService, useValue: mockMessageService },
+        { provide: ConfirmationService, useValue: { confirm: vi.fn() } },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
       schemas: [NO_ERRORS_SCHEMA], // Ignore unknown elements in template

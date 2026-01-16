@@ -6,22 +6,38 @@
 @use "styles/mixins" as *;
 
 .wellness-page {
-  padding: var(--space-6);
+  @include page-container(var(--content-max-width-xl));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
 
-  @include respond-to(md) {
-    padding: var(--space-4);
-  }
+.wellness-page > app-page-header {
+  width: 100%;
+  --page-header-margin-bottom: 0;
+}
 
-  @include respond-to(sm) {
-    padding: var(--space-3);
-  }
+.wellness-page
+  > :is(
+    app-stats-grid,
+    p-card,
+    app-card,
+    app-body-composition-card,
+    app-supplement-tracker,
+    app-hydration-tracker
+  ) {
+  width: 100%;
+  margin: 0;
+}
+
+.confidence-card {
+  width: 100%;
 }
 
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: var(--space-6);
-  margin-bottom: var(--space-6);
   align-items: stretch; /* Ensure equal card heights */
 }
 
@@ -37,7 +53,8 @@
 }
 
 .checkin-card {
-  max-width: var(--content-max-width-md);
+  width: 100%;
+  max-width: var(--content-max-width-xl);
   margin: 0 auto;
 }
 

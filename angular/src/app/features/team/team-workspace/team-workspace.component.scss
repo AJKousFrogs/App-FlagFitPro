@@ -48,7 +48,7 @@
 
 .tool-card {
   background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   display: flex;
@@ -61,7 +61,7 @@
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
     background-color var(--transition-fast);
-  min-height: 180px;
+  min-height: calc(var(--space-20) * 2 + var(--space-5));
   justify-content: center;
 
   &:hover {
@@ -78,30 +78,30 @@
   // Tablet: Reduce padding
   @include respond-to(lg) {
     padding: var(--space-5);
-    min-height: 160px;
+    min-height: calc(var(--space-20) * 2);
   }
 
   // Mobile: Further reduce padding and height
   @include respond-to(md) {
     padding: var(--space-4);
-    min-height: 140px;
+    min-height: calc(var(--space-20) * 2 - var(--space-5));
   }
 
   @include respond-to(sm) {
     padding: var(--space-5);
-    min-height: 160px;
+    min-height: calc(var(--space-20) * 2);
   }
 
   // Icon styling
   i {
-    font-size: 2rem; // 32px - feature icon
+    font-size: var(--font-h1-size); // 32px - feature icon
     color: var(--ds-primary-green);
     margin-bottom: var(--space-4);
     transition: transform var(--transition-fast);
     flex-shrink: 0;
 
     @include respond-to(md) {
-      font-size: 1.75rem; // 28px on mobile
+      font-size: calc(var(--font-h2-size) + var(--space-1)); // 28px on mobile
       margin-bottom: var(--space-3);
     }
   }
@@ -143,7 +143,7 @@
 // ================================================================
 
 .mr-2 {
-  margin-right: 0.5rem;
+  margin-right: var(--space-2);
 }
 
 // ================================================================

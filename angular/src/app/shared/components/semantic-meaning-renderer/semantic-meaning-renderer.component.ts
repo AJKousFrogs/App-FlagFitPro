@@ -63,8 +63,9 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
   meaning = input.required<SemanticMeaning>();
   context = input.required<MeaningMetadata["context"]>();
 
-  // Angular 21: Use viewChild() signal instead of @ViewChild()
-  renderTarget = viewChild.required<ViewContainerRef>("renderTarget");
+  // Angular 21: Use viewChild() signal with { read: ViewContainerRef } to get container ref
+  // Note: ng-container doesn't create a real DOM element, so we must explicitly read ViewContainerRef
+  renderTarget = viewChild.required("renderTarget", { read: ViewContainerRef });
 
   private rendererService = inject(SemanticRendererService);
   private logger = inject(LoggerService);

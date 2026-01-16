@@ -50,7 +50,7 @@
 
 /* Personal tournament card styling */
 .tournament-card.personal-tournament {
-  border-left: 4px solid var(--color-status-warning);
+  border-left: var(--space-1) solid var(--color-status-warning);
 }
 
 .tags-row {
@@ -105,8 +105,8 @@
 }
 
 .visibility-info-banner .banner-icon {
-  width: 40px;
-  height: 40px;
+  width: var(--space-10);
+  height: var(--space-10);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
@@ -170,8 +170,8 @@
 }
 
 .info-icon {
-  width: 32px;
-  height: 32px;
+  width: var(--space-8);
+  height: var(--space-8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -468,7 +468,7 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  border-left: 4px solid var(--ds-primary-green);
+  border-left: var(--space-1) solid var(--ds-primary-green);
 }
 
 .cost-summary h4 {
@@ -944,7 +944,7 @@
 }
 
 .tournament-form textarea.p-inputtextarea {
-  min-height: 80px;
+  min-height: var(--space-20);
   resize: vertical;
 }
 

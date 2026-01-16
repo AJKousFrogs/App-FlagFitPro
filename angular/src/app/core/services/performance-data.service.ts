@@ -541,7 +541,7 @@ export class PerformanceDataService {
       this.logger.error(
         "[Performance] Cannot log measurement: No user logged in",
       );
-      return of({ success: false });
+      return of({ success: false, error: "Not authenticated. Please log in again." });
     }
 
     return from(

@@ -196,12 +196,17 @@ export class DirectSupabaseApiService {
       .order("sequence_order", { ascending: true });
 
     // Group exercises into blocks
+    // Evidence-based 1.5h gym structure with separate training blocks
     const blockMap = new Map<string, ProtocolExercise[]>();
     const blockTypes = [
       "morning_mobility",
       "foam_roll",
       "warm_up",
-      "main_session",
+      "isometrics",
+      "plyometrics",
+      "strength",
+      "conditioning",
+      "skill_drills",
       "cool_down",
       "evening_recovery",
     ];
@@ -417,12 +422,17 @@ export class DirectSupabaseApiService {
   }
 
   private getBlockEstimatedMinutes(blockType: string): number {
+    // Evidence-based 1.5h gym structure timing
     const estimates: Record<string, number> = {
       morning_mobility: 10,
       foam_roll: 8,
-      warm_up: 10,
-      main_session: 45,
-      cool_down: 8,
+      warm_up: 15,
+      isometrics: 15,
+      plyometrics: 15,
+      strength: 15,
+      conditioning: 15,
+      skill_drills: 15,
+      cool_down: 15,
       evening_recovery: 10,
     };
     return estimates[blockType] || 15;
@@ -574,84 +584,114 @@ export class DirectSupabaseApiService {
       return shuffled.slice(0, count);
     };
 
-    // Morning mobility (2 exercises)
-    const mobilityExercises = getExercises("mobility", 2);
-    mobilityExercises.forEach((ex, i) => {
+    // Helper to add exercises to a block
+    const addBlockExercises = (
+      blockType: string,
+      category: string,
+      count: number,
+      options: { useSets?: boolean; useHold?: boolean; useDuration?: boolean } = { useSets: true }
+    ) => {
+      const exercises = getExercises(category, count);
+      exercises.forEach((ex, i) => {
+        const exercise: {
+          protocol_id: string;
+          exercise_id: string;
+          block_type: string;
+          sequence_order: number;
+          status: string;
+          prescribed_sets: number;
+          prescribed_reps?: number;
+          prescribed_hold_seconds?: number;
+          prescribed_duration_seconds?: number;
+        } = {
+          protocol_id: protocolId,
+          exercise_id: ex.id,
+          block_type: blockType,
+          sequence_order: i + 1,
+          status: "pending",
+          prescribed_sets: ex.default_sets || (options.useSets ? 3 : 1),
+        };
+
+        if (options.useHold) {
+          exercise.prescribed_hold_seconds = ex.default_hold_seconds || 30;
+        } else if (options.useDuration) {
+          exercise.prescribed_duration_seconds = ex.default_duration_seconds || 60;
+        } else {
+          exercise.prescribed_reps = ex.default_reps || 10;
+        }
+
+        protocolExercises.push(exercise);
+      });
+    };
+
+    // =========================================================================
+    // EVIDENCE-BASED 1.5H GYM STRUCTURE
+    // =========================================================================
+
+    // Morning Mobility - Use day-specific routine if available (e.g., "Morning Mobility - Day 5 (Friday)")
+    // These are complete follow-along routines. Fall back to individual exercises if not found.
+    const dayOfWeek = new Date().getDay();
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayNumber = dayOfWeek === 0 ? 7 : dayOfWeek; // Sunday = 7
+    const dayName = dayNames[dayOfWeek];
+    
+    // Find day-specific morning mobility routine
+    const daySpecificMobility = allExercises.find(ex => 
+      ex.name.toLowerCase().includes(`day ${dayNumber}`) && 
+      ex.name.toLowerCase().includes(dayName.toLowerCase()) &&
+      ex.category?.toLowerCase() === 'mobility'
+    );
+    
+    if (daySpecificMobility) {
+      // Use the day-specific morning mobility routine
       protocolExercises.push({
         protocol_id: protocolId,
-        exercise_id: ex.id,
+        exercise_id: daySpecificMobility.id,
         block_type: "morning_mobility",
-        sequence_order: i + 1,
+        sequence_order: 1,
         status: "pending",
-        prescribed_reps: ex.default_reps || 10,
+        prescribed_sets: 1,
+        prescribed_reps: 1, // Follow along with routine
       });
-    });
-
-    // Foam roll (3 exercises)
-    const foamRollExercises = getExercises("foam_roll", 3);
-    foamRollExercises.forEach((ex, i) => {
-      protocolExercises.push({
-        protocol_id: protocolId,
-        exercise_id: ex.id,
-        block_type: "foam_roll",
-        sequence_order: i + 1,
-        status: "pending",
-        prescribed_duration_seconds: ex.default_duration_seconds || 60,
-      });
-    });
-
-    // Main session based on focus (4 exercises)
-    let mainCategory = focus.toLowerCase();
-    if (mainCategory === "conditioning") mainCategory = "cardio";
-    if (mainCategory === "recovery") mainCategory = "mobility";
-
-    // Try to get exercises from the focus category, fall back to strength/core
-    let mainExercises = getExercises(mainCategory, 4);
-    if (mainExercises.length === 0) {
-      mainExercises = [
-        ...getExercises("strength", 2),
-        ...getExercises("core", 2),
-      ];
+    } else {
+      // Fallback: use individual mobility exercises
+      addBlockExercises("morning_mobility", "mobility", 2);
     }
 
-    mainExercises.forEach((ex, i) => {
-      protocolExercises.push({
-        protocol_id: protocolId,
-        exercise_id: ex.id,
-        block_type: "main_session",
-        sequence_order: i + 1,
-        status: "pending",
-        prescribed_sets: ex.default_sets || 3,
-        prescribed_reps: ex.default_reps || 10,
-      });
-    });
+    // Foam Roll (3 exercises) - pre-workout tissue prep
+    addBlockExercises("foam_roll", "foam_roll", 3, { useDuration: true });
 
-    // Add core exercises to main session (2 exercises)
-    const coreExercises = getExercises("core", 2);
-    coreExercises.forEach((ex, i) => {
-      protocolExercises.push({
-        protocol_id: protocolId,
-        exercise_id: ex.id,
-        block_type: "main_session",
-        sequence_order: mainExercises.length + i + 1,
-        status: "pending",
-        prescribed_sets: ex.default_sets || 3,
-        prescribed_hold_seconds: ex.default_hold_seconds || 30,
-      });
-    });
+    // Warm-Up (3 exercises) - dynamic movement prep
+    addBlockExercises("warm_up", "warm_up", 3);
 
-    // Evening recovery / cool down (2 exercises)
-    const coolDownExercises = getExercises("cool_down", 2);
-    coolDownExercises.forEach((ex, i) => {
-      protocolExercises.push({
-        protocol_id: protocolId,
-        exercise_id: ex.id,
-        block_type: "evening_recovery",
-        sequence_order: i + 1,
-        status: "pending",
-        prescribed_hold_seconds: ex.default_hold_seconds || 60,
-      });
-    });
+    // =========================================================================
+    // MAIN TRAINING BLOCKS (15 min each = 75 min total)
+    // =========================================================================
+
+    // Isometrics (3 exercises) - tendon loading, injury prevention
+    addBlockExercises("isometrics", "isometric", 3, { useHold: true });
+
+    // Plyometrics (3 exercises) - power development, reactive strength
+    addBlockExercises("plyometrics", "plyometric", 3);
+
+    // Strength (4 exercises) - primary strength work
+    addBlockExercises("strength", "strength", 4);
+
+    // Conditioning (3 exercises) - metabolic conditioning
+    addBlockExercises("conditioning", "conditioning", 3);
+
+    // Skill Drills (3 exercises) - sport-specific skills
+    addBlockExercises("skill_drills", "skill", 3);
+
+    // =========================================================================
+    // RECOVERY BLOCKS
+    // =========================================================================
+
+    // Cool Down (3 exercises) - post-workout recovery
+    addBlockExercises("cool_down", "cool_down", 3, { useHold: true });
+
+    // Evening Recovery (2 exercises) - done at home
+    addBlockExercises("evening_recovery", "recovery", 2, { useDuration: true });
 
     // Insert all exercises
     if (protocolExercises.length > 0) {

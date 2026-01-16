@@ -245,7 +245,13 @@ export class AcwrService {
     sessions.forEach((session) => {
       const dateKey = this.getDateKeyLocal(session.date);
       const currentLoad = dailyLoads.get(dateKey) || 0;
-      dailyLoads.set(dateKey, currentLoad + session.load);
+      const sessionLoad =
+        Number.isFinite(session.load) && session.load > 0
+          ? session.load
+          : session.metrics?.calculatedLoad ??
+            session.metrics?.internal?.workload ??
+            0;
+      dailyLoads.set(dateKey, currentLoad + sessionLoad);
     });
 
     return dailyLoads;
@@ -1325,11 +1331,12 @@ export class AcwrService {
     }
 
     try {
+      // Note: load_monitoring uses calculated_at (timestamp with time zone) not date column
       const { error } = await this.supabaseService.client
         .from("load_monitoring")
         .upsert({
           player_id: userId,
-          date: new Date().toISOString().split("T")[0],
+          calculated_at: new Date().toISOString(),
           daily_load: Math.round(acwrData.acute), // Current day's load estimate
           acute_load: acwrData.acute,
           chronic_load: acwrData.chronic,

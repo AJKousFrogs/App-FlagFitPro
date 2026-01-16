@@ -499,7 +499,7 @@ export function validateDateRange(
 export function getDateKey(date: Date | string): string {
   const parsed = safeParseDate(date);
   if (!parsed) return getTodayISO();
-  return parsed.toISOString().split("T")[0];
+  return dateFnsFormat(parsed, "yyyy-MM-dd");
 }
 
 // Re-export parseISO for convenience

@@ -146,7 +146,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
+    command: "node scripts/start-playwright-servers.cjs",
     url: "http://localhost:4200",
     reuseExistingServer: !process.env.CI, // Always reuse in local dev, force start in CI
     timeout: 180 * 1000, // 3 minutes for server startup

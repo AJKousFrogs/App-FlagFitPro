@@ -567,11 +567,12 @@ export class TrainingDataService {
             : 0;
 
         // Try to get ACWR data from load_monitoring table
+        // Note: load_monitoring uses calculated_at (timestamp) not date column
         const { data: loadData } = await this.supabaseService.client
           .from("load_monitoring")
           .select("acwr, acute_load, chronic_load, injury_risk_level")
           .eq("player_id", userId)
-          .order("date", { ascending: false })
+          .order("calculated_at", { ascending: false })
           .limit(1)
           .single();
 
