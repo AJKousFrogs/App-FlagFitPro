@@ -176,10 +176,10 @@
   ); /* 8px - Design System standard */
 
   --p-button-font-weight: var(--font-weight-medium, 500);
-  --p-button-sm-font-size: var(--font-body-sm, 0.875rem);
+  --p-button-sm-font-size: var(--font-body-sm-size, 0.875rem);
   --p-button-sm-padding-y: var(--space-2, 0.5rem);
   --p-button-sm-padding-x: var(--space-3, 0.75rem);
-  --p-button-lg-font-size: var(--font-body-lg, 1.125rem);
+  --p-button-lg-font-size: var(--font-body-size, 1.125rem);
   --p-button-lg-padding-y: var(--space-4, 1rem);
   --p-button-lg-padding-x: var(--space-5, 1.25rem);
 

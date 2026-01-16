@@ -10,16 +10,17 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
-import { DialogModule } from "primeng/dialog";
-import { KnobModule } from "primeng/knob";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { UIChart } from "primeng/chart";
+import { Dialog } from "primeng/dialog";
+import { Knob } from "primeng/knob";
+import { ProgressBar } from "primeng/progressbar";
 import { SelectButton } from "primeng/selectbutton";
 import { Tabs } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
-import { TimelineModule } from "primeng/timeline";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { Timeline } from "primeng/timeline";
+import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom, Subscription, timer } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -89,16 +90,17 @@ interface ChartOptions {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    ChartModule,
-    TagModule,
-    KnobModule,
-    ProgressBarModule,
+    Card,
+    UIChart,
+    Tag,
+    StatusTagComponent,
+    Knob,
+    ProgressBar,
     Tabs,
-    TimelineModule,
+    Timeline,
     SelectButton,
-    DialogModule,
-    TooltipModule,
+    Dialog,
+    Tooltip,
     CountdownTimerComponent,
     ButtonComponent,
   ],
@@ -201,11 +203,11 @@ interface ChartOptions {
                     </div>
                     <div>
                       <h4>{{ protocol.name }}</h4>
-                      <p-tag
+                      <app-status-tag
                         [value]="protocol.category"
                         [severity]="getProtocolSeverity(protocol.category)"
-                      >
-                      </p-tag>
+                        size="sm"
+                      />
                     </div>
                   </div>
                   <div class="protocol-meta">
@@ -328,14 +330,15 @@ interface ChartOptions {
               </div>
               <div>
                 <h2>{{ selectedProtocolDetails()?.name }}</h2>
-                <p-tag
+                <app-status-tag
                   [value]="selectedProtocolDetails()?.category || ''"
                   [severity]="
                     getProtocolSeverity(
                       selectedProtocolDetails()?.category || ''
                     )
                   "
-                ></p-tag>
+                  size="sm"
+                />
               </div>
             </div>
 
@@ -410,7 +413,7 @@ interface ChartOptions {
                     muscle of selectedProtocolDetails()?.targetMuscles;
                     track muscle
                   ) {
-                    <p-tag [value]="muscle" severity="secondary"></p-tag>
+                    <app-status-tag [value]="muscle" severity="secondary" size="sm" />
                   }
                 </div>
               </div>
@@ -561,7 +564,7 @@ interface ChartOptions {
                 <div class="research-item">
                   <div class="research-header">
                     <h4>{{ insight.title }}</h4>
-                    <p-tag [value]="insight.journal" severity="info"></p-tag>
+                    <app-status-tag [value]="insight.journal" severity="info" size="sm" />
                   </div>
                   <p>{{ insight.summary }}</p>
                   <div class="research-meta">
@@ -658,18 +661,18 @@ export class RecoveryDashboardComponent implements OnInit, OnDestroy {
   ):
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "secondary"
     | "contrast"
     | undefined {
     const severityMap: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
     > = {
       Cryotherapy: "info",
       Compression: "success",
-      "Manual Therapy": "warn",
+      "Manual Therapy": "warning",
       "Heat Therapy": "danger",
       Sleep: "secondary",
       Mobility: "contrast",

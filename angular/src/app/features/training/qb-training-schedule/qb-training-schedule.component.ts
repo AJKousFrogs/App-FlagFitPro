@@ -6,10 +6,10 @@ import {
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 @Component({
@@ -18,9 +18,9 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    CardModule,
+    Card,
     DatePicker,
-    TagModule,
+    Tag,
     PageHeaderComponent,
 
     ButtonComponent,

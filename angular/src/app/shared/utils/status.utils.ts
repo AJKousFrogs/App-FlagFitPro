@@ -9,7 +9,7 @@
  * import { getStatusSeverity, statusSeverityMap } from '@shared/utils/status.utils';
  *
  * // In template:
- * // <p-tag [value]="status" [severity]="getStatusSeverity(status)"></p-tag>
+ * // <app-status-tag [value]="status" [severity]="getStatusSeverity(status)"></app-status-tag>
  *
  * // In component:
  * readonly getStatusSeverity = getStatusSeverity;
@@ -67,13 +67,12 @@ export const statusSeverityMap: Record<string, string> = {
  */
 export function getStatusSeverity(
   status: string,
-): "success" | "info" | "warn" | "warning" | "danger" | "secondary" {
+): "success" | "info" | "warning" | "danger" | "secondary" {
   const severity = statusSeverityMap[status?.toLowerCase()];
   return (
     (severity as
       | "success"
       | "info"
-      | "warn"
       | "warning"
       | "danger"
       | "secondary") || "info"

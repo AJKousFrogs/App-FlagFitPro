@@ -19,10 +19,10 @@ import {
 } from "primeng/table";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { CheckboxModule } from "primeng/checkbox";
-import { InputTextModule } from "primeng/inputtext";
+import { Checkbox } from "primeng/checkbox";
+import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
-import { MenuModule } from "primeng/menu";
+import { Menu } from "primeng/menu";
 
 /**
  * Generic table row type with selection support
@@ -80,10 +80,10 @@ export interface TablePreferences {
     CommonModule,
     FormsModule,
     TableModule,
-    CheckboxModule,
-    InputTextModule,
+    Checkbox,
+    InputText,
     MultiSelect,
-    MenuModule,
+    Menu,
 
     ButtonComponent,
     IconButtonComponent,
@@ -101,9 +101,11 @@ export interface TablePreferences {
                 [binary]="true"
                 variant="filled"
                 (onValueChange)="toggleSelectAll()"
+                inputId="select-all-rows"
+                ariaLabel="Select all rows"
               />
-              <span class="checkbox-label"
-                >{{ selectedRows().length }} selected</span
+              <label for="select-all-rows" class="checkbox-label"
+                >{{ selectedRows().length }} selected</label
               >
             </div>
           }
@@ -118,10 +120,11 @@ export interface TablePreferences {
             optionValue="value"
             [showHeader]="false"
             styleClass="column-selector"
+            ariaLabel="Select columns to display"
           >
             <ng-template let-column pTemplate="item">
               <div class="column-option">
-                <i class="pi pi-eye"></i>
+                <i class="pi pi-eye" aria-hidden="true"></i>
                 <span>{{ column.label }}</span>
               </div>
             </ng-template>
@@ -162,7 +165,8 @@ export interface TablePreferences {
             variant="outlined"
             size="sm"
             (clicked)="resetPreferences()"
-            ariaLabel="refresh"
+            ariaLabel="Reset table preferences"
+            tooltip="Reset"
           />
         </div>
       </div>
@@ -186,12 +190,13 @@ export interface TablePreferences {
           <ng-template pTemplate="header" let-columns>
             <tr>
               @if (selectable()) {
-                <th style="width: 48px">
+                <th style="width: 48px" scope="col">
                   <p-checkbox
                     [(ngModel)]="selectAll"
                     [binary]="true"
                     variant="filled"
                     (onValueChange)="toggleSelectAll()"
+                    ariaLabel="Select all rows in table"
                   />
                 </th>
               }
@@ -233,6 +238,7 @@ export interface TablePreferences {
                     [binary]="true"
                     variant="filled"
                     (onValueChange)="onRowSelect(rowData)"
+                    [ariaLabel]="'Select row ' + (rowIndex + 1)"
                   />
                 </td>
               }
@@ -289,8 +295,8 @@ export interface TablePreferences {
                   (hasActions() ? 1 : 0)
                 "
               >
-                <div class="empty-message">
-                  <i class="pi pi-inbox"></i>
+                <div class="empty-message" role="status">
+                  <i class="pi pi-inbox" aria-hidden="true"></i>
                   <p>No data available</p>
                 </div>
               </td>
@@ -311,6 +317,7 @@ export interface TablePreferences {
                     [binary]="true"
                     variant="filled"
                     (onValueChange)="onRowSelect(row)"
+                    [ariaLabel]="'Select card ' + ($index + 1)"
                   />
                 </div>
               }
@@ -346,8 +353,8 @@ export interface TablePreferences {
               }
             </div>
           } @empty {
-            <div class="empty-message">
-              <i class="pi pi-inbox"></i>
+            <div class="empty-message" role="status">
+              <i class="pi pi-inbox" aria-hidden="true"></i>
               <p>No data available</p>
             </div>
           }

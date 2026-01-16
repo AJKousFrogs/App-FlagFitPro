@@ -7,16 +7,16 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { AccordionModule } from "primeng/accordion";
-import { CardModule } from "primeng/card";
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
-import { DialogModule } from "primeng/dialog";
-import { DividerModule } from "primeng/divider";
-import { InputTextModule } from "primeng/inputtext";
+import { Dialog } from "primeng/dialog";
+import { Divider } from "primeng/divider";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AccountDeletionService } from "../../../core/services/account-deletion.service";
@@ -56,16 +56,16 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     ToggleSwitch,
     Select,
-    InputTextModule,
-    ToastModule,
-    DialogModule,
-    DividerModule,
-    TooltipModule,
+    InputText,
+    Toast,
+    Dialog,
+    Divider,
+    Tooltip,
     Chip,
-    AccordionModule,
+    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
@@ -92,8 +92,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         </app-page-header>
 
         @if (loading()) {
-          <div class="loading-state">
-            <i class="pi pi-spin pi-spinner"></i>
+          <div class="loading-state" role="status" aria-live="polite">
+            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
             <span>Loading privacy settings...</span>
           </div>
         } @else {
@@ -102,7 +102,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <p-card class="privacy-section ai-section">
               <ng-template pTemplate="header">
                 <div class="section-header">
-                  <div class="section-icon ai-icon">
+                  <div class="section-icon ai-icon" aria-hidden="true">
                     <i class="pi pi-sparkles"></i>
                   </div>
                   <div class="section-title-group">
@@ -124,15 +124,15 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   </p>
                   <div class="setting-details">
                     <span class="detail-item">
-                      <i class="pi pi-check-circle"></i>
+                      <i class="pi pi-check-circle" aria-hidden="true"></i>
                       Training load optimization
                     </span>
                     <span class="detail-item">
-                      <i class="pi pi-check-circle"></i>
+                      <i class="pi pi-check-circle" aria-hidden="true"></i>
                       Recovery recommendations
                     </span>
                     <span class="detail-item">
-                      <i class="pi pi-check-circle"></i>
+                      <i class="pi pi-check-circle" aria-hidden="true"></i>
                       Injury risk warnings
                     </span>
                   </div>
@@ -146,8 +146,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               </div>
 
               @if (!aiProcessingEnabled) {
-                <div class="warning-banner">
-                  <i class="pi pi-info-circle"></i>
+                <div class="warning-banner" role="alert">
+                  <i class="pi pi-info-circle" aria-hidden="true"></i>
                   <span>
                     With AI processing disabled, you won't receive personalized
                     training recommendations or automated injury risk
@@ -195,7 +195,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <p-card class="privacy-section team-section">
               <ng-template pTemplate="header">
                 <div class="section-header">
-                  <div class="section-icon team-icon">
+                  <div class="section-icon team-icon" aria-hidden="true">
                     <i class="pi pi-users"></i>
                   </div>
                   <div class="section-title-group">
@@ -206,8 +206,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
               </ng-template>
 
               @if (teamSettings().length === 0) {
-                <div class="empty-state">
-                  <i class="pi pi-users"></i>
+                <div class="empty-state" role="status">
+                  <i class="pi pi-users" aria-hidden="true"></i>
                   <p>You're not currently on any teams.</p>
                   <small>Join a team to manage data sharing preferences.</small>
                 </div>
@@ -315,7 +315,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <p-card class="privacy-section emergency-section">
               <ng-template pTemplate="header">
                 <div class="section-header">
-                  <div class="section-icon emergency-icon">
+                  <div class="section-icon emergency-icon" aria-hidden="true">
                     <i class="pi pi-exclamation-triangle"></i>
                   </div>
                   <div class="section-title-group">
@@ -368,7 +368,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                       icon="pi-trash"
                       variant="text"
                       (clicked)="removeEmergencyContact($index)"
-                      ariaLabel="trash"
+                      ariaLabel="Remove emergency contact"
+                      tooltip="Remove"
                     />
                   </div>
                 }
@@ -388,7 +389,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <p-card class="privacy-section research-section">
               <ng-template pTemplate="header">
                 <div class="section-header">
-                  <div class="section-icon research-icon">
+                  <div class="section-icon research-icon" aria-hidden="true">
                     <i class="pi pi-chart-bar"></i>
                   </div>
                   <div class="section-title-group">
@@ -439,7 +440,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             <p-card class="privacy-section rights-section">
               <ng-template pTemplate="header">
                 <div class="section-header">
-                  <div class="section-icon rights-icon">
+                  <div class="section-icon rights-icon" aria-hidden="true">
                     <i class="pi pi-file-check"></i>
                   </div>
                   <div class="section-title-group">
@@ -451,7 +452,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
               <div class="rights-grid">
                 <div class="right-item">
-                  <i class="pi pi-download"></i>
+                  <i class="pi pi-download" aria-hidden="true"></i>
                   <h5>Export Data</h5>
                   <p>Download all your personal data in a portable format.</p>
                   @if (exporting()) {
@@ -475,12 +476,12 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                 </div>
 
                 <div class="right-item">
-                  <i class="pi pi-trash"></i>
+                  <i class="pi pi-trash" aria-hidden="true"></i>
                   <h5>Delete Account</h5>
                   @if (hasPendingDeletion()) {
                     <div class="pending-deletion-warning">
                       <p class="warning-text">
-                        <i class="pi pi-exclamation-triangle"></i>
+                        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                         Deletion scheduled in
                         {{ deletionStatus()?.daysUntilDeletion }} days
                       </p>
@@ -504,7 +505,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                 </div>
 
                 <div class="right-item">
-                  <i class="pi pi-history"></i>
+                  <i class="pi pi-history" aria-hidden="true"></i>
                   <h5>View Audit Log</h5>
                   <p>See a history of how your data has been accessed.</p>
                   <app-button variant="outlined" size="sm" [disabled]="true"
@@ -577,8 +578,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         [modal]="true"
         [style]="dialogStyles.form"
       >
-        <div class="delete-warning">
-          <i class="pi pi-exclamation-triangle"></i>
+        <div class="delete-warning" role="alert">
+          <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
           <h4>This action cannot be undone</h4>
           <p>
             Your account will be immediately deactivated. All personal data will
@@ -586,14 +587,14 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
             policy.
           </p>
           <div class="retention-note">
-            <i class="pi pi-info-circle"></i>
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
             <small>
               Emergency medical records are retained for 7 years as required by
               law.
             </small>
           </div>
           <div class="cancellation-note">
-            <i class="pi pi-clock"></i>
+            <i class="pi pi-clock" aria-hidden="true"></i>
             <small>
               You can cancel this request within 30 days by logging back in.
             </small>

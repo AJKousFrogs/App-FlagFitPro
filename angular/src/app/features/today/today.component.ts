@@ -34,14 +34,14 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
 import { Message } from "primeng/message";
-import { ProgressBarModule } from "primeng/progressbar";
-import { SkeletonModule } from "primeng/skeleton";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
-import { TooltipModule } from "primeng/tooltip";
+import { ProgressBar } from "primeng/progressbar";
+import { Skeleton } from "primeng/skeleton";
+import { Tag } from "primeng/tag";
+import { Toast } from "primeng/toast";
+import { Tooltip } from "primeng/tooltip";
 import { from } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
@@ -90,7 +90,7 @@ type DayPhase = "morning" | "midday" | "evening";
 type ActiveFocus = "checkin" | "protocol" | "wrapup";
 type TagSeverity =
   | "success"
-  | "warn"
+  | "warning"
   | "danger"
   | "info"
   | "secondary"
@@ -120,14 +120,14 @@ interface QuickFormData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    CardModule,
-    DialogModule,
+    Card,
+    Dialog,
     Message,
-    ProgressBarModule,
-    SkeletonModule,
-    TagModule,
-    ToastModule,
-    TooltipModule,
+    ProgressBar,
+    Skeleton,
+    Tag,
+    Toast,
+    Tooltip,
     MainLayoutComponent,
     ProtocolBlockComponent,
     ButtonComponent,
@@ -194,7 +194,7 @@ interface QuickFormData {
         flex-direction: column;
         gap: var(--space-6);
         padding: var(--space-6);
-        max-width: 1200px;
+        max-width: var(--content-max-width-xl);
         margin: 0 auto;
         width: 100%;
       }
@@ -224,26 +224,26 @@ interface QuickFormData {
       }
 
       .onboarding-avatar {
-        width: 3rem;
-        height: 3rem;
-        min-width: 3rem;
+        width: var(--space-12);
+        height: var(--space-12);
+        min-width: var(--space-12);
         background: rgba(255, 255, 255, 0.2);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--font-heading-sm);
+        font-size: var(--font-h4-size);
       }
 
       .onboarding-text h2 {
         margin: 0;
-        font-size: var(--font-heading-sm);
+        font-size: var(--font-h4-size);
         font-weight: var(--font-weight-semibold);
       }
 
       .onboarding-text p {
         margin: var(--space-1) 0 0;
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         opacity: 0.9;
       }
 
@@ -258,17 +258,17 @@ interface QuickFormData {
       }
 
       .user-avatar {
-        width: 3rem;
-        height: 3rem;
-        min-width: 3rem;
+        width: var(--space-12);
+        height: var(--space-12);
+        min-width: var(--space-12);
         background: var(--surface-tertiary);
         border-radius: var(--radius-full);
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--color-text-secondary);
-        font-size: var(--font-heading-sm);
-        border: 2px solid var(--color-border-secondary);
+        font-size: var(--font-h4-size);
+        border: var(--border-2) solid var(--color-border-secondary);
       }
 
       .welcome-text {
@@ -287,7 +287,7 @@ interface QuickFormData {
       }
 
       .welcome-name {
-        font-size: var(--font-heading-lg);
+        font-size: var(--font-h2-size);
         font-weight: var(--font-weight-bold);
         margin: var(--space-1) 0 0;
         color: var(--color-text-primary);
@@ -295,7 +295,7 @@ interface QuickFormData {
       }
 
       .welcome-hint {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
         margin: var(--space-1) 0 0;
       }
@@ -317,9 +317,9 @@ interface QuickFormData {
       }
 
       .stat-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        min-width: 2.5rem;
+        width: var(--space-10);
+        height: var(--space-10);
+        min-width: var(--space-10);
         border-radius: var(--radius-md);
         display: flex;
         align-items: center;
@@ -357,7 +357,7 @@ interface QuickFormData {
       }
 
       .stat-status-label {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
         font-weight: var(--font-weight-medium);
       }
@@ -411,7 +411,7 @@ interface QuickFormData {
         gap: var(--space-2);
         padding: var(--space-3) var(--space-4) var(--space-2);
         margin-bottom: var(--space-3);
-        border-bottom: 1px solid var(--color-border-secondary);
+        border-bottom: var(--border-1) solid var(--color-border-secondary);
       }
 
       .card-header-icon {
@@ -429,7 +429,7 @@ interface QuickFormData {
       }
 
       .card-description {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
         margin: 0 0 var(--space-4);
         line-height: 1.5;
@@ -454,7 +454,7 @@ interface QuickFormData {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--font-heading-xs);
+        font-size: var(--font-h4-size);
       }
 
       .insight-text {
@@ -463,13 +463,13 @@ interface QuickFormData {
 
       .insight-title {
         margin: 0 0 var(--space-2);
-        font-size: var(--font-body-md);
+        font-size: var(--font-body-size);
         font-weight: var(--font-weight-semibold);
       }
 
       .insight-message {
         margin: 0 0 var(--space-3);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         line-height: 1.6;
         opacity: 0.95;
       }
@@ -490,7 +490,7 @@ interface QuickFormData {
         display: flex;
         justify-content: space-between;
         margin-top: var(--space-2);
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
       }
 
@@ -503,7 +503,7 @@ interface QuickFormData {
       .card-footer {
         margin-top: var(--space-4);
         padding-top: var(--space-3);
-        border-top: 1px solid var(--color-border-secondary);
+        border-top: var(--border-1) solid var(--color-border-secondary);
         text-align: center;
       }
 
@@ -524,9 +524,9 @@ interface QuickFormData {
       }
 
       .action-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        min-width: 2.5rem;
+        width: var(--space-10);
+        height: var(--space-10);
+        min-width: var(--space-10);
         background: var(--ds-primary-green-ultra-subtle);
         color: var(--color-brand-primary);
         border-radius: var(--radius-md);
@@ -542,14 +542,14 @@ interface QuickFormData {
 
       .action-text h4 {
         margin: 0;
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         font-weight: var(--font-weight-medium);
         color: var(--color-text-primary);
       }
 
       .action-text p {
         margin: var(--space-1) 0 0;
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
       }
 
@@ -565,7 +565,7 @@ interface QuickFormData {
         text-align: center;
         padding: var(--space-8) var(--space-4);
         background: var(--surface-tertiary);
-        border: 2px dashed var(--color-border-secondary);
+        border: var(--border-2) dashed var(--color-border-secondary);
         border-radius: var(--radius-lg);
       }
 
@@ -578,14 +578,14 @@ interface QuickFormData {
 
       .empty-state h3 {
         margin: 0 0 var(--space-2);
-        font-size: var(--font-body-md);
+        font-size: var(--font-body-size);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
       }
 
       .empty-state p {
         margin: 0 0 var(--space-4);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
       }
 
@@ -664,7 +664,7 @@ interface QuickFormData {
       .quick-intro {
         text-align: center;
         color: var(--color-text-secondary);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         margin: 0;
       }
 
@@ -675,7 +675,7 @@ interface QuickFormData {
       }
 
       .quick-label {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
       }
@@ -694,7 +694,7 @@ interface QuickFormData {
         gap: var(--space-1);
         padding: var(--space-3) var(--space-2);
         background: var(--surface-secondary);
-        border: 2px solid var(--color-border-secondary);
+        border: var(--border-2) solid var(--color-border-secondary);
         border-radius: var(--radius-md);
         cursor: pointer;
         transition: all var(--hover-transition-fast);
@@ -715,7 +715,7 @@ interface QuickFormData {
       }
 
       .mood-text {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
       }
 
@@ -737,11 +737,11 @@ interface QuickFormData {
         gap: var(--space-1);
         padding: var(--space-2);
         background: var(--surface-secondary);
-        border: 2px solid var(--color-border-secondary);
+        border: var(--border-2) solid var(--color-border-secondary);
         border-radius: var(--radius-md);
         cursor: pointer;
         transition: all var(--hover-transition-fast);
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
       }
 
@@ -773,11 +773,11 @@ interface QuickFormData {
         gap: var(--space-2);
         padding: var(--space-3);
         background: var(--surface-secondary);
-        border: 2px solid var(--color-border-secondary);
+        border: var(--border-2) solid var(--color-border-secondary);
         border-radius: var(--radius-md);
         cursor: pointer;
         transition: all var(--hover-transition-fast);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
       }
 
@@ -811,12 +811,12 @@ interface QuickFormData {
       }
 
       .quick-preview .preview-label {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
       }
 
       .quick-preview .preview-score {
-        font-size: var(--font-heading-md);
+        font-size: var(--font-h3-size);
         font-weight: var(--font-weight-bold);
       }
 
@@ -866,8 +866,8 @@ interface QuickFormData {
 
       .confetti-piece {
         position: absolute;
-        width: 10px;
-        height: 10px;
+        width: var(--space-2);
+        height: var(--space-2);
         background: var(--color-brand-primary);
         border-radius: 50%;
         animation: confetti-fall 2s ease-out forwards;
@@ -878,14 +878,14 @@ interface QuickFormData {
 
       .confetti-piece:nth-child(2n) {
         background: var(--color-status-warning);
-        width: 8px;
-        height: 8px;
+        width: var(--space-2);
+        height: var(--space-2);
       }
 
       .confetti-piece:nth-child(3n) {
         background: var(--color-status-info);
-        width: 12px;
-        height: 12px;
+        width: var(--space-3);
+        height: var(--space-3);
       }
 
       .confetti-piece:nth-child(4n) {
@@ -897,7 +897,9 @@ interface QuickFormData {
       @keyframes confetti-fall {
         0% {
           opacity: 1;
-          transform: translateX(var(--x)) translateY(-20px) rotate(0deg);
+          transform: translateX(var(--x))
+            translateY(calc(-1 * var(--space-5)))
+            rotate(0deg);
         }
         100% {
           opacity: 0;
@@ -924,14 +926,14 @@ interface QuickFormData {
 
       .celebration-title {
         margin: 0 0 var(--space-2);
-        font-size: var(--font-heading-lg);
+        font-size: var(--font-h2-size);
         font-weight: var(--font-weight-bold);
         color: var(--color-text-primary);
       }
 
       .celebration-message {
         margin: 0 0 var(--space-5);
-        font-size: var(--font-body-md);
+        font-size: var(--font-body-size);
         color: var(--color-text-secondary);
         line-height: 1.5;
       }
@@ -954,13 +956,13 @@ interface QuickFormData {
       }
 
       .celebration-stats .stat-number {
-        font-size: var(--font-heading-md);
+        font-size: var(--font-h3-size);
         font-weight: var(--font-weight-bold);
         color: var(--color-brand-primary);
       }
 
       .celebration-stats .stat-block__label {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -985,14 +987,14 @@ interface QuickFormData {
 
       .attribution-card {
         background: var(--surface-tertiary);
-        border-left: 3px solid var(--ds-primary-green);
+        border-left: var(--space-1) solid var(--ds-primary-green);
       }
 
       .attribution-content {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
       }
 
@@ -1002,7 +1004,7 @@ interface QuickFormData {
 
       .attribution-time {
         margin-left: auto;
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-muted);
       }
 
@@ -1012,7 +1014,7 @@ interface QuickFormData {
 
       .alert-gate-card {
         background: var(--color-status-warning-light);
-        border: 2px solid var(--color-status-warning);
+        border: var(--border-2) solid var(--color-status-warning);
       }
 
       .alert-gate-content {
@@ -1033,14 +1035,14 @@ interface QuickFormData {
 
       .alert-gate-text h3 {
         margin: 0 0 var(--space-1);
-        font-size: var(--font-heading-md);
+        font-size: var(--font-h3-size);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
       }
 
       .alert-gate-text p {
         margin: 0;
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
       }
 
@@ -1063,7 +1065,7 @@ interface QuickFormData {
         display: flex;
         align-items: baseline;
         gap: var(--space-2);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
       }
 
       .stat-item .stat-block__label {
@@ -1099,14 +1101,14 @@ interface QuickFormData {
       }
 
       .tomorrow-rationale {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
         line-height: 1.6;
         margin: 0;
         padding: var(--space-3);
         background: var(--surface-tertiary);
         border-radius: var(--radius-md);
-        border-left: 3px solid var(--color-brand-primary);
+        border-left: var(--space-1) solid var(--color-brand-primary);
       }
 
       .tomorrow-blocks {
@@ -1122,7 +1124,7 @@ interface QuickFormData {
         padding: var(--space-3);
         background: var(--surface-secondary);
         border-radius: var(--radius-md);
-        border: 1px solid var(--color-border-secondary);
+        border: var(--border-1) solid var(--color-border-secondary);
       }
 
       .tomorrow-block-item i {
@@ -1132,13 +1134,13 @@ interface QuickFormData {
 
       .tomorrow-block-item span:nth-child(2) {
         flex: 1;
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         font-weight: var(--font-weight-medium);
         color: var(--color-text-primary);
       }
 
       .tomorrow-block-item .block-count {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
       }
 
@@ -1155,7 +1157,7 @@ interface QuickFormData {
 
       .tomorrow-empty p {
         margin: 0 0 var(--space-3);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
       }
 
@@ -1362,8 +1364,8 @@ export class TodayComponent {
     const level = this.acwrRiskZone()?.level;
     const severityMap: Record<string, TagSeverity> = {
       "sweet-spot": "success",
-      "under-training": "warn",
-      "elevated-risk": "warn",
+      "under-training": "warning",
+      "elevated-risk": "warning",
       "danger-zone": "danger",
       "no-data": "secondary",
     };
@@ -1393,7 +1395,7 @@ export class TodayComponent {
   readonly readinessSeverity = computed<TagSeverity>(() => {
     const severityMap: Record<string, TagSeverity> = {
       high: "success",
-      moderate: "warn",
+      moderate: "warning",
       low: "danger",
     };
     return severityMap[this.readinessLevel()] ?? "secondary";
@@ -2267,7 +2269,7 @@ export class TodayComponent {
       default:
         this.logger.warn(`Unknown CTA action: ${actionId}`);
         this.messageService.add({
-          severity: "warn",
+          severity: "warning",
           summary: "Action Not Available",
           detail: "This action is not yet implemented",
         });

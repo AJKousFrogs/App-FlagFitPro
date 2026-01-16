@@ -37,7 +37,7 @@
 }
 
 .checkin-card {
-  max-width: 800px;
+  max-width: var(--content-max-width-md);
   margin: 0 auto;
 }
 
@@ -52,7 +52,7 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
-  border-left: 4px solid var(--ds-primary-green);
+  border-left: var(--space-1) solid var(--ds-primary-green);
 }
 
 .section-label {
@@ -96,7 +96,7 @@
   align-items: center;
   gap: var(--space-3);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .submit-note {
@@ -121,7 +121,7 @@
 .wellness-alert {
   padding: var(--space-4);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
 
   &.alert-danger {
     background: var(--color-status-danger-bg, rgba(239, 68, 68, 0.1));

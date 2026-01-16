@@ -14,11 +14,11 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
-import { PasswordModule } from "primeng/password";
-import { ToastModule } from "primeng/toast";
+import { Password } from "primeng/password";
+import { Toast } from "primeng/toast";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -40,12 +40,12 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    CardModule,
+    Card,
     ButtonComponent,
-    InputTextModule,
-    PasswordModule,
+    InputText,
+    Password,
     Message,
-    ToastModule,
+    Toast,
   ],
   template: `
     <p-toast></p-toast>

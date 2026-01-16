@@ -75,16 +75,16 @@ export function formatSuggestionDate(dateStr: string): string {
  */
 export function getStatusSeverity(
   status: string,
-): "warn" | "success" | "danger" | undefined {
+): "warning" | "success" | "danger" | "secondary" {
   switch (status) {
     case "pending":
-      return "warn";
+      return "warning";
     case "approved":
       return "success";
     case "rejected":
       return "danger";
     default:
-      return undefined;
+      return "secondary";
   }
 }
 

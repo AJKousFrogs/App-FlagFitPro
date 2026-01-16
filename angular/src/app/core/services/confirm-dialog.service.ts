@@ -21,7 +21,7 @@ export interface ConfirmDialogOptions {
     | "secondary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "help"
     | "contrast";
@@ -30,7 +30,7 @@ export interface ConfirmDialogOptions {
     | "secondary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "help"
     | "contrast";
@@ -68,7 +68,7 @@ export class ConfirmDialogService {
       icon: "pi pi-times-circle",
       acceptLabel: "Remove",
       rejectLabel: "Cancel",
-      acceptSeverity: "warn",
+      acceptSeverity: "warning",
       defaultFocus: "reject",
     },
     archive: {
@@ -100,7 +100,7 @@ export class ConfirmDialogService {
       icon: "pi pi-refresh",
       acceptLabel: "Reset",
       rejectLabel: "Cancel",
-      acceptSeverity: "warn",
+      acceptSeverity: "warning",
       defaultFocus: "reject",
     },
     leave: {
@@ -241,7 +241,7 @@ export class ConfirmDialogService {
       icon: "pi pi-exclamation-triangle",
       acceptLabel: action,
       rejectLabel: "Cancel",
-      acceptSeverity: action.toLowerCase() === "delete" ? "danger" : "warn",
+      acceptSeverity: action.toLowerCase() === "delete" ? "danger" : "warning",
       defaultFocus: "reject",
     });
   }
@@ -272,7 +272,7 @@ export class ConfirmDialogService {
     switch (severity) {
       case "danger":
         return "p-button-danger";
-      case "warn":
+      case "warning":
         return "p-button-warning";
       case "success":
         return "p-button-success";

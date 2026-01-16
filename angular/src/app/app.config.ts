@@ -19,7 +19,7 @@ import {
   withFetch,
   withInterceptors,
 } from "@angular/common/http";
-import { MessageService } from "primeng/api";
+import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
 import Aura from "@primeuix/themes/aura";
 import { routes } from "./app.routes";
@@ -75,6 +75,7 @@ export const appConfig: ApplicationConfig = {
       ]),
     ),
     MessageService,
+    ConfirmationService,
     providePrimeNG({
       ripple: false, // Disable ripple effect (we use CSS transitions) - reduces JS execution
       zIndex: {

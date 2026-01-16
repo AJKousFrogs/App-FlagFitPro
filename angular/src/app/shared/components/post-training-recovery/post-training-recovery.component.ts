@@ -29,11 +29,12 @@ import { Router, RouterModule } from "@angular/router";
 import { COLORS } from "../../../core/constants/app.constants";
 
 // PrimeNG
-import { CheckboxModule } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { ProgressBarModule } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
+import { Checkbox } from "primeng/checkbox";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { ProgressBar } from "primeng/progressbar";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { ButtonComponent } from "../button/button.component";
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -65,11 +66,12 @@ interface RecoveryRecommendation {
     CommonModule,
     FormsModule,
     RouterModule,
-    DialogModule,
-    InputNumberModule,
-    CheckboxModule,
-    TagModule,
-    ProgressBarModule,
+    Dialog,
+    InputNumber,
+    Checkbox,
+    Tag,
+    StatusTagComponent,
+    ProgressBar,
 
     ButtonComponent,
   ],
@@ -226,11 +228,11 @@ interface RecoveryRecommendation {
                       <span class="rec-duration">{{ rec.duration }}</span>
                     }
                   </div>
-                  <p-tag
+                  <app-status-tag
                     [value]="rec.priority"
                     [severity]="getPrioritySeverity(rec.priority)"
-                    size="small"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               }
             </div>
@@ -451,12 +453,12 @@ export class PostTrainingRecoveryComponent implements OnInit {
 
   getPrioritySeverity(
     priority: string,
-  ): "success" | "info" | "warn" | "danger" {
+  ): "success" | "info" | "warning" | "danger" {
     switch (priority) {
       case "high":
         return "danger";
       case "medium":
-        return "warn";
+        return "warning";
       default:
         return "info";
     }

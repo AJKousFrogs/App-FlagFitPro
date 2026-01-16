@@ -19,15 +19,16 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -77,14 +78,15 @@ interface DiscussionMessage {
     CommonModule,
     FormsModule,
     DatePipe,
-    CardModule,
-    DialogModule,
-    InputTextModule,
-    ProgressBarModule,
+    Card,
+    Dialog,
+    InputText,
+    ProgressBar,
     Select,
-    TagModule,
+    Tag,
+    StatusTagComponent,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
@@ -291,16 +293,17 @@ interface DiscussionMessage {
                           <i class="pi pi-play-circle"></i>
                           {{ formatTimestamp(moment.timestamp) }}
                         </span>
-                        <p-tag
+                        <app-status-tag
                           [value]="
                             moment.type === 'positive'
                               ? 'Great play!'
                               : 'Correction'
                           "
                           [severity]="
-                            moment.type === 'positive' ? 'success' : 'warn'
+                            moment.type === 'positive' ? 'success' : 'warning'
                           "
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                       <h5>{{ moment.title }}</h5>
                       <p class="coach-comment">
@@ -456,9 +459,8 @@ export class FilmRoomComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
-        this.api.get("/api/film-room"),
+      const response = await firstValueFrom(
+        this.api.get<{ films?: FilmSession[] }>("/api/film-room"),
       );
       if (response?.success && response.data?.films) {
         this.films.set(response.data.films);

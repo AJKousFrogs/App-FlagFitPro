@@ -8,8 +8,8 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { BadgeModule } from "primeng/badge";
-import { TooltipModule } from "primeng/tooltip";
+import { Badge } from "primeng/badge";
+import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 
@@ -36,8 +36,8 @@ export interface WorkoutEntry {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    TooltipModule,
-    BadgeModule,
+    Tooltip,
+    Badge,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -49,7 +49,8 @@ export interface WorkoutEntry {
           icon="pi-chevron-left"
           variant="text"
           (clicked)="previousMonth()"
-          ariaLabel="chevron-left"
+          ariaLabel="Go to previous month"
+          tooltip="Previous month"
         />
 
         <h3 class="month-title">{{ monthYearLabel() }}</h3>
@@ -58,7 +59,8 @@ export interface WorkoutEntry {
           icon="pi-chevron-right"
           variant="text"
           (clicked)="nextMonth()"
-          ariaLabel="chevron-right"
+          ariaLabel="Go to next month"
+          tooltip="Next month"
         />
 
         <app-button variant="text" size="sm" (clicked)="goToToday()"
@@ -146,7 +148,7 @@ export interface WorkoutEntry {
                       >
                     }
                     @if (workout.completed) {
-                      <i class="pi pi-check-circle completed-icon"></i>
+                      <i class="pi pi-check-circle completed-icon" aria-hidden="true"></i>
                     }
                   </div>
                 }

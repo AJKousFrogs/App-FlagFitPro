@@ -3,7 +3,7 @@
  * Displays a single staff member card
  */
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { StaffMember } from "../roster.models";
 import { getInitials } from "../../../shared/utils/format.utils";
 import { getYears } from "../roster-utils";
@@ -12,7 +12,7 @@ import { getYears } from "../roster-utils";
   selector: "app-roster-staff-card",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule],
+  imports: [Card],
   template: `
     <p-card class="staff-card" [class]="'staff-' + member().roleCategory">
       <div class="role-badge" [class]="member().roleCategory">

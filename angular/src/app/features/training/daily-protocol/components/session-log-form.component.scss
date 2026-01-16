@@ -19,14 +19,14 @@
 
 .form-header h4 {
   margin: 0 0 var(--space-1, 4px) 0;
-  font-size: var(--font-body-lg, 18px);
+  font-size: var(--font-body-size, 18px);
   font-weight: var(--font-weight-semibold, 600);
   color: var(--color-text-primary);
 }
 
 .form-header p {
   margin: 0;
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size, 14px);
   color: var(--color-text-secondary);
 }
 
@@ -45,7 +45,7 @@
 }
 
 .form-field label {
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size, 14px);
   font-weight: var(--font-weight-medium, 500);
   color: var(--color-text-primary);
   display: flex;
@@ -57,7 +57,7 @@
 /* Info icon for tooltips (UX Audit Fix #7) */
 .info-icon {
   color: var(--color-text-tertiary);
-  font-size: var(--font-body-xs, 12px);
+  font-size: var(--font-caption-size, 12px);
   cursor: help;
   transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
   margin-left: var(--space-1, 4px);
@@ -94,7 +94,7 @@
 
 .rpe-value {
   text-align: center;
-  font-size: var(--font-heading-sm, 20px);
+  font-size: var(--font-h4-size, 20px);
   font-weight: var(--font-weight-bold, 700);
   color: var(--ds-primary-green);
   margin-top: var(--space-2, 8px);
@@ -112,7 +112,7 @@
 }
 
 .expected-duration {
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size, 14px);
   color: var(--color-text-secondary);
 }
 
@@ -130,7 +130,7 @@
   padding: var(--space-3, 12px);
   border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-lg, 8px);
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size, 14px);
   resize: vertical;
   transition: border-color 150ms ease;
 }
@@ -157,19 +157,19 @@
 }
 
 .load-label {
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size, 14px);
   font-weight: var(--font-weight-medium, 500);
   color: var(--ds-primary-green-hover);
 }
 
 .load-value {
-  font-size: var(--font-heading-md, 24px);
+  font-size: var(--font-h3-size, 24px);
   font-weight: var(--font-weight-bold, 700);
   color: var(--ds-primary-green);
 }
 
 .load-formula {
-  font-size: var(--font-body-xs, 12px);
+  font-size: var(--font-caption-size, 12px);
   color: var(--ds-primary-green-hover);
   opacity: 0.8;
 }

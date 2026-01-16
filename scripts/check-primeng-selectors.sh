@@ -88,8 +88,9 @@ for file in "${FILES_ARRAY[@]}"; do
   echo -e "${BLUE}Checking: $RELATIVE_FILE${NC}"
   
   # Check for .p-* selectors (but not in comments)
-  # Match: .p-*, :global(.p-*), ::ng-deep .p-*
-  VIOLATIONS=$(grep -n -E '\.p-[a-zA-Z0-9-]+|:global\(\.p-[a-zA-Z0-9-]+\)|::ng-deep\s+\.p-[a-zA-Z0-9-]+' "$RELATIVE_FILE" 2>/dev/null | grep -v '^\s*//' | grep -v '^\s*/\*' || true)
+  # Match: .p-*, :global(.p-*)
+  # Note: ::ng-deep has been fully removed from the codebase (January 2026)
+  VIOLATIONS=$(grep -n -E '\.p-[a-zA-Z0-9-]+|:global\(\.p-[a-zA-Z0-9-]+\)' "$RELATIVE_FILE" 2>/dev/null | grep -v '^\s*//' | grep -v '^\s*/\*' || true)
   
   if [ -n "$VIOLATIONS" ]; then
     echo -e "${RED}❌ Violations found in: $RELATIVE_FILE${NC}"

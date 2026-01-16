@@ -10,10 +10,10 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Checkbox } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
+import { Dialog } from "primeng/dialog";
 import { Slider } from "primeng/slider";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../../../core/services/unified-training.service";
@@ -47,9 +47,9 @@ export interface ReadinessResult {
     FormsModule,
     Slider,
     Checkbox,
-    DialogModule,
-    TagModule,
-    TooltipModule,
+    Dialog,
+    Tag,
+    Tooltip,
     ButtonComponent,
     IconButtonComponent,
   ],

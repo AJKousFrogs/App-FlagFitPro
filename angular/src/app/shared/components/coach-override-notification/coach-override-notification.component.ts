@@ -19,10 +19,10 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../button/button.component";
 import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-override-badge.component";
 import {
@@ -39,10 +39,10 @@ import { getTimeAgo } from "../../utils/date.utils";
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    DialogModule,
-    TagModule,
-    TooltipModule,
+    Card,
+    Dialog,
+    Tag,
+    Tooltip,
     ButtonComponent,
     CoachOverrideBadgeComponent,
   ],

@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { AccordionModule } from "primeng/accordion";
+import { Card } from "primeng/card";
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { ButtonComponent } from "../../shared/components/button/button.component";
 
 interface HelpTopic {
   id: string;
@@ -20,10 +21,11 @@ interface HelpTopic {
   imports: [
     CommonModule,
     RouterLink,
-    CardModule,
-    AccordionModule,
+    Card,
+    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
     MainLayoutComponent,
     PageHeaderComponent,
+    ButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -32,10 +34,12 @@ interface HelpTopic {
           title="Help Center"
           subtitle="Find answers to common questions"
         >
-          <a routerLink="/dashboard" class="p-button p-button-text">
-            <i class="pi pi-arrow-left"></i>
-            Back to Dashboard
-          </a>
+          <app-button
+            iconLeft="pi-arrow-left"
+            variant="text"
+            routerLink="/dashboard"
+            >Back to Dashboard</app-button
+          >
         </app-page-header>
 
         <!-- Quick Links -->
@@ -92,9 +96,9 @@ interface HelpTopic {
             <i class="pi pi-envelope"></i>
             <h3>Still need help?</h3>
             <p>Contact our support team for personalized assistance.</p>
-            <a href="mailto:support&#64;flagfitpro.com" class="p-button">
-              Contact Support
-            </a>
+            <app-button href="mailto:support@flagfitpro.com"
+              >Contact Support</app-button
+            >
           </div>
         </p-card>
       </div>

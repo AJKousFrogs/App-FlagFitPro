@@ -10,14 +10,14 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { AvatarModule } from "primeng/avatar";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
+import { Avatar } from "primeng/avatar";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
@@ -54,15 +54,15 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     TableModule,
     StatusTagComponent,
-    DialogModule,
-    InputTextModule,
-    InputNumberModule,
+    Dialog,
+    InputText,
+    InputNumber,
     Select,
-    TooltipModule,
-    AvatarModule,
+    Tooltip,
+    Avatar,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
@@ -182,13 +182,15 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                           icon="pi-calendar-plus"
                           variant="text"
                           (clicked)="openScheduleDialog(official)"
-                          ariaLabel="calendar-plus"
+                          ariaLabel="Schedule official for game"
+                          tooltip="Schedule"
                         />
                         <app-icon-button
                           icon="pi-pencil"
                           variant="text"
                           (clicked)="openEditOfficialDialog(official)"
-                          ariaLabel="pencil"
+                          ariaLabel="Edit official"
+                          tooltip="Edit"
                         />
                       }
                     </div>
@@ -272,13 +274,15 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                           (clicked)="
                             updateAssignmentStatus(assignment, 'confirmed')
                           "
-                          ariaLabel="check"
+                          ariaLabel="Confirm assignment"
+                          tooltip="Confirm"
                         />
                         <app-icon-button
                           icon="pi-times"
                           variant="text"
                           (clicked)="removeAssignment(assignment)"
-                          ariaLabel="times"
+                          ariaLabel="Remove assignment"
+                          tooltip="Remove"
                         />
                       </div>
                     }
@@ -397,7 +401,8 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
               icon="pi-check"
               [disabled]="!officialForm.name"
               (clicked)="saveOfficial()"
-              ariaLabel="check"
+              ariaLabel="Save official"
+              tooltip="Save"
             />
           </ng-template>
         </p-dialog>

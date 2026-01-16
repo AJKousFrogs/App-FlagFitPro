@@ -6,15 +6,16 @@ import {
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
-import { BreadcrumbModule } from "primeng/breadcrumb";
-import { TagModule } from "primeng/tag";
+import { Breadcrumb } from "primeng/breadcrumb";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { ContextService } from "../../../core/services/context.service";
 
 @Component({
   selector: "app-smart-breadcrumbs",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, BreadcrumbModule, TagModule],
+  imports: [RouterModule, Breadcrumb, Tag, StatusTagComponent],
   template: `
     @if (breadcrumbItems().length > 0) {
       <nav class="smart-breadcrumbs" aria-label="Navigation path">
@@ -39,13 +40,12 @@ import { ContextService } from "../../../core/services/context.service";
                   </span>
                 }
                 @if (item.data?.badge) {
-                  <p-tag
+                  <app-status-tag
                     [value]="item.data.badge.text"
                     [severity]="item.data.badge.severity"
-                    size="small"
+                    size="sm"
                     class="breadcrumb-badge"
-                  >
-                  </p-tag>
+                  />
                 }
               </div>
             </ng-template>

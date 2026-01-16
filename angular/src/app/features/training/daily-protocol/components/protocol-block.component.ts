@@ -21,7 +21,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { formatDate } from "../../../../shared/utils/date.utils";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 
@@ -39,7 +39,7 @@ import { ExerciseCardComponent } from "./exercise-card.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ProgressBarModule,
+    ProgressBar,
     StatusTagComponent,
     ExerciseCardComponent,
 

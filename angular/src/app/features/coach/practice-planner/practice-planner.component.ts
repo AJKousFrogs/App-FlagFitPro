@@ -19,18 +19,19 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -112,17 +113,18 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     CommonModule,
     FormsModule,
     DatePipe,
-    CardModule,
-    CheckboxModule,
+    Card,
+    Checkbox,
     DatePicker,
-    DialogModule,
-    InputNumberModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputNumber,
+    InputText,
+    ProgressBar,
     Select,
-    TagModule,
+    Tag,
+    StatusTagComponent,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -178,10 +180,11 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                   <div class="practice-title">
                     <span class="practice-icon">🏋️</span>
                     <h4>{{ practice.title }}</h4>
-                    <p-tag
+                    <app-status-tag
                       [value]="getStatusLabel(practice.status)"
                       [severity]="getStatusSeverity(practice.status)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </div>
                   <div class="practice-actions">
                     <app-button
@@ -666,9 +669,8 @@ export class PracticePlannerComponent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
-        this.api.get("/api/coach/practices"),
+      const response = await firstValueFrom(
+        this.api.get<{ practices?: PracticePlan[] }>("/api/coach/practices"),
       );
       if (response?.success && response.data?.practices) {
         this.practices.set(response.data.practices);
@@ -919,10 +921,10 @@ export class PracticePlannerComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
+  getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
+    const severities: Record<string, "success" | "info" | "warning" | "danger"> = {
       scheduled: "info",
-      "in-progress": "warn",
+      "in-progress": "warning",
       completed: "success",
       cancelled: "danger",
     };

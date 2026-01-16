@@ -19,17 +19,18 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -112,19 +113,20 @@ const COMPARE_OPTIONS = [
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
 
     LazyChartComponent,
     DatePicker,
-    DialogModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputText,
+    ProgressBar,
     RadioButton,
     Select,
     TableModule,
-    TagModule,
+    Tag,
+    StatusTagComponent,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -306,10 +308,11 @@ const COMPARE_OPTIONS = [
                       <span class="current-value"
                         >Current: {{ goal.currentValue }}</span
                       >
-                      <p-tag
+                      <app-status-tag
                         [value]="getStatusLabel(goal.status)"
                         [severity]="getStatusSeverity(goal.status)"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </div>
                     <div class="goal-actions">
                       <app-button
@@ -407,10 +410,11 @@ const COMPARE_OPTIONS = [
                     ></p-progressBar>
                   </div>
                   <span class="skill-score">{{ skill.score }}%</span>
-                  <p-tag
+                  <app-status-tag
                     [value]="skill.grade"
                     [severity]="getGradeSeverity(skill.grade)"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               }
             </div>
@@ -866,14 +870,14 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
     > = {
       "on-track": "success",
       ahead: "success",
-      behind: "warn",
+      behind: "warning",
       completed: "info",
     };
     return severities[status] || "secondary";
@@ -881,15 +885,15 @@ export class PlayerDevelopmentComponent implements OnInit {
 
   getGradeSeverity(
     grade: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
     > = {
       Elite: "success",
       Excellent: "success",
       Good: "info",
-      Developing: "warn",
+      Developing: "warning",
       "Needs Work": "danger",
     };
     return severities[grade] || "secondary";

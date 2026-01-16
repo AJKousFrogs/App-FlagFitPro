@@ -17,10 +17,10 @@ import {
 } from "@angular/core";
 import { TitleCasePipe, DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { CheckboxModule } from "primeng/checkbox";
-import { TooltipModule } from "primeng/tooltip";
+import { Card } from "primeng/card";
+import { Tag } from "primeng/tag";
+import { Checkbox } from "primeng/checkbox";
+import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
@@ -44,10 +44,10 @@ import { TRAINING } from "../../../core/constants/app.constants";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CardModule,
-    TagModule,
-    CheckboxModule,
-    TooltipModule,
+    Card,
+    Tag,
+    Checkbox,
+    Tooltip,
     ProgressBar,
     FormsModule,
     TitleCasePipe,
@@ -200,7 +200,8 @@ import { TRAINING } from "../../../core/constants/app.constants";
           icon="pi-eye"
           variant="text"
           (clicked)="viewDetails.emit(player())"
-          ariaLabel="eye"
+          ariaLabel="View player details"
+          tooltip="View details"
         />
 
         @if (canManage()) {
@@ -212,7 +213,8 @@ import { TRAINING } from "../../../core/constants/app.constants";
               icon="pi-sliders-h"
               variant="text"
               (clicked)="adjustLoad.emit(player())"
-              ariaLabel="sliders-h"
+              ariaLabel="Adjust player training load"
+              tooltip="Adjust load"
             />
           }
 
@@ -220,14 +222,16 @@ import { TRAINING } from "../../../core/constants/app.constants";
             icon="pi-pencil"
             variant="text"
             (clicked)="edit.emit(player())"
-            ariaLabel="pencil"
+            ariaLabel="Edit player"
+            tooltip="Edit"
           />
 
           <app-icon-button
             icon="pi-tag"
             variant="text"
             (clicked)="changeStatus.emit(player())"
-            ariaLabel="tag"
+            ariaLabel="Change player status"
+            tooltip="Change status"
           />
         }
 
@@ -236,7 +240,8 @@ import { TRAINING } from "../../../core/constants/app.constants";
             icon="pi-trash"
             variant="text"
             (clicked)="remove.emit(player())"
-            ariaLabel="trash"
+            ariaLabel="Remove player from roster"
+            tooltip="Remove"
           />
         }
       </div>

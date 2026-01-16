@@ -10,17 +10,17 @@ import {
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { MessageService } from "primeng/api";
-import { BadgeModule } from "primeng/badge";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { IconFieldModule } from "primeng/iconfield";
-import { InputIconModule } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
-import { PaginatorModule } from "primeng/paginator";
-import { RippleModule } from "primeng/ripple";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
-import { TooltipModule } from "primeng/tooltip";
+import { Badge } from "primeng/badge";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { IconField } from "primeng/iconfield";
+import { InputIcon } from "primeng/inputicon";
+import { InputText } from "primeng/inputtext";
+import { Paginator } from "primeng/paginator";
+import { Ripple } from "primeng/ripple";
+import { Tag } from "primeng/tag";
+import { Toast } from "primeng/toast";
+import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -64,17 +64,17 @@ interface Category {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    CardModule,
-    InputTextModule,
-    IconFieldModule,
-    InputIconModule,
-    TagModule,
-    PaginatorModule,
-    TooltipModule,
-    RippleModule,
-    BadgeModule,
-    DialogModule,
-    ToastModule,
+    Card,
+    InputText,
+    IconField,
+    InputIcon,
+    Tag,
+    Paginator,
+    Tooltip,
+    Ripple,
+    Badge,
+    Dialog,
+    Toast,
     MainLayoutComponent,
 
     ButtonComponent,

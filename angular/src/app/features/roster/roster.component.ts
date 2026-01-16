@@ -39,14 +39,13 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ConfirmationService } from "primeng/api";
-import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Badge } from "primeng/badge";
+import { Card } from "primeng/card";
+import { ConfirmDialog } from "primeng/confirmdialog";
+import { Dialog } from "primeng/dialog";
+import { ProgressSpinner } from "primeng/progressspinner";
 import { Select } from "primeng/select";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -108,14 +107,13 @@ import {
   providers: [ConfirmationService],
   imports: [
     // PrimeNG
-    CardModule,
+    Card,
     StatusTagComponent,
-    ProgressSpinnerModule,
-    DialogModule,
-    TooltipModule,
-    ConfirmDialogModule,
-    BadgeModule,
-    ButtonModule,
+    ProgressSpinner,
+    Dialog,
+    Tooltip,
+    ConfirmDialog,
+    Badge,
     Select,
     // Angular
     FormsModule,
@@ -173,20 +171,18 @@ import {
                   >Export</app-button
                 >
 
-                <p-button
-                  label="Invitations"
-                  icon="pi pi-envelope"
-                  [outlined]="true"
-                  severity="info"
-                  (onClick)="openInvitationsDialog()"
-                  pTooltip="Manage pending invitations"
-                  [badge]="
-                    rosterService.pendingInvitations().length > 0
-                      ? rosterService.pendingInvitations().length.toString()
-                      : ''
-                  "
-                  badgeSeverity="danger"
-                ></p-button>
+                <app-button
+                  iconLeft="pi-envelope"
+                  variant="outlined"
+                  (clicked)="openInvitationsDialog()"
+                  [pTooltip]="'Manage pending invitations'"
+                  >Invitations
+                  @if (rosterService.pendingInvitations().length > 0) {
+                    <span class="badge badge-danger">{{
+                      rosterService.pendingInvitations().length
+                    }}</span>
+                  }</app-button
+                >
 
                 <app-button
                   variant="outlined"
@@ -259,8 +255,8 @@ import {
             filteredPlayers().length === 0 &&
             (searchQuery() || positionFilter || statusFilter)
           ) {
-            <div class="no-results">
-              <i class="pi pi-search"></i>
+            <div class="no-results" role="status">
+              <i class="pi pi-search" aria-hidden="true"></i>
               <h3>No players match your filters</h3>
               <p>Try adjusting your search or filter criteria</p>
               <app-button
@@ -287,7 +283,7 @@ import {
             @if (rosterService.coachingStaffByCategory().coaching.length > 0) {
               <div class="position-section">
                 <h2 class="section-title">
-                  <i class="pi pi-users"></i>
+                  <i class="pi pi-users" aria-hidden="true"></i>
                   Coaching Staff
                   <span class="position-count"
                     >({{
@@ -313,7 +309,7 @@ import {
             @if (rosterService.coachingStaffByCategory().medical.length > 0) {
               <div class="position-section">
                 <h2 class="section-title">
-                  <i class="pi pi-heart"></i>
+                  <i class="pi pi-heart" aria-hidden="true"></i>
                   Medical Staff
                   <span class="position-count"
                     >({{
@@ -341,7 +337,7 @@ import {
             ) {
               <div class="position-section">
                 <h2 class="section-title">
-                  <i class="pi pi-chart-line"></i>
+                  <i class="pi pi-chart-line" aria-hidden="true"></i>
                   Performance Staff
                   <span class="position-count"
                     >({{
@@ -548,7 +544,7 @@ import {
               <!-- Position Benchmarks Section -->
               @if (enrichedSelectedPlayer()?.benchmarkComparison?.length) {
                 <div class="details-benchmarks">
-                  <h3><i class="pi pi-chart-bar"></i> Position Benchmarks</h3>
+                  <h3><i class="pi pi-chart-bar" aria-hidden="true"></i> Position Benchmarks</h3>
                   <div class="benchmarks-grid">
                     @for (
                       benchmark of enrichedSelectedPlayer()!
@@ -589,7 +585,7 @@ import {
               <!-- Training Priorities -->
               @if (trainingPriorities().length > 0) {
                 <div class="details-priorities">
-                  <h3><i class="pi pi-list-check"></i> Training Priorities</h3>
+                  <h3><i class="pi pi-list-check" aria-hidden="true"></i> Training Priorities</h3>
                   <ul class="priorities-list">
                     @for (priority of trainingPriorities(); track priority) {
                       <li>{{ priority }}</li>
@@ -608,12 +604,12 @@ import {
                   [class]="'risk-level-' + riskAssessment()!.level"
                 >
                   <h3>
-                    <i class="pi pi-exclamation-triangle"></i> Risk Assessment
+                    <i class="pi pi-exclamation-triangle" aria-hidden="true"></i> Risk Assessment
                   </h3>
                   <div class="risk-factors">
                     @for (factor of riskAssessment()!.factors; track factor) {
                       <div class="risk-factor">
-                        <i class="pi pi-info-circle"></i>
+                        <i class="pi pi-info-circle" aria-hidden="true"></i>
                         {{ factor }}
                       </div>
                     }
@@ -834,8 +830,8 @@ import {
         >
           <div class="invitations-list">
             @if (rosterService.pendingInvitations().length === 0) {
-              <div class="empty-invitations">
-                <i class="pi pi-inbox"></i>
+              <div class="empty-invitations" role="status">
+                <i class="pi pi-inbox" aria-hidden="true"></i>
                 <p>No pending invitations</p>
                 <app-button
                   iconLeft="pi-plus"
@@ -856,7 +852,7 @@ import {
                 >
                   <div class="invitation-info">
                     <div class="invitation-email">
-                      <i class="pi pi-envelope"></i>
+                      <i class="pi pi-envelope" aria-hidden="true"></i>
                       {{ invitation.email }}
                     </div>
                     <div class="invitation-meta">
@@ -885,13 +881,15 @@ import {
                       icon="pi-refresh"
                       variant="text"
                       (clicked)="resendInvitation(invitation)"
-                      ariaLabel="refresh"
+                      ariaLabel="Resend invitation"
+                      tooltip="Resend"
                     />
                     <app-icon-button
                       icon="pi-times"
                       variant="text"
                       (clicked)="cancelInvitation(invitation)"
-                      ariaLabel="times"
+                      ariaLabel="Cancel invitation"
+                      tooltip="Cancel"
                     />
                   </div>
                 </div>

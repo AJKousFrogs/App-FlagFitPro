@@ -469,7 +469,7 @@ export class DebugConsoleComponent implements OnInit, OnDestroy {
     try {
       const result = await this.debugService.testRLSPolicies(
         this.supabase,
-        this.selectedTable,
+        this.selectedTableModule,
         this.userId,
       );
 
@@ -510,7 +510,7 @@ export class DebugConsoleComponent implements OnInit, OnDestroy {
     try {
       const result = await this.debugService.validateSchema(
         this.supabase,
-        this.selectedTable,
+        this.selectedTableModule,
         expectedColumns[this.selectedTable] || [],
       );
 
@@ -559,7 +559,7 @@ export class DebugConsoleComponent implements OnInit, OnDestroy {
     try {
       const result = await this.debugService.testUpsert(
         this.supabase,
-        this.selectedTable,
+        this.selectedTableModule,
         testData,
         { upsert: false },
       );
@@ -638,7 +638,7 @@ export class DebugConsoleComponent implements OnInit, OnDestroy {
     this.realtimeSubscription =
       this.debugService.subscribeWithConflictDetection(
         this.supabase,
-        this.selectedTable,
+        this.selectedTableModule,
         this.userId,
         (data) => {
           this.addLog("info", "Realtime update received", data);

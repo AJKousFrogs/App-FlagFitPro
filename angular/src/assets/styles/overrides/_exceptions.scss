@@ -11,12 +11,11 @@
  * 1. Every exception MUST include the exception template below
  * 2. Exceptions MUST have a removal date
  * 3. Exceptions MUST be scoped to specific components
- * 4. Undocumented !important or ::ng-deep is a violation
+ * 4. Undocumented !important is a violation
  * 5. Review exceptions quarterly and remove expired ones
  * 
  * ALLOWED IN THIS FILE:
  * - !important (with ticket)
- * - ::ng-deep (with scope container)
  * - Raw values (with justification)
  */
 
@@ -114,7 +113,7 @@
    *         Waiting for PrimeNG v20 which exposes these as tokens.
    */
   // .analytics-dashboard {
-  //   ::ng-deep .p-datatable-paginator {
+  //   .p-datatable-paginator {
   //     padding: var(--space-2) !important;
   //   }
   // }
@@ -130,7 +129,7 @@
    *         z-index token not available in portal context.
    */
   // .calendar-widget {
-  //   ::ng-deep .p-datepicker {
+  //   .p-datepicker {
   //     z-index: 9999 !important;
   //   }
   // }
@@ -146,7 +145,7 @@
    * ------------------------------------------------ */
   .acwr-baseline {
     .acwr-progress-bar {
-      ::ng-deep .p-progressbar {
+      .p-progressbar {
         height: 8px;
         background: var(--surface-secondary);
         border-radius: var(--radius-full);
@@ -205,14 +204,14 @@
 
     // Progressbar mobile
     @include respond-to(md) {
-      ::ng-deep .p-progressbar {
+      .p-progressbar {
         height: 6px !important;
       }
     }
 
     // Chart mobile optimization
     @include respond-to(md) {
-      ::ng-deep .p-chart {
+      .p-chart {
         canvas {
           max-width: 100% !important;
           height: auto !important;
@@ -228,7 +227,7 @@
 
     // Timeline mobile
     @include respond-to(md) {
-      ::ng-deep .p-timeline {
+      .p-timeline {
         .p-timeline-event-marker {
           width: 12px !important;
           height: 12px !important;
@@ -373,9 +372,9 @@
     border-bottom: var(--border-1) solid var(--surface-border);
     border-radius: 0;
     padding: 0 var(--space-6);
-    height: 64px;
-    min-height: 64px;
-    max-height: 64px;
+    height: var(--header-height, 64px);
+    min-height: var(--header-height, 64px);
+    max-height: var(--header-height, 64px);
     gap: var(--space-6);
     box-shadow: var(--shadow-1);
     display: flex;
@@ -422,9 +421,9 @@
 
     @include respond-to(md) {
       padding: 0 var(--space-4);
-      height: 56px;
-      min-height: 56px;
-      max-height: 56px;
+      height: var(--header-height-mobile, 56px);
+      min-height: var(--header-height-mobile, 56px);
+      max-height: var(--header-height-mobile, 56px);
     }
   }
 
@@ -527,12 +526,12 @@
   }
 
   .header-icon-btn.p-button {
-    width: var(--space-10);
-    height: var(--space-10);
-    min-width: var(--space-10);
-    min-height: var(--space-10);
-    max-width: var(--space-10);
-    max-height: var(--space-10);
+    width: var(--touch-target-md);
+    height: var(--touch-target-md);
+    min-width: var(--touch-target-md);
+    min-height: var(--touch-target-md);
+    max-width: var(--touch-target-md);
+    max-height: var(--touch-target-md);
     padding: 0;
     margin: 0;
     border-radius: var(--radius-lg);
@@ -576,12 +575,12 @@
     }
 
     @include respond-to(md) {
-      width: var(--space-10);
-      height: var(--space-10);
-      min-width: var(--space-10);
-      min-height: var(--space-10);
-      max-width: var(--space-10);
-      max-height: var(--space-10);
+      width: var(--touch-target-md);
+      height: var(--touch-target-md);
+      min-width: var(--touch-target-md);
+      min-height: var(--touch-target-md);
+      max-width: var(--touch-target-md);
+      max-height: var(--touch-target-md);
 
       .p-button-icon {
         font-size: var(--font-size-body);
@@ -649,7 +648,7 @@
     }
   }
 
-  :host ::ng-deep .shortcuts-dialog {
+  .p-toolbar.app-header .shortcuts-dialog {
     .p-dialog-content {
       padding: 0;
     }
@@ -1181,20 +1180,18 @@
    *         Autocomplete panel positioning and jersey badge color override.
    * ------------------------------------------------ */
   .onboarding {
-    ::ng-deep {
-      .p-autocomplete,
-      .p-select,
-      .p-inputtext {
-        width: 100%;
-      }
+    .p-autocomplete,
+    .p-select,
+    .p-inputtext {
+      width: 100%;
+    }
 
-      .p-autocomplete-input {
-        width: 100% !important;
-      }
+    .p-autocomplete-input {
+      width: 100% !important;
     }
 
     .team-autocomplete {
-      ::ng-deep .p-autocomplete {
+      .p-autocomplete {
         width: 100%;
 
         .p-autocomplete-input {
@@ -1203,7 +1200,7 @@
       }
     }
 
-    ::ng-deep .p-autocomplete-panel {
+    .p-autocomplete-panel {
       position: fixed !important;
       z-index: 9999 !important;
       margin-top: var(--space-1);
@@ -1255,33 +1252,31 @@
       }
     }
 
-    :host ::ng-deep {
-      .p-checkbox {
-        .p-checkbox-box {
-          width: 1.25rem;
-          height: 1.25rem;
-          border: 2px solid var(--color-border-primary);
-          border-radius: var(--radius-sm);
-          background: var(--surface-primary);
-          transition:
-            opacity var(--transition-fast),
-            transform var(--transition-fast),
-            background-color var(--transition-fast),
-            border-color var(--transition-fast),
-            box-shadow var(--transition-fast);
+    .p-checkbox {
+      .p-checkbox-box {
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 2px solid var(--color-border-primary);
+        border-radius: var(--radius-sm);
+        background: var(--surface-primary);
+        transition:
+          opacity var(--transition-fast),
+          transform var(--transition-fast),
+          background-color var(--transition-fast),
+          border-color var(--transition-fast),
+          box-shadow var(--transition-fast);
 
-          &:hover {
-            border-color: var(--ds-primary-green);
-            box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.1);
-          }
+        &:hover {
+          border-color: var(--ds-primary-green);
+          box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.1);
+        }
 
-          &.p-highlight {
-            background: var(--ds-primary-green);
-            border-color: var(--ds-primary-green);
+        &.p-highlight {
+          background: var(--ds-primary-green);
+          border-color: var(--ds-primary-green);
 
-            .p-checkbox-icon {
-              color: white;
-            }
+          .p-checkbox-icon {
+            color: white;
           }
         }
       }
@@ -1291,8 +1286,9 @@
           border-color: var(--ds-primary-green);
         }
       }
+    }
 
-      .p-steps {
+    .p-steps {
         padding: var(--space-4) 0;
         margin: var(--space-5) 0;
         background: transparent;
@@ -2838,28 +2834,28 @@
     }
 
     .chart-card {
-      ::ng-deep .p-card-header {
+      .p-card-header {
         padding: var(--space-3);
       }
 
-      ::ng-deep .p-card-body {
+      .p-card-body {
         padding: var(--space-3);
       }
 
       @include respond-to(md) {
-        ::ng-deep .p-card-header,
-        ::ng-deep .p-card-body {
+        .p-card-header,
+        .p-card-body {
           padding: var(--space-2);
         }
       }
 
       @media (min-width: 1024px) {
-        ::ng-deep .p-card-header {
+        .p-card-header {
           padding: var(--space-5);
           border-bottom: 1px solid var(--color-border-secondary);
         }
 
-        ::ng-deep .p-card-body {
+        .p-card-body {
           padding: var(--space-5);
         }
       }

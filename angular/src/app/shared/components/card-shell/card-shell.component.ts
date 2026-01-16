@@ -16,7 +16,7 @@ import { CommonModule } from "@angular/common";
  *
  * CANONICAL REFERENCE: Player Dashboard cards
  * - Header: inline icon + title, NO background, NO separator
- * - Icon: raw icon (no container), --font-body-md, --color-brand-primary, opacity 0.85
+ * - Icon: raw icon (no container), --font-body-size, --color-brand-primary, opacity 0.85
  * - Title: --font-size-h2 (18px), semibold, line-height-tight
  *
  * @see docs/CARD_SHELL_CONTRACT.md for full specification

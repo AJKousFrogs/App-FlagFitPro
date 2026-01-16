@@ -19,10 +19,10 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
+import { Avatar } from "primeng/avatar";
+import { Badge } from "primeng/badge";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { SkeletonModule } from "primeng/skeleton";
+import { Skeleton } from "primeng/skeleton";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -83,9 +83,9 @@ interface InboxStats {
     Tabs,
     TabPanel,
     StatusTagComponent,
-    BadgeModule,
-    SkeletonModule,
-    AvatarModule,
+    Badge,
+    Skeleton,
+    Avatar,
     MainLayoutComponent,
 
     ButtonComponent,

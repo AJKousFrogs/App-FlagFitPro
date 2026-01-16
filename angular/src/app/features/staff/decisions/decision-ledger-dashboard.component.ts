@@ -26,10 +26,10 @@ import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { LoggerService } from "@core/services/logger.service";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
+import { ButtonComponent } from "@shared/components/button/button.component";
+import { Card } from "primeng/card";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
 import { CreateDecisionDialogComponent } from "./create-decision-dialog.component";
 import { DecisionCardComponent } from "./decision-card.component";
 import { ReviewDecisionDialogComponent } from "./review-decision-dialog.component";
@@ -42,9 +42,9 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
     CommonModule,
     FormsModule,
     RouterModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
+    Card,
+    ButtonComponent,
+    Tag,
     Select,
     PageHeaderComponent,
     CardShellComponent,
@@ -58,11 +58,10 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
         title="Decision Ledger"
         subtitle="Track decisions, reviews, and outcomes"
       >
-        <p-button
-          label="New Decision"
-          icon="pi pi-plus"
-          (onClick)="openCreateDialog()"
-        ></p-button>
+        <app-button
+          iconLeft="pi-plus"
+          (clicked)="openCreateDialog()"
+        >New Decision</app-button>
       </app-page-header>
 
       <!-- Stats Cards -->
@@ -145,13 +144,13 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
             </div>
 
             <div class="filter-item">
-              <p-button
-                label="Clear Filters"
-                icon="pi pi-times"
-                [outlined]="true"
-                size="small"
-                (onClick)="clearFilters()"
-              ></p-button>
+              <app-button
+                iconLeft="pi-times"
+                variant="outlined"
+                size="sm"
+                (clicked)="clearFilters()"
+                >Clear Filters</app-button
+              >
             </div>
           </div>
         </app-card-shell>
@@ -168,7 +167,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
       @if (decisionService.error()) {
         <div class="error-state">
           <p>Error: {{ decisionService.error() }}</p>
-          <p-button label="Retry" (onClick)="loadData()"></p-button>
+          <app-button (clicked)="loadData()">Retry</app-button>
         </div>
       }
 
@@ -180,13 +179,13 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
             headerIcon="pi-clock"
           >
             <ng-container header-actions>
-              <p-button
-                label="View All"
-                [outlined]="true"
-                size="small"
+              <app-button
+                variant="outlined"
+                size="sm"
                 [routerLink]="['/staff/decisions']"
-                [queryParams]="{ dueForReview: true }"
-              ></p-button>
+                [queryParams]="{ dueForReview: 'true' }"
+                >View All</app-button
+              >
             </ng-container>
 
             <div class="decisions-grid">
@@ -212,22 +211,22 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
       <div class="section">
         <app-card-shell title="Recent Decisions" headerIcon="pi-history">
           <ng-container header-actions>
-            <p-button
-              label="View All"
-              [outlined]="true"
-              size="small"
+            <app-button
+              variant="outlined"
+              size="sm"
               [routerLink]="['/staff/decisions']"
-            ></p-button>
+              >View All</app-button
+            >
           </ng-container>
 
           @if (decisions().length === 0) {
             <div class="empty-state">
               <p>No decisions found</p>
-              <p-button
-                label="Create First Decision"
-                icon="pi pi-plus"
-                (onClick)="openCreateDialog()"
-              ></p-button>
+              <app-button
+                iconLeft="pi-plus"
+                (clicked)="openCreateDialog()"
+                >Create First Decision</app-button
+              >
             </div>
           } @else {
             <div class="decisions-grid">

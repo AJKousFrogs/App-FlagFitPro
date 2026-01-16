@@ -12,10 +12,10 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { InputTextModule } from "primeng/inputtext";
-import { ToastModule } from "primeng/toast";
+import { InputText } from "primeng/inputtext";
+import { Toast } from "primeng/toast";
 import { Select } from "primeng/select";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -31,9 +31,9 @@ import { AuthService } from "../../../core/services/auth.service";
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    CardModule,
-    InputTextModule,
-    ToastModule,
+    Card,
+    InputText,
+    Toast,
     Select,
     MainLayoutComponent,
     PageHeaderComponent,

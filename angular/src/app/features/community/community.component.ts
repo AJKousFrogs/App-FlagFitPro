@@ -13,15 +13,15 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
+import { Avatar } from "primeng/avatar";
+import { Badge } from "primeng/badge";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { TagModule } from "primeng/tag";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { Tag } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
@@ -144,14 +144,14 @@ interface ApiPollVoteResponse {
     FormsModule,
     RouterModule,
     ScrollingModule,
-    CardModule,
-    DialogModule,
+    Card,
+    Dialog,
     Textarea,
-    AvatarModule,
-    BadgeModule,
-    TagModule,
-    InputTextModule,
-    TooltipModule,
+    Avatar,
+    Badge,
+    Tag,
+    InputText,
+    Tooltip,
     MainLayoutComponent,
     AnnouncementsBannerComponent,
     ButtonComponent,

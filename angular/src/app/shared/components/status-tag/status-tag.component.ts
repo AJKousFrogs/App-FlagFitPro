@@ -39,7 +39,9 @@ export type StatusTagSeverity =
   | "danger"
   | "info"
   | "secondary"
-  | "primary";
+  | "primary"
+  | "contrast"
+  | "warn";
 
 @Component({
   selector: "app-status-tag",
@@ -163,6 +165,18 @@ export type StatusTagSeverity =
       .status-tag-secondary {
         background-color: var(--surface-tertiary);
         color: var(--color-text-secondary);
+      }
+
+      /* Contrast - High contrast neutral */
+      .status-tag-contrast {
+        background-color: var(--primitive-neutral-800);
+        color: var(--color-text-on-primary);
+      }
+
+      /* Warn - Alias for warning (backwards compatibility) */
+      .status-tag-warn {
+        background-color: var(--color-status-warning);
+        color: var(--primitive-warning-800);
       }
 
       /* ================================================================

@@ -15,13 +15,13 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { AvatarModule } from "primeng/avatar";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Avatar } from "primeng/avatar";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
@@ -54,17 +54,17 @@ interface PositionGroup {
     CommonModule,
     FormsModule,
     DragDropModule,
-    CardModule,
+    Card,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
-    DialogModule,
+    Dialog,
     Select,
-    InputTextModule,
-    TooltipModule,
-    AvatarModule,
+    InputText,
+    Tooltip,
+    Avatar,
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -188,7 +188,8 @@ interface PositionGroup {
                                           variant="text"
                                           size="sm"
                                           (clicked)="removePlayer(entry)"
-                                          ariaLabel="times"
+                                          ariaLabel="Remove player from position"
+                                          tooltip="Remove"
                                         />
                                       }
                                     } @else {

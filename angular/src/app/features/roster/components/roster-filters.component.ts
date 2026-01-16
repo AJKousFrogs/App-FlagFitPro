@@ -10,7 +10,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { InputTextModule } from "primeng/inputtext";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -22,7 +22,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    InputTextModule,
+    InputText,
     Select,
     ButtonComponent,
     IconButtonComponent,
@@ -30,7 +30,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
   template: `
     <div class="search-filter-bar">
       <div class="search-box">
-        <i class="pi pi-search"></i>
+        <i class="pi pi-search" aria-hidden="true"></i>
         <input
           type="text"
           pInputText
@@ -38,10 +38,11 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
           [ngModel]="searchQuery()"
           (ngModelChange)="searchQuery.set($event)"
           class="search-input"
+          aria-label="Search players by name"
         />
         @if (searchQuery()) {
-          <button class="clear-search" (click)="searchQuery.set('')">
-            <i class="pi pi-times"></i>
+          <button class="clear-search" (click)="searchQuery.set('')" aria-label="Clear search">
+            <i class="pi pi-times" aria-hidden="true"></i>
           </button>
         }
       </div>
@@ -91,7 +92,8 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
             variant="text"
             size="sm"
             (clicked)="clearSelection.emit()"
-            ariaLabel="times"
+            ariaLabel="Clear all filters"
+            tooltip="Clear filters"
           />
         </div>
       }

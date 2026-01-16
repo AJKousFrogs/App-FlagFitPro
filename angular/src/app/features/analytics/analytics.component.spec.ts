@@ -232,13 +232,10 @@ describe("AnalyticsComponent", () => {
         { chart: { id: "speed", canvas: document.createElement("canvas") } },
       ];
 
-      const mockChartRefs = {
-        forEach: vi.fn((callback: any) => {
-          mockCharts.forEach(callback);
-        }),
-      } as unknown as QueryList<UIChart>;
+      const mockChartRefs = mockCharts as unknown as UIChart[];
+      const forEachSpy = vi.spyOn(mockChartRefs, "forEach");
 
-      // Mock the signal function to return the mock QueryList
+      // Mock the signal function to return the mock array
       component.chartRefs = vi.fn(() => mockChartRefs) as any;
       component.ngAfterViewInit();
 
@@ -246,20 +243,17 @@ describe("AnalyticsComponent", () => {
       vi.advanceTimersByTime(600);
 
       // Verify all chart types were processed
-      expect(mockChartRefs.forEach).toHaveBeenCalled();
+      expect(forEachSpy).toHaveBeenCalled();
 
       vi.useRealTimers();
     });
 
     it("should handle missing chart instances gracefully", async () => {
-      const mockChartRefs = {
-        forEach: vi.fn((callback: any) => {
-          // Simulate charts without the chart property
-          [{ canvas: document.createElement("canvas") }].forEach(callback);
-        }),
-      } as unknown as QueryList<UIChart>;
+      const mockChartRefs = [
+        { canvas: document.createElement("canvas") },
+      ] as unknown as UIChart[];
 
-      component.chartRefs = mockChartRefs;
+      component.chartRefs = vi.fn(() => mockChartRefs) as any;
 
       expect(() => component.ngAfterViewInit()).not.toThrow();
     });

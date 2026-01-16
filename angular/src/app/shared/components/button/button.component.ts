@@ -9,9 +9,9 @@ import {
   HostBinding,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
-import { RippleModule } from "primeng/ripple";
-import { TooltipModule } from "primeng/tooltip";
+import { Button } from "primeng/button";
+import { Ripple } from "primeng/ripple";
+import { Tooltip } from "primeng/tooltip";
 
 /**
  * Button Component - Unified Design System Button
@@ -68,9 +68,9 @@ export type ButtonSize = "sm" | "md" | "lg";
   imports: [
     CommonModule,
     RouterModule,
-    ButtonModule,
-    RippleModule,
-    TooltipModule,
+    Button,
+    Ripple,
+    Tooltip,
   ],
   template: `
     <!-- Link version (when routerLink is provided) -->

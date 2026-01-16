@@ -242,7 +242,7 @@ npm run lint:ds                    # Design system check
 
 ### Issue: ViewEncapsulation Blocking Styles
 
-**Solution:** Use `:host ::ng-deep` for PrimeNG overrides
+**Solution:** Use `ViewEncapsulation.None` for wrapper components or CSS custom properties
 
 ### Issue: Black Text on Green Buttons
 

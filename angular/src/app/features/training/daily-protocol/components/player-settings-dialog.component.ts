@@ -22,8 +22,8 @@ import {
 import { FormsModule } from "@angular/forms";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { Select } from "primeng/select";
 import { firstValueFrom } from "rxjs";
@@ -82,11 +82,11 @@ interface DayOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    DialogModule,
+    Dialog,
     Select,
     DatePicker,
     Checkbox,
-    InputTextModule,
+    InputText,
     MultiSelect,
 
     ButtonComponent,
@@ -193,7 +193,8 @@ interface DayOption {
                   variant="text"
                   size="sm"
                   (clicked)="removePracticeSlot(slot.day)"
-                  ariaLabel="trash"
+                  ariaLabel="Remove practice slot"
+                  tooltip="Remove"
                 />
               </div>
               <div class="slot-times">

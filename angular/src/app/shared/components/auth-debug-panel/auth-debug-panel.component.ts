@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Message } from "primeng/message";
 import { interval } from "rxjs";
 import { environment } from "../../../../environments/environment";
@@ -30,7 +30,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-auth-debug-panel",
   standalone: true,
-  imports: [CommonModule, DatePipe, CardModule, Message, ButtonComponent],
+  imports: [CommonModule, DatePipe, Card, Message, ButtonComponent],
   template: `
     <p-card
       header="🔍 Authentication Debug Panel"
@@ -155,7 +155,7 @@ export class AuthDebugPanelComponent {
   reauthing = signal(false);
 
   lastCheckMessage = signal<string | null>(null);
-  lastCheckSeverity = signal<"success" | "info" | "warn" | "error">("info");
+  lastCheckSeverity = signal<"success" | "info" | "warning" | "error">("info");
 
   // Reactive "clock" so the countdown updates
   private now = signal(Date.now());

@@ -29,7 +29,7 @@ export interface ValidationError {
 // Schema Builder (Lightweight Zod Alternative)
 // ============================================================================
 
-type SchemaType<T> = {
+export type SchemaType<T> = {
   parse: (data: unknown) => T;
   safeParse: (data: unknown) => ValidationResult<T>;
   optional: () => SchemaType<T | undefined>;
@@ -497,6 +497,14 @@ export const GameListSchema = z.array(GameSchema);
 // ============================================================================
 
 /**
+ * Minimal schema interface for validation
+ * Allows schemas that may not have optional/nullable methods
+ */
+export interface MinimalSchema<T> {
+  safeParse: (data: unknown) => ValidationResult<T>;
+}
+
+/**
  * Validate API response data
  *
  * @example
@@ -509,7 +517,7 @@ export const GameListSchema = z.array(GameSchema);
  */
 export function validateApiResponse<T>(
   data: unknown,
-  schema: SchemaType<T>,
+  schema: MinimalSchema<T>,
 ): ValidationResult<T> {
   return schema.safeParse(data);
 }

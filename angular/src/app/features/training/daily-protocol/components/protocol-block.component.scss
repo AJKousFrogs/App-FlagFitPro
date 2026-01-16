@@ -100,7 +100,7 @@
 }
 
 .progress-indicator {
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size, 14px);
   font-weight: var(--font-weight-semibold, 600);
   color: var(--color-text-secondary, #737373);
 }
@@ -129,7 +129,7 @@
 }
 
 .expand-text {
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size, 14px);
   color: inherit;
   font-weight: var(--font-weight-medium, 500);
 }
@@ -197,7 +197,7 @@
   align-items: center;
   gap: var(--space-3, 12px);
   cursor: pointer;
-  font-size: var(--font-body-md, 16px);
+  font-size: var(--font-body-size, 16px);
   color: var(--color-text-primary, #171717);
   user-select: none;
   width: 100%;
@@ -228,7 +228,7 @@
 
 .exercise-prescription {
   color: var(--color-text-secondary, #737373);
-  font-size: var(--font-body-sm, 14px);
+  font-size: var(--font-body-sm-size, 14px);
   white-space: nowrap;
 }
 
@@ -299,7 +299,7 @@
   }
 
   .block-title {
-    font-size: var(--font-body-md, 16px);
+    font-size: var(--font-body-size, 16px);
   }
 
   .header-right {

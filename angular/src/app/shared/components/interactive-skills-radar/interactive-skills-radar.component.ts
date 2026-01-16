@@ -6,9 +6,9 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { UIChart } from "primeng/chart";
+import { ProgressBar } from "primeng/progressbar";
 import { ButtonComponent } from "../button/button.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -32,9 +32,9 @@ export interface SkillData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    ChartModule,
-    ProgressBarModule,
+    Card,
+    UIChart,
+    ProgressBar,
 
     ButtonComponent,
   ],

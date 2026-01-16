@@ -9,13 +9,14 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { SkeletonModule } from "primeng/skeleton";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { Skeleton } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { Textarea } from "primeng/textarea";
+import { Tooltip } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
@@ -88,14 +89,15 @@ interface CoachVisibilityRecord {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
+    Card,
     TableModule,
-    TagModule,
-    DialogModule,
-    TextareaModule,
+    Tag,
+    StatusTagComponent,
+    Dialog,
+    Textarea,
     FormsModule,
-    TooltipModule,
-    SkeletonModule,
+    Tooltip,
+    Skeleton,
 
     ButtonComponent,
     IconButtonComponent,
@@ -156,7 +158,7 @@ interface CoachVisibilityRecord {
                     <span class="player-name">{{
                       alert.player_name || "Player"
                     }}</span>
-                    <p-tag value="High Risk" severity="danger"></p-tag>
+                    <app-status-tag value="High Risk" severity="danger" size="sm" />
                   </div>
                   <p class="alert-message">
                     {{
@@ -183,13 +185,15 @@ interface CoachVisibilityRecord {
                     icon="pi-eye"
                     variant="text"
                     (clicked)="viewAlert(alert)"
-                    ariaLabel="eye"
+                    ariaLabel="View alert details"
+                    tooltip="View"
                   />
                   <app-icon-button
                     icon="pi-comment"
                     variant="text"
                     (clicked)="openNoteDialog(alert)"
-                    ariaLabel="comment"
+                    ariaLabel="Add note to alert"
+                    tooltip="Add note"
                   />
                 </div>
               </div>
@@ -255,10 +259,11 @@ interface CoachVisibilityRecord {
                   </div>
                 </td>
                 <td>
-                  <p-tag
+                  <app-status-tag
                     [value]="formatRecType(rec.recommendation_type)"
                     [severity]="getRecTypeSeverity(rec.recommendation_type)"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </td>
                 <td class="reason-cell">
                   <span [pTooltip]="rec.reason" tooltipPosition="top">
@@ -266,10 +271,11 @@ interface CoachVisibilityRecord {
                   </span>
                 </td>
                 <td>
-                  <p-tag
+                  <app-status-tag
                     [value]="rec.status | titlecase"
                     [severity]="getStatusSeverity(rec.status)"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </td>
                 <td class="date-cell">
                   {{ formatDate(rec.created_at) }}
@@ -280,14 +286,16 @@ interface CoachVisibilityRecord {
                       icon="pi-eye"
                       variant="text"
                       (clicked)="viewRecommendation(rec)"
-                      ariaLabel="eye"
+                      ariaLabel="View recommendation details"
+                      tooltip="View"
                     />
                     @if (rec.status === "pending") {
                       <app-icon-button
                         icon="pi-times"
                         variant="text"
                         (clicked)="openOverrideDialog(rec)"
-                        ariaLabel="times"
+                        ariaLabel="Override recommendation"
+                        tooltip="Override"
                       />
                     }
                   </div>
@@ -725,16 +733,16 @@ export class AiCoachVisibilityComponent implements OnInit {
 
   getRecTypeSeverity(
     type: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       create_session: "info",
-      modify_plan: "warn",
+      modify_plan: "warning",
       add_exercise: "success",
       reduce_load: "danger",
-      increase_load: "warn",
+      increase_load: "warning",
       ask_coach: "secondary",
     };
     return severities[type] || "info";
@@ -742,12 +750,12 @@ export class AiCoachVisibilityComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
-      pending: "warn",
+      pending: "warning",
       accepted: "success",
       rejected: "danger",
       completed: "success",

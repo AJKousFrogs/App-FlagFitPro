@@ -26,10 +26,10 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { TIMEOUTS } from "../../../core/constants/app.constants";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, tap } from "rxjs/operators";
 import {
@@ -50,9 +50,9 @@ const SUGGESTION_DEBOUNCE_MS = 150;
   imports: [
     RouterModule,
     FormsModule,
-    InputTextModule,
-    DialogModule,
-    TooltipModule,
+    InputText,
+    Dialog,
+    Tooltip,
     IconButtonComponent,
   ],
   templateUrl: "./search-panel.component.html",

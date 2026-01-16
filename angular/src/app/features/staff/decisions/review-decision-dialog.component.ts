@@ -15,13 +15,14 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { DialogModule } from "primeng/dialog";
-import { ButtonModule } from "primeng/button";
+import { Dialog } from "primeng/dialog";
+import { ButtonComponent } from "@shared/components/button/button.component";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
-import { CheckboxModule } from "primeng/checkbox";
+import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import { ModalComponent } from "@shared/components/modal/modal.component";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
 import { LoggerService } from "@core/services/logger.service";
@@ -38,13 +39,14 @@ import type {
   imports: [
     CommonModule,
     FormsModule,
-    DialogModule,
-    ButtonModule,
+    Dialog,
+    ButtonComponent,
     Select,
     Textarea,
-    CheckboxModule,
+    Checkbox,
     DatePicker,
-    TagModule,
+    Tag,
+    StatusTagComponent,
     ModalComponent,
   ],
   template: `
@@ -82,7 +84,7 @@ import type {
             <p>
               {{ formatDate(decision()!.reviewDate) }}
               @if (isOverdue()) {
-                <p-tag severity="danger" value="Overdue"></p-tag>
+                <app-status-tag severity="danger" value="Overdue" size="sm" />
               }
             </p>
           </div>
@@ -154,20 +156,19 @@ import type {
                   placeholder="Describe any unintended consequences"
                   styleClass="w-full"
                 />
-                <p-button
-                  icon="pi pi-times"
-                  [text]="true"
-                  severity="danger"
-                  (onClick)="removeConsequence($index)"
-                ></p-button>
+                <app-button
+                  iconLeft="pi-times"
+                  variant="danger"
+                  (clicked)="removeConsequence($index)"
+                />
               </div>
             }
-            <p-button
-              label="Add Consequence"
-              icon="pi pi-plus"
-              [outlined]="true"
-              (onClick)="addConsequence()"
-            ></p-button>
+            <app-button
+              iconLeft="pi-plus"
+              variant="outlined"
+              (clicked)="addConsequence()"
+              >Add Consequence</app-button
+            >
           </div>
 
           <div class="lessons-learned">
@@ -185,17 +186,17 @@ import type {
 
       <!-- Footer -->
       <ng-container footer>
-        <p-button
-          label="Cancel"
-          [outlined]="true"
-          (onClick)="onCancel()"
-        ></p-button>
-        <p-button
-          label="Submit Review"
-          (onClick)="onConfirm()"
+        <app-button
+          variant="outlined"
+          (clicked)="onCancel()"
+          >Cancel</app-button
+        >
+        <app-button
+          (clicked)="onConfirm()"
           [disabled]="!canSubmit()"
           [loading]="isSubmitting()"
-        ></p-button>
+          >Submit Review</app-button
+        >
       </ng-container>
     </app-modal>
   `,

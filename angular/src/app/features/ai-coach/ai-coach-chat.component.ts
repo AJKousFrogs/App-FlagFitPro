@@ -27,15 +27,15 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { RippleModule } from "primeng/ripple";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Avatar } from "primeng/avatar";
+import { Badge } from "primeng/badge";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressSpinner } from "primeng/progressspinner";
+import { Ripple } from "primeng/ripple";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
 import { ApiService } from "../../core/services/api.service";
@@ -149,15 +149,15 @@ interface AutocompleteSuggestion {
   ],
   imports: [
     FormsModule,
-    CardModule,
-    InputTextModule,
-    AvatarModule,
-    TagModule,
-    TooltipModule,
-    ProgressSpinnerModule,
-    DialogModule,
-    RippleModule,
-    BadgeModule,
+    Card,
+    InputText,
+    Avatar,
+    Tag,
+    Tooltip,
+    ProgressSpinner,
+    Dialog,
+    Ripple,
+    Badge,
     MainLayoutComponent,
     DailyReadinessComponent,
     MicroSessionComponent,

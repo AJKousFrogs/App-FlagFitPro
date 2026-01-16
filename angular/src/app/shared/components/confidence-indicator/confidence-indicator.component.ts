@@ -13,8 +13,8 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
-import { TooltipModule } from "primeng/tooltip";
-import { ButtonModule } from "primeng/button";
+import { Tooltip } from "primeng/tooltip";
+import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: "app-confidence-indicator",
@@ -24,8 +24,8 @@ import { ButtonModule } from "primeng/button";
     CommonModule,
     RouterModule,
     StatusTagComponent,
-    TooltipModule,
-    ButtonModule,
+    Tooltip,
+    ButtonComponent,
   ],
   template: `
     <div
@@ -100,22 +100,22 @@ import { ButtonModule } from "primeng/button";
               <strong>Improve confidence:</strong>
               <div class="action-buttons">
                 @if (missingInputs().includes("wellness")) {
-                  <button
-                    pButton
-                    label="Complete Wellness Check-in"
-                    icon="pi pi-heart"
+                  <app-button
+                    iconLeft="pi-heart"
+                    variant="outlined"
+                    size="sm"
                     [routerLink]="['/wellness']"
-                    styleClass="p-button-sm p-button-outlined"
-                  ></button>
+                    >Complete Wellness Check-in</app-button
+                  >
                 }
                 @if (missingInputs().includes("training")) {
-                  <button
-                    pButton
-                    label="Log Training Session"
-                    icon="pi pi-plus"
+                  <app-button
+                    iconLeft="pi-plus"
+                    variant="outlined"
+                    size="sm"
                     [routerLink]="['/training/log']"
-                    styleClass="p-button-sm p-button-outlined"
-                  ></button>
+                    >Log Training Session</app-button
+                  >
                 }
               </div>
             </div>

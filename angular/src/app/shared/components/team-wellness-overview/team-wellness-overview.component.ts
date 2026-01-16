@@ -23,15 +23,16 @@ import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { TagModule } from "primeng/tag";
-import { ProgressBarModule } from "primeng/progressbar";
-import { AvatarModule } from "primeng/avatar";
-import { TooltipModule } from "primeng/tooltip";
-import { BadgeModule } from "primeng/badge";
-import { SkeletonModule } from "primeng/skeleton";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { ProgressBar } from "primeng/progressbar";
+import { Avatar } from "primeng/avatar";
+import { Tooltip } from "primeng/tooltip";
+import { Badge } from "primeng/badge";
+import { Skeleton } from "primeng/skeleton";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -74,13 +75,14 @@ interface TeamWellnessSummary {
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    TagModule,
-    ProgressBarModule,
-    AvatarModule,
-    TooltipModule,
-    BadgeModule,
-    SkeletonModule,
+    Card,
+    Tag,
+    StatusTagComponent,
+    ProgressBar,
+    Avatar,
+    Tooltip,
+    Badge,
+    Skeleton,
 
     ButtonComponent,
     IconButtonComponent,
@@ -216,11 +218,11 @@ interface TeamWellnessSummary {
 
                 <div class="athlete-alerts">
                   @for (alert of athlete.alerts; track alert) {
-                    <p-tag
+                    <app-status-tag
                       [value]="alert"
                       severity="danger"
-                      size="small"
-                    ></p-tag>
+                      size="sm"
+                    />
                   }
                 </div>
 
@@ -246,7 +248,8 @@ interface TeamWellnessSummary {
                   icon="pi-arrow-right"
                   variant="text"
                   routerLink="/roster"
-                  ariaLabel="arrow-right"
+                  ariaLabel="View player roster"
+                  tooltip="View roster"
                 />
               </div>
             }

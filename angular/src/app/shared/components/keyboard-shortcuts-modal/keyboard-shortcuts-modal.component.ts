@@ -15,16 +15,16 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DialogModule } from "primeng/dialog";
+import { Dialog } from "primeng/dialog";
 import { ButtonComponent } from "../button/button.component";
-import { DividerModule } from "primeng/divider";
+import { Divider } from "primeng/divider";
 import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortcuts.service";
 
 @Component({
   selector: "app-keyboard-shortcuts-modal",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DialogModule, DividerModule, ButtonComponent],
+  imports: [CommonModule, Dialog, Divider, ButtonComponent],
   template: `
     <p-dialog
       [visible]="shortcutsService.isHelpModalOpen()"

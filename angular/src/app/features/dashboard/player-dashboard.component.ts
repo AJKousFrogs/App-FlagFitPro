@@ -33,12 +33,12 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Message } from "primeng/message";
 import { ProgressBar } from "primeng/progressbar";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { TimelineModule } from "primeng/timeline";
-import { TooltipModule } from "primeng/tooltip";
+import { Timeline } from "primeng/timeline";
+import { Tooltip } from "primeng/tooltip";
 import { of } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { AuthService } from "../../core/services/auth.service";
@@ -124,17 +124,17 @@ interface AnnouncementBanner {
     CommonModule,
     RouterModule,
     DecimalPipe,
-    CardModule,
+    Card,
     StatusTagComponent,
     ButtonComponent,
 
     LazyChartComponent,
     ChartSkeletonComponent,
     DashboardSkeletonComponent,
-    TooltipModule,
+    Tooltip,
     ProgressBar,
     Message,
-    TimelineModule,
+    Timeline,
     MainLayoutComponent,
     PageErrorStateComponent,
     ConfidenceIndicatorComponent,
@@ -1073,7 +1073,7 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .no-program-card {
         background: var(--surface-card);
-        border: 2px dashed var(--surface-border);
+        border: var(--border-2) dashed var(--surface-border);
         border-radius: var(--radius-lg);
       }
 
@@ -1087,9 +1087,9 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .no-program-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
+        width: var(--space-16);
+        height: var(--space-16);
+        border-radius: var(--radius-full);
         background: var(--surface-ground);
         display: flex;
         align-items: center;
@@ -1098,7 +1098,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .no-program-icon i {
-        font-size: 2rem;
+        font-size: var(--font-h1-size);
       }
 
       .no-program-title {
@@ -1111,7 +1111,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       .no-program-message {
         font-size: var(--font-size-sm);
         color: var(--text-color-secondary);
-        max-width: 400px;
+        max-width: var(--content-max-width-sm);
         margin: 0;
         line-height: 1.5;
       }
@@ -1127,7 +1127,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       /* Enhanced Diagnostic Checklist Styles (UX Audit Fix #3) */
       .setup-checklist {
         width: 100%;
-        max-width: 500px;
+        max-width: var(--content-max-width-sm);
         display: flex;
         flex-direction: column;
         gap: var(--space-3);
@@ -1142,7 +1142,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         padding: var(--space-3);
         background: var(--surface-ground);
         border-radius: var(--radius-md);
-        border-left: 4px solid var(--color-border-primary);
+        border-left: var(--space-1) solid var(--color-border-primary);
       }
 
       .checklist-item.checklist-action-needed {
@@ -1151,9 +1151,9 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .checklist-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
+        width: var(--space-8);
+        height: var(--space-8);
+        border-radius: var(--radius-full);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1185,17 +1185,17 @@ Keep logging sessions to unlock this injury prevention metric!'
       .checklist-label {
         font-weight: var(--font-weight-medium);
         color: var(--color-text-primary);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
       }
 
       .checklist-status {
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
       }
 
       .setup-next-steps {
         width: 100%;
-        max-width: 500px;
+        max-width: var(--content-max-width-sm);
         text-align: left;
         background: var(--surface-ground);
         padding: var(--space-4);
@@ -1204,7 +1204,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .next-steps-title {
-        font-size: var(--font-body-md);
+        font-size: var(--font-body-size);
         font-weight: var(--font-weight-semibold);
         margin: 0 0 var(--space-3) 0;
         color: var(--color-text-primary);
@@ -1218,26 +1218,26 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .next-steps-list li {
         margin-bottom: var(--space-2);
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-primary);
         line-height: 1.6;
       }
 
       .next-steps-message {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-primary);
         margin: 0 0 var(--space-3) 0;
         line-height: 1.6;
       }
 
       .next-steps-tip {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
         margin: 0;
         padding: var(--space-3);
         background: var(--surface-card);
         border-radius: var(--radius-sm);
-        border-left: 3px solid var(--ds-primary-green);
+        border-left: var(--space-1) solid var(--ds-primary-green);
       }
 
       .setup-timeline {
@@ -1247,7 +1247,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         padding: var(--space-3);
         background: var(--surface-ground);
         border-radius: var(--radius-md);
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         color: var(--color-text-secondary);
         margin-top: var(--space-4);
       }
@@ -1412,7 +1412,7 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       /* PrimeNG Card padding override for stat cards */
       .stat-card .p-card-body {
-        padding: var(--space-4); /* 16px for breathing room */
+        padding: var(--space-5); /* Align with stat-card padding */
       }
       .stat-card .p-card-content {
         padding: 0;
@@ -1477,20 +1477,20 @@ Keep logging sessions to unlock this injury prevention metric!'
       .wellness-checkin-status {
         margin-top: var(--space-3);
         padding-top: var(--space-3);
-        border-top: 1px solid var(--color-border-secondary);
+        border-top: var(--border-1) solid var(--color-border-secondary);
       }
 
       .checkin-status {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         padding: var(--space-2);
         border-radius: var(--radius-sm);
       }
 
       .checkin-status i {
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
       }
 
       .checkin-complete {
@@ -1510,7 +1510,7 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .checkin-streak {
         margin-top: var(--space-2);
-        font-size: var(--font-body-xs);
+        font-size: var(--font-caption-size);
         font-weight: var(--font-weight-semibold);
         color: var(--primitive-warning-600);
         padding: var(--space-1) var(--space-2);
@@ -1587,7 +1587,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         font-size: var(--font-caption-size);
         background: var(--surface-tertiary);
         color: var(--color-text-muted);
-        border: 2px solid transparent;
+        border: var(--border-2) solid transparent;
         transition:
           background-color var(--motion-fast) var(--ease-standard),
           border-color var(--motion-fast) var(--ease-standard);
@@ -1737,7 +1737,7 @@ Keep logging sessions to unlock this injury prevention metric!'
        Performance Chart
        ========================================== */
       .chart-container {
-        height: 160px;
+        height: calc(var(--space-8) * 5);
       }
 
       /* ==========================================
@@ -1785,7 +1785,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .event-icon {
-        font-size: 1.5rem;
+        font-size: var(--font-h2-size);
         flex-shrink: 0;
       }
 
@@ -1798,14 +1798,14 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .event-details h4 {
         margin: 0;
-        font-size: var(--font-body-md);
+        font-size: var(--font-body-size);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
       }
 
       .event-details p {
         margin: 0;
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
       }
 
@@ -1840,7 +1840,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .date-month {
-        font-size: var(--font-compact-sm);
+        font-size: var(--font-compact-md);
         color: var(--color-text-secondary);
         text-transform: uppercase;
         letter-spacing: var(--letter-spacing-wide);
@@ -2785,7 +2785,7 @@ export class PlayerDashboardComponent {
     const score = this.readinessScore();
     if (score === null) return "info";
     const severity = getReadinessLevel(score).severity;
-    return severity === "warn" ? "warning" : severity;
+    return severity === "warning" ? "warning" : severity;
   }
 
   getAcwrStatus(): string {

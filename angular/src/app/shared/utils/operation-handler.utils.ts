@@ -157,7 +157,7 @@ export class OperationHandler {
           ? takeUntilDestroyed(destroyRef)
           : (source: Observable<T>) => source;
 
-        result = await firstValueFrom(operationResult.pipe(pipe));
+        result = (await firstValueFrom(operationResult.pipe(pipe))) as T;
       } else {
         // Handle Promise
         result = await operationResult;

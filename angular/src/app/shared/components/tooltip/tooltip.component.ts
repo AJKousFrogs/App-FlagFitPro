@@ -1,6 +1,6 @@
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 
 /**
  * Tooltip Component - Angular 21
@@ -12,7 +12,7 @@ import { TooltipModule } from "primeng/tooltip";
   selector: "app-tooltip",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TooltipModule],
+  imports: [CommonModule, Tooltip],
   template: `
     <span
       [pTooltip]="text()"

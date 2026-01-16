@@ -143,7 +143,8 @@ export class TeamApiService {
           }
           
           // Create lookup map for users
-          const usersMap = new Map<string, typeof usersData[0]>();
+          type UserData = NonNullable<typeof usersData>[number];
+          const usersMap = new Map<string, UserData>();
           if (usersData) {
             usersData.forEach((u) => usersMap.set(u.id, u));
           }

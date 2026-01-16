@@ -251,9 +251,9 @@ export class ReadinessService {
   /**
    * Get severity color for PrimeNG Tag
    */
-  getSeverity(level: ReadinessLevel): "success" | "warn" | "danger" {
+  getSeverity(level: ReadinessLevel): "success" | "warning" | "danger" {
     if (level === "high") return "success";
-    if (level === "moderate") return "warn";
+    if (level === "moderate") return "warning";
     return "danger";
   }
 

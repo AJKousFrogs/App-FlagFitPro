@@ -8,13 +8,13 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { TagModule } from "primeng/tag";
-import { ProgressBarModule } from "primeng/progressbar";
-import { AccordionModule } from "primeng/accordion";
-import { DividerModule } from "primeng/divider";
-import { CheckboxModule } from "primeng/checkbox";
+import { Card } from "primeng/card";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { ProgressBar } from "primeng/progressbar";
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import { Divider } from "primeng/divider";
+import { Checkbox } from "primeng/checkbox";
 import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -93,13 +93,13 @@ interface ScheduleBlock {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
-    ProgressBarModule,
-    AccordionModule,
-    DividerModule,
-    CheckboxModule,
+    Card,
+    Tag,
+    StatusTagComponent,
+    ProgressBar,
+    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Divider,
+    Checkbox,
     FormsModule,
     MainLayoutComponent,
   ],
@@ -113,7 +113,7 @@ interface ScheduleBlock {
             <p class="date-text">{{ dayOfWeek() }}, {{ formattedDate() }}</p>
           </div>
           <div class="motivation-badge">
-            <i class="pi pi-bolt"></i>
+            <i class="pi pi-bolt" aria-hidden="true"></i>
             <span>{{ motivationalMessage() }}</span>
           </div>
         </div>
@@ -124,7 +124,7 @@ interface ScheduleBlock {
             class="seasonal-banner"
             [class]="'season-' + seasonalContext()?.season"
           >
-            <div class="seasonal-icon">
+            <div class="seasonal-icon" aria-hidden="true">
               <i [class]="getSeasonIcon()"></i>
             </div>
             <div class="seasonal-info">
@@ -139,7 +139,7 @@ interface ScheduleBlock {
             </div>
             @if (!seasonalContext()?.outdoorSprintSuitable) {
               <div class="weather-warning">
-                <i class="pi pi-cloud"></i>
+                <i class="pi pi-cloud" aria-hidden="true"></i>
                 <span>Indoor training recommended</span>
               </div>
             }
@@ -149,7 +149,7 @@ interface ScheduleBlock {
         <!-- Training Status Overview -->
         <div class="status-cards">
           <div class="status-card phase-card">
-            <div class="status-icon">
+            <div class="status-icon" aria-hidden="true">
               <i class="pi pi-calendar"></i>
             </div>
             <div class="status-info">
@@ -163,7 +163,7 @@ interface ScheduleBlock {
             [class.optimal]="isAcwrOptimal()"
             [class.warning]="!isAcwrOptimal()"
           >
-            <div class="status-icon">
+            <div class="status-icon" aria-hidden="true">
               <i class="pi pi-chart-line"></i>
             </div>
             <div class="status-info">
@@ -174,7 +174,7 @@ interface ScheduleBlock {
           </div>
 
           <div class="status-card session-card">
-            <div class="status-icon">
+            <div class="status-icon" aria-hidden="true">
               <i class="pi pi-flag"></i>
             </div>
             <div class="status-info">
@@ -184,7 +184,7 @@ interface ScheduleBlock {
           </div>
 
           <div class="status-card position-card">
-            <div class="status-icon">
+            <div class="status-icon" aria-hidden="true">
               <i class="pi pi-user"></i>
             </div>
             <div class="status-info">
@@ -194,7 +194,7 @@ interface ScheduleBlock {
           </div>
 
           <div class="status-card duration-card">
-            <div class="status-icon">
+            <div class="status-icon" aria-hidden="true">
               <i class="pi pi-clock"></i>
             </div>
             <div class="status-info">
@@ -225,7 +225,7 @@ interface ScheduleBlock {
             <h3>Today's Focus Areas</h3>
             <div class="focus-tags">
               @for (focus of sessionFocus(); track focus) {
-                <p-tag [value]="focus" severity="info"></p-tag>
+                <app-status-tag [value]="focus" severity="info" size="sm" />
               }
             </div>
           </div>
@@ -255,7 +255,7 @@ interface ScheduleBlock {
                     "
                   ></p-checkbox>
                   @if (block.completed) {
-                    <i class="pi pi-check-circle completed-icon"></i>
+                    <i class="pi pi-check-circle completed-icon" aria-hidden="true"></i>
                   }
                 </div>
               </div>
@@ -337,7 +337,7 @@ interface ScheduleBlock {
               @if (block.block === "Plyometrics" && block.exercises) {
                 <div class="block-summary">
                   <span class="summary-item">
-                    <i class="pi pi-bolt"></i>
+                    <i class="pi pi-bolt" aria-hidden="true"></i>
                     Total Contacts: {{ block.totalContacts }}
                   </span>
                   @if (block.notes) {
@@ -359,12 +359,13 @@ interface ScheduleBlock {
                             {{ exercise.description }}
                           </p>
                           <div class="exercise-meta">
-                            <p-tag
+                            <app-status-tag
                               [value]="exercise.difficulty_level"
                               [severity]="
                                 getDifficultySeverity(exercise.difficulty_level)
                               "
-                            ></p-tag>
+                              size="sm"
+                            />
                             <span class="meta-item"
                               >{{ exercise.session_sets }} sets ×
                               {{ exercise.session_reps }} reps</span
@@ -390,7 +391,7 @@ interface ScheduleBlock {
                           @if (exercise.safety_notes.length) {
                             <div class="safety-notes">
                               <h4>
-                                <i class="pi pi-exclamation-triangle"></i>
+                                <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
                                 Safety Notes
                               </h4>
                               <ul>
@@ -414,7 +415,7 @@ interface ScheduleBlock {
               @if (block.block === "Isometrics" && block.exercises) {
                 <div class="block-summary">
                   <span class="summary-item">
-                    <i class="pi pi-stopwatch"></i>
+                    <i class="pi pi-stopwatch" aria-hidden="true"></i>
                     Total Hold Time: {{ block.totalDuration }}s
                   </span>
                   @if (block.purpose) {
@@ -436,16 +437,18 @@ interface ScheduleBlock {
                             {{ exercise.description }}
                           </p>
                           <div class="exercise-meta">
-                            <p-tag
+                            <app-status-tag
                               [value]="exercise.difficulty_level"
                               [severity]="
                                 getDifficultySeverity(exercise.difficulty_level)
                               "
-                            ></p-tag>
-                            <p-tag
+                              size="sm"
+                            />
+                            <app-status-tag
                               [value]="exercise.category"
                               severity="secondary"
-                            ></p-tag>
+                              size="sm"
+                            />
                             <span class="meta-item"
                               >{{ exercise.session_sets }} sets ×
                               {{ exercise.session_duration }}s hold</span
@@ -482,7 +485,7 @@ interface ScheduleBlock {
               @if (block.block === "Main Session") {
                 <div class="main-session-content">
                   <div class="session-type-badge">
-                    <i class="pi pi-star"></i>
+                    <i class="pi pi-star" aria-hidden="true"></i>
                     {{ block.type | titlecase }} Session
                   </div>
                   @if (block.focus) {
@@ -491,7 +494,7 @@ interface ScheduleBlock {
                       <div class="focus-list">
                         @for (f of block.focus; track f) {
                           <div class="focus-item">
-                            <i class="pi pi-check"></i>
+                            <i class="pi pi-check" aria-hidden="true"></i>
                             {{ f }}
                           </div>
                         }
@@ -507,7 +510,7 @@ interface ScheduleBlock {
                   <div class="activity-list">
                     @for (activity of block.activities; track activity) {
                       <div class="activity-item">
-                        <i class="pi pi-circle-fill"></i>
+                        <i class="pi pi-circle-fill" aria-hidden="true"></i>
                         {{ activity }}
                       </div>
                     }
@@ -520,8 +523,8 @@ interface ScheduleBlock {
 
         <!-- Loading State -->
         @if (loading()) {
-          <div class="loading-overlay">
-            <i class="pi pi-spin pi-spinner"></i>
+          <div class="loading-overlay" role="status" aria-live="polite">
+            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
             <span>Loading your training plan...</span>
           </div>
         }
@@ -1381,14 +1384,14 @@ export class DailyTrainingComponent implements OnInit {
 
   getDifficultySeverity(
     level: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     switch (level?.toLowerCase()) {
       case "beginner":
         return "success";
       case "intermediate":
         return "info";
       case "advanced":
-        return "warn";
+        return "warning";
       default:
         return "secondary";
     }

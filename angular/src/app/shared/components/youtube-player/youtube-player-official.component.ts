@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { YouTubePlayerModule } from "@angular/youtube-player";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -21,7 +21,7 @@ import { LoggerService } from "../../../core/services/logger.service";
   selector: "app-youtube-player-official",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, YouTubePlayerModule, CardModule, ButtonComponent],
+  imports: [CommonModule, YouTubePlayerModule, Card, ButtonComponent],
   template: `
     <div class="youtube-player-container">
       @if (videoId()) {

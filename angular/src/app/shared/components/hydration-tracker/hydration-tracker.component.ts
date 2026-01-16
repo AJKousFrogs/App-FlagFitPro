@@ -20,8 +20,8 @@ import {
   signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { ProgressBarModule } from "primeng/progressbar";
-import { TooltipModule } from "primeng/tooltip";
+import { ProgressBar } from "primeng/progressbar";
+import { Tooltip } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
@@ -43,8 +43,8 @@ interface HydrationLog {
     CommonModule,
     ButtonComponent,
     CardComponent,
-    ProgressBarModule,
-    TooltipModule,
+    ProgressBar,
+    Tooltip,
   ],
   template: `
     <app-card

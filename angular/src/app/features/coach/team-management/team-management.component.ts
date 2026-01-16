@@ -19,20 +19,21 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { AvatarModule } from "primeng/avatar";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
-import { ColorPickerModule } from "primeng/colorpicker";
-import { DialogModule } from "primeng/dialog";
-import { FileUploadModule } from "primeng/fileupload";
-import { InputTextModule } from "primeng/inputtext";
+import { Avatar } from "primeng/avatar";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
+import { ColorPicker } from "primeng/colorpicker";
+import { Dialog } from "primeng/dialog";
+import { FileUpload } from "primeng/fileupload";
+import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TabsModule } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
@@ -109,11 +110,11 @@ const STATUS_CONFIG: Record<
   {
     label: string;
     icon: string;
-    severity: "success" | "warn" | "danger" | "secondary";
+    severity: "success" | "warning" | "danger" | "secondary";
   }
 > = {
   active: { label: "Active", icon: "🟢", severity: "success" },
-  "minor-injury": { label: "Minor Injury", icon: "🟡", severity: "warn" },
+  "minor-injury": { label: "Minor Injury", icon: "🟡", severity: "warning" },
   rtp: { label: "RTP", icon: "🔴", severity: "danger" },
   inactive: { label: "Inactive", icon: "⚪", severity: "secondary" },
 };
@@ -126,20 +127,25 @@ const STATUS_CONFIG: Record<
     CommonModule,
     FormsModule,
     DatePipe,
-    AvatarModule,
-    CardModule,
-    CheckboxModule,
-    ColorPickerModule,
-    DialogModule,
-    FileUploadModule,
-    InputTextModule,
+    Avatar,
+    Card,
+    Checkbox,
+    ColorPicker,
+    Dialog,
+    FileUpload,
+    InputText,
     RadioButton,
     Select,
     TableModule,
-    TabsModule,
-    TagModule,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Tag,
+    StatusTagComponent,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -268,10 +274,11 @@ const STATUS_CONFIG: Record<
                   <td>{{ member.position }}</td>
                   <td>#{{ member.jerseyNumber }}</td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="getStatusConfig(member.status).label"
                       [severity]="getStatusConfig(member.status).severity"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td>
                     @if (member.acwr) {
@@ -347,13 +354,13 @@ const STATUS_CONFIG: Record<
                               p.player.jerseyNumber
                             }}</span
                           >
-                          <p-tag
+                          <app-status-tag
                             [value]="getStatusConfig(p.player.status).label"
                             [severity]="
                               getStatusConfig(p.player.status).severity
                             "
-                            [style]="{ fontSize: '0.7rem' }"
-                          ></p-tag>
+                            size="sm"
+                          />
                           @if (p.note) {
                             <span class="player-note">{{ p.note }}</span>
                           }
@@ -382,13 +389,13 @@ const STATUS_CONFIG: Record<
                               p.player.jerseyNumber
                             }}</span
                           >
-                          <p-tag
+                          <app-status-tag
                             [value]="getStatusConfig(p.player.status).label"
                             [severity]="
                               getStatusConfig(p.player.status).severity
                             "
-                            [style]="{ fontSize: '0.7rem' }"
-                          ></p-tag>
+                            size="sm"
+                          />
                           @if (p.note) {
                             <span class="player-note">{{ p.note }}</span>
                           }

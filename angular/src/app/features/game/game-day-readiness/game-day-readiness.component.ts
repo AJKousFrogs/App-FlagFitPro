@@ -23,12 +23,12 @@ import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
 // PrimeNG Components
-import { CardModule } from "primeng/card";
-import { ProgressBarModule } from "primeng/progressbar";
-import { SliderModule } from "primeng/slider";
-import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Card } from "primeng/card";
+import { ProgressBar } from "primeng/progressbar";
+import { Slider } from "primeng/slider";
+import { Tag } from "primeng/tag";
+import { Textarea } from "primeng/textarea";
+import { Tooltip } from "primeng/tooltip";
 import { DataConfidenceService } from "../../../core/services/data-confidence.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { ConfidenceIndicatorComponent } from "../../../shared/components/confidence-indicator/confidence-indicator.component";
@@ -63,12 +63,12 @@ interface ReadinessMetric {
     CommonModule,
     FormsModule,
     RouterModule,
-    CardModule,
-    SliderModule,
-    TextareaModule,
-    ProgressBarModule,
-    TooltipModule,
-    TagModule,
+    Card,
+    Slider,
+    Textarea,
+    ProgressBar,
+    Tooltip,
+    Tag,
 
     ButtonComponent,
     ConfidenceIndicatorComponent,

@@ -13,9 +13,9 @@ import {
   computed,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
+import { Card } from "primeng/card";
+import { Tag } from "primeng/tag";
+import { ButtonComponent } from "../button/button.component";
 
 export interface RTPPhaseInfo {
   currentPhase: number;
@@ -36,7 +36,7 @@ export interface RTPPhaseInfo {
   selector: "app-rtp-phase-celebration",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardModule, TagModule, ButtonModule],
+  imports: [CommonModule, RouterModule, Card, Tag, ButtonComponent],
   template: `
     @if (showCelebration()) {
       <p-card styleClass="celebration-card">
@@ -114,13 +114,11 @@ export interface RTPPhaseInfo {
 
         <!-- Action Button -->
         <div class="celebration-actions">
-          <button
-            pButton
-            label="Continue Recovery Journey"
-            icon="pi pi-arrow-right"
+          <app-button
+            iconRight="pi-arrow-right"
             [routerLink]="['/return-to-play']"
-            styleClass="p-button-primary"
-          ></button>
+            >Continue Recovery Journey</app-button
+          >
         </div>
       </p-card>
     }
@@ -147,7 +145,7 @@ export interface RTPPhaseInfo {
       }
 
       .celebration-icon {
-        font-size: var(--font-display-lg);
+        font-size: var(--font-h1-size);
         line-height: 1;
       }
 

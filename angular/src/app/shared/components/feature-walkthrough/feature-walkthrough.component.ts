@@ -26,10 +26,10 @@ import { COLORS } from "../../../core/constants/app.constants";
 // PrimeNG
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { ProgressBarModule } from "primeng/progressbar";
-import { StepperModule } from "primeng/stepper";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { ProgressBar } from "primeng/progressbar";
+import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -57,10 +57,10 @@ interface WalkthroughStep {
   imports: [
     CommonModule,
     RouterModule,
-    DialogModule,
-    StepperModule,
-    ProgressBarModule,
-    CardModule,
+    Dialog,
+    Stepper, StepList, Step, StepPanels, StepPanel,
+    ProgressBar,
+    Card,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -118,7 +118,7 @@ interface WalkthroughStep {
             <div class="benefits-list">
               @for (benefit of currentStep().benefits; track benefit) {
                 <div class="benefit-item">
-                  <i class="pi pi-check-circle"></i>
+                  <i class="pi pi-check-circle" aria-hidden="true"></i>
                   <span>{{ benefit }}</span>
                 </div>
               }
@@ -127,7 +127,7 @@ interface WalkthroughStep {
             <!-- Tip -->
             @if (currentStep().tip) {
               <div class="tip-box">
-                <i class="pi pi-lightbulb"></i>
+                <i class="pi pi-lightbulb" aria-hidden="true"></i>
                 <span>{{ currentStep().tip }}</span>
               </div>
             }
@@ -139,7 +139,8 @@ interface WalkthroughStep {
               <app-icon-button
                 icon="pi-arrow-right"
                 (clicked)="executeAction()"
-                ariaLabel="arrow-right"
+                ariaLabel="Try this feature"
+                tooltip="Try it"
               />
             </div>
           }

@@ -7,12 +7,13 @@ import {
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { Tooltip } from "primeng/tooltip";
 import { Textarea } from "primeng/textarea";
 import { DatePicker } from "primeng/datepicker";
 import { Select } from "primeng/select";
@@ -54,16 +55,17 @@ interface TeamMember {
   imports: [
     FormsModule,
     RouterModule,
-    CardModule,
+    Card,
     ButtonComponent,
     IconButtonComponent,
 
     LazyChartComponent,
     TableModule,
-    TagModule,
-    DialogModule,
-    InputTextModule,
-    TooltipModule,
+    Tag,
+    StatusTagComponent,
+    Dialog,
+    InputText,
+    Tooltip,
     Textarea,
     DatePicker,
     Select,
@@ -169,11 +171,11 @@ interface TeamMember {
                   @if (member.isConsentBlocked) {
                     <span class="blocked-data">—</span>
                   } @else {
-                    <p-tag
+                    <app-status-tag
                       [value]="member.performance + '%'"
                       [severity]="getPerformanceSeverity(member.performance)"
-                    >
-                    </p-tag>
+                      size="sm"
+                    />
                   }
                 </td>
                 <td>
@@ -185,13 +187,13 @@ interface TeamMember {
                 </td>
                 <td>
                   @if (member.isConsentBlocked) {
-                    <p-tag value="Private" severity="secondary"></p-tag>
+                    <app-status-tag value="Private" severity="secondary" size="sm" />
                   } @else {
-                    <p-tag
+                    <app-status-tag
                       [value]="member.status"
                       [severity]="getStatusSeverity(member.status)"
-                    >
-                    </p-tag>
+                      size="sm"
+                    />
                   }
                 </td>
                 <td>
@@ -520,17 +522,17 @@ export class CoachComponent implements OnInit {
 
   getPerformanceSeverity(
     performance: number,
-  ): "success" | "info" | "warn" | "danger" {
+  ): "success" | "info" | "warning" | "danger" {
     if (performance >= 90) return "success";
     if (performance >= 80) return "info";
-    if (performance >= 70) return "warn";
+    if (performance >= 70) return "warning";
     return "danger";
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
+  getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
+    const severities: Record<string, "success" | "info" | "warning" | "danger"> = {
       Active: "success",
-      Injured: "warn",
+      Injured: "warning",
       Inactive: "danger",
     };
     return severities[status] || "info";

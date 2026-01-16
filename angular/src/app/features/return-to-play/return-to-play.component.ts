@@ -17,21 +17,22 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { Textarea } from "primeng/textarea";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import {
@@ -280,23 +281,24 @@ const SEVERITY_LEVELS = [
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Checkbox,
 
     LazyChartComponent,
     DatePicker,
-    DialogModule,
-    InputNumberModule,
-    InputTextModule,
+    Dialog,
+    InputNumber,
+    InputText,
     Message,
-    ProgressBarModule,
+    ProgressBar,
     RadioButton,
     Select,
     Slider,
     TableModule,
-    TagModule,
-    TextareaModule,
-    ToastModule,
+    Tag,
+    StatusTagComponent,
+    Textarea,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -363,10 +365,11 @@ const SEVERITY_LEVELS = [
             <div class="protocol-stats">
               <div class="stat">
                 <span class="stat-block__label">Severity</span>
-                <p-tag
+                <app-status-tag
                   [value]="formatSeverity(protocol.severity)"
                   [severity]="getSeverityColor(protocol.severity)"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
               <div class="stat">
                 <span class="stat-block__label">Day of Recovery</span>
@@ -445,10 +448,11 @@ const SEVERITY_LEVELS = [
                     {{ getCurrentStage().name }}</span
                   >
                 </div>
-                <p-tag
+                <app-status-tag
                   [value]="'Load: ' + getCurrentStage().loadPercentage + '%'"
                   severity="info"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
             </ng-template>
 
@@ -1191,10 +1195,10 @@ export class ReturnToPlayComponent implements OnInit {
 
   getSeverityColor(
     severity: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const colors: Record<string, "success" | "warn" | "danger"> = {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+    const colors: Record<string, "success" | "warning" | "danger"> = {
       mild: "success",
-      moderate: "warn",
+      moderate: "warning",
       severe: "danger",
     };
     return colors[severity] || "info";

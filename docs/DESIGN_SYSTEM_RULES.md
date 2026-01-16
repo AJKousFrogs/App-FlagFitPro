@@ -560,7 +560,7 @@ Allowed **only** for dashboards and analytics.
 | No raw box-shadow                 | ✅       |
 | No raw z-index                    | ✅       |
 | No `transition: all`              | ✅       |
-| No `::ng-deep` outside overrides  | ✅       |
+| No `::ng-deep` (fully removed)    | ✅       |
 | No `!important` outside overrides | ✅       |
 
 **Violations block PR merge.**
@@ -1686,53 +1686,58 @@ gap: var(--space-6); // 24px - section gap
 
 ---
 
-## Decision 22: No ::ng-deep Policy
+## Decision 22: No ::ng-deep Policy ✅ COMPLETE
 
-### The Problem
+### Status: FULLY REMOVED (January 2026)
 
-`::ng-deep` is the fastest way to reintroduce global chaos.
+All 84 instances of `::ng-deep` have been removed from the codebase.
+
+### The Problem (Historical)
+
+`::ng-deep` was the fastest way to reintroduce global chaos and is deprecated by Angular.
 
 ### The Rule
 
-> **`::ng-deep` is forbidden by default**
+> **`::ng-deep` is fully removed from the codebase**
 
-### Allowed ONLY When ALL Conditions Met
+### Migration Strategies Used
 
-1. ✅ PrimeNG cannot be themed otherwise
-2. ✅ A ticket exists documenting the exception
-3. ✅ Selector is wrapped by a feature root container
-4. ✅ Rule lives in `@layer overrides`
-5. ✅ Has expiry date
+1. **Wrapper components (e.g., modals):** Use `ViewEncapsulation.None` with scoped selectors
+2. **Global stylesheets:** Remove `::ng-deep` (already global)
+3. **Component SCSS:** Use CSS custom properties or class-based selectors
 
-### Implementation
+### Implementation Examples
 
 ```scss
-// ❌ FORBIDDEN
-::ng-deep .p-datatable {
+// ❌ OLD APPROACH (removed)
+:host ::ng-deep .p-datatable {
   background: red;
 }
 
-// ✅ ALLOWED (all conditions met)
-@layer overrides {
-  /* 
-   * EXCEPTION: PrimeNG datatable pagination
-   * Ticket: #456
-   * Owner: @developer
-   * Scope: analytics-dashboard only
-   * Remove by: 2026-02-15
-   */
-  .analytics-dashboard {
-    ::ng-deep .p-datatable-paginator {
-      padding: var(--space-2);
+// ✅ NEW APPROACH 1: ViewEncapsulation.None with scoped selector
+@Component({
+  encapsulation: ViewEncapsulation.None,
+  styles: [`
+    app-my-component .p-datatable {
+      background: var(--surface-secondary);
     }
-  }
+  `]
+})
+
+// ✅ NEW APPROACH 2: CSS custom properties (preferred)
+:host {
+  --p-datatable-background: var(--surface-secondary);
+}
+
+// ✅ NEW APPROACH 3: Global stylesheet (for overrides)
+.my-feature .p-datatable {
+  background: var(--surface-secondary);
 }
 ```
 
-### Your Decision
+### Decision Status
 
-- [ ] **APPROVED** - Forbid ::ng-deep by default ⭐ CORE
-- [ ] **REJECTED** - Allow ::ng-deep freely (explain why)
+- [x] **APPROVED** - `::ng-deep` fully removed from codebase ⭐ COMPLETE
 
 ---
 
@@ -3342,7 +3347,7 @@ transition:
 | 18  | Interaction States                 | ✅ APPROVED                  |
 | 19  | Motion Tokens                      | ✅ APPROVED                  |
 | 20  | Z-Index Scale                      | ✅ APPROVED                  |
-| 22  | No ::ng-deep                       | ✅ APPROVED                  |
+| 22  | No ::ng-deep (fully removed)       | ✅ COMPLETE                  |
 | 23  | Form System                        | ✅ APPROVED                  |
 | 24  | Table Standards                    | ✅ APPROVED                  |
 | 25  | Dialog/Drawer Standards            | ✅ APPROVED                  |
@@ -3492,7 +3497,7 @@ transition:
 | Disallow raw border-color values                | 13                |
 | Disallow raw z-index values                     | 20                |
 | Disallow `transition: all`                      | 19                |
-| Warn on `::ng-deep` outside overrides           | 22                |
+| Error on any `::ng-deep` usage (fully removed)  | 22                |
 | Warn on `!important` outside overrides          | 7                 |
 | Disallow hardcoded `font-family`                | 56                |
 | Disallow fixed width on labels/buttons          | 58                |
@@ -3930,7 +3935,7 @@ Rules become a document, not a system. Without gates, drift returns.
 | No hex outside tokens file                 | Decision 1  |
 | No raw padding/margin/gap                  | Decision 2  |
 | No `transition: all`                       | Decision 19 |
-| No `::ng-deep` outside `@layer overrides`  | Decision 22 |
+| No `::ng-deep` (fully removed)             | Decision 22 |
 | No `!important` outside `@layer overrides` | Decision 7  |
 
 #### 2. Screenshot Regression (Automated)
@@ -3957,7 +3962,7 @@ Rules become a document, not a system. Without gates, drift returns.
 - [ ] Screenshot regression reviewed
 - [ ] Keyboard navigation works (dialogs, forms)
 - [ ] Focus rings visible
-- [ ] No new `::ng-deep` without exception ticket
+- [ ] No `::ng-deep` usage (fully removed from codebase)
 ```
 
 ### Your Decision

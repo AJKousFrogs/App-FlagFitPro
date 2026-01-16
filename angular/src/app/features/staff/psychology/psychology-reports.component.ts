@@ -9,16 +9,17 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TabsModule } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { Textarea } from "primeng/textarea";
+import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
@@ -134,18 +135,23 @@ interface ReportPrivacySettings {
     CommonModule,
     FormsModule,
     RouterModule,
-    CardModule,
-    CheckboxModule,
+    Card,
+    Checkbox,
 
     LazyChartComponent,
-    DialogModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputText,
+    ProgressBar,
     Select,
-    TabsModule,
-    TagModule,
-    TextareaModule,
-    TooltipModule,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Tag,
+    StatusTagComponent,
+    Textarea,
+    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -260,7 +266,8 @@ interface ReportPrivacySettings {
                             icon="pi-trash"
                             variant="text"
                             (clicked)="deleteReport(report)"
-                            ariaLabel="trash"
+                            ariaLabel="Delete psychology report"
+                            tooltip="Delete"
                           />
                         </ng-template>
                       </p-card>
@@ -303,7 +310,7 @@ interface ReportPrivacySettings {
                       <div class="metric-card">
                         <div class="metric-header">
                           <span class="metric-label">Mood</span>
-                          <p-tag
+                          <app-status-tag
                             [value]="
                               currentWellnessData()!.wellnessTrends.moodTrend
                             "
@@ -312,7 +319,8 @@ interface ReportPrivacySettings {
                                 currentWellnessData()!.wellnessTrends.moodTrend
                               )
                             "
-                          ></p-tag>
+                            size="sm"
+                          />
                         </div>
                         <span class="metric-value"
                           >{{
@@ -333,7 +341,7 @@ interface ReportPrivacySettings {
                       <div class="metric-card">
                         <div class="metric-header">
                           <span class="metric-label">Stress Level</span>
-                          <p-tag
+                          <app-status-tag
                             [value]="
                               currentWellnessData()!.wellnessTrends.stressTrend
                             "
@@ -344,7 +352,8 @@ interface ReportPrivacySettings {
                                 true
                               )
                             "
-                          ></p-tag>
+                            size="sm"
+                          />
                         </div>
                         <span class="metric-value"
                           >{{
@@ -527,7 +536,7 @@ interface ReportPrivacySettings {
                         </div>
                         <div class="screen-time">
                           <span>Screen time before bed:</span>
-                          <p-tag
+                          <app-status-tag
                             [value]="
                               currentWellnessData()!.recoveryBehaviors
                                 .screenTimeBeforeBed
@@ -538,7 +547,8 @@ interface ReportPrivacySettings {
                                   .screenTimeBeforeBed
                               )
                             "
-                          ></p-tag>
+                            size="sm"
+                          />
                         </div>
                         <div class="activities-list">
                           <span class="list-label"
@@ -654,14 +664,15 @@ interface ReportPrivacySettings {
                                 report.competition.date | date: "mediumDate"
                               }}</span>
                             </div>
-                            <p-tag
+                            <app-status-tag
                               [value]="report.competition.significance"
                               [severity]="
                                 getSignificanceSeverity(
                                   report.competition.significance
                                 )
                               "
-                            ></p-tag>
+                              size="sm"
+                            />
                           </div>
                         </ng-template>
 
@@ -846,10 +857,11 @@ interface ReportPrivacySettings {
                         <ng-template #header>
                           <div class="insight-header">
                             <div class="insight-meta">
-                              <p-tag
+                              <app-status-tag
                                 [value]="insight.fromRole"
                                 [severity]="getRoleSeverity(insight.fromRole)"
-                              ></p-tag>
+                                size="sm"
+                              />
                               <span class="insight-type">{{
                                 getInsightTypeLabel(insight.insightType)
                               }}</span>
@@ -860,13 +872,13 @@ interface ReportPrivacySettings {
                               }
                             </div>
                             <div class="insight-actions">
-                              <p-tag
+                              <app-status-tag
                                 [value]="insight.priority"
                                 [severity]="
                                   getPrioritySeverity(insight.priority)
                                 "
-                                styleClass="priority-tag"
-                              ></p-tag>
+                                size="sm"
+                              />
                               <span class="insight-date">{{
                                 formatDate(insight.createdAt)
                               }}</span>
@@ -1517,30 +1529,30 @@ export class PsychologyReportsComponent implements OnInit {
   getTrendSeverity(
     trend: string,
     invertForStress = false,
-  ): "success" | "warn" | "danger" | "info" | "secondary" {
+  ): "success" | "warning" | "danger" | "info" | "secondary" {
     if (invertForStress) {
       return trend === "declining"
         ? "success"
         : trend === "improving"
-          ? "warn"
+          ? "warning"
           : "info";
     }
     return trend === "improving"
       ? "success"
       : trend === "declining"
-        ? "warn"
+        ? "warning"
         : "info";
   }
 
   getScreenTimeSeverity(
     level: string,
-  ): "success" | "warn" | "danger" | "secondary" {
+  ): "success" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "warn" | "danger" | "secondary"
+      "success" | "warning" | "danger" | "secondary"
     > = {
       low: "success",
-      moderate: "warn",
+      moderate: "warning",
       high: "danger",
     };
     return severities[level] || "secondary";
@@ -1548,13 +1560,13 @@ export class PsychologyReportsComponent implements OnInit {
 
   getSignificanceSeverity(
     significance: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       regular: "info",
-      important: "warn",
+      important: "warning",
       championship: "danger",
     };
     return severities[significance] || "info";
@@ -1676,11 +1688,11 @@ export class PsychologyReportsComponent implements OnInit {
     };
   }
 
-  getRoleSeverity(role: string): "success" | "info" | "warn" | "danger" {
-    const roleMap: Record<string, "success" | "info" | "warn" | "danger"> = {
+  getRoleSeverity(role: string): "success" | "info" | "warning" | "danger" {
+    const roleMap: Record<string, "success" | "info" | "warning" | "danger"> = {
       coach: "info",
       physiotherapist: "success",
-      nutritionist: "warn",
+      nutritionist: "warning",
       psychologist: "danger",
     };
     return roleMap[role] || "info";
@@ -1698,11 +1710,11 @@ export class PsychologyReportsComponent implements OnInit {
 
   getPrioritySeverity(
     priority: string,
-  ): "success" | "info" | "warn" | "danger" {
-    const priorityMap: Record<string, "success" | "info" | "warn" | "danger"> =
+  ): "success" | "info" | "warning" | "danger" {
+    const priorityMap: Record<string, "success" | "info" | "warning" | "danger"> =
       {
         low: "info",
-        medium: "warn",
+        medium: "warning",
         high: "danger",
       };
     return priorityMap[priority] || "info";

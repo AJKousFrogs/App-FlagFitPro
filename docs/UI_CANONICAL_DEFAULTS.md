@@ -44,18 +44,11 @@ All cards in the application MUST use these canonical values:
 | **Content Padding** | `0`                                       | 0                           | Reset PrimeNG default    |
 
 ```scss
-// ✅ CANONICAL CARD STYLING
-:host ::ng-deep .my-card {
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-:host ::ng-deep .my-card .p-card-body {
-  padding: var(--space-4);
-}
-
-:host ::ng-deep .my-card .p-card-content {
-  padding: 0;
+// ✅ CANONICAL CARD STYLING (use app-card-shell component)
+// Card styling is handled by the card-shell component
+// No direct PrimeNG overrides needed in feature SCSS
+app-card-shell {
+  // Custom properties cascade into the component
 }
 ```
 
@@ -68,17 +61,9 @@ All cards in the application MUST use these canonical values:
 | **Transition** | `transform 0.15s ease, box-shadow 0.15s ease` | Fast, smooth     |
 
 ```scss
-// ✅ CANONICAL CARD HOVER
-:host ::ng-deep .my-card {
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-:host ::ng-deep .my-card:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
+// ✅ CANONICAL CARD HOVER (handled by card-shell component)
+// Use state="interactive" on app-card-shell for hover effects
+// <app-card-shell state="interactive">...</app-card-shell>
 ```
 
 ### 1.3 Stat Card Variant
@@ -341,7 +326,7 @@ For empty states inside cards/sections:
   opacity: 0.7;
 }
 
-:host ::ng-deep .empty-message {
+.empty-message {
   width: 100%;
 }
 ```
@@ -587,8 +572,9 @@ Use this checklist when reviewing PRs that include UI changes:
 
 ### ✅ PrimeNG Overrides
 
-- [ ] Minimizes `::ng-deep` usage
+- [ ] No `::ng-deep` usage (fully removed from codebase)
 - [ ] Uses `styleClass` prop instead of direct CSS selectors where possible
+- [ ] Uses CSS custom properties for theming
 - [ ] Does NOT override PrimeNG component internals unnecessarily
 
 ### ✅ Accessibility

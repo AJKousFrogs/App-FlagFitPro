@@ -328,15 +328,15 @@ export class TournamentService {
    */
   getStatusSeverity(
     status: string,
-  ): "info" | "success" | "secondary" | "warn" | "danger" {
+  ): "info" | "success" | "secondary" | "warning" | "danger" {
     const severities: Record<
       string,
-      "info" | "success" | "secondary" | "warn" | "danger"
+      "info" | "success" | "secondary" | "warning" | "danger"
     > = {
       upcoming: "info",
       ongoing: "success",
       completed: "secondary",
-      registration: "warn",
+      registration: "warning",
     };
     return severities[status] || "info";
   }

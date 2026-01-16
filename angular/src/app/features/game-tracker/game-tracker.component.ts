@@ -15,11 +15,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { CardComponent } from "../../shared/components/card/card.component";
 import { DatePicker } from "primeng/datepicker";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -117,11 +117,11 @@ interface Play {
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    CardModule,
+    Card,
     CardComponent,
-    InputTextModule,
+    InputText,
     Textarea,
-    InputNumberModule,
+    InputNumber,
     DatePicker,
     Select,
     TableModule,
@@ -217,7 +217,7 @@ export class GameTrackerComponent implements OnInit {
   passOutcomeOptions = [
     { label: "Completion", value: "completion", severity: "success" },
     { label: "Drop", value: "drop", severity: "danger" },
-    { label: "Incompletion", value: "incompletion", severity: "warn" },
+    { label: "Incompletion", value: "incompletion", severity: "warning" },
     { label: "Interception", value: "interception", severity: "danger" },
     { label: "Defended", value: "defended", severity: "info" },
   ];

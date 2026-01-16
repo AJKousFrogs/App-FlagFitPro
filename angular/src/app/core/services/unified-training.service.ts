@@ -144,9 +144,9 @@ export class UnifiedTrainingService {
   /**
    * Get severity color for PrimeNG Tag
    */
-  getReadinessSeverity(level: string): "success" | "warn" | "danger" {
+  getReadinessSeverity(level: string): "success" | "warning" | "danger" {
     if (level === "high") return "success";
-    if (level === "moderate") return "warn";
+    if (level === "moderate") return "warning";
     return "danger";
   }
 

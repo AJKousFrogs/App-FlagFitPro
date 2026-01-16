@@ -10,17 +10,17 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { AvatarModule } from "primeng/avatar";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
+import { Avatar } from "primeng/avatar";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import {
@@ -55,18 +55,18 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     TableModule,
     StatusTagComponent,
-    DialogModule,
-    InputTextModule,
+    Dialog,
+    InputText,
     Textarea,
     Select,
     DatePicker,
-    CheckboxModule,
-    ProgressBarModule,
-    TooltipModule,
-    AvatarModule,
+    Checkbox,
+    ProgressBar,
+    Tooltip,
+    Avatar,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
@@ -188,7 +188,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                             openAttendanceDialog(event);
                             $event.stopPropagation()
                           "
-                          ariaLabel="users"
+                          ariaLabel="Manage event attendance"
+                          tooltip="Attendance"
                         />
                       } @else {
                         <app-icon-button
@@ -197,7 +198,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                           (clicked)="
                             quickCheckIn(event); $event.stopPropagation()
                           "
-                          ariaLabel="check"
+                          ariaLabel="Quick check-in"
+                          tooltip="Check in"
                         />
                       }
                     </div>
@@ -498,10 +500,10 @@ export class AttendanceComponent implements OnInit {
   attendanceStatuses: Array<{
     value: AttendanceStatus;
     label: string;
-    severity: "success" | "danger" | "warn" | "info";
+    severity: "success" | "danger" | "warning" | "info";
   }> = [
     { value: "present", label: "Present", severity: "success" },
-    { value: "late", label: "Late", severity: "warn" },
+    { value: "late", label: "Late", severity: "warning" },
     { value: "excused", label: "Excused", severity: "info" },
     { value: "absent", label: "Absent", severity: "danger" },
   ];

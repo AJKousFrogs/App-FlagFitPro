@@ -22,10 +22,10 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -55,11 +55,11 @@ interface BodyCompositionData {
     FormsModule,
     ButtonComponent,
     CardComponent,
-    TagModule,
-    TooltipModule,
+    Tag,
+    Tooltip,
     DecimalPipe,
-    DialogModule,
-    InputNumberModule,
+    Dialog,
+    InputNumber,
   ],
   template: `
     <app-card

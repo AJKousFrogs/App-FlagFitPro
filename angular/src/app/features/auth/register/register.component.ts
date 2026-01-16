@@ -14,11 +14,11 @@ import {
   Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
+import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -38,12 +38,12 @@ import {
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    CardModule,
+    Card,
     ButtonComponent,
-    InputTextModule,
+    InputText,
     Message,
-    ToastModule,
-    CheckboxModule,
+    Toast,
+    Checkbox,
   ],
   template: `
     <p-toast></p-toast>

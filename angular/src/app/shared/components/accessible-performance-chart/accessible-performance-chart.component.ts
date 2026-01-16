@@ -8,7 +8,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
-import { ChartModule } from "primeng/chart";
+import { UIChart } from "primeng/chart";
 import { ButtonComponent } from "../button/button.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -24,7 +24,7 @@ export interface AccessibleDataPoint {
   selector: "app-accessible-performance-chart",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ChartModule, DatePipe, ButtonComponent],
+  imports: [CommonModule, UIChart, DatePipe, ButtonComponent],
   template: `
     <div
       class="chart-container"

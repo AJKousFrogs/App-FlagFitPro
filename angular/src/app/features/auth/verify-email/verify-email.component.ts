@@ -7,9 +7,9 @@ import {
 } from "@angular/core";
 
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Message } from "primeng/message";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -33,10 +33,10 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    CardModule,
+    Card,
     ButtonComponent,
     Message,
-    ToastModule,
+    Toast,
   ],
 
   template: `

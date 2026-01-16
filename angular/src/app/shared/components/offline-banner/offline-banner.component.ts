@@ -26,7 +26,7 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
         aria-live="polite"
       >
         <div class="banner-content">
-          <div class="status-icon">
+          <div class="status-icon" aria-hidden="true">
             @switch (connectionStatus()) {
               @case ("offline") {
                 <i class="pi pi-wifi-off"></i>
@@ -63,7 +63,8 @@ export type ConnectionStatus = "online" | "offline" | "slow" | "syncing";
               variant="text"
               size="sm"
               (clicked)="dismiss()"
-              ariaLabel="times"
+              ariaLabel="Dismiss offline notification"
+              tooltip="Dismiss"
             />
           }
         </div>

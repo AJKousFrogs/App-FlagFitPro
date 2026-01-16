@@ -15,8 +15,8 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { RippleModule } from "primeng/ripple";
-import { TooltipModule } from "primeng/tooltip";
+import { Ripple } from "primeng/ripple";
+import { Tooltip } from "primeng/tooltip";
 
 export interface AIModeStatus {
   isConservative: boolean;
@@ -30,7 +30,7 @@ export interface AIModeStatus {
   selector: "app-ai-mode-explanation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, RippleModule, TooltipModule],
+  imports: [CommonModule, RouterModule, Ripple, Tooltip],
   template: `
     @if (modeStatus() && modeStatus()!.isConservative) {
       <div class="ai-mode-card">

@@ -29,20 +29,20 @@ import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 
 // PrimeNG Components
-import { AccordionModule } from "primeng/accordion";
-import { BadgeModule } from "primeng/badge";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import { Badge } from "primeng/badge";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
 import { Chip } from "primeng/chip";
-import { DatePickerModule } from "primeng/datepicker";
-import { DividerModule } from "primeng/divider";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { DatePicker } from "primeng/datepicker";
+import { Divider } from "primeng/divider";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { StepperModule } from "primeng/stepper";
-import { TimelineModule } from "primeng/timeline";
-import { TooltipModule } from "primeng/tooltip";
+import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
+import { Timeline } from "primeng/timeline";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
@@ -79,20 +79,20 @@ interface TimezoneOption {
     CommonModule,
     FormsModule,
     RouterModule,
-    CardModule,
+    Card,
     Chip,
-    DatePickerModule,
-    InputNumberModule,
-    InputTextModule,
+    DatePicker,
+    InputNumber,
+    InputText,
     Select,
-    StepperModule,
-    TimelineModule,
-    ProgressBarModule,
-    AccordionModule,
-    CheckboxModule,
-    TooltipModule,
-    DividerModule,
-    BadgeModule,
+    Stepper, StepList, Step, StepPanels, StepPanel,
+    Timeline,
+    ProgressBar,
+    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Checkbox,
+    Tooltip,
+    Divider,
+    Badge,
     ButtonComponent,
     MainLayoutComponent,
     PageHeaderComponent,

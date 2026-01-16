@@ -18,10 +18,16 @@
  * @version 1.0.0
  */
 
-import { HttpErrorResponse, HttpInterceptorFn } from "@angular/common/http";
+import {
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+} from "@angular/common/http";
 import { inject } from "@angular/core";
-import { Observable, throwError, timer } from "rxjs";
-import { catchError, retry } from "rxjs/operators";
+import { Observable, throwError } from "rxjs";
+import { catchError } from "rxjs/operators";
 import { LoggerService } from "../services/logger.service";
 import { API, TIMEOUTS } from "../constants/app.constants";
 
@@ -97,7 +103,10 @@ function calculateBackoffDelay(attempt: number, baseDelay: number): number {
 /**
  * Retry interceptor with exponential backoff
  */
-export const retryInterceptor: HttpInterceptorFn = (req, next) => {
+export const retryInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn,
+): Observable<HttpEvent<unknown>> => {
   const logger = inject(LoggerService);
 
   // Skip retry if explicitly requested
@@ -118,32 +127,33 @@ export const retryInterceptor: HttpInterceptorFn = (req, next) => {
   let retryCount = 0;
 
   return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
-      // Check if we should retry this error
-      if (!isRetryableError(error, req.method)) {
-        return throwError(() => error);
-      }
+    catchError(
+      (error: HttpErrorResponse): Observable<HttpEvent<unknown>> => {
+        // Check if we should retry this error
+        if (!isRetryableError(error, req.method)) {
+          return throwError(() => error);
+        }
 
-      // Check if we have retries left
-      if (retryCount >= maxRetries) {
-        logger.warn(
-          `[RetryInterceptor] Max retries (${maxRetries}) reached for ${req.method} ${req.url}`,
+        // Check if we have retries left
+        if (retryCount >= maxRetries) {
+          logger.warn(
+            `[RetryInterceptor] Max retries (${maxRetries}) reached for ${req.method} ${req.url}`,
+            { status: error.status, message: error.message },
+          );
+          return throwError(() => error);
+        }
+
+        // Calculate delay and retry
+        const delay = calculateBackoffDelay(retryCount, baseDelay);
+        retryCount++;
+
+        logger.debug(
+          `[RetryInterceptor] Retry ${retryCount}/${maxRetries} for ${req.method} ${req.url} in ${delay}ms`,
           { status: error.status, message: error.message },
         );
-        return throwError(() => error);
-      }
 
-      // Calculate delay and retry
-      const delay = calculateBackoffDelay(retryCount, baseDelay);
-      retryCount++;
-
-      logger.debug(
-        `[RetryInterceptor] Retry ${retryCount}/${maxRetries} for ${req.method} ${req.url} in ${delay}ms`,
-        { status: error.status, message: error.message },
-      );
-
-      // Return a new observable that waits then retries
-      return new Observable((subscriber) => {
+        // Return a new observable that waits then retries
+        return new Observable<HttpEvent<unknown>>((subscriber) => {
         const timeoutId = setTimeout(() => {
           next(req).subscribe({
             next: (value) => subscriber.next(value),
@@ -177,6 +187,7 @@ export const retryInterceptor: HttpInterceptorFn = (req, next) => {
         // Cleanup on unsubscribe
         return () => clearTimeout(timeoutId);
       });
-    }),
+    },
+    ),
   );
 };

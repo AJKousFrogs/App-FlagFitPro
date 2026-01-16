@@ -9,18 +9,18 @@ import {
 import { FormsModule } from "@angular/forms";
 
 import { ConfirmationService, MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TabPanel, Tabs } from "primeng/tabs";
-import { TextareaModule } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Textarea } from "primeng/textarea";
+import { Toast } from "primeng/toast";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -66,18 +66,18 @@ interface TournamentBudget {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    ProgressBarModule,
+    Card,
+    ProgressBar,
     Tabs,
     TabPanel,
     Dialog,
-    InputTextModule,
-    TextareaModule,
+    InputText,
+    Textarea,
     DatePicker,
     Select,
     InputNumber,
     Checkbox,
-    ToastModule,
+    Toast,
     ConfirmDialog,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -105,14 +105,16 @@ interface TournamentBudget {
                 icon="pi-calendar"
                 variant="outlined"
                 (clicked)="scrollToTournament(next.id)"
-                ariaLabel="calendar"
+                ariaLabel="Go to next tournament"
+                tooltip="Next tournament"
               />
             }
             @if (isAuthenticated()) {
               <app-icon-button
                 icon="pi-plus"
                 (clicked)="openCreateDialog()"
-                ariaLabel="plus"
+                ariaLabel="Add new tournament"
+                tooltip="Add tournament"
               />
             }
           </div>
@@ -185,14 +187,16 @@ interface TournamentBudget {
                               variant="text"
                               size="sm"
                               (clicked)="openEditDialog(tournament)"
-                              ariaLabel="pencil"
+                              ariaLabel="Edit tournament"
+                              tooltip="Edit"
                             />
                             <app-icon-button
                               icon="pi-trash"
                               variant="text"
                               size="sm"
                               (clicked)="confirmDelete(tournament)"
-                              ariaLabel="trash"
+                              ariaLabel="Delete tournament"
+                              tooltip="Delete"
                             />
                           </div>
                         }
@@ -373,14 +377,16 @@ interface TournamentBudget {
                               variant="text"
                               size="sm"
                               (clicked)="openEditDialog(tournament)"
-                              ariaLabel="pencil"
+                              ariaLabel="Edit tournament"
+                              tooltip="Edit"
                             />
                             <app-icon-button
                               icon="pi-trash"
                               variant="text"
                               size="sm"
                               (clicked)="confirmDelete(tournament)"
-                              ariaLabel="trash"
+                              ariaLabel="Delete tournament"
+                              tooltip="Delete"
                             />
                           </div>
                         }

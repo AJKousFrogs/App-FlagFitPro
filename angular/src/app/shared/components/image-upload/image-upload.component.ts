@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { Message } from "primeng/message";
 import { LoggerService } from "../../../core/services/logger.service";
 import { timer } from "rxjs";
@@ -35,7 +35,7 @@ export interface ImageUploadResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ProgressBarModule,
+    ProgressBar,
     Message,
     ButtonComponent,
     MobileOptimizedImageDirective,

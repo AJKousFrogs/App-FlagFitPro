@@ -25,16 +25,16 @@ import {
   viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { MenuModule } from "primeng/menu";
-import { ScrollPanelModule } from "primeng/scrollpanel";
+import { Avatar } from "primeng/avatar";
+import { Badge } from "primeng/badge";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { Menu } from "primeng/menu";
+import { ScrollPanel } from "primeng/scrollpanel";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { COLORS, TIMEOUTS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
@@ -67,17 +67,17 @@ import { getInitials } from "../../shared/utils/format.utils";
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    InputTextModule,
-    AvatarModule,
-    BadgeModule,
-    ScrollPanelModule,
+    Card,
+    InputText,
+    Avatar,
+    Badge,
+    ScrollPanel,
     ScrollingModule,
-    DialogModule,
+    Dialog,
     Select,
     Textarea,
-    TooltipModule,
-    MenuModule,
+    Tooltip,
+    Menu,
     MainLayoutComponent,
 
     ButtonComponent,
@@ -131,21 +131,24 @@ import { getInitials } from "../../shared/utils/format.utils";
                 icon="pi-bookmark"
                 variant="text"
                 (clicked)="showPinnedMessages = true"
-                ariaLabel="bookmark"
+                ariaLabel="View pinned messages"
+                tooltip="Pinned messages"
               />
             }
             <app-icon-button
               icon="pi-users"
               variant="text"
               (clicked)="showMembersDialog = true"
-              ariaLabel="users"
+              ariaLabel="View channel members"
+              tooltip="Members"
             />
             @if (isCoach()) {
               <app-icon-button
                 icon="pi-cog"
                 variant="text"
                 (clicked)="openChannelSettings()"
-                ariaLabel="cog"
+                ariaLabel="Channel settings"
+                tooltip="Settings"
               />
             }
           </div>
@@ -304,7 +307,8 @@ import { getInitials } from "../../shared/utils/format.utils";
                     variant="text"
                     size="sm"
                     (clicked)="dismissImportantBanner()"
-                    ariaLabel="times"
+                    ariaLabel="Dismiss important message"
+                    tooltip="Dismiss"
                   />
                 </div>
               }
@@ -399,14 +403,16 @@ import { getInitials } from "../../shared/utils/format.utils";
                                 variant="text"
                                 size="sm"
                                 (clicked)="startEditing(message)"
-                                ariaLabel="pencil"
+                                ariaLabel="Edit message"
+                                tooltip="Edit"
                               />
                               <app-icon-button
                                 icon="pi-trash"
                                 variant="text"
                                 size="sm"
                                 (clicked)="deleteMessage(message)"
-                                ariaLabel="trash"
+                                ariaLabel="Delete message"
+                                tooltip="Delete"
                               />
                             }
                           </div>
@@ -484,14 +490,16 @@ import { getInitials } from "../../shared/utils/format.utils";
                       icon="pi-at"
                       variant="text"
                       (clicked)="triggerMentionPicker()"
-                      ariaLabel="at"
+                      ariaLabel="Mention someone"
+                      tooltip="Mention"
                     />
 
                     <app-icon-button
                       icon="pi-send"
                       [disabled]="!newMessage.trim()"
                       (clicked)="sendMessage()"
-                      ariaLabel="send"
+                      ariaLabel="Send message"
+                      tooltip="Send"
                     />
                   </div>
                 }
@@ -708,7 +716,8 @@ import { getInitials } from "../../shared/utils/format.utils";
                       variant="text"
                       size="sm"
                       (clicked)="startDirectMessage(member)"
-                      ariaLabel="comment"
+                      ariaLabel="Send direct message"
+                      tooltip="Message"
                     />
                   </div>
                 }
@@ -777,7 +786,8 @@ import { getInitials } from "../../shared/utils/format.utils";
                       variant="text"
                       size="sm"
                       (clicked)="startDirectMessage(member)"
-                      ariaLabel="comment"
+                      ariaLabel="Send direct message"
+                      tooltip="Message"
                     />
                   </div>
                 }

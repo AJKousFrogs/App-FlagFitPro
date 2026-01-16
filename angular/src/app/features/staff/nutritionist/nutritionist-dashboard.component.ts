@@ -9,17 +9,18 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TabsModule } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
@@ -121,17 +122,22 @@ interface TournamentNutritionBrief {
     CommonModule,
     FormsModule,
     RouterModule,
-    CardModule,
+    Card,
 
     LazyChartComponent,
-    DialogModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputText,
+    ProgressBar,
     Select,
     TableModule,
-    TabsModule,
-    TagModule,
-    TooltipModule,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Tag,
+    StatusTagComponent,
+    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -298,10 +304,11 @@ interface TournamentNutritionBrief {
                           </div>
                         </td>
                         <td>
-                          <p-tag
+                          <app-status-tag
                             [value]="getHydrationLabel(athlete.id)"
                             [severity]="getHydrationSeverity(athlete.id)"
-                          ></p-tag>
+                            size="sm"
+                          />
                         </td>
                         <td>
                           @if (getAthleteAlerts(athlete.id).length > 0) {
@@ -320,13 +327,15 @@ interface TournamentNutritionBrief {
                             icon="pi-eye"
                             variant="text"
                             (clicked)="viewAthleteDetails(athlete)"
-                            ariaLabel="eye"
+                            ariaLabel="View athlete nutrition details"
+                            tooltip="View"
                           />
                           <app-icon-button
                             icon="pi-file"
                             variant="text"
                             (clicked)="generateAthleteReport(athlete)"
-                            ariaLabel="file"
+                            ariaLabel="Generate nutrition report"
+                            tooltip="Generate report"
                           />
                         </td>
                       </tr>
@@ -413,14 +422,15 @@ interface TournamentNutritionBrief {
                             <span class="athlete-name">{{
                               getAthleteName(compliance.athleteId)
                             }}</span>
-                            <p-tag
+                            <app-status-tag
                               [value]="compliance.overallComplianceRate + '%'"
                               [severity]="
                                 getComplianceSeverity(
                                   compliance.overallComplianceRate
                                 )
                               "
-                            ></p-tag>
+                              size="sm"
+                            />
                           </div>
                         </ng-template>
                         <div class="supplement-list">
@@ -489,12 +499,11 @@ interface TournamentNutritionBrief {
                           <ng-template #header>
                             <div class="tournament-header">
                               <h4>{{ tournament.tournament.name }}</h4>
-                              <p-tag
-                                value="{{
-                                  tournament.tournament.expectedGames
-                                }} games"
+                              <app-status-tag
+                                [value]="tournament.tournament.expectedGames + ' games'"
                                 severity="info"
-                              ></p-tag>
+                                size="sm"
+                              />
                             </div>
                           </ng-template>
                           <div class="tournament-details">
@@ -1162,15 +1171,15 @@ export class NutritionistDashboardComponent implements OnInit {
 
   getHydrationSeverity(
     athleteId: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const status = this.wellnessMetrics().get(athleteId)?.hydrationStatus;
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       optimal: "success",
       good: "info",
-      adequate: "warn",
+      adequate: "warning",
       poor: "danger",
     };
     return severities[status || ""] || "secondary";
@@ -1178,10 +1187,10 @@ export class NutritionistDashboardComponent implements OnInit {
 
   getComplianceSeverity(
     rate: number,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     if (rate >= 90) return "success";
     if (rate >= 75) return "info";
-    if (rate >= 60) return "warn";
+    if (rate >= 60) return "warning";
     return "danger";
   }
 

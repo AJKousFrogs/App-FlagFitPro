@@ -9,7 +9,7 @@ export interface HealthMetric {
   name: string;
   value: string | number;
   status: "healthy" | "warning" | "error";
-  severity: "success" | "warn" | "danger" | "info";
+  severity: "success" | "warning" | "danger" | "info";
   icon: string;
   color: string;
 }
@@ -18,7 +18,7 @@ export interface SyncStatus {
   source: string;
   timestamp: Date;
   result: "success" | "failed" | "partial";
-  severity: "success" | "warn" | "danger";
+  severity: "success" | "warning" | "danger";
   recordsUpdated?: number;
   error?: string;
 }
@@ -318,7 +318,7 @@ export class AdminService {
         name: "Database Connection",
         value: "Checking...",
         status: "warning",
-        severity: "warn",
+        severity: "warning",
         icon: "pi pi-spin pi-spinner",
         color: "#f59e0b",
       },
@@ -331,7 +331,7 @@ export class AdminService {
         source: "Database",
         timestamp: new Date(),
         result: "partial",
-        severity: "warn",
+        severity: "warning",
         recordsUpdated: 0,
       },
     ];

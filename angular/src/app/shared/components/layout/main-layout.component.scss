@@ -9,8 +9,10 @@
 .dashboard-container {
   display: flex;
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   overflow-x: hidden;
+  --bottom-nav-height: 64px;
 }
 
 .main-content {
@@ -26,6 +28,11 @@
   // Tablet landscape and below - remove sidebar margin
   @include respond-to(lg) {
     margin-left: 0;
+  }
+
+  // Tablet (collapsed sidebar) - preserve icon rail
+  @media (max-width: 1024px) and (min-width: 769px) {
+    margin-left: var(--sidebar-collapsed-width, 64px);
   }
 }
 
@@ -45,14 +52,22 @@
   // Mobile - add bottom padding for bottom nav
   @include respond-to(md) {
     padding: space(4);
-    padding-bottom: calc(#{space(4)} + 80px);
+    padding-bottom: calc(
+      #{space(4)} + var(--bottom-nav-height, 64px) + var(--safe-area-bottom, 0px)
+    );
   }
 
   // Small mobile
   @include respond-to(xs) {
     padding: space(3);
-    padding-bottom: calc(#{space(3)} + 80px);
+    padding-bottom: calc(
+      #{space(3)} + var(--bottom-nav-height, 64px) + var(--safe-area-bottom, 0px)
+    );
   }
+}
+
+.app-footer {
+  display: block;
 }
 
 // Desktop-only elements (Quick Actions FAB)

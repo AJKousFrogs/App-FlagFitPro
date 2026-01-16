@@ -23,8 +23,8 @@ import {
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { CountdownTimerComponent } from "../../../../shared/components/countdown-timer/countdown-timer.component";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { formatDate } from "../../../../shared/utils/date.utils";
 
@@ -39,8 +39,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    TagModule,
-    TooltipModule,
+    Tag,
+    Tooltip,
     ButtonComponent,
     CountdownTimerComponent,
   ],

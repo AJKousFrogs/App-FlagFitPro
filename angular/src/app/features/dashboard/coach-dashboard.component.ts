@@ -9,16 +9,16 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
-import { CardModule } from "primeng/card";
+import { Avatar } from "primeng/avatar";
+import { Badge } from "primeng/badge";
+import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { forkJoin } from "rxjs";
 import { AuthService } from "../../core/services/auth.service";
 import { HeaderService } from "../../core/services/header.service";
@@ -99,16 +99,16 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
   imports: [
     FormsModule,
     RouterModule,
-    CardModule,
+    Card,
     TableModule,
     StatusTagComponent,
     LazyChartComponent,
     ChartSkeletonComponent,
-    DialogModule,
-    TooltipModule,
-    AvatarModule,
-    BadgeModule,
-    InputTextModule,
+    Dialog,
+    Tooltip,
+    Avatar,
+    Badge,
+    InputText,
     Textarea,
     DatePicker,
     Select,

@@ -19,16 +19,16 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -93,16 +93,16 @@ const TAG_TYPES = [
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Checkbox,
-    DialogModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputText,
+    ProgressBar,
     RadioButton,
     Select,
-    TagModule,
+    Tag,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 

@@ -7,12 +7,13 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TableModule } from "primeng/table";
-import { InputTextModule } from "primeng/inputtext";
+import { InputText } from "primeng/inputtext";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
@@ -36,10 +37,11 @@ interface User {
     CommonModule,
     RouterLink,
     FormsModule,
-    CardModule,
-    TagModule,
+    Card,
+    Tag,
+    StatusTagComponent,
     TableModule,
-    InputTextModule,
+    InputText,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -53,10 +55,12 @@ interface User {
           subtitle="View and manage all users on the platform"
         >
           <div class="header-actions">
-            <a routerLink="/superadmin" class="p-button p-button-text">
-              <i class="pi pi-arrow-left"></i>
-              Back to Dashboard
-            </a>
+            <app-button
+              iconLeft="pi-arrow-left"
+              variant="text"
+              routerLink="/superadmin"
+              >Back to Dashboard</app-button
+            >
           </div>
         </app-page-header>
 
@@ -138,17 +142,19 @@ interface User {
                   <td>{{ user.full_name }}</td>
                   <td>{{ user.email }}</td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="user.role"
                       [severity]="getRoleSeverity(user.role)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td>{{ user.team_name || "-" }}</td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="user.status"
                       [severity]="getStatusSeverity(user.status)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td>{{ user.last_login | date: "short" }}</td>
                   <td>
@@ -374,12 +380,12 @@ export class SuperadminUsersComponent implements OnInit {
 
   getRoleSeverity(
     role: string,
-  ): "success" | "warn" | "danger" | "info" | "secondary" {
+  ): "success" | "warning" | "danger" | "info" | "secondary" {
     switch (role) {
       case "superadmin":
         return "danger";
       case "admin":
-        return "warn";
+        return "warning";
       case "coach":
         return "info";
       case "player":
@@ -391,12 +397,12 @@ export class SuperadminUsersComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "warn" | "danger" | "info" | "secondary" {
+  ): "success" | "warning" | "danger" | "info" | "secondary" {
     switch (status) {
       case "active":
         return "success";
       case "pending":
-        return "warn";
+        return "warning";
       case "suspended":
         return "danger";
       default:

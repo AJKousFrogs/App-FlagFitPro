@@ -18,13 +18,14 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TabsModule } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -263,13 +264,18 @@ const CATEGORY_LABELS: Record<
     FormsModule,
     DatePipe,
     DecimalPipe,
-    CardModule,
-    ProgressBarModule,
+    Card,
+    ProgressBar,
     Select,
     TableModule,
-    TabsModule,
-    TagModule,
-    ToastModule,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Tag,
+    StatusTagComponent,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
   ],
@@ -297,10 +303,11 @@ const CATEGORY_LABELS: Record<
                 <span class="stat-block__value">{{
                   totalPoints() | number
                 }}</span>
-                <p-tag
+                <app-status-tag
                   [value]="'Top ' + userRankPercentile() + '%'"
                   severity="info"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
             </div>
           </p-card>

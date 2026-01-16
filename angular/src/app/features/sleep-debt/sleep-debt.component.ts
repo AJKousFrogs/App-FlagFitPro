@@ -18,10 +18,10 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Message } from "primeng/message";
-import { ProgressBarModule } from "primeng/progressbar";
-import { ToastModule } from "primeng/toast";
+import { ProgressBar } from "primeng/progressbar";
+import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -80,12 +80,12 @@ const DEBT_THRESHOLDS = {
     CommonModule,
     FormsModule,
     DecimalPipe,
-    CardModule,
+    Card,
 
     LazyChartComponent,
     Message,
-    ProgressBarModule,
-    ToastModule,
+    ProgressBar,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
     StatusTagComponent,

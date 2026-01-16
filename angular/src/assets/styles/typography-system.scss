@@ -330,7 +330,7 @@ p {
 .text-lg,
 .body-lg,
 .lead {
-  font-size: var(--font-body-lg, 1.125rem); /* 18px */
+  font-size: var(--font-body-size, 1.125rem); /* 18px */
   line-height: var(--line-height-relaxed, 1.625);
 }
 

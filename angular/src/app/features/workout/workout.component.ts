@@ -8,10 +8,10 @@ import {
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { InputNumberModule } from "primeng/inputnumber";
-import { CheckboxModule } from "primeng/checkbox";
+import { InputNumber } from "primeng/inputnumber";
+import { Checkbox } from "primeng/checkbox";
 import {} from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -50,9 +50,9 @@ interface Workout {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    CardModule,
-    InputNumberModule,
-    CheckboxModule,
+    Card,
+    InputNumber,
+    Checkbox,
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,

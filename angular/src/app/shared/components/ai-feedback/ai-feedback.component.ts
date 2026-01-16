@@ -9,10 +9,10 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
-import { DialogModule } from "primeng/dialog";
-import { TextareaModule } from "primeng/textarea";
+import { Dialog } from "primeng/dialog";
+import { Textarea } from "primeng/textarea";
 import { RadioButton } from "primeng/radiobutton";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -53,10 +53,10 @@ interface FeedbackData {
   imports: [
     CommonModule,
     FormsModule,
-    DialogModule,
-    TextareaModule,
+    Dialog,
+    Textarea,
     RadioButton,
-    TooltipModule,
+    Tooltip,
     ButtonComponent,
   ],
   template: `

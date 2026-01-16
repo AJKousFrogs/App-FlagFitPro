@@ -31,15 +31,15 @@ import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 
 // PrimeNG Components
-import { BadgeModule } from "primeng/badge";
+import { Badge } from "primeng/badge";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
-import { DividerModule } from "primeng/divider";
-import { InputNumberModule } from "primeng/inputnumber";
-import { ProgressBarModule } from "primeng/progressbar";
-import { TooltipModule } from "primeng/tooltip";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
+import { Divider } from "primeng/divider";
+import { InputNumber } from "primeng/inputnumber";
+import { ProgressBar } from "primeng/progressbar";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // App Components & Services
@@ -102,14 +102,14 @@ interface HydrationLog {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    InputNumberModule,
-    CheckboxModule,
+    Card,
+    InputNumber,
+    Checkbox,
     StatusTagComponent,
-    TooltipModule,
-    ProgressBarModule,
-    DividerModule,
-    BadgeModule,
+    Tooltip,
+    ProgressBar,
+    Divider,
+    Badge,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -221,7 +221,8 @@ interface HydrationLog {
                   icon="pi-times"
                   variant="text"
                   (clicked)="showScheduleEditor = false"
-                  ariaLabel="times"
+                  ariaLabel="Close schedule editor"
+                  tooltip="Close"
                 />
               </div>
             </ng-template>
@@ -266,7 +267,8 @@ interface HydrationLog {
                       variant="text"
                       [disabled]="editGames.length <= 1"
                       (clicked)="removeGame(i)"
-                      ariaLabel="trash"
+                      ariaLabel="Remove game from schedule"
+                      tooltip="Remove"
                     />
                   </div>
                 }

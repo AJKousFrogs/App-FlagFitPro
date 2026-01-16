@@ -1,8 +1,9 @@
-<p-toolbar
-  styleClass="app-header"
-  [class]="headerClass()"
-  aria-label="Main navigation"
->
+<header class="app-header-shell" role="banner">
+  <p-toolbar
+    styleClass="app-header"
+    [class]="headerClass()"
+    aria-label="Global header"
+  >
   <!-- Left Section: Olympics Countdown -->
   <ng-template #start>
     <div class="header-start">
@@ -75,8 +76,10 @@
       class="header-center"
       (click)="onSearch()"
       (keydown.enter)="onSearch()"
+      (keydown.space)="onSearch()"
       tabindex="0"
       role="button"
+      aria-haspopup="dialog"
       aria-label="Open search"
     >
       <p-inputgroup styleClass="search-input-group">
@@ -125,23 +128,27 @@
       }
 
       <!-- Notifications -->
-      <p-button
-        icon="pi pi-bell"
-        [text]="true"
-        [badge]="
-          notificationCount() > 0
-            ? notificationCount() > 9
-              ? '9+'
-              : notificationCount().toString()
-            : undefined
-        "
-        badgeClass="p-badge-danger"
-        (onClick)="toggleNotifications()"
-        aria-label="Notifications"
-        pTooltip="Notifications"
-        tooltipPosition="bottom"
-        styleClass="header-icon-btn"
-      />
+      <div class="header-icon-btn-wrapper">
+        <app-icon-button
+          icon="pi-bell"
+          variant="text"
+          ariaLabel="Notifications"
+          tooltip="Notifications"
+          tooltipPosition="bottom"
+          (clicked)="toggleNotifications()"
+          class="header-icon-btn"
+        />
+        @if (notificationCount() > 0) {
+          <app-badge
+            [overlay]="true"
+            variant="danger"
+            position="top-right"
+            >{{
+              notificationCount() > 9 ? "9+" : notificationCount().toString()
+            }}</app-badge
+          >
+        }
+      </div>
 
       <!-- Settings -->
       <app-icon-button
@@ -198,6 +205,7 @@
     </div>
   </ng-template>
 </p-toolbar>
+</header>
 
 <!-- Search Panel -->
 <app-search-panel />

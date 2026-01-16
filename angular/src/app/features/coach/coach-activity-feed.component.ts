@@ -26,16 +26,17 @@ import {
   CoachActivityItem,
   ActivityType,
 } from "../../core/services/team-notification.service";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TIMEOUTS } from "../../core/constants/app.constants";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
-import { TagModule } from "primeng/tag";
-import { SkeletonModule } from "primeng/skeleton";
-import { TooltipModule } from "primeng/tooltip";
-import { ScrollPanelModule } from "primeng/scrollpanel";
+import { Avatar } from "primeng/avatar";
+import { Badge } from "primeng/badge";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { Skeleton } from "primeng/skeleton";
+import { Tooltip } from "primeng/tooltip";
+import { ScrollPanel } from "primeng/scrollpanel";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
 import { getInitials } from "../../shared/utils/format.utils";
@@ -45,13 +46,14 @@ import { getInitials } from "../../shared/utils/format.utils";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    CardModule,
-    AvatarModule,
-    BadgeModule,
-    TagModule,
-    SkeletonModule,
-    TooltipModule,
-    ScrollPanelModule,
+    Card,
+    Avatar,
+    Badge,
+    Tag,
+    StatusTagComponent,
+    Skeleton,
+    Tooltip,
+    ScrollPanel,
 
     ButtonComponent,
     IconButtonComponent,
@@ -78,7 +80,8 @@ import { getInitials } from "../../shared/utils/format.utils";
             variant="text"
             [loading]="loading()"
             (clicked)="refresh()"
-            ariaLabel="refresh"
+            ariaLabel="Refresh activity feed"
+            tooltip="Refresh"
           />
         </div>
       </div>
@@ -163,10 +166,11 @@ import { getInitials } from "../../shared/utils/format.utils";
                           {{ formatTime(activity.created_at) }}
                         </span>
                         @if (activity.player?.position) {
-                          <p-tag
+                          <app-status-tag
                             [value]="activity.player?.position ?? ''"
                             severity="info"
-                          ></p-tag>
+                            size="sm"
+                          />
                         }
                       </div>
                     </div>

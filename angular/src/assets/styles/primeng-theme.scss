@@ -31,7 +31,7 @@
     // ─────────────────────────────────────────
     font-family: var(--font-family-sans);
     font-weight: var(--font-weight-semibold);
-    font-size: var(--font-body-md, 16px);
+    font-size: var(--font-body-size, 16px);
     letter-spacing: 0.01em;
     line-height: 1.5;
 
@@ -717,10 +717,10 @@
   .p-button-sm {
     min-height: 36px;
     padding: var(--space-2, 8px) var(--space-4, 16px);
-    font-size: var(--font-body-sm, 14px);
+    font-size: var(--font-body-sm-size, 14px);
 
     .p-button-icon {
-      font-size: var(--font-body-sm, 14px);
+      font-size: var(--font-body-sm-size, 14px);
     }
 
     &.p-button-rounded {
@@ -732,10 +732,10 @@
   .p-button-lg {
     min-height: 52px;
     padding: var(--space-4, 16px) 2rem;
-    font-size: var(--font-body-lg, 18px);
+    font-size: var(--font-body-size, 18px);
 
     .p-button-icon {
-      font-size: var(--font-heading-sm, 18px);
+      font-size: var(--font-h4-size, 18px);
     }
 
     &.p-button-rounded {
@@ -2454,7 +2454,7 @@
       /* TOOLTIP FIX: Consistent padding from design system */
       padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
       font-family: var(--font-family-sans);
-      font-size: var(--font-body-xs, 0.8125rem);
+      font-size: var(--font-caption-size, 0.8125rem);
       font-weight: var(--font-weight-medium, 500);
       /* TOOLTIP FIX: Explicit line-height for readability */
       line-height: 1.5;
@@ -3787,7 +3787,7 @@ p-button .p-button,
     BlinkMacSystemFont,
     sans-serif;
   font-weight: 600;
-  font-size: var(--font-body-md, 1rem);
+  font-size: var(--font-body-size, 1rem);
   color: var(--color-text-primary, var(--primitive-neutral-900));
   margin: 0 0.125rem;
   background: none;

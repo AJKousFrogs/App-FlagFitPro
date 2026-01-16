@@ -21,11 +21,11 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 // PrimeNG
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
-import { ProgressBarModule } from "primeng/progressbar";
-import { TooltipModule } from "primeng/tooltip";
-import { BadgeModule } from "primeng/badge";
+import { ProgressBar } from "primeng/progressbar";
+import { Tooltip } from "primeng/tooltip";
+import { Badge } from "primeng/badge";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 // Services
@@ -40,10 +40,10 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    ProgressBarModule,
-    TooltipModule,
-    BadgeModule,
+    Card,
+    ProgressBar,
+    Tooltip,
+    Badge,
 
     ButtonComponent,
     StatusTagComponent,

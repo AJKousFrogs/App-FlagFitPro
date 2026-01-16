@@ -7,7 +7,7 @@ import {
   OnInit,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Tabs, TabPanel } from "primeng/tabs";
@@ -33,7 +33,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    CardModule,
+    Card,
 
     LazyChartComponent,
     Tabs,
@@ -76,7 +76,8 @@ import {
                   <app-icon-button
                     icon="pi-plus"
                     routerLink="noDataMessage.helpLink"
-                    ariaLabel="plus"
+                    ariaLabel="Add performance data"
+                    tooltip="Add data"
                   />
                 </div>
               } @else if (performanceChartData()) {
@@ -104,7 +105,8 @@ import {
                     icon="pi-info-circle"
                     variant="outlined"
                     routerLink="injuryRiskInsufficientMessage.helpLink"
-                    ariaLabel="info-circle"
+                    ariaLabel="Learn more about injury risk analysis"
+                    tooltip="Learn more"
                   />
                 </div>
               } @else {

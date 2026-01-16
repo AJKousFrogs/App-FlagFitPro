@@ -11,11 +11,12 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
-import { TagModule } from "primeng/tag";
-import { KnobModule } from "primeng/knob";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { UIChart } from "primeng/chart";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { Knob } from "primeng/knob";
+import { ProgressBar } from "primeng/progressbar";
 import { Subject } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
 import { ApiService } from "../../../core/services/api.service";
@@ -41,11 +42,12 @@ interface PerformanceMetric {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    ChartModule,
-    TagModule,
-    KnobModule,
-    ProgressBarModule,
+    Card,
+    UIChart,
+    Tag,
+    StatusTagComponent,
+    Knob,
+    ProgressBar,
   ],
   template: `
     <div class="performance-dashboard">
@@ -57,12 +59,12 @@ interface PerformanceMetric {
                 <i [class]="metric.icon" [style.color]="metric.color"></i>
                 <h4>{{ metric.label }}</h4>
               </div>
-              <p-tag
+              <app-status-tag
                 [value]="formatTrend(metric.trend, metric.trendValue)"
                 [severity]="getTrendSeverity(metric.trend)"
                 [icon]="getTrendIcon(metric.trend)"
-              >
-              </p-tag>
+                size="sm"
+              />
             </div>
             <div class="metric-visualization">
               <div class="metric-value-container">
@@ -278,7 +280,7 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
 
   getTrendSeverity(
     trend: string,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  ): "success" | "secondary" | "info" | "warning" | "danger" | "contrast" {
     switch (trend) {
       case "up":
         return "success";

@@ -14,13 +14,13 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 
 @Component({
   selector: "app-scroll-to-top",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TooltipModule],
+  imports: [CommonModule, Tooltip],
   template: `
     @if (isVisible()) {
       <button

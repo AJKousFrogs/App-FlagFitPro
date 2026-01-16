@@ -28,11 +28,11 @@ import { Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { ProgressBarModule } from "primeng/progressbar";
-import { ToastModule } from "primeng/toast";
-import { DialogModule } from "primeng/dialog";
+import { ProgressBar } from "primeng/progressbar";
+import { Toast } from "primeng/toast";
+import { Dialog } from "primeng/dialog";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -59,10 +59,10 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     StatusTagComponent,
-    ProgressBarModule,
-    ToastModule,
-    DialogModule,
-    TooltipModule,
+    ProgressBar,
+    Toast,
+    Dialog,
+    Tooltip,
     MainLayoutComponent,
     StatsGridComponent,
     TrainingBuilderComponent,

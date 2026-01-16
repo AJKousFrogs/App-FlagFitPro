@@ -6,9 +6,10 @@ import {
   signal,
 } from "@angular/core";
 import { MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Tabs } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import {
   AdminService,
@@ -20,7 +21,7 @@ import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: "app-admin-database-dashboard",
   standalone: true,
-  imports: [CommonModule, CardModule, TagModule, Tabs, ButtonComponent],
+  imports: [CommonModule, Card, Tag, StatusTagComponent, Tabs, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MessageService],
   template: `
@@ -35,10 +36,11 @@ import { ButtonComponent } from "../button/button.component";
                 <span>{{ metric.name }}</span>
               </div>
               <div class="metric-value">{{ metric.value }}</div>
-              <p-tag
+              <app-status-tag
                 [value]="metric.status"
                 [severity]="metric.severity"
-              ></p-tag>
+                size="sm"
+              />
             </div>
           }
         </div>
@@ -125,10 +127,11 @@ import { ButtonComponent } from "../button/button.component";
                   <span class="status-time">{{
                     status.timestamp | date: "medium"
                   }}</span>
-                  <p-tag
+                  <app-status-tag
                     [value]="status.result"
                     [severity]="status.severity"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               }
             </div>

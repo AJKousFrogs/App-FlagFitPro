@@ -28,12 +28,13 @@ import { RosterService } from "@features/roster/roster.service";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
 import { ModalComponent } from "@shared/components/modal/modal.component";
 import { StepperComponent } from "@shared/components/stepper/stepper.component";
-import { ButtonModule } from "primeng/button";
-import { CheckboxModule } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { ButtonComponent } from "@shared/components/button/button.component";
+import { Checkbox } from "primeng/checkbox";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
 
 @Component({
@@ -43,13 +44,14 @@ import { Textarea } from "primeng/textarea";
   imports: [
     CommonModule,
     FormsModule,
-    DialogModule,
-    ButtonModule,
+    Dialog,
+    ButtonComponent,
     Select,
-    InputTextModule,
+    InputText,
     Textarea,
-    CheckboxModule,
-    TagModule,
+    Checkbox,
+    Tag,
+    StatusTagComponent,
     ModalComponent,
     StepperComponent,
     ConfidenceIndicatorComponent,
@@ -153,7 +155,7 @@ import { Textarea } from "primeng/textarea";
                   <label [for]="point.id">
                     {{ point.label }}
                     @if (point.required) {
-                      <p-tag value="Required" severity="danger"></p-tag>
+                      <app-status-tag value="Required" severity="danger" size="sm" />
                     }
                   </label>
                 </div>
@@ -180,20 +182,19 @@ import { Textarea } from "primeng/textarea";
                     placeholder="e.g., RTP Phase 2, No sprinting >80%"
                     styleClass="w-full"
                   />
-                  <p-button
-                    icon="pi pi-times"
-                    [text]="true"
-                    severity="danger"
-                    (onClick)="removeConstraint($index)"
-                  ></p-button>
+                  <app-button
+                    iconLeft="pi-times"
+                    variant="danger"
+                    (clicked)="removeConstraint($index)"
+                  />
                 </div>
               }
-              <p-button
-                label="Add Constraint"
-                icon="pi pi-plus"
-                [outlined]="true"
-                (onClick)="addConstraint()"
-              ></p-button>
+              <app-button
+                iconLeft="pi-plus"
+                variant="outlined"
+                (clicked)="addConstraint()"
+                >Add Constraint</app-button
+              >
             </div>
           </div>
         }
@@ -254,10 +255,11 @@ import { Textarea } from "primeng/textarea";
               ></app-confidence-indicator>
               @if (calculatedConfidence() < 0.7) {
                 <div class="confidence-warning">
-                  <p-tag
-                    severity="warn"
+                  <app-status-tag
+                    severity="warning"
                     value="Low Confidence - Consider collecting more data"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               }
             </div>
@@ -267,31 +269,31 @@ import { Textarea } from "primeng/textarea";
 
       <!-- Footer -->
       <ng-container footer>
-        <p-button
-          label="Cancel"
-          [outlined]="true"
-          (onClick)="onCancel()"
-        ></p-button>
+        <app-button
+          variant="outlined"
+          (clicked)="onCancel()"
+          >Cancel</app-button
+        >
         @if (currentStep() > 0) {
-          <p-button
-            label="Back"
-            [outlined]="true"
-            (onClick)="previousStep()"
-          ></p-button>
+          <app-button
+            variant="outlined"
+            (clicked)="previousStep()"
+            >Back</app-button
+          >
         }
         @if (currentStep() < 6) {
-          <p-button
-            label="Next"
-            (onClick)="nextStep()"
+          <app-button
+            (clicked)="nextStep()"
             [disabled]="!canProceed()"
-          ></p-button>
+            >Next</app-button
+          >
         } @else {
-          <p-button
-            label="Create Decision"
-            (onClick)="onConfirm()"
+          <app-button
+            (clicked)="onConfirm()"
             [disabled]="!canCreate()"
             [loading]="isCreating()"
-          ></p-button>
+            >Create Decision</app-button
+          >
         }
       </ng-container>
     </app-modal>

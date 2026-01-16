@@ -26,10 +26,11 @@ import {
 import { CommonModule } from "@angular/common";
 
 // PrimeNG Components
-import { ToastModule } from "primeng/toast";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TabsModule } from "primeng/tabs";
-import { BadgeModule } from "primeng/badge";
+import { Toast } from "primeng/toast";
+import { ConfirmDialog } from "primeng/confirmdialog";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Badge } from "primeng/badge";
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 // Services
 import { VideoCurationService } from "./video-curation.service";
 
@@ -63,10 +64,15 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ToastModule,
-    ConfirmDialogModule,
-    TabsModule,
-    BadgeModule,
+    Toast,
+    ConfirmDialog,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Badge,
+    ButtonComponent,
     MainLayoutComponent,
     VideoCurationStatsComponent,
     VideoCurationVideoTableComponent,
@@ -93,12 +99,11 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
               <p>Manage and curate training videos for your team</p>
             </div>
             <div class="header-actions">
-              <button
-                pButton
-                label="Create Playlist"
-                icon="pi pi-plus"
-                (click)="openPlaylistDialog()"
-              ></button>
+              <app-button
+                iconLeft="pi-plus"
+                (clicked)="openPlaylistDialog()"
+                >Create Playlist</app-button
+              >
             </div>
           </div>
         </header>

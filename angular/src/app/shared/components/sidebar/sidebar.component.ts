@@ -13,11 +13,11 @@ import {
   signal,
 } from "@angular/core";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
-import { BadgeModule } from "primeng/badge";
 import { filter, Subscription } from "rxjs";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
-import { NotificationStateService } from "../../../core/services/notification-state.service";
+import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
+import { NavItemComponent } from "../nav-item.component";
 
 interface NavItem {
   label: string;
@@ -41,7 +41,7 @@ interface _CollapsibleGroup {
   selector: "app-sidebar",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, BadgeModule],
+  imports: [RouterModule, NavItemComponent],
   template: `
     <div
       class="sidebar"
@@ -54,6 +54,7 @@ interface _CollapsibleGroup {
         class="sidebar-close-btn"
         (click)="closeSidebar()"
         aria-label="Close navigation"
+        type="button"
       >
         <i class="pi pi-times"></i>
       </button>
@@ -82,51 +83,46 @@ interface _CollapsibleGroup {
       </div>
 
       <nav class="nav-section" aria-label="Main navigation">
-        <!-- PRIMARY NAVIGATION (4-5 core items) -->
-        <div class="primary-nav">
-          @for (item of primaryNavItems(); track trackByRoute($index, item)) {
-            <a
-              [routerLink]="item.route"
-              [attr.data-testid]="getNavTestId(item.route)"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{
-                exact:
+        <div class="nav-group">
+          <div class="nav-group-title">{{ navGroups[0].label }}</div>
+          <div class="nav-group-items">
+            @for (item of primaryNavItems(); track trackByRoute($index, item)) {
+              <app-nav-item
+                [route]="item.route"
+                [label]="item.label"
+                [icon]="item.icon"
+                [ariaLabel]="item.ariaLabel"
+                [testId]="getNavTestId(item.route)"
+                [itemId]="'nav-' + item.route.replace('/', '')"
+                [exact]="
                   item.route === '/dashboard' ||
-                  item.route === '/todays-practice',
-              }"
-              class="nav-item"
-              [class.nav-item-primary]="true"
-              [attr.aria-label]="item.ariaLabel"
-              [id]="'nav-' + item.route.replace('/', '')"
-              (click)="onNavItemClick()"
-            >
-              <span class="nav-item-icon">
-                <i [class]="'pi ' + item.icon"></i>
-              </span>
-              <span class="nav-item-label">{{ item.label }}</span>
-            </a>
-          }
+                  item.route === '/todays-practice'
+                "
+                variant="sidebar"
+                [itemClass]="'nav-item-primary'"
+                (clicked)="onNavItemClick()"
+              />
+            }
+          </div>
         </div>
 
-        <!-- ADDITIONAL NAVIGATION ITEMS -->
         @if (additionalItems().length > 0) {
-          <div class="additional-nav">
-            @for (item of additionalItems(); track trackByRoute($index, item)) {
-              <a
-                [routerLink]="item.route"
-                [attr.data-testid]="getNavTestId(item.route)"
-                routerLinkActive="active"
-                class="nav-item"
-                [attr.aria-label]="item.ariaLabel"
-                [id]="'nav-' + item.route.replace('/', '')"
-                (click)="onNavItemClick()"
-              >
-                <span class="nav-item-icon">
-                  <i [class]="'pi ' + item.icon"></i>
-                </span>
-                <span class="nav-item-label">{{ item.label }}</span>
-              </a>
-            }
+          <div class="nav-group">
+            <div class="nav-group-title">More</div>
+            <div class="nav-group-items">
+              @for (item of additionalItems(); track trackByRoute($index, item)) {
+                <app-nav-item
+                  [route]="item.route"
+                  [label]="item.label"
+                  [icon]="item.icon"
+                  [ariaLabel]="item.ariaLabel"
+                  [testId]="getNavTestId(item.route)"
+                  [itemId]="'nav-' + item.route.replace('/', '')"
+                  variant="sidebar"
+                  (clicked)="onNavItemClick()"
+                />
+              }
+            </div>
           </div>
         }
 
@@ -137,6 +133,7 @@ interface _CollapsibleGroup {
             (click)="toggleMeGroup()"
             [attr.aria-expanded]="meGroupExpanded()"
             aria-controls="me-group-items"
+            type="button"
           >
             <span class="me-group-icon">
               <i
@@ -153,20 +150,17 @@ interface _CollapsibleGroup {
           @if (meGroupExpanded()) {
             <div id="me-group-items" class="me-group-items">
               @for (item of meItems(); track trackByRoute($index, item)) {
-                <a
-                  [routerLink]="item.route"
-                  [attr.data-testid]="getNavTestId(item.route)"
-                  routerLinkActive="active"
-                  class="nav-item nav-item-sub"
-                  [attr.aria-label]="item.ariaLabel"
-                  [id]="'nav-' + item.route.replace('/', '')"
-                  (click)="onNavItemClick()"
-                >
-                  <span class="nav-item-icon">
-                    <i [class]="'pi ' + item.icon"></i>
-                  </span>
-                  <span class="nav-item-label">{{ item.label }}</span>
-                </a>
+                <app-nav-item
+                  [route]="item.route"
+                  [label]="item.label"
+                  [icon]="item.icon"
+                  [ariaLabel]="item.ariaLabel"
+                  [testId]="getNavTestId(item.route)"
+                  [itemId]="'nav-' + item.route.replace('/', '')"
+                  variant="sidebar"
+                  [itemClass]="'nav-item-sub'"
+                  (clicked)="onNavItemClick()"
+                />
               }
             </div>
           }
@@ -175,24 +169,22 @@ interface _CollapsibleGroup {
 
       <!-- Bottom Section (Profile quick access + Logout) -->
       <div class="sidebar-footer">
-        <a
-          routerLink="/profile"
-          routerLinkActive="active"
-          class="nav-item"
-          aria-label="Profile - Quick access"
-          (click)="onNavItemClick()"
-        >
-          <span class="nav-item-icon">
-            <i class="pi pi-user"></i>
-          </span>
-          <span class="nav-item-label">Profile</span>
-        </a>
-        <button class="nav-item logout-btn" (click)="logout()">
-          <span class="nav-item-icon">
-            <i class="pi pi-sign-out"></i>
-          </span>
-          <span class="nav-item-label">Logout</span>
-        </button>
+        <app-nav-item
+          route="/profile"
+          label="Profile"
+          icon="pi-user"
+          ariaLabel="Profile - Quick access"
+          variant="sidebar"
+          (clicked)="onNavItemClick()"
+        />
+        <app-nav-item
+          label="Logout"
+          icon="pi-sign-out"
+          ariaLabel="Log out"
+          variant="sidebar"
+          [itemClass]="'logout-btn'"
+          (clicked)="logout()"
+        />
       </div>
     </div>
     <div
@@ -207,7 +199,7 @@ interface _CollapsibleGroup {
 export class SidebarComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private authService = inject(AuthService);
-  private notificationState = inject(NotificationStateService);
+  private confirmDialog = inject(ConfirmDialogService);
   private renderer = inject(Renderer2);
   private platformId = inject(PLATFORM_ID);
   private routerSub?: Subscription;
@@ -590,9 +582,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
     }
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(["/login"]);
+  async logout(): Promise<void> {
+    const confirmed = await this.confirmDialog.confirmLogout();
+    if (!confirmed) return;
+    this.authService.logout().subscribe();
     this.closeSidebar();
   }
 

@@ -6,7 +6,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ButtonModule } from "primeng/button";
+import { IconButtonComponent } from "../button/icon-button.component";
 
 /**
  * Pagination Component - Angular 19+
@@ -18,7 +18,7 @@ import { ButtonModule } from "primeng/button";
   selector: "app-pagination",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, IconButtonComponent],
   template: `
     <nav
       class="pagination-container"
@@ -38,27 +38,25 @@ import { ButtonModule } from "primeng/button";
       <div class="pagination-controls">
         <!-- First Page -->
         @if (showFirstLast()) {
-          <p-button
-            icon="pi pi-angle-double-left"
-            [text]="true"
+          <app-icon-button
+            icon="pi-angle-double-left"
+            variant="text"
             [disabled]="currentPage() === 1"
-            (onClick)="goToPage(1)"
-            [attr.aria-label]="'Go to first page'"
+            (clicked)="goToPage(1)"
+            ariaLabel="Go to first page"
             class="pagination-btn pagination-first"
-          >
-          </p-button>
+          />
         }
 
         <!-- Previous Page -->
-        <p-button
-          icon="pi pi-angle-left"
-          [text]="true"
+        <app-icon-button
+          icon="pi-angle-left"
+          variant="text"
           [disabled]="currentPage() === 1"
-          (onClick)="goToPage(currentPage() - 1)"
-          [attr.aria-label]="'Go to previous page'"
+          (clicked)="goToPage(currentPage() - 1)"
+          ariaLabel="Go to previous page"
           class="pagination-btn pagination-prev"
-        >
-        </p-button>
+        />
 
         <!-- Page Numbers -->
         @if (variant() !== "compact") {
@@ -89,27 +87,25 @@ import { ButtonModule } from "primeng/button";
         }
 
         <!-- Next Page -->
-        <p-button
-          icon="pi pi-angle-right"
-          [text]="true"
+        <app-icon-button
+          icon="pi-angle-right"
+          variant="text"
           [disabled]="currentPage() === totalPages()"
-          (onClick)="goToPage(currentPage() + 1)"
-          [attr.aria-label]="'Go to next page'"
+          (clicked)="goToPage(currentPage() + 1)"
+          ariaLabel="Go to next page"
           class="pagination-btn pagination-next"
-        >
-        </p-button>
+        />
 
         <!-- Last Page -->
         @if (showFirstLast()) {
-          <p-button
-            icon="pi pi-angle-double-right"
-            [text]="true"
+          <app-icon-button
+            icon="pi-angle-double-right"
+            variant="text"
             [disabled]="currentPage() === totalPages()"
-            (onClick)="goToPage(totalPages())"
-            [attr.aria-label]="'Go to last page'"
+            (clicked)="goToPage(totalPages())"
+            ariaLabel="Go to last page"
             class="pagination-btn pagination-last"
-          >
-          </p-button>
+          />
         }
       </div>
 
@@ -152,7 +148,7 @@ import { ButtonModule } from "primeng/button";
       }
 
       .pagination-text {
-        font-size: var(--font-body-sm, 0.875rem);
+        font-size: var(--font-body-sm-size, 0.875rem);
         color: var(--text-secondary, #6b7280);
       }
 
@@ -183,7 +179,7 @@ import { ButtonModule } from "primeng/button";
         border-radius: var(--p-border-radius, 0.5rem);
         cursor: pointer;
         transition: all 0.2s;
-        font-size: var(--font-body-md, 1rem);
+        font-size: var(--font-body-size, 1rem);
       }
 
       .pagination-page:hover:not(.active):not(:disabled) {
@@ -213,7 +209,7 @@ import { ButtonModule } from "primeng/button";
         align-items: center;
         gap: var(--space-1, 0.25rem);
         padding: 0 var(--space-2, 0.5rem);
-        font-size: var(--font-body-md, 1rem);
+        font-size: var(--font-body-size, 1rem);
         color: var(--text-primary, #1a1a1a);
       }
 
@@ -232,7 +228,7 @@ import { ButtonModule } from "primeng/button";
       }
 
       .pagination-items-per-page label {
-        font-size: var(--font-body-sm, 0.875rem);
+        font-size: var(--font-body-sm-size, 0.875rem);
         color: var(--text-secondary, #6b7280);
       }
 
@@ -242,7 +238,7 @@ import { ButtonModule } from "primeng/button";
         border-radius: var(--p-border-radius, 0.5rem);
         background: var(--p-surface-0, #ffffff);
         color: var(--text-primary, #1a1a1a);
-        font-size: var(--font-body-sm, 0.875rem);
+        font-size: var(--font-body-sm-size, 0.875rem);
         cursor: pointer;
       }
 

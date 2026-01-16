@@ -8,8 +8,8 @@ import {
   output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { RippleModule } from "primeng/ripple";
-import { TooltipModule } from "primeng/tooltip";
+import { Ripple } from "primeng/ripple";
+import { Tooltip } from "primeng/tooltip";
 
 /**
  * Icon Button Component - For icon-only actions
@@ -55,7 +55,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
   selector: "app-icon-button",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, RippleModule, TooltipModule],
+  imports: [CommonModule, RouterModule, Ripple, Tooltip],
   template: `
     <!-- Link version (when routerLink is provided) -->
     @if (routerLink()) {
@@ -195,7 +195,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
       }
 
       .icon-btn-sm i {
-        font-size: var(--font-body-sm, 14px);
+        font-size: var(--font-body-sm-size, 14px);
       }
 
       .icon-btn-sm .spinner-svg {
@@ -212,7 +212,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
       }
 
       .icon-btn-lg i {
-        font-size: var(--font-heading-sm, 20px);
+        font-size: var(--font-h4-size, 20px);
       }
 
       .icon-btn-lg .spinner-svg {
@@ -295,7 +295,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
        ================================ */
 
       .icon-btn i {
-        font-size: var(--font-body-lg);
+        font-size: var(--font-body-size);
         line-height: 1;
       }
 

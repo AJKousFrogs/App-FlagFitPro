@@ -59,14 +59,14 @@
 }
 
 .upload-label {
-  font-size: var(--font-body-lg, 1.125rem);
+  font-size: var(--font-body-size, 1.125rem);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0;
 }
 
 .upload-hint {
-  font-size: var(--font-body-sm, 0.875rem);
+  font-size: var(--font-body-sm-size, 0.875rem);
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -117,7 +117,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1, 0.25rem);
-  font-size: var(--font-body-sm, 0.875rem);
+  font-size: var(--font-body-sm-size, 0.875rem);
   color: var(--color-text-secondary);
 }
 
@@ -135,7 +135,7 @@
 }
 
 .resize-controls label {
-  font-size: var(--font-body-sm, 0.875rem);
+  font-size: var(--font-body-sm-size, 0.875rem);
   color: var(--color-text-secondary);
 }
 
@@ -154,6 +154,6 @@
   display: block;
   text-align: center;
   margin-top: var(--space-2, 0.5rem);
-  font-size: var(--font-body-sm, 0.875rem);
+  font-size: var(--font-body-sm-size, 0.875rem);
   color: var(--color-text-secondary);
 }

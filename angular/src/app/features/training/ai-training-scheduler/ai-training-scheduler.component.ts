@@ -10,13 +10,14 @@ import { firstValueFrom } from "rxjs";
 
 import { FormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
-import { TagModule } from "primeng/tag";
-import { SkeletonModule } from "primeng/skeleton";
-import { ToastModule } from "primeng/toast";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { Skeleton } from "primeng/skeleton";
+import { Toast } from "primeng/toast";
+import { ProgressBar } from "primeng/progressbar";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { AiConsentRequiredComponent } from "../../../shared/components/ai-consent-required/ai-consent-required.component";
@@ -67,12 +68,13 @@ interface AthleteMetrics {
   imports: [
     FormsModule,
     CommonModule,
-    CardModule,
+    Card,
     DatePicker,
-    TagModule,
-    SkeletonModule,
-    ToastModule,
-    ProgressBarModule,
+    Tag,
+    StatusTagComponent,
+    Skeleton,
+    Toast,
+    ProgressBar,
     MainLayoutComponent,
     PageHeaderComponent,
     AiConsentRequiredComponent,
@@ -193,10 +195,11 @@ interface AthleteMetrics {
               <div class="card-header">
                 <h3><i class="pi pi-sparkles"></i> AI Suggestions</h3>
                 @if (pendingSuggestions().length > 0) {
-                  <p-tag
+                  <app-status-tag
                     [value]="pendingSuggestions().length + ' pending'"
                     severity="info"
-                  ></p-tag>
+                    size="sm"
+                  />
                 }
               </div>
             </ng-template>
@@ -237,12 +240,13 @@ interface AthleteMetrics {
                   >
                     <div class="suggestion-content">
                       <div class="suggestion-tags">
-                        <p-tag
+                        <app-status-tag
                           [value]="suggestion.type"
                           [severity]="getSuggestionSeverity(suggestion.type)"
-                        ></p-tag>
+                          size="sm"
+                        />
                         @if (suggestion.priority === "high") {
-                          <p-tag value="Priority" severity="danger"></p-tag>
+                          <app-status-tag value="Priority" severity="danger" size="sm" />
                         }
                       </div>
                       <p class="suggestion-message">{{ suggestion.message }}</p>
@@ -267,11 +271,11 @@ interface AthleteMetrics {
                           >Dismiss</app-button
                         >
                       } @else if (suggestion.accepted) {
-                        <p-tag
+                        <app-status-tag
                           value="Applied"
                           severity="success"
-                          styleClass="status-tag status-tag--success"
-                        ></p-tag>
+                          size="sm"
+                        />
                       }
                     </div>
                   </div>
@@ -320,12 +324,12 @@ interface AthleteMetrics {
                         </p>
                       </div>
                       @if (session.ai_optimized) {
-                        <p-tag
+                        <app-status-tag
                           value="AI Optimized"
                           severity="success"
-                          icon="pi pi-sparkles"
-                          styleClass="status-tag status-tag--success"
-                        ></p-tag>
+                          icon="pi-sparkles"
+                          size="sm"
+                        />
                       }
                     </div>
                   }
@@ -738,17 +742,15 @@ export class AiTrainingSchedulerComponent implements OnInit {
   ):
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "secondary"
     | "contrast"
-    | "danger"
-    | null
-    | undefined {
+    | "danger" {
     switch (type) {
       case "swap":
         return "info";
       case "reduce":
-        return "warn";
+        return "warning";
       case "increase":
         return "success";
       case "rest":
@@ -756,7 +758,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
       case "recovery":
         return "info";
       case "intensity":
-        return "warn";
+        return "warning";
       default:
         return "info";
     }

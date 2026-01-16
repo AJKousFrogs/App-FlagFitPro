@@ -9,11 +9,10 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ButtonModule } from "primeng/button";
-import { TooltipModule } from "primeng/tooltip";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Card } from "primeng/card";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
+import { ProgressSpinner } from "primeng/progressspinner";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageLoadingStateComponent } from "../../shared/components/page-loading-state/page-loading-state.component";
@@ -74,11 +73,10 @@ interface TrainingSession {
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    TagModule,
-    ButtonModule,
-    TooltipModule,
-    ProgressSpinnerModule,
+    Card,
+    Tag,
+    Tooltip,
+    ProgressSpinner,
     MainLayoutComponent,
     PageHeaderComponent,
     TrafficLightIndicatorComponent,

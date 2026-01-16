@@ -2185,7 +2185,7 @@ select {
   input[type="search"],
   select,
   textarea {
-    font-size: var(--font-body-md, 1rem);
+    font-size: var(--font-body-size, 1rem);
   }
 }
 
@@ -2293,7 +2293,9 @@ select {
   main,
   .main-content,
   .dashboard-content {
-    padding-bottom: calc(64px + var(--safe-area-bottom, 0px));
+    padding-bottom: calc(
+      var(--bottom-nav-height, 64px) + var(--safe-area-bottom, 0px)
+    );
   }
 }
 

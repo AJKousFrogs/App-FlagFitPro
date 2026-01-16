@@ -21,17 +21,17 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
+import { Dialog } from "primeng/dialog";
 import { Message } from "primeng/message";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TextareaModule } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Textarea } from "primeng/textarea";
+import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -290,17 +290,17 @@ const RETENTION_OPTIONS = [
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Checkbox,
     DatePicker,
-    DialogModule,
+    Dialog,
     Message,
-    ProgressBarModule,
+    ProgressBar,
     RadioButton,
     Select,
     TableModule,
-    TextareaModule,
-    ToastModule,
+    Textarea,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,

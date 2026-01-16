@@ -7,12 +7,12 @@ import {
 
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { AccordionModule } from "primeng/accordion";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
@@ -119,16 +119,16 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    CardModule,
+    Card,
 
     LazyChartComponent,
     TableModule,
-    DialogModule,
-    InputTextModule,
-    InputNumberModule,
-    ProgressBarModule,
+    Dialog,
+    InputText,
+    InputNumber,
+    ProgressBar,
     Select,
-    AccordionModule,
+    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
@@ -348,7 +348,8 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 <app-icon-button
                   icon="pi-plus"
                   (clicked)="openLogDialog()"
-                  ariaLabel="plus"
+                  ariaLabel="Log new performance"
+                  tooltip="Log performance"
                 />
               </div>
             } @else {

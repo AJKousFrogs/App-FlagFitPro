@@ -8,10 +8,11 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -28,8 +29,9 @@ import {
     CommonModule,
     RouterLink,
     FormsModule,
-    CardModule,
-    TagModule,
+    Card,
+    Tag,
+    StatusTagComponent,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -45,16 +47,17 @@ import {
           subtitle="Platform management and approval workflow"
         >
           <div class="header-actions">
-            <a
+            <app-button
+              iconLeft="pi-cog"
+              variant="outlined"
               routerLink="/superadmin/settings"
-              class="p-button p-button-outlined"
+              >Settings</app-button
             >
-              <i class="pi pi-cog"></i>
-              Settings
-            </a>
-            <a routerLink="/dashboard" class="p-button p-button-text">
-              Exit Admin
-            </a>
+            <app-button
+              variant="text"
+              routerLink="/dashboard"
+              >Exit Admin</app-button
+            >
           </div>
         </app-page-header>
 
@@ -154,7 +157,7 @@ import {
                   [class.role]="approval.request_type === 'role_elevation'"
                 >
                   <div class="approval-header">
-                    <p-tag
+                    <app-status-tag
                       [value]="
                         approval.request_type === 'team_creation'
                           ? 'Team Request'
@@ -162,10 +165,11 @@ import {
                       "
                       [severity]="
                         approval.request_type === 'team_creation'
-                          ? 'warn'
+                          ? 'warning'
                           : 'info'
                       "
-                    ></p-tag>
+                      size="sm"
+                    />
                     <span class="approval-date">{{
                       approval.created_at | date: "short"
                     }}</span>

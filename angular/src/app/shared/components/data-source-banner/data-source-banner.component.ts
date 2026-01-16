@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { DataState } from "../../../core/services/data-source.service";
 import {
@@ -34,7 +34,7 @@ import {
   selector: "app-data-source-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TooltipModule, StatusTagComponent],
+  imports: [CommonModule, Tooltip, StatusTagComponent],
   template: `
     @if (shouldShow()) {
       <div class="data-source-banner" [class]="bannerClass()">
@@ -178,7 +178,7 @@ export class DataSourceBannerComponent {
       case DataState.NO_DATA:
         return "secondary";
       case DataState.INSUFFICIENT_DATA:
-        return "warn"; // PrimeNG uses "warn" not "warning"
+        return "warning"; // PrimeNG uses "warning" not "warning"
       case DataState.REAL_DATA:
         return "success";
       default:

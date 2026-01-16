@@ -12,10 +12,10 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -28,11 +28,11 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   imports: [
     RouterModule,
     ReactiveFormsModule,
-    CardModule,
+    Card,
     ButtonComponent,
-    InputTextModule,
+    InputText,
     Message,
-    ToastModule,
+    Toast,
   ],
   template: `
     <p-toast></p-toast>

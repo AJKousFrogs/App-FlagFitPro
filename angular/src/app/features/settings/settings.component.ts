@@ -17,17 +17,17 @@ import {
     Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { DividerModule } from "primeng/divider";
-import { InputTextModule } from "primeng/inputtext";
-import { PasswordModule } from "primeng/password";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { Divider } from "primeng/divider";
+import { InputText } from "primeng/inputtext";
+import { Password } from "primeng/password";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { TIMEOUTS, TOAST, UI_LIMITS } from "../../core/constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
@@ -60,12 +60,12 @@ import { calculateAge } from "../../shared/utils/date.utils";
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    CardModule,
+    Card,
     DatePicker,
-    InputTextModule,
-    ProgressBarModule,
+    InputText,
+    ProgressBar,
     Select,
-    ToastModule,
+    Toast,
     ButtonComponent,
     IconButtonComponent,
     CardComponent,
@@ -75,11 +75,11 @@ import { calculateAge } from "../../shared/utils/date.utils";
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
-    PasswordModule,
-    DialogModule,
-    DividerModule,
+    Password,
+    Dialog,
+    Divider,
     ToggleSwitch,
-    TooltipModule,
+    Tooltip,
     RouterLink,
   ],
   templateUrl: "./settings.component.html",

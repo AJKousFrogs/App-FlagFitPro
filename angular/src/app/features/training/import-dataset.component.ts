@@ -5,10 +5,10 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { CardModule } from "primeng/card";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingMetricsService } from "../../core/services/training-metrics.service";
@@ -21,10 +21,10 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    InputTextModule,
+    Card,
+    InputText,
     Message,
-    ToastModule,
+    Toast,
   ],
 
   template: `

@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { TableModule } from "primeng/table";
 import {
   TrainingMetricsService,
@@ -26,7 +26,7 @@ import { formatDate } from "../../shared/utils/date.utils";
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
+    Card,
     TableModule,
     LazyChartComponent,
   ],

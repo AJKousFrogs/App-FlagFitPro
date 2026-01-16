@@ -23,10 +23,10 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import {} from "@angular/core/rxjs-interop";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -57,8 +57,8 @@ import { calculateAge } from "../../../shared/utils/date.utils";
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    ProgressBarModule,
+    Card,
+    ProgressBar,
     Tabs,
     TabPanel,
     MainLayoutComponent,
@@ -113,7 +113,8 @@ import { calculateAge } from "../../../shared/utils/date.utils";
                     icon="pi-plus"
                     variant="outlined"
                     routerLink="/training/log"
-                    ariaLabel="plus"
+                    ariaLabel="Log a workout"
+                    tooltip="Log workout"
                   />
                 </div>
               } @else {

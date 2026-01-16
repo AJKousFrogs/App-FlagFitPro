@@ -28,7 +28,7 @@ import { Injectable, inject } from "@angular/core";
 import { MessageService } from "primeng/api";
 
 export interface ToastOptions {
-  severity?: "success" | "info" | "warn" | "error";
+  severity?: "success" | "info" | "warning" | "error";
   summary?: string;
   detail?: string;
   life?: number;
@@ -119,7 +119,7 @@ export class ToastService {
       life,
     );
     this.messageService.add({
-      severity: "warn",
+      severity: "warning",
       summary,
       detail,
       life: lifeMs,

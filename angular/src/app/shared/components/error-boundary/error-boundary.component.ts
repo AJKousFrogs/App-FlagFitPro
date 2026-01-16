@@ -24,14 +24,14 @@ import {
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { GlobalErrorHandlerService } from "../../../core/services/global-error-handler.service";
 
 @Component({
   selector: "app-error-boundary",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule, ButtonComponent],
+  imports: [Card, ButtonComponent],
   template: `
     @if (hasError()) {
       <div class="error-boundary-container">

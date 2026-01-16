@@ -22,6 +22,24 @@ import {
 } from "./roster.models";
 
 /**
+ * User data from public.users table (simplified for team member queries)
+ */
+interface TeamMemberUserData {
+  id: string;
+  email?: string;
+  full_name?: string;
+  raw_user_meta_data?: {
+    full_name?: string;
+    country?: string;
+    experience?: string;
+    phone?: string;
+    specialization?: string;
+    certifications?: string[];
+    achievements?: string[];
+  };
+}
+
+/**
  * Team member record from database
  */
 interface TeamMemberRecord {
@@ -29,19 +47,7 @@ interface TeamMemberRecord {
   team_id: string;
   user_id: string;
   role: string;
-  users?: {
-    id: string;
-    email: string;
-    raw_user_meta_data?: {
-      full_name?: string;
-      country?: string;
-      experience?: string;
-      phone?: string;
-      specialization?: string;
-      certifications?: string[];
-      achievements?: string[];
-    };
-  };
+  users?: TeamMemberUserData;
   teams?: {
     name: string;
   };
@@ -226,7 +232,7 @@ export class RosterService {
         
         // Step 2: Fetch user data from public.users for these member user_ids
         const userIds = (membersData || []).map((m) => m.user_id).filter(Boolean);
-        let usersMap: Map<string, { id: string; email?: string; full_name?: string }> = new Map();
+        const usersMap = new Map<string, TeamMemberUserData>();
         
         if (userIds.length > 0) {
           const { data: usersData, error: usersError } = await this.supabaseService.client

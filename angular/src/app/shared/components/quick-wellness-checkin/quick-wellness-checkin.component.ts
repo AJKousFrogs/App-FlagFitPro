@@ -26,9 +26,9 @@ import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
 import { ButtonComponent } from "../button/button.component";
-import { CheckboxModule } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
+import { Checkbox } from "primeng/checkbox";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
 import { Textarea } from "primeng/textarea";
 
 // Services
@@ -45,9 +45,9 @@ import { WellnessService } from "../../../core/services/wellness.service";
     CommonModule,
     FormsModule,
     RouterModule,
-    DialogModule,
-    InputNumberModule,
-    CheckboxModule,
+    Dialog,
+    InputNumber,
+    Checkbox,
     Textarea,
 
     ButtonComponent,

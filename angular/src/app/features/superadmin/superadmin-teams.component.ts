@@ -7,12 +7,13 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TableModule } from "primeng/table";
-import { InputTextModule } from "primeng/inputtext";
+import { InputText } from "primeng/inputtext";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
@@ -35,10 +36,11 @@ interface Team {
     CommonModule,
     RouterLink,
     FormsModule,
-    CardModule,
-    TagModule,
+    Card,
+    Tag,
+    StatusTagComponent,
     TableModule,
-    InputTextModule,
+    InputText,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -52,10 +54,12 @@ interface Team {
           subtitle="View and manage all teams on the platform"
         >
           <div class="header-actions">
-            <a routerLink="/superadmin" class="p-button p-button-text">
-              <i class="pi pi-arrow-left"></i>
-              Back to Dashboard
-            </a>
+            <app-button
+              iconLeft="pi-arrow-left"
+              variant="text"
+              routerLink="/superadmin"
+              >Back to Dashboard</app-button
+            >
           </div>
         </app-page-header>
 
@@ -139,10 +143,11 @@ interface Team {
                   <td>{{ team.name }}</td>
                   <td>{{ team.country_code }}</td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="team.status"
                       [severity]="getStatusSeverity(team.status)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td>{{ team.member_count }}</td>
                   <td>{{ formatOlympicTrack(team.olympic_track) }}</td>
@@ -290,12 +295,12 @@ export class SuperadminTeamsComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "warn" | "danger" | "info" | "secondary" {
+  ): "success" | "warning" | "danger" | "info" | "secondary" {
     switch (status) {
       case "active":
         return "success";
       case "pending":
-        return "warn";
+        return "warning";
       case "suspended":
         return "danger";
       default:

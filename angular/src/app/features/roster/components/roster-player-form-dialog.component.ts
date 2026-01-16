@@ -20,10 +20,10 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { InputNumberModule } from "primeng/inputnumber";
+import { InputNumber } from "primeng/inputnumber";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import {
@@ -52,10 +52,10 @@ export interface PlayerFormData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    DialogModule,
-    InputTextModule,
+    Dialog,
+    InputText,
     Select,
-    InputNumberModule,
+    InputNumber,
 
     ButtonComponent,
     IconButtonComponent,
@@ -234,7 +234,8 @@ export interface PlayerFormData {
           [loading]="isSaving()"
           [disabled]="!playerForm.valid || isSaving()"
           (clicked)="onSave()"
-          ariaLabel="check"
+          ariaLabel="Save player"
+          tooltip="Save"
         />
       </ng-template>
     </p-dialog>

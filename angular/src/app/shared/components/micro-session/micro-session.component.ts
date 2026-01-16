@@ -24,13 +24,13 @@ import {
   output,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { ProgressBarModule } from "primeng/progressbar";
-import { SliderModule } from "primeng/slider";
-import { TextareaModule } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
+import { Dialog } from "primeng/dialog";
+import { ProgressBar } from "primeng/progressbar";
+import { Slider } from "primeng/slider";
+import { Textarea } from "primeng/textarea";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
@@ -77,13 +77,13 @@ type SessionStatus =
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    DialogModule,
-    ProgressBarModule,
-    CheckboxModule,
-    SliderModule,
-    TooltipModule,
-    TextareaModule,
+    Card,
+    Dialog,
+    ProgressBar,
+    Checkbox,
+    Slider,
+    Tooltip,
+    Textarea,
 
     ButtonComponent,
     StatusTagComponent,

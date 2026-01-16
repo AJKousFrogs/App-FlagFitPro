@@ -28,10 +28,10 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
 import { TableModule } from "primeng/table";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -95,10 +95,10 @@ type PaymentMethod = "check" | "cash" | "online" | "transfer";
 // ===== Constants =====
 const FEE_STATUS_CONFIG: Record<
   FeeStatus,
-  { label: string; severity: "success" | "warn" | "danger" | "info" }
+  { label: string; severity: "success" | "warning" | "danger" | "info" }
 > = {
   paid: { label: "Paid", severity: "success" },
-  pending: { label: "Pending", severity: "warn" },
+  pending: { label: "Pending", severity: "warning" },
   overdue: { label: "Overdue", severity: "danger" },
   partial: { label: "Partial", severity: "info" },
 };
@@ -122,10 +122,10 @@ const PAYMENT_METHOD_CONFIG: Record<
     FormsModule,
     CurrencyPipe,
     DatePipe,
-    CardModule,
-    DialogModule,
+    Card,
+    Dialog,
     TableModule,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 

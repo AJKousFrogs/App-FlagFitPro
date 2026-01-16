@@ -8,8 +8,8 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { InputNumberModule } from "primeng/inputnumber";
+import { Card } from "primeng/card";
+import { InputNumber } from "primeng/inputnumber";
 import { Message } from "primeng/message";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
@@ -41,7 +41,7 @@ import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
 
 interface WellnessAlert {
   id: string;
-  severity: "danger" | "warn" | "info";
+  severity: "danger" | "warning" | "info";
   title: string;
   message: string;
   recommendations?: string[];
@@ -63,10 +63,10 @@ interface WellnessMetric {
   imports: [
     FormsModule,
     RouterModule,
-    CardModule,
+    Card,
 
     LazyChartComponent,
-    InputNumberModule,
+    InputNumber,
     Message,
     AppLoadingComponent,
     ButtonComponent,
@@ -894,7 +894,7 @@ export class WellnessComponent {
         if (diff > 10) {
           alerts.push({
             id: "elevated-hr",
-            severity: "warn",
+            severity: "warning",
             title: "ELEVATED RESTING HEART RATE",
             message: `Your resting HR (${latest.resting_hr} BPM) is ${diff} BPM above baseline. This may indicate fatigue, stress, or illness.`,
             recommendations: ["Consider a lighter training day"],
@@ -922,11 +922,11 @@ export class WellnessComponent {
   /**
    * Get icon class for alert severity
    */
-  getAlertIcon(severity: "danger" | "warn" | "info"): string {
+  getAlertIcon(severity: "danger" | "warning" | "info"): string {
     switch (severity) {
       case "danger":
         return "pi pi-exclamation-circle";
-      case "warn":
+      case "warning":
         return "pi pi-exclamation-triangle";
       case "info":
         return "pi pi-lightbulb";

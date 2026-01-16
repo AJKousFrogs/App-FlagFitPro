@@ -11,14 +11,14 @@ import {
 
 import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { AvatarModule } from "primeng/avatar";
+import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
-import { ProgressBarModule } from "primeng/progressbar";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { ProgressBar } from "primeng/progressbar";
+import { ProgressSpinner } from "primeng/progressspinner";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { AccountDeletionService } from "../../core/services/account-deletion.service";
 import { ApiService } from "../../core/services/api.service";
@@ -63,16 +63,16 @@ interface PendingInvitation {
   imports: [
     CommonModule,
     RouterModule,
-    AvatarModule,
+    Avatar,
     StatusTagComponent,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
-    ProgressBarModule,
-    ProgressSpinnerModule,
-    TooltipModule,
+    ProgressBar,
+    ProgressSpinner,
+    Tooltip,
     MainLayoutComponent,
     PageErrorStateComponent,
     MobileOptimizedImageDirective,
@@ -100,7 +100,8 @@ interface PendingInvitation {
                   icon="pi-times"
                   [loading]="cancellingDeletion()"
                   (clicked)="cancelDeletion()"
-                  ariaLabel="times"
+                  ariaLabel="Cancel account deletion"
+                  tooltip="Cancel deletion"
                 />
                 <a
                   [routerLink]="deletionMessage.helpLink"

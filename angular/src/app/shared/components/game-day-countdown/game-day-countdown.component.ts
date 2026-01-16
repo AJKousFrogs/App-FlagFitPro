@@ -25,10 +25,10 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 // PrimeNG
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
-import { ProgressBarModule } from "primeng/progressbar";
-import { TooltipModule } from "primeng/tooltip";
+import { ProgressBar } from "primeng/progressbar";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 // Services
@@ -58,9 +58,9 @@ interface UpcomingGame {
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    ProgressBarModule,
-    TooltipModule,
+    Card,
+    ProgressBar,
+    Tooltip,
 
     ButtonComponent,
     StatusTagComponent,

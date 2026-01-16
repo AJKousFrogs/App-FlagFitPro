@@ -20,9 +20,10 @@ import {
   computed,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { RouterModule } from "@angular/router";
 import {
   TrainingSafetyService,
@@ -34,7 +35,7 @@ import { AuthService } from "../../../core/services/auth.service";
   selector: "app-safety-warnings",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, TagModule, RouterModule, ButtonComponent],
+  imports: [CommonModule, Card, Tag, StatusTagComponent, RouterModule, ButtonComponent],
   template: `
     @if (hasWarnings()) {
       <div class="safety-warnings-container">
@@ -50,11 +51,11 @@ import { AuthService } from "../../../core/services/auth.service";
             </div>
           </div>
           @if (hasCriticalWarnings()) {
-            <p-tag
+            <app-status-tag
               value="CRITICAL"
               severity="danger"
-              styleClass="critical-tag"
-            ></p-tag>
+              size="sm"
+            />
           }
         </div>
 
@@ -73,10 +74,11 @@ import { AuthService } from "../../../core/services/auth.service";
               <div class="warning-content">
                 <div class="warning-header-row">
                   <h4 class="warning-title">{{ warning.title }}</h4>
-                  <p-tag
+                  <app-status-tag
                     [value]="getSeverityLabel(warning.severity)"
                     [severity]="getSeverityTagType(warning.severity)"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
                 <p class="warning-message">{{ warning.message }}</p>
                 @if (warning.recommendation) {
@@ -222,13 +224,13 @@ export class SafetyWarningsComponent implements OnInit {
 
   getSeverityTagType(
     severity: WarningSeverity,
-  ): "danger" | "warn" | "info" | "success" {
+  ): "danger" | "warning" | "info" | "success" {
     switch (severity) {
       case "critical":
       case "danger":
         return "danger";
       case "warning":
-        return "warn";
+        return "warning";
       case "info":
         return "info";
       default:

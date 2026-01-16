@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MessageService } from "primeng/api";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 
 /**
  * Toast Component - Angular 21 Premium Edition
@@ -25,7 +25,7 @@ import { ToastModule } from "primeng/toast";
   selector: "app-toast",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ToastModule],
+  imports: [CommonModule, Toast],
   providers: [MessageService],
   template: `
     <p-toast
@@ -152,7 +152,7 @@ export class ToastComponent implements OnInit, OnDestroy {
     life?: number,
   ): void {
     messageService.add({
-      severity: "warn",
+      severity: "warning",
       summary,
       detail,
       life: life || 4000,

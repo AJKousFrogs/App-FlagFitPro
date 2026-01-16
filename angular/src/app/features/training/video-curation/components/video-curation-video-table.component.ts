@@ -4,35 +4,37 @@
  * Displays the main videos table with filtering and actions.
  */
 
+import { CommonModule } from "@angular/common";
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
   input,
   output,
   signal,
 } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
 // PrimeNG
-import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { InputTextModule } from "primeng/inputtext";
+import { Avatar } from "primeng/avatar";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { TooltipModule } from "primeng/tooltip";
-import { AvatarModule } from "primeng/avatar";
+import { TableModule } from "primeng/table";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
+import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 
-import {
-  InstagramVideo,
-  FlagPosition,
-  VideoStatus,
-} from "../video-curation.models";
 import {
   formatFocus,
   getStatusSeverity,
   POSITION_OPTIONS,
   STATUS_OPTIONS,
 } from "../video-curation-utils";
+import {
+  FlagPosition,
+  InstagramVideo,
+  VideoStatus,
+} from "../video-curation.models";
 
 @Component({
   selector: "app-video-curation-video-table",
@@ -42,24 +44,27 @@ import {
     CommonModule,
     FormsModule,
     TableModule,
-    TagModule,
-    InputTextModule,
+    Tag,
+    StatusTagComponent,
+    InputText,
     Select,
-    TooltipModule,
-    AvatarModule,
+    Tooltip,
+    Avatar,
+    IconButtonComponent,
   ],
   template: `
     <div class="tab-content">
       <!-- Filters -->
       <div class="table-filters">
         <span class="p-input-icon-left">
-          <i class="pi pi-search"></i>
+          <i class="pi pi-search" aria-hidden="true"></i>
           <input
             type="text"
             pInputText
             [ngModel]="searchValue()"
             (ngModelChange)="searchValue.set($event); onFilterChange()"
             placeholder="Search videos..."
+            aria-label="Search videos by title or description"
             class="filter-input"
           />
         </span>
@@ -70,6 +75,7 @@ import {
           placeholder="All Positions"
           [showClear]="true"
           styleClass="filter-select"
+          ariaLabel="Filter by position"
         ></p-select>
         <p-select
           [ngModel]="statusValue()"
@@ -78,6 +84,7 @@ import {
           placeholder="All Statuses"
           [showClear]="true"
           styleClass="filter-select"
+          ariaLabel="Filter by status"
         ></p-select>
       </div>
 
@@ -114,6 +121,7 @@ import {
                 icon="pi pi-play"
                 shape="circle"
                 styleClass="video-avatar"
+                ariaLabel="Video thumbnail"
               ></p-avatar>
             </td>
             <td>
@@ -130,14 +138,14 @@ import {
                   video.creator.displayName
                 }}</span>
                 @if (video.creator.verified) {
-                  <i class="pi pi-verified verified-icon"></i>
+                  <i class="pi pi-verified verified-icon" aria-label="Verified creator"></i>
                 }
               </div>
             </td>
             <td>
               <div class="tags-cell">
                 @for (pos of video.positions.slice(0, 2); track pos) {
-                  <p-tag [value]="pos" severity="info"></p-tag>
+                  <app-status-tag [value]="pos" severity="info" size="sm" />
                 }
                 @if (video.positions.length > 2) {
                   <span class="more-tag"
@@ -149,74 +157,70 @@ import {
             <td>
               <div class="tags-cell">
                 @for (focus of video.trainingFocus.slice(0, 2); track focus) {
-                  <p-tag
+                  <app-status-tag
                     [value]="getFormatFocus(focus)"
                     severity="success"
-                    styleClass="status-tag status-tag--success"
-                  ></p-tag>
+                    size="sm"
+                  />
                 }
               </div>
             </td>
             <td>
               <div class="rating-cell">
-                <i class="pi pi-star-fill"></i>
+                <i class="pi pi-star-fill" aria-hidden="true"></i>
+                <span class="visually-hidden">Rating:</span>
                 {{ video.rating.toFixed(1) }}
               </div>
             </td>
             <td>
-              <p-tag
+              <app-status-tag
                 [value]="getVideoStatusValue(video.id)"
                 [severity]="
                   getStatusSeverityValue(getVideoStatusValue(video.id))
                 "
-              ></p-tag>
+                size="sm"
+              />
             </td>
             <td>
               <div class="action-buttons">
-                <button
-                  pButton
-                  icon="pi pi-eye"
-                  class="p-button-text"
-                  pTooltip="Preview"
-                  aria-label="Preview video"
-                  (click)="preview.emit(video)"
-                ></button>
+                <app-icon-button
+                  icon="pi-eye"
+                  ariaLabel="Preview video"
+                  tooltip="Preview"
+                  (clicked)="preview.emit(video)"
+                />
                 @if (getVideoStatusValue(video.id) !== "approved") {
-                  <button
-                    pButton
-                    icon="pi pi-check"
-                    class="p-button-text p-button-success"
-                    pTooltip="Approve"
-                    aria-label="Approve video"
-                    (click)="approve.emit(video)"
-                  ></button>
+                  <app-icon-button
+                    icon="pi-check"
+                    variant="success"
+                    ariaLabel="Approve video"
+                    tooltip="Approve"
+                    (clicked)="approve.emit(video)"
+                  />
                 }
                 @if (getVideoStatusValue(video.id) !== "rejected") {
-                  <button
-                    pButton
-                    icon="pi pi-times"
-                    class="p-button-text p-button-danger"
-                    pTooltip="Reject"
-                    aria-label="Reject video"
-                    (click)="reject.emit(video)"
-                  ></button>
+                  <app-icon-button
+                    icon="pi-times"
+                    variant="danger"
+                    ariaLabel="Reject video"
+                    tooltip="Reject"
+                    (clicked)="reject.emit(video)"
+                  />
                 }
-                <button
-                  pButton
-                  icon="pi pi-plus"
-                  class="p-button-text"
-                  pTooltip="Add to Playlist"
-                  aria-label="Add to playlist"
-                  (click)="addToPlaylist.emit(video)"
-                ></button>
+                <app-icon-button
+                  icon="pi-plus"
+                  ariaLabel="Add to playlist"
+                  tooltip="Add to Playlist"
+                  (clicked)="addToPlaylist.emit(video)"
+                />
               </div>
             </td>
           </tr>
         </ng-template>
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="8" class="empty-message">
-              <i class="pi pi-inbox"></i>
+            <td colspan="8" class="empty-message" role="status">
+              <i class="pi pi-inbox" aria-hidden="true"></i>
               <span>No videos found</span>
             </td>
           </tr>
@@ -257,7 +261,7 @@ export class VideoCurationVideoTableComponent {
 
   getStatusSeverityValue(
     status: string,
-  ): "warn" | "success" | "danger" | undefined {
+  ): "warning" | "success" | "danger" | "secondary" {
     return getStatusSeverity(status);
   }
 

@@ -97,7 +97,8 @@ import { IconButtonComponent } from "../button/icon-button.component";
             icon="pi-play"
             variant="success"
             (clicked)="start()"
-            ariaLabel="play"
+            ariaLabel="Start timer"
+            tooltip="Start"
           />
         }
 
@@ -105,7 +106,8 @@ import { IconButtonComponent } from "../button/icon-button.component";
           <app-icon-button
             icon="pi-pause"
             (clicked)="pause()"
-            ariaLabel="pause"
+            ariaLabel="Pause timer"
+            tooltip="Pause"
           />
         }
 
@@ -114,7 +116,8 @@ import { IconButtonComponent } from "../button/icon-button.component";
             icon="pi-refresh"
             variant="outlined"
             (clicked)="reset()"
-            ariaLabel="refresh"
+            ariaLabel="Reset timer"
+            tooltip="Reset"
           />
         }
       </div>

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { formatNumber, formatStat } from "../../utils/format.utils";
 
@@ -29,7 +29,7 @@ export interface StatItem {
   selector: "app-stats-grid",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, StatusTagComponent],
+  imports: [CommonModule, Card, StatusTagComponent],
   template: `
     <section class="stats-overview" aria-label="Statistics">
       @for (stat of stats(); track trackByLabel($index, stat)) {

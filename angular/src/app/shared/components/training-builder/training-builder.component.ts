@@ -17,13 +17,13 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
-import { StepperModule } from "primeng/stepper";
-import { TimelineModule } from "primeng/timeline";
+import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
+import { Timeline } from "primeng/timeline";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
@@ -65,13 +65,13 @@ interface Goal {
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    CardModule,
-    StepperModule,
+    Card,
+    Stepper, StepList, Step, StepPanels, StepPanel,
     Select,
     Slider,
-    InputTextModule,
-    TimelineModule,
-    DialogModule,
+    InputText,
+    Timeline,
+    Dialog,
     ButtonComponent,
     StatusTagComponent,
   ],

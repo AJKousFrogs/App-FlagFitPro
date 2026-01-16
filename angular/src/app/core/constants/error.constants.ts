@@ -117,7 +117,7 @@ export const ERROR_TYPE_MAP: Record<string, ErrorType> = {
  */
 export enum ErrorSeverity {
   INFO = "info",
-  WARN = "warn",
+  WARN = "warning",
   ERROR = "error",
   CRITICAL = "critical",
 }

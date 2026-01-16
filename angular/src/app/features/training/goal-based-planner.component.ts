@@ -8,10 +8,11 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Select } from "primeng/select";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   TrainingPlanService,
   TrainingGoal,
@@ -30,9 +31,10 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Select,
-    TagModule,
+    Tag,
+    StatusTagComponent,
     TrafficLightRiskComponent,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -92,10 +94,11 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                     Readiness
                   </div>
                   <div class="stat-block__value text-lg font-bold">
-                    <p-tag
+                    <app-status-tag
                       [severity]="getReadinessSeverity()"
                       [value]="readinessLevel() | titlecase"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </div>
                 </div>
                 <div class="stat-item stat-block stat-block--compact">
@@ -121,10 +124,11 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                   <h3 class="text-xl font-semibold text-text-primary">
                     Weekly Training Plan - {{ getGoalLabel() }}
                   </h3>
-                  <p-tag
-                    [value]="weeklyPlan()?.phase || '' | titlecase"
+                  <app-status-tag
+                    [value]="(weeklyPlan()?.phase || '') | titlecase"
                     severity="info"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
 
                 <div
@@ -139,12 +143,13 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                         <div class="day-name font-bold text-lg">
                           {{ getDayName(session.day) }}
                         </div>
-                        <p-tag
+                        <app-status-tag
                           [value]="session.sessionType | titlecase"
                           [severity]="
                             getSessionTypeSeverity(session.sessionType)
                           "
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
 
                       <div class="session-details">
@@ -399,8 +404,9 @@ export class GoalBasedPlannerComponent implements OnInit {
     return "text-green-600";
   }
 
-  getReadinessSeverity(): "success" | "warn" | "danger" {
-    return this.trainingService.getReadinessSeverity(this.readinessLevel());
+  getReadinessSeverity(): "success" | "warning" | "danger" {
+    const severity = this.trainingService.getReadinessSeverity(this.readinessLevel());
+    return severity === "warning" ? "warning" : severity;
   }
 
   getProgressionRule(): string {
@@ -423,14 +429,14 @@ export class GoalBasedPlannerComponent implements OnInit {
     return "border-green-500 bg-green-50";
   }
 
-  getSessionTypeSeverity(type: string): "success" | "info" | "warn" | "danger" {
-    const severityMap: Record<string, "success" | "info" | "warn" | "danger"> =
+  getSessionTypeSeverity(type: string): "success" | "info" | "warning" | "danger" {
+    const severityMap: Record<string, "success" | "info" | "warning" | "danger"> =
       {
         speed: "danger",
-        agility: "warn",
+        agility: "warning",
         strength: "info",
         technique: "success",
-        conditioning: "warn",
+        conditioning: "warning",
         recovery: "success",
         game: "info",
       };

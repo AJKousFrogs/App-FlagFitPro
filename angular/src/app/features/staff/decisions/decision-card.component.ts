@@ -17,9 +17,9 @@ import type { DecisionLedgerEntry } from "@core/models/decision-ledger.models";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
 import { formatDate, getTimeAgo } from "@shared/utils/date.utils";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
+import { ButtonComponent } from "@shared/components/button/button.component";
+import { Card } from "primeng/card";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 @Component({
   selector: "app-decision-card",
@@ -28,9 +28,9 @@ import { TagModule } from "primeng/tag";
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
+    Card,
+    ButtonComponent,
+    StatusTagComponent,
     CardShellComponent,
     ConfidenceIndicatorComponent,
   ],
@@ -42,10 +42,11 @@ import { TagModule } from "primeng/tag";
       [class.decision-card--low-confidence]="confidenceScore() < 0.7"
     >
       <ng-container header-actions>
-        <p-tag
+        <app-status-tag
           [value]="decision().reviewPriority"
           [severity]="getPrioritySeverity(decision().reviewPriority)"
-        ></p-tag>
+          size="sm"
+        />
       </ng-container>
 
       <div class="decision-card__content">
@@ -82,27 +83,27 @@ import { TagModule } from "primeng/tag";
           <span>
             Review due: {{ formatReviewDate(decision().reviewDate) }}
             @if (isOverdue(decision().reviewDate)) {
-              <p-tag severity="danger" value="Overdue"></p-tag>
+              <app-status-tag severity="danger" value="Overdue" size="sm" />
             }
           </span>
         </div>
 
         <!-- Actions -->
         <div class="decision-card__actions">
-          <p-button
-            label="View Details"
-            icon="pi pi-eye"
-            [outlined]="true"
-            size="small"
+          <app-button
+            iconLeft="pi-eye"
+            variant="outlined"
+            size="sm"
             [routerLink]="['/staff/decisions', decision().id]"
-          ></p-button>
+            >View Details</app-button
+          >
           @if (canReview()) {
-            <p-button
-              label="Review Now"
-              icon="pi pi-check"
-              size="small"
-              (onClick)="review.emit(decision())"
-            ></p-button>
+            <app-button
+              iconLeft="pi-check"
+              size="sm"
+              (clicked)="review.emit(decision())"
+              >Review Now</app-button
+            >
           }
         </div>
       </div>
@@ -240,10 +241,10 @@ export class DecisionCardComponent {
 
   getPrioritySeverity(
     priority: "critical" | "high" | "normal" | "low",
-  ): "danger" | "warn" | "info" | "success" {
+  ): "danger" | "warning" | "info" | "success" {
     const severityMap = {
       critical: "danger" as const,
-      high: "warn" as const,
+      high: "warning" as const,
       normal: "info" as const,
       low: "success" as const,
     };

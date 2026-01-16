@@ -12,6 +12,7 @@
 .hero-section {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -295,7 +296,7 @@
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 8vw, var(--font-display-xl, 4.5rem));
+  font-size: clamp(2.5rem, 8vw, var(--font-h1-size, 4.5rem));
   font-weight: var(--font-weight-extrabold);
   margin-bottom: var(--space-6);
   line-height: 1.1;

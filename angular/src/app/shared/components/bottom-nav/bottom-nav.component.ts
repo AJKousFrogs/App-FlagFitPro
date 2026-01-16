@@ -8,12 +8,11 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { NavigationEnd, Router, RouterModule } from "@angular/router";
-import { BadgeModule } from "primeng/badge";
-import { RippleModule } from "primeng/ripple";
+import { NavigationEnd, Router } from "@angular/router";
 import { Subscription, filter } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { NotificationStateService } from "../../../core/services/notification-state.service";
+import { NavItemComponent } from "../nav-item.component";
 
 interface NavItem {
   label: string;
@@ -27,39 +26,33 @@ interface NavItem {
   selector: "app-bottom-nav",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, BadgeModule, RippleModule],
+  imports: [CommonModule, NavItemComponent],
   template: `
-    <nav class="bottom-nav" [class.hidden]="!isVisible()">
+    <nav
+      class="bottom-nav"
+      [class.hidden]="!isVisible()"
+      aria-label="Primary navigation"
+    >
       @for (item of visibleNavItems(); track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
-          class="nav-item"
-          pRipple
-        >
-          <div class="nav-icon-wrapper">
-            <i [class]="'pi ' + item.icon"></i>
-            @if (item.badge && item.badge > 0) {
-              <p-badge
-                [value]="item.badge.toString()"
-                severity="danger"
-                class="nav-badge"
-              ></p-badge>
-            }
-          </div>
-          <span class="nav-label">{{ item.label }}</span>
-        </a>
+        <app-nav-item
+          [route]="item.route"
+          [label]="item.label"
+          [icon]="item.icon"
+          [badge]="item.badge && item.badge > 0 ? item.badge : null"
+          [exact]="item.route === '/dashboard'"
+          variant="bottom"
+        />
       }
 
       <!-- More menu for additional items -->
       @if (hasMoreItems()) {
-        <button class="nav-item more-btn" (click)="toggleMoreMenu()" pRipple>
-          <div class="nav-icon-wrapper">
-            <i class="pi pi-ellipsis-h"></i>
-          </div>
-          <span class="nav-label">More</span>
-        </button>
+        <app-nav-item
+          label="More"
+          icon="pi-ellipsis-h"
+          ariaLabel="More navigation items"
+          variant="bottom"
+          (clicked)="toggleMoreMenu()"
+        />
       }
     </nav>
 
@@ -69,27 +62,25 @@ interface NavItem {
         <div class="more-menu" (click)="$event.stopPropagation()">
           <div class="more-menu-header">
             <span>More</span>
-            <button class="close-btn" (click)="toggleMoreMenu()">
+            <button
+              class="close-btn"
+              (click)="toggleMoreMenu()"
+              aria-label="Close more menu"
+              type="button"
+            >
               <i class="pi pi-times"></i>
             </button>
           </div>
           <div class="more-menu-items">
             @for (item of moreNavItems(); track item.route) {
-              <a
-                [routerLink]="item.route"
-                routerLinkActive="active"
-                class="more-item"
-                (click)="toggleMoreMenu()"
-              >
-                <i [class]="'pi ' + item.icon"></i>
-                <span>{{ item.label }}</span>
-                @if (item.badge && item.badge > 0) {
-                  <p-badge
-                    [value]="item.badge.toString()"
-                    severity="danger"
-                  ></p-badge>
-                }
-              </a>
+              <app-nav-item
+                [route]="item.route"
+                [label]="item.label"
+                [icon]="item.icon"
+                [badge]="item.badge && item.badge > 0 ? item.badge : null"
+                variant="menu"
+                (clicked)="toggleMoreMenu()"
+              />
             }
           </div>
         </div>

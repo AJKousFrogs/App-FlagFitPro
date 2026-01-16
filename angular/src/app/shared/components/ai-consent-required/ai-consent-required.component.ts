@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { RouterLink } from "@angular/router";
@@ -37,7 +37,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
+    Card,
     RouterLink,
     ButtonComponent,
     IconButtonComponent,
@@ -72,7 +72,8 @@ import {
               variant="outlined"
               size="sm"
               routerLink="getHelpLink()"
-              ariaLabel="cog"
+              ariaLabel="Go to AI settings"
+              tooltip="AI Settings"
             />
             @if (showDismiss()) {
               <app-button variant="text" size="sm" (clicked)="onDismiss.emit()"

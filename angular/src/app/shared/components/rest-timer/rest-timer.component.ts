@@ -9,7 +9,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { DialogModule } from "primeng/dialog";
+import { Dialog } from "primeng/dialog";
 import { Slider } from "primeng/slider";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
@@ -20,7 +20,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    DialogModule,
+    Dialog,
     Slider,
     FormsModule,
     ButtonComponent,
@@ -35,7 +35,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
         (click)="maximize()"
       >
         <div class="floating-content">
-          <i class="pi pi-clock"></i>
+          <i class="pi pi-clock" aria-hidden="true"></i>
           <span class="floating-time">{{ formattedTime() }}</span>
         </div>
         <div class="floating-progress">
@@ -58,7 +58,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
       <ng-template pTemplate="header">
         <div class="timer-header">
           <span class="timer-title">
-            <i class="pi pi-clock"></i>
+            <i class="pi pi-clock" aria-hidden="true"></i>
             Rest Timer
           </span>
           <div class="header-actions">
@@ -67,14 +67,16 @@ import { IconButtonComponent } from "../button/icon-button.component";
               variant="text"
               size="sm"
               (clicked)="minimize()"
-              ariaLabel="minus"
+              ariaLabel="Minimize timer"
+              tooltip="Minimize"
             />
             <app-icon-button
               icon="pi-times"
               variant="text"
               size="sm"
               (clicked)="close()"
-              ariaLabel="times"
+              ariaLabel="Close timer"
+              tooltip="Close"
             />
           </div>
         </div>

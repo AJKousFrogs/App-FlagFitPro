@@ -18,16 +18,16 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -106,16 +106,16 @@ const RECURRING_OPTIONS = [
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Checkbox,
     DatePicker,
-    DialogModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputText,
+    ProgressBar,
     RadioButton,
     Select,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -350,8 +350,8 @@ const RECURRING_OPTIONS = [
                 </div>
               </div>
             } @empty {
-              <div class="empty-state">
-                <i class="pi pi-calendar"></i>
+              <div class="empty-state" role="status">
+                <i class="pi pi-calendar" aria-hidden="true"></i>
                 <p>No upcoming events</p>
                 <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
                   >Create Event</app-button
@@ -535,7 +535,8 @@ const RECURRING_OPTIONS = [
           <app-icon-button
             icon="pi-check"
             (clicked)="saveEvent()"
-            ariaLabel="check"
+            ariaLabel="Save event"
+            tooltip="Save"
           />
         </ng-template>
       </p-dialog>
@@ -861,7 +862,7 @@ export class CalendarCoachComponent implements OnInit {
   async saveEvent(): Promise<void> {
     if (!this.eventForm.title || !this.eventForm.date) {
       this.messageService.add({
-        severity: "warn",
+        severity: "warning",
         summary: "Validation Error",
         detail: "Please fill in all required fields",
       });

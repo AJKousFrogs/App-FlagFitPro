@@ -867,7 +867,7 @@ body {
   .lang-check {
     opacity: 0;
     color: var(--ds-primary-green);
-    font-size: var(--font-body-md, 1rem);
+    font-size: var(--font-body-size, 1rem);
     transition:
       opacity 0.2s ease,
       transform 0.2s ease;
@@ -973,7 +973,7 @@ body {
   .p-toast-summary,
   .p-toast .p-toast-summary {
     font-weight: 700;
-    font-size: var(--font-body-md, 1rem);
+    font-size: var(--font-body-size, 1rem);
     line-height: 1.4;
     margin: 0;
   }

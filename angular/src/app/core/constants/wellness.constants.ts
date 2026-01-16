@@ -124,7 +124,7 @@ export interface ReadinessLevelConfig {
   readonly minScore: number;
   readonly label: string;
   readonly cssClass: string;
-  readonly severity: "success" | "info" | "warn" | "danger";
+  readonly severity: "success" | "info" | "warning" | "danger";
   readonly hint: string;
 }
 
@@ -153,7 +153,7 @@ export const READINESS_LEVELS: Record<ReadinessLevelKey, ReadinessLevelConfig> =
       minScore: WELLNESS.READINESS_MODERATE,
       label: "Moderate",
       cssClass: "moderate",
-      severity: "warn",
+      severity: "warning",
       hint: "Consider lighter activity today",
     },
     LOW: {

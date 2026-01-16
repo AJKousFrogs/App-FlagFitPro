@@ -100,14 +100,14 @@ export class WeatherService {
    */
   getWeatherSeverity(
     suitability: "excellent" | "good" | "fair" | "poor",
-  ): "success" | "info" | "warn" | "danger" {
+  ): "success" | "info" | "warning" | "danger" {
     switch (suitability) {
       case "excellent":
         return "success";
       case "good":
         return "info";
       case "fair":
-        return "warn";
+        return "warning";
       case "poor":
         return "danger";
       default:

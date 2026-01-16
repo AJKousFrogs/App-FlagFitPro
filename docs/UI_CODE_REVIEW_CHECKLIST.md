@@ -136,8 +136,9 @@
 ## ✅ PrimeNG Override Checklist
 
 ```
-□ Minimal ::ng-deep usage
+□ No ::ng-deep usage (fully removed from codebase)
 □ Uses styleClass prop where possible
+□ Uses CSS custom properties for theming
 □ Does NOT override PrimeNG internals unnecessarily
 □ Follows PrimeNG design token patterns
 ```

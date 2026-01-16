@@ -11,7 +11,7 @@
 
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 
 export interface WeekDay {
   date: string; // ISO date string
@@ -34,7 +34,7 @@ export interface WeekStats {
   selector: "app-week-progress-strip",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TooltipModule],
+  imports: [CommonModule, Tooltip],
   template: `
     <div class="week-progress-strip">
       <!-- Week Days -->

@@ -14,7 +14,7 @@ import {
   Injector,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { timer, Subscription } from "rxjs";
@@ -84,12 +84,12 @@ interface WindowWithYouTubeAPI {
   selector: "app-youtube-player",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, ButtonComponent, IconButtonComponent],
+  imports: [CommonModule, Card, ButtonComponent, IconButtonComponent],
   template: `
     <div class="youtube-player-container">
       @if (loading()) {
-        <div class="loading-state">
-          <i class="pi pi-spin pi-spinner"></i>
+        <div class="loading-state" role="status" aria-live="polite">
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           <span>Loading video...</span>
         </div>
       }
@@ -117,7 +117,8 @@ interface WindowWithYouTubeAPI {
             icon="pi-volume-up"
             [disabled]="!playerReady()"
             (clicked)="toggleMute()"
-            ariaLabel="volume-up"
+            ariaLabel="Toggle mute"
+            tooltip="Mute/Unmute"
           />
         </div>
       }

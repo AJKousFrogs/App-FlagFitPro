@@ -119,32 +119,31 @@ fi
 echo ""
 
 # ============================================================
-# Decision 22: ::ng-deep only in overrides
+# Decision 22: ::ng-deep fully removed (January 2026)
 # ============================================================
-echo "📋 Decision 22: Checking for ::ng-deep outside overrides..."
+echo "📋 Decision 22: Checking for ::ng-deep usage..."
 
+# Only check for actual ::ng-deep usage, not comments mentioning it
 NG_DEEP=$(grep -RIn \
   --include="*.scss" \
   --include="*.css" \
+  --include="*.ts" \
   --exclude-dir=node_modules \
   --exclude-dir=.angular \
   --exclude-dir=dist \
-  --exclude-dir=overrides \
-  "::ng-deep" src \
-  | grep -v "// exception:" \
-  | grep -v "/* exception:" \
+  -E "^\s+::ng-deep|^\s+:host\s+::ng-deep" src \
   || true)
 
 if [ -n "$NG_DEEP" ]; then
-  echo -e "${YELLOW}⚠️  ::ng-deep found outside overrides:${NC}"
+  echo -e "${RED}❌ ::ng-deep usage found (should be fully removed):${NC}"
   echo "$NG_DEEP" | head -20
   NG_COUNT=$(echo "$NG_DEEP" | wc -l | tr -d ' ')
   echo ""
-  echo -e "${YELLOW}   Total: $NG_COUNT violations${NC}"
-  echo "   Fix: Move to overrides with exception template or refactor"
-  # Warning only, not blocking (gradual migration)
+  echo -e "${RED}   Total: $NG_COUNT violations${NC}"
+  echo "   Fix: Use ViewEncapsulation.None or CSS custom properties"
+  FAILED=1
 else
-  echo -e "${GREEN}   ✓ No ::ng-deep outside overrides${NC}"
+  echo -e "${GREEN}   ✓ No ::ng-deep usage (fully removed from codebase)${NC}"
 fi
 echo ""
 

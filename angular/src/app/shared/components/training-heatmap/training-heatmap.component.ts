@@ -1,12 +1,12 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
-import { ToggleButtonModule } from "primeng/togglebutton";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { ToggleButton } from "primeng/togglebutton";
+import { Tooltip } from "primeng/tooltip";
 import { formatDate } from "../../utils/date.utils";
 
 interface HeatmapCell {
@@ -26,12 +26,12 @@ interface HeatmapCell {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Select,
-    ToggleButtonModule,
-    TagModule,
-    DialogModule,
-    TooltipModule,
+    ToggleButton,
+    Tag,
+    Dialog,
+    Tooltip,
     DatePipe,
   ],
   template: `

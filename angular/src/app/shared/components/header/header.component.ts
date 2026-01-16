@@ -16,16 +16,15 @@ import {
 import { toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { MenuItem } from "primeng/api";
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
-import { DialogModule } from "primeng/dialog";
-import { InputGroupModule } from "primeng/inputgroup";
-import { InputGroupAddonModule } from "primeng/inputgroupaddon";
-import { InputTextModule } from "primeng/inputtext";
-import { MenuModule } from "primeng/menu";
-import { ToolbarModule } from "primeng/toolbar";
-import { TooltipModule } from "primeng/tooltip";
+import { Avatar } from "primeng/avatar";
+import { Button } from "primeng/button";
+import { Dialog } from "primeng/dialog";
+import { InputGroup } from "primeng/inputgroup";
+import { InputGroupAddon } from "primeng/inputgroupaddon";
+import { InputText } from "primeng/inputtext";
+import { Menu } from "primeng/menu";
+import { Toolbar } from "primeng/toolbar";
+import { Tooltip } from "primeng/tooltip";
 import { filter } from "rxjs/operators";
 import { AuthService } from "../../../core/services/auth.service";
 import { HeaderService } from "../../../core/services/header.service";
@@ -34,6 +33,8 @@ import { NotificationStateService } from "../../../core/services/notification-st
 import { SearchService } from "../../../core/services/search.service";
 import { ThemeService } from "../../../core/services/theme.service";
 import { TrainingStatsCalculationService } from "../../../core/services/training-stats-calculation.service";
+import { ConfirmDialogService } from "../../../core/services/confirm-dialog.service";
+import { BadgeComponent } from "../badge/badge.component";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import {
   WeatherData,
@@ -49,19 +50,19 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    InputTextModule,
-    InputGroupModule,
-    InputGroupAddonModule,
-    AvatarModule,
-    BadgeModule,
-    TooltipModule,
-    ToolbarModule,
-    MenuModule,
-    DialogModule,
+    InputText,
+    InputGroup,
+    InputGroupAddon,
+    Avatar,
+    Button,
+    Tooltip,
+    Toolbar,
+    Menu,
+    Dialog,
     SearchPanelComponent,
     NotificationsPanelComponent,
-    ButtonModule,
     IconButtonComponent,
+    BadgeComponent,
     StatusTagComponent,
   ],
   templateUrl: "./header.component.html",
@@ -77,6 +78,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private logger = inject(LoggerService);
   private trainingStatsService = inject(TrainingStatsCalculationService);
   private weatherService = inject(WeatherService);
+  private confirmDialog = inject(ConfirmDialogService);
 
   // Angular 21: Use viewChild() signal instead of @ViewChild()
   notificationsPanel = viewChild<NotificationsPanelComponent>("notificationsPanel");
@@ -329,17 +331,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.router.navigate([path]);
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
     this.closeUserMenu();
-    // Angular 21: Use toSignal() for one-time operations or handle directly
-    this.authService.logout().subscribe({
-      next: () => {
-        // Logout successful, navigation handled by auth service
-      },
-      error: () => {
-        // Error handled by error interceptor
-      },
-    });
+    const confirmed = await this.confirmDialog.confirmLogout();
+    if (!confirmed) return;
+    this.authService.logout().subscribe();
   }
 
   onLogoError(event: Event): void {

@@ -45,14 +45,14 @@ export function getJerseyColor(position: string): string {
  */
 export function getStatusSeverity(
   status: string,
-): "success" | "danger" | "secondary" | "info" | "warn" {
+): "success" | "danger" | "secondary" | "info" | "warning" {
   switch (status) {
     case "active":
       return "success";
     case "injured":
       return "danger";
     case "limited":
-      return "warn";
+      return "warning";
     case "returning":
       return "info";
     default:
@@ -188,7 +188,7 @@ export function getPlayerStats(player: {
 export function getInvitationStatusSeverity(invitation: {
   isExpired: boolean;
   status: string;
-}): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+}): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
   if (invitation.isExpired) return "danger";
   if (invitation.status === "pending") return "info";
   if (invitation.status === "accepted") return "success";

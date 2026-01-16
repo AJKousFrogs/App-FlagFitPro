@@ -18,11 +18,11 @@ import {
 } from "@angular/forms";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { DialogModule } from "primeng/dialog";
+import { Dialog } from "primeng/dialog";
 import { Select } from "primeng/select";
-import { InputNumberModule } from "primeng/inputnumber";
-import { SelectButtonModule } from "primeng/selectbutton";
-import { SpeedDialModule } from "primeng/speeddial";
+import { InputNumber } from "primeng/inputnumber";
+import { SelectButton } from "primeng/selectbutton";
+import { SpeedDial } from "primeng/speeddial";
 import { MenuItem } from "primeng/api";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SwipeGestureDirective } from "../../shared/directives/swipe-gesture.directive";
@@ -71,11 +71,11 @@ interface Play {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    DialogModule,
+    Dialog,
     Select,
-    InputNumberModule,
-    SelectButtonModule,
-    SpeedDialModule,
+    InputNumber,
+    SelectButton,
+    SpeedDial,
     SwipeGestureDirective,
     GameTimePipe,
     ButtonComponent,

@@ -10,15 +10,16 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
-import { BadgeModule } from "primeng/badge";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
+import { Badge } from "primeng/badge";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { Tooltip } from "primeng/tooltip";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
@@ -54,15 +55,16 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     TableModule,
-    TagModule,
-    DialogModule,
-    InputTextModule,
-    InputNumberModule,
+    Tag,
+    StatusTagComponent,
+    Dialog,
+    InputText,
+    InputNumber,
     Select,
-    TooltipModule,
-    BadgeModule,
+    Tooltip,
+    Badge,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
@@ -193,10 +195,11 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                     </div>
                   </td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="getTypeLabel(item.item_type)"
-                      [severity]="'info'"
-                    ></p-tag>
+                      severity="info"
+                      size="sm"
+                    />
                   </td>
                   <td>
                     <span>{{ item.size || "-" }}</span>
@@ -217,10 +220,11 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                     </div>
                   </td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="getConditionLabel(item.condition)"
                       [severity]="getConditionSeverity(item.condition)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td>
                     <div class="action-buttons">
@@ -230,19 +234,22 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                           variant="text"
                           [disabled]="item.quantity_available === 0"
                           (clicked)="openCheckoutDialog(item)"
-                          ariaLabel="arrow-right"
+                          ariaLabel="Check out equipment"
+                          tooltip="Checkout"
                         />
                         <app-icon-button
                           icon="pi-pencil"
                           variant="text"
                           (clicked)="openEditDialog(item)"
-                          ariaLabel="pencil"
+                          ariaLabel="Edit equipment"
+                          tooltip="Edit"
                         />
                         <app-icon-button
                           icon="pi-trash"
                           variant="text"
                           (clicked)="deleteItem(item)"
-                          ariaLabel="trash"
+                          ariaLabel="Delete equipment"
+                          tooltip="Delete"
                         />
                       }
                     </div>
@@ -402,7 +409,8 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
               icon="pi-check"
               [disabled]="!canSaveItem()"
               (clicked)="saveItem()"
-              ariaLabel="check"
+              ariaLabel="Save equipment"
+              tooltip="Save"
             />
           </ng-template>
         </p-dialog>
@@ -685,11 +693,11 @@ export class EquipmentComponent implements OnInit {
 
   getConditionSeverity(
     condition: string,
-  ): "success" | "warn" | "danger" | "info" {
-    const severities: Record<string, "success" | "warn" | "danger" | "info"> = {
+  ): "success" | "warning" | "danger" | "info" {
+    const severities: Record<string, "success" | "warning" | "danger" | "info"> = {
       new: "success",
       good: "success",
-      fair: "warn",
+      fair: "warning",
       poor: "danger",
       needs_replacement: "danger",
     };

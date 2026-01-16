@@ -15,11 +15,12 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 
 // PrimeNG
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { TextareaModule } from "primeng/textarea";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { Textarea } from "primeng/textarea";
 import { Select } from "primeng/select";
 import { MultiSelect } from "primeng/multiselect";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 
 import { PlaylistForm, VideoOption } from "../video-curation.models";
 import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
@@ -31,11 +32,12 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
   imports: [
     CommonModule,
     FormsModule,
-    DialogModule,
-    InputTextModule,
-    TextareaModule,
+    Dialog,
+    InputText,
+    Textarea,
     Select,
     MultiSelect,
+    ButtonComponent,
   ],
   template: `
     <p-dialog
@@ -91,8 +93,9 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
         </div>
 
         <div class="form-field">
-          <label>Select Videos</label>
+          <label for="playlistVideos">Select Videos</label>
           <p-multiselect
+            id="playlistVideos"
             [(ngModel)]="form.videoIds"
             [options]="videoOptions()"
             optionLabel="label"
@@ -101,24 +104,23 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
             [filter]="true"
             filterPlaceholder="Search videos..."
             [maxSelectedLabels]="5"
+            ariaLabel="Select videos to add to playlist"
           ></p-multiselect>
         </div>
       </div>
 
       <ng-template pTemplate="footer">
-        <button
-          pButton
-          label="Cancel"
-          class="p-button-text"
-          (click)="onCancel()"
-        ></button>
-        <button
-          pButton
-          label="Create Playlist"
-          icon="pi pi-check"
-          (click)="onSubmit()"
+        <app-button
+          variant="text"
+          (clicked)="onCancel()"
+          >Cancel</app-button
+        >
+        <app-button
+          iconLeft="pi-check"
+          (clicked)="onSubmit()"
           [disabled]="!form.name || form.videoIds.length === 0"
-        ></button>
+          >Create Playlist</app-button
+        >
       </ng-template>
     </p-dialog>
   `,

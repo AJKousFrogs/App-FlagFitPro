@@ -19,15 +19,16 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -122,15 +123,16 @@ const POSITIONS = [
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    DialogModule,
-    InputTextModule,
-    ProgressBarModule,
+    Card,
+    Dialog,
+    InputText,
+    ProgressBar,
     Select,
     TableModule,
-    TagModule,
+    Tag,
+    StatusTagComponent,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -224,14 +226,15 @@ const POSITIONS = [
                   <div class="detail-row">
                     <span class="detail-item">
                       Registration:
-                      <p-tag
+                      <app-status-tag
                         [value]="
                           getRegistrationLabel(tournament.registrationStatus)
                         "
                         [severity]="
                           getRegistrationSeverity(tournament.registrationStatus)
                         "
-                      ></p-tag>
+                        size="sm"
+                      />
                     </span>
                     <span class="detail-item"
                       >Entry Fee: {{ tournament.entryFee }}</span
@@ -786,13 +789,13 @@ export class TournamentManagementComponent implements OnInit {
 
   getRegistrationSeverity(
     status: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
     > = {
       confirmed: "success",
-      pending: "warn",
+      pending: "warning",
       "auto-qualified": "info",
     };
     return severities[status] || "secondary";

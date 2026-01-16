@@ -7,10 +7,10 @@ import {
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Message } from "primeng/message";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { ToastModule } from "primeng/toast";
+import { ProgressSpinner } from "primeng/progressspinner";
+import { Toast } from "primeng/toast";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -38,11 +38,11 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    CardModule,
+    Card,
     ButtonComponent,
     Message,
-    ProgressSpinnerModule,
-    ToastModule,
+    ProgressSpinner,
+    Toast,
   ],
   template: `
     <p-toast></p-toast>

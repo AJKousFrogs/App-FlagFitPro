@@ -8,7 +8,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -32,7 +32,7 @@ interface SuperadminUser {
     CommonModule,
     RouterLink,
     FormsModule,
-    CardModule,
+    Card,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -46,10 +46,12 @@ interface SuperadminUser {
           title="Superadmin Settings"
           subtitle="Platform configuration and access control"
         >
-          <a routerLink="/superadmin" class="p-button p-button-outlined">
-            <i class="pi pi-arrow-left"></i>
-            Back to Dashboard
-          </a>
+          <app-button
+            iconLeft="pi-arrow-left"
+            variant="outlined"
+            routerLink="/superadmin"
+            >Back to Dashboard</app-button
+          >
         </app-page-header>
 
         <!-- Your Status Card -->

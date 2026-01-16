@@ -28,12 +28,12 @@ import { Router, RouterModule } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
 // PrimeNG
-import { CheckboxModule } from "primeng/checkbox";
-import { InputNumberModule } from "primeng/inputnumber";
-import { ProgressBarModule } from "primeng/progressbar";
-import { RippleModule } from "primeng/ripple";
+import { Checkbox } from "primeng/checkbox";
+import { InputNumber } from "primeng/inputnumber";
+import { ProgressBar } from "primeng/progressbar";
+import { Ripple } from "primeng/ripple";
 import { Slider } from "primeng/slider";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 // Services
@@ -74,11 +74,11 @@ interface TodaysPlan {
     CardComponent,
     ButtonComponent,
     Slider,
-    InputNumberModule,
-    ProgressBarModule,
-    RippleModule,
-    TooltipModule,
-    CheckboxModule,
+    InputNumber,
+    ProgressBar,
+    Ripple,
+    Tooltip,
+    Checkbox,
     StatusTagComponent,
   ],
   template: `

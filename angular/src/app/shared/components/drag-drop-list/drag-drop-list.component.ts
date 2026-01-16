@@ -11,7 +11,7 @@ import {
   transferArrayItem,
   DragDropModule,
 } from "@angular/cdk/drag-drop";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 
 export interface DragDropItem {
   id: string;
@@ -28,7 +28,7 @@ export interface DragDropItem {
   selector: "app-drag-drop-list",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DragDropModule, CardModule],
+  imports: [CommonModule, DragDropModule, Card],
   template: `
     <div
       class="drag-drop-container"

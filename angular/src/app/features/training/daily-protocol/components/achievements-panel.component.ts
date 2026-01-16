@@ -7,12 +7,13 @@ import {
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
-import { DialogModule } from "primeng/dialog";
-import { TabsModule } from "primeng/tabs";
-import { SkeletonModule } from "primeng/skeleton";
+import { Dialog } from "primeng/dialog";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Skeleton } from "primeng/skeleton";
+import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
@@ -58,12 +59,17 @@ interface Stats {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TagModule,
-    TooltipModule,
+    Tag,
+    StatusTagComponent,
+    Tooltip,
     ProgressBar,
-    DialogModule,
-    TabsModule,
-    SkeletonModule,
+    Dialog,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Skeleton,
     IconButtonComponent,
   ],
   template: `
@@ -75,7 +81,8 @@ interface Stats {
           <app-icon-button
             icon="pi-external-link"
             variant="text"
-            ariaLabel="external-link"
+            ariaLabel="View all achievements"
+            tooltip="View all"
           />
         </div>
 
@@ -205,9 +212,10 @@ interface Stats {
                         <div class="ach-content">
                           <div class="ach-header">
                             <span class="ach-name">{{ ach.name }}</span>
-                            <p-tag
+                            <app-status-tag
                               [value]="ach.tier"
                               [severity]="getTierSeverity(ach.tier)"
+                              size="sm"
                             />
                           </div>
                           <p class="ach-desc">{{ ach.description }}</p>
@@ -422,19 +430,39 @@ export class AchievementsPanelComponent {
 
   async loadAchievements(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
-        this.api.get("/api/achievements"),
+      const response = await firstValueFrom(
+        this.api.get<{
+          achievements?: Achievement[];
+          grouped?: Record<string, Achievement[]>;
+          summary?: { total: number; earned: number; points: number };
+        }>("/api/achievements"),
       );
       if (response?.success && response.data) {
         this.achievements.set(response.data.achievements || []);
         this.grouped.set(response.data.grouped || {});
-        this.summary.set(response.data.summary);
-      } else if (response?.achievements) {
-        // Direct response without wrapper
-        this.achievements.set(response.achievements);
-        this.grouped.set(response.grouped || {});
-        this.summary.set(response.summary);
+        if (response.data.summary) {
+          this.summary.set({
+            totalEarned: response.data.summary.earned,
+            totalAvailable: response.data.summary.total,
+            totalPoints: response.data.summary.points,
+          });
+        }
+      } else if ((response as unknown as { achievements?: Achievement[] })?.achievements) {
+        // Direct response without wrapper (legacy format)
+        const legacyResponse = response as unknown as {
+          achievements?: Achievement[];
+          grouped?: Record<string, Achievement[]>;
+          summary?: { total: number; earned: number; points: number };
+        };
+        this.achievements.set(legacyResponse.achievements || []);
+        this.grouped.set(legacyResponse.grouped || {});
+        if (legacyResponse.summary) {
+          this.summary.set({
+            totalEarned: legacyResponse.summary.earned,
+            totalAvailable: legacyResponse.summary.total,
+            totalPoints: legacyResponse.summary.points,
+          });
+        }
       }
     } catch (err) {
       this.logger.error("Failed to load achievements", err);
@@ -445,14 +473,17 @@ export class AchievementsPanelComponent {
 
   async loadStreaks(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
-        this.api.get("/api/achievements/streaks"),
+      const response = await firstValueFrom(
+        this.api.get<{ streaks?: Streak[] }>("/api/achievements/streaks"),
       );
       if (response?.success && response.data) {
         this.streaks.set(response.data.streaks || []);
-      } else if (response?.streaks) {
-        this.streaks.set(response.streaks);
+      } else if (
+        (response as unknown as { streaks?: Streak[] })?.streaks
+      ) {
+        // Direct response without wrapper (legacy format)
+        const legacyResponse = response as unknown as { streaks?: Streak[] };
+        this.streaks.set(legacyResponse.streaks || []);
       }
     } catch (err) {
       this.logger.error("Failed to load streaks", err);
@@ -461,14 +492,15 @@ export class AchievementsPanelComponent {
 
   async loadStats(): Promise<void> {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const response: any = await firstValueFrom(
-        this.api.get("/api/achievements/stats"),
+      const response = await firstValueFrom(
+        this.api.get<{ stats?: Stats }>("/api/achievements/stats"),
       );
-      if (response?.success && response.data) {
+      if (response?.success && response.data?.stats) {
         this.stats.set(response.data.stats);
-      } else if (response?.stats) {
-        this.stats.set(response.stats);
+      } else if ((response as unknown as { stats?: Stats })?.stats) {
+        // Direct response without wrapper (legacy format)
+        const legacyResponse = response as unknown as { stats?: Stats };
+        this.stats.set(legacyResponse.stats || null);
       }
     } catch (err) {
       this.logger.error("Failed to load stats", err);
@@ -494,14 +526,14 @@ export class AchievementsPanelComponent {
 
   getTierSeverity(
     tier: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
     > = {
       bronze: "secondary",
       silver: "info",
-      gold: "warn",
+      gold: "warning",
       platinum: "contrast",
     };
     return severities[tier] || "secondary";

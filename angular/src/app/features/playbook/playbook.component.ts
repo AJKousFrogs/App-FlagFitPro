@@ -18,15 +18,15 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { AccordionModule } from "primeng/accordion";
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
@@ -89,14 +89,14 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     CommonModule,
     FormsModule,
     DatePipe,
-    AccordionModule,
-    CardModule,
-    DialogModule,
-    InputTextModule,
+    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Card,
+    Dialog,
+    InputText,
     Message,
-    ProgressBarModule,
+    ProgressBar,
     Select,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
@@ -669,7 +669,7 @@ export class PlaybookComponent implements OnInit {
     const questions = this.generateQuizQuestions();
     if (questions.length === 0) {
       this.messageService.add({
-        severity: "warn",
+        severity: "warning",
         summary: "Not enough plays",
         detail: "Add more plays to start a quiz",
       });

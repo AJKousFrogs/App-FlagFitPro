@@ -6,14 +6,15 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
-import { AutoCompleteModule } from "primeng/autocomplete";
+import { Card } from "primeng/card";
+import { UIChart } from "primeng/chart";
+import { AutoComplete } from "primeng/autocomplete";
 import { Select } from "primeng/select";
 import { ButtonComponent } from "../button/button.component";
-import { TagModule } from "primeng/tag";
-import { DataViewModule } from "primeng/dataview";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { DataView } from "primeng/dataview";
+import { ProgressBar } from "primeng/progressbar";
 import { COLORS } from "../../../core/constants/app.constants";
 import {
   NutritionService,
@@ -50,13 +51,14 @@ interface Meal {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    ChartModule,
-    AutoCompleteModule,
+    Card,
+    UIChart,
+    AutoComplete,
     Select,
-    TagModule,
-    DataViewModule,
-    ProgressBarModule,
+    Tag,
+    StatusTagComponent,
+    DataView,
+    ProgressBar,
 
     ButtonComponent,
   ],
@@ -107,16 +109,15 @@ interface Meal {
             </h5>
             <div class="suggestion-chips">
               @for (suggestion of aiSuggestions(); track suggestion.name) {
-                <p-tag
-                  [value]="suggestion.name"
+                <app-status-tag
+                  [value]="suggestion.name + ' (' + suggestion.benefit + ')'"
                   [severity]="
                     suggestion.priority === 'high' ? 'success' : 'info'
                   "
+                  size="sm"
                   (click)="addSuggestedFood(suggestion)"
                   class="clickable-tag"
-                >
-                  {{ suggestion.name }} ({{ suggestion.benefit }})
-                </p-tag>
+                />
               }
             </div>
           </div>
@@ -136,12 +137,11 @@ interface Meal {
             >
               <div class="goal-header">
                 <span class="nutrient-name">{{ goal.nutrient }}</span>
-                <p-tag
+                <app-status-tag
                   [value]="goal.priority"
                   [severity]="getPrioritySeverity(goal.priority)"
-                  size="small"
-                >
-                </p-tag>
+                  size="sm"
+                />
               </div>
 
               <div class="goal-progress">
@@ -172,13 +172,12 @@ interface Meal {
                       source of getNutrientSources(goal.nutrient);
                       track source
                     ) {
-                      <p-tag
+                      <app-status-tag
                         [value]="source"
                         severity="secondary"
-                        size="small"
+                        size="sm"
                         class="source-tag"
-                      >
-                      </p-tag>
+                      />
                     }
                   </div>
                 </div>
@@ -349,7 +348,7 @@ export class NutritionDashboardComponent {
       case "high":
         return "danger";
       case "medium":
-        return "warn";
+        return "warning";
       default:
         return "info";
     }

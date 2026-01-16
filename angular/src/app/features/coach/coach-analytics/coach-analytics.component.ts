@@ -17,11 +17,11 @@ import { DecimalPipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ChartOptions } from "chart.js";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { Divider } from "primeng/divider";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { SkeletonModule } from "primeng/skeleton";
+import { Skeleton } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { COLORS } from "../../../core/constants/app.constants";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
@@ -97,13 +97,13 @@ interface TeamOption {
   imports: [
     DecimalPipe,
     FormsModule,
-    CardModule,
+    Card,
 
     LazyChartComponent,
-    DividerModule,
-    ProgressBarModule,
+    Divider,
+    ProgressBar,
     Select,
-    SkeletonModule,
+    Skeleton,
     TableModule,
     StatusTagComponent,
     MainLayoutComponent,
@@ -141,7 +141,8 @@ interface TeamOption {
               variant="outlined"
               [loading]="loading()"
               (clicked)="loadAnalytics()"
-              ariaLabel="refresh"
+              ariaLabel="Refresh analytics"
+              tooltip="Refresh"
             />
           </div>
         </div>
@@ -290,7 +291,7 @@ interface TeamOption {
                           100
                         "
                         [showValue]="false"
-                        severity="warn"
+                        severity="warning"
                       ></p-progressBar>
                     </div>
                     <div class="distribution-item">

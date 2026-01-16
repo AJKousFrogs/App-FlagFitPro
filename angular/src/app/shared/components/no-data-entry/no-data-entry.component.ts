@@ -21,7 +21,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { RouterModule } from "@angular/router";
 
 export type NoDataContext =
@@ -155,7 +155,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
   selector: "app-no-data-entry",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, RouterModule, ButtonComponent],
+  imports: [CommonModule, Card, RouterModule, ButtonComponent],
   template: `
     <div
       class="no-data-entry"

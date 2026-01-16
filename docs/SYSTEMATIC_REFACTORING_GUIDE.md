@@ -179,10 +179,10 @@ For each component:
 - [ ] **Use PrimeNG tokens:**
 
   ```scss
-  // ✅ Use PrimeNG design tokens
-  :host ::ng-deep .p-card-body {
-    padding: var(--p-card-body-padding);
-    gap: var(--p-card-body-gap);
+  // ✅ Use PrimeNG design tokens via CSS custom properties
+  :host {
+    --p-card-body-padding: var(--space-4);
+    --p-card-body-gap: var(--space-3);
   }
   ```
 
@@ -299,11 +299,22 @@ After successful refactoring:
 
 **Problem:** Angular Emulated encapsulation adds `_ngcontent-*` attributes
 
-**Solution:** Use `:host ::ng-deep`
+**Solution:** Use `ViewEncapsulation.None` for wrapper components or CSS custom properties
 
-```scss
-:host ::ng-deep .p-button {
-  background: var(--ds-primary-green);
+```typescript
+// For wrapper components (e.g., modals)
+@Component({
+  encapsulation: ViewEncapsulation.None,
+  styles: [`
+    app-my-component .p-button {
+      background: var(--ds-primary-green);
+    }
+  `]
+})
+
+// Or use CSS custom properties (preferred)
+:host {
+  --p-button-primary-background: var(--ds-primary-green);
 }
 ```
 

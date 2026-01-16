@@ -11,17 +11,17 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { AutoCompleteModule } from "primeng/autocomplete";
-import { AvatarModule } from "primeng/avatar";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
+import { AutoComplete } from "primeng/autocomplete";
+import { Avatar } from "primeng/avatar";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { FileUploadModule } from "primeng/fileupload";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { FileUpload } from "primeng/fileupload";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { StepperModule } from "primeng/stepper";
-import { ToastModule } from "primeng/toast";
+import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
+import { Toast } from "primeng/toast";
 import { Subject, Subscription, debounceTime, firstValueFrom } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -65,17 +65,17 @@ interface InjuryEntry {
     CommonModule,
     RouterModule,
     FormsModule,
-    CardModule,
-    InputTextModule,
+    Card,
+    InputText,
     Select,
-    AutoCompleteModule,
-    StepperModule,
-    ToastModule,
+    AutoComplete,
+    Stepper, StepList, Step, StepPanels, StepPanel,
+    Toast,
     DatePicker,
-    CheckboxModule,
-    FileUploadModule,
-    AvatarModule,
-    ProgressBarModule,
+    Checkbox,
+    FileUpload,
+    Avatar,
+    ProgressBar,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -755,7 +755,8 @@ interface InjuryEntry {
                       icon="pi-plus"
                       [disabled]="!newInjury.area"
                       (clicked)="addCurrentInjury()"
-                      ariaLabel="plus"
+                      ariaLabel="Add injury"
+                      tooltip="Add"
                     />
                   </div>
 

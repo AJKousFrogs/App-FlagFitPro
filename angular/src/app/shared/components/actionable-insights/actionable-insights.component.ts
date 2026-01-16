@@ -26,13 +26,14 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 // PrimeNG
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { TagModule } from "primeng/tag";
-import { ProgressBarModule } from "primeng/progressbar";
-import { TooltipModule } from "primeng/tooltip";
-import { SkeletonModule } from "primeng/skeleton";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { ProgressBar } from "primeng/progressbar";
+import { Tooltip } from "primeng/tooltip";
+import { Skeleton } from "primeng/skeleton";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -66,11 +67,12 @@ export interface Insight {
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    TagModule,
-    ProgressBarModule,
-    TooltipModule,
-    SkeletonModule,
+    Card,
+    Tag,
+    StatusTagComponent,
+    ProgressBar,
+    Tooltip,
+    Skeleton,
 
     ButtonComponent,
     IconButtonComponent,
@@ -82,17 +84,18 @@ export interface Insight {
         <div class="header-left">
           <i class="pi pi-sparkles"></i>
           <h3>AI Insights</h3>
-          <p-tag
+          <app-status-tag
             [value]="highPriorityCount() + ' action needed'"
             [severity]="highPriorityCount() > 0 ? 'danger' : 'success'"
-            size="small"
-          ></p-tag>
+            size="sm"
+          />
         </div>
         <app-icon-button
           icon="pi-refresh"
           variant="text"
           (clicked)="refreshInsights()"
-          ariaLabel="refresh"
+          ariaLabel="Refresh insights"
+          tooltip="Refresh"
         />
       </div>
 
@@ -124,17 +127,17 @@ export interface Insight {
                 <div class="insight-header">
                   <h4>{{ insight.title }}</h4>
                   <div class="insight-badges">
-                    <p-tag
+                    <app-status-tag
                       [value]="insight.category"
                       [severity]="getCategorySeverity(insight.category)"
-                      size="small"
-                    ></p-tag>
+                      size="sm"
+                    />
                     @if (insight.impact === "high") {
-                      <p-tag
+                      <app-status-tag
                         value="High Impact"
                         severity="danger"
-                        size="small"
-                      ></p-tag>
+                        size="sm"
+                      />
                     }
                   </div>
                 </div>
@@ -307,14 +310,14 @@ export class ActionableInsightsComponent implements OnInit {
 
   getCategorySeverity(
     category: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (category) {
       case "training":
         return "info";
       case "recovery":
         return "success";
       case "nutrition":
-        return "warn";
+        return "warning";
       case "performance":
         return "info";
       case "health":

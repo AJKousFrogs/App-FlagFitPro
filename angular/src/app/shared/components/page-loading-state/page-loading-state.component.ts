@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { ProgressSpinner } from "primeng/progressspinner";
 
 /**
  * Page Loading State Component
@@ -11,7 +11,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
   selector: "app-page-loading-state",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressSpinnerModule],
+  imports: [CommonModule, ProgressSpinner],
   template: `
     <div class="page-loading-state">
       <div class="loading-content">

@@ -14,6 +14,8 @@ import { filter } from "rxjs/operators";
 import { CookieConsentBannerComponent } from "./shared/components/cookie-consent-banner/cookie-consent-banner.component";
 import { LoadingOverlayComponent } from "./shared/components/loading-overlay/loading-overlay.component";
 import { SkipToContentComponent } from "./shared/components/skip-to-content/skip-to-content.component";
+import { ConfirmDialog } from "primeng/confirmdialog";
+import { PlatformDetectionService } from "./core/services/platform-detection.service";
 
 @Component({
   selector: "app-root",
@@ -24,6 +26,7 @@ import { SkipToContentComponent } from "./shared/components/skip-to-content/skip
     SkipToContentComponent,
     CookieConsentBannerComponent,
     LoadingOverlayComponent,
+    ConfirmDialog,
   ],
   template: `
     <app-skip-to-content />
@@ -32,11 +35,14 @@ import { SkipToContentComponent } from "./shared/components/skip-to-content/skip
     </main>
     <app-cookie-consent-banner />
     <app-loading-overlay />
+    <p-confirmDialog></p-confirmDialog>
   `,
   styleUrl: "./app.component.scss",
 })
 export class AppComponent implements OnInit {
   private router = inject(Router);
+  // Ensure platform classes (iOS/Safari/Android) are applied globally.
+  private platformDetection = inject(PlatformDetectionService);
 
   ngOnInit(): void {
     // Track navigation events for analytics/debugging

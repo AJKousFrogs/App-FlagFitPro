@@ -47,7 +47,9 @@ import { ThemeService } from "../../../core/services/theme.service";
       <app-quick-actions-fab class="desktop-only"></app-quick-actions-fab>
 
       <!-- Mobile Bottom Navigation -->
-      <app-bottom-nav></app-bottom-nav>
+      <footer class="app-footer">
+        <app-bottom-nav></app-bottom-nav>
+      </footer>
 
       <!-- Scroll to Top Button (UX Audit Fix #10) -->
       <app-scroll-to-top></app-scroll-to-top>

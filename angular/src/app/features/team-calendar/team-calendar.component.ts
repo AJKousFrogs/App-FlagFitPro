@@ -19,15 +19,16 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -80,13 +81,13 @@ const EVENT_TYPE_CONFIG: Record<
   {
     label: string;
     icon: string;
-    severity: "success" | "info" | "warn" | "danger" | "secondary";
+    severity: "success" | "info" | "warning" | "danger" | "secondary";
   }
 > = {
   practice: { label: "Practice", icon: "pi-flag", severity: "success" },
   game: { label: "Game", icon: "pi-star", severity: "danger" },
   "team-event": { label: "Team Event", icon: "pi-users", severity: "info" },
-  meeting: { label: "Meeting", icon: "pi-comments", severity: "warn" },
+  meeting: { label: "Meeting", icon: "pi-comments", severity: "warning" },
   tournament: { label: "Tournament", icon: "pi-trophy", severity: "danger" },
 };
 
@@ -98,15 +99,16 @@ const EVENT_TYPE_CONFIG: Record<
     CommonModule,
     FormsModule,
     DatePipe,
-    CardModule,
-    CheckboxModule,
-    DialogModule,
-    InputNumberModule,
+    Card,
+    Checkbox,
+    Dialog,
+    InputNumber,
     RadioButton,
     Select,
-    TagModule,
+    Tag,
+    StatusTagComponent,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -177,10 +179,11 @@ const EVENT_TYPE_CONFIG: Record<
                     <div class="event-details">
                       <div class="event-header">
                         <h4>{{ event.title }}</h4>
-                        <p-tag
+                        <app-status-tag
                           [value]="getEventTypeConfig(event.type).label"
                           [severity]="getEventTypeConfig(event.type).severity"
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
 
                       <p class="event-location">

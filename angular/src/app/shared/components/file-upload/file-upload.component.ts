@@ -9,9 +9,9 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { Message } from "primeng/message";
-import { FileUploadModule } from "primeng/fileupload";
+import { FileUpload } from "primeng/fileupload";
 import { HttpClient } from "@angular/common/http";
 import { timer } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -37,9 +37,9 @@ export interface UploadedFile {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ProgressBarModule,
+    ProgressBar,
     Message,
-    FileUploadModule,
+    FileUpload,
     MobileOptimizedImageDirective,
     ButtonComponent,
   ],

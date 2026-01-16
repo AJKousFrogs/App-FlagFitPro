@@ -22,10 +22,10 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { ProgressBarModule } from "primeng/progressbar";
-import { SkeletonModule } from "primeng/skeleton";
-import { TooltipModule } from "primeng/tooltip";
+import { Card } from "primeng/card";
+import { ProgressBar } from "primeng/progressbar";
+import { Skeleton } from "primeng/skeleton";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -65,10 +65,10 @@ interface AnalyticsData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    ProgressBarModule,
-    SkeletonModule,
-    TooltipModule,
+    Card,
+    ProgressBar,
+    Skeleton,
+    Tooltip,
     LazyChartComponent,
     StatusTagComponent,
   ],

@@ -446,10 +446,10 @@ The card shell supports **three** padding modes:
 <app-card-shell [flush]="true">...</app-card-shell>
 
 // ❌ FORBIDDEN - Feature SCSS padding overrides
-::ng-deep .p-card-body {
+.my-card .p-card-body {
   padding: var(--space-5);
 }
-::ng-deep .p-card-content {
+.my-card .p-card-content {
   padding: 0;
 }
 .my-card {
@@ -507,8 +507,8 @@ Before merging any card-related code, verify:
 
 - [ ] Uses `density="default"` OR `density="compact"` - no other values
 - [ ] Uses `[flush]="true"` for zero-padding content (tables, charts)
-- [ ] **NO** `::ng-deep .p-card-body { padding: ... }` in feature SCSS
-- [ ] **NO** `::ng-deep .p-card-content { padding: ... }` in feature SCSS
+- [ ] **NO** `.p-card-body { padding: ... }` overrides in feature SCSS
+- [ ] **NO** `.p-card-content { padding: ... }` overrides in feature SCSS
 - [ ] **NO** raw padding values (px, rem) on card containers
 - [ ] **NO** inline style padding on card elements
 
@@ -527,7 +527,6 @@ Before merging any card-related code, verify:
 
 ### Forbidden Patterns
 
-- [ ] No `::ng-deep` for card styling in feature components
 - [ ] No `.p-card`, `.p-card-body`, `.p-card-content` overrides in feature SCSS
 - [ ] No raw box-shadow values
 - [ ] No raw border-radius values
@@ -1160,8 +1159,8 @@ No feature may define custom `.stat-value`, `.metric-value`, `.stat-label`, or s
 
 ```scss
 // DELETE ALL OF THIS
-:host ::ng-deep .custom-card { ... }
-:host ::ng-deep .schedule-card { ... }
+.custom-card { ... }
+.schedule-card { ... }
 .card-header-custom { ... }
 ```
 
@@ -1339,12 +1338,12 @@ These styles are defined in `_tables.scss` and `primeng-theme.scss`:
 
 ```scss
 // ❌ FORBIDDEN: Custom padding around table in card
-.my-card ::ng-deep .p-card-body {
+.my-card .p-card-body {
   padding: 0;  // Don't do this - use [flush]="true"
 }
 
 // ❌ FORBIDDEN: Custom table header styles in feature
-.my-card ::ng-deep .p-datatable-thead > tr > th {
+.my-card .p-datatable-thead > tr > th {
   padding: var(--space-5);  // Don't override globally
   background: custom-color;
 }
@@ -1364,7 +1363,7 @@ These styles are defined in `_tables.scss` and `primeng-theme.scss`:
 
 - [ ] Card uses `[flush]="true"` when containing a table
 - [ ] Table uses `styleClass="table-default"` or `styleClass="table-compact"`
-- [ ] **NO** `::ng-deep .p-datatable-*` overrides in feature SCSS
+- [ ] **NO** `.p-datatable-*` overrides in feature SCSS
 - [ ] **NO** wrapper divs with padding around tables
 - [ ] **NO** custom header/body padding values
 - [ ] Table inherits card's border-radius at bottom corners

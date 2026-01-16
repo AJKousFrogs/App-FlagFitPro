@@ -22,12 +22,13 @@ import { ButtonComponent } from "../../../../shared/components/button/button.com
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { Tooltip } from "primeng/tooltip";
 
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
@@ -64,14 +65,15 @@ interface EventTypeOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    DialogModule,
-    InputTextModule,
-    InputNumberModule,
+    Dialog,
+    InputText,
+    InputNumber,
     DatePicker,
     Select,
     Checkbox,
-    TagModule,
-    TooltipModule,
+    Tag,
+    StatusTagComponent,
+    Tooltip,
     DatePipe,
 
     ButtonComponent,
@@ -81,7 +83,7 @@ interface EventTypeOption {
     <div class="tournament-calendar">
       <div class="calendar-header">
         <h3>
-          <i class="pi pi-trophy"></i>
+          <i class="pi pi-trophy" aria-hidden="true"></i>
           Tournament Calendar
         </h3>
         <app-button
@@ -94,13 +96,13 @@ interface EventTypeOption {
       </div>
 
       @if (isLoading()) {
-        <div class="loading-state">
-          <i class="pi pi-spin pi-spinner"></i>
+        <div class="loading-state" role="status" aria-live="polite">
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
           <span>Loading tournaments...</span>
         </div>
       } @else if (tournaments().length === 0) {
-        <div class="empty-state">
-          <i class="pi pi-calendar-times"></i>
+        <div class="empty-state" role="status">
+          <i class="pi pi-calendar-times" aria-hidden="true"></i>
           <p>No upcoming tournaments</p>
           <app-button iconLeft="pi-plus" (clicked)="openAddDialog()"
             >Add Your First Tournament</app-button
@@ -119,15 +121,16 @@ interface EventTypeOption {
                   <div class="tournament-name">
                     {{ tournament.name }}
                     @if (tournament.isPeakEvent) {
-                      <p-tag value="PEAK" severity="danger"></p-tag>
+                      <app-status-tag value="PEAK" severity="danger" size="sm" />
                     }
                     @if (tournament.isNationalTeamEvent) {
-                      <p-tag value="National Team" severity="info"></p-tag>
+                      <app-status-tag value="National Team" severity="info" size="sm" />
                     }
                   </div>
                   <div class="tournament-details">
                     <span class="detail">
-                      <i class="pi pi-calendar"></i>
+                      <i class="pi pi-calendar" aria-hidden="true"></i>
+                      <span class="visually-hidden">Date:</span>
                       {{
                         formatDateRange(
                           tournament.startDate,
@@ -137,13 +140,15 @@ interface EventTypeOption {
                     </span>
                     @if (tournament.country) {
                       <span class="detail">
-                        <i class="pi pi-map-marker"></i>
+                        <i class="pi pi-map-marker" aria-hidden="true"></i>
+                        <span class="visually-hidden">Location:</span>
                         {{ tournament.city ? tournament.city + ", " : ""
                         }}{{ tournament.country }}
                       </span>
                     }
                     <span class="detail">
-                      <i class="pi pi-flag"></i>
+                      <i class="pi pi-flag" aria-hidden="true"></i>
+                      <span class="visually-hidden">Games:</span>
                       {{ tournament.gamesExpected }} games
                     </span>
                   </div>
@@ -165,8 +170,8 @@ interface EventTypeOption {
               </div>
 
               @if (tournament.isInTaperPeriod) {
-                <div class="taper-banner">
-                  <i class="pi pi-info-circle"></i>
+                <div class="taper-banner" role="alert">
+                  <i class="pi pi-info-circle" aria-hidden="true"></i>
                   <span>
                     <strong>Taper Period Active</strong> - Training volume
                     reduced to peak for this event. Started
@@ -179,7 +184,7 @@ interface EventTypeOption {
                 tournament.daysUntil <= 21
               ) {
                 <div class="taper-info">
-                  <i class="pi pi-clock"></i>
+                  <i class="pi pi-clock" aria-hidden="true"></i>
                   <span>
                     Taper starts
                     {{ tournament.taperStartDate | date: "MMM d" }} ({{
@@ -197,7 +202,8 @@ interface EventTypeOption {
                     variant="text"
                     size="sm"
                     (clicked)="openExternalUrl(tournament.externalUrl)"
-                    ariaLabel="external-link"
+                    ariaLabel="Open tournament website"
+                    tooltip="Open external link"
                   />
                 }
                 <app-icon-button
@@ -205,14 +211,16 @@ interface EventTypeOption {
                   variant="text"
                   size="sm"
                   (clicked)="editTournament(tournament)"
-                  ariaLabel="pencil"
+                  ariaLabel="Edit tournament"
+                  tooltip="Edit"
                 />
                 <app-icon-button
                   icon="pi-trash"
                   variant="text"
                   size="sm"
                   (clicked)="deleteTournament(tournament)"
-                  ariaLabel="trash"
+                  ariaLabel="Delete tournament"
+                  tooltip="Delete"
                 />
               </div>
             </div>
@@ -385,7 +393,8 @@ interface EventTypeOption {
           [loading]="isSaving()"
           [disabled]="!isFormValid()"
           (clicked)="saveTournament()"
-          ariaLabel="check"
+          ariaLabel="Save tournament"
+          tooltip="Save"
         />
       </ng-template>
     </p-dialog>

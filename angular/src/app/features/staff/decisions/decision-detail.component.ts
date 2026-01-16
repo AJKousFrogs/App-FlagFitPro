@@ -14,10 +14,11 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { ButtonModule } from "primeng/button";
-import { TagModule } from "primeng/tag";
-import { AccordionModule } from "primeng/accordion";
+import { Card } from "primeng/card";
+import { ButtonComponent } from "@shared/components/button/button.component";
+import { Tag } from "primeng/tag";
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
@@ -36,10 +37,11 @@ import type {
   imports: [
     CommonModule,
     RouterModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
-    AccordionModule,
+    Card,
+    ButtonComponent,
+    Tag,
+    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    StatusTagComponent,
     PageHeaderComponent,
     CardShellComponent,
     ConfidenceIndicatorComponent,
@@ -58,7 +60,7 @@ import type {
       @else if (error()) {
         <div class="error-state">
           <p>Error: {{ error() }}</p>
-          <p-button label="Go Back" (onClick)="goBack()"></p-button>
+          <app-button (clicked)="goBack()">Go Back</app-button>
         </div>
       }
 
@@ -68,18 +70,18 @@ import type {
           [title]="decision()!.athleteName || 'Decision Details'"
           subtitle="{{ getDecisionTypeLabel(decision()!.decisionType) }}"
         >
-          <p-button
-            label="Back to Decisions"
-            icon="pi pi-arrow-left"
-            [outlined]="true"
-            (onClick)="goBack()"
-          ></p-button>
+          <app-button
+            iconLeft="pi-arrow-left"
+            variant="outlined"
+            (clicked)="goBack()"
+            >Back to Decisions</app-button
+          >
           @if (canReview()) {
-            <p-button
-              label="Review Decision"
-              icon="pi pi-check"
-              (onClick)="openReviewDialog()"
-            ></p-button>
+            <app-button
+              iconLeft="pi-check"
+              (clicked)="openReviewDialog()"
+              >Review Decision</app-button
+            >
           }
         </app-page-header>
 
@@ -99,26 +101,29 @@ import type {
 
               <div class="overview-item">
                 <label>Category</label>
-                <p-tag
+                <app-status-tag
                   [value]="decision()!.decisionCategory"
                   severity="info"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
 
               <div class="overview-item">
                 <label>Status</label>
-                <p-tag
+                <app-status-tag
                   [value]="decision()!.status"
                   [severity]="getStatusSeverity(decision()!.status)"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
 
               <div class="overview-item">
                 <label>Priority</label>
-                <p-tag
+                <app-status-tag
                   [value]="decision()!.reviewPriority"
                   [severity]="getPrioritySeverity(decision()!.reviewPriority)"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
             </div>
           </app-card-shell>
@@ -158,7 +163,7 @@ import type {
                 <p>
                   {{ formatDate(decision()!.reviewDate) }}
                   @if (isOverdue()) {
-                    <p-tag severity="danger" value="Overdue"></p-tag>
+                    <app-status-tag severity="danger" value="Overdue" size="sm" />
                   }
                 </p>
               </div>
@@ -187,11 +192,11 @@ import type {
               @if (decision()!.reviewOutcome) {
                 <div class="review-item">
                   <label>Review Outcome</label>
-                  <p-tag
-                    [value]="decision()!.reviewOutcome"
+                  <app-status-tag
+                    [value]="decision()!.reviewOutcome || ''"
                     severity="success"
-                    styleClass="status-tag status-tag--success"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               }
             </div>
@@ -268,14 +273,15 @@ import type {
               <div class="outcome-content">
                 <div class="outcome-item">
                   <label>Goal Achieved</label>
-                  <p-tag
+                  <app-status-tag
                     [value]="
                       decision()!.outcomeData!.goalAchieved ? 'Yes' : 'No'
                     "
                     [severity]="
-                      decision()!.outcomeData!.goalAchieved ? 'success' : 'warn'
+                      decision()!.outcomeData!.goalAchieved ? 'success' : 'warning'
                     "
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
 
                 @if (
@@ -315,7 +321,7 @@ import type {
                     <a [routerLink]="['/staff/decisions', related.id]">
                       {{ related.decisionSummary }}
                     </a>
-                    <p-tag [value]="related.relation" severity="info"></p-tag>
+                    <app-status-tag [value]="related.relation" severity="info" size="sm" />
                   </div>
                 }
               </div>
@@ -587,13 +593,13 @@ export class DecisionDetailComponent implements OnInit {
     return labels[type] || type;
   }
 
-  getStatusSeverity(status: string): "success" | "warn" | "danger" | "info" {
-    const severityMap: Record<string, "success" | "warn" | "danger" | "info"> =
+  getStatusSeverity(status: string): "success" | "warning" | "danger" | "info" {
+    const severityMap: Record<string, "success" | "warning" | "danger" | "info"> =
       {
         active: "info",
         reviewed: "success",
-        superseded: "warn",
-        expired: "warn",
+        superseded: "warning",
+        expired: "warning",
         cancelled: "danger",
       };
     return severityMap[status] || "info";
@@ -601,10 +607,10 @@ export class DecisionDetailComponent implements OnInit {
 
   getPrioritySeverity(
     priority: "critical" | "high" | "normal" | "low",
-  ): "danger" | "warn" | "info" | "success" {
+  ): "danger" | "warning" | "info" | "success" {
     const severityMap = {
       critical: "danger" as const,
-      high: "warn" as const,
+      high: "warning" as const,
       normal: "info" as const,
       low: "success" as const,
     };

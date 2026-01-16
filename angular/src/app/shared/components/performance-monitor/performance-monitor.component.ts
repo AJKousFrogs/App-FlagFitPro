@@ -9,7 +9,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { Message } from "primeng/message";
 import { PerformanceMonitorService } from "../../../core/services/performance-monitor.service";
 import { MessageService } from "primeng/api";
@@ -22,7 +22,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ProgressBarModule,
+    ProgressBar,
     Message,
     ButtonComponent,
     IconButtonComponent,
@@ -140,7 +140,7 @@ export class PerformanceMonitorComponent {
   getProgressSeverity(status: string): string {
     const severityMap: Record<string, string> = {
       good: "success",
-      warning: "warn",
+      warning: "warning",
       critical: "danger",
     };
     return severityMap[status] || "info";

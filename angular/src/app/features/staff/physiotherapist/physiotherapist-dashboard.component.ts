@@ -10,19 +10,20 @@ import {
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TabsModule } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
-import { TimelineModule } from "primeng/timeline";
-import { TooltipModule } from "primeng/tooltip";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { Textarea } from "primeng/textarea";
+import { Timeline } from "primeng/timeline";
+import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import {
@@ -198,17 +199,22 @@ const RTP_PHASES = [
     CommonModule,
     FormsModule,
     RouterModule,
-    CardModule,
-    DialogModule,
-    InputTextModule,
-    ProgressBarModule,
+    Card,
+    Dialog,
+    InputText,
+    ProgressBar,
     Select,
     TableModule,
-    TabsModule,
-    TagModule,
-    TextareaModule,
-    TimelineModule,
-    TooltipModule,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Tag,
+    StatusTagComponent,
+    Textarea,
+    Timeline,
+    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -346,18 +352,20 @@ const RTP_PHASES = [
                           </div>
                         </td>
                         <td>
-                          <p-tag
+                          <app-status-tag
                             [value]="athlete.position"
                             severity="info"
-                          ></p-tag>
+                            size="sm"
+                          />
                         </td>
                         <td>
-                          <p-tag
+                          <app-status-tag
                             [value]="getClearanceLabel(athlete.clearanceStatus)"
                             [severity]="
                               getClearanceSeverity(athlete.clearanceStatus)
                             "
-                          ></p-tag>
+                            size="sm"
+                          />
                         </td>
                         <td>
                           @if (athlete.activeInjuries.length > 0) {
@@ -398,23 +406,26 @@ const RTP_PHASES = [
                           }
                         </td>
                         <td>
-                          <p-tag
+                          <app-status-tag
                             [value]="getAthleteRiskLabel(athlete.id)"
                             [severity]="getAthleteRiskSeverity(athlete.id)"
-                          ></p-tag>
+                            size="sm"
+                          />
                         </td>
                         <td>
                           <app-icon-button
                             icon="pi-eye"
                             variant="text"
                             (clicked)="viewAthleteDetails(athlete)"
-                            ariaLabel="eye"
+                            ariaLabel="View athlete physiotherapy details"
+                            tooltip="View"
                           />
                           <app-icon-button
                             icon="pi-file"
                             variant="text"
                             (clicked)="generateAthleteReport(athlete)"
-                            ariaLabel="file"
+                            ariaLabel="Generate physiotherapy report"
+                            tooltip="Generate report"
                           />
                         </td>
                       </tr>
@@ -444,7 +455,7 @@ const RTP_PHASES = [
                                   rtp.injury.type
                                 }}</span>
                               </div>
-                              <p-tag
+                              <app-status-tag
                                 [value]="
                                   rtp.clearanceRecommendation.status.replace(
                                     '_',
@@ -456,7 +467,8 @@ const RTP_PHASES = [
                                     rtp.clearanceRecommendation.status
                                   )
                                 "
-                              ></p-tag>
+                                size="sm"
+                              />
                             </div>
                           </ng-template>
 
@@ -625,10 +637,11 @@ const RTP_PHASES = [
                             <span class="athlete-name">{{
                               getAthleteName(risk.athleteId)
                             }}</span>
-                            <p-tag
+                            <app-status-tag
                               [value]="risk.acwrRisk.toUpperCase() + ' RISK'"
                               [severity]="getRiskSeverity(risk.acwrRisk)"
-                            ></p-tag>
+                              size="sm"
+                            />
                           </div>
                         </ng-template>
 
@@ -853,10 +866,11 @@ const RTP_PHASES = [
                           <ng-template #header>
                             <div class="insight-header">
                               <div class="insight-meta">
-                                <p-tag
+                                <app-status-tag
                                   [value]="insight.fromRole"
                                   [severity]="getRoleSeverity(insight.fromRole)"
-                                ></p-tag>
+                                  size="sm"
+                                />
                                 <span class="insight-type">{{
                                   getInsightTypeLabel(insight.insightType)
                                 }}</span>
@@ -867,13 +881,13 @@ const RTP_PHASES = [
                                 }
                               </div>
                               <div class="insight-actions">
-                                <p-tag
+                                <app-status-tag
                                   [value]="insight.priority"
                                   [severity]="
                                     getPrioritySeverity(insight.priority)
                                   "
-                                  styleClass="priority-tag"
-                                ></p-tag>
+                                  size="sm"
+                                />
                                 <span class="insight-date">{{
                                   formatDate(insight.createdAt)
                                 }}</span>
@@ -928,15 +942,15 @@ const RTP_PHASES = [
                     {{ selectedAthlete()!.yearsPlaying }} years playing
                   </p>
                 </div>
-                <p-tag
+                <app-status-tag
                   [value]="
                     getClearanceLabel(selectedAthlete()!.clearanceStatus)
                   "
                   [severity]="
                     getClearanceSeverity(selectedAthlete()!.clearanceStatus)
                   "
-                  styleClass="large-tag"
-                ></p-tag>
+                  size="md"
+                />
               </div>
 
               <!-- Position Risk Profile -->
@@ -994,10 +1008,11 @@ const RTP_PHASES = [
                     <div class="injury-card" [class]="injury.severity">
                       <div class="injury-header">
                         <span class="injury-type">{{ injury.type }}</span>
-                        <p-tag
+                        <app-status-tag
                           [value]="injury.severity"
                           [severity]="getInjurySeverity(injury.severity)"
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                       <div class="injury-details">
                         <span>{{ injury.bodyArea }}</span>
@@ -1481,12 +1496,12 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   getAthleteRiskSeverity(
     id: string,
-  ): "success" | "warn" | "danger" | "secondary" {
+  ): "success" | "warning" | "danger" | "secondary" {
     const risk = this.riskIndicators().find((r) => r.athleteId === id);
     if (!risk) return "secondary";
-    return { low: "success", moderate: "warn", high: "danger" }[
+    return { low: "success", moderate: "warning", high: "danger" }[
       risk.acwrRisk
-    ] as "success" | "warn" | "danger";
+    ] as "success" | "warning" | "danger";
   }
 
   getClearanceLabel(status: string): string {
@@ -1500,13 +1515,13 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   getClearanceSeverity(
     status: string,
-  ): "success" | "warn" | "danger" | "secondary" {
+  ): "success" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "warn" | "danger" | "secondary"
+      "success" | "warning" | "danger" | "secondary"
     > = {
       full: "success",
-      limited: "warn",
+      limited: "warning",
       not_cleared: "danger",
     };
     return severities[status] || "secondary";
@@ -1514,25 +1529,25 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   getInjurySeverity(
     severity: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       mild: "info",
-      moderate: "warn",
+      moderate: "warning",
       severe: "danger",
     };
     return severities[severity] || "secondary";
   }
 
-  getRiskSeverity(risk: string): "success" | "warn" | "danger" | "secondary" {
+  getRiskSeverity(risk: string): "success" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "warn" | "danger" | "secondary"
+      "success" | "warning" | "danger" | "secondary"
     > = {
       low: "success",
-      moderate: "warn",
+      moderate: "warning",
       high: "danger",
     };
     return severities[risk] || "secondary";
@@ -1540,13 +1555,13 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   getRtpStatusSeverity(
     status: string,
-  ): "success" | "warn" | "danger" | "secondary" {
+  ): "success" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "warn" | "danger" | "secondary"
+      "success" | "warning" | "danger" | "secondary"
     > = {
       full_clearance: "success",
-      limited_return: "warn",
+      limited_return: "warning",
       not_ready: "danger",
     };
     return severities[status] || "secondary";
@@ -1610,11 +1625,11 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     this.showReportDialog.set(false);
   }
 
-  getRoleSeverity(role: string): "success" | "info" | "warn" | "danger" {
-    const roleMap: Record<string, "success" | "info" | "warn" | "danger"> = {
+  getRoleSeverity(role: string): "success" | "info" | "warning" | "danger" {
+    const roleMap: Record<string, "success" | "info" | "warning" | "danger"> = {
       coach: "info",
       physiotherapist: "success",
-      nutritionist: "warn",
+      nutritionist: "warning",
       psychologist: "danger",
     };
     return roleMap[role] || "info";
@@ -1632,11 +1647,11 @@ export class PhysiotherapistDashboardComponent implements OnInit {
 
   getPrioritySeverity(
     priority: string,
-  ): "success" | "info" | "warn" | "danger" {
-    const priorityMap: Record<string, "success" | "info" | "warn" | "danger"> =
+  ): "success" | "info" | "warning" | "danger" {
+    const priorityMap: Record<string, "success" | "info" | "warning" | "danger"> =
       {
         low: "info",
-        medium: "warn",
+        medium: "warning",
         high: "danger",
       };
     return priorityMap[priority] || "info";

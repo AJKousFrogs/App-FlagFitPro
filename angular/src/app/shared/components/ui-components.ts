@@ -94,6 +94,7 @@ export {
 // ============================================================================
 // NAVIGATION & LAYOUT COMPONENTS
 // ============================================================================
+export { NavItemComponent } from "./nav-item.component";
 export { SwipeableCardsComponent } from "./swipeable-cards/swipeable-cards.component";
 export { TabsComponent, type TabItem } from "./tabs/tabs.component";
 

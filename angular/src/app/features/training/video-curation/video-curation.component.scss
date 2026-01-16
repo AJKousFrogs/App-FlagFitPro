@@ -7,6 +7,7 @@
 
 .curation-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: var(--surface-primary);
   @include page-container(var(--content-max-width-2xl));
 }

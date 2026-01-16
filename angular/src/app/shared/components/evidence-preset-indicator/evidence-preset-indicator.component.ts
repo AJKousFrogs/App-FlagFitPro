@@ -13,11 +13,11 @@ import {
   computed,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { TooltipModule } from "primeng/tooltip";
-import { DialogModule } from "primeng/dialog";
+import { Tooltip } from "primeng/tooltip";
+import { Dialog } from "primeng/dialog";
 import { EvidenceConfigService } from "../../../core/services/evidence-config.service";
 import { EvidencePreset } from "../../../core/config/evidence-config";
 
@@ -27,9 +27,9 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    TooltipModule,
-    DialogModule,
+    Card,
+    Tooltip,
+    Dialog,
 
     ButtonComponent,
     IconButtonComponent,
@@ -53,7 +53,8 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             icon="pi-info-circle"
             variant="text"
             (clicked)="showDetails = true"
-            ariaLabel="info-circle"
+            ariaLabel="View evidence preset details"
+            tooltip="View details"
           />
         </div>
 
@@ -120,7 +121,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             <h4 class="font-semibold mb-3">ACWR Thresholds</h4>
             <div class="science-notes science-info-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-info-circle science-icon mt-1"></i>
+                <i class="pi pi-info-circle science-icon mt-1" aria-hidden="true"></i>
                 <div>
                   <div class="font-semibold mb-1">Science (Research-Based)</div>
                   <div class="text-sm text-text-secondary">
@@ -131,7 +132,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             </div>
             <div class="coach-notes coach-override-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-wrench coach-icon mt-1"></i>
+                <i class="pi pi-wrench coach-icon mt-1" aria-hidden="true"></i>
                 <div>
                   <div class="font-semibold mb-1">Coach Override</div>
                   <div class="text-sm text-text-secondary">
@@ -178,7 +179,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             <h4 class="font-semibold mb-3">Readiness Scoring</h4>
             <div class="science-notes science-info-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-info-circle science-icon mt-1"></i>
+                <i class="pi pi-info-circle science-icon mt-1" aria-hidden="true"></i>
                 <div>
                   <div class="font-semibold mb-2">Science (Research-Based)</div>
                   <div class="text-sm text-text-secondary mb-2">
@@ -194,7 +195,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             </div>
             <div class="coach-notes coach-override-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-wrench coach-icon mt-1"></i>
+                <i class="pi pi-wrench coach-icon mt-1" aria-hidden="true"></i>
                 <div>
                   <div class="font-semibold mb-1">Coach Override</div>
                   <div class="text-sm text-text-secondary">
@@ -236,7 +237,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             <h4 class="font-semibold mb-3">Tapering Protocols</h4>
             <div class="science-notes science-info-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-info-circle science-icon mt-1"></i>
+                <i class="pi pi-info-circle science-icon mt-1" aria-hidden="true"></i>
                 <div>
                   <div class="font-semibold mb-2">Science (Research-Based)</div>
                   <div class="text-sm text-text-secondary mb-2">
@@ -256,7 +257,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             </div>
             <div class="coach-notes coach-override-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-wrench coach-icon mt-1"></i>
+                <i class="pi pi-wrench coach-icon mt-1" aria-hidden="true"></i>
                 <div>
                   <div class="font-semibold mb-1">Coach Override</div>
                   <div class="text-sm text-text-secondary">

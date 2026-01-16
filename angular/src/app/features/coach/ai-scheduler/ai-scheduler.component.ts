@@ -19,14 +19,14 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
+import { Tag } from "primeng/tag";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
@@ -110,14 +110,14 @@ const PRACTICE_DURATIONS = [
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Checkbox,
-    DialogModule,
-    ProgressBarModule,
+    Dialog,
+    ProgressBar,
     RadioButton,
     Select,
-    TagModule,
-    ToastModule,
+    Tag,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 

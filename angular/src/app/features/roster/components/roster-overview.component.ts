@@ -3,14 +3,14 @@
  * Displays team statistics overview card
  */
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { TeamStat } from "../roster.models";
 
 @Component({
   selector: "app-roster-overview",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CardModule],
+  imports: [Card],
   template: `
     <p-card class="overview-card">
       <ng-template pTemplate="header">

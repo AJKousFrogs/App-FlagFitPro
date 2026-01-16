@@ -29,13 +29,14 @@ import {
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { COLORS } from "../../../core/constants/app.constants";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { ProgressBarModule } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
-import { SkeletonModule } from "primeng/skeleton";
+import { ProgressBar } from "primeng/progressbar";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { Tooltip } from "primeng/tooltip";
+import { Skeleton } from "primeng/skeleton";
 import { WellnessService } from "../../../core/services/wellness.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -60,11 +61,12 @@ export interface WellnessMetric {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    ProgressBarModule,
-    TagModule,
-    TooltipModule,
-    SkeletonModule,
+    Card,
+    ProgressBar,
+    Tag,
+    StatusTagComponent,
+    Tooltip,
+    Skeleton,
     ButtonComponent,
     IconButtonComponent,
   ],
@@ -123,11 +125,11 @@ export interface WellnessMetric {
               <i class="pi pi-heart" [style.color]="statusColor()"></i>
               <span>Wellness</span>
             </div>
-            <p-tag
+            <app-status-tag
               [value]="statusLabel()"
               [severity]="tagSeverity()"
-              size="small"
-            ></p-tag>
+              size="sm"
+            />
           </div>
           <p-progressBar
             [value]="overallScore()"
@@ -200,7 +202,8 @@ export interface WellnessMetric {
                   variant="text"
                   size="sm"
                   (clicked)="handleClick()"
-                  ariaLabel="external-link"
+                  ariaLabel="View wellness details"
+                  tooltip="View details"
                 />
               }
             </div>
@@ -292,11 +295,11 @@ export class WellnessScoreDisplayComponent implements OnInit {
   });
 
   tagSeverity = computed(
-    (): "success" | "info" | "warn" | "danger" | "secondary" => {
+    (): "success" | "info" | "warning" | "danger" | "secondary" => {
       const score = this.overallScore();
       if (score >= 80) return "success";
       if (score >= 60) return "info";
-      if (score >= 40) return "warn";
+      if (score >= 40) return "warning";
       if (score > 0) return "danger";
       return "secondary";
     },

@@ -7,12 +7,13 @@ import {
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
-import { DialogModule } from "primeng/dialog";
-import { TimelineModule } from "primeng/timeline";
-import { CardModule } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { Timeline } from "primeng/timeline";
+import { Card } from "primeng/card";
 import { ApiService } from "../../../../core/services/api.service";
 import { LoggerService } from "../../../../core/services/logger.service";
 import { formatDate as formatDateUtil } from "../../../../shared/utils/date.utils";
@@ -54,12 +55,13 @@ interface Milestone {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TagModule,
-    TooltipModule,
+    Tag,
+    StatusTagComponent,
+    Tooltip,
     ProgressBar,
-    DialogModule,
-    TimelineModule,
-    CardModule,
+    Dialog,
+    Timeline,
+    Card,
     IconButtonComponent,
   ],
   template: `
@@ -74,7 +76,8 @@ interface Milestone {
           <app-icon-button
             icon="pi-external-link"
             variant="text"
-            ariaLabel="external-link"
+            ariaLabel="View LA28 roadmap details"
+            tooltip="View details"
           />
         </div>
 
@@ -177,9 +180,10 @@ interface Milestone {
                     <div class="cycle-year">
                       {{ cycle.program_cycle?.cycle_year }}
                     </div>
-                    <p-tag
+                    <app-status-tag
                       [value]="getStatusLabel(cycle.status)"
                       [severity]="getStatusSeverity(cycle.status)"
+                      size="sm"
                     />
                   </div>
                   <h5>{{ cycle.program_cycle?.cycle_name }}</h5>
@@ -230,9 +234,10 @@ interface Milestone {
                   [subheader]="formatDate(event.date, 'MMM yyyy')"
                 >
                   <p>{{ event.description }}</p>
-                  <p-tag
+                  <app-status-tag
                     [value]="event.type"
                     [severity]="getMilestoneTypeSeverity(event.type)"
+                    size="sm"
                   />
                 </p-card>
               </ng-template>
@@ -485,10 +490,10 @@ export class La28RoadmapComponent {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
     > = {
       not_started: "secondary",
       in_progress: "info",
@@ -499,14 +504,14 @@ export class La28RoadmapComponent {
 
   getMilestoneTypeSeverity(
     type: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary" | "contrast"
+      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
     > = {
       tournament: "info",
       cycle: "secondary",
-      checkpoint: "warn",
+      checkpoint: "warning",
       olympics: "success",
     };
     return severities[type] || "secondary";

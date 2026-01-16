@@ -9,15 +9,16 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TabsModule } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { Textarea } from "primeng/textarea";
+import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -112,15 +113,20 @@ interface ScoutingReport {
     CommonModule,
     FormsModule,
     RouterModule,
-    CardModule,
-    DialogModule,
-    InputTextModule,
+    Card,
+    Dialog,
+    InputText,
     Select,
     TableModule,
-    TabsModule,
-    TagModule,
-    TextareaModule,
-    TooltipModule,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    Tag,
+    StatusTagComponent,
+    Textarea,
+    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -194,7 +200,7 @@ interface ScoutingReport {
                                   report.gameDate | date: "mediumDate"
                                 }}</span>
                               </div>
-                              <p-tag
+                              <app-status-tag
                                 [value]="
                                   report.sharedWith === 'team'
                                     ? 'Team'
@@ -205,7 +211,8 @@ interface ScoutingReport {
                                     ? 'info'
                                     : 'secondary'
                                 "
-                              ></p-tag>
+                                size="sm"
+                              />
                             </div>
                           </ng-template>
 
@@ -247,7 +254,8 @@ interface ScoutingReport {
                               icon="pi-pencil"
                               variant="text"
                               (clicked)="editReport(report)"
-                              ariaLabel="pencil"
+                              ariaLabel="Edit scouting report"
+                              tooltip="Edit"
                             />
                           </ng-template>
                         </p-card>
@@ -804,7 +812,7 @@ interface ScoutingReport {
                   <h3>vs {{ viewingReport()!.opponentName }}</h3>
                   <p>{{ viewingReport()!.gameDate | date: "fullDate" }}</p>
                 </div>
-                <p-tag
+                <app-status-tag
                   [value]="
                     viewingReport()!.requiredReading
                       ? 'Required Reading'
@@ -813,7 +821,8 @@ interface ScoutingReport {
                   [severity]="
                     viewingReport()!.requiredReading ? 'danger' : 'info'
                   "
-                ></p-tag>
+                  size="sm"
+                />
               </div>
 
               <div class="report-section">

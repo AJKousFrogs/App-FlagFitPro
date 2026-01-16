@@ -13,8 +13,8 @@ import {
   inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
+import { ButtonComponent } from "../button/button.component";
+import { Card } from "primeng/card";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { MissingDataStatus } from "../../../core/services/missing-data-detection.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -26,8 +26,8 @@ import { LoggerService } from "../../../core/services/logger.service";
   imports: [
     CommonModule,
     RouterModule,
-    ButtonModule,
-    CardModule,
+    ButtonComponent,
+    Card,
     StatusTagComponent,
   ],
   template: `
@@ -91,20 +91,18 @@ import { LoggerService } from "../../../core/services/logger.service";
 
           <!-- Action buttons -->
           <div class="action-section">
-            <p-button
-              label="Complete Wellness Check-in"
-              icon="pi pi-heart"
+            <app-button
+              iconLeft="pi-heart"
               [routerLink]="['/wellness']"
-              styleClass="p-button-primary"
-            ></p-button>
+              >Complete Wellness Check-in</app-button
+            >
             @if (showCoachLink()) {
-              <p-button
-                label="View Missing Data Details"
-                icon="pi pi-info-circle"
-                [routerLink]="['/dashboard']"
+              <app-button
+                iconLeft="pi-info-circle"
                 variant="outlined"
-                styleClass="p-button-outlined"
-              ></p-button>
+                [routerLink]="['/dashboard']"
+                >View Missing Data Details</app-button
+              >
             }
           </div>
         </div>

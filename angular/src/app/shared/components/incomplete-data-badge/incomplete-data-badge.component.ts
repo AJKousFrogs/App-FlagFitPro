@@ -16,9 +16,8 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
-import { ButtonModule } from "primeng/button";
 
 export type IncompleteDataSeverity = "warning" | "critical";
 export type IncompleteDataType =
@@ -40,8 +39,7 @@ export type IncompleteDataPlacement =
   imports: [
     CommonModule,
     RouterModule,
-    TooltipModule,
-    ButtonModule,
+    Tooltip,
     StatusTagComponent,
   ],
   template: `

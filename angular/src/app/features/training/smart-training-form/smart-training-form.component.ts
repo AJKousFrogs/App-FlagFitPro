@@ -16,13 +16,14 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
 import { Select } from "primeng/select";
-import { SelectButtonModule } from "primeng/selectbutton";
+import { SelectButton } from "primeng/selectbutton";
 import { Slider } from "primeng/slider";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { Toast } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
@@ -62,14 +63,15 @@ interface EquipmentOption {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    CardModule,
+    Card,
     Select,
     Slider,
     ToggleSwitch,
     Chip,
-    TagModule,
-    SelectButtonModule,
-    ToastModule,
+    Tag,
+    StatusTagComponent,
+    SelectButton,
+    Toast,
     ButtonComponent,
   ],
   template: `
@@ -148,13 +150,13 @@ interface EquipmentOption {
                   >{{ weatherData()?.temp }}°F,
                   {{ weatherData()?.condition }}</span
                 >
-                <p-tag
-                  [value]="weatherData()?.suitability"
+                <app-status-tag
+                  [value]="weatherData()?.suitability || ''"
                   [severity]="
                     getWeatherSeverity(weatherData()?.suitability || 'good')
                   "
-                >
-                </p-tag>
+                  size="sm"
+                />
               </div>
               <p-toggleswitch
                 formControlName="outdoorSession"
@@ -470,7 +472,7 @@ export class SmartTrainingFormComponent implements OnInit {
 
   getWeatherSeverity(
     suitability: "excellent" | "good" | "fair" | "poor" | undefined,
-  ): "success" | "info" | "warn" | "danger" {
+  ): "success" | "info" | "warning" | "danger" {
     return this.weatherService.getWeatherSeverity(suitability || "good");
   }
 

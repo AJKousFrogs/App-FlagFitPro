@@ -9,7 +9,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
-import { SkeletonModule } from "primeng/skeleton";
+import { Skeleton } from "primeng/skeleton";
 import { ReadinessService } from "../../../core/services/readiness.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
 
@@ -21,7 +21,7 @@ import { ButtonComponent, CardComponent } from "../ui-components";
     CommonModule,
     CardComponent,
     StatusTagComponent,
-    SkeletonModule,
+    Skeleton,
     ButtonComponent,
   ],
   template: `

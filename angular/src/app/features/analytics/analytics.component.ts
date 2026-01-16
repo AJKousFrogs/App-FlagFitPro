@@ -11,14 +11,14 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
 import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   COLORS,
@@ -88,14 +88,14 @@ interface DevelopmentGoal {
     TitleCasePipe,
     FormsModule,
     RouterModule,
-    CardModule,
+    Card,
 
     LazyChartComponent,
-    DialogModule,
-    ProgressBarModule,
+    Dialog,
+    ProgressBar,
     TableModule,
     StatusTagComponent,
-    TooltipModule,
+    Tooltip,
     Tabs,
     TabPanel,
     Select,
@@ -291,7 +291,8 @@ interface DevelopmentGoal {
                           variant="outlined"
                           size="sm"
                           (clicked)="exportChart('performance')"
-                          ariaLabel="download"
+                          ariaLabel="Download performance chart"
+                          tooltip="Download"
                         />
                       </div>
                     }
@@ -327,7 +328,8 @@ interface DevelopmentGoal {
                     <app-icon-button
                       icon="pi-bolt"
                       routerLink="noDataMessage.helpLink"
-                      ariaLabel="bolt"
+                      ariaLabel="Start logging workouts"
+                      tooltip="Get started"
                     />
                   </div>
                 }

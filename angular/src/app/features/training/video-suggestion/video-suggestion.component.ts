@@ -40,20 +40,21 @@ import {
 } from "@angular/forms";
 
 // PrimeNG Components
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
+import { Avatar } from "primeng/avatar";
+import { Badge } from "primeng/badge";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Chip } from "primeng/chip";
-import { DialogModule } from "primeng/dialog";
-import { DividerModule } from "primeng/divider";
-import { InputTextModule } from "primeng/inputtext";
+import { Dialog } from "primeng/dialog";
+import { Divider } from "primeng/divider";
+import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
-import { SkeletonModule } from "primeng/skeleton";
-import { StepperModule } from "primeng/stepper";
-import { TextareaModule } from "primeng/textarea";
-import { TimelineModule } from "primeng/timeline";
-import { ToastModule } from "primeng/toast";
-import { TooltipModule } from "primeng/tooltip";
+import { Skeleton } from "primeng/skeleton";
+import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
+import { Textarea } from "primeng/textarea";
+import { Timeline } from "primeng/timeline";
+import { Toast } from "primeng/toast";
+import { Tooltip } from "primeng/tooltip";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -99,21 +100,22 @@ interface VideoSuggestion {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    InputTextModule,
-    TextareaModule,
+    InputText,
+    Textarea,
     MultiSelect,
-    ToastModule,
-    DialogModule,
-    BadgeModule,
-    TooltipModule,
-    SkeletonModule,
-    AvatarModule,
-    TimelineModule,
-    StepperModule,
+    Toast,
+    Dialog,
+    Badge,
+    Tooltip,
+    Skeleton,
+    Avatar,
+    Timeline,
+    Stepper, StepList, Step, StepPanels, StepPanel,
     Chip,
-    DividerModule,
+    Divider,
     MainLayoutComponent,
     ButtonComponent,
+    IconButtonComponent,
     CardShellComponent,
     StatusTagComponent,
   ],
@@ -440,23 +442,20 @@ interface VideoSuggestion {
                     </div>
 
                     <div class="suggestion-actions">
-                      <button
-                        pButton
-                        icon="pi pi-external-link"
-                        class="p-button-text"
-                        pTooltip="Open in Instagram"
-                        aria-label="Open in Instagram"
-                        (click)="openInInstagram(suggestion)"
-                      ></button>
+                      <app-icon-button
+                        icon="pi-external-link"
+                        ariaLabel="Open in Instagram"
+                        tooltip="Open in Instagram"
+                        (clicked)="openInInstagram(suggestion)"
+                      />
                       @if (suggestion.status === "pending") {
-                        <button
-                          pButton
-                          icon="pi pi-trash"
-                          class="p-button-text p-button-danger"
-                          pTooltip="Delete submission"
-                          aria-label="Delete submission"
-                          (click)="deleteSuggestion(suggestion)"
-                        ></button>
+                        <app-icon-button
+                          icon="pi-trash"
+                          variant="danger"
+                          ariaLabel="Delete submission"
+                          tooltip="Delete submission"
+                          (clicked)="deleteSuggestion(suggestion)"
+                        />
                       }
                     </div>
                   </article>
@@ -597,12 +596,11 @@ interface VideoSuggestion {
                 </div>
               </div>
               <div class="preview-actions">
-                <button
-                  pButton
-                  label="Open in Instagram"
-                  icon="pi pi-external-link"
-                  (click)="openInInstagram(video)"
-                ></button>
+                <app-button
+                  iconLeft="pi-external-link"
+                  (clicked)="openInInstagram(video)"
+                  >Open in Instagram</app-button
+                >
               </div>
             </div>
           }

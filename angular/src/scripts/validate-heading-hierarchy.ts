@@ -49,10 +49,6 @@ const headingAudit: {
     headings: ["h4 (Keyboard help)"],
     issues: ["Should verify parent context has h1-h3"],
   },
-  {
-    component: "signal-form-example.component.ts",
-    headings: ["h3 (Form sections)", "h4 (Form status)"],
-  },
 ];
 
 function validateHeadingHierarchy(): HeadingIssue[] {

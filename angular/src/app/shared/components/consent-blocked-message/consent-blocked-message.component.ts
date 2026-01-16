@@ -1,7 +1,7 @@
 import { Component, input, ChangeDetectionStrategy } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import {
   CONSENT_BLOCKED_MESSAGES,
   PrivacyMessage,
@@ -38,7 +38,7 @@ export type ConsentBlockedDataType =
   selector: "app-consent-blocked-message",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardModule],
+  imports: [CommonModule, RouterModule, Card],
   template: `
     <div class="consent-blocked" [class]="variant()">
       <div class="consent-icon">

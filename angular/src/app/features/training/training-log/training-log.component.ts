@@ -32,11 +32,11 @@ import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
+import { Tag } from "primeng/tag";
+import { Toast } from "primeng/toast";
 import { Message } from "primeng/message";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -64,11 +64,11 @@ interface SessionType {
     CommonModule,
     ReactiveFormsModule,
     Slider,
-    InputNumberModule,
-    InputTextModule,
+    InputNumber,
+    InputText,
     Textarea,
-    TagModule,
-    ToastModule,
+    Tag,
+    Toast,
     Message,
     MainLayoutComponent,
     PageHeaderComponent,

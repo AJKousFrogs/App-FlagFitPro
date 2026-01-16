@@ -7,9 +7,10 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { ProgressBar } from "primeng/progressbar";
 import { ApiService } from "../../../core/services/api.service";
 
 export interface LiveMetric {
@@ -28,7 +29,7 @@ export interface LiveMetric {
   selector: "app-live-performance-chart",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, TagModule, ProgressBarModule],
+  imports: [CommonModule, Card, Tag, StatusTagComponent, ProgressBar],
   template: `
     <p-card header="Live Performance Tracking">
       <div class="performance-metrics-grid">
@@ -44,7 +45,7 @@ export interface LiveMetric {
             <span class="unit">{{ metric.unit }}</span>
           </div>
           <div class="metric-trend">
-            <p-tag
+            <app-status-tag
               [value]="metric.trend.text"
               [severity]="
                 metric.trend.direction === "up" ? "success" : "danger"
@@ -54,8 +55,8 @@ export interface LiveMetric {
                   ? "pi pi-arrow-up"
                   : "pi pi-arrow-down"
               "
-            >
-            </p-tag>
+              size="sm"
+            />
           </div>
           <p-progressBar
             [value]="metric.progress"

@@ -17,17 +17,18 @@ import { CommonModule } from "@angular/common";
 import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { Toast } from "primeng/toast";
+import { Tooltip } from "primeng/tooltip";
 import { MessageService } from "primeng/api";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -86,17 +87,18 @@ interface SessionTypeOption {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Checkbox,
-    DialogModule,
-    InputNumberModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputNumber,
+    InputText,
+    ProgressBar,
     Select,
     Slider,
-    TagModule,
-    ToastModule,
-    TooltipModule,
+    Tag,
+    StatusTagComponent,
+    Toast,
+    Tooltip,
 
     ButtonComponent,
   ],
@@ -113,18 +115,19 @@ interface SessionTypeOption {
               {{ progressionStatus()!.progressionPhase }}
             </div>
             @if (progressionStatus()!.daysSinceLastSession <= 3) {
-              <p-tag
+              <app-status-tag
                 value="Active"
                 severity="success"
-                styleClass="status-tag status-tag--success"
-              ></p-tag>
+                size="sm"
+              />
             } @else {
-              <p-tag
+              <app-status-tag
                 [value]="
                   progressionStatus()!.daysSinceLastSession + ' days ago'
                 "
-                severity="warn"
-              ></p-tag>
+                severity="warning"
+                size="sm"
+              />
             }
           </div>
 
@@ -220,10 +223,11 @@ interface SessionTypeOption {
                   <div class="session-info">
                     <div class="session-date">
                       {{ session.sessionDate | date: "EEE, MMM d" }}
-                      <p-tag
+                      <app-status-tag
                         [value]="formatSessionType(session.sessionType)"
                         [severity]="getSessionTypeSeverity(session.sessionType)"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </div>
                     <div class="throw-breakdown">
                       <span class="throw-total"
@@ -624,17 +628,17 @@ export class QbThrowingTrackerComponent {
 
   getSessionTypeSeverity(
     type: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       practice: "info",
       warm_up: "secondary",
       drill_work: "info",
       game: "success",
       tournament: "danger",
-      simulation: "warn",
+      simulation: "warning",
     };
     return severities[type] || "secondary";
   }

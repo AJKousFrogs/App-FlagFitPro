@@ -31,16 +31,17 @@ import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 
 // PrimeNG Components
-import { AvatarModule } from "primeng/avatar";
-import { BadgeModule } from "primeng/badge";
+import { Avatar } from "primeng/avatar";
+import { Badge } from "primeng/badge";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { RippleModule } from "primeng/ripple";
-import { SkeletonModule } from "primeng/skeleton";
-import { ToastModule } from "primeng/toast";
-import { TooltipModule } from "primeng/tooltip";
+import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { Ripple } from "primeng/ripple";
+import { Skeleton } from "primeng/skeleton";
+import { Toast } from "primeng/toast";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
@@ -77,18 +78,19 @@ interface FilterChip {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    CardModule,
-    BadgeModule,
-    SkeletonModule,
-    TooltipModule,
-    DialogModule,
-    InputTextModule,
-    ToastModule,
-    AvatarModule,
-    RippleModule,
+    Card,
+    Badge,
+    Skeleton,
+    Tooltip,
+    Dialog,
+    InputText,
+    Toast,
+    Avatar,
+    Ripple,
     MainLayoutComponent,
 
     ButtonComponent,
+    IconButtonComponent,
     StatusTagComponent,
   ],
   template: `
@@ -134,13 +136,12 @@ interface FilterChip {
                   <i class="pi pi-chevron-down stat-action-icon"></i>
                 </button>
               </div>
-              <button
-                pButton
-                label="Suggest a Video"
-                icon="pi pi-lightbulb"
+              <app-button
+                iconLeft="pi-lightbulb"
                 class="suggest-btn"
-                (click)="navigateToSuggest()"
-              ></button>
+                (clicked)="navigateToSuggest()"
+                >Suggest a Video</app-button
+              >
             </div>
           </div>
         </header>
@@ -161,14 +162,12 @@ interface FilterChip {
               />
             </span>
             @if (searchQuery()) {
-              <button
-                pButton
-                icon="pi pi-times"
-                class="p-button-text clear-btn"
-                (click)="clearSearch()"
-                pTooltip="Clear search"
-                aria-label="Clear search"
-              ></button>
+              <app-icon-button
+                icon="pi-times"
+                ariaLabel="Clear search"
+                tooltip="Clear search"
+                (clicked)="clearSearch()"
+              />
             }
           </div>
 
@@ -226,13 +225,13 @@ interface FilterChip {
               @for (filter of activeFilterLabels(); track filter) {
                 <app-status-tag [value]="filter" severity="success" size="sm" />
               }
-              <button
-                pButton
-                label="Clear All"
-                icon="pi pi-times"
-                class="p-button-text p-button-sm clear-filters-btn"
-                (click)="clearAllFilters()"
-              ></button>
+              <app-button
+                iconLeft="pi-times"
+                variant="text"
+                size="sm"
+                (clicked)="clearAllFilters()"
+                >Clear All</app-button
+              >
             </div>
           }
         </section>
@@ -276,12 +275,11 @@ interface FilterChip {
               </div>
               <h3>No videos found</h3>
               <p>Try adjusting your filters or search query</p>
-              <button
-                pButton
-                label="Clear Filters"
-                icon="pi pi-refresh"
-                (click)="clearAllFilters()"
-              ></button>
+              <app-button
+                iconLeft="pi-refresh"
+                (clicked)="clearAllFilters()"
+                >Clear Filters</app-button
+              >
             </div>
           } @else {
             <!-- Video Cards Grid -->

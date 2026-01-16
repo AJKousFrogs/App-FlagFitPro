@@ -9,7 +9,7 @@ import { PerformanceDashboardComponent } from "../performance-dashboard/performa
 import { TrainingBuilderComponent } from "../training-builder/training-builder.component";
 import { SwipeTableComponent } from "../swipe-table/swipe-table.component";
 import { TrainingHeatmapComponent } from "../training-heatmap/training-heatmap.component";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { Tabs } from "primeng/tabs";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
@@ -24,7 +24,7 @@ import { toLogContext } from "../../../core/services/logger.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
+    Card,
     Tabs,
     PerformanceDashboardComponent,
     TrainingBuilderComponent,

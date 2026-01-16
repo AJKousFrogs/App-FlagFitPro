@@ -5,7 +5,7 @@ import {
   computed,
   input,
 } from "@angular/core";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
 import { CardComponent } from "../card/card.component";
 
 export interface TrendData {
@@ -22,7 +22,7 @@ export interface TrendData {
   selector: "app-trend-card",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardComponent, TagModule],
+  imports: [CommonModule, CardComponent, Tag],
   template: `
     <app-card [title]="data().title" [subtitle]="data().subtitle">
       <div header-actions>

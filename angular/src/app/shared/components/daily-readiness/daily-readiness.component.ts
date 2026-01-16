@@ -24,17 +24,17 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
-import { CardModule } from "primeng/card";
-import { SliderModule } from "primeng/slider";
-import { DialogModule } from "primeng/dialog";
-import { TooltipModule } from "primeng/tooltip";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Card } from "primeng/card";
+import { Slider } from "primeng/slider";
+import { Dialog } from "primeng/dialog";
+import { Tooltip } from "primeng/tooltip";
+import { ProgressBar } from "primeng/progressbar";
 import { AuthService } from "../../../core/services/auth.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ToastService } from "../../../core/services/toast.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ProfileCompletionService } from "../../../core/services/profile-completion.service";
-import { InputNumberModule } from "primeng/inputnumber";
+import { InputNumber } from "primeng/inputnumber";
 import { ApiService } from "../../../core/services/api.service";
 
 // Centralized wellness constants
@@ -60,12 +60,12 @@ interface DailyState {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    SliderModule,
-    DialogModule,
-    TooltipModule,
-    ProgressBarModule,
-    InputNumberModule,
+    Card,
+    Slider,
+    Dialog,
+    Tooltip,
+    ProgressBar,
+    InputNumber,
     ButtonComponent,
   ],
   template: `

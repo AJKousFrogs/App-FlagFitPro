@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 
 /**
  * Progress Indicator Component - Angular 19+
@@ -19,7 +19,7 @@ import { ProgressBarModule } from "primeng/progressbar";
   selector: "app-progress-indicator",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ProgressBarModule],
+  imports: [CommonModule, ProgressBar],
   template: `
     <div [class]="containerClass()">
       <!-- Label -->

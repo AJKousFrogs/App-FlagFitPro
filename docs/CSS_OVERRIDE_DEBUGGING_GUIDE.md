@@ -49,13 +49,15 @@ getComputedStyle(document.documentElement).getPropertyValue('--ds-primary-green'
 **Angular Emulated ViewEncapsulation:**
 
 - Adds `_ngcontent-*` attributes
-- Blocks `::ng-deep` from working
-- **Solution:** Use `:host ::ng-deep` or `ViewEncapsulation.None`
+- Styles are scoped to the component
+- **Solution:** Use `ViewEncapsulation.None` for wrapper components or CSS custom properties
 
 **Check in DevTools:**
 
 - Look for `_ngcontent-*` attributes on elements
 - If present, component styles are encapsulated
+
+**Note:** `::ng-deep` has been fully removed from the codebase. Use CSS custom properties or `ViewEncapsulation.None` instead.
 
 ## Automated Override Detection Script
 
@@ -193,21 +195,33 @@ calculateSpecificity("#app .p-button.p-primary"); // [[1, 2, 0]]
 @Component({
   selector: 'app-button',
   styles: [`
-    ::ng-deep .p-button { } /* Won't work */
+    .p-button { } /* Won't reach PrimeNG internals */
   `]
 })
 ```
 
-**Fix:** Use `:host ::ng-deep`:
+**Fix:** Use `ViewEncapsulation.None` for wrapper components:
 
 ```typescript
-styles: [
-  `
-  :host ::ng-deep .p-button {
-    background: var(--ds-primary-green);
+@Component({
+  selector: 'app-modal',
+  encapsulation: ViewEncapsulation.None,
+  styles: [`
+    app-modal .p-button {
+      background: var(--ds-primary-green);
+    }
+  `]
+})
+```
+
+**Or use CSS custom properties (preferred):**
+
+```typescript
+styles: [`
+  :host {
+    --p-button-primary-background: var(--ds-primary-green);
   }
-`,
-];
+`]
 ```
 
 ## Chrome DevTools Shortcuts

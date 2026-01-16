@@ -9,13 +9,14 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { AvatarModule } from "primeng/avatar";
-import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
-import { DialogModule } from "primeng/dialog";
+import { Avatar } from "primeng/avatar";
+import { Card } from "primeng/card";
+import { UIChart } from "primeng/chart";
+import { Dialog } from "primeng/dialog";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { Tooltip } from "primeng/tooltip";
 import { getInitials } from "../../utils/format.utils";
 import { PlayerWithStats } from "../../../core/models/player.models";
 
@@ -36,13 +37,14 @@ interface StatComparison {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
+    Card,
     Select,
-    ChartModule,
-    AvatarModule,
-    TagModule,
-    TooltipModule,
-    DialogModule,
+    UIChart,
+    Avatar,
+    Tag,
+    StatusTagComponent,
+    Tooltip,
+    Dialog,
   ],
   template: `
     <div class="player-comparison">
@@ -71,10 +73,11 @@ interface StatComparison {
                     size="normal"
                   ></p-avatar>
                   <span>{{ selected.name }}</span>
-                  <p-tag
+                  <app-status-tag
                     [value]="selected.position"
                     severity="secondary"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               }
             </ng-template>
@@ -87,7 +90,7 @@ interface StatComparison {
                   size="normal"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
-                <p-tag [value]="player.position" severity="secondary"></p-tag>
+                <app-status-tag [value]="player.position" severity="secondary" size="sm" />
               </div>
             </ng-template>
           </p-select>
@@ -118,10 +121,11 @@ interface StatComparison {
                     size="normal"
                   ></p-avatar>
                   <span>{{ selected.name }}</span>
-                  <p-tag
+                  <app-status-tag
                     [value]="selected.position"
                     severity="secondary"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               }
             </ng-template>
@@ -134,7 +138,7 @@ interface StatComparison {
                   size="normal"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
-                <p-tag [value]="player.position" severity="secondary"></p-tag>
+                <app-status-tag [value]="player.position" severity="secondary" size="sm" />
               </div>
             </ng-template>
           </p-select>
@@ -153,7 +157,7 @@ interface StatComparison {
             ></p-avatar>
             <div class="player-info">
               <h3>{{ player1()!.name }}</h3>
-              <p-tag [value]="player1()!.position" severity="info"></p-tag>
+              <app-status-tag [value]="player1()!.position" severity="info" size="sm" />
               @if (player1()!.jerseyNumber) {
                 <span class="jersey-number"
                   >#{{ player1()!.jerseyNumber }}</span
@@ -173,7 +177,7 @@ interface StatComparison {
             </div>
             <div class="player-info">
               <h3>{{ player2()!.name }}</h3>
-              <p-tag [value]="player2()!.position" severity="info"></p-tag>
+              <app-status-tag [value]="player2()!.position" severity="info" size="sm" />
               @if (player2()!.jerseyNumber) {
                 <span class="jersey-number"
                   >#{{ player2()!.jerseyNumber }}</span

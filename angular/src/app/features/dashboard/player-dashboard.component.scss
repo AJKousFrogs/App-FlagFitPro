@@ -324,7 +324,7 @@
 .quick-action-card {
   padding: var(--space-4);
   background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition:
@@ -450,7 +450,7 @@
 }
 
 .no-program-title {
-  font-size: var(--font-display-xs);
+  font-size: var(--font-h1-size);
   font-weight: var(--font-weight-bold);
   color: var(--ds-text-primary);
   margin-bottom: var(--space-2);

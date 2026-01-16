@@ -21,9 +21,9 @@ import {
   HostListener,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { ScrollerModule } from "primeng/scroller";
-import { BadgeModule } from "primeng/badge";
-import { TooltipModule } from "primeng/tooltip";
+import { Scroller } from "primeng/scroller";
+import { Badge } from "primeng/badge";
+import { Tooltip } from "primeng/tooltip";
 import {
   Notification,
   NotificationCategory,
@@ -37,7 +37,7 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
   selector: "app-notifications-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, ScrollerModule, BadgeModule, TooltipModule],
+  imports: [RouterModule, Scroller, Badge, Tooltip],
   template: `
     <!-- Backdrop -->
     @if (visible) {

@@ -18,20 +18,20 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { AvatarModule } from "primeng/avatar";
+import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -190,19 +190,19 @@ const RTP_STAGES: RtpStage[] = [
     CommonModule,
     FormsModule,
     DatePipe,
-    AvatarModule,
-    CardModule,
-    CheckboxModule,
+    Avatar,
+    Card,
+    Checkbox,
     DatePicker,
-    DialogModule,
-    InputNumberModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputNumber,
+    InputText,
+    ProgressBar,
     RadioButton,
     Select,
     TableModule,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 

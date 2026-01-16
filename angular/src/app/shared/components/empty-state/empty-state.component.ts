@@ -6,7 +6,7 @@ import {
     output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 
 /**
@@ -26,7 +26,7 @@ import { ButtonComponent } from "../button/button.component";
   selector: "app-empty-state",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, CardModule, ButtonComponent],
+  imports: [CommonModule, RouterModule, Card, ButtonComponent],
   template: `
     <div class="empty-state" [class.compact]="compact()">
       @if (icon()) {
@@ -143,7 +143,7 @@ export class EmptyStateComponent {
     | "secondary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "help"
     | "contrast"

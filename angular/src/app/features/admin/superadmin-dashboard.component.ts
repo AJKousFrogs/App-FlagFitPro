@@ -12,13 +12,14 @@ import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -83,13 +84,13 @@ interface AdminTeam {
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    DialogModule,
-    InputTextModule,
+    Card,
+    Dialog,
+    InputText,
     Select,
     TableModule,
-    TagModule,
-    ToastModule,
+    Tag,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -368,10 +369,11 @@ interface AdminTeam {
               <td>{{ user.name }}</td>
               <td>{{ user.email }}</td>
               <td>
-                <p-tag
+                <app-status-tag
                   [value]="user.role"
                   [severity]="getRoleSeverity(user.role)"
-                ></p-tag>
+                  size="sm"
+                />
               </td>
               <td>{{ user.team || "--" }}</td>
               <td>
@@ -412,10 +414,11 @@ interface AdminTeam {
               <td>{{ team.playerCount }}</td>
               <td>{{ team.createdDate }}</td>
               <td>
-                <p-tag
+                <app-status-tag
                   [value]="team.status"
                   [severity]="getTeamStatusSeverity(team.status)"
-                ></p-tag>
+                  size="sm"
+                />
               </td>
               <td>
                 <app-button variant="text" iconLeft="pi-ellipsis-v"
@@ -814,29 +817,29 @@ export class SuperadminDashboardComponent implements OnInit {
 
   getRoleSeverity(
     role: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       coach: "success",
       player: "info",
       parent: "secondary",
-      admin: "warn",
+      admin: "warning",
     };
     return severities[role] || "secondary";
   }
 
   getTeamStatusSeverity(
     status: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       active: "success",
       inactive: "secondary",
-      new: "warn",
+      new: "warning",
     };
     return severities[status] || "secondary";
   }

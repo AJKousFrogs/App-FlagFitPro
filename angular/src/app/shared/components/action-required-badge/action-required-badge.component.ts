@@ -16,9 +16,9 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
-import { ButtonModule } from "primeng/button";
+import { ButtonComponent } from "../button/button.component";
 
 export type ActionUrgency = "low" | "medium" | "high" | "critical";
 export type ActionPlacement = "top" | "inline" | "banner" | "button";
@@ -38,20 +38,18 @@ export type ActionType =
   imports: [
     CommonModule,
     RouterModule,
-    TooltipModule,
-    ButtonModule,
+    Tooltip,
+    ButtonComponent,
     StatusTagComponent,
   ],
   template: `
     @if (placement() === "button" && actionRoute()) {
-      <button
-        pButton
-        [label]="getLabel()"
-        [icon]="getIconClass()"
+      <app-button
+        [iconLeft]="getIconClass().replace('pi ', '')"
         [routerLink]="actionRoute()!"
         [class]="'action-btn urgency-' + urgency()"
-        styleClass="p-button-primary"
-      ></button>
+        >{{ getLabel() }}</app-button
+      >
     } @else {
       <div
         class="action-required-badge"

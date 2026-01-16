@@ -89,13 +89,15 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
             icon="pi-check"
             variant="text"
             (clicked)="acknowledgeAnnouncement()"
-            ariaLabel="check"
+            ariaLabel="Acknowledge announcement"
+            tooltip="Acknowledge"
           />
           <app-icon-button
             icon="pi-times"
             variant="text"
             (clicked)="dismiss()"
-            ariaLabel="times"
+            ariaLabel="Dismiss announcement"
+            tooltip="Dismiss"
           />
         </div>
       </div>

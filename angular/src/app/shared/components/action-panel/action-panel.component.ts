@@ -33,8 +33,8 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
+import { ButtonComponent } from "../button/button.component";
+import { Card } from "primeng/card";
 
 export type ActionPanelUrgency = "low" | "medium" | "high" | "critical";
 export type ActionPanelType =
@@ -50,7 +50,7 @@ export type ActionPanelType =
   selector: "app-action-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ButtonModule, CardModule],
+  imports: [CommonModule, RouterModule, ButtonComponent, Card],
   template: `
     <div
       class="action-panel"
@@ -70,23 +70,19 @@ export type ActionPanelType =
 
         <div class="action-panel-actions">
           @if (actionRoute()) {
-            <button
-              pButton
-              [label]="actionLabel() || 'Take Action'"
+            <app-button
               [routerLink]="actionRoute()!"
               [class]="'action-panel-btn urgency-' + urgency()"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-            ></button>
+              iconRight="pi-arrow-right"
+              >{{ actionLabel() || "Take Action" }}</app-button
+            >
           } @else {
-            <button
-              pButton
-              [label]="actionLabel() || 'Take Action'"
-              (click)="actionClicked.emit()"
+            <app-button
+              (clicked)="actionClicked.emit()"
               [class]="'action-panel-btn urgency-' + urgency()"
-              icon="pi pi-arrow-right"
-              iconPos="right"
-            ></button>
+              iconRight="pi-arrow-right"
+              >{{ actionLabel() || "Take Action" }}</app-button
+            >
           }
         </div>
       </div>

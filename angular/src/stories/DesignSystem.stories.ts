@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/angular";
 import { applicationConfig } from "@storybook/angular";
 import { provideAnimations } from "@angular/platform-browser/animations";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { InputTextModule } from "primeng/inputtext";
+import { Button } from "primeng/button";
+import { Card } from "primeng/card";
+import { InputText } from "primeng/inputtext";
 import { CommonModule } from "@angular/common";
 // Note: play functions temporarily disabled due to Storybook 10 + @storybook/test incompatibility
 
@@ -103,7 +103,7 @@ export const Colors: Story = {
  */
 export const Buttons: Story = {
   render: () => ({
-    imports: [ButtonModule, CommonModule],
+    imports: [Button, CommonModule],
     template: `
       <div style="display: grid; gap: 24px; padding: 24px; max-width: 800px;">
         <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0;">Buttons</h2>
@@ -155,7 +155,7 @@ export const Buttons: Story = {
  */
 export const Cards: Story = {
   render: () => ({
-    imports: [CardModule, CommonModule],
+    imports: [Card, CommonModule],
     template: `
       <div style="display: grid; gap: 24px; padding: 24px; max-width: 800px;">
         <h2 style="font-size: 1.5rem; font-weight: 600; margin: 0;">Cards</h2>
@@ -233,27 +233,27 @@ export const Typography: Story = {
         <div style="display: flex; flex-direction: column; gap: 16px;">
           <div>
             <h1 style="font-size: 1.5rem; font-weight: 600; margin: 0 0 8px 0;">Heading Large (1.5rem / 24px)</h1>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-heading-lg</p>
+            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-h2-size</p>
           </div>
           
           <div>
             <h2 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 8px 0;">Heading Small (1.125rem / 18px)</h2>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-heading-sm</p>
+            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-h4-size</p>
           </div>
           
           <div>
             <p style="font-size: 1rem; margin: 0 0 8px 0;">Body Medium (1rem / 16px)</p>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-body-md</p>
+            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-body-size</p>
           </div>
           
           <div>
             <p style="font-size: 0.875rem; margin: 0 0 8px 0;">Body Small (0.875rem / 14px)</p>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-body-sm</p>
+            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-body-sm-size</p>
           </div>
           
           <div>
             <p style="font-size: 0.75rem; margin: 0 0 8px 0;">Body Extra Small (0.75rem / 12px)</p>
-            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-body-xs</p>
+            <p style="font-size: 0.875rem; color: #525252; margin: 0;">--font-caption-size</p>
           </div>
         </div>
       </div>

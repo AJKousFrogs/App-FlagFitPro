@@ -20,16 +20,16 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { FileUploadModule } from "primeng/fileupload";
-import { InputTextModule } from "primeng/inputtext";
+import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
+import { FileUpload } from "primeng/fileupload";
+import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
-import { ProgressBarModule } from "primeng/progressbar";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { StepperModule } from "primeng/stepper";
+import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
 import { TableModule } from "primeng/table";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
@@ -183,16 +183,16 @@ const WEARABLE_DEVICES: WearableDevice[] = [
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    DialogModule,
-    FileUploadModule,
-    InputTextModule,
+    Card,
+    Dialog,
+    FileUpload,
+    InputText,
     Message,
-    ProgressBarModule,
+    ProgressBar,
     Select,
-    StepperModule,
+    Stepper, StepList, Step, StepPanels, StepPanel,
     TableModule,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 

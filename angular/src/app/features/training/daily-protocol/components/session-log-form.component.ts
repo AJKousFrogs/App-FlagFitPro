@@ -20,10 +20,10 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { InputNumberModule } from "primeng/inputnumber";
+import { InputNumber } from "primeng/inputnumber";
 import { Slider } from "primeng/slider";
 import { Textarea } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
+import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 
 export interface SessionLogData {
@@ -40,9 +40,9 @@ export interface SessionLogData {
     CommonModule,
     FormsModule,
     Slider,
-    InputNumberModule,
+    InputNumber,
     Textarea,
-    TooltipModule,
+    Tooltip,
 
     ButtonComponent,
   ],

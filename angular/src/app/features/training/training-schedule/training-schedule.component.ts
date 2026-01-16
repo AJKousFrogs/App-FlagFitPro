@@ -10,12 +10,12 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { CheckboxModule } from "primeng/checkbox";
+import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { SkeletonModule } from "primeng/skeleton";
-import { TagModule } from "primeng/tag";
-import { ToastModule } from "primeng/toast";
-import { TooltipModule } from "primeng/tooltip";
+import { Skeleton } from "primeng/skeleton";
+import { Tag } from "primeng/tag";
+import { Toast } from "primeng/toast";
+import { Tooltip } from "primeng/tooltip";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -62,11 +62,11 @@ interface MonthlyStats {
     FormsModule,
     CommonModule,
     DatePicker,
-    TagModule,
-    SkeletonModule,
-    ToastModule,
-    TooltipModule,
-    CheckboxModule,
+    Tag,
+    Skeleton,
+    Toast,
+    Tooltip,
+    Checkbox,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
@@ -856,7 +856,7 @@ export class TrainingScheduleComponent implements OnInit {
   ):
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "secondary"
     | "contrast"
     | "danger"
@@ -868,7 +868,7 @@ export class TrainingScheduleComponent implements OnInit {
       case "missed":
         return "danger";
       case "in_progress":
-        return "warn";
+        return "warning";
       default:
         return "info";
     }

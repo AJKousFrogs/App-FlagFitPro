@@ -4,10 +4,7 @@ import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
-import {
-  validateApiResponse,
-  type ValidationResult,
-} from "../schemas/api-response.schema";
+import { type MinimalSchema, validateApiResponse } from "../schemas/api-response.schema";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -17,20 +14,11 @@ export interface ApiResponse<T = unknown> {
 }
 
 /**
- * Schema type for response validation.
- * Generic interface that allows any schema with parse/safeParse methods.
- */
-export interface ResponseSchema<T> {
-  parse: (data: unknown) => T;
-  safeParse: (data: unknown) => ValidationResult<T>;
-}
-
-/**
  * Options for API requests with optional schema validation.
  */
 export interface ApiRequestOptions<T> {
   /** Schema to validate response data against */
-  schema?: ResponseSchema<T>;
+  schema?: MinimalSchema<T>;
   /** Whether to throw on validation failure (default: true) */
   throwOnValidationError?: boolean;
 }

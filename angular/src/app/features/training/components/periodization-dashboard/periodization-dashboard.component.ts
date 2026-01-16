@@ -25,16 +25,17 @@ import {
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
-import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
-import { ProgressBarModule } from "primeng/progressbar";
-import { AccordionModule } from "primeng/accordion";
+import { Card } from "primeng/card";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { ProgressBar } from "primeng/progressbar";
+import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { TooltipModule } from "primeng/tooltip";
-import { DividerModule } from "primeng/divider";
+import { Tooltip } from "primeng/tooltip";
+import { Divider } from "primeng/divider";
 import { Chip } from "primeng/chip";
-import { TimelineModule } from "primeng/timeline";
-import { BadgeModule } from "primeng/badge";
+import { Timeline } from "primeng/timeline";
+import { Badge } from "primeng/badge";
 
 // Services
 import {
@@ -74,20 +75,21 @@ interface TimelineEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    TagModule,
-    ProgressBarModule,
-    AccordionModule,
+    Card,
+    Tag,
+    StatusTagComponent,
+    ProgressBar,
+    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
     Tabs,
     TabList,
     Tab,
     TabPanels,
     TabPanel,
-    TooltipModule,
-    DividerModule,
+    Tooltip,
+    Divider,
     Chip,
-    TimelineModule,
-    BadgeModule,
+    Timeline,
+    Badge,
     MainLayoutComponent,
     PageHeaderComponent,
   ],
@@ -119,11 +121,11 @@ interface TimelineEvent {
             <ng-template pTemplate="header">
               <div class="phase-header">
                 <div class="phase-info">
-                  <p-tag
+                  <app-status-tag
                     [value]="currentPhase()?.name || 'Loading...'"
                     [severity]="getPhaseSeverity()"
-                    styleClass="phase-tag"
-                  ></p-tag>
+                    size="md"
+                  />
                   <span class="phase-week"
                     >Week {{ currentWeek() }} of
                     {{ currentPhase()?.durationWeeks || 4 }}</span
@@ -197,10 +199,11 @@ interface TimelineEvent {
                   <div class="acwr-header">
                     <span class="acwr-label">ACWR</span>
                     <span class="acwr-value">{{ acwrStatus()?.acwr }}</span>
-                    <p-tag
+                    <app-status-tag
                       [value]="acwrStatus()?.riskZone || 'unknown'"
                       [severity]="getAcwrSeverity()"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </div>
                   <p class="acwr-recommendation">
                     {{ acwrStatus()?.recommendation }}
@@ -233,11 +236,11 @@ interface TimelineEvent {
                       >
                         <div class="day-header">
                           <span class="day-name">{{ day.dayName }}</span>
-                          <p-tag
+                          <app-status-tag
                             [value]="day.sessionType"
                             [severity]="getSessionSeverity(day.sessionType)"
-                            size="small"
-                          ></p-tag>
+                            size="sm"
+                          />
                         </div>
                         <div class="day-content">
                           <div class="day-focus">
@@ -763,7 +766,7 @@ export class PeriodizationDashboardComponent implements OnInit {
     }
   }
 
-  getPhaseSeverity(): "success" | "info" | "warn" | "danger" | "secondary" {
+  getPhaseSeverity(): "success" | "info" | "warning" | "danger" | "secondary" {
     const phase = this.currentPhase();
     if (!phase) return "info";
 
@@ -773,7 +776,7 @@ export class PeriodizationDashboardComponent implements OnInit {
         return "danger";
       case "speed_development":
       case "power_development":
-        return "warn";
+        return "warning";
       case "in_season_maintenance":
       case "mid_season_reload":
         return "success";
@@ -784,10 +787,10 @@ export class PeriodizationDashboardComponent implements OnInit {
 
   getSessionSeverity(
     sessionType: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (sessionType) {
       case "game":
-        return "warn";
+        return "warning";
       case "recovery":
         return "success";
       case "rest":
@@ -797,7 +800,7 @@ export class PeriodizationDashboardComponent implements OnInit {
     }
   }
 
-  getAcwrSeverity(): "success" | "info" | "warn" | "danger" {
+  getAcwrSeverity(): "success" | "info" | "warning" | "danger" {
     const status = this.acwrStatus();
     if (!status) return "info";
 
@@ -805,7 +808,7 @@ export class PeriodizationDashboardComponent implements OnInit {
       case "optimal":
         return "success";
       case "caution":
-        return "warn";
+        return "warning";
       case "danger":
         return "danger";
       default:

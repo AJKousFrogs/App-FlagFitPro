@@ -8,10 +8,10 @@ import {
 
 import { Router, RouterModule, ActivatedRoute } from "@angular/router";
 import { TitleCasePipe } from "@angular/common";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Message } from "primeng/message";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { ToastService } from "../../../core/services/toast.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { formatDate } from "../../../shared/utils/date.utils";
@@ -47,9 +47,9 @@ interface InvitationData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    CardModule,
+    Card,
     Message,
-    ToastModule,
+    Toast,
     TitleCasePipe,
 
     ButtonComponent,

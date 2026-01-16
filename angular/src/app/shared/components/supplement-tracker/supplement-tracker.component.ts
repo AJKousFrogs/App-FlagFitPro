@@ -21,13 +21,13 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CheckboxModule } from "primeng/checkbox";
-import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
-import { SkeletonModule } from "primeng/skeleton";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Checkbox } from "primeng/checkbox";
+import { Dialog } from "primeng/dialog";
+import { InputText } from "primeng/inputtext";
+import { Select } from "primeng/select";
+import { Skeleton } from "primeng/skeleton";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { EmptyStateComponent } from "../ui-components";
@@ -185,13 +185,13 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
   imports: [
     CommonModule,
     FormsModule,
-    CheckboxModule,
-    TooltipModule,
-    TagModule,
-    SkeletonModule,
-    DialogModule,
-    InputTextModule,
-    SelectModule,
+    Checkbox,
+    Tooltip,
+    Tag,
+    Skeleton,
+    Dialog,
+    InputText,
+    Select,
     ButtonComponent,
     IconButtonComponent,
     EmptyStateComponent,

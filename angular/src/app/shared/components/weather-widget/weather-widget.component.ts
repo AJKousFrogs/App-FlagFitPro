@@ -17,8 +17,8 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
-import { CardModule } from "primeng/card";
-import { TooltipModule } from "primeng/tooltip";
+import { Card } from "primeng/card";
+import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import {
   WeatherService,
@@ -34,8 +34,8 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    TooltipModule,
+    Card,
+    Tooltip,
     CardComponent,
     StatusTagComponent,
   ],

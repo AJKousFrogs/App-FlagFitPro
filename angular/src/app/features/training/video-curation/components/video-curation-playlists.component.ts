@@ -13,9 +13,12 @@ import {
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import { Tooltip } from "primeng/tooltip";
 import { Chip } from "primeng/chip";
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 
 import { InstagramPlaylist } from "../video-curation.models";
 import { formatFocus, formatDuration } from "../video-curation-utils";
@@ -24,17 +27,16 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   selector: "app-video-curation-playlists",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule, Chip],
+  imports: [CommonModule, Tag, StatusTagComponent, Tooltip, Chip, ButtonComponent, IconButtonComponent],
   template: `
     <div class="tab-content">
       <div class="playlists-header">
         <h3>Your Playlists</h3>
-        <button
-          pButton
-          label="Create Playlist"
-          icon="pi pi-plus"
-          (click)="create.emit()"
-        ></button>
+        <app-button
+          iconLeft="pi-plus"
+          (clicked)="create.emit()"
+          >Create Playlist</app-button
+        >
       </div>
 
       @if (playlists().length === 0) {
@@ -42,12 +44,11 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
           <i class="pi pi-list"></i>
           <h3>No playlists yet</h3>
           <p>Create your first playlist to organize training videos</p>
-          <button
-            pButton
-            label="Create Playlist"
-            icon="pi pi-plus"
-            (click)="create.emit()"
-          ></button>
+          <app-button
+            iconLeft="pi-plus"
+            (clicked)="create.emit()"
+            >Create Playlist</app-button
+          >
         </div>
       } @else {
         <div class="playlists-grid">
@@ -56,7 +57,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
               <div class="playlist-header">
                 <h4>{{ playlist.name }}</h4>
                 @if (playlist.position) {
-                  <p-tag [value]="playlist.position" severity="info"></p-tag>
+                  <app-status-tag [value]="playlist.position" severity="info" size="sm" />
                 }
               </div>
               <p class="playlist-description">{{ playlist.description }}</p>
@@ -76,30 +77,25 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
                 }
               </div>
               <div class="playlist-actions">
-                <button
-                  pButton
-                  icon="pi pi-pencil"
-                  class="p-button-text"
-                  pTooltip="Edit"
-                  aria-label="Edit playlist"
-                  (click)="edit.emit(playlist)"
-                ></button>
-                <button
-                  pButton
-                  icon="pi pi-share-alt"
-                  class="p-button-text"
-                  pTooltip="Share with team"
-                  aria-label="Share playlist"
-                  (click)="share.emit(playlist)"
-                ></button>
-                <button
-                  pButton
-                  icon="pi pi-trash"
-                  class="p-button-text p-button-danger"
-                  pTooltip="Delete"
-                  aria-label="Delete playlist"
-                  (click)="delete.emit(playlist)"
-                ></button>
+                <app-icon-button
+                  icon="pi-pencil"
+                  ariaLabel="Edit playlist"
+                  tooltip="Edit"
+                  (clicked)="edit.emit(playlist)"
+                />
+                <app-icon-button
+                  icon="pi-share-alt"
+                  ariaLabel="Share playlist"
+                  tooltip="Share with team"
+                  (clicked)="share.emit(playlist)"
+                />
+                <app-icon-button
+                  icon="pi-trash"
+                  variant="danger"
+                  ariaLabel="Delete playlist"
+                  tooltip="Delete"
+                  (clicked)="delete.emit(playlist)"
+                />
               </div>
             </div>
           }

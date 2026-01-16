@@ -46,7 +46,7 @@ export function toLogContext(value: unknown): LogContext {
 }
 
 export interface StructuredLog {
-  level: "debug" | "info" | "warn" | "error";
+  level: "debug" | "info" | "warning" | "error";
   message: string;
   timestamp: string;
   context?: LogContext;
@@ -59,7 +59,7 @@ export interface StructuredLog {
 })
 export class LoggerService {
   private isDevelopment = isDevMode();
-  private logLevel: "debug" | "info" | "warn" | "error" | "silent" = this
+  private logLevel: "debug" | "info" | "warning" | "error" | "silent" = this
     .isDevelopment
     ? "debug"
     : "error";
@@ -75,7 +75,7 @@ export class LoggerService {
    * Set log level: 'debug', 'info', 'warn', 'error', 'silent'
    * @param level - Log level to set
    */
-  setLevel(level: "debug" | "info" | "warn" | "error" | "silent"): void {
+  setLevel(level: "debug" | "info" | "warning" | "error" | "silent"): void {
     this.logLevel = level;
   }
 
@@ -114,13 +114,13 @@ export class LoggerService {
    * @param level - Log level to check
    * @returns Whether the level should be logged
    */
-  private shouldLog(level: "debug" | "info" | "warn" | "error"): boolean {
+  private shouldLog(level: "debug" | "info" | "warning" | "error"): boolean {
     if (this.logLevel === "silent") return false;
 
-    const levels: ("debug" | "info" | "warn" | "error")[] = [
+    const levels: ("debug" | "info" | "warning" | "error")[] = [
       "debug",
       "info",
-      "warn",
+      "warning",
       "error",
     ];
     const currentLevelIndex = levels.indexOf(this.logLevel);
@@ -143,7 +143,7 @@ export class LoggerService {
    * Create structured log entry
    */
   private createLog(
-    level: "debug" | "info" | "warn" | "error",
+    level: "debug" | "info" | "warning" | "error",
     message: string,
     context?: LogContext,
     data?: unknown,
@@ -323,10 +323,10 @@ export class LoggerService {
    * @param data - Optional data to log
    */
   warn(message: string, context?: unknown, data?: unknown): void {
-    if (!this.shouldLog("warn")) return;
+    if (!this.shouldLog("warning")) return;
 
     const log = this.createLog(
-      "warn",
+      "warning",
       message,
       this.normalizeContext(context),
       this.redactSensitiveData(data),
@@ -408,7 +408,7 @@ export class LoggerService {
     durationMs: number,
     context?: LogContext,
   ): void {
-    const level = durationMs > 1000 ? "warn" : "info";
+    const level = durationMs > 1000 ? "warning" : "info";
 
     if (!this.shouldLog(level)) return;
 
@@ -416,7 +416,7 @@ export class LoggerService {
       durationMs,
     });
 
-    if (this.isDevelopment || level === "warn") {
+    if (this.isDevelopment || level === "warning") {
       const emoji = durationMs > 1000 ? "🐌" : "⚡";
       // eslint-disable-next-line no-console
       console.log(emoji, `[PERF] ${operationName}: ${durationMs}ms`, context);

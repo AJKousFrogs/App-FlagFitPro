@@ -9,21 +9,22 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { InputTextModule } from "primeng/inputtext";
-import { TagModule } from "primeng/tag";
+import { InputText } from "primeng/inputtext";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Select } from "primeng/select";
 import { MultiSelect } from "primeng/multiselect";
-import { DialogModule } from "primeng/dialog";
-import { ToastModule } from "primeng/toast";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { Toast } from "primeng/toast";
+import { ProgressBar } from "primeng/progressbar";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 import { Slider } from "primeng/slider";
 import { Chip } from "primeng/chip";
-import { SkeletonModule } from "primeng/skeleton";
-import { BadgeModule } from "primeng/badge";
-import { TooltipModule } from "primeng/tooltip";
+import { Skeleton } from "primeng/skeleton";
+import { Badge } from "primeng/badge";
+import { Tooltip } from "primeng/tooltip";
 import { MessageService } from "primeng/api";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -47,14 +48,14 @@ import { capitalize } from "../../shared/utils/format.utils";
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    InputTextModule,
-    TagModule,
+    Card,
+    InputText,
+    Tag,
     Select,
     MultiSelect,
-    DialogModule,
-    ToastModule,
-    ProgressBarModule,
+    Dialog,
+    Toast,
+    ProgressBar,
     Tabs,
     TabList,
     Tab,
@@ -62,13 +63,14 @@ import { capitalize } from "../../shared/utils/format.utils";
     TabPanel,
     Slider,
     Chip,
-    SkeletonModule,
-    BadgeModule,
-    TooltipModule,
+    Skeleton,
+    Badge,
+    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <app-main-layout>
@@ -278,10 +280,11 @@ import { capitalize } from "../../shared/utils/format.utils";
                             </span>
                           </div>
                           @if (exercise.ff_category) {
-                            <p-tag
+                            <app-status-tag
                               [value]="exercise.ff_category"
-                              styleClass="category-tag"
-                            ></p-tag>
+                              severity="info"
+                              size="sm"
+                            />
                           }
                           @if (exercise.applicable_positions?.length) {
                             <div class="position-chips">
@@ -439,10 +442,11 @@ import { capitalize } from "../../shared/utils/format.utils";
                       @for (log of importLogs(); track log.id) {
                         <div class="history-item">
                           <div class="history-status">
-                            <p-tag
+                            <app-status-tag
                               [value]="log.status"
                               [severity]="getStatusSeverity(log.status)"
-                            ></p-tag>
+                              size="sm"
+                            />
                           </div>
                           <div class="history-details">
                             <span class="history-type"
@@ -494,15 +498,21 @@ import { capitalize } from "../../shared/utils/format.utils";
                         <div class="approval-info">
                           <h4>{{ exercise.name }}</h4>
                           <div class="approval-meta">
-                            <p-tag
+                            <app-status-tag
                               [value]="exercise.body_part"
                               severity="info"
-                            ></p-tag>
-                            <p-tag [value]="exercise.equipment"></p-tag>
-                            <p-tag
+                              size="sm"
+                            />
+                            <app-status-tag
+                              [value]="exercise.equipment"
+                              severity="secondary"
+                              size="sm"
+                            />
+                            <app-status-tag
                               [value]="exercise.target_muscle"
                               severity="secondary"
-                            ></p-tag>
+                              size="sm"
+                            />
                           </div>
                         </div>
                       </div>
@@ -575,17 +585,21 @@ import { capitalize } from "../../shared/utils/format.utils";
                 <div class="detail-section">
                   <h4>Target</h4>
                   <div class="detail-tags">
-                    <p-tag
+                    <app-status-tag
                       [value]="selectedExercise()?.body_part || ''"
                       severity="info"
-                    ></p-tag>
-                    <p-tag
+                      size="sm"
+                    />
+                    <app-status-tag
                       [value]="selectedExercise()?.target_muscle || ''"
                       severity="secondary"
-                    ></p-tag>
-                    <p-tag
+                      size="sm"
+                    />
+                    <app-status-tag
                       [value]="selectedExercise()?.equipment || ''"
-                    ></p-tag>
+                      severity="secondary"
+                      size="sm"
+                    />
                   </div>
                 </div>
 
@@ -606,10 +620,11 @@ import { capitalize } from "../../shared/utils/format.utils";
                 @if (selectedExercise()?.ff_category) {
                   <div class="detail-section">
                     <h4>Flag Football Category</h4>
-                    <p-tag
+                    <app-status-tag
                       [value]="selectedExercise()?.ff_category || ''"
-                      styleClass="ff-category-tag"
-                    ></p-tag>
+                      severity="info"
+                      size="sm"
+                    />
                   </div>
                 }
 
@@ -1158,7 +1173,7 @@ export class ExerciseDBManagerComponent implements OnInit {
 
   getStatusSeverity(
     status: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (status) {
       case "completed":
         return "success";

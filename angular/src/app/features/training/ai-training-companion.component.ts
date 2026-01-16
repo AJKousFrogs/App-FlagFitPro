@@ -11,9 +11,9 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { CardModule } from "primeng/card";
-import { CarouselModule } from "primeng/carousel";
-import { KnobModule } from "primeng/knob";
+import { Card } from "primeng/card";
+import { Carousel } from "primeng/carousel";
+import { Knob } from "primeng/knob";
 import { scaleInOut } from "../../shared/animations/app.animations";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AIService, AnalysisContext } from "../../core/services/ai.service";
@@ -38,7 +38,7 @@ interface Insight {
 interface QuickAction {
   label: string;
   icon: string;
-  severity?: "success" | "info" | "warn" | "danger";
+  severity?: "success" | "info" | "warning" | "danger";
   action: () => void;
 }
 
@@ -121,9 +121,9 @@ declare global {
     CommonModule,
     FormsModule,
     RouterModule,
-    CardModule,
-    CarouselModule,
-    KnobModule,
+    Card,
+    Carousel,
+    Knob,
 
     ButtonComponent,
   ],

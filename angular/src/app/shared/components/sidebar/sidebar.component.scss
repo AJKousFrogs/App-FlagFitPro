@@ -22,7 +22,7 @@
   top: 0;
   height: 100vh;
   height: 100dvh; /* Use dynamic viewport height for mobile browsers */
-  width: 250px;
+  width: var(--sidebar-width, 250px);
   background: var(--surface-primary);
   border-right: 1px solid var(--color-border-primary);
   z-index: calc(var(--z-modal) + 10); /* Higher than overlay to prevent blur */
@@ -82,7 +82,7 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-  min-height: 64px;
+  min-height: var(--header-height, 64px);
   text-decoration: none;
 }
 
@@ -96,8 +96,8 @@
 }
 
 .logo-icon-wrapper {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target-md);
+  height: var(--touch-target-md);
   border-radius: var(--radius-lg);
   background: linear-gradient(
     135deg,
@@ -137,8 +137,8 @@
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target-md);
+  height: var(--touch-target-md);
   border-radius: var(--radius-full);
   background: var(--color-brand-primary);
   color: white;
@@ -174,20 +174,35 @@
   padding: var(--space-2);
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-// Primary navigation items (no grouping, just clean list)
-.primary-nav {
-  margin-bottom: var(--space-4);
+// Navigation grouping
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-.nav-item-primary {
-  font-weight: var(--font-weight-medium);
+.nav-group-title {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-caption-size);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.nav-group-items {
+  display: flex;
+  flex-direction: column;
 }
 
 // "Me" collapsible group
 .me-group-container {
-  margin-top: var(--space-4);
+  margin-top: var(--space-2);
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-border-secondary);
 }
@@ -255,84 +270,10 @@
   }
 }
 
-.nav-item-sub {
-  padding-left: var(--space-6); // Indent sub-items
-  font-size: var(--font-body-sm-size);
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  margin-bottom: var(--space-1);
-  border-radius: var(--radius-md);
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast);
-  border: none;
-  background: transparent;
-  width: 100%;
-  cursor: pointer;
-  font-size: var(--font-size-h4);
-  font-family: inherit;
-  min-height: var(--touch-target-md); /* 44px WCAG touch target */
-}
-
-.nav-item:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
-  outline-offset: 2px;
-}
-
-.nav-item:focus:not(:focus-visible) {
-  outline: none;
-}
-
-.nav-item:hover {
-  background: var(--surface-secondary);
-  color: var(--color-brand-primary);
-}
-
-.nav-item.active {
-  background: var(--color-brand-light);
-  color: var(--color-brand-primary);
-  font-weight: var(--font-weight-semibold);
-}
-
-.nav-item-icon {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 24px;
-  justify-content: center;
-}
-
-.nav-item-icon i {
-  font-size: var(--font-body-size);
-}
-
-.nav-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  transform: scale(0.75);
-}
-
 .sidebar-footer {
   padding: var(--space-4);
   border-top: 1px solid var(--color-border-secondary);
   margin-top: auto;
-}
-
-.logout-btn {
-  color: var(--color-status-error);
-}
-
-.logout-btn:hover {
-  background: var(--color-status-error-bg);
-  color: var(--color-status-error);
 }
 
 .sidebar-overlay {
@@ -358,14 +299,16 @@
 // ============================================
 @media (max-width: 1024px) and (min-width: 769px) {
   .sidebar {
-    width: 72px;
+    width: var(--sidebar-collapsed-width, 64px);
   }
 
   .logo-text,
-  .nav-item-label,
   .user-info,
-  .me-group-label,
-  .sidebar-footer .nav-item-label {
+  .me-group-label {
+    display: none;
+  }
+
+  .nav-group-title {
     display: none;
   }
 
@@ -375,8 +318,8 @@
   }
 
   .logo-icon-wrapper {
-    width: var(--touch-target-sm); /* 36px */
-    height: var(--touch-target-sm);
+    width: var(--touch-target-md);
+    height: var(--touch-target-md);
   }
 
   .user-section {
@@ -391,15 +334,6 @@
 
   .me-group-icon {
     margin: 0;
-  }
-
-  .nav-item {
-    justify-content: center;
-    padding: var(--space-3);
-  }
-
-  .nav-item-icon {
-    width: auto;
   }
 
   // Hide "Me" group items when collapsed (icon only mode)

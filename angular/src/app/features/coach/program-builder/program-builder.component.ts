@@ -18,18 +18,19 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
+import { Card } from "primeng/card";
+import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressBarModule } from "primeng/progressbar";
+import { Dialog } from "primeng/dialog";
+import { InputNumber } from "primeng/inputnumber";
+import { InputText } from "primeng/inputtext";
+import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { Tag } from "primeng/tag";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { ToastModule } from "primeng/toast";
+import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
@@ -147,18 +148,19 @@ const PHASE_PRESETS = [
     CommonModule,
     FormsModule,
     DatePipe,
-    CardModule,
-    CheckboxModule,
+    Card,
+    Checkbox,
     DatePicker,
-    DialogModule,
-    InputNumberModule,
-    InputTextModule,
-    ProgressBarModule,
+    Dialog,
+    InputNumber,
+    InputText,
+    ProgressBar,
     Select,
     TableModule,
-    TagModule,
+    Tag,
+    StatusTagComponent,
     Textarea,
-    ToastModule,
+    Toast,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -240,10 +242,11 @@ const PHASE_PRESETS = [
                       <span class="detail-label">Duration:</span>
                       <span>{{ program.durationWeeks }} weeks</span>
                       <span class="detail-label">Status:</span>
-                      <p-tag
+                      <app-status-tag
                         [value]="getStatusLabel(program.status)"
                         [severity]="getStatusSeverity(program.status)"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </div>
                     <div class="detail-row">
                       <span class="detail-label">Start:</span>
@@ -916,15 +919,15 @@ export class ProgramBuilderComponent implements OnInit {
 
   getStatusSeverity(
     status: ProgramStatus,
-  ): "success" | "info" | "warn" | "secondary" {
+  ): "success" | "info" | "warning" | "secondary" {
     const severities: Record<
       ProgramStatus,
-      "success" | "info" | "warn" | "secondary"
+      "success" | "info" | "warning" | "secondary"
     > = {
       draft: "secondary",
       active: "success",
       completed: "info",
-      archived: "warn",
+      archived: "warning",
     };
     return severities[status];
   }

@@ -19,6 +19,10 @@
   z-index: var(--z-modal);
 }
 
+.app-header-shell {
+  display: block;
+}
+
 // PrimeNG toolbar overrides moved to _exceptions.scss (DS-EXC-004)
 .app-header {
   // Component-specific styles remain here
@@ -32,7 +36,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  height: 64px;
+  height: var(--header-height, 64px);
 }
 
 .header-center {
@@ -41,7 +45,7 @@
   justify-content: center;
   flex: 1;
   max-width: 400px;
-  height: 64px;
+  height: var(--header-height, 64px);
   cursor: pointer;
 }
 
@@ -55,7 +59,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  height: 64px;
+  height: var(--header-height, 64px);
 }
 
 /* ================================================================
@@ -79,7 +83,7 @@
   background: var(--surface-ground);
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
-  height: 34px;
+  height: var(--touch-target-sm);
   cursor: default;
 }
 
@@ -141,7 +145,7 @@
   background: var(--surface-ground);
   border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
-  height: 34px;
+  height: var(--touch-target-sm);
   cursor: default;
   transition:
     border-color var(--motion-fast) var(--ease-standard),
@@ -418,7 +422,6 @@
 @include respond-to(lg) {
   .olympic-countdown {
     padding: 0 var(--space-2);
-    height: 30px;
   }
 
   .countdown-value {
@@ -435,7 +438,6 @@
 
   .weather-indicator {
     padding: 0 var(--space-2);
-    height: 30px;
   }
 
   .weather-location {
@@ -452,7 +454,7 @@
   .header-start,
   .header-center,
   .header-end {
-    height: 56px;
+    height: var(--header-height-mobile, 56px);
   }
 
   .mobile-menu-toggle {

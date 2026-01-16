@@ -4,11 +4,12 @@ import {
   output,
   computed,
   ChangeDetectionStrategy,
+  ViewEncapsulation,
   model,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { DialogModule } from "primeng/dialog";
-import { ButtonModule } from "primeng/button";
+import { Dialog } from "primeng/dialog";
+import { ButtonComponent } from "../button/button.component";
 
 /**
  * Modal Component - Angular 21 Premium Edition
@@ -26,7 +27,8 @@ import { ButtonModule } from "primeng/button";
   selector: "app-modal",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, DialogModule, ButtonModule],
+  encapsulation: ViewEncapsulation.None,
+  imports: [CommonModule, Dialog, ButtonComponent],
   template: `
     <p-dialog
       [visible]="visible()"
@@ -93,26 +95,25 @@ import { ButtonModule } from "primeng/button";
             @if (showDefaultButtons()) {
               <div class="modal-footer-buttons">
                 @if (showCancelButton()) {
-                  <p-button
-                    [label]="cancelLabel()"
-                    [icon]="cancelIcon()"
-                    severity="secondary"
-                    [text]="true"
-                    (onClick)="handleCancel()"
+                  <app-button
+                    [iconLeft]="cancelIcon()?.replace('pi ', '') || ''"
+                    variant="text"
+                    (clicked)="handleCancel()"
                     [disabled]="cancelDisabled()"
-                    styleClass="modal-btn modal-btn-cancel"
-                  />
+                    class="modal-btn modal-btn-cancel"
+                    >{{ cancelLabel() }}</app-button
+                  >
                 }
                 @if (showConfirmButton()) {
-                  <p-button
-                    [label]="confirmLabel()"
-                    [icon]="confirmIcon()"
-                    [severity]="confirmSeverity()"
-                    (onClick)="handleConfirm()"
+                  <app-button
+                    [iconLeft]="confirmIcon()?.replace('pi ', '') || ''"
+                    [variant]="confirmSeverity()"
+                    (clicked)="handleConfirm()"
                     [disabled]="confirmDisabled()"
                     [loading]="confirmLoading()"
-                    styleClass="modal-btn modal-btn-confirm"
-                  />
+                    class="modal-btn modal-btn-confirm"
+                    >{{ confirmLabel() }}</app-button
+                  >
                 }
               </div>
             }
@@ -131,7 +132,7 @@ import { ButtonModule } from "primeng/button";
          DIALOG CONTAINER
          ================================ */
 
-      :host ::ng-deep .p-dialog {
+      app-modal .p-dialog {
         border-radius: var(--radius-xl);
         box-shadow:
           0 25px 50px -12px rgba(0, 0, 0, 0.25),
@@ -155,7 +156,7 @@ import { ButtonModule } from "primeng/button";
          BACKDROP
          ================================ */
 
-      :host ::ng-deep .p-dialog-mask {
+      app-modal .p-dialog-mask {
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
@@ -177,14 +178,14 @@ import { ButtonModule } from "primeng/button";
          HEADER
          ================================ */
 
-      :host ::ng-deep .p-dialog-header {
+      app-modal .p-dialog-header {
         padding: var(--space-5);
         border-bottom: 1px solid var(--color-border-secondary);
         background: var(--surface-primary);
       }
 
-      :host ::ng-deep .p-dialog-title {
-        font-size: var(--font-heading-md);
+      app-modal .p-dialog-title {
+        font-size: var(--font-h3-size);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
         line-height: 1.3;
@@ -239,7 +240,7 @@ import { ButtonModule } from "primeng/button";
 
       .modal-title {
         margin: 0;
-        font-size: var(--font-heading-md);
+        font-size: var(--font-h3-size);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
         line-height: 1.3;
@@ -247,7 +248,7 @@ import { ButtonModule } from "primeng/button";
 
       .modal-subtitle {
         margin: var(--space-1) 0 0 0;
-        font-size: var(--font-body-sm);
+        font-size: var(--font-body-sm-size);
         color: var(--color-text-secondary);
         line-height: 1.4;
       }
@@ -256,7 +257,7 @@ import { ButtonModule } from "primeng/button";
          CLOSE BUTTON
          ================================ */
 
-      :host ::ng-deep .p-dialog-header-close {
+      app-modal .p-dialog-header-close {
         width: 2.5rem;
         height: 2.5rem;
         border-radius: var(--radius-lg);
@@ -268,24 +269,24 @@ import { ButtonModule } from "primeng/button";
       }
 
       @media (hover: hover) and (pointer: fine) {
-        :host ::ng-deep .p-dialog-header-close:hover {
+        app-modal .p-dialog-header-close:hover {
           background: var(--surface-tertiary);
           color: var(--color-text-primary);
           transform: scale(1.1);
         }
       }
 
-      :host ::ng-deep .p-dialog-header-close:active {
+      app-modal .p-dialog-header-close:active {
         transform: scale(0.95);
       }
 
-      :host ::ng-deep .p-dialog-header-close:focus-visible {
+      app-modal .p-dialog-header-close:focus-visible {
         outline: 2px solid var(--ds-primary-green);
         outline-offset: 2px;
         box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
       }
 
-      :host ::ng-deep .p-dialog-header-close:focus:not(:focus-visible) {
+      app-modal .p-dialog-header-close:focus:not(:focus-visible) {
         outline: none;
       }
 
@@ -293,7 +294,7 @@ import { ButtonModule } from "primeng/button";
          CONTENT
          ================================ */
 
-      :host ::ng-deep .p-dialog-content {
+      app-modal .p-dialog-content {
         padding: var(--space-5);
         background: var(--surface-primary);
       }
@@ -331,7 +332,7 @@ import { ButtonModule } from "primeng/button";
          FOOTER
          ================================ */
 
-      :host ::ng-deep .p-dialog-footer {
+      app-modal .p-dialog-footer {
         padding: var(--space-4) var(--space-5);
         border-top: 1px solid var(--color-border-secondary);
         background: var(--surface-secondary);
@@ -366,16 +367,16 @@ import { ButtonModule } from "primeng/button";
         margin-left: auto;
       }
 
-      :host ::ng-deep .modal-btn {
+      app-modal .modal-btn {
         min-width: 100px;
       }
 
-      :host ::ng-deep .modal-btn-cancel {
+      app-modal .modal-btn-cancel {
         color: var(--color-text-secondary);
       }
 
       @media (hover: hover) and (pointer: fine) {
-        :host ::ng-deep .modal-btn-cancel:hover {
+        app-modal .modal-btn-cancel:hover {
           color: var(--color-text-primary);
         }
       }
@@ -384,32 +385,32 @@ import { ButtonModule } from "primeng/button";
          SIZE VARIANTS
          ================================ */
 
-      :host ::ng-deep .modal-sm {
+      app-modal .modal-sm {
         width: 400px;
         max-width: 95vw;
       }
 
-      :host ::ng-deep .modal-md {
+      app-modal .modal-md {
         width: 560px;
         max-width: 95vw;
       }
 
-      :host ::ng-deep .modal-lg {
+      app-modal .modal-lg {
         width: 800px;
         max-width: 95vw;
       }
 
-      :host ::ng-deep .modal-xl {
+      app-modal .modal-xl {
         width: 1140px;
         max-width: 95vw;
       }
 
-      :host ::ng-deep .modal-full {
+      app-modal .modal-full {
         width: 95vw;
         height: 90vh;
       }
 
-      :host ::ng-deep .modal-full .p-dialog-content {
+      app-modal .modal-full .p-dialog-content {
         flex: 1;
         overflow-y: auto;
       }
@@ -419,20 +420,20 @@ import { ButtonModule } from "primeng/button";
          ================================ */
 
       @media (max-width: 640px) {
-        :host ::ng-deep .p-dialog {
+        app-modal .p-dialog {
           margin: var(--space-4);
           max-height: calc(100vh - var(--space-8));
         }
 
-        :host ::ng-deep .p-dialog-header {
+        app-modal .p-dialog-header {
           padding: var(--space-4);
         }
 
-        :host ::ng-deep .p-dialog-content {
+        app-modal .p-dialog-content {
           padding: var(--space-4);
         }
 
-        :host ::ng-deep .p-dialog-footer {
+        app-modal .p-dialog-footer {
           padding: var(--space-3) var(--space-4);
         }
 
@@ -447,7 +448,7 @@ import { ButtonModule } from "primeng/button";
           margin-left: 0;
         }
 
-        :host ::ng-deep .modal-btn {
+        app-modal .modal-btn {
           width: 100%;
         }
       }
@@ -457,15 +458,15 @@ import { ButtonModule } from "primeng/button";
          ================================ */
 
       @media (prefers-reduced-motion: reduce) {
-        :host ::ng-deep .p-dialog {
+        app-modal .p-dialog {
           animation: none;
         }
 
-        :host ::ng-deep .p-dialog-mask {
+        app-modal .p-dialog-mask {
           animation: none;
         }
 
-        :host ::ng-deep .p-dialog-header-close {
+        app-modal .p-dialog-header-close {
           transition: none;
         }
       }
@@ -474,11 +475,9 @@ import { ButtonModule } from "primeng/button";
          DARK MODE
          ================================ */
 
-      :host-context([data-theme="dark"]),
-      :host-context(.dark-theme) {
-        :host ::ng-deep .p-dialog-mask {
-          background: rgba(0, 0, 0, 0.7);
-        }
+      [data-theme="dark"] app-modal .p-dialog-mask,
+      .dark-theme app-modal .p-dialog-mask {
+        background: rgba(0, 0, 0, 0.7);
       }
     `,
   ],
@@ -537,7 +536,7 @@ export class ModalComponent {
   confirmDisabled = input<boolean>(false);
   confirmLoading = input<boolean>(false);
   confirmSeverity = input<
-    "success" | "info" | "warn" | "danger" | "secondary" | "primary"
+    "success" | "danger" | "secondary" | "primary" | "outlined" | "text"
   >("primary");
 
   // Events

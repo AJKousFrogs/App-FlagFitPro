@@ -6,8 +6,8 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { CardModule } from "primeng/card";
-import { ChartModule } from "primeng/chart";
+import { Card } from "primeng/card";
+import { UIChart } from "primeng/chart";
 import { ButtonComponent } from "../button/button.component";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { expandCollapse } from "../../animations/app.animations";
@@ -48,8 +48,8 @@ export interface ProgressiveStatItem extends StatItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    CardModule,
-    ChartModule,
+    Card,
+    UIChart,
     StatusTagComponent,
     Tabs,
     TabPanel,

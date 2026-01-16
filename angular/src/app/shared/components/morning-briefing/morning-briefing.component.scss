@@ -959,8 +959,7 @@
  * Ticket: DS-COMP-002
  * Owner: @design-system
  * Scope: morning-briefing component only
- * Remove by: N/A - Permanent PrimeNG limitation
- * Reason: PrimeNG components require ::ng-deep for internal styling
+ * Note: PrimeNG overrides moved to _exceptions.scss (uses CSS custom properties)
  */
 .submit-btn {
   width: 100%;

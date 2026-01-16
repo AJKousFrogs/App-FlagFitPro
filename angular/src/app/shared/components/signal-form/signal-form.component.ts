@@ -15,9 +15,9 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { CardModule } from "primeng/card";
+import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
-import { InputTextModule } from "primeng/inputtext";
+import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
 import {
   FormValidators,
@@ -34,8 +34,8 @@ import { toLogContext } from "../../../core/services/logger.service";
   imports: [
     CommonModule,
     FormsModule,
-    CardModule,
-    InputTextModule,
+    Card,
+    InputText,
     Message,
 
     ButtonComponent,

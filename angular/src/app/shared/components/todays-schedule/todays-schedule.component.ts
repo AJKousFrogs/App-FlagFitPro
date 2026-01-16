@@ -20,9 +20,9 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { SkeletonModule } from "primeng/skeleton";
-import { TagModule } from "primeng/tag";
-import { TooltipModule } from "primeng/tooltip";
+import { Skeleton } from "primeng/skeleton";
+import { Tag } from "primeng/tag";
+import { Tooltip } from "primeng/tooltip";
 
 import { ButtonComponent, CardComponent } from "../ui-components";
 import { UnifiedTrainingService } from "../../../core/services/unified-training.service";
@@ -48,9 +48,9 @@ export interface ScheduleItem {
     RouterModule,
     ButtonComponent,
     CardComponent,
-    TagModule,
-    TooltipModule,
-    SkeletonModule,
+    Tag,
+    Tooltip,
+    Skeleton,
   ],
   templateUrl: "./todays-schedule.component.html",
   styleUrls: ["./todays-schedule.component.scss"],
@@ -288,7 +288,7 @@ export class TodaysScheduleComponent {
 
   getTypeSeverity(
     _type: ScheduleItem["type"],
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
     // All tags use the same neutral color for visual consistency
     return "secondary";
   }
