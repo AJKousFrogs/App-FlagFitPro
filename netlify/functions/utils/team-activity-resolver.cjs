@@ -178,12 +178,12 @@ async function resolveTeamActivityForAthleteDay(
   if (teamActivity.created_by_coach_id) {
     const { data: coach } = await supabase
       .from("users")
-      .select("name")
+      .select("full_name")
       .eq("id", teamActivity.created_by_coach_id)
       .maybeSingle();
 
     if (coach) {
-      createdByCoachName = coach.name;
+      createdByCoachName = coach.full_name;
     }
   }
 

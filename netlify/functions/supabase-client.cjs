@@ -43,7 +43,7 @@ const db = {
         const { data, error } = await supabaseAdmin
           .from("users")
           .select(
-            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+            "id, email, full_name, profile_photo_url, email_verified, created_at, updated_at",
           )
           .eq("email", email)
           .single();
@@ -67,7 +67,7 @@ const db = {
           .from("users")
           .insert(userData)
           .select(
-            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+            "id, email, full_name, profile_photo_url, email_verified, created_at, updated_at",
           )
           .single();
 
@@ -87,7 +87,7 @@ const db = {
         const { data, error } = await supabaseAdmin
           .from("users")
           .select(
-            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+            "id, email, full_name, profile_photo_url, email_verified, created_at, updated_at",
           )
           .eq("id", id)
           .single();
@@ -111,7 +111,7 @@ const db = {
           .update({ ...updates, updated_at: new Date() })
           .eq("id", id)
           .select(
-            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+            "id, email, full_name, profile_photo_url, email_verified, created_at, updated_at",
           )
           .single();
 
@@ -138,7 +138,7 @@ const db = {
           })
           .eq("id", userId)
           .select(
-            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+            "id, email, full_name, profile_photo_url, email_verified, created_at, updated_at",
           )
           .single();
 
@@ -159,7 +159,7 @@ const db = {
         const { data: user, error: findError } = await supabaseAdmin
           .from("users")
           .select(
-            "id, email, name, role, avatar_url, email_verified, verification_token, verification_token_expires_at, created_at, updated_at",
+            "id, email, full_name, profile_photo_url, email_verified, verification_token, verification_token_expires_at, created_at, updated_at",
           )
           .eq("verification_token", token)
           .single();
@@ -192,7 +192,7 @@ const db = {
           })
           .eq("id", user.id)
           .select(
-            "id, email, name, role, avatar_url, email_verified, created_at, updated_at",
+            "id, email, full_name, profile_photo_url, email_verified, created_at, updated_at",
           )
           .single();
 

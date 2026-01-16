@@ -1,11 +1,11 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  OnDestroy,
-  OnInit,
-  computed,
-  inject,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    OnDestroy,
+    OnInit,
+    computed,
+    inject,
+    signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -22,28 +22,28 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
 import { ToastModule } from "primeng/toast";
-import { firstValueFrom, Subject, Subscription, debounceTime } from "rxjs";
+import { Subject, Subscription, debounceTime, firstValueFrom } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import {
-  LoggerService,
-  toLogContext,
+    LoggerService,
+    toLogContext,
 } from "../../core/services/logger.service";
-import {
-  PlayerProgramService,
-  getProgramIdForPosition,
-  normalizePositionForModifiers,
-} from "../../core/services/player-program.service";
 import { PlatformService } from "../../core/services/platform.service";
+import {
+    PlayerProgramService,
+    getProgramIdForPosition,
+    normalizePositionForModifiers,
+} from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
-import { RosterService } from "../roster/roster.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { RosterService } from "../roster/roster.service";
 
 interface OnboardingStep {
   label: string;
@@ -3176,6 +3176,8 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       const weightKg = isStaffUser ? null : this.getWeightInKg();
 
       // Prepare user profile data - different for staff vs players
+      // Note: user_type, staff_role, staff_visibility are stored in auth.users metadata
+      // and team_members.role, NOT in the users table
       const profileData = {
         full_name: this.onboardingData.name,
         first_name: firstName,
@@ -3187,12 +3189,6 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         country: this.onboardingData.country,
         phone: this.onboardingData.phone || null,
         team: this.onboardingData.team,
-        // Staff-specific fields
-        user_type: this.onboardingData.userType,
-        staff_role: isStaffUser ? this.onboardingData.staffRole : null,
-        staff_visibility: isStaffUser
-          ? this.onboardingData.staffVisibility
-          : null,
         // Player-specific fields (null for staff)
         position: isStaffUser ? null : this.onboardingData.position,
         secondary_position: isStaffUser

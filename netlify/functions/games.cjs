@@ -19,13 +19,13 @@ const {
 const { baseHandler } = require("./utils/base-handler.cjs");
 const { getRateLimitType } = require("./utils/rate-limiter.cjs");
 
-// Helper to get user role
+// Helper to get user role from team_members (authoritative source)
 async function getUserRole(userId) {
   const { data, error } = await supabaseAdmin
-    .from("users")
+    .from("team_members")
     .select("role")
-    .eq("id", userId)
-    .single();
+    .eq("user_id", userId)
+    .maybeSingle();
 
   if (error || !data) {
     return "player";

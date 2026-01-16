@@ -55,10 +55,10 @@ async function getCoachDashboard(userId) {
 
     for (const member of teamMembers) {
       try {
-        // Get user details
+        // Get user details (note: role is in team_members, not users)
         const { data: userData, error: userError } = await supabaseAdmin
           .from("users")
-          .select("id, name, position, role")
+          .select("id, full_name, position")
           .eq("id", member.user_id)
           .single();
 

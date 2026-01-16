@@ -1,10 +1,10 @@
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  OnInit,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    inject,
+    OnInit,
+    signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";
@@ -62,25 +62,19 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    // Fallback: Check users table for user_type (for users who completed onboarding)
+    // Fallback: Check team_members for staff role (user_type is in auth metadata, not users table)
     // This handles cases where auth metadata wasn't updated properly
     try {
-      const { data: userData } = await this.supabaseService.client
-        .from("users")
-        .select("user_type, staff_role")
-        .eq("id", user.id)
+      const { data: teamMembership } = await this.supabaseService.client
+        .from("team_members")
+        .select("role")
+        .eq("user_id", user.id)
         .maybeSingle();
 
-      if (userData) {
-        if (userData.user_type === "staff") {
-          this.loadingMessage.set("Loading your Coach Dashboard...");
-          this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
-          return;
-        } else if (userData.user_type === "player") {
-          this.loadingMessage.set("Loading your Dashboard...");
-          this.router.navigate(["/player-dashboard"], { replaceUrl: true });
-          return;
-        }
+      if (teamMembership && this.isCoachRole(teamMembership.role)) {
+        this.loadingMessage.set("Loading your Coach Dashboard...");
+        this.router.navigate(["/coach/dashboard"], { replaceUrl: true });
+        return;
       }
     } catch {
       // If lookup fails, fall through to default

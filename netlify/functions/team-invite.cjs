@@ -281,11 +281,11 @@ exports.handler = async (event, context) => {
       // Get user info for inviter name
       const { data: userData } = await supabase
         .from("users")
-        .select("name, email")
+        .select("full_name, email")
         .eq("id", userId)
         .single();
 
-      const inviterName = userData?.name || userData?.email || "A coach";
+      const inviterName = userData?.full_name || userData?.email || "A coach";
 
       const mailOptions = {
         from: { name: "FlagFit Pro", address: getFromEmail() },

@@ -10,32 +10,33 @@ const { createErrorResponse } = require("./error-handler.cjs");
 /**
  * Get user role from database (not JWT)
  * Contract: Section 1.1 - Roles MUST be assigned explicitly, MUST NOT be inferred from token
+ * Note: Role is stored in team_members table, NOT users table
  */
 async function getUserRole(userId) {
   if (!userId) {
     return null;
   }
 
-  // Try users table first (profiles table doesn't exist - use users)
-  const { data: user, error: userError } = await supabaseAdmin
-    .from("users")
+  // Get role from team_members table (authoritative source for team roles)
+  const { data: membership, error: memberError } = await supabaseAdmin
+    .from("team_members")
     .select("role")
-    .eq("id", userId)
-    .single();
+    .eq("user_id", userId)
+    .maybeSingle();
 
-  if (!userError && user) {
-    return user.role;
+  if (!memberError && membership?.role) {
+    return membership.role;
   }
 
-  // Fallback to auth.users metadata (for backward compatibility)
+  // Fallback to auth.users metadata
   const { data: authUser, error: authError } =
     await supabaseAdmin.auth.admin.getUserById(userId);
 
-  if (authError || !authUser) {
+  if (authError || !authUser?.user) {
     return null;
   }
 
-  return authUser.user_metadata?.role || null;
+  return authUser.user.user_metadata?.role || "player";
 }
 
 /**

@@ -32,14 +32,15 @@ async function getTournaments(event, _context, { userId, requestId }) {
   const { id, year, status, type } = queryParams;
 
   // Get user role if userId is provided (for visibility filtering)
+  // Role is in team_members table, not users table
   let userRole = null;
   if (userId) {
-    const { data: userData } = await supabaseAdmin
-      .from("users")
+    const { data: memberData } = await supabaseAdmin
+      .from("team_members")
       .select("role")
-      .eq("id", userId)
-      .single();
-    userRole = userData?.role || "player";
+      .eq("user_id", userId)
+      .maybeSingle();
+    userRole = memberData?.role || "player";
   }
 
   // Get single tournament by ID
@@ -179,14 +180,15 @@ async function createTournament(event, _context, { userId, requestId }) {
   }
 
   // Get user role to determine visibility scope
+  // Role is in team_members table, not users table
   let userRole = "player";
   if (userId) {
-    const { data: userData } = await supabaseAdmin
-      .from("users")
+    const { data: memberData } = await supabaseAdmin
+      .from("team_members")
       .select("role")
-      .eq("id", userId)
-      .single();
-    userRole = userData?.role || "player";
+      .eq("user_id", userId)
+      .maybeSingle();
+    userRole = memberData?.role || "player";
   }
 
   // Determine visibility scope based on user role

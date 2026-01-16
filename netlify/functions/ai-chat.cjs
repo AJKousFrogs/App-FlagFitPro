@@ -1273,13 +1273,15 @@ async function buildAthleteStateGates(userId) {
     // 6. Get user position and name
     const { data: userProfile } = await supabaseAdmin
       .from("users")
-      .select("position, name")
+      .select("position, full_name, first_name")
       .eq("id", userId)
       .single();
     gates.position = userProfile?.position;
     // Extract first name for personalized conversation
-    if (userProfile?.name) {
-      gates.userName = userProfile.name.split(" ")[0];
+    if (userProfile?.first_name) {
+      gates.userName = userProfile.first_name;
+    } else if (userProfile?.full_name) {
+      gates.userName = userProfile.full_name.split(" ")[0];
     }
 
     // Calculate risk escalation (0-3 levels)
