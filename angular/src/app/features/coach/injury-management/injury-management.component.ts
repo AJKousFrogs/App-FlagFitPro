@@ -30,10 +30,10 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -201,13 +201,13 @@ const RTP_STAGES: RtpStage[] = [
     RadioButton,
     Select,
     TableModule,
-    TagModule,
     Textarea,
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
 
     ButtonComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -300,10 +300,11 @@ const RTP_STAGES: RtpStage[] = [
             @for (injury of activeInjuries(); track injury.id) {
               <p-card styleClass="injury-card new">
                 <div class="injury-header">
-                  <p-tag
+                  <app-status-tag
                     value="New Injury - Needs Evaluation"
                     severity="danger"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
                 <div class="injury-content">
                   <p-avatar
@@ -360,15 +361,16 @@ const RTP_STAGES: RtpStage[] = [
             @for (injury of rtpInjuries(); track injury.id) {
               <p-card styleClass="injury-card rtp">
                 <div class="injury-header">
-                  <p-tag
+                  <app-status-tag
                     [value]="
                       'Stage ' +
                       injury.rtpStage +
                       ' of 7 - ' +
                       getStageName(injury.rtpStage!)
                     "
-                    severity="warn"
-                  ></p-tag>
+                    severity="warning"
+                    size="sm"
+                  />
                 </div>
                 <div class="injury-content">
                   <p-avatar
@@ -487,7 +489,7 @@ const RTP_STAGES: RtpStage[] = [
                     </p>
                     <p>Recovery time: {{ injury.daysInProtocol }} days</p>
                   </div>
-                  <p-tag value="Cleared" severity="success"></p-tag>
+                  <app-status-tag value="Cleared" severity="success" size="sm" />
                 </div>
               </p-card>
             }
@@ -513,10 +515,11 @@ const RTP_STAGES: RtpStage[] = [
                   <td>{{ injury.bodyPart }} {{ injury.injuryType }}</td>
                   <td>{{ injury.injuryDate | date: "MMM d, y" }}</td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="getStatusLabel(injury.status)"
                       [severity]="getStatusSeverity(injury.status)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td>{{ injury.daysInProtocol || "-" }}</td>
                 </tr>
@@ -1205,14 +1208,14 @@ export class InjuryManagementComponent implements OnInit {
 
   getStatusSeverity(
     status: InjuryStatus,
-  ): "success" | "info" | "warn" | "danger" {
+  ): "success" | "info" | "warning" | "danger" {
     const severities: Record<
       InjuryStatus,
-      "success" | "info" | "warn" | "danger"
+      "success" | "info" | "warning" | "danger"
     > = {
       new: "danger",
-      evaluating: "warn",
-      rtp: "warn",
+      evaluating: "warning",
+      rtp: "warning",
       cleared: "success",
     };
     return severities[status];

@@ -41,9 +41,9 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
-import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -87,7 +87,6 @@ interface TimezoneOption {
     Select,
     StepperModule,
     TimelineModule,
-    TagModule,
     ProgressBarModule,
     AccordionModule,
     CheckboxModule,
@@ -97,6 +96,7 @@ interface TimezoneOption {
     ButtonComponent,
     MainLayoutComponent,
     PageHeaderComponent,
+    StatusTagComponent,
   ],
   template: `
     <app-main-layout>
@@ -362,10 +362,11 @@ interface TimezoneOption {
                             : 'pi pi-arrow-left'
                         "
                       ></p-chip>
-                      <p-tag
+                      <app-status-tag
                         [value]="jetLagSeverity().level | titlecase"
                         [severity]="getSeverityColor(jetLagSeverity().level)"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </div>
                     <div class="recovery-estimate">
                       <i class="pi pi-calendar-plus"></i>
@@ -422,10 +423,11 @@ interface TimezoneOption {
                       <i class="pi pi-sun"></i>
                       <div>
                         <h3>Today's Protocol</h3>
-                        <p-tag
+                        <app-status-tag
                           [value]="todayProtocol()!.phase | titlecase"
                           [severity]="getPhaseColor(todayProtocol()!.phase)"
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                     </div>
                     <div class="header-right">
@@ -492,7 +494,7 @@ interface TimezoneOption {
                   <div class="protocol-section">
                     <h4><i class="pi pi-bolt"></i> Training</h4>
                     <div class="training-info">
-                      <p-tag
+                      <app-status-tag
                         [value]="
                           'Intensity: ' +
                           (todayProtocol()!.trainingGuidelines.allowedIntensity
@@ -503,7 +505,8 @@ interface TimezoneOption {
                             todayProtocol()!.trainingGuidelines.allowedIntensity
                           )
                         "
-                      ></p-tag>
+                        size="sm"
+                      />
                       <span class="max-duration"
                         >Max
                         {{ todayProtocol()!.trainingGuidelines.maxDuration }}
@@ -574,10 +577,11 @@ interface TimezoneOption {
                       >
                         <span class="rec-time">{{ rec.time }}</span>
                         <span class="rec-action">{{ rec.action }}</span>
-                        <p-tag
+                        <app-status-tag
                           [value]="rec.importance"
                           [severity]="getImportanceColor(rec.importance)"
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                     }
                   </div>
@@ -644,10 +648,11 @@ interface TimezoneOption {
                         <span class="timeline-date">{{
                           protocol.date | date: "EEE, MMM d"
                         }}</span>
-                        <p-tag
+                        <app-status-tag
                           [value]="protocol.phase"
                           [severity]="getPhaseColor(protocol.phase)"
-                        ></p-tag>
+                          size="sm"
+                        />
                         @if (isToday(protocol.date)) {
                           <p-badge value="Today" severity="info"></p-badge>
                         }
@@ -856,10 +861,11 @@ interface TimezoneOption {
                         }}</span>
                         <span class="risk-label">Risk Score</span>
                       </div>
-                      <p-tag
+                      <app-status-tag
                         [value]="carTravelRisk().riskLevel | titlecase"
                         [severity]="getRiskColor(carTravelRisk().riskLevel)"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </div>
 
                     <div class="risk-factors">
@@ -922,10 +928,11 @@ interface TimezoneOption {
                                 : 'pi pi-users'
                             "
                           ></p-chip>
-                          <p-tag
+                          <app-status-tag
                             [value]="carTravelRisk().riskLevel + ' Risk'"
                             [severity]="getRiskColor(carTravelRisk().riskLevel)"
-                          ></p-tag>
+                            size="sm"
+                          />
                         </div>
                       </div>
                     </div>
@@ -966,10 +973,11 @@ interface TimezoneOption {
                         Recommended:
                         {{ compressionGuidelines().garmentType | titlecase }}
                       </h4>
-                      <p-tag
+                      <app-status-tag
                         [value]="compressionGuidelines().pressureMmHg"
                         severity="info"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </div>
 
                     <div class="compression-timing">
@@ -1034,10 +1042,11 @@ interface TimezoneOption {
                         <p-accordion-content>
                           <div class="massage-protocol">
                             <div class="protocol-summary">
-                              <p-tag
+                              <app-status-tag
                                 [value]="protocol.totalDuration + ' min total'"
                                 severity="info"
-                              ></p-tag>
+                                size="sm"
+                              />
                               <span class="frequency">{{
                                 protocol.frequency
                               }}</span>
@@ -1105,10 +1114,11 @@ interface TimezoneOption {
                       <div class="exercise-card">
                         <div class="exercise-header">
                           <h4>{{ exercise.name }}</h4>
-                          <p-tag
+                          <app-status-tag
                             [value]="exercise.targetArea | titlecase"
                             [severity]="getTargetAreaColor(exercise.targetArea)"
-                          ></p-tag>
+                            size="sm"
+                          />
                         </div>
                         <p class="exercise-description">
                           {{ exercise.description }}
@@ -1175,10 +1185,11 @@ interface TimezoneOption {
                                   ></i>
                                   <span>{{ rec.action }}</span>
                                   @if (rec.duration) {
-                                    <p-tag
+                                    <app-status-tag
                                       [value]="rec.duration + ' min'"
                                       severity="secondary"
-                                    ></p-tag>
+                                      size="sm"
+                                    />
                                   }
                                 </div>
                               }
@@ -1444,12 +1455,12 @@ export class TravelRecoveryComponent implements OnInit {
 
   getRiskColor(
     level: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (level) {
       case "low":
         return "success";
       case "moderate":
-        return "warn";
+        return "warning";
       case "high":
         return "danger";
       case "very-high":
@@ -1461,14 +1472,14 @@ export class TravelRecoveryComponent implements OnInit {
 
   getTargetAreaColor(
     area: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (area) {
       case "calves":
         return "info";
       case "thighs":
         return "success";
       case "glutes":
-        return "warn";
+        return "warning";
       case "lower-back":
         return "danger";
       case "full-body":
@@ -1637,14 +1648,14 @@ export class TravelRecoveryComponent implements OnInit {
 
   getSeverityColor(
     level: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (level) {
       case "none":
         return "success";
       case "mild":
         return "info";
       case "moderate":
-        return "warn";
+        return "warning";
       case "severe":
         return "danger";
       default:
@@ -1654,12 +1665,12 @@ export class TravelRecoveryComponent implements OnInit {
 
   getPhaseColor(
     phase: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (phase) {
       case "pre-travel":
         return "info";
       case "in-flight":
-        return "warn";
+        return "warning";
       case "post-arrival":
         return "danger";
       case "competition-ready":
@@ -1671,14 +1682,14 @@ export class TravelRecoveryComponent implements OnInit {
 
   getIntensityColor(
     intensity: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (intensity) {
       case "full":
         return "success";
       case "moderate":
         return "info";
       case "light":
-        return "warn";
+        return "warning";
       case "none":
         return "danger";
       default:
@@ -1688,12 +1699,12 @@ export class TravelRecoveryComponent implements OnInit {
 
   getImportanceColor(
     importance: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (importance) {
       case "critical":
         return "danger";
       case "high":
-        return "warn";
+        return "warning";
       case "medium":
         return "info";
       case "low":

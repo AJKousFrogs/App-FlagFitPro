@@ -33,8 +33,8 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { ProgressBarModule } from "primeng/progressbar";
 import { RippleModule } from "primeng/ripple";
 import { Slider } from "primeng/slider";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 // Services
 import { ApiService } from "../../../core/services/api.service";
@@ -76,10 +76,10 @@ interface TodaysPlan {
     Slider,
     InputNumberModule,
     ProgressBarModule,
-    TagModule,
     RippleModule,
     TooltipModule,
     CheckboxModule,
+    StatusTagComponent,
   ],
   template: `
     <div class="morning-briefing" [class.expanded]="isExpanded()">
@@ -98,9 +98,9 @@ interface TodaysPlan {
             </div>
             <div class="quick-status">
               @if (hasCheckedInToday()) {
-                <p-tag value="✓ Checked In" severity="success"></p-tag>
+                <app-status-tag value="✓ Checked In" severity="success" size="sm" />
               } @else {
-                <p-tag value="Check-in Needed" severity="warn"></p-tag>
+                <app-status-tag value="Check-in Needed" severity="warning" size="sm" />
               }
             </div>
           </div>
@@ -372,10 +372,11 @@ interface TodaysPlan {
                       >{{ todaysPlan()!.duration }} min</span
                     >
                   </div>
-                  <p-tag
+                  <app-status-tag
                     [value]="todaysPlan()!.phase"
                     [severity]="getPhasesSeverity()"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
 
                 @if (todaysPlan()!.focus.length > 0) {
@@ -681,13 +682,13 @@ export class MorningBriefingComponent implements OnInit {
     return "Excellent";
   }
 
-  getPhasesSeverity(): "success" | "info" | "warn" | "danger" {
+  getPhasesSeverity(): "success" | "info" | "warning" | "danger" {
     const phase = this.todaysPlan()?.phase;
     switch (phase) {
       case "Competition":
         return "success";
       case "Peak":
-        return "warn";
+        return "warning";
       case "Build":
         return "info";
       default:

@@ -24,7 +24,6 @@ import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
-import { TagModule } from "primeng/tag";
 import { ToolbarModule } from "primeng/toolbar";
 import { TooltipModule } from "primeng/tooltip";
 import { filter } from "rxjs/operators";
@@ -35,6 +34,7 @@ import { NotificationStateService } from "../../../core/services/notification-st
 import { SearchService } from "../../../core/services/search.service";
 import { ThemeService } from "../../../core/services/theme.service";
 import { TrainingStatsCalculationService } from "../../../core/services/training-stats-calculation.service";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import {
   WeatherData,
   WeatherService,
@@ -56,13 +56,13 @@ import { SearchPanelComponent } from "../search-panel/search-panel.component";
     BadgeModule,
     TooltipModule,
     ToolbarModule,
-    TagModule,
     MenuModule,
     DialogModule,
     SearchPanelComponent,
     NotificationsPanelComponent,
     ButtonModule,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",
@@ -202,7 +202,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // Weather data for header widget
   weatherData = signal<WeatherData | null>(null);
   weatherLoading = signal(false);
-  weatherLocation = signal("Training Ground");
+
+  // Computed weather location from API response, with fallback
+  weatherLocation = computed(() => {
+    const data = this.weatherData();
+    return data?.location || "Training Ground";
+  });
 
   // Computed weather icon based on condition
   weatherIcon = computed(() => {
@@ -535,7 +540,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   private fetchWeatherByLocation(): void {
-    this.weatherService.getWeatherData(this.weatherLocation()).subscribe({
+    // Don't pass a location - let the API use its defaults
+    // The actual location will be returned in the response
+    this.weatherService.getWeatherData().subscribe({
       next: (data) => {
         this.weatherData.set(data);
         this.weatherLoading.set(false);

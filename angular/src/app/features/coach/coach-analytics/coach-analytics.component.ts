@@ -23,11 +23,11 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { COLORS } from "../../../core/constants/app.constants";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { LazyChartComponent } from "../../../shared/components/lazy-chart/lazy-chart.component";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { getInitials } from "../../../shared/utils/format.utils";
 
 interface OverviewMetrics {
@@ -105,7 +105,7 @@ interface TeamOption {
     Select,
     SkeletonModule,
     TableModule,
-    TagModule,
+    StatusTagComponent,
     MainLayoutComponent,
     IconButtonComponent,
   ],
@@ -368,10 +368,11 @@ interface TeamOption {
                     <td>{{ entry.name }}</td>
                     <td>{{ entry.completedSessions }}</td>
                     <td>
-                      <p-tag
+                      <app-status-tag
                         [value]="entry.completionRate + '%'"
                         [severity]="getCompletionSeverity(entry.completionRate)"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </td>
                   </tr>
                 </ng-template>
@@ -551,10 +552,10 @@ export class CoachAnalyticsComponent {
     };
   }
 
-  getCompletionSeverity(rate: number): "success" | "info" | "warn" | "danger" {
+  getCompletionSeverity(rate: number): "success" | "info" | "warning" | "danger" {
     if (rate >= 90) return "success";
     if (rate >= 70) return "info";
-    if (rate >= 50) return "warn";
+    if (rate >= 50) return "warning";
     return "danger";
   }
 

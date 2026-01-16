@@ -23,7 +23,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
 import { StepperModule } from "primeng/stepper";
-import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
@@ -36,6 +35,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { WeatherService } from "../../../core/services/weather.service";
 import { formatDate } from "../../utils/date.utils";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 interface TrainingExercise {
   id: string;
@@ -70,10 +70,10 @@ interface Goal {
     Select,
     Slider,
     InputTextModule,
-    TagModule,
     TimelineModule,
     DialogModule,
     ButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <p-card header="Smart Training Session Builder" class="training-builder">
@@ -105,12 +105,12 @@ interface Goal {
                   <h4>{{ goal.name }}</h4>
                   <p>{{ goal.description }}</p>
                   @if (goal.aiRecommended) {
-                    <p-tag
+                    <app-status-tag
                       value="AI Recommended"
                       severity="success"
-                      icon="pi pi-sparkles"
-                    >
-                    </p-tag>
+                      icon="pi-sparkles"
+                      size="sm"
+                    />
                   }
                 </div>
               }
@@ -182,11 +182,11 @@ interface Goal {
                     >{{ weatherData()?.condition }},
                     {{ weatherData()?.temperature }}°F</span
                   >
-                  <p-tag
+                  <app-status-tag
                     [value]="weatherData()?.recommendation"
                     [severity]="getWeatherSeverity()"
-                  >
-                  </p-tag>
+                    size="sm"
+                  />
                 </div>
               }
             </form>
@@ -223,10 +223,11 @@ interface Goal {
                 </div>
                 <div class="stat">
                   <span class="label">Intensity</span>
-                  <p-tag
+                  <app-status-tag
                     [value]="sessionForm.get('intensity')?.value"
                     [severity]="getIntensitySeverity()"
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               </div>
             </div>
@@ -248,12 +249,11 @@ interface Goal {
                     <div class="exercise-meta">
                       <span class="duration">{{ event.duration }} min</span>
                       @if (event.aiGenerated) {
-                        <p-tag
+                        <app-status-tag
                           value="AI Generated"
                           severity="info"
-                          size="small"
-                        >
-                        </p-tag>
+                          size="sm"
+                        />
                       }
                     </div>
                   </div>
@@ -742,12 +742,11 @@ export class TrainingBuilderComponent {
     | "success"
     | "secondary"
     | "info"
-    | "warn"
-    | "danger"
-    | "contrast" {
+    | "warning"
+    | "danger" {
     const temp = this.weatherData()?.temperature || 70;
     if (temp < 40 || temp > 90) return "danger";
-    if (temp < 50 || temp > 85) return "warn";
+    if (temp < 50 || temp > 85) return "warning";
     return "success";
   }
 
@@ -755,15 +754,14 @@ export class TrainingBuilderComponent {
     | "success"
     | "secondary"
     | "info"
-    | "warn"
-    | "danger"
-    | "contrast" {
+    | "warning"
+    | "danger" {
     const intensity = this.sessionForm.get("intensity")?.value;
     switch (intensity) {
       case "high":
         return "danger";
       case "medium":
-        return "warn";
+        return "warning";
       default:
         return "success";
     }

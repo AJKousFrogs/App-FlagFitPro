@@ -42,6 +42,10 @@ import { ButtonModule } from "primeng/button";
       [blockScroll]="blockScroll()"
       [dismissableMask]="dismissableMask()"
       [closeOnEscape]="closeOnEscape()"
+      [focusOnShow]="focusOnShow()"
+      [attr.aria-label]="ariaLabel()"
+      [attr.aria-describedby]="ariaDescribedBy()"
+      role="dialog"
       (onHide)="handleHide()"
       (onShow)="handleShow()"
     >
@@ -510,6 +514,14 @@ export class ModalComponent {
   dismissableMask = input<boolean>(false);
   closeOnEscape = input<boolean>(true);
   scrollable = input<boolean>(false);
+  /** Focus first focusable element when dialog opens */
+  focusOnShow = input<boolean>(true);
+
+  // Accessibility inputs
+  /** Custom aria-label for the dialog (overrides header) */
+  ariaLabel = input<string | null>(null);
+  /** ID of element that describes the dialog content */
+  ariaDescribedBy = input<string | null>(null);
 
   // Footer configuration
   showFooter = input<boolean>(false);

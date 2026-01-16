@@ -6,9 +6,7 @@
 @use "styles/mixins" as *;
 
 .game-day-readiness {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--space-6);
+  @include page-container(var(--content-max-width-md));
 }
 
 .readiness-header {

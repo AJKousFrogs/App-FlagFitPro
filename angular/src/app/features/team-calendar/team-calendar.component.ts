@@ -170,7 +170,7 @@ const EVENT_TYPE_CONFIG: Record<
                 <p-card styleClass="event-card" [class]="'type-' + event.type">
                   <div class="event-content">
                     <div class="event-time">
-                      <span class="time">{{ event.startTime }}</span>
+                      <span class="item-time">{{ event.startTime }}</span>
                       <span class="duration">{{ event.endTime }}</span>
                     </div>
 

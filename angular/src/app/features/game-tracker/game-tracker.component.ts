@@ -23,7 +23,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
@@ -38,8 +37,16 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { formatDate } from "../../shared/utils/date.utils";
+import { formatDate, formatDateISO, safeParseDate } from "../../shared/utils/date.utils";
+import {
+  validateForm,
+  sanitizeFormData,
+  GameValidators,
+  FormValidationResult,
+} from "../../shared/utils/form-validation.utils";
+import { GameResponseSchema } from "../../core/schemas/api-response.schema";
 
 interface Game {
   id: string;
@@ -118,13 +125,13 @@ interface Play {
     DatePicker,
     Select,
     TableModule,
-    TagModule,
     RadioButton,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
     IconButtonComponent,
     EmptyStateComponent,
+    StatusTagComponent,
   ],
   templateUrl: "./game-tracker.component.html",
   styleUrl: "./game-tracker.component.scss",
@@ -597,27 +604,34 @@ export class GameTrackerComponent implements OnInit {
   }
 
   submitGame(): void {
-    if (this.gameForm.invalid) {
-      this.gameForm.markAllAsTouched();
-      // Show which fields are invalid
-      const invalidFields = Object.keys(this.gameForm.controls)
-        .filter((key) => this.gameForm.get(key)?.invalid)
-        .join(", ");
+    // Use comprehensive form validation
+    const validationResult: FormValidationResult = validateForm(this.gameForm);
+
+    if (!validationResult.valid) {
+      // Show detailed error messages
+      const errorMessages = validationResult.errors
+        .map((e) => e.message)
+        .slice(0, 3) // Limit to first 3 errors
+        .join(". ");
       this.toastService.error(
-        `Please fill required fields: ${invalidFields || "unknown"}`,
+        errorMessages || "Please fill in all required fields correctly",
       );
       return;
     }
 
     const formValue = this.gameForm.value;
 
-    // Map form data to API expected format
-    const gameData = {
+    // Parse and validate date safely
+    const parsedDate = safeParseDate(formValue.gameDate);
+    if (!parsedDate) {
+      this.toastService.error("Please enter a valid game date");
+      return;
+    }
+
+    // Sanitize and map form data to API expected format
+    const gameData = sanitizeFormData({
       opponentName: formValue.opponent,
-      gameDate:
-        formValue.gameDate instanceof Date
-          ? formValue.gameDate.toISOString()
-          : formValue.gameDate,
+      gameDate: formatDateISO(parsedDate),
       gameTime: formValue.gameTime || null,
       location: formValue.location || null,
       isHomeGame: formValue.homeAway === "home",
@@ -629,10 +643,10 @@ export class GameTrackerComponent implements OnInit {
         formValue.visibilityScope ||
         (this.isCoachOrAdmin() ? "team" : "personal"),
       notes: formValue.notes || null,
-    };
+    });
 
     this.apiService
-      .post("/api/games", gameData)
+      .post("/api/games", gameData, { schema: GameResponseSchema })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: unknown) => {
@@ -640,12 +654,12 @@ export class GameTrackerComponent implements OnInit {
           if (response && typeof response === "object") {
             const respObj = response as Record<string, unknown>;
             // Backend returns { success: true, data: {...} } structure
-            const gameData = respObj["data"] as
+            const gameDataResp = respObj["data"] as
               | Record<string, unknown>
               | undefined;
-            if (gameData && typeof gameData === "object") {
-              const respId = gameData["id"];
-              const respGameId = gameData["game_id"];
+            if (gameDataResp && typeof gameDataResp === "object") {
+              const respId = gameDataResp["id"];
+              const respGameId = gameDataResp["game_id"];
               if (typeof respId === "string") {
                 gameId = respId;
               } else if (typeof respGameId === "string") {
@@ -910,16 +924,16 @@ export class GameTrackerComponent implements OnInit {
 
   getPlayTypeSeverity(
     playType: string,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  ): "success" | "secondary" | "info" | "warning" | "danger" {
     const severities: Record<
       string,
-      "success" | "secondary" | "info" | "warn" | "danger" | "contrast"
+      "success" | "secondary" | "info" | "warning" | "danger"
     > = {
       pass_play: "info",
       run_play: "success",
-      flag_pull: "warn",
+      flag_pull: "warning",
       interception: "danger",
-      pass_deflection: "warn",
+      pass_deflection: "warning",
     };
     return severities[playType] || "info";
   }
@@ -1030,10 +1044,10 @@ export class GameTrackerComponent implements OnInit {
 
   getResultSeverity(
     result: string,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  ): "success" | "secondary" | "info" | "warning" | "danger" {
     const severities: Record<
       string,
-      "success" | "secondary" | "info" | "warn" | "danger" | "contrast"
+      "success" | "secondary" | "info" | "warning" | "danger"
     > = {
       win: "success",
       loss: "danger",

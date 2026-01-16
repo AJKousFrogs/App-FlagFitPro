@@ -31,8 +31,8 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -125,12 +125,12 @@ const PAYMENT_METHOD_CONFIG: Record<
     CardModule,
     DialogModule,
     TableModule,
-    TagModule,
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
 
     ButtonComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -233,10 +233,11 @@ const PAYMENT_METHOD_CONFIG: Record<
                     </div>
                     <div class="fee-amount">
                       <span class="amount">{{ fee.amount | currency }}</span>
-                      <p-tag
+                      <app-status-tag
                         [value]="getFeeStatusConfig(fee.status).label"
                         [severity]="getFeeStatusConfig(fee.status).severity"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </div>
                   </div>
 

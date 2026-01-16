@@ -50,12 +50,12 @@ import { InputTextModule } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { SkeletonModule } from "primeng/skeleton";
 import { StepperModule } from "primeng/stepper";
-import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TimelineModule } from "primeng/timeline";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
 import { AuthService } from "../../../core/services/auth.service";
@@ -104,7 +104,6 @@ interface VideoSuggestion {
     MultiSelect,
     ToastModule,
     DialogModule,
-    TagModule,
     BadgeModule,
     TooltipModule,
     SkeletonModule,
@@ -116,6 +115,7 @@ interface VideoSuggestion {
     MainLayoutComponent,
     ButtonComponent,
     CardShellComponent,
+    StatusTagComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -322,10 +322,11 @@ interface VideoSuggestion {
                 My Submissions
               </h2>
               @if (mySuggestions().length > 0) {
-                <p-tag
+                <app-status-tag
                   [value]="mySuggestions().length + ' total'"
                   severity="info"
-                ></p-tag>
+                  size="sm"
+                />
               }
             </div>
 
@@ -368,25 +369,28 @@ interface VideoSuggestion {
                     <div class="suggestion-status">
                       @switch (suggestion.status) {
                         @case ("approved") {
-                          <p-tag
+                          <app-status-tag
                             value="Approved"
                             severity="success"
-                            icon="pi pi-check"
-                          ></p-tag>
+                            icon="pi-check"
+                            size="sm"
+                          />
                         }
                         @case ("rejected") {
-                          <p-tag
+                          <app-status-tag
                             value="Not Approved"
                             severity="danger"
-                            icon="pi pi-times"
-                          ></p-tag>
+                            icon="pi-times"
+                            size="sm"
+                          />
                         }
                         @case ("pending") {
-                          <p-tag
+                          <app-status-tag
                             value="Pending Review"
-                            severity="warn"
-                            icon="pi pi-clock"
-                          ></p-tag>
+                            severity="warning"
+                            icon="pi-clock"
+                            size="sm"
+                          />
                         }
                       }
                     </div>

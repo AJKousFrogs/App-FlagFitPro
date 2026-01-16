@@ -74,18 +74,43 @@ export const HTTP_ERROR_MESSAGES: Record<number, string> = {
 };
 
 /**
- * Error type categories
+ * Error type categories (matching backend ErrorType values)
  */
 export enum ErrorType {
+  // Frontend-specific types
   NETWORK = "network",
-  AUTHENTICATION = "authentication",
-  AUTHORIZATION = "authorization",
-  VALIDATION = "validation",
-  NOT_FOUND = "not_found",
-  SERVER = "server",
   CLIENT = "client",
-  UNKNOWN = "unknown",
+
+  // Backend errorType values (from error-handler.cjs)
+  VALIDATION = "validation_error",
+  AUTHENTICATION = "authentication_error",
+  AUTHORIZATION = "authorization_error",
+  NOT_FOUND = "not_found",
+  METHOD_NOT_ALLOWED = "method_not_allowed",
+  CONFLICT = "conflict",
+  RATE_LIMIT = "rate_limit_exceeded",
+  SERVER = "server_error",
+  DATABASE = "database_error",
+  TIMEOUT = "timeout_error",
+  UNKNOWN = "unknown_error",
 }
+
+/**
+ * Map backend errorType strings to ErrorType enum
+ */
+export const ERROR_TYPE_MAP: Record<string, ErrorType> = {
+  validation_error: ErrorType.VALIDATION,
+  authentication_error: ErrorType.AUTHENTICATION,
+  authorization_error: ErrorType.AUTHORIZATION,
+  not_found: ErrorType.NOT_FOUND,
+  method_not_allowed: ErrorType.METHOD_NOT_ALLOWED,
+  conflict: ErrorType.CONFLICT,
+  rate_limit_exceeded: ErrorType.RATE_LIMIT,
+  server_error: ErrorType.SERVER,
+  database_error: ErrorType.DATABASE,
+  timeout_error: ErrorType.TIMEOUT,
+  unknown_error: ErrorType.UNKNOWN,
+};
 
 /**
  * Error severity levels

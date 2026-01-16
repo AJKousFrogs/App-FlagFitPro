@@ -50,6 +50,8 @@ export interface ToastMethodOptions {
 export class ToastService {
   private messageService = inject(MessageService);
 
+  constructor() {}
+
   /**
    * Show a success notification
    * @param detail - The message to display
@@ -190,6 +192,9 @@ export class ToastService {
    * Clear all notifications
    */
   clear(): void {
+    if (!this.messageService || typeof this.messageService.clear !== "function") {
+      return;
+    }
     this.messageService.clear();
   }
 
@@ -198,6 +203,9 @@ export class ToastService {
    * @param key - The key of the notification to clear
    */
   clearByKey(key: string): void {
+    if (!this.messageService || typeof this.messageService.clear !== "function") {
+      return;
+    }
     this.messageService.clear(key);
   }
 }

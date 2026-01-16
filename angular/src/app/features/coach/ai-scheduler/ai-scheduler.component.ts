@@ -394,7 +394,7 @@ const PRACTICE_DURATIONS = [
                       <span class="day-name">{{ session.day }}</span>
                       <span class="day-date">{{ session.date }}</span>
                       @if (!session.isRestDay) {
-                        <span class="day-time">{{ session.time }}</span>
+                        <span class="item-time">{{ session.time }}</span>
                       }
                     </div>
                     <div class="session-content">

@@ -11,6 +11,7 @@ export interface WeatherData {
   humidity?: number;
   windSpeed?: number;
   description?: string;
+  location?: string;
 }
 
 @Injectable({
@@ -77,6 +78,7 @@ export class WeatherService {
         (data["wind_speed"] as number) ??
         undefined,
       description: (data["description"] as string) ?? undefined,
+      location: (data["location"] as string) ?? undefined,
     };
   }
 

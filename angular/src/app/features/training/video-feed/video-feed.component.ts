@@ -39,9 +39,9 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { RippleModule } from "primeng/ripple";
 import { SkeletonModule } from "primeng/skeleton";
-import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
 import { AuthService } from "../../../core/services/auth.service";
@@ -85,11 +85,11 @@ interface FilterChip {
     InputTextModule,
     ToastModule,
     AvatarModule,
-    TagModule,
     RippleModule,
     MainLayoutComponent,
 
     ButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -224,7 +224,7 @@ interface FilterChip {
             <div class="active-filters">
               <span class="active-label">Active:</span>
               @for (filter of activeFilterLabels(); track filter) {
-                <p-tag [value]="filter" severity="success"></p-tag>
+                <app-status-tag [value]="filter" severity="success" size="sm" />
               }
               <button
                 pButton

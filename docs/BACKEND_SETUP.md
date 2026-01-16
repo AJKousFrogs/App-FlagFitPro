@@ -16,8 +16,8 @@ FlagFit Pro uses **Netlify Functions** (serverless) as the backend API layer, co
 ### Prerequisites Checklist
 
 - [ ] Supabase project created with credentials
-- [ ] Node.js version 20 or higher installed
-- [ ] npm package manager installed
+- [ ] Node.js version 22 or higher installed
+- [ ] npm or pnpm package manager installed
 - [ ] Netlify CLI installed (for local development)
 - [ ] Environment variables configured
 

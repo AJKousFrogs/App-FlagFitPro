@@ -62,6 +62,14 @@ import {
   RealtimePostgresUpdatePayload,
 } from "@supabase/supabase-js";
 import { ResearchCitation } from "../config/evidence-config";
+import {
+  roundToPrecision,
+  safeDivide,
+  ACWR_PRECISION,
+  percentageChange,
+  clamp,
+} from "../../shared/utils/precision.utils";
+import { getDateKey } from "../../shared/utils/date.utils";
 
 interface LoadMonitoringRecord {
   daily_load?: number;
@@ -81,6 +89,19 @@ interface WorkoutLog {
   notes?: string;
   load_monitoring?: LoadMonitoringRecord[];
 }
+
+/**
+ * Memory management constants for ACWR service
+ * Prevents unbounded memory growth from historical data
+ */
+const ACWR_MEMORY_LIMITS = {
+  /** Maximum days of training sessions to retain in memory */
+  MAX_SESSION_DAYS: 35,
+  /** Maximum days of historical ACWR data for tolerance detection */
+  MAX_HISTORICAL_ACWR_DAYS: 90,
+  /** Maximum entries in historical ACWR array */
+  MAX_HISTORICAL_ACWR_ENTRIES: 90,
+} as const;
 
 @Injectable({
   providedIn: "root",
@@ -155,17 +176,28 @@ export class AcwrService {
     Array<{ date: Date; ratio: number; chronic: number }>
   >([]);
 
+  // Track the last loaded user to prevent duplicate loads
+  private lastLoadedUserId: string | null = null;
+
   constructor() {
     // Auto-load and subscribe to workout logs when user logs in
     effect(() => {
       const userId = this.supabaseService.userId();
       if (userId) {
+        // Prevent duplicate loading for same user (memory optimization)
+        if (this.lastLoadedUserId === userId) {
+          this.logger.debug("[ACWR] User already loaded, skipping reload");
+          return;
+        }
+
         this.logger.info("[ACWR] User authenticated, loading training data...");
+        this.lastLoadedUserId = userId;
         this.setPlayer(userId);
         this.loadPlayerSessions(userId);
         this.subscribeToWorkoutLogs(userId);
       } else {
-        this.logger.debug("[ACWR] No user authenticated");
+        this.logger.debug("[ACWR] No user authenticated, cleaning up");
+        this.lastLoadedUserId = null;
         this.unsubscribeFromWorkoutLogs();
         this.clearSessions();
       }
@@ -176,6 +208,8 @@ export class AcwrService {
    * Calculate EWMA (Exponentially Weighted Moving Average)
    * Formula: EWMA_today = lambda × load_today + (1 - lambda) × EWMA_yesterday
    *
+   * Uses precision utilities for consistent rounding.
+   *
    * @param loads - Array of daily loads (most recent first)
    * @param lambda - Decay factor (0-1), higher = more weight to recent
    * @param days - Number of days to calculate over
@@ -183,15 +217,20 @@ export class AcwrService {
   private calculateEWMA(loads: number[], lambda: number, days: number): number {
     if (loads.length === 0) return 0;
 
+    // Validate lambda is in valid range
+    const validLambda = clamp(lambda, 0, 1);
+
     // Start with first value
-    let ewma = loads[0];
+    let ewma = loads[0] || 0;
 
     // Apply EWMA formula iteratively
     for (let i = 1; i < Math.min(loads.length, days); i++) {
-      ewma = lambda * loads[i] + (1 - lambda) * ewma;
+      const load = loads[i] || 0;
+      ewma = validLambda * load + (1 - validLambda) * ewma;
     }
 
-    return ewma;
+    // Return with standard precision
+    return roundToPrecision(ewma, ACWR_PRECISION);
   }
 
   /**
@@ -204,7 +243,7 @@ export class AcwrService {
     const dailyLoads = new Map<string, number>();
 
     sessions.forEach((session) => {
-      const dateKey = this.getDateKey(session.date);
+      const dateKey = this.getDateKeyLocal(session.date);
       const currentLoad = dailyLoads.get(dateKey) || 0;
       dailyLoads.set(dateKey, currentLoad + session.load);
     });
@@ -225,7 +264,7 @@ export class AcwrService {
     for (let i = 0; i < days; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const dateKey = this.getDateKey(date);
+      const dateKey = this.getDateKeyLocal(date);
       loads.push(dailyLoads.get(dateKey) || 0);
     }
 
@@ -234,9 +273,10 @@ export class AcwrService {
 
   /**
    * Convert date to string key (YYYY-MM-DD)
+   * Uses centralized date utility for consistency.
    */
-  private getDateKey(date: Date): string {
-    return date.toISOString().split("T")[0];
+  private getDateKeyLocal(date: Date): string {
+    return getDateKey(date);
   }
 
   /**
@@ -301,7 +341,7 @@ export class AcwrService {
 
     const recentSessions = sessions.filter((s) => s.date >= cutoffDate);
     const uniqueDays = new Set(
-      recentSessions.map((s) => this.getDateKey(s.date)),
+      recentSessions.map((s) => this.getDateKeyLocal(s.date)),
     );
 
     const daysWithData = uniqueDays.size;
@@ -382,20 +422,19 @@ export class AcwrService {
 
   /**
    * Reactive signal: Calculate ACWR ratio with data quality checks
-   * Returns 0 if insufficient data for reliable calculation
+   * Returns 0 if insufficient data for reliable calculation.
+   * Uses safeDivide for precision and division-by-zero safety.
    */
   public acwrRatio: Signal<number> = computed(() => {
     const acute = this.acuteLoad();
     const chronic = this.chronicLoad();
     const { sufficient } = this.hasSufficientData();
 
-    // Avoid division by zero
-    if (chronic === 0) return 0;
-
     // Return 0 if insufficient data (prevents misleading ratios)
     if (!sufficient) return 0;
 
-    return acute / chronic;
+    // Use safeDivide for precision handling and division-by-zero safety
+    return safeDivide(acute, chronic, ACWR_PRECISION);
   });
 
   /**
@@ -492,13 +531,17 @@ export class AcwrService {
     const currentWeekLoads = this.getRecentLoads(dailyLoads, 7);
     const previousWeekLoads = this.getRecentLoads(dailyLoads, 14).slice(7);
 
-    const currentWeek = currentWeekLoads.reduce((sum, load) => sum + load, 0);
-    const previousWeek = previousWeekLoads.reduce((sum, load) => sum + load, 0);
+    const currentWeek = roundToPrecision(
+      currentWeekLoads.reduce((sum, load) => sum + load, 0),
+      ACWR_PRECISION,
+    );
+    const previousWeek = roundToPrecision(
+      previousWeekLoads.reduce((sum, load) => sum + load, 0),
+      ACWR_PRECISION,
+    );
 
-    const changePercent =
-      previousWeek === 0
-        ? 0
-        : ((currentWeek - previousWeek) / previousWeek) * 100;
+    // Use percentageChange utility for consistent precision
+    const changePercent = percentageChange(previousWeek, currentWeek, 1);
 
     // Use conservative cap if configured, otherwise use standard cap
     const maxIncrease =
@@ -511,11 +554,11 @@ export class AcwrService {
     return {
       currentWeek,
       previousWeek,
-      changePercent: cappedAtMax ? maxIncrease : changePercent,
+      changePercent: cappedAtMax ? maxIncrease : roundToPrecision(changePercent, 1),
       isSafe,
       cappedAtMax,
       warning: !isSafe
-        ? `Weekly load increased by ${changePercent.toFixed(1)}% (max recommended: ${maxIncrease}% per Gabbett 2016)`
+        ? `Weekly load increased by ${roundToPrecision(changePercent, 1)}% (max recommended: ${maxIncrease}% per Gabbett 2016)`
         : undefined,
     };
   });
@@ -661,14 +704,20 @@ export class AcwrService {
   /**
    * Add a training session and update historical ACWR
    * @param session - Training session data
+   *
+   * MEMORY SAFETY: Limits session and history retention to prevent unbounded growth
    */
   public addSession(session: TrainingSession): void {
     const sessions = [...this.trainingSessions(), session];
     const cfg = this.config();
 
-    // Keep sessions for chronic window + buffer for calculations
+    // MEMORY SAFETY: Keep sessions for chronic window + buffer, but cap at MAX_SESSION_DAYS
+    const maxDays = Math.min(
+      cfg.chronicWindowDays + 7,
+      ACWR_MEMORY_LIMITS.MAX_SESSION_DAYS,
+    );
     const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - (cfg.chronicWindowDays + 7));
+    cutoffDate.setDate(cutoffDate.getDate() - maxDays);
 
     const filtered = sessions.filter((s) => s.date >= cutoffDate);
 
@@ -687,9 +736,11 @@ export class AcwrService {
         chronic: currentData.chronic,
       });
 
-      // Keep last 30 days of history
+      // MEMORY SAFETY: Keep history limited by both date and count
       const historyCutoff = new Date();
-      historyCutoff.setDate(historyCutoff.getDate() - 30);
+      historyCutoff.setDate(
+        historyCutoff.getDate() - ACWR_MEMORY_LIMITS.MAX_HISTORICAL_ACWR_DAYS,
+      );
 
       // Check for ACWR spike and create load cap if needed
       if (currentData.ratio > 1.5 && session.playerId) {
@@ -708,7 +759,11 @@ export class AcwrService {
             this.logger.error("[ACWR] Error decrementing load cap:", error);
           });
       }
-      const filteredHistory = history.filter((h) => h.date >= historyCutoff);
+
+      // Filter by date and then cap by count for memory safety
+      const filteredHistory = history
+        .filter((h) => h.date >= historyCutoff)
+        .slice(0, ACWR_MEMORY_LIMITS.MAX_HISTORICAL_ACWR_ENTRIES);
 
       this.historicalACWR.set(filteredHistory);
     }
@@ -729,11 +784,15 @@ export class AcwrService {
   }
 
   /**
-   * Clear all sessions (useful for switching players)
+   * Clear all sessions (useful for switching players or logout)
+   * MEMORY SAFETY: Ensures all cached data is released
    */
   public clearSessions(): void {
     this.trainingSessions.set([]);
     this.historicalACWR.set([]);
+    this.currentPlayerId.set(null);
+    this.lastLoadedUserId = null;
+    this.logger.debug("[ACWR] Sessions and history cleared");
   }
 
   /**

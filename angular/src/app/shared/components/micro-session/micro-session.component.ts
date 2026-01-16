@@ -29,9 +29,9 @@ import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { ProgressBarModule } from "primeng/progressbar";
 import { SliderModule } from "primeng/slider";
-import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -82,11 +82,11 @@ type SessionStatus =
     ProgressBarModule,
     CheckboxModule,
     SliderModule,
-    TagModule,
     TooltipModule,
     TextareaModule,
 
     ButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <!-- Session Card / Modal -->
@@ -107,10 +107,11 @@ type SessionStatus =
         <ng-template pTemplate="header">
           <div class="card-header">
             <div class="header-info">
-              <p-tag
+              <app-status-tag
                 [value]="getSessionTypeLabel(session().session_type)"
                 [severity]="getSessionTypeSeverity(session().session_type)"
-              ></p-tag>
+                size="sm"
+              />
               <span class="duration-badge">
                 <i class="pi pi-clock"></i>
                 {{ session().estimated_duration_minutes }} min
@@ -702,16 +703,16 @@ export class MicroSessionComponent implements OnInit, OnDestroy {
 
   getSessionTypeSeverity(
     type: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       recovery: "success",
       technique: "info",
       mobility: "info",
       mental: "secondary",
-      strength: "warn",
+      strength: "warning",
       warm_up: "success",
     };
     return severities[type] || "secondary";

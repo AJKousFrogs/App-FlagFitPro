@@ -184,7 +184,7 @@
     }
   }
 
-  .activity-time {
+  .item-time {
     font-size: var(--font-size-badge);
     color: var(--ds-text-tertiary);
     white-space: nowrap;
@@ -271,7 +271,7 @@
   .activity-item {
     flex-direction: column;
 
-    .activity-time {
+    .item-time {
       align-self: flex-end;
     }
   }

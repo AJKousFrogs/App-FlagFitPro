@@ -67,11 +67,13 @@ interface InvitationData {
 
         @if (isLoading()) {
           <div class="loading-state">
-            <p-message severity="info">Loading invitation...</p-message>
+            <p-message severity="info" styleClass="status-message">
+              Loading invitation...
+            </p-message>
           </div>
         } @else if (needsLogin()) {
           <div class="login-required-state">
-            <p-message severity="warn">
+            <p-message severity="warn" styleClass="status-message">
               Please sign in to accept this invitation
             </p-message>
             <p class="login-message">
@@ -94,14 +96,20 @@ interface InvitationData {
           </div>
         } @else if (invitationError()) {
           <div class="error-state">
-            <p-message severity="error">{{ invitationError() }}</p-message>
+            <p-message severity="error" styleClass="status-message">
+              {{ invitationError() }}
+            </p-message>
             <a [routerLink]="['/dashboard']" class="back-link mt-4"
               >Go to Dashboard</a
             >
           </div>
         } @else if (isAccepted()) {
           <div class="accepted-state">
-            <p-message severity="success">Invitation accepted!</p-message>
+            <p-message
+              severity="success"
+              styleClass="status-message status-message--success"
+              >Invitation accepted!</p-message
+            >
             <p class="accepted-message">
               You've successfully joined {{ teamName() }}. Welcome to the team!
             </p>
@@ -111,7 +119,9 @@ interface InvitationData {
           </div>
         } @else if (isDeclined()) {
           <div class="declined-state">
-            <p-message severity="info">Invitation declined</p-message>
+            <p-message severity="info" styleClass="status-message">
+              Invitation declined
+            </p-message>
             <p class="declined-message">
               You have declined the invitation to join {{ teamName() }}.
             </p>

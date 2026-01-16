@@ -16,13 +16,35 @@ import { ToastService } from "./toast.service";
 import { TIMEOUTS } from "../constants/app.constants";
 import { TOAST } from "../constants/toast-messages.constants";
 
+/**
+ * Supported action types for offline queue
+ * Extended to support more API operations
+ */
+export type QueuedActionType =
+  | "wellness_checkin"
+  | "training_log"
+  | "game_action"
+  | "wellness_update"
+  | "profile_update"
+  | "settings_update"
+  | "notification_action"
+  | "attendance_record"
+  | "equipment_action"
+  | "generic_post"
+  | "generic_put"
+  | "generic_patch";
+
 export interface QueuedAction {
   id: string;
-  type: "wellness_checkin" | "training_log" | "game_action" | "wellness_update";
+  type: QueuedActionType;
   payload: Record<string, unknown>;
   timestamp: Date;
   retryCount: number;
   priority: "high" | "medium" | "low";
+  /** Optional endpoint for generic actions */
+  endpoint?: string;
+  /** HTTP method for generic actions */
+  method?: "POST" | "PUT" | "PATCH";
 }
 
 @Injectable({
@@ -36,6 +58,9 @@ export class OfflineQueueService {
   private readonly _queue = signal<QueuedAction[]>([]);
   private readonly _isOnline = signal(navigator.onLine);
   private readonly _isSyncing = signal(false);
+  
+  // Sync lock to prevent race conditions
+  private _syncLock = false;
 
   // Public readonly signals
   readonly queue = this._queue.asReadonly();
@@ -67,6 +92,10 @@ export class OfflineQueueService {
     type: QueuedAction["type"],
     payload: Record<string, unknown>,
     priority: QueuedAction["priority"] = "medium",
+    options?: {
+      endpoint?: string;
+      method?: "POST" | "PUT" | "PATCH";
+    },
   ): string {
     const action: QueuedAction = {
       id: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -75,6 +104,8 @@ export class OfflineQueueService {
       timestamp: new Date(),
       retryCount: 0,
       priority,
+      endpoint: options?.endpoint,
+      method: options?.method,
     };
 
     this._queue.update((queue) => [...queue, action]);
@@ -94,6 +125,20 @@ export class OfflineQueueService {
   }
 
   /**
+   * Queue a generic API request for offline sync
+   * Use this for any API call that should be retried when online
+   */
+  queueGenericRequest(
+    endpoint: string,
+    method: "POST" | "PUT" | "PATCH",
+    payload: Record<string, unknown>,
+    priority: QueuedAction["priority"] = "medium",
+  ): string {
+    const type: QueuedActionType = `generic_${method.toLowerCase()}` as QueuedActionType;
+    return this.queueAction(type, payload, priority, { endpoint, method });
+  }
+
+  /**
    * Remove action from queue (after successful sync)
    */
   removeAction(actionId: string): void {
@@ -107,6 +152,9 @@ export class OfflineQueueService {
    * Handle online event
    */
   private handleOnline(): void {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'offline-queue.service.ts:handleOnline',message:'Browser reports online',data:{previousState:this._isOnline(),queueSize:this._queue().length,navigatorOnLine:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H4'})}).catch(()=>{});
+    // #endregion
     this._isOnline.set(true);
     this.logger.info("[OfflineQueue] Connection restored");
 
@@ -122,6 +170,9 @@ export class OfflineQueueService {
    * Handle offline event
    */
   private handleOffline(): void {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'offline-queue.service.ts:handleOffline',message:'Browser reports offline',data:{previousState:this._isOnline(),queueSize:this._queue().length,navigatorOnLine:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H4'})}).catch(()=>{});
+    // #endregion
     this._isOnline.set(false);
     this.logger.warn("[OfflineQueue] Connection lost - actions will be queued");
     this.toastService.warn(TOAST.WARN.OFFLINE);
@@ -129,73 +180,109 @@ export class OfflineQueueService {
 
   /**
    * Sync queued actions with server
+   * Uses a lock to prevent concurrent sync operations (race condition fix)
    */
   async syncQueue(): Promise<void> {
-    if (this._isSyncing() || !this._isOnline() || this._queue().length === 0) {
+    // Atomic lock check - prevents race condition where multiple calls
+    // could pass the initial check before any sets _isSyncing
+    if (this._syncLock) {
+      this.logger.debug("[OfflineQueue] Sync already in progress, skipping");
       return;
     }
+    
+    // Acquire lock immediately (synchronous)
+    this._syncLock = true;
+    
+    try {
+      if (!this._isOnline() || this._queue().length === 0) {
+        return;
+      }
 
-    this._isSyncing.set(true);
-    const queue = [...this._queue()]; // Copy to avoid mutation during sync
+      this._isSyncing.set(true);
+      
+      // Deep copy queue to avoid mutation during sync
+      const queue = this._queue().map(action => ({
+        ...action,
+        timestamp: new Date(action.timestamp.getTime()),
+      }));
 
-    // Sort by priority (high first) and timestamp (oldest first)
-    const sortedQueue = queue.sort((a, b) => {
-      const priorityOrder = { high: 0, medium: 1, low: 2 };
-      const priorityDiff =
-        priorityOrder[a.priority] - priorityOrder[b.priority];
-      if (priorityDiff !== 0) return priorityDiff;
-      return a.timestamp.getTime() - b.timestamp.getTime();
-    });
+      // Sort by priority (high first) and timestamp (oldest first)
+      const sortedQueue = queue.sort((a, b) => {
+        const priorityOrder = { high: 0, medium: 1, low: 2 };
+        const priorityDiff =
+          priorityOrder[a.priority] - priorityOrder[b.priority];
+        if (priorityDiff !== 0) return priorityDiff;
+        return a.timestamp.getTime() - b.timestamp.getTime();
+      });
 
-    let successCount = 0;
-    let failureCount = 0;
+      let successCount = 0;
+      let failureCount = 0;
 
-    for (const action of sortedQueue) {
-      try {
-        const success = await this.syncAction(action);
-        if (success) {
-          this.removeAction(action.id);
-          successCount++;
-        } else {
-          // Increment retry count
-          action.retryCount++;
-          if (action.retryCount >= 3) {
-            // Max retries reached - remove from queue or mark as failed
-            this.logger.error(
-              `[OfflineQueue] Max retries reached for action ${action.id}, removing from queue`,
-            );
+      for (const action of sortedQueue) {
+        try {
+          const success = await this.syncAction(action);
+          if (success) {
+            this.removeAction(action.id);
+            successCount++;
+          } else {
+            // Update retry count in actual queue (not copy)
+            this.incrementRetryCount(action.id);
+            const currentAction = this._queue().find(a => a.id === action.id);
+            if (currentAction && currentAction.retryCount >= 3) {
+              this.logger.error(
+                `[OfflineQueue] Max retries reached for action ${action.id}, removing from queue`,
+              );
+              this.removeAction(action.id);
+              failureCount++;
+            }
+          }
+        } catch (error) {
+          this.logger.error(
+            `[OfflineQueue] Error syncing action ${action.id}:`,
+            error,
+          );
+          this.incrementRetryCount(action.id);
+          const currentAction = this._queue().find(a => a.id === action.id);
+          if (currentAction && currentAction.retryCount >= 3) {
             this.removeAction(action.id);
             failureCount++;
           }
         }
-      } catch (error) {
-        this.logger.error(
-          `[OfflineQueue] Error syncing action ${action.id}:`,
-          error,
+
+        // Small delay between syncs to avoid overwhelming server
+        await new Promise((resolve) =>
+          setTimeout(resolve, TIMEOUTS.UI_MICRO_DELAY),
         );
-        action.retryCount++;
-        if (action.retryCount >= 3) {
-          this.removeAction(action.id);
-          failureCount++;
-        }
       }
 
-      // Small delay between syncs to avoid overwhelming server
-      await new Promise((resolve) =>
-        setTimeout(resolve, TIMEOUTS.UI_MICRO_DELAY),
-      );
-    }
+      this._isSyncing.set(false);
 
-    this._isSyncing.set(false);
-
-    if (successCount > 0) {
-      this.toastService.success(
-        `Successfully synced ${successCount} action(s)`,
-      );
+      if (successCount > 0) {
+        this.toastService.success(
+          `Successfully synced ${successCount} action(s)`,
+        );
+      }
+      if (failureCount > 0) {
+        this.toastService.warn(`Failed to sync ${failureCount} action(s)`);
+      }
+    } finally {
+      // Always release lock
+      this._syncLock = false;
     }
-    if (failureCount > 0) {
-      this.toastService.warn(`Failed to sync ${failureCount} action(s)`);
-    }
+  }
+  
+  /**
+   * Increment retry count for an action (immutable update)
+   */
+  private incrementRetryCount(actionId: string): void {
+    this._queue.update((queue) =>
+      queue.map((action) =>
+        action.id === actionId
+          ? { ...action, retryCount: action.retryCount + 1 }
+          : action
+      ),
+    );
+    this.saveQueueToStorage();
   }
 
   /**
@@ -207,28 +294,55 @@ export class OfflineQueueService {
       let endpoint = "";
       let method = "POST";
 
-      switch (action.type) {
-        case "wellness_checkin":
-          endpoint = "/.netlify/functions/wellness-checkin";
-          method = "POST";
-          break;
-        case "training_log":
-          endpoint = "/.netlify/functions/daily-protocol";
-          method = "POST";
-          break;
-        case "game_action":
-          endpoint = "/.netlify/functions/games";
-          method = "PUT";
-          break;
-        case "wellness_update":
-          endpoint = "/.netlify/functions/wellness-checkin";
-          method = "PUT";
-          break;
-        default:
-          this.logger.warn(
-            `[OfflineQueue] Unknown action type: ${action.type}`,
-          );
-          return false;
+      // Handle generic actions first
+      if (action.type.startsWith("generic_") && action.endpoint) {
+        endpoint = action.endpoint;
+        method = action.method || "POST";
+      } else {
+        // Specific action type mappings
+        switch (action.type) {
+          case "wellness_checkin":
+            endpoint = "/.netlify/functions/wellness-checkin";
+            method = "POST";
+            break;
+          case "training_log":
+            endpoint = "/.netlify/functions/daily-protocol";
+            method = "POST";
+            break;
+          case "game_action":
+            endpoint = "/.netlify/functions/games";
+            method = "PUT";
+            break;
+          case "wellness_update":
+            endpoint = "/.netlify/functions/wellness-checkin";
+            method = "PUT";
+            break;
+          case "profile_update":
+            endpoint = "/.netlify/functions/users";
+            method = "PATCH";
+            break;
+          case "settings_update":
+            endpoint = "/.netlify/functions/settings";
+            method = "PATCH";
+            break;
+          case "notification_action":
+            endpoint = "/.netlify/functions/notifications";
+            method = "POST";
+            break;
+          case "attendance_record":
+            endpoint = "/.netlify/functions/attendance";
+            method = "POST";
+            break;
+          case "equipment_action":
+            endpoint = "/.netlify/functions/equipment";
+            method = "POST";
+            break;
+          default:
+            this.logger.warn(
+              `[OfflineQueue] Unknown action type: ${action.type}`,
+            );
+            return false;
+        }
       }
 
       // Make API call

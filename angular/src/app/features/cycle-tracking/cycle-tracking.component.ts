@@ -30,9 +30,9 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -299,12 +299,12 @@ const RETENTION_OPTIONS = [
     RadioButton,
     Select,
     TableModule,
-    TagModule,
     TextareaModule,
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -319,7 +319,7 @@ const RETENTION_OPTIONS = [
         ></app-page-header>
 
         <!-- Privacy Notice -->
-        <p-message severity="info" styleClass="privacy-notice">
+        <p-message severity="info" styleClass="privacy-notice status-message">
           <div class="privacy-content">
             <i class="pi pi-lock"></i>
             <div>
@@ -533,7 +533,7 @@ const RETENTION_OPTIONS = [
               </div>
             </div>
 
-            <p-message severity="info" styleClass="nutrition-tip">
+            <p-message severity="info" styleClass="nutrition-tip status-message">
               <span>💡 {{ getNutritionTip() }}</span>
             </p-message>
           </p-card>
@@ -565,7 +565,7 @@ const RETENTION_OPTIONS = [
 
               <p-message
                 [severity]="getAcwrStatus().severity"
-                styleClass="acwr-status"
+                styleClass="acwr-status status-message"
               >
                 <span>{{ getAcwrStatus().message }}</span>
               </p-message>
@@ -668,10 +668,11 @@ const RETENTION_OPTIONS = [
                   <td>{{ cycle.startDate | date: "MMM d, y" }}</td>
                   <td>{{ cycle.length ? cycle.length + " days" : "--" }}</td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="formatFlow(cycle.flowIntensity)"
                       [severity]="getFlowSeverity(cycle.flowIntensity)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td class="symptoms-cell">
                     {{ formatSymptoms(cycle.symptoms) }}
@@ -1187,10 +1188,10 @@ export class CycleTrackingComponent implements OnInit {
 
   getFlowSeverity(
     flow: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
-    const severities: Record<string, "success" | "warn" | "danger"> = {
+  ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
+    const severities: Record<string, "success" | "warning" | "danger"> = {
       light: "success",
-      moderate: "warn",
+      moderate: "warning",
       heavy: "danger",
     };
     return severities[flow] || "info";

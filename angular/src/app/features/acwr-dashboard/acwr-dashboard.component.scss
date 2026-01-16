@@ -8,9 +8,7 @@
 @include stat-block;
 
 .acwr-dashboard {
-  max-width: var(--content-max-width-xl); /* 1280px - closest token to 1200px */
-  margin: 0 auto;
-  padding: var(--space-8);
+  @include page-container(var(--content-max-width-xl));
   font-family: var(--font-family-sans);
 }
 

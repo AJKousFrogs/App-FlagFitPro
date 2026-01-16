@@ -87,6 +87,17 @@ interface WellnessTrend {
   change: number;
 }
 
+/**
+ * Memory management constants for wellness data
+ * Prevents unbounded data growth
+ */
+const WELLNESS_MEMORY_LIMITS = {
+  /** Maximum days of wellness data to keep in memory */
+  MAX_DAYS: 90,
+  /** Maximum entries in memory cache */
+  MAX_ENTRIES: 100,
+} as const;
+
 @Injectable({
   providedIn: "root",
 })
@@ -114,23 +125,53 @@ export class WellnessService {
     return data.length > 0 ? data[0] : null;
   });
 
+  // MEMORY SAFETY: Track subscription cleanup function
+  private unsubscribeFromRealtime: (() => void) | null = null;
+  private lastLoadedUserId: string | null = null;
+
   constructor() {
     // Set up realtime subscription when user logs in/out
     effect(() => {
       const userId = this.userId();
 
       if (userId) {
+        // MEMORY SAFETY: Prevent duplicate loads for same user
+        if (this.lastLoadedUserId === userId) {
+          this.logger.debug("[Wellness] User already loaded, skipping reload");
+          return;
+        }
+
         this.logger.info(
           "[Wellness] User logged in, setting up realtime subscription",
         );
+        this.lastLoadedUserId = userId;
         this.loadWellnessData();
         this.subscribeToWellnessUpdates(userId);
       } else {
         this.logger.info("[Wellness] User logged out, cleaning up");
-        this.clearCache();
-        this.realtimeService.unsubscribe("daily_wellness_checkin");
+        this.cleanup();
       }
     });
+  }
+
+  /**
+   * MEMORY SAFETY: Centralized cleanup method
+   */
+  private cleanup(): void {
+    // Clean up realtime subscription
+    if (this.unsubscribeFromRealtime) {
+      this.unsubscribeFromRealtime();
+      this.unsubscribeFromRealtime = null;
+    }
+
+    // Also try generic unsubscribe
+    this.realtimeService.unsubscribe("daily_wellness_checkin");
+
+    // Clear cached data
+    this.clearCache();
+    this.lastLoadedUserId = null;
+
+    this.logger.debug("[Wellness] Cleanup complete");
   }
 
   /**
@@ -566,10 +607,18 @@ export class WellnessService {
 
   /**
    * Subscribe to realtime wellness updates
+   * MEMORY SAFETY: Stores unsubscribe function for cleanup
    */
   private subscribeToWellnessUpdates(userId: string): void {
+    // Clean up any existing subscription first
+    if (this.unsubscribeFromRealtime) {
+      this.unsubscribeFromRealtime();
+      this.unsubscribeFromRealtime = null;
+    }
+
     // Subscribe to changes for daily_wellness_checkin (canonical table)
-    this.realtimeService.subscribe(
+    // MEMORY SAFETY: Store the unsubscribe function
+    this.unsubscribeFromRealtime = this.realtimeService.subscribe(
       "daily_wellness_checkin",
       `user_id=eq.${userId}`,
       {
@@ -579,8 +628,13 @@ export class WellnessService {
             payload.new as unknown as DailyWellnessCheckinEntry,
           );
           const current = this._wellnessData();
-          this._wellnessData.set([newEntry, ...current]);
-          this._averages.set(this.calculateAverages([newEntry, ...current]));
+          // MEMORY SAFETY: Limit data size
+          const newData = [newEntry, ...current].slice(
+            0,
+            WELLNESS_MEMORY_LIMITS.MAX_ENTRIES,
+          );
+          this._wellnessData.set(newData);
+          this._averages.set(this.calculateAverages(newData));
         },
         onUpdate: (payload: RealtimeEvent) => {
           this.logger.info("[Wellness] Entry updated via realtime");

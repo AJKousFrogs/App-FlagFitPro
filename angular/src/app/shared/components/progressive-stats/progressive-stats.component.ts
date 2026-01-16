@@ -9,10 +9,10 @@ import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { ButtonComponent } from "../button/button.component";
-import { TagModule } from "primeng/tag";
 import { Tabs, TabPanel } from "primeng/tabs";
 import { expandCollapse } from "../../animations/app.animations";
 import { StatItem } from "../stats-grid/stats-grid.component";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { DEFAULT_CHART_OPTIONS } from "../../config/chart.config";
 import { LoggerService } from "../../../core/services/logger.service";
 import { toLogContext } from "../../../core/services/logger.service";
@@ -50,7 +50,7 @@ export interface ProgressiveStatItem extends StatItem {
     CommonModule,
     CardModule,
     ChartModule,
-    TagModule,
+    StatusTagComponent,
     Tabs,
     TabPanel,
 
@@ -84,12 +84,11 @@ export interface ProgressiveStatItem extends StatItem {
                   <div class="stat-block__value">{{ stat.value }}</div>
                   @if (stat.trend) {
                     <div class="stat-trend">
-                      <p-tag
+                      <app-status-tag
                         [value]="stat.trend"
                         [severity]="getTrendSeverity(stat.trendType)"
-                        size="small"
-                      >
-                      </p-tag>
+                        size="sm"
+                      />
                     </div>
                   }
                 </div>
@@ -150,14 +149,13 @@ export interface ProgressiveStatItem extends StatItem {
                                 {{ benchmark.value }}
                               </div>
                               <div class="benchmark-comparison">
-                                <p-tag
+                                <app-status-tag
                                   [value]="benchmark.comparison"
                                   [severity]="
                                     getComparisonSeverity(benchmark.comparison)
                                   "
-                                  size="small"
-                                >
-                                </p-tag>
+                                  size="sm"
+                                />
                               </div>
                             </div>
                           }

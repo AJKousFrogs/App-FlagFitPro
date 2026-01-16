@@ -267,7 +267,11 @@ interface AthleteMetrics {
                           >Dismiss</app-button
                         >
                       } @else if (suggestion.accepted) {
-                        <p-tag value="Applied" severity="success"></p-tag>
+                        <p-tag
+                          value="Applied"
+                          severity="success"
+                          styleClass="status-tag status-tag--success"
+                        ></p-tag>
                       }
                     </div>
                   </div>
@@ -320,6 +324,7 @@ interface AthleteMetrics {
                           value="AI Optimized"
                           severity="success"
                           icon="pi pi-sparkles"
+                          styleClass="status-tag status-tag--success"
                         ></p-tag>
                       }
                     </div>

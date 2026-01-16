@@ -13,9 +13,9 @@ import {
   inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { TagModule } from "primeng/tag";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { MissingDataStatus } from "../../../core/services/missing-data-detection.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
@@ -23,7 +23,13 @@ import { LoggerService } from "../../../core/services/logger.service";
   selector: "app-missing-data-explanation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, TagModule, ButtonModule, CardModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    ButtonModule,
+    CardModule,
+    StatusTagComponent,
+  ],
   template: `
     @if (missingStatus() && missingStatus()!.missing) {
       <p-card
@@ -43,11 +49,11 @@ import { LoggerService } from "../../../core/services/logger.service";
               </p>
             </div>
           </div>
-          <p-tag
+          <app-status-tag
             [value]="getSeverityLabel()"
             [severity]="getSeverityTag()"
-            styleClass="severity-badge"
-          ></p-tag>
+            size="sm"
+          />
         </div>
 
         <div class="missing-data-content">
@@ -271,11 +277,11 @@ export class MissingDataExplanationComponent {
     | "secondary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "contrast" {
     const severity = this.missingStatus()?.severity || "warning";
-    return severity === "critical" ? "danger" : "warn";
+    return severity === "critical" ? "danger" : "warning";
   }
 
   getWhyItMatters(): string {

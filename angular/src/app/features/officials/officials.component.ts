@@ -17,8 +17,8 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -56,7 +56,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     FormsModule,
     CardModule,
     TableModule,
-    TagModule,
+    StatusTagComponent,
     DialogModule,
     InputTextModule,
     InputNumberModule,
@@ -151,14 +151,15 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                     </div>
                   </td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="
                         getCertificationLabel(official.certification_level)
                       "
                       [severity]="
                         getCertificationSeverity(official.certification_level)
                       "
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td>
                     @if (official.years_experience) {
@@ -168,10 +169,11 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                     }
                   </td>
                   <td>
-                    <p-tag
+                    <app-status-tag
                       [value]="official.is_active ? 'Active' : 'Inactive'"
                       [severity]="official.is_active ? 'success' : 'secondary'"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </td>
                   <td>
                     <div class="action-buttons">
@@ -242,17 +244,18 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                         <span class="official-name">{{
                           assignment.official_name
                         }}</span>
-                        <p-tag
+                        <app-status-tag
                           [value]="getRoleLabel(assignment.role)"
-                          size="small"
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                     </div>
                     <div class="assignment-status">
-                      <p-tag
+                      <app-status-tag
                         [value]="getStatusLabel(assignment.status)"
                         [severity]="getStatusSeverity(assignment.status)"
-                      ></p-tag>
+                        size="sm"
+                      />
                       @if (assignment.payment_amount) {
                         <span class="payment">
                           {{ assignment.payment_amount | currency }}
@@ -621,11 +624,12 @@ export class OfficialsComponent implements OnInit {
 
   getCertificationSeverity(
     level: string | undefined,
-  ): "success" | "info" | "warn" | "danger" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
+  ): "success" | "info" | "warning" | "danger" {
+    const severities: Record<string, "success" | "info" | "warning" | "danger"> =
+      {
       professional: "success",
       college: "info",
-      high_school: "warn",
+      high_school: "warning",
       youth: "secondary" as "info",
     };
     return severities[level || ""] || "info";
@@ -648,11 +652,12 @@ export class OfficialsComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
+  getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
+    const severities: Record<string, "success" | "info" | "warning" | "danger"> =
+      {
       confirmed: "success",
       scheduled: "info",
-      declined: "warn",
+      declined: "warning",
       no_show: "danger",
     };
     return severities[status] || "info";

@@ -130,7 +130,7 @@ import { HeaderService } from "../../core/services/header.service";
                     </div>
                     <div class="activity-content">
                       <div class="activity-title">{{ activity.title }}</div>
-                      <div class="activity-time">{{ activity.time }}</div>
+                      <div class="item-time">{{ activity.time }}</div>
                     </div>
                   </div>
                 }
@@ -230,7 +230,7 @@ import { HeaderService } from "../../core/services/header.service";
         color: var(--color-text-primary);
       }
 
-      .activity-time {
+      .item-time {
         font-size: 0.875rem;
         color: var(--color-text-secondary);
       }

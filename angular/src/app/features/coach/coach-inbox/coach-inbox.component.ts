@@ -24,9 +24,9 @@ import { BadgeModule } from "primeng/badge";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { SkeletonModule } from "primeng/skeleton";
 import { TabPanel, Tabs } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 interface InboxItem {
   id: string;
@@ -82,7 +82,7 @@ interface InboxStats {
     DatePipe,
     Tabs,
     TabPanel,
-    TagModule,
+    StatusTagComponent,
     BadgeModule,
     SkeletonModule,
     AvatarModule,
@@ -142,10 +142,11 @@ interface InboxStats {
                           item.created_at | date: "short"
                         }}</span>
                       </div>
-                      <p-tag
+                      <app-status-tag
                         [value]="item.priority"
                         [severity]="getPrioritySeverity(item.priority)"
-                      ></p-tag>
+                        size="sm"
+                      />
                     </div>
                     <div class="item-body">
                       <h4>{{ item.title }}</h4>
@@ -186,6 +187,7 @@ interface InboxStats {
                   [value]="stats().wins.toString()"
                   severity="success"
                   class="ml-2"
+                  styleClass="status-tag status-tag--success"
                 ></p-badge>
               }
             </ng-template>
@@ -253,13 +255,13 @@ export class CoachInboxComponent {
 
   getPrioritySeverity(
     priority: string,
-  ): "danger" | "warn" | "info" | "secondary" {
+  ): "danger" | "warning" | "info" | "secondary" {
     switch (priority) {
       case "critical":
       case "high":
         return "danger";
       case "medium":
-        return "warn";
+        return "warning";
       case "low":
         return "info";
       default:

@@ -19,9 +19,9 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import {
   AttendanceRecord,
@@ -57,7 +57,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     FormsModule,
     CardModule,
     TableModule,
-    TagModule,
+    StatusTagComponent,
     DialogModule,
     InputTextModule,
     Textarea,
@@ -175,10 +175,11 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                       </div>
                     </div>
                     <div class="event-actions">
-                      <p-tag
+                      <app-status-tag
                         [value]="event.is_mandatory ? 'Mandatory' : 'Optional'"
                         [severity]="event.is_mandatory ? 'danger' : 'info'"
-                      ></p-tag>
+                        size="sm"
+                      />
                       @if (isCoach()) {
                         <app-icon-button
                           icon="pi-users"

@@ -68,7 +68,8 @@ export class TeamApiService {
 
   /**
    * Get team members with user data
-   * Common pattern: team_members join users
+   * NOTE: team_members.user_id references auth.users (not public.users), so PostgREST
+   * cannot do implicit joins. We query team_members first, then fetch user data separately.
    * 
    * @param teamId - Team ID
    * @param options - Query options
@@ -91,37 +92,10 @@ export class TeamApiService {
     try {
       const { role, status, includeUserData = true } = options;
 
+      // Step 1: Query team_members (no user join - FK is to auth.users)
       let query = this.supabaseService.client
         .from("team_members")
-        .select(
-          includeUserData
-            ? `
-            id,
-            team_id,
-            user_id,
-            role,
-            position,
-            jersey_number,
-            status,
-            joined_at,
-            users:user_id (
-              id,
-              email,
-              first_name,
-              last_name,
-              full_name,
-              position,
-              jersey_number,
-              country,
-              height_cm,
-              weight_kg,
-              date_of_birth,
-              onboarding_completed,
-              profile_photo_url
-            )
-          `
-            : "id, team_id, user_id, role, position, jersey_number, status, joined_at",
-        )
+        .select("id, team_id, user_id, role, position, jersey_number, status, joined_at")
         .eq("team_id", teamId);
 
       if (role) {
@@ -136,7 +110,7 @@ export class TeamApiService {
         query = query.eq("status", status);
       }
 
-      const { data, error } = await query;
+      const { data: membersData, error } = await query;
 
       if (error) {
         // Handle RLS policy denial gracefully (400 error means user not in team)
@@ -149,13 +123,44 @@ export class TeamApiService {
       }
 
       // Type guard: ensure data is an array, not a parser error
-      if (!data || !Array.isArray(data)) {
+      if (!membersData || !Array.isArray(membersData)) {
         this.logger.warn("[TeamApi] No team members found or invalid data format");
         return [];
       }
 
-      // Explicitly cast after type guard to satisfy TypeScript
-      return data as unknown as TeamMemberWithUser[];
+      // Step 2: Fetch user data from public.users if requested
+      if (includeUserData && membersData.length > 0) {
+        const userIds = membersData.map((m) => m.user_id).filter(Boolean);
+        
+        if (userIds.length > 0) {
+          const { data: usersData, error: usersError } = await this.supabaseService.client
+            .from("users")
+            .select("id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed, profile_photo_url")
+            .in("id", userIds);
+          
+          if (usersError) {
+            this.logger.warn("[TeamApi] Error fetching user data:", usersError);
+          }
+          
+          // Create lookup map for users
+          const usersMap = new Map<string, typeof usersData[0]>();
+          if (usersData) {
+            usersData.forEach((u) => usersMap.set(u.id, u));
+          }
+          
+          // Combine members with user data
+          return membersData.map((m) => ({
+            ...m,
+            users: usersMap.get(m.user_id) || null,
+          })) as unknown as TeamMemberWithUser[];
+        }
+      }
+
+      // Return members without user data
+      return membersData.map((m) => ({
+        ...m,
+        users: null,
+      })) as unknown as TeamMemberWithUser[];
     } catch (error) {
       // Don't throw for common RLS/permission errors, just return empty
       const errorMessage = error instanceof Error ? error.message : String(error);

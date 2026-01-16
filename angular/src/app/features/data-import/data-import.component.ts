@@ -29,8 +29,8 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -192,12 +192,12 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     Select,
     StepperModule,
     TableModule,
-    TagModule,
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
 
     ButtonComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -307,7 +307,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   </div>
                 </div>
 
-                <p-message severity="info" styleClass="tip-message">
+                <p-message severity="info" styleClass="tip-message status-message">
                   💡 Tip: Ask your coach for an export file in the supported format
                 </p-message>
               </p-card>
@@ -326,7 +326,11 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     <span class="file-size">{{
                       importPreview()!.fileSize
                     }}</span>
-                    <p-tag value="Validated" severity="success"></p-tag>
+                    <app-status-tag
+                      value="Validated"
+                      severity="success"
+                      size="sm"
+                    />
                   </div>
                   <div class="summary-stats">
                     @for (stat of getPreviewStats(); track stat.label) {
@@ -378,12 +382,11 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                           }
                         </td>
                         <td>
-                          <p-tag
+                          <app-status-tag
                             [value]="getMappingStatusLabel(mapping.status)"
-                            [severity]="
-                              getMappingStatusSeverity(mapping.status)
-                            "
-                          ></p-tag>
+                            [severity]="getMappingStatusSeverity(mapping.status)"
+                            size="sm"
+                          />
                         </td>
                       </tr>
                     </ng-template>
@@ -519,7 +522,11 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                     <div class="device-card connected">
                       <div class="device-info">
                         <span class="device-name">⌚ {{ device.name }}</span>
-                        <p-tag value="Connected" severity="success"></p-tag>
+                        <app-status-tag
+                          value="Connected"
+                          severity="success"
+                          size="sm"
+                        />
                       </div>
                       <p class="device-sync">
                         Last sync: {{ device.lastSync || "Never" }}
@@ -882,10 +889,10 @@ export class DataImportComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getMappingStatusSeverity(status: string): "success" | "info" | "warn" {
+  getMappingStatusSeverity(status: string): "success" | "info" | "warning" {
     if (status === "auto") return "success";
     if (status === "manual") return "info";
-    return "warn";
+    return "warning";
   }
 
   hasUnmappedFields(): boolean {

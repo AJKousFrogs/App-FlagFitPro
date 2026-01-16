@@ -26,12 +26,12 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { ApiService } from "../../../core/services/api.service";
@@ -114,7 +114,6 @@ const RECURRING_OPTIONS = [
     ProgressBarModule,
     RadioButton,
     Select,
-    TagModule,
     Textarea,
     ToastModule,
     MainLayoutComponent,
@@ -122,6 +121,7 @@ const RECURRING_OPTIONS = [
 
     ButtonComponent,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -295,7 +295,11 @@ const RECURRING_OPTIONS = [
                   <div class="event-deadline">
                     <span>RSVP Deadline: {{ event.rsvpDeadline }}</span>
                     @if (event.rsvpSummary.pending > 0) {
-                      <p-tag value="Pending RSVPs" severity="warn"></p-tag>
+                      <app-status-tag
+                        value="Pending RSVPs"
+                        severity="warning"
+                        size="sm"
+                      />
                     }
                   </div>
                 }

@@ -5,6 +5,7 @@ const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
+  ErrorType,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 
@@ -497,7 +498,7 @@ exports.handler = async (event, context) => {
         try {
           body = JSON.parse(event.body);
         } catch {
-          return createErrorResponse("Invalid JSON", 400, "invalid_json");
+          return createErrorResponse("Invalid JSON", 400, ErrorType.VALIDATION);
         }
       }
 

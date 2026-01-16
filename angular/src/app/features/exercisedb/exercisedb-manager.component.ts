@@ -242,6 +242,7 @@ import { capitalize } from "../../shared/utils/format.utils";
                               <p-badge
                                 value="Approved"
                                 severity="success"
+                                styleClass="status-tag status-tag--success"
                               ></p-badge>
                             }
                             @if (exercise.is_curated && !exercise.is_approved) {

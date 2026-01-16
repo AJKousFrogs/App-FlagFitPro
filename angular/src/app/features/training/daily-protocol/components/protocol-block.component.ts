@@ -22,8 +22,8 @@ import {
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
 import { formatDate } from "../../../../shared/utils/date.utils";
+import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 
 import {
   ProtocolBlock,
@@ -40,7 +40,7 @@ import { ExerciseCardComponent } from "./exercise-card.component";
   imports: [
     CommonModule,
     ProgressBarModule,
-    TagModule,
+    StatusTagComponent,
     ExerciseCardComponent,
 
     ButtonComponent,
@@ -92,13 +92,13 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           @if (!simpleView()) {
             <!-- Status Tag -->
             @if (block().status === "complete") {
-              <p-tag value="Done" severity="success"></p-tag>
+              <app-status-tag value="Done" severity="success" size="sm" />
             } @else if (block().status === "in_progress") {
-              <p-tag value="In Progress" severity="info"></p-tag>
+              <app-status-tag value="In Progress" severity="info" size="sm" />
             } @else if (block().status === "skipped") {
-              <p-tag value="Skipped" severity="secondary"></p-tag>
+              <app-status-tag value="Skipped" severity="secondary" size="sm" />
             } @else {
-              <p-tag value="Pending" severity="warn"></p-tag>
+              <app-status-tag value="Pending" severity="warning" size="sm" />
             }
 
             <!-- Progress -->

@@ -387,7 +387,7 @@ consent-check:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: '20.x'
+        node-version: '22.x'
     - run: npm ci
     - name: Check for consent violations
       run: npm run check:consent -- --strict --ci

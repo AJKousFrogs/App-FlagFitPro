@@ -23,11 +23,11 @@ import {
   signal,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { TagModule } from "primeng/tag";
 import { TeamNotificationService } from "../../../core/services/team-notification.service";
 import { getTimeAgo } from "../../utils/date.utils";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 @Component({
   selector: "app-announcements-banner",
@@ -36,9 +36,9 @@ import { IconButtonComponent } from "../button/icon-button.component";
   imports: [
     CommonModule,
     RouterModule,
-    TagModule,
     ButtonComponent,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     @if (visible() && currentAnnouncement(); as announcement) {
@@ -57,7 +57,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
         <div class="banner-content">
           <div class="banner-header">
             @if (announcement.is_important) {
-              <p-tag severity="danger" value="Important"></p-tag>
+              <app-status-tag value="Important" severity="danger" size="sm" />
             }
             <span class="announcement-channel">
               #{{ announcement.channel_name }}

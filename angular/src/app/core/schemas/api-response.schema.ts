@@ -319,6 +319,137 @@ export const WellnessEntrySchema = z.object({
 export type WellnessEntryDTO = ReturnType<typeof WellnessEntrySchema.parse>;
 
 // ============================================================================
+// Game Schema
+// ============================================================================
+
+export const GameSchema = z.object({
+  id: z.string(),
+  opponent_name: z.string(),
+  game_date: z.string(),
+  game_time: z.string().optional(),
+  location: z.string().optional(),
+  is_home_game: z.boolean().optional(),
+  game_type: z.string().optional(),
+  weather: z.string().optional(),
+  temperature: z.number().optional(),
+  score_us: z.number().optional(),
+  score_them: z.number().optional(),
+  result: z.enum(["win", "loss", "tie", "pending"] as const).optional(),
+  notes: z.string().optional(),
+  created_at: z.string().optional(),
+});
+
+export type GameDTO = ReturnType<typeof GameSchema.parse>;
+
+// ============================================================================
+// Load Management Schema
+// ============================================================================
+
+export const LoadManagementSchema = z.object({
+  acwr: z.number().nullable(),
+  riskZone: z.string(),
+  injuryRiskMultiplier: z.number().nullable(),
+  acuteAverage: z.number().nullable(),
+  chronicAverage: z.number().nullable(),
+  acuteLoads: z.number(),
+  chronicLoads: z.number(),
+  recommendation: z.string().optional(),
+  message: z.string().optional(),
+});
+
+export type LoadManagementDTO = ReturnType<typeof LoadManagementSchema.parse>;
+
+// ============================================================================
+// Notification Schema
+// ============================================================================
+
+export const NotificationSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  type: z.string(),
+  title: z.string(),
+  message: z.string(),
+  read: z.boolean(),
+  created_at: z.string(),
+  data: z.unknown().optional(),
+});
+
+export type NotificationDTO = ReturnType<typeof NotificationSchema.parse>;
+
+// ============================================================================
+// Dashboard Overview Schema
+// ============================================================================
+
+export const DashboardOverviewSchema = z.object({
+  readiness: z.number().optional(),
+  readinessLabel: z.string().optional(),
+  acwr: z.number().optional(),
+  acwrRiskZone: z.string().optional(),
+  streakDays: z.number().optional(),
+  weeklyProgress: z.number().optional(),
+  upcomingSession: z
+    .object({
+      title: z.string(),
+      time: z.string().optional(),
+      type: z.string().optional(),
+    })
+    .optional(),
+  todaysTasks: z
+    .array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        completed: z.boolean(),
+      }),
+    )
+    .optional(),
+});
+
+export type DashboardOverviewDTO = ReturnType<
+  typeof DashboardOverviewSchema.parse
+>;
+
+// ============================================================================
+// Team Member Schema
+// ============================================================================
+
+export const TeamMemberSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  team_id: z.string(),
+  role: z.string(),
+  jersey_number: z.string().optional(),
+  position: z.string().optional(),
+  full_name: z.string().optional(),
+  email: z.string().optional(),
+  avatar_url: z.string().optional(),
+  joined_at: z.string().optional(),
+});
+
+export type TeamMemberDTO = ReturnType<typeof TeamMemberSchema.parse>;
+
+// ============================================================================
+// Readiness Schema
+// ============================================================================
+
+export const ReadinessSchema = z.object({
+  score: z.number(),
+  label: z.string(),
+  factors: z
+    .object({
+      sleep: z.number().optional(),
+      wellness: z.number().optional(),
+      training_load: z.number().optional(),
+      recovery: z.number().optional(),
+    })
+    .optional(),
+  recommendations: z.array(z.string()).optional(),
+  last_updated: z.string().optional(),
+});
+
+export type ReadinessDTO = ReturnType<typeof ReadinessSchema.parse>;
+
+// ============================================================================
 // API Response Wrapper Schema
 // ============================================================================
 
@@ -330,6 +461,36 @@ export function createApiResponseSchema<T>(dataSchema: SchemaType<T>) {
     message: z.string().optional(),
   });
 }
+
+// ============================================================================
+// Pre-built API Response Schemas
+// ============================================================================
+
+export const TrainingSessionResponseSchema = createApiResponseSchema(
+  TrainingSessionSchema,
+);
+export const ACWRDataResponseSchema = createApiResponseSchema(ACWRDataSchema);
+export const UserProfileResponseSchema =
+  createApiResponseSchema(UserProfileSchema);
+export const WellnessEntryResponseSchema =
+  createApiResponseSchema(WellnessEntrySchema);
+export const GameResponseSchema = createApiResponseSchema(GameSchema);
+export const LoadManagementResponseSchema =
+  createApiResponseSchema(LoadManagementSchema);
+export const NotificationResponseSchema =
+  createApiResponseSchema(NotificationSchema);
+export const DashboardOverviewResponseSchema = createApiResponseSchema(
+  DashboardOverviewSchema,
+);
+export const TeamMemberResponseSchema =
+  createApiResponseSchema(TeamMemberSchema);
+export const ReadinessResponseSchema = createApiResponseSchema(ReadinessSchema);
+
+// List response schemas
+export const TrainingSessionListSchema = z.array(TrainingSessionSchema);
+export const NotificationListSchema = z.array(NotificationSchema);
+export const TeamMemberListSchema = z.array(TeamMemberSchema);
+export const GameListSchema = z.array(GameSchema);
 
 // ============================================================================
 // Validation Helper
@@ -358,4 +519,22 @@ export function validateApiResponse<T>(
  */
 export function parseApiResponse<T>(data: unknown, schema: SchemaType<T>): T {
   return schema.parse(data);
+}
+
+/**
+ * Type guard to check if validation was successful
+ */
+export function isValidationSuccess<T>(
+  result: ValidationResult<T>,
+): result is { success: true; data: T } {
+  return result.success;
+}
+
+/**
+ * Type guard to check if validation failed
+ */
+export function isValidationError<T>(
+  result: ValidationResult<T>,
+): result is { success: false; error: ValidationError } {
+  return !result.success;
 }

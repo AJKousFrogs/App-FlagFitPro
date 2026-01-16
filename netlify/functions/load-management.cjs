@@ -22,6 +22,13 @@ const {
   ConsentDataReader,
   AccessContext,
 } = require("./utils/consent-data-reader.cjs");
+const {
+  roundToPrecision,
+  safeDivide,
+  average,
+  standardDeviation,
+  ACWR_PRECISION,
+} = require("./utils/precision.cjs");
 
 const supabase = supabaseAdmin;
 
@@ -339,19 +346,16 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
     };
   }
 
-  const acuteSum = acuteLoads.reduce((sum, load) => sum + load, 0);
-  const chronicSum = chronicLoads.reduce((sum, load) => sum + load, 0);
-
-  const acuteAverage = acuteLoads.length > 0 ? acuteSum / acuteLoads.length : 0;
-  const chronicAverage =
-    chronicLoads.length > 0 ? chronicSum / chronicLoads.length : 0;
+  // Use precision utilities for consistent calculations
+  const acuteAverage = average(acuteLoads, ACWR_PRECISION);
+  const chronicAverage = average(chronicLoads, ACWR_PRECISION);
 
   if (chronicAverage === 0) {
     return {
-      acwr: hasAcuteData ? Infinity : 0,
+      acwr: hasAcuteData ? null : 0, // Use null instead of Infinity for JSON compatibility
       riskZone: hasAcuteData ? "danger" : "insufficient_data",
       injuryRiskMultiplier: hasAcuteData ? 2.0 : 1.0,
-      acuteAverage: parseFloat(acuteAverage.toFixed(2)),
+      acuteAverage: acuteAverage,
       chronicAverage: 0,
       acuteLoads: acuteLoads.filter((l) => l > 0).length,
       chronicLoads: 0,
@@ -362,7 +366,8 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
     };
   }
 
-  const acwr = acuteAverage / chronicAverage;
+  // Use safeDivide for precision handling and division safety
+  const acwr = safeDivide(acuteAverage, chronicAverage, ACWR_PRECISION);
 
   // Risk zones based on Gabbett's research
   let riskZone, injuryRiskMultiplier, recommendation;
@@ -392,11 +397,11 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
   }
 
   return {
-    acwr: parseFloat(acwr.toFixed(2)),
+    acwr,
     riskZone,
     injuryRiskMultiplier,
-    acuteAverage: parseFloat(acuteAverage.toFixed(2)),
-    chronicAverage: parseFloat(chronicAverage.toFixed(2)),
+    acuteAverage,
+    chronicAverage,
     acuteLoads: acuteLoads.filter((l) => l > 0).length,
     chronicLoads: chronicLoads.filter((l) => l > 0).length,
     recommendation,
@@ -457,21 +462,21 @@ async function calculateMonotony(
     };
   }
 
-  const mean =
-    nonZeroLoads.reduce((sum, load) => sum + load, 0) / nonZeroLoads.length;
-  const variance =
-    nonZeroLoads.reduce((sum, load) => sum + (load - mean) ** 2, 0) /
-    nonZeroLoads.length;
-  const stdDev = Math.sqrt(variance);
+  // Use precision utilities for consistent calculations
+  const mean = average(nonZeroLoads, ACWR_PRECISION);
+  const stdDev = standardDeviation(nonZeroLoads, ACWR_PRECISION);
 
   if (stdDev === 0) {
     return {
-      monotony: Infinity,
-      strain: mean * 7 * Infinity,
+      monotony: null, // Use null instead of Infinity for JSON compatibility
+      strain: null,
       monotonyRisk: "very_high",
-      meanLoad: parseFloat(mean.toFixed(2)),
+      meanLoad: mean,
       loadVariation: 0,
-      totalLoad: nonZeroLoads.reduce((sum, load) => sum + load, 0),
+      totalLoad: roundToPrecision(
+        nonZeroLoads.reduce((sum, load) => sum + load, 0),
+        ACWR_PRECISION,
+      ),
       trainingDays: nonZeroLoads.length,
       message:
         "All sessions have identical load. Add variety to your training.",
@@ -479,9 +484,12 @@ async function calculateMonotony(
     };
   }
 
-  const monotony = mean / stdDev;
-  const totalLoad = weeklyLoads.reduce((sum, load) => sum + load, 0);
-  const strain = totalLoad * monotony;
+  const monotony = safeDivide(mean, stdDev, ACWR_PRECISION);
+  const totalLoad = roundToPrecision(
+    weeklyLoads.reduce((sum, load) => sum + load, 0),
+    ACWR_PRECISION,
+  );
+  const strain = roundToPrecision(totalLoad * monotony, ACWR_PRECISION);
 
   let monotonyRisk, recommendation;
   if (monotony < 1.5) {
@@ -497,12 +505,12 @@ async function calculateMonotony(
   }
 
   return {
-    monotony: parseFloat(monotony.toFixed(2)),
-    strain: parseFloat(strain.toFixed(2)),
+    monotony,
+    strain,
     monotonyRisk,
-    meanLoad: parseFloat(mean.toFixed(2)),
-    loadVariation: parseFloat(stdDev.toFixed(2)),
-    totalLoad: parseFloat(totalLoad.toFixed(2)),
+    meanLoad: mean,
+    loadVariation: stdDev,
+    totalLoad,
     trainingDays: nonZeroLoads.length,
     recommendation,
     consentInfo: result.consentInfo,

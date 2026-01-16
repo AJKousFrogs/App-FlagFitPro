@@ -15,8 +15,8 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 export type RiskLevel = "low" | "moderate" | "high" | "critical";
 export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
@@ -25,7 +25,7 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
   selector: "app-risk-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule],
+  imports: [CommonModule, TooltipModule, StatusTagComponent],
   template: `
     <div
       class="risk-badge"
@@ -38,11 +38,11 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
       }
       <span class="risk-label">{{ getLabel() }}</span>
       @if (showTag()) {
-        <p-tag
+        <app-status-tag
           [value]="getLabel()"
           [severity]="getSeverity()"
-          styleClass="risk-tag"
-        ></p-tag>
+          size="sm"
+        />
       }
     </div>
   `,
@@ -188,17 +188,17 @@ export class RiskBadgeComponent {
     | "secondary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "contrast" {
     const l = this.level();
     const severities: Record<
       RiskLevel,
-      "secondary" | "success" | "info" | "warn" | "danger" | "contrast"
+      "secondary" | "success" | "info" | "warning" | "danger" | "contrast"
     > = {
       low: "success",
-      moderate: "warn",
-      high: "warn",
+      moderate: "warning",
+      high: "warning",
       critical: "danger",
     };
     return severities[l] || "info";

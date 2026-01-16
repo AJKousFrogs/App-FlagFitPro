@@ -196,64 +196,58 @@ export class RosterService {
       this.currentUserRole.set(teamMember.role as TeamRole);
 
       // Load team members (coaches/staff)
+      // NOTE: team_members.user_id references auth.users (not public.users), so PostgREST
+      // cannot do an implicit join. We query team_members first, then fetch user data separately.
       let members: TeamMemberRecord[] | null = null;
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.service.ts:200',message:'Querying team_members (no join - FK is to auth.users)',data:{teamId:teamMember.team_id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      
+      // Step 1: Get team members without user join (FK is to auth.users, not public.users)
       const { data: membersData, error: membersError } =
         await this.supabaseService.client
           .from("team_members")
-          .select(
-            `
-          id,
-          team_id,
-          user_id,
-          role,
-          users:user_id (
-            id,
-            email,
-            raw_user_meta_data
-          )
-        `,
-          )
+          .select("id, team_id, user_id, role")
           .eq("team_id", teamMember.team_id);
 
       if (membersError) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.service.ts:218',message:'team_members query ERROR',data:{error:membersError,code:membersError?.code,details:membersError?.details,hint:membersError?.hint},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         this.logger.warn(
-          `[RosterService] Error loading team members with relationship:`,
+          `[RosterService] Error loading team members:`,
           JSON.stringify(membersError),
         );
-        // Try fallback query without user relationship
-        const { data: membersFallback, error: fallbackError } =
-          await this.supabaseService.client
-            .from("team_members")
-            .select("id, team_id, user_id, role")
-            .eq("team_id", teamMember.team_id);
-        
-        if (fallbackError) {
-          this.logger.error(
-            `[RosterService] Fallback query also failed:`,
-            JSON.stringify(fallbackError),
-          );
-          members = [];
-        } else {
-          this.logger.warn(
-            `[RosterService] Using fallback query, loaded ${membersFallback?.length || 0} members`,
-          );
-          // Map fallback data to expected structure
-          members = (membersFallback || []).map((m) => ({
-            id: m.id,
-            team_id: m.team_id,
-            user_id: m.user_id,
-            role: m.role,
-            users: undefined, // No user data available
-          }));
-        }
+        members = [];
       } else {
-        // Supabase returns users as an array due to the foreign key syntax, extract first element
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.service.ts:230',message:'team_members query SUCCESS',data:{count:membersData?.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
+        
+        // Step 2: Fetch user data from public.users for these member user_ids
+        const userIds = (membersData || []).map((m) => m.user_id).filter(Boolean);
+        let usersMap: Map<string, { id: string; email?: string; full_name?: string }> = new Map();
+        
+        if (userIds.length > 0) {
+          const { data: usersData, error: usersError } = await this.supabaseService.client
+            .from("users")
+            .select("id, email, full_name")
+            .in("id", userIds);
+          
+          if (usersError) {
+            this.logger.warn(`[RosterService] Error fetching user data:`, JSON.stringify(usersError));
+          } else if (usersData) {
+            usersData.forEach((u) => usersMap.set(u.id, u));
+          }
+        }
+        
+        // Map members with user data
         members = (membersData || []).map((m) => ({
           id: m.id,
           team_id: m.team_id,
           user_id: m.user_id,
           role: m.role,
-          users: Array.isArray(m.users) ? m.users[0] : m.users,
+          users: usersMap.get(m.user_id),
         }));
       }
 

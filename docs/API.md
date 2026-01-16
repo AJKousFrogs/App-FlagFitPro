@@ -413,22 +413,40 @@ All endpoints return consistent error responses:
 {
   "success": false,
   "error": "Error description",
-  "code": "error_code",
-  "requestId": "uuid-for-tracking"
+  "errorType": "error_type",
+  "timestamp": "2025-01-29T12:00:00.000Z"
 }
 ```
 
-### Common Error Codes
+### Error Types
 
-| Code                 | HTTP Status | Description                   |
-| -------------------- | ----------- | ----------------------------- |
-| `validation_error`   | 400         | Invalid request parameters    |
-| `unauthorized`       | 401         | Missing or invalid auth token |
-| `forbidden`          | 403         | Insufficient permissions      |
-| `not_found`          | 404         | Resource not found            |
-| `method_not_allowed` | 405         | HTTP method not supported     |
-| `rate_limited`       | 429         | Too many requests             |
-| `internal_error`     | 500         | Server error                  |
+| errorType              | HTTP Status | Description                      |
+| ---------------------- | ----------- | -------------------------------- |
+| `validation_error`     | 400         | Invalid request parameters       |
+| `authentication_error` | 401         | Missing or invalid auth token    |
+| `authorization_error`  | 403         | Insufficient permissions         |
+| `not_found`            | 404         | Resource not found               |
+| `method_not_allowed`   | 405         | HTTP method not supported        |
+| `conflict`             | 409         | Resource already exists          |
+| `rate_limit_exceeded`  | 429         | Too many requests                |
+| `server_error`         | 500         | Internal server error            |
+| `database_error`       | 500         | Database operation failed        |
+| `timeout_error`        | varies      | Operation timed out              |
+| `unknown_error`        | varies      | Unclassified error               |
+
+### Validation Errors
+
+Validation errors include an additional `errors` array with specific field errors:
+
+```json
+{
+  "success": false,
+  "error": "Validation failed",
+  "errorType": "validation_error",
+  "timestamp": "2025-01-29T12:00:00.000Z",
+  "errors": ["Field 'email' is required", "Field 'password' is invalid"]
+}
+```
 
 ---
 

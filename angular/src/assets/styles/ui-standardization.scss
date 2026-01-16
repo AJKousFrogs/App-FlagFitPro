@@ -568,6 +568,29 @@
   color: var(--color-text-on-primary);
 }
 
+/* ================================
+   STATUS MESSAGES
+   Consistent spacing and alignment for p-message
+   ================================ */
+.status-message {
+  margin: 0;
+}
+
+.status-message .p-message-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+
+.status-message .p-message-icon {
+  margin-right: 0;
+}
+
+.status-message--success {
+  /* Keep success visuals from PrimeNG; only normalize layout. */
+}
+
 .status-tag--neutral {
   background: var(--surface-secondary);
   color: var(--color-text-secondary);

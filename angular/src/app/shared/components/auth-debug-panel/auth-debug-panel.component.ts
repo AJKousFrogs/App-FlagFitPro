@@ -120,7 +120,7 @@ import { ButtonComponent } from "../button/button.component";
         <!-- Last Check Result -->
         @if (lastCheckMessage()) {
           <div class="col-12">
-            <p-message [severity]="lastCheckSeverity()">
+            <p-message [severity]="lastCheckSeverity()" styleClass="status-message">
               {{ lastCheckMessage() }}
             </p-message>
           </div>
@@ -128,7 +128,7 @@ import { ButtonComponent } from "../button/button.component";
 
         <!-- Console Notice -->
         <div class="col-12">
-          <p-message severity="info">
+          <p-message severity="info" styleClass="status-message">
             Detailed logs are available in the browser console (press F12)
           </p-message>
         </div>

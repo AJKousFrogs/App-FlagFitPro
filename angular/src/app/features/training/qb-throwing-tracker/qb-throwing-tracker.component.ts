@@ -113,7 +113,11 @@ interface SessionTypeOption {
               {{ progressionStatus()!.progressionPhase }}
             </div>
             @if (progressionStatus()!.daysSinceLastSession <= 3) {
-              <p-tag value="Active" severity="success"></p-tag>
+              <p-tag
+                value="Active"
+                severity="success"
+                styleClass="status-tag status-tag--success"
+              ></p-tag>
             } @else {
               <p-tag
                 [value]="

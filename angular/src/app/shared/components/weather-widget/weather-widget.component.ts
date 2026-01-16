@@ -18,8 +18,8 @@ import {
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import {
   WeatherService,
   WeatherData,
@@ -32,7 +32,13 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
   selector: "app-weather-widget",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, TagModule, TooltipModule, CardComponent],
+  imports: [
+    CommonModule,
+    CardModule,
+    TooltipModule,
+    CardComponent,
+    StatusTagComponent,
+  ],
   template: `
     @if (weatherData()) {
       <app-card
@@ -59,11 +65,12 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
 
           <!-- Suitability Badge -->
           <div class="suitability-section">
-            <p-tag
+            <app-status-tag
               [value]="getSuitabilityLabel()"
               [severity]="getSuitabilitySeverity()"
+              size="sm"
               [pTooltip]="getSuitabilityTooltip()"
-            ></p-tag>
+            />
           </div>
 
           <!-- Recommendations -->
@@ -246,7 +253,7 @@ export class WeatherWidgetComponent implements OnInit {
   getSuitabilitySeverity():
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "secondary" {
     return this.weatherService.getWeatherSeverity(

@@ -190,6 +190,7 @@ import type {
                   <p-tag
                     [value]="decision()!.reviewOutcome"
                     severity="success"
+                    styleClass="status-tag status-tag--success"
                   ></p-tag>
                 </div>
               }

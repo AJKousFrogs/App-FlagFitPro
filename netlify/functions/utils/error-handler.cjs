@@ -14,6 +14,7 @@ const ErrorType = Object.freeze({
   AUTHENTICATION: "authentication_error",
   AUTHORIZATION: "authorization_error",
   NOT_FOUND: "not_found",
+  METHOD_NOT_ALLOWED: "method_not_allowed",
   CONFLICT: "conflict",
   RATE_LIMIT: "rate_limit_exceeded",
   SERVER: "server_error",
@@ -62,13 +63,10 @@ const CORS_HEADERS = {
 /**
  * Create a standardized error response
  *
- * Note: Fourth parameter can be either additionalData object or requestId string
- * for backward compatibility with older code patterns.
- *
  * @param {Error|string} error - Error object or message
  * @param {number} statusCode - HTTP status code
  * @param {string} errorType - Error type from ErrorType enum
- * @param {object|string} additionalDataOrRequestId - Additional data to include or requestId (ignored)
+ * @param {object|string} additionalDataOrRequestId - Additional data to include or requestId string
  * @returns {object} Netlify function response
  */
 function createErrorResponse(
@@ -80,30 +78,50 @@ function createErrorResponse(
   const errorMessage = error instanceof Error ? error.message : error;
   const timestamp = new Date().toISOString();
 
-  // Handle backward compatibility: if fourth param is string (requestId), ignore it
-  const additionalData =
-    typeof additionalDataOrRequestId === "object" &&
-    additionalDataOrRequestId !== null
-      ? additionalDataOrRequestId
-      : {};
+  // Handle backward compatibility: if fourth param is string (requestId), include it
+  let additionalData = {};
+  let requestId = null;
 
-  // Log the error
+  if (typeof additionalDataOrRequestId === "string") {
+    // Legacy: fourth param is requestId string
+    requestId = additionalDataOrRequestId;
+  } else if (
+    additionalDataOrRequestId !== null &&
+    typeof additionalDataOrRequestId === "object"
+  ) {
+    additionalData = additionalDataOrRequestId;
+    // Check if requestId is in the additional data
+    if (additionalData.requestId) {
+      requestId = additionalData.requestId;
+      delete additionalData.requestId;
+    }
+  }
+
+  // Log the error with requestId if available
+  const logPrefix = requestId ? `[${requestId}]` : "";
   console.error(
-    `[${errorType}] ${statusCode}:`,
+    `${logPrefix}[${errorType}] ${statusCode}:`,
     errorMessage,
     error.stack || "",
   );
 
+  const responseBody = {
+    success: false,
+    error: errorMessage,
+    errorType,
+    timestamp,
+    ...additionalData,
+  };
+
+  // Include requestId in response if available
+  if (requestId) {
+    responseBody.requestId = requestId;
+  }
+
   return {
     statusCode,
     headers: CORS_HEADERS,
-    body: JSON.stringify({
-      success: false,
-      error: errorMessage,
-      errorType,
-      timestamp,
-      ...additionalData,
-    }),
+    body: JSON.stringify(responseBody),
   };
 }
 
@@ -203,6 +221,24 @@ function handleValidationError(errors) {
  */
 function handleNotFoundError(resource = "Resource") {
   return createErrorResponse(`${resource} not found`, 404, ErrorType.NOT_FOUND);
+}
+
+/**
+ * Handle method not allowed errors
+ * @param {string} method - HTTP method that was attempted
+ * @param {string[]} allowedMethods - List of allowed methods
+ * @returns {object} 405 response
+ */
+function handleMethodNotAllowedError(
+  method = "Method",
+  allowedMethods = ["GET", "POST"],
+) {
+  return createErrorResponse(
+    `${method} method not allowed. Allowed: ${allowedMethods.join(", ")}`,
+    405,
+    ErrorType.METHOD_NOT_ALLOWED,
+    { allowedMethods },
+  );
 }
 
 /**
@@ -423,6 +459,7 @@ module.exports = {
   handleAuthorizationError,
   handleValidationError,
   handleNotFoundError,
+  handleMethodNotAllowedError,
   handleConflictError,
   handleDatabaseError,
   handleServerError,

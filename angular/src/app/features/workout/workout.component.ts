@@ -12,10 +12,10 @@ import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { InputNumberModule } from "primeng/inputnumber";
 import { CheckboxModule } from "primeng/checkbox";
-import { TagModule } from "primeng/tag";
 import {} from "@angular/core/rxjs-interop";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { EmptyStateComponent } from "../../shared/components/empty-state/empty-state.component";
 import { ApiService } from "../../core/services/api.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -53,7 +53,7 @@ interface Workout {
     CardModule,
     InputNumberModule,
     CheckboxModule,
-    TagModule,
+    StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     EmptyStateComponent,
@@ -79,13 +79,13 @@ interface Workout {
             <ng-template pTemplate="header">
               <div class="workout-header">
                 <h3>{{ activeWorkout()?.name }}</h3>
-                <p-tag
+                <app-status-tag
                   [value]="
                     activeWorkout()?.completed ? 'Completed' : 'In Progress'
                   "
                   [severity]="activeWorkout()?.completed ? 'success' : 'info'"
-                >
-                </p-tag>
+                  size="sm"
+                />
               </div>
             </ng-template>
             <div class="exercises-list">
@@ -163,11 +163,11 @@ interface Workout {
                     </p>
                   </div>
                   <div class="workout-status">
-                    <p-tag
+                    <app-status-tag
                       [value]="workout.completed ? 'Completed' : 'Incomplete'"
-                      [severity]="workout.completed ? 'success' : 'warn'"
-                    >
-                    </p-tag>
+                      [severity]="workout.completed ? 'success' : 'warning'"
+                      size="sm"
+                    />
                   </div>
                 </div>
               }

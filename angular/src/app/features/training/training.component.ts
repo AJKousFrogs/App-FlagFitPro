@@ -28,10 +28,10 @@ import { Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { ToastModule } from "primeng/toast";
 import { DialogModule } from "primeng/dialog";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -58,7 +58,7 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
   selector: "app-training",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    TagModule,
+    StatusTagComponent,
     ProgressBarModule,
     ToastModule,
     DialogModule,
@@ -176,7 +176,7 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
             "
           >
             <ng-container header-actions>
-              <p-tag value="Position-Specific" severity="info" />
+              <app-status-tag value="Position-Specific" severity="info" size="sm" />
             </ng-container>
             <div class="priority-grid">
               @for (workout of positionWorkouts(); track workout.title) {

@@ -18,8 +18,8 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 import { ProgressBarModule } from "primeng/progressbar";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { AccountDeletionService } from "../../core/services/account-deletion.service";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
@@ -64,7 +64,7 @@ interface PendingInvitation {
     CommonModule,
     RouterModule,
     AvatarModule,
-    TagModule,
+    StatusTagComponent,
     Tabs,
     TabList,
     Tab,
@@ -336,7 +336,7 @@ interface PendingInvitation {
                                 <div class="activity-title">
                                   {{ activity.title }}
                                 </div>
-                                <div class="activity-time">
+                                <div class="item-time">
                                   {{ activity.time }}
                                 </div>
                               </div>
@@ -406,11 +406,11 @@ interface PendingInvitation {
                               stat.label
                             }}</span>
                           </div>
-                          <p-tag
-                            class="stat-block__tag"
+                          <app-status-tag
                             [value]="stat.trend"
                             [severity]="stat.trendType"
-                          ></p-tag>
+                            size="sm"
+                          />
                         </div>
                       }
                     </div>
@@ -448,10 +448,11 @@ interface PendingInvitation {
                             <div class="invitation-content">
                               <div class="invitation-header">
                                 <h4>{{ invitation.teamName }}</h4>
-                                <p-tag
+                                <app-status-tag
                                   [value]="invitation.role | titlecase"
                                   severity="info"
-                                ></p-tag>
+                                  size="sm"
+                                />
                               </div>
                               <p class="invitation-message">
                                 @if (invitation.message) {
@@ -473,10 +474,11 @@ interface PendingInvitation {
                                   }}</span
                                 >
                                 @if (invitation.isExpired) {
-                                  <p-tag
+                                  <app-status-tag
                                     value="Expired"
                                     severity="danger"
-                                  ></p-tag>
+                                    size="sm"
+                                  />
                                 } @else {
                                   <span class="expires-soon"
                                     >Expires
@@ -593,7 +595,7 @@ export class ProfileComponent implements OnInit {
       trendType:
         | "success"
         | "info"
-        | "warn"
+        | "warning"
         | "secondary"
         | "contrast"
         | "danger";

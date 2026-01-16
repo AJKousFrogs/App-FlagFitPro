@@ -19,11 +19,11 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TabPanel, Tabs } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
 import { AuthService } from "../../core/services/auth.service";
 import {
@@ -67,7 +67,6 @@ interface TournamentBudget {
     CommonModule,
     FormsModule,
     CardModule,
-    TagModule,
     ProgressBarModule,
     Tabs,
     TabPanel,
@@ -86,6 +85,7 @@ interface TournamentBudget {
 
     ButtonComponent,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -156,7 +156,7 @@ interface TournamentBudget {
                     <div class="tournament-header">
                       <div class="header-row">
                         <div class="tags-row">
-                          <p-tag
+                          <app-status-tag
                             [value]="
                               tournamentService.getStatusLabel(
                                 tournament.calculatedStatus || 'upcoming'
@@ -167,14 +167,15 @@ interface TournamentBudget {
                                 tournament.calculatedStatus || 'upcoming'
                               )
                             "
-                          ></p-tag>
+                            size="sm"
+                          />
                           @if (isPersonalTournament(tournament)) {
-                            <p-tag
+                            <app-status-tag
                               value="Personal"
-                              severity="warn"
-                              icon="pi pi-user"
-                              styleClass="personal-badge"
-                            ></p-tag>
+                              severity="warning"
+                              icon="pi-user"
+                              size="sm"
+                            />
                           }
                         </div>
                         @if (isAuthenticated()) {
@@ -343,7 +344,7 @@ interface TournamentBudget {
                     <div class="tournament-header">
                       <div class="header-row">
                         <div class="tags-row">
-                          <p-tag
+                          <app-status-tag
                             [value]="
                               tournamentService.getStatusLabel(
                                 tournament.calculatedStatus || 'upcoming'
@@ -354,14 +355,15 @@ interface TournamentBudget {
                                 tournament.calculatedStatus || 'upcoming'
                               )
                             "
-                          ></p-tag>
+                            size="sm"
+                          />
                           @if (isPersonalTournament(tournament)) {
-                            <p-tag
+                            <app-status-tag
                               value="Personal"
-                              severity="warn"
-                              icon="pi pi-user"
-                              styleClass="personal-badge"
-                            ></p-tag>
+                              severity="warning"
+                              icon="pi-user"
+                              size="sm"
+                            />
                           }
                         </div>
                         @if (isAuthenticated()) {
@@ -1230,10 +1232,11 @@ interface TournamentBudget {
                     <span class="player-position">{{ player.position }}</span>
                   </div>
                   <div class="player-status">
-                    <p-tag
+                    <app-status-tag
                       [value]="getAvailabilityLabel(player.status)"
                       [severity]="getAvailabilitySeverity(player.status)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </div>
                   @if (player.reason) {
                     <div class="player-reason">
@@ -1243,11 +1246,11 @@ interface TournamentBudget {
                   }
                   <div class="player-payment">
                     @if (player.paymentStatus === "paid") {
-                      <p-tag value="Paid" severity="success"></p-tag>
+                      <app-status-tag value="Paid" severity="success" size="sm" />
                     } @else if (player.paymentStatus === "partial") {
-                      <p-tag value="Partial" severity="warn"></p-tag>
+                      <app-status-tag value="Partial" severity="warning" size="sm" />
                     } @else if (player.status === "confirmed") {
-                      <p-tag value="Unpaid" severity="danger"></p-tag>
+                      <app-status-tag value="Unpaid" severity="danger" size="sm" />
                     }
                   </div>
                 </div>
@@ -2138,13 +2141,13 @@ export class TournamentsComponent implements OnInit {
 
   getAvailabilitySeverity(
     status: string,
-  ): "success" | "warn" | "danger" | "secondary" | "info" | "contrast" {
+  ): "success" | "warning" | "danger" | "secondary" | "info" {
     const severities: Record<
       string,
-      "success" | "warn" | "danger" | "secondary"
+      "success" | "warning" | "danger" | "secondary"
     > = {
       confirmed: "success",
-      tentative: "warn",
+      tentative: "warning",
       declined: "danger",
       pending: "secondary",
     };

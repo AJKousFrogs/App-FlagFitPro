@@ -5,6 +5,7 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
+  ErrorType,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
 
@@ -465,7 +466,7 @@ async function handler(event) {
       });
     }
 
-    return createErrorResponse(404, "Endpoint not found");
+    return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
   });
 }
 

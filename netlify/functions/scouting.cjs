@@ -5,6 +5,7 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
+  ErrorType,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
 
@@ -373,7 +374,7 @@ async function handler(event) {
     // Verify coach access
     const access = await verifyCoachAccess(userId);
     if (!access) {
-      return createErrorResponse(403, "Access denied. Coach role required.");
+      return createErrorResponse("Access denied. Coach role required.", 403, ErrorType.AUTHORIZATION);
     }
 
     const teamId = access.team_id;
@@ -401,7 +402,7 @@ async function handler(event) {
     if (method === "POST" && path === "/reports") {
       const body = JSON.parse(event.body || "{}");
       if (!body.opponentName) {
-        return createErrorResponse(400, "Missing required field: opponentName");
+        return createErrorResponse("Missing required field: opponentName", 400, ErrorType.VALIDATION);
       }
       const report = await createScoutingReport(teamId, userId, body);
       return createSuccessResponse({ report });
@@ -432,7 +433,7 @@ async function handler(event) {
     if (method === "POST" && path === "/opponents") {
       const body = JSON.parse(event.body || "{}");
       if (!body.name) {
-        return createErrorResponse(400, "Missing required field: name");
+        return createErrorResponse("Missing required field: name", 400, ErrorType.VALIDATION);
       }
       const opponent = await addOpponent(teamId, body);
       return createSuccessResponse({ opponent });
@@ -455,7 +456,7 @@ async function handler(event) {
       });
     }
 
-    return createErrorResponse(404, "Endpoint not found");
+    return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
   });
 }
 

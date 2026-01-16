@@ -5,6 +5,7 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
+  ErrorType,
 } = require("./utils/error-handler.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
 
@@ -495,7 +496,7 @@ async function handler(event) {
     // Verify access
     const access = await verifyPsychologyAccess(userId, targetUserId);
     if (!access) {
-      return createErrorResponse(403, "Access denied");
+      return createErrorResponse("Access denied", 403, ErrorType.AUTHORIZATION);
     }
 
     // GET /my-data - Get own mental data (athlete self-service)
@@ -524,7 +525,7 @@ async function handler(event) {
       // Verify access to target user's data
       const canAccess = await verifyPsychologyAccess(userId, reportUserId);
       if (!canAccess) {
-        return createErrorResponse(403, "Access denied to athlete data");
+        return createErrorResponse("Access denied to athlete data", 403, ErrorType.AUTHORIZATION);
       }
 
       const report = await generateMentalWellnessReport(reportUserId, body);
@@ -570,7 +571,7 @@ async function handler(event) {
       }
     }
 
-    return createErrorResponse(404, "Endpoint not found");
+    return createErrorResponse("Endpoint not found", 404, ErrorType.NOT_FOUND);
   });
 }
 

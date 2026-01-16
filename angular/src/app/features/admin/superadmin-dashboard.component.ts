@@ -256,7 +256,7 @@ interface AdminTeam {
                   <strong>{{ log.title }}</strong>
                   <p>{{ log.description }}</p>
                 </div>
-                <span class="activity-time">{{ log.timestamp }}</span>
+                <span class="item-time">{{ log.timestamp }}</span>
                 @if (log.type === "error" || log.type === "ticket") {
                   <app-button
                     variant="text"

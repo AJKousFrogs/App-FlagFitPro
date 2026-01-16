@@ -21,8 +21,8 @@ import { MessageService } from "primeng/api";
 import { CardModule } from "primeng/card";
 import { Message } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
@@ -85,10 +85,10 @@ const DEBT_THRESHOLDS = {
     LazyChartComponent,
     Message,
     ProgressBarModule,
-    TagModule,
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -147,7 +147,7 @@ const DEBT_THRESHOLDS = {
                   <span class="stat-block__value"
                     >{{ analysis.sevenDayAvg | number: "1.1-1" }} hrs</span
                   >
-                  <p-tag
+                  <app-status-tag
                     [value]="
                       analysis.sevenDayAvg < analysis.optimalTarget
                         ? 'Below optimal'
@@ -158,7 +158,8 @@ const DEBT_THRESHOLDS = {
                         ? 'danger'
                         : 'success'
                     "
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               </div>
             </p-card>
@@ -171,7 +172,7 @@ const DEBT_THRESHOLDS = {
                   <span class="stat-block__value"
                     >{{ analysis.fourteenDayAvg | number: "1.1-1" }} hrs</span
                   >
-                  <p-tag
+                  <app-status-tag
                     [value]="
                       analysis.fourteenDayAvg >= analysis.optimalTarget - 0.5
                         ? 'Near target'
@@ -179,10 +180,11 @@ const DEBT_THRESHOLDS = {
                     "
                     [severity]="
                       analysis.fourteenDayAvg >= analysis.optimalTarget - 0.5
-                        ? 'warn'
+                        ? 'warning'
                         : 'danger'
                     "
-                  ></p-tag>
+                    size="sm"
+                  />
                 </div>
               </div>
             </p-card>

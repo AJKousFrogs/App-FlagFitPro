@@ -24,9 +24,9 @@ import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { BadgeModule } from "primeng/badge";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 // Services
 import { TournamentModeService } from "../../../core/services/tournament-mode.service";
@@ -42,11 +42,11 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
     RouterModule,
     CardModule,
     ProgressBarModule,
-    TagModule,
     TooltipModule,
     BadgeModule,
 
     ButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     @if (isInTournament()) {
@@ -65,7 +65,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
               </span>
             </div>
           </div>
-          <p-tag value="ACTIVE" severity="success"></p-tag>
+          <app-status-tag value="ACTIVE" severity="success" size="sm" />
         </div>
 
         <!-- Game Progress -->
@@ -126,7 +126,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
             </div>
             <div class="next-game-info">
               <span class="opponent">vs {{ nextGame()!.opponent }}</span>
-              <span class="time">{{
+              <span class="item-time">{{
                 nextGame()!.scheduledTime | date: "shortTime"
               }}</span>
             </div>

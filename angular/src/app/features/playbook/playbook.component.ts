@@ -26,9 +26,9 @@ import { InputTextModule } from "primeng/inputtext";
 import { Message } from "primeng/message";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -96,12 +96,12 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     Message,
     ProgressBarModule,
     Select,
-    TagModule,
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -197,10 +197,11 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
                 <div class="play-header">
                   <div class="play-title">
                     <h3>{{ play.name }}</h3>
-                    <p-tag
+                    <app-status-tag
                       [value]="getCategoryLabel(play.category)"
                       [severity]="getCategorySeverity(play.category)"
-                    ></p-tag>
+                      size="sm"
+                    />
                   </div>
                   @if (play.isMemorized) {
                     <i
@@ -409,6 +410,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
                 @if (answerSubmitted()) {
                   <p-message
                     [severity]="selectedAnswer() === q.correctIndex ? 'success' : 'error'"
+                    styleClass="status-message"
                   >
                     {{
                       selectedAnswer() === q.correctIndex
@@ -462,15 +464,18 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             </p>
 
             @if (quizScore() >= 80) {
-              <p-message severity="success">
+              <p-message
+                severity="success"
+                styleClass="status-message status-message--success"
+              >
                 Great job! You know your plays well.
               </p-message>
             } @else if (quizScore() >= 60) {
-              <p-message severity="warn">
+              <p-message severity="warn" styleClass="status-message">
                 Good effort! Keep studying to improve.
               </p-message>
             } @else {
-              <p-message severity="info">
+              <p-message severity="info" styleClass="status-message">
                 Keep studying! Review the plays you missed.
               </p-message>
             }
@@ -757,14 +762,14 @@ export class PlaybookComponent implements OnInit {
 
   getCategorySeverity(
     category: PlayCategory,
-  ): "success" | "info" | "warn" | "danger" | "secondary" | "contrast" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     switch (category) {
       case "offense":
         return "success";
       case "defense":
         return "info";
       case "special-teams":
-        return "warn";
+        return "warning";
       default:
         return "secondary";
     }

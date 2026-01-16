@@ -129,7 +129,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
           </div>
         } @else {
           <div class="invalid-session">
-            <p-message severity="error">
+            <p-message severity="error" styleClass="status-message">
               This password reset link is invalid or has expired.
             </p-message>
             <p class="mb-4 mt-4">Please request a new password reset link.</p>

@@ -15,8 +15,8 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { getTimeAgo } from "../../utils/date.utils";
 
 export type CoachOverrideType =
@@ -35,7 +35,7 @@ export type CoachOverridePlacement =
   selector: "app-coach-override-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule],
+  imports: [CommonModule, TooltipModule, StatusTagComponent],
   template: `
     <div
       class="coach-override-badge"
@@ -48,11 +48,11 @@ export type CoachOverridePlacement =
       }
       <span class="override-label">{{ getLabel() }}</span>
       @if (showTag()) {
-        <p-tag
+        <app-status-tag
           [value]="getOverrideTypeLabel()"
           severity="info"
-          styleClass="override-tag"
-        ></p-tag>
+          size="sm"
+        />
       }
       @if (showTimestamp() && timestamp()) {
         <span class="override-timestamp">{{ getTimeAgoStr() }}</span>

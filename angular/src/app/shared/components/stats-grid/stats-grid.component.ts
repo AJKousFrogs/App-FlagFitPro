@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-import { TagModule } from "primeng/tag";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { formatNumber, formatStat } from "../../utils/format.utils";
 
 export interface StatItem {
@@ -29,7 +29,7 @@ export interface StatItem {
   selector: "app-stats-grid",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CardModule, TagModule],
+  imports: [CommonModule, CardModule, StatusTagComponent],
   template: `
     <section class="stats-overview" aria-label="Statistics">
       @for (stat of stats(); track trackByLabel($index, stat)) {
@@ -45,10 +45,10 @@ export interface StatItem {
               <span class="stat-block__label">{{ stat.label }}</span>
             </div>
             @if (stat.trend) {
-              <p-tag
+              <app-status-tag
                 [value]="stat.trend"
                 [severity]="getTrendSeverity(stat.trendType)"
-                styleClass="stat-tag"
+                size="sm"
               />
             }
           </div>
@@ -77,10 +77,10 @@ export class StatsGridComponent {
 
   getTrendSeverity(
     trendType?: string,
-  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  ): "success" | "secondary" | "info" | "warning" | "danger" | "contrast" {
     const severities: Record<
       string,
-      "success" | "secondary" | "info" | "warn" | "danger" | "contrast"
+      "success" | "secondary" | "info" | "warning" | "danger" | "contrast"
     > = {
       positive: "success",
       negative: "danger",

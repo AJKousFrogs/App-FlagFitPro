@@ -39,8 +39,8 @@ import { CheckboxModule } from "primeng/checkbox";
 import { DividerModule } from "primeng/divider";
 import { InputNumberModule } from "primeng/inputnumber";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // App Components & Services
 import { AuthService } from "../../../core/services/auth.service";
@@ -105,7 +105,7 @@ interface HydrationLog {
     CardModule,
     InputNumberModule,
     CheckboxModule,
-    TagModule,
+    StatusTagComponent,
     TooltipModule,
     ProgressBarModule,
     DividerModule,
@@ -336,11 +336,11 @@ interface HydrationLog {
                     (click)="toggleWindowExpanded(window.id)"
                   >
                     <div class="window-time">
-                      <span class="time"
+                      <span class="item-time"
                         >{{ window.startTime }} - {{ window.endTime }}</span
                       >
                       @if (window.priority === "critical") {
-                        <p-tag value="Critical" severity="danger"></p-tag>
+                        <app-status-tag value="Critical" severity="danger" size="sm" />
                       }
                       @if (window.completed) {
                         <span class="completed-badge-inline">

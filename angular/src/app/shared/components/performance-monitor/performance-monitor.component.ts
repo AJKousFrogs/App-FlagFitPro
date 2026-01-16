@@ -72,7 +72,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
         @if (hasIssues()) {
           <div class="performance-actions">
-            <p-message severity="warn">
+            <p-message severity="warn" styleClass="status-message">
               Performance issues detected
             </p-message>
             <div class="action-buttons">

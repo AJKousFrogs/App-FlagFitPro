@@ -191,6 +191,10 @@ export class NotificationStateService implements OnDestroy {
     isRealtimeConnected: this.isRealtimeConnected(),
   }));
 
+  // Guard to prevent duplicate subscription initialization
+  private _realtimeInitialized = false;
+  private _initializationInProgress = false;
+
   constructor() {
     // Initialize realtime subscription when user is authenticated
     this.initializeRealtimeSubscription();
@@ -202,8 +206,19 @@ export class NotificationStateService implements OnDestroy {
 
   /**
    * Initialize Supabase Realtime subscription for notifications
+   * Includes guards to prevent duplicate subscriptions
    */
   private async initializeRealtimeSubscription(): Promise<void> {
+    // Guard: prevent duplicate initialization
+    if (this._realtimeInitialized || this._initializationInProgress) {
+      this.logger.debug(
+        "[NotificationState] Realtime subscription already initialized or in progress, skipping",
+      );
+      return;
+    }
+
+    this._initializationInProgress = true;
+
     try {
       // Wait for Supabase to be initialized
       await this.supabaseService.waitForInit();
@@ -213,7 +228,26 @@ export class NotificationStateService implements OnDestroy {
         this.logger.debug(
           "[NotificationState] No user ID, skipping realtime subscription",
         );
+        this._initializationInProgress = false;
         return;
+      }
+
+      // Double-check we haven't initialized while waiting
+      if (this._realtimeInitialized) {
+        this.logger.debug(
+          "[NotificationState] Realtime subscription initialized while waiting, skipping",
+        );
+        this._initializationInProgress = false;
+        return;
+      }
+
+      // Clean up any existing channel before creating new one
+      if (this.realtimeChannel) {
+        this.logger.debug(
+          "[NotificationState] Cleaning up existing channel before reinitializing",
+        );
+        await this.supabaseService.client.removeChannel(this.realtimeChannel);
+        this.realtimeChannel = null;
       }
 
       // Subscribe to notifications table changes for this user
@@ -267,15 +301,30 @@ export class NotificationStateService implements OnDestroy {
             `[NotificationState] Realtime subscription status: ${status}`,
           );
           this.isRealtimeConnected.set(status === "SUBSCRIBED");
+          if (status === "SUBSCRIBED") {
+            this._realtimeInitialized = true;
+          }
         });
 
       this.logger.info("[NotificationState] Realtime subscription initialized");
+      this._realtimeInitialized = true;
     } catch (error) {
       this.logger.error(
         "[NotificationState] Failed to initialize realtime subscription:",
         error,
       );
+    } finally {
+      this._initializationInProgress = false;
     }
+  }
+
+  /**
+   * Reinitialize realtime subscription (e.g., after user change)
+   */
+  async reinitializeRealtime(): Promise<void> {
+    this._realtimeInitialized = false;
+    this.unsubscribeFromRealtime();
+    await this.initializeRealtimeSubscription();
   }
 
   /**

@@ -152,6 +152,7 @@ import {
                   <p-tag
                     [value]="getFormatFocus(focus)"
                     severity="success"
+                    styleClass="status-tag status-tag--success"
                   ></p-tag>
                 }
               </div>

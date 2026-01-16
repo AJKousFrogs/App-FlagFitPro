@@ -160,7 +160,9 @@ export interface ImageUploadResult {
 
       <!-- Error Message -->
       @if (errorMessage()) {
-        <p-message severity="error">{{ errorMessage() }}</p-message>
+        <p-message severity="error" styleClass="status-message">
+          {{ errorMessage() }}
+        </p-message>
       }
     </div>
   `,

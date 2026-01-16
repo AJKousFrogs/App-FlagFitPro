@@ -3,10 +3,18 @@
  * 
  * Common RxJS pipe patterns extracted for reuse across the application.
  * Reduces duplication of map/catchError/finalize patterns.
+ * 
+ * IMPORTANT: All operators that handle errors should:
+ * 1. Reset error state before the operation starts
+ * 2. Clear error state on success
+ * 3. Set error state on failure
+ * 
+ * @see BaseViewModel for consistent patterns
  */
 
-import { Observable, throwError } from "rxjs";
-import { catchError, finalize, map, tap } from "rxjs/operators";
+import { Observable, throwError, timer } from "rxjs";
+import { catchError, finalize, map, tap, retry, retryWhen, delayWhen, take, scan } from "rxjs/operators";
+import { getErrorMessage } from "./error.utils";
 
 /**
  * Handle errors with logging and optional fallback value
@@ -149,6 +157,12 @@ export function logValues<T>(
  * Complete pipe with error handling and loading state
  * Combines common patterns: map, catchError, finalize
  * 
+ * CRITICAL: This operator:
+ * - Resets error state before operation starts
+ * - Clears error state on success
+ * - Sets error state on failure
+ * - Always resets loading state when complete
+ * 
  * @example
  * source$.pipe(
  *   completePipe({
@@ -167,30 +181,48 @@ export function completePipe<T, R>(options: {
   isLoading?: { set: (value: boolean) => void };
   setError?: { set: (value: string | null) => void };
   fallbackValue?: R;
+  clearErrorOnSuccess?: boolean;
 }) {
   return (source: Observable<T>): Observable<R> => {
     return new Observable<R>((subscriber) => {
-      const { mapFn, errorMessage, logger, isLoading, setError, fallbackValue } =
-        options;
+      const {
+        mapFn,
+        errorMessage,
+        logger,
+        isLoading,
+        setError,
+        fallbackValue,
+        clearErrorOnSuccess = true,
+      } = options;
 
-      if (isLoading) {
-        isLoading.set(true);
-      }
+      // CRITICAL: Reset error state before starting operation
       if (setError) {
         setError.set(null);
       }
 
+      if (isLoading) {
+        isLoading.set(true);
+      }
+
+      let hasSucceeded = false;
+
       const subscription = source
         .pipe(
           map((value) => (mapFn ? mapFn(value) : (value as unknown as R))),
+          tap(() => {
+            // Mark success and clear error
+            hasSucceeded = true;
+            if (clearErrorOnSuccess && setError) {
+              setError.set(null);
+            }
+          }),
           catchError((error: unknown) => {
+            hasSucceeded = false;
             if (logger && errorMessage) {
               logger.error(errorMessage, error);
             }
             if (setError) {
-              setError.set(
-                error instanceof Error ? error.message : "An error occurred",
-              );
+              setError.set(getErrorMessage(error, errorMessage || "An error occurred"));
             }
             if (fallbackValue !== undefined) {
               subscriber.next(fallbackValue);
@@ -204,6 +236,10 @@ export function completePipe<T, R>(options: {
             if (isLoading) {
               isLoading.set(false);
             }
+            // Ensure error is cleared on success
+            if (hasSucceeded && clearErrorOnSuccess && setError) {
+              setError.set(null);
+            }
           }),
         )
         .subscribe({
@@ -216,5 +252,79 @@ export function completePipe<T, R>(options: {
         subscription.unsubscribe();
       };
     });
+  };
+}
+
+/**
+ * Retry operator with exponential backoff for Observable streams
+ * Use this for service-level retry logic (HTTP interceptor handles most cases)
+ * 
+ * @example
+ * source$.pipe(
+ *   withRetry({
+ *     maxRetries: 3,
+ *     delayMs: 1000,
+ *     shouldRetry: (error) => error.status >= 500,
+ *     onRetry: (error, attempt) => console.log(`Retry ${attempt}`)
+ *   })
+ * )
+ */
+export function withRetry<T>(options: {
+  maxRetries?: number;
+  delayMs?: number;
+  backoffMultiplier?: number;
+  shouldRetry?: (error: unknown) => boolean;
+  onRetry?: (error: unknown, attempt: number) => void;
+} = {}) {
+  const {
+    maxRetries = 3,
+    delayMs = 1000,
+    backoffMultiplier = 2,
+    shouldRetry = () => true,
+    onRetry,
+  } = options;
+
+  return (source: Observable<T>): Observable<T> => {
+    return source.pipe(
+      retryWhen((errors) =>
+        errors.pipe(
+          scan((retryCount, error) => {
+            if (retryCount >= maxRetries || !shouldRetry(error)) {
+              throw error;
+            }
+            return retryCount + 1;
+          }, 0),
+          delayWhen((retryCount) => {
+            const delay = delayMs * Math.pow(backoffMultiplier, retryCount - 1);
+            if (onRetry) {
+              onRetry(errors, retryCount);
+            }
+            return timer(delay);
+          }),
+        ),
+      ),
+    );
+  };
+}
+
+/**
+ * Simple retry operator for service methods
+ * Retries up to maxRetries times with fixed delay
+ * 
+ * @example
+ * this.http.get('/api/data').pipe(
+ *   simpleRetry(3, 1000)
+ * )
+ */
+export function simpleRetry<T>(maxRetries: number = 3, delayMs: number = 1000) {
+  return (source: Observable<T>): Observable<T> => {
+    return source.pipe(
+      retryWhen((errors) =>
+        errors.pipe(
+          delayWhen(() => timer(delayMs)),
+          take(maxRetries),
+        ),
+      ),
+    );
   };
 }

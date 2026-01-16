@@ -63,7 +63,9 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
               <i class="pi pi-times-circle"></i>
             </div>
             <h2>Authentication Failed</h2>
-            <p-message severity="error">{{ error() }}</p-message>
+            <p-message severity="error" styleClass="status-message">
+              {{ error() }}
+            </p-message>
             <div class="error-actions">
               <app-button
                 iconLeft="pi-refresh"

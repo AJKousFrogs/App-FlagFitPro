@@ -305,23 +305,29 @@
     [modal]="true"
     [style]="{ width: '95vw', maxWidth: '400px' }"
     [contentStyle]="{ padding: 'var(--space-6)' }"
+    [focusOnShow]="true"
+    [closeOnEscape]="true"
+    ariaLabel="Quick wellness check-in dialog"
+    role="dialog"
   >
     <div class="quick-checkin-form">
       <p class="quick-intro">How are you feeling today? Tap to select.</p>
 
       <!-- Step 1: Overall Feeling -->
       <div class="quick-section">
-        <span class="quick-label">Overall Feeling</span>
-        <div class="mood-selector">
+        <span class="quick-label" id="mood-label">Overall Feeling</span>
+        <div class="mood-selector" role="radiogroup" aria-labelledby="mood-label">
           @for (mood of quickMoods; track mood.value) {
             <button
               type="button"
               class="mood-btn"
               [class.selected]="quickFormData().overallFeeling === mood.value"
               (click)="setQuickField('overallFeeling', mood.value)"
-              [attr.aria-label]="mood.label"
+              [attr.aria-label]="'Overall feeling: ' + mood.label"
+              role="radio"
+              [attr.aria-checked]="quickFormData().overallFeeling === mood.value"
             >
-              <span class="mood-emoji">{{ mood.emoji }}</span>
+              <span class="mood-emoji" aria-hidden="true">{{ mood.emoji }}</span>
               <span class="mood-text">{{ mood.label }}</span>
             </button>
           }
@@ -330,18 +336,23 @@
 
       <!-- Step 2: Energy Level -->
       <div class="quick-section">
-        <span class="quick-label">Energy Level</span>
-        <div class="energy-selector">
+        <span class="quick-label" id="energy-level-label">Energy Level</span>
+        <div class="energy-selector" role="radiogroup" aria-labelledby="energy-level-label">
           @for (level of quickEnergyLevels; track level.value) {
             <button
               type="button"
               class="energy-btn"
               [class.selected]="quickFormData().energyLevel === level.value"
               (click)="setQuickField('energyLevel', level.value)"
+              [attr.aria-label]="'Energy level: ' + level.label"
+              [attr.aria-pressed]="quickFormData().energyLevel === level.value"
+              role="radio"
+              [attr.aria-checked]="quickFormData().energyLevel === level.value"
             >
               <i
                 class="pi pi-bolt"
                 [style.opacity]="level.value * 0.2 + 0.2"
+                aria-hidden="true"
               ></i>
               <span>{{ level.label }}</span>
             </button>
@@ -351,15 +362,18 @@
 
       <!-- Step 3: Any Soreness -->
       <div class="quick-section">
-        <span class="quick-label">Any Soreness?</span>
-        <div class="soreness-selector">
+        <span class="quick-label" id="soreness-label">Any Soreness?</span>
+        <div class="soreness-selector" role="radiogroup" aria-labelledby="soreness-label">
           <button
             type="button"
             class="soreness-btn"
             [class.selected]="quickFormData().hasSoreness === false"
             (click)="setQuickField('hasSoreness', false)"
+            aria-label="No soreness - Feeling Good"
+            role="radio"
+            [attr.aria-checked]="quickFormData().hasSoreness === false"
           >
-            <i class="pi pi-check-circle"></i>
+            <i class="pi pi-check-circle" aria-hidden="true"></i>
             <span>Feeling Good</span>
           </button>
           <button
@@ -367,17 +381,25 @@
             class="soreness-btn soreness-yes"
             [class.selected]="quickFormData().hasSoreness === true"
             (click)="setQuickField('hasSoreness', true)"
+            aria-label="Has soreness - Some Soreness"
+            role="radio"
+            [attr.aria-checked]="quickFormData().hasSoreness === true"
           >
-            <i class="pi pi-exclamation-circle"></i>
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
             <span>Some Soreness</span>
           </button>
         </div>
       </div>
 
       <!-- Preview Score -->
-      <div class="quick-preview">
-        <span class="preview-label">Estimated Readiness</span>
-        <span class="preview-score" [class]="getQuickReadinessClass()">
+      <div class="quick-preview" aria-live="polite" aria-atomic="true">
+        <span class="preview-label" id="readiness-preview-label">Estimated Readiness</span>
+        <span 
+          class="preview-score" 
+          [class]="getQuickReadinessClass()"
+          aria-labelledby="readiness-preview-label"
+          role="status"
+        >
           {{ quickReadinessScore() }}%
         </span>
       </div>

@@ -16,6 +16,17 @@ import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 import { TrainingDataService, TrainingSession } from "./training-data.service";
 
+/**
+ * Memory management constants for stats calculation
+ * Prevents loading unbounded historical data
+ */
+const STATS_MEMORY_LIMITS = {
+  /** Default date range for stats calculation (days) */
+  DEFAULT_DATE_RANGE_DAYS: 90,
+  /** Maximum sessions to load for stats calculation */
+  MAX_SESSIONS: 500,
+} as const;
+
 export interface ACWRData {
   acwr: number | null;
   acuteLoad: number;
@@ -125,18 +136,33 @@ export class TrainingStatsCalculationService {
 
     try {
       // Build query with optional date filters
+      // MEMORY SAFETY: Always apply date range and limit to prevent loading unbounded data
       let query = this.supabase.client
         .from("training_sessions")
         .select("*")
         .eq("user_id", user.id)
         .order("session_date", { ascending: false });
 
+      // Apply start date - default to last 90 days if not specified
       if (options?.startDate) {
         query = query.gte("session_date", options.startDate);
+      } else {
+        const defaultStartDate = new Date();
+        defaultStartDate.setDate(
+          defaultStartDate.getDate() - STATS_MEMORY_LIMITS.DEFAULT_DATE_RANGE_DAYS,
+        );
+        query = query.gte(
+          "session_date",
+          defaultStartDate.toISOString().split("T")[0],
+        );
       }
+
       if (options?.endDate) {
         query = query.lte("session_date", options.endDate);
       }
+
+      // Cap results to prevent memory issues
+      query = query.limit(STATS_MEMORY_LIMITS.MAX_SESSIONS);
 
       const { data: sessions, error } = await query;
 

@@ -811,7 +811,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 </div>
               } @else {
                 <div class="empty-schedule">
-                  <p-message severity="info">
+                  <p-message severity="info" styleClass="status-message">
                     <div class="empty-content">
                       <i class="pi pi-calendar empty-icon"></i>
                       <span>No training scheduled for today</span>
@@ -879,7 +879,7 @@ Keep logging sessions to unlock this injury prevention metric!'
                 </div>
               } @else {
                 <div class="empty-chart">
-                  <p-message severity="info">
+                  <p-message severity="info" styleClass="status-message">
                     <div class="empty-content">
                       <i class="pi pi-chart-line empty-icon"></i>
                       <span>Complete more sessions to see your trend</span>
@@ -1542,7 +1542,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        padding: var(--space-3) var(--space-4) var(--space-2);
+        padding: var(--space-3) var(--space-4);
       }
 
       .card-header-icon {
@@ -1555,8 +1555,8 @@ Keep logging sessions to unlock this injury prevention metric!'
         font-size: var(--font-h3-size);
         font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
-        line-height: var(--font-h3-line-height);
-        margin-bottom: var(--space-3);
+        line-height: var(--line-height-tight);
+        margin: 0;
       }
 
       /* ==========================================

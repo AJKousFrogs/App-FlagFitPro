@@ -159,7 +159,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                         </div>
                       }
                       <div class="activity-meta">
-                        <span class="activity-time">
+                        <span class="item-time">
                           {{ formatTime(activity.created_at) }}
                         </span>
                         @if (activity.player?.position) {

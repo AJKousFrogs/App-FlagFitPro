@@ -27,6 +27,7 @@ import {
   OnDestroy,
   OnInit,
   effect,
+  DestroyRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
@@ -67,7 +68,12 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
 
   private rendererService = inject(SemanticRendererService);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
   private componentRef: ComponentRef<unknown> | null = null;
+
+  // MEMORY SAFETY: Track pending timeouts for cleanup
+  private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private isDestroyed = false;
 
   // Computed render decision
   renderDecision = computed(() => {
@@ -78,23 +84,63 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
     return this.rendererService.renderMeaning(metadata);
   });
 
-  // Effect to re-render when meaning or context changes
-  private renderEffect = effect(() => {
-    // Access computed to trigger effect
-    this.renderDecision();
-    // Render after view is initialized
-    setTimeout(() => this.render(), 0);
-  });
+  constructor() {
+    // MEMORY SAFETY: Register cleanup on destroy
+    this.destroyRef.onDestroy(() => {
+      this.cleanup();
+    });
+
+    // Effect to re-render when meaning or context changes
+    effect(() => {
+      // Access computed to trigger effect
+      this.renderDecision();
+      // MEMORY SAFETY: Clear any pending timeout before setting new one
+      this.clearPendingTimeout();
+      // Render after view is initialized, but only if not destroyed
+      this.pendingTimeoutId = setTimeout(() => {
+        if (!this.isDestroyed) {
+          this.render();
+        }
+      }, 0);
+    });
+  }
 
   ngOnInit(): void {
     // Render the meaning when component initializes
-    setTimeout(() => this.render(), 0);
+    // MEMORY SAFETY: Clear any pending timeout before setting new one
+    this.clearPendingTimeout();
+    this.pendingTimeoutId = setTimeout(() => {
+      if (!this.isDestroyed) {
+        this.render();
+      }
+    }, 0);
   }
 
   ngOnDestroy(): void {
+    this.cleanup();
+  }
+
+  /**
+   * MEMORY SAFETY: Centralized cleanup method
+   */
+  private cleanup(): void {
+    this.isDestroyed = true;
+    this.clearPendingTimeout();
+
     // Clean up component reference
     if (this.componentRef) {
       this.componentRef.destroy();
+      this.componentRef = null;
+    }
+  }
+
+  /**
+   * MEMORY SAFETY: Clear any pending timeout
+   */
+  private clearPendingTimeout(): void {
+    if (this.pendingTimeoutId !== null) {
+      clearTimeout(this.pendingTimeoutId);
+      this.pendingTimeoutId = null;
     }
   }
 
@@ -107,7 +153,9 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
     const decision = this.renderDecision();
 
     // Clear previous render
-    target.clear();
+    if (typeof target.clear === "function") {
+      target.clear();
+    }
     if (this.componentRef) {
       this.componentRef.destroy();
     }

@@ -21,8 +21,8 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
@@ -65,7 +65,7 @@ interface PositionGroup {
     InputTextModule,
     TooltipModule,
     AvatarModule,
-    TagModule,
+    StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
 
@@ -231,10 +231,11 @@ interface PositionGroup {
                 <ng-template pTemplate="header">
                   <div class="card-header">
                     <h3>Unassigned Players</h3>
-                    <p-tag
+                    <app-status-tag
                       [value]="unassignedPlayers().length + ' players'"
-                      severity="warn"
-                    ></p-tag>
+                      severity="warning"
+                      size="sm"
+                    />
                   </div>
                 </ng-template>
                 <div class="unassigned-list">

@@ -26,6 +26,7 @@ import { routes } from "./app.routes";
 import { authInterceptor } from "./core/interceptors/auth.interceptor";
 import { cacheInterceptor } from "./core/interceptors/cache.interceptor";
 import { errorInterceptor } from "./core/interceptors/error.interceptor";
+import { retryInterceptor } from "./core/interceptors/retry.interceptor";
 import { debugInterceptor } from "./core/interceptors/debug.interceptor";
 import { AcwrAlertsService } from "./core/services/acwr-alerts.service";
 import { AcwrService } from "./core/services/acwr.service";
@@ -67,6 +68,7 @@ export const appConfig: ApplicationConfig = {
       withFetch(), // Angular 21: Use fetch API for better performance and streaming support
       withInterceptors([
         authInterceptor,
+        retryInterceptor, // Retry transient network errors with exponential backoff
         cacheInterceptor,
         errorInterceptor,
         ...(isDevMode() ? [debugInterceptor] : []), // Debug interceptor - only in development

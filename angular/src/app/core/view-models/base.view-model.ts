@@ -7,6 +7,12 @@
  * - Data Services: Handle API calls, return Observables
  * - View Models: Manage component state using Signals, subscribe to data services
  *
+ * Key Features:
+ * - Automatic error state reset before new operations
+ * - Consistent loading state management
+ * - Error state cleared on successful operations
+ * - Automatic cleanup on destroy
+ *
  * Usage:
  * ```typescript
  * export class DashboardViewModel extends BaseViewModel {
@@ -14,25 +20,13 @@
  *
  *   // State (Signals)
  *   stats = signal<Stat[]>([]);
- *   loading = signal(false);
  *
- *   // Derived state (Computed)
- *   totalStats = computed(() => this.stats().reduce((sum, s) => sum + s.value, 0));
- *
- *   // Data fetching (RxJS)
+ *   // Data fetching (RxJS) - error/loading handled automatically
  *   loadDashboard() {
- *     this.loading.set(true);
  *     this.subscribe(
  *       this.dashboardService.getDashboard(),
  *       {
- *         next: (data) => {
- *           this.stats.set(data.stats);
- *           this.loading.set(false);
- *         },
- *         error: (err) => {
- *           this.handleError(err);
- *           this.loading.set(false);
- *         }
+ *         next: (data) => this.stats.set(data.stats),
  *       }
  *     );
  *   }
@@ -41,9 +35,10 @@
  */
 
 import { Injectable, signal, DestroyRef, inject } from "@angular/core";
-import { Observable, Subject, catchError, finalize } from "rxjs";
+import { Observable, Subject, catchError, finalize, tap } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LoggerService } from "../services/logger.service";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 
 @Injectable()
 export abstract class BaseViewModel {
@@ -67,6 +62,13 @@ export abstract class BaseViewModel {
   /**
    * Subscribe to an Observable with automatic cleanup
    * Handles loading state and errors automatically
+   *
+   * IMPORTANT: This method automatically:
+   * - Resets error state before starting the operation
+   * - Sets loading state to true
+   * - Clears error state on success
+   * - Sets error state on failure
+   * - Sets loading state to false when complete
    */
   protected subscribe<T>(
     observable: Observable<T>,
@@ -75,19 +77,43 @@ export abstract class BaseViewModel {
       error?: (error: unknown) => void;
       complete?: () => void;
       showLoading?: boolean;
+      resetErrorOnStart?: boolean;
+      clearErrorOnSuccess?: boolean;
     } = {},
   ): void {
-    const { next, error, complete, showLoading = true } = callbacks;
+    const {
+      next,
+      error,
+      complete,
+      showLoading = true,
+      resetErrorOnStart = true,
+      clearErrorOnSuccess = true,
+    } = callbacks;
+
+    // CRITICAL: Always reset error state before new operation
+    if (resetErrorOnStart) {
+      this.error.set(null);
+    }
 
     if (showLoading) {
       this.loading.set(true);
-      this.error.set(null);
     }
+
+    let hasSucceeded = false;
 
     observable
       .pipe(
         takeUntilDestroyed(this.destroyRef),
+        tap(() => {
+          // Mark as succeeded when we receive data
+          hasSucceeded = true;
+          // Clear error on successful data receipt
+          if (clearErrorOnSuccess) {
+            this.error.set(null);
+          }
+        }),
         catchError((err) => {
+          hasSucceeded = false;
           if (error) {
             error(err);
           } else {
@@ -98,6 +124,10 @@ export abstract class BaseViewModel {
         finalize(() => {
           if (showLoading) {
             this.loading.set(false);
+          }
+          // Ensure error is cleared on success (belt and suspenders)
+          if (hasSucceeded && clearErrorOnSuccess) {
+            this.error.set(null);
           }
           if (complete) {
             complete();
@@ -114,24 +144,19 @@ export abstract class BaseViewModel {
   }
 
   /**
-   * Handle errors consistently
+   * Handle errors consistently using centralized error utilities
    */
   protected handleError(error: unknown): void {
-    let errorMessage = "An error occurred";
-
-    if (error instanceof Error) {
-      errorMessage = error.message;
-    } else if (error && typeof error === "object" && "message" in error) {
-      errorMessage = String(error.message);
-    } else if (error && typeof error === "object" && "error" in error) {
-      const nestedError = (error as { error: { message?: string } }).error;
-      if (nestedError && typeof nestedError.message === "string") {
-        errorMessage = nestedError.message;
-      }
-    }
-
+    const errorMessage = getErrorMessage(error, "An error occurred");
     this.error.set(errorMessage);
     this.logger.error("[ViewModel Error]", error);
+  }
+
+  /**
+   * Clear error state manually (useful for retry scenarios)
+   */
+  clearError(): void {
+    this.error.set(null);
   }
 
   /**
@@ -141,6 +166,14 @@ export abstract class BaseViewModel {
     this.loading.set(false);
     this.error.set(null);
     this.initialized.set(false);
+  }
+
+  /**
+   * Prepare for a new operation by resetting error state
+   * Call this at the start of any operation that might fail
+   */
+  protected prepareOperation(): void {
+    this.error.set(null);
   }
 
   /**

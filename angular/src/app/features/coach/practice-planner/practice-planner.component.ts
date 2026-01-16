@@ -245,7 +245,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                   <div class="timeline-items">
                     @for (activity of practice.activities; track activity.id) {
                       <div class="timeline-item">
-                        <span class="time">{{ activity.startTime }}</span>
+                        <span class="item-time">{{ activity.startTime }}</span>
                         <span class="activity">{{ activity.title }}</span>
                       </div>
                     }
@@ -386,7 +386,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
               ) {
                 <div class="activity-block">
                   <div class="activity-header">
-                    <span class="activity-time">{{ activity.startTime }}</span>
+                    <span class="item-time">{{ activity.startTime }}</span>
                     <span class="activity-icon">{{
                       getActivityIcon(activity.type)
                     }}</span>

@@ -28,8 +28,8 @@ import { RouterModule } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -60,10 +60,10 @@ interface UpcomingGame {
     RouterModule,
     CardModule,
     ProgressBarModule,
-    TagModule,
     TooltipModule,
 
     ButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     @if (game()) {
@@ -86,10 +86,11 @@ interface UpcomingGame {
               }
             </span>
           </div>
-          <p-tag
+          <app-status-tag
             [value]="getUrgencyLabel()"
             [severity]="getUrgencySeverity()"
-          ></p-tag>
+            size="sm"
+          />
         </div>
 
         <!-- Countdown Display -->
@@ -278,10 +279,10 @@ export class GameDayCountdownComponent implements OnInit, OnDestroy {
     return `${this.daysRemaining()}d`;
   }
 
-  getUrgencySeverity(): "success" | "info" | "warn" | "danger" {
+  getUrgencySeverity(): "success" | "info" | "warning" | "danger" {
     const hours = this.hoursRemaining();
     if (hours < 4) return "danger";
-    if (hours < 24) return "warn";
+    if (hours < 24) return "warning";
     return "info";
   }
 

@@ -413,7 +413,7 @@ interface ApiPollVoteResponse {
                           }
                         </div>
                         <div class="post-meta">
-                          <span class="time">{{ post.timeAgo }}</span>
+                          <span class="item-time">{{ post.timeAgo }}</span>
                           @if (post.location) {
                             <span class="location">
                               <i class="pi pi-map-marker"></i>

@@ -97,7 +97,7 @@ interface Play {
         </div>
 
         <div class="game-clock">
-          <span class="time">{{ gameTime() | gameTime }}</span>
+          <span class="item-time">{{ gameTime() | gameTime }}</span>
           <span class="quarter">Q{{ currentQuarter() }}</span>
         </div>
 

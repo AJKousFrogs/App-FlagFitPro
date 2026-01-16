@@ -26,10 +26,10 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -112,13 +112,13 @@ const ROUTES = [
     RadioButton,
     Select,
     TableModule,
-    TagModule,
     Textarea,
     ToastModule,
     MainLayoutComponent,
     PageHeaderComponent,
 
     ButtonComponent,
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -463,11 +463,11 @@ const ROUTES = [
                     <div class="assignment-header">
                       <strong>{{ assignment.position }}</strong>
                       @if (assignment.isPrimary) {
-                        <p-tag
+                        <app-status-tag
                           value="PRIMARY"
                           severity="success"
-                          [style]="{ fontSize: '0.6rem' }"
-                        ></p-tag>
+                          size="sm"
+                        />
                       }
                     </div>
                     <textarea

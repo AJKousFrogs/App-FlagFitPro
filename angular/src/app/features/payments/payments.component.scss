@@ -1,9 +1,7 @@
 @use "styles/mixins" as *;
 
 .payments-page {
-  padding: var(--space-4);
-  max-width: 900px;
-  margin: 0 auto;
+  @include page-container(var(--content-max-width-lg));
   display: flex;
   flex-direction: column;
   gap: var(--space-4);

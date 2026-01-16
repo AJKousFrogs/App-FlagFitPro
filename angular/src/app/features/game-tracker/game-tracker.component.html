@@ -665,11 +665,11 @@
               <td>{{ play.half }}</td>
               <td>{{ formatTime(play.timeRemaining) }}</td>
               <td>
-                <p-tag
+                <app-status-tag
                   [value]="formatPlayType(play.playType)"
                   [severity]="getPlayTypeSeverity(play.playType)"
-                >
-                </p-tag>
+                  size="sm"
+                />
               </td>
               <td>{{ getPlayDetails(play) }}</td>
               <td>
@@ -763,11 +763,11 @@
               <td>{{ game.location }}</td>
               <td>{{ game.score }}</td>
               <td>
-                <p-tag
+                <app-status-tag
                   [value]="game.result.toUpperCase()"
                   [severity]="getResultSeverity(game.result)"
-                >
-                </p-tag>
+                  size="sm"
+                />
               </td>
               <td>
                 <app-icon-button

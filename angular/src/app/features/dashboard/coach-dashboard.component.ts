@@ -17,7 +17,6 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { forkJoin } from "rxjs";
@@ -47,6 +46,7 @@ import {
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   AppLoadingComponent,
   ButtonComponent,
@@ -101,7 +101,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     RouterModule,
     CardModule,
     TableModule,
-    TagModule,
+    StatusTagComponent,
     LazyChartComponent,
     ChartSkeletonComponent,
     DialogModule,
@@ -219,16 +219,17 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                         alert.readiness !== undefined &&
                         alert.readiness < 40
                       ) {
-                        <p-tag
+                        <app-status-tag
+                          class="wellness-low-tag"
                           value="Wellness Low"
                           severity="danger"
-                          styleClass="wellness-low-tag"
+                          size="sm"
                           [pTooltip]="
                             'Wellness is ' +
                             alert.readiness +
                             '% - review player status'
                           "
-                        ></p-tag>
+                        />
                       }
                       <i class="pi pi-chevron-right"></i>
                     </div>
@@ -277,11 +278,12 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                           data</span
                         >
                       </div>
-                      <p-tag
+                      <app-status-tag
+                        class="missing-data-tag"
                         [value]="player.daysMissing + ' days'"
                         [severity]="getMissingDataSeverity(player.severity)"
-                        styleClass="missing-data-tag"
-                      ></p-tag>
+                        size="sm"
+                      />
                       <i class="pi pi-chevron-right"></i>
                     </div>
                   }
@@ -323,11 +325,12 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                         (click)="viewPlayer(player.playerId)"
                       >
                         <span class="player-name">{{ player.playerName }}</span>
-                        <p-tag
+                        <app-status-tag
+                          class="protocol-tag"
                           [value]="'Day ' + player.dayNumber"
                           severity="info"
-                          styleClass="protocol-tag"
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                     }
                   </div>
@@ -355,13 +358,14 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                         (click)="viewPlayer(player.playerId)"
                       >
                         <span class="player-name">{{ player.playerName }}</span>
-                        <p-tag
+                        <app-status-tag
+                          class="protocol-tag"
                           [value]="
                             player.sessionsRemaining + ' sessions remaining'
                           "
-                          severity="warn"
-                          styleClass="protocol-tag"
-                        ></p-tag>
+                          severity="warning"
+                          size="sm"
+                        />
                       </div>
                     }
                   </div>
@@ -389,11 +393,12 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                         (click)="viewPlayer(player.playerId)"
                       >
                         <span class="player-name">{{ player.playerName }}</span>
-                        <p-tag
+                        <app-status-tag
+                          class="protocol-tag"
                           [value]="player.daysRemaining + ' day(s) remaining'"
                           severity="info"
-                          styleClass="protocol-tag"
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                     }
                   </div>
@@ -602,12 +607,13 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                               </div>
                             </td>
                             <td>
-                              <p-tag
+                              <app-status-tag
                                 [value]="player.position"
                                 [severity]="
                                   getPositionSeverity(player.position)
                                 "
-                              ></p-tag>
+                                size="sm"
+                              />
                             </td>
                             <td>
                               <span
@@ -635,22 +641,24 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                               </div>
                             </td>
                             <td>
-                              <p-tag
+                              <app-status-tag
                                 [value]="getStatusLabel(player.status)"
                                 [severity]="getStatusSeverity(player.status)"
-                              ></p-tag>
+                                size="sm"
+                              />
                             </td>
                             <td>
                               @if (player._consentBlocked) {
                                 <div class="data-sharing-cell">
-                                  <p-tag
+                                  <app-status-tag
+                                    class="data-sharing-tag"
                                     value="⛔ Not Shared"
                                     severity="danger"
-                                    styleClass="data-sharing-tag"
+                                    size="sm"
                                     [pTooltip]="
                                       'Player has not enabled data sharing'
                                     "
-                                  ></p-tag>
+                                  />
                                   <app-button
                                     variant="text"
                                     size="sm"
@@ -666,14 +674,15 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                 isPlayerDataPartiallyShared(player.playerId)
                               ) {
                                 <div class="data-sharing-cell">
-                                  <p-tag
+                                  <app-status-tag
+                                    class="data-sharing-tag"
                                     value="⚠️ Partial"
-                                    severity="warn"
-                                    styleClass="data-sharing-tag"
+                                    severity="warning"
+                                    size="sm"
                                     [pTooltip]="
                                       'Some metrics are shared, some are not'
                                     "
-                                  ></p-tag>
+                                  />
                                   <app-button
                                     variant="text"
                                     size="sm"
@@ -688,14 +697,15 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                   ></app-button>
                                 </div>
                               } @else {
-                                <p-tag
+                                <app-status-tag
+                                  class="data-sharing-tag"
                                   value="✅ Shared"
                                   severity="success"
-                                  styleClass="data-sharing-tag"
+                                  size="sm"
                                   [pTooltip]="
                                     'All metrics are shared with coach'
                                   "
-                                ></p-tag>
+                                />
                               }
                             </td>
                             <td>
@@ -1464,12 +1474,12 @@ export class CoachDashboardComponent {
    */
   getMissingDataSeverity(
     severity: string,
-  ): "success" | "info" | "warn" | "danger" {
+  ): "success" | "info" | "warning" | "danger" {
     switch (severity) {
       case "critical":
         return "danger";
       case "warning":
-        return "warn";
+        return "warning";
       default:
         return "info";
     }
@@ -1668,14 +1678,14 @@ export class CoachDashboardComponent {
 
   getPositionSeverity(
     position: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
     const positionColors: Record<
       string,
-      "success" | "info" | "warn" | "danger" | "secondary"
+      "success" | "info" | "warning" | "danger" | "secondary"
     > = {
       QB: "success",
       WR: "info",
-      RB: "warn",
+      RB: "warning",
       DB: "secondary",
       Rusher: "danger",
     };
@@ -1721,12 +1731,13 @@ export class CoachDashboardComponent {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warn" | "danger" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
+  getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
+    const severities: Record<string, "success" | "info" | "warning" | "danger"> =
+      {
       active: "success",
       injured: "danger",
       inactive: "info",
-      at_risk: "warn",
+      at_risk: "warning",
     };
     return severities[status] || "info";
   }
@@ -1749,10 +1760,11 @@ export class CoachDashboardComponent {
 
   getSessionStatusSeverity(
     status: string,
-  ): "success" | "info" | "warn" | "danger" {
-    const severities: Record<string, "success" | "info" | "warn" | "danger"> = {
+  ): "success" | "info" | "warning" | "danger" {
+    const severities: Record<string, "success" | "info" | "warning" | "danger"> =
+      {
       scheduled: "info",
-      in_progress: "warn",
+      in_progress: "warning",
       completed: "success",
       cancelled: "danger",
     };

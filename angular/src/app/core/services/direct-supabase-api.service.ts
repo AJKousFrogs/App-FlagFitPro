@@ -301,11 +301,17 @@ export class DirectSupabaseApiService {
       // Wellness API failed, continue without override
     }
 
+    // Compute confidence_metadata dynamically based on CURRENT wellness data
+    // This ensures we reflect the latest check-in status, not stale stored values
+    const confidenceMetadata = await this.computeConfidenceMetadata(userId, date, protocol);
+
     return {
       id: protocol.id,
       date: protocol.protocol_date,
       userId: protocol.user_id,
-      readinessScore: protocol.readiness_score,
+      readinessScore: confidenceMetadata.readiness?.hasData 
+        ? (await this.getTodaysReadinessScore(userId, date)) ?? protocol.readiness_score
+        : protocol.readiness_score,
       acwrValue: protocol.acwr_value,
       trainingFocus: protocol.training_focus || "general",
       blocks,
@@ -314,9 +320,100 @@ export class DirectSupabaseApiService {
         protocol.total_exercises ||
         blocks.reduce((sum, b) => sum + b.exercises.length, 0),
       completedExercises: protocol.completed_exercises || 0,
-      confidenceMetadata: protocol.confidence_metadata,
+      confidenceMetadata,
       override,
     };
+  }
+
+  /**
+   * Compute confidence_metadata dynamically based on current wellness data
+   * This ensures we reflect the latest check-in status
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private async computeConfidenceMetadata(userId: string, date: string, protocol: any): Promise<ConfidenceMetadata> {
+    // Check for today's wellness check-in (table is daily_wellness_checkin)
+    const { data: todayWellness, error: wellnessError } = await this.supabase.client
+      .from("daily_wellness_checkin")
+      .select("id, readiness_score, created_at")
+      .eq("user_id", userId)
+      .eq("checkin_date", date)
+      .maybeSingle();
+
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'direct-supabase-api.service.ts:computeConfidenceMetadata',message:'Checking wellness for confidence',data:{userId,date,hasWellness:!!todayWellness,wellnessScore:todayWellness?.readiness_score,wellnessError:wellnessError?.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'E'})}).catch(()=>{});
+    // #endregion
+
+    const hasCheckinToday = !!todayWellness;
+    const readinessScore = todayWellness?.readiness_score ?? protocol.readiness_score;
+
+    // Calculate days stale if no check-in today but we have stored data
+    let daysStale: number | null = null;
+    if (!hasCheckinToday && protocol.readiness_score !== null) {
+      // Find last check-in to calculate staleness (table is daily_wellness_checkin)
+      const { data: lastCheckin } = await this.supabase.client
+        .from("daily_wellness_checkin")
+        .select("checkin_date")
+        .eq("user_id", userId)
+        .order("checkin_date", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (lastCheckin?.checkin_date) {
+        const lastDate = new Date(lastCheckin.checkin_date);
+        const today = new Date(date);
+        daysStale = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+      }
+    } else if (hasCheckinToday) {
+      daysStale = 0;
+    }
+
+    // Determine readiness confidence
+    let readinessConfidence: "none" | "stale" | "measured" | "high" = "none";
+    if (hasCheckinToday) {
+      readinessConfidence = "high";
+    } else if (daysStale !== null && daysStale <= 2) {
+      readinessConfidence = "stale";
+    } else if (readinessScore !== null) {
+      readinessConfidence = "stale";
+    }
+
+    // Use stored confidence_metadata for ACWR and sessionResolution (these don't change as frequently)
+    const storedMeta = protocol.confidence_metadata || {};
+
+    return {
+      readiness: {
+        hasData: hasCheckinToday || readinessScore !== null,
+        source: hasCheckinToday ? "wellness_checkin" : (readinessScore !== null ? "stored" : "none"),
+        daysStale,
+        confidence: readinessConfidence,
+      },
+      acwr: storedMeta.acwr || {
+        hasData: protocol.acwr_value !== null,
+        source: protocol.acwr_value !== null ? "training_sessions" : "none",
+        trainingDaysLogged: null,
+        confidence: protocol.acwr_value !== null ? "high" : "building_baseline",
+      },
+      sessionResolution: storedMeta.sessionResolution || {
+        success: true,
+        status: "resolved",
+        hasProgram: true,
+        hasSessionTemplate: true,
+      },
+    };
+  }
+
+  /**
+   * Get today's readiness score from wellness check-in (table is daily_wellness_checkin)
+   */
+  private async getTodaysReadinessScore(userId: string, date: string): Promise<number | null> {
+    const { data } = await this.supabase.client
+      .from("daily_wellness_checkin")
+      .select("readiness_score")
+      .eq("user_id", userId)
+      .eq("checkin_date", date)
+      .maybeSingle();
+
+    return data?.readiness_score ?? null;
   }
 
   private getBlockEstimatedMinutes(blockType: string): number {

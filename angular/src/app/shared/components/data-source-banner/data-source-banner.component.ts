@@ -5,8 +5,8 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { DataState } from "../../../core/services/data-source.service";
 import {
   DATA_STATE_MESSAGES,
@@ -34,7 +34,7 @@ import {
   selector: "app-data-source-banner",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule],
+  imports: [CommonModule, TooltipModule, StatusTagComponent],
   template: `
     @if (shouldShow()) {
       <div class="data-source-banner" [class]="bannerClass()">
@@ -45,11 +45,11 @@ import {
           <div class="banner-text">
             <div class="banner-header">
               <h4 class="banner-title">{{ title() }}</h4>
-              <p-tag
+              <app-status-tag
                 [value]="badgeText()"
                 [severity]="badgeSeverity()"
                 [icon]="badgeIcon()"
-                styleClass="data-source-badge"
+                size="sm"
               />
             </div>
             <p class="banner-message">{{ message() }}</p>

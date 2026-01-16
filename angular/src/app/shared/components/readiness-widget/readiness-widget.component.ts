@@ -1,12 +1,14 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
+  DestroyRef,
   effect,
   inject,
   input,
   ChangeDetectionStrategy,
 } from "@angular/core";
-import { TagModule } from "primeng/tag";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { SkeletonModule } from "primeng/skeleton";
 import { ReadinessService } from "../../../core/services/readiness.service";
 import { ButtonComponent, CardComponent } from "../ui-components";
@@ -18,7 +20,7 @@ import { ButtonComponent, CardComponent } from "../ui-components";
   imports: [
     CommonModule,
     CardComponent,
-    TagModule,
+    StatusTagComponent,
     SkeletonModule,
     ButtonComponent,
   ],
@@ -68,11 +70,11 @@ import { ButtonComponent, CardComponent } from "../ui-components";
           <!-- Level and Suggestion -->
           <div class="meta-section mb-6">
             <div class="flex items-center justify-center gap-3 mb-4">
-              <p-tag
+              <app-status-tag
                 [severity]="getSeverity()"
                 [value]="readiness()?.level || 'moderate' | titlecase"
-              >
-              </p-tag>
+                size="sm"
+              />
             </div>
             <p
               class="suggestion-text text-center text-text-primary font-medium"
@@ -250,6 +252,7 @@ export class ReadinessWidgetComponent {
   athleteId = input.required<string>();
 
   private readinessService = inject(ReadinessService);
+  private destroyRef = inject(DestroyRef);
 
   loading = this.readinessService.loading;
   readiness = this.readinessService.current;
@@ -268,7 +271,10 @@ export class ReadinessWidgetComponent {
   refresh() {
     const id = this.athleteId();
     if (id) {
-      this.readinessService.calculateToday(id).subscribe();
+      // Use takeUntilDestroyed for proper subscription cleanup
+      this.readinessService.calculateToday(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe();
     }
   }
 

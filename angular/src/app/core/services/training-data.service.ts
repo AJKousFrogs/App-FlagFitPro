@@ -50,6 +50,19 @@ export interface TrainingSessionsOptions {
   limit?: number;
 }
 
+/**
+ * Memory management constants for training data
+ * Prevents unbounded memory growth from large datasets
+ */
+const TRAINING_DATA_LIMITS = {
+  /** Default limit for session queries to prevent memory issues */
+  DEFAULT_SESSION_LIMIT: 100,
+  /** Maximum sessions allowed in a single query */
+  MAX_SESSION_LIMIT: 500,
+  /** Default date range for stats calculation (days) */
+  STATS_DATE_RANGE_DAYS: 90,
+} as const;
+
 @Injectable({
   providedIn: "root",
 })
@@ -117,9 +130,13 @@ export class TrainingDataService {
           query = query.eq("status", options.status);
         }
 
-        if (options?.limit) {
-          query = query.limit(options.limit);
-        }
+        // MEMORY SAFETY: Always apply a limit to prevent loading unbounded data
+        // Use provided limit, but cap at MAX_SESSION_LIMIT
+        const limit = Math.min(
+          options?.limit ?? TRAINING_DATA_LIMITS.DEFAULT_SESSION_LIMIT,
+          TRAINING_DATA_LIMITS.MAX_SESSION_LIMIT,
+        );
+        query = query.limit(limit);
 
         const { data, error } = await query;
 
@@ -454,6 +471,7 @@ export class TrainingDataService {
     return from(
       (async () => {
         // Get sessions for stats calculation
+        // MEMORY SAFETY: Limit date range to prevent loading years of data
         let query = this.supabaseService.client
           .from("training_sessions")
           .select("*")
@@ -462,9 +480,23 @@ export class TrainingDataService {
         const endDate = options?.endDate || new Date().toISOString();
         query = query.lte("session_date", endDate);
 
+        // Apply start date filter - default to last 90 days if not specified
         if (options?.startDate) {
           query = query.gte("session_date", options.startDate);
+        } else {
+          // Default to last 90 days to prevent loading all historical data
+          const defaultStartDate = new Date();
+          defaultStartDate.setDate(
+            defaultStartDate.getDate() - TRAINING_DATA_LIMITS.STATS_DATE_RANGE_DAYS,
+          );
+          query = query.gte(
+            "session_date",
+            defaultStartDate.toISOString().split("T")[0],
+          );
         }
+
+        // Cap results to prevent memory issues
+        query = query.limit(TRAINING_DATA_LIMITS.MAX_SESSION_LIMIT);
 
         const { data: sessions, error } = await query;
 

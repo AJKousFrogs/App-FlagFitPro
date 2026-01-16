@@ -13,8 +13,8 @@ import {
   inject,
   input,
 } from "@angular/core";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { OwnershipTransition } from "../../../core/services/ownership-transition.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { getTimeAgo } from "../../utils/date.utils";
@@ -23,7 +23,7 @@ import { getTimeAgo } from "../../utils/date.utils";
   selector: "app-ownership-transition-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, TagModule, TooltipModule],
+  imports: [CommonModule, TooltipModule, StatusTagComponent],
   template: `
     @if (transition()) {
       <div class="ownership-badge" [class]="'status-' + transition()!.status">
@@ -37,11 +37,11 @@ import { getTimeAgo } from "../../utils/date.utils";
               }}</span>
             }
           </div>
-          <p-tag
+          <app-status-tag
             [value]="getStatusLabel(transition()!.status)"
             [severity]="getStatusSeverity(transition()!.status)"
-            styleClass="status-tag"
-          ></p-tag>
+            size="sm"
+          />
         </div>
 
         @if (showDetails()) {
@@ -209,12 +209,12 @@ export class OwnershipTransitionBadgeComponent {
 
   getStatusSeverity(
     status: OwnershipTransition["status"],
-  ): "secondary" | "success" | "info" | "warn" | "danger" | "contrast" {
+  ): "secondary" | "success" | "info" | "warning" | "danger" | "contrast" {
     const severities: Record<
       string,
-      "secondary" | "success" | "info" | "warn" | "danger" | "contrast"
+      "secondary" | "success" | "info" | "warning" | "danger" | "contrast"
     > = {
-      pending: "warn",
+      pending: "warning",
       in_progress: "info",
       completed: "success",
       overdue: "danger",

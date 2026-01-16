@@ -73,6 +73,7 @@ import { DirectSupabaseApiService } from "../../core/services/direct-supabase-ap
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
+import { ScreenReaderAnnouncerService } from "../../core/services/screen-reader-announcer.service";
 
 // Environment
 import { environment } from "../../../environments/environment";
@@ -408,23 +409,23 @@ interface QuickFormData {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        padding-bottom: var(--space-3);
+        padding: var(--space-3) var(--space-4) var(--space-2);
         margin-bottom: var(--space-3);
         border-bottom: 1px solid var(--color-border-secondary);
       }
 
       .card-header-icon {
-        font-size: var(--icon-md); /* 16px - standard icon */
+        font-size: var(--font-body-size);
         color: var(--color-brand-primary);
       }
 
       .card-header-title {
         flex: 1;
-        font-size: var(--font-size-h2); /* H2: Card titles - 18px */
-        font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
+        font-size: var(--font-h3-size);
+        font-weight: var(--font-weight-semibold);
         color: var(--color-text-primary);
         line-height: var(--line-height-tight);
-        margin-bottom: var(--space-3); /* 12px consistent margin */
+        margin: 0;
       }
 
       .card-description {
@@ -1187,12 +1188,16 @@ export class TodayComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(ApiService);
   private readonly directApi = inject(DirectSupabaseApiService);
+  private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
 
   // Environment flag for API routing
   private readonly useDirectSupabase = environment.useDirectSupabase;
 
   // Guard to prevent duplicate initial loads
   private _initialLoadDone = false;
+  
+  // Guard to prevent multiple protocol generation attempts (race condition fix)
+  private readonly _generationAttempted = signal(false);
 
   // Computed userId from auth service - uses signal for reactivity
   // Per audit: use currentUser() signal, not getUser() method
@@ -1511,14 +1516,13 @@ export class TodayComponent {
    */
   private loadTodayData(): void {
     const today = new Date().toISOString().split("T")[0];
-    let generationAttempted = false;
 
     // Use direct Supabase API in local development mode
     if (this.useDirectSupabase) {
       this.logger.info(
         "[TodayComponent] Using direct Supabase API for protocol data",
       );
-      this.loadTodayDataDirect(today, generationAttempted);
+      this.loadTodayDataDirect(today);
       return;
     }
 
@@ -1536,9 +1540,11 @@ export class TodayComponent {
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
             this.error.set(null);
-          } else if (!generationAttempted) {
-            // Protocol not found, generate once
-            generationAttempted = true;
+            // Reset generation flag on successful load
+            this._generationAttempted.set(false);
+          } else if (!this._generationAttempted()) {
+            // Protocol not found, generate once (using component-level signal)
+            this._generationAttempted.set(true);
             this.generateAndLoadProtocol(today);
           } else {
             // Generation already attempted, show error
@@ -1553,8 +1559,8 @@ export class TodayComponent {
         },
         error: (err) => {
           this.logger.error("Failed to load today data", err);
-          if (!generationAttempted) {
-            generationAttempted = true;
+          if (!this._generationAttempted()) {
+            this._generationAttempted.set(true);
             this.generateAndLoadProtocol(today);
           } else {
             this.error.set(
@@ -1572,10 +1578,7 @@ export class TodayComponent {
   /**
    * Load today data using direct Supabase API (for local development)
    */
-  private loadTodayDataDirect(
-    date: string,
-    generationAttempted: boolean,
-  ): void {
+  private loadTodayDataDirect(date: string): void {
     this.directApi
       .getDailyProtocol(date)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -1593,8 +1596,11 @@ export class TodayComponent {
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
             this.error.set(null);
-          } else if (!generationAttempted) {
-            // Protocol not found, generate once
+            // Reset generation flag on successful load
+            this._generationAttempted.set(false);
+          } else if (!this._generationAttempted()) {
+            // Protocol not found, generate once (using component-level signal)
+            this._generationAttempted.set(true);
             this.generateAndLoadProtocolDirect(date);
           } else {
             this.error.set(
@@ -1609,7 +1615,8 @@ export class TodayComponent {
         },
         error: (err) => {
           this.logger.error("Failed to load today data (direct)", err);
-          if (!generationAttempted) {
+          if (!this._generationAttempted()) {
+            this._generationAttempted.set(true);
             this.generateAndLoadProtocolDirect(date);
           } else {
             this.error.set(
@@ -2019,6 +2026,10 @@ export class TodayComponent {
               summary: "Quick Check-in Complete",
               detail: `Readiness: ${readiness}%. Ready to train!`,
             });
+            // Announce to screen readers
+            this.screenReaderAnnouncer.announceSuccess(
+              `Quick check-in saved. Your readiness is ${readiness} percent.`
+            );
             this.refreshProtocol();
           } else {
             this.messageService.add({
@@ -2026,6 +2037,10 @@ export class TodayComponent {
               summary: "Error",
               detail: "Failed to save check-in. Please try again.",
             });
+            // Announce error to screen readers
+            this.screenReaderAnnouncer.announceAssertive(
+              "Error: Failed to save check-in. Please try again."
+            );
           }
           this.isSavingQuickCheckin.set(false);
         },
@@ -2053,6 +2068,8 @@ export class TodayComponent {
   // ============================================================================
   generateProtocol(): void {
     this.isGeneratingProtocol.set(true);
+    // Announce loading state to screen readers
+    this.screenReaderAnnouncer.announceLoading("training protocol");
     this.handleProtocolRequest(
       this.trainingService.generateDailyProtocol(),
       this.protocol,
@@ -2103,6 +2120,8 @@ export class TodayComponent {
               summary: toast.success,
               detail: toast.detail,
             });
+            // Announce success to screen readers
+            this.screenReaderAnnouncer.announceSuccess(toast.detail);
           }
         }
         loadingSignal.set(false);
@@ -2115,6 +2134,10 @@ export class TodayComponent {
             summary: "Error",
             detail: "Request failed. Please try again.",
           });
+          // Announce error to screen readers
+          this.screenReaderAnnouncer.announceAssertive(
+            "Error: Request failed. Please try again."
+          );
         }
         loadingSignal.set(false);
       },

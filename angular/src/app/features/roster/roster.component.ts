@@ -46,10 +46,10 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -109,7 +109,7 @@ import {
   imports: [
     // PrimeNG
     CardModule,
-    TagModule,
+    StatusTagComponent,
     ProgressSpinnerModule,
     DialogModule,
     TooltipModule,
@@ -434,15 +434,16 @@ import {
                     {{ getPositionDisplayName(selectedPlayer()!.position) }}
                   </p>
                   <div class="details-tags">
-                    <p-tag
+                    <app-status-tag
                       [value]="selectedPlayer()!.status | titlecase"
                       [severity]="getStatusSeverity(selectedPlayer()!.status)"
-                    ></p-tag>
+                      size="sm"
+                    />
                     @if (
                       enrichedSelectedPlayer()?.riskLevel &&
                       enrichedSelectedPlayer()!.riskLevel !== "low"
                     ) {
-                      <p-tag
+                      <app-status-tag
                         [value]="
                           'Risk: ' +
                           (enrichedSelectedPlayer()!.riskLevel | titlecase)
@@ -450,7 +451,8 @@ import {
                         [severity]="
                           getRiskSeverity(enrichedSelectedPlayer()!.riskLevel!)
                         "
-                      ></p-tag>
+                        size="sm"
+                      />
                     }
                   </div>
                 </div>
@@ -643,10 +645,11 @@ import {
                       stat of getPlayerStats(selectedPlayer()!);
                       track stat.key
                     ) {
-                      <p-tag
+                      <app-status-tag
                         [value]="stat.label + ': ' + stat.value"
                         severity="info"
-                      ></p-tag>
+                        size="sm"
+                      />
                     }
                   </div>
                 </div>
@@ -857,10 +860,11 @@ import {
                       {{ invitation.email }}
                     </div>
                     <div class="invitation-meta">
-                      <p-tag
+                      <app-status-tag
                         [value]="getRoleDisplayName(invitation.role)"
                         severity="info"
-                      ></p-tag>
+                        size="sm"
+                      />
                       <span class="invited-by">
                         Invited by {{ invitation.invitedBy }}
                       </span>
@@ -869,7 +873,7 @@ import {
                       </span>
                     </div>
                     @if (invitation.isExpired) {
-                      <p-tag value="Expired" severity="danger"></p-tag>
+                      <app-status-tag value="Expired" severity="danger" size="sm" />
                     } @else {
                       <span class="expires-text">
                         Expires {{ invitation.expiresAt | date: "short" }}
@@ -1078,14 +1082,14 @@ export class RosterComponent implements OnInit {
 
   getRiskSeverity(
     level: PlayerRiskLevel,
-  ): "success" | "info" | "warn" | "danger" {
+  ): "success" | "info" | "warning" | "danger" {
     switch (level) {
       case "low":
         return "success";
       case "moderate":
-        return "warn";
+        return "warning";
       case "high":
-        return "warn";
+        return "warning";
       case "critical":
         return "danger";
       default:
@@ -1094,14 +1098,23 @@ export class RosterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.component.ts:ngOnInit',message:'RosterComponent ngOnInit called',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
     this.initializePage();
   }
 
   private async initializePage(): Promise<void> {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.component.ts:initializePage:start',message:'initializePage starting',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
     this.isPageLoading.set(true);
     this.hasPageError.set(false);
 
     await this.rosterService.loadRosterData();
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.component.ts:initializePage:afterRosterLoad',message:'loadRosterData completed',data:{hasError:!!this.rosterService.error()},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
     await this.rosterService.loadPendingInvitations();
 
     if (this.rosterService.error()) {
@@ -1109,6 +1122,9 @@ export class RosterComponent implements OnInit {
     }
 
     this.isPageLoading.set(false);
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.component.ts:initializePage:end',message:'initializePage completed',data:{hasError:this.hasPageError()},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
   }
 
   retryLoad(): void {

@@ -6,9 +6,7 @@
 @use "styles/mixins" as *;
 
 .qb-throwing-tracker {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: var(--space-4, 16px);
+  @include page-container(var(--content-max-width-lg));
 }
 
 /* Header */

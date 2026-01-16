@@ -24,9 +24,9 @@ import {
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TagModule } from "primeng/tag";
 import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
 import { LazyChartComponent } from "../lazy-chart/lazy-chart.component";
@@ -67,10 +67,10 @@ interface AnalyticsData {
     CommonModule,
     CardModule,
     ProgressBarModule,
-    TagModule,
     SkeletonModule,
     TooltipModule,
     LazyChartComponent,
+    StatusTagComponent,
   ],
   template: `
     <div class="session-analytics">
@@ -145,7 +145,7 @@ interface AnalyticsData {
           <ng-template pTemplate="header">
             <div class="chart-header">
               <h3>Weekly Progress</h3>
-              <p-tag [value]="'Last 4 weeks'" severity="secondary"></p-tag>
+              <app-status-tag value="Last 4 weeks" severity="secondary" size="sm" />
             </div>
           </ng-template>
           <div class="chart-container">

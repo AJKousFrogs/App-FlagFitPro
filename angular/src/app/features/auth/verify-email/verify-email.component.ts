@@ -55,6 +55,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
             <p-message
               severity="info"
               [text]="'Verifying your email address...'"
+              styleClass="status-message"
             ></p-message>
           </div>
         } @else if (isVerified()) {
@@ -62,6 +63,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
             <p-message
               severity="success"
               [text]="'Email verified successfully!'"
+              styleClass="status-message status-message--success"
             ></p-message>
             <p class="verified-message">
               Your email has been verified. You can now access all features.
@@ -78,6 +80,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
             <p-message
               severity="error"
               [text]="verificationError()"
+              styleClass="status-message"
             ></p-message>
             <app-button
               iconLeft="pi-send"
@@ -96,6 +99,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
             <p-message
               severity="warn"
               [text]="'Please check your email'"
+              styleClass="status-message"
             ></p-message>
             <p class="pending-message">
               We've sent a verification link to your email address. Please click

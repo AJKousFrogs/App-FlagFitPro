@@ -1,15 +1,38 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable, throwError } from "rxjs";
-import { catchError } from "rxjs/operators";
+import { catchError, map } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
+import {
+  validateApiResponse,
+  type ValidationResult,
+} from "../schemas/api-response.schema";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
   message?: string;
+}
+
+/**
+ * Schema type for response validation.
+ * Generic interface that allows any schema with parse/safeParse methods.
+ */
+export interface ResponseSchema<T> {
+  parse: (data: unknown) => T;
+  safeParse: (data: unknown) => ValidationResult<T>;
+}
+
+/**
+ * Options for API requests with optional schema validation.
+ */
+export interface ApiRequestOptions<T> {
+  /** Schema to validate response data against */
+  schema?: ResponseSchema<T>;
+  /** Whether to throw on validation failure (default: true) */
+  throwOnValidationError?: boolean;
 }
 
 @Injectable({
@@ -88,9 +111,42 @@ export class ApiService {
     return endpoint;
   }
 
+  /**
+   * Validate API response data against a schema.
+   * @param response - The API response to validate
+   * @param options - Request options including schema
+   * @returns Validated response or throws on validation error
+   */
+  private validateResponse<T>(
+    response: ApiResponse<T>,
+    options?: ApiRequestOptions<T>,
+  ): ApiResponse<T> {
+    if (!options?.schema || !response.data) {
+      return response;
+    }
+
+    const validationResult = validateApiResponse(response.data, options.schema);
+
+    if (!validationResult.success) {
+      const errorMsg = `Response validation failed: ${validationResult.error.message}`;
+      this.logger.warn(`[ApiService] ${errorMsg}`, {
+        path: validationResult.error.path,
+        expected: validationResult.error.expected,
+        received: validationResult.error.received,
+      });
+
+      if (options.throwOnValidationError !== false) {
+        throw new Error(errorMsg);
+      }
+    }
+
+    return response;
+  }
+
   get<T = unknown>(
     endpoint: string,
     params?: Record<string, unknown>,
+    options?: ApiRequestOptions<T>,
   ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     let httpParams = new HttpParams();
@@ -106,60 +162,73 @@ export class ApiService {
 
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http
-      .get<ApiResponse<T>>(url, { params: httpParams })
-      .pipe(catchError(this.handleError));
+    return this.http.get<ApiResponse<T>>(url, { params: httpParams }).pipe(
+      map((response) => this.validateResponse(response, options)),
+      catchError(this.handleError),
+    );
   }
 
   post<T = unknown>(
     endpoint: string,
     data?: unknown,
+    options?: ApiRequestOptions<T>,
   ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
     this.logger.info(`[ApiService] POST ${url}`);
 
-    return this.http
-      .post<ApiResponse<T>>(url, data)
-      .pipe(catchError(this.handleError));
+    return this.http.post<ApiResponse<T>>(url, data).pipe(
+      map((response) => this.validateResponse(response, options)),
+      catchError(this.handleError),
+    );
   }
 
   put<T = unknown>(
     endpoint: string,
     data?: unknown,
+    options?: ApiRequestOptions<T>,
   ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http
-      .put<ApiResponse<T>>(url, data)
-      .pipe(catchError(this.handleError));
+    return this.http.put<ApiResponse<T>>(url, data).pipe(
+      map((response) => this.validateResponse(response, options)),
+      catchError(this.handleError),
+    );
   }
 
   patch<T = unknown>(
     endpoint: string,
     data?: unknown,
+    options?: ApiRequestOptions<T>,
   ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http
-      .patch<ApiResponse<T>>(url, data)
-      .pipe(catchError(this.handleError));
+    return this.http.patch<ApiResponse<T>>(url, data).pipe(
+      map((response) => this.validateResponse(response, options)),
+      catchError(this.handleError),
+    );
   }
 
-  delete<T = unknown>(endpoint: string): Observable<ApiResponse<T>> {
+  delete<T = unknown>(
+    endpoint: string,
+    options?: ApiRequestOptions<T>,
+  ): Observable<ApiResponse<T>> {
     const normalizedEndpoint = this.normalizeEndpoint(endpoint);
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    return this.http
-      .delete<ApiResponse<T>>(url)
-      .pipe(catchError(this.handleError));
+    return this.http.delete<ApiResponse<T>>(url).pipe(
+      map((response) => this.validateResponse(response, options)),
+      catchError(this.handleError),
+    );
   }
 
   private handleError = (error: unknown): Observable<never> => {
     let errorMessage = "An unknown error occurred";
+    let errorType: string | undefined;
+    let requestId: string | undefined;
 
     if (error instanceof ErrorEvent) {
       errorMessage = `Error: ${error.message}`;
@@ -167,20 +236,41 @@ export class ApiService {
       const httpError = error as {
         error?: {
           error?: string;
+          errorType?: string;
           message?: string;
+          requestId?: string;
         };
         status?: number;
         message?: string;
       };
+
+      // Extract error details from API response
       errorMessage =
         httpError.error?.error ||
         httpError.error?.message ||
         `Error Code: ${httpError.status}\nMessage: ${httpError.message}`;
+
+      // Extract errorType and requestId for better error handling
+      errorType = httpError.error?.errorType;
+      requestId = httpError.error?.requestId;
     }
 
-    this.logger.error(`[ApiService] API request failed: ${errorMessage}`);
+    // Log with requestId if available
+    const logContext = requestId ? `[${requestId}]` : "";
+    this.logger.error(
+      `[ApiService]${logContext} API request failed: ${errorMessage}`,
+      { errorType, requestId },
+    );
 
-    return throwError(() => new Error(errorMessage));
+    // Create error with additional context
+    const apiError = new Error(errorMessage) as Error & {
+      errorType?: string;
+      requestId?: string;
+    };
+    apiError.errorType = errorType;
+    apiError.requestId = requestId;
+
+    return throwError(() => apiError);
   };
 }
 

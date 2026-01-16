@@ -1,7 +1,7 @@
 # FlagFit Pro - Angular 21 Application
 
-**Version:** 2.0  
-**Last Updated:** 29. December 2025  
+**Version:** 2.1  
+**Last Updated:** 16. January 2026  
 **Status:** ✅ ~90% Production Ready
 
 ---
@@ -10,7 +10,7 @@
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - Angular CLI 21
 
 ### Installation
@@ -22,12 +22,14 @@ npm install -g @angular/cli@21
 # Navigate to angular directory
 cd angular
 
-# Install dependencies
-npm install
+# Install dependencies (uses pnpm)
+npx pnpm install
 
 # Start development server
 npm start
 ```
+
+> **Note:** The Angular folder uses **pnpm** as its package manager. Use `npx pnpm install` if you don't have pnpm installed globally.
 
 The application will be available at `http://localhost:4200`
 
@@ -409,4 +411,4 @@ import { DialogModule } from 'primeng/dialog';
 
 ---
 
-**Last Updated:** 29. December 2025
+**Last Updated:** 16. January 2026

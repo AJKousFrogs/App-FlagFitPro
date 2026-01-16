@@ -26,9 +26,9 @@ import {} from "@angular/core/rxjs-interop";
 import { CardModule } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { TagModule } from "primeng/tag";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Tabs, TabPanel } from "primeng/tabs";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 import { SafetyWarningsComponent } from "../../../shared/components/safety-warnings/safety-warnings.component";
@@ -58,7 +58,6 @@ import { calculateAge } from "../../../shared/utils/date.utils";
     CommonModule,
     RouterModule,
     CardModule,
-    TagModule,
     ProgressBarModule,
     Tabs,
     TabPanel,
@@ -69,6 +68,7 @@ import { calculateAge } from "../../../shared/utils/date.utils";
 
     ButtonComponent,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <app-main-layout>
@@ -146,10 +146,11 @@ import { calculateAge } from "../../../shared/utils/date.utils";
             <div class="card-content">
               <div class="card-header">
                 <h3>Recovery Status</h3>
-                <p-tag
+                <app-status-tag
                   [value]="ageGroup()"
                   [severity]="getAgeGroupSeverity()"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
               <div class="metric-display">
                 <span class="metric-value"
@@ -177,10 +178,11 @@ import { calculateAge } from "../../../shared/utils/date.utils";
             <div class="card-content">
               <div class="card-header">
                 <h3>Sleep Debt</h3>
-                <p-tag
+                <app-status-tag
                   [value]="sleepDebtLevel()"
                   [severity]="getSleepDebtSeverity()"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
               <div class="metric-display">
                 <span class="metric-value"
@@ -205,10 +207,11 @@ import { calculateAge } from "../../../shared/utils/date.utils";
             <div class="card-content">
               <div class="card-header">
                 <h3>Movement Limits</h3>
-                <p-tag
+                <app-status-tag
                   [value]="movementLimitStatus()"
                   [severity]="getMovementLimitSeverity()"
-                ></p-tag>
+                  size="sm"
+                />
               </div>
               <div class="movement-limits">
                 @for (limit of movementLimits(); track limit.type) {
@@ -284,7 +287,7 @@ import { calculateAge } from "../../../shared/utils/date.utils";
               <div class="rtp-protocol">
                 <div class="rtp-header">
                   <h3>Active Return-to-Play Protocol</h3>
-                  <p-tag [value]="rtpStage()" severity="info"></p-tag>
+                  <app-status-tag [value]="rtpStage()" severity="info" size="sm" />
                 </div>
                 <div class="rtp-progress">
                   <p-progressBar
@@ -840,26 +843,26 @@ export class TrainingSafetyComponent implements OnInit {
     this.recommendations.set(recs);
   }
 
-  getAgeGroupSeverity(): "success" | "info" | "warn" | "danger" {
+  getAgeGroupSeverity(): "success" | "info" | "warning" | "danger" {
     const group = this.ageGroup();
     if (group === "Youth" || group === "Young Adult") return "success";
     if (group === "Adult") return "info";
-    if (group === "Masters") return "warn";
+    if (group === "Masters") return "warning";
     return "danger";
   }
 
-  getSleepDebtSeverity(): "success" | "info" | "warn" | "danger" {
+  getSleepDebtSeverity(): "success" | "info" | "warning" | "danger" {
     const level = this.sleepDebtLevel();
     if (level === "None") return "success";
     if (level === "Mild") return "info";
-    if (level === "Moderate") return "warn";
+    if (level === "Moderate") return "warning";
     return "danger";
   }
 
-  getMovementLimitSeverity(): "success" | "info" | "warn" | "danger" {
+  getMovementLimitSeverity(): "success" | "info" | "warning" | "danger" {
     const status = this.movementLimitStatus();
     if (status === "Safe") return "success";
-    if (status === "Caution") return "warn";
+    if (status === "Caution") return "warning";
     return "danger";
   }
 

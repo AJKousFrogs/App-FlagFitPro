@@ -106,6 +106,10 @@ export class AriaDialogComponent {
   showCloseButton = input<boolean>(true);
   closeOnBackdrop = input<boolean>(true);
   closeOnEscape = input<boolean>(true);
+  /** Focus the first focusable element instead of the dialog container */
+  focusFirstElement = input<boolean>(true);
+  /** Selector for initial focus element (overrides focusFirstElement) */
+  initialFocusSelector = input<string | null>(null);
 
   // ARIA inputs
   descriptionId = input<string | null>(null);
@@ -148,12 +152,35 @@ export class AriaDialogComponent {
     this.isOpen.set(true);
     this.opened.emit();
 
-    // Focus dialog after render
+    // Focus appropriate element after render
     afterNextRender(
       () => {
         const dialog =
           this.elementRef.nativeElement.querySelector("[role='dialog']");
-        dialog?.focus();
+        if (!dialog) return;
+
+        // Priority 1: Custom selector
+        if (this.initialFocusSelector()) {
+          const customFocus = dialog.querySelector(this.initialFocusSelector()!);
+          if (customFocus instanceof HTMLElement) {
+            customFocus.focus();
+            return;
+          }
+        }
+
+        // Priority 2: First focusable element (recommended for forms)
+        if (this.focusFirstElement()) {
+          const focusableElements = dialog.querySelectorAll(
+            'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusableElements.length > 0) {
+            (focusableElements[0] as HTMLElement).focus();
+            return;
+          }
+        }
+
+        // Fallback: Focus dialog container
+        dialog.focus();
       },
       { injector: this.injector },
     );

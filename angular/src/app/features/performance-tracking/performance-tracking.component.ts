@@ -15,7 +15,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
@@ -28,6 +27,7 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
 import { AppLoadingComponent } from "../../shared/components/loading/loading.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   StatItem,
   StatsGridComponent,
@@ -123,7 +123,6 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
 
     LazyChartComponent,
     TableModule,
-    TagModule,
     DialogModule,
     InputTextModule,
     InputNumberModule,
@@ -139,6 +138,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
 
     ButtonComponent,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <app-main-layout>
@@ -287,16 +287,17 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                           >Priority #{{ i + 1 }}:</span
                         >
                         <span class="priority-metric">{{ gap.metric }}</span>
-                        <p-tag
+                        <app-status-tag
                           [value]="gap.gapPercentage.toFixed(1) + '% gap'"
                           [severity]="
                             gap.gapPercentage > 10
                               ? 'danger'
                               : gap.gapPercentage > 5
-                                ? 'warn'
+                                ? 'warning'
                                 : 'info'
                           "
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                     </ng-template>
                     <ng-template pTemplate="content">
@@ -383,11 +384,11 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                     <td>{{ record.squat || "-" }}</td>
                     <td>{{ record.deadlift || "-" }}</td>
                     <td>
-                      <p-tag
+                      <app-status-tag
                         [value]="record.score + '%'"
                         [severity]="getScoreSeverity(record.score)"
-                      >
-                      </p-tag>
+                        size="sm"
+                      />
                     </td>
                   </tr>
                 </ng-template>
@@ -1063,10 +1064,10 @@ export class PerformanceTrackingComponent {
     return severities[trendType] || "info";
   }
 
-  getScoreSeverity(score: number): "success" | "info" | "warn" | "danger" {
+  getScoreSeverity(score: number): "success" | "info" | "warning" | "danger" {
     if (score >= 90) return "success";
     if (score >= 80) return "info";
-    if (score >= 70) return "warn";
+    if (score >= 70) return "warning";
     return "danger";
   }
 

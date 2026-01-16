@@ -11,7 +11,21 @@
 import {
   ERROR_MESSAGES,
   HTTP_ERROR_MESSAGES,
+  ErrorType,
+  ERROR_TYPE_MAP,
 } from "../../core/constants/error.constants";
+
+/**
+ * API error response structure from backend
+ */
+export interface ApiErrorResponse {
+  success: false;
+  error: string;
+  errorType?: string;
+  timestamp?: string;
+  requestId?: string;
+  errors?: string[];
+}
 
 /**
  * Extract a user-friendly error message from any error type
@@ -20,6 +34,7 @@ import {
  * - Error instances
  * - Objects with message property
  * - Objects with error property (API responses)
+ * - Objects with errorType property (backend API responses)
  * - HTTP status codes
  * - String errors
  * - Unknown errors
@@ -68,6 +83,117 @@ export function getErrorMessage(
   }
 
   return fallback;
+}
+
+/**
+ * Extract error type from API error response
+ *
+ * @example
+ * const errorType = getErrorType(error);
+ * if (errorType === ErrorType.AUTHENTICATION) {
+ *   // Redirect to login
+ * }
+ */
+export function getErrorType(error: unknown): ErrorType {
+  // Check for errorType field (backend API response)
+  if (error && typeof error === "object" && "errorType" in error) {
+    const errorTypeStr = (error as { errorType: unknown }).errorType;
+    if (typeof errorTypeStr === "string" && errorTypeStr in ERROR_TYPE_MAP) {
+      return ERROR_TYPE_MAP[errorTypeStr];
+    }
+  }
+
+  // Check nested error object
+  if (error && typeof error === "object" && "error" in error) {
+    const nested = (error as { error: unknown }).error;
+    if (nested && typeof nested === "object" && "errorType" in nested) {
+      const errorTypeStr = (nested as { errorType: unknown }).errorType;
+      if (typeof errorTypeStr === "string" && errorTypeStr in ERROR_TYPE_MAP) {
+        return ERROR_TYPE_MAP[errorTypeStr];
+      }
+    }
+  }
+
+  // Fallback to HTTP status-based detection
+  if (error && typeof error === "object" && "status" in error) {
+    const status = (error as { status: number }).status;
+    switch (status) {
+      case 400:
+        return ErrorType.VALIDATION;
+      case 401:
+        return ErrorType.AUTHENTICATION;
+      case 403:
+        return ErrorType.AUTHORIZATION;
+      case 404:
+        return ErrorType.NOT_FOUND;
+      case 405:
+        return ErrorType.METHOD_NOT_ALLOWED;
+      case 409:
+        return ErrorType.CONFLICT;
+      case 429:
+        return ErrorType.RATE_LIMIT;
+      case 500:
+      case 502:
+      case 503:
+        return ErrorType.SERVER;
+      case 504:
+        return ErrorType.TIMEOUT;
+    }
+  }
+
+  // Check for network errors
+  if (isNetworkError(error)) {
+    return ErrorType.NETWORK;
+  }
+
+  return ErrorType.UNKNOWN;
+}
+
+/**
+ * Extract requestId from error response for logging/debugging
+ */
+export function getRequestId(error: unknown): string | null {
+  if (error && typeof error === "object" && "requestId" in error) {
+    return String((error as { requestId: unknown }).requestId);
+  }
+  if (error && typeof error === "object" && "error" in error) {
+    const nested = (error as { error: unknown }).error;
+    if (nested && typeof nested === "object" && "requestId" in nested) {
+      return String((nested as { requestId: unknown }).requestId);
+    }
+  }
+  return null;
+}
+
+/**
+ * Get user-friendly message based on error type
+ */
+export function getMessageForErrorType(errorType: ErrorType): string {
+  switch (errorType) {
+    case ErrorType.VALIDATION:
+      return ERROR_MESSAGES.VALIDATION_FAILED;
+    case ErrorType.AUTHENTICATION:
+      return ERROR_MESSAGES.UNAUTHORIZED;
+    case ErrorType.AUTHORIZATION:
+      return ERROR_MESSAGES.FORBIDDEN;
+    case ErrorType.NOT_FOUND:
+      return ERROR_MESSAGES.NOT_FOUND;
+    case ErrorType.METHOD_NOT_ALLOWED:
+      return ERROR_MESSAGES.BAD_REQUEST;
+    case ErrorType.CONFLICT:
+      return ERROR_MESSAGES.CONFLICT;
+    case ErrorType.RATE_LIMIT:
+      return ERROR_MESSAGES.TOO_MANY_REQUESTS;
+    case ErrorType.SERVER:
+    case ErrorType.DATABASE:
+      return ERROR_MESSAGES.SERVER_ERROR;
+    case ErrorType.TIMEOUT:
+      return ERROR_MESSAGES.TIMEOUT;
+    case ErrorType.NETWORK:
+      return ERROR_MESSAGES.NETWORK;
+    default:
+      return ERROR_MESSAGES.GENERIC;
+  }
 }
 
 /**

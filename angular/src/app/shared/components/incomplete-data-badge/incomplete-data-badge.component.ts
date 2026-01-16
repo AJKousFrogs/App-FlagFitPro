@@ -16,8 +16,8 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { ButtonModule } from "primeng/button";
 
 export type IncompleteDataSeverity = "warning" | "critical";
@@ -37,7 +37,13 @@ export type IncompleteDataPlacement =
   selector: "app-incomplete-data-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, TagModule, TooltipModule, ButtonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    TooltipModule,
+    ButtonModule,
+    StatusTagComponent,
+  ],
   template: `
     <div
       class="incomplete-data-badge"
@@ -48,11 +54,11 @@ export type IncompleteDataPlacement =
       <i [class]="getIconClass()" class="badge-icon"></i>
       <span class="badge-label">{{ getLabel() }}</span>
       @if (showTag()) {
-        <p-tag
+        <app-status-tag
           [value]="getSeverityLabel()"
           [severity]="getSeverityTag()"
-          styleClass="severity-tag"
-        ></p-tag>
+          size="sm"
+        />
       }
       @if (showDaysCount() && daysMissing() > 0) {
         <span class="days-count"
@@ -203,11 +209,11 @@ export class IncompleteDataBadgeComponent {
     | "secondary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "contrast" {
     const s = this.severity();
-    return s === "critical" ? "danger" : "warn";
+    return s === "critical" ? "danger" : "warning";
   }
 
   getDefaultTooltip(): string {

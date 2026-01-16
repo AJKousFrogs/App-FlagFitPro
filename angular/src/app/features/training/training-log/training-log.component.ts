@@ -457,7 +457,7 @@ interface SessionType {
             >
               <div class="conflict-warning">
                 @for (conflict of conflicts(); track conflict.type) {
-                  <p-message severity="warn">
+                  <p-message severity="warn" styleClass="status-message">
                     <div class="warning-content">
                       <i class="pi pi-info-circle"></i>
                       <div>

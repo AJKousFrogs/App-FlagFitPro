@@ -141,7 +141,7 @@
     gap: var(--space-2);
     font-size: var(--font-size-h4);
 
-    .time {
+    .item-time {
       min-width: 70px;
       color: var(--ds-text-tertiary);
       font-family: monospace;
@@ -296,7 +296,7 @@
     gap: var(--space-2);
     flex-wrap: wrap;
 
-    .activity-time {
+    .item-time {
       min-width: 70px;
       font-family: monospace;
       font-size: var(--font-size-h4);

@@ -3,6 +3,12 @@
  *
  * Manages real-time subscriptions for all data entities in the app.
  * Provides a centralized way to subscribe to database changes.
+ *
+ * MEMORY SAFETY:
+ * - Tracks all subscriptions for cleanup
+ * - Provides unsubscribeAll() for app-level cleanup
+ * - Auto-cleans up on user logout via effect
+ * - Prevents duplicate subscriptions
  */
 
 import { Injectable, effect, inject, signal } from "@angular/core";
@@ -52,8 +58,34 @@ export class RealtimeService {
     "connected" | "disconnected" | "connecting"
   >("disconnected");
 
+  // Track last user ID to detect logout
+  private lastUserId: string | null = null;
+
   constructor() {
     this.initializeConnectionStatus();
+    this.initializeLogoutCleanup();
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.service.ts:constructor',message:'RealtimeService initialized',data:{navigatorOnline:navigator.onLine,channelCount:this.channels.size},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H4'})}).catch(()=>{});
+    // #endregion
+  }
+
+  /**
+   * MEMORY SAFETY: Clean up all subscriptions when user logs out
+   */
+  private initializeLogoutCleanup(): void {
+    effect(() => {
+      const currentUserId = this.supabase.userId();
+
+      // User logged out - clean up all subscriptions
+      if (this.lastUserId && !currentUserId) {
+        this.logger.info(
+          "[Realtime] User logged out, cleaning up all subscriptions",
+        );
+        this.unsubscribeAll();
+      }
+
+      this.lastUserId = currentUserId ?? null;
+    });
   }
 
   /**
@@ -348,8 +380,15 @@ export class RealtimeService {
     // Check if channel already exists
     if (this.channels.has(channelName)) {
       this.logger.warn(`Channel ${channelName} already exists`);
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.service.ts:createSubscription',message:'Duplicate channel skipped',data:{channelName,existingChannels:Array.from(this.channels.keys())},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
+      // #endregion
       return () => {};
     }
+
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.service.ts:createSubscription:before',message:'Creating channel subscription',data:{channelName,tableName,filter,totalChannels:this.channels.size,navigatorOnline:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H3'})}).catch(()=>{});
+    // #endregion
 
     // Create channel
     const channel = this.supabase.client
@@ -375,10 +414,18 @@ export class RealtimeService {
         },
       )
       .subscribe((status) => {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.service.ts:subscribe:callback',message:'Channel status changed',data:{channelName,status,navigatorOnline:navigator.onLine,totalChannels:this.channels.size},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H5'})}).catch(()=>{});
+        // #endregion
         if (status === "SUBSCRIBED") {
           this.logger.success(`Subscribed to ${channelName}`);
         } else if (status === "CHANNEL_ERROR") {
           this.logger.error(`Error subscribing to ${channelName}`);
+        } else if (status === "CLOSED" || status === "TIMED_OUT") {
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.service.ts:subscribe:disconnected',message:'Channel disconnected - no auto-reconnect',data:{channelName,status,navigatorOnline:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H5'})}).catch(()=>{});
+          // #endregion
+          this.logger.warn(`Channel ${channelName} status: ${status}`);
         }
       });
 
@@ -431,5 +478,16 @@ export class RealtimeService {
    */
   isSubscribed(channelName: string): boolean {
     return this.channels.has(channelName);
+  }
+
+  /**
+   * Get statistics about current subscriptions
+   * Useful for debugging memory issues
+   */
+  getStats(): { channelCount: number; channels: string[] } {
+    return {
+      channelCount: this.channels.size,
+      channels: Array.from(this.channels.keys()),
+    };
   }
 }

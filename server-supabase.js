@@ -318,26 +318,36 @@ export async function getTeamData(teamId) {
       return null;
     }
 
-    const { data: members } = await supabase
+    // NOTE: team_members.user_id references auth.users (not public.users), 
+    // so PostgREST cannot do implicit joins. Query separately.
+    const { data: membersData } = await supabase
       .from("team_members")
-      .select(
-        `
-        id,
-        role,
-        jersey_number,
-        position,
-        user_id,
-        users:user_id (
-          id,
-          email,
-          full_name
-        )
-      `,
-      )
+      .select("id, role, jersey_number, position, user_id")
       .eq("team_id", teamId)
       .eq("status", "active");
 
-    return { ...team, members: members || [] };
+    // Fetch user data from public.users separately
+    const userIds = (membersData || []).map((m) => m.user_id).filter(Boolean);
+    let usersMap = {};
+    
+    if (userIds.length > 0) {
+      const { data: usersData } = await supabase
+        .from("users")
+        .select("id, email, full_name")
+        .in("id", userIds);
+      
+      if (usersData) {
+        usersData.forEach((u) => { usersMap[u.id] = u; });
+      }
+    }
+    
+    // Combine members with user data
+    const members = (membersData || []).map((m) => ({
+      ...m,
+      users: usersMap[m.user_id] || null,
+    }));
+
+    return { ...team, members };
   } catch (error) {
     console.error("[Server] Error fetching team data:", error);
     return null;

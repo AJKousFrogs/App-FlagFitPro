@@ -16,8 +16,8 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { ButtonModule } from "primeng/button";
 
 export type ActionUrgency = "low" | "medium" | "high" | "critical";
@@ -35,7 +35,13 @@ export type ActionType =
   selector: "app-action-required-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, TagModule, TooltipModule, ButtonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    TooltipModule,
+    ButtonModule,
+    StatusTagComponent,
+  ],
   template: `
     @if (placement() === "button" && actionRoute()) {
       <button
@@ -58,11 +64,11 @@ export type ActionType =
         }
         <span class="action-label">{{ getLabel() }}</span>
         @if (showTag()) {
-          <p-tag
+          <app-status-tag
             [value]="getUrgencyLabel()"
             [severity]="getSeverity()"
-            styleClass="urgency-tag"
-          ></p-tag>
+            size="sm"
+          />
         }
       </div>
     }
@@ -240,20 +246,20 @@ export class ActionRequiredBadgeComponent {
     | "secondary"
     | "success"
     | "info"
-    | "warn"
+    | "warning"
     | "danger"
     | "contrast" {
     const u = this.urgency();
     const severities: Record<
       ActionUrgency,
-      "secondary" | "success" | "info" | "warn" | "danger" | "contrast"
+      "secondary" | "success" | "info" | "warning" | "danger" | "contrast"
     > = {
       low: "info",
-      medium: "warn",
-      high: "warn",
+      medium: "warning",
+      high: "warning",
       critical: "danger",
     };
-    return severities[u] || "warn";
+    return severities[u] || "warning";
   }
 
   getDefaultTooltip(): string {

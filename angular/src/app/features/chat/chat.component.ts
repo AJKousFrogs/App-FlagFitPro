@@ -33,7 +33,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
 import { ScrollPanelModule } from "primeng/scrollpanel";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
 import { Textarea } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { COLORS, TIMEOUTS } from "../../core/constants/app.constants";
@@ -57,6 +56,7 @@ import {
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
 
@@ -78,11 +78,11 @@ import { getInitials } from "../../shared/utils/format.utils";
     Textarea,
     TooltipModule,
     MenuModule,
-    TagModule,
     MainLayoutComponent,
 
     ButtonComponent,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <app-main-layout>
@@ -107,11 +107,12 @@ import { getInitials } from "../../shared/utils/format.utils";
             </div>
             <div class="header-badges">
               @if (currentChannel()?.channel_type === "announcements") {
-                <p-tag
-                  severity="warn"
+                <app-status-tag
                   value="Announcements"
-                  icon="pi pi-megaphone"
-                ></p-tag>
+                  severity="warning"
+                  icon="pi-megaphone"
+                  size="sm"
+                />
               }
               @if (currentChannelOnlineCount() > 0) {
                 <div
@@ -360,10 +361,11 @@ import { getInitials } from "../../shared/utils/format.utils";
                               }}
                             </span>
                             @if (message.is_important) {
-                              <p-tag
-                                severity="danger"
+                              <app-status-tag
                                 value="Important"
-                              ></p-tag>
+                                severity="danger"
+                                size="sm"
+                              />
                             }
                             <span class="message-time">{{
                               formatTime(message.created_at)
@@ -619,10 +621,11 @@ import { getInitials } from "../../shared/utils/format.utils";
         <div class="members-dialog-header">
           <span class="dialog-title">Channel Members</span>
           @if (channelMembersData()) {
-            <p-tag
+            <app-status-tag
               [value]="channelMembersData()!.total_count.toString()"
               severity="info"
-            ></p-tag>
+              size="sm"
+            />
           }
         </div>
       </ng-template>
@@ -691,12 +694,13 @@ import { getInitials } from "../../shared/utils/format.utils";
                     <div class="member-info">
                       <span class="member-name">{{ member.full_name }}</span>
                       <div class="member-meta">
-                        <p-tag
+                        <app-status-tag
                           [value]="
                             member.role === 'coach' ? 'Head Coach' : 'Assistant'
                           "
                           severity="success"
-                        ></p-tag>
+                          size="sm"
+                        />
                       </div>
                     </div>
                     <app-icon-button
@@ -755,10 +759,11 @@ import { getInitials } from "../../shared/utils/format.utils";
                       </span>
                       <div class="member-meta">
                         @if (member.position) {
-                          <p-tag
+                          <app-status-tag
                             [value]="member.position"
                             severity="secondary"
-                          ></p-tag>
+                            size="sm"
+                          />
                         }
                         @if (!member.can_post) {
                           <span class="read-only-badge">

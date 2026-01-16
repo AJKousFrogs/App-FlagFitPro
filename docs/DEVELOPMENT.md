@@ -14,7 +14,7 @@ Stop and restart the development server **only** when:
 
 #### 🔄 **Always Restart Required:**
 
-- **Adding new dependencies** - `npm install` or `yarn add`
+- **Adding new dependencies** - `pnpm install` (in angular folder) or `npm install` (in root)
 - **Changing configuration files**:
   - `angular.json`
   - `package.json`
@@ -383,8 +383,6 @@ supabase db push
 # Or apply manually in Supabase Dashboard SQL Editor
 ```
 
-See `docs/RELEASE_NOTES_2026-01-12.md` for complete list of changes.
-
 ---
 
-_Last Updated: January 12, 2026_
+_Last Updated: January 16, 2026_

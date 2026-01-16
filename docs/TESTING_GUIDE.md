@@ -22,7 +22,7 @@ A cross-platform guide for setting up and testing the Angular frontend with API 
 
 | Software | Version    | Check Command    |
 | -------- | ---------- | ---------------- |
-| Node.js  | ≥ 20.0.0   | `node --version` |
+| Node.js  | ≥ 22.0.0   | `node --version` |
 | npm      | ≥ 10.0.0   | `npm --version`  |
 | Git      | Any recent | `git --version`  |
 
@@ -40,14 +40,14 @@ A cross-platform guide for setting up and testing the Angular frontend with API 
 
 ```bash
 # Install Node.js via Homebrew
-brew install node@20
+brew install node@22
 ```
 
 **Linux (Ubuntu/Debian):**
 
 ```bash
 # Install Node.js via NodeSource
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
@@ -74,10 +74,12 @@ cd app-new-flag
 # Install root dependencies (for Netlify functions)
 npm install
 
-# Install Angular dependencies
+# Install Angular dependencies (uses pnpm)
 cd angular
-npm install
+npx pnpm install
 ```
+
+> **Note:** The Angular folder uses **pnpm** as its package manager (`packageManager: "pnpm@10.28.0"` in package.json). Use `npx pnpm install` if you don't have pnpm installed globally.
 
 ### 2. Environment Variables
 

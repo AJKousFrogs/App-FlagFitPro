@@ -18,8 +18,8 @@ import { ProgressBarModule } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   COLORS,
   TIMEOUTS,
@@ -94,7 +94,7 @@ interface DevelopmentGoal {
     DialogModule,
     ProgressBarModule,
     TableModule,
-    TagModule,
+    StatusTagComponent,
     TooltipModule,
     Tabs,
     TabPanel,
@@ -675,11 +675,11 @@ interface DevelopmentGoal {
                       <td>{{ game.gameDate }}</td>
                       <td>{{ game.opponent }}</td>
                       <td>
-                        <p-tag
+                        <app-status-tag
                           [value]="game.present ? 'Present' : 'Missed'"
                           [severity]="game.present ? 'success' : 'danger'"
-                        >
-                        </p-tag>
+                          size="sm"
+                        />
                       </td>
                       <td>{{ game.passAttempts }}</td>
                       <td>{{ game.completions }}</td>

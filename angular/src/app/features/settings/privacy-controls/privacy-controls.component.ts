@@ -14,10 +14,10 @@ import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
+import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AccountDeletionService } from "../../../core/services/account-deletion.service";
 import { AuthService } from "../../../core/services/auth.service";
@@ -65,7 +65,6 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     DividerModule,
     TooltipModule,
     Chip,
-    TagModule,
     AccordionModule,
     MainLayoutComponent,
     PageHeaderComponent,
@@ -73,6 +72,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
 
     ButtonComponent,
     IconButtonComponent,
+    StatusTagComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -223,12 +223,17 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                               team.performanceSharingEnabled ||
                               team.healthSharingEnabled
                             ) {
-                              <p-tag severity="success" value="Sharing"></p-tag>
+                              <app-status-tag
+                                value="Sharing"
+                                severity="success"
+                                size="sm"
+                              />
                             } @else {
-                              <p-tag
-                                severity="secondary"
+                              <app-status-tag
                                 value="Private"
-                              ></p-tag>
+                                severity="secondary"
+                                size="sm"
+                              />
                             }
                           </div>
                         </div>

@@ -111,6 +111,7 @@ async function baseHandler(event, context, options = {}) {
         `Method not allowed. Use ${allowedMethods.join(" or ")}.`,
         405,
         "method_not_allowed",
+        requestId,
       );
     }
 

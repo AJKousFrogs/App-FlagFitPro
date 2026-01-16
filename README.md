@@ -1,6 +1,6 @@
 # 🏈 FlagFit Pro - Professional Flag Football Training Platform
 
-[![Angular](https://img.shields.io/badge/Angular-21.0-red.svg)](https://angular.dev/)
+[![Angular](https://img.shields.io/badge/Angular-21.1-red.svg)](https://angular.dev/)
 [![PrimeNG](https://img.shields.io/badge/PrimeNG-21.0-blue.svg)](https://primeng.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)](https://supabase.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
@@ -131,14 +131,16 @@ cd flagfit-pro
 # Install root dependencies
 npm install
 
-# Install Angular dependencies
+# Install Angular dependencies (uses pnpm)
 cd angular
-npm install
+npx pnpm install
 cd ..
 
 # Start development (BOTH servers)
 npm run dev
 ```
+
+> **Note:** The Angular folder uses **pnpm** as its package manager. The command `npx pnpm install` will automatically download and run pnpm if not installed globally.
 
 ### ⚠️ IMPORTANT: Local Development
 
