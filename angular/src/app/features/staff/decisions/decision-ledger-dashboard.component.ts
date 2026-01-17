@@ -11,7 +11,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -27,9 +27,9 @@ import { LoggerService } from "@core/services/logger.service";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { ButtonComponent } from "@shared/components/button/button.component";
-import { Card } from "primeng/card";
+
 import { Select } from "primeng/select";
-import { Tag } from "primeng/tag";
+
 import { CreateDecisionDialogComponent } from "./create-decision-dialog.component";
 import { DecisionCardComponent } from "./decision-card.component";
 import { ReviewDecisionDialogComponent } from "./review-decision-dialog.component";
@@ -42,15 +42,13 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
     CommonModule,
     FormsModule,
     RouterModule,
-    Card,
     ButtonComponent,
-    Tag,
     Select,
     PageHeaderComponent,
     CardShellComponent,
     DecisionCardComponent,
     CreateDecisionDialogComponent,
-    ReviewDecisionDialogComponent,
+    ReviewDecisionDialogComponent
   ],
   template: `
     <div class="decision-ledger-dashboard">

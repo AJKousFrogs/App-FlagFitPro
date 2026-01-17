@@ -20,7 +20,7 @@ import {
   keyframes,
   style,
   transition,
-  trigger,
+  trigger
 } from "@angular/animations";
 import {
   ChangeDetectionStrategy,
@@ -29,19 +29,19 @@ import {
   computed,
   effect,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
 import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { Message } from "primeng/message";
+
 import { ProgressBar } from "primeng/progressbar";
 import { Skeleton } from "primeng/skeleton";
-import { Tag } from "primeng/tag";
+
 import { Toast } from "primeng/toast";
-import { Tooltip } from "primeng/tooltip";
+
 import { from } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { EmptyStateComponent } from "../../shared/components/ui-components";
@@ -53,7 +53,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import {
   ProtocolJson,
   TodayViewModel,
-  resolveTodayState,
+  resolveTodayState
 } from "../../today/resolution/today-state.resolver";
 import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import { WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
@@ -62,7 +62,7 @@ import {
   DailyProtocol,
   ExerciseCategory,
   PrescribedExercise,
-  ProtocolBlock,
+  ProtocolBlock
 } from "../training/daily-protocol/daily-protocol.models";
 
 // Services
@@ -82,7 +82,7 @@ import { environment } from "../../../environments/environment";
 import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
 import {
   WELLNESS,
-  computeQuickReadiness,
+  computeQuickReadiness
 } from "../../core/constants/wellness.constants";
 
 // Types
@@ -112,6 +112,10 @@ interface QuickFormData {
   overallFeeling: number | null;
   energyLevel: number | null;
   hasSoreness: boolean | null;
+  sleepHours: number | null;
+  sorenessLevel: number | null;
+  stressLevel: number | null;
+  sorenessAreas: string[];
 }
 
 @Component({
@@ -122,18 +126,15 @@ interface QuickFormData {
     RouterModule,
     Card,
     Dialog,
-    Message,
     ProgressBar,
     Skeleton,
-    Tag,
     Toast,
-    Tooltip,
     MainLayoutComponent,
     ProtocolBlockComponent,
     ButtonComponent,
     EmptyStateComponent,
     AppBannerComponent,
-    AcwrBaselineComponent,
+    AcwrBaselineComponent
   ],
   providers: [MessageService],
   animations: [
@@ -831,6 +832,50 @@ interface QuickFormData {
       }
 
       /* --------------------------------------------------------------------------
+       QUICK CHECK-IN MODAL - Ensure footer is always visible
+       -------------------------------------------------------------------------- */
+      :host ::ng-deep .quick-checkin-modal {
+        .p-dialog {
+          display: flex;
+          flex-direction: column;
+          max-height: 90vh;
+        }
+
+        .p-dialog-content {
+          flex: 1;
+          overflow-y: auto;
+          max-height: 60vh;
+        }
+
+        .p-dialog-footer {
+          flex-shrink: 0;
+          padding: var(--space-4) var(--space-5);
+          border-top: var(--border-1) solid var(--color-border-secondary);
+          background: var(--surface-primary);
+          display: flex;
+          justify-content: flex-end;
+          gap: var(--space-3);
+        }
+      }
+
+      @media (max-width: 480px) {
+        :host ::ng-deep .quick-checkin-modal {
+          .p-dialog {
+            max-height: 85vh;
+            margin: var(--space-3);
+          }
+
+          .p-dialog-content {
+            max-height: 50vh;
+          }
+
+          .p-dialog-footer {
+            padding: var(--space-3) var(--space-4);
+          }
+        }
+      }
+
+      /* --------------------------------------------------------------------------
        CELEBRATION OVERLAY
        -------------------------------------------------------------------------- */
       .celebration-overlay {
@@ -1224,6 +1269,10 @@ export class TodayComponent {
     overallFeeling: null,
     energyLevel: null,
     hasSoreness: null,
+    sleepHours: null,
+    sorenessLevel: null,
+    stressLevel: null,
+    sorenessAreas: [],
   });
 
   // Celebration State
@@ -1962,6 +2011,10 @@ export class TodayComponent {
       overallFeeling: null,
       energyLevel: null,
       hasSoreness: null,
+      sleepHours: null,
+      sorenessLevel: null,
+      stressLevel: null,
+      sorenessAreas: [],
     });
     this.showQuickCheckin.set(true);
   }
@@ -2003,15 +2056,20 @@ export class TodayComponent {
     });
 
     // Map quick form to full wellness data
+    // IMPORTANT: Do NOT use hardcoded defaults for wellness metrics
+    // Missing data should be null to ensure accurate calculations and
+    // proper data quality indicators in ACWR/readiness scoring
     const wellnessData = {
       date: targetDate,
-      sleepQuality: data.overallFeeling ?? 3,
-      sleepHours: 7, // Default
-      energyLevel: data.energyLevel ?? 3,
-      muscleSoreness: data.hasSoreness ? 2 : 4,
-      stressLevel: data.overallFeeling ?? 3,
-      sorenessAreas: [] as string[],
-      readinessScore: readiness,
+      sleepQuality: data.overallFeeling ?? null, // No default - require explicit input
+      sleepHours: data.sleepHours ?? null, // No hardcoded default - affects calculations
+      energyLevel: data.energyLevel ?? null, // No default - require explicit input
+      muscleSoreness: data.hasSoreness !== undefined 
+        ? (data.hasSoreness ? data.sorenessLevel ?? null : null) 
+        : null,
+      stressLevel: data.stressLevel ?? null, // No default - require explicit input
+      sorenessAreas: data.sorenessAreas ?? [],
+      readinessScore: readiness, // Calculated from actual inputs, not defaults
     };
 
     from(this.trainingService.submitWellness(wellnessData))

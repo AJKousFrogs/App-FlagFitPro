@@ -75,7 +75,26 @@ function createErrorResponse(
   errorType = ErrorType.UNKNOWN,
   additionalDataOrRequestId = {},
 ) {
-  const errorMessage = error instanceof Error ? error.message : error;
+  // Backward compatibility for legacy call order: (statusCode, message, errorType)
+  let resolvedStatusCode = statusCode;
+  let resolvedError = error;
+  let resolvedErrorType = errorType;
+
+  if (typeof error === "number" && typeof statusCode === "string") {
+    resolvedStatusCode = error;
+    resolvedError = statusCode;
+    resolvedErrorType = errorType;
+  }
+
+  if (
+    resolvedErrorType === ErrorType.VALIDATION &&
+    resolvedStatusCode === 400
+  ) {
+    resolvedStatusCode = 422;
+  }
+
+  const errorMessage =
+    resolvedError instanceof Error ? resolvedError.message : resolvedError;
   const timestamp = new Date().toISOString();
 
   // Handle backward compatibility: if fourth param is string (requestId), include it
@@ -105,10 +124,30 @@ function createErrorResponse(
     error.stack || "",
   );
 
+  const errorDetails =
+    additionalData?.details ||
+    additionalData?.errors ||
+    additionalData?.fields ||
+    null;
+
+  if (additionalData?.details) {
+    delete additionalData.details;
+  }
+  if (additionalData?.errors) {
+    delete additionalData.errors;
+  }
+  if (additionalData?.fields) {
+    delete additionalData.fields;
+  }
+
   const responseBody = {
     success: false,
-    error: errorMessage,
-    errorType,
+    error: {
+      code: resolvedErrorType,
+      message: errorMessage,
+      details: errorDetails,
+    },
+    errorType: resolvedErrorType,
     timestamp,
     ...additionalData,
   };
@@ -119,7 +158,7 @@ function createErrorResponse(
   }
 
   return {
-    statusCode,
+    statusCode: resolvedStatusCode,
     headers: CORS_HEADERS,
     body: JSON.stringify(responseBody),
   };
@@ -209,8 +248,8 @@ function handleAuthorizationError(message = "Permission denied") {
  */
 function handleValidationError(errors) {
   const errorMessage = Array.isArray(errors) ? errors.join(", ") : errors;
-  return createErrorResponse(errorMessage, 400, ErrorType.VALIDATION, {
-    errors: Array.isArray(errors) ? errors : [errors],
+  return createErrorResponse(errorMessage, 422, ErrorType.VALIDATION, {
+    details: Array.isArray(errors) ? errors : [errors],
   });
 }
 

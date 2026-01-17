@@ -6,7 +6,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -20,14 +20,14 @@ import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import {
   AttendanceRecord,
   AttendanceService,
   PlayerAttendanceStats,
-  TeamEvent,
+  TeamEvent
 } from "../../core/services/attendance.service";
 import { AuthService } from "../../core/services/auth.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -65,14 +65,12 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     DatePicker,
     Checkbox,
     ProgressBar,
-    Tooltip,
     Avatar,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>

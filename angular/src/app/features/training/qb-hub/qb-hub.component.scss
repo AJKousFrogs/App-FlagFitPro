@@ -44,39 +44,3 @@
 .mr-2 {
   margin-right: var(--space-2);
 }
-
-// ================================================================
-// PRIMENG TABS OVERRIDES FOR MOBILE
-// ================================================================
-
-:host {
-  // Ensure tabs scroll horizontally on mobile
-  .p-tablist {
-    @include respond-to(md) {
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
-    }
-  }
-
-  // Adjust tab padding on mobile
-  .p-tab {
-    @include respond-to(md) {
-      padding: var(--space-2) var(--space-3);
-      font-size: var(--font-size-h4);
-      white-space: nowrap;
-    }
-  }
-
-  // Ensure tab panel has proper padding
-  .p-tabpanel {
-    @include respond-to(md) {
-      padding: var(--space-3) 0;
-    }
-  }
-}

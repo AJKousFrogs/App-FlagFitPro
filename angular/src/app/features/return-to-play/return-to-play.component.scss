@@ -142,7 +142,7 @@
   }
 
   .stage-icon {
-    height: 20px;
+    height: var(--avatar-size-xs);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -202,7 +202,7 @@
 }
 
 .stage-connector {
-  width: 30px;
+  width: var(--avatar-size-sm);
   height: 2px;
   background: var(--color-border-secondary);
 
@@ -297,8 +297,8 @@
   }
 
   &.restricted {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: var(--color-status-error-light);
+    border: 1px solid rgba(var(--primitive-error-500-rgb), 0.2);
   }
 
   .activity-item {
@@ -438,7 +438,7 @@
     padding: var(--space-1) 0;
 
     label {
-      font-weight: normal;
+      font-weight: var(--font-weight-normal);
       margin-bottom: 0;
       font-size: var(--font-size-h4);
       cursor: pointer;
@@ -474,7 +474,7 @@
 }
 
 .notes-cell {
-  max-width: 200px;
+  max-width: var(--input-min-width-lg);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -529,7 +529,7 @@
       gap: var(--space-2);
 
       label {
-        font-weight: normal;
+        font-weight: var(--font-weight-normal);
         margin-bottom: 0;
         font-size: var(--font-size-h4);
         cursor: pointer;
@@ -584,7 +584,7 @@
   }
 
   .stage-box {
-    min-width: 60px;
+    min-width: var(--avatar-size-xl);
     padding: var(--space-2);
 
     .stage-name {

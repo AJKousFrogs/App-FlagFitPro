@@ -101,7 +101,7 @@
 
     i {
       color: var(--ds-text-tertiary);
-      width: 20px;
+      width: var(--avatar-size-xs);
     }
   }
 }
@@ -142,7 +142,7 @@
     font-size: var(--font-size-h4);
 
     .item-time {
-      min-width: 70px;
+      min-width: var(--badge-min-width-md);
       color: var(--ds-text-tertiary);
       font-family: monospace;
     }
@@ -297,7 +297,7 @@
     flex-wrap: wrap;
 
     .item-time {
-      min-width: 70px;
+      min-width: var(--badge-min-width-md);
       font-family: monospace;
       font-size: var(--font-size-h4);
       color: var(--ds-text-tertiary);
@@ -309,7 +309,7 @@
 
     .activity-title-input {
       flex: 1;
-      min-width: 150px;
+      min-width: var(--input-min-width-md);
     }
   }
 
@@ -333,7 +333,7 @@
 // Equipment Grid
 .equipment-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-2);
 
   .equipment-item {

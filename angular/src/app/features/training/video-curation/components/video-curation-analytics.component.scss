@@ -11,7 +11,7 @@
 
 .analytics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-lg), 1fr));
   gap: var(--space-4);
 }
 
@@ -34,7 +34,7 @@
 }
 
 .analytics-bar {
-  height: 8px;
+  height: var(--indicator-size-sm);
   border-radius: var(--radius-sm);
 
   // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-042)
@@ -58,7 +58,7 @@
   gap: var(--space-3);
   padding: var(--space-2);
   border-radius: var(--radius-md);
-  transition: background 0.2s;
+  transition: background var(--transition-base) var(--ease-standard);
 
   &:hover {
     background: var(--surface-secondary);

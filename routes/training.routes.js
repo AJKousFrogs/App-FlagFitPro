@@ -71,18 +71,17 @@ router.get(
         );
       }
       const userId = userIdValidation.userId;
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const ninetyDaysAgo = new Date();
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
       let query = supabase
         .from("training_sessions")
         .select(
           "id, user_id, session_date, duration_minutes, rpe, status, session_type",
         )
-        .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-        .eq("status", "completed")
+        .gte("session_date", ninetyDaysAgo.toISOString().split("T")[0])
         .order("session_date", { ascending: false })
-        .limit(50);
+        .limit(100);
 
       query = query.eq("user_id", userId);
 
@@ -94,9 +93,10 @@ router.get(
 
       const totalMinutes =
         sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
+      const sessionsWithRpe = sessions?.filter((s) => s.rpe !== null && s.rpe !== undefined) || [];
       const avgRpe =
-        sessions?.length > 0
-          ? sessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessions.length
+        sessionsWithRpe.length > 0
+          ? sessionsWithRpe.reduce((sum, s) => sum + s.rpe, 0) / sessionsWithRpe.length
           : 0;
 
       // Calculate this week's sessions
@@ -156,14 +156,13 @@ router.get(
         );
       }
       const userId = userIdValidation.userId;
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const ninetyDaysAgo = new Date();
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
       let query = supabase
         .from("training_sessions")
         .select("session_date, duration_minutes, rpe, session_type")
-        .gte("session_date", thirtyDaysAgo.toISOString().split("T")[0])
-        .eq("status", "completed")
+        .gte("session_date", ninetyDaysAgo.toISOString().split("T")[0])
         .order("session_date");
 
       query = query.eq("user_id", userId);
@@ -187,7 +186,11 @@ router.get(
         }
         weeklyData[weekKey].sessions++;
         weeklyData[weekKey].minutes += s.duration_minutes || 0;
-        weeklyData[weekKey].load += (s.rpe || 5) * (s.duration_minutes || 60);
+        const rpe = s.rpe ?? null;
+        const duration = s.duration_minutes ?? null;
+        if (rpe !== null && duration !== null) {
+          weeklyData[weekKey].load += rpe * duration;
+        }
       });
 
       // Session type distribution

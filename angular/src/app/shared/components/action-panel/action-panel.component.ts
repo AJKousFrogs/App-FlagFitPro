@@ -29,12 +29,11 @@ import {
   Component,
   input,
   output,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
-import { Card } from "primeng/card";
 
 export type ActionPanelUrgency = "low" | "medium" | "high" | "critical";
 export type ActionPanelType =
@@ -50,7 +49,7 @@ export type ActionPanelType =
   selector: "app-action-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ButtonComponent, Card],
+  imports: [CommonModule, RouterModule, ButtonComponent],
   template: `
     <div
       class="action-panel"

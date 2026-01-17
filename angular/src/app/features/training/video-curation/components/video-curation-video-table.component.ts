@@ -10,7 +10,7 @@ import {
   Component,
   input,
   output,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
@@ -19,8 +19,7 @@ import { Avatar } from "primeng/avatar";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tag } from "primeng/tag";
-import { Tooltip } from "primeng/tooltip";
+
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 
@@ -28,12 +27,12 @@ import {
   formatFocus,
   getStatusSeverity,
   POSITION_OPTIONS,
-  STATUS_OPTIONS,
+  STATUS_OPTIONS
 } from "../video-curation-utils";
 import {
   FlagPosition,
   InstagramVideo,
-  VideoStatus,
+  VideoStatus
 } from "../video-curation.models";
 
 @Component({
@@ -44,13 +43,11 @@ import {
     CommonModule,
     FormsModule,
     TableModule,
-    Tag,
     StatusTagComponent,
     InputText,
     Select,
-    Tooltip,
     Avatar,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <div class="tab-content">

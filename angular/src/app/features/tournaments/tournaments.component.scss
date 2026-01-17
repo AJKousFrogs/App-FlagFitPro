@@ -38,7 +38,7 @@
 
 .tournaments-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
   gap: var(--space-6);
   margin-top: var(--space-6);
 }
@@ -591,7 +591,7 @@
 
 /* Player Availability List */
 .player-availability-list {
-  max-height: 300px;
+  max-height: var(--chart-min-height-md); /* 300px */
   overflow-y: auto;
 }
 
@@ -935,14 +935,6 @@
  * Tournament Form - Layout only (no form control styling)
  * Form control height/radius/padding/focus handled by global system
  */
-.tournament-form .p-inputtext,
-.tournament-form .p-select,
-.tournament-form .p-datepicker,
-.tournament-form .p-calendar,
-.tournament-form .p-inputnumber {
-  width: 100%;
-}
-
 .tournament-form textarea.p-inputtextarea {
   min-height: var(--space-20);
   resize: vertical;

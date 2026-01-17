@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -25,7 +25,7 @@ import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
@@ -35,7 +35,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
   DIALOG_STYLES,
-  DROPDOWN_WIDTHS,
+  DROPDOWN_WIDTHS
 } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -105,14 +105,12 @@ const EVENT_TYPE_CONFIG: Record<
     InputNumber,
     RadioButton,
     Select,
-    Tag,
     StatusTagComponent,
     Textarea,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

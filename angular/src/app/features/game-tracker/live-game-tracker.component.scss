@@ -18,7 +18,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4);
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--surface-overlay-darkest);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
@@ -67,7 +67,7 @@
 
 .ball-marker {
   cursor: pointer;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 2px 4px var(--surface-overlay));
   transition: r var(--transition-fast);
 }
 
@@ -96,7 +96,7 @@
 }
 
 .field-action {
-  background: rgba(0, 0, 0, 0.8);
+  background: var(--surface-overlay-darkest);
   color: var(--color-text-on-primary);
   border: var(--border-2) solid var(--surface-primary);
   padding: var(--space-3) var(--space-4);
@@ -122,7 +122,7 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-4);
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--surface-overlay-dark);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }

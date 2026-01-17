@@ -4,6 +4,7 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { createErrorResponse } = require("./utils/error-handler.cjs");
 
 const supabase = supabaseAdmin;
 
@@ -14,17 +15,19 @@ const headers = {
   "Content-Type": "application/json",
 };
 
+function withHeaders(response) {
+  return { ...response, headers };
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 200, headers, body: "" };
   }
 
   if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
+    return withHeaders(
+      createErrorResponse("Method not allowed", 405, "method_not_allowed"),
+    );
   }
 
   try {
@@ -51,11 +54,13 @@ exports.handler = async (event) => {
 
     if (error) {
       console.error("Error fetching plyometric exercises:", error);
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: "Failed to fetch exercises" }),
-      };
+      return withHeaders(
+        createErrorResponse(
+          "Failed to fetch exercises",
+          500,
+          "database_error",
+        ),
+      );
     }
 
     return {
@@ -69,10 +74,8 @@ exports.handler = async (event) => {
     };
   } catch (error) {
     console.error("Plyometrics API error:", error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: "Internal server error" }),
-    };
+    return withHeaders(
+      createErrorResponse("Internal server error", 500, "server_error"),
+    );
   }
 };

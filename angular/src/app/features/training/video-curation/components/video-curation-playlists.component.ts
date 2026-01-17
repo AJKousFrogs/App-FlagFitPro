@@ -8,14 +8,14 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output,
+  output
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
-import { Tooltip } from "primeng/tooltip";
+
 import { Chip } from "primeng/chip";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -27,7 +27,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   selector: "app-video-curation-playlists",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tag, StatusTagComponent, Tooltip, Chip, ButtonComponent, IconButtonComponent],
+  imports: [CommonModule, StatusTagComponent, Chip, ButtonComponent, IconButtonComponent],
   template: `
     <div class="tab-content">
       <div class="playlists-header">

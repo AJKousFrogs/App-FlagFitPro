@@ -8,62 +8,6 @@
 
 :host {
   display: block;
-
-  /* ================================
-     PRIMENG TOAST CSS CUSTOM PROPERTIES
-     These cascade into the p-toast component
-     ================================ */
-
-  // Toast container
-  --p-toast-blur: 10px;
-  --p-toast-border-radius: var(--radius-xl);
-  --p-toast-shadow:
-    0 10px 40px -10px rgba(0, 0, 0, 0.2), 0 4px 15px -5px rgba(0, 0, 0, 0.1);
-
-  // Toast message
-  --p-toast-content-padding: 0;
-  --p-toast-content-gap: 0;
-
-  // Close button
-  --p-toast-close-button-width: 2rem;
-  --p-toast-close-button-height: 2rem;
-  --p-toast-close-button-border-radius: var(--radius-md);
-
-  // Success severity
-  --p-toast-success-background: linear-gradient(
-    135deg,
-    rgba(99, 173, 14, 0.1) 0%,
-    var(--surface-primary) 100%
-  );
-  --p-toast-success-border-color: var(--color-status-success);
-  --p-toast-success-color: var(--color-text-primary);
-
-  // Info severity
-  --p-toast-info-background: linear-gradient(
-    135deg,
-    rgba(var(--ds-primary-green-rgb), 0.1) 0%,
-    var(--surface-primary) 100%
-  );
-  --p-toast-info-border-color: var(--ds-primary-green);
-  --p-toast-info-color: var(--color-text-primary);
-
-  // Warning severity
-  --p-toast-warn-background: linear-gradient(
-    135deg,
-    rgba(255, 192, 0, 0.1) 0%,
-    var(--surface-primary) 100%
-  );
-  --p-toast-warn-border-color: var(--color-status-warning);
-  --p-toast-warn-color: var(--color-text-primary);
-
-  // Error severity
-  --p-toast-error-background: linear-gradient(
-    135deg,
-    rgba(255, 0, 60, 0.1) 0%,
-    var(--surface-primary) 100%
-  );
-  --p-toast-error-border-color: var(--color-status-error);
-  --p-toast-error-color: var(--color-text-primary);
 }
 
 /* ================================

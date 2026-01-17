@@ -30,17 +30,18 @@
     // LOCKED GEOMETRY - MATCHES APP-BUTTON CONTRACT
     // ─────────────────────────────────────────
     font-family: var(--font-family-sans);
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-body-size, 16px);
+    font-weight: var(--p-button-font-weight, var(--font-weight-semibold));
+    font-size: var(--p-button-font-size, var(--font-body-size, 16px));
     letter-spacing: 0.01em;
     line-height: 1.5;
 
     // LOCKED SHAPE - RAISED RECTANGULAR (NOT PILL)
-    border-radius: var(--radius-button, 8px);
+    border-radius: var(--p-button-border-radius, var(--radius-lg, 8px));
 
     // LOCKED SIZE
-    min-height: 44px;
-    padding: var(--space-3, 12px) var(--space-6, 24px);
+    min-height: var(--p-form-control-height, 44px);
+    padding: var(--p-button-padding-y, var(--space-3, 12px))
+      var(--p-button-padding-x, var(--space-6, 24px));
 
     // LOCKED BORDER for hover state support
     border: 2px solid transparent;
@@ -58,6 +59,18 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-2, 8px);
+
+    &.p-button-sm {
+      padding: var(--p-button-sm-padding-y, var(--space-2, 8px))
+        var(--p-button-sm-padding-x, var(--space-3, 12px));
+      font-size: var(--p-button-sm-font-size, var(--font-body-sm-size, 14px));
+    }
+
+    &.p-button-lg {
+      padding: var(--p-button-lg-padding-y, var(--space-4, 16px))
+        var(--p-button-lg-padding-x, var(--space-5, 20px));
+      font-size: var(--p-button-lg-font-size, var(--font-body-size, 16px));
+    }
 
     /* Subtle inner glow effect */
     &::before {
@@ -103,7 +116,7 @@
     /* Icon styling within buttons */
     .p-button-icon {
       font-size: var(--font-body-size);
-      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform var(--transition-base) var(--ease-micro-bounce);
     }
 
     /* Icon spacing - left icon */
@@ -1094,7 +1107,7 @@
       width: 0.875rem;
       height: 0.875rem;
       line-height: 1;
-      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform var(--transition-base) var(--ease-micro-bounce);
     }
 
     /* Subtle inner shadow for depth */
@@ -1359,7 +1372,7 @@
       font-size: var(--font-caption-size);
       width: 0.75rem;
       height: 0.75rem;
-      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform var(--transition-base) var(--ease-micro-bounce);
     }
 
     @media (hover: hover) and (pointer: fine) {
@@ -4124,7 +4137,7 @@ p-button .p-button,
     .pi,
     .p-icon {
       font-size: var(--font-body-sm-size);
-      transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform var(--transition-base) var(--ease-micro-bounce);
     }
 
     @media (hover: hover) and (pointer: fine) {
@@ -4178,8 +4191,8 @@ p-button .p-button,
 
   .pi,
   .p-icon {
-    font-size: 0.625rem;
-    transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-size: var(--font-caption-size); /* Minimum accessible size */
+    transition: transform var(--transition-base) var(--ease-micro-bounce);
   }
 
   @media (hover: hover) and (pointer: fine) {

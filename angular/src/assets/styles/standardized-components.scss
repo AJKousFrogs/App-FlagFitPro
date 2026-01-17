@@ -317,7 +317,7 @@
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.2);
+    box-shadow: 0 0 0 0.2rem rgba(var(--primitive-error-500-rgb), 0.2);
   }
 
   @media (hover: none) and (pointer: coarse) {
@@ -352,7 +352,7 @@
   }
 
   &:focus-visible {
-    box-shadow: 0 0 0 0.2rem rgba(241, 196, 15, 0.2);
+    box-shadow: 0 0 0 0.2rem rgba(var(--primitive-success-500-rgb), 0.2);
   }
 
   @media (hover: none) and (pointer: coarse) {
@@ -852,7 +852,7 @@ input[type="datetime-local"] {
     border-color: var(--color-status-success);
 
     &:focus-visible {
-      box-shadow: 0 0 0 0.2rem rgba(241, 196, 15, 0.2);
+      box-shadow: 0 0 0 0.2rem rgba(var(--primitive-success-500-rgb), 0.2);
     }
   }
 }

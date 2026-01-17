@@ -10,6 +10,8 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { createErrorResponse, handleValidationError } = require("./utils/error-handler.cjs");
 
 const supabase = supabaseAdmin;
 
@@ -26,20 +28,12 @@ const headers = {
 /**
  * Verify user has coach/admin role
  */
-async function verifyCoachRole(authHeader) {
-  if (!authHeader) {
-    return { authorized: false, error: "No authorization header" };
+async function verifyCoachRole(event) {
+  const auth = await authenticateRequest(event);
+  if (!auth.success) {
+    return { authorized: false, error: auth.error };
   }
-
-  const token = authHeader.replace("Bearer ", "");
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser(token);
-
-  if (error || !user) {
-    return { authorized: false, error: "Invalid token" };
-  }
+  const { user } = auth;
 
   // Get role from team_members table (not users table)
   const { data: memberData } = await supabase
@@ -50,7 +44,14 @@ async function verifyCoachRole(authHeader) {
 
   const role = memberData?.role || "player";
   if (!["coach", "admin", "head_coach", "assistant_coach"].includes(role)) {
-    return { authorized: false, error: "Insufficient permissions" };
+    return {
+      authorized: false,
+      error: createErrorResponse(
+        "Insufficient permissions",
+        403,
+        "authorization_error",
+      ),
+    };
   }
 
   return { authorized: true, user, role };
@@ -454,15 +455,9 @@ exports.handler = async (event) => {
 
       // GET /api/exercisedb/search - Search ExerciseDB API
       if (path === "/search") {
-        const auth = await verifyCoachRole(
-          event.headers.authorization || event.headers.Authorization,
-        );
+        const auth = await verifyCoachRole(event);
         if (!auth.authorized) {
-          return {
-            statusCode: 401,
-            headers,
-            body: JSON.stringify({ error: auth.error }),
-          };
+          return auth.error;
         }
 
         const results = await searchExerciseDB(params);
@@ -475,15 +470,9 @@ exports.handler = async (event) => {
 
       // GET /api/exercisedb/logs - Get import logs
       if (path === "/logs") {
-        const auth = await verifyCoachRole(
-          event.headers.authorization || event.headers.Authorization,
-        );
+        const auth = await verifyCoachRole(event);
         if (!auth.authorized) {
-          return {
-            statusCode: 401,
-            headers,
-            body: JSON.stringify({ error: auth.error }),
-          };
+          return auth.error;
         }
 
         const { data: logs, error } = await supabase
@@ -514,18 +503,17 @@ exports.handler = async (event) => {
 
     // POST requests (require auth)
     if (event.httpMethod === "POST") {
-      const auth = await verifyCoachRole(
-        event.headers.authorization || event.headers.Authorization,
-      );
+      const auth = await verifyCoachRole(event);
       if (!auth.authorized) {
-        return {
-          statusCode: 401,
-          headers,
-          body: JSON.stringify({ error: auth.error }),
-        };
+        return auth.error;
       }
 
-      const body = JSON.parse(event.body || "{}");
+      let body = {};
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch (_parseError) {
+        return handleValidationError("Invalid JSON in request body");
+      }
 
       // POST /api/exercisedb/import - Import exercises
       if (path === "/import") {
@@ -549,23 +537,24 @@ exports.handler = async (event) => {
       }
 
       return {
-        statusCode: 404,
+        ...createErrorResponse("Endpoint not found", 404, "not_found"),
         headers,
-        body: JSON.stringify({ error: "Endpoint not found" }),
       };
     }
 
     return {
-      statusCode: 405,
+      ...createErrorResponse("Method not allowed", 405, "method_not_allowed"),
       headers,
-      body: JSON.stringify({ error: "Method not allowed" }),
     };
   } catch (error) {
     console.error("ExerciseDB API error:", error);
     return {
-      statusCode: 500,
+      ...createErrorResponse(
+        error.message || "Internal server error",
+        500,
+        "server_error",
+      ),
       headers,
-      body: JSON.stringify({ error: error.message || "Internal server error" }),
     };
   }
 };

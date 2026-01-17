@@ -1,4 +1,9 @@
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 exports.handler = async (event) => {
   const headers = {
@@ -13,31 +18,12 @@ exports.handler = async (event) => {
   }
 
   try {
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: "Missing authorization" }),
-      };
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return { ...auth.error, headers };
     }
-
-    const token = authHeader.replace("Bearer ", "");
+    const { user } = auth;
     const supabase = supabaseAdmin;
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: "Invalid token" }),
-      };
-    }
 
     const method = event.httpMethod;
 
@@ -48,21 +34,21 @@ exports.handler = async (event) => {
 
     // POST - Update cycle status
     if (method === "POST") {
-      const payload = JSON.parse(event.body || "{}");
+      let payload = {};
+      try {
+        payload = JSON.parse(event.body || "{}");
+      } catch (_parseError) {
+        return { ...handleValidationError("Invalid JSON in request body"), headers };
+      }
       return await updateCycleStatus(supabase, user.id, payload, headers);
     }
 
-    return {
-      statusCode: 404,
-      headers,
-      body: JSON.stringify({ error: "Not found" }),
-    };
+    return { ...createErrorResponse("Not found", 404, "not_found"), headers };
   } catch (error) {
     console.error("Program cycles error:", error);
     return {
-      statusCode: 500,
+      ...createErrorResponse(error.message, 500, "server_error"),
       headers,
-      body: JSON.stringify({ error: error.message }),
     };
   }
 };
@@ -77,9 +63,8 @@ async function getCycles(supabase, userId, headers) {
 
   if (cyclesError) {
     return {
-      statusCode: 500,
+      ...createErrorResponse(cyclesError.message, 500, "database_error"),
       headers,
-      body: JSON.stringify({ error: cyclesError.message }),
     };
   }
 
@@ -142,11 +127,7 @@ async function updateCycleStatus(supabase, userId, payload, headers) {
   const { cycleId, status, completionPercentage, notes } = payload;
 
   if (!cycleId) {
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: "cycleId required" }),
-    };
+    return { ...handleValidationError("cycleId required"), headers };
   }
 
   // Upsert player cycle progress
@@ -173,9 +154,8 @@ async function updateCycleStatus(supabase, userId, payload, headers) {
 
   if (error) {
     return {
-      statusCode: 500,
+      ...createErrorResponse(error.message, 500, "database_error"),
       headers,
-      body: JSON.stringify({ error: error.message }),
     };
   }
 

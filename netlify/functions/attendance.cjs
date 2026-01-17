@@ -570,6 +570,7 @@ exports.handler = async (event, context) => {
     functionName: "attendance",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "DEFAULT",
+    requireAuth: true, // SECURITY: Explicit auth for attendance management
     handler: async (event, _context, { userId }) => {
       const path = event.path
         .replace(/^\/api\/attendance\/?/, "")

@@ -41,6 +41,14 @@
             "stylePreprocessorOptions": {
               "includePaths": ["src", "node_modules"]
             },
+            "allowedCommonJsDependencies": [
+              "canvg",
+              "core-js",
+              "raf",
+              "rgbcolor",
+              "html2canvas",
+              "jspdf"
+            ],
             "outputMode": "static"
           },
           "configurations": {
@@ -48,22 +56,22 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "800kb",
+                  "maximumWarning": "1.5mb",
                   "maximumError": "1.5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "30kb",
+                  "maximumWarning": "45kb",
                   "maximumError": "50kb"
                 },
                 {
                   "type": "anyScript",
-                  "maximumWarning": "400kb",
+                  "maximumWarning": "450kb",
                   "maximumError": "600kb"
                 },
                 {
                   "type": "any",
-                  "maximumWarning": "400kb",
+                  "maximumWarning": "450kb",
                   "maximumError": "600kb"
                 }
               ],

@@ -15,7 +15,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -24,13 +24,12 @@ import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ColorPicker } from "primeng/colorpicker";
 import { Dialog } from "primeng/dialog";
-import { FileUpload } from "primeng/fileupload";
+
 import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
@@ -132,24 +131,16 @@ const STATUS_CONFIG: Record<
     Checkbox,
     ColorPicker,
     Dialog,
-    FileUpload,
     InputText,
     RadioButton,
     Select,
     TableModule,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
-    Tag,
     StatusTagComponent,
     Textarea,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

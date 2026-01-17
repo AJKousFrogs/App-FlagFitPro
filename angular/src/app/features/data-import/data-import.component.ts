@@ -15,19 +15,19 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
+
 import { FileUpload } from "primeng/fileupload";
 import { InputText } from "primeng/inputtext";
 import { Message } from "primeng/message";
-import { ProgressBar } from "primeng/progressbar";
+
 import { Select } from "primeng/select";
-import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
+import { Stepper, StepList, Step } from "primeng/stepper";
 import { TableModule } from "primeng/table";
 import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -184,20 +184,19 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     CommonModule,
     FormsModule,
     Card,
-    Dialog,
     FileUpload,
     InputText,
     Message,
-    ProgressBar,
     Select,
-    Stepper, StepList, Step, StepPanels, StepPanel,
+    Stepper,
+    StepList,
+    Step,
     TableModule,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   providers: [MessageService],
   template: `

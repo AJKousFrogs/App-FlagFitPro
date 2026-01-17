@@ -19,7 +19,7 @@ import {
   computed,
   ChangeDetectionStrategy,
   input,
-  output,
+  output
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -27,8 +27,7 @@ import { ButtonComponent } from "../button/button.component";
 import { Card } from "primeng/card";
 import { Slider } from "primeng/slider";
 import { Dialog } from "primeng/dialog";
-import { Tooltip } from "primeng/tooltip";
-import { ProgressBar } from "primeng/progressbar";
+
 import { AuthService } from "../../../core/services/auth.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { ToastService } from "../../../core/services/toast.service";
@@ -42,7 +41,7 @@ import {
   WELLNESS,
   computeDailyReadiness,
   getReadinessLevel,
-  getRiskFlags,
+  getRiskFlags
 } from "../../../core/constants/wellness.constants";
 
 interface DailyState {
@@ -63,10 +62,8 @@ interface DailyState {
     Card,
     Slider,
     Dialog,
-    Tooltip,
-    ProgressBar,
     InputNumber,
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     @if (mode() === "modal") {
@@ -249,7 +246,7 @@ interface DailyState {
           </div>
 
           <!-- Weight (Optional) -->
-          <div class="slider-item weight-input">
+          <div class="slider-item weight-input form-controls-full">
             <div class="slider-header">
               <label>
                 <i class="pi pi-chart-line"></i>

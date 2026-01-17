@@ -196,6 +196,92 @@ const VALIDATION_RULES = {
     teamScore: { type: "integer", min: 0, max: 999, required: false },
     opponentScore: { type: "integer", min: 0, max: 999, required: false },
   },
+
+  // Games - Update Game validation (P1-009)
+  updateGame: {
+    teamScore: { type: "integer", min: 0, max: 999, required: false },
+    opponentScore: { type: "integer", min: 0, max: 999, required: false },
+    location: { type: "string", maxLength: 200, required: false },
+    notes: { type: "string", maxLength: 2000, required: false },
+    status: {
+      type: "string",
+      enum: ["scheduled", "in_progress", "completed", "cancelled", "postponed"],
+      required: false,
+    },
+    weather: { type: "string", maxLength: 100, required: false },
+    temperature: { type: "integer", min: -50, max: 150, required: false },
+  },
+
+  // Chat - Send Message validation (P1-010)
+  chatMessage: {
+    message: { type: "string", minLength: 1, maxLength: 4000, required: true },
+    message_type: {
+      type: "string",
+      enum: ["text", "image", "file", "system", "announcement"],
+      required: false,
+    },
+    is_important: { type: "boolean", required: false },
+    reply_to: { type: "string", maxLength: 100, required: false },
+    thread_id: { type: "string", maxLength: 100, required: false },
+  },
+
+  // Chat - Create Channel validation
+  createChannel: {
+    team_id: { type: "string", maxLength: 100, required: true },
+    name: { type: "string", minLength: 1, maxLength: 100, required: true },
+    description: { type: "string", maxLength: 500, required: false },
+    channel_type: {
+      type: "string",
+      enum: [
+        "general",
+        "announcements",
+        "coaches_only",
+        "position_group",
+        "game_specific",
+        "direct_message",
+      ],
+      required: false,
+    },
+    position_filter: { type: "string", maxLength: 50, required: false },
+    game_id: { type: "string", maxLength: 100, required: false },
+  },
+
+  // Training Session validation
+  trainingSession: {
+    workout_type: {
+      type: "string",
+      enum: [
+        "strength",
+        "conditioning",
+        "skill",
+        "recovery",
+        "game_prep",
+        "film_study",
+        "team_practice",
+        "individual",
+      ],
+      required: false,
+    },
+    session_date: { type: "date", required: false },
+    duration: { type: "integer", min: 1, max: 480, required: false }, // Max 8 hours
+    intensity: { type: "integer", min: 1, max: 10, required: false },
+    notes: { type: "string", maxLength: 2000, required: false },
+    exercises: { type: "object", required: false }, // Array of exercises
+  },
+
+  // Team Invitation validation
+  teamInvitation: {
+    teamId: { type: "string", maxLength: 100, required: true },
+    email: { type: "string", minLength: 5, maxLength: 255, required: true },
+    role: {
+      type: "string",
+      enum: ["player", "coach", "assistant_coach", "manager"],
+      required: false,
+    },
+    position: { type: "string", maxLength: 50, required: false },
+    jerseyNumber: { type: "integer", min: 0, max: 99, required: false },
+    coachMessage: { type: "string", maxLength: 500, required: false },
+  },
 };
 
 /**

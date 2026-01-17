@@ -24,7 +24,7 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
 }
 
@@ -76,8 +76,8 @@
 }
 
 .event-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -128,7 +128,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 28px;
+  min-width: var(--avatar-size-sm);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-full);
   font-size: var(--font-size-badge); /* 0.75rem/12px */
@@ -162,7 +162,7 @@
 
   .rate-bar {
     width: 80px;
-    height: 8px;
+    height: var(--indicator-size-sm);
     border-radius: var(--radius-sm);
   }
 }

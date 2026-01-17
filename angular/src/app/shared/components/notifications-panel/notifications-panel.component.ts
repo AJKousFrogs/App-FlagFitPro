@@ -18,16 +18,15 @@ import {
   computed,
   inject,
   signal,
-  HostListener,
+  HostListener
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Scroller } from "primeng/scroller";
-import { Badge } from "primeng/badge";
+
 import { Tooltip } from "primeng/tooltip";
 import {
   Notification,
   NotificationCategory,
-  NotificationStateService,
+  NotificationStateService
 } from "../../../core/services/notification-state.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
@@ -37,7 +36,7 @@ import { TIMEOUTS, TIME } from "../../../core/constants/app.constants";
   selector: "app-notifications-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Scroller, Badge, Tooltip],
+  imports: [RouterModule, Tooltip],
   template: `
     <!-- Backdrop -->
     @if (visible) {

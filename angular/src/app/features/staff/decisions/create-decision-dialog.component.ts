@@ -12,7 +12,7 @@ import {
   inject,
   input,
   output,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { TIME } from "@core/constants";
@@ -30,10 +30,10 @@ import { ModalComponent } from "@shared/components/modal/modal.component";
 import { StepperComponent } from "@shared/components/stepper/stepper.component";
 import { ButtonComponent } from "@shared/components/button/button.component";
 import { Checkbox } from "primeng/checkbox";
-import { Dialog } from "primeng/dialog";
+
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
 
@@ -44,17 +44,15 @@ import { Textarea } from "primeng/textarea";
   imports: [
     CommonModule,
     FormsModule,
-    Dialog,
     ButtonComponent,
     Select,
     InputText,
     Textarea,
     Checkbox,
-    Tag,
     StatusTagComponent,
     ModalComponent,
     StepperComponent,
-    ConfidenceIndicatorComponent,
+    ConfidenceIndicatorComponent
   ],
   template: `
     <app-modal

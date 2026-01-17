@@ -25,17 +25,17 @@ import {
   afterNextRender,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 
 // PrimeNG Components
 import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
+
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { Card } from "primeng/card";
+
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Ripple } from "primeng/ripple";
@@ -50,7 +50,7 @@ import { HapticFeedbackService } from "../../../core/services/haptic-feedback.se
 import {
   InstagramCreator,
   InstagramVideo,
-  InstagramVideoService,
+  InstagramVideoService
 } from "../../../core/services/instagram-video.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -58,7 +58,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   FlagPosition,
-  TrainingFocus,
+  TrainingFocus
 } from "../../../core/services/training-video-database.service";
 
 // Layout
@@ -78,8 +78,6 @@ interface FilterChip {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    Card,
-    Badge,
     Skeleton,
     Tooltip,
     Dialog,
@@ -88,10 +86,9 @@ interface FilterChip {
     Avatar,
     Ripple,
     MainLayoutComponent,
-
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <p-toast></p-toast>

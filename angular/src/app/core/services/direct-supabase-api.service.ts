@@ -87,7 +87,7 @@ interface DailyProtocolData {
 
 interface TrainingSession {
   id: string;
-  athleteId: string;
+  athleteId?: string | null;
   userId: string;
   teamId: string | null;
   sessionDate: string;
@@ -337,16 +337,12 @@ export class DirectSupabaseApiService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async computeConfidenceMetadata(userId: string, date: string, protocol: any): Promise<ConfidenceMetadata> {
     // Check for today's wellness check-in (table is daily_wellness_checkin)
-    const { data: todayWellness, error: wellnessError } = await this.supabase.client
+    const { data: todayWellness } = await this.supabase.client
       .from("daily_wellness_checkin")
       .select("id, readiness_score, created_at")
       .eq("user_id", userId)
       .eq("checkin_date", date)
       .maybeSingle();
-
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'direct-supabase-api.service.ts:computeConfidenceMetadata',message:'Checking wellness for confidence',data:{userId,date,hasWellness:!!todayWellness,wellnessScore:todayWellness?.readiness_score,wellnessError:wellnessError?.message},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'E'})}).catch(()=>{});
-    // #endregion
 
     const hasCheckinToday = !!todayWellness;
     const readinessScore = todayWellness?.readiness_score ?? protocol.readiness_score;
@@ -757,7 +753,7 @@ export class DirectSupabaseApiService {
     let query = this.supabase.client
       .from("training_sessions")
       .select("*")
-      .or(`athlete_id.eq.${userId},user_id.eq.${userId}`)
+      .eq("user_id", userId)
       .order("session_date", { ascending: false });
 
     if (params?.startDate) {
@@ -787,12 +783,12 @@ export class DirectSupabaseApiService {
 
     return (data || []).map((session) => ({
       id: session.id,
-      athleteId: session.athlete_id,
+      athleteId: session.athlete_id || session.user_id || null,
       userId: session.user_id,
       teamId: session.team_id,
       sessionDate: session.session_date,
       sessionName: session.session_name,
-      trainingType: session.training_type,
+      trainingType: session.session_type || session.training_type || null,
       status: session.status,
       durationMinutes: session.duration_minutes,
       intensityLevel: session.intensity_level,

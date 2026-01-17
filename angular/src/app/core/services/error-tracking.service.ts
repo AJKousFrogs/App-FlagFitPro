@@ -94,6 +94,7 @@ export class ErrorTrackingService {
           // This prevents build-time errors when Sentry is not installed
           const sentryPackage = "@sentry" + "/angular"; // Split to avoid static analysis
           try {
+            // @ts-ignore - Sentry is an optional dependency
             const sentryModule = await import(
               /* @vite-ignore */ sentryPackage
             ).catch(() => null);

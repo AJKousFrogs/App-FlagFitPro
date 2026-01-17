@@ -140,8 +140,8 @@
 }
 
 .player-jersey {
-  width: 56px;
-  height: 56px;
+  width: var(--avatar-size-xl);
+  height: var(--avatar-size-xl);
   border-radius: 50%;
   display: flex;
   align-items: center;

@@ -113,7 +113,7 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  transition: background 0.2s;
+  transition: background var(--transition-base) var(--ease-standard);
 }
 
 .workout-item:hover {

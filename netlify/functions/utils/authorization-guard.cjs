@@ -4,7 +4,7 @@
  * Date: 2026-01-06
  */
 
-const { supabaseAdmin } = require("../supabase-client.cjs");
+const { supabaseAdmin, supabaseService } = require("../supabase-client.cjs");
 const { createErrorResponse } = require("./error-handler.cjs");
 
 /**
@@ -29,8 +29,12 @@ async function getUserRole(userId) {
   }
 
   // Fallback to auth.users metadata
+  if (!supabaseService) {
+    return null;
+  }
+
   const { data: authUser, error: authError } =
-    await supabaseAdmin.auth.admin.getUserById(userId);
+    await supabaseService.auth.admin.getUserById(userId);
 
   if (authError || !authUser?.user) {
     return null;

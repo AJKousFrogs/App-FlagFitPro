@@ -99,7 +99,7 @@
 // ============================================
 
 .card-shell--disabled {
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   pointer-events: none;
 }
 
@@ -145,7 +145,7 @@
   // CANONICAL: raw icon, no container
   font-size: var(--font-body-size); // 16px
   color: var(--color-brand-primary);
-  opacity: 0.85;
+  opacity: var(--opacity-strong);
   flex-shrink: 0;
   line-height: 1;
   display: flex;
@@ -238,7 +238,7 @@
   justify-content: center;
   text-align: center;
   padding: var(--space-6);
-  min-height: 180px;
+  min-height: var(--card-min-height-lg); /* 160px */
 
   // Subtle entrance animation
   animation: card-empty-fade-in 0.4s var(--ease-standard);
@@ -247,7 +247,7 @@
 @keyframes card-empty-fade-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(var(--indicator-size-sm));
   }
   to {
     opacity: 1;
@@ -258,7 +258,7 @@
 // Compact variant for smaller cards
 .card-empty-state--compact {
   padding: var(--space-4);
-  min-height: 120px;
+  min-height: var(--card-min-height-md); /* 120px */
 }
 
 // Inline variant (icon + text horizontal)
@@ -290,7 +290,7 @@
 .card-empty-state__icon {
   font-size: var(--icon-3xl);
   color: var(--color-text-muted);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
   margin-bottom: var(--space-3);
   line-height: 1;
 }
@@ -323,12 +323,12 @@
   font-size: var(--font-body-sm-size);
   color: var(--color-text-muted);
   line-height: var(--line-height-base);
-  max-width: 280px;
+  max-width: var(--grid-card-min-md); /* 280px */
 }
 
 .card-empty-state--compact .card-empty-state__text {
   font-size: var(--font-caption);
-  max-width: 240px;
+  max-width: var(--input-min-width-lg); /* 240px */
 }
 
 .card-empty-state__action {
@@ -434,16 +434,7 @@
 // ============================================
 
 // Table inside flush card body - inherit bottom corners
-.card-shell__body--flush {
-  // PrimeNG DataTable inside flush card - use CSS custom properties
-  --p-datatable-border: none;
-  --p-datatable-shadow: none;
-  --p-datatable-border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-
-  // Paginator styling
-  --p-paginator-border: none;
-  --p-paginator-border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-}
+// Tokens moved to ui-standardization.scss for global consistency.
 
 // Table styling classes to apply in template
 .table-in-card {

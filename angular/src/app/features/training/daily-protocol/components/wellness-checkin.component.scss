@@ -86,7 +86,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 60px;
+    min-width: var(--badge-min-width-md);
     gap: var(--space-1);
 
     .readiness-score {
@@ -189,7 +189,7 @@
   .slider-label {
     font-size: var(--font-size-badge);
     color: var(--color-text-secondary);
-    min-width: 80px;
+    min-width: var(--badge-min-width-lg);
     font-weight: var(--font-weight-medium);
 
     &:first-child {

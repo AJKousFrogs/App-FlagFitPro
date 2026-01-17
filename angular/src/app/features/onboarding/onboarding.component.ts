@@ -5,22 +5,22 @@ import {
     OnInit,
     computed,
     inject,
-    signal,
+    signal
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { AutoComplete } from "primeng/autocomplete";
-import { Avatar } from "primeng/avatar";
+
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { FileUpload } from "primeng/fileupload";
+
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
+import { Stepper, StepList, Step } from "primeng/stepper";
 import { Toast } from "primeng/toast";
 import { Subject, Subscription, debounceTime, firstValueFrom } from "rxjs";
 import { UI_LIMITS } from "../../core/constants/app.constants";
@@ -29,13 +29,13 @@ import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import {
     LoggerService,
-    toLogContext,
+    toLogContext
 } from "../../core/services/logger.service";
 import { PlatformService } from "../../core/services/platform.service";
 import {
     PlayerProgramService,
     getProgramIdForPosition,
-    normalizePositionForModifiers,
+    normalizePositionForModifiers
 } from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -69,18 +69,17 @@ interface InjuryEntry {
     InputText,
     Select,
     AutoComplete,
-    Stepper, StepList, Step, StepPanels, StepPanel,
+    Stepper,
+    StepList,
+    Step,
     Toast,
     DatePicker,
     Checkbox,
-    FileUpload,
-    Avatar,
     ProgressBar,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <p-toast></p-toast>

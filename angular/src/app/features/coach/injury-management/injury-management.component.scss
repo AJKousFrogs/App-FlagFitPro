@@ -49,7 +49,7 @@
 // Summary Stats
 .summary-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-3);
 }
 
@@ -203,7 +203,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 50px;
+  min-width: var(--badge-min-width-sm);
   padding: var(--space-2);
   background: var(--ds-surface-elevated);
   border: 1px solid var(--ds-border-default);
@@ -293,7 +293,7 @@
 
 .analytics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
 }
 
@@ -313,14 +313,14 @@
   margin-bottom: var(--space-2);
 
   .bar-label {
-    min-width: 80px;
+    min-width: var(--badge-min-width-lg);
     font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
 
   .bar-track {
     flex: 1;
-    height: 12px;
+    height: var(--indicator-size-md);
     background: var(--ds-surface-base);
     border-radius: var(--radius-full);
     overflow: hidden;
@@ -329,12 +329,12 @@
       height: 100%;
       background: var(--ds-primary-green);
       border-radius: var(--radius-full);
-      transition: width 0.3s ease;
+      transition: width var(--transition-slow) var(--ease-standard);
     }
   }
 
   .bar-count {
-    min-width: 20px;
+    min-width: var(--avatar-size-xs);
     font-size: var(--font-size-h4);
     font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);

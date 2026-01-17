@@ -6,11 +6,11 @@ import {
   inject,
   OnDestroy,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 
 import { NavigationEnd, Router } from "@angular/router";
-import { Tooltip } from "primeng/tooltip";
+
 import { filter, Subscription } from "rxjs";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -27,7 +27,7 @@ interface QuickActionItem {
   selector: "app-quick-actions-fab",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip],
+  imports: [CommonModule],
   template: `
     @if (showFAB()) {
       <!-- Backdrop -->

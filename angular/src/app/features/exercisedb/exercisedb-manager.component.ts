@@ -5,14 +5,14 @@ import {
   signal,
   computed,
   effect,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { InputText } from "primeng/inputtext";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Select } from "primeng/select";
 import { MultiSelect } from "primeng/multiselect";
@@ -24,7 +24,7 @@ import { Slider } from "primeng/slider";
 import { Chip } from "primeng/chip";
 import { Skeleton } from "primeng/skeleton";
 import { Badge } from "primeng/badge";
-import { Tooltip } from "primeng/tooltip";
+
 import { MessageService } from "primeng/api";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -34,7 +34,7 @@ import {
   ExerciseDBFilters,
   ImportStats,
   ImportLog,
-  ExerciseApprovalData,
+  ExerciseApprovalData
 } from "../../core/services/exercisedb.service";
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
@@ -50,7 +50,6 @@ import { capitalize } from "../../shared/utils/format.utils";
     FormsModule,
     Card,
     InputText,
-    Tag,
     Select,
     MultiSelect,
     Dialog,
@@ -65,12 +64,11 @@ import { capitalize } from "../../shared/utils/format.utils";
     Chip,
     Skeleton,
     Badge,
-    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <app-main-layout>
@@ -123,7 +121,7 @@ import { capitalize } from "../../shared/utils/format.utils";
         </div>
 
         <!-- Tab View -->
-        <p-tabs value="0" styleClass="exercise-tabs">
+        <p-tabs value="0" styleClass="exercise-tabs tabs-standard">
           <p-tablist>
             <p-tab value="0">Browse Exercises</p-tab>
             <p-tab value="1">Import from ExerciseDB</p-tab>

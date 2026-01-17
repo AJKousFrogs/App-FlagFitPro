@@ -5,7 +5,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -15,7 +15,7 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
@@ -123,15 +123,13 @@ interface ScoutingReport {
     Tab,
     TabPanels,
     TabPanel,
-    Tag,
     StatusTagComponent,
     Textarea,
     Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>

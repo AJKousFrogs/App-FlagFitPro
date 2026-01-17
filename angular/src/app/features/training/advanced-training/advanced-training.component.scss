@@ -25,13 +25,13 @@
 
 .tab-content-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
   padding: var(--space-6) 0;
 
   // Tablet: Smaller gap, adjust min card size
   @include respond-to(lg) {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
     gap: var(--space-3);
     padding: var(--space-4) 0;
   }
@@ -69,7 +69,7 @@
     transform var(--transition-fast),
     box-shadow var(--transition-fast),
     background-color var(--transition-fast);
-  min-height: 180px;
+  min-height: var(--card-min-height-xl);
   justify-content: center;
 
   &:hover {
@@ -86,18 +86,18 @@
   // Tablet: Reduce padding
   @include respond-to(lg) {
     padding: var(--space-5);
-    min-height: 160px;
+    min-height: var(--card-min-height-lg);
   }
 
   // Mobile: Further reduce padding and height
   @include respond-to(md) {
     padding: var(--space-4);
-    min-height: 140px;
+    min-height: var(--card-min-height-lg);
   }
 
   @include respond-to(sm) {
     padding: var(--space-5);
-    min-height: 160px;
+    min-height: var(--card-min-height-lg);
   }
 
   // Icon styling
@@ -109,7 +109,7 @@
     flex-shrink: 0;
 
     @include respond-to(md) {
-      font-size: 1.75rem; // 28px on mobile
+      font-size: var(--font-h2-size); // 24px on mobile (closest standard size)
       margin-bottom: var(--space-3);
     }
   }
@@ -124,7 +124,7 @@
     font-weight: var(--font-weight-semibold); // 600
     color: var(--color-text-primary);
     margin: 0 0 var(--space-2) 0;
-    line-height: 1.3;
+    line-height: var(--font-h3-line-height);
 
     @include respond-to(md) {
       font-size: var(--font-size-body); // 16px on mobile
@@ -141,7 +141,7 @@
 
     @include respond-to(md) {
       font-size: var(--font-caption-size); // 12px on mobile
-      line-height: 1.4;
+      line-height: var(--font-body-sm-line-height);
     }
   }
 }
@@ -152,42 +152,4 @@
 
 .mr-2 {
   margin-right: var(--space-2);
-}
-
-// ================================================================
-// PRIMENG TABS OVERRIDES FOR MOBILE
-// ================================================================
-
-// Removed ::ng-deep - Using :host selector with proper scoping
-// PrimeNG tab components can be styled through CSS custom properties
-:host {
-  // Ensure tabs scroll horizontally on mobile
-  .p-tablist {
-    @include respond-to(md) {
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
-    }
-  }
-
-  // Adjust tab padding on mobile
-  .p-tab {
-    @include respond-to(md) {
-      padding: var(--space-2) var(--space-3);
-      font-size: var(--font-size-h4);
-      white-space: nowrap;
-    }
-  }
-
-  // Ensure tab panel has proper padding
-  .p-tabpanel {
-    @include respond-to(md) {
-      padding: var(--space-3) 0;
-    }
-  }
 }

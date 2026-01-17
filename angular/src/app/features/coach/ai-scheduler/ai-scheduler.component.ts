@@ -15,17 +15,17 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { Dialog } from "primeng/dialog";
+
 import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { Tag } from "primeng/tag";
+
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -112,16 +112,13 @@ const PRACTICE_DURATIONS = [
     FormsModule,
     Card,
     Checkbox,
-    Dialog,
     ProgressBar,
     RadioButton,
     Select,
-    Tag,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

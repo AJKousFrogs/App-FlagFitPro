@@ -21,7 +21,7 @@ import {
   computed,
   inject,
   output,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
@@ -30,10 +30,9 @@ import { firstValueFrom } from "rxjs";
 // PrimeNG
 import { Checkbox } from "primeng/checkbox";
 import { InputNumber } from "primeng/inputnumber";
-import { ProgressBar } from "primeng/progressbar";
-import { Ripple } from "primeng/ripple";
+
 import { Slider } from "primeng/slider";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 // Services
@@ -75,11 +74,8 @@ interface TodaysPlan {
     ButtonComponent,
     Slider,
     InputNumber,
-    ProgressBar,
-    Ripple,
-    Tooltip,
     Checkbox,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <div class="morning-briefing" [class.expanded]="isExpanded()">

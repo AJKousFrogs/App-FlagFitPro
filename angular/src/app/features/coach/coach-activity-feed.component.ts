@@ -18,24 +18,24 @@ import {
   computed,
   input,
   ChangeDetectionStrategy,
-  DestroyRef,
+  DestroyRef
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
   TeamNotificationService,
   CoachActivityItem,
-  ActivityType,
+  ActivityType
 } from "../../core/services/team-notification.service";
-import { Card } from "primeng/card";
+
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { TIMEOUTS } from "../../core/constants/app.constants";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Skeleton } from "primeng/skeleton";
-import { Tooltip } from "primeng/tooltip";
+
 import { ScrollPanel } from "primeng/scrollpanel";
 import { LoggerService } from "../../core/services/logger.service";
 import { toLogContext } from "../../core/services/logger.service";
@@ -46,17 +46,13 @@ import { getInitials } from "../../shared/utils/format.utils";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule,
-    Card,
     Avatar,
     Badge,
-    Tag,
     StatusTagComponent,
     Skeleton,
-    Tooltip,
     ScrollPanel,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <div class="activity-feed" [class.compact]="compact()">

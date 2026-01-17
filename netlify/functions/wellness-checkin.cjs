@@ -5,6 +5,11 @@ const {
 } = require("./utils/consent-guard.cjs");
 const { detectPainTrigger } = require("./utils/safety-override.cjs");
 const { getUserRole } = require("./utils/authorization-guard.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 exports.handler = async (event) => {
   const headers = {
@@ -19,31 +24,12 @@ exports.handler = async (event) => {
   }
 
   try {
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: "Missing authorization" }),
-      };
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return auth.error;
     }
-
-    const token = authHeader.replace("Bearer ", "");
+    const { user } = auth;
     const supabase = supabaseAdmin;
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: "Invalid token" }),
-      };
-    }
 
     const method = event.httpMethod;
 
@@ -57,21 +43,24 @@ exports.handler = async (event) => {
 
     // POST - Save checkin
     if (method === "POST") {
-      const payload = JSON.parse(event.body || "{}");
+      let payload = {};
+      try {
+        payload = JSON.parse(event.body || "{}");
+      } catch (_parseError) {
+        return handleValidationError("Invalid JSON in request body");
+      }
       return await saveCheckin(supabase, user.id, payload, headers);
     }
 
     return {
-      statusCode: 404,
+      ...createErrorResponse("Not found", 404, "not_found"),
       headers,
-      body: JSON.stringify({ error: "Not found" }),
     };
   } catch (error) {
     console.error("Wellness checkin error:", error);
     return {
-      statusCode: 500,
+      ...createErrorResponse(error.message, 500, "server_error"),
       headers,
-      body: JSON.stringify({ error: error.message }),
     };
   }
 };
@@ -90,9 +79,8 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
 
   if (error && error.code !== "PGRST116") {
     return {
-      statusCode: 500,
+      ...createErrorResponse(error.message, 500, "database_error"),
       headers,
-      body: JSON.stringify({ error: error.message }),
     };
   }
 
@@ -303,9 +291,8 @@ async function saveCheckin(supabase, userId, payload, headers) {
 
   if (error) {
     return {
-      statusCode: 500,
+      ...createErrorResponse(error.message, 500, "database_error"),
       headers,
-      body: JSON.stringify({ error: error.message }),
     };
   }
 

@@ -90,6 +90,19 @@
    * ------------------------------------------------ */
 
   /* ------------------------------------------------
+   * AUDIT NOTE: ::ng-deep Removal
+   * Ticket: DS-AUDIT-001
+   * Owner: @design-system-team
+   * Scope: All component SCSS files
+   * Remove by: COMPLETED 2026-01-04
+   * Reason: ::ng-deep is deprecated in Angular.
+   * Status: ✅ RESOLVED - Jan 2026
+   *         - All 27 instances removed from component files
+   *         - Replaced with CSS custom property cascade
+   *         - Components now use class-based styling
+   * ------------------------------------------------ */
+
+  /* ------------------------------------------------
    * COMPONENT FILE: settings.component.scss
    * Ticket: DS-COMP-001
    * Owner: @feature-team
@@ -455,7 +468,7 @@
     overflow: hidden;
     box-shadow: none;
     height: var(--space-10);
-    border: var(--border-1) solid rgba(0, 0, 0, 0.1);
+    border: var(--border-1) solid var(--color-border-subtle);
     background: var(--surface-ground);
     display: flex;
     align-items: center;
@@ -655,22 +668,6 @@
   }
 
   /* ------------------------------------------------
-   * COMPONENT: update-password.component
-   * Ticket: DS-EXC-005
-   * Owner: @design-system-team
-   * Scope: update-password component only
-   * Remove by: 2026-04-01
-   * Reason: Component-specific password input width override.
-   * ------------------------------------------------ */
-  .p-password {
-    width: 100%;
-
-    input {
-      width: 100%;
-    }
-  }
-
-  /* ------------------------------------------------
    * COMPONENT: chat.component
    * Ticket: DS-EXC-006
    * Owner: @design-system-team
@@ -681,11 +678,11 @@
   .chat-header {
     .p-button {
       color: var(--color-text-on-primary);
-      border-color: rgba(255, 255, 255, 0.3);
+      border-color: var(--overlay-white-30);
 
       &:hover {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: rgba(255, 255, 255, 0.5);
+        background: var(--overlay-white-20);
+        border-color: var(--overlay-white-50);
       }
 
       .p-button-icon {
@@ -1380,7 +1377,7 @@
           .p-steps-title,
           span {
             display: block;
-            font-size: 11px;
+            font-size: var(--font-compact-md); /* 11px */
             font-weight: var(--font-weight-medium);
             color: var(--color-text-secondary);
             text-align: center;
@@ -1530,7 +1527,7 @@
 
             .p-steps-title,
             span {
-              font-size: 9px;
+              font-size: var(--font-compact-md); /* 11px minimum - 9px too small for accessibility */
               padding: 0 2px;
             }
 
@@ -1729,7 +1726,7 @@
 
       @include respond-to(md) {
         font-size: var(--font-compact-md);
-        padding: 4px var(--space-1);
+        padding: var(--space-1) var(--space-1);
       }
     }
   }
@@ -2633,7 +2630,7 @@
    * Scope: settings component only
    * Remove by: 2026-04-01
    * Reason: Extensive PrimeNG overrides for card, field, checkbox,
-   *         divider, dialog, and password input. Required for settings UI.
+   *         divider, and dialog. Required for settings UI.
    * ------------------------------------------------ */
   .settings-grid {
     .settings-section {
@@ -2682,14 +2679,6 @@
         color: var(--color-text-primary);
         font-size: var(--font-size-h4);
       }
-    }
-
-    .p-select {
-      width: 100%;
-    }
-
-    .p-inputtext {
-      width: 100%;
     }
 
     .security-actions {
@@ -2771,49 +2760,6 @@
       }
     }
 
-    .password-input {
-      &.p-password {
-        display: flex;
-        width: 100%;
-      }
-
-      .p-password-input,
-      input {
-        width: 100%;
-        padding: var(--space-3) var(--space-4);
-        padding-right: var(--space-10);
-        border: 1px solid var(--color-border-primary);
-        border-radius: var(--radius-lg);
-        font-size: var(--font-size-body);
-        transition:
-          border-color var(--transition-fast),
-          box-shadow var(--transition-fast);
-      }
-
-      .p-password-input:focus-visible,
-      input:focus-visible {
-        border-color: var(--ds-primary-green);
-        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.1);
-        outline: none;
-      }
-
-      .p-password-wrapper,
-      .p-inputwrapper {
-        position: relative;
-        width: 100%;
-        display: block;
-      }
-
-      .p-password-toggle-mask-icon {
-        color: var(--color-text-muted);
-        cursor: pointer;
-        right: var(--space-3);
-
-        &:hover {
-          color: var(--color-text-secondary);
-        }
-      }
-    }
   }
 
   /* ------------------------------------------------

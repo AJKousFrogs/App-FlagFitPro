@@ -4,7 +4,11 @@
 
 const https = require("https");
 const http = require("http");
-const { CORS_HEADERS } = require("./utils/error-handler.cjs");
+const {
+  CORS_HEADERS,
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 // Cache for logo data (in-memory, resets on function restart)
 const logoCache = new Map();
@@ -96,11 +100,7 @@ exports.handler = async (event, _context) => {
 
   // Only allow GET requests
   if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers: CORS_HEADERS,
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 
   try {
@@ -108,11 +108,7 @@ exports.handler = async (event, _context) => {
     const imageUrl = event.queryStringParameters?.url;
 
     if (!imageUrl) {
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({ error: "Missing 'url' query parameter" }),
-      };
+      return handleValidationError("url query parameter is required");
     }
 
     // Validate URL is from allowed domains
@@ -127,11 +123,7 @@ exports.handler = async (event, _context) => {
       urlObj = new URL(imageUrl);
     } catch (urlError) {
       console.error("Invalid URL:", imageUrl, urlError);
-      return {
-        statusCode: 400,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({ error: "Invalid URL format" }),
-      };
+      return handleValidationError("Invalid URL format");
     }
 
     const isAllowed = allowedDomains.some((domain) =>
@@ -139,11 +131,7 @@ exports.handler = async (event, _context) => {
     );
 
     if (!isAllowed) {
-      return {
-        statusCode: 403,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({ error: "Domain not allowed" }),
-      };
+      return createErrorResponse("Domain not allowed", 403, "authorization_error");
     }
 
     // Check cache
@@ -187,17 +175,8 @@ exports.handler = async (event, _context) => {
     };
   } catch (error) {
     console.error("Error proxying sponsor logo:", error);
-    return {
-      statusCode: 500,
-      headers: {
-        ...CORS_HEADERS,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        success: false,
-        error: "Failed to proxy sponsor logo",
-        errorType: "server_error",
-      }),
-    };
+    return createErrorResponse("Failed to proxy sponsor logo", 500, "server_error", {
+      details: error.message,
+    });
   }
 };

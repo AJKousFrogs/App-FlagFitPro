@@ -31,7 +31,7 @@
 
     h3 {
       margin: 0;
-      min-width: 180px;
+      min-width: var(--input-min-width-md);
       text-align: center;
       font-size: var(--font-body-size);
       font-weight: var(--font-weight-semibold);
@@ -75,7 +75,7 @@
 }
 
 .calendar-day {
-  min-height: 80px;
+  min-height: var(--card-min-height-sm);
   padding: var(--space-2);
   background: var(--ds-surface-elevated);
 
@@ -86,8 +86,8 @@
       background: var(--ds-primary-green);
       color: white;
       border-radius: 50%;
-      width: 28px;
-      height: 28px;
+      width: var(--avatar-size-sm);
+      height: var(--avatar-size-sm);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -95,7 +95,7 @@
   }
 
   &.other-month {
-    opacity: 0.4;
+    opacity: var(--opacity-minimal);
   }
 
   .day-number {
@@ -478,7 +478,7 @@
   .rsvp-name {
     font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
-    min-width: 120px;
+    min-width: var(--input-min-width-sm);
   }
 
   .rsvp-arrival {
@@ -521,7 +521,7 @@
   }
 
   .calendar-day {
-    min-height: 60px;
+    min-height: var(--card-min-height-sm);
     padding: var(--space-1);
   }
 

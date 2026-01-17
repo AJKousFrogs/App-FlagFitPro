@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
+  inject
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";
 import { Breadcrumb } from "primeng/breadcrumb";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { ContextService } from "../../../core/services/context.service";
 
@@ -15,7 +15,7 @@ import { ContextService } from "../../../core/services/context.service";
   selector: "app-smart-breadcrumbs",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, Breadcrumb, Tag, StatusTagComponent],
+  imports: [RouterModule, Breadcrumb, StatusTagComponent],
   template: `
     @if (breadcrumbItems().length > 0) {
       <nav class="smart-breadcrumbs" aria-label="Navigation path">

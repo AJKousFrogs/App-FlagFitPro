@@ -16,18 +16,17 @@ import {
   Component,
   inject,
   input,
-  signal,
+  signal
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { Tag } from "primeng/tag";
-import { Tooltip } from "primeng/tooltip";
+
 import { ButtonComponent } from "../button/button.component";
 import { CoachOverrideBadgeComponent } from "../coach-override-badge/coach-override-badge.component";
 import {
   OverrideLoggingService,
-  CoachOverride,
+  CoachOverride
 } from "../../../core/services/override-logging.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { getTimeAgo } from "../../utils/date.utils";
@@ -41,10 +40,8 @@ import { getTimeAgo } from "../../utils/date.utils";
     RouterModule,
     Card,
     Dialog,
-    Tag,
-    Tooltip,
     ButtonComponent,
-    CoachOverrideBadgeComponent,
+    CoachOverrideBadgeComponent
   ],
   template: `
     @if (override()) {

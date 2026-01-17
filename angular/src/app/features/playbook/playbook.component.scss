@@ -44,12 +44,12 @@
 
   .stat-divider {
     width: 1px;
-    height: 40px;
+    height: var(--avatar-size-md);
     background: var(--ds-border-subtle);
   }
 
   .progress-overall {
-    height: 8px;
+    height: var(--indicator-size-sm);
     border-radius: var(--radius-sm);
   }
 }
@@ -63,7 +63,7 @@
 
   .filter-search {
     flex: 1;
-    min-width: 200px;
+    min-width: var(--input-min-width-lg);
 
     input {
       width: 100%;
@@ -74,7 +74,7 @@
 // Plays Grid
 .plays-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
 }
 
@@ -181,7 +181,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
+  min-height: var(--chart-min-height-sm);
 
   img {
     max-width: 100%;
@@ -241,7 +241,7 @@
     .label {
       font-weight: var(--font-weight-medium);
       color: var(--ds-text-secondary);
-      min-width: 120px;
+      min-width: var(--input-min-width-sm);
     }
 
     .value {
@@ -375,8 +375,8 @@
   }
 
   .option-letter {
-    width: 28px;
-    height: 28px;
+    width: var(--avatar-size-sm);
+    height: var(--avatar-size-sm);
     border-radius: 50%;
     background: var(--ds-surface-elevated);
     display: flex;

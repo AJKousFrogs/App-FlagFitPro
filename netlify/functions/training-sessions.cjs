@@ -2,10 +2,7 @@
 // Handles creation and retrieval of training sessions for the Training Builder component
 // Endpoint: /api/training/sessions
 
-const {
-  checkEnvVars: _checkEnvVars,
-  supabaseAdmin,
-} = require("./supabase-client.cjs");
+const { validateInput } = require("./utils/input-validator.cjs");
 const {
   createSuccessResponse,
   createErrorResponse,
@@ -23,8 +20,16 @@ const { guardMerlinRequest } = require("./utils/merlin-guard.cjs");
  * Create a training session from the Training Builder
  * Contract: Section 3.1 - Session Mutation APIs
  */
-async function createTrainingSession(userId, sessionData, requestInfo = {}) {
+async function createTrainingSession(
+  userId,
+  sessionData,
+  requestInfo = {},
+  supabase,
+) {
   try {
+    if (!supabase) {
+      throw new Error("Supabase client is required for RLS enforcement");
+    }
     // Check role - only coaches can create sessions for others
     const role = await getUserRole(userId);
     if (!role) {
@@ -38,6 +43,11 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
         requestInfo,
       );
       throw new Error("User role not found");
+    }
+
+    const validation = validateTrainingBuilderPayload(sessionData);
+    if (!validation.valid) {
+      throw buildValidationError(validation.errors);
     }
 
     const {
@@ -67,8 +77,11 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
     }
 
     // Calculate total duration if not provided
-    const totalDuration =
-      duration || exercises.reduce((sum, ex) => sum + (ex.duration || 0), 0);
+    const computedDuration = exercises.reduce(
+      (sum, ex) => sum + (ex.duration || 0),
+      0,
+    );
+    const totalDuration = duration || computedDuration || 60;
 
     // Map intensity to numeric value
     const intensityMap = {
@@ -96,7 +109,7 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
     };
 
     // Insert into training_sessions table
-    const { data: session, error } = await supabaseAdmin
+    const { data: session, error } = await supabase
       .from("training_sessions")
       .insert(sessionRecord)
       .select()
@@ -143,6 +156,261 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
   }
 }
 
+function normalizeTrainingLogPayload(sessionData = {}) {
+  const sessionDateRaw =
+    sessionData.session_date || sessionData.sessionDate || sessionData.date;
+  const sessionType =
+    sessionData.session_type || sessionData.sessionType || sessionData.type;
+  const durationRaw =
+    sessionData.duration_minutes ||
+    sessionData.durationMinutes ||
+    sessionData.duration;
+  const rpeRaw = sessionData.rpe ?? sessionData.sessionRpe ?? sessionData.actualRpe;
+  const notes = sessionData.notes ?? sessionData.sessionNotes ?? null;
+  const status = sessionData.status || "completed";
+
+  const sessionDate = sessionDateRaw
+    ? new Date(sessionDateRaw).toISOString().split("T")[0]
+    : null;
+  const durationMinutes =
+    durationRaw !== undefined && durationRaw !== null
+      ? Number(durationRaw)
+      : null;
+  const rpe =
+    rpeRaw !== undefined && rpeRaw !== null ? Number(rpeRaw) : null;
+
+  return {
+    sessionDate,
+    sessionType,
+    durationMinutes,
+    rpe,
+    notes,
+    status,
+  };
+}
+
+function isTrainingLogPayload(sessionData = {}) {
+  const normalized = normalizeTrainingLogPayload(sessionData);
+  return (
+    Boolean(normalized.sessionDate) &&
+    Boolean(normalized.sessionType) &&
+    normalized.durationMinutes !== null
+  );
+}
+
+function validateTrainingLogPayload(payload) {
+  const schema = {
+    sessionDate: { type: "date", required: true },
+    sessionType: { type: "string", required: true, minLength: 1, maxLength: 120 },
+    durationMinutes: {
+      type: "number",
+      required: true,
+      min: 1,
+      max: 600,
+      integer: true,
+    },
+    rpe: { type: "number", min: 0, max: 10 },
+    notes: { type: "string", maxLength: 2000 },
+    status: {
+      type: "enum",
+      values: ["completed", "in_progress", "planned"],
+    },
+  };
+
+  const result = validateInput(payload, schema);
+  return {
+    valid: result.valid,
+    errors: result.errors,
+    cleaned: result.cleaned,
+  };
+}
+
+function validateTrainingBuilderPayload(sessionData = {}) {
+  const errors = [];
+  const schema = {
+    intensity: { type: "enum", values: ["low", "medium", "high"] },
+    duration: { type: "number", min: 1, max: 600, integer: true },
+    scheduledDate: { type: "date" },
+    notes: { type: "string", maxLength: 2000 },
+    user_id: { type: "uuid" },
+  };
+
+  const baseValidation = validateInput(sessionData, schema);
+  if (!baseValidation.valid) {
+    errors.push(...baseValidation.errors);
+  }
+
+  if (!Array.isArray(sessionData.exercises) || sessionData.exercises.length === 0) {
+    errors.push("exercises must be a non-empty array");
+  } else if (sessionData.exercises.length > 50) {
+    errors.push("exercises must have at most 50 items");
+  } else {
+    sessionData.exercises.forEach((exercise, index) => {
+      if (
+        typeof exercise !== "object" ||
+        exercise === null ||
+        Array.isArray(exercise)
+      ) {
+        errors.push(`exercises[${index}] must be an object`);
+        return;
+      }
+      const durationValue =
+        exercise.duration ?? exercise.duration_minutes ?? exercise.durationMinutes;
+      const durationNumber =
+        typeof durationValue === "string" ? Number(durationValue) : durationValue;
+      if (
+        durationValue !== undefined &&
+        (typeof durationNumber !== "number" ||
+          Number.isNaN(durationNumber) ||
+          durationNumber < 1 ||
+          durationNumber > 240)
+      ) {
+        errors.push(`exercises[${index}].duration must be between 1 and 240`);
+      }
+      const nameValue =
+        exercise.name ?? exercise.title ?? exercise.exercise_name ?? null;
+      if (nameValue && typeof nameValue === "string" && nameValue.length > 200) {
+        errors.push(`exercises[${index}].name must be at most 200 characters`);
+      }
+    });
+  }
+
+  if (sessionData.goals !== undefined) {
+    if (!Array.isArray(sessionData.goals)) {
+      errors.push("goals must be an array");
+    } else if (sessionData.goals.length > 10) {
+      errors.push("goals must have at most 10 items");
+    } else {
+      sessionData.goals.forEach((goal, index) => {
+        if (typeof goal !== "string" || goal.trim().length === 0) {
+          errors.push(`goals[${index}] must be a non-empty string`);
+        } else if (goal.length > 120) {
+          errors.push(`goals[${index}] must be at most 120 characters`);
+        }
+      });
+    }
+  }
+
+  if (sessionData.equipment !== undefined) {
+    if (!Array.isArray(sessionData.equipment)) {
+      errors.push("equipment must be an array");
+    } else if (sessionData.equipment.length > 20) {
+      errors.push("equipment must have at most 20 items");
+    } else {
+      sessionData.equipment.forEach((item, index) => {
+        if (typeof item !== "string" || item.trim().length === 0) {
+          errors.push(`equipment[${index}] must be a non-empty string`);
+        } else if (item.length > 120) {
+          errors.push(`equipment[${index}] must be at most 120 characters`);
+        }
+      });
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+function buildValidationError(errors) {
+  const error = new Error("Validation failed");
+  error.details = errors;
+  return error;
+}
+
+async function createTrainingLogSession(
+  userId,
+  sessionData,
+  requestInfo = {},
+  supabase,
+) {
+  try {
+    if (!supabase) {
+      throw new Error("Supabase client is required for RLS enforcement");
+    }
+    const payload = normalizeTrainingLogPayload(sessionData);
+
+    const validation = validateTrainingLogPayload(payload);
+    if (!validation.valid) {
+      throw buildValidationError(validation.errors);
+    }
+    const cleaned = validation.cleaned;
+
+    const sessionRecord = {
+      user_id: userId,
+      session_date: cleaned.sessionDate,
+      session_type: cleaned.sessionType,
+      duration_minutes: cleaned.durationMinutes,
+      rpe: cleaned.rpe ?? null,
+      notes: cleaned.notes ?? null,
+      status: cleaned.status || "completed",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data: session, error } = await supabase
+      .from("training_sessions")
+      .insert(sessionRecord)
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === "42P01") {
+        return {
+          success: true,
+          session: {
+            ...sessionRecord,
+            id: `temp_${Date.now()}`,
+          },
+          note: "Table needs to be created via migration",
+          workoutLogSynced: false,
+        };
+      }
+      throw error;
+    }
+
+    let workoutLogSynced = false;
+    if (session?.id) {
+      const completedAt = payload.sessionDate
+        ? new Date(payload.sessionDate).toISOString()
+        : new Date().toISOString();
+      const { error: logError } = await supabase
+        .from("workout_logs")
+        .insert({
+          player_id: userId,
+          session_id: session.id,
+          completed_at: completedAt,
+          rpe: payload.rpe ?? null,
+          duration_minutes: payload.durationMinutes,
+          notes: payload.notes ?? null,
+        });
+      if (!logError) {
+        workoutLogSynced = true;
+      }
+    }
+
+    return { success: true, session, workoutLogSynced };
+  } catch (error) {
+    if (error.message) {
+      await logViolation(
+        userId,
+        null,
+        "session",
+        "create",
+        "TRAINING_LOG_FAILED",
+        error.message,
+        requestInfo,
+      );
+    }
+    throw error;
+  }
+}
+
+function extractSessionIdFromPath(path = "") {
+  const parts = path.split("/").filter(Boolean);
+  if (parts.length === 0) return null;
+  const last = parts[parts.length - 1];
+  return last && last !== "training-sessions" ? last : null;
+}
+
 /**
  * Get training sessions for a user
  * Always filters to sessions up to and including today by default
@@ -156,8 +424,11 @@ async function createTrainingSession(userId, sessionData, requestInfo = {}) {
  * - status (optional, filter by status)
  * - limit (optional, default: 50)
  */
-async function getTrainingSessions(userId, queryParams) {
+async function getTrainingSessions(userId, queryParams, supabase) {
   try {
+    if (!supabase) {
+      throw new Error("Supabase client is required for RLS enforcement");
+    }
     const {
       status,
       startDate,
@@ -166,7 +437,7 @@ async function getTrainingSessions(userId, queryParams) {
       includeUpcoming = false,
     } = queryParams || {};
 
-    let query = supabaseAdmin
+    let query = supabase
       .from("training_sessions")
       .select("*")
       .eq("user_id", userId)
@@ -222,7 +493,11 @@ async function updateTrainingSession(
   sessionId,
   updates,
   requestInfo = {},
+  supabase,
 ) {
+  if (!supabase) {
+    throw new Error("Supabase client is required for RLS enforcement");
+  }
   // Check authorization
   const authCheck = await requireAuthorization(
     userId,
@@ -267,7 +542,7 @@ async function updateTrainingSession(
   }
 
   // Proceed with update
-  const { data: session, error } = await supabaseAdmin
+  const { data: session, error } = await supabase
     .from("training_sessions")
     .update(updatePayload)
     .eq("id", sessionId)
@@ -297,7 +572,11 @@ const { baseHandler } = require("./utils/base-handler.cjs");
 
 exports.handler = async (event, context) => {
   // Apply Merlin guard for mutation endpoints
-  if (event.httpMethod === "POST" || event.httpMethod === "PUT") {
+  if (
+    event.httpMethod === "POST" ||
+    event.httpMethod === "PUT" ||
+    event.httpMethod === "DELETE"
+  ) {
     const req = {
       method: event.httpMethod,
       path: event.path,
@@ -313,12 +592,15 @@ exports.handler = async (event, context) => {
 
   return baseHandler(event, context, {
     functionName: "training-sessions",
-    allowedMethods: ["GET", "POST", "PUT"],
+    allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType:
-      event.httpMethod === "POST" || event.httpMethod === "PUT"
+      event.httpMethod === "POST" ||
+      event.httpMethod === "PUT" ||
+      event.httpMethod === "DELETE"
         ? "CREATE"
         : "READ",
-    handler: async (event, _context, { userId }) => {
+    requireAuth: true, // SECURITY: Explicit auth for training sessions
+    handler: async (event, _context, { userId, supabase }) => {
       const requestInfo = {
         ip: event.headers["x-forwarded-for"] || event.headers["x-real-ip"],
         userAgent: event.headers["user-agent"],
@@ -332,6 +614,7 @@ exports.handler = async (event, context) => {
         const sessions = await getTrainingSessions(
           userId,
           event.queryStringParameters,
+          supabase,
         );
         return createSuccessResponse(sessions);
       }
@@ -346,20 +629,39 @@ exports.handler = async (event, context) => {
           return handleValidationError("Invalid JSON in request body");
         }
 
-        // Validate required fields
-        if (
-          !sessionData.exercises ||
-          !Array.isArray(sessionData.exercises) ||
-          sessionData.exercises.length === 0
-        ) {
-          return handleValidationError("Exercises array is required");
-        }
-
         try {
+          if (isTrainingLogPayload(sessionData)) {
+            const result = await createTrainingLogSession(
+              userId,
+              sessionData,
+              requestInfo,
+              supabase,
+            );
+            return createSuccessResponse(
+              {
+                session: result.session,
+                workoutLogSynced: result.workoutLogSynced,
+                note: result.note,
+              },
+              201,
+              "Training session logged successfully",
+            );
+          }
+
+          // Validate required fields for builder sessions
+          if (
+            !sessionData.exercises ||
+            !Array.isArray(sessionData.exercises) ||
+            sessionData.exercises.length === 0
+          ) {
+            return handleValidationError("Exercises array is required");
+          }
+
           const result = await createTrainingSession(
             userId,
             sessionData,
             requestInfo,
+            supabase,
           );
           return createSuccessResponse(
             { session: result.session, id: result.id, note: result.note },
@@ -367,6 +669,9 @@ exports.handler = async (event, context) => {
             "Training session created successfully",
           );
         } catch (error) {
+          if (error.details) {
+            return handleValidationError(error.details);
+          }
           return createErrorResponse(
             error.message || "Failed to create training session",
             403,
@@ -398,6 +703,7 @@ exports.handler = async (event, context) => {
             sessionId,
             updates,
             requestInfo,
+            supabase,
           );
           return createSuccessResponse(session);
         } catch (error) {
@@ -409,6 +715,80 @@ exports.handler = async (event, context) => {
             error.message || "Failed to update training session",
             403,
             "UPDATE_FAILED",
+          );
+        }
+      }
+
+      if (event.httpMethod === "DELETE") {
+        let deletePayload = {};
+        try {
+          deletePayload = event.body ? JSON.parse(event.body) : {};
+        } catch (_parseError) {
+          return handleValidationError("Invalid JSON in request body");
+        }
+
+        const sessionId =
+          deletePayload.sessionId ||
+          deletePayload.session_id ||
+          event.queryStringParameters?.sessionId ||
+          event.queryStringParameters?.session_id ||
+          extractSessionIdFromPath(event.path);
+
+        if (!sessionId) {
+          return handleValidationError("sessionId is required");
+        }
+
+        try {
+          const { data: session, error: fetchError } = await supabase
+            .from("training_sessions")
+            .select("id, user_id, coach_locked")
+            .eq("id", sessionId)
+            .maybeSingle();
+
+          if (fetchError) {
+            throw fetchError;
+          }
+
+          if (!session || session.user_id !== userId) {
+            return createErrorResponse(
+              "Training session not found or you don't have permission to delete it",
+              404,
+              "NOT_FOUND",
+            );
+          }
+
+          if (session.coach_locked) {
+            return createErrorResponse(
+              "Cannot delete: session is coach_locked",
+              403,
+              "COACH_LOCKED",
+            );
+          }
+
+          const { error: updateError } = await supabase
+            .from("training_sessions")
+            .update({
+              status: "deleted",
+              deleted_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", sessionId)
+            .eq("user_id", userId);
+
+          if (updateError) {
+            throw updateError;
+          }
+
+          return createSuccessResponse(
+            { sessionId },
+            200,
+            "Training session deleted successfully",
+          );
+        } catch (error) {
+          return createErrorResponse(
+            error.message || "Failed to delete training session",
+            500,
+            "DELETE_FAILED",
           );
         }
       }

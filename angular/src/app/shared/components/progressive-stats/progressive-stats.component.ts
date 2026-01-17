@@ -105,7 +105,7 @@ export interface ProgressiveStatItem extends StatItem {
               <div class="stat-details" [@expandCollapse]>
                 <!-- Level 3: Deep Dive Charts -->
                 @if (showDeepDive() === stat.id && hasChartData(stat)) {
-                  <p-tabs class="stat-tabs">
+                <p-tabs class="stat-tabs tabs-standard">
                     <p-tabpanel header="Trends" leftIcon="pi pi-chart-line">
                       @if (stat.trendData) {
                         <div class="chart-container">

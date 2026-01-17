@@ -27,7 +27,7 @@
 
 .positions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
 }
 
@@ -51,8 +51,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
   background: var(--primary-color);
   color: white;
   border-radius: var(--radius-lg);
@@ -69,7 +69,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  min-height: 80px;
+  min-height: var(--card-min-height-sm);
 }
 
 .player-slot {
@@ -104,7 +104,7 @@
   }
 
   &.cdk-drag-placeholder {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
   }
 }
 
@@ -112,8 +112,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--space-6);
+  height: var(--space-6);
   background: var(--surface-200);
   border-radius: 50%;
   font-size: var(--font-size-badge);

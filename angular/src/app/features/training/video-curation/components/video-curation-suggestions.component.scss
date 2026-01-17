@@ -50,7 +50,7 @@
 
 .suggestions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xl), 1fr));
   gap: var(--space-4);
 }
 
@@ -81,7 +81,7 @@
   position: absolute;
   top: var(--space-2);
   left: var(--space-2);
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--surface-overlay-dark);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
   color: white;

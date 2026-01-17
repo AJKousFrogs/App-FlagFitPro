@@ -16,7 +16,7 @@
 "use strict";
 
 const { baseHandler } = require("./base-handler.cjs");
-const { authenticateRequest } = require("./auth-helper.cjs");
+const { getUserRole } = require("./authorization-guard.cjs");
 
 /**
  * Create a handler with automatic authentication and role extraction
@@ -50,10 +50,8 @@ function createHandler(options) {
 
         if (requireAuth && userId) {
           try {
-            const auth = await authenticateRequest(event);
-            if (auth.success && auth.user) {
-              userRole = auth.user.role || "player";
-            }
+            const resolvedRole = await getUserRole(userId);
+            userRole = resolvedRole || "player";
           } catch (error) {
             console.warn(
               `[${functionName}] Could not get user role:`,

@@ -397,86 +397,18 @@ export class La28RoadmapComponent {
         this.playerCycles.set(response.data);
       } else if (Array.isArray(response)) {
         this.playerCycles.set(response);
+      } else {
+        // No data available - show empty state instead of mock data
+        // This ensures athletes see real data only and calculations are accurate
+        this.playerCycles.set([]);
+        this.logger.info("No program cycles found - showing empty state");
       }
     } catch (err) {
       this.logger.error("Failed to load program cycles", err);
-      // Set mock data for now
-      this.playerCycles.set(this.getMockCycles());
+      // Show empty state instead of mock data to avoid misleading athletes
+      // Real data will populate once coach assigns program cycles
+      this.playerCycles.set([]);
     }
-  }
-
-  private getMockCycles(): PlayerCycle[] {
-    return [
-      {
-        id: "1",
-        cycle_id: "c1",
-        status: "completed",
-        completion_percentage: 100,
-        program_cycle: {
-          id: "c1",
-          cycle_name: "Foundation Building",
-          cycle_year: "2025",
-          start_date: "2025-01-01",
-          end_date: "2025-12-31",
-          focus_area: "Base Fitness & Technical Skills",
-          target_event: "EC 2025 Qualifiers",
-          description: "Build aerobic base and fundamental skills",
-          cycle_order: 1,
-        },
-      },
-      {
-        id: "2",
-        cycle_id: "c2",
-        status: "in_progress",
-        started_at: "2026-01-01",
-        completion_percentage: 35,
-        program_cycle: {
-          id: "c2",
-          cycle_name: "Competition Preparation",
-          cycle_year: "2026",
-          start_date: "2026-01-01",
-          end_date: "2026-12-31",
-          focus_area: "Intensification & Competition",
-          target_event: "EC 2026",
-          description: "Increase training intensity for competition",
-          cycle_order: 2,
-        },
-      },
-      {
-        id: "3",
-        cycle_id: "c3",
-        status: "not_started",
-        completion_percentage: 0,
-        program_cycle: {
-          id: "c3",
-          cycle_name: "Peak Performance",
-          cycle_year: "2027",
-          start_date: "2027-01-01",
-          end_date: "2027-12-31",
-          focus_area: "Performance Optimization",
-          target_event: "World Games / WC 2027",
-          description: "Optimize performance for major events",
-          cycle_order: 3,
-        },
-      },
-      {
-        id: "4",
-        cycle_id: "c4",
-        status: "not_started",
-        completion_percentage: 0,
-        program_cycle: {
-          id: "c4",
-          cycle_name: "Olympic Qualification",
-          cycle_year: "2028",
-          start_date: "2028-01-01",
-          end_date: "2028-07-31",
-          focus_area: "Final Preparation & Taper",
-          target_event: "LA 2028 Olympics",
-          description: "Final preparation for Olympic debut",
-          cycle_order: 4,
-        },
-      },
-    ];
   }
 
   getStatusLabel(status: string): string {

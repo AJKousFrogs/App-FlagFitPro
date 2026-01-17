@@ -19,6 +19,7 @@ const {
   createErrorResponse,
 } = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
+const { validate } = require("./validation.cjs");
 
 // Use shared Supabase admin client
 function getSupabase() {
@@ -103,6 +104,15 @@ async function getChannels(userId) {
  */
 async function createChannel(userId, channelData) {
   const supabase = getSupabase();
+
+  // SECURITY: Validate channel data
+  const validation = validate(channelData, "createChannel");
+  if (!validation.valid) {
+    const error = new Error(`Validation failed: ${validation.errors.join(", ")}`);
+    error.isValidation = true;
+    error.errors = validation.errors;
+    throw error;
+  }
 
   // Verify user is a coach for this team (for non-DM channels)
   if (channelData.channel_type !== "direct_message") {
@@ -224,6 +234,15 @@ async function getMessages(userId, channelId, options = {}) {
  */
 async function sendMessage(userId, channelId, messageData) {
   const supabase = getSupabase();
+
+  // SECURITY: Validate message data
+  const validation = validate(messageData, "chatMessage");
+  if (!validation.valid) {
+    const error = new Error(`Validation failed: ${validation.errors.join(", ")}`);
+    error.isValidation = true;
+    error.errors = validation.errors;
+    throw error;
+  }
 
   // Verify user can post to this channel
   const canPost = await verifyCanPost(userId, channelId);
@@ -614,6 +633,17 @@ exports.handler = async (event, context) => {
         return createErrorResponse("Not found", 404, "not_found");
       } catch (error) {
         console.error("Chat API error:", error);
+
+        // SECURITY: Handle validation errors with proper 422 status
+        if (error.isValidation) {
+          return createErrorResponse(
+            error.message || "Validation failed",
+            422,
+            "validation_error",
+            requestId,
+          );
+        }
+
         return createErrorResponse(
           error.message || "Internal error",
           error.message?.includes("denied") || error.message?.includes("cannot")

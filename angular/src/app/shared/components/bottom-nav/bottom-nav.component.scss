@@ -36,7 +36,7 @@
 .more-menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--surface-overlay);
   z-index: 1001;
   display: flex;
   align-items: flex-end;

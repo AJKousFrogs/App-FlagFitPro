@@ -96,7 +96,7 @@ import { ButtonComponent } from "../button/button.component";
               <div class="modal-footer-buttons">
                 @if (showCancelButton()) {
                   <app-button
-                    [iconLeft]="cancelIcon()?.replace('pi ', '') || ''"
+                    [iconLeft]="cancelIcon().replace('pi ', '') || ''"
                     variant="text"
                     (clicked)="handleCancel()"
                     [disabled]="cancelDisabled()"
@@ -106,7 +106,7 @@ import { ButtonComponent } from "../button/button.component";
                 }
                 @if (showConfirmButton()) {
                   <app-button
-                    [iconLeft]="confirmIcon()?.replace('pi ', '') || ''"
+                    [iconLeft]="confirmIcon().replace('pi ', '') || ''"
                     [variant]="confirmSeverity()"
                     (clicked)="handleConfirm()"
                     [disabled]="confirmDisabled()"

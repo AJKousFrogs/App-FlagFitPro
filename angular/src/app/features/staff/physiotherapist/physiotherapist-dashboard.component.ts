@@ -5,7 +5,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -14,21 +14,19 @@ import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Dialog } from "primeng/dialog";
-import { InputText } from "primeng/inputtext";
+
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
-import { Textarea } from "primeng/textarea";
-import { Timeline } from "primeng/timeline";
-import { Tooltip } from "primeng/tooltip";
+
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import {
   SharedInsight,
-  SharedInsightFeedService,
+  SharedInsightFeedService
 } from "../../../core/services/shared-insight-feed.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
@@ -201,7 +199,6 @@ const RTP_PHASES = [
     RouterModule,
     Card,
     Dialog,
-    InputText,
     ProgressBar,
     Select,
     TableModule,
@@ -210,16 +207,11 @@ const RTP_PHASES = [
     Tab,
     TabPanels,
     TabPanel,
-    Tag,
     StatusTagComponent,
-    Textarea,
-    Timeline,
-    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>

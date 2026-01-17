@@ -41,8 +41,8 @@
 }
 
 .status-indicator {
-  width: 32px;
-  height: 32px;
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
   border-radius: var(--radius-full, 9999px);
   display: flex;
   align-items: center;
@@ -89,8 +89,8 @@
 }
 
 .expand-toggle {
-  width: 32px;
-  height: 32px;
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
   border: none;
   background: var(--primitive-neutral-100);
   border-radius: var(--radius-full, 9999px);
@@ -99,7 +99,7 @@
   align-items: center;
   justify-content: center;
   color: var(--color-text-secondary);
-  transition: background-color 150ms ease;
+  transition: background-color var(--transition-fast) var(--ease-standard);
 }
 
 .expand-toggle:hover {
@@ -199,7 +199,7 @@
   background: var(--surface-primary);
   border-radius: var(--radius-lg, 8px);
   padding: var(--space-3, 12px);
-  min-width: 60px;
+  min-width: var(--badge-min-width-md);
   box-shadow: var(--shadow-1);
 }
 

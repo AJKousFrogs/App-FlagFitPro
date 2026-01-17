@@ -88,23 +88,18 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error("Weather error:", error);
 
-    // Return mock data on error
+    // Return error state instead of mock data
+    // Mock weather data could lead athletes to train in unsafe conditions
     return new Response(
       JSON.stringify({
-        success: true,
-        data: {
-          temp: 72,
-          condition: "Partly Cloudy",
-          description: "Perfect for outdoor training",
-          humidity: 60,
-          windSpeed: 8,
-          suitable: true,
-          suitability: "excellent",
-          icon: "pi pi-sun",
-          location: "Mock Data",
-        },
+        success: false,
+        data: null,
+        error: "Weather data temporarily unavailable. Check local weather before outdoor training.",
+        // Include a safety flag so UI can show appropriate warnings
+        safetyWarning: true,
       }),
       {
+        status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
     );

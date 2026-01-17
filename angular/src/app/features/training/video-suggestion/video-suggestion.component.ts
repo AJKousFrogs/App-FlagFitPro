@@ -28,7 +28,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import {
@@ -36,12 +36,11 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from "@angular/forms";
 
 // PrimeNG Components
-import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
+
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Chip } from "primeng/chip";
@@ -50,11 +49,11 @@ import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { Skeleton } from "primeng/skeleton";
-import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
+
 import { Textarea } from "primeng/textarea";
-import { Timeline } from "primeng/timeline";
+
 import { Toast } from "primeng/toast";
-import { Tooltip } from "primeng/tooltip";
+
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
@@ -68,7 +67,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   FlagPosition,
-  TrainingFocus,
+  TrainingFocus
 } from "../../../core/services/training-video-database.service";
 
 // Layout
@@ -105,19 +104,14 @@ interface VideoSuggestion {
     MultiSelect,
     Toast,
     Dialog,
-    Badge,
-    Tooltip,
     Skeleton,
-    Avatar,
-    Timeline,
-    Stepper, StepList, Step, StepPanels, StepPanel,
     Chip,
     Divider,
     MainLayoutComponent,
     ButtonComponent,
     IconButtonComponent,
     CardShellComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <p-toast></p-toast>

@@ -3,10 +3,10 @@ import {
     ChangeDetectionStrategy,
     Component,
     input,
-    output,
+    output
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
+
 import { ButtonComponent } from "../button/button.component";
 
 /**
@@ -26,7 +26,7 @@ import { ButtonComponent } from "../button/button.component";
   selector: "app-empty-state",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Card, ButtonComponent],
+  imports: [CommonModule, RouterModule, ButtonComponent],
   template: `
     <div class="empty-state" [class.compact]="compact()">
       @if (icon()) {

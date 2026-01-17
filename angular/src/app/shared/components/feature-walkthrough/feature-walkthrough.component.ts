@@ -18,7 +18,7 @@ import {
   computed,
   inject,
   output,
-  signal,
+  signal
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -26,10 +26,8 @@ import { COLORS } from "../../../core/constants/app.constants";
 // PrimeNG
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { Card } from "primeng/card";
+
 import { Dialog } from "primeng/dialog";
-import { ProgressBar } from "primeng/progressbar";
-import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -58,11 +56,8 @@ interface WalkthroughStep {
     CommonModule,
     RouterModule,
     Dialog,
-    Stepper, StepList, Step, StepPanels, StepPanel,
-    ProgressBar,
-    Card,
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <p-dialog

@@ -36,7 +36,7 @@
   align-items: center;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-xl);
-  min-width: 80px;
+  min-width: var(--badge-min-width-lg);
 
   &.green {
     background: var(--color-status-success-subtle);

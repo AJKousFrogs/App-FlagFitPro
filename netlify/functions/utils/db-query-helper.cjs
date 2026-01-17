@@ -42,8 +42,8 @@ async function executeQuery(queryPromise, errorMessage) {
       return {
         success: false,
         error: createErrorResponse(
-          500,
           `${errorMessage}: ${error.message}`,
+          500,
           "database_error",
         ),
       };
@@ -58,8 +58,8 @@ async function executeQuery(queryPromise, errorMessage) {
     return {
       success: false,
       error: createErrorResponse(
-        500,
         `${errorMessage}: ${error.message}`,
+        500,
         "database_error",
       ),
     };

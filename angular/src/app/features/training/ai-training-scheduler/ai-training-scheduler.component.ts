@@ -4,7 +4,7 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-  OnInit,
+  OnInit
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 
@@ -13,7 +13,7 @@ import { CommonModule } from "@angular/common";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Skeleton } from "primeng/skeleton";
 import { Toast } from "primeng/toast";
@@ -70,7 +70,6 @@ interface AthleteMetrics {
     CommonModule,
     Card,
     DatePicker,
-    Tag,
     StatusTagComponent,
     Skeleton,
     Toast,
@@ -78,8 +77,7 @@ interface AthleteMetrics {
     MainLayoutComponent,
     PageHeaderComponent,
     AiConsentRequiredComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     <p-toast></p-toast>

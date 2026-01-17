@@ -41,7 +41,7 @@
 
 .clickable-chip {
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-base) var(--ease-standard);
 }
 
 .clickable-chip:hover {
@@ -50,7 +50,7 @@
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-6);
 }
 

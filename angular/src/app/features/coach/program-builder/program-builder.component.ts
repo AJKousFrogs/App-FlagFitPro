@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -27,7 +27,7 @@ import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
@@ -157,14 +157,12 @@ const PHASE_PRESETS = [
     ProgressBar,
     Select,
     TableModule,
-    Tag,
     StatusTagComponent,
     Textarea,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

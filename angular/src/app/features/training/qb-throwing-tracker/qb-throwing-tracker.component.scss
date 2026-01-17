@@ -149,8 +149,8 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  min-height: 20px;
-  transition: height 300ms ease;
+  min-height: var(--avatar-size-xs);
+  transition: height var(--transition-slow) var(--ease-standard);
 }
 
 .bar-fill.medium {
@@ -254,8 +254,8 @@
 }
 
 .feeling-dot {
-  width: 8px;
-  height: 8px;
+  width: var(--indicator-size-sm);
+  height: var(--indicator-size-sm);
   border-radius: var(--radius-full);
   background: var(--primitive-neutral-200);
 }

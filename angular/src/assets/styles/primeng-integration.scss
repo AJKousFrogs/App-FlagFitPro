@@ -169,19 +169,21 @@
     0.04
   );
   --p-button-padding-y: var(--space-3, 0.75rem);
-  --p-button-padding-x: var(--space-4, 1rem);
-  --p-button-border-radius: var(
-    --radius-lg,
-    0.5rem
-  ); /* 8px - Design System standard */
+  --p-button-padding-x: var(--space-6, 1.5rem);
+  --p-button-border-radius: var(--radius-button, var(--radius-lg, 0.5rem));
+  --p-button-icon-only-width: 44px;
+  --p-button-icon-only-height: 44px;
+  --p-button-raised-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --p-button-gap: var(--space-2);
 
   --p-button-font-weight: var(--font-weight-medium, 500);
   --p-button-sm-font-size: var(--font-body-sm-size, 0.875rem);
   --p-button-sm-padding-y: var(--space-2, 0.5rem);
-  --p-button-sm-padding-x: var(--space-3, 0.75rem);
+  --p-button-sm-padding-x: var(--space-4, 1rem);
   --p-button-lg-font-size: var(--font-body-size, 1.125rem);
   --p-button-lg-padding-y: var(--space-4, 1rem);
-  --p-button-lg-padding-x: var(--space-5, 1.25rem);
+  --p-button-lg-padding-x: var(--space-8, 2rem);
 
   /* Card - Typography aligned to unified system */
   --p-card-background: var(--surface-card, var(--color-text-on-primary));
@@ -194,13 +196,17 @@
     0.5rem
   ); /* 8px - Design System standard */
 
-  --p-card-body-padding: var(--space-5, 1.25rem);
+  --p-card-body-padding: var(--space-4, 1rem);
+  --p-card-body-gap: var(--space-3, 0.75rem);
+  --p-card-header-padding: var(--space-4, 1rem);
+  --p-card-footer-padding: var(--space-4, 1rem);
+  --p-card-content-padding: 0;
   --p-card-title-font-size: var(
     --font-h3-size,
     1.25rem
   ); /* 20px - H3 for card titles */
 
-  --p-card-title-font-weight: 600; /* semibold for card headers */
+  --p-card-title-font-weight: var(--font-weight-semibold); /* semibold for card headers */
   --p-card-subtitle-font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
   --p-card-subtitle-font-weight: var(--font-body-sm-weight, 400);
   --p-card-subtitle-color: var(
@@ -244,6 +250,10 @@
   --p-input-padding-y: var(--p-form-control-padding-y);
   --p-input-padding-x: var(--p-form-control-padding-x);
   --p-input-border-radius: var(--p-form-control-border-radius);
+  --p-inputtext-padding-y: var(--p-form-control-padding-y);
+  --p-inputtext-padding-x: var(--p-form-control-padding-x);
+  --p-inputtext-border-radius: var(--p-form-control-border-radius);
+  --p-inputtext-min-height: var(--p-form-control-min-height);
   --p-input-placeholder-color: var(
     --color-text-muted,
     var(--primitive-neutral-500)
@@ -277,6 +287,8 @@
   --p-select-background: var(--p-input-background);
   --p-select-border-color: var(--p-input-border-color);
   --p-select-border-radius: var(--p-form-control-border-radius);
+  --p-select-padding-y: var(--p-form-control-padding-y);
+  --p-select-padding-x: var(--p-form-control-padding-x);
   --p-select-hover-border-color: var(--p-input-hover-border-color);
   --p-select-focus-border-color: var(--p-input-focus-border-color);
   --p-select-focus-ring-color: var(--p-input-focus-ring-color);
@@ -306,6 +318,12 @@
   --p-dropdown-option-font-size: var(--font-body-size);
 
   /* Checkbox/Radio */
+  --p-checkbox-width: 20px;
+  --p-checkbox-height: 20px;
+  --p-checkbox-border-radius: var(--radius-md);
+  --p-checkbox-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
+  --p-control-row-min-height: 44px;
+  --p-control-disabled-opacity: 0.6;
   --p-checkbox-border-color: var(
     --color-border-primary,
     var(--primitive-neutral-300)
@@ -314,7 +332,14 @@
   --p-checkbox-checked-border-color: var(--ds-primary-green);
   --p-checkbox-icon-checked-color: var(--color-text-on-primary);
 
+  --p-toggleswitch-width: 44px;
+  --p-toggleswitch-height: 24px;
+  --p-toggleswitch-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
+
   /* Tag/Badge */
+  --p-tag-font-size: var(--font-size-badge, 0.75rem);
+  --p-tag-font-weight: var(--font-weight-semibold, 600);
+  --p-tag-border-radius: var(--radius-md, 0.5rem);
   --p-tag-primary-background: var(--ds-primary-green);
   --p-tag-primary-color: var(--color-text-on-primary);
   --p-tag-success-background: var(--ds-primary-green);
@@ -326,13 +351,18 @@
   --p-tag-info-background: var(--color-status-info);
   --p-tag-info-color: var(--color-text-on-primary);
 
+  /* Avatar */
+  --p-avatar-background: var(--ds-primary-green);
+  --p-avatar-color: var(--color-text-on-primary);
+  --p-avatar-font-weight: var(--font-weight-semibold, 600);
+
   /* Dialog/Modal - Typography aligned to unified system */
   --p-dialog-border-radius: var(
     --radius-lg,
     0.5rem
   ); /* 8px - Design System standard */
 
-  --p-dialog-header-padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
+  --p-dialog-header-padding: var(--space-4, 1rem);
   --p-dialog-header-font-size: var(
     --font-h2-size,
     1.5rem
@@ -340,21 +370,50 @@
 
   --p-dialog-header-font-weight: var(--font-h2-weight, 600); /* semibold */
   --p-dialog-header-line-height: var(--font-h2-line-height, 1.25);
-  --p-dialog-content-padding: var(--space-5, 1.25rem) var(--space-6, 1.5rem);
-  --p-dialog-footer-padding: var(--space-4, 1rem) var(--space-6, 1.5rem)
-    var(--space-5, 1.25rem);
+  --p-dialog-content-padding: var(--space-4, 1rem);
+  --p-dialog-footer-padding: var(--space-4, 1rem);
+  --p-dialog-footer-gap: var(--space-3, 0.75rem);
 
   /* Toast */
-  --p-toast-border-radius: var(--radius-lg, 0.5rem);
-  --p-toast-success-background: var(--ds-primary-green);
-  --p-toast-success-border-color: var(--ds-primary-green);
-  --p-toast-success-color: var(--color-text-on-primary);
-  --p-toast-warn-background: var(--color-status-warning);
-  --p-toast-warn-color: var(--primitive-warning-900);
-  --p-toast-error-background: var(--color-status-error);
-  --p-toast-error-color: var(--color-text-on-primary);
-  --p-toast-info-background: var(--color-status-info);
-  --p-toast-info-color: var(--color-text-on-primary);
+  --p-toast-blur: 10px;
+  --p-toast-border-radius: var(--radius-xl, 0.75rem);
+  --p-toast-shadow:
+    0 10px 40px -10px rgba(0, 0, 0, 0.2), 0 4px 15px -5px rgba(0, 0, 0, 0.1);
+  --p-toast-content-padding: 0;
+  --p-toast-content-gap: 0;
+  --p-toast-close-button-width: 2rem;
+  --p-toast-close-button-height: 2rem;
+  --p-toast-close-button-border-radius: var(--radius-md);
+  --p-message-border-radius: var(--radius-lg, 0.5rem);
+  --p-message-content-padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  --p-toast-success-background: linear-gradient(
+    135deg,
+    rgba(99, 173, 14, 0.1) 0%,
+    var(--surface-primary) 100%
+  );
+  --p-toast-success-border-color: var(--color-status-success);
+  --p-toast-success-color: var(--color-text-primary);
+  --p-toast-warn-background: linear-gradient(
+    135deg,
+    rgba(255, 192, 0, 0.1) 0%,
+    var(--surface-primary) 100%
+  );
+  --p-toast-warn-border-color: var(--color-status-warning);
+  --p-toast-warn-color: var(--color-text-primary);
+  --p-toast-error-background: linear-gradient(
+    135deg,
+    rgba(255, 0, 60, 0.1) 0%,
+    var(--surface-primary) 100%
+  );
+  --p-toast-error-border-color: var(--color-status-error);
+  --p-toast-error-color: var(--color-text-primary);
+  --p-toast-info-background: linear-gradient(
+    135deg,
+    rgba(var(--ds-primary-green-rgb), 0.1) 0%,
+    var(--surface-primary) 100%
+  );
+  --p-toast-info-border-color: var(--ds-primary-green);
+  --p-toast-info-color: var(--color-text-primary);
 
   /* Menu */
   --p-menu-background: var(--surface-card, var(--color-text-on-primary));
@@ -424,7 +483,7 @@
     0.875rem
   ); /* 14px - body-sm */
 
-  --p-tabview-tab-font-weight: 600; /* semibold for tab labels */
+  --p-tabview-tab-font-weight: var(--font-weight-semibold); /* semibold for tab labels */
   --p-tabview-tab-line-height: var(--font-body-sm-line-height, 1.45);
   --p-tabview-tab-active-border-color: var(--ds-primary-green);
   --p-tabview-tab-active-color: var(--ds-primary-green);
@@ -487,9 +546,13 @@
      ================================================================ */
 
   --p-focus-ring-width: 2px;
-  --p-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.5);
+  --p-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
   --p-focus-ring-offset: 2px;
   --p-focus-ring-style: solid;
+  --p-inputtext-focus-ring-width: 2px;
+  --p-inputtext-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
+  --p-inputtext-focus-ring-offset: 2px;
+  --p-inputtext-focus-border-color: var(--ds-primary-green);
 
   /* ================================================================
      DISABLED STATES
@@ -758,23 +821,6 @@
   border-top: 1px solid var(--color-border-primary);
 }
 
-/* Button Sizing */
-.p-button {
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  font-weight: var(--font-weight-medium);
-
-  &.p-button-sm {
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--font-body-sm-size);
-  }
-
-  &.p-button-lg {
-    padding: var(--space-4) var(--space-5);
-    font-size: var(--font-body-size);
-  }
-}
-
 /* ================================================================
    FORM CONTROL NORMALIZATION - SINGLE SOURCE OF TRUTH
    All form controls: 44px height, 8px radius, consistent padding
@@ -806,6 +852,15 @@
     background-color 0.15s ease;
 }
 
+/* Password input: reserve space for toggle icon */
+.p-password .p-password-input {
+  padding-right: var(--space-10, 2.5rem);
+}
+
+.p-password .p-password-toggle-mask-icon {
+  color: var(--color-text-muted);
+}
+
 /* Placeholder styling */
 .p-inputtext::placeholder,
 .p-dropdown .p-placeholder,
@@ -813,7 +868,7 @@
 .p-multiselect .p-placeholder {
   color: var(--p-input-placeholder-color);
   font-size: var(--p-input-placeholder-font-size, 14px);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
 }
 
 /* Hover state - subtle border change, NO size change */
@@ -989,7 +1044,7 @@
 .p-listbox-option.p-highlight {
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
 }
 
 /* Option focus */

@@ -22,7 +22,7 @@ import {
   inject,
   input,
   output,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
@@ -32,8 +32,7 @@ import { COLORS } from "../../../core/constants/app.constants";
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
-import { ProgressBar } from "primeng/progressbar";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { ButtonComponent } from "../button/button.component";
 // Services
@@ -69,11 +68,8 @@ interface RecoveryRecommendation {
     Dialog,
     InputNumber,
     Checkbox,
-    Tag,
     StatusTagComponent,
-    ProgressBar,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     <p-dialog

@@ -14,17 +14,17 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { Card } from "primeng/card";
+
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { Tag } from "primeng/tag";
+
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
@@ -91,18 +91,15 @@ const VISIBILITY_OPTIONS = [
   imports: [
     CommonModule,
     FormsModule,
-    Card,
     Dialog,
     InputText,
     RadioButton,
     Select,
-    Tag,
     Textarea,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

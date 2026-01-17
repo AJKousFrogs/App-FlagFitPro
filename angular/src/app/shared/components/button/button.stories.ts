@@ -63,7 +63,10 @@ const meta: Meta<ButtonComponent> = {
   tags: ["autodocs"],
   decorators: [
     moduleMetadata({
-      imports: [ButtonComponent, IconButtonComponent, RouterModule.forRoot([])],
+      imports: [
+        ButtonComponent,
+        IconButtonComponent
+      ],
     }),
   ],
   argTypes: {
@@ -394,7 +397,9 @@ const iconButtonMeta: Meta<IconButtonComponent> = {
   tags: ["autodocs"],
   decorators: [
     moduleMetadata({
-      imports: [IconButtonComponent, RouterModule.forRoot([])],
+      imports: [
+        IconButtonComponent
+      ],
     }),
   ],
   argTypes: {

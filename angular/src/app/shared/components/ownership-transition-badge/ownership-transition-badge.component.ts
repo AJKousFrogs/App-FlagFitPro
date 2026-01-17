@@ -11,9 +11,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  input,
+  input
 } from "@angular/core";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { OwnershipTransition } from "../../../core/services/ownership-transition.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -23,7 +23,7 @@ import { getTimeAgo } from "../../utils/date.utils";
   selector: "app-ownership-transition-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip, StatusTagComponent],
+  imports: [CommonModule, StatusTagComponent],
   template: `
     @if (transition()) {
       <div class="ownership-badge" [class]="'status-' + transition()!.status">

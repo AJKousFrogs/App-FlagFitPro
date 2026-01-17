@@ -13,12 +13,12 @@ import {
   output,
   computed,
   inject,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { TitleCasePipe, DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
-import { Tag } from "primeng/tag";
+
 import { Checkbox } from "primeng/checkbox";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
@@ -28,14 +28,14 @@ import { RiskMeaning } from "../../../core/semantics/semantic-meaning.types";
 import { Player } from "../roster.models";
 import {
   PlayerMetricsService,
-  PlayerWithMetrics,
+  PlayerWithMetrics
 } from "../services/player-metrics.service";
 import {
   getJerseyColor,
   getPlayerStats,
   formatHeight,
   formatWeight,
-  getCountryFlag,
+  getCountryFlag
 } from "../roster-utils";
 import { TRAINING } from "../../../core/constants/app.constants";
 
@@ -45,7 +45,6 @@ import { TRAINING } from "../../../core/constants/app.constants";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Card,
-    Tag,
     Checkbox,
     Tooltip,
     ProgressBar,
@@ -53,7 +52,7 @@ import { TRAINING } from "../../../core/constants/app.constants";
     TitleCasePipe,
     DecimalPipe,
     SemanticMeaningRendererComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <p-card

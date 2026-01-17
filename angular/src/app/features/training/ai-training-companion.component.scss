@@ -22,8 +22,8 @@
 
 .avatar-container {
   position: relative;
-  width: 64px;
-  height: 64px;
+  width: var(--avatar-size-2xl);
+  height: var(--avatar-size-2xl);
   border-radius: var(--radius-full);
   background: linear-gradient(
     135deg,
@@ -75,8 +75,8 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 16px;
-  height: 16px;
+  width: var(--indicator-size-lg);
+  height: var(--indicator-size-lg);
   border-radius: var(--radius-full);
   border: 2px solid var(--surface-primary);
   background: var(--color-text-secondary);
@@ -109,8 +109,8 @@
   position: absolute;
   bottom: 80px;
   right: 0;
-  min-width: 200px;
-  max-width: 300px;
+  min-width: var(--input-min-width-lg);
+  max-width: var(--element-max-width-sm);
   padding: var(--space-4);
   background: var(--surface-primary);
   border-radius: var(--radius-2xl);
@@ -143,7 +143,7 @@
   bottom: 80px;
   right: 0;
   width: 90vw;
-  max-width: 400px;
+  max-width: var(--dialog-max-width-sm);
   max-height: 80vh;
   overflow-y: auto;
   background: var(--surface-primary);
@@ -325,7 +325,7 @@
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
-  max-width: 320px;
+  max-width: var(--element-max-width-md);
 }
 
 .ai-disabled-content {

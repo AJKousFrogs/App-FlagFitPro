@@ -3,7 +3,7 @@ import {
   Component,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
@@ -11,14 +11,14 @@ import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
   SuperadminService,
-  ApprovalRequest,
+  ApprovalRequest
 } from "../../core/services/superadmin.service";
 
 @Component({
@@ -30,14 +30,12 @@ import {
     RouterLink,
     FormsModule,
     Card,
-    Tag,
     StatusTagComponent,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>

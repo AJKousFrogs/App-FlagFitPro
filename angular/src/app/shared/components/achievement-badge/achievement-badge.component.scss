@@ -231,7 +231,7 @@
 
 .star {
   font-size: var(--font-caption-size);
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--overlay-white-90);
   text-shadow: var(--shadow-sm);
 }
 
@@ -290,7 +290,7 @@
 /* Badge info */
 .badge-info {
   text-align: center;
-  max-width: 150px;
+  max-width: var(--input-min-width-md); /* 150px */
 }
 
 .badge-title {
@@ -344,7 +344,7 @@
 .progress-text {
   font-size: var(--font-size-badge);
   color: var(--color-text-secondary);
-  min-width: 35px;
+  min-width: var(--touch-target-sm); /* 36px */
   text-align: right;
 }
 

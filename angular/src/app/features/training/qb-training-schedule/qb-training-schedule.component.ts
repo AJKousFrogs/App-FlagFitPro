@@ -2,14 +2,14 @@ import {
   Component,
   signal,
   ChangeDetectionStrategy,
-  OnInit,
+  OnInit
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { DatePicker } from "primeng/datepicker";
-import { Tag } from "primeng/tag";
+
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
 
 @Component({
@@ -20,10 +20,8 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     FormsModule,
     Card,
     DatePicker,
-    Tag,
     PageHeaderComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     <div class="qb-training-schedule-page">

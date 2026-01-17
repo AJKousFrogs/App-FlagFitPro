@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -22,8 +22,7 @@ import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
@@ -32,7 +31,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
   DROPDOWN_WIDTHS,
-  TABLE_COLUMN_WIDTHS,
+  TABLE_COLUMN_WIDTHS
 } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -268,16 +267,10 @@ const CATEGORY_LABELS: Record<
     ProgressBar,
     Select,
     TableModule,
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
-    Tag,
     StatusTagComponent,
     Toast,
     MainLayoutComponent,
-    PageHeaderComponent,
+    PageHeaderComponent
   ],
   providers: [MessageService],
   template: `

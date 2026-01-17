@@ -74,7 +74,7 @@
 .phase-content {
   .phase-description {
     font-size: var(--font-size-body);
-    line-height: 1.6;
+    line-height: var(--line-height-relaxed);
     color: var(--color-text-secondary);
     margin-bottom: var(--space-6);
   }
@@ -183,7 +183,7 @@
 
 .weekly-schedule {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-6);
 }
@@ -409,7 +409,7 @@
 .phase-detail {
   p {
     margin-bottom: var(--space-4);
-    line-height: 1.6;
+    line-height: var(--line-height-relaxed);
   }
 
   .phase-metrics {
@@ -459,12 +459,12 @@
   .evidence-intro {
     margin-bottom: var(--space-6);
     color: var(--color-text-secondary);
-    line-height: 1.6;
+    line-height: var(--line-height-relaxed);
   }
 
   .research-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-lg), 1fr));
     gap: var(--space-6);
   }
 

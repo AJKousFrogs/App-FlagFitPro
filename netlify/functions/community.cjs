@@ -809,6 +809,18 @@ exports.handler = async (event, context) => {
       const authHeader =
         event.headers.authorization || event.headers.Authorization;
 
+      // SECURITY FIX: Require auth header for POST/DELETE even before checking token
+      if (event.httpMethod === "POST" || event.httpMethod === "DELETE") {
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+          return createErrorResponse(
+            "Authentication required",
+            401,
+            "auth_required",
+            requestId,
+          );
+        }
+      }
+
       if (authHeader && authHeader.startsWith("Bearer ")) {
         const auth = await authenticateRequest(event);
         if (auth.success) {

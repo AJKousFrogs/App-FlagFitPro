@@ -15,7 +15,7 @@
 
 .register-card {
   width: 100%;
-  max-width: 450px;
+  max-width: var(--dialog-max-width-md);
 }
 
 .register-logo {

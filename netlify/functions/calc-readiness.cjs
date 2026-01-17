@@ -159,6 +159,7 @@ exports.handler = async (event, context) => {
     functionName: "calc-readiness",
     allowedMethods: ["POST"],
     rateLimitType: "CREATE",
+    requireAuth: true, // SECURITY: Explicit auth for readiness calculation
     handler: async (event, _context, { userId }) => {
       console.log("[calc-readiness] Starting function execution", {
         userId,

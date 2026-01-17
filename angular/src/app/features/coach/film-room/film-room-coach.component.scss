@@ -49,7 +49,7 @@
 // Film Stats
 .film-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-3);
 }
 

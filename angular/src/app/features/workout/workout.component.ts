@@ -4,15 +4,15 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
-  DestroyRef,
+  DestroyRef
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { InputNumber } from "primeng/inputnumber";
+
 import { Checkbox } from "primeng/checkbox";
-import {} from "@angular/core/rxjs-interop";
+
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -51,14 +51,12 @@ interface Workout {
   imports: [
     FormsModule,
     Card,
-    InputNumber,
     Checkbox,
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
     EmptyStateComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     <app-main-layout>

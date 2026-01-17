@@ -23,6 +23,7 @@ exports.handler = async (event, context) => {
     functionName: "fixtures",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // Explicit auth requirement for user fixture data
     handler: async (event, context, { userId }) => {
       // Parse query parameters
       const { valid, athleteId, error } = parseAthleteId(event, userId);

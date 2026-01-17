@@ -86,6 +86,50 @@ async function createCompletionNotification(userId, sessionType, points) {
 }
 
 /**
+ * Ensure workout_logs entry exists for ACWR calculations
+ */
+async function syncWorkoutLog(userId, sessionId, completedAt, rpe, durationMinutes, notes) {
+  try {
+    const { data: existing, error: fetchError } = await supabaseAdmin
+      .from("workout_logs")
+      .select("id")
+      .eq("player_id", userId)
+      .eq("session_id", sessionId)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.warn("[Training Complete] Failed to check workout log:", fetchError.message);
+      return false;
+    }
+
+    if (existing) {
+      return false;
+    }
+
+    const { error: insertError } = await supabaseAdmin
+      .from("workout_logs")
+      .insert({
+        player_id: userId,
+        session_id: sessionId,
+        completed_at: completedAt,
+        rpe: rpe ?? null,
+        duration_minutes: durationMinutes,
+        notes: notes || null,
+      });
+
+    if (insertError) {
+      console.warn("[Training Complete] Failed to sync workout log:", insertError.message);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn("[Training Complete] Workout log sync error:", error.message);
+    return false;
+  }
+}
+
+/**
  * Mark a training session as completed
  * Updates session status and calculates workload
  */
@@ -110,13 +154,23 @@ async function completeTrainingSession(userId, sessionId, completionData) {
     // Workload = duration_minutes * intensity_level / 10
     const duration = completionData.duration || session.duration_minutes || 60;
     const intensity = completionData.intensity || session.intensity_level || 6;
+    const rpe =
+      completionData.rpe !== undefined && completionData.rpe !== null
+        ? completionData.rpe
+        : session.rpe;
+
     const workload =
-      completionData.workload || Math.round((duration * intensity) / 10);
+      completionData.workload !== undefined && completionData.workload !== null
+        ? completionData.workload
+        : rpe !== undefined && rpe !== null
+          ? Math.round(rpe * duration)
+          : Math.round((duration * intensity) / 10);
 
     // Update session with completion data
+    const completedAt = new Date().toISOString();
     const updateData = {
       status: "completed",
-      completed_at: new Date().toISOString(),
+      completed_at: completedAt,
       updated_at: new Date().toISOString(),
       workload,
       // Update duration and intensity if provided
@@ -129,6 +183,9 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       // Store completion notes if provided
       ...(completionData.notes && {
         notes: `${session.notes || ""}\n\nCompleted: ${completionData.notes}`,
+      }),
+      ...(rpe !== undefined && rpe !== null && {
+        rpe,
       }),
       // Store performance metrics if provided
       ...(completionData.metrics && { metrics: completionData.metrics }),
@@ -146,6 +203,9 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       console.error("Error updating training session:", updateError);
       throw updateError;
     }
+
+    // Ensure workout_logs entry exists for ACWR calculations
+    await syncWorkoutLog(userId, sessionId, completedAt, rpe, duration, completionData.notes);
 
     // Award points for completing the session
     const pointsResult = await awardTrainingPoints(userId, duration, intensity);
@@ -199,6 +259,7 @@ async function handleRequest(event, context, { userId }) {
       duration: body.duration,
       intensity: body.intensity,
       workload: body.workload,
+      rpe: body.rpe,
       notes: body.notes,
       metrics: body.metrics,
     });

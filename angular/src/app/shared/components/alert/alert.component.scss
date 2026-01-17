@@ -52,7 +52,7 @@
 
 .alert-close:hover {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--surface-overlay-light);
 }
 
 .alert-close:focus-visible {

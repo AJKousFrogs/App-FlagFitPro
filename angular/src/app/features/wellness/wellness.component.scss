@@ -36,7 +36,7 @@
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xl), 1fr));
   gap: var(--space-6);
   align-items: stretch; /* Ensure equal card heights */
 }
@@ -84,7 +84,7 @@
 
 .checkin-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
   align-items: stretch; /* Ensure equal card heights */
 }

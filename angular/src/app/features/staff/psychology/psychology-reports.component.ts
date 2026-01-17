@@ -5,7 +5,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -16,10 +16,10 @@ import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
-import { Tooltip } from "primeng/tooltip";
+
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { SharedInsightFeedService } from "../../../core/services/shared-insight-feed.service";
@@ -137,7 +137,6 @@ interface ReportPrivacySettings {
     RouterModule,
     Card,
     Checkbox,
-
     LazyChartComponent,
     Dialog,
     InputText,
@@ -148,15 +147,12 @@ interface ReportPrivacySettings {
     Tab,
     TabPanels,
     TabPanel,
-    Tag,
     StatusTagComponent,
     Textarea,
-    Tooltip,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>

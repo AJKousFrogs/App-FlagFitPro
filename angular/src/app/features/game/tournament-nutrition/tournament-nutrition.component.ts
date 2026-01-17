@@ -25,19 +25,18 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 
 // PrimeNG Components
-import { Badge } from "primeng/badge";
+
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { Divider } from "primeng/divider";
-import { InputNumber } from "primeng/inputnumber";
+
 import { ProgressBar } from "primeng/progressbar";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -103,18 +102,14 @@ interface HydrationLog {
     CommonModule,
     FormsModule,
     Card,
-    InputNumber,
     Checkbox,
     StatusTagComponent,
     Tooltip,
     ProgressBar,
-    Divider,
-    Badge,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   styleUrl: "./tournament-nutrition.component.scss",
   template: `

@@ -13,7 +13,7 @@
   top: 0;
   z-index: var(--z-sticky);
   background: var(--surface-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .stepper-nav {
@@ -103,8 +103,8 @@
 }
 
 .step-indicator {
-  width: 40px;
-  height: 40px;
+  width: var(--avatar-size-md); /* 40px */
+  height: var(--avatar-size-md); /* 40px */
   border-radius: var(--radius-full);
   background: var(--surface-secondary);
   border: 2px solid var(--color-border-primary);
@@ -157,7 +157,7 @@
   top: 20px;
   left: calc(50% + 20px);
   right: calc(-50% + 20px);
-  height: 2px;
+  height: var(--border-2);
   background: var(--color-border-primary);
   z-index: 1;
   transition: background-color var(--transition-base);
@@ -186,12 +186,12 @@
 
   .stepper-step {
     padding: var(--space-2) var(--space-1);
-    min-width: 80px;
+    min-width: var(--card-min-height-sm); /* 80px */
   }
 
   .step-indicator {
-    width: 36px;
-    height: 36px;
+    width: var(--touch-target-sm); /* 36px */
+    height: var(--touch-target-sm); /* 36px */
   }
 
   .step-label {
@@ -211,12 +211,12 @@
 
   .stepper-step {
     padding: var(--space-2) var(--space-1);
-    min-width: 70px;
+    min-width: var(--badge-min-width-md); /* 70px */
   }
 
   .step-indicator {
-    width: 32px;
-    height: 32px;
+    width: var(--avatar-size-sm); /* 32px */
+    height: var(--avatar-size-sm); /* 32px */
   }
 
   .step-label {

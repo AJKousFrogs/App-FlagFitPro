@@ -10,6 +10,7 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { createErrorResponse } = require("./utils/error-handler.cjs");
 
 const supabase = supabaseAdmin;
 
@@ -19,6 +20,10 @@ const headers = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
   "Content-Type": "application/json",
 };
+
+function withHeaders(response) {
+  return { ...response, headers };
+}
 
 /**
  * Map plyometric exercise to unified format
@@ -217,11 +222,9 @@ exports.handler = async (event) => {
 
   // Only allow GET requests
   if (event.httpMethod !== "GET") {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
+    return withHeaders(
+      createErrorResponse("Method not allowed", 405, "method_not_allowed"),
+    );
   }
 
   const params = event.queryStringParameters || {};
@@ -235,10 +238,12 @@ exports.handler = async (event) => {
     };
   } catch (error) {
     console.error("Exercises API error:", error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message || "Internal server error" }),
-    };
+    return withHeaders(
+      createErrorResponse(
+        error.message || "Internal server error",
+        500,
+        "server_error",
+      ),
+    );
   }
 };

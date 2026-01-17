@@ -2,16 +2,16 @@ import {
   Component,
   input,
   output,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Card } from "primeng/card";
+
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { RouterLink } from "@angular/router";
 import {
   AI_PROCESSING_MESSAGES,
-  PrivacyMessage,
+  PrivacyMessage
 } from "../../utils/privacy-ux-copy";
 
 /**
@@ -37,10 +37,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
     RouterLink,
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <div class="ai-consent-required" [class]="variant()">

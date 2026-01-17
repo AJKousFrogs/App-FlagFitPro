@@ -35,7 +35,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 420px;
+  width: var(--chart-min-height-lg); /* 400px */
   max-width: 100vw;
   height: 100vh;
   height: 100dvh;
@@ -45,7 +45,7 @@
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform var(--transition-slow) var(--ease-standard);
 }
 
 .notifications-panel.open {
@@ -238,7 +238,7 @@
   font-weight: var(--font-weight-bold);
 
   .filter-tab.active & {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--overlay-white-30);
   }
 }
 
@@ -339,7 +339,7 @@
   margin: 0;
   font-size: var(--font-size-h4);
   color: var(--text-secondary);
-  max-width: 260px;
+  max-width: var(--grid-card-min-md); /* 260px */
   line-height: var(--line-height-base);
 }
 
@@ -473,7 +473,7 @@
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
-  line-height: 1.3;
+  line-height: var(--font-h3-line-height);
 }
 
 .notification-message {
@@ -637,7 +637,7 @@
 
 .view-all-btn i {
   font-size: var(--font-size-h4);
-  transition: transform 0.2s;
+  transition: transform var(--transition-base) var(--ease-standard);
 }
 
 .view-all-btn:hover i {

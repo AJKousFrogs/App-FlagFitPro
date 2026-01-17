@@ -4,7 +4,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -13,9 +13,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Skeleton } from "primeng/skeleton";
-import { Tag } from "primeng/tag";
-import { Toast } from "primeng/toast";
-import { Tooltip } from "primeng/tooltip";
+
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -62,15 +60,12 @@ interface MonthlyStats {
     FormsModule,
     CommonModule,
     DatePicker,
-    Tag,
     Skeleton,
-    Toast,
-    Tooltip,
     Checkbox,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardShellComponent,
+    CardShellComponent
   ],
   template: `
     <app-main-layout>
@@ -516,11 +511,8 @@ export class TrainingScheduleComponent implements OnInit {
             `
           id,
           session_date,
-          start_time,
           session_type,
-          training_type,
           duration_minutes,
-          duration,
           status,
           notes
         `,
@@ -570,11 +562,9 @@ export class TrainingScheduleComponent implements OnInit {
         actualSessions || []
       ).map((session) => ({
         id: session.id,
-        date: session.start_time
-          ? new Date(session.start_time)
-          : new Date(session.session_date),
-        type: session.session_type || session.training_type || "Training",
-        duration: session.duration_minutes || session.duration || 60,
+        date: new Date(session.session_date),
+        type: session.session_type || "Training",
+        duration: session.duration_minutes || 60,
         status: this.mapDbStatusToUiStatus(session.status),
         isTemplate: false,
       }));
@@ -812,13 +802,10 @@ export class TrainingScheduleComponent implements OnInit {
         .from("training_sessions")
         .insert({
           user_id: user.id,
-          athlete_id: user.id,
           session_date: session.date.toISOString().split("T")[0],
-          start_time: new Date().toISOString(),
           session_type: session.type,
           duration_minutes: session.duration,
           status: "in_progress",
-          template_id: session.id,
         })
         .select("id")
         .single();
@@ -953,7 +940,7 @@ export class TrainingScheduleComponent implements OnInit {
 
       const { data: sessions, error } = await this.supabaseService.client
         .from("training_sessions")
-        .select("session_date, session_type, training_type, status")
+        .select("session_date, session_type, status")
         .eq("user_id", user.id)
         .gte("session_date", startOfMonth.toISOString().split("T")[0])
         .lte("session_date", endOfMonth.toISOString().split("T")[0]);
@@ -966,8 +953,8 @@ export class TrainingScheduleComponent implements OnInit {
       const markers: CalendarDateMarker[] = (sessions || []).map((s) => ({
         date: new Date(s.session_date),
         status: this.mapDbStatusToUiStatus(s.status),
-        sessionType: s.session_type || s.training_type || "Training",
-        tooltip: `${s.session_type || s.training_type || "Training"} - ${this.mapDbStatusToUiStatus(s.status)}`,
+        sessionType: s.session_type || "Training",
+        tooltip: `${s.session_type || "Training"} - ${this.mapDbStatusToUiStatus(s.status)}`,
       }));
 
       this.dateMarkers.set(markers);
@@ -998,7 +985,7 @@ export class TrainingScheduleComponent implements OnInit {
 
       const { data: sessions, error } = await this.supabaseService.client
         .from("training_sessions")
-        .select("status, duration_minutes, duration")
+        .select("status, duration_minutes")
         .eq("user_id", user.id)
         .gte("session_date", startOfMonth.toISOString().split("T")[0])
         .lte("session_date", endOfMonth.toISOString().split("T")[0]);
@@ -1015,7 +1002,7 @@ export class TrainingScheduleComponent implements OnInit {
         sessions?.filter((s) => s.status === "cancelled").length || 0;
       const totalDuration =
         sessions?.reduce(
-          (sum, s) => sum + (s.duration_minutes || s.duration || 0),
+          (sum, s) => sum + (s.duration_minutes || 0),
           0,
         ) || 0;
 

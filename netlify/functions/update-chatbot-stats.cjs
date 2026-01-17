@@ -3,6 +3,10 @@
 
 const { Pool } = require("pg");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const {
+  createErrorResponse: createStandardErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 // Use shared auth helper for consistency with other backend functions
 // This ensures consistent authentication patterns across all Netlify functions
@@ -16,30 +20,35 @@ const pool = new Pool({
 // Authentication is handled by authenticateRequest from auth-helper.cjs
 // This ensures consistent auth patterns across all backend functions
 
+const responseHeaders = {
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 // Helper function to create success response
 function createSuccessResponse(data) {
   return {
     statusCode: 200,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
+    headers: responseHeaders,
     body: JSON.stringify({ success: true, data }),
   };
 }
 
 // Helper function to create error response
-function createErrorResponse(message, statusCode = 400) {
-  return {
+function createErrorResponse(
+  message,
+  statusCode = 400,
+  errorType = "unknown_error",
+  details = null,
+) {
+  const response = createStandardErrorResponse(
+    message,
     statusCode,
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-    body: JSON.stringify({ success: false, error: message }),
-  };
+    errorType,
+    details ? { details } : {},
+  );
+  return { ...response, headers: responseHeaders };
 }
 
 exports.handler = async (event, _context) => {
@@ -57,7 +66,7 @@ exports.handler = async (event, _context) => {
   }
 
   if (event.httpMethod !== "POST") {
-    return createErrorResponse("Method not allowed", 405);
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 
   try {
@@ -68,6 +77,7 @@ exports.handler = async (event, _context) => {
       return createErrorResponse(
         authResult.error?.message || "Unauthorized - Invalid or missing token",
         401,
+        "authentication_error",
       );
     }
 
@@ -78,7 +88,7 @@ exports.handler = async (event, _context) => {
     try {
       bodyData = JSON.parse(event.body || "{}");
     } catch (_parseError) {
-      return createErrorResponse("Invalid JSON in request body", 400);
+      return { ...handleValidationError("Invalid JSON in request body"), headers: responseHeaders };
     }
 
     const { topic } = bodyData;
@@ -94,7 +104,7 @@ exports.handler = async (event, _context) => {
     });
   } catch (error) {
     console.error("Error in update-chatbot-stats function:", error);
-    return createErrorResponse("Internal server error", 500);
+    return createErrorResponse("Internal server error", 500, "server_error");
   } finally {
     // Don't close pool - it's reused across invocations
   }

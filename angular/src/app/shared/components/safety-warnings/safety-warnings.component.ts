@@ -17,17 +17,17 @@ import {
   Component,
   OnInit,
   inject,
-  computed,
+  computed
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Card } from "primeng/card";
+
 import { ButtonComponent } from "../button/button.component";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { RouterModule } from "@angular/router";
 import {
   TrainingSafetyService,
-  WarningSeverity,
+  WarningSeverity
 } from "../../../core/services/training-safety.service";
 import { AuthService } from "../../../core/services/auth.service";
 
@@ -35,7 +35,7 @@ import { AuthService } from "../../../core/services/auth.service";
   selector: "app-safety-warnings",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Card, Tag, StatusTagComponent, RouterModule, ButtonComponent],
+  imports: [CommonModule, StatusTagComponent, RouterModule, ButtonComponent],
   template: `
     @if (hasWarnings()) {
       <div class="safety-warnings-container">

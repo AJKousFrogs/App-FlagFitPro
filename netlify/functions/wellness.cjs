@@ -193,6 +193,7 @@ exports.handler = async (event, context) => {
     functionName: "wellness",
     allowedMethods: ["GET", "POST"],
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
+    requireAuth: true, // P0-008: Explicitly require authentication for health data
     handler: async (event, context, { userId }) => {
       if (event.httpMethod === "POST") {
         // Handle POST /api/wellness/checkin

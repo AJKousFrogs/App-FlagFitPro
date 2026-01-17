@@ -24,7 +24,7 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
-  OnInit,
+  OnInit
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
@@ -33,7 +33,7 @@ import { Card } from "primeng/card";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { ProgressBar } from "primeng/progressbar";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
 import { Skeleton } from "primeng/skeleton";
@@ -63,12 +63,11 @@ export interface WellnessMetric {
     CommonModule,
     Card,
     ProgressBar,
-    Tag,
     StatusTagComponent,
     Tooltip,
     Skeleton,
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <!-- Loading State -->

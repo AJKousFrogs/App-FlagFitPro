@@ -14,12 +14,12 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
 import { Card } from "primeng/card";
-import { Message } from "primeng/message";
+
 import { ProgressBar } from "primeng/progressbar";
 import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -81,14 +81,12 @@ const DEBT_THRESHOLDS = {
     FormsModule,
     DecimalPipe,
     Card,
-
     LazyChartComponent,
-    Message,
     ProgressBar,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   providers: [MessageService],
   template: `

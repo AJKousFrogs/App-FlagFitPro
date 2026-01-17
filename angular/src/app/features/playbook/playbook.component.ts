@@ -14,11 +14,11 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -34,7 +34,7 @@ import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
   DIALOG_STYLES,
-  DROPDOWN_WIDTHS,
+  DROPDOWN_WIDTHS
 } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -89,7 +89,6 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     CommonModule,
     FormsModule,
     DatePipe,
-    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
     Card,
     Dialog,
     InputText,
@@ -101,7 +100,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     PageHeaderComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   providers: [MessageService],
   template: `

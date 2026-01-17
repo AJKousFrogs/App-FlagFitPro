@@ -371,6 +371,33 @@ exports.handler = async (event, context) => {
         );
       }
 
+      // SECURITY: Validate email format to prevent abuse
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(to)) {
+        return createErrorResponse(
+          "Invalid email address format",
+          400,
+          "validation_error",
+        );
+      }
+
+      // SECURITY: Validate email type to prevent arbitrary email sending
+      const allowedTypes = [
+        "verification",
+        "parental_consent",
+        "password_reset",
+        "acwr_alert",
+        "welcome",
+        "team_invitation",
+      ];
+      if (!allowedTypes.includes(type)) {
+        return createErrorResponse(
+          `Invalid email type. Allowed types: ${allowedTypes.join(", ")}`,
+          400,
+          "validation_error",
+        );
+      }
+
       const fromEmail = getFromEmail();
       let mailOptions;
 

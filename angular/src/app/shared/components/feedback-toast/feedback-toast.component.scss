@@ -11,7 +11,7 @@
   flex-direction: column;
   gap: var(--space-3);
   z-index: var(--z-index-notification);
-  max-width: 400px;
+  max-width: var(--chart-min-height-lg); /* 400px */
 }
 
 .toast-item {
@@ -72,8 +72,8 @@
 }
 
 .toast-action-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--overlay-white-20);
+  border: 1px solid var(--overlay-white-30);
   color: white;
   padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
   border-radius: var(--radius-md);
@@ -84,7 +84,7 @@
 }
 
 .toast-action-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--overlay-white-30);
 }
 
 .toast-close-btn {

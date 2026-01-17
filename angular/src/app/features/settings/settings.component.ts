@@ -6,7 +6,7 @@ import {
     inject,
     OnInit,
     signal,
-    viewChild,
+    viewChild
 } from "@angular/core";
 
 import {
@@ -14,7 +14,7 @@ import {
     FormGroup,
     FormsModule,
     ReactiveFormsModule,
-    Validators,
+    Validators
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { Card } from "primeng/card";
@@ -27,12 +27,12 @@ import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { Toast } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
-import { Tooltip } from "primeng/tooltip";
+
 import { TIMEOUTS, TOAST, UI_LIMITS } from "../../core/constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
     LoggerService,
-    toLogContext,
+    toLogContext
 } from "../../core/services/logger.service";
 import { PlatformService } from "../../core/services/platform.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
@@ -48,7 +48,7 @@ import {
     CardComponent,
     ControlRowComponent,
     DialogFooterComponent,
-    DialogHeaderComponent,
+    DialogHeaderComponent
 } from "../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { calculateAge } from "../../shared/utils/date.utils";
@@ -79,8 +79,7 @@ import { calculateAge } from "../../shared/utils/date.utils";
     Dialog,
     Divider,
     ToggleSwitch,
-    Tooltip,
-    RouterLink,
+    RouterLink
   ],
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",

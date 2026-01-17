@@ -5,6 +5,7 @@
 
 const { createHandler } = require("./utils/handler-factory.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { handleValidationError } = require("./utils/error-handler.cjs");
 
 exports.handler = createHandler({
   functionName: "inactive-player-notify",
@@ -23,16 +24,16 @@ exports.handler = createHandler({
     }
 
     if (event.httpMethod === "POST") {
-      const body = JSON.parse(event.body || "{}");
+      let body = {};
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch (_parseError) {
+        return handleValidationError("Invalid JSON in request body");
+      }
       const { user_id, days_inactive } = body;
 
       if (!user_id) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({
-            error: "Missing user_id",
-          }),
-        };
+        return handleValidationError("user_id is required");
       }
 
       try {

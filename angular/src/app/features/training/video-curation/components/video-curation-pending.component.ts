@@ -8,12 +8,12 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output,
+  output
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { InstagramVideo } from "../video-curation.models";
@@ -22,7 +22,7 @@ import { InstagramVideo } from "../video-curation.models";
   selector: "app-video-curation-pending",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tag, StatusTagComponent, ButtonComponent],
+  imports: [CommonModule, StatusTagComponent, ButtonComponent],
   template: `
     <div class="tab-content">
       @if (videos().length === 0) {

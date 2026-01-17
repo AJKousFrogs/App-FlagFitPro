@@ -37,7 +37,7 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-6);
 }
@@ -47,8 +47,8 @@
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -83,7 +83,7 @@
 /* Consent blocked styles */
 .consent-blocked-row {
   background: var(--surface-100);
-  opacity: 0.85;
+  opacity: var(--opacity-strong);
 }
 
 .member-name-cell {
@@ -125,8 +125,8 @@
 }
 
 .notice-icon {
-  width: 40px;
-  height: 40px;
+  width: var(--avatar-size-md);
+  height: var(--avatar-size-md);
   background: var(--primitive-info-100);
   border-radius: 50%;
   display: flex;

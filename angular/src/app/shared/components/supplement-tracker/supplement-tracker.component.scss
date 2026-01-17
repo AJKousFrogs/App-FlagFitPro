@@ -87,7 +87,7 @@
   }
 
   .progress-bar {
-    height: 6px;
+    height: var(--indicator-size-sm); /* 8px */
     background: var(--primitive-neutral-200);
     border-radius: var(--radius-full, 9999px);
     overflow: hidden;
@@ -98,7 +98,7 @@
     height: 100%;
     background: var(--ds-primary-green);
     border-radius: var(--radius-full, 9999px);
-    transition: width 200ms ease;
+    transition: width var(--transition-base) var(--ease-standard);
 
     &.complete {
       background: var(--ds-primary-green);
@@ -133,7 +133,7 @@
 
   .supplement-list {
     padding: var(--space-3, 12px) 0;
-    max-height: 400px;
+    max-height: var(--chart-min-height-lg); /* 400px */
     overflow-y: auto;
     flex: 1;
   }
@@ -210,7 +210,7 @@
   font-size: var(--font-body-sm-size, 14px);
     font-weight: var(--font-weight-medium, 500);
     color: var(--color-text-primary);
-    transition: color 150ms ease;
+    transition: color var(--transition-fast) var(--ease-standard);
   }
 
   .item-dosage {

@@ -16,19 +16,18 @@ import {
   DestroyRef,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
-import {} from "@angular/core/rxjs-interop";
+
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
 // PrimeNG Components
-import { Card } from "primeng/card";
-import { ProgressBar } from "primeng/progressbar";
+
 import { Slider } from "primeng/slider";
-import { Tag } from "primeng/tag";
+
 import { Textarea } from "primeng/textarea";
-import { Tooltip } from "primeng/tooltip";
+
 import { DataConfidenceService } from "../../../core/services/data-confidence.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { ConfidenceIndicatorComponent } from "../../../shared/components/confidence-indicator/confidence-indicator.component";
@@ -38,7 +37,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import {
   LoggerService,
-  toLogContext,
+  toLogContext
 } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
@@ -63,15 +62,10 @@ interface ReadinessMetric {
     CommonModule,
     FormsModule,
     RouterModule,
-    Card,
     Slider,
     Textarea,
-    ProgressBar,
-    Tooltip,
-    Tag,
-
     ButtonComponent,
-    ConfidenceIndicatorComponent,
+    ConfidenceIndicatorComponent
   ],
   styleUrl: "./game-day-readiness.component.scss",
   template: `

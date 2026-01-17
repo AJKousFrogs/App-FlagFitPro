@@ -1,4 +1,8 @@
 const nodemailer = require("nodemailer");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 // Test email endpoint
 exports.handler = async (event, _context) => {
@@ -19,11 +23,7 @@ exports.handler = async (event, _context) => {
   }
 
   if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
+    return { ...createErrorResponse("Method not allowed", 405, "method_not_allowed"), headers };
   }
 
   try {
@@ -32,21 +32,13 @@ exports.handler = async (event, _context) => {
     try {
       bodyData = JSON.parse(event.body);
     } catch (_parseError) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: "Invalid JSON in request body" }),
-      };
+      return { ...handleValidationError("Invalid JSON in request body"), headers };
     }
 
     const { email, provider: _provider = "smtp" } = bodyData;
 
     if (!email) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: "Email is required" }),
-      };
+      return { ...handleValidationError("email is required"), headers };
     }
 
     // Test email configuration

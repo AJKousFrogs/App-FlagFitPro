@@ -1,4 +1,9 @@
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 exports.handler = async (event) => {
   const headers = {
@@ -7,37 +12,19 @@ exports.handler = async (event) => {
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   };
+  const withHeaders = (response) => ({ ...response, headers });
 
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers, body: "" };
   }
 
   try {
-    const authHeader =
-      event.headers.authorization || event.headers.Authorization;
-    if (!authHeader?.startsWith("Bearer ")) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: "Missing authorization" }),
-      };
+    const auth = await authenticateRequest(event);
+    if (!auth.success) {
+      return withHeaders(auth.error);
     }
-
-    const token = authHeader.replace("Bearer ", "");
+    const { user } = auth;
     const supabase = supabaseAdmin;
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: "Invalid token" }),
-      };
-    }
 
     const path = event.path
       .replace("/.netlify/functions/achievements", "")
@@ -66,22 +53,21 @@ exports.handler = async (event) => {
 
     // POST /achievements/streak - Update a streak
     if (method === "POST" && path === "/streak") {
-      const payload = JSON.parse(event.body || "{}");
+      let payload = {};
+      try {
+        payload = JSON.parse(event.body || "{}");
+      } catch (_parseError) {
+        return withHeaders(handleValidationError("Invalid JSON in request body"));
+      }
       return await updateStreak(supabase, user.id, payload, headers);
     }
 
-    return {
-      statusCode: 404,
-      headers,
-      body: JSON.stringify({ error: "Not found" }),
-    };
+    return withHeaders(createErrorResponse("Not found", 404, "not_found"));
   } catch (error) {
     console.error("Achievements error:", error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message }),
-    };
+    return withHeaders(
+      createErrorResponse(error.message, 500, "server_error"),
+    );
   }
 };
 
@@ -94,11 +80,7 @@ async function getAchievements(supabase, userId, headers) {
     .order("display_order");
 
   if (defError) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: defError.message }),
-    };
+    return { ...createErrorResponse(defError.message, 500, "database_error"), headers };
   }
 
   // Get user's earned achievements
@@ -221,11 +203,7 @@ async function getUserStats(supabase, userId, headers) {
     .single();
 
   if (error && error.code !== "PGRST116") {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message }),
-    };
+    return { ...createErrorResponse(error.message, 500, "database_error"), headers };
   }
 
   // Get recent activity
@@ -277,11 +255,7 @@ async function getUserStreaks(supabase, userId, headers) {
     .eq("user_id", userId);
 
   if (error) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message }),
-    };
+    return { ...createErrorResponse(error.message, 500, "database_error"), headers };
   }
 
   // Format streaks with additional info
@@ -311,11 +285,7 @@ async function updateStreak(supabase, userId, payload, headers) {
   const { streakType, date } = payload;
 
   if (!streakType) {
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: "streakType required" }),
-    };
+    return { ...handleValidationError("streakType required"), headers };
   }
 
   const { data: result, error } = await supabase.rpc("update_player_streak", {
@@ -325,11 +295,7 @@ async function updateStreak(supabase, userId, payload, headers) {
   });
 
   if (error) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message }),
-    };
+    return { ...createErrorResponse(error.message, 500, "database_error"), headers };
   }
 
   // Award any unlocked achievements

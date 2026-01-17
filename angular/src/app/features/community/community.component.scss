@@ -104,19 +104,6 @@
      These cascade into PrimeNG components without ::ng-deep
      ================================================================ */
 
-  // Avatar styling
-  --p-avatar-color: var(--color-text-on-primary);
-  --p-avatar-font-weight: var(--font-weight-semibold);
-  --p-avatar-background: var(--ds-primary-green);
-
-  // Dialog styling
-  --p-dialog-header-padding: var(--space-5);
-  --p-dialog-content-padding: var(--space-5);
-  --p-dialog-footer-padding: var(--space-4) var(--space-5);
-
-  // Input styling
-  --p-inputtext-border-radius: var(--radius-lg);
-  --p-textarea-border-radius: var(--radius-xl);
 }
 
 /* ============================================
@@ -287,7 +274,7 @@
     border-color: var(--ds-primary-green);
     padding: var(--space-2) var(--space-4);
     box-shadow: var(--hover-shadow-md);
-    transform: translateY(calc(-1 * var(--space-1) / 2));
+    transform: var(--transform-hover-lift-subtle);
   }
 
   .media-btn:hover i {
@@ -304,7 +291,7 @@
 
 /* Active/pressed state */
 .media-btn:active {
-  transform: translateY(0) scale(0.95);
+  transform: var(--transform-active-press-touch);
   box-shadow: var(--shadow-1);
 }
 
@@ -499,7 +486,7 @@
 
 .post-text {
   font-size: var(--font-size-body);
-  line-height: 1.7;
+  line-height: var(--line-height-relaxed);
   color: var(--color-text-primary);
   margin: 0;
 }
@@ -656,7 +643,7 @@
   height: 100%;
   background: var(--ds-primary-green-ultra-subtle);
   border-radius: var(--radius-lg);
-  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: width var(--transition-slower) var(--ease-micro-bounce);
   z-index: 0;
 }
 
@@ -1192,11 +1179,11 @@
 }
 
 .topic-item.active .topic-count {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--overlay-white-80);
 }
 
 .topic-item.active .topic-trend {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--overlay-white-20);
   color: var(--color-text-on-primary);
 }
 

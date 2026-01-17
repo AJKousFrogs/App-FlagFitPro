@@ -22,16 +22,15 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  viewChild,
+  viewChild
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
-import { Card } from "primeng/card";
+
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
-import { Menu } from "primeng/menu";
-import { ScrollPanel } from "primeng/scrollpanel";
+
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
@@ -44,14 +43,14 @@ import {
   ChannelMembersResponse,
   ChannelService,
   ChannelType,
-  ChatMessage,
+  ChatMessage
 } from "../../core/services/channel.service";
 import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
 import {
   DIALOG_STYLES,
-  DROPDOWN_WIDTHS,
+  DROPDOWN_WIDTHS
 } from "../../core/utils/design-tokens.util";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -67,22 +66,18 @@ import { getInitials } from "../../shared/utils/format.utils";
   imports: [
     CommonModule,
     FormsModule,
-    Card,
     InputText,
     Avatar,
     Badge,
-    ScrollPanel,
     ScrollingModule,
     Dialog,
     Select,
     Textarea,
     Tooltip,
-    Menu,
     MainLayoutComponent,
-
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <app-main-layout>

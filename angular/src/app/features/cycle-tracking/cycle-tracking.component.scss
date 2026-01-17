@@ -65,7 +65,7 @@
 
 .quick-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-3);
 
   .stat-item {
@@ -122,8 +122,8 @@
     color: var(--ds-text-secondary);
 
     .legend-dot {
-      width: 12px;
-      height: 12px;
+      width: var(--indicator-size-md);
+      height: var(--indicator-size-md);
       border-radius: 50%;
 
       &.menstrual {
@@ -152,7 +152,7 @@
 
 .symptoms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-2);
 
   .symptom-btn {
@@ -194,7 +194,7 @@
   margin-bottom: var(--space-4);
 
   .symptoms-cell {
-    max-width: 200px;
+    max-width: var(--input-min-width-lg);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

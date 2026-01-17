@@ -20,18 +20,18 @@ import {
   signal,
   computed,
   input,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 // PrimeNG
-import { Card } from "primeng/card";
+
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
-import { ProgressBar } from "primeng/progressbar";
+
 import { Tooltip } from "primeng/tooltip";
 import { Skeleton } from "primeng/skeleton";
 
@@ -67,15 +67,11 @@ export interface Insight {
   imports: [
     CommonModule,
     RouterModule,
-    Card,
-    Tag,
     StatusTagComponent,
-    ProgressBar,
     Tooltip,
     Skeleton,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <div class="actionable-insights">

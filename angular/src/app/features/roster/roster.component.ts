@@ -35,12 +35,11 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ConfirmationService } from "primeng/api";
-import { Badge } from "primeng/badge";
-import { Card } from "primeng/card";
+
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Dialog } from "primeng/dialog";
 import { ProgressSpinner } from "primeng/progressspinner";
@@ -60,7 +59,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 
 import {
   COMPONENT_SIZES,
-  DIALOG_STYLES,
+  DIALOG_STYLES
 } from "../../core/utils/design-tokens.util";
 import {
   PlayerFormData,
@@ -68,7 +67,7 @@ import {
   RosterOverviewComponent,
   RosterPlayerCardComponent,
   RosterPlayerFormDialogComponent,
-  RosterStaffCardComponent,
+  RosterStaffCardComponent
 } from "./components";
 import { getPositionDisplayName } from "../../core/constants";
 import {
@@ -78,7 +77,7 @@ import {
   getJerseyColor,
   getPlayerStats,
   getPositionIcon,
-  getStatusSeverity,
+  getStatusSeverity
 } from "./roster-utils";
 import {
   Player,
@@ -87,17 +86,17 @@ import {
   PositionGroup,
   ROLE_OPTIONS,
   STATUS_OPTIONS,
-  TeamInvitation,
+  TeamInvitation
 } from "./roster.models";
 import { RosterService } from "./roster.service";
 import {
   PlayerMetricsService,
   PlayerWithMetrics,
-  RiskAssessment,
+  RiskAssessment
 } from "./services/player-metrics.service";
 import {
   TeamMembershipService,
-  TeamRole,
+  TeamRole
 } from "../../core/services/team-membership.service";
 
 @Component({
@@ -106,34 +105,28 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ConfirmationService],
   imports: [
-    // PrimeNG
-    Card,
     StatusTagComponent,
     ProgressSpinner,
     Dialog,
     Tooltip,
     ConfirmDialog,
-    Badge,
     Select,
-    // Angular
     FormsModule,
     DatePipe,
     DecimalPipe,
     TitleCasePipe,
-    // Layout
     MainLayoutComponent,
     PageHeaderComponent,
     EmptyStateComponent,
     PageErrorStateComponent,
     AppLoadingComponent,
-    // Roster Components
     RosterPlayerCardComponent,
     RosterStaffCardComponent,
     RosterOverviewComponent,
     RosterFiltersComponent,
     RosterPlayerFormDialogComponent,
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>
@@ -1096,23 +1089,14 @@ export class RosterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.component.ts:ngOnInit',message:'RosterComponent ngOnInit called',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-    // #endregion
     this.initializePage();
   }
 
   private async initializePage(): Promise<void> {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.component.ts:initializePage:start',message:'initializePage starting',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-    // #endregion
     this.isPageLoading.set(true);
     this.hasPageError.set(false);
 
     await this.rosterService.loadRosterData();
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.component.ts:initializePage:afterRosterLoad',message:'loadRosterData completed',data:{hasError:!!this.rosterService.error()},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-    // #endregion
     await this.rosterService.loadPendingInvitations();
 
     if (this.rosterService.error()) {
@@ -1120,9 +1104,6 @@ export class RosterComponent implements OnInit {
     }
 
     this.isPageLoading.set(false);
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.component.ts:initializePage:end',message:'initializePage completed',data:{hasError:this.hasPageError()},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'D'})}).catch(()=>{});
-    // #endregion
   }
 
   retryLoad(): void {

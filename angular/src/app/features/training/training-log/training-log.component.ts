@@ -19,23 +19,23 @@ import {
   inject,
   signal,
   computed,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import {
   FormBuilder,
   FormGroup,
   Validators,
-  ReactiveFormsModule,
+  ReactiveFormsModule
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
 import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
+
 import { Textarea } from "primeng/textarea";
-import { Tag } from "primeng/tag";
+
 import { Toast } from "primeng/toast";
 import { Message } from "primeng/message";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -65,15 +65,13 @@ interface SessionType {
     ReactiveFormsModule,
     Slider,
     InputNumber,
-    InputText,
     Textarea,
-    Tag,
     Toast,
     Message,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardShellComponent,
+    CardShellComponent
   ],
   template: `
     <p-toast></p-toast>
@@ -681,7 +679,7 @@ export class TrainingLogComponent {
         formValue.sessionDate || new Date().toISOString().split("T")[0];
 
       const sessionData = {
-        athlete_id: user?.id,
+        user_id: user?.id,
         session_type: formValue.sessionType,
         session_date: sessionDate,
         duration_minutes: formValue.durationMinutes,
@@ -739,14 +737,13 @@ export class TrainingLogComponent {
         const formValue = this.sessionForm.value;
         const user = this.authService.getUser();
         const sessionData = {
-          athlete_id: user?.id,
           session_type: formValue.sessionType,
           session_date:
             formValue.sessionDate || new Date().toISOString().split("T")[0],
           duration_minutes: formValue.durationMinutes,
           rpe: formValue.rpe,
-          training_load: formValue.durationMinutes * formValue.rpe,
           notes: formValue.notes,
+          status: "completed",
         };
 
         this.offlineQueue.queueAction("training_log", sessionData, "high");

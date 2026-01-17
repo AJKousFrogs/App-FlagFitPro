@@ -5,22 +5,76 @@ import { catchError, map } from "rxjs/operators";
 import { LoggerService, toLogContext } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
 
+/**
+ * Training Session Status Enum
+ * Contract: Must match DB enum values exactly
+ */
+export type TrainingStatus = 'planned' | 'in_progress' | 'completed' | 'cancelled' | 'scheduled' | 'deleted';
+
+/**
+ * Session State Enum (for advanced workflow tracking)
+ * Contract: Must match DB text enum values
+ */
+export type SessionState =
+  | 'UNRESOLVED'
+  | 'PLANNED'
+  | 'GENERATED'
+  | 'VISIBLE'
+  | 'ACKNOWLEDGED'
+  | 'IN_PROGRESS'
+  | 'COMPLETED'
+  | 'LOCKED'
+  | 'CANCELLED'
+  | 'EXPIRED'
+  | 'ABANDONED';
+
+/**
+ * Training Session Interface
+ *
+ * Contract: Field names align with DB schema (training_sessions table)
+ * - Primary ID field: user_id (maps to athlete_id in some contexts)
+ * - Date field: session_date (canonical, not 'date')
+ * - Duration field: duration_minutes (canonical, not 'duration')
+ * - Type field: session_type (canonical, not 'type')
+ * - Intensity field: intensity_level (canonical, not 'intensity')
+ *
+ * Legacy aliases are preserved for backward compatibility but deprecated.
+ */
 export interface TrainingSession {
   id?: string;
+  /** User/Athlete ID - maps to user_id in DB */
   user_id: string;
+  /** @deprecated Use session_date instead */
   date?: string;
+  /** Canonical date field (YYYY-MM-DD format) */
   session_date?: string;
+  /** @deprecated Use session_type instead */
   type?: string;
+  /** Canonical session type field */
   session_type?: string;
+  /** @deprecated Use duration_minutes instead */
   duration?: number;
+  /** Canonical duration field (in minutes) */
   duration_minutes?: number;
+  /** @deprecated Use intensity_level instead */
   intensity?: string;
+  /** Canonical intensity field (1-10 scale) */
   intensity_level?: number;
+  /** Rate of Perceived Exertion (1-10 scale) */
   rpe?: number;
   notes?: string;
-  status?: string;
+  /** Session status - see TrainingStatus type */
+  status?: TrainingStatus;
+  /** Advanced workflow state */
+  session_state?: SessionState;
+  /** Calculated workload (RPE × duration) */
+  workload?: number;
+  /** Whether session is locked by coach */
+  coach_locked?: boolean;
   created_at?: string;
   updated_at?: string;
+  /** Soft delete timestamp */
+  deleted_at?: string;
 }
 
 export interface TrainingStats {
@@ -357,7 +411,18 @@ export class TrainingDataService {
         ? new Date(sessionDate).toISOString()
         : new Date().toISOString();
       const duration = session.duration_minutes || session.duration || 0;
-      const rpe = session.rpe ?? session.intensity_level ?? 5;
+      
+      // RPE is critical for ACWR calculations - do NOT use fallback values
+      // If RPE is not provided, the workout log should still be created but
+      // with null RPE to indicate missing data (affects ACWR data quality score)
+      const rpe = session.rpe ?? session.intensity_level ?? null;
+      
+      if (rpe === null) {
+        this.logger.warn(
+          "[TrainingDataService] Creating workout log without RPE - this affects ACWR calculation accuracy",
+          { sessionId: session.id }
+        );
+      }
 
       const { error } = await this.supabaseService.client
         .from("workout_logs")
@@ -365,7 +430,7 @@ export class TrainingDataService {
           player_id: session.user_id,
           session_id: session.id || null,
           completed_at: completedAt,
-          rpe,
+          rpe, // May be null - ACWR service handles missing RPE with data quality warnings
           duration_minutes: duration,
           notes: session.notes || null,
         });
@@ -440,17 +505,66 @@ export class TrainingDataService {
   }
 
   /**
-   * Delete a training session
-   * Contract: Sessions should be locked, not deleted (Section 8.11)
-   * Violation Fix: Removed delete operation - violates contract
+   * Delete a training session (soft delete)
+   *
+   * Contract: Sessions are soft-deleted via status change to 'deleted'.
+   * This aligns with BE behavior (DELETE /api/training/sessions/:id).
+   *
+   * The session is NOT permanently removed - it's marked with:
+   * - status: 'deleted'
+   * - deleted_at: timestamp
+   *
+   * Coach-locked sessions cannot be deleted.
+   *
+   * @param id - Session ID to delete
+   * @returns Observable<boolean> - true if deletion succeeded
    */
-  deleteTrainingSession(_id: string): Observable<boolean> {
-    // Contract violation: Sessions MUST be locked, not deleted
-    // See AUTHORIZATION_AND_GUARDRAILS_CONTRACT_v1 Section 8.11
-    this.logger.warn(
-      "Session deletion not allowed per contract. Sessions must be locked, not deleted.",
-    );
-    return of(false);
+  deleteTrainingSession(id: string): Observable<boolean> {
+    const userId = this.userId();
+
+    if (!userId) {
+      this.logger.error("Cannot delete training session: No user logged in");
+      return of(false);
+    }
+
+    if (!id) {
+      this.logger.error("Cannot delete training session: No session ID provided");
+      return of(false);
+    }
+
+    // Route through API endpoint for soft delete
+    // Contract: BE performs authorization check (user_id match)
+    const apiUrl = this.getApiBaseUrl();
+    return this.http
+      .delete<{ success: boolean; message?: string }>(
+        `${apiUrl}/training-sessions/${id}`,
+      )
+      .pipe(
+        map((response) => {
+          if (response.success) {
+            this.logger.info(
+              "Training session soft-deleted successfully:",
+              id,
+            );
+            return true;
+          }
+          return false;
+        }),
+        catchError((error) => {
+          if (error.status === 404) {
+            this.logger.error(
+              "Training session not found or you don't have permission to delete it",
+            );
+          } else if (error.status === 403) {
+            this.logger.error(
+              "Cannot delete: Session may be coach_locked",
+            );
+          } else {
+            this.logger.error("Error deleting training session:", error);
+          }
+          return of(false);
+        }),
+      );
   }
 
   /**

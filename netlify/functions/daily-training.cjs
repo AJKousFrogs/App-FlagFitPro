@@ -126,10 +126,9 @@ async function getUserContext(userId) {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const { data: sessions, error: sessionsError } = await supabaseAdmin
-      .from("training_sessions")
-      .select("completed_at, workload, duration_minutes, intensity_level")
-      .eq("user_id", userId)
-      .eq("status", "completed")
+      .from("workout_logs")
+      .select("completed_at, rpe, duration_minutes, session_id")
+      .eq("player_id", userId)
       .gte("completed_at", thirtyDaysAgo.toISOString())
       .order("completed_at", { ascending: false });
 
@@ -189,7 +188,7 @@ async function getUserContext(userId) {
     return {
       profile: {},
       sessions: [],
-      acwr: { value: 1.0, status: "Optimal" },
+      acwr: { value: 0, status: "no-data" },
     };
   }
 }
@@ -198,46 +197,92 @@ async function getUserContext(userId) {
  * Calculate Acute:Chronic Workload Ratio
  */
 function calculateACWR(sessions) {
-  if (sessions.length === 0) {
-    return { value: 1.0, status: "No data - starting fresh" };
+  const ACWR_CONFIG = {
+    acuteWindowDays: 7,
+    chronicWindowDays: 28,
+    acuteLambda: 2 / (7 + 1),
+    chronicLambda: 2 / (28 + 1),
+    minChronicLoad: 100,
+    minDaysForChronic: 21,
+    minSessionsForChronic: 12,
+    thresholds: {
+      sweetSpotLow: 0.8,
+      sweetSpotHigh: 1.3,
+      dangerHigh: 1.5,
+    },
+  };
+
+  if (!sessions || sessions.length === 0) {
+    return { value: 0, status: "no-data" };
   }
 
-  const now = new Date();
-  const sevenDaysAgo = new Date(now);
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  const twentyEightDaysAgo = new Date(now);
-  twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 28);
+  const withLoads = sessions
+    .map((session) => {
+      const dateKey = session.completed_at || session.session_date;
+      if (!dateKey) return null;
+      const hasRpeLoad =
+        session.rpe !== null &&
+        session.rpe !== undefined &&
+        session.duration_minutes !== null &&
+        session.duration_minutes !== undefined;
+      if (hasRpeLoad) {
+        return {
+          date: dateKey,
+          load: session.rpe * session.duration_minutes,
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
 
-  // Acute load (last 7 days)
-  const acuteSessions = sessions.filter(
-    (s) => new Date(s.completed_at) >= sevenDaysAgo,
-  );
-  const acuteLoad =
-    acuteSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 7;
-
-  // Chronic load (last 28 days)
-  const chronicSessions = sessions.filter(
-    (s) => new Date(s.completed_at) >= twentyEightDaysAgo,
-  );
-  const chronicLoad =
-    chronicSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 28;
-
-  if (chronicLoad === 0) {
-    return { value: 1.0, status: "Building baseline" };
+  if (withLoads.length === 0) {
+    return { value: 0, status: "no-data" };
   }
 
+  const uniqueDates = [
+    ...new Set(withLoads.map((s) => s.date.split("T")[0])),
+  ].sort((a, b) => new Date(a) - new Date(b));
+
+  const daysSpan =
+    (new Date(uniqueDates[uniqueDates.length - 1]) -
+      new Date(uniqueDates[0])) /
+    (1000 * 60 * 60 * 24);
+
+  if (
+    uniqueDates.length < ACWR_CONFIG.minSessionsForChronic ||
+    daysSpan < ACWR_CONFIG.minDaysForChronic
+  ) {
+    return { value: 0, status: "no-data" };
+  }
+
+  const dailyLoads = new Map();
+  withLoads.forEach((s) => {
+    const dayKey = s.date.split("T")[0];
+    dailyLoads.set(dayKey, (dailyLoads.get(dayKey) || 0) + s.load);
+  });
+
+  const loadSeries = Array.from(dailyLoads.entries())
+    .map(([date, load]) => ({ date, load }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const calculateEwma = (series, lambda) => {
+    let ewma = series[0].load;
+    for (let i = 1; i < series.length; i++) {
+      ewma = lambda * series[i].load + (1 - lambda) * ewma;
+    }
+    return ewma;
+  };
+
+  const acuteLoad = calculateEwma(loadSeries, ACWR_CONFIG.acuteLambda);
+  const rawChronic = calculateEwma(loadSeries, ACWR_CONFIG.chronicLambda);
+  const chronicLoad = Math.max(rawChronic, ACWR_CONFIG.minChronicLoad);
   const acwr = acuteLoad / chronicLoad;
 
-  let status;
-  if (acwr < 0.8) {
-    status = "Under-training - increase load gradually";
-  } else if (acwr <= 1.3) {
-    status = "Optimal training zone";
-  } else if (acwr <= 1.5) {
-    status = "Caution - moderate injury risk";
-  } else {
-    status = "High risk - reduce training load";
-  }
+  let status = "no-data";
+  if (acwr < ACWR_CONFIG.thresholds.sweetSpotLow) status = "under-training";
+  else if (acwr <= ACWR_CONFIG.thresholds.sweetSpotHigh) status = "sweet-spot";
+  else if (acwr <= ACWR_CONFIG.thresholds.dangerHigh) status = "elevated-risk";
+  else status = "danger-zone";
 
   return { value: Math.round(acwr * 100) / 100, status };
 }

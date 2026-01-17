@@ -11,13 +11,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { firstValueFrom } from "rxjs";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { Card } from "primeng/card";
+
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
@@ -25,7 +25,7 @@ import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Toast } from "primeng/toast";
 import { Tooltip } from "primeng/tooltip";
@@ -87,7 +87,6 @@ interface SessionTypeOption {
   imports: [
     CommonModule,
     FormsModule,
-    Card,
     Checkbox,
     Dialog,
     InputNumber,
@@ -95,12 +94,10 @@ interface SessionTypeOption {
     ProgressBar,
     Select,
     Slider,
-    Tag,
     StatusTagComponent,
     Toast,
     Tooltip,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

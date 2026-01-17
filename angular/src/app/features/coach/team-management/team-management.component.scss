@@ -56,7 +56,7 @@
 }
 
 .tab-content-card {
-  min-height: 400px;
+  min-height: var(--chart-min-height-lg);
 }
 
 // Filters Row
@@ -68,7 +68,7 @@
 
   .filter-search {
     flex: 1;
-    min-width: 200px;
+    min-width: var(--input-min-width-lg);
 
     input {
       width: 100%;
@@ -140,7 +140,7 @@
     padding: var(--space-3);
     background: var(--ds-surface-base);
     border-radius: var(--radius-md);
-    min-width: 80px;
+    min-width: var(--badge-min-width-lg);
 
     .pos-name {
       font-weight: var(--font-weight-semibold);
@@ -224,7 +224,7 @@
   }
 
   .rank {
-    min-width: 30px;
+    min-width: var(--icon-min-width-sm);
     font-weight: var(--font-weight-semibold);
     color: var(--ds-text-secondary);
   }
@@ -384,7 +384,7 @@
 
 .form-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
 }
 

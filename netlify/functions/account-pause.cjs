@@ -5,13 +5,23 @@
 
 const { createHandler } = require("./utils/handler-factory.cjs");
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { handleValidationError } = require("./utils/error-handler.cjs");
 
 exports.handler = createHandler({
   functionName: "account-pause",
   handler: async (event, _context, { userId }) => {
     if (event.httpMethod === "POST") {
-      const body = JSON.parse(event.body || "{}");
+      let body = {};
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch (_parseError) {
+        return handleValidationError("Invalid JSON in request body");
+      }
       const { action, paused_until, reason } = body;
+
+      if (!action) {
+        return handleValidationError("action is required");
+      }
 
       if (action === "pause") {
         try {

@@ -18,7 +18,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--surface-overlay-medium);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: var(--z-modal);
@@ -91,7 +91,7 @@
 
 /* Action Label - Raised style (8px radius), Poppins font */
 .action-label {
-  min-width: 150px;
+  min-width: var(--input-min-width-md); /* 150px */
   padding: var(--space-4) var(--space-5);
   background: var(--surface-card);
   border-radius: var(--radius-lg); /* Raised style - NOT pill */
@@ -108,8 +108,8 @@
   white-space: nowrap;
   text-align: center;
   box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.08),
-    0 4px 12px rgba(0, 0, 0, 0.1);
+    var(--shadow-sm),
+    var(--shadow-md);
   transition:
     background-color var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard),
@@ -121,7 +121,7 @@
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
   box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.12),
+    var(--shadow-md),
     0 6px 16px rgba(var(--ds-primary-green-rgb), 0.25);
 }
 
@@ -137,7 +137,7 @@
   justify-content: center;
   background: var(--ds-primary-green);
   box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.1),
+    var(--shadow-sm),
     0 4px 12px rgba(var(--ds-primary-green-rgb), 0.3);
   transition:
     background-color var(--motion-fast) var(--ease-standard),
@@ -157,7 +157,7 @@
 .action-item:hover .action-icon {
   transform: scale(1.05);
   box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.15),
+    var(--shadow-md),
     0 6px 16px rgba(var(--ds-primary-green-rgb), 0.4);
 }
 
@@ -174,7 +174,7 @@
   cursor: pointer;
   background: var(--ds-primary-green);
   box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.12),
+    var(--shadow-md),
     0 6px 20px rgba(var(--ds-primary-green-rgb), 0.35);
   transition:
     background-color var(--motion-base) cubic-bezier(0.16, 1, 0.3, 1),
@@ -187,7 +187,7 @@
 .main-fab:hover {
   transform: scale(1.05);
   box-shadow:
-    0 6px 12px rgba(0, 0, 0, 0.15),
+    var(--shadow-md),
     0 8px 28px rgba(var(--ds-primary-green-rgb), 0.4);
 }
 
@@ -212,7 +212,7 @@
 
 /* Merlin Icon */
 .merlin-icon {
-  font-size: 1.5rem;
+  font-size: var(--font-h2-size);
   color: var(--color-text-on-primary);
   transition:
     opacity var(--motion-base) var(--ease-standard),
@@ -272,8 +272,8 @@
   background: var(--surface-800);
   color: var(--text-color);
   box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    0 4px 12px rgba(0, 0, 0, 0.3);
+    var(--shadow-md),
+    var(--shadow-lg);
 }
 
 [data-theme="dark"] .action-item:hover .action-label,

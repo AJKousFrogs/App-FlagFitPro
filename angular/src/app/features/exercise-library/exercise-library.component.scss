@@ -190,7 +190,7 @@
 
 .close-icon {
   margin-left: var(--space-1);
-  opacity: 0.8;
+  opacity: var(--opacity-subtle);
 }
 
 /* ===== RESULTS SUMMARY ===== */
@@ -211,7 +211,7 @@
 /* ===== EXERCISES GRID ===== */
 .exercises-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
   gap: var(--space-5);
   margin-bottom: var(--space-6);
 }
@@ -311,7 +311,7 @@
 .exercise-description {
   font-size: var(--font-size-h4);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
   margin-bottom: var(--space-4);
 }
 
@@ -594,7 +594,7 @@
 
 .prescription-info {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-3);
 }
 
@@ -644,7 +644,7 @@
 .detail-section p {
   font-size: var(--font-size-body);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
   margin: 0;
 }
 
@@ -694,7 +694,7 @@
 /* ===== RESPONSIVE ===== */
 @include respond-to(lg) {
   .exercises-grid {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
   }
 }
 

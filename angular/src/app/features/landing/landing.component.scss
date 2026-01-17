@@ -89,8 +89,8 @@
 
 .particle {
   position: absolute;
-  width: 4px;
-  height: 4px;
+  width: var(--indicator-size-xs);
+  height: var(--indicator-size-xs);
   background: var(--color-brand-primary);
   border-radius: var(--radius-full);
   opacity: 0.3;
@@ -165,7 +165,7 @@
 .merlin-icon {
   font-size: var(--font-h1-size);
   line-height: 1;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 2px 4px var(--surface-overlay-light));
 }
 
 @keyframes logo-pulse {
@@ -229,7 +229,7 @@
 }
 
 .countdown-label-text {
-  font-family: Poppins, system-ui, sans-serif;
+  font-family: var(--font-family-sans);
   font-size: clamp(0.625rem, 1.5vw, 0.875rem);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing-wide);
@@ -238,7 +238,7 @@
 }
 
 .countdown-label-event {
-  font-family: Poppins, system-ui, sans-serif;
+  font-family: var(--font-family-sans);
   font-size: clamp(0.875rem, 2vw, 1.25rem);
   font-weight: var(--font-weight-extrabold);
   letter-spacing: 0.1em;
@@ -277,7 +277,7 @@
 }
 
 .countdown-unit {
-  font-family: Poppins, system-ui, sans-serif;
+  font-family: var(--font-family-sans);
   font-size: clamp(0.5rem, 1.5vw, 0.875rem);
   font-weight: var(--font-weight-semibold);
   letter-spacing: var(--letter-spacing-wide);
@@ -318,7 +318,7 @@
   font-size: var(--font-size-h2);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-10);
-  max-width: 650px;
+  max-width: var(--dialog-max-width-2xl);
   margin-left: auto;
   margin-right: auto;
   line-height: 1.7;
@@ -466,13 +466,13 @@
 .features-subtitle {
   font-size: var(--font-body-size);
   color: var(--color-text-secondary);
-  max-width: 600px;
+  max-width: var(--dialog-max-width-2xl);
   margin: 0 auto;
 }
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-8);
 }
 
@@ -606,7 +606,7 @@
 }
 
 .footer-brand {
-  max-width: 320px;
+  max-width: var(--element-max-width-md);
 }
 
 .footer-logo {

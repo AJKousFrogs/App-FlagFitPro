@@ -152,9 +152,6 @@ export class OfflineQueueService {
    * Handle online event
    */
   private handleOnline(): void {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'offline-queue.service.ts:handleOnline',message:'Browser reports online',data:{previousState:this._isOnline(),queueSize:this._queue().length,navigatorOnLine:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H4'})}).catch(()=>{});
-    // #endregion
     this._isOnline.set(true);
     this.logger.info("[OfflineQueue] Connection restored");
 
@@ -170,9 +167,6 @@ export class OfflineQueueService {
    * Handle offline event
    */
   private handleOffline(): void {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'offline-queue.service.ts:handleOffline',message:'Browser reports offline',data:{previousState:this._isOnline(),queueSize:this._queue().length,navigatorOnLine:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H4'})}).catch(()=>{});
-    // #endregion
     this._isOnline.set(false);
     this.logger.warn("[OfflineQueue] Connection lost - actions will be queued");
     this.toastService.warn(TOAST.WARN.OFFLINE);
@@ -306,7 +300,7 @@ export class OfflineQueueService {
             method = "POST";
             break;
           case "training_log":
-            endpoint = "/.netlify/functions/daily-protocol";
+            endpoint = "/.netlify/functions/training-sessions";
             method = "POST";
             break;
           case "game_action":

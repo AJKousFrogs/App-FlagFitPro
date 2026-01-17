@@ -27,9 +27,9 @@
 }
 
 .loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
+  width: var(--avatar-size-lg); /* 48px */
+  height: var(--avatar-size-lg); /* 48px */
+  border: 4px solid var(--overlay-white-10);
   border-left-color: var(--color-brand-primary);
   border-radius: var(--radius-full);
   animation: spin 1s linear infinite;
@@ -44,8 +44,8 @@
 .loading-cancel-btn {
   margin-top: var(--space-4);
   padding: var(--space-2) var(--space-4);
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--overlay-white-20);
+  border: 1px solid var(--overlay-white-30);
   color: var(--color-text-on-primary);
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -54,7 +54,7 @@
 }
 
 .loading-cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--overlay-white-30);
 }
 
 @keyframes spin {

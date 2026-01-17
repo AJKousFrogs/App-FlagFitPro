@@ -577,6 +577,7 @@ exports.handler = async (event, context) => {
     functionName: "equipment",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "DEFAULT",
+    requireAuth: true, // SECURITY: Explicit auth for equipment management
     handler: async (event, _context, { userId }) => {
       const path = event.path
         .replace(/^\/api\/equipment\/?/, "")

@@ -21,6 +21,7 @@ exports.handler = async (event, context) => {
     functionName: "account-deletion",
     allowedMethods: ["GET", "POST", "DELETE"],
     rateLimitType: "CREATE",
+    requireAuth: true, // P0-006: Explicitly require authentication for account deletion
     handler: async (event, context, { userId }) => {
       const supabase = getSupabaseClient();
 

@@ -328,11 +328,11 @@
   .rsvp-name {
     font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);
-    min-width: 120px;
+    min-width: var(--input-min-width-sm);
   }
 
   .rsvp-position {
-    min-width: 40px;
+    min-width: var(--icon-min-width-md);
     font-size: var(--font-size-h4);
     color: var(--ds-text-secondary);
   }
@@ -370,7 +370,7 @@
 
   &.cant-go {
     border-left: 3px solid var(--primitive-error-500);
-    opacity: 0.7;
+    opacity: var(--opacity-subtle);
   }
 }
 
@@ -398,7 +398,7 @@
 
 .lineup-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-3);
 }
 

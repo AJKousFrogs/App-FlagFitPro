@@ -4,14 +4,14 @@ import {
   DestroyRef,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
-import { Card } from "primeng/card";
+
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
@@ -25,13 +25,13 @@ import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
   MissingDataDetectionService,
-  PlayerMissingData,
+  PlayerMissingData
 } from "../../core/services/missing-data-detection.service";
 import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
 import { OverrideLoggingService } from "../../core/services/override-logging.service";
 import {
   OwnershipTransitionService,
-  OwnershipTransition,
+  OwnershipTransition
 } from "../../core/services/ownership-transition.service";
 import { AccountabilityTrackingService } from "../../core/services/accountability-tracking.service";
 import {
@@ -41,7 +41,7 @@ import {
   TeamOverviewStats,
   TeamStatisticsService,
   TrainingSession,
-  UpcomingGame,
+  UpcomingGame
 } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -50,7 +50,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import {
   AppLoadingComponent,
   ButtonComponent,
-  CardComponent,
+  CardComponent
 } from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -99,7 +99,6 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
   imports: [
     FormsModule,
     RouterModule,
-    Card,
     TableModule,
     StatusTagComponent,
     LazyChartComponent,
@@ -119,7 +118,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     PageErrorStateComponent,
     DatePipe,
     DecimalPipe,
-    SemanticMeaningRendererComponent,
+    SemanticMeaningRendererComponent
   ],
   template: `
     <app-main-layout>

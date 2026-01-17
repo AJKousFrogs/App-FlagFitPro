@@ -704,6 +704,7 @@ exports.handler = async (event, context) => {
     functionName: "analytics",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // P0-007: Explicitly require authentication for analytics data
     handler: async (event, _context, { userId }) => {
       // Parse path to determine endpoint
       const path = event.path.replace("/.netlify/functions/analytics", "");

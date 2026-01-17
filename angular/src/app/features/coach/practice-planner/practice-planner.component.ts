@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -25,9 +25,9 @@ import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
+
 import { Select } from "primeng/select";
-import { Tag } from "primeng/tag";
+
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
@@ -119,16 +119,13 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
     Dialog,
     InputNumber,
     InputText,
-    ProgressBar,
     Select,
-    Tag,
     StatusTagComponent,
     Textarea,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

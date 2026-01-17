@@ -4,21 +4,20 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { MessageService } from "primeng/api";
-import { Badge } from "primeng/badge";
-import { Card } from "primeng/card";
+
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputText } from "primeng/inputtext";
 import { Paginator } from "primeng/paginator";
 import { Ripple } from "primeng/ripple";
-import { Tag } from "primeng/tag";
+
 import { Toast } from "primeng/toast";
 import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
@@ -64,20 +63,16 @@ interface Category {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    Card,
     InputText,
     IconField,
     InputIcon,
-    Tag,
     Paginator,
     Tooltip,
     Ripple,
-    Badge,
     Dialog,
     Toast,
     MainLayoutComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

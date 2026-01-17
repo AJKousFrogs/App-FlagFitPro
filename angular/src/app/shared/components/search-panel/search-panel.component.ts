@@ -20,7 +20,7 @@ import {
   inject,
   OnDestroy,
   signal,
-  viewChild,
+  viewChild
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -29,12 +29,12 @@ import { IconButtonComponent } from "../button/icon-button.component";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { TIMEOUTS } from "../../../core/constants/app.constants";
-import { Tooltip } from "primeng/tooltip";
+
 import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, tap } from "rxjs/operators";
 import {
   SearchResult,
-  SearchService,
+  SearchService
 } from "../../../core/services/search.service";
 
 /** Debounce delay for search input in milliseconds */
@@ -52,8 +52,7 @@ const SUGGESTION_DEBOUNCE_MS = 150;
     FormsModule,
     InputText,
     Dialog,
-    Tooltip,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   templateUrl: "./search-panel.component.html",
   styleUrl: "./search-panel.component.scss",

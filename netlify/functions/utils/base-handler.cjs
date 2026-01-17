@@ -34,7 +34,11 @@
 "use strict";
 
 const crypto = require("node:crypto");
-const { checkEnvVars } = require("../supabase-client.cjs");
+const {
+  checkEnvVars,
+  getSupabaseClient,
+  runWithAuthContext,
+} = require("../supabase-client.cjs");
 const {
   createErrorResponse,
   handleServerError,
@@ -123,12 +127,18 @@ async function baseHandler(event, context, options = {}) {
 
     // Authenticate request (if required)
     let userId = null;
+    let authToken = null;
+    let authUser = null;
+    let supabase = null;
     if (requireAuth) {
       const auth = await authenticateRequest(event);
       if (!auth.success) {
         return auth.error;
       }
       userId = auth.user.id;
+      authToken = auth.token;
+      authUser = auth.user;
+      supabase = getSupabaseClient(authToken);
 
       // Call optional onAuth callback
       if (onAuth && typeof onAuth === "function") {
@@ -136,8 +146,60 @@ async function baseHandler(event, context, options = {}) {
       }
     }
 
-    // Call the actual handler
-    const response = await handler(event, context, { userId, requestId });
+    if (!supabase) {
+      supabase = getSupabaseClient(null);
+    }
+
+    const executeHandler = () =>
+      handler(event, context, {
+        userId,
+        requestId,
+        authToken,
+        authUser,
+        supabase,
+      });
+
+    // Call the actual handler within auth context
+    const response = await runWithAuthContext(authToken, executeHandler);
+
+    // Normalize error shape for non-standard responses
+    if (
+      response &&
+      typeof response.body === "string" &&
+      response.statusCode &&
+      response.statusCode >= 400
+    ) {
+      try {
+        const parsed = JSON.parse(response.body);
+        const hasStructuredError =
+          parsed?.error &&
+          typeof parsed.error === "object" &&
+          parsed.error.code &&
+          parsed.error.message;
+
+        if (!hasStructuredError) {
+          const fallbackMessage =
+            parsed?.error?.message ||
+            parsed?.error ||
+            parsed?.message ||
+            "Request failed";
+          const fallbackType = parsed?.errorType || parsed?.code || "unknown_error";
+          response = createErrorResponse(
+            fallbackMessage,
+            response.statusCode,
+            fallbackType,
+            { requestId },
+          );
+        }
+      } catch (_parseError) {
+        response = createErrorResponse(
+          "Request failed",
+          response.statusCode,
+          "unknown_error",
+          { requestId },
+        );
+      }
+    }
 
     // Performance monitoring - calculate duration
     const duration = Date.now() - startTime;

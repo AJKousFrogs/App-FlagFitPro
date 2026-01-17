@@ -13,6 +13,12 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { getUserRole } = require("./utils/authorization-guard.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 // API Base URLs (all free, no API key required for basic usage)
 const PUBMED_BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
@@ -1117,6 +1123,7 @@ exports.handler = async (event, _context) => {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Content-Type": "application/json",
   };
+  const withHeaders = (response) => ({ ...response, headers });
 
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers, body: "" };
@@ -1130,13 +1137,34 @@ exports.handler = async (event, _context) => {
     const endpoint = segments[0] || "search";
 
     const params = event.queryStringParameters || {};
-    const body = event.body ? JSON.parse(event.body) : {};
+    let body = {};
+    try {
+      body = event.body ? JSON.parse(event.body) : {};
+    } catch (_parseError) {
+      return withHeaders(handleValidationError("Invalid JSON in request body"));
+    }
 
     let result;
 
     switch (endpoint) {
       case "sync":
         // Trigger full research sync (admin only)
+        {
+          const auth = await authenticateRequest(event);
+          if (!auth.success) {
+            return withHeaders(auth.error);
+          }
+          const role = await getUserRole(auth.user.id);
+          if (role !== "admin") {
+            return withHeaders(
+              createErrorResponse(
+                "Admin role required",
+                403,
+                "authorization_error",
+              ),
+            );
+          }
+        }
         result = await syncAllResearch();
         break;
 
@@ -1222,6 +1250,22 @@ exports.handler = async (event, _context) => {
 
       case "sync-institutions":
         // Sync research from top institutions (admin only)
+        {
+          const auth = await authenticateRequest(event);
+          if (!auth.success) {
+            return withHeaders(auth.error);
+          }
+          const role = await getUserRole(auth.user.id);
+          if (role !== "admin") {
+            return withHeaders(
+              createErrorResponse(
+                "Admin role required",
+                403,
+                "authorization_error",
+              ),
+            );
+          }
+        }
         result = await syncFromTopInstitutions(params.topic || body.topic);
         break;
 
@@ -1277,11 +1321,13 @@ exports.handler = async (event, _context) => {
       }
 
       default:
-        return {
-          statusCode: 404,
-          headers,
-          body: JSON.stringify({ error: `Unknown endpoint: ${endpoint}` }),
-        };
+        return withHeaders(
+          createErrorResponse(
+            `Unknown endpoint: ${endpoint}`,
+            404,
+            "not_found",
+          ),
+        );
     }
 
     return {
@@ -1291,14 +1337,9 @@ exports.handler = async (event, _context) => {
     };
   } catch (error) {
     console.error("Research sync error:", error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        error: error.message,
-        success: false,
-      }),
-    };
+    return withHeaders(
+      createErrorResponse(error.message, 500, "server_error"),
+    );
   }
 };
 

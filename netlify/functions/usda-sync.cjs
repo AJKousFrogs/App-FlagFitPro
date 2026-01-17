@@ -11,6 +11,9 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const { getUserRole } = require("./utils/authorization-guard.cjs");
+const { createErrorResponse } = require("./utils/error-handler.cjs");
 
 // USDA FoodData Central API Key (optional - USDA sync features require this)
 // Get your free API key at: https://fdc.nal.usda.gov/api-key-signup.html
@@ -572,32 +575,45 @@ exports.handler = async (event, _context) => {
     }
 
     if (event.httpMethod === "POST" && (path === "/sync" || path === "")) {
+      const auth = await authenticateRequest(event);
+      if (!auth.success) {
+        return { ...auth.error, headers };
+      }
+      const role = await getUserRole(auth.user.id);
+      if (role !== "admin") {
+        return {
+          ...createErrorResponse(
+            "Admin role required",
+            403,
+            "authorization_error",
+          ),
+          headers,
+        };
+      }
       const result = await handleSync(event);
       return { ...result, headers: { ...result.headers, ...headers } };
     }
 
     return {
-      statusCode: 404,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        error: "Not found",
-        availableEndpoints: [
+      ...createErrorResponse("Not found", 404, "not_found", {
+        details: [
           "GET /status - Get sync status and stats",
           "GET /search?q=query - Search foods in database",
           "POST /sync - Trigger USDA data sync",
         ],
       }),
+      headers,
     };
   } catch (error) {
     console.error("Handler error:", error);
     return {
-      statusCode: 500,
+      ...createErrorResponse(
+        "Failed to handle USDA sync request",
+        500,
+        "server_error",
+        { details: error.message },
+      ),
       headers,
-      body: JSON.stringify({
-        success: false,
-        error: error.message,
-      }),
     };
   }
 };

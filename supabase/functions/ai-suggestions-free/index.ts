@@ -55,12 +55,15 @@ Deno.serve(async (req) => {
     const groqApiKey = Deno.env.get("GROQ_API_KEY");
 
     if (!groqApiKey) {
-      console.warn("GROQ_API_KEY not set, returning mock suggestions");
+      console.warn("GROQ_API_KEY not set, returning empty suggestions");
+      // Return empty array instead of mock data to avoid misleading athletes
+      // with generic suggestions that don't reflect their actual training state
       return new Response(
         JSON.stringify({
           success: true,
-          data: getMockSuggestions(),
-          source: "mock",
+          data: [],
+          source: "none",
+          message: "AI suggestions unavailable. Configure GROQ_API_KEY for personalized recommendations.",
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
@@ -125,14 +128,19 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error("AI suggestions error:", error);
 
-    // Return mock suggestions on error
+    // Return empty array on error instead of mock data
+    // Mock data could mislead athletes about their actual training needs
     return new Response(
       JSON.stringify({
-        success: true,
-        data: getMockSuggestions(),
-        source: "mock-fallback",
+        success: false,
+        data: [],
+        source: "error",
+        error: "AI suggestions temporarily unavailable. Please try again later.",
       }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      { 
+        status: 503,
+        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+      },
     );
   }
 });
@@ -181,34 +189,13 @@ function parseTextSuggestions(_text: string): Suggestion[] {
   ];
 }
 
+/**
+ * @deprecated REMOVED: Mock suggestions function
+ * Previously returned hardcoded suggestions that didn't reflect actual athlete data.
+ * Now returns empty array to ensure athletes only see personalized AI recommendations.
+ */
 function getMockSuggestions(): Suggestion[] {
-  return [
-    {
-      id: "speed-1",
-      title: "Speed & Agility Focus",
-      description: "High-intensity sprint work with cone drills",
-      priority: "high",
-      duration: 45,
-      focus: ["acceleration", "agility", "change-of-direction"],
-      reasoning: "Improve explosive speed for flag football",
-    },
-    {
-      id: "strength-1",
-      title: "Lower Body Power",
-      description: "Plyometric exercises for explosive strength",
-      priority: "medium",
-      duration: 40,
-      focus: ["power", "explosiveness", "jumping"],
-      reasoning: "Build foundational strength for athletic movements",
-    },
-    {
-      id: "recovery-1",
-      title: "Active Recovery Session",
-      description: "Light cardio and mobility work",
-      priority: "low",
-      duration: 30,
-      focus: ["recovery", "flexibility", "mobility"],
-      reasoning: "Allow your body to recover and prevent overtraining",
-    },
-  ];
+  // Return empty array - mock data removed to ensure data integrity
+  // Athletes should only see AI-generated suggestions based on their actual training data
+  return [];
 }

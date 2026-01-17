@@ -17,11 +17,11 @@ import {
   output,
   signal,
   computed,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
-import { ProgressBar } from "primeng/progressbar";
+
 import { formatDate } from "../../../../shared/utils/date.utils";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 
@@ -29,7 +29,7 @@ import {
   ProtocolBlock,
   PrescribedExercise,
   getBlockConfig,
-  formatPrescription,
+  formatPrescription
 } from "../daily-protocol.models";
 import { ExerciseCardComponent } from "./exercise-card.component";
 
@@ -39,11 +39,9 @@ import { ExerciseCardComponent } from "./exercise-card.component";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    ProgressBar,
     StatusTagComponent,
     ExerciseCardComponent,
-
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     <div

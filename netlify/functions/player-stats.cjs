@@ -388,6 +388,7 @@ exports.handler = async (event, context) => {
     functionName: "player-stats",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // P0-001: Explicitly require authentication
     handler: async (event, _context, { userId }) => {
       const queryParams = event.queryStringParameters || {};
       const path = event.path.replace("/.netlify/functions/player-stats", "");
@@ -403,6 +404,44 @@ exports.handler = async (event, context) => {
       }
 
       const playerId = queryParams.playerId || athleteId;
+
+      // P0-013: IDOR Protection - Verify user can access this player's stats
+      if (playerId !== userId) {
+        // Check if requesting user is a coach with consent
+        const { data: teamMember } = await supabaseAdmin
+          .from("team_members")
+          .select("role")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+        const isCoach = teamMember?.role && ["coach", "head_coach", "assistant_coach", "admin"].includes(teamMember.role);
+
+        if (!isCoach) {
+          return createErrorResponse(
+            "You can only view your own stats",
+            403,
+            "authorization_denied",
+          );
+        }
+
+        // Check consent for coaches
+        const { data: consent } = await supabaseAdmin
+          .from("player_stats_consent")
+          .select("id")
+          .eq("coach_id", userId)
+          .eq("player_id", playerId)
+          .eq("consent_granted", true)
+          .is("revoked_at", null)
+          .maybeSingle();
+
+        if (!consent) {
+          return createErrorResponse(
+            "You don't have consent to view this player's stats",
+            403,
+            "consent_required",
+          );
+        }
+      }
 
       if (!playerId) {
         return createErrorResponse(

@@ -8,12 +8,12 @@ import {
   Component,
   input,
   computed,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
-import { Tooltip } from "primeng/tooltip";
+
 import { ButtonComponent } from "../button/button.component";
 
 @Component({
@@ -24,8 +24,7 @@ import { ButtonComponent } from "../button/button.component";
     CommonModule,
     RouterModule,
     StatusTagComponent,
-    Tooltip,
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     <div

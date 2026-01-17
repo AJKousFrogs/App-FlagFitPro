@@ -32,8 +32,8 @@
   gap: var(--space-1, 4px);
   padding: var(--space-2, 8px);
   border-radius: var(--radius-lg, 8px);
-  min-width: 48px;
-  transition: background-color 150ms ease;
+  min-width: var(--icon-min-width-lg);
+  transition: background-color var(--transition-fast) var(--ease-standard);
   position: relative;
 }
 
@@ -54,8 +54,8 @@
 }
 
 .day-indicator {
-  width: 28px;
-  height: 28px;
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
   border-radius: var(--radius-full, 9999px);
   display: flex;
   align-items: center;
@@ -79,8 +79,8 @@
 }
 
 .status-planned .day-indicator .dot {
-  width: 8px;
-  height: 8px;
+  width: var(--indicator-size-sm);
+  height: var(--indicator-size-sm);
   border-radius: var(--radius-full, 9999px);
   background: var(--primitive-neutral-400, #a3a3a3);
 }
@@ -95,8 +95,8 @@
 }
 
 .status-empty .day-indicator .empty-dot {
-  width: 6px;
-  height: 6px;
+  width: var(--indicator-size-sm);
+  height: var(--indicator-size-sm);
   border-radius: var(--radius-full, 9999px);
   background: var(--primitive-neutral-300, #d4d4d4);
 }
@@ -152,7 +152,7 @@
   }
 
   .day-item {
-    min-width: 40px;
+    min-width: var(--icon-min-width-md);
     padding: var(--space-1, 4px);
   }
 

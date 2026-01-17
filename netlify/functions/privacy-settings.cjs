@@ -20,6 +20,7 @@ exports.handler = async (event, context) => {
     functionName: "privacy-settings",
     allowedMethods: ["GET", "PUT"],
     rateLimitType: "READ",
+    requireAuth: true, // P0-005: Explicitly require authentication for privacy settings
     handler: async (event, context, { userId }) => {
       const supabase = getSupabaseClient();
 

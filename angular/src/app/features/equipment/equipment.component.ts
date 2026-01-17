@@ -6,7 +6,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -17,16 +17,16 @@ import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { Tooltip } from "primeng/tooltip";
+
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
   EquipmentAssignment,
   EquipmentItem,
   EquipmentService,
-  EquipmentSummary,
+  EquipmentSummary
 } from "../../core/services/equipment.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -57,20 +57,17 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     FormsModule,
     Card,
     TableModule,
-    Tag,
     StatusTagComponent,
     Dialog,
     InputText,
     InputNumber,
     Select,
-    Tooltip,
     Badge,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>

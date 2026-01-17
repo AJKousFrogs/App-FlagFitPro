@@ -28,6 +28,7 @@ exports.handler = async (event, context) => {
     functionName: "readiness-history",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // SECURITY: Explicit auth for readiness history
     handler: async (event, context, { userId }) => {
       // Parse query parameters
       // NOTE: In production, verify user has permission to view requested athleteId

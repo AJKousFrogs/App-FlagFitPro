@@ -17,8 +17,8 @@
 }
 
 .water-bottle {
-  width: 60px;
-  height: 100px;
+  width: var(--avatar-size-xl); /* 56px */
+  height: var(--card-min-height-md); /* 120px */
   background: linear-gradient(
     to bottom,
     var(--primitive-info-50) 0%,
@@ -74,8 +74,8 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.3);
+  height: var(--indicator-size-md); /* 12px */
+  background: var(--overlay-white-30);
   border-radius: 50%;
   animation: wave 2s ease-in-out infinite;
 }

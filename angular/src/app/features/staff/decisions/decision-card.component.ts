@@ -10,7 +10,7 @@ import {
   Component,
   computed,
   input,
-  output,
+  output
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import type { DecisionLedgerEntry } from "@core/models/decision-ledger.models";
@@ -18,7 +18,7 @@ import { CardShellComponent } from "@shared/components/card-shell/card-shell.com
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
 import { formatDate, getTimeAgo } from "@shared/utils/date.utils";
 import { ButtonComponent } from "@shared/components/button/button.component";
-import { Card } from "primeng/card";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 @Component({
@@ -28,11 +28,10 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
   imports: [
     CommonModule,
     RouterModule,
-    Card,
     ButtonComponent,
     StatusTagComponent,
     CardShellComponent,
-    ConfidenceIndicatorComponent,
+    ConfidenceIndicatorComponent
   ],
   template: `
     <app-card-shell

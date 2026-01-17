@@ -17,22 +17,21 @@ import {
   inject,
   signal,
   computed,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
 
 // PrimeNG
-import { Card } from "primeng/card";
+
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { ProgressBar } from "primeng/progressbar";
 import { Avatar } from "primeng/avatar";
 import { Tooltip } from "primeng/tooltip";
 import { Badge } from "primeng/badge";
-import { Skeleton } from "primeng/skeleton";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -75,17 +74,13 @@ interface TeamWellnessSummary {
   imports: [
     CommonModule,
     RouterModule,
-    Card,
-    Tag,
     StatusTagComponent,
     ProgressBar,
     Avatar,
     Tooltip,
     Badge,
-    Skeleton,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <div class="team-wellness-overview">

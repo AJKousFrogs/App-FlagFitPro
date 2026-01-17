@@ -15,17 +15,17 @@ import {
   Component,
   inject,
   computed,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
 // PrimeNG
-import { Card } from "primeng/card";
+
 import { ButtonComponent } from "../button/button.component";
 import { ProgressBar } from "primeng/progressbar";
 import { Tooltip } from "primeng/tooltip";
-import { Badge } from "primeng/badge";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 
 // Services
@@ -40,13 +40,10 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
   imports: [
     CommonModule,
     RouterModule,
-    Card,
     ProgressBar,
     Tooltip,
-    Badge,
-
     ButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     @if (isInTournament()) {

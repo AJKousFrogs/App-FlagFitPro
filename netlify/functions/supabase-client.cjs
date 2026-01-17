@@ -2,6 +2,7 @@
 // Handles database connections and operations
 
 const { createClient } = require("@supabase/supabase-js");
+const { AsyncLocalStorage } = require("node:async_hooks");
 
 // Environment variables (set in Netlify UI)
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -10,12 +11,14 @@ const supabaseAnonKey = process.env.SUPABASE_ANON_KEY; // Anon key for regular o
 
 // Create Supabase client with service key for admin operations
 // Only create if environment variables are available
-let supabaseAdmin;
+let supabaseService;
 let supabase;
+const authContext = new AsyncLocalStorage();
+const rlsClientCache = new Map();
 
 try {
   if (supabaseUrl && supabaseServiceKey) {
-    supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+    supabaseService = createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
@@ -31,6 +34,84 @@ try {
   console.error("Failed to initialize Supabase clients:", error);
   // Clients will be undefined, checkEnvVars will catch this
 }
+
+/**
+ * Create a per-request Supabase client that enforces RLS via JWT.
+ *
+ * @param {string|null} token - Supabase access token
+ * @returns {object} Supabase client instance
+ */
+function getSupabaseClient(token = null) {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error(
+      "Supabase anon client is not initialized. Please check SUPABASE_URL and SUPABASE_ANON_KEY.",
+    );
+  }
+
+  const headers = token
+    ? {
+        Authorization: `Bearer ${token}`,
+      }
+    : undefined;
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+    global: {
+      headers,
+    },
+  });
+}
+
+function getAuthTokenFromContext() {
+  return authContext.getStore()?.token || null;
+}
+
+function getSupabaseClientFromContext() {
+  const token = getAuthTokenFromContext();
+  const cacheKey = token || "anon";
+  if (rlsClientCache.has(cacheKey)) {
+    return rlsClientCache.get(cacheKey);
+  }
+  const client = getSupabaseClient(token);
+  rlsClientCache.set(cacheKey, client);
+  return client;
+}
+
+function runWithAuthContext(token, fn) {
+  return authContext.run({ token }, fn);
+}
+
+function setAuthContextToken(token) {
+  authContext.enterWith({ token });
+}
+
+const supabaseAdmin = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      const client = getSupabaseClientFromContext();
+      if (prop === "auth") {
+        return new Proxy(client.auth, {
+          get(authTarget, authProp) {
+            if (authProp === "getUser") {
+              return async (token) => {
+                if (token) {
+                  setAuthContextToken(token);
+                }
+                return authTarget.getUser(token);
+              };
+            }
+            return authTarget[authProp];
+          },
+        });
+      }
+      return client[prop];
+    },
+  },
+);
 
 // Database operations helper
 const db = {
@@ -1142,6 +1223,10 @@ function checkEnvVars() {
 module.exports = {
   supabase,
   supabaseAdmin,
+  supabaseService,
+  getSupabaseClient,
+  setAuthContextToken,
+  runWithAuthContext,
   db,
   checkEnvVars,
 };

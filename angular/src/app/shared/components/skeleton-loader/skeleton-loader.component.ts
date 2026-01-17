@@ -318,7 +318,10 @@ export class SkeletonLoaderComponent {
   selector: "app-skeleton-repeat",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, SkeletonLoaderComponent],
+  imports: [
+    CommonModule,
+    SkeletonLoaderComponent
+  ],
   template: `
     <div class="skeleton-repeat" [class]="containerClass()">
       @for (item of items(); track $index) {

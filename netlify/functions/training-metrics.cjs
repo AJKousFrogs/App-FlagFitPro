@@ -22,6 +22,7 @@ exports.handler = async (event, context) => {
     functionName: "training-metrics",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // Explicit auth requirement for training metrics
     handler: async (event, context, { userId }) => {
       // Parse query parameters
       const { valid, athleteId, error } = parseAthleteId(event, userId);

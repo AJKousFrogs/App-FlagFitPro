@@ -6,14 +6,14 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Card } from "primeng/card";
@@ -21,25 +21,25 @@ import { Chip } from "primeng/chip";
 import { Select } from "primeng/select";
 import { SelectButton } from "primeng/selectbutton";
 import { Slider } from "primeng/slider";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Toast } from "primeng/toast";
 import { ToggleSwitch } from "primeng/toggleswitch";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   AIService,
-  TrainingSuggestion,
+  TrainingSuggestion
 } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
 import {
   LoggerService,
-  toLogContext,
+  toLogContext
 } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
   WeatherData,
-  WeatherService,
+  WeatherService
 } from "../../../core/services/weather.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
@@ -68,11 +68,10 @@ interface EquipmentOption {
     Slider,
     ToggleSwitch,
     Chip,
-    Tag,
     StatusTagComponent,
     SelectButton,
     Toast,
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     <p-toast></p-toast>

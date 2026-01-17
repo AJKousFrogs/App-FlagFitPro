@@ -12,6 +12,11 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 const getSupabase = (_authHeader) => {
   // Use shared admin client
@@ -89,7 +94,6 @@ const READINESS_ADJUSTMENTS = {
 
 exports.handler = async (event) => {
   const { httpMethod, body, headers } = event;
-  const authHeader = headers.authorization || headers.Authorization;
 
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -97,55 +101,37 @@ exports.handler = async (event) => {
     "Content-Type": "application/json",
   };
 
+  const withHeaders = (response) => ({ ...response, headers: corsHeaders });
+
   if (httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: corsHeaders, body: "" };
   }
 
   if (httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
+    return withHeaders(
+      createErrorResponse("Method not allowed", 405, "method_not_allowed"),
+    );
   }
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Authorization required" }),
-    };
+  const auth = await authenticateRequest(event);
+  if (!auth.success) {
+    return withHeaders(auth.error);
   }
 
-  // Extract the JWT token from "Bearer <token>"
-  const token = authHeader.substring(7);
-  const supabase = getSupabase(authHeader);
-
-  // Get user from token - MUST pass token to getUser() when using admin client
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser(token);
-
-  if (authError || !user) {
-    console.error("[exercise-progression] Auth error:", authError?.message);
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Invalid authentication" }),
-    };
-  }
+  const { user } = auth;
+  const supabase = getSupabase();
 
   try {
-    const payload = JSON.parse(body);
+    let payload = {};
+    try {
+      payload = JSON.parse(body || "{}");
+    } catch (_parseError) {
+      return withHeaders(handleValidationError("Invalid JSON in request body"));
+    }
     const { exerciseIds, date, acwrValue, readinessScore } = payload;
 
     if (!exerciseIds || !Array.isArray(exerciseIds)) {
-      return {
-        statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify({ error: "exerciseIds array required" }),
-      };
+      return withHeaders(handleValidationError("exerciseIds array required"));
     }
 
     const targetDate = date || new Date().toISOString().split("T")[0];
@@ -220,14 +206,11 @@ exports.handler = async (event) => {
     };
   } catch (err) {
     console.error("Progression calculation error:", err);
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        error: "Internal server error",
-        message: err.message,
+    return withHeaders(
+      createErrorResponse("Internal server error", 500, "server_error", {
+        details: err.message,
       }),
-    };
+    );
   }
 };
 

@@ -2,19 +2,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { InputText } from "primeng/inputtext";
-import { Message } from "primeng/message";
+
 import { Toast } from "primeng/toast";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -31,8 +31,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     Card,
     ButtonComponent,
     InputText,
-    Message,
-    Toast,
+    Toast
   ],
   template: `
     <p-toast></p-toast>

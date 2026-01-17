@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit,
+  OnInit
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
@@ -10,7 +10,7 @@ import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TableModule } from "primeng/table";
 import { InputText } from "primeng/inputtext";
@@ -38,14 +38,13 @@ interface User {
     RouterLink,
     FormsModule,
     Card,
-    Tag,
     StatusTagComponent,
     TableModule,
     InputText,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>
@@ -124,7 +123,7 @@ interface User {
               [value]="filteredUsers"
               [paginator]="true"
               [rows]="10"
-              styleClass="p-datatable-sm"
+              styleClass="p-datatable-sm table-standard"
             >
               <ng-template pTemplate="header">
                 <tr>

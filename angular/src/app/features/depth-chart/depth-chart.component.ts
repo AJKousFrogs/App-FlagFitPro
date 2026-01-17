@@ -1,7 +1,7 @@
 import {
   CdkDragDrop,
   DragDropModule,
-  moveItemInArray,
+  moveItemInArray
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import {
@@ -11,17 +11,17 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { InputText } from "primeng/inputtext";
+
 import { Select } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
@@ -29,7 +29,7 @@ import {
   DepthChartEntry,
   DepthChartService,
   DepthChartTemplate,
-  DepthChartWithEntries,
+  DepthChartWithEntries
 } from "../../core/services/depth-chart.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -62,15 +62,12 @@ interface PositionGroup {
     TabPanel,
     Dialog,
     Select,
-    InputText,
-    Tooltip,
     Avatar,
     StatusTagComponent,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>

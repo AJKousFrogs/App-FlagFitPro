@@ -18,19 +18,18 @@ import {
   signal,
   computed,
   inject,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { CountdownTimerComponent } from "../../../../shared/components/countdown-timer/countdown-timer.component";
-import { Tag } from "primeng/tag";
-import { Tooltip } from "primeng/tooltip";
+
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { formatDate } from "../../../../shared/utils/date.utils";
 
 import {
   PrescribedExercise,
-  formatPrescription,
+  formatPrescription
 } from "../daily-protocol.models";
 
 @Component({
@@ -39,10 +38,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Tag,
-    Tooltip,
     ButtonComponent,
-    CountdownTimerComponent,
+    CountdownTimerComponent
   ],
   template: `
     <div

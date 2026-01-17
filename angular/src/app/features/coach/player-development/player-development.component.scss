@@ -33,7 +33,7 @@
 
   .selection-field {
     flex: 1;
-    min-width: 200px;
+    min-width: var(--input-min-width-lg);
 
     label {
       display: block;
@@ -48,7 +48,7 @@
 // Stats Summary
 .stats-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-3);
 }
 
@@ -103,8 +103,8 @@
   }
 
   .legend-color {
-    width: 12px;
-    height: 12px;
+    width: var(--indicator-size-md);
+    height: var(--indicator-size-md);
     border-radius: 50%;
 
     &.player {
@@ -172,14 +172,14 @@
     .progress-label {
       font-size: var(--font-size-h4);
       color: var(--ds-text-secondary);
-      min-width: 60px;
+      min-width: var(--badge-min-width-md);
     }
 
     .progress-value {
       font-size: var(--font-size-h4);
       font-weight: var(--font-weight-medium);
       color: var(--ds-text-primary);
-      min-width: 40px;
+      min-width: var(--icon-min-width-md);
     }
   }
 
@@ -273,18 +273,18 @@
   gap: var(--space-3);
 
   .skill-name {
-    min-width: 140px;
+    min-width: var(--input-min-width-md);
     font-size: var(--font-size-h4);
     color: var(--ds-text-primary);
   }
 
   .skill-bar {
     flex: 1;
-    min-width: 100px;
+    min-width: var(--input-min-width-sm);
   }
 
   .skill-score {
-    min-width: 45px;
+    min-width: var(--icon-min-width-lg);
     font-size: var(--font-size-h4);
     font-weight: var(--font-weight-medium);
     color: var(--ds-text-primary);

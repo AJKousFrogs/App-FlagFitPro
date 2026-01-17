@@ -19,6 +19,7 @@ exports.handler = async (event, context) => {
     functionName: "user-profile",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // SECURITY: Explicit auth for user profile
     handler: async (event, _context, { userId }) => {
       const requestedUserId = event.queryStringParameters?.userId || userId;
 

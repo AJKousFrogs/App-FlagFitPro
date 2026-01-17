@@ -84,7 +84,7 @@
 // Featured Grid
 .featured-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
 }
 
@@ -151,7 +151,7 @@
 // Categories Grid
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-3);
 }
 

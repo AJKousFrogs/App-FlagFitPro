@@ -135,6 +135,10 @@
   --surface-tertiary: #e9ecef; /* Light gray - subtle backgrounds */
   --surface-elevated: #fff; /* White - elevated cards/modals */
   --surface-overlay: rgba(0, 0, 0, 0.5);
+  --surface-overlay-light: rgba(0, 0, 0, 0.3);
+  --surface-overlay-medium: rgba(0, 0, 0, 0.4);
+  --surface-overlay-dark: rgba(0, 0, 0, 0.6);
+  --surface-overlay-darkest: rgba(0, 0, 0, 0.8);
 
   /* Neutral Grays */
   --neutral-50: #fafafa;
@@ -259,6 +263,13 @@
   --state-active-opacity: 0.16;
   --state-disabled-opacity: 0.38;
 
+  /* Semantic Opacity Tokens - For common UI states */
+  --opacity-dimmed: 0.5; /* For disabled/dimmed states */
+  --opacity-subtle: 0.7; /* For subtle overlays and secondary content */
+  --opacity-strong: 0.9; /* For strong overlays and emphasized content */
+  --opacity-minimal: 0.4; /* For very subtle states */
+  --opacity-disabled: 0.38; /* Alias for disabled state */
+
   /* State Layer Colors (for overlays) */
   --state-layer-primary: rgba(
     var(--ds-primary-green-rgb),
@@ -269,9 +280,13 @@
 
   /* White Overlay Tokens (for colored backgrounds) */
   --overlay-white-10: rgba(255, 255, 255, 0.1);
+  --overlay-white-15: rgba(255, 255, 255, 0.15);
   --overlay-white-20: rgba(255, 255, 255, 0.2);
   --overlay-white-30: rgba(255, 255, 255, 0.3);
   --overlay-white-50: rgba(255, 255, 255, 0.5);
+  --overlay-white-80: rgba(255, 255, 255, 0.8);
+  --overlay-white-90: rgba(255, 255, 255, 0.9);
+  --overlay-white-95: rgba(255, 255, 255, 0.95);
 
   /* Transform Values for States */
   --transform-hover-lift: translateY(-2px);
@@ -698,6 +713,8 @@
   --transition-base: 200ms;
   --transition-slow: 300ms;
   --transition-slower: 500ms;
+  --transition-quick: 180ms; /* For tooltips and quick animations */
+  --transition-medium: 250ms; /* Between base and slow */
 
   /* Standard easing (Material Design) - use for most transitions */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
@@ -858,6 +875,60 @@
   --card-min-height-sm: 5rem; /* 80px */
   --card-min-height-md: 7.5rem; /* 120px */
   --card-min-height-lg: 10rem; /* 160px */
+  --card-min-height-xl: 12.5rem; /* 200px */
+
+  /* Chart/Visualization Min Heights */
+  --chart-min-height-sm: 12.5rem; /* 200px */
+  --chart-min-height-md: 18.75rem; /* 300px */
+  --chart-min-height-lg: 25rem; /* 400px */
+
+  /* Grid Card Min Widths (for minmax in auto-fit grids) */
+  --grid-card-min-xs: 8.75rem; /* 140px - compact stats */
+  --grid-card-min-sm: 12.5rem; /* 200px - small cards */
+  --grid-card-min-md: 17.5rem; /* 280px - standard cards */
+  --grid-card-min-lg: 22.5rem; /* 360px - large cards */
+  --grid-card-min-xl: 25rem; /* 400px - extra large/charts */
+
+  /* Form/Input Widths */
+  --input-min-width-sm: 7.5rem; /* 120px */
+  --input-min-width-md: 11.25rem; /* 180px */
+  --input-min-width-lg: 15rem; /* 240px */
+
+  /* Icon/Badge/Button Min Widths */
+  --icon-min-width-sm: 2rem; /* 32px */
+  --icon-min-width-md: 2.5rem; /* 40px */
+  --icon-min-width-lg: 3rem; /* 48px */
+  --badge-min-width-sm: 3.5rem; /* 56px */
+  --badge-min-width-md: 4.375rem; /* 70px */
+  --badge-min-width-lg: 5rem; /* 80px */
+
+  /* Avatar/Icon Sizes */
+  --avatar-size-xs: 1.25rem; /* 20px */
+  --avatar-size-sm: 2rem; /* 32px */
+  --avatar-size-md: 2.5rem; /* 40px */
+  --avatar-size-lg: 3rem; /* 48px */
+  --avatar-size-xl: 3.5rem; /* 56px */
+  --avatar-size-2xl: 4rem; /* 64px */
+  --avatar-size-3xl: 4.5rem; /* 72px */
+
+  /* Indicator/Progress Sizes */
+  --indicator-size-xs: 0.25rem; /* 4px */
+  --indicator-size-sm: 0.5rem; /* 8px */
+  --indicator-size-md: 0.75rem; /* 12px */
+  --indicator-size-lg: 1rem; /* 16px */
+
+  /* Dialog/Form Container Max Widths */
+  --dialog-max-width-xs: 20rem; /* 320px - compact dialogs */
+  --dialog-max-width-sm: 25rem; /* 400px - small forms */
+  --dialog-max-width-md: 28rem; /* 450px - standard forms */
+  --dialog-max-width-lg: 31.25rem; /* 500px - large forms */
+  --dialog-max-width-xl: 35rem; /* 560px - extra large dialogs */
+  --dialog-max-width-2xl: 50rem; /* 800px - full dialogs */
+
+  /* Element Max Widths */
+  --element-max-width-sm: 18.75rem; /* 300px */
+  --element-max-width-md: 20rem; /* 320px */
+  --element-max-width-lg: 25rem; /* 400px */
 
   /* Container Max Widths (already defined, aliased) */
   --content-max-width-sm: 40rem; /* 640px */

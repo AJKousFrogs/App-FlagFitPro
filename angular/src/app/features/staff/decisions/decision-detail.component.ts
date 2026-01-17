@@ -10,13 +10,13 @@ import {
   inject,
   signal,
   computed,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
+
 import { ButtonComponent } from "@shared/components/button/button.component";
-import { Tag } from "primeng/tag";
+
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
@@ -37,15 +37,16 @@ import type {
   imports: [
     CommonModule,
     RouterModule,
-    Card,
     ButtonComponent,
-    Tag,
-    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Accordion,
+    AccordionPanel,
+    AccordionHeader,
+    AccordionContent,
     StatusTagComponent,
     PageHeaderComponent,
     CardShellComponent,
     ConfidenceIndicatorComponent,
-    ReviewDecisionDialogComponent,
+    ReviewDecisionDialogComponent
   ],
   template: `
     <div class="decision-detail">

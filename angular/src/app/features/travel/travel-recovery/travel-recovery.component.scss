@@ -112,17 +112,17 @@
   &.selected {
     border-color: var(--ds-primary-green);
     background: var(--ds-primary-green-light, rgba(8, 153, 73, 0.08));
-    box-shadow: 0 0 0 var(--border-2) rgba(8, 153, 73, 0.15);
+    box-shadow: 0 0 0 var(--border-2) rgba(var(--ds-primary-green-rgb), 0.15);
   }
 
   &.la28.selected {
     border-color: var(--ds-primary-green);
-    background: rgba(8, 153, 73, 0.1);
+    background: var(--ds-primary-green-subtle);
   }
 
   &.brisbane.selected {
     border-color: var(--ds-primary-green);
-    background: rgba(8, 153, 73, 0.1);
+    background: var(--ds-primary-green-subtle);
   }
 
   .olympic-btn-content {
@@ -183,7 +183,7 @@
 // ===== Form Grid =====
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
   padding: var(--space-4);
 }
@@ -198,21 +198,6 @@
     color: var(--color-text-primary);
   }
 
-  // Date picker specific fixes
-  :global(.p-datepicker) {
-    width: 100%;
-  }
-
-  :global(.p-datepicker-input) {
-    width: 100%;
-  }
-
-  // Ensure calendar panel is visible
-  :global(.p-datepicker-panel) {
-    z-index: 10001 !important;
-    position: fixed !important;
-    min-width: 280px;
-  }
 }
 
 .form-actions {
@@ -382,7 +367,7 @@
 
 .protocol-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
   padding: var(--space-4);
 }
@@ -601,7 +586,7 @@
 
 .supplements-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-3);
 }
 
@@ -799,7 +784,7 @@
     background: var(
       --ds-primary-green
     ); /* SOLID green background when active */
-    box-shadow: 0 0 0 var(--border-2) rgba(8, 153, 73, 0.15);
+    box-shadow: 0 0 0 var(--border-2) rgba(var(--ds-primary-green-rgb), 0.15);
 
     /* FIX: Black-on-green violation - use white text on green background */
     span,
@@ -809,7 +794,7 @@
 
     i {
       color: var(--color-text-on-primary); /* White icon */
-      background: rgba(255, 255, 255, 0.15); /* Subtle white container */
+      background: var(--overlay-white-10); /* Subtle white container */
     }
   }
 
@@ -1228,7 +1213,7 @@
 
 .exercises-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
   padding: var(--space-4);
 }

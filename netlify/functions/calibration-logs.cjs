@@ -380,6 +380,7 @@ exports.handler = async (event, context) => {
     functionName: "calibration-logs",
     allowedMethods: ["GET", "POST"],
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
+    requireAuth: true, // SECURITY: Explicit auth for calibration data
     handler: async (event, _context, { userId, requestId }) => {
       if (event.httpMethod === "POST") {
         // Handle POST /api/calibration-logs/outcome

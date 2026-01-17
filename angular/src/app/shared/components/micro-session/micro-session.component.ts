@@ -21,7 +21,7 @@ import {
   OnInit,
   signal,
   input,
-  output,
+  output
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
@@ -30,7 +30,7 @@ import { Dialog } from "primeng/dialog";
 import { ProgressBar } from "primeng/progressbar";
 import { Slider } from "primeng/slider";
 import { Textarea } from "primeng/textarea";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
@@ -82,11 +82,9 @@ type SessionStatus =
     ProgressBar,
     Checkbox,
     Slider,
-    Tooltip,
     Textarea,
-
     ButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <!-- Session Card / Modal -->

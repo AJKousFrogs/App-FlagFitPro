@@ -12,6 +12,7 @@ exports.handler = async (event, context) => {
     functionName: "notifications-count",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // Explicit auth requirement for notification data
     handler: async (event, context, { userId }) => {
       try {
         // Get unread count (already filters muted types)

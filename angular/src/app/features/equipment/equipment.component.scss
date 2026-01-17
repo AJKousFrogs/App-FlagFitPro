@@ -20,7 +20,7 @@
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
 }
 
@@ -94,8 +94,8 @@
 
 .color-dot {
   display: inline-block;
-  width: 12px;
-  height: 12px;
+  width: var(--indicator-size-md);
+  height: var(--indicator-size-md);
   border-radius: 50%;
   margin-left: var(--space-2);
   border: 1px solid var(--surface-border);

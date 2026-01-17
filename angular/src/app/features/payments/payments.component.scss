@@ -39,7 +39,7 @@
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
 }
 
@@ -81,8 +81,8 @@
 }
 
 .summary-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;

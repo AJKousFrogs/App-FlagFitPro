@@ -205,9 +205,6 @@ export class RosterService {
       // NOTE: team_members.user_id references auth.users (not public.users), so PostgREST
       // cannot do an implicit join. We query team_members first, then fetch user data separately.
       let members: TeamMemberRecord[] | null = null;
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.service.ts:200',message:'Querying team_members (no join - FK is to auth.users)',data:{teamId:teamMember.team_id},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       
       // Step 1: Get team members without user join (FK is to auth.users, not public.users)
       const { data: membersData, error: membersError } =
@@ -217,19 +214,12 @@ export class RosterService {
           .eq("team_id", teamMember.team_id);
 
       if (membersError) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.service.ts:218',message:'team_members query ERROR',data:{error:membersError,code:membersError?.code,details:membersError?.details,hint:membersError?.hint},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
-        // #endregion
         this.logger.warn(
           `[RosterService] Error loading team members:`,
           JSON.stringify(membersError),
         );
         members = [];
       } else {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'roster.service.ts:230',message:'team_members query SUCCESS',data:{count:membersData?.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A'})}).catch(()=>{});
-        // #endregion
-        
         // Step 2: Fetch user data from public.users for these member user_ids
         const userIds = (membersData || []).map((m) => m.user_id).filter(Boolean);
         const usersMap = new Map<string, TeamMemberUserData>();

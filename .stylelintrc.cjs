@@ -107,11 +107,21 @@ module.exports = {
 
         // Decision 20: Disallow raw z-index values (except 0, 1, -1, auto)
         // NOTE: This catches numeric z-index; var() usage is allowed
-        "z-index": ["/^[2-9]\\d*$/", "/^\\d{2,}$/"],
+        // Updated: Allow 0, 1, 2 for stacking contexts, but warn on higher values
+        "z-index": ["/^[3-9]\\d*$/", "/^\\d{3,}$/"],
 
-        // Design Token Audit (Jan 8, 2026): Enforce design token usage
+        // Design Token Audit (Jan 9, 2026): Enforce design token usage
         // Warn on hardcoded font-size px values (should use --font-* tokens)
         "font-size": ["/^\\d+px$/"],
+
+        // Warn on hardcoded font-weight numeric values (should use --font-weight-* tokens)
+        "font-weight": ["/^[0-9]{3}$/", "normal", "bold", "bolder", "lighter"],
+
+        // Warn on hardcoded line-height decimal values (should use --line-height-* or --font-*-line-height tokens)
+        "line-height": ["/^[0-9]\\.[0-9]+$/"],
+
+        // Warn on hardcoded opacity values (should use --opacity-* or --state-*-opacity tokens)
+        opacity: ["/^0\\.[0-9]+$/"],
 
         // Warn on hardcoded border-radius px values (should use --radius-* tokens)
         // Allows: var(), %, 0, inherit, initial, unset
@@ -130,6 +140,10 @@ module.exports = {
 
         // Warn on hardcoded box-shadow (should use --shadow-* tokens)
         "box-shadow": ["/^0\\s+\\d+px/"],
+
+        // Warn on hardcoded transition durations (should use --transition-* tokens)
+        transition: ["/\\d+ms/", "/\\d+\\.\\d+s/", "/\\d+s/"],
+        "transition-duration": ["/\\d+ms/", "/\\d+\\.\\d+s/", "/\\d+s/"],
       },
       {
         severity: "warning",

@@ -7,6 +7,11 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 const getSupabase = (_authHeader) => {
   // Use shared admin client
@@ -15,7 +20,6 @@ const getSupabase = (_authHeader) => {
 
 exports.handler = async (event) => {
   const { httpMethod, body, headers } = event;
-  const authHeader = headers.authorization || headers.Authorization;
 
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -23,37 +27,18 @@ exports.handler = async (event) => {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Content-Type": "application/json",
   };
+  const withHeaders = (response) => ({ ...response, headers: corsHeaders });
 
   if (httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: corsHeaders, body: "" };
   }
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Authorization required" }),
-    };
+  const auth = await authenticateRequest(event);
+  if (!auth.success) {
+    return withHeaders(auth.error);
   }
-
-  // Extract the JWT token from "Bearer <token>"
-  const token = authHeader.substring(7);
-  const supabase = getSupabase(authHeader);
-
-  // Get user from token - MUST pass token to getUser() when using admin client
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser(token);
-
-  if (authError || !user) {
-    console.error("[player-settings] Auth error:", authError?.message);
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Invalid authentication" }),
-    };
-  }
+  const { user } = auth;
+  const supabase = getSupabase();
 
   try {
     if (httpMethod === "GET") {
@@ -61,25 +46,23 @@ exports.handler = async (event) => {
     }
 
     if (httpMethod === "POST") {
-      const payload = body ? JSON.parse(body) : {};
+      let payload = {};
+      try {
+        payload = body ? JSON.parse(body) : {};
+      } catch (_parseError) {
+        return withHeaders(handleValidationError("Invalid JSON in request body"));
+      }
       return await saveSettings(supabase, user.id, payload, corsHeaders);
     }
 
-    return {
-      statusCode: 404,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Not found" }),
-    };
+    return withHeaders(createErrorResponse("Not found", 404, "not_found"));
   } catch (err) {
     console.error("Player settings error:", err);
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        error: "Internal server error",
-        message: err.message,
+    return withHeaders(
+      createErrorResponse("Internal server error", 500, "server_error", {
+        details: err.message,
       }),
-    };
+    );
   }
 };
 

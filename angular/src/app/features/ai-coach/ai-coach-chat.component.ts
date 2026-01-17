@@ -22,19 +22,16 @@ import {
   viewChild,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
-import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
-import { Card } from "primeng/card";
+
 import { Dialog } from "primeng/dialog";
-import { InputText } from "primeng/inputtext";
-import { ProgressSpinner } from "primeng/progressspinner";
+
 import { Ripple } from "primeng/ripple";
-import { Tag } from "primeng/tag";
+
 import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
@@ -43,7 +40,7 @@ import { AuthService } from "../../core/services/auth.service";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import {
   LoggerService,
-  toLogContext,
+  toLogContext
 } from "../../core/services/logger.service";
 import { MissingDataDetectionService } from "../../core/services/missing-data-detection.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -52,7 +49,7 @@ import { UnifiedTrainingService } from "../../core/services/unified-training.ser
 import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import {
   AIModeExplanationComponent,
-  AIModeStatus,
+  AIModeStatus
 } from "../../shared/components/ai-mode-explanation/ai-mode-explanation.component";
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -149,19 +146,13 @@ interface AutocompleteSuggestion {
   ],
   imports: [
     FormsModule,
-    Card,
-    InputText,
-    Avatar,
-    Tag,
     Tooltip,
-    ProgressSpinner,
     Dialog,
     Ripple,
-    Badge,
     MainLayoutComponent,
     DailyReadinessComponent,
     MicroSessionComponent,
-    AIModeExplanationComponent,
+    AIModeExplanationComponent
   ],
   template: `
     <app-main-layout>

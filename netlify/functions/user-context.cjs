@@ -219,6 +219,7 @@ exports.handler = async (event, context) => {
     functionName: "user-context",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // SECURITY: Explicit auth for user context
     handler: async (event, context, { userId }) => {
       const result = await getUserContext(userId);
       return createSuccessResponse(result);

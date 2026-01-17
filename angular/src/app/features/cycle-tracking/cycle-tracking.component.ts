@@ -16,7 +16,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -26,7 +26,7 @@ import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { Message } from "primeng/message";
-import { ProgressBar } from "primeng/progressbar";
+
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -295,7 +295,6 @@ const RETENTION_OPTIONS = [
     DatePicker,
     Dialog,
     Message,
-    ProgressBar,
     RadioButton,
     Select,
     TableModule,
@@ -304,7 +303,7 @@ const RETENTION_OPTIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   providers: [MessageService],
   template: `

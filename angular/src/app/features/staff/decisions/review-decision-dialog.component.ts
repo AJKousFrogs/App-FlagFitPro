@@ -11,17 +11,17 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-  inject,
+  inject
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Dialog } from "primeng/dialog";
+
 import { ButtonComponent } from "@shared/components/button/button.component";
 import { Select } from "primeng/select";
 import { Textarea } from "primeng/textarea";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import { ModalComponent } from "@shared/components/modal/modal.component";
 import { DecisionLedgerService } from "@core/services/decision-ledger.service";
@@ -39,15 +39,13 @@ import type {
   imports: [
     CommonModule,
     FormsModule,
-    Dialog,
     ButtonComponent,
     Select,
     Textarea,
     Checkbox,
     DatePicker,
-    Tag,
     StatusTagComponent,
-    ModalComponent,
+    ModalComponent
   ],
   template: `
     <app-modal

@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
@@ -30,7 +30,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   StatItem,
-  StatsGridComponent,
+  StatsGridComponent
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -120,7 +120,6 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
   imports: [
     FormsModule,
     Card,
-
     LazyChartComponent,
     TableModule,
     Dialog,
@@ -128,17 +127,17 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     InputNumber,
     ProgressBar,
     Select,
-    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Accordion,
+    AccordionPanel,
     MainLayoutComponent,
     PageHeaderComponent,
     StatsGridComponent,
     PageErrorStateComponent,
     AppLoadingComponent,
     RouterModule,
-
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <app-main-layout>

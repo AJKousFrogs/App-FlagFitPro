@@ -17,7 +17,7 @@ app-card-shell {
 
 .session-types-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-4);
 }
 
@@ -62,7 +62,7 @@ app-card-shell {
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
 }
 
@@ -264,7 +264,7 @@ app-card-shell {
   margin: 0;
   font-size: var(--font-size-body);
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: var(--font-body-line-height);
 }
 
 /* ========================================================================

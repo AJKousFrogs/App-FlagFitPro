@@ -17,13 +17,12 @@ import {
   inject,
   signal,
   input,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
 import { Tooltip } from "primeng/tooltip";
-import { Badge } from "primeng/badge";
 
 // Services
 import { LoggerService } from "../../../core/services/logger.service";
@@ -34,7 +33,7 @@ export type OfflineCapability = "full" | "partial" | "none" | "syncing";
   selector: "app-offline-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tooltip, Badge],
+  imports: [CommonModule, Tooltip],
   template: `
     <div
       class="offline-badge"

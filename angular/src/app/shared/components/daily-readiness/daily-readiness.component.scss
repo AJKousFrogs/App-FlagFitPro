@@ -4,7 +4,7 @@
 // ============================================================================
 
 .readiness-card {
-  max-width: 400px;
+  max-width: var(--chart-min-height-lg); /* 400px */
 }
 
 .card-header {
@@ -202,12 +202,7 @@
   margin-left: var(--space-1);
 }
 
-.weight-input :global(.p-inputnumber) {
-  width: 100%;
-}
-
 .weight-input :global(.p-inputnumber-input) {
-  width: 100%;
   text-align: center;
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-semibold);

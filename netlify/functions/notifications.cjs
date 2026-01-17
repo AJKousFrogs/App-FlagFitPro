@@ -14,6 +14,7 @@ exports.handler = async (event, context) => {
     functionName: "notifications",
     allowedMethods: ["GET", "POST", "PATCH"],
     rateLimitType: "READ",
+    requireAuth: true, // SECURITY: Explicit auth for notifications
     handler: async (event, _context, { userId }) => {
       if (event.httpMethod === "GET") {
         // Get notifications for user with query params

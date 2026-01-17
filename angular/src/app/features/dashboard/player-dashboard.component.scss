@@ -518,7 +518,7 @@
   justify-content: center;
   font-size: var(--font-size-h2); /* 24px */
   flex-shrink: 0;
-  opacity: 0.7; // Dimmed to indicate "building"
+  opacity: var(--opacity-subtle); // Dimmed to indicate "building"
 
   @include respond-to(md) {
     width: var(--space-10); /* 40px */
@@ -567,7 +567,7 @@
     var(--primitive-success-500) 100%
   );
   border-radius: var(--radius-full);
-  transition: width 0.3s ease;
+  transition: width var(--transition-slow) var(--ease-standard);
 }
 
 .acwr-progress-text {

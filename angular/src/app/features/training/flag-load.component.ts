@@ -4,16 +4,16 @@ import {
   OnInit,
   inject,
   signal,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { Card } from "primeng/card";
+
 import { TableModule } from "primeng/table";
 import {
   TrainingMetricsService,
   ACWRData,
-  FlagMetrics,
+  FlagMetrics
 } from "../../core/services/training-metrics.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -26,9 +26,8 @@ import { formatDate } from "../../shared/utils/date.utils";
   imports: [
     CommonModule,
     RouterModule,
-    Card,
     TableModule,
-    LazyChartComponent,
+    LazyChartComponent
   ],
   template: `
     <div

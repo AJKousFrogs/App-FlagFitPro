@@ -18,7 +18,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Checkbox } from "primeng/checkbox";
@@ -27,7 +27,7 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Skeleton } from "primeng/skeleton";
 import { Tag } from "primeng/tag";
-import { Tooltip } from "primeng/tooltip";
+
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { EmptyStateComponent } from "../ui-components";
@@ -186,7 +186,6 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
     CommonModule,
     FormsModule,
     Checkbox,
-    Tooltip,
     Tag,
     Skeleton,
     Dialog,
@@ -194,7 +193,7 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
     Select,
     ButtonComponent,
     IconButtonComponent,
-    EmptyStateComponent,
+    EmptyStateComponent
   ],
   templateUrl: "./supplement-tracker.component.html",
   styleUrls: ["./supplement-tracker.component.scss"],

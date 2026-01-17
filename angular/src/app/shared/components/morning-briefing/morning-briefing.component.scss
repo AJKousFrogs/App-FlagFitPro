@@ -737,9 +737,9 @@
 
 .acwr-indicator {
   position: absolute;
-  top: -4px;
-  width: 16px;
-  height: 16px;
+  top: calc(-1 * var(--indicator-size-xs));
+  width: var(--indicator-size-lg); /* 16px */
+  height: var(--indicator-size-lg); /* 16px */
   border-radius: var(--radius-full);
   background: var(--color-surface-primary);
   border: 3px solid var(--color-status-success);
@@ -765,7 +765,7 @@
 
 .acwr-value-display {
   text-align: center;
-  min-width: 80px;
+  min-width: var(--card-min-height-sm); /* 80px */
 
   .value {
     display: block;
@@ -976,7 +976,7 @@
 }
 
 .sleep-number-input {
-  width: 140px;
+  width: var(--input-min-width-md); /* 150px */
 
   // PrimeNG inputnumber overrides moved to _exceptions.scss (DS-EXC-028)
 }

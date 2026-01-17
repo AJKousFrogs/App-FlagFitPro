@@ -22,7 +22,7 @@ import {
   Component,
   OnInit,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -35,14 +35,12 @@ import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { Chip } from "primeng/chip";
 import { DatePicker } from "primeng/datepicker";
-import { Divider } from "primeng/divider";
+
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
+
 import { Select } from "primeng/select";
-import { Stepper, StepList, Step, StepPanels, StepPanel } from "primeng/stepper";
-import { Timeline } from "primeng/timeline";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 // Services
@@ -57,7 +55,7 @@ import {
   MassageGunProtocol,
   RecoveryProtocol,
   TravelChecklist,
-  TravelRecoveryService,
+  TravelRecoveryService
 } from "../../../core/services/travel-recovery.service";
 
 // Layout & Components
@@ -85,18 +83,16 @@ interface TimezoneOption {
     InputNumber,
     InputText,
     Select,
-    Stepper, StepList, Step, StepPanels, StepPanel,
-    Timeline,
-    ProgressBar,
-    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Accordion,
+    AccordionPanel,
+    AccordionHeader,
+    AccordionContent,
     Checkbox,
-    Tooltip,
-    Divider,
     Badge,
     ButtonComponent,
     MainLayoutComponent,
     PageHeaderComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <app-main-layout>
@@ -221,7 +217,7 @@ interface TimezoneOption {
                 </div>
               </ng-template>
 
-              <div class="form-grid">
+              <div class="form-grid form-controls-full">
                 <div class="form-field">
                   <label>Trip Name</label>
                   <input
@@ -782,7 +778,7 @@ interface TimezoneOption {
                   </div>
                 </ng-template>
 
-                <div class="form-grid">
+                <div class="form-grid form-controls-full">
                   <div class="form-field">
                     <label>Trip Name</label>
                     <input

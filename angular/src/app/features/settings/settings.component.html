@@ -53,7 +53,7 @@
     </p-card>
 
     <!-- Settings Grid -->
-    <div class="settings-grid">
+    <div class="settings-grid form-controls-full">
       <!-- Section 1: Account Settings -->
       <div id="account-settings" class="settings-section">
         <h2 class="settings-section-title">
@@ -722,7 +722,7 @@
     />
 
     <!-- Form Content -->
-    <form [formGroup]="passwordForm" class="password-form">
+    <form [formGroup]="passwordForm" class="password-form form-controls-full">
       <div class="form-field">
         <label for="settings-currentPassword">
           <i class="pi pi-key"></i>
@@ -735,7 +735,6 @@
             [feedback]="false"
             [toggleMask]="true"
             placeholder="Enter your current password"
-            styleClass="password-input"
             autocomplete="current-password"
           ></p-password>
         </div>
@@ -752,7 +751,6 @@
             formControlName="newPassword"
             [toggleMask]="true"
             placeholder="Create a strong password"
-            styleClass="password-input"
             autocomplete="new-password"
           ></p-password>
         </div>
@@ -811,7 +809,6 @@
             [feedback]="false"
             [toggleMask]="true"
             placeholder="Confirm your new password"
-            styleClass="password-input"
             autocomplete="new-password"
           ></p-password>
         </div>

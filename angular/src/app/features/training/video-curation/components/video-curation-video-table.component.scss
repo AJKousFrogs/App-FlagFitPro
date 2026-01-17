@@ -17,11 +17,11 @@
 }
 
 .filter-input {
-  min-width: 250px;
+  min-width: var(--input-min-width-lg);
 }
 
 .filter-select {
-  min-width: 150px;
+  min-width: var(--input-min-width-md);
 }
 
 .video-title-cell {

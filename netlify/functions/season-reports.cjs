@@ -5,6 +5,7 @@
 
 const { createHandler } = require("./utils/handler-factory.cjs");
 const { getSupabaseClient, supabaseAdmin } = require("./supabase-client.cjs");
+const { handleValidationError } = require("./utils/error-handler.cjs");
 
 exports.handler = createHandler({
   functionName: "season-reports",
@@ -25,16 +26,16 @@ exports.handler = createHandler({
     }
 
     if (event.httpMethod === "POST") {
-      const body = JSON.parse(event.body || "{}");
+      let body = {};
+      try {
+        body = JSON.parse(event.body || "{}");
+      } catch (_parseError) {
+        return handleValidationError("Invalid JSON in request body");
+      }
       const { season_id } = body;
 
       if (!season_id) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({
-            error: "Missing season_id",
-          }),
-        };
+        return handleValidationError("season_id is required");
       }
 
       try {

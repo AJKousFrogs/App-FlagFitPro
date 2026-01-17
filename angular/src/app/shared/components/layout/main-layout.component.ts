@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   HostListener,
+  OnInit,
 } from "@angular/core";
 
 import { SidebarComponent } from "../sidebar/sidebar.component";
@@ -14,6 +15,7 @@ import { OfflineBannerComponent } from "../offline-banner/offline-banner.compone
 import { KeyboardShortcutsModalComponent } from "../keyboard-shortcuts-modal/keyboard-shortcuts-modal.component";
 import { ScrollToTopComponent } from "../scroll-to-top/scroll-to-top.component";
 import { ThemeService } from "../../../core/services/theme.service";
+import { ProfileNotificationService } from "../../../core/services/profile-notification.service";
 
 @Component({
   selector: "app-main-layout",
@@ -60,8 +62,15 @@ import { ThemeService } from "../../../core/services/theme.service";
   `,
   styleUrls: ["./main-layout.component.scss"],
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
   private themeService = inject(ThemeService);
+  private profileNotificationService = inject(ProfileNotificationService);
+
+  ngOnInit(): void {
+    // Check profile completion on every page load
+    // This ensures users are reminded to complete their profile
+    this.profileNotificationService.checkAndNotify();
+  }
 
   /**
    * Listen for custom events from keyboard shortcuts service

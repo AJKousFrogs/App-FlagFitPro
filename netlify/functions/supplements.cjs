@@ -192,6 +192,7 @@ exports.handler = async (event, context) => {
     functionName: "supplements",
     allowedMethods: ["GET", "POST"],
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
+    requireAuth: true, // P0-009: Explicitly require authentication for supplement data
     handler: async (event, context, { userId }) => {
       if (event.httpMethod === "POST") {
         // Handle POST /api/supplements/log

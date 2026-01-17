@@ -71,10 +71,6 @@ export class SupabaseService {
       environment.supabase.anonKey,
     );
 
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:constructor',message:'SupabaseClient created',data:{url:environment.supabase.url,navigatorOnline:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-    // #endregion
-
     // Initialize session and set up auth listener
     this.initializeAuth();
   }
@@ -299,9 +295,6 @@ export class SupabaseService {
     }
 
     channel.subscribe((status) => {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:subscribeToCoachInbox',message:'Coach inbox channel status',data:{channelName,status,navigatorOnline:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H5'})}).catch(()=>{});
-      // #endregion
       this.logger.debug(
         `[SupabaseService] Coach inbox subscription status: ${status}`,
       );
@@ -369,9 +362,6 @@ export class SupabaseService {
     }
 
     channel.subscribe((status) => {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/1109c3b1-ad92-4df3-94cd-11d0d3503af9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabase.service.ts:subscribeToAthleteDailyState',message:'Daily wellness channel status',data:{channelName:'athlete-daily-state',status,navigatorOnline:navigator.onLine},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2-H5'})}).catch(()=>{});
-      // #endregion
       this.logger.debug(
         `[SupabaseService] Daily wellness checkin subscription status: ${status}`,
       );

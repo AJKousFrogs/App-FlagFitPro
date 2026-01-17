@@ -12,6 +12,11 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 const { resolveTodaySession } = require("./utils/session-resolver.cjs");
 const {
   resolveTeamActivityForAthleteDay,
@@ -750,7 +755,6 @@ function getTaperRecommendation(daysUntil, isPeakEvent) {
  */
 exports.handler = async (event) => {
   const { httpMethod, path, queryStringParameters, body, headers } = event;
-  const authHeader = headers.authorization || headers.Authorization;
 
   // CORS headers
   const corsHeaders = {
@@ -759,39 +763,19 @@ exports.handler = async (event) => {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Content-Type": "application/json",
   };
+  const withHeaders = (response) => ({ ...response, headers: corsHeaders });
 
   // Handle preflight
   if (httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: corsHeaders, body: "" };
   }
 
-  // Require auth
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Authorization required" }),
-    };
+  const auth = await authenticateRequest(event);
+  if (!auth.success) {
+    return withHeaders(auth.error);
   }
-
-  // Extract the JWT token from "Bearer <token>"
-  const token = authHeader.substring(7);
-  const supabase = getSupabase(authHeader);
-
-  // Get user from token - MUST pass token to getUser() when using admin client
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser(token);
-
-  if (authError || !user) {
-    console.error("[daily-protocol] Auth error:", authError?.message);
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Invalid authentication" }),
-    };
-  }
+  const { user } = auth;
+  const supabase = getSupabase();
 
   try {
     // Route to appropriate handler
@@ -808,7 +792,12 @@ exports.handler = async (event) => {
     }
 
     if (httpMethod === "POST") {
-      const payload = body ? JSON.parse(body) : {};
+      let payload = {};
+      try {
+        payload = body ? JSON.parse(body) : {};
+      } catch (_parseError) {
+        return withHeaders(handleValidationError("Invalid JSON in request body"));
+      }
 
       switch (endpoint) {
         case "generate":
@@ -839,19 +828,16 @@ exports.handler = async (event) => {
     }
 
     return {
-      statusCode: 404,
+      ...createErrorResponse("Not found", 404, "not_found"),
       headers: corsHeaders,
-      body: JSON.stringify({ error: "Not found" }),
     };
   } catch (err) {
     console.error("Daily protocol error:", err);
     return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        error: "Internal server error",
-        message: err.message,
+      ...createErrorResponse("Internal server error", 500, "server_error", {
+        details: err.message,
       }),
+      headers: corsHeaders,
     };
   }
 };
@@ -2414,11 +2400,7 @@ async function completeExercise(supabase, userId, payload, headers) {
     payload;
 
   if (!protocolExerciseId) {
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: "protocolExerciseId required" }),
-    };
+    return { ...handleValidationError("protocolExerciseId required"), headers };
   }
 
   // Update the exercise
@@ -2442,9 +2424,8 @@ async function completeExercise(supabase, userId, payload, headers) {
   // Verify user owns this
   if (exercise.daily_protocols.user_id !== userId) {
     return {
-      statusCode: 403,
+      ...createErrorResponse("Not authorized", 403, "authorization_error"),
       headers,
-      body: JSON.stringify({ error: "Not authorized" }),
     };
   }
 
@@ -2475,11 +2456,7 @@ async function skipExercise(supabase, userId, payload, headers) {
   const { protocolExerciseId, skipReason: _skipReason } = payload;
 
   if (!protocolExerciseId) {
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: "protocolExerciseId required" }),
-    };
+    return { ...handleValidationError("protocolExerciseId required"), headers };
   }
 
   // Update the exercise
@@ -2511,9 +2488,8 @@ async function completeBlock(supabase, userId, payload, headers) {
 
   if (!protocolId || !blockType) {
     return {
-      statusCode: 400,
+      ...handleValidationError("protocolId and blockType required"),
       headers,
-      body: JSON.stringify({ error: "protocolId and blockType required" }),
     };
   }
 
@@ -2527,9 +2503,8 @@ async function completeBlock(supabase, userId, payload, headers) {
 
   if (verifyError || !protocol) {
     return {
-      statusCode: 403,
+      ...createErrorResponse("Not authorized", 403, "authorization_error"),
       headers,
-      body: JSON.stringify({ error: "Not authorized" }),
     };
   }
 
@@ -2597,9 +2572,8 @@ async function skipBlock(supabase, userId, payload, headers) {
 
   if (!protocolId || !blockType) {
     return {
-      statusCode: 400,
+      ...handleValidationError("protocolId and blockType required"),
       headers,
-      body: JSON.stringify({ error: "protocolId and blockType required" }),
     };
   }
 
@@ -2613,9 +2587,8 @@ async function skipBlock(supabase, userId, payload, headers) {
 
   if (verifyError || !protocol) {
     return {
-      statusCode: 403,
+      ...createErrorResponse("Not authorized", 403, "authorization_error"),
       headers,
-      body: JSON.stringify({ error: "Not authorized" }),
     };
   }
 

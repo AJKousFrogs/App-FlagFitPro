@@ -26,133 +26,8 @@
    Enterprise / Calm Clinical values
    ================================================================ */
 
-:root {
-  /* ================================
-     8PT SPACING RHYTHM (ENFORCED)
-     All spacing values are multiples of 8px
-     ================================ */
-
-  /* Base unit: 8px */
-  --space-unit: 8px;
-
-  /* Standard spacing scale */
-  --space-0: 0;
-  --space-1: calc(var(--space-unit) * 0.5); /* 4px */
-  --space-2: var(--space-unit); /* 8px */
-  --space-3: calc(var(--space-unit) * 1.5); /* 12px */
-  --space-4: calc(var(--space-unit) * 2); /* 16px */
-  --space-5: calc(var(--space-unit) * 2.5); /* 20px */
-  --space-6: calc(var(--space-unit) * 3); /* 24px */
-  --space-8: calc(var(--space-unit) * 4); /* 32px */
-  --space-10: calc(var(--space-unit) * 5); /* 40px */
-  --space-12: calc(var(--space-unit) * 6); /* 48px */
-
-  /* ================================
-     CARD TOKENS (p-card)
-     Design System: 8px radius (--radius-lg), spacing tokens
-     ================================ */
-
-  --p-card-border-radius: var(--radius-lg); /* 8px */
-  --p-card-body-padding: var(--space-4); /* 16px */
-  --p-card-body-gap: var(--space-3); /* 12px */
-  --p-card-shadow: var(--shadow-sm);
-  --p-card-header-padding: var(--space-4); /* 16px */
-  --p-card-footer-padding: var(--space-4); /* 16px */
-  --p-card-content-padding: 0;
-
-  /* ================================
-     BUTTON TOKENS (p-button)
-     Design System: 8px radius (--radius-button), 44px icon-only width
-     ================================ */
-
-  --p-button-border-radius: var(
-    --radius-button,
-    8px
-  ); /* RAISED style - NOT pill */
-
-  --p-button-padding-x: var(--space-6); /* 24px */
-  --p-button-padding-y: var(--space-3); /* 12px */
-  --p-button-icon-only-width: 44px;
-  --p-button-icon-only-height: 44px;
-  --p-button-raised-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
-  --p-button-sm-padding-x: var(--space-4); /* 16px */
-  --p-button-sm-padding-y: var(--space-2); /* 8px */
-  --p-button-lg-padding-x: var(--space-8); /* 32px */
-  --p-button-lg-padding-y: var(--space-4); /* 16px */
-  --p-button-gap: var(--space-2); /* 8px between icon and label */
-
-  /* ================================
-     FORM CONTROL TOKENS (p-inputtext, p-select)
-     Design System: 8px radius (--radius-lg), calm focus ring
-     ================================ */
-
-  /* InputText */
-  --p-inputtext-padding-x: var(--space-4); /* 16px */
-  --p-inputtext-padding-y: var(--space-3); /* 12px */
-  --p-inputtext-border-radius: var(--radius-lg); /* 8px */
-  --p-inputtext-min-height: 44px;
-
-  /* Select/Dropdown */
-  --p-select-padding-x: var(--space-4); /* 16px */
-  --p-select-padding-y: var(--space-3); /* 12px */
-  --p-select-border-radius: var(--radius-lg); /* 8px */
-
-  /* Focus Ring - Calm, consistent, low-intensity */
-  --p-focus-ring-width: 2px;
-  --p-focus-ring-offset: 2px;
-  --p-focus-ring-style: solid;
-  --p-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
-  --p-inputtext-focus-ring-width: 2px;
-  --p-inputtext-focus-ring-color: rgba(var(--ds-primary-green-rgb), 0.25);
-  --p-inputtext-focus-ring-offset: 2px;
-  --p-inputtext-focus-border-color: var(--ds-primary-green);
-
-  /* ================================
-     DIALOG TOKENS (p-dialog)
-     Design System: 8px radius (--radius-lg), spacing tokens
-     ================================ */
-
-  --p-dialog-border-radius: var(--radius-lg); /* 8px */
-  --p-dialog-header-padding: var(--space-4); /* 16px */
-  --p-dialog-content-padding: var(--space-4); /* 16px */
-  --p-dialog-footer-padding: var(--space-4); /* 16px */
-  --p-dialog-footer-gap: var(--space-3); /* 12px between buttons */
-
-  /* ================================
-     MESSAGE/TOAST TOKENS
-     Design System: 8px radius (--radius-lg), spacing tokens
-     ================================ */
-
-  /* Message */
-  --p-message-border-radius: var(--radius-lg); /* 8px */
-  --p-message-content-padding: var(--space-3) var(--space-4); /* 12px 16px */
-
-  /* Toast */
-  --p-toast-border-radius: var(--radius-lg); /* 8px */
-  --p-toast-content-padding: var(--space-3) var(--space-4); /* 12px 16px */
-
-  /* ================================
-     CHECKBOX/TOGGLE TOKENS
-     Consistent control sizing - no layout shift
-     
-     Design Rules:
-     - Checkbox: 20px box, 6px radius, green check
-     - Toggle: 44px width, 24px height, green=ON
-     - Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
-     - Disabled: opacity 0.6, not interactive
-     ================================ */
-
-  --p-checkbox-width: 20px;
-  --p-checkbox-height: 20px;
-  --p-checkbox-border-radius: var(--radius-md);
-  --p-checkbox-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
-  --p-toggleswitch-width: 44px;
-  --p-toggleswitch-height: 24px;
-  --p-toggleswitch-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
-  --p-control-row-min-height: 44px;
-  --p-control-disabled-opacity: 0.6;
-}
+/* PrimeNG tokens live in primeng-integration.scss.
+   Spacing tokens live in design-system-tokens.scss. */
 
 /* ================================================================
    STEP 3: SHARED UTILITY CLASSES
@@ -226,6 +101,73 @@
 /* Tight variant: 8px */
 .card-stack--tight {
   gap: var(--space-2);
+}
+
+/* ================================
+   TABLE STANDARD
+   Consistent PrimeNG table + paginator tokens
+   ================================ */
+.table-standard {
+  --p-datatable-header-cell-padding: var(--space-4) var(--space-5);
+  --p-datatable-body-cell-padding: var(--space-4) var(--space-5);
+  --p-datatable-row-background: var(--surface-primary);
+  --p-datatable-row-hover-background: var(--surface-secondary);
+  --p-paginator-padding: var(--space-4) var(--space-5);
+  --p-paginator-background: var(--surface-secondary);
+  --p-paginator-border-color: transparent;
+  --p-paginator-item-border-radius: var(--radius-md);
+  --p-paginator-item-hover-background: var(--surface-tertiary);
+}
+
+/* ================================
+   FORM CONTROLS FULL WIDTH
+   Standard full-width form control layout
+   ================================ */
+.form-controls-full {
+  .p-inputtext,
+  .p-dropdown,
+  .p-select,
+  .p-multiselect,
+  .p-calendar,
+  .p-datepicker,
+  .p-inputnumber,
+  .p-password,
+  .p-autocomplete,
+  .p-textarea,
+  .p-input-icon-left,
+  .p-input-icon-right {
+    width: 100%;
+  }
+
+  .p-input-icon-left input,
+  .p-input-icon-right input,
+  .p-inputnumber-input,
+  .p-datepicker-input {
+    width: 100%;
+  }
+}
+
+/* ================================
+   CARD SHELL - TABLE FLUSH
+   Standard table tokens for flush card bodies
+   ================================ */
+.card-shell__body--flush {
+  --p-datatable-border: none;
+  --p-datatable-shadow: none;
+  --p-datatable-border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  --p-paginator-border: none;
+  --p-paginator-border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+/* ================================
+   TABS STANDARD
+   Consistent PrimeNG tabs surface + padding
+   ================================ */
+.tabs-standard {
+  --p-tabview-nav-background: var(--surface-card);
+  --p-tabview-nav-border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  --p-tabview-content-background: transparent;
+  --p-tabview-content-padding: 0;
 }
 
 /* ================================
@@ -863,15 +805,10 @@
 
   /* ================================
      TAG/BADGE - RAISED RECTANGULAR styling
-     See primeng-theme.scss for complete styles
+     NOTE: Primary tag styles are in primeng/_brand-overrides.scss
+     This block provides additional utility class support only
      ================================ */
-  .p-tag {
-    border-radius: var(--radius-md);
-    height: var(--touch-target-sm); /* 36px for breathing room */
-    min-height: var(--touch-target-sm);
-    padding: var(--space-1) var(--space-4); /* 4px vertical, 16px horizontal */
-    box-shadow: var(--shadow-sm);
-  }
+  /* Tag styles consolidated in _brand-overrides.scss - removed duplicate */
 } /* End @layer overrides */
 
 /* ================================================================

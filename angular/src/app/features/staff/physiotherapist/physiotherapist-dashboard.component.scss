@@ -23,7 +23,7 @@
 // Stats Grid
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--ds-spacing-md);
   margin-bottom: var(--ds-spacing-xl);
 }
@@ -148,7 +148,7 @@
 .rtp-section {
   .rtp-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xl), 1fr));
     gap: var(--ds-spacing-lg);
   }
 
@@ -318,7 +318,7 @@
 .risk-section {
   .risk-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
     gap: var(--ds-spacing-lg);
   }
 
@@ -391,7 +391,7 @@
       padding: var(--ds-spacing-sm);
       background: var(--surface-ground);
       border-radius: var(--ds-radius-sm);
-      opacity: 0.5;
+      opacity: var(--opacity-dimmed);
 
       i {
         font-size: var(--font-size-body);
@@ -472,7 +472,7 @@
     i {
       font-size: var(--font-h1-size);
       margin-bottom: var(--ds-spacing-md);
-      opacity: 0.5;
+      opacity: var(--opacity-dimmed);
     }
   }
 
@@ -494,7 +494,7 @@
       background: var(--surface-card);
       border-radius: var(--ds-radius-md);
       border: var(--border-1) solid var(--surface-border);
-      min-width: 150px;
+      min-width: var(--input-min-width-md);
 
       // .stat-value/.stat-label REMOVED
       // Use .stat-block classes from card-shell instead

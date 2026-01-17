@@ -283,6 +283,7 @@ exports.handler = async (event, context) => {
     functionName: "dashboard",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // P0-004: Explicitly require authentication for dashboard data
     handler: async (event, _context, { userId }) => {
       // Parse path to determine endpoint
       const path = event.path.replace("/.netlify/functions/dashboard", "");

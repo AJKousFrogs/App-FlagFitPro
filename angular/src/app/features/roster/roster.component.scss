@@ -21,7 +21,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-12);
-  min-height: 300px;
+  min-height: var(--chart-min-height-md);
 }
 
 .loading-message {
@@ -82,7 +82,7 @@
 
 .roster-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
   gap: var(--space-6);
 }
 
@@ -462,8 +462,8 @@
 }
 
 .status-indicator {
-  width: 12px;
-  height: 12px;
+  width: var(--indicator-size-md);
+  height: var(--indicator-size-md);
   border-radius: var(--radius-full);
 }
 
@@ -666,8 +666,8 @@
   }
 
   .details-jersey {
-    width: 60px;
-    height: 60px;
+    width: var(--avatar-size-xl);
+    height: var(--avatar-size-xl);
     font-size: var(--font-size-metric-md);
   }
 

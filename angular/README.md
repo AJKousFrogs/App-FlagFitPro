@@ -369,6 +369,7 @@ import { DialogModule } from "primeng/dialog";
 
 | Document                                                       | Description         |
 | -------------------------------------------------------------- | ------------------- |
+| [BUILD_WARNINGS.md](./BUILD_WARNINGS.md)                       | Build warnings log  |
 | [STYLE_GUIDE.md](./STYLE_GUIDE.md)                             | Coding standards    |
 | [ANGULAR_DEVTOOLS_SETUP.md](./ANGULAR_DEVTOOLS_SETUP.md)       | DevTools setup      |
 | [ACWR_IMPLEMENTATION_GUIDE.md](./ACWR_IMPLEMENTATION_GUIDE.md) | ACWR service docs   |

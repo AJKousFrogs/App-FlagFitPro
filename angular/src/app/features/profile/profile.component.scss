@@ -143,7 +143,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-16);
-  min-height: 400px;
+  min-height: var(--chart-min-height-lg);
 }
 
 .profile-page .loading-message {
@@ -253,7 +253,7 @@
 }
 
 .profile-page .avatar-upload-btn:disabled {
-  opacity: 0.7;
+  opacity: var(--opacity-subtle);
   cursor: not-allowed;
 }
 
@@ -298,7 +298,7 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-4) 0;
-  line-height: 1.2;
+  line-height: var(--font-h1-line-height);
   overflow-wrap: break-word;
   max-width: 100%;
 }
@@ -325,7 +325,7 @@
 }
 
 .profile-page .position-tag {
-  background: rgba(8, 153, 73, 0.1);
+  background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
 }
 
@@ -394,8 +394,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
+  min-width: var(--avatar-size-xs);
+  height: var(--avatar-size-xs);
   padding: 0 var(--space-2);
   font-size: var(--font-caption-size);
   font-weight: var(--font-weight-bold);
@@ -438,7 +438,7 @@
   gap: var(--space-4); // 16px gap between icon and content
   padding: var(--space-4); // 16px padding for comfortable touch targets
   border-radius: var(--radius-lg);
-  transition: background-color 0.2s ease;
+  transition: background-color var(--transition-base) var(--ease-standard);
   border: 1px solid transparent; // Subtle border ready for hover
 }
 
@@ -454,7 +454,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(8, 153, 73, 0.08); // Dashboard: sessions-icon background
+  background: var(--ds-primary-green-ultra-subtle); // Dashboard: sessions-icon background
   border-radius: var(--radius-md); // Dashboard: var(--radius-md)
   color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
   font-size: var(--font-body-size); // Dashboard: var(--font-body-size)
@@ -483,7 +483,7 @@
 /* ========== Achievements Grid ========== */
 .profile-page .achievements-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
 }
 
@@ -499,7 +499,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(8, 153, 73, 0.08); // Dashboard: sessions-icon background
+  background: var(--ds-primary-green-ultra-subtle); // Dashboard: sessions-icon background
   border-radius: var(--radius-md); // Dashboard: var(--radius-md)
   font-size: var(--icon-lg); // Use design token
   color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
@@ -516,7 +516,7 @@
   font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-3) 0;
-  line-height: 1.5;
+  line-height: var(--font-body-line-height);
 }
 
 .profile-page .achievement-date {
@@ -626,7 +626,7 @@
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
   font-size: var(--font-body-sm-size);
-  line-height: 1.5;
+  line-height: var(--font-body-line-height);
 }
 
 .profile-page .invitation-meta {
@@ -686,7 +686,7 @@
 }
 
 .profile-page .card-empty-state__content {
-  max-width: 300px;
+  max-width: var(--element-max-width-sm);
 }
 
 .profile-page .card-empty-state__title {
@@ -700,7 +700,7 @@
   font-size: var(--font-body-sm-size);
   color: var(--color-text-secondary);
   margin: 0;
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
 }
 
 /* ========== Responsive Styles ==========
@@ -747,7 +747,7 @@
   .profile__avatar-fallback {
     inline-size: 120px;
     block-size: 120px;
-    border-width: 4px;
+    border-width: var(--indicator-size-xs);
   }
 
   .profile-page .profile-display-name,
@@ -841,7 +841,7 @@
   .profile-page .profile-avatar-fallback {
     width: 120px;
     height: 120px;
-    border-width: 4px;
+    border-width: var(--indicator-size-xs);
   }
 
   .profile-page .profile-avatar-fallback span {
@@ -849,8 +849,8 @@
   }
 
   .profile-page .avatar-upload-btn {
-    width: 40px;
-    height: 40px;
+    width: var(--avatar-size-md);
+    height: var(--avatar-size-md);
   }
 
   .profile-page .profile-display-name {
@@ -924,9 +924,9 @@
   }
 
   .profile-page .activity-icon {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
+    width: var(--avatar-size-md);
+    height: var(--avatar-size-md);
+    min-width: var(--icon-min-width-md);
     font-size: var(--font-body-size);
   }
 }

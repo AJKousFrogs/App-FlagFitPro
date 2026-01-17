@@ -345,10 +345,17 @@ export class ApiClient {
         if (response.status === 401) {
           if (isJSON) {
             const errorData = await response.json().catch(() => ({}));
-            const error = new Error(
-              errorData.error || `HTTP ${response.status}`,
-            );
+            const errorPayload = errorData?.error;
+            const errorMessage =
+              (typeof errorPayload === "string" && errorPayload) ||
+              errorPayload?.message ||
+              errorData?.message ||
+              `HTTP ${response.status}`;
+            const error = new Error(errorMessage);
             error.status = 401;
+            error.code =
+              errorPayload?.code || errorData?.errorType || errorData?.code;
+            error.details = errorPayload?.details || errorData?.details;
             throw error;
           } else {
             const error = new Error(`HTTP ${response.status}: Unauthorized`);
@@ -370,7 +377,17 @@ export class ApiClient {
         // Try to parse JSON error response
         if (isJSON) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || `HTTP ${response.status}`);
+          const errorPayload = errorData?.error;
+          const errorMessage =
+            (typeof errorPayload === "string" && errorPayload) ||
+            errorPayload?.message ||
+            errorData?.message ||
+            `HTTP ${response.status}`;
+          const error = new Error(errorMessage);
+          error.status = response.status;
+          error.code = errorPayload?.code || errorData?.errorType || errorData?.code;
+          error.details = errorPayload?.details || errorData?.details;
+          throw error;
         } else {
           // Non-JSON error response
           const text = await response.text().catch(() => "");

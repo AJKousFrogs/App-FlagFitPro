@@ -40,14 +40,14 @@
 }
 
 .header-icon {
-  width: 64px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.15);
+  width: var(--avatar-size-2xl);
+  height: var(--avatar-size-2xl);
+  background: var(--overlay-white-15);
   border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: var(--border-1) solid rgba(255, 255, 255, 0.2);
+  border: var(--border-1) solid var(--overlay-white-20);
 }
 
 .header-icon i {
@@ -70,12 +70,12 @@
   display: flex;
   gap: var(--space-3);
   flex-wrap: wrap;
-  max-width: 800px;
+  max-width: var(--dialog-max-width-2xl);
   margin: 0 auto;
 }
 
 .stat-pill {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--overlay-white-15);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
   display: flex;
@@ -83,7 +83,7 @@
   gap: var(--space-2);
   font-size: var(--font-size-h4);
   font-weight: var(--font-weight-medium);
-  border: var(--border-1) solid rgba(255, 255, 255, 0.2);
+  border: var(--border-1) solid var(--overlay-white-20);
 }
 
 .stat-pill.approved {
@@ -192,8 +192,8 @@
 }
 
 .step-number {
-  width: 32px;
-  height: 32px;
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
   background: var(--color-brand-primary);
   color: var(--color-text-on-primary);
   border-radius: var(--radius-full);
@@ -335,7 +335,7 @@
 
 .submit-btn {
   width: 100%;
-  height: 48px;
+  height: var(--avatar-size-lg);
   font-size: var(--font-size-body);
   font-weight: var(--font-weight-semibold);
   border-radius: var(--radius-lg);
@@ -454,7 +454,7 @@
 
 .focus-chip {
   font-size: var(--font-size-badge);
-  height: 24px;
+  height: var(--space-6);
 }
 
 .review-notes {
@@ -510,7 +510,7 @@
 }
 
 .approved-videos-scroll::-webkit-scrollbar {
-  height: 6px;
+  height: var(--indicator-size-sm);
 }
 
 .approved-videos-scroll::-webkit-scrollbar-track {
@@ -611,7 +611,7 @@
 
 .tips-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-6);
 }
 
@@ -622,8 +622,8 @@
 }
 
 .tip-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
   background: var(--color-brand-primary-subtle);
   border-radius: var(--radius-lg);
   display: flex;
@@ -667,7 +667,7 @@
 }
 
 .preview-embed {
-  min-height: 350px;
+  min-height: var(--chart-min-height-md);
   background: var(--primitive-neutral-950);
   display: flex;
   align-items: center;

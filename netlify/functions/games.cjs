@@ -3,7 +3,7 @@
 // Supports team games (coach/admin) and personal games (player domestic leagues)
 
 const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const { validate: _validate } = require("./validation.cjs");
+const { validate, validateRequestBody, VALIDATION_RULES } = require("./validation.cjs");
 const { sanitizeObject } = require("./utils/input-validator.cjs");
 const {
   createSuccessResponse,
@@ -62,6 +62,15 @@ async function hasPlayerConsent(coachId, playerId) {
 const createGame = async (userId, gameData) => {
   try {
     checkEnvVars();
+
+    // SECURITY: Validate input against schema
+    const validation = validate(gameData, "createGame");
+    if (!validation.valid) {
+      const error = new Error(`Validation failed: ${validation.errors.join(", ")}`);
+      error.isValidation = true;
+      error.errors = validation.errors;
+      throw error;
+    }
 
     // Get user role to determine game type
     const userRole = await getUserRole(userId);
@@ -368,6 +377,15 @@ async function triggerGameDayRecovery(playerId, gameDate) {
 const updateGame = async (userId, gameId, updates) => {
   try {
     checkEnvVars();
+
+    // SECURITY: Validate input against schema
+    const validation = validate(updates, "updateGame");
+    if (!validation.valid) {
+      const error = new Error(`Validation failed: ${validation.errors.join(", ")}`);
+      error.isValidation = true;
+      error.errors = validation.errors;
+      throw error;
+    }
 
     const userRole = await getUserRole(userId);
     const isCoach = isCoachOrAdmin(userRole);
@@ -761,6 +779,7 @@ exports.handler = async (event, context) => {
     functionName: "games",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: getRateLimitType(event.httpMethod, event.path),
+    requireAuth: true, // P0-003: Explicitly require authentication for game data
     handler: async (event, _context, { userId }) => {
       // Safe path parsing
       const pathMatch = event.path.match(
@@ -840,6 +859,11 @@ exports.handler = async (event, context) => {
 
         return createSuccessResponse(result);
       } catch (error) {
+        // SECURITY: Handle validation errors with proper 422 status
+        if (error.isValidation) {
+          return handleValidationError(error.errors || error.message);
+        }
+
         if (error.message && error.message.includes("not found")) {
           return handleNotFoundError(error.message);
         }

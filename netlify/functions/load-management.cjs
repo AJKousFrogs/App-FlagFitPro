@@ -1030,6 +1030,7 @@ exports.handler = async (event, context) => {
     functionName: "load-management",
     allowedMethods: ["GET"],
     rateLimitType: "READ",
+    requireAuth: true, // SECURITY: Explicit auth for load management data
     handler: async (event, _context, { userId }) => {
       const { httpMethod, path, queryStringParameters } = event;
       const pathSegments = path.split("/").filter(Boolean);

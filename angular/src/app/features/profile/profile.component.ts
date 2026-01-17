@@ -6,26 +6,26 @@ import {
   OnInit,
   viewChild,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 
 import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { Avatar } from "primeng/avatar";
+
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { ProgressBar } from "primeng/progressbar";
 import { ProgressSpinner } from "primeng/progressspinner";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { AccountDeletionService } from "../../core/services/account-deletion.service";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import {
   LoggerService,
-  toLogContext,
+  toLogContext
 } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -36,7 +36,7 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
 import {
   DELETION_MESSAGES,
-  getDeletionMessage,
+  getDeletionMessage
 } from "../../shared/utils/privacy-ux-copy";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { UI_LIMITS } from "../../core/constants/app.constants";
@@ -63,7 +63,6 @@ interface PendingInvitation {
   imports: [
     CommonModule,
     RouterModule,
-    Avatar,
     StatusTagComponent,
     Tabs,
     TabList,
@@ -72,7 +71,6 @@ interface PendingInvitation {
     TabPanel,
     ProgressBar,
     ProgressSpinner,
-    Tooltip,
     MainLayoutComponent,
     PageErrorStateComponent,
     MobileOptimizedImageDirective,
@@ -81,7 +79,7 @@ interface PendingInvitation {
     ButtonComponent,
     IconButtonComponent,
     CardShellComponent,
-    StatsGridComponent,
+    StatsGridComponent
   ],
   template: `
     <app-main-layout>

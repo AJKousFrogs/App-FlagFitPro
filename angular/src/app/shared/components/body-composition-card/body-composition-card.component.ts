@@ -18,13 +18,13 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
-import { Tag } from "primeng/tag";
+
 import { Tooltip } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -55,11 +55,10 @@ interface BodyCompositionData {
     FormsModule,
     ButtonComponent,
     CardComponent,
-    Tag,
     Tooltip,
     DecimalPipe,
     Dialog,
-    InputNumber,
+    InputNumber
   ],
   template: `
     <app-card

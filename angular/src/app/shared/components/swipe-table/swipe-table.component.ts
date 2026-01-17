@@ -13,7 +13,9 @@ import { TableModule } from "primeng/table";
   selector: "app-swipe-table",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Table],
+  imports: [
+    CommonModule
+  ],
   template: `
     <div
       class="swipe-table-container"

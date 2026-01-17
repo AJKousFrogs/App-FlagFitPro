@@ -10,7 +10,7 @@
 }
 
 .preview-embed {
-  min-height: 400px;
+  min-height: var(--chart-min-height-lg);
   background: var(--color-video-background);
   border-radius: var(--radius-lg);
   display: flex;

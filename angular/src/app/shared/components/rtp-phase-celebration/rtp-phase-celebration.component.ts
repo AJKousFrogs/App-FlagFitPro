@@ -10,11 +10,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   input,
-  computed,
+  computed
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
-import { Tag } from "primeng/tag";
+
 import { ButtonComponent } from "../button/button.component";
 
 export interface RTPPhaseInfo {
@@ -36,7 +36,7 @@ export interface RTPPhaseInfo {
   selector: "app-rtp-phase-celebration",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, Card, Tag, ButtonComponent],
+  imports: [CommonModule, RouterModule, Card, ButtonComponent],
   template: `
     @if (showCelebration()) {
       <p-card styleClass="celebration-card">

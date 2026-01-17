@@ -68,7 +68,7 @@
       stroke: var(--primary-500);
       stroke-width: 8;
       stroke-linecap: round;
-      transition: stroke-dashoffset 0.5s ease;
+      transition: stroke-dashoffset var(--transition-slower) var(--ease-standard);
     }
 
     .ring-content {
@@ -200,7 +200,7 @@
 
   .cycles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
     gap: var(--space-4);
   }
 
@@ -333,7 +333,7 @@
         .number {
           font-size: var(--font-size-metric-lg);
           font-weight: var(--font-weight-bold);
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+          text-shadow: 0 2px 4px var(--surface-overlay-light);
         }
 
         .label {

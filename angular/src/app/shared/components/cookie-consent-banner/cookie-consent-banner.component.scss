@@ -17,8 +17,8 @@
   background: var(--surface-primary);
   border-top: 1px solid var(--color-border-subtle);
   box-shadow:
-    0 -8px 32px rgba(0, 0, 0, 0.12),
-    0 -2px 8px rgba(0, 0, 0, 0.06);
+    var(--shadow-lg),
+    var(--shadow-sm);
   animation: slide-up var(--motion-slow) var(--ease-decelerate);
   backdrop-filter: blur(12px);
 }
@@ -35,7 +35,7 @@
 }
 
 .cookie-content {
-  max-width: 1200px;
+  max-width: var(--container-max-lg); /* 1200px */
   margin: 0 auto;
   padding: var(--space-8) var(--space-6);
   display: flex;

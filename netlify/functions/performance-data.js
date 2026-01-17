@@ -2,7 +2,10 @@
 // Handles athlete performance data storage and retrieval using Supabase
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
-const { createErrorResponse } = require("./utils/error-handler.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 const { baseHandler } = require("./utils/base-handler.cjs");
 const {
   canCoachViewWellness,
@@ -228,10 +231,7 @@ async function handleMeasurements(method, userId, body, query) {
       // Validate data
       const errors = validateMeasurementData(measurementData);
       if (errors.length > 0) {
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ errors }),
-        };
+        return handleValidationError(errors);
       }
 
       try {
@@ -287,18 +287,16 @@ async function handleMeasurements(method, userId, body, query) {
         };
       } catch (error) {
         console.error("Error saving measurement:", error);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({ error: "Failed to save measurement" }),
-        };
+        return createErrorResponse(
+          "Failed to save measurement",
+          500,
+          "server_error",
+        );
       }
     }
 
     default:
-      return {
-        statusCode: 405,
-        body: JSON.stringify({ error: "Method not allowed" }),
-      };
+      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 }
 
@@ -426,18 +424,16 @@ async function handlePerformanceTests(method, userId, body, query) {
         };
       } catch (error) {
         console.error("Error saving performance test:", error);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({ error: "Failed to save performance test" }),
-        };
+        return createErrorResponse(
+          "Failed to save performance test",
+          500,
+          "server_error",
+        );
       }
     }
 
     default:
-      return {
-        statusCode: 405,
-        body: JSON.stringify({ error: "Method not allowed" }),
-      };
+      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 }
 
@@ -565,18 +561,16 @@ async function handleWellness(method, userId, requestedAthleteId, body, query) {
         };
       } catch (error) {
         console.error("Error saving wellness data:", error);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({ error: "Failed to save wellness data" }),
-        };
+        return createErrorResponse(
+          "Failed to save wellness data",
+          500,
+          "server_error",
+        );
       }
     }
 
     default:
-      return {
-        statusCode: 405,
-        body: JSON.stringify({ error: "Method not allowed" }),
-      };
+      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 }
 
@@ -672,18 +666,16 @@ async function handleSupplements(method, userId, body, query) {
         };
       } catch (error) {
         console.error("Error saving supplement data:", error);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({ error: "Failed to save supplement data" }),
-        };
+        return createErrorResponse(
+          "Failed to save supplement data",
+          500,
+          "server_error",
+        );
       }
     }
 
     default:
-      return {
-        statusCode: 405,
-        body: JSON.stringify({ error: "Method not allowed" }),
-      };
+      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 }
 
@@ -847,9 +839,8 @@ async function handleInjuries(method, userId, body, query) {
 
       if (!injuryId) {
         return {
-          statusCode: 400,
+          ...handleValidationError("injuryId is required"),
           headers: CORS_HEADERS,
-          body: JSON.stringify({ error: "Injury ID required" }),
         };
       }
 
@@ -885,9 +876,8 @@ async function handleInjuries(method, userId, body, query) {
           if (updateError.code === "PGRST116") {
             // No rows updated - injury not found
             return {
-              statusCode: 404,
+              ...createErrorResponse("Injury not found", 404, "not_found"),
               headers: CORS_HEADERS,
-              body: JSON.stringify({ error: "Injury not found" }),
             };
           }
           throw updateError;
@@ -917,20 +907,18 @@ async function handleInjuries(method, userId, body, query) {
       } catch (dbError) {
         console.error("Error updating injury:", dbError);
         return {
-          statusCode: 500,
+          ...createErrorResponse(
+            "Failed to update injury record",
+            500,
+            "server_error",
+          ),
           headers: CORS_HEADERS,
-          body: JSON.stringify({
-            error: "Failed to update injury record",
-          }),
         };
       }
     }
 
     default:
-      return {
-        statusCode: 405,
-        body: JSON.stringify({ error: "Method not allowed" }),
-      };
+      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 }
 
@@ -938,10 +926,7 @@ async function handleInjuries(method, userId, body, query) {
 async function handleTrends(method, userId, requestedAthleteId, body, query) {
   const targetAthleteId = requestedAthleteId || userId;
   if (method !== "GET") {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
+    return createErrorResponse("Method not allowed", 405, "method_not_allowed");
   }
 
   const timeframe = query?.timeframe || "12m";
@@ -1126,10 +1111,7 @@ async function handleExport(userId, query) {
     };
   } catch (error) {
     console.error("Error exporting data:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Failed to export data" }),
-    };
+    return createErrorResponse("Failed to export data", 500, "server_error");
   }
 }
 

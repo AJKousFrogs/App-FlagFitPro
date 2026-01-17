@@ -9,17 +9,17 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Avatar } from "primeng/avatar";
-import { Badge } from "primeng/badge";
+
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { Card } from "primeng/card";
+
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
-import { Tag } from "primeng/tag";
+
 import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
 import { COLORS } from "../../core/constants/app.constants";
@@ -144,18 +144,15 @@ interface ApiPollVoteResponse {
     FormsModule,
     RouterModule,
     ScrollingModule,
-    Card,
     Dialog,
     Textarea,
     Avatar,
-    Badge,
-    Tag,
     InputText,
     Tooltip,
     MainLayoutComponent,
     AnnouncementsBannerComponent,
     ButtonComponent,
-    CardShellComponent,
+    CardShellComponent
   ],
   animations: [fadeInOut],
   template: `

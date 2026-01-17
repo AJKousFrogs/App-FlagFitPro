@@ -11,13 +11,13 @@
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xl), 1fr));
   gap: var(--space-6);
   margin-bottom: var(--space-6);
 }
 
 .chart-card {
-  min-height: 300px;
+  min-height: var(--chart-min-height-md);
 }
 
 .table-card {
@@ -65,7 +65,7 @@
 }
 
 .position-selector {
-  min-width: 180px;
+  min-width: var(--input-min-width-md);
 }
 
 .benchmarks-list {

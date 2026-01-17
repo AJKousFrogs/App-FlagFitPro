@@ -58,7 +58,7 @@
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-8);
 }
@@ -70,12 +70,12 @@
   background: white;
   padding: var(--space-4);
   border-radius: var(--radius-lg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .metric-icon {
-  width: 48px;
-  height: 48px;
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
@@ -205,13 +205,13 @@
 }
 
 .chart-container {
-  height: 250px;
+  height: var(--chart-min-height-md); /* 300px */
   position: relative;
 }
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-6);
   margin-bottom: var(--space-6);
 }
@@ -257,7 +257,7 @@
 
 .feedback-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
 }
 

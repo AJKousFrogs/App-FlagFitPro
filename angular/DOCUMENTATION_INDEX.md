@@ -6,6 +6,7 @@
 
 1. Read **[DEBUGGING_GUIDE.md](./DEBUGGING_GUIDE.md)** - Comprehensive Angular debugging guide
 2. Check **[debugging-signals-examples.ts](./src/app/examples/debugging-signals-examples.ts)** - Code examples
+3. Review **[BUILD_WARNINGS.md](./BUILD_WARNINGS.md)** - Known build warnings and rationale
 
 ### For Testing
 
@@ -93,6 +94,16 @@
 - Example 7: Complete dashboard example
 
 ---
+
+### 6. BUILD_WARNINGS.md
+
+**Purpose:** Document known non-blocking build warnings  
+**What's Inside:**
+
+- Unsupported regexp warning (PrimeNG)
+- Unsupported dynamic import warning (Sentry)
+- Duplicate case warning (html2canvas)
+- How to reproduce
 
 ## 🔧 Implementation Files
 

@@ -5,7 +5,7 @@ import {
   DestroyRef,
   effect,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -15,14 +15,13 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
-import { Checkbox } from "primeng/checkbox";
+
 import { InputText } from "primeng/inputtext";
-import { Message } from "primeng/message";
-import { Password } from "primeng/password";
+
 import { Toast } from "primeng/toast";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { AuthService } from "../../../core/services/auth.service";
@@ -32,7 +31,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   getFormControlError,
   isFormControlInvalid,
-  markFormGroupTouched,
+  markFormGroupTouched
 } from "../../../shared/utils/form.utils";
 
 @Component({
@@ -46,10 +45,7 @@ import {
     Card,
     ButtonComponent,
     InputText,
-    Checkbox,
-    Message,
-    Toast,
-    Password,
+    Toast
   ],
   template: `
     <p-toast></p-toast>

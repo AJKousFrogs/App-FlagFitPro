@@ -537,163 +537,20 @@ export class SuperadminDashboardComponent implements OnInit {
     }
   }
 
+  /**
+   * @deprecated REMOVED: Mock demo data method
+   * This method previously loaded hardcoded demo data which could mislead administrators.
+   * All data should come from the actual database via the API.
+   * Empty states are now shown when no data is available.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private loadDemoData(): void {
-    this.stats.set({
-      totalUsers: 1245,
-      usersGrowth: 45,
-      activeTeams: 42,
-      teamsGrowth: 5,
-      dailyActive: 328,
-      dailyActivePercent: 26,
-      openIssues: 3,
-      dbSize: "2.4 GB",
-      dbPercent: 78,
-      apiRequests: 45230,
-      apiGrowth: 12,
-      avgResponse: 142,
-      errorsLast24h: 12,
-      errorRate: 0.03,
-    });
-
-    this.recentActivity.set([
-      {
-        id: "1",
-        type: "new_team",
-        title: "New team registered: Thunder Bolts",
-        description: "Created by: john.coach@email.com",
-        timestamp: "10 minutes ago",
-      },
-      {
-        id: "2",
-        type: "error",
-        title: "Error spike detected: Auth service",
-        description: "8 failed login attempts from IP 192.168.1.x",
-        timestamp: "45 minutes ago",
-        priority: "high",
-      },
-      {
-        id: "3",
-        type: "user_delete",
-        title: "User account deleted: former.player@email.com",
-        description: "Requested by user via Settings > Delete Account",
-        timestamp: "2 hours ago",
-      },
-      {
-        id: "4",
-        type: "ticket",
-        title: 'Support ticket opened: "Can\'t login" - Priority High',
-        description: "User: confused.user@email.com",
-        timestamp: "3 hours ago",
-        priority: "high",
-      },
-    ]);
-
-    this.services.set([
-      {
-        name: "API Server",
-        status: "healthy",
-        detail: "Healthy • 142ms avg response",
-      },
-      {
-        name: "Database (Supabase)",
-        status: "healthy",
-        detail: "Healthy • 2.4GB / 8GB",
-      },
-      {
-        name: "Authentication",
-        status: "healthy",
-        detail: "Healthy • 0 failed auth (last hour)",
-      },
-      {
-        name: "Edge Functions",
-        status: "healthy",
-        detail: "Healthy • 23 active functions",
-      },
-      { name: "Storage", status: "warning", detail: "Warning • 78% capacity" },
-      {
-        name: "Real-time",
-        status: "healthy",
-        detail: "Healthy • 156 active connections",
-      },
-    ]);
-
-    this.users.set([
-      {
-        id: "1",
-        name: "Mike Johnson",
-        email: "mike@team.com",
-        role: "coach",
-        team: "Panthers",
-        status: "active",
-      },
-      {
-        id: "2",
-        name: "Sarah Chen",
-        email: "sarah@email.com",
-        role: "player",
-        team: "Panthers",
-        status: "active",
-      },
-      {
-        id: "3",
-        name: "John Smith",
-        email: "john@newteam.com",
-        role: "coach",
-        team: "Thunder",
-        status: "active",
-      },
-      {
-        id: "4",
-        name: "Emily Brown",
-        email: "emily@email.com",
-        role: "player",
-        team: "Eagles",
-        status: "active",
-      },
-      {
-        id: "5",
-        name: "Admin User",
-        email: "admin@flagfit.com",
-        role: "admin",
-        team: "",
-        status: "active",
-      },
-    ]);
-
-    this.teams.set([
-      {
-        id: "1",
-        name: "Panthers",
-        coach: "Mike Johnson",
-        playerCount: 15,
-        createdDate: "Sep 2025",
-        status: "active",
-      },
-      {
-        id: "2",
-        name: "Eagles",
-        coach: "Sarah Williams",
-        playerCount: 12,
-        createdDate: "Oct 2025",
-        status: "active",
-      },
-      {
-        id: "3",
-        name: "Thunder Bolts",
-        coach: "John Smith",
-        playerCount: 3,
-        createdDate: "Today",
-        status: "new",
-      },
-      {
-        id: "4",
-        name: "Hawks",
-        coach: "Lisa Davis",
-        playerCount: 18,
-        createdDate: "Aug 2025",
-        status: "active",
-      },
-    ]);
+    // NO-OP: Mock data removed to ensure data integrity
+    // Admin dashboard now shows empty states when API returns no data
+    // This prevents administrators from seeing fake statistics
+    this.logger.info(
+      "[SuperadminDashboard] Demo data loading disabled - showing real data only",
+    );
   }
 
   // Quick Actions

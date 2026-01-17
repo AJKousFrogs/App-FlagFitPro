@@ -798,9 +798,9 @@ export class UnifiedTrainingService {
   private async loadTrainingSessions(
     userId: string,
   ): Promise<TrainingSessionRecord[]> {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const start = thirtyDaysAgo.toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
+    const ninetyDaysAgo = new Date();
+    ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+    const start = ninetyDaysAgo.toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
 
     const { data, error } = await this.supabase.client
       .from("training_sessions")
@@ -1003,7 +1003,11 @@ export class UnifiedTrainingService {
 
   private async loadAvailableWorkouts(): Promise<Workout[]> {
     const userId = this.userId();
-    if (!userId) return this.getDefaultWorkouts();
+    // Return empty array if no user - don't show fake workouts
+    if (!userId) {
+      this.logger.info("[UnifiedTrainingService] No user ID - returning empty workouts");
+      return [];
+    }
 
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD for DATE column
     const { data, error } = await this.supabase.client
@@ -1024,10 +1028,15 @@ export class UnifiedTrainingService {
           code: error.code,
         }),
       );
-      return this.getDefaultWorkouts();
+      // Return empty array on error - don't show fake workouts
+      return [];
     }
 
-    if (!data || data.length === 0) return this.getDefaultWorkouts();
+    // Return empty array if no scheduled workouts - don't show fake defaults
+    if (!data || data.length === 0) {
+      this.logger.info("[UnifiedTrainingService] No scheduled workouts for today");
+      return [];
+    }
     return data.map((w) => this.transformToWorkout(w));
   }
 
@@ -1372,29 +1381,18 @@ export class UnifiedTrainingService {
     };
   }
 
+  /**
+   * @deprecated REMOVED: Default workouts method
+   * Previously returned hardcoded workout suggestions which could mislead athletes
+   * into thinking they had scheduled training when they didn't.
+   * Now returns empty array - athletes see their actual scheduled workouts only.
+   */
   private getDefaultWorkouts(): Workout[] {
-    return [
-      {
-        type: "speed",
-        title: "Speed Work",
-        description: "Acceleration focus",
-        duration: "45 min",
-        intensity: "high",
-        location: "Track",
-        icon: "pi-bolt",
-        iconBg: COLORS.ERROR,
-      },
-      {
-        type: "strength",
-        title: "Strength",
-        description: "Power focus",
-        duration: "60 min",
-        intensity: "medium",
-        location: "Gym",
-        icon: "pi-shield",
-        iconBg: COLORS.BLUE,
-      },
-    ];
+    // NO-OP: Mock workouts removed to ensure data integrity
+    // Athletes should only see their actual scheduled workouts
+    // Empty state encourages them to schedule real training sessions
+    this.logger.info("[UnifiedTrainingService] getDefaultWorkouts called - returning empty (mock data removed)");
+    return [];
   }
 
   /**
@@ -1510,10 +1508,11 @@ export class UnifiedTrainingService {
   }
 
   private getFallbackData(): TrainingDataResult {
+    // Return empty data - don't show fake workouts or achievements
     return {
       stats: [],
       schedule: [],
-      workouts: this.getDefaultWorkouts(),
+      workouts: [], // Empty - no fake workouts
       achievements: [],
       wellnessData: { alert: null, readinessScore: 0, readinessStatus: "good" },
       userName: "Athlete",

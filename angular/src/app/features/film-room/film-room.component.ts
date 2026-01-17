@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -24,7 +24,7 @@ import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { Tag } from "primeng/tag";
+
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
@@ -83,14 +83,13 @@ interface DiscussionMessage {
     InputText,
     ProgressBar,
     Select,
-    Tag,
     StatusTagComponent,
     Textarea,
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
-    ButtonComponent,
+    ButtonComponent
   ],
   providers: [MessageService],
   template: `

@@ -236,7 +236,7 @@ import { calculateAge } from "../../../shared/utils/date.utils";
         </div>
 
         <!-- Detailed Tabs -->
-        <p-tabs class="safety-tabs">
+        <p-tabs class="safety-tabs tabs-standard">
           <!-- Safety Recommendations Tab -->
           <p-tabpanel header="Recommendations">
             <div class="recommendations-list">

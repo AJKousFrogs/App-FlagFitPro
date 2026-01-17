@@ -84,7 +84,7 @@
   flex: 1;
   overflow-y: auto;
   padding: var(--space-2) 0;
-  min-height: 180px;
+  min-height: var(--card-min-height-lg); /* 160px */
   max-height: calc(70vh - 140px);
 }
 
@@ -327,7 +327,7 @@
   border-color: var(--ds-primary-green);
   color: white;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md);
 }
 
 .popular-tag i {
@@ -373,7 +373,7 @@
   gap: var(--space-4);
   padding: var(--space-3) var(--space-4);
   cursor: pointer;
-  transition: background-color 0.1s ease;
+  transition: background-color var(--transition-fast) var(--ease-standard);
   margin: 0 var(--space-2);
   border-radius: var(--radius-lg);
 }
@@ -607,7 +607,7 @@
 .search-tips {
   text-align: left;
   width: 100%;
-  max-width: 400px;
+  max-width: var(--chart-min-height-lg); /* 400px */
   margin-bottom: var(--space-5);
   padding: var(--space-4);
   background: var(--surface-ground);
@@ -637,7 +637,7 @@
   gap: var(--space-2);
   font-size: var(--font-size-badge);
   color: var(--text-color-secondary);
-  line-height: 1.5;
+  line-height: var(--font-body-line-height);
 }
 
 .search-tips li i {
@@ -715,11 +715,11 @@
   color: var(--text-color);
   font-size: var(--font-size-h4);
   text-align: left;
-  transition: background-color 0.1s ease;
+  transition: background-color var(--transition-fast) var(--ease-standard);
 }
 
 .suggestion-item:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--color-surface-hover);
 }
 
 .suggestion-item i:first-child {
@@ -732,7 +732,7 @@
   color: var(--text-color-secondary);
   font-size: var(--font-caption-size);
   opacity: 0;
-  transition: opacity 0.1s ease;
+  transition: opacity var(--transition-fast) var(--ease-standard);
 }
 
 .suggestion-item:hover i:last-child {
@@ -784,7 +784,7 @@
   text-align: center;
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .search-type-hint {
@@ -829,7 +829,7 @@
   }
 
   .suggestions-dropdown {
-    max-height: 150px;
+    max-height: var(--input-min-width-md); /* 150px */
     overflow-y: auto;
   }
 }

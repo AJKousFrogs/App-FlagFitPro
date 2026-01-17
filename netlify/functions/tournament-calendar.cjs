@@ -8,6 +8,11 @@
  */
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
+const { authenticateRequest } = require("./utils/auth-helper.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 const getSupabase = (_authHeader) => {
   // Use shared admin client
@@ -16,7 +21,6 @@ const getSupabase = (_authHeader) => {
 
 exports.handler = async (event) => {
   const { httpMethod, path, body, headers } = event;
-  const authHeader = headers.authorization || headers.Authorization;
 
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -24,37 +28,18 @@ exports.handler = async (event) => {
     "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
     "Content-Type": "application/json",
   };
+  const withHeaders = (response) => ({ ...response, headers: corsHeaders });
 
   if (httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: corsHeaders, body: "" };
   }
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Authorization required" }),
-    };
+  const auth = await authenticateRequest(event);
+  if (!auth.success) {
+    return withHeaders(auth.error);
   }
-
-  // Extract the JWT token from "Bearer <token>"
-  const token = authHeader.substring(7);
-  const supabase = getSupabase(authHeader);
-
-  // Get user from token - MUST pass token to getUser() when using admin client
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser(token);
-
-  if (authError || !user) {
-    console.error("[tournament-calendar] Auth error:", authError?.message);
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Invalid authentication" }),
-    };
-  }
+  const { user } = auth;
+  const supabase = getSupabase();
 
   try {
     const endpoint = path.split("/").pop();
@@ -64,7 +49,12 @@ exports.handler = async (event) => {
     }
 
     if (httpMethod === "POST") {
-      const payload = body ? JSON.parse(body) : {};
+      let payload = {};
+      try {
+        payload = body ? JSON.parse(body) : {};
+      } catch (_parseError) {
+        return withHeaders(handleValidationError("Invalid JSON in request body"));
+      }
 
       if (endpoint === "delete") {
         return await deleteTournament(supabase, user.id, payload, corsHeaders);
@@ -73,21 +63,14 @@ exports.handler = async (event) => {
       return await saveTournament(supabase, user.id, payload, corsHeaders);
     }
 
-    return {
-      statusCode: 404,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Not found" }),
-    };
+    return withHeaders(createErrorResponse("Not found", 404, "not_found"));
   } catch (err) {
     console.error("Tournament calendar error:", err);
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        error: "Internal server error",
-        message: err.message,
+    return withHeaders(
+      createErrorResponse("Internal server error", 500, "server_error", {
+        details: err.message,
       }),
-    };
+    );
   }
 };
 
@@ -188,9 +171,8 @@ async function saveTournament(supabase, userId, payload, headers) {
 
   if (!name || !startDate || !endDate) {
     return {
-      statusCode: 400,
+      ...handleValidationError("name, startDate, and endDate are required"),
       headers,
-      body: JSON.stringify({ error: "Name, startDate, and endDate required" }),
     };
   }
 
@@ -260,11 +242,7 @@ async function deleteTournament(supabase, userId, payload, headers) {
   const { id } = payload;
 
   if (!id) {
-    return {
-      statusCode: 400,
-      headers,
-      body: JSON.stringify({ error: "Tournament ID required" }),
-    };
+    return { ...handleValidationError("tournamentId is required"), headers };
   }
 
   // Verify ownership or allow if user is coach
@@ -282,11 +260,12 @@ async function deleteTournament(supabase, userId, payload, headers) {
   // TODO: Add coach role check for national team events
   if (tournament.created_by && tournament.created_by !== userId) {
     return {
-      statusCode: 403,
+      ...createErrorResponse(
+        "Not authorized to delete this tournament",
+        403,
+        "authorization_error",
+      ),
       headers,
-      body: JSON.stringify({
-        error: "Not authorized to delete this tournament",
-      }),
     };
   }
 

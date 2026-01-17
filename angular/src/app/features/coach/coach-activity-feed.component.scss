@@ -75,7 +75,7 @@
 .empty-state i {
   font-size: var(--font-h1-size);
   margin-bottom: var(--space-3);
-  opacity: 0.5;
+  opacity: var(--opacity-dimmed);
 }
 
 .empty-state p {
@@ -188,8 +188,8 @@
 }
 
 .unread-dot {
-  width: 8px;
-  height: 8px;
+  width: var(--indicator-size-sm);
+  height: var(--indicator-size-sm);
   border-radius: 50%;
   background: var(--color-brand-primary);
   flex-shrink: 0;

@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -25,8 +25,7 @@ import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
-import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
+
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -196,8 +195,6 @@ const RTP_STAGES: RtpStage[] = [
     DatePicker,
     Dialog,
     InputNumber,
-    InputText,
-    ProgressBar,
     RadioButton,
     Select,
     TableModule,
@@ -205,9 +202,8 @@ const RTP_STAGES: RtpStage[] = [
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-
     ButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   providers: [MessageService],
   template: `

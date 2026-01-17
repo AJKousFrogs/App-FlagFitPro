@@ -6,10 +6,10 @@ import {
   input,
   output,
   booleanAttribute,
-  HostBinding,
+  HostBinding
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Button } from "primeng/button";
+
 import { Ripple } from "primeng/ripple";
 import { Tooltip } from "primeng/tooltip";
 
@@ -68,9 +68,8 @@ export type ButtonSize = "sm" | "md" | "lg";
   imports: [
     CommonModule,
     RouterModule,
-    Button,
     Ripple,
-    Tooltip,
+    Tooltip
   ],
   template: `
     <!-- Link version (when routerLink is provided) -->

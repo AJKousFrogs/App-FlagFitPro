@@ -8,13 +8,12 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output,
+  output
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 // PrimeNG
-import { Tag } from "primeng/tag";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
@@ -23,14 +22,14 @@ import { PlayerSuggestion } from "../video-curation.models";
 import {
   formatFocus,
   formatSuggestionDate,
-  getStatusSeverity,
+  getStatusSeverity
 } from "../video-curation-utils";
 
 @Component({
   selector: "app-video-curation-suggestions",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Tag, Tooltip, StatusTagComponent, ButtonComponent, IconButtonComponent],
+  imports: [CommonModule, StatusTagComponent, ButtonComponent, IconButtonComponent],
   template: `
     <div class="tab-content">
       <div class="suggestions-header">

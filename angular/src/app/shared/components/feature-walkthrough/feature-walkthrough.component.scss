@@ -9,21 +9,18 @@
 :host {
   display: block;
 
-  /* ================================================================
-     PRIMENG COMPONENT STYLING VIA CSS CUSTOM PROPERTIES
-     These cascade into PrimeNG components without ::ng-deep
-     ================================================================ */
-
-  // Dialog styling
-  --p-dialog-content-padding: 0;
-  --p-dialog-border-radius: var(--radius-2xl);
-
-  // Button styling
-  --p-button-border-radius: var(--radius-full);
 }
 
 /* Dialog content styling via class */
 .walkthrough-dialog {
+  .p-dialog {
+    border-radius: var(--radius-2xl);
+  }
+
+  .p-dialog-content {
+    padding: 0;
+  }
+
   .dialog-content {
     padding: 0;
     border-radius: var(--radius-2xl);
@@ -49,8 +46,8 @@
 }
 
 .progress-dot {
-  width: 10px;
-  height: 10px;
+  width: var(--space-3); /* 12px - aligns with spacing scale */
+  height: var(--space-3);
   border-radius: 50%;
   background: var(--color-border-secondary);
   transition:
@@ -84,7 +81,7 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(var(--space-5));
   }
   to {
     opacity: 1;
@@ -131,7 +128,7 @@
   margin: 0 0 var(--space-4) 0;
   font-size: var(--font-size-body);
   color: var(--color-text-primary);
-  line-height: 1.6;
+  line-height: var(--line-height-relaxed);
 }
 
 .benefits-list {
@@ -222,7 +219,7 @@
 }
 
 .nav-btn--outlined {
-  border-width: 2px;
+  border-width: var(--border-2);
   border-color: var(--ds-primary-green);
   color: var(--ds-primary-green);
   background: transparent;

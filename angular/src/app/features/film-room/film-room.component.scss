@@ -33,12 +33,12 @@
 
   .stat-divider {
     width: 1px;
-    height: 40px;
+    height: var(--avatar-size-md);
     background: var(--ds-border-subtle);
   }
 
   .progress-overall {
-    height: 8px;
+    height: var(--indicator-size-sm);
     border-radius: var(--radius-sm);
   }
 
@@ -59,7 +59,7 @@
 
   .filter-search {
     flex: 1;
-    min-width: 200px;
+    min-width: var(--input-min-width-lg);
 
     input {
       width: 100%;
@@ -70,7 +70,7 @@
 // Films Grid
 .films-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
 }
 
@@ -107,7 +107,7 @@
 
     i {
       font-size: var(--font-h1-size);
-      color: rgba(255, 255, 255, 0.3);
+      color: var(--overlay-white-30);
     }
   }
 
@@ -115,7 +115,7 @@
     position: absolute;
     bottom: var(--space-2);
     right: var(--space-2);
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--surface-overlay-darker);
     color: white;
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
@@ -127,8 +127,8 @@
     position: absolute;
     top: var(--space-2);
     right: var(--space-2);
-    width: 28px;
-    height: 28px;
+    width: var(--avatar-size-sm);
+    height: var(--avatar-size-sm);
     border-radius: 50%;
     background: var(--ds-primary-green);
     color: white;
@@ -193,7 +193,7 @@
 }
 
 .film-progress {
-  height: 4px;
+  height: var(--indicator-size-xs);
   margin-top: var(--space-2);
   border-radius: var(--radius-sm);
 }

@@ -4,10 +4,11 @@
   "description": "Professional flag football training platform with AI coaching, ACWR monitoring, and performance analytics",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#0f172a",
   "theme_color": "#10b981",
   "orientation": "portrait-primary",
   "scope": "/",
+  "id": "/",
   "icons": [
     {
       "src": "/assets/icons/icon-72x72.png",

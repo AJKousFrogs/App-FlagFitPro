@@ -4,7 +4,7 @@ import {
   DestroyRef,
   OnInit,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -13,9 +13,9 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from "@angular/forms";
-import { Card } from "primeng/card";
+
 import { CardComponent } from "../../shared/components/card/card.component";
 import { DatePicker } from "primeng/datepicker";
 import { InputNumber } from "primeng/inputnumber";
@@ -44,7 +44,7 @@ import {
   validateForm,
   sanitizeFormData,
   GameValidators,
-  FormValidationResult,
+  FormValidationResult
 } from "../../shared/utils/form-validation.utils";
 import { GameResponseSchema } from "../../core/schemas/api-response.schema";
 
@@ -117,7 +117,6 @@ interface Play {
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    Card,
     CardComponent,
     InputText,
     Textarea,
@@ -131,7 +130,7 @@ interface Play {
     ButtonComponent,
     IconButtonComponent,
     EmptyStateComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   templateUrl: "./game-tracker.component.html",
   styleUrl: "./game-tracker.component.scss",

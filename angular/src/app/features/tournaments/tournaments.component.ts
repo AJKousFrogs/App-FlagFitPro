@@ -4,7 +4,7 @@ import {
   Component,
   OnInit,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
@@ -16,7 +16,7 @@ import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
-import { ProgressBar } from "primeng/progressbar";
+
 import { Select } from "primeng/select";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { Textarea } from "primeng/textarea";
@@ -28,7 +28,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { AuthService } from "../../core/services/auth.service";
 import {
   LoggerService,
-  toLogContext,
+  toLogContext
 } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -36,7 +36,7 @@ import {
   CreateTournamentDto,
   Tournament,
   TournamentService,
-  TournamentVisibilityScope,
+  TournamentVisibilityScope
 } from "../../core/services/tournament.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -67,7 +67,6 @@ interface TournamentBudget {
     CommonModule,
     FormsModule,
     Card,
-    ProgressBar,
     Tabs,
     TabPanel,
     Dialog,
@@ -82,10 +81,9 @@ interface TournamentBudget {
     MainLayoutComponent,
     PageHeaderComponent,
     DecimalPipe,
-
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -471,7 +469,7 @@ interface TournamentBudget {
         [resizable]="false"
         styleClass="tournament-dialog"
       >
-        <div class="tournament-form">
+        <div class="tournament-form form-controls-full">
           <!-- Visibility Info Banner -->
           @if (isPlayer() && !editingTournament) {
             <div class="visibility-info-banner personal">

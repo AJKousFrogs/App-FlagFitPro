@@ -3,11 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
+  signal
 } from "@angular/core";
-import { Card } from "primeng/card";
-import { InputText } from "primeng/inputtext";
-import { Message } from "primeng/message";
+
 import { Toast } from "primeng/toast";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -21,10 +19,7 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    Card,
-    InputText,
-    Message,
-    Toast,
+    Toast
   ],
 
   template: `

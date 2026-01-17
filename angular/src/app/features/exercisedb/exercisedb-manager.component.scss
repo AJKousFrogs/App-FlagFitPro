@@ -23,31 +23,12 @@
      These cascade into PrimeNG components without ::ng-deep
      ================================================================ */
 
-  // Card styling
-  --p-card-background: var(--surface-card);
-  --p-card-border-radius: var(--radius-lg);
-  --p-card-border-color: var(--surface-border);
-
-  // Tab styling
-  --p-tabview-nav-background: var(--surface-card);
-  --p-tabview-nav-border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  --p-tabview-content-background: transparent;
-  --p-tabview-content-padding: 0;
-
-  // Tag styling
-  --p-tag-font-size: var(--font-size-badge);
-
-  // MultiSelect styling
-  --p-multiselect-border-radius: var(--radius-md);
-
-  // Progress bar styling
-  --p-progressbar-border-radius: var(--radius-md);
 }
 
 /* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-6);
 }
@@ -118,7 +99,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  min-width: 150px;
+  min-width: var(--input-min-width-md);
   flex: 1;
 }
 
@@ -133,13 +114,13 @@
 }
 
 .status-filter {
-  max-width: 180px;
+  max-width: var(--input-min-width-md);
 }
 
 /* Exercise Grid */
 .exercises-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
   gap: var(--space-4);
 }
 
@@ -340,7 +321,7 @@
 
 .results-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xs), 1fr));
   gap: var(--space-3);
 }
 
@@ -463,7 +444,7 @@
 
 .approval-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
   gap: var(--space-4);
 }
 

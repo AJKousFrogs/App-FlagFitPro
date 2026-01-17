@@ -4,19 +4,19 @@ import {
   inject,
   signal,
   input,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Card } from "primeng/card";
+
 import { Select } from "primeng/select";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { Tag } from "primeng/tag";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   TrainingPlanService,
   TrainingGoal,
-  WeeklyTrainingPlan,
+  WeeklyTrainingPlan
 } from "../../core/services/training-plan.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -31,14 +31,12 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
   imports: [
     CommonModule,
     FormsModule,
-    Card,
     Select,
-    Tag,
     StatusTagComponent,
     TrafficLightRiskComponent,
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent,
+    ButtonComponent
   ],
   template: `
     <app-main-layout>

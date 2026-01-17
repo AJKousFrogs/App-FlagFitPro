@@ -487,6 +487,7 @@ exports.handler = async (event, context) => {
     functionName: "officials",
     allowedMethods: ["GET", "POST", "PUT", "DELETE"],
     rateLimitType: "DEFAULT",
+    requireAuth: true, // SECURITY: Explicit auth for officials management
     handler: async (event, _context, { userId }) => {
       const path = event.path
         .replace(/^\/api\/officials\/?/, "")

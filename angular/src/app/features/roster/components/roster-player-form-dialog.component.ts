@@ -25,7 +25,6 @@ import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { InputNumber } from "primeng/inputnumber";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import {
   FormErrorSummaryComponent,
   FormError,
@@ -58,7 +57,6 @@ export interface PlayerFormData {
     InputNumber,
 
     ButtonComponent,
-    IconButtonComponent,
     FormErrorSummaryComponent,
   ],
   template: `
@@ -229,14 +227,13 @@ export interface PlayerFormData {
           (clicked)="visibleChange.emit(false)"
           >Cancel</app-button
         >
-        <app-icon-button
-          icon="pi-check"
+        <app-button
+          iconLeft="pi-check"
           [loading]="isSaving()"
           [disabled]="!playerForm.valid || isSaving()"
           (clicked)="onSave()"
-          ariaLabel="Save player"
-          tooltip="Save"
-        />
+          >{{ editingPlayer() ? 'Save Changes' : 'Add Player' }}</app-button
+        >
       </ng-template>
     </p-dialog>
   `,

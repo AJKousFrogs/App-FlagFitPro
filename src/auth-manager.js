@@ -1362,8 +1362,10 @@ class AuthManager {
         return { success: true, user: this.user };
       } else {
         this.hideLoading();
-        this.showError(response.error || "Profile update failed");
-        return { success: false, error: response.error };
+        const errorMessage =
+          response?.error?.message || response?.error || "Profile update failed";
+        this.showError(errorMessage);
+        return { success: false, error: errorMessage };
       }
     } catch (error) {
       this.hideLoading();
@@ -1411,8 +1413,10 @@ class AuthManager {
         return { success: true };
       } else {
         this.hideLoading();
-        this.showError(response.error || "Password change failed");
-        return { success: false, error: response.error };
+        const errorMessage =
+          response?.error?.message || response?.error || "Password change failed";
+        this.showError(errorMessage);
+        return { success: false, error: errorMessage };
       }
     } catch (error) {
       this.hideLoading();

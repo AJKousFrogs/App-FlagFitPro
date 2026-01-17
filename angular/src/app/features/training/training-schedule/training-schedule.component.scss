@@ -136,8 +136,8 @@
   bottom: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
+  width: var(--indicator-size-sm);
+  height: var(--indicator-size-sm);
   border-radius: 50%;
 
   &.scheduled {
@@ -158,8 +158,8 @@
 
   // Mobile: Slightly larger markers
   @include respond-to(md) {
-    width: 7px;
-    height: 7px;
+    width: var(--indicator-size-sm);
+    height: var(--indicator-size-sm);
   }
 }
 
@@ -300,7 +300,7 @@
 
 .session-type-indicator {
   display: inline-block;
-  width: 4px;
+  width: var(--indicator-size-xs);
   height: 100%;
   position: absolute;
   left: 0;
@@ -465,7 +465,7 @@
 
 .sessions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
   gap: var(--space-4);
 
   // Mobile: Single column
@@ -498,7 +498,7 @@
   // Mobile: Touch-friendly, compact
   @include respond-to(md) {
     padding: var(--space-3);
-    min-height: 100px;
+    min-height: var(--card-min-height-md);
   }
 
   &:active {
@@ -589,7 +589,7 @@
       button {
         width: 100%;
         justify-content: center;
-        min-height: 44px;
+        min-height: var(--input-height);
       }
     }
   }
@@ -627,7 +627,7 @@
 
 .loading-skeletons {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
   gap: var(--space-4);
 
   @include respond-to(md) {
@@ -670,8 +670,8 @@
   font-size: var(--font-h1-size);
 
   @include respond-to(md) {
-    width: 64px;
-    height: 64px;
+    width: var(--avatar-size-2xl);
+    height: var(--avatar-size-2xl);
     font-size: var(--font-h1-size);
   }
 }
@@ -690,7 +690,7 @@
 .empty-message {
   font-size: var(--font-size-body);
   color: var(--ds-text-secondary);
-  max-width: 500px;
+  max-width: var(--dialog-max-width-lg);
   margin: 0 auto var(--space-4);
 
   @include respond-to(md) {
@@ -806,8 +806,8 @@
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
+  width: var(--indicator-size-md);
+  height: var(--indicator-size-md);
   border-radius: 50%;
 
   &.scheduled {
@@ -827,8 +827,8 @@
   }
 
   @include respond-to(md) {
-    width: 8px;
-    height: 8px;
+    width: var(--indicator-size-sm);
+    height: var(--indicator-size-sm);
   }
 }
 

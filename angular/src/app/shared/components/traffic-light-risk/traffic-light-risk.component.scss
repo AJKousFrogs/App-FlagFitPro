@@ -109,7 +109,7 @@
     opacity var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard),
     transform var(--motion-fast) var(--ease-standard);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--overlay-white-30);
 
   &.active {
     opacity: 1;
@@ -367,7 +367,7 @@
 }
 
 .marker-line {
-  width: 2px;
+  width: var(--border-2);
   height: var(--space-4);
   background: var(--color-surface-inverse);
   border-radius: var(--radius-full);
@@ -387,8 +387,8 @@
   }
 
   .light {
-    width: 24px;
-    height: 24px;
+    width: var(--space-6); /* 24px */
+    height: var(--space-6); /* 24px */
   }
 
   .risk-info {

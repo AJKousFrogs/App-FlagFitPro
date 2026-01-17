@@ -650,7 +650,12 @@
     <!-- Recent Plays -->
     @if (activeGameId() && plays().length > 0) {
       <app-card title="Recent Plays" class="plays-list-card">
-        <p-table [value]="plays()" [paginator]="true" [rows]="10">
+        <p-table
+          [value]="plays()"
+          [paginator]="true"
+          [rows]="10"
+          styleClass="table-standard"
+        >
           <ng-template pTemplate="header">
             <tr>
               <th>Half</th>
@@ -728,7 +733,12 @@
 
       <!-- Games Table -->
       @else {
-        <p-table [value]="games()" [paginator]="true" [rows]="10">
+        <p-table
+          [value]="games()"
+          [paginator]="true"
+          [rows]="10"
+          styleClass="table-standard"
+        >
           <ng-template pTemplate="header">
             <tr>
               <th>Date</th>

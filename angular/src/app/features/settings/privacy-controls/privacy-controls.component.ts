@@ -4,10 +4,10 @@ import {
   Component,
   OnInit,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
 import { Dialog } from "primeng/dialog";
@@ -26,7 +26,7 @@ import {
   EmergencyContact,
   EmergencySharingLevel,
   METRIC_CATEGORIES,
-  PrivacySettingsService,
+  PrivacySettingsService
 } from "../../../core/services/privacy-settings.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
@@ -65,14 +65,14 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     Divider,
     Tooltip,
     Chip,
-    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Accordion,
+    AccordionPanel,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
-
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent,
+    StatusTagComponent
   ],
   template: `
     <p-toast></p-toast>

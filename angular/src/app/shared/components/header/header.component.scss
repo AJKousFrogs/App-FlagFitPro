@@ -44,7 +44,7 @@
   align-items: center;
   justify-content: center;
   flex: 1;
-  max-width: 400px;
+  max-width: var(--chart-min-height-lg); /* 400px */
   height: var(--header-height, 64px);
   cursor: pointer;
 }
@@ -175,7 +175,7 @@
   font-size: var(--font-caption-size);
   font-weight: var(--font-weight-medium);
   color: var(--text-color-secondary);
-  max-width: 80px;
+  max-width: var(--card-min-height-sm); /* 80px */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -216,7 +216,7 @@
 }
 
 .weather-loading {
-  min-width: 60px;
+  min-width: var(--avatar-size-xl); /* 56px */
   justify-content: center;
 
   i {
@@ -267,7 +267,7 @@
 
 .search-input {
   cursor: pointer;
-  min-width: 200px;
+  min-width: var(--chart-min-height-sm); /* 200px */
 }
 
 /* Search shortcut hint */

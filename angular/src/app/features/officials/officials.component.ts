@@ -6,7 +6,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -17,7 +17,7 @@ import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tooltip } from "primeng/tooltip";
+
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
@@ -25,7 +25,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import {
   GameOfficial,
   Official,
-  OfficialsService,
+  OfficialsService
 } from "../../core/services/officials.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -61,15 +61,13 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     InputText,
     InputNumber,
     Select,
-    Tooltip,
     Avatar,
     MainLayoutComponent,
     PageHeaderComponent,
     DatePipe,
     CurrencyPipe,
-
     ButtonComponent,
-    IconButtonComponent,
+    IconButtonComponent
   ],
   template: `
     <app-main-layout>

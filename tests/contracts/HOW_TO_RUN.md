@@ -1,31 +1,52 @@
 # How to Run Contract Tests
 
-## ✅ I Can Run Tests For You!
+## ✅ Contract Test Suite
 
-I've created a simple test runner that doesn't require Jest. Here's how to run it:
+This directory contains contract tests that verify FE/BE/DB alignment.
 
-### Option 1: Run with Environment Variables (Recommended)
+### Available Test Files
+
+| Test File | Description | Requires DB |
+|-----------|-------------|-------------|
+| `run-contracts-test.js` | Database schema & immutability | Yes |
+| `api-response-shapes.contract.test.js` | API response shapes, enums, dates | Yes |
+| `acwr-calculation.contract.test.js` | ACWR calculation formulas | No |
+| `missing-data-handling.contract.test.js` | Mock data removal verification | No |
+| `session-lifecycle-immutability.test.js` | Session state transitions | Yes |
+| `data-consent-visibility.test.js` | Data consent views | Yes |
+| `today-screen-ux.test.js` | Today screen UX contracts | Yes |
+
+### Option 1: Run All Contract Tests
 
 ```bash
-cd /Users/aljosakous/Documents/GitHub/app-new-flag
+cd /Users/aljosaursakous/Desktop/Flag\ football\ HTML\ -\ APP
 
 # Set your Supabase credentials
-export SUPABASE_URL="https://pvziciccwxgftcielknm.supabase.co"
+export SUPABASE_URL="https://your-project.supabase.co"
 export SUPABASE_SERVICE_KEY="your-service-role-key-here"
 
-# Run tests
+# Run all contract tests
 npm run test:contracts
 ```
 
-### Option 2: Run Directly
+### Option 2: Run Individual Tests
 
 ```bash
-cd /Users/aljosakous/Documents/GitHub/app-new-flag
+# API Response Shape Tests (requires Supabase)
+node tests/contracts/api-response-shapes.contract.test.js
 
-export SUPABASE_URL="https://pvziciccwxgftcielknm.supabase.co"
-export SUPABASE_SERVICE_KEY="your-service-role-key-here"
+# ACWR Calculation Tests (no Supabase required)
+node tests/contracts/acwr-calculation.contract.test.js
 
+# Database Schema Tests
 node tests/contracts/run-contracts-test.js
+```
+
+### Option 3: Run ACWR Tests Only (No DB Required)
+
+```bash
+# These tests verify calculation formulas without database access
+node tests/contracts/acwr-calculation.contract.test.js
 ```
 
 ## 🔑 Getting Your Service Role Key
@@ -42,21 +63,42 @@ node tests/contracts/run-contracts-test.js
 
 ## 📋 What the Tests Verify
 
-The test runner checks:
+### 1. Database Schema Tests (`run-contracts-test.js`)
+- `state_transition_history` table exists
+- `session_state` column exists
+- `coach_locked` column exists
+- Consent views exist
 
-1. ✅ **Database Schema**
-   - `state_transition_history` table exists
-   - `session_state` column exists
-   - `coach_locked` column exists
+### 2. API Response Shape Tests (`api-response-shapes.contract.test.js`)
+- Training session response shape matches contract
+- Status enums match DB values (`planned`, `in_progress`, `completed`, etc.)
+- Session state enums match contract
+- RPE values are in range 1-10
+- Date fields use ISO 8601 format
+- Wellness metrics are in valid ranges
+- Load monitoring fields are present
+- User ID field naming consistency
 
-2. ✅ **Consent Views**
-   - `v_readiness_scores_consent` view exists
-   - `v_wellness_entries_consent` view exists
-   - `v_injury_tracking_consent` view exists
+### 3. ACWR Calculation Tests (`acwr-calculation.contract.test.js`)
+- Load calculation: `Load = RPE × Duration`
+- EWMA formula: `EWMA = λ × load + (1 - λ) × EWMA_prev`
+- Lambda values: acute=0.25, chronic=0.069
+- Risk zone thresholds: 0.8/1.3/1.5
+- Minimum chronic load floor (100)
+- Configuration constants match contract
 
-3. ✅ **Immutability**
-   - UPDATE on `state_transition_history` is blocked
-   - DELETE on `state_transition_history` is blocked
+### 4. Missing Data Handling Tests (`missing-data-handling.contract.test.js`)
+- Wellness form fields default to null (no pre-filled values)
+- Training RPE is null when not provided (not defaulted to 5)
+- ACWR returns 0 ratio when data is insufficient
+- Database triggers preserve NULL values (no COALESCE with numeric defaults)
+- Edge functions return empty arrays on error (no mock data)
+- AI suggestions don't fall back to hardcoded suggestions
+- Weather service returns error state, not fake "excellent" weather
+
+### 5. Immutability Tests
+- UPDATE on `state_transition_history` is blocked
+- DELETE on `state_transition_history` is blocked
 
 ## 🎯 Expected Output
 
@@ -132,10 +174,19 @@ npm run test:contracts:jest
 
 ## ✅ Current Status
 
-- ✅ Simple test runner created (`run-contracts-test.js`)
+- ✅ Database schema test runner (`run-contracts-test.js`)
+- ✅ API response shape tests (`api-response-shapes.contract.test.js`)
+- ✅ ACWR calculation tests (`acwr-calculation.contract.test.js`)
 - ✅ NPM script added (`npm run test:contracts`)
-- ✅ Tests verify database schema and immutability
-- ⏭️ **Ready to run** - Just need your service role key!
+- ✅ Tests verify database schema, response shapes, enums, and calculations
+
+---
+
+## 📚 Related Documentation
+
+- **Contract Map**: `docs/contracts/CONTRACT_MAP.md` - Full FE/BE/DB alignment documentation
+- **Findings**: P0/P1/P2 issues documented in Contract Map
+- **ACWR Formulas**: Detailed in Contract Map Section "ACWR Calculation Details"
 
 ---
 

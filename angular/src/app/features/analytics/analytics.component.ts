@@ -2032,20 +2032,24 @@ export class AnalyticsComponent implements AfterViewInit {
   }
 
   /**
-   * Load sample gap analysis data for demonstration
+   * Show empty state when no gap analysis data is available
+   * @description Previously loaded sample/mock data which could mislead athletes
+   * about their actual performance. Now shows empty state to encourage real data entry.
    */
   private loadSampleGapAnalysis(): void {
-    // Olympic-level benchmarks for flag football
-    const sampleData = [
-      { metric: "40-Yard Dash", current: 4.65, benchmark: 4.4, unit: "s" },
-      { metric: "10-Yard Split", current: 1.58, benchmark: 1.5, unit: "s" },
-      { metric: "Pro Agility", current: 4.35, benchmark: 4.1, unit: "s" },
-      { metric: "Vertical Jump", current: 32, benchmark: 36, unit: '"' },
-      { metric: "Broad Jump", current: 9.2, benchmark: 10.0, unit: "ft" },
-      { metric: "Completion %", current: 72, benchmark: 85, unit: "%" },
-    ];
-
-    this.processGapAnalysisData(sampleData);
+    // NO-OP: Mock data removed to ensure calculation integrity
+    // Athletes should see their real performance data only
+    // Empty state encourages them to complete fitness tests
+    this.gapAnalysisData.set([]);
+    this.gapAnalysisSummary.set({
+      achieved: 0,
+      close: 0,
+      needsWork: 0,
+      overallScore: 0,
+    });
+    this.logger.info(
+      "[Analytics] Gap analysis showing empty state - no mock data",
+    );
   }
 
   /**

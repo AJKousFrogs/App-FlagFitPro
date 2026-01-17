@@ -3,14 +3,14 @@ import {
   Component,
   DestroyRef,
   inject,
-  signal,
+  signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { InputNumber } from "primeng/inputnumber";
-import { Message } from "primeng/message";
+
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -28,13 +28,13 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
   StatItem,
-  StatsGridComponent,
+  StatsGridComponent
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
   AppLoadingComponent,
   ButtonComponent,
-  CardComponent,
+  CardComponent
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -64,10 +64,8 @@ interface WellnessMetric {
     FormsModule,
     RouterModule,
     Card,
-
     LazyChartComponent,
     InputNumber,
-    Message,
     AppLoadingComponent,
     ButtonComponent,
     CardComponent,
@@ -78,7 +76,7 @@ interface WellnessMetric {
     BodyCompositionCardComponent,
     SupplementTrackerComponent,
     HydrationTrackerComponent,
-    ConfidenceIndicatorComponent,
+    ConfidenceIndicatorComponent
   ],
   template: `
     <app-main-layout>
@@ -526,17 +524,34 @@ export class WellnessComponent {
   readonly completedMetricsCount = signal<number>(0);
   readonly totalMetricsCount = signal<number>(4);
 
-  checkInData = {
-    sleepHours: 7,
-    sleepQuality: 7,
-    energyLevel: 7,
-    soreness: 3,
-    hydration: 8,
-    restingHR: 0,
-    mood: 7,
-    stress: 3,
-    motivation: 7,
-    readiness: 7,
+  /**
+   * Check-in form data - initialized to null/undefined to require explicit user input
+   * This ensures athletes consciously enter their actual values rather than
+   * accidentally submitting pre-filled defaults, which could lead to inaccurate
+   * ACWR calculations and injury risk assessments.
+   */
+  checkInData: {
+    sleepHours: number | null;
+    sleepQuality: number | null;
+    energyLevel: number | null;
+    soreness: number | null;
+    hydration: number | null;
+    restingHR: number | null;
+    mood: number | null;
+    stress: number | null;
+    motivation: number | null;
+    readiness: number | null;
+  } = {
+    sleepHours: null,
+    sleepQuality: null,
+    energyLevel: null,
+    soreness: null,
+    hydration: null,
+    restingHR: null,
+    mood: null,
+    stress: null,
+    motivation: null,
+    readiness: null,
   };
 
   readonly chartOptions = DEFAULT_CHART_OPTIONS;
@@ -770,9 +785,20 @@ export class WellnessComponent {
   }
 
   submitCheckIn(): void {
-    // Validate input
-    if (!this.checkInData.sleepHours || this.checkInData.sleepHours <= 0) {
+    // Validate required inputs - ensure athlete has entered their actual data
+    if (this.checkInData.sleepHours === null || this.checkInData.sleepHours <= 0) {
       this.toastService.warn(TOAST.WARN.ENTER_SLEEP_HOURS);
+      return;
+    }
+    
+    // Validate that at least sleep quality and energy are provided for meaningful data
+    if (this.checkInData.sleepQuality === null) {
+      this.toastService.warn("Please enter your sleep quality rating");
+      return;
+    }
+    
+    if (this.checkInData.energyLevel === null) {
+      this.toastService.warn("Please enter your energy level");
       return;
     }
 
@@ -802,18 +828,18 @@ export class WellnessComponent {
         this.isSubmitting.set(false);
         if (response.success) {
           this.toastService.success(TOAST.SUCCESS.WELLNESS_CHECKIN_SAVED);
-          // Reset form to defaults
+          // Reset form to empty state (no pre-filled values)
           this.checkInData = {
-            sleepHours: 7,
-            sleepQuality: 7,
-            energyLevel: 7,
-            soreness: 3,
-            hydration: 8,
-            restingHR: 0,
-            mood: 7,
-            stress: 3,
-            motivation: 7,
-            readiness: 7,
+            sleepHours: null,
+            sleepQuality: null,
+            energyLevel: null,
+            soreness: null,
+            hydration: null,
+            restingHR: null,
+            mood: null,
+            stress: null,
+            motivation: null,
+            readiness: null,
           };
           // Reload wellness data to show updated stats
           this.loadWellnessData();
@@ -837,18 +863,18 @@ export class WellnessComponent {
           this.toastService.info(
             "You're offline. Check-in queued for sync when connection is restored.",
           );
-          // Reset form even if queued
+          // Reset form even if queued (no pre-filled values)
           this.checkInData = {
-            sleepHours: 7,
-            sleepQuality: 7,
-            energyLevel: 7,
-            soreness: 3,
-            hydration: 8,
-            restingHR: 0,
-            mood: 7,
-            stress: 3,
-            motivation: 7,
-            readiness: 7,
+            sleepHours: null,
+            sleepQuality: null,
+            energyLevel: null,
+            soreness: null,
+            hydration: null,
+            restingHR: null,
+            mood: null,
+            stress: null,
+            motivation: null,
+            readiness: null,
           };
         } else {
           this.toastService.error(TOAST.ERROR.WELLNESS_CHECKIN_FAILED);

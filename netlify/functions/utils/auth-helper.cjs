@@ -5,7 +5,7 @@
  * SECURITY: Uses Supabase auth instead of JWT_SECRET
  */
 
-const { supabaseAdmin } = require("../supabase-client.cjs");
+const { supabaseAdmin, setAuthContextToken } = require("../supabase-client.cjs");
 const { handleAuthenticationError } = require("./error-handler.cjs");
 
 /**
@@ -20,7 +20,7 @@ function getSupabaseClient() {
 /**
  * Authenticate request using Supabase JWT
  * @param {object} event - Netlify function event
- * @returns {Promise<object>} { success: boolean, user?: object, error?: object }
+ * @returns {Promise<object>} { success: boolean, user?: object, token?: string, error?: object }
  */
 async function authenticateRequest(event) {
   const authHeader = event.headers.authorization || event.headers.Authorization;
@@ -50,8 +50,10 @@ async function authenticateRequest(event) {
     }
 
     // Return user with consistent format
+    setAuthContextToken(token);
     return {
       success: true,
+      token,
       user: {
         id: user.id,
         email: user.email,

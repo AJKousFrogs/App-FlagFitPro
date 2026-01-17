@@ -153,6 +153,7 @@ exports.handler = async (event, context) => {
     functionName: "hydration",
     allowedMethods: ["GET", "POST"],
     rateLimitType: event.httpMethod === "POST" ? "CREATE" : "READ",
+    requireAuth: true, // P0-010: Explicitly require authentication for hydration data
     handler: async (event, context, { userId }) => {
       if (event.httpMethod === "POST") {
         // Handle POST /api/hydration/log

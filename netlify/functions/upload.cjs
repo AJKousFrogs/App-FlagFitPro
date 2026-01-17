@@ -173,9 +173,9 @@ exports.handler = async (event, context) => {
       // Handle DELETE
       if (event.httpMethod === "DELETE") {
         const queryParams = event.queryStringParameters || {};
-        const { path } = queryParams;
+        const { path: filePath } = queryParams;
 
-        if (!path) {
+        if (!filePath) {
           return createErrorResponse(
             "Missing required parameter: path",
             400,
@@ -184,8 +184,19 @@ exports.handler = async (event, context) => {
           );
         }
 
-        // Verify user owns this file (path starts with their userId)
-        if (!path.startsWith(userId)) {
+        // P1-002: Secure path ownership verification
+        // Normalize path to prevent traversal attacks (e.g., "../other-user/file")
+        const normalizedPath = filePath.replace(/\\/g, "/"); // Normalize slashes
+        const pathParts = normalizedPath.split("/");
+        
+        // Path must start with userId as the first directory component
+        // Valid: "user-uuid/timestamp_filename.jpg"
+        // Invalid: "../user-uuid/file", "user-uuid/../other/file"
+        if (
+          pathParts.length < 2 || 
+          pathParts[0] !== userId || 
+          pathParts.some(part => part === ".." || part === ".")
+        ) {
           return createErrorResponse(
             "Not authorized to delete this file",
             403,
@@ -195,7 +206,7 @@ exports.handler = async (event, context) => {
         }
 
         try {
-          await deleteFile(path);
+          await deleteFile(filePath);
           return createSuccessResponse(
             { message: "File deleted successfully" },
             requestId,
