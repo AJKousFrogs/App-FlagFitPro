@@ -160,7 +160,7 @@ async function baseHandler(event, context, options = {}) {
       });
 
     // Call the actual handler within auth context
-    const response = await runWithAuthContext(authToken, executeHandler);
+    let response = await runWithAuthContext(authToken, executeHandler);
 
     // Normalize error shape for non-standard responses
     if (
