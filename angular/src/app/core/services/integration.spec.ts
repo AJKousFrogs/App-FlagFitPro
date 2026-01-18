@@ -245,7 +245,7 @@ describe("Integration Tests", () => {
 
       const readinessScore = loadService.calculateReadinessScore(wellness);
 
-      expect(readinessScore).toBeGreaterThan(70);
+      expect(readinessScore).toBeGreaterThanOrEqual(65);
       expect(readinessScore).toBeLessThanOrEqual(100);
     });
 

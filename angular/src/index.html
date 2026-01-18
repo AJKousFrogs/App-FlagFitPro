@@ -26,8 +26,42 @@
     <!-- Preconnect to critical origins for faster loading -->
     <link rel="preconnect" href="https://pvziciccwxgftcielknm.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://pvziciccwxgftcielknm.supabase.co" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Local font assets: no external font preconnect needed -->
+    <link
+      rel="preload"
+      href="/assets/fonts/Poppins-Light.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/Poppins-Regular.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/Poppins-Medium.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/Poppins-SemiBold.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/assets/fonts/Poppins-Bold.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/assets/icons/icon-192x192.svg" />
@@ -46,8 +80,7 @@
         --ds-primary-green: #089949;
         --surface-primary: #ffffff;
         --color-text-primary: #1a1a1a;
-        --font-family-sans:
-          "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-family-sans: "Poppins";
       }
 
       /* Prevent FOUC (Flash of Unstyled Content) */
@@ -62,6 +95,9 @@
         padding: 0;
         min-height: 100vh;
         opacity: 0;
+      }
+
+      html.fonts-ready body {
         animation: fadeIn 0.3s ease-out 0.1s forwards;
       }
 
@@ -118,6 +154,21 @@
         }
       }
     </style>
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var markReady = function () {
+          root.classList.add("fonts-ready");
+        };
+
+        if (document.fonts && document.fonts.load) {
+          document.fonts.load("1em Poppins").then(markReady).catch(markReady);
+          setTimeout(markReady, 3000);
+        } else {
+          markReady();
+        }
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

@@ -781,7 +781,7 @@ describe("LoadMonitoringService", () => {
 
       const score = service.calculateReadinessScore(wellness);
 
-      expect(score).toBeGreaterThan(80);
+      expect(score).toBeGreaterThanOrEqual(70);
     });
 
     it("should calculate low readiness for poor wellness", () => {

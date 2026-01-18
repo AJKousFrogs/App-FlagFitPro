@@ -284,7 +284,8 @@ describe("PageHeaderComponent - QB Hub Pattern Simulation", () => {
     selector: "app-mock-qb-hub",
     standalone: true,
     imports: [
-      PageHeaderComponent
+      PageHeaderComponent,
+      MockChildComponent
     ],
     template: `
       <div class="qb-hub-page">
@@ -323,6 +324,7 @@ describe("PageHeaderComponent - QB Hub Pattern Simulation", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        MockQbHubComponent
       ],
     }).compileComponents();
 

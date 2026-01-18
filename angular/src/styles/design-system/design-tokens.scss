@@ -1,13 +1,7 @@
 /* Design system tokens: CSS variables only. No component selectors. */
 :root {
   /* Typography */
-  --ds-font-family-sans: var(
-    --font-family-sans,
-    "Poppins",
-    "Segoe UI",
-    Arial,
-    sans-serif
-  );
+  --ds-font-family-sans: "Poppins";
   --ds-font-family-mono: "SFMono-Regular", Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 

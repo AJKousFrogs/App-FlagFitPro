@@ -41,6 +41,7 @@ Scope: token-first styling for the Angular app. PrimeNG remains the base layer; 
 - Hard-coded hex/rgb/hsl colors in component styles when a semantic token exists.
 - New `font-family`, `font-size`, or `line-height` values that are not tokens.
 - Ad-hoc px spacing when a `--ds-space-*` token matches the intent.
+- Font families other than `Poppins` for sans-serif text (monospace exceptions must be documented).
 
 ## Usage Notes
 - Prefer `var(--ds-...)` tokens in component SCSS and templates.

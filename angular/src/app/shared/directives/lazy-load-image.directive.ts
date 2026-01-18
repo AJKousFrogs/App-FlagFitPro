@@ -30,6 +30,7 @@ import {
 export class LazyLoadImageDirective implements OnInit, OnDestroy {
   // Angular 21: Use input() signals instead of @Input()
   src = input.required<string>();
+  // ds-exception: inline SVG placeholder uses fixed font-size in data URI
   placeholder = input<string>(
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23f3f4f6' width='400' height='300'/%3E%3Ctext fill='%239ca3af' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='18'%3ELoading...%3C/text%3E%3C/svg%3E",
   );
@@ -94,6 +95,7 @@ export class LazyLoadImageDirective implements OnInit, OnDestroy {
 
     img.onerror = () => {
       // On error, show error placeholder
+      // ds-exception: inline SVG placeholder uses fixed font-size in data URI
       const errorPlaceholder =
         "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23fee2e2' width='400' height='300'/%3E%3Ctext fill='%23dc2626' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='18'%3EFailed to load%3C/text%3E%3C/svg%3E";
       this.renderer.setAttribute(
