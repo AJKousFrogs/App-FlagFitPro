@@ -230,23 +230,23 @@
 }
 
 .icon-success {
-  background: var(--color-status-success-light);
-  color: var(--color-status-success);
+  background: var(--ds-status-success-bg);
+  color: var(--ds-status-success-solid);
 }
 
 .icon-warning {
-  background: var(--color-status-warning-light);
-  color: var(--color-status-warning-text);
+  background: var(--ds-status-warning-bg);
+  color: var(--ds-status-warning-solid);
 }
 
 .icon-error {
-  background: var(--color-status-error-light);
-  color: var(--color-status-error);
+  background: var(--ds-status-danger-bg);
+  color: var(--ds-status-danger-solid);
 }
 
 .icon-info {
-  background: var(--color-status-info-light);
-  color: var(--color-status-info);
+  background: var(--ds-status-info-bg);
+  color: var(--ds-status-info-solid);
 }
 
 .card-header-text {

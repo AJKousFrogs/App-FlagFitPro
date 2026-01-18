@@ -55,16 +55,6 @@
   color: var(--color-text-on-primary);
 }
 
-// Removed ::ng-deep - Using proper CSS cascade
-.data-source-badge {
-  font-size: var(--ds-font-size-xs);
-  font-weight: var(--ds-font-weight-semibold);
-  padding: var(--space-1) var(--space-2);
-  background: var(--overlay-white-30) !important;
-  color: white !important;
-  border: 1px solid var(--overlay-white-30);
-}
-
 .banner-message {
   margin: 0;
   font-size: var(--ds-font-size-md);

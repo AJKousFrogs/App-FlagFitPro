@@ -61,6 +61,10 @@ import { OwnershipTransitionBadgeComponent } from "../../shared/components/owner
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
 import { formatDate } from "../../shared/utils/date.utils";
+import {
+  getRiskSeverityFromAlert,
+  getRiskSeverityFromZone
+} from "../../shared/utils/risk.utils";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 
 @Component({
@@ -689,13 +693,7 @@ export class AcwrDashboardComponent implements OnInit {
       return null;
     }
 
-    // Map alert severity to risk severity
-    const severityMap: Record<string, RiskMeaning["severity"]> = {
-      warning: "moderate",
-      critical: "critical",
-    };
-
-    const severity = severityMap[alert.severity] || "moderate";
+    const severity = getRiskSeverityFromAlert(alert.severity, "moderate");
     const zone = this.riskZone();
 
     return {
@@ -722,13 +720,7 @@ export class AcwrDashboardComponent implements OnInit {
       return null;
     }
 
-    // Map zone level to risk severity
-    const severityMap: Record<string, RiskMeaning["severity"]> = {
-      "elevated-risk": "high",
-      "danger-zone": "critical",
-    };
-
-    const severity = severityMap[zone.level] || "moderate";
+    const severity = getRiskSeverityFromZone(zone.level, "moderate");
 
     return {
       type: "risk",

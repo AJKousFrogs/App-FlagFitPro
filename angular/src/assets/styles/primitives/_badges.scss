@@ -96,39 +96,39 @@
   // Primary - Brand green
   .badge-primary {
     background-color: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
+    color: var(--ds-color-brand-contrast);
   }
 
   // Success - Status success color
   .badge-success {
-    background-color: var(--color-status-success);
-    color: var(--color-text-on-primary);
+    background-color: var(--ds-status-success-solid);
+    color: var(--ds-status-success-text);
   }
 
   // Warning - Amber with dark text for contrast
   .badge-warning {
-    background-color: var(--color-status-warning);
-    color: var(--primitive-warning-800);
+    background-color: var(--ds-status-warning-solid);
+    color: var(--ds-status-warning-text);
   }
 
   // Danger/Error - Red
   .badge-danger,
   .badge-error {
-    background-color: var(--color-status-error);
-    color: var(--color-text-on-primary);
+    background-color: var(--ds-status-danger-solid);
+    color: var(--ds-status-danger-text);
   }
 
   // Info - Blue
   .badge-info {
-    background-color: var(--color-status-info);
-    color: var(--color-text-on-primary);
+    background-color: var(--ds-status-info-solid);
+    color: var(--ds-status-info-text);
   }
 
   // Secondary/Neutral - Gray
   .badge-secondary,
   .badge-neutral {
-    background-color: var(--surface-tertiary);
-    color: var(--color-text-secondary);
+    background-color: var(--ds-status-neutral-bg);
+    color: var(--ds-status-neutral-text);
   }
 
   // ============================================
@@ -185,7 +185,7 @@
     height: var(--space-2);
     padding: 0;
     border-radius: var(--radius-full); // Dots stay circular
-    background-color: var(--color-status-success);
+    background-color: var(--ds-status-success-solid);
     box-shadow: none; // No shadow on dots
 
     &.badge-primary {
@@ -193,16 +193,16 @@
     }
 
     &.badge-warning {
-      background-color: var(--color-status-warning);
+      background-color: var(--ds-status-warning-solid);
     }
 
     &.badge-danger,
     &.badge-error {
-      background-color: var(--color-status-error);
+      background-color: var(--ds-status-danger-solid);
     }
 
     &.badge-info {
-      background-color: var(--color-status-info);
+      background-color: var(--ds-status-info-solid);
     }
   }
 

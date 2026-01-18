@@ -117,9 +117,7 @@ export type ButtonSize = "sm" | "md" | "lg";
       <!-- Loading spinner -->
       @if (loading()) {
         <span class="btn-spinner" aria-hidden="true">
-          <svg viewBox="0 0 24 24" class="spinner-svg">
-            <circle cx="12" cy="12" r="10" fill="none" stroke-width="3" />
-          </svg>
+          <i class="pi pi-spin pi-spinner"></i>
         </span>
       }
 

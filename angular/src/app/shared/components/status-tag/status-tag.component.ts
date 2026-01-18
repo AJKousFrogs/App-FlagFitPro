@@ -10,7 +10,7 @@
  * - Text: var(--color-text-on-primary) white on colored backgrounds
  * - Font weight: var(--ds-font-weight-semibold) (600)
  * - Fixed height: var(--touch-target-sm) (36px)
- * - Horizontal padding: var(--space-3) (12px)
+ * - Horizontal padding: var(--space-3)
  * - RAISED RECTANGULAR shape: var(--radius-md) (8px)
  * - Subtle shadow for depth
  * - Text vertically centered
@@ -100,9 +100,9 @@ export type StatusTagSeverity =
         box-shadow: var(--shadow-1);
         outline: none;
 
-        /* Default: Success (green) - using design tokens */
-        background-color: var(--color-status-success);
-        color: var(--color-text-on-primary);
+        /* Default: Success (semantic tokens) */
+        background-color: var(--ds-status-success-solid);
+        color: var(--ds-status-success-text);
 
         /* Prevent flex row stretching */
         flex-shrink: 0;
@@ -132,50 +132,50 @@ export type StatusTagSeverity =
 
       /* Success - Solid green (matches "Good" reference) */
       .status-tag-success {
-        background-color: var(--color-status-success);
-        color: var(--color-text-on-primary);
+        background-color: var(--ds-status-success-solid);
+        color: var(--ds-status-success-text);
       }
 
       /* Primary - Brand green */
       .status-tag-primary {
         background-color: var(--ds-primary-green);
-        color: var(--color-text-on-primary);
+        color: var(--ds-color-brand-contrast);
       }
 
       /* Warning - Amber/yellow with dark text for contrast */
       .status-tag-warning {
-        background-color: var(--color-status-warning);
-        color: var(--primitive-warning-800);
+        background-color: var(--ds-status-warning-solid);
+        color: var(--ds-status-warning-text);
       }
 
       /* Danger - Red */
       .status-tag-danger {
-        background-color: var(--color-status-error);
-        color: var(--color-text-on-primary);
+        background-color: var(--ds-status-danger-solid);
+        color: var(--ds-status-danger-text);
       }
 
       /* Info - Blue */
       .status-tag-info {
-        background-color: var(--color-status-info);
-        color: var(--color-text-on-primary);
+        background-color: var(--ds-status-info-solid);
+        color: var(--ds-status-info-text);
       }
 
       /* Secondary - Neutral gray */
       .status-tag-secondary {
-        background-color: var(--surface-tertiary);
-        color: var(--color-text-secondary);
+        background-color: var(--ds-status-neutral-bg);
+        color: var(--ds-status-neutral-text);
       }
 
       /* Contrast - High contrast neutral */
       .status-tag-contrast {
-        background-color: var(--primitive-neutral-800);
-        color: var(--color-text-on-primary);
+        background-color: var(--ds-status-neutral-solid);
+        color: var(--ds-color-brand-contrast);
       }
 
       /* Warn - Alias for warning (backwards compatibility) */
       .status-tag-warn {
-        background-color: var(--color-status-warning);
-        color: var(--primitive-warning-800);
+        background-color: var(--ds-status-warning-solid);
+        color: var(--ds-status-warning-text);
       }
 
       /* ================================================================

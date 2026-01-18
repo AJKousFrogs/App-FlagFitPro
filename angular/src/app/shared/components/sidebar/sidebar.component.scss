@@ -50,24 +50,39 @@
   border-radius: var(--radius-full);
   cursor: pointer;
   color: var(--color-text-secondary);
-  transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
   z-index: var(--z-dropdown);
+  
+  // Centralized transition
+  transition:
+    background-color var(--ds-state-transition),
+    color var(--ds-state-transition),
+    transform var(--ds-state-transition);
 }
 
-.sidebar-close-btn:hover {
-  background: var(--color-border-secondary);
-  color: var(--color-text-primary);
+// Desktop-only hover
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-close-btn:hover {
+    background: var(--color-border-secondary);
+    color: var(--color-text-primary);
+  }
 }
 
+// Active state for touch
+.sidebar-close-btn:active {
+  transform: scale(0.95);
+}
+
+// Consistent focus ring
 .sidebar-close-btn:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
+  outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.25);
 }
 
 .sidebar-close-btn:focus:not(:focus-visible) {
   outline: none;
+  box-shadow: none;
 }
 
 .sidebar-logo {
@@ -226,18 +241,24 @@
   min-height: var(--touch-target-md); /* 44px WCAG */
 }
 
-.me-group-header:hover {
-  background: var(--surface-secondary);
-  color: var(--color-text-primary);
+// Desktop-only hover
+@media (hover: hover) and (pointer: fine) {
+  .me-group-header:hover {
+    background: var(--surface-secondary);
+    color: var(--color-text-primary);
+  }
 }
 
+// Consistent focus ring
 .me-group-header:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
+  outline: 2px solid var(--ds-primary-green);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.25);
 }
 
 .me-group-header:focus:not(:focus-visible) {
   outline: none;
+  box-shadow: none;
 }
 
 .me-group-icon {

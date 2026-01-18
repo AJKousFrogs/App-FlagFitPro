@@ -42,28 +42,15 @@ export type SuccessVariant = "default" | "filled" | "outlined" | "minimal";
         <div class="success-circle" [class.pulse]="pulse()"></div>
       }
 
-      <!-- Checkmark SVG -->
-      <svg
-        class="checkmark-svg"
-        viewBox="0 0 52 52"
-        [attr.width]="svgSize()"
-        [attr.height]="svgSize()"
+      <!-- Checkmark Icon -->
+      <div
+        class="success-icon"
+        [class.variant-filled]="variant() === 'filled'"
+        [class.variant-outlined]="variant() === 'outlined'"
+        [class.variant-minimal]="variant() === 'minimal'"
       >
-        @if (variant() === "filled" || variant() === "outlined") {
-          <circle
-            class="checkmark-circle"
-            cx="26"
-            cy="26"
-            r="25"
-            [class.filled]="variant() === 'filled'"
-          />
-        }
-        <path
-          class="checkmark-check"
-          fill="none"
-          d="M14.1 27.2l7.1 7.2 16.7-16.8"
-        />
-      </svg>
+        <i [class]="iconClass()" aria-hidden="true"></i>
+      </div>
 
       <!-- Optional label -->
       @if (label()) {
@@ -103,14 +90,8 @@ export class SuccessCheckmarkComponent implements OnInit, OnDestroy {
     ].join(" ");
   });
 
-  svgSize = computed(() => {
-    const sizes: Record<SuccessSize, number> = {
-      sm: 32,
-      md: 48,
-      lg: 64,
-      xl: 96,
-    };
-    return sizes[this.size()];
+  iconClass = computed(() => {
+    return this.variant() === "minimal" ? "pi pi-check" : "pi pi-check-circle";
   });
 
   ngOnInit(): void {

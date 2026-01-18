@@ -86,6 +86,24 @@
   gap: $gap;
 }
 
+// Search bar container (shared layout rhythm)
+@mixin search-bar(
+  $padding-y: var(--ds-space-3),
+  $padding-x: var(--ds-space-5),
+  $gap: var(--ds-space-3),
+  $background: var(--surface-primary),
+  $border: var(--border-1) solid var(--color-border-secondary),
+  $radius: var(--radius-lg)
+) {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+  padding: $padding-y $padding-x;
+  background: $background;
+  border: $border;
+  border-radius: $radius;
+}
+
 // Standard page container with tokenized padding and responsive scale.
 @mixin page-container($max-width: 1400px) {
   padding: var(--space-6);

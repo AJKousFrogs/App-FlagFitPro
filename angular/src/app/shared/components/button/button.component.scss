@@ -374,18 +374,18 @@ a.btn {
 // ============================================
 
 .btn-icon {
-  font-size: var(--ds-font-size-xl);
+  font-size: var(--ds-icon-size-button);
   line-height: var(--ds-line-height-1);
   flex-shrink: 0;
   color: inherit;
 }
 
 .btn.btn-sm .btn-icon {
-  font-size: var(--ds-font-size-sm);
+  font-size: var(--ds-icon-size-button-sm);
 }
 
 .btn.btn-lg .btn-icon {
-  font-size: var(--ds-font-size-xl);
+  font-size: var(--ds-icon-size-button-lg);
 }
 
 // ============================================
@@ -409,7 +409,7 @@ a.btn {
   width: 1px;
   height: 1px;
   padding: 0;
-  margin: -1px;
+  margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -426,23 +426,16 @@ a.btn {
   justify-content: center;
 }
 
-.spinner-svg {
-  width: var(--space-5);
-  height: var(--space-5);
-  animation: spinner-rotate var(--motion-base) linear infinite;
+.btn-spinner .pi {
+  font-size: var(--ds-icon-size-button);
 }
 
-.spinner-svg circle {
-  stroke: currentColor;
-  stroke-dasharray: 60;
-  stroke-dashoffset: 45;
-  stroke-linecap: round;
+.btn.btn-sm .btn-spinner .pi {
+  font-size: var(--ds-icon-size-button-sm);
 }
 
-@keyframes spinner-rotate {
-  to {
-    transform: rotate(360deg);
-  }
+.btn.btn-lg .btn-spinner .pi {
+  font-size: var(--ds-icon-size-button-lg);
 }
 
 // ============================================
@@ -468,10 +461,6 @@ a.btn {
 @media (prefers-reduced-motion: reduce) {
   .btn {
     transition: none;
-  }
-
-  .spinner-svg {
-    animation-duration: 1.5s;
   }
 
   .btn:hover,

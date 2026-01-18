@@ -282,7 +282,7 @@
 .benchmark-rating {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--space-1) 8px;
+  padding: var(--ds-space-1) var(--ds-space-2);
   border-radius: var(--radius-sm);
   text-transform: var(--ds-text-transform-uppercase);
 

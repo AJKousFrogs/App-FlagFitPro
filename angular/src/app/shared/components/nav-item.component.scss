@@ -1,4 +1,5 @@
 @use "styles/mixins" as *;
+@use "styles/design-system/states" as states;
 
 :host {
   display: block;
@@ -13,26 +14,19 @@
   background: transparent;
   border: none;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  
+  // Centralized transition
   transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast),
-    background var(--transition-fast);
-}
-
-.nav-item:disabled,
-.nav-item[aria-disabled="true"] {
-  opacity: 0.6;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.nav-item:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
-  outline-offset: 2px;
-}
-
-.nav-item:focus:not(:focus-visible) {
-  outline: none;
+    background-color var(--ds-state-transition),
+    color var(--ds-state-transition),
+    transform var(--ds-state-transition);
+  
+  // Centralized focus ring
+  @include states.ds-focus-ring(var(--ds-primary-green));
+  
+  // Centralized disabled state
+  @include states.ds-disabled-state;
 }
 
 .nav-item--sidebar {

@@ -77,7 +77,7 @@
 }
 
 .exercise-name {
-  margin: 0 0 var(--space-1, 4px) 0;
+  margin: 0 0 var(--ds-space-1) 0;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -147,7 +147,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   color: var(--color-text-muted);
 }
 
@@ -158,7 +158,7 @@
 .youtube-link {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
   margin-top: var(--space-2, 8px);
   font-size: var(--ds-font-size-xs);
   color: var(--primitive-info-600);
@@ -188,7 +188,7 @@
 .prescription-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   margin-bottom: var(--space-3, var(--ds-font-size-xs));
 }
 
@@ -219,8 +219,8 @@
 .progression-note {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
-  padding: var(--space-2, 8px);
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-2);
   background: var(--primitive-success-50);
   border-radius: var(--radius-md, 6px);
   font-size: var(--ds-font-size-sm);
@@ -268,8 +268,8 @@
 .instruction-label {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
-  margin: 0 0 var(--space-2, 8px) 0;
+  gap: var(--ds-space-2);
+  margin: 0 0 var(--ds-space-2) 0;
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
   text-transform: var(--ds-text-transform-uppercase);
@@ -299,7 +299,7 @@
 .ai-note {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   padding: var(--space-3, var(--ds-font-size-xs));
   background: var(--primitive-info-50);
   border-radius: var(--radius-lg);
@@ -330,7 +330,7 @@
 .timer-section-title {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -359,7 +359,7 @@
 .completed-badge {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   padding: var(--space-3, var(--ds-font-size-xs)) var(--space-4, var(--ds-font-size-md));
   background: var(--primitive-success-100);
   border-radius: var(--radius-lg, 8px);

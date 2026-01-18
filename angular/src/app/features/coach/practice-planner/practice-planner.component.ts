@@ -32,6 +32,7 @@ import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -919,14 +920,10 @@ export class PracticePlannerComponent implements OnInit {
     return labels[status] || status;
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
-    const severities: Record<string, "success" | "info" | "warning" | "danger"> = {
-      scheduled: "info",
-      "in-progress": "warning",
-      completed: "success",
-      cancelled: "danger",
-    };
-    return severities[status] || "info";
+  getStatusSeverity(
+    status: string,
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
+    return getStatusSeverityValue(status);
   }
 
   getEquipmentSummary(equipment: EquipmentItem[]): string {

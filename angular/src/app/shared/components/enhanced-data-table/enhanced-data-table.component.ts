@@ -20,9 +20,7 @@ import {
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { Checkbox } from "primeng/checkbox";
-import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
-import { Menu } from "primeng/menu";
 
 /**
  * Generic table row type with selection support
@@ -81,9 +79,7 @@ export interface TablePreferences {
     FormsModule,
     TableModule,
     Checkbox,
-    InputText,
     MultiSelect,
-    Menu,
 
     ButtonComponent,
     IconButtonComponent,

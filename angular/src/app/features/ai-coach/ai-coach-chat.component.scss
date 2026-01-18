@@ -209,6 +209,7 @@
 
 /* ========================================
    SEARCH BAR
+   Uses .ds-search-bar--flush variant from design-system/utilities.scss
    ======================================== */
 
 .search-bar {
@@ -220,21 +221,9 @@
   border-bottom: var(--border-1) solid var(--color-border-secondary);
 }
 
-.search-bar i {
-  color: var(--color-text-muted);
-}
-
-.search-input {
+.search-bar-input {
   flex: 1;
-  border: none;
-  background: transparent;
-  font-size: var(--ds-font-size-md);
-  color: var(--color-text-primary);
-  outline: none;
-}
-
-.search-input::placeholder {
-  color: var(--color-text-muted);
+  min-width: 0;
 }
 
 .search-count {

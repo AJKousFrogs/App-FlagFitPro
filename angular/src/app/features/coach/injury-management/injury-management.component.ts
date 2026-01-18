@@ -33,6 +33,10 @@ import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import {
+  getMappedStatusSeverity,
+  injuryStatusSeverityMap
+} from "../../../shared/utils/status.utils";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -1206,15 +1210,6 @@ export class InjuryManagementComponent implements OnInit {
   getStatusSeverity(
     status: InjuryStatus,
   ): "success" | "info" | "warning" | "danger" {
-    const severities: Record<
-      InjuryStatus,
-      "success" | "info" | "warning" | "danger"
-    > = {
-      new: "danger",
-      evaluating: "warning",
-      rtp: "warning",
-      cleared: "success",
-    };
-    return severities[status];
+    return getMappedStatusSeverity(status, injuryStatusSeverityMap, "info");
   }
 }

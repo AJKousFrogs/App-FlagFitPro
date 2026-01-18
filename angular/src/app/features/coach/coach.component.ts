@@ -11,6 +11,10 @@ import { Card } from "primeng/card";
 import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import {
+  getMappedStatusSeverity,
+  teamMemberStatusSeverityMap
+} from "../../shared/utils/status.utils";
 import { Dialog } from "primeng/dialog";
 import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
@@ -532,12 +536,7 @@ export class CoachComponent implements OnInit {
   }
 
   getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
-    const severities: Record<string, "success" | "info" | "warning" | "danger"> = {
-      Active: "success",
-      Injured: "warning",
-      Inactive: "danger",
-    };
-    return severities[status] || "info";
+    return getMappedStatusSeverity(status, teamMemberStatusSeverityMap, "info");
   }
 
   trackByMemberId(index: number, member: TeamMember): string {

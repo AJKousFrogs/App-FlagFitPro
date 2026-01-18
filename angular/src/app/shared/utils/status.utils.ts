@@ -20,33 +20,54 @@
  * Status to PrimeNG severity mapping
  * Maps common status values to PrimeNG severity types
  */
-export const statusSeverityMap: Record<string, string> = {
+export type StatusVariant = "success" | "warning" | "danger" | "info" | "neutral";
+export type StatusSeverity =
+  | "success"
+  | "warning"
+  | "danger"
+  | "info"
+  | "secondary"
+  | "contrast";
+export type StatusSeverityBase = Exclude<StatusSeverity, "contrast">;
+
+/**
+ * Status to semantic variant mapping
+ * Single source of truth for status -> semantic variant
+ */
+export const statusVariantMap: Record<string, StatusVariant> = {
   // Training/Session statuses
   scheduled: "info",
   in_progress: "warning",
+  "in-progress": "warning",
+  started: "info",
   active: "success",
+  inactive: "neutral",
   completed: "success",
   cancelled: "danger",
   missed: "danger",
+  failed: "danger",
 
   // General statuses
   pending: "info",
   approved: "success",
   rejected: "danger",
-  draft: "secondary",
+  draft: "neutral",
+  at_risk: "warning",
 
   // User/Team statuses
   invited: "info",
   accepted: "success",
   declined: "danger",
-  inactive: "secondary",
+  injured: "danger",
+  limited: "warning",
+  returning: "info",
 
   // Health/Risk statuses
   optimal: "success",
   elevated: "warning",
   danger: "danger",
-  low: "secondary",
-  moderate: "info",
+  low: "success",
+  moderate: "warning",
   high: "warning",
   critical: "danger",
 
@@ -57,7 +78,12 @@ export const statusSeverityMap: Record<string, string> = {
   // ACWR Risk Zones
   detraining: "warning",
   sweet_spot: "success",
-  insufficient_data: "secondary",
+  insufficient_data: "neutral",
+  "under-training": "info",
+  "sweet-spot": "success",
+  "elevated-risk": "warning",
+  "danger-zone": "danger",
+  "no-data": "neutral",
 };
 
 /**
@@ -67,16 +93,151 @@ export const statusSeverityMap: Record<string, string> = {
  */
 export function getStatusSeverity(
   status: string,
-): "success" | "info" | "warning" | "danger" | "secondary" {
-  const severity = statusSeverityMap[status?.toLowerCase()];
-  return (
-    (severity as
-      | "success"
-      | "info"
-      | "warning"
-      | "danger"
-      | "secondary") || "info"
-  );
+  fallback: StatusSeverityBase = "info",
+): StatusSeverityBase {
+  const normalizedFallback = fallback === "secondary" ? "neutral" : fallback;
+  const variant = getStatusVariant(status, normalizedFallback);
+  return variant === "neutral" ? "secondary" : variant;
+}
+
+/**
+ * Get semantic status variant for a given status
+ * @param status - The status string
+ * @returns Semantic status variant
+ */
+export function getStatusVariant(
+  status: string,
+  fallback: StatusVariant = "info",
+): StatusVariant {
+  return statusVariantMap[status?.toLowerCase()] || fallback;
+}
+
+/**
+ * Map a status to severity using a custom map.
+ * Keeps mappings centralized while preserving domain-specific defaults.
+ */
+export function getMappedStatusSeverity<
+  TMap extends Readonly<Record<string, StatusSeverity>>,
+  TFallback extends StatusSeverity,
+>(
+  status: string,
+  map: TMap,
+  fallback: TFallback,
+): TMap[keyof TMap] | TFallback {
+  const key = status?.toLowerCase() as keyof TMap;
+  const mapped = map[key];
+  return mapped ?? fallback;
+}
+
+/**
+ * Domain-specific status maps (single source of truth).
+ */
+export const rosterStatusSeverityMap = {
+  active: "success",
+  injured: "danger",
+  limited: "warning",
+  returning: "info",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const accountStatusSeverityMap = {
+  active: "success",
+  pending: "warning",
+  suspended: "danger",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const decisionStatusSeverityMap = {
+  active: "info",
+  reviewed: "success",
+  superseded: "warning",
+  expired: "warning",
+  cancelled: "danger",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const playerStatusSeverityMap = {
+  active: "success",
+  injured: "danger",
+  inactive: "info",
+  at_risk: "warning",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const programStatusSeverityMap = {
+  draft: "secondary",
+  active: "success",
+  completed: "info",
+  archived: "warning",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const injuryStatusSeverityMap = {
+  new: "danger",
+  evaluating: "warning",
+  rtp: "warning",
+  cleared: "success",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const goalStatusSeverityMap = {
+  "on-track": "success",
+  ahead: "success",
+  behind: "warning",
+  completed: "info",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const paymentStatusSeverityMap = {
+  paid: "success",
+  due: "warning",
+  overdue: "danger",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const aiCoachStatusSeverityMap = {
+  pending: "warning",
+  accepted: "success",
+  rejected: "danger",
+  completed: "success",
+  expired: "secondary",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const teamMemberStatusSeverityMap = {
+  active: "success",
+  injured: "warning",
+  inactive: "danger",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const officialAssignmentStatusSeverityMap = {
+  confirmed: "success",
+  scheduled: "info",
+  declined: "warning",
+  no_show: "danger",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const roadmapStatusSeverityMap = {
+  not_started: "secondary",
+  in_progress: "info",
+  completed: "success",
+} as const satisfies Record<string, StatusSeverity>;
+
+export const reviewStatusSeverityMap = {
+  pending: "warning",
+  approved: "success",
+  rejected: "danger",
+} as const satisfies Record<string, StatusSeverity>;
+
+/**
+ * Get CSS token set for a status variant
+ * @param variant - Semantic status variant
+ * @returns CSS variable names for background/text/border
+ */
+export function getStatusTokens(variant: StatusVariant): {
+  solid: string;
+  bg: string;
+  text: string;
+  border: string;
+} {
+  const base = variant === "neutral" ? "neutral" : variant;
+  return {
+    solid: `var(--ds-status-${base}-solid)`,
+    bg: `var(--ds-status-${base}-bg)`,
+    text: `var(--ds-status-${base}-text)`,
+    border: `var(--ds-status-${base}-border)`,
+  };
 }
 
 /**

@@ -109,8 +109,12 @@
   color: var(--color-text-secondary);
 }
 
-.search-input {
-  width: 100%;
+.filter-search {
+  --ds-search-padding-y: var(--space-0);
+  --ds-search-padding-x: var(--space-0);
+  --ds-search-background: transparent;
+  --ds-search-border: none;
+  --ds-search-radius: 0;
 }
 
 .status-filter {

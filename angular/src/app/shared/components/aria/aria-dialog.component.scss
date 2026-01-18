@@ -1,9 +1,10 @@
 // ============================================================================
 // aria-dialog.component Styles
-// Design System Compliant
+// Design System Compliant - Uses centralized state mixins
 // ============================================================================
 
 @use "styles/mixins" as *;
+@use "styles/design-system/states" as states;
 
 .aria-dialog-backdrop {
   position: fixed;
@@ -13,12 +14,22 @@
   align-items: center;
   justify-content: center;
   background: var(--surface-overlay);
+  
+  // Start hidden but NOT with opacity transition on first render
+  // Use visibility + opacity for proper animation without initial blur
+  visibility: hidden;
   opacity: 0;
-  transition: opacity 0.2s ease;
 }
 
 .aria-dialog-backdrop.visible {
+  visibility: visible;
   opacity: 1;
+  transition: opacity 0.2s ease, visibility 0s linear;
+}
+
+// Ensure backdrop doesn't transition on close (instant hide after fade)
+.aria-dialog-backdrop:not(.visible) {
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
 }
 
 .aria-dialog {
@@ -30,7 +41,11 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: dialogEnter 0.2s ease;
+}
+
+// Animation only when visible (prevents initial render flicker)
+.aria-dialog-backdrop.visible .aria-dialog {
+  animation: dialogEnter 0.2s ease forwards;
 }
 
 @keyframes dialogEnter {
@@ -92,20 +107,14 @@
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition:
-    transform var(--transition-fast),
-    opacity var(--transition-fast),
-    background var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+  
+  // Centralized state handling
+  @include states.ds-dialog-close-states;
 }
 
-.aria-dialog-close:hover {
-  background: var(--surface-tertiary);
-  color: var(--color-text-primary);
-}
-
-.aria-dialog-close:focus-visible {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: 2px;
+.aria-dialog-close .pi {
+  font-size: var(--ds-icon-size-md);
 }
 
 .aria-dialog-content {
@@ -132,5 +141,16 @@
     margin: var(--space-4);
     max-height: calc(100vh - var(--space-8));
     max-height: calc(100dvh - var(--space-8));
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .aria-dialog-backdrop.visible .aria-dialog {
+    animation: none;
+  }
+  
+  .aria-dialog-backdrop {
+    transition: none;
   }
 }

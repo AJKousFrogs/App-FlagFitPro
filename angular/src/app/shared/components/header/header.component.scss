@@ -48,7 +48,7 @@
   min-width: 280px;
   height: var(--header-height, var(--ds-font-size-4rem));
   cursor: pointer;
-  padding: 0 8px;
+  padding: 0 var(--ds-space-2);
 }
 
 .header-center:focus-visible {
@@ -92,13 +92,13 @@
 .countdown-timer {
   display: flex;
   align-items: center;
-  gap: 1px; /* Intentionally tight for countdown display */
+  gap: calc(var(--ds-space-1) / 4); /* Intentionally tight for countdown display */
 }
 
 .countdown-segment {
   display: flex;
   align-items: baseline;
-  gap: 1px; /* Intentionally tight for countdown display */
+  gap: calc(var(--ds-space-1) / 4); /* Intentionally tight for countdown display */
 }
 
 .countdown-value {
@@ -125,7 +125,7 @@
   font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
   opacity: 0.6;
-  padding: 0 1px;
+  padding: 0 calc(var(--ds-space-1) / 4);
   line-height: var(--ds-line-height-1);
 }
 
@@ -277,7 +277,7 @@
 .search-shortcut {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--ds-space-1);
   opacity: 0.6;
 }
 
@@ -287,7 +287,7 @@
   justify-content: center;
   min-width: 22px;
   height: 22px;
-  padding: 0 6px;
+  padding: 0 calc(var(--ds-space-3) / 2);
   background: var(--surface-100, #f3f4f6);
   border: 1px solid var(--surface-border, #e5e7eb);
   border-radius: 6px;

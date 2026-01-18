@@ -64,7 +64,7 @@
 .error-summary-item {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .error-link {
@@ -98,8 +98,8 @@
 .error-suggestion {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2, 8px);
-  padding: var(--space-2, 8px) var(--space-3, var(--ds-font-size-xs));
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-2) var(--ds-space-3);
   background: white;
   border-radius: var(--radius-md, 8px);
   font-size: var(--ds-font-size-md);
@@ -123,7 +123,7 @@
   color: var(--primitive-error-600);
   font-size: var(--ds-font-size-md);
   cursor: pointer;
-  padding: var(--space-2, 8px);
+  padding: var(--ds-space-2);
   border-radius: var(--radius-sm, 4px);
   transition: background-color var(--motion-fast, 150ms)
     var(--ease-standard, ease);

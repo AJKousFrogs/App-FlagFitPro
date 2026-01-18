@@ -252,7 +252,7 @@ export const NoGames: Story = {
 export const AllVariants: Story = {
   render: () => ({
     template: `
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--ds-space-6);">
         <div style="border: 1px solid var(--color-border-secondary); border-radius: 12px; overflow: hidden;">
           <app-empty-state
             title="Default Empty State"

@@ -125,29 +125,29 @@
 }
 
 .status-completed .status-dot {
-  background: var(--color-status-success);
-  color: white;
+  background: var(--ds-status-success-solid);
+  color: var(--ds-color-brand-contrast);
 }
 
 .status-current .status-dot {
   background: var(--color-brand-primary);
-  color: white;
+  color: var(--ds-color-brand-contrast);
   box-shadow: 0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.2);
 }
 
 .status-upcoming .status-dot {
-  background: var(--color-border-secondary);
-  color: var(--color-text-muted);
+  background: var(--ds-status-neutral-bg);
+  color: var(--ds-status-neutral-text);
 }
 
 .status-skipped .status-dot {
-  background: var(--color-border-secondary);
-  color: var(--color-text-muted);
+  background: var(--ds-status-neutral-bg);
+  color: var(--ds-status-neutral-text);
 }
 
 .status-rest .status-dot {
-  background: var(--color-status-info-light);
-  color: var(--color-status-info);
+  background: var(--ds-status-info-bg);
+  color: var(--ds-status-info-solid);
 }
 
 .dot-inner {
@@ -162,7 +162,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: white;
+  background: var(--ds-color-brand-contrast);
   animation: current-pulse 2s ease-in-out infinite;
 }
 
@@ -215,15 +215,15 @@
 .item-value {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
-  padding: var(--space-1) 8px;
+  padding: var(--ds-space-1) var(--ds-space-2);
   border-radius: var(--radius-full);
   background: var(--surface-tertiary);
   color: var(--color-text-secondary);
 }
 
 .status-completed .item-value {
-  background: var(--color-status-success-light);
-  color: var(--color-status-success);
+  background: var(--ds-status-success-bg);
+  color: var(--ds-status-success-solid);
 }
 
 .is-current .item-value {

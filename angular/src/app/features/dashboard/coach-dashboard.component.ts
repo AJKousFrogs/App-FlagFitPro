@@ -57,6 +57,11 @@ import { PageErrorStateComponent } from "../../shared/components/page-error-stat
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { SemanticMeaningRendererComponent } from "../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
+import {
+  getMappedStatusSeverity,
+  getStatusSeverity as getStatusSeverityValue,
+  playerStatusSeverityMap
+} from "../../shared/utils/status.utils";
 import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
 import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
 import { DatePipe, DecimalPipe } from "@angular/common";
@@ -1733,14 +1738,7 @@ export class CoachDashboardComponent {
   }
 
   getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
-    const severities: Record<string, "success" | "info" | "warning" | "danger"> =
-      {
-      active: "success",
-      injured: "danger",
-      inactive: "info",
-      at_risk: "warning",
-    };
-    return severities[status] || "info";
+    return getMappedStatusSeverity(status, playerStatusSeverityMap, "info");
   }
 
   getCountdownLabel(days: number): string {
@@ -1761,15 +1759,8 @@ export class CoachDashboardComponent {
 
   getSessionStatusSeverity(
     status: string,
-  ): "success" | "info" | "warning" | "danger" {
-    const severities: Record<string, "success" | "info" | "warning" | "danger"> =
-      {
-      scheduled: "info",
-      in_progress: "warning",
-      completed: "success",
-      cancelled: "danger",
-    };
-    return severities[status] || "info";
+  ): "success" | "info" | "warning" | "danger" | "secondary" {
+    return getStatusSeverityValue(status);
   }
 
   /**

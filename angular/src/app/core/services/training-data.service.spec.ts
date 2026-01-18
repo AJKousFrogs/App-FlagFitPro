@@ -114,7 +114,21 @@ describe("TrainingDataService", () => {
     );
 
     expect(workoutLogsInsert).toHaveBeenCalled();
-    const payload = workoutLogsInsert.mock.calls[0][0];
+    const calls = workoutLogsInsert.mock.calls as unknown as Array<
+      [
+        {
+          player_id: string;
+          session_id: string;
+          duration_minutes: number;
+          rpe: number;
+          completed_at: string;
+        },
+      ]
+    >;
+    expect(calls.length).toBeGreaterThan(0);
+    const payload = calls[0]?.[0];
+    expect(payload).toBeDefined();
+    if (!payload) return;
     expect(payload.player_id).toBe("user-123");
     expect(payload.session_id).toBe("session-1");
     expect(payload.duration_minutes).toBe(60);

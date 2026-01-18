@@ -23,7 +23,7 @@
   width: 1px;
   height: 1px;
   padding: 0;
-  margin: -1px;
+  margin: calc(-1 * (var(--ds-space-1) / 4));
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;

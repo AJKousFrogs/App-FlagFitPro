@@ -46,7 +46,7 @@
   .header-title {
     display: flex;
     align-items: center;
-    gap: var(--space-2, 8px);
+    gap: var(--ds-space-2);
 
     i {
       font-size: var(--ds-font-size-2xl);
@@ -64,7 +64,7 @@
   .header-actions {
     display: flex;
     align-items: center;
-    gap: var(--space-2, 8px);
+    gap: var(--ds-space-2);
   }
 
   .progress-badge {
@@ -72,7 +72,7 @@
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     background: var(--surface-secondary);
-    padding: var(--space-1, 4px) var(--space-2, 8px);
+    padding: var(--ds-space-1) var(--ds-space-2);
     border-radius: var(--radius-md, 8px);
     box-shadow: var(--shadow-1);
   }
@@ -150,8 +150,8 @@
   .timing-header {
     display: flex;
     align-items: center;
-    gap: var(--space-2, 8px);
-    padding: var(--space-2, 8px) var(--space-5, var(--ds-font-size-xl));
+    gap: var(--ds-space-2);
+    padding: var(--ds-space-2) var(--ds-space-5);
   font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
@@ -169,7 +169,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-3, var(--ds-font-size-xs));
-    padding: var(--space-2, 8px) var(--space-5, var(--ds-font-size-xl));
+    padding: var(--ds-space-2) var(--ds-space-5);
     cursor: pointer;
     transition: background-color 150ms ease;
 
@@ -202,7 +202,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--space-1, 4px);
+    gap: var(--ds-space-1);
     min-width: 0;
   }
 
@@ -258,7 +258,7 @@
   .form-field {
     display: flex;
     flex-direction: column;
-    gap: var(--space-2, 8px);
+    gap: var(--ds-space-2);
 
     label {
     font-size: var(--ds-font-size-sm);
@@ -296,7 +296,7 @@
  */
   .category-tag {
   font-size: var(--ds-font-size-xs);
-    padding: var(--space-1, 4px) var(--space-2, 8px);
+    padding: var(--ds-space-1) var(--ds-space-2);
   }
 
   // PrimeNG checkbox and dialog overrides moved to _exceptions.scss (DS-EXC-011)

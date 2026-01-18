@@ -157,8 +157,18 @@
     <script>
       (function () {
         var root = document.documentElement;
+        
+        // Prevent transition blur on initial render
+        root.classList.add("ds-initial-render");
+        
         var markReady = function () {
           root.classList.add("fonts-ready");
+          // Remove initial render class after first paint to enable transitions
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              root.classList.remove("ds-initial-render");
+            });
+          });
         };
 
         if (document.fonts && document.fonts.load) {

@@ -136,6 +136,33 @@
   --ds-color-neutral-bg: var(--surface-secondary, #f8faf9);
   --ds-color-neutral-text: #1a1a1a;
 
+  /* Status color aliases (semantic, shared across UI) */
+  --ds-status-success-solid: var(--ds-color-success);
+  --ds-status-success-bg: var(--ds-color-success-bg);
+  --ds-status-success-text: var(--ds-color-success-text);
+  --ds-status-success-border: var(--ds-color-success);
+
+  --ds-status-warning-solid: var(--ds-color-warning);
+  --ds-status-warning-bg: var(--ds-color-warning-bg);
+  --ds-status-warning-text: var(--ds-color-warning-text);
+  --ds-status-warning-border: var(--ds-color-warning);
+
+  --ds-status-danger-solid: var(--ds-color-danger);
+  --ds-status-danger-bg: var(--ds-color-danger-bg);
+  --ds-status-danger-text: var(--ds-color-danger-text);
+  --ds-status-danger-border: var(--ds-color-danger);
+
+  --ds-status-info-solid: var(--ds-color-info);
+  --ds-status-info-bg: var(--ds-color-info-bg);
+  --ds-status-info-text: var(--ds-color-info-text);
+  --ds-status-info-border: var(--ds-color-info);
+
+  --ds-status-neutral-solid: var(--ds-color-neutral);
+  --ds-status-neutral-bg: var(--ds-color-neutral-bg);
+  --ds-status-neutral-text: var(--ds-color-neutral-text);
+  --ds-status-neutral-border: var(--ds-color-neutral);
+  --ds-status-neutral-glow: rgba(74, 74, 74, 0.4);
+
   /* Interaction states */
   --ds-state-hover-bg: rgba(0, 0, 0, 0.04);
   --ds-state-active-bg: rgba(0, 0, 0, 0.08);
@@ -150,4 +177,22 @@
   --ds-button-height-sm: 2.25rem; /* 36px */
   --ds-button-height-md: 2.75rem; /* 44px */
   --ds-button-height-lg: 3.25rem; /* 52px */
+
+  /* Icon sizes */
+  --ds-icon-size-2xs: 0.625rem; /* 10px */
+  --ds-icon-size-xs: 0.75rem; /* 12px */
+  --ds-icon-size-sm: 0.875rem; /* 14px */
+  --ds-icon-size-md: 1rem; /* 16px */
+  --ds-icon-size-lg: 1.25rem; /* 20px */
+  --ds-icon-size-xl: 1.5rem; /* 24px */
+  --ds-icon-size-2xl: 2rem; /* 32px */
+  --ds-icon-size-3xl: 3rem; /* 48px */
+
+  --ds-icon-size-inline: var(--ds-icon-size-sm);
+  --ds-icon-size-button: var(--ds-icon-size-lg);
+  --ds-icon-size-button-sm: var(--ds-icon-size-sm);
+  --ds-icon-size-button-lg: var(--ds-icon-size-lg);
+  --ds-icon-size-icon-button: var(--ds-icon-size-md);
+  --ds-icon-size-icon-button-sm: var(--ds-icon-size-sm);
+  --ds-icon-size-icon-button-lg: var(--ds-icon-size-md);
 }

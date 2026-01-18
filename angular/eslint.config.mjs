@@ -1,5 +1,7 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import storybook from "eslint-plugin-storybook";
+import templatePlugin from "@angular-eslint/eslint-plugin-template";
+import templateParser from "@angular-eslint/template-parser";
 
 /**
  * ESLint Configuration for Angular App
@@ -37,6 +39,25 @@ export default tseslint.config(
       "server.ts",
       ".storybook/**",
     ],
+  },
+  // ============================================
+  // ANGULAR TEMPLATE RULES
+  // Enforces design system compliance in HTML templates.
+  // See docs/ui/UI_FINAL_REPORT.md for enforcement details.
+  // ============================================
+  {
+    files: ["**/*.component.html"],
+    languageOptions: {
+      parser: templateParser,
+    },
+    plugins: {
+      "@angular-eslint/template": templatePlugin,
+    },
+    rules: {
+      // Block inline styles - use SCSS classes or design-system utilities instead
+      // This catches: style="...", [style]="...", [ngStyle]="..."
+      "@angular-eslint/template/no-inline-styles": "error",
+    },
   },
   // ============================================
   // NODE.JS SCRIPTS (JavaScript files)

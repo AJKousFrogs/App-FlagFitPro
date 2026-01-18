@@ -16,6 +16,10 @@ import { Skeleton } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
+import {
+  aiCoachStatusSeverityMap,
+  getMappedStatusSeverity
+} from "../../utils/status.utils";
 import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
 import { AuthService } from "../../../core/services/auth.service";
@@ -753,17 +757,7 @@ export class AiCoachVisibilityComponent implements OnInit {
   getStatusSeverity(
     status: string,
   ): "success" | "info" | "warning" | "danger" | "secondary" {
-    const severities: Record<
-      string,
-      "success" | "info" | "warning" | "danger" | "secondary"
-    > = {
-      pending: "warning",
-      accepted: "success",
-      rejected: "danger",
-      completed: "success",
-      expired: "secondary",
-    };
-    return severities[status] || "info";
+    return getMappedStatusSeverity(status, aiCoachStatusSeverityMap, "info");
   }
 
   /**

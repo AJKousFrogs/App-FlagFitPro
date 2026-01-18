@@ -24,7 +24,7 @@
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .page-title i {
@@ -32,7 +32,7 @@
 }
 
 .page-subtitle {
-  margin: var(--space-1, 4px) 0 0 0;
+  margin: var(--ds-space-1) 0 0 0;
   color: var(--color-text-secondary);
 }
 
@@ -98,7 +98,7 @@
 .recommendation {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   padding: var(--space-3, var(--ds-font-size-xs));
   background: var(--surface-primary);
   border-radius: var(--radius-md, 6px);
@@ -131,7 +131,7 @@
   justify-content: space-between;
   align-items: flex-end;
   height: 150px;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .week-bar {
@@ -165,7 +165,7 @@
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   color: white;
-  padding: var(--space-1, 4px);
+  padding: var(--ds-space-1);
 }
 
 .bar-label {
@@ -199,7 +199,7 @@
   font-weight: var(--ds-font-weight-semibold);
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   margin-bottom: var(--space-1, 4px);
 }
 
@@ -219,13 +219,13 @@
 
 .session-compliance {
   display: flex;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .compliance-item {
   display: flex;
   align-items: center;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
   font-size: var(--ds-font-size-xs);
   color: var(--primitive-error-500);
 }
@@ -237,7 +237,7 @@
 .arm-feeling {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   margin-top: var(--space-2, 8px);
   padding-top: var(--space-2, 8px);
   border-top: 1px solid var(--primitive-neutral-100);
@@ -283,7 +283,7 @@
   color: var(--color-text-secondary);
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .session-notes i {
@@ -311,7 +311,7 @@
 }
 
 .reminder-content h4 {
-  margin: 0 0 var(--space-1, 4px) 0;
+  margin: 0 0 var(--ds-space-1) 0;
   font-size: var(--ds-font-size-md);
 }
 
@@ -345,7 +345,7 @@
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
 }
 
 .form-field label {
@@ -387,7 +387,7 @@
 .checkbox-group {
   flex-direction: row;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .checkbox-group label {

@@ -34,15 +34,15 @@ import { Router } from "@angular/router";
 import { Avatar } from "primeng/avatar";
 
 import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 
 import { Dialog } from "primeng/dialog";
-import { InputText } from "primeng/inputtext";
 import { Ripple } from "primeng/ripple";
 import { Skeleton } from "primeng/skeleton";
 import { Toast } from "primeng/toast";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
+import { formatDate as formatDateValue } from "../../../shared/utils/date.utils";
 
 // Services
 import { AuthService } from "../../../core/services/auth.service";
@@ -81,14 +81,13 @@ interface FilterChip {
     Skeleton,
     Tooltip,
     Dialog,
-    InputText,
     Toast,
     Avatar,
     Ripple,
     MainLayoutComponent,
     ButtonComponent,
-    IconButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
+    SearchInputComponent
   ],
   template: `
     <p-toast></p-toast>
@@ -146,27 +145,14 @@ interface FilterChip {
         <!-- Filter Section -->
         <section class="filter-section">
           <!-- Search Bar -->
-          <div class="search-container">
-            <span class="p-input-icon-left search-wrapper">
-              <i class="pi pi-search"></i>
-              <input
-                type="text"
-                pInputText
-                [(ngModel)]="searchQuery"
-                placeholder="Search videos, creators, or tags..."
-                class="search-input"
-                (input)="onSearchChange()"
-              />
-            </span>
-            @if (searchQuery()) {
-              <app-icon-button
-                icon="pi-times"
-                ariaLabel="Clear search"
-                tooltip="Clear search"
-                (clicked)="clearSearch()"
-              />
-            }
-          </div>
+          <app-search-input
+            class="search-container"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearchChange()"
+            placeholder="Search videos, creators, or tags..."
+            ariaLabel="Search videos, creators, or tags"
+            [clearable]="true"
+          />
 
           <!-- Position Filter Chips -->
           <div class="filter-chips-container">
@@ -980,12 +966,7 @@ export class VideoFeedComponent {
   }
 
   formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+    return formatDateValue(dateStr, "MMM d, yyyy");
   }
 
   navigateToSuggest(): void {

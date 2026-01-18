@@ -17,6 +17,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
+import { getStatusSeverity } from "../../utils/status.utils";
 
 export type RiskLevel = "low" | "moderate" | "high" | "critical";
 export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
@@ -66,26 +67,26 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
       /* Risk Level Colors - SEMANTIC RULE: Risk MUST be red ONLY */
       /* Severity is handled by intensity (opacity, size), NOT color */
       .risk-low {
-        background: var(--color-status-error);
-        color: var(--color-text-on-primary);
+        background: var(--ds-status-danger-solid);
+        color: var(--ds-status-danger-text);
         opacity: 0.4; /* Subtle intensity for low risk */
       }
 
       .risk-moderate {
-        background: var(--color-status-error);
-        color: var(--color-text-on-primary);
+        background: var(--ds-status-danger-solid);
+        color: var(--ds-status-danger-text);
         opacity: 0.6; /* Normal intensity for moderate risk */
       }
 
       .risk-high {
-        background: var(--color-status-error);
-        color: var(--color-text-on-primary);
+        background: var(--ds-status-danger-solid);
+        color: var(--ds-status-danger-text);
         opacity: 0.9; /* Strong intensity for high risk */
       }
 
       .risk-critical {
-        background: var(--color-status-error);
-        color: var(--color-text-on-primary);
+        background: var(--ds-status-danger-solid);
+        color: var(--ds-status-danger-text);
         opacity: 1; /* Full intensity for critical risk */
         animation: pulse-risk 2s infinite;
       }
@@ -190,17 +191,8 @@ export class RiskBadgeComponent {
     | "warning"
     | "danger"
     | "contrast" {
-    const l = this.level();
-    const severities: Record<
-      RiskLevel,
-      "secondary" | "success" | "info" | "warning" | "danger" | "contrast"
-    > = {
-      low: "success",
-      moderate: "warning",
-      high: "warning",
-      critical: "danger",
-    };
-    return severities[l] || "info";
+    const severity = getStatusSeverity(this.level());
+    return severity === "secondary" ? "contrast" : severity;
   }
 
   getDefaultTooltip(): string {

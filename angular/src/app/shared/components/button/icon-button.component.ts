@@ -98,9 +98,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
     <ng-template #buttonContent>
       @if (loading()) {
         <span class="btn-spinner" aria-hidden="true">
-          <svg viewBox="0 0 24 24" class="spinner-svg">
-            <circle cx="12" cy="12" r="10" fill="none" stroke-width="3" />
-          </svg>
+          <i class="pi pi-spin pi-spinner"></i>
         </span>
       } @else {
         <i [class]="iconClasses()" aria-hidden="true"></i>
@@ -195,12 +193,11 @@ export type IconButtonSize = "sm" | "md" | "lg";
       }
 
       .icon-btn-sm i {
-        font-size: var(--ds-font-size-sm);
+        font-size: var(--ds-icon-size-icon-button-sm);
       }
 
-      .icon-btn-sm .spinner-svg {
-        width: 1rem;
-        height: 1rem;
+      .icon-btn-sm .btn-spinner .pi {
+        font-size: var(--ds-icon-size-icon-button-sm);
       }
 
       .icon-btn-lg {
@@ -212,12 +209,11 @@ export type IconButtonSize = "sm" | "md" | "lg";
       }
 
       .icon-btn-lg i {
-        font-size: var(--ds-font-size-md);
+        font-size: var(--ds-icon-size-icon-button-lg);
       }
 
-      .icon-btn-lg .spinner-svg {
-        width: 1.5rem;
-        height: 1.5rem;
+      .icon-btn-lg .btn-spinner .pi {
+        font-size: var(--ds-icon-size-icon-button-lg);
       }
 
       /* ================================
@@ -295,7 +291,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
        ================================ */
 
       .icon-btn i {
-        font-size: var(--ds-font-size-md);
+        font-size: var(--ds-icon-size-icon-button);
         line-height: var(--ds-line-height-1);
       }
 
@@ -307,25 +303,6 @@ export type IconButtonSize = "sm" | "md" | "lg";
         display: flex;
         align-items: center;
         justify-content: center;
-      }
-
-      .spinner-svg {
-        width: 1.25rem;
-        height: 1.25rem;
-        animation: spinner-rotate 0.8s linear infinite;
-      }
-
-      .spinner-svg circle {
-        stroke: currentColor;
-        stroke-dasharray: 60;
-        stroke-dashoffset: 45;
-        stroke-linecap: round;
-      }
-
-      @keyframes spinner-rotate {
-        to {
-          transform: rotate(360deg);
-        }
       }
 
       /* ================================
@@ -347,7 +324,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
           transition: none;
         }
 
-        .spinner-svg {
+        .btn-spinner .pi-spin {
           animation: none;
         }
 

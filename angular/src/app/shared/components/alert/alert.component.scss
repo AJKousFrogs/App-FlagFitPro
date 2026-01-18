@@ -41,62 +41,80 @@
   padding: var(--space-1);
   color: inherit;
   opacity: 0.7;
-  transition: opacity 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   width: var(--space-6);
   height: var(--space-6);
   border-radius: var(--radius-md);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    opacity var(--ds-state-transition),
+    background-color var(--ds-state-transition);
 }
 
-.alert-close:hover {
+// Desktop-only hover
+@media (hover: hover) and (pointer: fine) {
+  .alert-close:hover {
+    opacity: 1;
+    background: var(--surface-overlay-light);
+  }
+}
+
+// Active state for touch
+.alert-close:active {
   opacity: 1;
-  background: var(--surface-overlay-light);
+  transform: scale(0.95);
 }
 
+// Consistent focus ring
 .alert-close:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
+  opacity: 1;
+}
+
+.alert-close:focus:not(:focus-visible) {
+  outline: none;
 }
 
 /* Variants */
 .alert-success {
-  background-color: var(--primitive-success-50);
-  color: var(--primitive-success-700);
-  border-color: var(--color-status-success);
+  background-color: var(--ds-status-success-bg);
+  color: var(--ds-status-success-solid);
+  border-color: var(--ds-status-success-border);
 }
 
 .alert-success .alert-title {
-  color: var(--primitive-success-700);
+  color: var(--ds-status-success-solid);
 }
 
 .alert-warning {
-  background-color: var(--primitive-warning-50);
-  color: var(--primitive-warning-700);
-  border-color: var(--color-status-warning);
+  background-color: var(--ds-status-warning-bg);
+  color: var(--ds-status-warning-solid);
+  border-color: var(--ds-status-warning-border);
 }
 
 .alert-warning .alert-title {
-  color: var(--primitive-warning-700);
+  color: var(--ds-status-warning-solid);
 }
 
 .alert-error {
-  background-color: var(--primitive-error-50);
-  color: var(--primitive-error-700);
-  border-color: var(--color-status-error);
+  background-color: var(--ds-status-danger-bg);
+  color: var(--ds-status-danger-solid);
+  border-color: var(--ds-status-danger-border);
 }
 
 .alert-error .alert-title {
-  color: var(--primitive-error-700);
+  color: var(--ds-status-danger-solid);
 }
 
 .alert-info {
-  background-color: var(--primitive-info-50);
-  color: var(--primitive-info-700);
-  border-color: var(--color-status-info);
+  background-color: var(--ds-status-info-bg);
+  color: var(--ds-status-info-solid);
+  border-color: var(--ds-status-info-border);
 }
 
 .alert-info .alert-title {
-  color: var(--primitive-info-700);
+  color: var(--ds-status-info-solid);
 }

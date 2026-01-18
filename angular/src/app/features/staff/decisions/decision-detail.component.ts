@@ -19,6 +19,10 @@ import { ButtonComponent } from "@shared/components/button/button.component";
 
 import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
+import {
+  decisionStatusSeverityMap,
+  getMappedStatusSeverity
+} from "@shared/utils/status.utils";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
 import { ConfidenceIndicatorComponent } from "@shared/components/confidence-indicator/confidence-indicator.component";
@@ -594,17 +598,8 @@ export class DecisionDetailComponent implements OnInit {
     return labels[type] || type;
   }
 
-  getStatusSeverity(status: string): "success" | "warning" | "danger" | "info" {
-    const severityMap: Record<string, "success" | "warning" | "danger" | "info"> =
-      {
-        active: "info",
-        reviewed: "success",
-        superseded: "warning",
-        expired: "warning",
-        cancelled: "danger",
-      };
-    return severityMap[status] || "info";
-  }
+  getStatusSeverity = (status: string) =>
+    getMappedStatusSeverity(status, decisionStatusSeverityMap, "info");
 
   getPrioritySeverity(
     priority: "critical" | "high" | "normal" | "low",

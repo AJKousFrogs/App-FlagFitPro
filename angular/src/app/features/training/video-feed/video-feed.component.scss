@@ -249,53 +249,13 @@
   margin-right: auto;
 }
 
+/* Uses .ds-search-bar--hero variant from design-system/utilities.scss */
 .search-container {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  width: 100%;
+  max-width: var(--dialog-max-width-lg);
   margin-bottom: var(--space-6);
 }
 
-.search-wrapper {
-  flex: 1;
-  max-width: var(--dialog-max-width-lg);
-}
-
-.search-input {
-  width: 100%;
-  border-radius: var(--radius-full);
-  padding-left: var(--space-10);
-  padding-right: var(--space-5);
-  height: var(--avatar-size-xl);
-  font-size: var(--ds-font-size-md);
-  border: var(--border-2) solid var(--color-border-secondary);
-  transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    transform var(--transition-fast);
-  background: var(--surface-primary);
-  box-shadow: var(--shadow-1);
-}
-
-.search-input:focus-visible {
-  border-color: var(--ds-primary-green);
-  box-shadow: var(--shadow-focus), var(--shadow-2);
-  transform: translateY(-1px);
-}
-
-.search-input:focus:not(:focus-visible) {
-  outline: none;
-}
-
-.search-input::placeholder {
-  color: var(--color-text-muted);
-  font-weight: var(--ds-font-weight-regular);
-}
-
-.clear-btn {
-  width: var(--avatar-size-md);
-  height: var(--avatar-size-md);
-}
 
 .filter-chips-container {
   display: flex;

@@ -2127,7 +2127,7 @@ export class AnalyticsComponent implements AfterViewInit {
         <style>
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* ds-exception: PDF export font stack */
-            padding: 40px;
+            padding: var(--ds-space-10);
             max-width: 800px;
             margin: 0 auto;
             color: #1a1a2e;
@@ -2145,7 +2145,7 @@ export class AnalyticsComponent implements AfterViewInit {
           }
           .header p {
             color: #666;
-            margin: 10px 0 0;
+            margin: calc(var(--ds-space-5) / 2) 0 0;
           }
           .section {
             margin-bottom: 30px;
@@ -2160,11 +2160,11 @@ export class AnalyticsComponent implements AfterViewInit {
           .metrics-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: var(--ds-space-4);
           }
           .metric-card {
             background: var(--surface-secondary);
-            padding: 16px;
+            padding: var(--ds-space-4);
             border-radius: var(--radius-lg);
             text-align: center;
           }
@@ -2179,9 +2179,9 @@ export class AnalyticsComponent implements AfterViewInit {
           }
           .goal-item {
             background: var(--surface-secondary);
-            padding: 12px;
+            padding: var(--ds-space-3);
             border-radius: var(--radius-lg);
-            margin-bottom: 8px;
+            margin-bottom: var(--ds-space-2);
           }
           .goal-name {
             font-weight: var(--ds-font-weight-bold);
@@ -2196,7 +2196,7 @@ export class AnalyticsComponent implements AfterViewInit {
             border-collapse: collapse;
           }
           .stats-table th, .stats-table td {
-            padding: 8px 12px;
+            padding: var(--ds-space-2) var(--ds-space-3);
             text-align: left;
             border-bottom: 1px solid #eee;
           }
@@ -2213,7 +2213,7 @@ export class AnalyticsComponent implements AfterViewInit {
             font-size: var(--ds-font-size-xs);
           }
           @media print {
-            body { padding: 20px; }
+            body { padding: var(--ds-space-5); }
             .no-print { display: none; }
           }
         </style>

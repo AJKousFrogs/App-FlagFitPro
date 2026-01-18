@@ -33,7 +33,7 @@
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
 }
 
 .form-field label {
@@ -80,7 +80,7 @@
 .time-field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
   flex: 1;
   min-width: var(--input-min-width-sm);
 }
@@ -96,7 +96,7 @@
 
 .add-practice {
   display: flex;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   align-items: center;
 }
 
@@ -143,7 +143,7 @@
 .checkbox-group {
   flex-direction: row;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .checkbox-group label {

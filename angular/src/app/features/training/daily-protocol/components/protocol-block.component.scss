@@ -184,7 +184,7 @@
 
 /* Simple List View (Wireframe Style) */
 .exercise-list-item {
-  padding: var(--space-2, 8px) 0;
+  padding: var(--ds-space-2) 0;
   border-bottom: 1px solid var(--primitive-neutral-100, #f5f5f5);
 }
 
@@ -303,7 +303,7 @@
   }
 
   .header-right {
-    gap: var(--space-2, 8px);
+    gap: var(--ds-space-2);
   }
 
   .progress-indicator {

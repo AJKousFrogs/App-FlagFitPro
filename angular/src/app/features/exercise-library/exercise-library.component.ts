@@ -12,9 +12,6 @@ import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { MessageService , PrimeTemplate } from "primeng/api";
 
 import { Dialog } from "primeng/dialog";
-import { IconField } from "primeng/iconfield";
-import { InputIcon } from "primeng/inputicon";
-import { InputText } from "primeng/inputtext";
 import { Paginator } from "primeng/paginator";
 import { Ripple } from "primeng/ripple";
 
@@ -26,6 +23,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
+import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
 
 interface Exercise {
   id: string;
@@ -63,9 +61,6 @@ interface Category {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    InputText,
-    IconField,
-    InputIcon,
     Paginator,
     Tooltip,
     Ripple,
@@ -73,7 +68,8 @@ interface Category {
     PrimeTemplate,
     Toast,
     MainLayoutComponent,
-    ButtonComponent
+    ButtonComponent,
+    SearchInputComponent
   ],
   providers: [MessageService],
   template: `
@@ -114,21 +110,16 @@ interface Category {
         <!-- Modern Search and Filters -->
         <div class="search-filters-section">
           <!-- Search Bar with Icon -->
-          <p-iconfield class="search-container">
-            <p-inputicon>
-              <i class="pi pi-search"></i>
-            </p-inputicon>
-            <input
-              pInputText
-              [(ngModel)]="searchQuery"
-              (ngModelChange)="onSearchChange()"
-              placeholder="Search exercises by name, muscle group, or equipment..."
-              class="search-input"
-            />
-          </p-iconfield>
+          <app-search-input
+            class="search-container"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onSearchChange()"
+            placeholder="Search exercises by name, muscle group, or equipment..."
+            ariaLabel="Search exercises by name, muscle group, or equipment"
+          />
 
           <!-- Category Filters -->
-          <div class="filter-section">
+          <div class="filter-section ds-card-surface">
             <h3 class="filter-title">
               <i class="pi pi-filter"></i>
               Filter by Category
@@ -175,7 +166,7 @@ interface Category {
         <!-- Exercises Grid -->
         <div class="exercises-grid">
           @for (exercise of paginatedExercises(); track exercise.id) {
-            <div class="exercise-card">
+            <div class="exercise-card ds-card-surface">
               <div class="card-header">
                 <div class="header-left">
                   <i

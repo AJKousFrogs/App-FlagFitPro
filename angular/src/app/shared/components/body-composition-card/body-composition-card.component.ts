@@ -219,8 +219,6 @@ interface BodyCompositionData {
       header="Log Body Composition"
       [(visible)]="showLogDialog"
       [modal]="true"
-      [style]="{ width: '450px', maxWidth: '95vw' }"
-      [contentStyle]="{ maxHeight: 'calc(80dvh - 140px)', overflowY: 'auto' }"
       styleClass="body-comp-dialog"
       [closable]="true"
     >

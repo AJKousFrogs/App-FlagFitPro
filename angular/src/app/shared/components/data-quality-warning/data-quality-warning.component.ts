@@ -88,12 +88,12 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
   `,
   styles: [`
     .data-quality-warning {
-      padding: var(--spacing-sm) var(--spacing-md);
+      padding: var(--ds-space-2) var(--ds-space-3);
       border-radius: var(--radius-md);
-      margin-bottom: var(--spacing-sm);
+      margin-bottom: var(--ds-space-2);
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-xs);
+      gap: var(--ds-space-1);
     }
     
     .quality-insufficient {
@@ -118,7 +118,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
     .warning-header {
       display: flex;
       align-items: center;
-      gap: var(--spacing-sm);
+      gap: var(--ds-space-2);
     }
     
     .warning-header i {
@@ -144,7 +144,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
     
     .confidence-badge {
       margin-left: auto;
-      padding: 2px 8px;
+      padding: calc(var(--ds-space-1) / 2) var(--ds-space-2);
       border-radius: var(--radius-full);
       font-size: var(--ds-font-size-xs);
       font-weight: var(--ds-font-weight-medium);
@@ -152,7 +152,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
     }
     
     .warning-details {
-      padding-left: calc(1.1rem + var(--spacing-sm));
+      padding-left: calc(1.1rem + var(--ds-space-2));
     }
     
     .warning-message {
@@ -162,7 +162,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
     }
     
     .recommendations {
-      margin-top: var(--spacing-xs);
+      margin-top: var(--ds-space-1);
       font-size: var(--ds-font-size-0-8rem);
     }
     
@@ -172,17 +172,17 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
     }
     
     .recommendations ul {
-      margin: var(--spacing-xs) 0 0;
-      padding-left: var(--spacing-md);
+      margin: var(--ds-space-1) 0 0;
+      padding-left: var(--ds-space-3);
     }
     
     .recommendations li {
       color: var(--color-text-secondary);
-      margin-bottom: 2px;
+      margin-bottom: calc(var(--ds-space-1) / 2);
     }
     
     .warning-action {
-      padding-left: calc(1.1rem + var(--spacing-sm));
+      padding-left: calc(1.1rem + var(--ds-space-2));
     }
   `],
 })

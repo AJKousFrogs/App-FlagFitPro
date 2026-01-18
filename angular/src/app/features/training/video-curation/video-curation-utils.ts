@@ -5,6 +5,10 @@
  */
 
 import { TrainingFocus } from "./video-curation.models";
+import {
+  getMappedStatusSeverity,
+  reviewStatusSeverityMap
+} from "../../../shared/utils/status.utils";
 
 /**
  * Format training focus for display
@@ -76,16 +80,7 @@ export function formatSuggestionDate(dateStr: string): string {
 export function getStatusSeverity(
   status: string,
 ): "warning" | "success" | "danger" | "secondary" {
-  switch (status) {
-    case "pending":
-      return "warning";
-    case "approved":
-      return "success";
-    case "rejected":
-      return "danger";
-    default:
-      return "secondary";
-  }
+  return getMappedStatusSeverity(status, reviewStatusSeverityMap, "secondary");
 }
 
 /**

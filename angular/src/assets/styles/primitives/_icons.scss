@@ -17,64 +17,77 @@
  */
 
 @layer primitives {
+  // Base PrimeIcon alignment + color inheritance
+  .pi {
+    color: inherit;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
   // ============================================
   // ICON SIZE SCALE
   // ============================================
 
+  // ============================================
+  // ICON SIZE CLASSES
+  // Note: Removed !important - CSS layers handle specificity.
+  // These classes use [class*="icon-"] selector for higher specificity.
+  // ============================================
+
   // Extra small - inline with body-xs text
   .icon-2xs {
-    font-size: var(--font-compact-md) !important;
-    width: 10px;
-    height: 10px;
+    font-size: var(--ds-icon-size-2xs);
+    width: var(--ds-icon-size-2xs);
+    height: var(--ds-icon-size-2xs);
   }
 
   // Extra small - inline with body-sm text
   .icon-xs {
-    font-size: var(--font-caption-size) !important;
-    width: 12px;
-    height: 12px;
+    font-size: var(--ds-icon-size-xs);
+    width: var(--ds-icon-size-xs);
+    height: var(--ds-icon-size-xs);
   }
 
   // Small - inline with body text
   .icon-sm {
-    font-size: var(--font-body-sm-size) !important;
-    width: 14px;
-    height: 14px;
+    font-size: var(--ds-icon-size-sm);
+    width: var(--ds-icon-size-sm);
+    height: var(--ds-icon-size-sm);
   }
 
   // Medium - default icon size, buttons, navigation
   .icon-md {
-    font-size: var(--font-body-size) !important;
-    width: 16px;
-    height: 16px;
+    font-size: var(--ds-icon-size-md);
+    width: var(--ds-icon-size-md);
+    height: var(--ds-icon-size-md);
   }
 
   // Large - section headers, emphasis
   .icon-lg {
-    font-size: var(--font-h3-size) !important;
-    width: 20px;
-    height: 20px;
+    font-size: var(--ds-icon-size-lg);
+    width: var(--ds-icon-size-lg);
+    height: var(--ds-icon-size-lg);
   }
 
   // Extra large - page headers, hero sections
   .icon-xl {
-    font-size: var(--font-h2-size) !important;
-    width: 24px;
-    height: 24px;
+    font-size: var(--ds-icon-size-xl);
+    width: var(--ds-icon-size-xl);
+    height: var(--ds-icon-size-xl);
   }
 
   // 2XL - empty states, feature highlights
   .icon-2xl {
-    font-size: var(--font-h1-size) !important;
-    width: 32px;
-    height: 32px;
+    font-size: var(--ds-icon-size-2xl);
+    width: var(--ds-icon-size-2xl);
+    height: var(--ds-icon-size-2xl);
   }
 
   // 3XL - large empty states
   .icon-3xl {
-    font-size: var(--font-h1-size) !important;
-    width: 48px;
-    height: 48px;
+    font-size: var(--ds-icon-size-3xl);
+    width: var(--ds-icon-size-3xl);
+    height: var(--ds-icon-size-3xl);
   }
 
   // ============================================
@@ -264,21 +277,21 @@
   // ============================================
 
   :root {
-    --icon-size-2xs: 10px;
-    --icon-size-xs: 12px;
-    --icon-size-sm: 14px;
-    --icon-size-md: 16px;
-    --icon-size-lg: 20px;
-    --icon-size-xl: 24px;
-    --icon-size-2xl: 32px;
-    --icon-size-3xl: 48px;
+    --icon-size-2xs: var(--ds-icon-size-2xs);
+    --icon-size-xs: var(--ds-icon-size-xs);
+    --icon-size-sm: var(--ds-icon-size-sm);
+    --icon-size-md: var(--ds-icon-size-md);
+    --icon-size-lg: var(--ds-icon-size-lg);
+    --icon-size-xl: var(--ds-icon-size-xl);
+    --icon-size-2xl: var(--ds-icon-size-2xl);
+    --icon-size-3xl: var(--ds-icon-size-3xl);
 
     // Standardized icon sizes for specific contexts
-    --icon-size-inline: var(--icon-size-sm); // Inline with text
-    --icon-size-button: var(--icon-size-md); // Inside buttons
-    --icon-size-nav: var(--icon-size-lg); // Navigation items
-    --icon-size-header: var(--icon-size-lg); // Section headers (20px)
-    --icon-size-page-header: var(--icon-size-xl); // Page headers
-    --icon-size-empty-state: var(--icon-size-3xl); // Empty states
+    --icon-size-inline: var(--ds-icon-size-inline); // Inline with text
+    --icon-size-button: var(--ds-icon-size-button); // Inside buttons
+    --icon-size-nav: var(--ds-icon-size-lg); // Navigation items
+    --icon-size-header: var(--ds-icon-size-lg); // Section headers (20px)
+    --icon-size-page-header: var(--ds-icon-size-xl); // Page headers
+    --icon-size-empty-state: var(--ds-icon-size-3xl); // Empty states
   }
 }

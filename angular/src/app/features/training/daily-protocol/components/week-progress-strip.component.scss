@@ -22,15 +22,15 @@
 /* Week Days */
 .week-days {
   display: flex;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .day-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-1, 4px);
-  padding: var(--space-2, 8px);
+  gap: var(--ds-space-1);
+  padding: var(--ds-space-2);
   border-radius: var(--radius-lg, 8px);
   min-width: var(--icon-min-width-lg);
   transition: background-color var(--transition-fast) var(--ease-standard);
@@ -122,7 +122,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
 }
 
 .stat-block__value {
@@ -153,7 +153,7 @@
 
   .day-item {
     min-width: var(--icon-min-width-md);
-    padding: var(--space-1, 4px);
+    padding: var(--ds-space-1);
   }
 
   .week-stats {

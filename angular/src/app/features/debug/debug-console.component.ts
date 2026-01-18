@@ -158,7 +158,7 @@ interface DebugLog {
   styles: [
     `
       .debug-console {
-        padding: 20px;
+        padding: var(--ds-space-5);
         background: #1e1e1e;
         color: #d4d4d4;
         font-family: var(--ds-font-family-mono); /* ds-exception: monospace console */
@@ -167,22 +167,22 @@ interface DebugLog {
 
       h2 {
         color: #4ec9b0;
-        margin-bottom: 20px;
+        margin-bottom: var(--ds-space-5);
       }
 
       h3 {
         color: #569cd6;
-        margin: 20px 0 10px;
+        margin: var(--ds-space-5) 0 calc(var(--ds-space-5) / 2);
       }
 
       .debug-controls {
         display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
+        gap: calc(var(--ds-space-5) / 2);
+        margin-bottom: var(--ds-space-5);
       }
 
       button {
-        padding: 8px 16px;
+        padding: var(--ds-space-2) var(--ds-space-4);
         background: #2d2d2d;
         color: #d4d4d4;
         border: 1px solid #3e3e3e;
@@ -217,36 +217,36 @@ interface DebugLog {
       .test-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 15px;
-        margin-top: 15px;
+        gap: calc(var(--ds-space-4) - (var(--ds-space-1) / 4));
+        margin-top: calc(var(--ds-space-4) - (var(--ds-space-1) / 4));
       }
 
       .test-card {
         background: #2d2d2d;
-        padding: 15px;
+        padding: calc(var(--ds-space-4) - (var(--ds-space-1) / 4));
         border-radius: 4px;
         border: 1px solid #3e3e3e;
       }
 
       .test-card h4 {
         color: #9cdcfe;
-        margin: 0 0 10px;
+        margin: 0 0 calc(var(--ds-space-5) / 2);
         font-size: var(--ds-font-size-sm);
       }
 
       .test-card select {
         width: 100%;
-        padding: 6px;
+        padding: calc(var(--ds-space-3) / 2);
         background: #1e1e1e;
         color: #d4d4d4;
         border: 1px solid #3e3e3e;
         border-radius: 4px;
-        margin-bottom: 8px;
+        margin-bottom: var(--ds-space-2);
       }
 
       .test-card button {
         width: 100%;
-        padding: 8px;
+        padding: var(--ds-space-2);
         font-size: var(--ds-font-size-xs);
       }
 
@@ -258,13 +258,13 @@ interface DebugLog {
         background: #1e1e1e;
         border: 1px solid #3e3e3e;
         border-radius: 4px;
-        padding: 10px;
+        padding: calc(var(--ds-space-5) / 2);
         max-height: 500px;
         overflow-y: auto;
       }
 
       .log-entry {
-        padding: 8px;
+        padding: var(--ds-space-2);
         margin-bottom: 4px;
         border-left: 3px solid transparent;
         font-size: var(--ds-font-size-xs);
@@ -292,11 +292,11 @@ interface DebugLog {
 
       .log-time {
         color: #808080;
-        margin-right: 8px;
+        margin-right: var(--ds-space-2);
       }
 
       .log-level {
-        margin-right: 8px;
+        margin-right: var(--ds-space-2);
         font-weight: var(--ds-font-weight-bold);
       }
 
@@ -319,7 +319,7 @@ interface DebugLog {
 
       .log-details {
         margin-top: 4px;
-        padding: 8px;
+        padding: var(--ds-space-2);
         background: #000;
         border-radius: 2px;
         font-size: var(--ds-font-size-compact-md);
@@ -328,9 +328,9 @@ interface DebugLog {
       }
 
       .stats-section {
-        margin-top: 30px;
+        margin-top: var(--ds-space-6);
         background: #2d2d2d;
-        padding: 20px;
+        padding: var(--ds-space-5);
         border-radius: 4px;
         border: 1px solid #3e3e3e;
       }
@@ -338,13 +338,13 @@ interface DebugLog {
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-        margin-top: 15px;
+        gap: calc(var(--ds-space-4) - (var(--ds-space-1) / 4));
+        margin-top: calc(var(--ds-space-4) - (var(--ds-space-1) / 4));
       }
 
       .stat-card {
         background: #1e1e1e;
-        padding: 15px;
+        padding: calc(var(--ds-space-4) - (var(--ds-space-1) / 4));
         border-radius: 4px;
         text-align: center;
       }
@@ -353,7 +353,7 @@ interface DebugLog {
         font-size: var(--ds-font-size-3xl);
         font-weight: var(--ds-font-weight-bold);
         color: #569cd6;
-        margin-bottom: 5px;
+        margin-bottom: calc(var(--ds-space-1) + (var(--ds-space-1) / 4));
       }
 
       .stat-block__value.success {
@@ -370,19 +370,19 @@ interface DebugLog {
       }
 
       .by-table {
-        margin-top: 20px;
+        margin-top: var(--ds-space-5);
       }
 
       .table-stats {
         display: grid;
-        gap: 8px;
-        margin-top: 10px;
+        gap: var(--ds-space-2);
+        margin-top: calc(var(--ds-space-5) / 2);
       }
 
       .table-stat {
         display: flex;
         justify-content: space-between;
-        padding: 8px;
+        padding: var(--ds-space-2);
         background: #1e1e1e;
         border-radius: 4px;
       }

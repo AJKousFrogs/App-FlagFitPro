@@ -29,6 +29,10 @@ import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import {
+  getMappedStatusSeverity,
+  programStatusSeverityMap
+} from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
@@ -919,16 +923,7 @@ export class ProgramBuilderComponent implements OnInit {
   getStatusSeverity(
     status: ProgramStatus,
   ): "success" | "info" | "warning" | "secondary" {
-    const severities: Record<
-      ProgramStatus,
-      "success" | "info" | "warning" | "secondary"
-    > = {
-      draft: "secondary",
-      active: "success",
-      completed: "info",
-      archived: "warning",
-    };
-    return severities[status];
+    return getMappedStatusSeverity(status, programStatusSeverityMap, "info");
   }
 
   getProgressPercent(program: TrainingProgram): number {

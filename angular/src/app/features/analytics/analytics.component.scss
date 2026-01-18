@@ -53,32 +53,50 @@
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition:
-    background-color var(--transition-base),
-    transform var(--transition-base);
+    background-color var(--ds-state-transition),
+    transform var(--ds-state-transition);
   position: relative;
   min-width: var(--input-min-width-sm);
   flex-shrink: 0;
-  outline: none;
+  -webkit-tap-highlight-color: transparent;
 
-  &:hover:not(.disabled) {
-    background: var(--surface-secondary);
-    transform: translateY(-2px);
+  // Desktop-only hover
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(.disabled) {
+      background: var(--surface-secondary);
+      transform: translateY(-2px);
 
-    .step-number {
-      background: var(--ds-primary-green);
-      color: var(--color-text-on-primary);
-      transform: scale(1.1);
-    }
+      .step-number {
+        background: var(--ds-primary-green);
+        color: var(--color-text-on-primary);
+        transform: scale(1.1);
+      }
 
-    .step-label {
-      color: var(--ds-primary-green);
-      font-weight: var(--ds-font-weight-semibold);
+      .step-label {
+        color: var(--ds-primary-green);
+        font-weight: var(--ds-font-weight-semibold);
+      }
     }
   }
 
+  // Touch device active state
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(.disabled) {
+      background: var(--surface-secondary);
+      transform: scale(0.98);
+    }
+  }
+
+  // Consistent focus ring
   &:focus-visible {
-    outline: var(--border-2) solid var(--ds-primary-green);
-    outline-offset: var(--space-1);
+    outline: 2px solid var(--ds-primary-green);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.25);
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
   }
 
   &.active {
@@ -830,12 +848,15 @@
 .metric-card {
   text-align: left;
   transition:
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+    transform var(--ds-state-transition),
+    box-shadow var(--ds-state-transition);
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+  // Desktop-only hover
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
   }
 
   // PrimeNG card body/content overrides moved to _exceptions.scss (DS-EXC-052)
@@ -888,7 +909,7 @@
 .metric-trend {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  padding: var(--space-2) var(--space-3); // More padding: 8px 12px
+  padding: var(--space-2) var(--space-3); // More padding for legibility
   border-radius: var(--radius-md);
   display: inline-block;
   margin-top: var(--space-2);

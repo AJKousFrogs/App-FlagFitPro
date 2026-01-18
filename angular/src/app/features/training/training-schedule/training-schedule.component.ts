@@ -25,6 +25,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
+import { getStatusSeverity as getStatusSeverityValue } from "../../../shared/utils/status.utils";
 
 interface TrainingSession {
   id: string;
@@ -849,16 +850,7 @@ export class TrainingScheduleComponent implements OnInit {
     | "danger"
     | null
     | undefined {
-    switch (status) {
-      case "completed":
-        return "success";
-      case "missed":
-        return "danger";
-      case "in_progress":
-        return "warning";
-      default:
-        return "info";
-    }
+    return getStatusSeverityValue(status);
   }
 
   getStatusIcon(status: string): string {

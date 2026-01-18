@@ -313,10 +313,10 @@ export const RepeatedTableRows: Story = {
 export const AllVariants: Story = {
   render: () => ({
     template: `
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--ds-space-8);">
         <div>
           <h4 style="margin-bottom: 16px; color: var(--color-text-secondary);">Text & Title</h4>
-          <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; flex-direction: column; gap: var(--ds-space-2);">
             <app-skeleton-loader variant="title" width="60%"></app-skeleton-loader>
             <app-skeleton-loader variant="text" width="100%"></app-skeleton-loader>
             <app-skeleton-loader variant="text" width="80%"></app-skeleton-loader>
@@ -326,7 +326,7 @@ export const AllVariants: Story = {
         
         <div>
           <h4 style="margin-bottom: 16px; color: var(--color-text-secondary);">Avatars & Badges</h4>
-          <div style="display: flex; gap: 16px; align-items: center;">
+          <div style="display: flex; gap: var(--ds-space-4); align-items: center;">
             <app-skeleton-loader variant="avatar" size="32px"></app-skeleton-loader>
             <app-skeleton-loader variant="avatar" size="48px"></app-skeleton-loader>
             <app-skeleton-loader variant="avatar" size="64px"></app-skeleton-loader>

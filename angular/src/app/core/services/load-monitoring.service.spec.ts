@@ -843,7 +843,9 @@ describe("LoadMonitoringService", () => {
       // Both scores are capped at 100, so if both exceed 100, difference is 0
       // Energy difference of 9 × 25 = 225 points, but capped
       // The test should verify energy has significant impact
-      expect(highScore).toBeGreaterThanOrEqual(lowScore);
+      expect(highScore).not.toBeNull();
+      expect(lowScore).not.toBeNull();
+      expect(highScore as number).toBeGreaterThanOrEqual(lowScore as number);
     });
   });
 

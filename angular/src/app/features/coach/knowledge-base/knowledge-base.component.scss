@@ -9,16 +9,9 @@
   gap: var(--space-4);
 }
 
-// Search Bar
+/* Uses .ds-search-bar--card variant from design-system/utilities.scss */
 .search-bar {
-  .search-input {
-    width: 100%;
-
-    input {
-      width: 100%;
-      padding-left: 2.5rem;
-    }
-  }
+  // Component-specific overrides only
 }
 
 // Tab Navigation

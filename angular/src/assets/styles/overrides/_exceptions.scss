@@ -681,6 +681,87 @@
   }
 
   /* ------------------------------------------------
+   * COMPONENT: header.component (shortcuts dialog sizing)
+   * Ticket: DS-EXC-053
+   * Owner: @design-system-team
+   * Scope: shortcuts dialog overlay
+   * Remove by: 2026-06-01
+   * Reason: Dialog overlay renders outside component tree.
+   * ------------------------------------------------ */
+  .shortcuts-dialog {
+    width: min(95vw, var(--dialog-max-width-lg));
+    max-width: var(--dialog-max-width-lg);
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: body-composition-card.component (dialog layout)
+   * Ticket: DS-EXC-054
+   * Owner: @design-system-team
+   * Scope: body composition dialog overlay
+   * Remove by: 2026-06-01
+   * Reason: PrimeNG dialog is appended to body; avoid ::ng-deep.
+   * ------------------------------------------------ */
+  .body-comp-dialog.p-dialog {
+    width: min(95vw, var(--dialog-max-width-md));
+    max-width: var(--dialog-max-width-md);
+  }
+
+  .body-comp-dialog .p-dialog-content {
+    max-height: calc(80dvh - var(--space-12));
+    overflow-y: auto;
+  }
+
+  @include respond-to(sm) {
+    .body-comp-dialog.p-dialog {
+      max-height: 80vh;
+      max-height: 80dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .body-comp-dialog .p-dialog-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .body-comp-dialog .p-dialog-footer {
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+      background: var(--surface-primary);
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      border-top: 1px solid var(--color-border-muted);
+    }
+  }
+
+  /* ------------------------------------------------
+   * COMPONENT: today.component (quick check-in dialog)
+   * Ticket: DS-EXC-055
+   * Owner: @design-system-team
+   * Scope: quick check-in dialog overlay
+   * Remove by: 2026-06-01
+   * Reason: Replace inline dialog styles with documented overrides.
+   * ------------------------------------------------ */
+  .quick-checkin-modal {
+    width: 95vw;
+    max-width: var(--dialog-max-width-sm);
+  }
+
+  .quick-checkin-modal .p-dialog-content {
+    padding: var(--ds-space-4);
+    max-height: calc(
+      80dvh -
+        (
+          var(--ds-space-24) +
+            var(--ds-space-10) +
+            var(--ds-space-1)
+        )
+    );
+    overflow-y: auto;
+  }
+
+  /* ------------------------------------------------
    * COMPONENT: chat.component
    * Ticket: DS-EXC-006
    * Owner: @design-system-team

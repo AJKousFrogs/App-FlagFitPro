@@ -12,6 +12,10 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import {
+  accountStatusSeverityMap,
+  getMappedStatusSeverity
+} from "../../shared/utils/status.utils";
 import { TableModule } from "primeng/table";
 import { InputText } from "primeng/inputtext";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -292,20 +296,8 @@ export class SuperadminTeamsComponent implements OnInit {
     this.filterTeams();
   }
 
-  getStatusSeverity(
-    status: string,
-  ): "success" | "warning" | "danger" | "info" | "secondary" {
-    switch (status) {
-      case "active":
-        return "success";
-      case "pending":
-        return "warning";
-      case "suspended":
-        return "danger";
-      default:
-        return "secondary";
-    }
-  }
+  getStatusSeverity = (status: string) =>
+    getMappedStatusSeverity(status, accountStatusSeverityMap, "secondary");
 
   formatOlympicTrack(track?: string): string {
     if (!track) return "-";

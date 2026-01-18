@@ -20,6 +20,10 @@ import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import {
+  getMappedStatusSeverity,
+  officialAssignmentStatusSeverityMap
+} from "../../shared/utils/status.utils";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
@@ -658,14 +662,11 @@ export class OfficialsComponent implements OnInit {
   }
 
   getStatusSeverity(status: string): "success" | "info" | "warning" | "danger" {
-    const severities: Record<string, "success" | "info" | "warning" | "danger"> =
-      {
-      confirmed: "success",
-      scheduled: "info",
-      declined: "warning",
-      no_show: "danger",
-    };
-    return severities[status] || "info";
+    return getMappedStatusSeverity(
+      status,
+      officialAssignmentStatusSeverityMap,
+      "info",
+    );
   }
 
   openAddOfficialDialog(): void {

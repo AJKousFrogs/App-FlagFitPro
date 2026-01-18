@@ -10,10 +10,10 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
 
 @Component({
@@ -22,30 +22,21 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormsModule,
-    InputText,
     Select,
     ButtonComponent,
     IconButtonComponent,
+    SearchInputComponent
   ],
   template: `
-    <div class="search-filter-bar">
-      <div class="search-box">
-        <i class="pi pi-search" aria-hidden="true"></i>
-        <input
-          type="text"
-          pInputText
-          placeholder="Search players by name..."
-          [ngModel]="searchQuery()"
-          (ngModelChange)="searchQuery.set($event)"
-          class="search-input"
-          aria-label="Search players by name"
-        />
-        @if (searchQuery()) {
-          <button class="clear-search" (click)="searchQuery.set('')" aria-label="Clear search">
-            <i class="pi pi-times" aria-hidden="true"></i>
-          </button>
-        }
-      </div>
+    <div class="search-filter-bar ds-toolbar ds-toolbar--card">
+      <app-search-input
+        class="search-box"
+        placeholder="Search players by name..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        ariaLabel="Search players by name"
+        [clearable]="true"
+      />
 
       <div class="filter-group">
         <p-select

@@ -54,6 +54,7 @@ import {
 import { DailyReadinessComponent } from "../../shared/components/daily-readiness/daily-readiness.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { MicroSessionComponent } from "../../shared/components/micro-session/micro-session.component";
+import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
 import { formatTimeOfDay } from "../../shared/utils/format.utils";
 
 interface ChatMessage {
@@ -152,7 +153,8 @@ interface AutocompleteSuggestion {
     MainLayoutComponent,
     DailyReadinessComponent,
     MicroSessionComponent,
-    AIModeExplanationComponent
+    AIModeExplanationComponent,
+    SearchInputComponent
   ],
   template: `
     <app-main-layout>
@@ -257,13 +259,12 @@ interface AutocompleteSuggestion {
         <!-- Search Bar (conditionally shown) -->
         @if (searchMode()) {
           <div class="search-bar" @slideDown>
-            <i class="pi pi-search"></i>
-            <input
-              type="text"
+            <app-search-input
+              class="search-bar-input"
               [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearchInput()"
               placeholder="Search in conversation..."
-              (input)="onSearchInput()"
-              class="search-input"
+              ariaLabel="Search in conversation"
               #searchInput
             />
             @if (searchQuery) {

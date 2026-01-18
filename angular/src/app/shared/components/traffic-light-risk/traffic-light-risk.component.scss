@@ -61,19 +61,19 @@
   font-weight: var(--ds-font-weight-bold);
 
   &.optimal {
-    color: var(--color-status-success);
+    color: var(--ds-status-success-solid);
   }
 
   &.warning {
-    color: var(--color-status-warning);
+    color: var(--ds-status-warning-solid);
   }
 
   &.danger {
-    color: var(--color-status-danger);
+    color: var(--ds-status-danger-solid);
   }
 
   &.under {
-    color: var(--color-status-info);
+    color: var(--ds-status-info-solid);
   }
 
   &.no-data {
@@ -118,7 +118,7 @@
 
   // Light colors using tokens
   &.green {
-    background: var(--ds-primary-green);
+    background: var(--ds-status-success-solid);
 
     &.active {
       box-shadow: 0 0 16px var(--ds-primary-green-subtle);
@@ -126,34 +126,34 @@
   }
 
   &.yellow {
-    background: var(--color-status-warning);
+    background: var(--ds-status-warning-solid);
 
     &.active {
-      box-shadow: 0 0 16px var(--color-warning-bg);
+      box-shadow: 0 0 16px var(--ds-status-warning-bg);
     }
   }
 
   &.red {
-    background: var(--color-status-error);
+    background: var(--ds-status-danger-solid);
 
     &.active {
-      box-shadow: 0 0 16px var(--color-danger-bg);
+      box-shadow: 0 0 16px var(--ds-status-danger-bg);
     }
   }
 
   &.orange {
-    background: var(--color-status-info);
+    background: var(--ds-status-info-solid);
 
     &.active {
-      box-shadow: 0 0 16px var(--color-info-bg);
+      box-shadow: 0 0 16px var(--ds-status-info-bg);
     }
   }
 
   &.gray {
-    background: var(--color-border-strong);
+    background: var(--ds-status-neutral-solid);
 
     &.active {
-      box-shadow: 0 0 16px rgba(163, 163, 163, 0.5);
+      box-shadow: 0 0 16px var(--ds-status-neutral-glow);
     }
   }
 }
@@ -197,23 +197,23 @@
 
   // Status-specific backgrounds using tokens
   &.info-sweet-spot {
-    background: var(--color-success-bg);
-    border-color: var(--ds-primary-green-subtle);
+    background: var(--ds-status-success-bg);
+    border-color: var(--ds-status-success-border);
   }
 
   &.info-elevated-risk {
-    background: var(--color-warning-bg);
-    border-color: var(--color-border-warning);
+    background: var(--ds-status-warning-bg);
+    border-color: var(--ds-status-warning-border);
   }
 
   &.info-danger-zone {
-    background: var(--color-danger-bg);
-    border-color: var(--color-border-danger);
+    background: var(--ds-status-danger-bg);
+    border-color: var(--ds-status-danger-border);
   }
 
   &.info-under-training {
-    background: var(--color-info-bg);
-    border-color: var(--color-status-info);
+    background: var(--ds-status-info-bg);
+    border-color: var(--ds-status-info-border);
   }
 
   &.info-no-data {
@@ -248,9 +248,9 @@
   color: var(--color-text-primary);
   font-weight: var(--ds-font-weight-medium);
   padding: var(--space-3);
-  background: var(--color-success-bg);
+  background: var(--ds-status-success-bg);
   border-radius: var(--radius-lg);
-  border-left: 3px solid var(--ds-primary-green);
+  border-left: 3px solid var(--ds-status-success-border);
 
   strong {
     color: var(--color-text-secondary);
@@ -284,7 +284,7 @@
   }
 
   &.segment-under {
-    background: var(--color-status-info);
+    background: var(--ds-status-info-solid);
     opacity: 0.7;
 
     &.active {
@@ -293,7 +293,7 @@
   }
 
   &.segment-sweet {
-    background: var(--color-status-success);
+    background: var(--ds-status-success-solid);
     opacity: 0.7;
 
     &.active {
@@ -302,7 +302,7 @@
   }
 
   &.segment-elevated {
-    background: var(--color-status-warning);
+    background: var(--ds-status-warning-solid);
     opacity: 0.7;
 
     &.active {
@@ -311,7 +311,7 @@
   }
 
   &.segment-danger {
-    background: var(--color-status-danger);
+    background: var(--ds-status-danger-solid);
     opacity: 0.7;
 
     &.active {

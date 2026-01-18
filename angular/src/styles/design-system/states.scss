@@ -1,13 +1,563 @@
-/* Interaction state mixins and utility classes. */
+/* ==========================================================================
+   INTERACTION STATES - Design System
+   Single source of truth for all interactive element states
+   
+   USAGE:
+   - Import: @use "styles/design-system/states" as states;
+   - Apply: @include states.ds-button-states;
+   
+   PRINCIPLES:
+   1. Consistent focus rings for keyboard accessibility
+   2. Hover states only on devices that support hover (desktop)
+   3. Disabled states are visually distinct and non-interactive
+   4. No transitions on initial render (prevents blur/flicker)
+   5. Reduced motion support throughout
+   ========================================================================== */
 
-@mixin ds-interactive-base {
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
+/* ==========================================================================
+   STATE TOKENS (CSS Variables)
+   ========================================================================== */
+
+:root {
+  /* Hover backgrounds */
+  --ds-state-hover-bg: rgba(0, 0, 0, 0.04);
+  --ds-state-hover-bg-dark: rgba(255, 255, 255, 0.08);
+  
+  /* Active/Pressed backgrounds */
+  --ds-state-active-bg: rgba(0, 0, 0, 0.08);
+  --ds-state-active-bg-dark: rgba(255, 255, 255, 0.12);
+  
+  /* Focus ring - consistent green ring for accessibility */
+  --ds-state-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.3);
+  --ds-state-focus-outline: 2px solid var(--ds-primary-green, #089949);
+  --ds-state-focus-outline-offset: 2px;
+  
+  /* Disabled */
+  --ds-state-disabled-opacity: 0.5;
+  --ds-state-disabled-cursor: not-allowed;
+  
+  /* Transition timing - prevents blur on first render */
+  --ds-state-transition-duration: 150ms;
+  --ds-state-transition-timing: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ds-state-transition: var(--ds-state-transition-duration) var(--ds-state-transition-timing);
 }
 
+/* ==========================================================================
+   INITIAL RENDER PROTECTION
+   Prevents transition blur/flicker on first paint
+   ========================================================================== */
+
+/* Applied via JS on document ready, removed after first paint */
+html.ds-initial-render,
+html.ds-initial-render * {
+  transition: none !important;
+  animation-duration: 0.01ms !important;
+}
+
+/* ==========================================================================
+   BASE INTERACTIVE MIXIN
+   Foundation for all interactive elements
+   ========================================================================== */
+
+@mixin ds-interactive-base {
+  /* Transition only after initial render */
+  transition:
+    background-color var(--ds-state-transition),
+    color var(--ds-state-transition),
+    border-color var(--ds-state-transition),
+    box-shadow var(--ds-state-transition),
+    transform var(--ds-state-transition),
+    opacity var(--ds-state-transition);
+  
+  /* Remove tap highlight on touch devices */
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Optimize paint for interactive elements */
+  will-change: auto; /* Let browser decide, avoid premature optimization */
+}
+
+/* ==========================================================================
+   FOCUS RING MIXIN
+   Consistent keyboard accessibility across all components
+   ========================================================================== */
+
+@mixin ds-focus-ring($color: var(--ds-primary-green, #089949)) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: var(--ds-state-focus-outline-offset);
+    box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.25);
+  }
+  
+  /* Hide outline for mouse users */
+  &:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+/* ==========================================================================
+   DISABLED STATE MIXIN
+   Ensures disabled elements are visually distinct
+   ========================================================================== */
+
+@mixin ds-disabled-state {
+  &:disabled,
+  &[aria-disabled="true"],
+  &.disabled {
+    opacity: var(--ds-state-disabled-opacity);
+    cursor: var(--ds-state-disabled-cursor);
+    pointer-events: none;
+    
+    /* Ensure disabled state is visually distinct */
+    filter: grayscale(10%);
+    
+    /* Remove any hover/active styles */
+    &:hover,
+    &:active {
+      transform: none;
+      box-shadow: inherit;
+      background-color: inherit;
+    }
+  }
+}
+
+/* ==========================================================================
+   HOVER STATE MIXIN
+   Desktop-only hover with proper detection
+   ========================================================================== */
+
+@mixin ds-hover-state($bg: var(--ds-state-hover-bg)) {
+  /* Only apply hover on devices that truly support it */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]):not(.disabled) {
+      background-color: $bg;
+    }
+  }
+}
+
+/* ==========================================================================
+   ACTIVE/PRESSED STATE MIXIN
+   ========================================================================== */
+
+@mixin ds-active-state($bg: var(--ds-state-active-bg)) {
+  &:active:not(:disabled):not([aria-disabled="true"]):not(.disabled) {
+    background-color: $bg;
+  }
+}
+
+/* ==========================================================================
+   BUTTON STATES
+   Complete button interaction states
+   ========================================================================== */
+
+@mixin ds-button-states(
+  $hover-bg: var(--color-text-on-primary, #fff),
+  $hover-color: var(--ds-primary-green, #089949),
+  $hover-border: var(--ds-primary-green, #089949)
+) {
+  @include ds-interactive-base;
+  
+  /* HOVER - Desktop only */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]):not(.btn-disabled):not(.disabled) {
+      background-color: $hover-bg;
+      color: $hover-color;
+      border-color: $hover-border;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(8, 153, 73, 0.25);
+    }
+  }
+  
+  /* ACTIVE/PRESSED - All devices */
+  &:active:not(:disabled):not([aria-disabled="true"]):not(.btn-disabled):not(.disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+  }
+  
+  /* Touch device active */
+  @media (hover: none) and (pointer: coarse) {
+    &:active:not(:disabled):not([aria-disabled="true"]):not(.btn-disabled):not(.disabled) {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+  }
+  
+  /* FOCUS - Keyboard accessibility */
+  @include ds-focus-ring;
+  
+  /* DISABLED */
+  @include ds-disabled-state;
+}
+
+/* ==========================================================================
+   INPUT STATES
+   Form input interaction states
+   ========================================================================== */
+
+@mixin ds-input-states {
+  @include ds-interactive-base;
+  
+  /* HOVER */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not(:focus-visible):not(.is-invalid):not(.ng-invalid.ng-touched) {
+      border-color: var(--color-text-secondary, #525252);
+    }
+  }
+  
+  /* FOCUS */
+  &:focus-visible {
+    outline: 2px solid var(--ds-primary-green, #089949);
+    outline-offset: 2px;
+    border-color: var(--ds-primary-green, #089949);
+    box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.2);
+  }
+  
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+  
+  /* DISABLED */
+  &:disabled {
+    background-color: var(--surface-secondary, #f8faf9);
+    cursor: not-allowed;
+    opacity: var(--ds-state-disabled-opacity);
+    
+    /* Ensure clearly non-interactive appearance */
+    &::placeholder {
+      color: var(--color-text-tertiary, #a3a3a3);
+    }
+  }
+  
+  /* ERROR/INVALID */
+  &.is-invalid,
+  &.ng-invalid.ng-touched,
+  &:invalid {
+    border-color: var(--color-status-error, #ef4444);
+    
+    &:focus-visible {
+      border-color: var(--color-status-error, #ef4444);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    }
+  }
+  
+  /* SUCCESS/VALID */
+  &.is-valid,
+  &.ng-valid.ng-touched:not(:invalid) {
+    border-color: var(--color-status-success, #63ad0e);
+    
+    &:focus-visible {
+      border-color: var(--color-status-success, #63ad0e);
+      box-shadow: 0 0 0 3px rgba(99, 173, 14, 0.2);
+    }
+  }
+}
+
+/* ==========================================================================
+   CARD STATES
+   Clickable card/surface interaction states
+   ========================================================================== */
+
+@mixin ds-card-states($interactive: false) {
+  @include ds-interactive-base;
+  
+  @if $interactive {
+    cursor: pointer;
+    
+    /* HOVER - Desktop only */
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
+      }
+    }
+    
+    /* ACTIVE/PRESSED */
+    &:active {
+      transform: translateY(-2px) scale(0.99);
+    }
+    
+    /* Touch device active */
+    @media (hover: none) and (pointer: coarse) {
+      &:active {
+        transform: scale(0.99);
+      }
+    }
+    
+    /* FOCUS */
+    @include ds-focus-ring;
+  } @else {
+    /* Non-interactive cards just get subtle hover elevation */
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.15));
+      }
+    }
+  }
+}
+
+/* ==========================================================================
+   TAB STATES
+   Tab/navigation item interaction states
+   ========================================================================== */
+
+@mixin ds-tab-states {
+  @include ds-interactive-base;
+  
+  /* HOVER */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]):not(.active):not([aria-selected="true"]) {
+      background-color: var(--surface-secondary, #f8faf9);
+      color: var(--ds-primary-green, #089949);
+    }
+  }
+  
+  /* ACTIVE TAB */
+  &.active,
+  &[aria-selected="true"] {
+    background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
+    color: var(--ds-primary-green, #089949);
+    font-weight: var(--ds-font-weight-semibold, 600);
+  }
+  
+  /* FOCUS */
+  @include ds-focus-ring;
+  
+  /* DISABLED */
+  @include ds-disabled-state;
+}
+
+/* ==========================================================================
+   MENU ITEM STATES
+   Dropdown/menu item interaction states
+   ========================================================================== */
+
+@mixin ds-menu-item-states {
+  @include ds-interactive-base;
+  
+  /* HOVER */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]) {
+      background-color: var(--surface-secondary, #f8faf9);
+    }
+  }
+  
+  /* FOCUS/HIGHLIGHTED */
+  &.p-focus,
+  &.p-highlight,
+  &:focus-visible {
+    background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
+    color: var(--ds-primary-green, #089949);
+    outline: none;
+  }
+  
+  /* SELECTED */
+  &.p-highlight,
+  &[aria-selected="true"] {
+    background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
+    color: var(--ds-primary-green, #089949);
+  }
+  
+  /* DISABLED */
+  @include ds-disabled-state;
+}
+
+/* ==========================================================================
+   NAV ITEM STATES
+   Navigation link interaction states
+   ========================================================================== */
+
+@mixin ds-nav-item-states {
+  @include ds-interactive-base;
+  
+  /* HOVER */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]):not(.active) {
+      background-color: var(--surface-secondary, #f8faf9);
+      color: var(--ds-primary-green, #089949);
+    }
+  }
+  
+  /* ACTIVE/CURRENT */
+  &.active,
+  &[aria-current="page"],
+  &.router-link-active {
+    background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
+    color: var(--ds-primary-green, #089949);
+    font-weight: var(--ds-font-weight-semibold, 600);
+  }
+  
+  /* FOCUS */
+  @include ds-focus-ring;
+  
+  /* DISABLED */
+  @include ds-disabled-state;
+}
+
+/* ==========================================================================
+   TOGGLE/SWITCH STATES
+   Toggle switch interaction states
+   ========================================================================== */
+
+@mixin ds-toggle-states {
+  @include ds-interactive-base;
+  
+  /* HOVER */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]) {
+      box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.1);
+    }
+  }
+  
+  /* FOCUS */
+  @include ds-focus-ring;
+  
+  /* CHECKED/ON */
+  &:checked,
+  &[aria-checked="true"],
+  &.checked {
+    background-color: var(--ds-primary-green, #089949);
+    border-color: var(--ds-primary-green, #089949);
+  }
+  
+  /* DISABLED */
+  @include ds-disabled-state;
+}
+
+/* ==========================================================================
+   ICON BUTTON STATES
+   Icon-only button interaction states
+   ========================================================================== */
+
+@mixin ds-icon-button-states {
+  @include ds-interactive-base;
+  
+  /* HOVER */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled):not([aria-disabled="true"]) {
+      background-color: var(--surface-tertiary, #f0f0f0);
+      color: var(--ds-primary-green, #089949);
+    }
+  }
+  
+  /* ACTIVE */
+  &:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: scale(0.95);
+  }
+  
+  /* FOCUS */
+  @include ds-focus-ring;
+  
+  /* DISABLED */
+  @include ds-disabled-state;
+}
+
+/* ==========================================================================
+   DIALOG CLOSE BUTTON STATES
+   Modal/dialog close button specific states
+   ========================================================================== */
+
+@mixin ds-dialog-close-states {
+  @include ds-interactive-base;
+  
+  /* HOVER */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--surface-tertiary, #f0f0f0);
+      color: var(--color-text-primary, #1a1a1a);
+    }
+  }
+  
+  /* FOCUS */
+  @include ds-focus-ring;
+}
+
+/* ==========================================================================
+   LOADING STATE MIXIN
+   Prevents layout jump during loading
+   ========================================================================== */
+
+@mixin ds-loading-state {
+  &.loading,
+  &[aria-busy="true"] {
+    pointer-events: none;
+    cursor: wait;
+    
+    /* Maintain dimensions to prevent layout shift */
+    min-height: inherit;
+    
+    /* Subtle visual indication */
+    opacity: 0.8;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   Respect user preferences
+   ========================================================================== */
+
+@mixin ds-reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+    
+    &:hover,
+    &:active,
+    &:focus-visible {
+      transform: none;
+    }
+  }
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   For direct application in templates
+   ========================================================================== */
+
+.ds-interactive {
+  @include ds-interactive-base;
+  @include ds-hover-state;
+  @include ds-active-state;
+  @include ds-focus-ring;
+  @include ds-disabled-state;
+  @include ds-reduced-motion;
+}
+
+.ds-button-interactive {
+  @include ds-button-states;
+  @include ds-reduced-motion;
+}
+
+.ds-input-interactive {
+  @include ds-input-states;
+  @include ds-reduced-motion;
+}
+
+.ds-card-interactive {
+  @include ds-card-states($interactive: true);
+  @include ds-reduced-motion;
+}
+
+.ds-tab-interactive {
+  @include ds-tab-states;
+  @include ds-reduced-motion;
+}
+
+.ds-menu-item-interactive {
+  @include ds-menu-item-states;
+  @include ds-reduced-motion;
+}
+
+.ds-nav-interactive {
+  @include ds-nav-item-states;
+  @include ds-reduced-motion;
+}
+
+/* ==========================================================================
+   LEGACY SUPPORT
+   Maintain backwards compatibility with existing code
+   ========================================================================== */
+
+/* Original mixin names for backwards compatibility */
 @mixin ds-interactive-hover {
   background-color: var(--ds-state-hover-bg);
 }
@@ -24,25 +574,4 @@
 @mixin ds-interactive-disabled {
   opacity: var(--ds-state-disabled-opacity);
   cursor: not-allowed;
-}
-
-.ds-interactive {
-  @include ds-interactive-base;
-}
-
-.ds-interactive:hover:not(:disabled):not([aria-disabled="true"]) {
-  @include ds-interactive-hover;
-}
-
-.ds-interactive:active:not(:disabled):not([aria-disabled="true"]) {
-  @include ds-interactive-active;
-}
-
-.ds-interactive:focus-visible {
-  @include ds-interactive-focus;
-}
-
-.ds-interactive:disabled,
-.ds-interactive[aria-disabled="true"] {
-  @include ds-interactive-disabled;
 }

@@ -28,6 +28,9 @@ import { Badge } from "primeng/badge";
 import { MessageService , PrimeTemplate } from "primeng/api";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
+import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
+import { formatDate as formatDateValue } from "../../shared/utils/date.utils";
+import { getStatusSeverity } from "../../shared/utils/status.utils";
 import {
   ExerciseDBService,
   ExerciseDBExercise,
@@ -69,7 +72,8 @@ import { capitalize } from "../../shared/utils/format.utils";
     PageHeaderComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
+    SearchInputComponent
   ],
   template: `
     <app-main-layout>
@@ -138,12 +142,12 @@ import { capitalize } from "../../shared/utils/format.utils";
                   <div class="filters-row">
                     <div class="filter-group">
                       <label>Search</label>
-                      <input
-                        pInputText
+                      <app-search-input
+                        class="filter-search"
                         [(ngModel)]="searchQuery"
+                        (ngModelChange)="onSearchChange()"
                         placeholder="Search exercises..."
-                        (input)="onSearchChange()"
-                        class="search-input"
+                        ariaLabel="Search exercises"
                       />
                     </div>
                     <div class="filter-group">
@@ -1170,28 +1174,10 @@ export class ExerciseDBManagerComponent implements OnInit {
     return "secondary";
   }
 
-  getStatusSeverity(
-    status: string,
-  ): "success" | "info" | "warning" | "danger" | "secondary" {
-    switch (status) {
-      case "completed":
-        return "success";
-      case "started":
-        return "info";
-      case "failed":
-        return "danger";
-      default:
-        return "secondary";
-    }
-  }
+  getStatusSeverity = (status: string) =>
+    getStatusSeverity(status, "secondary");
 
   formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    return formatDateValue(dateString, "MMM d, yyyy, p");
   }
 }

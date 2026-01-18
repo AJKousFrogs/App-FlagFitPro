@@ -31,6 +31,10 @@ import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
+import {
+  getMappedStatusSeverity,
+  paymentStatusSeverityMap
+} from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
@@ -1072,15 +1076,7 @@ export class PaymentManagementComponent implements OnInit {
   getStatusSeverity(
     status: string,
   ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
-    const severities: Record<
-      string,
-      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
-    > = {
-      paid: "success",
-      due: "warning",
-      overdue: "danger",
-    };
-    return severities[status] || "secondary";
+    return getMappedStatusSeverity(status, paymentStatusSeverityMap, "secondary");
   }
 
   getPlayerBalance(playerId: string): number {

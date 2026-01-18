@@ -27,7 +27,7 @@
   color: var(--color-text-primary, #171717);
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .calendar-header h3 i {
@@ -79,7 +79,7 @@
   color: var(--color-text-primary, #171717);
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   flex-wrap: wrap;
   margin-bottom: var(--space-2, 8px);
 }
@@ -93,7 +93,7 @@
 .tournament-details .detail {
   display: flex;
   align-items: center;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary, #737373);
 }
@@ -105,7 +105,7 @@
 /* Countdown */
 .tournament-countdown {
   text-align: center;
-  padding: var(--space-2, 8px) var(--space-3, var(--ds-font-size-xs));
+  padding: var(--ds-space-2) var(--ds-space-3);
   background: var(--primitive-neutral-100, #f5f5f5);
   border-radius: var(--radius-md, 6px);
   min-width: var(--badge-min-width-md);
@@ -135,9 +135,9 @@
 .taper-banner {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   margin-top: var(--space-3, var(--ds-font-size-xs));
-  padding: var(--space-2, 8px) var(--space-3, var(--ds-font-size-xs));
+  padding: var(--ds-space-2) var(--ds-space-3);
   background: var(--primitive-warning-100, #fef3c7);
   border-radius: var(--radius-md, 6px);
   font-size: var(--ds-font-size-sm);
@@ -151,7 +151,7 @@
 .taper-info {
   display: flex;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
   margin-top: var(--space-2, 8px);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted, #a3a3a3);
@@ -161,7 +161,7 @@
 .tournament-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
   margin-top: var(--space-2, 8px);
   border-top: 1px solid var(--primitive-neutral-100, #f5f5f5);
   padding-top: var(--space-2, 8px);
@@ -195,7 +195,7 @@
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 4px);
+  gap: var(--ds-space-1);
 }
 
 .form-field label {
@@ -213,7 +213,7 @@
 .checkbox-group {
   flex-direction: row;
   align-items: flex-start;
-  gap: var(--space-2, 8px);
+  gap: var(--ds-space-2);
 }
 
 .checkbox-group label {

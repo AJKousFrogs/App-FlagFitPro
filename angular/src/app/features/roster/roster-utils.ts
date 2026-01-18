@@ -41,26 +41,6 @@ export function getJerseyColor(position: string): string {
 }
 
 /**
- * Get status severity for PrimeNG tags
- */
-export function getStatusSeverity(
-  status: string,
-): "success" | "danger" | "secondary" | "info" | "warning" {
-  switch (status) {
-    case "active":
-      return "success";
-    case "injured":
-      return "danger";
-    case "limited":
-      return "warning";
-    case "returning":
-      return "info";
-    default:
-      return "secondary";
-  }
-}
-
-/**
  * Convert lbs to kg
  */
 export function lbsToKg(lbs: number): number {

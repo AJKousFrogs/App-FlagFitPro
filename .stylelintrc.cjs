@@ -5,10 +5,12 @@
  * Enforces DESIGN_SYSTEM_RULES.md decisions via automated linting.
  * See the referenced decisions for full context.
  *
- * Updated: January 9, 2026
+ * Updated: January 18, 2026
  * - Added deprecated token detection
  * - Enhanced design token enforcement
  * - Added spacing and color token rules
+ * - Strengthened hardcoded px and hex color guardrails
+ * - Added ::ng-deep warning (deprecated)
  */
 
 // ===========================================
@@ -102,6 +104,9 @@ module.exports = {
     // -----------------------------
     "declaration-property-value-disallowed-list": [
       {
+        // Decision 23: Disallow hardcoded px values (except tokens)
+        "/.*/": ["/\\d+px/"],
+
         // Decision 19: No transition: all
         transition: ["all", "/^all\\s/", "/\\s+all\\s/", "/\\s+all$/"],
 
@@ -154,11 +159,24 @@ module.exports = {
 
     // -----------------------------
     // Decision 22: ::ng-deep forbidden (warn to allow gradual cleanup)
+    // NOTE: ::ng-deep is deprecated in Angular. New code should use
+    // CSS custom properties or global styles in overrides/_exceptions.scss.
     // -----------------------------
     "selector-pseudo-element-no-unknown": [
       true,
       {
         ignorePseudoElements: ["ng-deep"],
+      },
+    ],
+
+    // Custom warning for ::ng-deep usage via pattern matching
+    // Developers should see this warning and migrate to alternatives
+    "selector-disallowed-list": [
+      ["::ng-deep", "/::ng-deep/"],
+      {
+        severity: "warning",
+        message:
+          "⚠️ ::ng-deep is deprecated. Use CSS custom properties or global overrides instead.",
       },
     ],
 

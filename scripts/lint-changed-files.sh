@@ -83,6 +83,19 @@ if [ ${#HTML_FILES[@]} -gt 0 ]; then
 fi
 
 # ============================================================
+# Step 1.25: Check HTML files for inline styles
+# ============================================================
+if [ ${#HTML_FILES[@]} -gt 0 ]; then
+  echo -e "${BLUE}🔍 Checking HTML files for inline styles...${NC}"
+  echo ""
+
+  if ! bash "$SCRIPT_DIR/check-inline-styles.sh" "$BASE_BRANCH"; then
+    FAILED=1
+  fi
+  echo ""
+fi
+
+# ============================================================
 # Step 1.5: Check SCSS files for PrimeNG .p-* selectors
 # ============================================================
 if [ ${#SCSS_FILES[@]} -gt 0 ]; then

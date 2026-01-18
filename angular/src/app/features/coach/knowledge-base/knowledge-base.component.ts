@@ -19,6 +19,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { MessageService , PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
@@ -100,7 +101,8 @@ const VISIBILITY_OPTIONS = [
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent
+    ButtonComponent,
+    SearchInputComponent
   ],
   providers: [MessageService],
   template: `
@@ -119,18 +121,13 @@ const VISIBILITY_OPTIONS = [
         </app-page-header>
 
         <!-- Search -->
-        <div class="search-bar">
-          <span class="p-input-icon-left search-input">
-            <i class="pi pi-search"></i>
-            <input
-              type="text"
-              pInputText
-              [(ngModel)]="searchQuery"
-              placeholder="Search knowledge base..."
-              (input)="onSearch()"
-            />
-          </span>
-        </div>
+        <app-search-input
+          class="search-bar"
+          [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearch()"
+          placeholder="Search knowledge base..."
+          ariaLabel="Search knowledge base"
+        />
 
         <!-- Tab Navigation -->
         <div class="tab-navigation">

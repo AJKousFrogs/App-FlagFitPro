@@ -10,6 +10,7 @@
   justify-content: center;
   gap: var(--space-2);
   position: relative;
+  --checkmark-color: var(--ds-primary-green);
 }
 
 /* ================================
@@ -17,23 +18,19 @@
    ================================ */
 
 .size-sm {
-  --checkmark-size: 32px;
-  --stroke-width: 3px;
+  --checkmark-size: var(--ds-icon-size-2xl);
 }
 
 .size-md {
-  --checkmark-size: 48px;
-  --stroke-width: 3px;
+  --checkmark-size: var(--ds-icon-size-3xl);
 }
 
 .size-lg {
-  --checkmark-size: 64px;
-  --stroke-width: 4px;
+  --checkmark-size: calc(var(--ds-icon-size-3xl) + var(--ds-icon-size-lg));
 }
 
 .size-xl {
-  --checkmark-size: 96px;
-  --stroke-width: 5px;
+  --checkmark-size: calc(var(--ds-icon-size-3xl) + var(--ds-icon-size-3xl));
 }
 
 /* ================================
@@ -87,84 +84,65 @@
 }
 
 /* ================================
-   CHECKMARK SVG
+   CHECKMARK ICON
    ================================ */
 
-.checkmark-svg {
+.success-icon {
   position: relative;
   z-index: 1;
   width: var(--checkmark-size);
   height: var(--checkmark-size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--checkmark-color);
 }
 
-.checkmark-circle {
-  stroke: var(--ds-primary-green);
-  stroke-width: var(--stroke-width);
-  fill: none;
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  stroke-linecap: round;
+.success-icon i {
+  font-size: var(--checkmark-size);
+  line-height: 1;
+  color: currentColor;
 }
 
-.checkmark-circle.filled {
-  fill: var(--ds-primary-green-subtle);
+.success-icon.variant-filled {
+  background: var(--checkmark-color);
+  color: var(--color-text-on-primary);
+  border-radius: var(--radius-full);
 }
 
-.animated .checkmark-circle {
-  animation: circle-draw 600ms cubic-bezier(0.65, 0, 0.45, 1) forwards;
+.success-icon.variant-outlined {
+  border: 2px solid var(--checkmark-color);
+  border-radius: var(--radius-full);
 }
 
-@keyframes circle-draw {
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-.checkmark-check {
-  stroke: var(--ds-primary-green);
-  stroke-width: var(--stroke-width);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-}
-
-.animated .checkmark-check {
-  animation: check-draw 400ms cubic-bezier(0.65, 0, 0.45, 1) 300ms forwards;
-}
-
-@keyframes check-draw {
-  100% {
-    stroke-dashoffset: 0;
-  }
+.success-icon.variant-minimal {
+  background: transparent;
 }
 
 /* ================================
    VARIANT STYLES
    ================================ */
 
-.variant-minimal .checkmark-check {
-  stroke-width: calc(var(--stroke-width) - 1px);
-}
-
-.variant-outlined .checkmark-circle {
-  stroke-width: 2px;
-}
+/* Icon variants handled by .success-icon */
 
 /* ================================
    VISIBILITY
+   Fixed: Use visibility + display instead of opacity to prevent blur
    ================================ */
 
 .success-checkmark-container:not(.visible) {
-  opacity: 0;
+  // Use visibility instead of opacity 0 to prevent initial render blur
+  visibility: hidden;
   transform: scale(0.5);
 }
 
 .success-checkmark-container.visible {
+  visibility: visible;
   opacity: 1;
   transform: scale(1);
 }
 
+// Only animate when transitioning TO visible (not on initial hidden state)
 .animated.visible {
   animation: container-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -223,15 +201,7 @@
   --checkmark-color: white;
 }
 
-.color-success .checkmark-check,
-.color-success .checkmark-circle {
-  stroke: var(--color-status-success);
-}
-
-.color-white .checkmark-check,
-.color-white .checkmark-circle {
-  stroke: white;
-}
+/* success-icon inherits --checkmark-color */
 
 /* ================================
    REDUCED MOTION
@@ -239,8 +209,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .animated .success-circle,
-  .animated .checkmark-circle,
-  .animated .checkmark-check,
   .animated .success-label,
   .animated.visible {
     animation: none;
@@ -249,14 +217,6 @@
   .success-circle {
     opacity: 0.3;
     transform: scale(1);
-  }
-
-  .checkmark-circle {
-    stroke-dashoffset: 0;
-  }
-
-  .checkmark-check {
-    stroke-dashoffset: 0;
   }
 
   .success-label {

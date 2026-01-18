@@ -76,9 +76,12 @@ import {
   getCountryFlag,
   getJerseyColor,
   getPlayerStats,
-  getPositionIcon,
-  getStatusSeverity
+  getPositionIcon
 } from "./roster-utils";
+import {
+  getMappedStatusSeverity,
+  rosterStatusSeverityMap
+} from "../../shared/utils/status.utils";
 import {
   Player,
   PlayerRiskLevel,
@@ -975,7 +978,8 @@ export class RosterComponent implements OnInit {
   getPositionDisplayName = getPositionDisplayName;
   getPositionIcon = getPositionIcon;
   getJerseyColor = getJerseyColor;
-  getStatusSeverity = getStatusSeverity;
+  getStatusSeverity = (status: string) =>
+    getMappedStatusSeverity(status, rosterStatusSeverityMap, "secondary");
   getPlayerStats = getPlayerStats;
   formatHeight = formatHeight;
   formatWeight = formatWeight;

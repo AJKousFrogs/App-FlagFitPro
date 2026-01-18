@@ -25,6 +25,7 @@ import { ProgressBar } from "primeng/progressbar";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { SemanticMeaningRendererComponent } from "../../../shared/components/semantic-meaning-renderer/semantic-meaning-renderer.component";
 import { RiskMeaning } from "../../../core/semantics/semantic-meaning.types";
+import { getRiskSeverityFromLevel } from "../../../shared/utils/risk.utils";
 import { Player } from "../roster.models";
 import {
   PlayerMetricsService,
@@ -385,15 +386,7 @@ export class RosterPlayerCardComponent {
 
     const assessment = this.metricsService.getRiskAssessment(this.player());
 
-    // Map PlayerRiskLevel to RiskMeaning severity
-    const severityMap: Record<string, RiskMeaning["severity"]> = {
-      low: "low",
-      moderate: "moderate",
-      high: "high",
-      critical: "critical",
-    };
-
-    const severity = severityMap[player.riskLevel] || "moderate";
+    const severity = getRiskSeverityFromLevel(player.riskLevel, "moderate");
 
     // Determine source based on risk factors
     let source = "player-metrics";

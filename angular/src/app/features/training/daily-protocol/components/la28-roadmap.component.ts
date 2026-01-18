@@ -9,6 +9,10 @@ import { firstValueFrom } from "rxjs";
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
+import {
+  getMappedStatusSeverity,
+  roadmapStatusSeverityMap
+} from "../../../../shared/utils/status.utils";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
 import { Dialog } from "primeng/dialog";
@@ -423,15 +427,7 @@ export class La28RoadmapComponent {
   getStatusSeverity(
     status: string,
   ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
-    const severities: Record<
-      string,
-      "success" | "info" | "warning" | "danger" | "secondary" | "contrast"
-    > = {
-      not_started: "secondary",
-      in_progress: "info",
-      completed: "success",
-    };
-    return severities[status] || "secondary";
+    return getMappedStatusSeverity(status, roadmapStatusSeverityMap, "secondary");
   }
 
   getMilestoneTypeSeverity(

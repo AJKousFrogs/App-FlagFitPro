@@ -80,9 +80,9 @@
 
   // Alert variants
   .alert--success {
-    background: var(--color-status-success-surface, rgba(34, 197, 94, 0.08));
-    border-color: var(--color-status-success);
-    color: var(--color-status-success);
+    background: var(--ds-status-success-bg);
+    border-color: var(--ds-status-success-border);
+    color: var(--ds-status-success-solid);
 
     .alert__message {
       color: var(--color-text-primary);
@@ -90,9 +90,9 @@
   }
 
   .alert--warning {
-    background: var(--color-status-warning-surface, rgba(245, 158, 11, 0.08));
-    border-color: var(--color-status-warning);
-    color: var(--color-status-warning);
+    background: var(--ds-status-warning-bg);
+    border-color: var(--ds-status-warning-border);
+    color: var(--ds-status-warning-solid);
 
     .alert__message {
       color: var(--color-text-primary);
@@ -100,9 +100,9 @@
   }
 
   .alert--error {
-    background: var(--color-status-error-surface, rgba(239, 68, 68, 0.08));
-    border-color: var(--color-status-error);
-    color: var(--color-status-error);
+    background: var(--ds-status-danger-bg);
+    border-color: var(--ds-status-danger-border);
+    color: var(--ds-status-danger-solid);
 
     .alert__message {
       color: var(--color-text-primary);
@@ -110,9 +110,9 @@
   }
 
   .alert--info {
-    background: var(--color-status-info-surface, rgba(59, 130, 246, 0.08));
-    border-color: var(--color-status-info);
-    color: var(--color-status-info);
+    background: var(--ds-status-info-bg);
+    border-color: var(--ds-status-info-border);
+    color: var(--ds-status-info-solid);
 
     .alert__message {
       color: var(--color-text-primary);
