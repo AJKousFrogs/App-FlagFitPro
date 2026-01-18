@@ -13,18 +13,18 @@
  * @version 2.0.0 - Added database integration
  */
 
-import { Injectable, signal, computed, inject } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import {
-  LoadMetrics,
-  ExternalLoad,
-  InternalLoad,
-  WellnessMetrics,
-  TrainingSession,
-  SessionType,
-  LoadCalculationOptions,
+    ExternalLoad,
+    InternalLoad,
+    LoadCalculationOptions,
+    LoadMetrics,
+    SessionType,
+    TrainingSession,
+    WellnessMetrics,
 } from "../models/acwr.models";
-import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 @Injectable({
   providedIn: "root",
@@ -251,7 +251,7 @@ export class LoadMonitoringService {
         accelerations: external.accelerations,
         decelerations: external.decelerations,
         maxSpeed: external.maxSpeed,
-        highIntensityDistance: external.highIntensityDistance,
+        highIntensityDistance: external.highSpeedRunning,
       } : null;
 
       // Prepare wellness snapshot for storage
