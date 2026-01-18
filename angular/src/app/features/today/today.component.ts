@@ -1607,6 +1607,9 @@ export class TodayComponent {
       .subscribe({
         next: (response) => {
           if (response?.success && response.data) {
+            // Store full protocol data for UI rendering (includes blocks with exercises)
+            this.fullProtocolData = response.data;
+
             // Protocol found, resolve state
             // Map API response (camelCase) to resolver format (snake_case)
             const protocolData = this.mapApiProtocolResponse(response.data);
