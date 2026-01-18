@@ -110,7 +110,6 @@
 .banner-info {
   h2 {
     margin: 0 0 var(--space-1) 0;
-    font-family: var(--font-family-sans);
     font-size: var(--ds-font-size-2xl);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-primary-green);
@@ -233,7 +232,6 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-family: var(--font-family-sans);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
@@ -339,7 +337,6 @@
   }
 
   .btn-label {
-    font-family: var(--font-family-sans);
     font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
@@ -433,7 +430,6 @@
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-5);
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -632,7 +628,6 @@
 
 .window-header h4 {
   margin: 0;
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -834,7 +829,6 @@
 }
 
 .rec-item {
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -1005,7 +999,6 @@
 .section-title {
   h3 {
     margin: 0 0 var(--space-1) 0;
-    font-family: var(--font-family-sans);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
@@ -1171,7 +1164,6 @@
 
 .supp-name {
   display: block;
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
@@ -1182,7 +1174,6 @@
 .supp-evidence {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-bold);
   text-transform: var(--ds-text-transform-none);
@@ -1392,7 +1383,6 @@
 .tip-content {
   h4 {
     margin: 0 0 var(--space-2) 0;
-    font-family: var(--font-family-sans);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-bold);
     color: var(--color-text-primary);
@@ -1425,7 +1415,6 @@
 .alert-content {
   h4 {
     margin: 0 0 var(--space-1) 0;
-    font-family: var(--font-family-sans);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--primitive-orange-700);
@@ -1487,7 +1476,6 @@
 
   h4 {
     margin: 0 0 var(--space-4) 0;
-    font-family: var(--font-family-sans);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-bold);
     color: var(--color-text-primary);

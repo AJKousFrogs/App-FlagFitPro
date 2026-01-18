@@ -47,7 +47,7 @@
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-muted);
   margin: 0 0 var(--space-6) 0;
-  font-family: monospace;
+  font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
 }
 
 .error-actions {

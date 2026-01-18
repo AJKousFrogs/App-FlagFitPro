@@ -2126,7 +2126,7 @@ export class AnalyticsComponent implements AfterViewInit {
         <title>FlagFit Pro Analytics - ${playerName}</title>
         <style>
           body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* ds-exception: PDF export font stack */
             padding: 40px;
             max-width: 800px;
             margin: 0 auto;

@@ -105,7 +105,6 @@
 }
 
 .brand-info h1 {
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
@@ -345,7 +344,6 @@
 }
 
 .welcome-hero h2 {
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
@@ -605,7 +603,7 @@
     background: var(--color-surface-hover);
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
-    font-family: var(--font-family-mono);
+    font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
     font-size: var(--ds-font-size-md);
   }
 }
@@ -907,7 +905,6 @@
   gap: var(--space-2);
   padding: var(--space-3) var(--space-5); /* 12px 20px for breathing room */
   border-radius: var(--radius-full);
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
   cursor: pointer;
@@ -1160,7 +1157,6 @@
   flex: 1;
   border: none;
   background: transparent;
-  font-family: inherit;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
   resize: none;

@@ -48,7 +48,6 @@ import { CommonModule } from "@angular/common";
         border-radius: var(--p-border-radius);
         cursor: pointer;
         transition: all 0.2s ease;
-        font-family: inherit;
         line-height: var(--ds-line-height-body);
         background-color: var(--color-brand-primary);
         color: var(--color-text-on-primary);

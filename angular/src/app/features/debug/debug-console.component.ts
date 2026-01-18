@@ -161,7 +161,7 @@ interface DebugLog {
         padding: 20px;
         background: #1e1e1e;
         color: #d4d4d4;
-        font-family: "Consolas", "Monaco", monospace;
+        font-family: var(--ds-font-family-mono); /* ds-exception: monospace console */
         min-height: 100vh;
       }
 
@@ -188,7 +188,6 @@ interface DebugLog {
         border: 1px solid #3e3e3e;
         border-radius: 4px;
         cursor: pointer;
-        font-family: inherit;
         transition: all 0.2s;
       }
 
@@ -243,7 +242,6 @@ interface DebugLog {
         border: 1px solid #3e3e3e;
         border-radius: 4px;
         margin-bottom: 8px;
-        font-family: inherit;
       }
 
       .test-card button {

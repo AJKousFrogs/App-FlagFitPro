@@ -1027,8 +1027,9 @@ export class AiCoachChatComponent implements AfterViewChecked {
         );
       } else {
         const acwr = this.trainingService.acwrRatio();
-        if (acwr > 1.3) chips.push("Explain my high ACWR");
-        if (this.trainingService.readinessScore() < 60)
+        const readiness = this.trainingService.readinessScore();
+        if (acwr !== null && acwr > 1.3) chips.push("Explain my high ACWR");
+        if (readiness !== null && readiness < 60)
           chips.push("Why is my readiness low?");
       }
       return chips.slice(0, UI_LIMITS.AI_CHIPS_COUNT);
@@ -1211,7 +1212,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
   async loadTodayReadiness(): Promise<void> {
     // We can now use the UnifiedTrainingService directly
     const score = this.trainingService.readinessScore();
-    if (score > 0) {
+    if (score !== null && score > 0) {
       this.todayReadinessScore.set(score);
     }
   }

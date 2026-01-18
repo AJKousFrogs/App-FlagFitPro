@@ -85,7 +85,6 @@ export type StatusTagSeverity =
         padding: 0 var(--space-3);
 
         /* Typography - using design tokens */
-        font-family: var(--font-family-sans);
         font-size: var(--ds-font-size-sm);
         font-weight: var(--ds-font-weight-semibold);
         line-height: var(--ds-line-height-1);

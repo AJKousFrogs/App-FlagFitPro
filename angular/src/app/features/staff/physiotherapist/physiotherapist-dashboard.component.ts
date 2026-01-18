@@ -67,12 +67,12 @@ interface InjuryHistory {
 
 interface RiskIndicators {
   athleteId: string;
-  acwrRisk: "low" | "moderate" | "high";
-  acwrValue: number;
+  acwrRisk: "low" | "moderate" | "high" | "unknown";
+  acwrValue: number | null;  // null = no training data
   trainingLoadSpike: boolean;
   sleepDeficit: boolean;
   weightFluctuation: boolean;
-  soreness: number;
+  soreness: number | null;   // null = no wellness data
   asymmetries: { test: string; leftRight: string; concern: boolean }[];
 }
 
@@ -641,14 +641,18 @@ const RTP_PHASES = [
                           <!-- ACWR -->
                           <div class="acwr-section">
                             <span class="acwr-label">ACWR Ratio</span>
-                            <span
-                              class="acwr-value"
-                              [class.danger]="risk.acwrValue > 1.5"
-                              [class.warning]="
-                                risk.acwrValue > 1.3 && risk.acwrValue <= 1.5
-                              "
-                              >{{ risk.acwrValue.toFixed(2) }}</span
-                            >
+                            @if (risk.acwrValue !== null) {
+                              <span
+                                class="acwr-value"
+                                [class.danger]="risk.acwrValue > 1.5"
+                                [class.warning]="
+                                  risk.acwrValue > 1.3 && risk.acwrValue <= 1.5
+                                "
+                                >{{ risk.acwrValue.toFixed(2) }}</span
+                              >
+                            } @else {
+                              <span class="acwr-value no-data">--</span>
+                            }
                           </div>
 
                           <!-- Risk Flags -->
@@ -680,11 +684,15 @@ const RTP_PHASES = [
                           <div class="soreness-section">
                             <span class="soreness-label">Avg Soreness</span>
                             <div class="soreness-bar">
-                              <p-progressBar
-                                [value]="risk.soreness * 10"
-                                [showValue]="false"
-                              ></p-progressBar>
-                              <span>{{ risk.soreness.toFixed(1) }}/10</span>
+                              @if (risk.soreness !== null) {
+                                <p-progressBar
+                                  [value]="risk.soreness * 10"
+                                  [showValue]="false"
+                                ></p-progressBar>
+                                <span>{{ risk.soreness.toFixed(1) }}/10</span>
+                              } @else {
+                                <span class="no-data">No data</span>
+                              }
                             </div>
                           </div>
 
@@ -1494,9 +1502,13 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   ): "success" | "warning" | "danger" | "secondary" {
     const risk = this.riskIndicators().find((r) => r.athleteId === id);
     if (!risk) return "secondary";
-    return { low: "success", moderate: "warning", high: "danger" }[
-      risk.acwrRisk
-    ] as "success" | "warning" | "danger";
+    const severityMap: Record<string, "success" | "warning" | "danger" | "secondary"> = {
+      low: "success",
+      moderate: "warning",
+      high: "danger",
+      unknown: "secondary",
+    };
+    return severityMap[risk.acwrRisk] ?? "secondary";
   }
 
   getClearanceLabel(status: string): string {

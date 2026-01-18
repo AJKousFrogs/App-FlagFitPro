@@ -209,7 +209,6 @@ export type ActionPanelType =
       }
 
       .action-panel-title {
-        font-family: var(--font-family-sans);
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
@@ -218,7 +217,6 @@ export type ActionPanelType =
       }
 
       .action-panel-message {
-        font-family: var(--font-family-sans);
         font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
         margin: 0;

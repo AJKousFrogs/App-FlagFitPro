@@ -234,7 +234,6 @@
 }
 
 .profile-page .profile-avatar-fallback span {
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-on-primary);
@@ -293,7 +292,6 @@
 }
 
 .profile-page .jersey-badge span {
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-on-primary);
@@ -307,7 +305,6 @@
 }
 
 .profile-page .profile-display-name {
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
@@ -333,7 +330,6 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
 }
@@ -841,7 +837,7 @@
 
   .profile-page .profile-display-name,
   .profile__display-name {
-    font-size: var(--ds-font-size-2xl));
+    font-size: var(--ds-font-size-2xl);
   }
 
   .profile-page .profile-info-section,

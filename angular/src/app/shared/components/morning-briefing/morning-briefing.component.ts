@@ -619,6 +619,7 @@ export class MorningBriefingComponent implements OnInit {
   /** Micro-context label for Readiness */
   getReadinessContext(): string {
     const score = this.readinessScore();
+    if (score === null) return "No data";
     if (score >= 80) return "High";
     if (score >= 60) return "Moderate";
     if (score >= 40) return "Low";
@@ -627,6 +628,7 @@ export class MorningBriefingComponent implements OnInit {
 
   getReadinessClass(): string {
     const score = this.readinessScore();
+    if (score === null) return "unknown";
     if (score >= 80) return "optimal";
     if (score >= 60) return "moderate";
     if (score >= 40) return "warning";

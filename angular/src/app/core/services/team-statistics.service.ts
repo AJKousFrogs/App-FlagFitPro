@@ -69,9 +69,9 @@ export interface PlayerPerformanceStats {
 
   // Workload & Risk
   workload: number;
-  acwr: number;
-  readiness: number;
-  riskLevel: "low" | "medium" | "high";
+  acwr: number | null;      // null = insufficient training data for ACWR calculation
+  readiness: number | null; // null = no wellness check-in data available
+  riskLevel: "low" | "medium" | "high" | "unknown";  // unknown = insufficient data
 
   // Position-specific stats (varies by position)
   positionStats: PositionStats;
@@ -456,7 +456,7 @@ export class TeamStatisticsService {
       let status: "active" | "injured" | "inactive" | "at_risk" = "active";
       if (player["status"] === "injured") status = "injured";
       else if (player["status"] === "inactive") status = "inactive";
-      else if (riskLevel === "high" || readiness < 40) status = "at_risk";
+      else if (riskLevel === "high" || (readiness !== null && readiness < 40)) status = "at_risk";
 
       return {
         playerId: String(player["id"] || player["user_id"] || ""),

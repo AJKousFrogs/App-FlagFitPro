@@ -73,7 +73,6 @@ export type IncompleteDataPlacement =
         gap: var(--space-1);
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-md);
-        font-family: var(--font-family-sans);
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-semibold);
         text-transform: var(--ds-text-transform-none);

@@ -43,8 +43,9 @@ export interface Player {
   user_id?: string;
 
   // Live Performance Metrics (Phase 1 Enhancement)
-  readiness?: number; // 0-100, from wellness check-in
-  acwr?: number; // Acute:Chronic Workload Ratio
+  // NOTE: null = no data available; undefined = not loaded yet
+  readiness?: number | null; // 0-100, from wellness check-in
+  acwr?: number | null; // Acute:Chronic Workload Ratio
   performanceScore?: number; // 0-100, based on position benchmarks
   riskLevel?: PlayerRiskLevel; // Calculated from ACWR + readiness + injuries
 

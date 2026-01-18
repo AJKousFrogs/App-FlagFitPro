@@ -1454,21 +1454,27 @@ export class TodayComponent {
   });
 
   readonly readinessStatusLabel = computed(() => {
+    const level = this.readinessLevel();
+    if (level === null) return "Unknown";
+    
     const labelMap: Record<string, string> = {
       high: "Great",
       moderate: "Good",
       low: "Low",
     };
-    return labelMap[this.readinessLevel()] ?? "Unknown";
+    return labelMap[level] ?? "Unknown";
   });
 
   readonly readinessSeverity = computed<TagSeverity>(() => {
+    const level = this.readinessLevel();
+    if (level === null) return "secondary";
+    
     const severityMap: Record<string, TagSeverity> = {
       high: "success",
       moderate: "warning",
       low: "danger",
     };
-    return severityMap[this.readinessLevel()] ?? "secondary";
+    return severityMap[level] ?? "secondary";
   });
 
   // Computed signals for template use

@@ -122,17 +122,21 @@ import { TRAINING } from "../../../core/constants/app.constants";
             <span class="metric-label">Readiness</span>
             <span
               class="metric-value"
-              [class]="getReadinessClass(enrichedPlayer().readiness)"
+              [class]="getReadinessClass(enrichedPlayer().readiness ?? 0)"
             >
-              {{ enrichedPlayer().readiness }}%
+              @if (enrichedPlayer().readiness !== null) {
+                {{ enrichedPlayer().readiness }}%
+              } @else {
+                --
+              }
             </span>
           </div>
           <p-progressBar
-            [value]="enrichedPlayer().readiness"
+            [value]="enrichedPlayer().readiness ?? 0"
             [showValue]="false"
             [style]="{ height: '6px' }"
             [styleClass]="
-              'readiness-bar ' + getReadinessClass(enrichedPlayer().readiness)
+              'readiness-bar ' + getReadinessClass(enrichedPlayer().readiness ?? 0)
             "
           ></p-progressBar>
         </div>
@@ -146,16 +150,20 @@ import { TRAINING } from "../../../core/constants/app.constants";
             <span class="metric-label">ACWR</span>
             <span
               class="metric-value"
-              [class]="getACWRClass(enrichedPlayer().acwr)"
+              [class]="getACWRClass(enrichedPlayer().acwr ?? 1.0)"
             >
-              {{ enrichedPlayer().acwr | number: "1.2-2" }}
+              @if (enrichedPlayer().acwr !== null) {
+                {{ enrichedPlayer().acwr | number: "1.2-2" }}
+              } @else {
+                --
+              }
             </span>
           </div>
           <div class="acwr-indicator">
             <div class="acwr-zone safe"></div>
             <div
               class="acwr-marker"
-              [style.left]="getACWRMarkerPosition(enrichedPlayer().acwr)"
+              [style.left]="getACWRMarkerPosition(enrichedPlayer().acwr ?? 1.0)"
             ></div>
           </div>
         </div>
@@ -389,9 +397,9 @@ export class RosterPlayerCardComponent {
 
     // Determine source based on risk factors
     let source = "player-metrics";
-    if (player.acwr > 1.5) {
+    if (player.acwr !== null && player.acwr > 1.5) {
       source = "acwr";
-    } else if (player.readiness < 50) {
+    } else if (player.readiness !== null && player.readiness < 50) {
       source = "readiness";
     } else if (
       this.player().status === "injured" ||

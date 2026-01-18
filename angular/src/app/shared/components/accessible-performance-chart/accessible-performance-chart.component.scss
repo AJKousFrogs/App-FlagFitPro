@@ -82,7 +82,7 @@ kbd {
   background: var(--color-border-secondary);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
-  font-family: monospace;
+  font-family: var(--ds-font-family-mono); /* ds-exception: monospace metrics */
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);

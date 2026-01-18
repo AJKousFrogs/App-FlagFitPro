@@ -144,7 +144,7 @@
     .item-time {
       min-width: var(--badge-min-width-md);
       color: var(--ds-text-tertiary);
-      font-family: monospace;
+      font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
     }
 
     .activity {
@@ -298,7 +298,7 @@
 
     .item-time {
       min-width: var(--badge-min-width-md);
-      font-family: monospace;
+      font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
       font-size: var(--ds-font-size-md);
       color: var(--ds-text-tertiary);
     }

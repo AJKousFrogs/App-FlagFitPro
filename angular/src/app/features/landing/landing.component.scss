@@ -229,7 +229,6 @@
 }
 
 .countdown-label-text {
-  font-family: var(--font-family-sans);
   font-size: clamp(var(--ds-font-size-0-625rem), 1.5vw, var(--ds-font-size-sm));
   font-weight: var(--ds-font-weight-semibold);
   letter-spacing: var(--ds-letter-spacing-wide);
@@ -238,7 +237,6 @@
 }
 
 .countdown-label-event {
-  font-family: var(--font-family-sans);
   font-size: clamp(var(--ds-font-size-sm), 2vw, var(--ds-font-size-xl));
   font-weight: var(--ds-font-weight-bold);
   letter-spacing: var(--ds-letter-spacing-0-1em);
@@ -260,8 +258,7 @@
 }
 
 .countdown-value {
-  font-family:
-    "JetBrains Mono", "SF Mono", "Fira Code", "Roboto Mono", monospace;
+  font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
   font-size: clamp(var(--ds-font-size-3xl), 8vw, var(--ds-font-size-4-5rem));
   font-weight: var(--ds-font-weight-bold);
   line-height: var(--ds-line-height-1);
@@ -277,7 +274,6 @@
 }
 
 .countdown-unit {
-  font-family: var(--font-family-sans);
   font-size: clamp(var(--ds-font-size-0-5rem), 1.5vw, var(--ds-font-size-sm));
   font-weight: var(--ds-font-weight-semibold);
   letter-spacing: var(--ds-letter-spacing-wide);
@@ -286,7 +282,7 @@
 }
 
 .countdown-separator {
-  font-family: "JetBrains Mono", "SF Mono", "Roboto Mono", monospace;
+  font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
   font-size: clamp(var(--ds-font-size-3xl), 8vw, var(--ds-font-size-4-5rem));
   font-weight: var(--ds-font-weight-bold);
   line-height: var(--ds-line-height-1);

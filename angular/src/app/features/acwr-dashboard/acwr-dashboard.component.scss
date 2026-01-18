@@ -9,7 +9,6 @@
 
 .acwr-dashboard {
   @include page-container(var(--content-max-width-xl));
-  font-family: var(--font-family-sans);
 }
 
 .dashboard-header {
@@ -119,7 +118,7 @@
 }
 
 .trend-display {
-  font-family: var(--font-family-mono);
+  font-family: var(--ds-font-family-mono); /* ds-exception: monospace metrics */
   font-weight: var(--ds-font-weight-medium);
 }
 
@@ -414,7 +413,6 @@
   color: var(--color-text-primary);
   will-change: transform, box-shadow;
   backface-visibility: hidden;
-  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .quick-actions .action-btn.primary {
@@ -525,7 +523,6 @@
     box-shadow var(--transition-normal);
   will-change: transform, box-shadow;
   backface-visibility: hidden;
-  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .acwr-empty-state .action-btn.primary {

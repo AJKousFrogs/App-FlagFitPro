@@ -1058,8 +1058,8 @@ export class UnifiedTrainingService {
       if (!response.success || !response.data) {
         return {
           alert: null,
-          readinessScore: 0,
-          readinessStatus: "good" as ReadinessStatus,
+          readinessScore: null,
+          readinessStatus: "unknown" as ReadinessStatus,
         };
       }
 
@@ -1072,6 +1072,16 @@ export class UnifiedTrainingService {
       };
 
       const score = this.calculateReadinessScore(wellnessData);
+      
+      // If no score could be calculated (missing required data), return with null score
+      if (score === null) {
+        return {
+          alert: null,
+          readinessScore: null,
+          readinessStatus: "unknown" as ReadinessStatus,
+        };
+      }
+      
       const status = this.getReadinessStatus(score);
       return {
         alert: this.generateWellnessAlert(score, status),
@@ -1085,8 +1095,8 @@ export class UnifiedTrainingService {
       );
       return {
         alert: null,
-        readinessScore: 0,
-        readinessStatus: "good" as ReadinessStatus,
+        readinessScore: null,
+        readinessStatus: "unknown" as ReadinessStatus,
       };
     }
   }
@@ -1328,9 +1338,9 @@ export class UnifiedTrainingService {
     }
 
     // 2. High Priority Rule-Based Insights
-    if (acwr > 1.5)
+    if (acwr !== null && acwr > 1.5)
       return `Your injury risk is very high (ACWR: ${acwr.toFixed(2)}). Merlin recommends immediate rest today.`;
-    if (readiness < 40)
+    if (readiness !== null && readiness < 40)
       return `Readiness is low (${readiness}%). Focus heavily on recovery and extra sleep tonight.`;
     if (hydration < 5 && hydration > 0)
       return "You're a bit dehydrated. Drink 500ml of water before you start your session.";
@@ -1352,7 +1362,7 @@ export class UnifiedTrainingService {
     }
 
     // 5. General Performance Insights
-    if (readiness > 80 && acwr < 1.3)
+    if (readiness !== null && readiness > 80 && acwr !== null && acwr < 1.3)
       return "Physiological green light! You're perfectly primed for a high-intensity session.";
 
     return "Consistency is your superpower. Follow today's protocol to stay on track.";
@@ -1563,12 +1573,13 @@ export class UnifiedTrainingService {
 
   private getFallbackData(): TrainingDataResult {
     // Return empty data - don't show fake workouts or achievements
+    // CRITICAL: Use null for readinessScore when no data - don't use fake 0
     return {
       stats: [],
       schedule: [],
       workouts: [], // Empty - no fake workouts
       achievements: [],
-      wellnessData: { alert: null, readinessScore: 0, readinessStatus: "good" },
+      wellnessData: { alert: null, readinessScore: null, readinessStatus: "unknown" },
       userName: "Athlete",
       lastRefresh: new Date(),
     };

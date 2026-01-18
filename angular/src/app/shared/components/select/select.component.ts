@@ -95,7 +95,6 @@ export interface SelectOption<T = unknown> {
         transition:
           border-color 0.2s,
           box-shadow 0.2s;
-        font-family: inherit;
         cursor: pointer;
       }
 

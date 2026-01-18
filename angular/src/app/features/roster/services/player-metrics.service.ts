@@ -25,8 +25,8 @@ import { TRAINING, UI_LIMITS } from "../../../core/constants/app.constants";
 import { WELLNESS } from "../../../core/constants/wellness.constants";
 
 export interface PlayerWithMetrics extends Player {
-  readiness: number;
-  acwr: number;
+  readiness: number | null;  // null = no wellness data
+  acwr: number | null;       // null = insufficient training data
   performanceScore: number;
   riskLevel: PlayerRiskLevel;
   positionMetrics: PositionMetrics;
@@ -143,27 +143,35 @@ export class PlayerMetricsService {
     const factors: string[] = [];
     const recommendations: string[] = [];
 
-    // Check ACWR
-    if (enriched.acwr > 1.5) {
-      factors.push(
-        `High ACWR (${enriched.acwr.toFixed(2)}) - Injury risk elevated`,
-      );
-      recommendations.push("Reduce training load by 20-30% this week");
-    } else if (enriched.acwr > 1.3) {
-      factors.push(`Elevated ACWR (${enriched.acwr.toFixed(2)})`);
-      recommendations.push("Monitor closely, avoid high-intensity sessions");
-    } else if (enriched.acwr < 0.8) {
-      factors.push(`Low ACWR (${enriched.acwr.toFixed(2)}) - Detraining risk`);
-      recommendations.push("Gradually increase training load");
+    // Check ACWR (only if we have data)
+    if (enriched.acwr !== null) {
+      if (enriched.acwr > 1.5) {
+        factors.push(
+          `High ACWR (${enriched.acwr.toFixed(2)}) - Injury risk elevated`,
+        );
+        recommendations.push("Reduce training load by 20-30% this week");
+      } else if (enriched.acwr > 1.3) {
+        factors.push(`Elevated ACWR (${enriched.acwr.toFixed(2)})`);
+        recommendations.push("Monitor closely, avoid high-intensity sessions");
+      } else if (enriched.acwr < 0.8) {
+        factors.push(`Low ACWR (${enriched.acwr.toFixed(2)}) - Detraining risk`);
+        recommendations.push("Gradually increase training load");
+      }
+    } else {
+      factors.push("ACWR data not available - log training sessions");
     }
 
-    // Check readiness
-    if (enriched.readiness < 50) {
-      factors.push(`Low readiness (${enriched.readiness}%)`);
-      recommendations.push("Consider recovery-focused session or rest day");
-    } else if (enriched.readiness < WELLNESS.READINESS_THRESHOLD_HIGH) {
-      factors.push(`Moderate readiness (${enriched.readiness}%)`);
-      recommendations.push("Reduce session intensity");
+    // Check readiness (only if we have data)
+    if (enriched.readiness !== null) {
+      if (enriched.readiness < 50) {
+        factors.push(`Low readiness (${enriched.readiness}%)`);
+        recommendations.push("Consider recovery-focused session or rest day");
+      } else if (enriched.readiness < WELLNESS.READINESS_THRESHOLD_HIGH) {
+        factors.push(`Moderate readiness (${enriched.readiness}%)`);
+        recommendations.push("Reduce session intensity");
+      }
+    } else {
+      factors.push("Readiness data not available - complete wellness check-in");
     }
 
     // Check status
@@ -352,27 +360,33 @@ export class PlayerMetricsService {
 
   /**
    * Calculate risk level from multiple factors
+   * Handles null values for readiness and ACWR gracefully
    */
   private calculateRiskLevel(
-    readiness: number,
-    acwr: number,
+    readiness: number | null,
+    acwr: number | null,
     status: string,
   ): PlayerRiskLevel {
-    // Critical risk
+    // Critical risk based on status
     if (status === "injured") return "critical";
-    if (acwr > 1.5 && readiness < 50) return "critical";
+    
+    // If we have both values, use full logic
+    if (acwr !== null && readiness !== null) {
+      if (acwr > 1.5 && readiness < 50) return "critical";
+    }
 
     // High risk
-    if (acwr > 1.5) return "high";
-    if (readiness < 40) return "high";
-    if (status === "returning" && acwr > 1.2) return "high";
+    if (acwr !== null && acwr > 1.5) return "high";
+    if (readiness !== null && readiness < 40) return "high";
+    if (status === "returning" && acwr !== null && acwr > 1.2) return "high";
 
     // Moderate risk
-    if (acwr > 1.3) return "moderate";
-    if (readiness < 60) return "moderate";
+    if (acwr !== null && acwr > 1.3) return "moderate";
+    if (readiness !== null && readiness < 60) return "moderate";
     if (status === "limited") return "moderate";
 
-    // Low risk
+    // If we have no data at all, return low (can't assess risk)
+    // Low risk (or unknown if no data)
     return "low";
   }
 
@@ -539,14 +553,15 @@ export class PlayerMetricsService {
   ): boolean {
     // Simplified check - in production would look at historical data
     const lowStrength = (player.positionMetrics?.relativeSquat ?? 1.5) < 1.5;
+    const acwr = player.acwr;
 
     switch (injuryType.toLowerCase()) {
       case "hamstring":
       case "hamstring strain":
-        return lowStrength || player.acwr > 1.3;
+        return lowStrength || (acwr !== null && acwr > 1.3);
       case "ankle":
       case "ankle sprain":
-        return player.acwr > 1.4;
+        return acwr !== null && acwr > 1.4;
       case "shoulder":
       case "shoulder (throwing)":
         return (

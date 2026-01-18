@@ -262,7 +262,6 @@
 }
 
 .game-header-content h3 {
-  font-family: var(--font-family-sans);
   font-size: var(--ds-font-size-2xl);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
@@ -400,7 +399,6 @@
 }
 
 .play-details-section h4 {
-  font-family: var(--font-family-sans);
   margin: 0 0 var(--space-5) 0;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
@@ -539,7 +537,7 @@
   --table-date-font-weight: var(--ds-font-weight-medium);
   --table-opponent-font-weight: var(--ds-font-weight-semibold);
   --table-location-color: var(--color-text-secondary);
-  --table-score-font-family: var(--font-family-mono);
+  --table-score-font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
   --table-score-font-weight: var(--ds-font-weight-bold);
 
   /* Tag styling - transparent background */
@@ -598,7 +596,7 @@
 }
 
 .col-score {
-  font-family: var(--font-family-mono);
+  font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
   font-weight: var(--ds-font-weight-bold);
   letter-spacing: var(--ds-letter-spacing-wide);
 }

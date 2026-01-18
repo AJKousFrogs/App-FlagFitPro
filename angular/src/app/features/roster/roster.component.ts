@@ -458,19 +458,27 @@ import {
                     <span
                       class="metric-value"
                       [class]="
-                        getReadinessClass(enrichedSelectedPlayer()!.readiness)
+                        getReadinessClass(enrichedSelectedPlayer()!.readiness ?? 0)
                       "
                     >
-                      {{ enrichedSelectedPlayer()!.readiness }}%
+                      @if (enrichedSelectedPlayer()!.readiness !== null) {
+                        {{ enrichedSelectedPlayer()!.readiness }}%
+                      } @else {
+                        --
+                      }
                     </span>
                   </div>
                   <div class="metric-card">
                     <span class="metric-label">ACWR</span>
                     <span
                       class="metric-value"
-                      [class]="getACWRClass(enrichedSelectedPlayer()!.acwr)"
+                      [class]="getACWRClass(enrichedSelectedPlayer()!.acwr ?? 1.0)"
                     >
-                      {{ enrichedSelectedPlayer()!.acwr | number: "1.2-2" }}
+                      @if (enrichedSelectedPlayer()!.acwr !== null) {
+                        {{ enrichedSelectedPlayer()!.acwr | number: "1.2-2" }}
+                      } @else {
+                        --
+                      }
                     </span>
                   </div>
                   <div class="metric-card">

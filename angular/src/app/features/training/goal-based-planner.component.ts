@@ -94,7 +94,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
                   <div class="stat-block__value text-lg font-bold">
                     <app-status-tag
                       [severity]="getReadinessSeverity()"
-                      [value]="readinessLevel() | titlecase"
+                      [value]="(readinessLevel() ?? 'unknown') | titlecase"
                       size="sm"
                     />
                   </div>
@@ -368,10 +368,11 @@ export class GoalBasedPlannerComponent implements OnInit {
     this.loading.set(true);
 
     try {
+      const level = this.readinessLevel();
       const plan = this.trainingPlanService.generateWeeklyPlan({
         goal: goal,
         currentACWR: this.currentACWR(),
-        readinessLevel: this.readinessLevel(),
+        readinessLevel: level ?? "moderate", // Default to moderate if no data
         gameDays: this.gameDays(),
       });
 
@@ -403,7 +404,9 @@ export class GoalBasedPlannerComponent implements OnInit {
   }
 
   getReadinessSeverity(): "success" | "warning" | "danger" {
-    const severity = this.trainingService.getReadinessSeverity(this.readinessLevel());
+    const level = this.readinessLevel();
+    if (level === null) return "warning"; // No data = warning
+    const severity = this.trainingService.getReadinessSeverity(level);
     return severity === "warning" ? "warning" : severity;
   }
 

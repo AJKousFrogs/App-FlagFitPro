@@ -130,7 +130,7 @@ kbd {
   min-width: var(--space-6); /* 24px */
   height: var(--space-6); /* 24px */
   padding: 0 var(--space-2);
-  font-family: var(--font-family-mono);
+  font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);

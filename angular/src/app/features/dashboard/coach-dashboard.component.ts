@@ -1247,8 +1247,8 @@ export class CoachDashboardComponent {
           (p) =>
             p.riskLevel === "high" ||
             p.status === "at_risk" ||
-            (p.readiness !== undefined && p.readiness < 40) || // Wellness < 40%
-            (p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
+            (p.readiness !== null && p.readiness !== undefined && p.readiness < 40) || // Wellness < 40%
+            (p.acwr !== null && p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
         );
       default:
         return allPlayers;
@@ -1261,8 +1261,8 @@ export class CoachDashboardComponent {
         (p) =>
           p.riskLevel === "high" ||
           p.status === "at_risk" ||
-          (p.readiness !== undefined && p.readiness < 40) || // Wellness < 40%
-          (p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
+          (p.readiness !== null && p.readiness !== undefined && p.readiness < 40) || // Wellness < 40%
+          (p.acwr !== null && p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
       ).length,
   );
 

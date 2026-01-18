@@ -255,7 +255,6 @@ export interface AIModeStatus {
 
       .mode-title {
         margin: 0 0 var(--space-1) 0;
-        font-family: var(--font-family-sans);
         font-size: var(--ds-font-size-xl);
         font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
@@ -414,7 +413,6 @@ export interface AIModeStatus {
         color: var(--color-text-on-primary);
         border: none;
         border-radius: var(--radius-lg);
-        font-family: var(--font-family-sans);
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-medium);
         cursor: pointer;
