@@ -1466,9 +1466,9 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .stat-block__label {
         font-size: var(--ds-font-size-xs);
-        font-weight: var(--ds-font-size-xs);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-muted);
-        line-height: var(--ds-font-size-xs);
+        line-height: var(--ds-line-height-caption);
         letter-spacing: var(--ds-letter-spacing-caption);
         text-transform: var(--ds-text-transform-uppercase);
       }

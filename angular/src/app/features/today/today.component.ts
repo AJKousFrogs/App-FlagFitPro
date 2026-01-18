@@ -283,9 +283,7 @@ interface QuickFormData {
 
       .welcome-greeting {
         font-size: var(--ds-font-size-3xl); /* H1: Page greeting - 28px */
-        font-weight: var(
-          --font-weight-semibold
-        ); /* H1: Semibold (600) - reduced from 700 */
+        font-weight: var(--ds-font-weight-semibold); /* H1: Semibold (600) */
         margin: 0;
         color: var(--color-text-primary);
         line-height: var(--ds-line-height-tight);

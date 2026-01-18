@@ -636,15 +636,13 @@
 
 .profile-page .stat-block__value {
   font-size: var(--ds-font-size-2xl); // 24px - matches Dashboard
-  font-weight: var(
-    --font-weight-semibold
-  ); // Reduced from bold to not compete with card title
+  font-weight: var(--ds-font-weight-semibold); // Reduced from bold to not compete with card title
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-tight);
 }
 
 .profile-page .stat-block__label {
-  font-size: var(--ds-font-size-xs); // 13px
+  font-size: var(--ds-font-size-compact-lg); // 13px
   font-weight: var(--ds-font-weight-regular); // Lighter weight for labels
   color: var(--color-text-muted);
   text-transform: var(--ds-text-transform-uppercase);

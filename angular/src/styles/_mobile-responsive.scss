@@ -104,8 +104,6 @@
     // Disable pull-to-refresh in Chrome on Android
     body {
       overscroll-behavior-y: contain;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     // Note: -webkit-overflow-scrolling and -webkit-touch-callout

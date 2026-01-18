@@ -12,12 +12,12 @@
  */
 
 import { Injectable, inject } from "@angular/core";
-import { firstValueFrom, Observable, from, of } from "rxjs";
-import { map, catchError } from "rxjs/operators";
+import { Observable, firstValueFrom, from, of } from "rxjs";
+import { catchError, map } from "rxjs/operators";
 import { ApiService } from "./api.service";
-import { SupabaseService } from "./supabase.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
+import { SupabaseService } from "./supabase.service";
 
 export interface DirectApiResponse<T = unknown> {
   success: boolean;
@@ -118,6 +118,7 @@ export class DirectSupabaseApiService {
   /**
    * GET /api/daily-protocol?date=YYYY-MM-DD
    * Fetches daily protocol directly from Supabase
+   * If protocol exists but has 0 exercises, regenerates exercises automatically
    */
   getDailyProtocol(
     date: string,
@@ -128,7 +129,7 @@ export class DirectSupabaseApiService {
       return of({ success: false, error: "Not authenticated" });
     }
 
-    return from(this.fetchDailyProtocol(userId, date)).pipe(
+    return from(this.fetchDailyProtocolWithAutoFix(userId, date)).pipe(
       map((data) => ({ success: true, data })),
       catchError((error) => {
         this.logger.error(
@@ -141,6 +142,48 @@ export class DirectSupabaseApiService {
         });
       }),
     );
+  }
+
+  /**
+   * Fetch protocol with automatic exercise regeneration if needed
+   */
+  private async fetchDailyProtocolWithAutoFix(
+    userId: string,
+    date: string,
+  ): Promise<DailyProtocolData | undefined> {
+    // First, fetch the protocol
+    const protocol = await this.fetchDailyProtocol(userId, date);
+    
+    // If no protocol, return undefined to trigger generation
+    if (!protocol) {
+      return undefined;
+    }
+    
+    // If protocol exists but has 0 exercises, regenerate them
+    if (protocol.totalExercises === 0) {
+      this.logger.warn("[DirectSupabaseApi] Protocol has 0 exercises - regenerating...");
+      
+      // Get user config for personalization
+      const { data: config } = await this.supabase.client
+        .from("athlete_training_config")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+      
+      // Force regenerate exercises with date for periodization
+      await this.generateProtocolExercises(
+        protocol.id,
+        protocol.trainingFocus || "general",
+        config?.primary_position,
+        true, // force regenerate
+        date  // pass date for periodization
+      );
+      
+      // Re-fetch with the new exercises
+      return this.fetchDailyProtocol(userId, date);
+    }
+    
+    return protocol;
   }
 
   private async fetchDailyProtocol(
@@ -532,6 +575,7 @@ export class DirectSupabaseApiService {
       trainingFocus,
       config?.primary_position,
       forceRegenerate,
+      date, // pass date for periodization
     );
 
     // Return the created protocol
@@ -541,13 +585,17 @@ export class DirectSupabaseApiService {
   /**
    * Generate protocol exercises using real exercises from the database
    * @param forceRegenerate - If true, delete existing exercises and regenerate
+   * @param date - The protocol date for periodization
    */
   private async generateProtocolExercises(
     protocolId: string,
     focus: string,
     _position?: string,
     forceRegenerate: boolean = false,
+    date?: string,
   ): Promise<void> {
+    const protocolDate = date || new Date().toISOString().split('T')[0];
+    
     // First, check if exercises already exist for this protocol
     const { data: existingExercises } = await this.supabase.client
       .from("protocol_exercises")
@@ -569,8 +617,39 @@ export class DirectSupabaseApiService {
         .eq("protocol_id", protocolId);
     }
 
-    // Fetch exercises by category
-    const { data: allExercises, error: fetchError } = await this.supabase.client
+    // Try to fetch from exercisedb_exercises first (500+ exercises)
+    let allExercises: Array<{
+      id: string;
+      name: string;
+      category: string | null;
+      default_sets?: number | null;
+      default_reps?: number | null;
+      default_hold_seconds?: number | null;
+      default_duration_seconds?: number | null;
+    }> = [];
+
+    // First try exercisedb_exercises (curated library with 500+ exercises)
+    const { data: exerciseDbExercises } = await this.supabase.client
+      .from("exercisedb_exercises")
+      .select("id, name, ff_category, recommended_sets, recommended_reps")
+      .eq("is_active", true)
+      .eq("is_approved", true)
+      .limit(500);
+
+    if (exerciseDbExercises && exerciseDbExercises.length > 0) {
+      this.logger.info(`[DirectSupabaseApi] Found ${exerciseDbExercises.length} exercises from ExerciseDB library`);
+      // Map ExerciseDB format to our format
+      allExercises = exerciseDbExercises.map(ex => ({
+        id: ex.id,
+        name: ex.name,
+        category: this.mapExerciseDbCategory(ex.ff_category),
+        default_sets: ex.recommended_sets || 3,
+        default_reps: parseInt(ex.recommended_reps || '10', 10) || 10,
+      }));
+    }
+
+    // Also fetch from exercises table
+    const { data: localExercises, error: fetchError } = await this.supabase.client
       .from("exercises")
       .select(
         "id, name, category, default_sets, default_reps, default_hold_seconds, default_duration_seconds",
@@ -581,11 +660,16 @@ export class DirectSupabaseApiService {
       this.logger.error("[DirectSupabaseApi] Error fetching exercises:", fetchError);
     }
 
-    if (!allExercises || allExercises.length === 0) {
+    if (localExercises && localExercises.length > 0) {
+      this.logger.info(`[DirectSupabaseApi] Found ${localExercises.length} exercises from local exercises table`);
+      allExercises = [...allExercises, ...localExercises];
+    }
+
+    // If still no exercises, seed defaults
+    if (allExercises.length === 0) {
       this.logger.warn("[DirectSupabaseApi] No exercises found in database - seeding default exercises");
-      // Seed default exercises so the user can see something
       await this.seedDefaultExercises();
-      // Re-fetch after seeding
+      
       const { data: seededExercises } = await this.supabase.client
         .from("exercises")
         .select(
@@ -597,48 +681,263 @@ export class DirectSupabaseApiService {
         this.logger.error("[DirectSupabaseApi] Failed to seed exercises");
         return;
       }
-      // Continue with seeded exercises
-      return this.generateProtocolExercisesWithData(protocolId, focus, seededExercises);
+      allExercises = seededExercises;
     }
+
+    this.logger.info(`[DirectSupabaseApi] Total exercises available: ${allExercises.length}`);
+    return this.generateProtocolExercisesWithData(protocolId, focus, allExercises, protocolDate);
+  }
+
+  /**
+   * Map ExerciseDB ff_category to our standard categories
+   */
+  private mapExerciseDbCategory(ffCategory: string | null): string {
+    if (!ffCategory) return 'strength';
     
-    return this.generateProtocolExercisesWithData(protocolId, focus, allExercises);
+    const categoryMap: Record<string, string> = {
+      'Hip Power & Explosiveness': 'plyometrics',
+      'Leg Strength': 'strength',
+      'Posterior Chain': 'strength',
+      'Lateral Movement': 'conditioning',
+      'Ankle Stability': 'isometrics',
+      'Core Stability': 'isometrics',
+      'Rotational Core': 'strength',
+      'Shoulder Stability': 'strength',
+      'Upper Body Power': 'plyometrics',
+      'Pushing Power': 'strength',
+      'Arm Extension': 'strength',
+      'Arm Strength': 'strength',
+      'Conditioning': 'conditioning',
+      'Mobility': 'mobility',
+    };
+    
+    return categoryMap[ffCategory] || 'strength';
   }
 
   /**
    * Seed default exercises when the exercises table is empty
-   * This provides a minimal set of exercises for the protocol to function
+   * This provides a comprehensive set of evidence-based exercises for flag football
+   * Based on the training video database and 1.5h gym periodization structure
    */
   private async seedDefaultExercises(): Promise<void> {
     const defaultExercises = [
-      // Morning Mobility
-      { name: 'Hip Circles', slug: 'hip-circles', category: 'mobility', default_sets: 2, default_reps: 10, active: true },
-      { name: 'Arm Circles', slug: 'arm-circles-mobility', category: 'mobility', default_sets: 2, default_reps: 10, active: true },
-      { name: 'Cat-Cow Stretch', slug: 'cat-cow', category: 'mobility', default_sets: 1, default_reps: 10, active: true },
-      { name: 'World\'s Greatest Stretch', slug: 'worlds-greatest', category: 'mobility', default_sets: 1, default_reps: 5, active: true },
-      // Foam Roll
-      { name: 'Quad Foam Roll', slug: 'quad-roll', category: 'foam_roll', default_sets: 1, default_duration_seconds: 60, active: true },
-      { name: 'IT Band Foam Roll', slug: 'it-band-roll', category: 'foam_roll', default_sets: 1, default_duration_seconds: 60, active: true },
-      { name: 'Hamstring Foam Roll', slug: 'hamstring-roll', category: 'foam_roll', default_sets: 1, default_duration_seconds: 60, active: true },
-      { name: 'Glute Foam Roll', slug: 'glute-roll', category: 'foam_roll', default_sets: 1, default_duration_seconds: 60, active: true },
-      // Warm Up
-      { name: 'High Knees', slug: 'high-knees', category: 'warm_up', default_sets: 2, default_reps: 20, active: true },
-      { name: 'Butt Kicks', slug: 'butt-kicks', category: 'warm_up', default_sets: 2, default_reps: 20, active: true },
-      { name: 'Leg Swings', slug: 'leg-swings', category: 'warm_up', default_sets: 2, default_reps: 10, active: true },
-      { name: 'A-Skips', slug: 'a-skips', category: 'warm_up', default_sets: 2, default_reps: 10, active: true },
-      // Main Session (Strength/Conditioning)
-      { name: 'Bodyweight Squat', slug: 'bw-squat', category: 'strength', default_sets: 3, default_reps: 15, active: true },
-      { name: 'Push-ups', slug: 'pushups', category: 'strength', default_sets: 3, default_reps: 10, active: true },
-      { name: 'Lunges', slug: 'lunges', category: 'strength', default_sets: 3, default_reps: 10, active: true },
-      { name: 'Plank', slug: 'plank', category: 'strength', default_sets: 3, default_hold_seconds: 30, active: true },
-      { name: 'Burpees', slug: 'burpees', category: 'conditioning', default_sets: 3, default_reps: 10, active: true },
-      { name: 'Mountain Climbers', slug: 'mountain-climbers', category: 'conditioning', default_sets: 3, default_reps: 20, active: true },
-      // Cool Down
-      { name: 'Standing Quad Stretch', slug: 'quad-stretch', category: 'cool_down', default_sets: 1, default_hold_seconds: 30, active: true },
-      { name: 'Hamstring Stretch', slug: 'hamstring-stretch', category: 'cool_down', default_sets: 1, default_hold_seconds: 30, active: true },
-      { name: 'Hip Flexor Stretch', slug: 'hip-flexor-stretch', category: 'cool_down', default_sets: 1, default_hold_seconds: 30, active: true },
-      // Recovery
-      { name: 'Child\'s Pose', slug: 'childs-pose', category: 'recovery', default_sets: 1, default_hold_seconds: 60, active: true },
-      { name: 'Deep Breathing', slug: 'deep-breathing', category: 'recovery', default_sets: 1, default_duration_seconds: 120, active: true },
+      // ============================================================================
+      // MORNING MOBILITY (10-15 min YouTube follow-along routines)
+      // These are the day-specific routines from our video database
+      // ============================================================================
+      { name: 'Morning Mobility - Day 1 (Monday)', slug: 'morning-mobility-day-1-monday', category: 'mobility', 
+        description: '10-minute morning mobility routine. Focus on hips, spine, and ankles.',
+        video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf',
+        video_id: 'IWNnTJFwi3s',
+        default_sets: 1, default_duration_seconds: 600, active: true },
+      { name: 'Morning Mobility - Day 2 (Tuesday)', slug: 'morning-mobility-day-2-tuesday', category: 'mobility',
+        description: '10-minute morning mobility routine. Hip flexor and thoracic focus.',
+        video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf',
+        video_id: 'IWNnTJFwi3s',
+        default_sets: 1, default_duration_seconds: 600, active: true },
+      { name: 'Morning Mobility - Day 3 (Wednesday)', slug: 'morning-mobility-day-3-wednesday', category: 'mobility',
+        description: '10-minute morning mobility routine. Groin and adductor focus.',
+        video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf',
+        video_id: 'IWNnTJFwi3s',
+        default_sets: 1, default_duration_seconds: 600, active: true },
+      { name: 'Morning Mobility - Day 4 (Thursday)', slug: 'morning-mobility-day-4-thursday', category: 'mobility',
+        description: '10-minute morning mobility routine. Ankle and achilles focus.',
+        video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf',
+        video_id: 'IWNnTJFwi3s',
+        default_sets: 1, default_duration_seconds: 600, active: true },
+      { name: 'Morning Mobility - Day 5 (Friday)', slug: 'morning-mobility-day-5-friday', category: 'mobility',
+        description: '10-minute morning mobility routine. Full body flow.',
+        video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf',
+        video_id: 'IWNnTJFwi3s',
+        default_sets: 1, default_duration_seconds: 600, active: true },
+      { name: 'Morning Mobility - Day 6 (Saturday)', slug: 'morning-mobility-day-6-saturday', category: 'mobility',
+        description: '10-minute morning mobility routine. Light recovery focus.',
+        video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf',
+        video_id: 'IWNnTJFwi3s',
+        default_sets: 1, default_duration_seconds: 600, active: true },
+      { name: 'Morning Mobility - Day 7 (Sunday)', slug: 'morning-mobility-day-7-sunday', category: 'mobility',
+        description: '10-minute morning mobility routine. Gentle recovery day.',
+        video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf',
+        video_id: 'IWNnTJFwi3s',
+        default_sets: 1, default_duration_seconds: 600, active: true },
+
+      // ============================================================================
+      // FOAM ROLLING (Pre-workout tissue prep - 8 min)
+      // ============================================================================
+      { name: 'Quad Foam Roll', slug: 'quad-foam-roll', category: 'foam_roll',
+        description: 'Lie face down, roll from above knee to hip. Rotate leg to target different quad muscles.',
+        default_sets: 1, default_duration_seconds: 60, active: true },
+      { name: 'IT Band Foam Roll', slug: 'it-band-foam-roll', category: 'foam_roll',
+        description: 'Lie on side, roll outer thigh from knee to hip. Control pressure with supporting foot.',
+        default_sets: 1, default_duration_seconds: 60, active: true },
+      { name: 'Hamstring Foam Roll', slug: 'hamstring-foam-roll', category: 'foam_roll',
+        description: 'Sit on roller, roll from above knee to glutes. Cross legs for more pressure.',
+        default_sets: 1, default_duration_seconds: 60, active: true },
+      { name: 'Glute Foam Roll', slug: 'glute-foam-roll', category: 'foam_roll',
+        description: 'Sit in figure-4 position on roller, roll glute muscle.',
+        default_sets: 1, default_duration_seconds: 60, active: true },
+      { name: 'Calf Foam Roll', slug: 'calf-foam-roll', category: 'foam_roll',
+        description: 'Sit with roller under calves, roll from ankle to knee.',
+        default_sets: 1, default_duration_seconds: 45, active: true },
+
+      // ============================================================================
+      // WARM-UP (15 min dynamic movement prep)
+      // ============================================================================
+      { name: 'Leg Swings (Front-to-Back)', slug: 'leg-swings-front-back', category: 'warm_up',
+        description: 'Stand sideways to wall, swing leg forward and backward in controlled arc.',
+        default_sets: 2, default_reps: 10, active: true },
+      { name: 'Leg Swings (Side-to-Side)', slug: 'leg-swings-side-to-side', category: 'warm_up',
+        description: 'Face wall, swing leg across body and out to side.',
+        default_sets: 2, default_reps: 10, active: true },
+      { name: 'A-Skips', slug: 'a-skips', category: 'warm_up',
+        description: 'Skip forward driving knee to hip height. Quick ground contacts.',
+        default_sets: 2, default_reps: 10, active: true },
+      { name: 'High Knees', slug: 'high-knees', category: 'warm_up',
+        description: 'Run in place or forward, driving knees to hip height.',
+        default_sets: 2, default_duration_seconds: 20, active: true },
+      { name: 'Butt Kicks', slug: 'butt-kicks', category: 'warm_up',
+        description: 'Run in place kicking heels up toward glutes.',
+        default_sets: 2, default_duration_seconds: 20, active: true },
+      { name: 'Lateral Shuffles', slug: 'lateral-shuffles', category: 'warm_up',
+        description: 'Athletic stance, shuffle sideways keeping hips low.',
+        default_sets: 2, default_reps: 10, active: true },
+
+      // ============================================================================
+      // ISOMETRICS (15 min - position holds for tendon health)
+      // ============================================================================
+      { name: 'Wall Sit', slug: 'wall-sit', category: 'isometrics',
+        description: 'Back against wall, thighs parallel to floor. Hold position.',
+        default_sets: 3, default_hold_seconds: 45, active: true },
+      { name: 'Single Leg Wall Sit', slug: 'single-leg-wall-sit', category: 'isometrics',
+        description: 'Wall sit with one leg extended. Switch legs each set.',
+        default_sets: 2, default_hold_seconds: 30, active: true },
+      { name: 'Isometric Lunge Hold', slug: 'isometric-lunge-hold', category: 'isometrics',
+        description: 'Deep lunge position, hold at bottom. Great for hip flexor and quad strength.',
+        default_sets: 2, default_hold_seconds: 30, active: true },
+      { name: 'Isometric Calf Raise Hold', slug: 'isometric-calf-raise-hold', category: 'isometrics',
+        description: 'Rise up on toes, hold at top. Single leg for progression.',
+        default_sets: 3, default_hold_seconds: 30, active: true },
+      { name: 'Glute Bridge Hold', slug: 'glute-bridge-hold', category: 'isometrics',
+        description: 'Bridge position, squeeze glutes, hold at top.',
+        default_sets: 3, default_hold_seconds: 30, active: true },
+      { name: 'Copenhagen Hold', slug: 'copenhagen-hold', category: 'isometrics',
+        description: 'Side plank with top leg on bench. Hold for adductor strength.',
+        default_sets: 2, default_hold_seconds: 20, active: true },
+
+      // ============================================================================
+      // PLYOMETRICS (15 min - explosive power development)
+      // ============================================================================
+      { name: 'Box Jumps', slug: 'box-jumps', category: 'plyometrics',
+        description: 'Explosive jump onto box, step down. Focus on soft landing.',
+        default_sets: 3, default_reps: 5, active: true },
+      { name: 'Broad Jumps', slug: 'broad-jumps', category: 'plyometrics',
+        description: 'Maximum horizontal jump from standing. Stick the landing.',
+        default_sets: 3, default_reps: 5, active: true },
+      { name: 'Single Leg Bounds', slug: 'single-leg-bounds', category: 'plyometrics',
+        description: 'Hop forward on one leg, maximizing distance. Alternate legs.',
+        default_sets: 3, default_reps: 5, active: true },
+      { name: 'Lateral Bounds', slug: 'lateral-bounds', category: 'plyometrics',
+        description: 'Explosive side-to-side jumps. Land softly, control the decel.',
+        default_sets: 3, default_reps: 6, active: true },
+      { name: 'Depth Jumps', slug: 'depth-jumps', category: 'plyometrics',
+        description: 'Step off box, immediately explode upward on landing. Advanced.',
+        default_sets: 3, default_reps: 4, active: true },
+      { name: 'Pogos', slug: 'pogos', category: 'plyometrics',
+        description: 'Quick, stiff ankle hops. Minimal ground contact time.',
+        default_sets: 3, default_reps: 15, active: true },
+
+      // ============================================================================
+      // STRENGTH (15 min - injury prevention focused)
+      // ============================================================================
+      { name: 'Nordic Curls', slug: 'nordic-curls', category: 'strength',
+        description: '51% hamstring injury reduction (Al Attar et al.). Kneel, lower body forward under control.',
+        video_url: 'https://www.youtube.com/watch?v=d8AAPcYxHKE',
+        default_sets: 3, default_reps: 5, active: true },
+      { name: 'Copenhagen Adductors', slug: 'copenhagen-adductors', category: 'strength',
+        description: '41% groin injury reduction (Harøy et al.). Side plank with top leg on bench.',
+        default_sets: 3, default_reps: 8, active: true },
+      { name: 'Single Leg RDL', slug: 'single-leg-rdl', category: 'strength',
+        description: 'Balance on one leg, hinge at hip reaching toward ground.',
+        default_sets: 3, default_reps: 8, active: true },
+      { name: 'Split Squat', slug: 'split-squat', category: 'strength',
+        description: 'Staggered stance, lower until back knee nearly touches ground.',
+        default_sets: 3, default_reps: 10, active: true },
+      { name: 'Glute Bridge', slug: 'glute-bridge', category: 'strength',
+        description: 'Lie on back, drive hips up squeezing glutes at top.',
+        default_sets: 3, default_reps: 12, active: true },
+      { name: 'Calf Raises', slug: 'calf-raises', category: 'strength',
+        description: 'Rise up on toes, control the lowering. Single leg for progression.',
+        default_sets: 3, default_reps: 15, active: true },
+
+      // ============================================================================
+      // CONDITIONING (15 min - ACWR-adjusted based on load)
+      // ============================================================================
+      { name: 'Sprint Intervals (20yd)', slug: 'sprint-intervals-20yd', category: 'conditioning',
+        description: '20-yard sprints at 85% effort with walk-back recovery.',
+        default_sets: 6, default_reps: 1, active: true },
+      { name: 'Pro Agility (5-10-5)', slug: 'pro-agility', category: 'conditioning',
+        description: 'Pro agility drill - 5 yards, touch, 10 yards back, 5 yards finish.',
+        default_sets: 4, default_reps: 1, active: true },
+      { name: 'Tempo Runs', slug: 'tempo-runs', category: 'conditioning',
+        description: '60-70% effort runs for aerobic base. 100-200 yards.',
+        default_sets: 4, default_duration_seconds: 30, active: true },
+      { name: 'Ladder Drills', slug: 'ladder-drills', category: 'conditioning',
+        description: 'Quick feet through agility ladder. Various patterns.',
+        default_sets: 4, default_reps: 1, active: true },
+      { name: 'Cone Drills', slug: 'cone-drills', category: 'conditioning',
+        description: 'Change of direction around cones. L-drill, T-drill, etc.',
+        default_sets: 4, default_reps: 1, active: true },
+
+      // ============================================================================
+      // SKILL DRILLS (15 min - position-specific)
+      // ============================================================================
+      { name: 'Route Running Drills', slug: 'route-running-drills', category: 'skill',
+        description: 'Practice route tree at 75% speed. Focus on cuts and stems.',
+        default_sets: 4, default_reps: 3, active: true },
+      { name: 'Backpedal & Break', slug: 'backpedal-break', category: 'skill',
+        description: 'DB drill - backpedal, hip turn, accelerate to ball.',
+        default_sets: 4, default_reps: 4, active: true },
+      { name: 'Pass Rush Get-Off', slug: 'pass-rush-getoff', category: 'skill',
+        description: 'First step explosion from rusher stance.',
+        default_sets: 4, default_reps: 4, active: true },
+      { name: 'QB Footwork Drops', slug: 'qb-footwork-drops', category: 'skill',
+        description: '3-step, 5-step drops with proper mechanics.',
+        default_sets: 4, default_reps: 4, active: true },
+
+      // ============================================================================
+      // COOL DOWN (15 min - static stretching)
+      // ============================================================================
+      { name: 'Standing Quad Stretch', slug: 'standing-quad-stretch', category: 'cool_down',
+        description: 'Stand on one leg, pull heel toward glute.',
+        default_sets: 1, default_hold_seconds: 30, active: true },
+      { name: 'Standing Hamstring Stretch', slug: 'standing-hamstring-stretch', category: 'cool_down',
+        description: 'Foot forward, heel down, hinge at hips toward toes.',
+        default_sets: 1, default_hold_seconds: 30, active: true },
+      { name: 'Kneeling Hip Flexor Stretch', slug: 'kneeling-hip-flexor-stretch', category: 'cool_down',
+        description: 'Kneeling lunge, push hips forward.',
+        default_sets: 1, default_hold_seconds: 30, active: true },
+      { name: 'Calf Stretch', slug: 'standing-calf-stretch', category: 'cool_down',
+        description: 'Step back, press heel into ground, lean into wall.',
+        default_sets: 1, default_hold_seconds: 30, active: true },
+      { name: 'Pigeon Stretch', slug: 'pigeon-stretch', category: 'cool_down',
+        description: 'Hip opener - front leg bent, back leg extended.',
+        default_sets: 1, default_hold_seconds: 45, active: true },
+
+      // ============================================================================
+      // EVENING RECOVERY (Home routine)
+      // ============================================================================
+      { name: 'Child\'s Pose', slug: 'childs-pose', category: 'recovery',
+        description: 'Kneel, sit back on heels, fold forward with arms extended.',
+        default_sets: 1, default_hold_seconds: 60, active: true },
+      { name: 'Supine Twist', slug: 'supine-twist', category: 'recovery',
+        description: 'Lie on back, drop knees to one side for spinal rotation.',
+        default_sets: 1, default_hold_seconds: 45, active: true },
+      { name: 'Deep Breathing', slug: 'deep-breathing', category: 'recovery',
+        description: 'Belly breathing - inhale 4 counts, exhale 6-8 counts.',
+        default_sets: 1, default_duration_seconds: 120, active: true },
+      { name: 'Legs Up The Wall', slug: 'legs-up-wall', category: 'recovery',
+        description: 'Lie on back with legs up against wall for circulation.',
+        default_sets: 1, default_duration_seconds: 180, active: true },
     ];
 
     const { error } = await this.supabase.client
@@ -648,12 +947,74 @@ export class DirectSupabaseApiService {
     if (error) {
       this.logger.error("[DirectSupabaseApi] Error seeding default exercises:", error);
     } else {
-      this.logger.success("[DirectSupabaseApi] Successfully seeded default exercises");
+      this.logger.success("[DirectSupabaseApi] Successfully seeded", defaultExercises.length, "exercises");
     }
   }
 
   /**
+   * Get user's practice days from preferences
+   */
+  private async getUserPracticeDays(userId: string): Promise<string[]> {
+    try {
+      // First try to get from user_preferences by email
+      const user = this.authService.getUser();
+      if (user?.email) {
+        const { data } = await this.supabase.client
+          .from("user_preferences")
+          .select("practice_days")
+          .eq("email", user.email)
+          .maybeSingle();
+        
+        if (data?.practice_days) {
+          return data.practice_days;
+        }
+      }
+      
+      // Default to Monday/Wednesday if not set
+      return ["Monday", "Wednesday"];
+    } catch {
+      return ["Monday", "Wednesday"];
+    }
+  }
+
+  /**
+   * Check if a given date is a practice day for the user
+   */
+  private async isPracticeDay(userId: string, date: string): Promise<boolean> {
+    const practiceDays = await this.getUserPracticeDays(userId);
+    const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+    return practiceDays.map(d => d.toLowerCase()).includes(dayOfWeek.toLowerCase());
+  }
+
+  /**
+   * Get the current training week number (1-52) for periodization
+   * Uses the protocol date to calculate week of year
+   */
+  private getWeekNumber(date: string): number {
+    const d = new Date(date);
+    const startOfYear = new Date(d.getFullYear(), 0, 1);
+    const days = Math.floor((d.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
+    return Math.ceil((days + startOfYear.getDay() + 1) / 7);
+  }
+
+  /**
+   * Get load percentage based on current week in periodization
+   * Foundation Phase (weeks 1-4): 20% -> 40% progression
+   * Build Phase (weeks 5-12): 40% -> 60% progression
+   * Peak Phase (weeks 13-16): 60% -> 75% (deload weeks included)
+   * Maintenance/In-season: 50-60%
+   */
+  private getLoadPercentage(weekNumber: number): number {
+    // Simplified periodization - max 40% BW as specified
+    if (weekNumber <= 4) return 20; // Foundation
+    if (weekNumber <= 8) return 30; // Early build
+    if (weekNumber <= 12) return 35; // Mid build
+    return 40; // Max load (capped at 40% as per requirement)
+  }
+
+  /**
    * Generate protocol exercises with provided exercise data
+   * Uses week number for periodization - each week gets different exercises
    */
   private async generateProtocolExercisesWithData(
     protocolId: string,
@@ -667,7 +1028,15 @@ export class DirectSupabaseApiService {
       default_hold_seconds?: number | null;
       default_duration_seconds?: number | null;
     }>,
+    date?: string,
   ): Promise<void> {
+    // Get week number for periodization
+    const protocolDate = date || new Date().toISOString().split('T')[0];
+    const weekNumber = this.getWeekNumber(protocolDate);
+    const dayOfYear = Math.floor((new Date(protocolDate).getTime() - new Date(new Date(protocolDate).getFullYear(), 0, 0).getTime()) / (24 * 60 * 60 * 1000));
+    const loadPercentage = this.getLoadPercentage(weekNumber);
+    
+    this.logger.info(`[DirectSupabaseApi] Generating protocol for week ${weekNumber}, day ${dayOfYear}, load ${loadPercentage}%`);
 
     // Group exercises by category (case-insensitive)
     const exercisesByCategory = new Map<string, typeof allExercises>();
@@ -694,7 +1063,8 @@ export class DirectSupabaseApiService {
       prescribed_duration_seconds?: number;
     }> = [];
 
-    // Helper to get random exercises from a category with fallback
+    // Helper to get exercises from a category with DETERMINISTIC selection based on day
+    // This ensures each day gets different exercises, but the same day always gets the same ones
     const getExercises = (category: string, count: number, fallbackCategories: string[] = []) => {
       let exercises = exercisesByCategory.get(category) || [];
       
@@ -708,11 +1078,21 @@ export class DirectSupabaseApiService {
       
       // If still empty, try to get any available exercises
       if (exercises.length === 0) {
-        // Get all exercises as last resort
         exercises = allExercises;
       }
       
-      const shuffled = [...exercises].sort(() => Math.random() - 0.5);
+      // Use deterministic selection based on dayOfYear + category hash
+      // This makes Tuesday Jan 20 different from Tuesday Jan 27, but repeatable
+      const categoryHash = category.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+      const seed = dayOfYear + categoryHash + weekNumber;
+      
+      // Deterministic shuffle using seed
+      const shuffled = [...exercises].sort((a, b) => {
+        const hashA = (a.id || a.name).split('').reduce((acc, c) => acc + c.charCodeAt(0), seed);
+        const hashB = (b.id || b.name).split('').reduce((acc, c) => acc + c.charCodeAt(0), seed);
+        return (hashA % 1000) - (hashB % 1000);
+      });
+      
       return shuffled.slice(0, count);
     };
 
@@ -797,38 +1177,47 @@ export class DirectSupabaseApiService {
     addBlockExercises("warm_up", "warm_up", 3);
 
     // =========================================================================
-    // MAIN TRAINING BLOCKS
-    // NOTE: Using main_session as block type for database compatibility.
-    // After running migration 113_extend_protocol_block_types.sql, these can
-    // be changed to specific block types (isometrics, plyometrics, etc.)
+    // MAIN TRAINING BLOCKS - 1.5h GYM STRUCTURE
+    // Evidence-based periodization with all training components
     // =========================================================================
 
-    // Main Session - combines strength, conditioning, and skill work
-    // Uses fallback categories when specific categories aren't seeded
+    // ISOMETRICS (15 min) - tendon health and strength foundation
+    addBlockExercises("main_session", "isometrics", 3, { 
+      useHold: true,
+      fallbackCategories: ["strength"] 
+    });
+
+    // PLYOMETRICS (15 min) - explosive power development
+    addBlockExercises("main_session", "plyometrics", 3, { 
+      fallbackCategories: ["conditioning", "warm_up"] 
+    });
+
+    // STRENGTH (15 min) - injury prevention focused (Nordic curls, Copenhagen, etc.)
     addBlockExercises("main_session", "strength", 3, { 
-      fallbackCategories: ["mobility", "warm_up"] 
+      fallbackCategories: ["isometrics"] 
     });
 
+    // CONDITIONING (15 min) - ACWR-adjusted sprint/agility work
     addBlockExercises("main_session", "conditioning", 2, { 
-      fallbackCategories: ["warm_up", "mobility"] 
+      fallbackCategories: ["warm_up"] 
     });
 
+    // SKILL DRILLS (15 min) - position-specific work
     addBlockExercises("main_session", "skill", 2, { 
-      fallbackCategories: ["warm_up", "mobility"] 
+      fallbackCategories: ["conditioning", "warm_up"] 
     });
 
     // =========================================================================
     // RECOVERY BLOCKS
     // =========================================================================
 
-    // Cool Down (3 exercises) - post-workout recovery
-    // Fallback to mobility or recovery
-    addBlockExercises("cool_down", "cool_down", 3, { 
+    // Cool Down (15 min) - static stretching
+    addBlockExercises("cool_down", "cool_down", 4, { 
       useHold: true, 
       fallbackCategories: ["mobility", "recovery"] 
     });
 
-    // Evening Recovery (2 exercises) - done at home
+    // Evening Recovery (at home) - done at home before bed
     addBlockExercises("evening_recovery", "recovery", 2, { 
       useDuration: true, 
       fallbackCategories: ["mobility", "foam_roll"] 
