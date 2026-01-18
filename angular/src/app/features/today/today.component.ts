@@ -1628,6 +1628,7 @@ export class TodayComponent {
               "Unable to generate your training plan. Please contact support.",
             );
             this.protocolJson.set(null);
+            this.fullProtocolData = null;
             this.todayViewModel.set(
               resolveTodayState(null, this.currentTime()),
             );
@@ -1643,6 +1644,7 @@ export class TodayComponent {
               "Failed to load your training data. Please try again.",
             );
             this.protocolJson.set(null);
+            this.fullProtocolData = null;
             this.todayViewModel.set(
               resolveTodayState(null, this.currentTime()),
             );
@@ -1699,6 +1701,7 @@ export class TodayComponent {
               "Failed to load your training data. Please try again.",
             );
             this.protocolJson.set(null);
+            this.fullProtocolData = null;
             this.todayViewModel.set(
               resolveTodayState(null, this.currentTime()),
             );
@@ -1807,6 +1810,7 @@ export class TodayComponent {
               "Unable to generate your training plan. Please contact support.",
             );
             this.protocolJson.set(null);
+            this.fullProtocolData = null;
             this.todayViewModel.set(
               resolveTodayState(null, this.currentTime()),
             );
@@ -1819,6 +1823,7 @@ export class TodayComponent {
             "Failed to generate your training plan. Please contact support.",
           );
           this.protocolJson.set(null);
+          this.fullProtocolData = null;
           this.todayViewModel.set(resolveTodayState(null, this.currentTime()));
         },
       });
