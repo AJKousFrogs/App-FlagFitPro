@@ -2968,9 +2968,10 @@ async function logSession(supabase, userId, payload, headers) {
  */
 async function computeDynamicConfidenceMetadata(supabase, userId, date, protocol) {
   // Check for today's wellness check-in
+  // Note: daily_wellness_checkin uses calculated_readiness and overall_readiness_score columns
   const { data: todayWellness, error: wellnessError } = await supabase
     .from("daily_wellness_checkin")
-    .select("id, readiness_score, calculated_readiness, created_at, checkin_date")
+    .select("id, calculated_readiness, overall_readiness_score, created_at, checkin_date")
     .eq("user_id", userId)
     .eq("checkin_date", date)
     .maybeSingle();
@@ -2980,7 +2981,8 @@ async function computeDynamicConfidenceMetadata(supabase, userId, date, protocol
   }
 
   const hasCheckinToday = !!todayWellness;
-  const readinessScore = todayWellness?.readiness_score ?? todayWellness?.calculated_readiness ?? protocol.readiness_score;
+  // Prefer calculated_readiness, fallback to overall_readiness_score, then protocol value
+  const readinessScore = todayWellness?.calculated_readiness ?? todayWellness?.overall_readiness_score ?? protocol.readiness_score;
 
   // Calculate days stale if no check-in today but we have stored data
   let daysStale = null;

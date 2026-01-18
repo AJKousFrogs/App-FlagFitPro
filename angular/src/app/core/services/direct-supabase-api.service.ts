@@ -334,15 +334,17 @@ export class DirectSupabaseApiService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async computeConfidenceMetadata(userId: string, date: string, protocol: any): Promise<ConfidenceMetadata> {
     // Check for today's wellness check-in (table is daily_wellness_checkin)
+    // Note: Use calculated_readiness or overall_readiness_score (not readiness_score which doesn't exist)
     const { data: todayWellness } = await this.supabase.client
       .from("daily_wellness_checkin")
-      .select("id, readiness_score, created_at")
+      .select("id, calculated_readiness, overall_readiness_score, created_at")
       .eq("user_id", userId)
       .eq("checkin_date", date)
       .maybeSingle();
 
     const hasCheckinToday = !!todayWellness;
-    const readinessScore = todayWellness?.readiness_score ?? protocol.readiness_score;
+    // Prefer calculated_readiness, fallback to overall_readiness_score, then protocol value
+    const readinessScore = todayWellness?.calculated_readiness ?? todayWellness?.overall_readiness_score ?? protocol.readiness_score;
 
     // Calculate days stale if no check-in today but we have stored data
     let daysStale: number | null = null;
@@ -402,16 +404,18 @@ export class DirectSupabaseApiService {
 
   /**
    * Get today's readiness score from wellness check-in (table is daily_wellness_checkin)
+   * Note: The table uses calculated_readiness or overall_readiness_score, not readiness_score
    */
   private async getTodaysReadinessScore(userId: string, date: string): Promise<number | null> {
     const { data } = await this.supabase.client
       .from("daily_wellness_checkin")
-      .select("readiness_score")
+      .select("calculated_readiness, overall_readiness_score")
       .eq("user_id", userId)
       .eq("checkin_date", date)
       .maybeSingle();
 
-    return data?.readiness_score ?? null;
+    // Prefer calculated_readiness, fallback to overall_readiness_score
+    return data?.calculated_readiness ?? data?.overall_readiness_score ?? null;
   }
 
   private getBlockEstimatedMinutes(blockType: string): number {
@@ -842,5 +846,110 @@ export class DirectSupabaseApiService {
     }
 
     return (count ?? 0) > 0;
+  }
+
+  /**
+   * Submit wellness check-in directly to Supabase
+   * This bypasses the API for local development
+   */
+  submitWellnessCheckin(data: {
+    date?: string;
+    sleepQuality?: number | null;
+    sleepHours?: number | null;
+    energyLevel?: number | null;
+    stressLevel?: number | null;
+    muscleSoreness?: number | null;
+    sorenessAreas?: string[];
+    notes?: string;
+    readinessScore?: number | null;
+    motivationLevel?: number | null;
+    mood?: number | null;
+    hydrationLevel?: number | null;
+  }): Observable<DirectApiResponse<{ id: string }>> {
+    const userId = this.authService.getUser()?.id;
+
+    if (!userId) {
+      return of({ success: false, error: "Not authenticated" });
+    }
+
+    const targetDate = data.date || new Date().toISOString().split("T")[0];
+    
+    // Calculate readiness if not provided
+    const calculatedReadiness = data.readinessScore ?? this.calculateReadiness(data);
+
+    return from(
+      this.supabase.client
+        .from("daily_wellness_checkin")
+        .upsert(
+          {
+            user_id: userId,
+            checkin_date: targetDate,
+            sleep_quality: data.sleepQuality,
+            sleep_hours: data.sleepHours,
+            energy_level: data.energyLevel,
+            stress_level: data.stressLevel,
+            muscle_soreness: data.muscleSoreness,
+            soreness_areas: data.sorenessAreas || [],
+            notes: data.notes,
+            calculated_readiness: calculatedReadiness,
+            overall_readiness_score: calculatedReadiness,
+            motivation_level: data.motivationLevel,
+            mood: data.mood,
+            hydration_level: data.hydrationLevel,
+          },
+          {
+            onConflict: "user_id,checkin_date",
+          }
+        )
+        .select("id")
+        .single()
+    ).pipe(
+      map((result) => {
+        if (result.error) {
+          this.logger.error("[DirectSupabaseApi] Wellness save error:", result.error);
+          return { success: false, error: result.error.message };
+        }
+        this.logger.success("[DirectSupabaseApi] Wellness check-in saved:", result.data?.id);
+        return { success: true, data: result.data };
+      }),
+      catchError((error) => {
+        this.logger.error("[DirectSupabaseApi] Wellness submission error:", error);
+        return of({ success: false, error: error.message || "Failed to save wellness" });
+      })
+    );
+  }
+
+  /**
+   * Calculate readiness score from wellness data
+   * Uses evidence-based formula similar to backend
+   */
+  private calculateReadiness(data: {
+    sleepQuality?: number | null;
+    energyLevel?: number | null;
+    stressLevel?: number | null;
+    muscleSoreness?: number | null;
+  }): number {
+    // Default to moderate values if not provided
+    const sleep = data.sleepQuality ?? 5;
+    const energy = data.energyLevel ?? 5;
+    const stress = data.stressLevel ?? 5;
+    const soreness = data.muscleSoreness ?? 3;
+
+    // Weighted formula (similar to wellness-checkin.cjs)
+    // Higher is better for sleep, energy; lower is better for stress, soreness
+    const sleepScore = (sleep / 10) * 100;
+    const energyScore = (energy / 10) * 100;
+    const stressScore = ((10 - stress) / 10) * 100; // Invert stress
+    const sorenessScore = ((10 - soreness) / 10) * 100; // Invert soreness
+
+    // Weights: sleep 30%, energy 25%, stress 25%, soreness 20%
+    const readiness = Math.round(
+      sleepScore * 0.3 +
+      energyScore * 0.25 +
+      stressScore * 0.25 +
+      sorenessScore * 0.2
+    );
+
+    return Math.max(0, Math.min(100, readiness));
   }
 }

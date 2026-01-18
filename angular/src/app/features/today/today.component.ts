@@ -2090,7 +2090,13 @@ export class TodayComponent {
       readinessScore: readiness, // Calculated from actual inputs, not defaults
     };
 
-    from(this.trainingService.submitWellness(wellnessData))
+    // Use direct Supabase submission when in direct mode to ensure data is saved
+    // to the same database that protocol loading uses
+    const submission$ = this.useDirectSupabase
+      ? this.directApi.submitWellnessCheckin(wellnessData)
+      : from(this.trainingService.submitWellness(wellnessData));
+
+    submission$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: unknown) => {
