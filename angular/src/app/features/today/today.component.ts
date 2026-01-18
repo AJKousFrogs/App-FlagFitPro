@@ -78,6 +78,9 @@ import { UnifiedTrainingService } from "../../core/services/unified-training.ser
 // Environment
 import { environment } from "../../../environments/environment";
 
+// Utils
+import { mapDailyProtocolResponse } from "../../core/utils/api-response-mapper";
+
 // Constants
 import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
 import {
@@ -1605,13 +1608,8 @@ export class TodayComponent {
         next: (response) => {
           if (response?.success && response.data) {
             // Protocol found, resolve state
-            // Map API response (camelCase confidenceMetadata) to resolver format (snake_case confidence_metadata)
-            const apiData = response.data as ProtocolJson & { confidenceMetadata?: ProtocolJson['confidence_metadata'] };
-            const protocolData: ProtocolJson = {
-              ...apiData,
-              // Ensure confidence_metadata is set from either snake_case or camelCase
-              confidence_metadata: apiData.confidence_metadata || apiData.confidenceMetadata,
-            };
+            // Map API response (camelCase) to resolver format (snake_case)
+            const protocolData = this.mapApiProtocolResponse(response.data);
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
             this.error.set(null);
@@ -1771,6 +1769,15 @@ export class TodayComponent {
           title: block.title || block.type,
         })) || [],
     };
+  }
+
+  /**
+   * Map API response (camelCase) to ProtocolJson format (snake_case)
+   * Handles field name mismatches between backend and frontend
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private mapApiProtocolResponse(data: any): ProtocolJson {
+    return mapDailyProtocolResponse(data) as ProtocolJson;
   }
 
   /**
