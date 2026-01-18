@@ -1278,6 +1278,13 @@ async function getProtocol(supabase, userId, params, headers) {
     throw exercisesError;
   }
 
+  // Debug logging to understand exercise state
+  console.log("[daily-protocol] Fetched protocol exercises:", {
+    count: protocolExercises?.length || 0,
+    protocolId: protocol.id,
+    totalExercisesStored: protocol.total_exercises,
+  });
+
   // ============================================================================
   // AUTO-FIX: If protocol exists but has 0 exercises, regenerate using fallback
   // This fixes protocols that were created when the DB was empty
