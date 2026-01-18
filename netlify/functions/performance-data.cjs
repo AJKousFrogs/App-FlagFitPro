@@ -235,14 +235,31 @@ async function handleMeasurements(method, userId, body, query) {
       }
 
       try {
+        // Insert all fields including enhanced body composition
         const { data, error } = await supabaseAdmin
           .from("physical_measurements")
           .insert({
             user_id: userId,
+            // Basic measurements
             weight: measurementData.weight,
             height: measurementData.height,
             body_fat: measurementData.bodyFat,
             muscle_mass: measurementData.muscleMass,
+            // Enhanced body composition fields (from smart scales)
+            body_water_mass: measurementData.bodyWaterMass,
+            fat_mass: measurementData.fatMass,
+            protein_mass: measurementData.proteinMass,
+            bone_mineral_content: measurementData.boneMineralContent,
+            skeletal_muscle_mass: measurementData.skeletalMuscleMass,
+            muscle_percentage: measurementData.musclePercentage,
+            body_water_percentage: measurementData.bodyWaterPercentage,
+            protein_percentage: measurementData.proteinPercentage,
+            bone_mineral_percentage: measurementData.boneMineralPercentage,
+            visceral_fat_rating: measurementData.visceralFatRating,
+            basal_metabolic_rate: measurementData.basalMetabolicRate,
+            waist_to_hip_ratio: measurementData.waistToHipRatio,
+            body_age: measurementData.bodyAge,
+            notes: measurementData.notes,
             created_at: new Date().toISOString(),
           })
           .select()
@@ -277,10 +294,26 @@ async function handleMeasurements(method, userId, body, query) {
             data: {
               id: data.id,
               userId: data.user_id,
+              // Basic measurements
               weight: data.weight,
               height: data.height,
               bodyFat: data.body_fat,
               muscleMass: data.muscle_mass,
+              // Enhanced body composition
+              bodyWaterMass: data.body_water_mass,
+              fatMass: data.fat_mass,
+              proteinMass: data.protein_mass,
+              boneMineralContent: data.bone_mineral_content,
+              skeletalMuscleMass: data.skeletal_muscle_mass,
+              musclePercentage: data.muscle_percentage,
+              bodyWaterPercentage: data.body_water_percentage,
+              proteinPercentage: data.protein_percentage,
+              boneMineralPercentage: data.bone_mineral_percentage,
+              visceralFatRating: data.visceral_fat_rating,
+              basalMetabolicRate: data.basal_metabolic_rate,
+              waistToHipRatio: data.waist_to_hip_ratio,
+              bodyAge: data.body_age,
+              notes: data.notes,
               timestamp: data.created_at,
             },
           }),
@@ -301,6 +334,7 @@ async function handleMeasurements(method, userId, body, query) {
 }
 
 // Performance Tests Handler
+// Uses 'performance_tests' table (aligned with frontend) - UUID-based with auth.users FK
 async function handlePerformanceTests(method, userId, body, query) {
   switch (method) {
     case "GET": {
@@ -313,16 +347,18 @@ async function handlePerformanceTests(method, userId, body, query) {
       const startDate = getStartDateForTimeframe(timeframe);
 
       try {
-        const queryBuilder = supabaseAdmin
-          .from("athlete_performance_tests")
+        let queryBuilder = supabaseAdmin
+          .from("performance_tests")
           .select("*", { count: "exact" })
           .eq("user_id", userId)
-          .gte("test_date", startDate.toISOString().split("T")[0])
+          .gte("test_date", startDate.toISOString())
           .order("test_date", { ascending: false })
           .range(offset, offset + limit - 1);
 
-        // Note: test_type would need to be added to the table schema
-        // For now, we'll filter in memory if testType is provided
+        // Filter by test type at query level for performance
+        if (testType) {
+          queryBuilder = queryBuilder.eq("test_type", testType);
+        }
 
         const { data: tests, error, count } = await queryBuilder;
 
@@ -330,21 +366,26 @@ async function handlePerformanceTests(method, userId, body, query) {
           throw error;
         }
 
-        let filteredTests = (tests || []).map(dataMappers.performanceTest);
+        // Map to consistent API format
+        const mappedTests = (tests || []).map(t => ({
+          id: t.id,
+          userId: t.user_id,
+          testType: t.test_type,
+          result: t.result_value,
+          target: t.target_value,
+          timestamp: t.test_date,
+          conditions: t.conditions || {},
+          notes: t.notes,
+        }));
 
-        // Filter by testType if provided (in memory for now)
-        if (testType) {
-          filteredTests = filteredTests.filter((t) => t.testType === testType);
-        }
-
-        const total = count || filteredTests.length;
+        const total = count || mappedTests.length;
 
         return {
           statusCode: 200,
           body: JSON.stringify({
-            data: filteredTests,
-            trends: calculatePerformanceTrends(filteredTests),
-            summary: calculateTestsSummary(filteredTests),
+            data: mappedTests,
+            trends: calculatePerformanceTrends(mappedTests),
+            summary: calculateTestsSummary(mappedTests),
             pagination: {
               page,
               limit,
@@ -377,17 +418,25 @@ async function handlePerformanceTests(method, userId, body, query) {
     case "POST": {
       const testData = JSON.parse(body);
 
+      // Validate required fields
+      if (!testData.testType) {
+        return handleValidationError(["testType is required"]);
+      }
+      if (testData.result === undefined || testData.result === null) {
+        return handleValidationError(["result is required"]);
+      }
+
       try {
         const { data, error } = await supabaseAdmin
-          .from("athlete_performance_tests")
+          .from("performance_tests")
           .insert({
             user_id: userId,
             test_type: testData.testType,
-            test_date: testData.date || new Date().toISOString().split("T")[0],
-            best_result: testData.result,
-            average_result: testData.result,
-            environmental_conditions: testData.conditions || {},
-            created_at: new Date().toISOString(),
+            result_value: testData.result,
+            target_value: testData.target,
+            test_date: testData.date || new Date().toISOString(),
+            conditions: testData.conditions || {},
+            notes: testData.notes,
           })
           .select()
           .single();
@@ -400,7 +449,7 @@ async function handlePerformanceTests(method, userId, body, query) {
               body: JSON.stringify({
                 success: true,
                 id: `temp_${Date.now()}`,
-                improvement: 0,
+                improvement: { percent: 0, trend: "no_data" },
                 note: "Table needs to be created via migration",
               }),
             };
@@ -419,6 +468,16 @@ async function handlePerformanceTests(method, userId, body, query) {
           body: JSON.stringify({
             success: true,
             id: data.id,
+            data: {
+              id: data.id,
+              userId: data.user_id,
+              testType: data.test_type,
+              result: data.result_value,
+              target: data.target_value,
+              timestamp: data.test_date,
+              conditions: data.conditions,
+              notes: data.notes,
+            },
             improvement,
           }),
         };
@@ -627,18 +686,24 @@ async function handleSupplements(method, userId, body, query) {
     case "POST": {
       const supplementData = JSON.parse(body);
 
+      // Validate supplement data
+      const validationErrors = validateSupplementData(supplementData);
+      if (validationErrors.length > 0) {
+        return handleValidationError(validationErrors);
+      }
+
       try {
         const { data, error } = await supabaseAdmin
           .from("supplement_logs")
           .insert({
             user_id: userId,
-            supplement_name: supplementData.name,
-            dosage: supplementData.dosage,
+            supplement_name: supplementData.name?.trim(),
+            dosage: supplementData.dosage?.trim(),
             taken:
               supplementData.taken !== undefined ? supplementData.taken : true,
             date: supplementData.date || new Date().toISOString().split("T")[0],
             time_of_day: supplementData.timeOfDay,
-            notes: supplementData.notes,
+            notes: supplementData.notes?.trim(),
           })
           .select()
           .single();
@@ -662,6 +727,16 @@ async function handleSupplements(method, userId, body, query) {
           body: JSON.stringify({
             success: true,
             id: data.id,
+            data: {
+              id: data.id,
+              userId: data.user_id,
+              name: data.supplement_name,
+              dosage: data.dosage,
+              taken: data.taken,
+              date: data.date,
+              timeOfDay: data.time_of_day,
+              notes: data.notes,
+            },
           }),
         };
       } catch (error) {
@@ -1147,20 +1222,88 @@ function getStartDateForTimeframe(timeframe) {
   return startDate;
 }
 
+function validateSupplementData(data) {
+  const errors = [];
+
+  // Name validation (required, max 200 chars)
+  if (!data.name || data.name.trim().length === 0) {
+    errors.push("Supplement name is required");
+  } else if (data.name.length > 200) {
+    errors.push("Supplement name must be at most 200 characters");
+  }
+
+  // Dosage validation (max 100 chars)
+  if (data.dosage && data.dosage.length > 100) {
+    errors.push("Dosage must be at most 100 characters");
+  }
+
+  // Time of day validation (enum)
+  const validTimeOfDay = ['morning', 'afternoon', 'evening', 'pre-workout', 'post-workout'];
+  if (data.timeOfDay && !validTimeOfDay.includes(data.timeOfDay)) {
+    errors.push(`Time of day must be one of: ${validTimeOfDay.join(', ')}`);
+  }
+
+  // Date validation
+  if (data.date) {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(data.date)) {
+      errors.push("Date must be in YYYY-MM-DD format");
+    } else {
+      const parsedDate = new Date(data.date);
+      if (isNaN(parsedDate.getTime())) {
+        errors.push("Invalid date");
+      }
+    }
+  }
+
+  // Notes validation (max 500 chars)
+  if (data.notes && data.notes.length > 500) {
+    errors.push("Notes must be at most 500 characters");
+  }
+
+  return errors;
+}
+
 function validateMeasurementData(data) {
   const errors = [];
 
-  if (data.height && (data.height < 140 || data.height > 220)) {
-    errors.push("Height must be between 140-220 cm");
+  // Basic measurements - aligned with database constraints
+  if (data.height && (data.height < 140 || data.height > 250)) {
+    errors.push("Height must be between 140-250 cm");
   }
 
-  if (data.weight && (data.weight < 40 || data.weight > 200)) {
-    errors.push("Weight must be between 40-200 kg");
+  if (data.weight && (data.weight < 30 || data.weight > 300)) {
+    errors.push("Weight must be between 30-300 kg");
   }
 
   if (data.bodyFat && (data.bodyFat < 3 || data.bodyFat > 50)) {
     errors.push("Body fat must be between 3-50%");
   }
+
+  // Enhanced body composition validation
+  if (data.visceralFatRating && (data.visceralFatRating < 1 || data.visceralFatRating > 59)) {
+    errors.push("Visceral fat rating must be between 1-59");
+  }
+
+  if (data.basalMetabolicRate && (data.basalMetabolicRate < 800 || data.basalMetabolicRate > 5000)) {
+    errors.push("Basal metabolic rate must be between 800-5000 kcal");
+  }
+
+  if (data.waistToHipRatio && (data.waistToHipRatio < 0.5 || data.waistToHipRatio > 1.5)) {
+    errors.push("Waist to hip ratio must be between 0.5-1.5");
+  }
+
+  if (data.bodyAge && (data.bodyAge < 10 || data.bodyAge > 120)) {
+    errors.push("Body age must be between 10-120");
+  }
+
+  // Percentage fields validation (0-100)
+  const percentageFields = ['musclePercentage', 'bodyWaterPercentage', 'proteinPercentage', 'boneMineralPercentage'];
+  percentageFields.forEach(field => {
+    if (data[field] && (data[field] < 0 || data[field] > 100)) {
+      errors.push(`${field} must be between 0-100%`);
+    }
+  });
 
   return errors;
 }
@@ -1360,8 +1503,8 @@ async function calculateImprovement(testType, currentResult, userId) {
   // Find previous test results for this user and test type from Supabase
   try {
     const { data: previousTests, error } = await supabaseAdmin
-      .from("athlete_performance_tests")
-      .select("best_result, average_result, test_date")
+      .from("performance_tests")
+      .select("result_value, test_date")
       .eq("user_id", userId)
       .eq("test_type", testType)
       .order("test_date", { ascending: false })
@@ -1372,8 +1515,11 @@ async function calculateImprovement(testType, currentResult, userId) {
     }
 
     // Skip the most recent (current) one, use the second most recent
-    const previousResult =
-      previousTests[1].best_result || previousTests[1].average_result;
+    const previousResult = previousTests[1].result_value;
+    if (!previousResult) {
+      return { percent: 0, trend: "no_data" };
+    }
+
     const percentChange = (
       ((currentResult - previousResult) / previousResult) *
       100

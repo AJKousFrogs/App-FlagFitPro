@@ -338,8 +338,59 @@ export class NutritionService {
   }
 
   /**
+   * Validate nutrient values
+   * Ensures values are within reasonable ranges
+   */
+  private validateNutrientValues(nutrients: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+  }): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+
+    // Calories validation (0-10000 per serving is reasonable)
+    if (nutrients.calories < 0) {
+      errors.push("Calories cannot be negative");
+    } else if (nutrients.calories > 10000) {
+      errors.push("Calories per serving seems too high (max 10000)");
+    }
+
+    // Protein validation (0-500g per serving)
+    if (nutrients.protein < 0) {
+      errors.push("Protein cannot be negative");
+    } else if (nutrients.protein > 500) {
+      errors.push("Protein per serving seems too high (max 500g)");
+    }
+
+    // Carbs validation (0-1000g per serving)
+    if (nutrients.carbs < 0) {
+      errors.push("Carbohydrates cannot be negative");
+    } else if (nutrients.carbs > 1000) {
+      errors.push("Carbohydrates per serving seems too high (max 1000g)");
+    }
+
+    // Fat validation (0-500g per serving)
+    if (nutrients.fat < 0) {
+      errors.push("Fat cannot be negative");
+    } else if (nutrients.fat > 500) {
+      errors.push("Fat per serving seems too high (max 500g)");
+    }
+
+    // Fiber validation (0-200g per serving)
+    if (nutrients.fiber < 0) {
+      errors.push("Fiber cannot be negative");
+    } else if (nutrients.fiber > 200) {
+      errors.push("Fiber per serving seems too high (max 200g)");
+    }
+
+    return { valid: errors.length === 0, errors };
+  }
+
+  /**
    * Add food to current meal
-   * Logs food intake to nutrition_logs table
+   * Logs food intake to nutrition_logs table with validation
    */
   addFoodToCurrentMeal(
     food:
@@ -373,19 +424,42 @@ export class NutritionService {
     const carbs = isUSDAFood
       ? ((food as USDAFood).carbohydrates ?? 0)
       : ((food as { carbs?: number }).carbs ?? 0);
+    const protein = food.protein ?? 0;
+    const fat = food.fat ?? 0;
+    const fiber = food.fiber ?? 0;
+
+    // Validate food name
+    if (!foodName || foodName.trim().length === 0) {
+      this.logger.error("[Nutrition] Cannot add food: Food name is required");
+      return of(false);
+    }
+
+    // Validate nutrient values
+    const validation = this.validateNutrientValues({
+      calories,
+      protein,
+      carbs,
+      fat,
+      fiber,
+    });
+
+    if (!validation.valid) {
+      this.logger.error("[Nutrition] Validation failed:", validation.errors);
+      return of(false);
+    }
 
     return from(
       this.supabaseService.client
         .from("nutrition_logs")
         .insert({
           user_id: userId,
-          food_name: foodName,
+          food_name: foodName.trim(),
           food_id: foodId,
-          calories: calories,
-          protein: food.protein ?? 0,
-          carbohydrates: carbs,
-          fat: food.fat ?? 0,
-          fiber: food.fiber ?? 0,
+          calories: Math.round(calories * 100) / 100, // Round to 2 decimals
+          protein: Math.round(protein * 100) / 100,
+          carbohydrates: Math.round(carbs * 100) / 100,
+          fat: Math.round(fat * 100) / 100,
+          fiber: Math.round(fiber * 100) / 100,
           logged_at: new Date().toISOString(),
           meal_type: this.getMealTypeFromTime(),
         })

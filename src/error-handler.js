@@ -4,21 +4,34 @@
 import { loadingManager } from "./loading-manager.js";
 import { logger } from "./logger.js";
 
+/**
+ * Legacy Error Handler - DEPRECATED
+ * 
+ * This class is kept for backward compatibility but no longer registers
+ * global error listeners. Use UnifiedErrorHandler instead.
+ * 
+ * @deprecated Use UnifiedErrorHandler from src/js/utils/unified-error-handler.js
+ */
 export class ErrorHandler {
+  /**
+   * @deprecated Global error listeners are now handled by UnifiedErrorHandler
+   * This method is kept for backward compatibility but does nothing.
+   */
   static init() {
-    // Global error event listeners
-    window.addEventListener("error", this.handleError.bind(this));
-    window.addEventListener(
-      "unhandledrejection",
-      this.handlePromiseRejection.bind(this),
+    // No-op: Global error handling is now done by UnifiedErrorHandler
+    // This method is kept for backward compatibility
+    logger.debug(
+      "[ErrorHandler] init() called but global listeners are handled by UnifiedErrorHandler",
     );
-
-    // Network status monitoring
-    window.addEventListener("online", this.handleOnline.bind(this));
-    window.addEventListener("offline", this.handleOffline.bind(this));
   }
 
+  /**
+   * @deprecated Use UnifiedErrorHandler.handleError() instead
+   */
   static handleError(event) {
+    logger.warn(
+      "[ErrorHandler] handleError() is deprecated, use UnifiedErrorHandler",
+    );
     logger.error("Global error caught:", event.error);
 
     // Show user-friendly error message
@@ -27,7 +40,13 @@ export class ErrorHandler {
     );
   }
 
+  /**
+   * @deprecated Use UnifiedErrorHandler.handlePromiseRejection() instead
+   */
   static handlePromiseRejection(event) {
+    logger.warn(
+      "[ErrorHandler] handlePromiseRejection() is deprecated, use UnifiedErrorHandler",
+    );
     logger.error("Unhandled promise rejection:", event.reason);
 
     // Prevent the default browser error handling
@@ -39,6 +58,9 @@ export class ErrorHandler {
     );
   }
 
+  /**
+   * Network status handlers - still useful as utility methods
+   */
   static handleOnline() {
     this.showSuccess("Connection restored");
   }
@@ -417,11 +439,8 @@ export class ErrorHandler {
   }
 }
 
-// Auto-initialize when module is imported
-if (typeof window !== "undefined") {
-  document.addEventListener("DOMContentLoaded", () => {
-    ErrorHandler.init();
-  });
-}
+// NOTE: Auto-initialization removed to prevent duplicate global error listeners
+// UnifiedErrorHandler (src/js/utils/unified-error-handler.js) now handles global error listeners
+// This class is kept for backward compatibility and utility methods only
 
 export default ErrorHandler;

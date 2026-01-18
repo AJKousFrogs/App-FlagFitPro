@@ -68,7 +68,12 @@ export default [
       // ============================================
       // CONSOLE & DEBUGGING
       // ============================================
-      "no-console": "warn",
+      "no-console": [
+        "warn",
+        {
+          allow: ["warn", "error"], // Allow console.warn/error for critical issues, but prefer logger
+        },
+      ],
       "no-alert": "warn",
       "no-debugger": "error",
 
@@ -156,10 +161,13 @@ export default [
   // ============================================
   {
     files: ["src/**/*.js"],
+    ignores: ["src/logger.js"], // Logger is allowed to use console
     rules: {
-      "no-console": "error",
+      "no-console": "error", // No console methods allowed - use logger instead
       "prefer-const": "error",
       "no-var": "error",
+      // Prevent empty catch blocks that swallow errors
+      "no-empty": ["error", { allowEmptyCatch: false }],
     },
   },
 

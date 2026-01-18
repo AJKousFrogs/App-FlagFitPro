@@ -571,7 +571,7 @@ async function getActiveConversationContexts(userId, limit = 5) {
       .eq("user_id", userId)
       .eq("is_active", true)
       .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
-      .order("last_referenced_at", { ascending: false, nullsFirst: false })
+      .order("updated_at", { ascending: false })
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -611,25 +611,22 @@ async function saveConversationContext(userId, contextData) {
       ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000).toISOString()
       : null;
 
+    // Store all context details in context_data JSONB column
     const { data, error } = await supabaseAdmin
       .from("conversation_context")
-      .upsert(
-        {
-          user_id: userId,
-          context_type: contextType,
-          context_key: contextKey,
-          context_summary: contextSummary,
-          context_data: contextDetails,
-          source_session_id: sessionId,
-          source_message_ids: messageId ? [messageId] : [],
-          expires_at: expiresAt,
-          is_active: true,
-          updated_at: new Date().toISOString(),
+      .insert({
+        user_id: userId,
+        session_id: sessionId,
+        context_type: contextType,
+        context_data: {
+          key: contextKey,
+          summary: contextSummary,
+          details: contextDetails,
+          message_id: messageId,
         },
-        {
-          onConflict: "user_id,context_type,context_key",
-        },
-      )
+        expires_at: expiresAt,
+        is_active: true,
+      })
       .select()
       .single();
 
@@ -646,19 +643,31 @@ async function saveConversationContext(userId, contextData) {
 }
 
 /**
- * Mark a context as referenced (updates last_referenced_at)
+ * Mark a context as referenced (updates updated_at timestamp)
  *
  * @param {string} contextId - Context ID
  */
 async function markContextReferenced(contextId) {
   try {
+    // Get current context_data to update reference count
+    const { data: current } = await supabaseAdmin
+      .from("conversation_context")
+      .select("context_data")
+      .eq("id", contextId)
+      .single();
+
+    const currentData = current?.context_data || {};
+    const refCount = (currentData.reference_count || 0) + 1;
+
     await supabaseAdmin
       .from("conversation_context")
       .update({
-        last_referenced_at: new Date().toISOString(),
-        reference_count: supabaseAdmin.rpc("increment_context_reference", {
-          context_id: contextId,
-        }),
+        updated_at: new Date().toISOString(),
+        context_data: {
+          ...currentData,
+          reference_count: refCount,
+          last_referenced_at: new Date().toISOString(),
+        },
       })
       .eq("id", contextId);
   } catch (error) {
@@ -715,19 +724,23 @@ async function createFollowup(userId, followupData) {
       scheduledFor,
       sourceType = null,
       sourceId = null,
+      sessionId = null,
     } = followupData;
 
     const { data, error } = await supabaseAdmin
       .from("ai_followups")
       .insert({
         user_id: userId,
+        session_id: sessionId,
         followup_type: followupType,
-        followup_prompt: followupPrompt,
-        context,
+        message: followupPrompt,
         scheduled_for: scheduledFor,
-        source_type: sourceType,
-        source_id: sourceId,
         status: "pending",
+        metadata: {
+          context,
+          source_type: sourceType,
+          source_id: sourceId,
+        },
       })
       .select()
       .single();
@@ -748,7 +761,7 @@ async function createFollowup(userId, followupData) {
 }
 
 /**
- * Mark a follow-up as triggered
+ * Mark a follow-up as triggered (sent)
  *
  * @param {string} followupId - Follow-up ID
  */
@@ -757,8 +770,8 @@ async function markFollowupTriggered(followupId) {
     await supabaseAdmin
       .from("ai_followups")
       .update({
-        status: "triggered",
-        triggered_at: new Date().toISOString(),
+        status: "sent",
+        sent_at: new Date().toISOString(),
       })
       .eq("id", followupId);
   } catch (error) {
@@ -775,12 +788,22 @@ async function markFollowupTriggered(followupId) {
  */
 async function _completeFollowup(followupId, messageId, responseSummary) {
   try {
+    // First get current metadata to preserve it
+    const { data: current } = await supabaseAdmin
+      .from("ai_followups")
+      .select("metadata")
+      .eq("id", followupId)
+      .single();
+
     await supabaseAdmin
       .from("ai_followups")
       .update({
         status: "completed",
-        response_message_id: messageId,
-        response_summary: responseSummary,
+        response: responseSummary,
+        metadata: {
+          ...(current?.metadata || {}),
+          response_message_id: messageId,
+        },
       })
       .eq("id", followupId);
   } catch (error) {
@@ -945,7 +968,7 @@ function determineContextToCreate(query, classification, userContext) {
  * Get or create user AI preferences
  *
  * @param {string} userId - User ID
- * @returns {Object} User preferences
+ * @returns {Object} User preferences with normalized fields
  */
 async function getUserAIPreferences(userId) {
   try {
@@ -960,31 +983,69 @@ async function getUserAIPreferences(userId) {
     }
 
     if (data) {
-      return data;
+      // Normalize DB schema to expected format
+      return {
+        ...data,
+        preferred_detail_level: data.verbosity || "balanced",
+        preferred_tone: data.tone || "friendly",
+        favorite_topics: data.focus_areas || [],
+        // These fields are stored in metadata or defaults
+        include_citations: true,
+        include_warnings: true,
+        total_interactions: 0,
+        helpful_responses: 0,
+        dismissed_responses: 0,
+        completed_sessions: 0,
+      };
     }
 
     // Create default preferences if none exist
-    const defaultPreferences = {
+    const defaultDBPreferences = {
       user_id: userId,
-      preferred_detail_level: "moderate",
-      preferred_tone: "supportive",
+      tone: "friendly",
+      verbosity: "balanced",
+      proactive_suggestions: true,
+      reminder_frequency: "moderate",
+      focus_areas: [],
+      avoided_topics: [],
+      language_preference: "en",
+    };
+
+    const { data: newPrefs, error: insertError } = await supabaseAdmin
+      .from("user_ai_preferences")
+      .insert(defaultDBPreferences)
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error("[AI Chat] Error creating user preferences:", insertError);
+      // Return normalized defaults even if insert fails
+      return {
+        ...defaultDBPreferences,
+        preferred_detail_level: "balanced",
+        preferred_tone: "friendly",
+        favorite_topics: [],
+        include_citations: true,
+        include_warnings: true,
+        total_interactions: 0,
+        helpful_responses: 0,
+        dismissed_responses: 0,
+        completed_sessions: 0,
+      };
+    }
+
+    return {
+      ...newPrefs,
+      preferred_detail_level: newPrefs?.verbosity || "balanced",
+      preferred_tone: newPrefs?.tone || "friendly",
+      favorite_topics: newPrefs?.focus_areas || [],
       include_citations: true,
       include_warnings: true,
-      favorite_topics: [],
-      avoided_topics: [],
       total_interactions: 0,
       helpful_responses: 0,
       dismissed_responses: 0,
       completed_sessions: 0,
     };
-
-    const { data: newPrefs } = await supabaseAdmin
-      .from("user_ai_preferences")
-      .insert(defaultPreferences)
-      .select()
-      .single();
-
-    return newPrefs || defaultPreferences;
   } catch (error) {
     console.error("[AI Chat] Error in getUserAIPreferences:", error);
     return null;
@@ -994,20 +1055,14 @@ async function getUserAIPreferences(userId) {
 /**
  * Update user preferences based on interaction
  * Learns from user behavior to improve future responses
+ * Note: Some tracking fields are stored in metadata since DB schema is limited
  *
  * @param {string} userId - User ID
  * @param {Object} interaction - Interaction data
  */
 async function updateUserPreferences(userId, interaction) {
   try {
-    const {
-      intent,
-      topic,
-      wasHelpful,
-      wasDismissed,
-      sessionCompleted,
-      position,
-    } = interaction;
+    const { topic, wasDismissed } = interaction;
 
     // Get current preferences
     const prefs = await getUserAIPreferences(userId);
@@ -1016,31 +1071,21 @@ async function updateUserPreferences(userId, interaction) {
     }
 
     const updates = {
-      total_interactions: (prefs.total_interactions || 0) + 1,
-      last_topic: topic || intent,
-      last_interaction_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
-    // Track helpful/dismissed responses
-    if (wasHelpful === true) {
-      updates.helpful_responses = (prefs.helpful_responses || 0) + 1;
-    }
-    if (wasDismissed === true) {
-      updates.dismissed_responses = (prefs.dismissed_responses || 0) + 1;
-    }
-    if (sessionCompleted === true) {
-      updates.completed_sessions = (prefs.completed_sessions || 0) + 1;
-    }
-
-    // Update favorite topics (track frequency)
+    // Update focus_areas (favorite topics) - maps to DB column
     if (topic && !wasDismissed) {
-      const currentFavorites = prefs.favorite_topics || [];
-      if (!currentFavorites.includes(topic) && currentFavorites.length < 10) {
-        updates.favorite_topics = [...currentFavorites, topic];
+      const currentFocusAreas = prefs.focus_areas || [];
+      if (
+        !currentFocusAreas.includes(topic) &&
+        currentFocusAreas.length < 10
+      ) {
+        updates.focus_areas = [...currentFocusAreas, topic];
       }
     }
 
-    // Track avoided topics (dismissed multiple times)
+    // Track avoided topics (dismissed multiple times) - maps to DB column
     if (topic && wasDismissed) {
       const currentAvoided = prefs.avoided_topics || [];
       if (!currentAvoided.includes(topic) && currentAvoided.length < 10) {
@@ -1048,15 +1093,13 @@ async function updateUserPreferences(userId, interaction) {
       }
     }
 
-    // Update position if provided and not already set
-    if (position && !prefs.primary_position) {
-      updates.primary_position = position;
+    // Only update if there are changes beyond timestamp
+    if (Object.keys(updates).length > 1) {
+      await supabaseAdmin
+        .from("user_ai_preferences")
+        .update(updates)
+        .eq("user_id", userId);
     }
-
-    await supabaseAdmin
-      .from("user_ai_preferences")
-      .update(updates)
-      .eq("user_id", userId);
   } catch (error) {
     console.error("[AI Chat] Error updating user preferences:", error);
   }
@@ -1379,7 +1422,7 @@ async function getConversationHistory(sessionId, limit = 10) {
   try {
     const { data, error } = await supabaseAdmin
       .from("ai_messages")
-      .select("role, content, created_at, intent_type, risk_level")
+      .select("role, content, created_at, intent, risk_level")
       .eq("session_id", sessionId)
       .order("created_at", { ascending: false })
       .limit(limit);
@@ -2528,7 +2571,7 @@ function generateSuggestedActions(
 
 /**
  * Save chat message to database
- * Phase 1: intent_type and user_state_snapshot
+ * Phase 1: intent and user_state_snapshot
  * Phase 3: youth interaction flags, classification confidence, parent notifications
  */
 async function saveChatMessage(
@@ -2567,15 +2610,14 @@ async function saveChatMessage(
       user_id: userId,
       role: "user",
       content: message,
-      intent_type: classification.intent,
-      user_state_snapshot: userStateSnapshot,
+      intent: classification.intent,
       risk_level: classification.riskLevel,
-      // Phase 3 fields
-      is_youth_interaction: isYouthInteraction,
-      youth_restrictions_applied: youthRestrictionsApplied,
-      classification_confidence: classification.confidence || null,
-      requires_approval: requiresApproval,
       metadata: {
+        // Phase 3 fields stored in metadata
+        is_youth_interaction: isYouthInteraction,
+        youth_restrictions_applied: youthRestrictionsApplied,
+        classification_confidence: classification.confidence || null,
+        requires_approval: requiresApproval,
         classification: {
           ...classification,
           stateGates: undefined, // Don't duplicate in metadata
@@ -2593,21 +2635,19 @@ async function saveChatMessage(
         role: "assistant",
         content: response.answer,
         risk_level: response.riskLevel,
-        intent_type: classification.intent,
-        user_state_snapshot: userStateSnapshot,
-        evidence_grade_explanation: response.evidenceGradeExplanation || null,
-        // Phase 3 fields
-        is_youth_interaction: isYouthInteraction,
-        youth_restrictions_applied: youthRestrictionsApplied,
-        classification_confidence: classification.confidence || null,
+        intent: classification.intent,
+        citations: response.citations || null,
         metadata: {
+          // Phase 3 fields stored in metadata
+          is_youth_interaction: isYouthInteraction,
+          youth_restrictions_applied: youthRestrictionsApplied,
+          classification_confidence: classification.confidence || null,
           riskLevel: response.riskLevel,
-          citations: response.citations,
           suggestedActions: response.suggestedActions,
           stateGateEscalation: classification.stateGateEscalation,
           escalationReasons: classification.escalationReasons,
-          // Phase 3: confidence details
           confidenceLevel: classification.confidenceLevel,
+          evidenceGradeExplanation: response.evidenceGradeExplanation || null,
         },
       })
       .select()
@@ -2854,19 +2894,21 @@ async function createCoachInboxItem(
       coach_id: coach.user_id,
       team_id: coach.team_id,
       player_id: userId,
-      inbox_type: reviewNeed.inboxType,
+      item_type: reviewNeed.inboxType,
       priority: reviewNeed.priority,
-      source_type: "ai_message",
-      source_id: messageId,
+      source: "ai_message",
       title,
-      summary,
-      risk_level: classification.riskLevel,
-      acwr_value: stateGates.acwr?.acwr,
-      acwr_zone: stateGates.acwr?.riskZone,
-      intent_type: classification.intent,
-      athlete_context: athleteContext,
-      status: "pending",
-      is_new: true,
+      message: summary,
+      status: "unread",
+      action_required: reviewNeed.priority === "urgent",
+      metadata: {
+        source_id: messageId,
+        risk_level: classification.riskLevel,
+        acwr_value: stateGates.acwr?.acwr,
+        acwr_zone: stateGates.acwr?.riskZone,
+        intent: classification.intent,
+        athlete_context: athleteContext,
+      },
     }));
 
     // Insert all inbox items

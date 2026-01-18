@@ -102,6 +102,10 @@ async function getCheckin(supabase, userId, requestedAthleteId, date, headers) {
     sorenessAreas: data.soreness_areas || [],
     notes: data.notes,
     readinessScore: data.calculated_readiness,
+    // Additional wellness fields
+    motivationLevel: data.motivation_level,
+    mood: data.mood,
+    hydrationLevel: data.hydration_level,
   };
 
   if (isCoach && targetAthleteId !== userId) {
@@ -144,6 +148,10 @@ async function saveCheckin(supabase, userId, payload, headers) {
     sorenessAreas,
     notes,
     readinessScore,
+    // Additional wellness fields (previously missing from daily_wellness_checkin)
+    motivationLevel,
+    mood,
+    hydrationLevel,
   } = payload;
 
   const targetDate = date || new Date().toISOString().split("T")[0];
@@ -281,6 +289,11 @@ async function saveCheckin(supabase, userId, payload, headers) {
         soreness_areas: sorenessAreas || [],
         notes,
         calculated_readiness: calculatedReadiness,
+        // Additional wellness fields
+        motivation_level: motivationLevel,
+        mood: mood,
+        hydration_level: hydrationLevel,
+        overall_readiness_score: calculatedReadiness,
       },
       {
         onConflict: "user_id,checkin_date",
@@ -309,6 +322,9 @@ async function saveCheckin(supabase, userId, payload, headers) {
         energy_level: energyLevel,
         stress_level: stressLevel,
         muscle_soreness: muscleSoreness,
+        motivation_level: motivationLevel,
+        mood: mood,
+        hydration_level: hydrationLevel,
         notes,
         updated_at: new Date().toISOString(),
       },
@@ -631,6 +647,10 @@ async function saveCheckin(supabase, userId, payload, headers) {
         sorenessAreas: data.soreness_areas || [],
         notes: data.notes,
         readinessScore: data.calculated_readiness,
+        // Additional wellness fields
+        motivationLevel: data.motivation_level,
+        mood: data.mood,
+        hydrationLevel: data.hydration_level,
       },
     }),
   };

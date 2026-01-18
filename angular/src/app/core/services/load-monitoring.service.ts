@@ -243,6 +243,32 @@ export class LoadMonitoringService {
         return session;
       }
 
+      // Prepare external load data for storage
+      const externalLoadData = external ? {
+        totalDistance: external.totalDistance,
+        sprintDistance: external.sprintDistance,
+        playerLoad: external.playerLoad,
+        accelerations: external.accelerations,
+        decelerations: external.decelerations,
+        maxSpeed: external.maxSpeed,
+        highIntensityDistance: external.highIntensityDistance,
+      } : null;
+
+      // Prepare wellness snapshot for storage
+      const wellnessSnapshot = wellness ? {
+        sleepQuality: wellness.sleepQuality,
+        sleepDuration: wellness.sleepDuration,
+        muscleSoreness: wellness.muscleSoreness,
+        stressLevel: wellness.stressLevel,
+        energyLevel: wellness.energyLevel,
+        mood: wellness.mood,
+      } : null;
+
+      // Calculate wellness adjustment factor
+      const wellnessAdjustmentFactor = wellness 
+        ? this.calculateWellnessFactor(wellness) 
+        : null;
+
       const { data, error } = await this.supabaseService.client
         .from("workout_logs")
         .insert({
@@ -252,6 +278,14 @@ export class LoadMonitoringService {
           rpe: internal.sessionRPE,
           duration_minutes: internal.duration,
           notes: notes || null,
+          // New fields for complete load tracking
+          load_au: metrics.calculatedLoad,
+          session_type: sessionType,
+          external_load_data: externalLoadData,
+          wellness_snapshot: wellnessSnapshot,
+          wellness_adjustment_factor: wellnessAdjustmentFactor,
+          avg_heart_rate: internal.avgHeartRate || null,
+          max_heart_rate: internal.maxHeartRate || null,
         })
         .select()
         .single();
@@ -261,7 +295,7 @@ export class LoadMonitoringService {
         throw error;
       }
 
-      this.logger.success("[LoadMonitoring] Workout log saved:", data.id);
+      this.logger.success("[LoadMonitoring] Workout log saved with load:", data.id, metrics.calculatedLoad);
 
       // Note: Database trigger will automatically calculate ACWR in load_monitoring table
 

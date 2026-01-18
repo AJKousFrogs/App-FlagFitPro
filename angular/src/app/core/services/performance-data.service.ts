@@ -684,6 +684,65 @@ export class PerformanceDataService {
     );
   }
 
+  /**
+   * Validate supplement data
+   */
+  private validateSupplementData(supplement: Partial<Supplement>): {
+    valid: boolean;
+    errors: string[];
+  } {
+    const errors: string[] = [];
+
+    // Name validation (required, max 200 chars)
+    if (!supplement.name || supplement.name.trim().length === 0) {
+      errors.push("Supplement name is required");
+    } else if (supplement.name.length > 200) {
+      errors.push("Supplement name must be at most 200 characters");
+    }
+
+    // Dosage validation (max 100 chars)
+    if (supplement.dosage && supplement.dosage.length > 100) {
+      errors.push("Dosage must be at most 100 characters");
+    }
+
+    // Time of day validation (enum)
+    const validTimeOfDay = [
+      "morning",
+      "afternoon",
+      "evening",
+      "pre-workout",
+      "post-workout",
+    ];
+    if (
+      supplement.timeOfDay &&
+      !validTimeOfDay.includes(supplement.timeOfDay)
+    ) {
+      errors.push(
+        `Time of day must be one of: ${validTimeOfDay.join(", ")}`,
+      );
+    }
+
+    // Date validation
+    if (supplement.date) {
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(supplement.date)) {
+        errors.push("Date must be in YYYY-MM-DD format");
+      } else {
+        const parsedDate = new Date(supplement.date);
+        if (isNaN(parsedDate.getTime())) {
+          errors.push("Invalid date");
+        }
+      }
+    }
+
+    // Notes validation (max 500 chars)
+    if (supplement.notes && supplement.notes.length > 500) {
+      errors.push("Notes must be at most 500 characters");
+    }
+
+    return { valid: errors.length === 0, errors };
+  }
+
   logSupplement(supplement: Partial<Supplement>): Observable<{
     success: boolean;
     data?: DatabaseSupplement;
@@ -695,7 +754,17 @@ export class PerformanceDataService {
       this.logger.error(
         "[Performance] Cannot log supplement: No user logged in",
       );
-      return of({ success: false });
+      return of({ success: false, error: "Not authenticated" });
+    }
+
+    // Validate supplement data
+    const validation = this.validateSupplementData(supplement);
+    if (!validation.valid) {
+      this.logger.error(
+        "[Performance] Supplement validation failed:",
+        validation.errors,
+      );
+      return of({ success: false, error: validation.errors.join(", ") });
     }
 
     return from(
@@ -703,12 +772,12 @@ export class PerformanceDataService {
         .from("supplement_logs")
         .insert({
           user_id: userId,
-          supplement_name: supplement.name,
-          dosage: supplement.dosage,
+          supplement_name: supplement.name?.trim(),
+          dosage: supplement.dosage?.trim(),
           taken: supplement.taken !== undefined ? supplement.taken : true,
           date: supplement.date || new Date().toISOString().split("T")[0],
           time_of_day: supplement.timeOfDay,
-          notes: supplement.notes,
+          notes: supplement.notes?.trim(),
         })
         .select()
         .single(),

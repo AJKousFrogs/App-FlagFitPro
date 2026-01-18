@@ -193,7 +193,7 @@ export const API_ENDPOINTS = {
 
   // Wellness endpoints
   wellness: {
-    checkin: normalizeEndpoint("/api/wellness/checkin"),
+    checkin: normalizeEndpoint("/api/wellness-checkin"),
     injuries: normalizeEndpoint("/api/wellness/injuries"),
   },
 

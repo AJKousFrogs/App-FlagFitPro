@@ -1,9 +1,38 @@
 /**
  * Unified Error Handling for FlagFit Pro Frontend
- * Combines error handling, user notifications, logging, and Sentry tracking
+ * 
+ * PRIMARY ERROR HANDLER - This is the only handler that registers global error listeners.
+ * All other error handlers have been deprecated and converted to utility functions.
+ * 
+ * Features:
+ * - Global error and unhandled promise rejection handling
+ * - Error categorization and user-friendly messages
+ * - Sentry integration for error tracking
+ * - User notifications with retry options
+ * - Network status monitoring
+ * - Consistent error response format
+ * 
+ * Auto-initializes on import. No manual initialization needed.
+ * 
+ * @see ROOT_CAUSE_ERROR_AUDIT.md for error handling architecture
  */
 
 import { logger } from "../../logger.js";
+
+// Import unified error constants
+import {
+  ErrorType,
+  ErrorSeverity,
+  AppError,
+  categorizeError as sharedCategorizeError,
+  ErrorMessages as _ErrorMessages, // Imported for potential future use
+  isRetryableError,
+  requiresReauth,
+  Errors,
+} from "../constants/error-constants.js";
+
+// Re-export for backward compatibility
+export { ErrorType, ErrorSeverity, AppError, isRetryableError, requiresReauth, Errors };
 
 // Lazy-load Sentry service (only in production)
 let sentryService = null;
@@ -20,46 +49,13 @@ const loadSentry = async () => {
 };
 
 /**
- * Error types for categorization
+ * Generate a unique error correlation ID
+ * Format: ERR-{timestamp}-{random}
  */
-export const ErrorType = {
-  NETWORK: "network",
-  VALIDATION: "validation",
-  AUTHENTICATION: "authentication",
-  AUTHORIZATION: "authorization",
-  NOT_FOUND: "not_found",
-  SERVER: "server",
-  CLIENT: "client",
-  UNKNOWN: "unknown",
-};
-
-/**
- * Error severity levels
- */
-export const ErrorSeverity = {
-  INFO: "info",
-  WARNING: "warning",
-  ERROR: "error",
-  CRITICAL: "critical",
-};
-
-/**
- * Custom application error class
- */
-export class AppError extends Error {
-  constructor(
-    message,
-    type = ErrorType.UNKNOWN,
-    severity = ErrorSeverity.ERROR,
-    details = {},
-  ) {
-    super(message);
-    this.name = "AppError";
-    this.type = type;
-    this.severity = severity;
-    this.details = details;
-    this.timestamp = new Date().toISOString();
-  }
+function generateErrorId() {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 8);
+  return `ERR-${timestamp}-${random}`;
 }
 
 /**
@@ -70,6 +66,42 @@ export class UnifiedErrorHandler {
     this.initialized = false;
     this.notificationQueue = [];
     this.maxNotifications = 3;
+    this.errorLog = []; // In-memory error log for debugging
+    this.maxErrorLogSize = 50;
+  }
+
+  /**
+   * Generate a unique error correlation ID
+   * @returns {string} Error correlation ID
+   */
+  generateErrorId() {
+    return generateErrorId();
+  }
+
+  /**
+   * Add error to internal log (for debugging)
+   * @param {object} errorEntry - Error entry to log
+   */
+  logErrorToMemory(errorEntry) {
+    this.errorLog.push(errorEntry);
+    if (this.errorLog.length > this.maxErrorLogSize) {
+      this.errorLog.shift(); // Remove oldest
+    }
+  }
+
+  /**
+   * Get recent errors (for debugging)
+   * @returns {Array} Recent error entries
+   */
+  getRecentErrors() {
+    return [...this.errorLog];
+  }
+
+  /**
+   * Clear error log
+   */
+  clearErrorLog() {
+    this.errorLog = [];
   }
 
   /**
@@ -160,6 +192,18 @@ export class UnifiedErrorHandler {
 
   /**
    * Main error handler - categorizes and processes errors
+   * 
+   * @param {Error} error - The error to handle
+   * @param {object} options - Handler options
+   * @param {string} options.context - Context/component where error occurred
+   * @param {boolean} options.showToUser - Whether to show notification to user
+   * @param {string} options.logLevel - Log level (error, warn, debug)
+   * @param {string} options.fallbackMessage - Fallback message if none available
+   * @param {function} options.onError - Callback when error is handled
+   * @param {boolean} options.allowRetry - Show retry button in notification
+   * @param {function} options.retryCallback - Callback for retry button
+   * @param {string} options.errorId - Custom error ID (auto-generated if not provided)
+   * @returns {object} Standardized error response with errorId
    */
   handleError(error, options = {}) {
     const {
@@ -171,14 +215,27 @@ export class UnifiedErrorHandler {
       onError = null,
       allowRetry = false,
       retryCallback = null,
+      errorId = this.generateErrorId(),
     } = options;
 
     // Categorize error
     const errorInfo = this.categorizeError(error);
-    const logMessage = `[${context}] ${errorInfo.message}`;
+    const logMessage = `[${errorId}][${context}] ${errorInfo.message}`;
 
-    // Log error
+    // Log error with correlation ID
     this.logError(logMessage, error, logLevel);
+
+    // Store in memory log for debugging
+    this.logErrorToMemory({
+      errorId,
+      context,
+      type: errorInfo.type,
+      severity: errorInfo.severity,
+      message: errorInfo.message,
+      userMessage: errorInfo.userMessage,
+      timestamp: new Date().toISOString(),
+      stack: error.stack,
+    });
 
     // Report to Sentry for critical and error severity
     if (
@@ -188,6 +245,7 @@ export class UnifiedErrorHandler {
       loadSentry().then((sentry) => {
         if (sentry) {
           sentry.captureException(error, {
+            errorId,
             component: context,
             errorType: errorInfo.type,
             severity: errorInfo.severity,
@@ -209,18 +267,19 @@ export class UnifiedErrorHandler {
     // Call custom error handler if provided
     if (onError && typeof onError === "function") {
       try {
-        onError(error, errorInfo);
+        onError(error, { ...errorInfo, errorId });
       } catch (callbackError) {
         logger.error("[Error Handler] Callback error:", callbackError);
       }
     }
 
-    // Return standardized error response
+    // Return standardized error response with correlation ID
     return {
       success: false,
       error: errorInfo.userMessage,
       errorType: errorInfo.type,
       severity: errorInfo.severity,
+      errorId, // Correlation ID for tracking
       details: error.details || {},
       timestamp: new Date().toISOString(),
     };
@@ -228,73 +287,22 @@ export class UnifiedErrorHandler {
 
   /**
    * Categorize error and determine user message
+   * Uses the shared categorizeError function from error-constants.js
    */
   categorizeError(error) {
-    let type = ErrorType.UNKNOWN;
-    let severity = ErrorSeverity.ERROR;
-    let userMessage = "An error occurred. Please try again.";
+    // Use the shared categorization function
+    const categorized = sharedCategorizeError(error);
 
-    // Handle AppError instances
-    if (error instanceof AppError) {
-      return {
-        type: error.type,
-        severity: error.severity,
-        message: error.message,
-        userMessage: error.message,
-      };
-    }
-
-    // Network errors
-    if (
-      error.message?.includes("fetch") ||
-      error.message?.includes("network") ||
-      !navigator.onLine
-    ) {
-      type = ErrorType.NETWORK;
-      severity = ErrorSeverity.WARNING;
-      userMessage =
-        "Network error. Please check your connection and try again.";
-    } else if (error.status === 401 || error.message?.includes("auth")) {
-      // Authentication errors
-      type = ErrorType.AUTHENTICATION;
-      severity = ErrorSeverity.ERROR;
-      userMessage = "Authentication failed. Please log in again.";
-
-      // Redirect to login after delay
+    // Handle authentication errors - redirect to login
+    if (categorized.type === ErrorType.AUTHENTICATION) {
       setTimeout(() => {
-        if (window.location.pathname !== "/login.html") {
+        if (typeof window !== "undefined" && window.location.pathname !== "/login.html") {
           window.location.href = "/login.html";
         }
       }, 2000);
-    } else if (error.status === 403) {
-      // Authorization errors
-      type = ErrorType.AUTHORIZATION;
-      severity = ErrorSeverity.ERROR;
-      userMessage = "You do not have permission to perform this action.";
-    } else if (error.status === 404) {
-      // Not found errors
-      type = ErrorType.NOT_FOUND;
-      severity = ErrorSeverity.WARNING;
-      userMessage = "The requested resource was not found.";
-    } else if (error.status >= 500) {
-      // Server errors
-      type = ErrorType.SERVER;
-      severity = ErrorSeverity.ERROR;
-      userMessage = "Server error. Please try again later.";
-    } else if (error.status >= 400) {
-      // Client errors
-      type = ErrorType.CLIENT;
-      severity = ErrorSeverity.WARNING;
-      userMessage =
-        error.message || "Invalid request. Please check your input.";
     }
 
-    return {
-      type,
-      severity,
-      message: error.message || "Unknown error",
-      userMessage,
-    };
+    return categorized;
   }
 
   /**

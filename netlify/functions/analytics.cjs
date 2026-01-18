@@ -308,23 +308,43 @@ const getPositionPerformance = async (userId) => {
     const teamId = teamMemberships[0].team_id;
 
     // Get team members with their positions
-    const { data: members, error: membersError } = await supabaseAdmin
+    // NOTE: team_members.user_id references auth.users (not public.users), so PostgREST
+    // cannot resolve the foreign key relationship. We query separately and join manually.
+    const { data: memberRows, error: membersError } = await supabaseAdmin
       .from("team_members")
-      .select(
-        `
-        user_id,
-        users:user_id (
-          id,
-          name,
-          position
-        )
-      `,
-      )
+      .select("user_id, position")
       .eq("team_id", teamId);
 
     if (membersError) {
       throw membersError;
     }
+
+    // Get user details for the team members
+    const memberUserIds = memberRows.map((m) => m.user_id);
+    const { data: userRows, error: usersError } = await supabaseAdmin
+      .from("users")
+      .select("id, name, position")
+      .in("id", memberUserIds);
+
+    if (usersError) {
+      throw usersError;
+    }
+
+    // Create a map of user_id -> user data
+    const usersMap = {};
+    (userRows || []).forEach((user) => {
+      usersMap[user.id] = user;
+    });
+
+    // Combine member and user data
+    const members = memberRows.map((member) => ({
+      user_id: member.user_id,
+      users: usersMap[member.user_id] || {
+        id: member.user_id,
+        name: "Unknown",
+        position: member.position || "Other",
+      },
+    }));
 
     // Get performance scores using ConsentDataReader for COACH_TEAM_DATA context
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
@@ -428,12 +448,12 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
 
     const { data: tests, error } = await supabaseAdmin
       .from("performance_tests")
-      .select("test_type, result, completed_at")
+      .select("test_type, result_value, test_date")
       .eq("user_id", userId)
       .in("test_type", ["40YardDash", "10YardSplit"])
-      .gte("completed_at", startDate.toISOString())
-      .lte("completed_at", todayEndOfDay.toISOString())
-      .order("completed_at", { ascending: true });
+      .gte("test_date", startDate.toISOString())
+      .lte("test_date", todayEndOfDay.toISOString())
+      .order("test_date", { ascending: true });
 
     if (error) {
       throw error;
@@ -442,13 +462,13 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
     // Group by week
     const weeklyData = { "40YardDash": {}, "10YardSplit": {} };
     tests.forEach((test) => {
-      const date = new Date(test.completed_at);
+      const date = new Date(test.test_date);
       const weekNum = getWeekNumber(date);
       const weekKey = `Week ${weekNum}`;
       if (!weeklyData[test.test_type][weekKey]) {
         weeklyData[test.test_type][weekKey] = [];
       }
-      weeklyData[test.test_type][weekKey].push(parseFloat(test.result) || 0);
+      weeklyData[test.test_type][weekKey].push(parseFloat(test.result_value) || 0);
     });
 
     // Calculate averages per week

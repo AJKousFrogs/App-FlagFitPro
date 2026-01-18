@@ -400,14 +400,10 @@ class FlagFitApplication {
   }
 
   setupErrorHandling() {
-    // Global error handling
-    window.addEventListener("error", (e) => {
-      this.handleError("JavaScript Error", e.error);
-    });
-
-    window.addEventListener("unhandledrejection", (e) => {
-      this.handleError("Promise Rejection", e.reason);
-    });
+    // Global error handling is now done by UnifiedErrorHandler
+    // (src/js/utils/unified-error-handler.js) which auto-initializes on import
+    // No need to register duplicate global listeners here
+    this.log("Error handling delegated to UnifiedErrorHandler");
   }
 
   setupPerformanceMonitoring() {

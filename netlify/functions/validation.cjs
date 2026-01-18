@@ -551,6 +551,55 @@ function validateQueryParams(queryParams) {
   };
 }
 
+/**
+ * Standard result type for consistent error handling
+ * @typedef {Object} ServiceResult
+ * @property {boolean} success - Whether the operation succeeded
+ * @property {*} [data] - The result data (if successful)
+ * @property {string} [error] - Error message (if failed)
+ * @property {string} [errorCode] - Error code for programmatic handling
+ */
+
+/**
+ * Create a success result
+ * @param {*} data - The result data
+ * @returns {ServiceResult}
+ */
+function createSuccessResult(data) {
+  return {
+    success: true,
+    data,
+  };
+}
+
+/**
+ * Create an error result
+ * @param {string} message - Error message
+ * @param {string} [errorCode] - Optional error code
+ * @returns {ServiceResult}
+ */
+function createErrorResult(message, errorCode = "UNKNOWN_ERROR") {
+  return {
+    success: false,
+    error: message,
+    errorCode,
+  };
+}
+
+/**
+ * Validation error codes
+ */
+const ERROR_CODES = {
+  VALIDATION_FAILED: "VALIDATION_FAILED",
+  NOT_AUTHENTICATED: "NOT_AUTHENTICATED",
+  NOT_AUTHORIZED: "NOT_AUTHORIZED",
+  NOT_FOUND: "NOT_FOUND",
+  DATABASE_ERROR: "DATABASE_ERROR",
+  SERVER_ERROR: "SERVER_ERROR",
+  RATE_LIMITED: "RATE_LIMITED",
+  INVALID_INPUT: "INVALID_INPUT",
+};
+
 module.exports = {
   validate,
   validateField,
@@ -559,5 +608,8 @@ module.exports = {
   sanitize,
   createValidationErrorResponse,
   validatePasswordComplexity,
+  createSuccessResult,
+  createErrorResult,
+  ERROR_CODES,
   VALIDATION_RULES,
 };

@@ -24,16 +24,44 @@ const { getUserRole } = require("./utils/authorization-guard.cjs");
  */
 async function createWellnessCheckin(userId, checkinData) {
   try {
-    const { readiness, sleep, energy, mood, soreness, notes } = checkinData;
+    let { readiness, sleep, energy, mood, soreness, notes } = checkinData;
 
     // Safety override: Check for pain triggers (if soreness >3/10)
     if (soreness !== undefined && soreness !== null && soreness > 3) {
       await detectPainTrigger(userId, soreness, notes || "general", null);
     }
 
-    // Validate required fields
+    // Calculate readiness from other fields if not explicitly provided
+    // This matches the behavior of /api/wellness-checkin endpoint
     if (readiness === undefined || readiness === null) {
-      throw new Error("readiness is required (1-10)");
+      // Calculate readiness as weighted average of available metrics (1-10 scale)
+      const metrics = [];
+      if (sleep !== undefined && sleep !== null) {
+        // Convert sleep hours (0-24) to 1-10 scale: 8hrs = 10, <4hrs = 1
+        const sleepScore = Math.max(1, Math.min(10, Math.round((sleep / 8) * 10)));
+        metrics.push({ value: sleepScore, weight: 0.3 });
+      }
+      if (energy !== undefined && energy !== null) {
+        metrics.push({ value: energy, weight: 0.3 });
+      }
+      if (mood !== undefined && mood !== null) {
+        metrics.push({ value: mood, weight: 0.2 });
+      }
+      if (soreness !== undefined && soreness !== null) {
+        // Invert soreness: high soreness = low readiness
+        const sorenessScore = 11 - soreness;
+        metrics.push({ value: sorenessScore, weight: 0.2 });
+      }
+
+      if (metrics.length > 0) {
+        // Weighted average, normalized by total weight
+        const totalWeight = metrics.reduce((sum, m) => sum + m.weight, 0);
+        const weightedSum = metrics.reduce((sum, m) => sum + m.value * m.weight, 0);
+        readiness = Math.round(weightedSum / totalWeight);
+      } else {
+        // Default readiness if no metrics provided
+        readiness = 5;
+      }
     }
 
     // Validate ranges

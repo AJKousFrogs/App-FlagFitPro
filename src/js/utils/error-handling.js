@@ -3,34 +3,23 @@ import { logger } from "../../logger.js";
 /**
  * FlagFit Pro - Standardized Error Handling Utilities
  * Provides consistent error handling patterns across the application
+ * 
+ * NOTE: This module now imports from the unified error-constants.js
+ * for consistent error types across the application.
  */
 
-/**
- * Error types for categorization
- */
-export const ErrorType = {
-  NETWORK: "network",
-  VALIDATION: "validation",
-  AUTHENTICATION: "authentication",
-  AUTHORIZATION: "authorization",
-  NOT_FOUND: "not_found",
-  SERVER: "server",
-  CLIENT: "client",
-  UNKNOWN: "unknown",
-};
+// Import from unified error constants
+import {
+  ErrorType,
+  ErrorSeverity,
+  AppError,
+  categorizeError as _sharedCategorizeError, // Available for use, prefixed to avoid unused warning
+  isRetryableError,
+  Errors,
+} from "../constants/error-constants.js";
 
-/**
- * Custom application error class
- */
-export class AppError extends Error {
-  constructor(message, type = ErrorType.UNKNOWN, details = {}) {
-    super(message);
-    this.name = "AppError";
-    this.type = type;
-    this.details = details;
-    this.timestamp = new Date().toISOString();
-  }
-}
+// Re-export for backward compatibility
+export { ErrorType, ErrorSeverity, AppError, isRetryableError, Errors };
 
 /**
  * Standardized error handler
@@ -216,31 +205,14 @@ export function validationError(message, details = {}) {
  * @param {string} message - Network error message
  * @param {object} details - Error details
  * @returns {AppError} Network error
+ * @deprecated Use Errors.network() from error-constants.js instead
  */
 export function networkError(message = "Network error occurred", details = {}) {
   return new AppError(message, ErrorType.NETWORK, details);
 }
 
-/**
- * Check if error is retryable (network/server errors)
- * @param {Error} error - Error to check
- * @returns {boolean} True if error is retryable
- */
-export function isRetryableError(error) {
-  if (error instanceof AppError) {
-    return error.type === ErrorType.NETWORK || error.type === ErrorType.SERVER;
-  }
-
-  if (error.status >= 500) {
-    return true;
-  }
-
-  if (error.message?.includes("fetch") || error.message?.includes("network")) {
-    return true;
-  }
-
-  return false;
-}
+// Note: isRetryableError is now imported from error-constants.js
+// The local definition has been removed to avoid duplicate exports
 
 /**
  * Safe DOM operation wrapper
@@ -262,27 +234,20 @@ export function safeDOMOperation(operation, options = {}) {
 }
 
 /**
- * Global unhandled error handler
+ * Global unhandled error handler - DEPRECATED
+ * 
+ * @deprecated This function no longer registers global listeners to prevent
+ * duplicate error handling. Use UnifiedErrorHandler instead.
+ * 
+ * This function is kept for backward compatibility but does nothing.
+ * Global error listeners are now handled by UnifiedErrorHandler.
  */
 export function setupGlobalErrorHandlers() {
-  // Catch unhandled promise rejections
-  window.addEventListener("unhandledrejection", (event) => {
-    logger.error("[Unhandled Promise Rejection]", event.reason);
-    event.preventDefault(); // Prevent default browser behavior
-  });
-
-  // Catch global errors
-  window.addEventListener("error", (event) => {
-    logger.error("[Global Error]", {
-      message: event.message,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-      error: event.error,
-    });
-  });
-
-  logger.debug("[Error Handling] Global error handlers installed");
+  // No-op: Global error handling is now done by UnifiedErrorHandler
+  // This function is kept for backward compatibility
+  logger.debug(
+    "[Error Handling] setupGlobalErrorHandlers() called but global listeners are handled by UnifiedErrorHandler",
+  );
 }
 
 // Export for use in modules

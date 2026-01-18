@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  inject,
-  signal
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    inject,
+    signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -27,14 +27,14 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-  StatItem,
-  StatsGridComponent
+    StatItem,
+    StatsGridComponent
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
-  AppLoadingComponent,
-  ButtonComponent,
-  CardComponent
+    AppLoadingComponent,
+    ButtonComponent,
+    CardComponent
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -808,6 +808,7 @@ export class WellnessComponent {
     // The service maps 'sleep' -> 'sleep_quality' in the database
     const wellnessData = {
       sleep: this.checkInData.sleepQuality, // 1-10 rating (service maps to sleep_quality in DB)
+      sleepHours: this.checkInData.sleepHours, // actual hours of sleep (stored in sleep_hours column)
       energy: this.checkInData.energyLevel, // 1-10 rating
       soreness: this.checkInData.soreness, // 1-10 rating
       hydration: this.checkInData.hydration, // glasses of water
@@ -815,10 +816,9 @@ export class WellnessComponent {
       stress: this.checkInData.stress, // 1-10 rating
       motivation: this.checkInData.motivation, // 1-10 rating
       date: new Date().toISOString().split("T")[0],
-      // Note: sleepHours, restingHR, and readiness are stored via notes field
-      // The daily_wellness_checkin table supports sleep_hours natively
-      notes: this.checkInData.sleepHours
-        ? `Sleep: ${this.checkInData.sleepHours}h${this.checkInData.restingHR ? `, RHR: ${this.checkInData.restingHR}bpm` : ""}${this.checkInData.readiness ? `, Readiness: ${this.checkInData.readiness}/10` : ""}`
+      // Note: restingHR and readiness are stored via notes field (not yet in database schema)
+      notes: this.checkInData.restingHR || this.checkInData.readiness
+        ? `${this.checkInData.restingHR ? `RHR: ${this.checkInData.restingHR}bpm` : ""}${this.checkInData.restingHR && this.checkInData.readiness ? ", " : ""}${this.checkInData.readiness ? `Readiness: ${this.checkInData.readiness}/10` : ""}`
         : undefined,
     };
 

@@ -88,7 +88,16 @@ function setAuthContextToken(token) {
   authContext.enterWith({ token });
 }
 
-const supabaseAdmin = new Proxy(
+// IMPORTANT: supabaseAdmin uses the SERVICE ROLE key to bypass RLS
+// This is required for server-side functions that need to access data
+// across users (e.g., wellness_logs, readiness scores, etc.)
+// The service role client should ONLY be used in server-side functions,
+// never exposed to the client.
+const supabaseAdmin = supabaseService;
+
+// RLS-aware client proxy for operations that should respect row-level security
+// Use this when you want queries to be filtered by the authenticated user's permissions
+const supabaseRLS = new Proxy(
   {},
   {
     get(_target, prop) {
@@ -1222,8 +1231,9 @@ function checkEnvVars() {
 
 module.exports = {
   supabase,
-  supabaseAdmin,
-  supabaseService,
+  supabaseAdmin, // Service role client - bypasses RLS (for server-side use only)
+  supabaseService, // Alias for supabaseAdmin (backwards compatibility)
+  supabaseRLS, // RLS-aware client - respects row-level security policies
   getSupabaseClient,
   setAuthContextToken,
   runWithAuthContext,
