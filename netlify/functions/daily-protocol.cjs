@@ -965,9 +965,28 @@ async function getProtocol(supabase, userId, params, headers) {
     throw exercisesError;
   }
 
+  // DYNAMICALLY compute confidence_metadata based on CURRENT wellness status
+  // This ensures the banner reflects the latest check-in, not stale stored values
+  const dynamicConfidenceMetadata = await computeDynamicConfidenceMetadata(
+    supabase,
+    userId,
+    date,
+    protocol,
+  );
+
+  // Merge dynamic confidence metadata into protocol before transforming
+  const protocolWithUpdatedMetadata = {
+    ...protocol,
+    confidence_metadata: dynamicConfidenceMetadata,
+    // Also update readiness_score if we have a fresh check-in
+    readiness_score: dynamicConfidenceMetadata.readiness?.hasData
+      ? (dynamicConfidenceMetadata.readiness._readinessScore ?? protocol.readiness_score)
+      : protocol.readiness_score,
+  };
+
   // Transform to frontend format
   const transformedProtocol = transformProtocolResponse(
-    protocol,
+    protocolWithUpdatedMetadata,
     protocolExercises,
     coachName,
     teamActivity, // Pass team activity to transformer
@@ -2934,6 +2953,97 @@ async function logSession(supabase, userId, payload, headers) {
           }
         : null,
     }),
+  };
+}
+
+/**
+ * Dynamically compute confidence_metadata based on CURRENT wellness check-in status
+ * This ensures the banner reflects the latest check-in, not stale stored values from protocol generation
+ *
+ * @param {object} supabase - Supabase client
+ * @param {string} userId - User ID
+ * @param {string} date - Protocol date (YYYY-MM-DD)
+ * @param {object} protocol - Stored protocol data
+ * @returns {object} Updated confidence_metadata
+ */
+async function computeDynamicConfidenceMetadata(supabase, userId, date, protocol) {
+  // Check for today's wellness check-in
+  const { data: todayWellness, error: wellnessError } = await supabase
+    .from("daily_wellness_checkin")
+    .select("id, readiness_score, calculated_readiness, created_at, checkin_date")
+    .eq("user_id", userId)
+    .eq("checkin_date", date)
+    .maybeSingle();
+
+  if (wellnessError && wellnessError.code !== "PGRST116") {
+    console.warn("[daily-protocol] Error checking wellness:", wellnessError);
+  }
+
+  const hasCheckinToday = !!todayWellness;
+  const readinessScore = todayWellness?.readiness_score ?? todayWellness?.calculated_readiness ?? protocol.readiness_score;
+
+  // Calculate days stale if no check-in today but we have stored data
+  let daysStale = null;
+  if (!hasCheckinToday && protocol.readiness_score !== null) {
+    // Find last check-in to calculate staleness
+    const { data: lastCheckin } = await supabase
+      .from("daily_wellness_checkin")
+      .select("checkin_date")
+      .eq("user_id", userId)
+      .order("checkin_date", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (lastCheckin?.checkin_date) {
+      const lastDate = new Date(lastCheckin.checkin_date);
+      const today = new Date(date);
+      daysStale = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+    }
+  } else if (hasCheckinToday) {
+    daysStale = 0;
+  }
+
+  // Determine readiness confidence
+  let readinessConfidence = "none";
+  if (hasCheckinToday) {
+    readinessConfidence = "high";
+  } else if (daysStale !== null && daysStale <= 2) {
+    readinessConfidence = "stale";
+  } else if (readinessScore !== null) {
+    readinessConfidence = "stale";
+  }
+
+  // Use stored confidence_metadata for ACWR and sessionResolution (these don't change as frequently)
+  const storedMeta = protocol.confidence_metadata || {};
+
+  console.log("[daily-protocol] Dynamic confidence metadata computed:", {
+    hasCheckinToday,
+    readinessScore,
+    daysStale,
+    readinessConfidence,
+  });
+
+  return {
+    readiness: {
+      hasData: hasCheckinToday || readinessScore !== null,
+      source: hasCheckinToday ? "wellness_checkin" : (readinessScore !== null ? "stored" : "none"),
+      daysStale,
+      confidence: readinessConfidence,
+      // Internal field for updating protocol.readiness_score in the response
+      _readinessScore: readinessScore,
+    },
+    acwr: storedMeta.acwr || {
+      hasData: protocol.acwr_value !== null,
+      source: protocol.acwr_value !== null ? "training_sessions" : "none",
+      trainingDaysLogged: null,
+      confidence: protocol.acwr_value !== null ? "high" : "building_baseline",
+    },
+    sessionResolution: storedMeta.sessionResolution || {
+      success: true,
+      status: "resolved",
+      hasProgram: true,
+      hasSessionTemplate: true,
+    },
   };
 }
 
