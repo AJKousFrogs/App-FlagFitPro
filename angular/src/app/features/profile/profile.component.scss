@@ -582,7 +582,7 @@
   justify-content: center;
   background: var(--ds-primary-green-ultra-subtle); // Dashboard: sessions-icon background
   border-radius: var(--radius-md); // Dashboard: var(--radius-md)
-  font-size: var(--icon-lg); // Use design token
+  font-size: var(--ds-font-size-xl); // Use design token
   color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
 }
 
@@ -761,7 +761,7 @@
   justify-content: center;
   background: var(--surface-tertiary); // Dashboard: day-indicator background
   border-radius: var(--radius-md); // Dashboard: var(--radius-md)
-  font-size: var(--icon-lg); // Use design token
+  font-size: var(--ds-font-size-xl); // Use design token
   color: var(--color-text-muted);
   margin-bottom: var(--space-3);
 }

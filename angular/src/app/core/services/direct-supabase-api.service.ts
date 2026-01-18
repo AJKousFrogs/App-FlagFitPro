@@ -487,7 +487,15 @@ export class DirectSupabaseApiService {
     };
     const trainingFocus = focusMap[dayOfWeek] || "general";
 
-    // Insert the protocol
+    // Check if protocol already exists
+    const { data: existingProtocol } = await this.supabase.client
+      .from("daily_protocols")
+      .select("id, total_exercises")
+      .eq("user_id", userId)
+      .eq("protocol_date", date)
+      .maybeSingle();
+
+    // Insert or update the protocol
     const { data: protocol, error } = await this.supabase.client
       .from("daily_protocols")
       .upsert(
@@ -517,11 +525,13 @@ export class DirectSupabaseApiService {
       throw error;
     }
 
-    // Generate default exercises using real exercise IDs from the database
+    // Generate exercises - force regenerate if existing protocol had 0 exercises
+    const forceRegenerate = !!(existingProtocol && (existingProtocol.total_exercises === 0 || existingProtocol.total_exercises === null));
     await this.generateProtocolExercises(
       protocol.id,
       trainingFocus,
       config?.primary_position,
+      forceRegenerate,
     );
 
     // Return the created protocol
@@ -530,24 +540,134 @@ export class DirectSupabaseApiService {
 
   /**
    * Generate protocol exercises using real exercises from the database
+   * @param forceRegenerate - If true, delete existing exercises and regenerate
    */
   private async generateProtocolExercises(
     protocolId: string,
     focus: string,
     _position?: string,
+    forceRegenerate: boolean = false,
   ): Promise<void> {
+    // First, check if exercises already exist for this protocol
+    const { data: existingExercises } = await this.supabase.client
+      .from("protocol_exercises")
+      .select("id")
+      .eq("protocol_id", protocolId)
+      .limit(1);
+
+    if (existingExercises && existingExercises.length > 0 && !forceRegenerate) {
+      this.logger.info("[DirectSupabaseApi] Protocol already has exercises, skipping generation");
+      return;
+    }
+
+    // If force regenerate, delete existing exercises first
+    if (forceRegenerate && existingExercises && existingExercises.length > 0) {
+      this.logger.info("[DirectSupabaseApi] Force regenerating - deleting existing exercises");
+      await this.supabase.client
+        .from("protocol_exercises")
+        .delete()
+        .eq("protocol_id", protocolId);
+    }
+
     // Fetch exercises by category
-    const { data: allExercises } = await this.supabase.client
+    const { data: allExercises, error: fetchError } = await this.supabase.client
       .from("exercises")
       .select(
         "id, name, category, default_sets, default_reps, default_hold_seconds, default_duration_seconds",
       )
       .eq("active", true);
 
-    if (!allExercises || allExercises.length === 0) {
-      this.logger.warn("[DirectSupabaseApi] No exercises found in database");
-      return;
+    if (fetchError) {
+      this.logger.error("[DirectSupabaseApi] Error fetching exercises:", fetchError);
     }
+
+    if (!allExercises || allExercises.length === 0) {
+      this.logger.warn("[DirectSupabaseApi] No exercises found in database - seeding default exercises");
+      // Seed default exercises so the user can see something
+      await this.seedDefaultExercises();
+      // Re-fetch after seeding
+      const { data: seededExercises } = await this.supabase.client
+        .from("exercises")
+        .select(
+          "id, name, category, default_sets, default_reps, default_hold_seconds, default_duration_seconds",
+        )
+        .eq("active", true);
+      
+      if (!seededExercises || seededExercises.length === 0) {
+        this.logger.error("[DirectSupabaseApi] Failed to seed exercises");
+        return;
+      }
+      // Continue with seeded exercises
+      return this.generateProtocolExercisesWithData(protocolId, focus, seededExercises);
+    }
+    
+    return this.generateProtocolExercisesWithData(protocolId, focus, allExercises);
+  }
+
+  /**
+   * Seed default exercises when the exercises table is empty
+   * This provides a minimal set of exercises for the protocol to function
+   */
+  private async seedDefaultExercises(): Promise<void> {
+    const defaultExercises = [
+      // Morning Mobility
+      { name: 'Hip Circles', slug: 'hip-circles', category: 'mobility', default_sets: 2, default_reps: 10, active: true },
+      { name: 'Arm Circles', slug: 'arm-circles-mobility', category: 'mobility', default_sets: 2, default_reps: 10, active: true },
+      { name: 'Cat-Cow Stretch', slug: 'cat-cow', category: 'mobility', default_sets: 1, default_reps: 10, active: true },
+      { name: 'World\'s Greatest Stretch', slug: 'worlds-greatest', category: 'mobility', default_sets: 1, default_reps: 5, active: true },
+      // Foam Roll
+      { name: 'Quad Foam Roll', slug: 'quad-roll', category: 'foam_roll', default_sets: 1, default_duration_seconds: 60, active: true },
+      { name: 'IT Band Foam Roll', slug: 'it-band-roll', category: 'foam_roll', default_sets: 1, default_duration_seconds: 60, active: true },
+      { name: 'Hamstring Foam Roll', slug: 'hamstring-roll', category: 'foam_roll', default_sets: 1, default_duration_seconds: 60, active: true },
+      { name: 'Glute Foam Roll', slug: 'glute-roll', category: 'foam_roll', default_sets: 1, default_duration_seconds: 60, active: true },
+      // Warm Up
+      { name: 'High Knees', slug: 'high-knees', category: 'warm_up', default_sets: 2, default_reps: 20, active: true },
+      { name: 'Butt Kicks', slug: 'butt-kicks', category: 'warm_up', default_sets: 2, default_reps: 20, active: true },
+      { name: 'Leg Swings', slug: 'leg-swings', category: 'warm_up', default_sets: 2, default_reps: 10, active: true },
+      { name: 'A-Skips', slug: 'a-skips', category: 'warm_up', default_sets: 2, default_reps: 10, active: true },
+      // Main Session (Strength/Conditioning)
+      { name: 'Bodyweight Squat', slug: 'bw-squat', category: 'strength', default_sets: 3, default_reps: 15, active: true },
+      { name: 'Push-ups', slug: 'pushups', category: 'strength', default_sets: 3, default_reps: 10, active: true },
+      { name: 'Lunges', slug: 'lunges', category: 'strength', default_sets: 3, default_reps: 10, active: true },
+      { name: 'Plank', slug: 'plank', category: 'strength', default_sets: 3, default_hold_seconds: 30, active: true },
+      { name: 'Burpees', slug: 'burpees', category: 'conditioning', default_sets: 3, default_reps: 10, active: true },
+      { name: 'Mountain Climbers', slug: 'mountain-climbers', category: 'conditioning', default_sets: 3, default_reps: 20, active: true },
+      // Cool Down
+      { name: 'Standing Quad Stretch', slug: 'quad-stretch', category: 'cool_down', default_sets: 1, default_hold_seconds: 30, active: true },
+      { name: 'Hamstring Stretch', slug: 'hamstring-stretch', category: 'cool_down', default_sets: 1, default_hold_seconds: 30, active: true },
+      { name: 'Hip Flexor Stretch', slug: 'hip-flexor-stretch', category: 'cool_down', default_sets: 1, default_hold_seconds: 30, active: true },
+      // Recovery
+      { name: 'Child\'s Pose', slug: 'childs-pose', category: 'recovery', default_sets: 1, default_hold_seconds: 60, active: true },
+      { name: 'Deep Breathing', slug: 'deep-breathing', category: 'recovery', default_sets: 1, default_duration_seconds: 120, active: true },
+    ];
+
+    const { error } = await this.supabase.client
+      .from("exercises")
+      .upsert(defaultExercises, { onConflict: 'slug' });
+
+    if (error) {
+      this.logger.error("[DirectSupabaseApi] Error seeding default exercises:", error);
+    } else {
+      this.logger.success("[DirectSupabaseApi] Successfully seeded default exercises");
+    }
+  }
+
+  /**
+   * Generate protocol exercises with provided exercise data
+   */
+  private async generateProtocolExercisesWithData(
+    protocolId: string,
+    _focus: string,
+    allExercises: Array<{
+      id: string;
+      name: string;
+      category: string | null;
+      default_sets?: number | null;
+      default_reps?: number | null;
+      default_hold_seconds?: number | null;
+      default_duration_seconds?: number | null;
+    }>,
+  ): Promise<void> {
 
     // Group exercises by category (case-insensitive)
     const exercisesByCategory = new Map<string, typeof allExercises>();

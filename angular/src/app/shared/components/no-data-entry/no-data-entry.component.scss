@@ -59,12 +59,12 @@
 }
 
 .no-data-icon i {
-  font-size: var(--icon-4xl);
+  font-size: var(--ds-font-size-4rem);
   color: white;
 }
 
 .compact .no-data-icon i {
-  font-size: var(--icon-3xl);
+  font-size: var(--ds-font-size-3rem);
 }
 
 .no-data-icon.pulse {
@@ -140,7 +140,7 @@
 
 .benefit-item i {
   color: var(--color-brand-primary);
-  font-size: var(--icon-md);
+  font-size: var(--ds-font-size-md);
 }
 
 .minimum-info {
@@ -180,7 +180,7 @@
 }
 
 .safety-note i {
-  font-size: var(--icon-lg);
+  font-size: var(--ds-font-size-xl);
   flex-shrink: 0;
 }
 
@@ -195,7 +195,7 @@
   }
 
   .no-data-icon i {
-    font-size: var(--icon-3xl);
+    font-size: var(--ds-font-size-3rem);
   }
 
   .no-data-title {

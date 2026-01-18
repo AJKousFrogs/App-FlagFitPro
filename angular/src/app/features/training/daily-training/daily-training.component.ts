@@ -561,7 +561,6 @@ interface ScheduleBlock {
         font-size: var(--ds-font-size-3xl);
         font-weight: var(--ds-font-weight-bold);
         margin: 0 0 var(--space-2) 0;
-        font-family: "Space Grotesk", sans-serif;
       }
 
       .date-text {

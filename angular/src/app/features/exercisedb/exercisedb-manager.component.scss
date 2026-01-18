@@ -59,7 +59,7 @@
 }
 
 .stat-icon {
-  font-size: var(--icon-2xl);
+  font-size: var(--ds-font-size-3xl);
   color: var(--ds-primary-green);
   opacity: 0.8;
 }
@@ -168,7 +168,7 @@
 }
 
 .exercise-placeholder i {
-  font-size: var(--icon-3xl);
+  font-size: var(--ds-font-size-3rem);
   color: var(--color-text-secondary);
   opacity: 0.5;
 }

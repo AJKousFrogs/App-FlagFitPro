@@ -270,7 +270,7 @@
 
   .card-empty-state__icon {
     margin-bottom: 0;
-    font-size: var(--icon-xl);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .card-empty-state__content {
@@ -288,7 +288,7 @@
 }
 
 .card-empty-state__icon {
-  font-size: var(--icon-3xl);
+  font-size: var(--ds-font-size-3rem);
   color: var(--color-text-muted);
   opacity: var(--opacity-dimmed);
   margin-bottom: var(--space-3);
@@ -296,7 +296,7 @@
 }
 
 .card-empty-state--compact .card-empty-state__icon {
-  font-size: var(--icon-2xl);
+  font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-2);
 }
 

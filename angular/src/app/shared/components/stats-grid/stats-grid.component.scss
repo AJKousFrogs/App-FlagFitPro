@@ -124,7 +124,7 @@
   }
 
   .stat-block__value {
-    font-size: var(--font-size-metric-sm, var(--ds-font-size-xl));
+    font-size: var(--ds-font-size-xl);
   }
 }
 
@@ -145,7 +145,7 @@
   }
 
   .stat-block__value {
-    font-size: var(--font-size-metric-sm, var(--ds-font-size-lg));
+    font-size: var(--ds-font-size-lg);
   }
 
   .stat-tag {

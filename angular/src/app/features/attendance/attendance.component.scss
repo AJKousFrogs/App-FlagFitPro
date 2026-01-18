@@ -35,7 +35,7 @@
 }
 
 .stat-icon {
-  font-size: var(--icon-2xl); /* 2rem/32px */
+  font-size: var(--ds-font-size-3xl); /* 2rem/32px */
   color: var(--ds-primary-green);
 
   &.success {
@@ -84,7 +84,7 @@
   background-color: var(--ds-primary-green-subtle);
   border-radius: var(--radius-lg);
   color: var(--ds-primary-green);
-  font-size: var(--icon-lg); /* 1.25rem/20px */
+  font-size: var(--ds-font-size-xl); /* 1.25rem/20px */
 }
 
 .event-details {

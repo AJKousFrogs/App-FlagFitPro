@@ -238,7 +238,7 @@
 
 .valid-icon {
   color: var(--color-status-success);
-  font-size: var(--icon-lg);
+  font-size: var(--ds-font-size-xl);
 }
 
 .error-text {
@@ -633,7 +633,7 @@
 
   i {
     color: var(--color-brand-primary);
-    font-size: var(--icon-lg);
+    font-size: var(--ds-font-size-xl);
   }
 }
 

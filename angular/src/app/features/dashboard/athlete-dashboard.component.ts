@@ -333,7 +333,7 @@ interface TrainingSession {
       }
 
       .metric-header i {
-        font-size: var(--icon-lg);
+        font-size: var(--ds-font-size-xl);
         color: var(--color-brand-primary);
       }
 

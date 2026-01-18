@@ -329,7 +329,7 @@ interface QuickFormData {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--icon-md); /* 16px - standard icon */
+        font-size: var(--ds-font-size-md); /* 16px - standard icon */
       }
 
       .stat-icon.acwr {
@@ -370,7 +370,7 @@ interface QuickFormData {
       .stat-chevron {
         color: var(--color-text-muted);
         opacity: 0.6;
-        font-size: var(--icon-sm); /* 14px - small icon */
+        font-size: var(--ds-font-size-sm); /* 14px - small icon */
       }
 
       .stat-block__value.optimal,
@@ -538,7 +538,7 @@ interface QuickFormData {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--icon-md); /* 16px - standard icon */
+        font-size: var(--ds-font-size-md); /* 16px - standard icon */
       }
 
       .action-text {
@@ -575,7 +575,7 @@ interface QuickFormData {
       }
 
       .empty-state i {
-        font-size: var(--icon-3xl); /* 48px - hero/empty state icon */
+        font-size: var(--ds-font-size-3rem); /* 48px - hero/empty state icon */
         color: var(--color-text-muted);
         opacity: 0.5;
         margin-bottom: var(--space-3);
@@ -751,7 +751,7 @@ interface QuickFormData {
       }
 
       .energy-btn i {
-        font-size: var(--icon-md);
+        font-size: var(--ds-font-size-md);
         color: var(--color-status-warning);
       }
 
@@ -787,7 +787,7 @@ interface QuickFormData {
       }
 
       .soreness-btn i {
-        font-size: var(--icon-md);
+        font-size: var(--ds-font-size-md);
       }
 
       .soreness-btn:hover {
@@ -1073,7 +1073,7 @@ interface QuickFormData {
       }
 
       .alert-gate-icon {
-        font-size: var(--icon-xl);
+        font-size: var(--ds-font-size-2xl);
         color: var(--color-status-warning);
         flex-shrink: 0;
       }
@@ -1178,7 +1178,7 @@ interface QuickFormData {
 
       .tomorrow-block-item i {
         color: var(--color-brand-primary);
-        font-size: var(--icon-md);
+        font-size: var(--ds-font-size-md);
       }
 
       .tomorrow-block-item span:nth-child(2) {

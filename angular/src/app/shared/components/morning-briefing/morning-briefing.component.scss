@@ -230,7 +230,7 @@
   }
 
   i {
-    font-size: var(--icon-md);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -369,7 +369,7 @@
 
     i {
       color: var(--ds-primary-green);
-      font-size: var(--icon-lg);
+      font-size: var(--ds-font-size-xl);
     }
   }
 }
@@ -575,7 +575,7 @@
   border: var(--border-1) solid var(--ds-primary-green-subtle);
 
   i {
-    font-size: var(--icon-lg);
+    font-size: var(--ds-font-size-xl);
     color: var(--ds-primary-green);
   }
 

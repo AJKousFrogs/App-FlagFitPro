@@ -29,7 +29,7 @@
 }
 
 .header-icon {
-  font-size: var(--icon-3xl);
+  font-size: var(--ds-font-size-3rem);
   color: var(--color-status-warning);
 }
 
@@ -95,7 +95,7 @@
 }
 
 .warning-icon {
-  font-size: var(--icon-xl);
+  font-size: var(--ds-font-size-2xl);
   flex-shrink: 0;
   width: var(--avatar-size-sm); /* 32px */
   height: var(--avatar-size-sm); /* 32px */

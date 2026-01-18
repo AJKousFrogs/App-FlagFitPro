@@ -17,7 +17,7 @@
 }
 
 .error-state__icon {
-  font-size: var(--icon-3xl);
+  font-size: var(--ds-font-size-3rem);
   color: var(--color-status-error);
   margin-bottom: var(--space-4);
   opacity: 0.9;
@@ -51,7 +51,7 @@
   }
 
   .error-state__icon {
-    font-size: var(--icon-2xl);
+    font-size: var(--ds-font-size-3xl);
   }
 }
 
