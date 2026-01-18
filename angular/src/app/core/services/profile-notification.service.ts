@@ -1,10 +1,10 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { ProfileCompletionService } from "./profile-completion.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
-import { ToastService } from "./toast.service";
+import { ProfileCompletionService } from "./profile-completion.service";
 import { SupabaseService } from "./supabase.service";
+import { ToastService } from "./toast.service";
 
 /**
  * ProfileNotificationService
@@ -123,7 +123,7 @@ export class ProfileNotificationService {
         .from("notifications")
         .select("id")
         .eq("user_id", user.id)
-        .eq("type", "profile_incomplete")
+        .eq("notification_type", "profile_incomplete")
         .eq("dismissed", false)
         .maybeSingle();
 
@@ -150,7 +150,7 @@ export class ProfileNotificationService {
         // Create new notification
         await this.supabaseService.client.from("notifications").insert({
           user_id: user.id,
-          type: "profile_incomplete",
+          notification_type: "profile_incomplete",
           title: "Complete Your Profile",
           message: `Your profile is ${percentage}% complete. Add your ${missingFields[0]?.toLowerCase() || "missing information"} to unlock all features.`,
           priority: "medium",
@@ -192,7 +192,7 @@ export class ProfileNotificationService {
         .from("notifications")
         .update({ dismissed: true })
         .eq("user_id", user.id)
-        .eq("type", "profile_incomplete");
+        .eq("notification_type", "profile_incomplete");
 
       this.logger.debug("[ProfileNotification] Notification dismissed");
     } catch (error) {

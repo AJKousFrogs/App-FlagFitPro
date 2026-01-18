@@ -218,13 +218,13 @@ async function getChildStats(childId) {
     .eq("user_id", childId)
     .gte("created_at", thirtyDaysAgo.toISOString());
 
-  // Get daily readiness average
+  // Get daily readiness average from daily_wellness_checkin
   const { data: readinessData, error: readinessError } = await supabaseAdmin
-    .from("athlete_daily_state")
-    .select("readiness_score, pain_level")
+    .from("daily_wellness_checkin")
+    .select("calculated_readiness, muscle_soreness")
     .eq("user_id", childId)
-    .gte("state_date", thirtyDaysAgo.toISOString().split("T")[0])
-    .order("state_date", { ascending: false })
+    .gte("checkin_date", thirtyDaysAgo.toISOString().split("T")[0])
+    .order("checkin_date", { ascending: false })
     .limit(7);
 
   const stats = {
@@ -277,15 +277,16 @@ async function getChildStats(childId) {
 
   if (readinessData && !readinessError && readinessData.length > 0) {
     const scores = readinessData
-      .filter((r) => r.readiness_score !== null)
-      .map((r) => parseFloat(r.readiness_score));
+      .filter((r) => r.calculated_readiness !== null)
+      .map((r) => parseFloat(r.calculated_readiness));
     stats.readiness.averageScore =
       scores.length > 0
         ? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 100)
         : null;
+    // Map muscle_soreness to recentPainLevels for backwards compatibility
     stats.readiness.recentPainLevels = readinessData
       .slice(0, 7)
-      .map((r) => r.pain_level);
+      .map((r) => r.muscle_soreness);
   }
 
   return stats;

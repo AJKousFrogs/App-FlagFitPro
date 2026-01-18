@@ -75,7 +75,7 @@ async function resolveTeamActivityForAthleteDay(
   // Step 2: Check for active rehab protocol (PRIORITY 1)
   const { data: wellnessCheckin } = await supabase
     .from("daily_wellness_checkin")
-    .select("soreness_areas, pain_level")
+    .select("soreness_areas, muscle_soreness")
     .eq("user_id", athleteId)
     .lte("checkin_date", dateLocal)
     .order("checkin_date", { ascending: false })

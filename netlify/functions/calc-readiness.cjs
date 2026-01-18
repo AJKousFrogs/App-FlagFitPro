@@ -303,14 +303,25 @@ exports.handler = async (event, context) => {
       console.log("[calc-readiness] Wellness log found:", !!wellness);
 
       if (!wellness) {
-        console.error(
+        console.log(
           "[calc-readiness] No wellness log found for date:",
           dayStr,
         );
-        return createErrorResponse(
-          400,
-          "Missing wellness log for this day. Please log wellness data first.",
-        );
+        // Return a graceful response with null score instead of error
+        // This allows the frontend to handle missing wellness data gracefully
+        return createSuccessResponse({
+          score: null,
+          level: null,
+          suggestion: "log_wellness",
+          acwr: null,
+          acuteLoad: null,
+          chronicLoad: null,
+          dataMode: "unavailable",
+          wellnessIndex: null,
+          componentScores: null,
+          message: "No wellness log for today. Please log your wellness data to calculate readiness.",
+          missingData: ["wellness_log"],
+        });
       }
 
       // Calculate wellness index (1-5 scale, modeled on common athlete monitoring scales)
