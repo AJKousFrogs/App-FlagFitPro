@@ -16,20 +16,20 @@
  */
 
 import {
-  animate,
-  keyframes,
-  style,
-  transition,
-  trigger
+    animate,
+    keyframes,
+    style,
+    transition,
+    trigger
 } from "@angular/animations";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  computed,
-  effect,
-  inject,
-  signal
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    computed,
+    effect,
+    inject,
+    signal
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
@@ -51,18 +51,18 @@ import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acw
 import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
-  ProtocolJson,
-  TodayViewModel,
-  resolveTodayState
+    ProtocolJson,
+    TodayViewModel,
+    resolveTodayState
 } from "../../today/resolution/today-state.resolver";
 import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import { WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
 import {
-  BlockType,
-  DailyProtocol,
-  ExerciseCategory,
-  PrescribedExercise,
-  ProtocolBlock
+    BlockType,
+    DailyProtocol,
+    ExerciseCategory,
+    PrescribedExercise,
+    ProtocolBlock
 } from "../training/daily-protocol/daily-protocol.models";
 
 // Services
@@ -72,8 +72,8 @@ import { DataSourceService } from "../../core/services/data-source.service";
 import { DirectSupabaseApiService } from "../../core/services/direct-supabase-api.service";
 import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 import { ScreenReaderAnnouncerService } from "../../core/services/screen-reader-announcer.service";
+import { UnifiedTrainingService } from "../../core/services/unified-training.service";
 
 // Environment
 import { environment } from "../../../environments/environment";
@@ -81,8 +81,8 @@ import { environment } from "../../../environments/environment";
 // Constants
 import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
 import {
-  WELLNESS,
-  computeQuickReadiness
+    WELLNESS,
+    computeQuickReadiness
 } from "../../core/constants/wellness.constants";
 
 // Types
@@ -1203,6 +1203,23 @@ interface QuickFormData {
       .tomorrow-empty p {
         margin: 0 0 var(--space-3);
         font-size: var(--font-body-sm-size);
+        color: var(--color-text-secondary);
+      }
+
+      /* --------------------------------------------------------------------------
+       NO EXERCISES MESSAGE - When protocol exists but exercises not loaded
+       -------------------------------------------------------------------------- */
+      .no-exercises-message {
+        text-align: center;
+        padding: var(--space-6);
+        background: var(--color-surface-secondary);
+        border-radius: var(--radius-lg);
+        margin: var(--space-4) 0;
+      }
+
+      .no-exercises-message p {
+        margin: 0 0 var(--space-4);
+        font-size: var(--font-body-size);
         color: var(--color-text-secondary);
       }
 
@@ -2477,6 +2494,7 @@ export class TodayComponent {
   // ============================================================================
   /**
    * Get block by type from DailyProtocol
+   * Returns null if block doesn't exist or has no exercises
    */
   getBlockByType(
     protocol: Partial<DailyProtocol>,
@@ -2504,7 +2522,15 @@ export class TodayComponent {
     const prop = blockMap[blockType];
     if (!prop) return null;
 
-    return (protocol[prop] as ProtocolBlock) || null;
+    const block = protocol[prop] as ProtocolBlock | undefined;
+    
+    // Return null if block doesn't exist or has no exercises
+    // This prevents rendering empty block cards
+    if (!block || !block.exercises || block.exercises.length === 0) {
+      return null;
+    }
+
+    return block;
   }
 
   /**

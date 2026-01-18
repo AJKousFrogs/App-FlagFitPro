@@ -196,17 +196,14 @@ export class DirectSupabaseApiService {
       .order("sequence_order", { ascending: true });
 
     // Group exercises into blocks
-    // Evidence-based 1.5h gym structure with separate training blocks
+    // Block types must match database CHECK constraint
+    // After migration 113 is applied, additional types can be added
     const blockMap = new Map<string, ProtocolExercise[]>();
     const blockTypes = [
       "morning_mobility",
       "foam_roll",
       "warm_up",
-      "isometrics",
-      "plyometrics",
-      "strength",
-      "conditioning",
-      "skill_drills",
+      "main_session",
       "cool_down",
       "evening_recovery",
     ];
@@ -573,21 +570,36 @@ export class DirectSupabaseApiService {
       prescribed_duration_seconds?: number;
     }> = [];
 
-    // Helper to get random exercises from a category
-    const getExercises = (category: string, count: number) => {
-      const exercises = exercisesByCategory.get(category) || [];
+    // Helper to get random exercises from a category with fallback
+    const getExercises = (category: string, count: number, fallbackCategories: string[] = []) => {
+      let exercises = exercisesByCategory.get(category) || [];
+      
+      // Try fallback categories if primary is empty
+      if (exercises.length === 0 && fallbackCategories.length > 0) {
+        for (const fallback of fallbackCategories) {
+          exercises = exercisesByCategory.get(fallback) || [];
+          if (exercises.length > 0) break;
+        }
+      }
+      
+      // If still empty, try to get any available exercises
+      if (exercises.length === 0) {
+        // Get all exercises as last resort
+        exercises = allExercises;
+      }
+      
       const shuffled = [...exercises].sort(() => Math.random() - 0.5);
       return shuffled.slice(0, count);
     };
 
-    // Helper to add exercises to a block
+    // Helper to add exercises to a block with fallback categories
     const addBlockExercises = (
       blockType: string,
       category: string,
       count: number,
-      options: { useSets?: boolean; useHold?: boolean; useDuration?: boolean } = { useSets: true }
+      options: { useSets?: boolean; useHold?: boolean; useDuration?: boolean; fallbackCategories?: string[] } = { useSets: true }
     ) => {
-      const exercises = getExercises(category, count);
+      const exercises = getExercises(category, count, options.fallbackCategories || []);
       exercises.forEach((ex, i) => {
         const exercise: {
           protocol_id: string;
@@ -661,33 +673,42 @@ export class DirectSupabaseApiService {
     addBlockExercises("warm_up", "warm_up", 3);
 
     // =========================================================================
-    // MAIN TRAINING BLOCKS (15 min each = 75 min total)
+    // MAIN TRAINING BLOCKS
+    // NOTE: Using main_session as block type for database compatibility.
+    // After running migration 113_extend_protocol_block_types.sql, these can
+    // be changed to specific block types (isometrics, plyometrics, etc.)
     // =========================================================================
 
-    // Isometrics (3 exercises) - tendon loading, injury prevention
-    addBlockExercises("isometrics", "isometric", 3, { useHold: true });
+    // Main Session - combines strength, conditioning, and skill work
+    // Uses fallback categories when specific categories aren't seeded
+    addBlockExercises("main_session", "strength", 3, { 
+      fallbackCategories: ["mobility", "warm_up"] 
+    });
 
-    // Plyometrics (3 exercises) - power development, reactive strength
-    addBlockExercises("plyometrics", "plyometric", 3);
+    addBlockExercises("main_session", "conditioning", 2, { 
+      fallbackCategories: ["warm_up", "mobility"] 
+    });
 
-    // Strength (4 exercises) - primary strength work
-    addBlockExercises("strength", "strength", 4);
-
-    // Conditioning (3 exercises) - metabolic conditioning
-    addBlockExercises("conditioning", "conditioning", 3);
-
-    // Skill Drills (3 exercises) - sport-specific skills
-    addBlockExercises("skill_drills", "skill", 3);
+    addBlockExercises("main_session", "skill", 2, { 
+      fallbackCategories: ["warm_up", "mobility"] 
+    });
 
     // =========================================================================
     // RECOVERY BLOCKS
     // =========================================================================
 
     // Cool Down (3 exercises) - post-workout recovery
-    addBlockExercises("cool_down", "cool_down", 3, { useHold: true });
+    // Fallback to mobility or recovery
+    addBlockExercises("cool_down", "cool_down", 3, { 
+      useHold: true, 
+      fallbackCategories: ["mobility", "recovery"] 
+    });
 
     // Evening Recovery (2 exercises) - done at home
-    addBlockExercises("evening_recovery", "recovery", 2, { useDuration: true });
+    addBlockExercises("evening_recovery", "recovery", 2, { 
+      useDuration: true, 
+      fallbackCategories: ["mobility", "foam_roll"] 
+    });
 
     // Insert all exercises
     if (protocolExercises.length > 0) {

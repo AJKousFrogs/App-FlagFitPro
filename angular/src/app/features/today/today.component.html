@@ -248,6 +248,19 @@
                     }
                   </div>
 
+                  <!-- Empty blocks message - when protocol exists but no exercises loaded -->
+                  @if (p.totalExercises === 0) {
+                    <div class="no-exercises-message">
+                      <p>Your training plan is being prepared. Try refreshing in a moment.</p>
+                      <app-button
+                        iconLeft="pi-refresh"
+                        variant="outlined"
+                        size="sm"
+                        (clicked)="refreshProtocol()"
+                      >Refresh</app-button>
+                    </div>
+                  }
+
                   <!-- Footer Link -->
                   <div class="card-footer">
                     <app-button
