@@ -134,11 +134,13 @@ export class UnifiedTrainingService {
     return this.acwrService.acwrData();
   }
 
+  // CRITICAL: Return null when no data, not a fake default
+  // UI should handle null by showing "No data" or prompting for check-in
   readonly readinessScore = computed(
-    () => this.readinessService.current()?.score || 0,
+    () => this.readinessService.current()?.score ?? null,
   );
   readonly readinessLevel = computed(
-    () => this.readinessService.current()?.level || "moderate",
+    () => this.readinessService.current()?.level ?? null,
   );
 
   /**
@@ -1089,21 +1091,73 @@ export class UnifiedTrainingService {
     }
   }
 
-  private calculateReadinessScore(wellness: WellnessCheckinRecord): number {
-    const sleep = wellness.sleep_quality ?? wellness.sleep ?? 0;
-    const energy = wellness.energy_level ?? wellness.energy ?? 0;
-    const stress = wellness.stress_level ?? wellness.stress ?? 10;
-    const soreness = wellness.soreness_level ?? wellness.soreness ?? 10;
-    const motivation = wellness.motivation_level ?? wellness.motivation ?? 0;
+  /**
+   * Calculate readiness score from wellness check-in data
+   * 
+   * IMPORTANT: Returns null if required data is missing.
+   * DO NOT use default values - readiness must be calculated from real user input.
+   * 
+   * Required: sleep_quality AND energy_level (minimum for valid calculation)
+   * 
+   * Evidence-based weights (team-sport optimized):
+   * - Sleep: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
+   * - Energy: 25% (correlates with perceived performance)
+   * - Stress: 25% (inverted - lower stress = better readiness)
+   * - Soreness: 20% (inverted - lower soreness = better readiness)
+   */
+  private calculateReadinessScore(wellness: WellnessCheckinRecord): number | null {
+    // Get values without defaults - we need real data
+    const sleep = wellness.sleep_quality ?? wellness.sleep ?? null;
+    const energy = wellness.energy_level ?? wellness.energy ?? null;
+    const stress = wellness.stress_level ?? wellness.stress ?? null;
+    const soreness = wellness.soreness_level ?? wellness.soreness ?? null;
 
-    const score =
-      (sleep * 2 +
-        energy * 2 +
-        (10 - stress) * 1.5 +
-        (10 - soreness) * 1.5 +
-        motivation * 1) /
-      8;
-    return Math.round(score * 10);
+    // CRITICAL: Require at least sleep AND energy for valid calculation
+    if (sleep === null || energy === null) {
+      this.logger.warn(
+        "[UnifiedTrainingService] Cannot calculate readiness: missing required fields (sleep and/or energy)"
+      );
+      return null;
+    }
+
+    // All values on 0-10 scale, convert to 0-100
+    const sleepScore = (sleep / 10) * 100;
+    const energyScore = (energy / 10) * 100;
+
+    const hasStress = stress !== null;
+    const hasSoreness = soreness !== null;
+
+    let score: number;
+
+    if (hasStress && hasSoreness) {
+      // Full calculation with all 4 metrics
+      const stressScore = ((10 - stress) / 10) * 100; // Invert
+      const sorenessScore = ((10 - soreness) / 10) * 100; // Invert
+      score =
+        sleepScore * 0.30 +
+        energyScore * 0.25 +
+        stressScore * 0.25 +
+        sorenessScore * 0.20;
+    } else if (hasStress) {
+      // Sleep, energy, stress (redistribute soreness weight)
+      const stressScore = ((10 - stress) / 10) * 100;
+      score = 
+        sleepScore * 0.375 + 
+        energyScore * 0.3125 + 
+        stressScore * 0.3125;
+    } else if (hasSoreness) {
+      // Sleep, energy, soreness (redistribute stress weight)
+      const sorenessScore = ((10 - soreness) / 10) * 100;
+      score = 
+        sleepScore * 0.40 + 
+        energyScore * 0.333 + 
+        sorenessScore * 0.267;
+    } else {
+      // Minimal: sleep and energy only
+      score = sleepScore * 0.55 + energyScore * 0.45;
+    }
+
+    return Math.round(Math.max(0, Math.min(100, score)));
   }
 
   private getReadinessStatus(score: number): ReadinessStatus {

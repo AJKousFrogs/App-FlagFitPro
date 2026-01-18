@@ -186,10 +186,10 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       app-modal .p-dialog-title {
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
-        line-height: 1.3;
+        line-height: var(--ds-line-height-h3);
       }
 
       .modal-header-custom {
@@ -205,7 +205,7 @@ import { ButtonComponent } from "../button/button.component";
         align-items: center;
         justify-content: center;
         border-radius: var(--radius-lg);
-        font-size: 1.5rem;
+        font-size: var(--ds-font-size-2xl);
         flex-shrink: 0;
       }
 
@@ -241,17 +241,17 @@ import { ButtonComponent } from "../button/button.component";
 
       .modal-title {
         margin: 0;
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
-        line-height: 1.3;
+        line-height: var(--ds-line-height-h3);
       }
 
       .modal-subtitle {
         margin: var(--space-1) 0 0 0;
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
-        line-height: 1.4;
+        line-height: var(--ds-line-height-1-4);
       }
 
       /* ================================
@@ -302,7 +302,7 @@ import { ButtonComponent } from "../button/button.component";
 
       .modal-content {
         color: var(--color-text-primary);
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
       }
 
       .modal-content-scrollable {

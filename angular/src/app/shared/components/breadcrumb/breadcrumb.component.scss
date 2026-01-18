@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
 }
 
 .breadcrumb-link {
@@ -56,7 +56,7 @@
 }
 
 .breadcrumb-link i {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .breadcrumb-current {
@@ -65,15 +65,15 @@
   gap: var(--space-2);
   padding: var(--space-1) var(--space-2);
   color: var(--color-text-primary);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .breadcrumb-current i {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .breadcrumb-separator {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-tertiary);
 }
 
@@ -85,7 +85,7 @@
   }
 
   .breadcrumb-item {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
 
   .breadcrumb-link,
@@ -101,5 +101,5 @@
 
 .breadcrumb-item .breadcrumb-current:only-child {
   color: var(--color-text-tertiary);
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--ds-font-weight-regular);
 }

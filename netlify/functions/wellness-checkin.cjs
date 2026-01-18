@@ -656,23 +656,80 @@ async function saveCheckin(supabase, userId, payload, headers) {
   };
 }
 
+/**
+ * Calculate readiness score from wellness data
+ * 
+ * IMPORTANT: Returns null if required data is missing.
+ * DO NOT use default values - readiness must be calculated from real user input.
+ * 
+ * Required: sleepQuality AND energyLevel (minimum for valid calculation)
+ * 
+ * Evidence-based weights (team-sport optimized):
+ * - Sleep Quality: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
+ * - Energy Level: 25% (correlates with perceived performance)
+ * - Stress Level: 25% (inverted - lower stress = better readiness)
+ * - Muscle Soreness: 20% (inverted - lower soreness = better readiness)
+ * 
+ * Scale: Input values are on 1-5 scale (from quick check-in) or 0-10 scale (full check-in)
+ */
 function calculateReadiness(data) {
-  const { sleepQuality, sleepHours, energyLevel, muscleSoreness, stressLevel } =
-    data;
+  const { sleepQuality, energyLevel, muscleSoreness, stressLevel } = data;
 
-  // Weighted average formula
-  const sleepQualityScore = ((sleepQuality || 3) / 5) * 100;
-  const sleepHoursScore = Math.min(100, (((sleepHours || 7) - 4) / 4) * 100);
-  const energyScore = ((energyLevel || 3) / 5) * 100;
-  const sorenessScore = ((muscleSoreness || 3) / 5) * 100;
-  const stressScore = ((stressLevel || 3) / 5) * 100;
+  // CRITICAL: Require at least sleep quality AND energy level
+  // DO NOT use defaults - user must provide real data
+  if (sleepQuality === null || sleepQuality === undefined ||
+      energyLevel === null || energyLevel === undefined) {
+    console.log("[wellness-checkin] Cannot calculate readiness: missing required fields");
+    return null;
+  }
 
-  const weighted =
-    sleepQualityScore * 0.3 +
-    sleepHoursScore * 0.15 +
-    energyScore * 0.25 +
-    sorenessScore * 0.15 +
-    stressScore * 0.15;
+  // Detect scale (1-5 quick check-in vs 0-10 full check-in)
+  // If max value is <= 5, assume 1-5 scale
+  const maxValue = Math.max(
+    sleepQuality || 0,
+    energyLevel || 0,
+    muscleSoreness || 0,
+    stressLevel || 0
+  );
+  const scale = maxValue <= 5 ? 5 : 10;
 
-  return Math.round(weighted);
+  // Normalize all values to 0-100
+  const sleepScore = (sleepQuality / scale) * 100;
+  const energyScore = (energyLevel / scale) * 100;
+
+  const hasStress = stressLevel !== null && stressLevel !== undefined;
+  const hasSoreness = muscleSoreness !== null && muscleSoreness !== undefined;
+
+  let score;
+
+  if (hasStress && hasSoreness) {
+    // Full calculation with all 4 metrics
+    // Invert stress and soreness (lower = better)
+    const stressScore = ((scale - stressLevel) / scale) * 100;
+    const sorenessScore = ((scale - muscleSoreness) / scale) * 100;
+    score =
+      sleepScore * 0.30 +
+      energyScore * 0.25 +
+      stressScore * 0.25 +
+      sorenessScore * 0.20;
+  } else if (hasStress) {
+    // Sleep, energy, stress (redistribute soreness weight)
+    const stressScore = ((scale - stressLevel) / scale) * 100;
+    score =
+      sleepScore * 0.375 +
+      energyScore * 0.3125 +
+      stressScore * 0.3125;
+  } else if (hasSoreness) {
+    // Sleep, energy, soreness (redistribute stress weight)
+    const sorenessScore = ((scale - muscleSoreness) / scale) * 100;
+    score =
+      sleepScore * 0.40 +
+      energyScore * 0.333 +
+      sorenessScore * 0.267;
+  } else {
+    // Minimal: sleep and energy only
+    score = sleepScore * 0.55 + energyScore * 0.45;
+  }
+
+  return Math.round(Math.max(0, Math.min(100, score)));
 }

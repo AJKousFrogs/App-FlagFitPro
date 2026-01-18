@@ -26,8 +26,8 @@
 }
 
 .header-text h1 {
-  font-size: var(--font-size-metric-lg);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -62,7 +62,7 @@
   }
 
   .header-content h1 {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .header-actions {

@@ -82,7 +82,7 @@
 }
 
 .status-icon i {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .status-text {
@@ -92,12 +92,12 @@
 }
 
 .status-title {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
 }
 
 .status-message {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   opacity: 0.9;
 }
 

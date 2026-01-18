@@ -232,7 +232,7 @@ interface DebugLog {
       .test-card h4 {
         color: #9cdcfe;
         margin: 0 0 10px;
-        font-size: 14px;
+        font-size: var(--ds-font-size-sm);
       }
 
       .test-card select {
@@ -249,7 +249,7 @@ interface DebugLog {
       .test-card button {
         width: 100%;
         padding: 8px;
-        font-size: 12px;
+        font-size: var(--ds-font-size-xs);
       }
 
       .logs-section {
@@ -269,7 +269,7 @@ interface DebugLog {
         padding: 8px;
         margin-bottom: 4px;
         border-left: 3px solid transparent;
-        font-size: 12px;
+        font-size: var(--ds-font-size-xs);
       }
 
       .log-entry.log-info {
@@ -299,7 +299,7 @@ interface DebugLog {
 
       .log-level {
         margin-right: 8px;
-        font-weight: bold;
+        font-weight: var(--ds-font-weight-bold);
       }
 
       .log-info .log-level {
@@ -324,7 +324,7 @@ interface DebugLog {
         padding: 8px;
         background: #000;
         border-radius: 2px;
-        font-size: 11px;
+        font-size: var(--ds-font-size-compact-md);
         color: #9cdcfe;
         overflow-x: auto;
       }
@@ -352,8 +352,8 @@ interface DebugLog {
       }
 
       .stat-block__value {
-        font-size: 32px;
-        font-weight: bold;
+        font-size: var(--ds-font-size-3xl);
+        font-weight: var(--ds-font-weight-bold);
         color: #569cd6;
         margin-bottom: 5px;
       }
@@ -366,9 +366,9 @@ interface DebugLog {
       }
 
       .stat-block__label {
-        font-size: 12px;
+        font-size: var(--ds-font-size-xs);
         color: #808080;
-        text-transform: uppercase;
+        text-transform: var(--ds-text-transform-uppercase);
       }
 
       .by-table {
@@ -395,7 +395,7 @@ interface DebugLog {
 
       .table-count {
         color: #b5cea8;
-        font-weight: bold;
+        font-weight: var(--ds-font-weight-bold);
       }
     `,
   ],

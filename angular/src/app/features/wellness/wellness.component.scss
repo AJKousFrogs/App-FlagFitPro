@@ -49,7 +49,7 @@
 
 .loading-text {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .checkin-card {
@@ -76,8 +76,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
   margin: 0 0 var(--space-4) 0;
 }
@@ -95,14 +95,14 @@
   gap: var(--space-2);
 
   label {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-primary);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
 .help-text {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   margin-top: var(--space-1);
 }
@@ -117,7 +117,7 @@
 }
 
 .submit-note {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -125,7 +125,7 @@
   text-align: center;
   padding: var(--space-8) var(--space-4);
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 // ===== Alerts Section =====
@@ -163,7 +163,7 @@
   margin-bottom: var(--space-2);
 
   i {
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-md);
   }
 
   .alert-danger & i {
@@ -180,13 +180,13 @@
 }
 
 .alert-title {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-body);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 }
 
 .alert-message {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-3) 0;
 }
@@ -195,8 +195,8 @@
   margin-bottom: var(--space-3);
 
   .rec-label {
-    font-size: var(--font-size-badge);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-secondary);
   }
 
@@ -204,7 +204,7 @@
     margin: var(--space-2) 0 0 var(--space-4);
     padding: 0;
     list-style: disc;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
   }
 }

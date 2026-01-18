@@ -35,8 +35,8 @@
 
 .date-range-label {
   display: block;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
 }
@@ -49,12 +49,12 @@
 }
 
 .form-help {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .form-error {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-status-error);
 }
 

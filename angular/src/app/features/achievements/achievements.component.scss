@@ -56,12 +56,12 @@
   }
 
   .stat-icon {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
     color: var(--ds-primary-green);
   }
 
   .stat-emoji {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .stat-details {
@@ -71,22 +71,22 @@
   }
 
   .stat-block__label {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 
   .stat-block__value {
-    font-size: var(--font-size-h2);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
 
     &.recent {
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
     }
   }
 
   .stat-hint {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-tertiary);
   }
 
@@ -161,7 +161,7 @@
   }
 
   .badge-icon {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
 
     &.locked {
       opacity: 0.5;
@@ -180,7 +180,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
     border: 2px solid var(--ds-surface-elevated);
   }
 }
@@ -191,16 +191,16 @@
 
   h4 {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
   }
 
   p {
     margin: 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
-    line-height: var(--line-height-base);
+    line-height: var(--ds-line-height-normal);
   }
 }
 
@@ -211,13 +211,13 @@
   margin-top: var(--space-2);
 
   .points {
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-h4);
+    font-weight: var(--ds-font-weight-semibold);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-primary-green);
   }
 
   .date {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-tertiary);
   }
 }
@@ -234,15 +234,15 @@
   }
 
   .progress-text {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-secondary);
     white-space: nowrap;
   }
 }
 
 .points {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
   color: var(--ds-primary-green);
   margin-top: var(--space-2);
 
@@ -290,12 +290,12 @@
     }
 
     .tab-icon {
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
     }
 
     .tab-label {
-      font-size: var(--font-size-h4);
-      font-weight: var(--font-weight-medium);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
     }
   }
 }
@@ -318,8 +318,8 @@
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      font-weight: var(--font-weight-semibold);
-      font-size: var(--font-body-size);
+      font-weight: var(--ds-font-weight-semibold);
+      font-size: var(--ds-font-size-md);
       color: var(--ds-text-primary);
 
       i {
@@ -329,11 +329,11 @@
   }
 
   .rank-medal {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .rank-number {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-secondary);
   }
 
@@ -342,7 +342,7 @@
   }
 
   .recent-achievement {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 
@@ -350,7 +350,7 @@
     padding: var(--space-3);
     text-align: center;
     border-top: 1px solid var(--ds-border-subtle);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 }

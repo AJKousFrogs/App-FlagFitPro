@@ -49,17 +49,17 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
+  line-height: var(--ds-line-height-tight);
   margin: 0 0 var(--space-2) 0;
   color: var(--color-text-primary);
 }
 
 .page-subtitle {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--line-height-normal);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-regular);
+  line-height: var(--ds-line-height-normal);
   color: var(--color-text-secondary);
   margin: 0;
 }

@@ -21,7 +21,7 @@
   padding: var(--space-3);
   background: var(--surface-tertiary);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .info-item {
@@ -30,7 +30,7 @@
 }
 
 .info-label {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
 }
 

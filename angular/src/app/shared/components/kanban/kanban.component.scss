@@ -36,8 +36,8 @@
 
 .kanban-column-title {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -46,8 +46,8 @@
   color: var(--color-text-secondary);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-xl);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .kanban-column-content {
@@ -93,8 +93,8 @@
 
 .kanban-card-title {
   margin: 0;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   flex: 1;
 }
@@ -115,9 +115,9 @@
 
 .kanban-card-description {
   margin: 0 0 var(--space-3) 0;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .kanban-card-footer {
@@ -129,8 +129,8 @@
 .kanban-card-label {
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
 }
@@ -139,7 +139,7 @@
   padding: var(--space-8);
   text-align: center;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   border: var(--border-2) dashed var(--color-border-primary);
   border-radius: var(--radius-md);
 }

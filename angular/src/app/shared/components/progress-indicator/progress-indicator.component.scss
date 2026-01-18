@@ -19,15 +19,15 @@
 }
 
 .progress-label {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   margin: 0;
 }
 
 .progress-value {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
 }
 
@@ -60,8 +60,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: var(--font-h3-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -90,7 +90,7 @@
   justify-content: center;
   background: var(--color-border-secondary);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   margin-bottom: var(--space-2);
   transition:
     color var(--motion-slow) var(--ease-standard),
@@ -108,11 +108,11 @@
 }
 
 .step-number {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
 }
 
 .step-label {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   text-align: center;
   max-width: var(--space-24);
@@ -120,7 +120,7 @@
 
 .step-item.active .step-label {
   color: var(--color-text-primary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .step-connector {
@@ -139,7 +139,7 @@
 
 .progress-helper {
   margin-top: var(--space-2);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 
@@ -152,29 +152,29 @@
   padding: var(--space-2) var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .time-estimate i {
   color: var(--ds-primary-green);
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 /* Size variants */
 .progress-sm .progress-label {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
 }
 
 .progress-sm .circular-value {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 .progress-lg .progress-label {
-  font-size: var(--font-h3-size);
+  font-size: var(--ds-font-size-xl);
 }
 
 .progress-lg .circular-value {
-  font-size: var(--font-h2-size);
+  font-size: var(--ds-font-size-2xl);
 }

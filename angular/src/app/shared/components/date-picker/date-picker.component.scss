@@ -16,11 +16,11 @@
 // PrimeNG datepicker overrides moved to _exceptions.scss (DS-EXC-041)
 
 .form-help {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .form-error {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-status-error);
 }

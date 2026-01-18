@@ -55,12 +55,12 @@
 }
 
 .stat-block__value {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
 .stat-block__label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }

@@ -326,8 +326,8 @@ interface TrainingSession {
       }
 
       .metric-header h3 {
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-secondary);
         margin: 0;
       }
@@ -338,14 +338,14 @@ interface TrainingSession {
       }
 
       .metric-value {
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: var(--ds-font-size-3xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--text-primary);
         margin-bottom: var(--space-2);
       }
 
       .metric-subtitle {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--text-secondary);
       }
 
@@ -358,8 +358,8 @@ interface TrainingSession {
       }
 
       .section-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-primary);
         margin-bottom: var(--space-4);
       }
@@ -452,13 +452,16 @@ export class AthleteDashboardComponent
     return "red";
   });
 
-  readinessScore = computed(() => this.readinessService.current()?.score || 0);
+  // CRITICAL: Return null when no data, not a fake default
+  // UI should handle null by showing "No data" or prompting for check-in
+  readinessScore = computed(() => this.readinessService.current()?.score ?? null);
   readinessLevel = computed(
-    () => this.readinessService.current()?.level || "moderate",
+    () => this.readinessService.current()?.level ?? null,
   );
 
   readinessStatus = computed<TrafficLightStatus>(() => {
     const score = this.readinessScore();
+    if (score === null) return "gray"; // No data
     if (score >= 75) return "green";
     if (score >= 55) return "yellow";
     return "red";

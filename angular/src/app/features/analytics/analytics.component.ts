@@ -2141,7 +2141,7 @@ export class AnalyticsComponent implements AfterViewInit {
           .header h1 {
             color: #10c96b;
             margin: 0;
-            font-size: 28px;
+            font-size: var(--ds-font-size-1-75rem);
           }
           .header p {
             color: #666;
@@ -2152,7 +2152,7 @@ export class AnalyticsComponent implements AfterViewInit {
           }
           .section h2 {
             color: #1a1a2e;
-            font-size: 18px;
+            font-size: var(--ds-font-size-lg);
             border-bottom: 1px solid #eee;
             padding-bottom: 8px;
             margin-bottom: 16px;
@@ -2169,13 +2169,13 @@ export class AnalyticsComponent implements AfterViewInit {
             text-align: center;
           }
           .metric-value {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: var(--ds-font-size-2xl);
+            font-weight: var(--ds-font-weight-bold);
             color: var(--ds-primary-green);
           }
           .metric-label {
             color: var(--color-text-secondary);
-            font-size: 14px;
+            font-size: var(--ds-font-size-sm);
           }
           .goal-item {
             background: var(--surface-secondary);
@@ -2184,12 +2184,12 @@ export class AnalyticsComponent implements AfterViewInit {
             margin-bottom: 8px;
           }
           .goal-name {
-            font-weight: bold;
+            font-weight: var(--ds-font-weight-bold);
             color: var(--color-text-primary);
           }
           .goal-progress {
             color: #666;
-            font-size: 14px;
+            font-size: var(--ds-font-size-sm);
           }
           .stats-table {
             width: 100%;
@@ -2202,7 +2202,7 @@ export class AnalyticsComponent implements AfterViewInit {
           }
           .stats-table th {
             background: #f8f9fa;
-            font-weight: 600;
+            font-weight: var(--ds-font-weight-semibold);
           }
           .footer {
             margin-top: 40px;
@@ -2210,7 +2210,7 @@ export class AnalyticsComponent implements AfterViewInit {
             border-top: 1px solid #eee;
             text-align: center;
             color: #999;
-            font-size: 12px;
+            font-size: var(--ds-font-size-xs);
           }
           @media print {
             body { padding: 20px; }

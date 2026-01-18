@@ -74,11 +74,11 @@ export type IncompleteDataPlacement =
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-md);
         font-family: var(--font-family-sans);
-        font-size: var(--font-size-h4);
-        font-weight: var(--font-weight-semibold);
-        text-transform: none;
-        letter-spacing: 0;
-        line-height: var(--line-height-tight);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
+        text-transform: var(--ds-text-transform-none);
+        letter-spacing: var(--ds-letter-spacing-normal);
+        line-height: var(--ds-line-height-tight);
         min-height: var(--space-8);
         transition: all var(--motion-fast) var(--ease-standard);
       }
@@ -94,7 +94,7 @@ export type IncompleteDataPlacement =
         background: var(--ds-primary-orange-subtle);
         color: var(--ds-primary-orange);
         border-left: var(--border-2) solid var(--ds-primary-orange);
-        font-weight: var(--font-weight-bold); /* Intensity difference */
+        font-weight: var(--ds-font-weight-bold); /* Intensity difference */
       }
 
       /* Placement Styles */
@@ -136,11 +136,11 @@ export type IncompleteDataPlacement =
       }
 
       .badge-icon {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
 
       .badge-label {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .severity-tag {
@@ -149,7 +149,7 @@ export type IncompleteDataPlacement =
 
       .days-count {
         margin-left: var(--space-1);
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         opacity: 0.9;
       }
 

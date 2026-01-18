@@ -61,14 +61,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   flex-shrink: 0;
 }
 
 .compact .stat-icon {
   width: 28px;
   height: 28px;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .status-success .stat-icon {
@@ -112,30 +112,30 @@
 // CANONICAL: Uses stat-block pattern tokens
 // @see docs/CARD_SHELL_CONTRACT.md §9 Stat Block Standard
 .stat-block__value {
-  font-size: var(--font-size-metric-md); // 24px - canonical
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl); // 24px - canonical
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  line-height: var(--line-height-tight);
+  line-height: var(--ds-line-height-tight);
   font-variant-numeric: tabular-nums;
 }
 
 .compact .stat-block__value {
-  font-size: var(--font-size-h2); // 18px - compact variant
+  font-size: var(--ds-font-size-2xl); // 18px - compact variant
 }
 
 .stat-unit {
-  font-size: var(--font-size-caption);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 // CANONICAL: Uses stat-block label pattern
 .stat-block__label {
-  font-size: var(--font-size-caption); // 13px - canonical
-  font-weight: var(--font-weight-regular);
+  font-size: var(--ds-font-size-xs); // 13px - canonical
+  font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-muted);
-  letter-spacing: var(--letter-spacing-caption);
-  text-transform: uppercase;
+  letter-spacing: var(--ds-letter-spacing-caption);
+  text-transform: var(--ds-text-transform-uppercase);
   white-space: nowrap;
 }
 
@@ -144,8 +144,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   margin-left: var(--space-2);
 }
 

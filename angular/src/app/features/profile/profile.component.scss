@@ -96,7 +96,7 @@
 }
 
 .profile-page .deletion-banner-content > i {
-  font-size: var(--font-h2-size);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-status-warning);
   flex-shrink: 0;
   margin-top: var(--space-1);
@@ -108,15 +108,15 @@
 
 .profile-page .deletion-banner-text h4 {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-warning-text);
 }
 
 .profile-page .deletion-banner-text p {
   margin: 0;
   color: var(--color-text-primary);
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 .profile-page .deletion-banner-actions {
@@ -128,7 +128,7 @@
 }
 
 .profile-page .deletion-help-link {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-warning-text);
   text-decoration: underline;
 }
@@ -162,7 +162,7 @@
 
 .profile-page .loading-message {
   margin-top: var(--space-4);
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -235,10 +235,10 @@
 
 .profile-page .profile-avatar-fallback span {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-on-primary);
-  letter-spacing: 2px;
+  letter-spacing: var(--ds-letter-spacing-2px);
 }
 
 .profile-page .avatar-upload-btn {
@@ -272,7 +272,7 @@
 }
 
 .profile-page .avatar-upload-btn i {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 .profile-page .hidden-file-input {
@@ -294,10 +294,10 @@
 
 .profile-page .jersey-badge span {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h3-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-on-primary);
-  letter-spacing: 1px;
+  letter-spacing: var(--ds-letter-spacing-1px);
 }
 
 /* ========== Profile Info Section ========== */
@@ -308,11 +308,11 @@
 
 .profile-page .profile-display-name {
   font-family: var(--font-family-sans);
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-4) 0;
-  line-height: var(--font-h1-line-height);
+  line-height: var(--ds-line-height-h1);
   overflow-wrap: break-word;
   max-width: 100%;
 }
@@ -334,8 +334,8 @@
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-full);
   font-family: var(--font-family-sans);
-  font-size: var(--font-body-sm-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .profile-page .position-tag {
@@ -350,11 +350,11 @@
 
 .profile-page .position-tag i,
 .profile-page .team-tag i {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
 }
 
 .profile-page .profile-email-text {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-3) 0;
   overflow-wrap: break-word;
@@ -365,13 +365,13 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-tertiary);
   margin: 0;
 }
 
 .profile-page .member-since i {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
 }
 
 /* ========== Profile Header Actions ========== */
@@ -403,14 +403,14 @@
 }
 
 .profile-page .completion-label {
-  font-size: var(--font-body-sm-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .profile-page .completion-percentage {
-  font-size: var(--font-body-sm-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
 }
 
@@ -424,9 +424,9 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-relaxed);
+  line-height: var(--ds-line-height-relaxed);
 }
 
 .profile-page .completion-hint i {
@@ -445,13 +445,13 @@
   padding: var(--space-3) var(--space-4);
   background: var(--ds-primary-green-ultra-subtle);
   border-radius: var(--radius-lg);
-  font-size: var(--font-body-sm-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
 }
 
 .profile-page .profile-complete-badge i {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 /* ========== Profile Tabs Container ========== 
@@ -482,13 +482,13 @@
   min-width: var(--avatar-size-xs);
   height: var(--avatar-size-xs);
   padding: 0 var(--space-2);
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-on-primary);
   background: var(--color-status-error);
   border-radius: var(--radius-md);
   margin-left: var(--space-2);
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
 }
 
 .profile-page .tab-label {
@@ -542,7 +542,7 @@
   background: var(--ds-primary-green-ultra-subtle); // Dashboard: sessions-icon background
   border-radius: var(--radius-md); // Dashboard: var(--radius-md)
   color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
-  font-size: var(--font-body-size); // Dashboard: var(--font-body-size)
+  font-size: var(--ds-font-size-md); // Dashboard: var(--ds-font-size-md)
 }
 
 .profile-page .activity-content {
@@ -551,16 +551,16 @@
 }
 
 .profile-page .activity-title {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  font-size: var(--font-body-sm-size);
-  line-height: 1.4;
+  font-size: var(--ds-font-size-sm);
+  line-height: var(--ds-line-height-1-4);
   overflow-wrap: break-word;
   max-width: 100%;
 }
 
 .profile-page .item-time {
-  font-size: var(--font-compact-lg);
+  font-size: var(--ds-font-size-compact-lg);
   color: var(--color-text-muted);
   margin-top: var(--space-1);
 }
@@ -591,25 +591,25 @@
 }
 
 .profile-page .achievement-title {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   margin: 0 0 var(--space-2) 0;
   color: var(--color-text-primary);
 }
 
 .profile-page .achievement-description {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-3) 0;
-  line-height: var(--font-body-line-height);
+  line-height: var(--ds-line-height-body);
 }
 
 .profile-page .achievement-date {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: var(--font-weight-medium);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 /* ========== Performance Stats Grid (Statistics Tab) ========== 
@@ -639,20 +639,20 @@
 }
 
 .profile-page .stat-block__value {
-  font-size: var(--font-size-metric-md); // 24px - matches Dashboard
+  font-size: var(--ds-font-size-2xl); // 24px - matches Dashboard
   font-weight: var(
     --font-weight-semibold
   ); // Reduced from bold to not compete with card title
   color: var(--color-text-primary);
-  line-height: var(--line-height-tight);
+  line-height: var(--ds-line-height-tight);
 }
 
 .profile-page .stat-block__label {
-  font-size: var(--font-size-caption); // 13px
-  font-weight: var(--font-weight-regular); // Lighter weight for labels
+  font-size: var(--ds-font-size-xs); // 13px
+  font-weight: var(--ds-font-weight-regular); // Lighter weight for labels
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-caption);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-caption);
 }
 
 .profile-page .stat-block__tag {
@@ -698,8 +698,8 @@
 
 .profile-page .invitation-header h4 {
   margin: 0;
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -710,15 +710,15 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-lg);
-  font-size: var(--font-body-sm-size);
-  line-height: var(--font-body-line-height);
+  font-size: var(--ds-font-size-sm);
+  line-height: var(--ds-line-height-body);
 }
 
 .profile-page .invitation-meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-4);
-  font-size: var(--font-compact-lg);
+  font-size: var(--ds-font-size-compact-lg);
   color: var(--color-text-muted);
 }
 
@@ -775,17 +775,17 @@
 }
 
 .profile-page .card-empty-state__title {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-2) 0;
 }
 
 .profile-page .card-empty-state__text {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   margin: 0;
-  line-height: var(--line-height-relaxed);
+  line-height: var(--ds-line-height-relaxed);
 }
 
 /* ========== Responsive Styles ==========
@@ -841,7 +841,7 @@
 
   .profile-page .profile-display-name,
   .profile__display-name {
-    font-size: var(--font-h2-size, var(--font-h2));
+    font-size: var(--ds-font-size-2xl));
   }
 
   .profile-page .profile-info-section,
@@ -938,7 +938,7 @@
   }
 
   .profile-page .profile-avatar-fallback span {
-    font-size: var(--font-h1-size);
+    font-size: var(--ds-font-size-3xl);
   }
 
   .profile-page .avatar-upload-btn {
@@ -957,7 +957,7 @@
   }
 
   .profile-page .profile-display-name {
-    font-size: var(--font-h2-size);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .profile-page .profile-info-section {
@@ -1020,7 +1020,7 @@
     margin-left: var(--space-1);
     min-width: 18px;
     height: 18px;
-    font-size: var(--font-compact-md);
+    font-size: var(--ds-font-size-compact-md);
   }
 
   .profile-page .achievements-grid {
@@ -1036,7 +1036,7 @@
     width: var(--avatar-size-md);
     height: var(--avatar-size-md);
     min-width: var(--icon-min-width-md);
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-md);
   }
   
   /* Profile Completion Card - Mobile */
@@ -1051,25 +1051,25 @@
   }
   
   .profile-page .completion-hint {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
   
   .profile-page .profile-complete-badge {
     margin: 0 var(--space-3) var(--space-3);
     padding: var(--space-2) var(--space-3);
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
   
   /* Ensure text doesn't overflow on mobile */
   .profile-page .profile-display-name {
-    font-size: var(--font-h3-size);
+    font-size: var(--ds-font-size-xl);
     word-break: break-word;
     hyphens: auto;
     padding: 0 var(--space-2);
   }
   
   .profile-page .profile-email-text {
-    font-size: var(--font-body-sm-size);
+    font-size: var(--ds-font-size-sm);
     word-break: break-all;
     padding: 0 var(--space-2);
   }
@@ -1105,7 +1105,7 @@
   }
   
   .profile-page .profile-avatar-fallback span {
-    font-size: var(--font-h2-size);
+    font-size: var(--ds-font-size-2xl);
   }
 }
 
@@ -1138,14 +1138,14 @@
   }
 
   .profile-page .profile-display-name {
-    font-size: var(--font-h4-size, 1.125rem);
+    font-size: var(--ds-font-size-md);
     overflow-wrap: anywhere;
     word-break: break-word;
     padding: 0 var(--space-2);
   }
 
   .profile-page .profile-email-text {
-    font-size: var(--font-caption-size, 0.8125rem);
+    font-size: var(--ds-font-size-xs);
     overflow-wrap: anywhere;
     word-break: break-all;
   }
@@ -1175,7 +1175,7 @@
   }
   
   .profile-page .profile-avatar-fallback span {
-    font-size: var(--font-h3-size);
+    font-size: var(--ds-font-size-xl);
   }
   
   .profile-page .avatar-upload-btn {
@@ -1192,7 +1192,7 @@
   }
   
   .profile-page .jersey-badge span {
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-md);
   }
   
   /* Profile Completion Card - Extra Small */
@@ -1203,23 +1203,23 @@
   
   .profile-page .completion-label,
   .profile-page .completion-percentage {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
   
   .profile-page .completion-hint {
-    font-size: var(--font-compact-lg, 0.6875rem);
+    font-size: var(--ds-font-size-compact-lg);
     gap: var(--space-1);
   }
   
   .profile-page .profile-complete-badge {
     margin: 0 var(--space-2) var(--space-3);
     padding: var(--space-2);
-    font-size: var(--font-compact-lg, 0.6875rem);
+    font-size: var(--ds-font-size-compact-lg);
     gap: var(--space-1);
   }
   
   .profile-page .profile-complete-badge i {
-    font-size: var(--font-body-sm-size);
+    font-size: var(--ds-font-size-sm);
   }
   
   /* Tabs container - Extra Small */
@@ -1229,13 +1229,13 @@
   
   /* Member since - Extra Small */
   .profile-page .member-since {
-    font-size: var(--font-compact-lg, 0.6875rem);
+    font-size: var(--ds-font-size-compact-lg);
   }
   
   /* Position and Team tags - Extra Small */
   .profile-page .position-tag,
   .profile-page .team-tag {
     padding: var(--space-1) var(--space-3);
-    font-size: var(--font-compact-lg, 0.6875rem);
+    font-size: var(--ds-font-size-compact-lg);
   }
 }

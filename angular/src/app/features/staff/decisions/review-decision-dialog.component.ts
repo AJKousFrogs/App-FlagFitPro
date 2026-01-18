@@ -211,8 +211,8 @@ import type {
       .review-options h3,
       .review-notes h3,
       .outcome-tracking h3 {
-        font-size: 1.125rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-lg);
+        font-weight: var(--ds-font-weight-semibold);
         margin: 0 0 var(--space-3) 0;
       }
 
@@ -223,7 +223,7 @@ import type {
       }
 
       .context-item label {
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         min-width: 120px;
       }
 
@@ -257,7 +257,7 @@ import type {
 
       .lessons-learned label {
         display: block;
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         margin-bottom: var(--space-2);
       }
     `,

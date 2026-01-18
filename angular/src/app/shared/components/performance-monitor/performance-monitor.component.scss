@@ -36,8 +36,8 @@
 
 .monitor-header h4 {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -80,14 +80,14 @@
 }
 
 .metric-label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
 }
 
 .metric-value {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -99,20 +99,20 @@
 
 .status-good {
   color: var(--ds-primary-green-hover);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .status-warning {
   color: var(--primitive-warning-600);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .status-critical {
   color: var(--primitive-error-600);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .performance-actions {

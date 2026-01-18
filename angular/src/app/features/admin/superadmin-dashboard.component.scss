@@ -30,7 +30,7 @@
   }
 
   .stat-icon {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
     flex-shrink: 0;
   }
 
@@ -39,19 +39,19 @@
     flex-direction: column;
 
     .stat-block__value {
-      font-size: var(--font-size-h2);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--ds-font-size-2xl);
+      font-weight: var(--ds-font-weight-bold);
       color: var(--ds-text-primary);
     }
 
     .stat-block__label {
-      font-size: var(--font-size-h4);
-      font-weight: var(--font-weight-medium);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
       color: var(--ds-text-primary);
     }
 
     .stat-change {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
 
       &.positive {
         color: var(--ds-primary-green);
@@ -63,7 +63,7 @@
     }
 
     .stat-sub {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--ds-text-tertiary);
 
       &.healthy {
@@ -87,8 +87,8 @@
   
   h3 {
     margin: 0;
-    font-size: var(--font-size-h3);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-xl);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
   }
 }
@@ -119,12 +119,12 @@
   }
 
   .action-icon {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .action-label {
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-primary);
   }
 }
@@ -163,7 +163,7 @@
   }
 
   .activity-icon {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
     flex-shrink: 0;
   }
 
@@ -173,19 +173,19 @@
 
     strong {
       display: block;
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--ds-text-primary);
     }
 
     p {
       margin: var(--space-1) 0 0 0;
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--ds-text-secondary);
     }
   }
 
   .item-time {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-tertiary);
     white-space: nowrap;
   }
@@ -220,12 +220,12 @@
 
   .service-name {
     flex: 1;
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-primary);
   }
 
   .service-detail {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 }

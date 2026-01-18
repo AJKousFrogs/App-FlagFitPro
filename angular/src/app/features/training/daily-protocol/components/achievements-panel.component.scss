@@ -23,8 +23,8 @@
 
     h3 {
       margin: 0;
-      font-size: var(--font-size-body);
-      font-weight: var(--font-weight-semibold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
     }
   }
 
@@ -41,13 +41,13 @@
   }
 
   .summary-stats .stat-block__value {
-    font-size: var(--font-size-h2);
-    font-weight: var(--font-weight-bold);
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
     color: var(--primary-color);
   }
 
   .summary-stats .stat-block__label {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--color-text-secondary);
   }
 
@@ -63,7 +63,7 @@
       padding: var(--space-1) var(--space-2);
       background: var(--surface-ground);
       border-radius: var(--radius-xl);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
 
       &.at-risk {
         background: var(--orange-100);
@@ -71,11 +71,11 @@
       }
 
       .streak-icon {
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
       }
 
       .streak-count {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .risk-badge {
@@ -87,8 +87,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--font-caption-size);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-xs);
+        font-weight: var(--ds-font-weight-bold);
       }
     }
   }
@@ -106,7 +106,7 @@
       margin-bottom: var(--space-2);
 
       .next-icon {
-        font-size: var(--font-size-h2);
+        font-size: var(--ds-font-size-2xl);
       }
 
       .next-info {
@@ -116,12 +116,12 @@
         align-items: center;
 
         .next-name {
-          font-weight: var(--font-weight-medium);
-          font-size: var(--font-size-h4);
+          font-weight: var(--ds-font-weight-medium);
+          font-size: var(--ds-font-size-md);
         }
 
         .next-progress {
-          font-size: var(--font-size-badge);
+          font-size: var(--ds-font-size-xs);
           color: var(--color-text-secondary);
         }
       }
@@ -134,12 +134,12 @@
     gap: var(--space-2);
 
     .recent-label {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
     }
 
     .recent-badge {
-      font-size: var(--font-size-h2);
+      font-size: var(--ds-font-size-2xl);
       cursor: help;
     }
   }
@@ -152,7 +152,7 @@
 
     h4 {
       margin: 0 0 var(--space-3) 0;
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
       border-bottom: var(--border-1) solid var(--surface-border);
       padding-bottom: var(--space-2);
@@ -194,7 +194,7 @@
     }
 
     .ach-icon {
-      font-size: var(--font-size-metric-md);
+      font-size: var(--ds-font-size-2xl);
 
       &.grayscale {
         filter: grayscale(100%);
@@ -211,13 +211,13 @@
         margin-bottom: var(--space-1);
 
         .ach-name {
-          font-weight: var(--font-weight-semibold);
+          font-weight: var(--ds-font-weight-semibold);
         }
       }
 
       .ach-desc {
         margin: 0;
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
       }
 
@@ -228,13 +228,13 @@
         gap: var(--space-2);
 
         .progress-text {
-          font-size: var(--font-size-badge);
+          font-size: var(--ds-font-size-xs);
           color: var(--color-text-secondary);
         }
       }
 
       .earned-date {
-        font-size: var(--font-size-badge);
+        font-size: var(--ds-font-size-xs);
         color: var(--green-500);
         margin-top: var(--space-1);
         display: block;
@@ -242,7 +242,7 @@
     }
 
     .ach-points {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
       white-space: nowrap;
     }
@@ -277,11 +277,11 @@
       margin-bottom: var(--space-3);
 
       .streak-type-icon {
-        font-size: var(--font-size-h2);
+        font-size: var(--ds-font-size-2xl);
       }
 
       .streak-type-name {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
     }
 
@@ -295,12 +295,12 @@
         align-items: center;
 
         .streak-value {
-          font-size: var(--font-size-h2);
-          font-weight: var(--font-weight-bold);
+          font-size: var(--ds-font-size-2xl);
+          font-weight: var(--ds-font-weight-bold);
         }
 
         .streak-label {
-          font-size: var(--font-size-badge);
+          font-size: var(--ds-font-size-xs);
           color: var(--color-text-secondary);
         }
       }
@@ -308,14 +308,14 @@
 
     .risk-warning {
       margin-top: var(--space-3);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--orange-600);
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--ds-font-weight-medium);
     }
 
     .start-prompt {
       margin-top: var(--space-3);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
     }
   }
@@ -344,7 +344,7 @@
     }
 
     .stat-icon {
-      font-size: var(--font-size-h2);
+      font-size: var(--ds-font-size-2xl);
       margin-bottom: var(--space-2);
     }
 
@@ -353,13 +353,13 @@
     }
 
     .stat-block__value {
-      font-size: var(--font-size-h2);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--ds-font-size-2xl);
+      font-weight: var(--ds-font-weight-bold);
       color: var(--primary-color);
     }
 
     .stat-block__label {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
     }
   }
@@ -377,7 +377,7 @@
 
     p {
       margin: 0;
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--primary-600);
     }
   }

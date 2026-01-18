@@ -52,7 +52,7 @@
 .header-left {
   display: flex;
   align-items: center;
-  gap: var(--space-4, 16px);
+  gap: var(--space-4, var(--ds-font-size-md));
 }
 
 .block-icon {
@@ -63,7 +63,7 @@
   align-items: center;
   justify-content: center;
   color: var(--color-text-on-primary);
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   flex-shrink: 0;
 }
 
@@ -75,17 +75,17 @@
 
 .block-title {
   margin: 0;
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .block-meta {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -96,12 +96,12 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
 }
 
 .progress-indicator {
-  font-size: var(--font-body-sm-size, 14px);
-  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary, #737373);
 }
 
@@ -129,9 +129,9 @@
 }
 
 .expand-text {
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   color: inherit;
-  font-weight: var(--font-weight-medium, 500);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 /* Progress Bar */
@@ -166,20 +166,20 @@
 .block-ai-note i {
   color: var(--color-status-info);
   margin-top: var(--space-1);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .block-ai-note span {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 /* Exercise List */
 .exercise-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
 }
 
 /* Simple List View (Wireframe Style) */
@@ -195,9 +195,9 @@
 .exercise-checkbox {
   display: flex;
   align-items: center;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
   cursor: pointer;
-  font-size: var(--font-body-size, 16px);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary, #171717);
   user-select: none;
   width: 100%;
@@ -223,12 +223,12 @@
 }
 
 .exercise-name {
-  font-weight: var(--font-weight-medium, 500);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .exercise-prescription {
   color: var(--color-text-secondary, #737373);
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   white-space: nowrap;
 }
 
@@ -236,8 +236,8 @@
   margin-left: auto;
   color: var(--color-brand-primary);
   text-decoration: none;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   white-space: nowrap;
   transition: color var(--transition-fast);
 
@@ -274,32 +274,32 @@
   background: var(--color-status-success-light);
   border-radius: var(--radius-md);
   color: var(--color-status-success);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   margin-top: var(--space-4);
 }
 
 .completion-info i {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 /* Mobile Adjustments */
 @include respond-to(sm) {
   .block-header {
-    padding: var(--space-3, 12px) var(--space-4, 16px);
+    padding: var(--space-3, var(--ds-font-size-xs)) var(--space-4, var(--ds-font-size-md));
   }
 
   .header-left {
-    gap: var(--space-3, 12px);
+    gap: var(--space-3, var(--ds-font-size-xs));
   }
 
   .block-icon {
     width: var(--icon-container-md); // 40px
     height: var(--icon-container-md); // 40px
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-md);
   }
 
   .block-title {
-    font-size: var(--font-body-size, 16px);
+    font-size: var(--ds-font-size-md);
   }
 
   .header-right {

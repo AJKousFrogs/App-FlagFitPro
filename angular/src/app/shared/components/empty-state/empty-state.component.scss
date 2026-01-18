@@ -56,8 +56,8 @@
 }
 
 .empty-title {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
   animation: empty-text-slide 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s both;
@@ -75,11 +75,11 @@
 }
 
 .empty-state.compact .empty-title {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .empty-message {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
   max-width: 500px;
@@ -87,7 +87,7 @@
 }
 
 .empty-state.compact .empty-message {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   margin-bottom: var(--space-3);
 }
 
@@ -105,13 +105,13 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .empty-benefits li i {
   color: var(--ds-primary-green);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   flex-shrink: 0;
 }
 
@@ -145,7 +145,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--ds-primary-green);
   text-decoration: none;
   transition: color 150ms ease-in-out;
@@ -156,7 +156,7 @@
 }
 
 .empty-help-link i {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 p-button {
@@ -174,11 +174,11 @@ p-button {
   }
 
   .empty-title {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .empty-message {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 

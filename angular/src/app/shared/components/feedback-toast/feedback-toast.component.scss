@@ -18,14 +18,14 @@
   padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-lg);
   color: var(--color-text-on-primary);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-md);
   box-shadow: var(--shadow-md);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   animation: slideIn var(--transition-slow) ease-out;
-  line-height: var(--line-height-normal);
+  line-height: var(--ds-line-height-normal);
 }
 
 @keyframes slideIn {
@@ -63,7 +63,7 @@
 }
 
 .toast-icon {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   flex-shrink: 0;
 }
 
@@ -78,8 +78,8 @@
   padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
   border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: var(--font-body-sm-size);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
   margin-left: 0.5rem;
 }
 
@@ -91,12 +91,12 @@
   background: none;
   border: none;
   color: white;
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   cursor: pointer;
   opacity: 0.8;
   padding: 0;
   margin-left: 0.5rem;
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
 }
 
 .toast-close-btn:hover {

@@ -231,7 +231,7 @@ interface Team {
 
       .empty-state i,
       .loading-state i {
-        font-size: 2.5rem;
+        font-size: var(--ds-font-size-2-5rem);
         margin-bottom: var(--spacing-md);
         opacity: 0.5;
       }

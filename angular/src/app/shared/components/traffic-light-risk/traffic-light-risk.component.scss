@@ -44,8 +44,8 @@
 
 .risk-title {
   margin: 0;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -57,8 +57,8 @@
 }
 
 .acwr-value {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
 
   &.optimal {
     color: var(--color-status-success);
@@ -172,8 +172,8 @@
 .light-label {
   position: absolute;
   bottom: -20px;
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
   white-space: nowrap;
   opacity: 0;
@@ -231,22 +231,22 @@
 
 .info-title {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .risk-description {
   margin: 0 0 var(--space-3) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .risk-recommendation {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   padding: var(--space-3);
   background: var(--color-success-bg);
   border-radius: var(--radius-lg);
@@ -254,7 +254,7 @@
 
   strong {
     color: var(--color-text-secondary);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--ds-font-weight-semibold);
   }
 }
 
@@ -325,7 +325,7 @@
   top: calc(100% + var(--space-1));
   left: 50%;
   transform: translateX(-50%);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   white-space: nowrap;
 }
@@ -349,8 +349,8 @@
   color: var(--color-text-on-inverse);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
   white-space: nowrap;
   margin-bottom: var(--space-1);
 

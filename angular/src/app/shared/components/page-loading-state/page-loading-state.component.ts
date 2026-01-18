@@ -34,31 +34,31 @@ import { ProgressSpinner } from "primeng/progressspinner";
         align-items: center;
         justify-content: center;
         min-height: 400px;
-        padding: var(--space-12, 3rem);
+        padding: var(--space-12, var(--ds-font-size-3rem));
       }
 
       .loading-content {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: var(--space-4, 1rem);
+        gap: var(--space-4, var(--ds-font-size-md));
       }
 
       .loading-message {
         margin: 0;
-        font-size: 1rem;
+        font-size: var(--ds-font-size-md);
         color: var(--text-secondary, #666);
         text-align: center;
       }
 
       @media (max-width: 768px) {
         .page-loading-state {
-          padding: var(--space-6, 1.5rem);
+          padding: var(--space-6, var(--ds-font-size-2xl));
           min-height: 300px;
         }
 
         .loading-message {
-          font-size: 0.875rem;
+          font-size: var(--ds-font-size-sm);
         }
       }
     `,

@@ -405,7 +405,7 @@ $touch-target-large: 56px;
 
   @include touch-device {
     min-height: $touch-target-comfortable;
-    font-size: var(--font-body-size); // Prevent zoom on iOS
+    font-size: var(--ds-font-size-md); // Prevent zoom on iOS
   }
 }
 

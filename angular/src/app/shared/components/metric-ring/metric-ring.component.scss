@@ -103,25 +103,25 @@
 }
 
 .ring-value {
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
 }
 
 .size-sm .ring-value {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .size-md .ring-value {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .size-lg .ring-value {
-  font-size: var(--font-size-metric-lg);
+  font-size: var(--ds-font-size-3xl);
 }
 
 .size-xl .ring-value {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
 }
 
 .ring-value.status-success {
@@ -137,25 +137,25 @@
 }
 
 .ring-unit {
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   opacity: 0.7;
   margin-left: var(--space-1);
 }
 
 .ring-label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin-top: var(--space-1);
 }
 
 .size-sm .ring-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .ring-sublabel {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   margin-top: var(--space-1);
 }
@@ -171,7 +171,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: white;
   box-shadow: var(--shadow-md);
 }
@@ -199,8 +199,8 @@
   gap: var(--space-1);
   padding: var(--space-1) 8px;
   border-radius: var(--radius-full);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   background: var(--surface-primary);
   box-shadow: var(--shadow-sm);
 }

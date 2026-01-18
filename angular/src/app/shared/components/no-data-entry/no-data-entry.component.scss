@@ -84,26 +84,26 @@
 }
 
 .no-data-title {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
 }
 
 .compact .no-data-title {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .no-data-message {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   max-width: 500px;
   margin-bottom: var(--space-6);
-  line-height: 1.6;
+  line-height: var(--ds-line-height-1-6);
 }
 
 .compact .no-data-message {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   margin-bottom: var(--space-4);
 }
 
@@ -115,12 +115,12 @@
 }
 
 .benefits-title {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-3);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-5px);
 }
 
 .benefits-list {
@@ -134,7 +134,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 }
 
@@ -151,7 +151,7 @@
   background: var(--surface-tertiary);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-4);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -174,7 +174,7 @@
   padding: var(--space-3) var(--space-4);
   background: var(--color-status-success-light);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-status-success);
   max-width: 400px;
 }
@@ -199,10 +199,10 @@
   }
 
   .no-data-title {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .no-data-message {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }

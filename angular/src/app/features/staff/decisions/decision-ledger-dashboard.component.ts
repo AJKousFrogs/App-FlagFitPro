@@ -276,8 +276,8 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
       }
 
       .stat-block__value {
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: var(--ds-font-size-3xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
         margin-bottom: var(--space-1);
       }
@@ -291,7 +291,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
       }
 
       .stat-block__label {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -308,8 +308,8 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
 
       .filter-item label {
         display: block;
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
         margin-bottom: var(--space-2);
       }

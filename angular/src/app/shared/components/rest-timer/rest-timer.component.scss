@@ -54,8 +54,8 @@
 }
 
 .floating-time {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   font-variant-numeric: tabular-nums;
 }
 
@@ -91,7 +91,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .header-actions {
@@ -146,11 +146,11 @@
 }
 
 .time-value {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   font-variant-numeric: tabular-nums;
   color: var(--color-text-primary);
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
 }
 
 .timer-display.warning .time-value {
@@ -162,7 +162,7 @@
 }
 
 .time-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-top: var(--space-1);
 }
@@ -179,8 +179,8 @@
   border: 1px solid var(--color-border-secondary);
   background: var(--surface-primary);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   cursor: pointer;
   transition:
     transform var(--transition-fast),
@@ -207,7 +207,7 @@
 }
 
 .custom-duration label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -232,7 +232,7 @@
   border: none;
   background: transparent;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   cursor: pointer;
   border-radius: var(--radius-md);
   transition:

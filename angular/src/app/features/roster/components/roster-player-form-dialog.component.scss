@@ -19,15 +19,15 @@
 }
 
 .form-field label {
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .field-hint {
   display: block;
   margin-top: var(--space-1);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-tertiary);
   font-style: italic;
 }

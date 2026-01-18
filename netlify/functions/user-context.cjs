@@ -56,9 +56,10 @@ async function getUserContext(userId) {
     }
 
     // Calculate ACWR (Acute:Chronic Workload Ratio)
+    // CRITICAL: Use null when no data - do not use fake defaults
     let acuteLoad = 0;
     let chronicLoad = 0;
-    let acwr = 1.0;
+    let acwr = null; // null = no data, not 1.0
     const last7Days = [];
     const _last28Days = [];
 
@@ -79,7 +80,9 @@ async function getUserContext(userId) {
           ? chronicSessions.reduce((sum, s) => sum + (s.workload || 0), 0) / 4 // Average weekly
           : acuteLoad;
 
-      acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : 1.0;
+      // Only calculate ACWR if we have meaningful chronic load
+      // Use null to indicate insufficient data
+      acwr = chronicLoad > 0 ? acuteLoad / chronicLoad : null;
 
       // Build daily load arrays
       const last7DaysMap = new Map();

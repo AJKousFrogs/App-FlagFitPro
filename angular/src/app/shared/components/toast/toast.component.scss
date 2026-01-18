@@ -39,7 +39,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .toast-icon-success {
@@ -69,17 +69,17 @@
 }
 
 .toast-summary {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
   margin-bottom: var(--space-1);
 }
 
 .toast-detail {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 /* ================================

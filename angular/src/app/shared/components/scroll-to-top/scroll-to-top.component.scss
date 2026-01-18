@@ -8,8 +8,8 @@
 
 .scroll-to-top-btn {
   position: fixed;
-  bottom: var(--space-6, 32px);
-  right: var(--space-6, 32px);
+  bottom: var(--space-6, var(--ds-font-size-3xl));
+  right: var(--space-6, var(--ds-font-size-3xl));
   z-index: var(--z-modal);
 
   width: 48px;
@@ -53,13 +53,13 @@
   }
 
   i {
-    font-size: var(--font-size-body, 16px);
+    font-size: var(--ds-font-size-md);
   }
 
   // Mobile adjustments
   @include respond-to(md) {
-    bottom: var(--space-4, 16px);
-    right: var(--space-4, 16px);
+    bottom: var(--space-4, var(--ds-font-size-md));
+    right: var(--space-4, var(--ds-font-size-md));
     width: 44px; // WCAG touch target minimum
     height: 44px;
   }

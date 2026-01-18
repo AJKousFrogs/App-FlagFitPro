@@ -10,7 +10,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(var(--bottom-nav-height, 64px) + var(--safe-area-bottom, 0px));
+  height: calc(var(--bottom-nav-height, var(--ds-font-size-4rem)) + var(--safe-area-bottom, 0px));
   background: var(--surface-primary);
   border-top: 1px solid var(--color-border-secondary);
   display: none;
@@ -75,8 +75,8 @@
   align-items: center;
   padding: var(--space-4);
   border-bottom: 1px solid var(--color-border-secondary);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-body-size);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
 }
 
 .close-btn {

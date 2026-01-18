@@ -29,7 +29,7 @@
   gap: var(--space-2);
   margin: 0 0 0.5rem;
   color: var(--ds-primary-green);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .suggestion-chips {
@@ -61,7 +61,7 @@
 }
 
 .form-field label {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -78,17 +78,17 @@
 }
 
 .option-label {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .option-description {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .duration-display {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
   text-align: center;
   margin-top: 0.5rem;
@@ -110,7 +110,7 @@
 
 .switch-label {
   margin-top: 0.5rem;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 

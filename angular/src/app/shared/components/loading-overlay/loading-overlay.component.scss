@@ -37,8 +37,8 @@
 }
 
 .loading-message {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .loading-cancel-btn {
@@ -49,7 +49,7 @@
   color: var(--color-text-on-primary);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   transition: background var(--transition-base);
 }
 

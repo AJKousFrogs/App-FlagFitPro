@@ -373,14 +373,14 @@ import type {
       .overview-item label,
       .review-item label,
       .outcome-item label {
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-secondary);
       }
 
       .overview-item p,
       .review-item p {
-        font-size: 1rem;
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-primary);
         margin: 0;
       }
@@ -396,11 +396,11 @@ import type {
         padding: var(--space-1) var(--space-2);
         background: var(--surface-secondary);
         border-radius: var(--radius-sm);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
 
       .maker-date {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -430,8 +430,8 @@ import type {
       }
 
       .quality-item label {
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-secondary);
       }
 

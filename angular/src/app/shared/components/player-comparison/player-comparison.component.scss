@@ -26,7 +26,7 @@
 .player-select label {
   display: block;
   margin-bottom: var(--space-2);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
 }
 
@@ -39,8 +39,8 @@
   background: var(--color-brand-primary);
   color: white;
   border-radius: 50%;
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-bold);
+  font-size: var(--ds-font-size-md);
   flex-shrink: 0;
 }
 
@@ -82,12 +82,12 @@
 
 .player-info h3 {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .jersey-number {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-left: var(--space-2);
 }
@@ -102,13 +102,13 @@
 }
 
 .wins-count {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
 }
 
 .wins-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -127,7 +127,7 @@
 
 .card-header h4 {
   margin: 0;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .chart-container {
@@ -183,8 +183,8 @@
 }
 
 .stat-block__value .value {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-body);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 }
 
@@ -194,7 +194,7 @@
 
 .winner-icon {
   color: var(--primitive-warning-500);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .stat-block__label {
@@ -202,10 +202,10 @@
 }
 
 .stat-block__label span {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
 }
 
 .comparison-bar {
@@ -248,14 +248,14 @@
 
 .summary-label {
   display: block;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-2);
 }
 
 .summary-value {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
 }
 
 .summary-value.player1 {
@@ -276,7 +276,7 @@
 }
 
 .empty-state i {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-border-primary);
   margin-bottom: var(--space-4);
 }

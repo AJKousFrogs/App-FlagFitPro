@@ -29,7 +29,7 @@
 }
 
 .analytics-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -41,7 +41,7 @@
 }
 
 .analytics-value {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   text-align: right;
 }
@@ -76,7 +76,7 @@
 }
 
 .creator-stat-name {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -88,7 +88,7 @@
 }
 
 .creator-stat-count {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-muted);
 }
 

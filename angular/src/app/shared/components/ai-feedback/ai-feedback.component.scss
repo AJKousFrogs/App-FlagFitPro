@@ -61,7 +61,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-status-success);
 }
 
@@ -72,15 +72,15 @@
 }
 
 .dialog-intro {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0;
 }
 
 .section-label {
   display: block;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
 }
@@ -102,7 +102,7 @@
   align-items: center;
   gap: var(--space-2);
   cursor: pointer;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .type-label i {
@@ -131,7 +131,7 @@
   transition:
     transform var(--transition-normal),
     opacity var(--transition-normal);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .outcome-btn:hover {
@@ -151,6 +151,6 @@
   }
 
   .feedback-btn i {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }

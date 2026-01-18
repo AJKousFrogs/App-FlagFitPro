@@ -13,8 +13,8 @@
   margin-bottom: var(--space-4);
 
   h3 {
-    font-size: var(--font-size-h2);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
     margin: 0 0 var(--space-1);
   }
@@ -30,14 +30,14 @@
   padding: var(--space-12);
 
   i {
-    font-size: var(--font-h1-size);
+    font-size: var(--ds-font-size-3xl);
     color: var(--color-brand-primary);
     opacity: 0.5;
     margin-bottom: var(--space-4);
   }
 
   h3 {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
     color: var(--color-text-primary);
     margin: 0 0 var(--space-2);
   }
@@ -72,7 +72,7 @@
   position: relative;
 
   i {
-    font-size: var(--font-size-h1);
+    font-size: var(--ds-font-size-3xl);
     color: var(--color-text-on-primary);
   }
 }
@@ -85,7 +85,7 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
   color: white;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .suggestion-content {
@@ -100,15 +100,15 @@
   margin-bottom: var(--space-2);
 
   h4 {
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
     margin: 0;
   }
 }
 
 .suggestion-desc {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-3);
   display: -webkit-box;
@@ -124,12 +124,12 @@
   margin-bottom: var(--space-3);
 
   strong {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--color-brand-primary);
   }
 
   p {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
     margin: var(--space-1) 0 0;
   }
@@ -138,7 +138,7 @@
 .suggestion-meta {
   display: flex;
   gap: var(--space-4);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   margin-bottom: var(--space-3);
 

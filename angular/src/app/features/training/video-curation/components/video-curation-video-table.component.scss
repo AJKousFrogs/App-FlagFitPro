@@ -30,12 +30,12 @@
 }
 
 .video-title-cell .title {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .video-title-cell .subtitle {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -47,7 +47,7 @@
 
 .verified-icon {
   color: var(--color-brand-twitter);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .tags-cell {
@@ -57,7 +57,7 @@
 }
 
 .more-tag {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -66,7 +66,7 @@
   align-items: center;
   gap: var(--space-1);
   color: var(--color-star-rating);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .action-buttons {

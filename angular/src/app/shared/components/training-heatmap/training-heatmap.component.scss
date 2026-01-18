@@ -94,8 +94,8 @@
 }
 
 .cell-value {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-on-primary);
   text-shadow: 0 1px 2px var(--surface-overlay);
 }
@@ -153,7 +153,7 @@
 }
 
 .legend-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -186,14 +186,14 @@
 }
 
 .metric .label {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
 }
 
 .metric .value {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 @include respond-to(md) {
@@ -212,6 +212,6 @@
   }
 
   .cell-value {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
 }

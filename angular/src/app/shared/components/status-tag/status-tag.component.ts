@@ -8,7 +8,7 @@
  * - Uses design tokens from design-system-tokens.scss
  * - Background: var(--color-status-success) for success
  * - Text: var(--color-text-on-primary) white on colored backgrounds
- * - Font weight: var(--font-weight-semibold) (600)
+ * - Font weight: var(--ds-font-weight-semibold) (600)
  * - Fixed height: var(--touch-target-sm) (36px)
  * - Horizontal padding: var(--space-3) (12px)
  * - RAISED RECTANGULAR shape: var(--radius-md) (8px)
@@ -86,11 +86,11 @@ export type StatusTagSeverity =
 
         /* Typography - using design tokens */
         font-family: var(--font-family-sans);
-        font-size: var(--font-body-sm-size);
-        font-weight: var(--font-weight-semibold);
-        line-height: 1;
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
+        line-height: var(--ds-line-height-1);
         white-space: nowrap;
-        text-transform: none;
+        text-transform: var(--ds-text-transform-none);
         text-decoration: none;
 
         /* Shape: RAISED RECTANGULAR (not pill) */
@@ -116,14 +116,14 @@ export type StatusTagSeverity =
 
       /* Icon styling */
       .status-tag i {
-        font-size: var(--font-caption-size);
-        line-height: 1;
+        font-size: var(--ds-font-size-xs);
+        line-height: var(--ds-line-height-1);
         text-decoration: none;
       }
 
       /* Text styling */
       .status-tag-text {
-        line-height: 1;
+        line-height: var(--ds-line-height-1);
         text-decoration: none;
       }
 
@@ -188,7 +188,7 @@ export type StatusTagSeverity =
         height: var(--space-6); /* 24px */
         min-height: var(--space-6);
         padding: 0 var(--space-2);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         border-radius: var(--radius-sm);
       }
 
@@ -197,7 +197,7 @@ export type StatusTagSeverity =
         height: var(--touch-target-md); /* 44px */
         min-height: var(--touch-target-md);
         padding: 0 var(--space-5);
-        font-size: var(--font-body-size);
+        font-size: var(--ds-font-size-md);
         border-radius: var(--radius-lg);
       }
 

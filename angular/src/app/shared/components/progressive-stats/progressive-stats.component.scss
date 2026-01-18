@@ -61,7 +61,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   flex-shrink: 0;
 }
 
@@ -71,18 +71,18 @@
 }
 
 .stat-title {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-2) 0;
 }
 
 .stat-block__value {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
-  line-height: var(--line-height-tight);
+  line-height: var(--ds-line-height-tight);
 }
 
 .stat-trend {
@@ -91,7 +91,7 @@
 
 .expand-icon {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   transition: transform 0.3s ease;
   flex-shrink: 0;
 }
@@ -121,7 +121,7 @@
   padding: var(--space-6);
   text-align: center;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .benchmark-container {
@@ -140,12 +140,12 @@
 }
 
 .benchmark-label {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .benchmark-value {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-brand-primary);
 }
 
@@ -166,7 +166,7 @@
   }
 
   .stat-block__value {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .chart-container {

@@ -28,14 +28,14 @@
 }
 
 .official-name {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .contact-info {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 
   span {
     display: flex;
@@ -85,7 +85,7 @@
 }
 
 .game-date {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .game-location {
@@ -93,7 +93,7 @@
   align-items: center;
   gap: var(--space-1);
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .official-info {
@@ -110,7 +110,7 @@
 }
 
 .payment {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 
   small {
@@ -125,12 +125,12 @@
 
 .paid {
   color: var(--green-600);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .pending {
   color: var(--orange-600);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .dialog-form {
@@ -145,8 +145,8 @@
   gap: var(--space-2);
 
   label {
-    font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-h4);
+    font-weight: var(--ds-font-weight-medium);
+    font-size: var(--ds-font-size-md);
   }
 }
 

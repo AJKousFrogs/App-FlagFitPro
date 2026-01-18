@@ -34,7 +34,7 @@
     border-left-color: var(--color-status-warning);
     border-left-width: 4px;
     color: var(--color-text-primary);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
   }
 
   // Error (red)
@@ -74,8 +74,8 @@
 
 .banner-message {
   margin: 0;
-  font-size: var(--font-body-sm-size);
-  line-height: var(--line-height-relaxed);
+  font-size: var(--ds-font-size-sm);
+  line-height: var(--ds-line-height-relaxed);
   flex: 1;
 }
 

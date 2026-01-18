@@ -10,13 +10,13 @@
 .week-progress-strip {
   background: var(--surface-primary, #fff);
   border: 1px solid var(--primitive-neutral-200, #e5e5e5);
-  border-radius: var(--radius-xl, 12px);
-  padding: var(--space-4, 16px) var(--space-5, 20px);
+  border-radius: var(--radius-xl, var(--ds-font-size-xs));
+  padding: var(--space-4, var(--ds-font-size-md)) var(--space-5, var(--ds-font-size-xl));
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-4, 16px);
-  margin-bottom: var(--space-4, 16px);
+  gap: var(--space-4, var(--ds-font-size-md));
+  margin-bottom: var(--space-4, var(--ds-font-size-md));
 }
 
 /* Week Days */
@@ -42,15 +42,15 @@
 }
 
 .day-name {
-  font-size: var(--font-caption-size, 12px);
-  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary, #737373);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 }
 
 .day-item.today .day-name {
   color: var(--ds-primary-green, #089949);
-  font-weight: var(--font-weight-semibold, 600);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .day-indicator {
@@ -60,7 +60,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 /* Status Colors */
@@ -104,17 +104,17 @@
 .today-label {
   position: absolute;
   bottom: -4px;
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green, #089949);
-  letter-spacing: 0.5px;
+  letter-spacing: var(--ds-letter-spacing-0-5px);
 }
 
 /* Week Stats */
 .week-stats {
   display: flex;
-  gap: var(--space-4, 16px);
-  padding-left: var(--space-4, 16px);
+  gap: var(--space-4, var(--ds-font-size-md));
+  padding-left: var(--space-4, var(--ds-font-size-md));
   border-left: 1px solid var(--primitive-neutral-200, #e5e5e5);
 }
 
@@ -126,8 +126,8 @@
 }
 
 .stat-block__value {
-  font-size: var(--font-body-size, 16px);
-  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary, #171717);
 }
 
@@ -136,7 +136,7 @@
 }
 
 .stat-block__label {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary, #737373);
 }
 
@@ -158,7 +158,7 @@
 
   .week-stats {
     padding-left: 0;
-    padding-top: var(--space-3, 12px);
+    padding-top: var(--space-3, var(--ds-font-size-xs));
     border-left: none;
     border-top: 1px solid var(--primitive-neutral-200, #e5e5e5);
     justify-content: center;

@@ -34,7 +34,7 @@
 }
 
 .food-name {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -43,7 +43,7 @@
 }
 
 .calories {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
 }
 
@@ -110,7 +110,7 @@
 }
 
 .nutrient-name {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -123,11 +123,11 @@
   align-items: center;
   gap: var(--space-1);
   margin-top: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .current {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
 }
 
@@ -141,7 +141,7 @@
 
 .nutrient-sources small {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .source-tags {
@@ -176,12 +176,12 @@
 
 .meal-time {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .meal-calories {
   margin-left: auto;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
 }
 
@@ -201,12 +201,12 @@
 }
 
 .food-name {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .food-amount {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .meal-nutrition {
@@ -246,7 +246,7 @@
 .insight-icon {
   display: flex;
   align-items: center;
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .insight-content h5 {

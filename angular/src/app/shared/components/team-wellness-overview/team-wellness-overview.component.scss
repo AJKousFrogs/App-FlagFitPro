@@ -30,13 +30,13 @@
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
 }
 
 .card-header i {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .checkin-card .card-header i {
@@ -59,10 +59,10 @@
 }
 
 .big-number {
-  font-size: var(--font-size-metric-lg);
-  font-weight: var(--font-weight-extrabold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
 }
 
 .big-number.good {
@@ -79,13 +79,13 @@
 
 .total,
 .unit {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .card-label {
   display: block;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   margin-top: var(--space-2);
 }
@@ -155,8 +155,8 @@
 
 .acwr-segment .count {
   display: block;
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
 }
 
 .acwr-segment.optimal .count {
@@ -172,10 +172,10 @@
 }
 
 .acwr-segment .label {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-5px);
 }
 
 /* Section Headers */
@@ -191,13 +191,13 @@
   align-items: center;
   gap: var(--space-2);
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .section-header h3 i {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 /* Attention Section */
@@ -244,12 +244,12 @@
 }
 
 .athlete-name {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .athlete-position {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -271,14 +271,14 @@
 }
 
 .metric-label {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 }
 
 .metric-value {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
 }
 
 .metric-value.good,
@@ -320,13 +320,13 @@
 }
 
 .chip-name {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .last-checkin {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -341,8 +341,8 @@
   background: var(--surface-tertiary);
   border: none;
   border-radius: var(--radius-md);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
   cursor: pointer;
   transition:
@@ -422,8 +422,8 @@
 }
 
 .mini-name {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   text-align: center;
 }
@@ -431,8 +431,8 @@
 .mini-metrics {
   display: flex;
   gap: var(--space-2);
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .mini-wellness.good {
@@ -473,7 +473,7 @@
 }
 
 .not-checked-badge i {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--primitive-warning-600);
 }
 
@@ -501,7 +501,7 @@
 }
 
 .notice-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--primitive-info-600);
 }
 
@@ -511,19 +511,19 @@
 
 .notice-content h4 {
   margin: 0 0 var(--space-1);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .notice-content p {
   margin: 0 0 var(--space-1);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .notice-action {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   font-style: italic;
 }
@@ -533,8 +533,8 @@
   align-items: center;
   gap: var(--space-1);
   margin-top: var(--space-2);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--primitive-info-600);
   text-decoration: none;
 }
@@ -544,7 +544,7 @@
 }
 
 .notice-link i {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 /* Consent Blocked Athlete Card */
@@ -567,12 +567,12 @@
 }
 
 .status-indicator.blocked i {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: white;
 }
 
 .mini-blocked-label {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   font-style: italic;
 }
@@ -591,7 +591,7 @@
 }
 
 .blocked-badge i {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: white;
 }
 

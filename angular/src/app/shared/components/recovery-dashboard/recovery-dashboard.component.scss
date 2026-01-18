@@ -32,13 +32,13 @@
 
 .score-text {
   display: block;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .score-status {
   display: block;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -63,7 +63,7 @@
 }
 
 .metric-name {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -75,13 +75,13 @@
 }
 
 .value {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
 .unit {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -130,7 +130,7 @@
 }
 
 .duration {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -156,7 +156,7 @@
 
 .evidence-badge small {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .benefits {
@@ -220,8 +220,8 @@
 }
 
 .time-remaining {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -277,7 +277,7 @@
 }
 
 .step-duration {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -321,7 +321,7 @@
 
 .research-meta span {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 /* Category Filter */
@@ -350,7 +350,7 @@
 
 .loading-protocols i,
 .no-protocols i {
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
 }
 
 /* Protocol Card Enhancements */
@@ -366,7 +366,7 @@
 }
 
 .protocol-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--ds-primary-green);
 }
 
@@ -415,12 +415,12 @@
   background: var(--primitive-warning-100);
   color: var(--primitive-warning-700);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .priority-badge i {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
 }
 
 .duration {
@@ -447,7 +447,7 @@
   background: var(--surface-secondary);
   border-radius: var(--radius-sm);
   margin-bottom: var(--space-4);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -475,7 +475,7 @@
 }
 
 .detail-icon i {
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
   color: var(--ds-primary-green);
 }
 
@@ -515,7 +515,7 @@
 .detail-description {
   margin: 0;
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--ds-line-height-1-6);
 }
 
 .detail-meta {
@@ -594,7 +594,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   flex-shrink: 0;
 }
 
@@ -611,14 +611,14 @@
 .step-info p {
   margin: 0 0 var(--space-2) 0;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .step-info .step-duration {
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 

@@ -115,7 +115,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   transition:
     background-color var(--motion-slow) cubic-bezier(0.34, 1.56, 0.64, 1),
     border-color var(--motion-slow) cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -193,8 +193,8 @@
 }
 
 .item-label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -208,13 +208,13 @@
 }
 
 .item-sublabel {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .item-value {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   padding: var(--space-1) 8px;
   border-radius: var(--radius-full);
   background: var(--surface-tertiary);
@@ -239,11 +239,11 @@
 .variant-compact .status-dot {
   width: 24px;
   height: 24px;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .variant-compact .item-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .variant-compact .item-sublabel,

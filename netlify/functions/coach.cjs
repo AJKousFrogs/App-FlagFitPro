@@ -87,7 +87,8 @@ async function getCoachDashboard(userId) {
         }
 
         // Calculate ACWR (Acute:Chronic Workload Ratio)
-        let acwr = 1.0;
+        // CRITICAL: Use null when no data - do not use fake defaults
+        let acwr = null;
         let workload = 0;
         let dataState = DataState.NO_DATA;
 
@@ -102,7 +103,9 @@ async function getCoachDashboard(userId) {
                   .reduce((sum, s) => sum + (s.workload || 0), 0) / 2
               : acute;
 
-          acwr = chronic > 0 ? acute / chronic : 1.0;
+          // Only set ACWR if we have meaningful chronic load
+          // 0/0 = undefined, use null to indicate insufficient data
+          acwr = chronic > 0 ? acute / chronic : null;
           workload = acute; // Weekly workload
           dataState =
             sessions.length >= 7
@@ -112,7 +115,8 @@ async function getCoachDashboard(userId) {
         }
 
         // Calculate readiness from wellness data using ConsentDataReader
-        let readiness = 75; // Default baseline
+        // CRITICAL: Do NOT use fake defaults - null means no data
+        let readiness = null;
         let wellnessDataState = DataState.NO_DATA;
 
         try {
@@ -137,35 +141,51 @@ async function getCoachDashboard(userId) {
 
           if (wellnessData && wellnessData.length > 0) {
             const w = wellnessData[0];
-            // Calculate wellness score (average of positive metrics, inverse stress/soreness)
-            const sleepScore = (w.sleep_quality || 5) * 10;
-            const energyScore = (w.energy_level || 5) * 10;
-            const stressScore = (10 - (w.stress_level || 5)) * 10; // Inverse
-            const sorenessScore = (10 - (w.muscle_soreness || 5)) * 10; // Inverse
-            const moodScore = (w.mood || 5) * 10;
+            
+            // CRITICAL: Only calculate if we have real data (at least sleep and energy)
+            const hasSleep = w.sleep_quality !== null && w.sleep_quality !== undefined;
+            const hasEnergy = w.energy_level !== null && w.energy_level !== undefined;
+            
+            if (hasSleep && hasEnergy) {
+              // Calculate wellness score from real data only
+              const sleepScore = (w.sleep_quality / 10) * 100;
+              const energyScore = (w.energy_level / 10) * 100;
+              
+              // Include stress and soreness only if available
+              const hasStress = w.stress_level !== null && w.stress_level !== undefined;
+              const hasSoreness = w.muscle_soreness !== null && w.muscle_soreness !== undefined;
+              
+              let wellnessAvg;
+              if (hasStress && hasSoreness) {
+                const stressScore = ((10 - w.stress_level) / 10) * 100;
+                const sorenessScore = ((10 - w.muscle_soreness) / 10) * 100;
+                wellnessAvg = 
+                  sleepScore * 0.30 + 
+                  energyScore * 0.25 + 
+                  stressScore * 0.25 + 
+                  sorenessScore * 0.20;
+              } else {
+                wellnessAvg = sleepScore * 0.55 + energyScore * 0.45;
+              }
 
-            const wellnessAvg =
-              (sleepScore +
-                energyScore +
-                stressScore +
-                sorenessScore +
-                moodScore) /
-              5;
-
-            // Combine wellness with ACWR impact
-            const acwrPenalty = Math.abs(acwr - 1.0) * 15; // Penalty for being far from optimal ACWR
-            readiness = Math.max(30, Math.min(100, wellnessAvg - acwrPenalty));
-            wellnessDataState = DataState.REAL_DATA;
-          } else {
-            // Fallback: estimate from ACWR only
-            readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
+              // Apply ACWR penalty only if we have ACWR data
+              if (acwr !== null) {
+                const acwrPenalty = Math.abs(acwr - 1.0) * 15;
+                readiness = Math.max(30, Math.min(100, wellnessAvg - acwrPenalty));
+              } else {
+                readiness = Math.round(wellnessAvg);
+              }
+              wellnessDataState = DataState.REAL_DATA;
+            }
+            // If we don't have required data, readiness stays null
           }
+          // If no wellness data, readiness stays null
         } catch (wellnessErr) {
           console.warn(
             `Could not fetch wellness for user ${member.user_id}:`,
             wellnessErr.message,
           );
-          readiness = Math.max(50, Math.min(100, 85 - (acwr - 1.0) * 20));
+          // readiness stays null - DO NOT estimate from ACWR alone
         }
 
         squadMembers.push({

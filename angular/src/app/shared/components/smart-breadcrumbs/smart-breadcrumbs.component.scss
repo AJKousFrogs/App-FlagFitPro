@@ -35,17 +35,17 @@
   align-items: center;
   gap: 0.625rem;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   padding: 0.375rem 0;
 }
 
 .breadcrumb-item.current {
   color: var(--color-text-primary);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .breadcrumb-item i {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   opacity: 0.7;
 }
 

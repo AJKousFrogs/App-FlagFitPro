@@ -26,7 +26,7 @@
 
 .loading-message {
   margin-top: var(--space-4);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -41,7 +41,7 @@
 }
 
 .no-results i {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-4);
   opacity: 0.5;
 }
@@ -63,9 +63,9 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--font-size-h2); /* H2: Section titles - 18px */
-  font-weight: var(--font-weight-semibold); /* H2: Semibold (600) */
-  line-height: var(--line-height-tight);
+  font-size: var(--ds-font-size-2xl); /* H2: Section titles - 18px */
+  font-weight: var(--ds-font-weight-semibold); /* H2: Semibold (600) */
+  line-height: var(--ds-line-height-tight);
   margin-bottom: var(--space-6);
   color: var(--color-text-primary);
 }
@@ -75,8 +75,8 @@
 }
 
 .position-count {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-normal);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-secondary);
 }
 
@@ -107,15 +107,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-size-metric-lg);
+  font-weight: var(--ds-font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-text-on-primary);
   box-shadow: var(--shadow-3);
 }
 
 .details-info h2 {
   margin: 0 0 var(--space-2);
-  font-size: var(--font-size-metric-lg);
+  font-size: var(--ds-font-size-3xl);
 }
 
 .details-position {
@@ -137,15 +137,15 @@
 }
 
 .details-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
 }
 
 .details-value {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -156,7 +156,7 @@
 }
 
 .details-stats h3 {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   margin: 0 0 var(--space-3);
 }
 
@@ -185,15 +185,15 @@
 }
 
 .metric-card .metric-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-5px);
 }
 
 .metric-card .metric-value {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
 }
 
 // Readiness colors
@@ -243,7 +243,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
     margin: 0 0 var(--space-4);
     color: var(--color-text-primary);
 
@@ -274,17 +274,17 @@
 }
 
 .benchmark-name {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .benchmark-rating {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   padding: var(--space-1) 8px;
   border-radius: var(--radius-sm);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 
   &.rating-elite {
     background: var(--ds-primary-green);
@@ -313,7 +313,7 @@
 }
 
 .benchmark-value {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 
   &.not-tested {
@@ -323,7 +323,7 @@
 }
 
 .benchmark-target {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   margin-left: var(--space-1);
 }
@@ -336,7 +336,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
     margin: 0 0 var(--space-3);
     color: var(--color-text-primary);
 
@@ -353,7 +353,7 @@
 
   li {
     margin-bottom: var(--space-1);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -382,7 +382,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
     margin: 0 0 var(--space-3);
 
     i {
@@ -402,16 +402,16 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 
   i {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
   }
 }
 
 .risk-recommendations {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 
   strong {
     display: block;
@@ -501,8 +501,8 @@
 }
 
 .form-field label {
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -530,7 +530,7 @@
 }
 
 .empty-invitations i {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-4);
   opacity: 0.5;
 }
@@ -573,7 +573,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -581,14 +581,14 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .invited-by,
 .invitation-date,
 .expires-text {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -645,7 +645,7 @@
   }
 
   .section-title {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .invitation-item {
@@ -668,7 +668,7 @@
   .details-jersey {
     width: var(--avatar-size-xl);
     height: var(--avatar-size-xl);
-    font-size: var(--font-size-metric-md);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .invitation-meta {
@@ -700,7 +700,7 @@
   }
 
   .section-title {
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-md);
     flex-wrap: wrap;
   }
 

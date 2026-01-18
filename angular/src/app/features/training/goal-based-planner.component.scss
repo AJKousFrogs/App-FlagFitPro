@@ -41,15 +41,15 @@
 
 .stat-block__label {
   margin-bottom: var(--space-1);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  text-transform: var(--ds-text-transform-uppercase);
   color: var(--color-text-secondary);
 }
 
 .stat-block__value {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
 }
 
 .session-card {

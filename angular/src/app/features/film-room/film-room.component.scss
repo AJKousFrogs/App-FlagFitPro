@@ -44,7 +44,7 @@
 
   .progress-text {
     text-align: center;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
     margin: var(--space-2) 0 0 0;
   }
@@ -106,7 +106,7 @@
     );
 
     i {
-      font-size: var(--font-h1-size);
+      font-size: var(--ds-font-size-3xl);
       color: var(--overlay-white-30);
     }
   }
@@ -119,8 +119,8 @@
     color: white;
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
-    font-size: var(--font-size-badge);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-medium);
   }
 
   .watched-badge {
@@ -135,7 +135,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
   }
 }
 
@@ -144,21 +144,21 @@
 
   h3 {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
-    line-height: var(--line-height-tight);
+    line-height: var(--ds-line-height-tight);
   }
 
   .opponent {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 
   .date {
     margin: 0;
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-tertiary);
   }
 }
@@ -174,11 +174,11 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-secondary);
 
     i {
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
     }
   }
 
@@ -188,7 +188,7 @@
 
   .due-date.overdue {
     color: var(--primitive-error-500);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
   }
 }
 
@@ -209,7 +209,7 @@
     text-align: center;
 
     i {
-      font-size: var(--font-h1-size);
+      font-size: var(--ds-font-size-3xl);
       color: var(--ds-text-tertiary);
       margin-bottom: var(--space-3);
     }
@@ -251,8 +251,8 @@
     align-items: center;
     gap: var(--space-2);
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
 
     i {
@@ -300,7 +300,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-primary-green);
     cursor: pointer;
 
@@ -309,22 +309,22 @@
     }
 
     i {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
     }
   }
 
   h5 {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
   }
 
   .coach-comment {
     margin: 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
-    line-height: var(--line-height-base);
+    line-height: var(--ds-line-height-normal);
 
     strong {
       color: var(--ds-text-primary);
@@ -351,19 +351,19 @@
   }
 
   .msg-author {
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-h4);
+    font-weight: var(--ds-font-weight-semibold);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-primary);
   }
 
   p {
     margin: var(--space-1) 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 
   .msg-time {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-tertiary);
   }
 }
@@ -388,7 +388,7 @@
   padding: var(--space-1) 0;
   background: none;
   border: none;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--ds-text-tertiary);
   cursor: pointer;
 

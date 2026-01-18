@@ -139,7 +139,7 @@ interface HelpTopic {
       }
 
       .quick-link-card i {
-        font-size: 1.5rem;
+        font-size: var(--ds-font-size-2xl);
         color: var(--primary-color);
       }
 
@@ -160,7 +160,7 @@ interface HelpTopic {
       .faq-item p {
         margin: 0;
         color: var(--text-secondary);
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
       }
 
       .support-card .support-content {
@@ -172,7 +172,7 @@ interface HelpTopic {
       }
 
       .support-content i {
-        font-size: 2.5rem;
+        font-size: var(--ds-font-size-2-5rem);
         color: var(--primary-color);
         margin-bottom: var(--spacing-md);
       }

@@ -41,8 +41,8 @@
 
 .accept-invitation-title {
   text-align: center;
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   margin: 0;
   color: var(--color-text-primary);
 }
@@ -53,15 +53,15 @@
 }
 
 .team-info h3 {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   margin-bottom: var(--space-2);
   color: var(--color-text-primary);
 }
 
 .team-description {
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--ds-line-height-1-6);
   margin-bottom: var(--space-4);
 }
 
@@ -75,7 +75,7 @@
   gap: var(--space-2);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .role-info i,
@@ -90,7 +90,7 @@
 .login-message {
   margin-top: var(--space-4);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--ds-line-height-1-6);
   text-align: center;
 }
 

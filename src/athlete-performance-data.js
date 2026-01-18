@@ -851,35 +851,75 @@ export const getBMICategory = (bmi) => {
 
 /**
  * Calculate readiness score from wellness metrics
+ * 
+ * IMPORTANT: Returns null if required data is missing.
+ * DO NOT use default values - readiness must be calculated from real user input.
+ * 
+ * Required: sleep AND energy (minimum for valid calculation)
+ * 
+ * Evidence-based weights (team-sport optimized):
+ * - Sleep: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
+ * - Energy: 25% (correlates with perceived performance)
+ * - Stress: 25% (inverted - lower stress = better readiness)
+ * - Soreness: 20% (inverted - lower soreness = better readiness)
+ * 
  * @param {Object} wellness - Wellness metrics object
- * @returns {number} Readiness score (1-10)
+ * @returns {number|null} Readiness score (0-100), or null if required data missing
  */
 export const calculateReadinessScore = (wellness) => {
   if (!wellness) {
     return null;
   }
 
-  const factors = {
-    sleep: wellness.sleep || 5,
-    energy: wellness.energy || 5,
-    stress: wellness.stress || 5,
-    soreness: wellness.soreness || 5,
-    motivation: wellness.motivation || 5,
-  };
+  // CRITICAL: Require at least sleep AND energy
+  // DO NOT use defaults - user must provide real data
+  const sleep = wellness.sleep ?? wellness.sleepQuality ?? null;
+  const energy = wellness.energy ?? wellness.energyLevel ?? null;
 
-  // Weighted calculation
-  // Sleep and energy are most important (30% each)
-  // Stress and soreness are negative factors (20% each, inverted)
-  // Motivation contributes 10%
-  const sleepScore = factors.sleep * 0.3;
-  const energyScore = factors.energy * 0.3;
-  const stressScore = (10 - factors.stress) * 0.2; // Invert stress
-  const sorenessScore = (10 - factors.soreness) * 0.2; // Invert soreness
-  const motivationScore = factors.motivation * 0.1;
+  if (sleep === null || energy === null) {
+    console.warn(
+      "[athlete-performance-data] Cannot calculate readiness: missing required fields (sleep and/or energy)"
+    );
+    return null;
+  }
 
-  const total =
-    sleepScore + energyScore + stressScore + sorenessScore + motivationScore;
-  return Math.round(total * 10) / 10; // Round to 1 decimal
+  const stress = wellness.stress ?? wellness.stressLevel ?? null;
+  const soreness = wellness.soreness ?? wellness.muscleSoreness ?? null;
+
+  // Detect scale (1-5 vs 1-10)
+  const maxValue = Math.max(sleep, energy, stress || 0, soreness || 0);
+  const scale = maxValue <= 5 ? 5 : 10;
+
+  // Normalize to 0-100
+  const sleepScore = (sleep / scale) * 100;
+  const energyScore = (energy / scale) * 100;
+
+  const hasStress = stress !== null;
+  const hasSoreness = soreness !== null;
+
+  let score;
+
+  if (hasStress && hasSoreness) {
+    // Full calculation
+    const stressScore = ((scale - stress) / scale) * 100; // Invert
+    const sorenessScore = ((scale - soreness) / scale) * 100; // Invert
+    score =
+      sleepScore * 0.30 +
+      energyScore * 0.25 +
+      stressScore * 0.25 +
+      sorenessScore * 0.20;
+  } else if (hasStress) {
+    const stressScore = ((scale - stress) / scale) * 100;
+    score = sleepScore * 0.375 + energyScore * 0.3125 + stressScore * 0.3125;
+  } else if (hasSoreness) {
+    const sorenessScore = ((scale - soreness) / scale) * 100;
+    score = sleepScore * 0.40 + energyScore * 0.333 + sorenessScore * 0.267;
+  } else {
+    // Minimal: sleep and energy only
+    score = sleepScore * 0.55 + energyScore * 0.45;
+  }
+
+  return Math.round(Math.max(0, Math.min(100, score)));
 };
 
 /**

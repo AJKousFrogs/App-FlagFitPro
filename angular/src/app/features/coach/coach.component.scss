@@ -23,14 +23,14 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   margin-bottom: var(--space-2);
   color: var(--color-text-primary);
 }
 
 .page-subtitle {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -54,18 +54,18 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto var(--space-4);
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .stat-block__value {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-2);
 }
 
 .stat-block__label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -103,7 +103,7 @@
 }
 
 .blocked-indicator i {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: white;
 }
 
@@ -136,7 +136,7 @@
 }
 
 .notice-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--primitive-info-600);
 }
 
@@ -146,14 +146,14 @@
 
 .notice-content h4 {
   margin: 0 0 var(--space-1);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .notice-content p {
   margin: 0 0 var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -161,8 +161,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--primitive-info-600);
   text-decoration: none;
 }
@@ -172,7 +172,7 @@
 }
 
 .notice-link i {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 @include respond-to(md) {

@@ -99,7 +99,7 @@ export interface ReadinessResult {
         />
         <small
           class="state-narration-inline"
-          style="display: block; margin-top: var(--space-2); font-size: var(--font-size-badge); color: var(--color-text-secondary);"
+          style="display: block; margin-top: var(--space-2); font-size: var(--ds-font-size-xs); color: var(--color-text-secondary);"
         >
           <strong>What changed:</strong> Check-in completed. Readiness score:
           {{ readinessScore() }}. <strong>Why:</strong> You saved your wellness

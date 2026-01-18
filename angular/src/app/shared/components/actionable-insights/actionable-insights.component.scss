@@ -27,14 +27,14 @@
 }
 
 .header-left i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--primitive-purple-500);
 }
 
 .header-left h3 {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
@@ -115,7 +115,7 @@
 }
 
 .insight-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .insight-icon.icon-warning {
@@ -154,8 +154,8 @@
 
 .insight-header h4 {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -167,9 +167,9 @@
 
 .insight-description {
   margin: 0 0 var(--space-3) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 /* Metric */
@@ -184,13 +184,13 @@
 }
 
 .metric-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .metric-value {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   display: flex;
   align-items: center;
   gap: var(--space-1);
@@ -213,13 +213,13 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-3);
 }
 
 .insight-evidence i {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--primitive-purple-400);
 }
 
@@ -260,14 +260,14 @@
 }
 
 .no-insights i {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   color: var(--primitive-success-400);
   margin-bottom: var(--space-3);
 }
 
 .no-insights h4 {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 }
 
@@ -288,8 +288,8 @@
   background: var(--surface-tertiary);
   border: none;
   border-radius: var(--radius-md);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
   cursor: pointer;
   transition:

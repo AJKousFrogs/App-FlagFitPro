@@ -65,7 +65,7 @@
 
 .banner-icon i {
   color: var(--color-text-on-primary);
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .banner-content {
@@ -82,31 +82,31 @@
 }
 
 .announcement-channel {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-on-primary);
 }
 
 .announcement-author {
   color: var(--color-text-on-primary);
   opacity: 0.85;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .announcement-time {
   color: var(--color-text-on-primary);
   opacity: 0.7;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .banner-message {
   color: var(--color-text-on-primary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 .banner-actions {
@@ -124,7 +124,7 @@
 }
 
 .more-count {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-on-primary);
   background: var(--overlay-white-15);
   padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */

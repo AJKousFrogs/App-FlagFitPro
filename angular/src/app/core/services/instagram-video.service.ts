@@ -792,12 +792,12 @@ export class InstagramVideoService {
           align-items: center;
           justify-content: center;
           background: var(--surface-ground, #1a1a2e);
-          border-radius: var(--radius-xl, 16px);
+          border-radius: var(--radius-xl, var(--ds-font-size-md));
           z-index: 1;
         ">
           <div style="text-align: center; color: var(--text-color-secondary, #888);">
-            <i class="pi pi-spin pi-spinner" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
-            <span style="font-size: 0.875rem;">Loading video...</span>
+            <i class="pi pi-spin pi-spinner" style="font-size: var(--ds-font-size-3xl); margin-bottom: 0.5rem; display: block;"></i>
+            <span style="font-size: var(--ds-font-size-sm);">Loading video...</span>
           </div>
         </div>
         <div id="${embedId}-error" style="
@@ -810,14 +810,14 @@ export class InstagramVideoService {
           align-items: center;
           justify-content: center;
           background: var(--surface-ground, #1a1a2e);
-          border-radius: var(--radius-xl, 16px);
+          border-radius: var(--radius-xl, var(--ds-font-size-md));
           z-index: 2;
         ">
           <div style="text-align: center; color: var(--text-color-secondary, #888); padding: 2rem;">
-            <i class="pi pi-video" style="font-size: 2.5rem; margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
-            <p style="margin: 0 0 1rem 0; font-size: 0.875rem;">Video temporarily unavailable</p>
+            <i class="pi pi-video" style="font-size: var(--ds-font-size-2-5rem); margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
+            <p style="margin: 0 0 1rem 0; font-size: var(--ds-font-size-sm);">Video temporarily unavailable</p>
             <a href="${video.url}" target="_blank" rel="noopener noreferrer" 
-               style="color: var(--primary-color, #3b82f6); text-decoration: none; font-size: 0.875rem;">
+               style="color: var(--primary-color, #3b82f6); text-decoration: none; font-size: var(--ds-font-size-sm);">
               <i class="pi pi-external-link" style="margin-right: 0.25rem;"></i>
               Watch on Instagram
             </a>

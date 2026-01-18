@@ -87,7 +87,7 @@
   padding: var(--space-1) var(--space-2);
   border: 2px solid var(--color-brand-primary);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   font-family: inherit;
 }
 
@@ -120,7 +120,7 @@ tr.selected {
 }
 
 .empty-message i {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-3);
   opacity: 0.5;
 }
@@ -166,15 +166,15 @@ tr.selected {
 }
 
 .field-label {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-5px);
 }
 
 .field-value {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 }
 

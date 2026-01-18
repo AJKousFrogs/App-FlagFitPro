@@ -32,7 +32,7 @@
 }
 
 .banner-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: white;
 }
 
@@ -50,15 +50,15 @@
 
 .banner-title {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-on-primary);
 }
 
 // Removed ::ng-deep - Using proper CSS cascade
 .data-source-badge {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   padding: var(--space-1) var(--space-2);
   background: var(--overlay-white-30) !important;
   color: white !important;
@@ -67,9 +67,9 @@
 
 .banner-message {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--overlay-white-80);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .dismiss-btn {
@@ -113,8 +113,8 @@
 }
 
 .progress-text {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   white-space: nowrap;
   color: var(--overlay-white-90);
 }
@@ -131,7 +131,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--overlay-white-80);
 }
 
@@ -185,14 +185,14 @@
   }
 
   .banner-icon i {
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-md);
   }
 
   .banner-title {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 
   .banner-message {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
   }
 }

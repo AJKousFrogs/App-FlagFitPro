@@ -225,7 +225,7 @@ export interface AIModeStatus {
       }
 
       .mode-control-btn i {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
       }
 
       .mode-icon-wrapper {
@@ -244,7 +244,7 @@ export interface AIModeStatus {
       }
 
       .mode-icon {
-        font-size: 1.5rem;
+        font-size: var(--ds-font-size-2xl);
         color: var(--color-status-warning);
       }
 
@@ -256,17 +256,17 @@ export interface AIModeStatus {
       .mode-title {
         margin: 0 0 var(--space-1) 0;
         font-family: var(--font-family-sans);
-        font-size: var(--font-size-h3);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
-        line-height: 1.3;
+        line-height: var(--ds-line-height-h3);
       }
 
       .mode-subtitle {
         margin: 0;
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
-        line-height: 1.5;
+        line-height: var(--ds-line-height-body);
       }
 
       .mode-badge {
@@ -281,8 +281,8 @@ export interface AIModeStatus {
         border: var(--border-1) solid
           rgba(var(--primitive-warning-500-rgb), 0.3);
         border-radius: var(--radius-full);
-        font-size: var(--font-size-h4);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-status-warning);
         cursor: help;
         flex-shrink: 0;
@@ -310,17 +310,17 @@ export interface AIModeStatus {
       }
 
       .section-label {
-        font-size: var(--font-size-body);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
-        line-height: 1.4;
+        line-height: var(--ds-line-height-1-4);
       }
 
       .section-text {
         margin: 0;
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
       }
 
       /* Confidence Display */
@@ -361,8 +361,8 @@ export interface AIModeStatus {
       }
 
       .confidence-value {
-        font-size: var(--font-size-metric-md);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-2xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
         min-width: 60px;
         text-align: right;
@@ -374,13 +374,13 @@ export interface AIModeStatus {
         align-items: center;
         gap: var(--space-2);
         margin: var(--space-1) 0 0 0;
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-muted);
-        line-height: 1.5;
+        line-height: var(--ds-line-height-body);
       }
 
       .confidence-note i {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-muted);
       }
 
@@ -393,9 +393,9 @@ export interface AIModeStatus {
 
       .data-list li {
         margin: var(--space-1) 0;
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
       }
 
       /* Action Buttons */
@@ -415,8 +415,8 @@ export interface AIModeStatus {
         border: none;
         border-radius: var(--radius-lg);
         font-family: var(--font-family-sans);
-        font-size: var(--font-size-body);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-medium);
         cursor: pointer;
         transition:
           transform var(--transition-fast),
@@ -437,7 +437,7 @@ export interface AIModeStatus {
       }
 
       .action-btn i {
-        font-size: 1rem;
+        font-size: var(--ds-font-size-md);
       }
 
       /* Responsive */
@@ -467,11 +467,11 @@ export interface AIModeStatus {
         }
 
         .mode-icon {
-          font-size: 1.25rem;
+          font-size: var(--ds-font-size-xl);
         }
 
         .mode-title {
-          font-size: var(--font-size-h4);
+          font-size: var(--ds-font-size-md);
         }
 
         .action-buttons {

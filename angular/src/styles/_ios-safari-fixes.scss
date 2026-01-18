@@ -58,7 +58,7 @@
   input[type="password"],
   input[type="number"],
   input[type="tel"] {
-    font-size: max(16px, 1rem);
+    font-size: max(var(--ds-font-size-md), var(--ds-font-size-md));
   }
 
   // Fix: Safari sticky position

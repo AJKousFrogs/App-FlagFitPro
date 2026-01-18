@@ -59,12 +59,12 @@
   border: var(--border-1) solid rgba(var(--ds-primary-green-rgb), 0.15);
   border-radius: var(--radius-lg);
   color: var(--ds-primary-green);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .visibility-info-banner .pi {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   flex-shrink: 0;
 }
 
@@ -86,10 +86,10 @@
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
 }
 
 .personal-badge {
@@ -106,7 +106,7 @@
 
 .personal-badge .pi,
 .team-badge .pi {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 /* Personal game row subtle highlight */
@@ -151,11 +151,11 @@
 }
 
 .form-field label {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
 }
 
 /* ================================================================
@@ -177,8 +177,8 @@
 }
 
 .unit-label {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-muted);
   transition: color var(--transition-fast);
   min-width: var(--space-5);
@@ -186,7 +186,7 @@
 }
 
 .unit-label.active {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
 }
 
@@ -263,8 +263,8 @@
 
 .game-header-content h3 {
   font-family: var(--font-family-sans);
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0;
   display: flex;
@@ -294,16 +294,16 @@
 }
 
 .score-group label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
   margin: 0;
 }
 
 .score-separator {
   color: var(--color-text-muted);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h2);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
 }
 
 /* ================================================================
@@ -333,11 +333,11 @@
 }
 
 .stat-box .stat-block__label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .stat-box .stat-block__value {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .stat-box:hover {
@@ -359,11 +359,11 @@
 
 .play-type-label {
   display: block;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
   margin-bottom: var(--space-4);
 }
 
@@ -381,8 +381,8 @@
 
 .play-type-label-text {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   cursor: pointer;
 }
@@ -402,8 +402,8 @@
 .play-details-section h4 {
   font-family: var(--font-family-sans);
   margin: 0 0 var(--space-5) 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -429,11 +429,11 @@
 
 .outcome-label {
   display: block;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: var(--letter-spacing-wide);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-wide);
   margin-bottom: var(--space-4);
 }
 
@@ -449,8 +449,8 @@
   border-radius: var(--radius-md);
   background: var(--surface-primary);
   color: var(--color-text-primary);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   cursor: pointer;
   transition:
     transform var(--transition-fast),
@@ -536,29 +536,29 @@
 
 .games-list-card {
   /* Table column styling via CSS custom properties */
-  --table-date-font-weight: var(--font-weight-medium);
-  --table-opponent-font-weight: var(--font-weight-semibold);
+  --table-date-font-weight: var(--ds-font-weight-medium);
+  --table-opponent-font-weight: var(--ds-font-weight-semibold);
   --table-location-color: var(--color-text-secondary);
   --table-score-font-family: var(--font-family-mono);
-  --table-score-font-weight: var(--font-weight-bold);
+  --table-score-font-weight: var(--ds-font-weight-bold);
 
   /* Tag styling - transparent background */
   .tag-win {
     color: var(--ds-primary-green);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-wide);
+    font-weight: var(--ds-font-weight-bold);
+    letter-spacing: var(--ds-letter-spacing-wide);
   }
 
   .tag-loss {
     color: var(--color-status-error);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-wide);
+    font-weight: var(--ds-font-weight-bold);
+    letter-spacing: var(--ds-letter-spacing-wide);
   }
 
   .tag-tie {
     color: var(--color-text-secondary);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-wide);
+    font-weight: var(--ds-font-weight-bold);
+    letter-spacing: var(--ds-letter-spacing-wide);
   }
 
   /* Action buttons in table */
@@ -586,11 +586,11 @@
 
 /* Column-specific classes to apply in template */
 .col-date {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .col-opponent {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .col-location {
@@ -599,8 +599,8 @@
 
 .col-score {
   font-family: var(--font-family-mono);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-weight: var(--ds-font-weight-bold);
+  letter-spacing: var(--ds-letter-spacing-wide);
 }
 
 /* ================================================================
@@ -674,7 +674,7 @@
 
   .form-field {
     label {
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
     }
 
     // Larger form controls for touch
@@ -725,7 +725,7 @@
       // PrimeNG checkbox override moved to _exceptions.scss (DS-EXC-003)
 
       .play-type-label-text {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
       }
     }
   }
@@ -741,7 +741,7 @@
     padding: var(--space-4);
 
     h3 {
-      font-size: var(--font-size-h3);
+      font-size: var(--ds-font-size-xl);
     }
   }
 
@@ -754,19 +754,19 @@
 
     .score-group {
       label {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
 
       :global(input) {
         width: calc(var(--space-12) + var(--space-3));
         text-align: center;
-        font-size: var(--font-size-h2);
+        font-size: var(--ds-font-size-2xl);
         min-height: var(--space-12);
       }
     }
 
     .score-separator {
-      font-size: var(--font-h1-size);
+      font-size: var(--ds-font-size-3xl);
     }
   }
 
@@ -784,11 +784,11 @@
     padding: var(--space-3);
 
     .stat-block__label {
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
     }
 
     .stat-block__value {
-      font-size: var(--font-size-h3);
+      font-size: var(--ds-font-size-xl);
     }
   }
 
@@ -808,10 +808,10 @@
   .outcome-btn {
     min-height: var(--touch-target-lg); // Larger for touch
     padding: var(--space-3);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
 
     i {
-      font-size: var(--font-size-h3);
+      font-size: var(--ds-font-size-xl);
     }
   }
 
@@ -867,11 +867,11 @@
   .visibility-info-banner {
     padding: var(--space-3);
     gap: var(--space-2);
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
     flex-wrap: wrap;
 
     .pi {
-      font-size: var(--font-size-h3);
+      font-size: var(--ds-font-size-xl);
     }
   }
 
@@ -883,7 +883,7 @@
     justify-content: flex-start;
 
     .unit-label {
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
     }
 
     .toggle-track {
@@ -906,7 +906,7 @@
     margin-top: var(--space-4);
 
     h4 {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       margin-bottom: var(--space-3);
     }
   }
@@ -946,14 +946,14 @@
 }
 
 .empty-state-container i {
-  font-size: var(--font-size-metric-lg);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-text-muted);
   margin-bottom: var(--space-4);
 }
 
 .empty-state-container p {
   margin: 0;
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -972,7 +972,7 @@
     padding: var(--space-3);
 
     h3 {
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
     }
   }
 

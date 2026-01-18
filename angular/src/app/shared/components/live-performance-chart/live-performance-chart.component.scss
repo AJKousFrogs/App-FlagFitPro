@@ -36,7 +36,7 @@
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
   border-radius: 50%;
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   margin-bottom: var(--space-4);
 }
 
@@ -48,15 +48,15 @@
 }
 
 .current-value {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
 }
 
 .unit {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .metric-trend {

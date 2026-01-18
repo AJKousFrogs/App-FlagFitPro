@@ -67,11 +67,11 @@
 }
 
 .live-text {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: 0.5px;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
+  letter-spacing: var(--ds-letter-spacing-0-5px);
   color: var(--color-status-error);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 }
 
 .live-indicator:not(.live-active) .live-text {

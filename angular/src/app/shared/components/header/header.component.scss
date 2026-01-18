@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  height: var(--header-height, 64px);
+  height: var(--header-height, var(--ds-font-size-4rem));
 }
 
 .header-center {
@@ -46,7 +46,7 @@
   flex: 1;
   max-width: 420px;
   min-width: 280px;
-  height: var(--header-height, 64px);
+  height: var(--header-height, var(--ds-font-size-4rem));
   cursor: pointer;
   padding: 0 8px;
 }
@@ -61,7 +61,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  height: var(--header-height, 64px);
+  height: var(--header-height, var(--ds-font-size-4rem));
 }
 
 /* ================================================================
@@ -103,30 +103,30 @@
 
 .countdown-value {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--text-color);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-  line-height: 1;
+  letter-spacing: var(--ds-letter-spacing-0-02em);
+  line-height: var(--ds-line-height-1);
 }
 
 .countdown-unit {
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-02em);
 }
 
 .countdown-sep {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
   opacity: 0.6;
   padding: 0 1px;
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
 }
 
 /* Olympics Badge */
@@ -154,7 +154,7 @@
     background-color var(--motion-fast) var(--ease-standard);
 
   i {
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
     color: var(--text-color-secondary);
   }
 
@@ -166,16 +166,16 @@
 
 .weather-temp {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--text-color);
   font-variant-numeric: tabular-nums;
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
 }
 
 .weather-location {
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
   max-width: var(--card-min-height-sm); /* 80px */
   overflow: hidden;
@@ -239,7 +239,7 @@
 }
 
 .breadcrumb-item {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--text-color-secondary);
   opacity: 0.7;
   margin: 0;
@@ -248,12 +248,12 @@
 
 .breadcrumb-item.current {
   color: var(--text-color);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   opacity: 1;
 }
 
 .separator {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--text-color-secondary);
   opacity: 0.5;
 }
@@ -291,12 +291,12 @@
   background: var(--surface-100, #f3f4f6);
   border: 1px solid var(--surface-border, #e5e7eb);
   border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
   font-family:
     -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
   box-shadow: 0 1px 0 var(--surface-border, #e5e7eb);
 }
 
@@ -321,8 +321,8 @@
 }
 
 .theme-label {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
   min-width: var(--space-8);
   padding: var(--space-1) var(--space-2);
@@ -434,7 +434,7 @@
   }
 
   .countdown-value {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
 
   .header-center {
@@ -529,7 +529,7 @@
   margin: 0;
   padding: var(--space-4) var(--space-4) 0;
   color: var(--ds-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .shortcuts-list {
@@ -561,7 +561,7 @@
 
   i {
     color: var(--ds-text-tertiary);
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
   }
 
   kbd {
@@ -575,8 +575,8 @@
     border: 1px solid var(--ds-border-default);
     border-radius: var(--radius-sm);
     font-family: var(--font-family-code, "SF Mono", "Courier New", monospace);
-    font-size: var(--font-caption-size);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-primary);
     box-shadow: 0 2px 0 var(--ds-border-subtle);
   }
@@ -584,8 +584,8 @@
 
 .shortcut-description {
   color: var(--ds-text-primary);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .shortcuts-tip {
@@ -595,7 +595,7 @@
   margin: 0;
   padding: var(--space-3) var(--space-4) var(--space-4);
   color: var(--ds-text-tertiary);
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   background: var(--ds-surface-base);
   border-top: 1px solid var(--ds-border-subtle);
 
@@ -609,7 +609,7 @@
     border: 1px solid var(--ds-border-default);
     border-radius: var(--radius-xs);
     font-family: var(--font-family-code, "SF Mono", "Courier New", monospace);
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-primary);
   }
 }

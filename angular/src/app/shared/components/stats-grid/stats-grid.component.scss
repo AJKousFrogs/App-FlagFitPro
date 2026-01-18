@@ -50,7 +50,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   flex-shrink: 0;
 }
 
@@ -86,29 +86,29 @@
 
 // Value text - matches Dashboard .stat-block__value
 .stat-block__value {
-  font-size: var(--font-size-metric-md); // 24px
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl); // 24px
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  line-height: var(--line-height-tight);
+  line-height: var(--ds-line-height-tight);
   overflow-wrap: break-word;
 }
 
 // Label text - matches Dashboard .stat-block__label
 .stat-block__label {
-  font-size: var(--font-size-caption); // 13px
-  font-weight: var(--font-weight-regular);
+  font-size: var(--ds-font-size-xs); // 13px
+  font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-muted);
-  line-height: var(--line-height-base);
-  letter-spacing: var(--letter-spacing-caption);
-  text-transform: uppercase;
+  line-height: var(--ds-line-height-normal);
+  letter-spacing: var(--ds-letter-spacing-caption);
+  text-transform: var(--ds-text-transform-uppercase);
   overflow-wrap: break-word;
 }
 
 // Tag styling - matches Dashboard .stat-tag
 .stat-tag {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
-  line-height: 1.2;
+  line-height: var(--ds-line-height-h1);
 }
 
 // Responsive: Smaller screens
@@ -119,12 +119,12 @@
 
   .stat-tag {
     flex-shrink: 0;
-    font-size: var(--font-size-badge, 11px);
+    font-size: var(--ds-font-size-xs);
     padding: var(--space-1) var(--space-2);
   }
 
   .stat-block__value {
-    font-size: var(--font-size-metric-sm, 20px);
+    font-size: var(--font-size-metric-sm, var(--ds-font-size-xl));
   }
 }
 
@@ -145,11 +145,11 @@
   }
 
   .stat-block__value {
-    font-size: var(--font-size-metric-sm, 18px);
+    font-size: var(--font-size-metric-sm, var(--ds-font-size-lg));
   }
 
   .stat-tag {
-    font-size: var(--font-size-badge, 11px);
+    font-size: var(--ds-font-size-xs);
     padding: var(--space-1) var(--space-2);
   }
 }
@@ -169,14 +169,14 @@
     width: var(--space-9); // 36px
     height: var(--space-9);
     min-width: var(--space-9);
-    font-size: var(--font-body-sm-size);
+    font-size: var(--ds-font-size-sm);
   }
 
   .stat-block__value {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 
   .stat-block__label {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
   }
 }

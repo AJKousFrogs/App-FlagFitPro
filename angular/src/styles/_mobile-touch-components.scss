@@ -38,7 +38,7 @@
       min-height: 44px;
       min-width: 44px;
       padding: var(--space-2) var(--space-4);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       border-radius: var(--radius-md);
       cursor: pointer;
 
@@ -74,7 +74,7 @@
       padding: var(--space-2);
 
       i {
-        font-size: var(--font-size-h3);
+        font-size: var(--ds-font-size-xl);
       }
     }
 
@@ -84,7 +84,7 @@
       min-height: 40px;
       min-width: 40px;
       padding: var(--space-1) var(--space-3);
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
     }
 
     // Full-width buttons on mobile (common pattern)
@@ -107,7 +107,7 @@
       box-shadow: var(--shadow-2);
 
       i {
-        font-size: var(--font-size-h2);
+        font-size: var(--ds-font-size-2xl);
       }
 
       &:active {
@@ -139,7 +139,7 @@
     .p-textarea,
     .p-inputnumber-input {
       min-height: 44px;
-      font-size: 16px; // CRITICAL: Prevents iOS zoom
+      font-size: var(--ds-font-size-md); // CRITICAL: Prevents iOS zoom
       padding: var(--space-2) var(--space-3);
       border-radius: var(--radius-md);
       border: 1px solid var(--surface-border);
@@ -177,7 +177,7 @@
     .p-textarea {
       min-height: 88px; // 2x button height
       resize: vertical;
-      line-height: 1.5;
+      line-height: var(--ds-line-height-body);
     }
 
     // Select dropdowns
@@ -265,7 +265,7 @@
       }
 
       .p-checkbox-icon {
-        font-size: 16px;
+        font-size: var(--ds-font-size-md);
       }
     }
 
@@ -387,8 +387,8 @@
     label,
     .p-field-label,
     .form-label {
-      font-size: var(--font-size-h4);
-      font-weight: var(--font-weight-medium);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
       color: var(--text-color-secondary);
       margin-bottom: var(--space-2);
       display: block;
@@ -431,7 +431,7 @@
     .p-field-helper,
     .form-helper,
     small.helper-text {
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
       color: var(--text-color-secondary);
       margin-top: var(--space-1);
     }
@@ -440,7 +440,7 @@
     .p-error,
     .form-error,
     small.error-text {
-      font-size: var(--font-caption-size);
+      font-size: var(--ds-font-size-xs);
       color: var(--primitive-error-500);
       margin-top: var(--space-1);
       display: flex;
@@ -449,7 +449,7 @@
 
       &::before {
         content: "⚠";
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
       }
     }
   }
@@ -520,7 +520,7 @@
     input,
     select,
     textarea {
-      font-size: 16px; // Prevents iOS zoom
+      font-size: var(--ds-font-size-md); // Prevents iOS zoom
     }
 
     // Prevent viewport zoom

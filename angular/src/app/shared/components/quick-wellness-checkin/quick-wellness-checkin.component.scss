@@ -32,20 +32,20 @@
 }
 
 .header-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-brand-primary);
 }
 
 .checkin-header h2 {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
 .time-estimate {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -56,7 +56,7 @@
 
 .checkin-field > label {
   display: block;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-3);
 }
@@ -71,7 +71,7 @@
 .scale-labels {
   display: flex;
   justify-content: space-between;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-3);
 }
@@ -87,8 +87,8 @@
   border: 2px solid var(--color-border-secondary);
   border-radius: var(--radius-md);
   background: white;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
   cursor: pointer;
   transition:
@@ -135,8 +135,8 @@
 }
 
 .quality {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
 }
@@ -169,7 +169,7 @@
 }
 
 .pain-question label {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   cursor: pointer;
 }
@@ -183,7 +183,7 @@
   padding: var(--space-3);
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   resize: none;
 }
 
@@ -216,7 +216,7 @@
 }
 
 .full-checkin-link {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-brand-primary);
   text-decoration: none;
 }
@@ -236,8 +236,8 @@
   background: var(--primitive-warning-50);
   border-radius: var(--radius-md);
   color: var(--primitive-warning-700);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .streak-indicator i {
@@ -247,7 +247,7 @@
 /* Responsive */
 @include respond-to(sm) {
   .scale-btn {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
   }
 
   .sleep-input {

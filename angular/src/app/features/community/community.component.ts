@@ -591,7 +591,7 @@ interface ApiPollVoteResponse {
                                   color: '#fff',
                                   width: 'var(--space-8)',
                                   height: 'var(--space-8)',
-                                  'font-size': 'var(--font-caption-size)',
+                                  'font-size': 'var(--ds-font-size-xs)',
                                 }"
                               ></p-avatar>
                               <div class="comment-body">
@@ -633,7 +633,7 @@ interface ApiPollVoteResponse {
                           [style]="{
                             width: 'var(--space-8)',
                             height: 'var(--space-8)',
-                            'font-size': 'var(--font-caption-size)',
+                            'font-size': 'var(--ds-font-size-xs)',
                           }"
                         ></p-avatar>
                         <div class="comment-input-wrapper">

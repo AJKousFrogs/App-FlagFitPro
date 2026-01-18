@@ -151,18 +151,18 @@
 
 /* Label */
 .pulse-label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
   white-space: nowrap;
 }
 
 .size-xs .pulse-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .size-lg .pulse-label {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .status-live .pulse-label,

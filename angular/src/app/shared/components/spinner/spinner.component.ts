@@ -61,7 +61,7 @@ import { CommonModule } from "@angular/common";
       }
 
       .spinner-text {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--p-text-color-secondary);
         text-align: center;
       }

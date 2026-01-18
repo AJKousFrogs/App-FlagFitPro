@@ -123,13 +123,13 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
       }
 
       .temp-value {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: var(--ds-font-size-2-5rem);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--text-primary);
       }
 
       .temp-unit {
-        font-size: 1.25rem;
+        font-size: var(--ds-font-size-xl);
         color: var(--text-secondary);
       }
 
@@ -141,13 +141,13 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
       }
 
       .condition-text {
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-primary);
       }
 
       .humidity-text {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--text-secondary);
       }
 
@@ -164,9 +164,9 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
 
       .recommendation-text {
         margin: 0;
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--text-secondary);
-        line-height: 1.5;
+        line-height: var(--ds-line-height-body);
       }
 
       .heat-warning {
@@ -178,12 +178,12 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
         border: 1px solid var(--color-warning-200);
         border-radius: var(--border-radius-md);
         color: var(--color-warning-700);
-        font-size: 0.875rem;
-        font-weight: 500;
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .heat-warning i {
-        font-size: 1.25rem;
+        font-size: var(--ds-font-size-xl);
       }
 
       .loading-text {

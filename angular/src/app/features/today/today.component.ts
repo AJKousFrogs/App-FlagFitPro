@@ -237,18 +237,18 @@ interface QuickFormData {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--font-h4-size);
+        font-size: var(--ds-font-size-md);
       }
 
       .onboarding-text h2 {
         margin: 0;
-        font-size: var(--font-h4-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .onboarding-text p {
         margin: var(--space-1) 0 0;
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         opacity: 0.9;
       }
 
@@ -272,7 +272,7 @@ interface QuickFormData {
         align-items: center;
         justify-content: center;
         color: var(--color-text-secondary);
-        font-size: var(--font-h4-size);
+        font-size: var(--ds-font-size-md);
         border: var(--border-2) solid var(--color-border-secondary);
       }
 
@@ -282,25 +282,25 @@ interface QuickFormData {
       }
 
       .welcome-greeting {
-        font-size: var(--font-size-h1); /* H1: Page greeting - 28px */
+        font-size: var(--ds-font-size-3xl); /* H1: Page greeting - 28px */
         font-weight: var(
           --font-weight-semibold
         ); /* H1: Semibold (600) - reduced from 700 */
         margin: 0;
         color: var(--color-text-primary);
-        line-height: var(--line-height-tight);
+        line-height: var(--ds-line-height-tight);
       }
 
       .welcome-name {
-        font-size: var(--font-h2-size);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-2xl);
+        font-weight: var(--ds-font-weight-bold);
         margin: var(--space-1) 0 0;
         color: var(--color-text-primary);
-        line-height: 1.2;
+        line-height: var(--ds-line-height-h1);
       }
 
       .welcome-hint {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
         margin: var(--space-1) 0 0;
       }
@@ -355,16 +355,16 @@ interface QuickFormData {
       }
 
       .stat-block__value {
-        font-size: var(--font-size-metric-md); /* Metric: KPI numbers - 24px */
-        font-weight: var(--font-weight-bold); /* Metric: Bold (700) */
-        line-height: var(--line-height-tight); /* Metric: 1.2 */
+        font-size: var(--ds-font-size-2xl); /* Metric: KPI numbers - 24px */
+        font-weight: var(--ds-font-weight-bold); /* Metric: Bold (700) */
+        line-height: var(--ds-line-height-tight); /* Metric: 1.2 */
         color: var(--color-text-primary);
       }
 
       .stat-status-label {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .stat-chevron {
@@ -386,10 +386,10 @@ interface QuickFormData {
       }
 
       .stat-block__label {
-        font-size: var(--font-size-caption); /* Caption: Helper text - 13px */
-        font-weight: var(--font-weight-regular); /* Caption: Regular (400) */
+        font-size: var(--ds-font-size-xs); /* Caption: Helper text - 13px */
+        font-weight: var(--ds-font-weight-regular); /* Caption: Regular (400) */
         color: var(--color-text-muted);
-        text-transform: uppercase;
+        text-transform: var(--ds-text-transform-uppercase);
         letter-spacing: var(
           --letter-spacing-caption
         ); /* 0.04em for labels like READINESS, ACWR */
@@ -420,24 +420,24 @@ interface QuickFormData {
       }
 
       .card-header-icon {
-        font-size: var(--font-body-size);
+        font-size: var(--ds-font-size-md);
         color: var(--color-brand-primary);
       }
 
       .card-header-title {
         flex: 1;
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
-        line-height: var(--line-height-tight);
+        line-height: var(--ds-line-height-tight);
         margin: 0;
       }
 
       .card-description {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
         margin: 0 0 var(--space-4);
-        line-height: 1.5;
+        line-height: var(--ds-line-height-body);
       }
 
       /* --------------------------------------------------------------------------
@@ -459,7 +459,7 @@ interface QuickFormData {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--font-h4-size);
+        font-size: var(--ds-font-size-md);
       }
 
       .insight-text {
@@ -468,14 +468,14 @@ interface QuickFormData {
 
       .insight-title {
         margin: 0 0 var(--space-2);
-        font-size: var(--font-body-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .insight-message {
         margin: 0 0 var(--space-3);
-        font-size: var(--font-body-sm-size);
-        line-height: 1.6;
+        font-size: var(--ds-font-size-sm);
+        line-height: var(--ds-line-height-1-6);
         opacity: 0.95;
       }
 
@@ -495,7 +495,7 @@ interface QuickFormData {
         display: flex;
         justify-content: space-between;
         margin-top: var(--space-2);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
@@ -547,14 +547,14 @@ interface QuickFormData {
 
       .action-text h4 {
         margin: 0;
-        font-size: var(--font-body-sm-size);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-primary);
       }
 
       .action-text p {
         margin: var(--space-1) 0 0;
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
@@ -583,14 +583,14 @@ interface QuickFormData {
 
       .empty-state h3 {
         margin: 0 0 var(--space-2);
-        font-size: var(--font-body-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
       }
 
       .empty-state p {
         margin: 0 0 var(--space-4);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -669,7 +669,7 @@ interface QuickFormData {
       .quick-intro {
         text-align: center;
         color: var(--color-text-secondary);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         margin: 0;
       }
 
@@ -680,8 +680,8 @@ interface QuickFormData {
       }
 
       .quick-label {
-        font-size: var(--font-body-sm-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
       }
 
@@ -716,17 +716,17 @@ interface QuickFormData {
       }
 
       .mood-emoji {
-        font-size: 1.5rem;
+        font-size: var(--ds-font-size-2xl);
       }
 
       .mood-text {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
       .mood-btn.selected .mood-text {
         color: var(--color-brand-primary);
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .energy-selector {
@@ -746,7 +746,7 @@ interface QuickFormData {
         border-radius: var(--radius-md);
         cursor: pointer;
         transition: all var(--hover-transition-fast);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
@@ -782,7 +782,7 @@ interface QuickFormData {
         border-radius: var(--radius-md);
         cursor: pointer;
         transition: all var(--hover-transition-fast);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -816,13 +816,13 @@ interface QuickFormData {
       }
 
       .quick-preview .preview-label {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
       .quick-preview .preview-score {
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-bold);
       }
 
       .quick-preview .preview-score.high {
@@ -958,7 +958,7 @@ interface QuickFormData {
       }
 
       .celebration-icon {
-        font-size: 4rem;
+        font-size: var(--ds-font-size-4rem);
         margin-bottom: var(--space-3);
         animation: icon-bounce 0.6s ease-out;
       }
@@ -975,16 +975,16 @@ interface QuickFormData {
 
       .celebration-title {
         margin: 0 0 var(--space-2);
-        font-size: var(--font-h2-size);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-2xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
       }
 
       .celebration-message {
         margin: 0 0 var(--space-5);
-        font-size: var(--font-body-size);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
-        line-height: 1.5;
+        line-height: var(--ds-line-height-body);
       }
 
       .celebration-stats {
@@ -1005,16 +1005,16 @@ interface QuickFormData {
       }
 
       .celebration-stats .stat-number {
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-brand-primary);
       }
 
       .celebration-stats .stat-block__label {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        text-transform: var(--ds-text-transform-uppercase);
+        letter-spacing: var(--ds-letter-spacing-wide);
       }
 
       /* --------------------------------------------------------------------------
@@ -1043,7 +1043,7 @@ interface QuickFormData {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -1053,7 +1053,7 @@ interface QuickFormData {
 
       .attribution-time {
         margin-left: auto;
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-muted);
       }
 
@@ -1084,14 +1084,14 @@ interface QuickFormData {
 
       .alert-gate-text h3 {
         margin: 0 0 var(--space-1);
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
       }
 
       .alert-gate-text p {
         margin: 0;
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -1114,7 +1114,7 @@ interface QuickFormData {
         display: flex;
         align-items: baseline;
         gap: var(--space-2);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
       }
 
       .stat-item .stat-block__label {
@@ -1122,7 +1122,7 @@ interface QuickFormData {
       }
 
       .stat-item .stat-block__value {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
       }
 
@@ -1150,9 +1150,9 @@ interface QuickFormData {
       }
 
       .tomorrow-rationale {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
         margin: 0;
         padding: var(--space-3);
         background: var(--surface-tertiary);
@@ -1183,13 +1183,13 @@ interface QuickFormData {
 
       .tomorrow-block-item span:nth-child(2) {
         flex: 1;
-        font-size: var(--font-body-sm-size);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-primary);
       }
 
       .tomorrow-block-item .block-count {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
@@ -1206,7 +1206,7 @@ interface QuickFormData {
 
       .tomorrow-empty p {
         margin: 0 0 var(--space-3);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -1223,7 +1223,7 @@ interface QuickFormData {
 
       .no-exercises-message p {
         margin: 0 0 var(--space-4);
-        font-size: var(--font-body-size);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
       }
 

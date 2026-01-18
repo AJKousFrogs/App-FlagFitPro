@@ -42,7 +42,7 @@
   margin-bottom: var(--space-1);
   width: 100%;
   min-height: var(--touch-target-md);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .nav-item--sidebar:hover {
@@ -53,16 +53,16 @@
 .nav-item--sidebar.active {
   background: var(--color-brand-light);
   color: var(--color-brand-primary);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .nav-item--sidebar.nav-item-primary {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .nav-item--sidebar.nav-item-sub {
   padding-left: var(--space-6);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
 }
 
 .nav-item--bottom {
@@ -117,13 +117,13 @@
 }
 
 .nav-item-icon i {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   transition: transform var(--transition-base) var(--ease-standard);
 }
 
 .nav-item--bottom .nav-item-icon i,
 .nav-item--menu .nav-item-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .nav-badge {
@@ -138,14 +138,14 @@
 }
 
 .nav-item--bottom .nav-item-label {
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-02em);
 }
 
 .nav-item--menu .nav-item-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   text-align: center;
 }
 

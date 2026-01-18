@@ -43,13 +43,13 @@ import { ProgressSpinner } from "primeng/progressspinner";
 
       .loading-message {
         margin-top: var(--space-4);
-        font-size: 1rem;
+        font-size: var(--ds-font-size-md);
         color: var(--text-secondary);
         text-align: center;
       }
 
       .loading-state.compact .loading-message {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         margin-top: var(--space-3);
       }
 
@@ -60,7 +60,7 @@ import { ProgressSpinner } from "primeng/progressspinner";
         }
 
         .loading-message {
-          font-size: 0.875rem;
+          font-size: var(--ds-font-size-sm);
         }
       }
     `,

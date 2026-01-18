@@ -122,7 +122,7 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
     }
     
     .warning-header i {
-      font-size: 1.1rem;
+      font-size: var(--ds-font-size-1-1rem);
     }
     
     .quality-insufficient .warning-header i {
@@ -138,16 +138,16 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
     }
     
     .warning-title {
-      font-weight: 600;
-      font-size: 0.9rem;
+      font-weight: var(--ds-font-weight-semibold);
+      font-size: var(--ds-font-size-0-9rem);
     }
     
     .confidence-badge {
       margin-left: auto;
       padding: 2px 8px;
       border-radius: var(--radius-full);
-      font-size: 0.75rem;
-      font-weight: 500;
+      font-size: var(--ds-font-size-xs);
+      font-weight: var(--ds-font-weight-medium);
       background: var(--surface-secondary);
     }
     
@@ -157,17 +157,17 @@ export type DataQualityLevel = "high" | "medium" | "low" | "insufficient";
     
     .warning-message {
       margin: 0;
-      font-size: 0.85rem;
+      font-size: var(--ds-font-size-0-85rem);
       color: var(--color-text-secondary);
     }
     
     .recommendations {
       margin-top: var(--spacing-xs);
-      font-size: 0.8rem;
+      font-size: var(--ds-font-size-0-8rem);
     }
     
     .rec-label {
-      font-weight: 500;
+      font-weight: var(--ds-font-weight-medium);
       color: var(--color-text-secondary);
     }
     

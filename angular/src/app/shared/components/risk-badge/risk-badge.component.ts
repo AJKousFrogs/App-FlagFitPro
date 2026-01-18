@@ -55,11 +55,11 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-md);
         font-family: var(--font-family-sans);
-        font-size: var(--font-size-h4);
-        font-weight: var(--font-weight-semibold);
-        text-transform: none;
-        letter-spacing: 0;
-        line-height: var(--line-height-tight);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
+        text-transform: var(--ds-text-transform-none);
+        letter-spacing: var(--ds-letter-spacing-normal);
+        line-height: var(--ds-line-height-tight);
         min-height: var(--space-8);
         transition: all var(--motion-fast) var(--ease-standard);
       }
@@ -125,15 +125,15 @@ export type RiskPlacement = "top-right" | "top-left" | "inline" | "banner";
         width: 100%;
         justify-content: center;
         padding: var(--space-3) var(--space-4);
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
       }
 
       .risk-icon {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
 
       .risk-label {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .risk-tag {

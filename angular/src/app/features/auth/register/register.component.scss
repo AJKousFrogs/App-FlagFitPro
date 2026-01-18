@@ -22,13 +22,13 @@
   text-align: center;
   margin-bottom: var(--space-4);
   color: var(--color-brand-primary);
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
 }
 
 .register-title {
   text-align: center;
-  font-size: var(--font-size-metric-lg);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
   margin-bottom: var(--space-6);
 }
@@ -61,7 +61,7 @@
   display: block;
   text-align: center;
   color: var(--color-brand-primary);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   text-decoration: none;
 
   &:hover {
@@ -88,9 +88,9 @@
 
 .age-label,
 .terms-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
   cursor: pointer;
 }
 
@@ -114,7 +114,7 @@
 .terms-label a {
   color: var(--color-brand-primary);
   text-decoration: none;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 
   &:hover {
     text-decoration: underline;

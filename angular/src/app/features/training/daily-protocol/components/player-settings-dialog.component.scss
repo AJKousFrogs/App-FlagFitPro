@@ -6,19 +6,19 @@
 .settings-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5, 20px);
+  gap: var(--space-5, var(--ds-font-size-xl));
 }
 
 .form-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
 }
 
 .form-section h4 {
   margin: 0;
-  font-size: var(--font-body-size, 16px);
-  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary, #171717);
   padding-bottom: var(--space-2, 8px);
   border-bottom: 1px solid var(--primitive-neutral-200, #e5e5e5);
@@ -26,7 +26,7 @@
 
 .section-description {
   margin: 0;
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary, #737373);
 }
 
@@ -37,13 +37,13 @@
 }
 
 .form-field label {
-  font-size: var(--font-body-sm-size, 14px);
-  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary, #737373);
 }
 
 .field-hint {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted, #a3a3a3);
 }
 
@@ -56,7 +56,7 @@
   background: var(--primitive-neutral-50, #fafafa);
   border: 1px solid var(--primitive-neutral-200, #e5e5e5);
   border-radius: var(--radius-md, 6px);
-  padding: var(--space-3, 12px);
+  padding: var(--space-3, var(--ds-font-size-xs));
 }
 
 .slot-header {
@@ -67,13 +67,13 @@
 }
 
 .day-name {
-  font-weight: var(--font-weight-semibold, 600);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary, #171717);
 }
 
 .slot-times {
   display: flex;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
   flex-wrap: wrap;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .time-field label {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted, #a3a3a3);
 }
 
@@ -124,7 +124,7 @@
 .routine-label {
   display: flex;
   align-items: center;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 
   i {
@@ -135,7 +135,7 @@
 
 .routine-time-input {
   width: 100px;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   padding: var(--space-1) var(--space-2);
 }
 
@@ -147,6 +147,6 @@
 }
 
 .checkbox-group label {
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-primary, #171717);
 }

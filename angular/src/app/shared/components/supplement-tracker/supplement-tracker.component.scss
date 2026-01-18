@@ -39,7 +39,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-4, 16px) var(--space-5, 20px);
+    padding: var(--space-4, var(--ds-font-size-md)) var(--space-5, var(--ds-font-size-xl));
     border-bottom: 1px solid var(--primitive-neutral-100);
   }
 
@@ -49,14 +49,14 @@
     gap: var(--space-2, 8px);
 
     i {
-      font-size: var(--font-size-h2);
+      font-size: var(--ds-font-size-2xl);
       color: var(--primitive-error-500);
     }
 
     h3 {
       margin: 0;
-    font-size: var(--font-body-size, 16px);
-      font-weight: var(--font-weight-semibold, 600);
+    font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
     }
   }
@@ -68,8 +68,8 @@
   }
 
   .progress-badge {
-  font-size: var(--font-body-sm-size, 14px);
-    font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     background: var(--surface-secondary);
     padding: var(--space-1, 4px) var(--space-2, 8px);
@@ -82,7 +82,7 @@
   // =============================================
 
   .supplement-progress {
-    padding: var(--space-3, 12px) var(--space-5, 20px);
+    padding: var(--space-3, var(--ds-font-size-xs)) var(--space-5, var(--ds-font-size-xl));
     background: var(--surface-secondary);
   }
 
@@ -106,7 +106,7 @@
   }
 
   .progress-text {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
     color: var(--color-text-secondary);
   }
 
@@ -115,16 +115,16 @@
   // =============================================
 
   .supplement-loading {
-    padding: var(--space-4, 16px) var(--space-5, 20px);
+    padding: var(--space-4, var(--ds-font-size-md)) var(--space-5, var(--ds-font-size-xl));
     display: flex;
     flex-direction: column;
-    gap: var(--space-3, 12px);
+    gap: var(--space-3, var(--ds-font-size-xs));
   }
 
   .skeleton-row {
     display: flex;
     align-items: center;
-    gap: var(--space-3, 12px);
+    gap: var(--space-3, var(--ds-font-size-xs));
   }
 
   // =============================================
@@ -132,7 +132,7 @@
   // =============================================
 
   .supplement-list {
-    padding: var(--space-3, 12px) 0;
+    padding: var(--space-3, var(--ds-font-size-xs)) 0;
     max-height: var(--chart-min-height-lg); /* 400px */
     overflow-y: auto;
     flex: 1;
@@ -141,8 +141,8 @@
   // Timing Groups
   .timing-group {
     &:not(:last-child) {
-      margin-bottom: var(--space-3, 12px);
-      padding-bottom: var(--space-3, 12px);
+      margin-bottom: var(--space-3, var(--ds-font-size-xs));
+      padding-bottom: var(--space-3, var(--ds-font-size-xs));
       border-bottom: 1px solid var(--primitive-neutral-100);
     }
   }
@@ -151,15 +151,15 @@
     display: flex;
     align-items: center;
     gap: var(--space-2, 8px);
-    padding: var(--space-2, 8px) var(--space-5, 20px);
-  font-size: var(--font-caption-size, 11px);
-    font-weight: var(--font-weight-semibold, 600);
+    padding: var(--space-2, 8px) var(--space-5, var(--ds-font-size-xl));
+  font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    text-transform: var(--ds-text-transform-uppercase);
+    letter-spacing: var(--ds-letter-spacing-0-5px);
 
     i {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--color-text-muted);
     }
   }
@@ -168,8 +168,8 @@
   .supplement-item {
     display: flex;
     align-items: center;
-    gap: var(--space-3, 12px);
-    padding: var(--space-2, 8px) var(--space-5, 20px);
+    gap: var(--space-3, var(--ds-font-size-xs));
+    padding: var(--space-2, 8px) var(--space-5, var(--ds-font-size-xl));
     cursor: pointer;
     transition: background-color 150ms ease;
 
@@ -207,14 +207,14 @@
   }
 
   .item-name {
-  font-size: var(--font-body-sm-size, 14px);
-    font-weight: var(--font-weight-medium, 500);
+  font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-primary);
     transition: color var(--transition-fast) var(--ease-standard);
   }
 
   .item-dosage {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
     color: var(--color-text-secondary);
   }
 
@@ -223,7 +223,7 @@
   // =============================================
 
   .supplement-empty {
-    padding: var(--space-8, 32px) var(--space-5, 20px);
+    padding: var(--space-8, var(--ds-font-size-3xl)) var(--space-5, var(--ds-font-size-xl));
     text-align: center;
     flex: 1;
     display: flex;
@@ -232,16 +232,16 @@
     justify-content: center;
 
     i {
-      font-size: var(--font-size-metric-lg);
+      font-size: var(--ds-font-size-3xl);
       color: var(--color-text-muted);
-      margin-bottom: var(--space-3, 12px);
+      margin-bottom: var(--space-3, var(--ds-font-size-xs));
       display: block;
     }
 
     p {
-      margin: 0 0 var(--space-4, 16px) 0;
+      margin: 0 0 var(--space-4, var(--ds-font-size-md)) 0;
       color: var(--color-text-secondary);
-    font-size: var(--font-body-sm-size, 14px);
+    font-size: var(--ds-font-size-sm);
     }
   }
 
@@ -252,7 +252,7 @@
   .dialog-form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4, 16px);
+    gap: var(--space-4, var(--ds-font-size-md));
   }
 
   .form-field {
@@ -261,8 +261,8 @@
     gap: var(--space-2, 8px);
 
     label {
-    font-size: var(--font-body-sm-size, 14px);
-      font-weight: var(--font-weight-medium, 500);
+    font-size: var(--ds-font-size-sm);
+      font-weight: var(--ds-font-weight-medium);
       color: var(--color-text-primary);
     }
 
@@ -276,7 +276,7 @@
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-4, 16px);
+    gap: var(--space-4, var(--ds-font-size-md));
 
     @include respond-to(sm) {
       grid-template-columns: 1fr;
@@ -295,7 +295,7 @@
  * Status: Permanent - Component requirement
  */
   .category-tag {
-  font-size: var(--font-caption-size, 11px);
+  font-size: var(--ds-font-size-xs);
     padding: var(--space-1, 4px) var(--space-2, 8px);
   }
 
@@ -313,8 +313,8 @@
     .supplement-header {
       flex-direction: column;
       align-items: flex-start;
-      gap: var(--space-3, 12px);
-      padding: var(--space-4, 16px);
+      gap: var(--space-3, var(--ds-font-size-xs));
+      padding: var(--space-4, var(--ds-font-size-md));
     }
 
     .header-actions {
@@ -323,11 +323,11 @@
     }
 
     .supplement-item {
-      padding: var(--space-3, 12px) var(--space-4, 16px);
+      padding: var(--space-3, var(--ds-font-size-xs)) var(--space-4, var(--ds-font-size-md));
     }
 
     .supplement-progress {
-      padding: var(--space-3, 12px) var(--space-4, 16px);
+      padding: var(--space-3, var(--ds-font-size-xs)) var(--space-4, var(--ds-font-size-md));
     }
   }
 

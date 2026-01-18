@@ -121,14 +121,14 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
       }
 
       .decision-card__summary h4 {
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
         margin: 0 0 var(--space-2) 0;
       }
 
       .decision-card__summary p {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
         margin: 0;
       }
@@ -137,7 +137,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -149,7 +149,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
         padding: var(--space-1) var(--space-2);
         background: var(--surface-secondary);
         border-radius: var(--radius-sm);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         margin-left: var(--space-1);
       }
 
@@ -168,7 +168,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 

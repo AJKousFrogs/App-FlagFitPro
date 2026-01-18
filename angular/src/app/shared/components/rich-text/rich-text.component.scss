@@ -67,8 +67,8 @@
   max-height: 400px;
   overflow-y: auto;
   padding: var(--space-4);
-  font-size: var(--font-size-body);
-  line-height: var(--line-height-base);
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-line-height-normal);
   color: var(--color-text-primary);
   outline: none;
 }
@@ -98,11 +98,11 @@
 }
 
 .form-help {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .form-error {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-status-error);
 }

@@ -79,9 +79,9 @@ export interface SelectOption<T = unknown> {
       }
 
       label {
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--p-text-color);
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
       }
 
       .form-control {
@@ -89,7 +89,7 @@ export interface SelectOption<T = unknown> {
         padding: 0.75rem;
         border: 1px solid var(--p-surface-border);
         border-radius: var(--p-border-radius);
-        font-size: 1rem;
+        font-size: var(--ds-font-size-md);
         background-color: var(--surface-primary);
         color: var(--p-text-color);
         transition:
@@ -134,7 +134,7 @@ export interface SelectOption<T = unknown> {
       }
 
       .form-error {
-        font-size: 0.75rem;
+        font-size: var(--ds-font-size-xs);
         color: var(--p-error-color);
       }
     `,

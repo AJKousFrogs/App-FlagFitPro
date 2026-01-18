@@ -103,7 +103,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-5, 1.25rem);
+  padding: var(--space-5, var(--ds-font-size-xl));
   border-bottom: 1px solid
     var(--color-border-secondary, var(--color-border-primary));
   background: var(--surface-secondary, var(--surface-secondary));
@@ -111,8 +111,8 @@
 
 .drawer-title {
   margin: 0;
-  font-size: var(--font-h3-size, 1.25rem);
-  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary, var(--color-text-primary));
 }
 
@@ -157,7 +157,7 @@
 
 .drawer-content {
   flex: 1;
-  padding: var(--space-5, 1.25rem);
+  padding: var(--space-5, var(--ds-font-size-xl));
   overflow-y: auto;
 }
 

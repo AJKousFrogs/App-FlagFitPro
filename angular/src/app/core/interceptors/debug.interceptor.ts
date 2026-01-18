@@ -30,7 +30,7 @@ export const debugInterceptor: HttpInterceptorFn = (
   // Log the outgoing request
   console.group(
     `%c🌐 HTTP ${req.method} ${req.url}`,
-    "color: #2196f3; font-weight: bold;",
+    "color: #2196f3; font-weight: var(--ds-font-weight-bold);",
   );
   console.log("Request:", {
     url: req.url,
@@ -68,7 +68,7 @@ export const debugInterceptor: HttpInterceptorFn = (
         if (duration > 2000) {
           console.warn(
             `%c⚠️ Slow API call detected: ${req.url}`,
-            "color: #ff9800; font-weight: bold;",
+            "color: #ff9800; font-weight: var(--ds-font-weight-bold);",
             `${duration.toFixed(2)}ms`,
           );
         }
@@ -109,7 +109,7 @@ export const debugInterceptor: HttpInterceptorFn = (
       if (error.status === 0) {
         console.error(
           "%c❌ Network Error: Request failed to reach server",
-          "color: #f44336; font-weight: bold;",
+          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
         );
         console.log("Possible causes:");
         console.log("  - CORS issue");
@@ -119,7 +119,7 @@ export const debugInterceptor: HttpInterceptorFn = (
       } else if (error.status === 401) {
         console.error(
           "%c🔒 Authentication Error: Unauthorized",
-          "color: #f44336; font-weight: bold;",
+          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
         );
         console.log("Check:");
         console.log("  - Auth token validity");
@@ -128,7 +128,7 @@ export const debugInterceptor: HttpInterceptorFn = (
       } else if (error.status === 403) {
         console.error(
           "%c🚫 Authorization Error: Forbidden",
-          "color: #f44336; font-weight: bold;",
+          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
         );
         console.log("Check:");
         console.log("  - User permissions");
@@ -137,7 +137,7 @@ export const debugInterceptor: HttpInterceptorFn = (
       } else if (error.status === 404) {
         console.error(
           "%c🔍 Not Found Error: Resource not found",
-          "color: #f44336; font-weight: bold;",
+          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
         );
         console.log("Check:");
         console.log("  - API endpoint URL");
@@ -146,7 +146,7 @@ export const debugInterceptor: HttpInterceptorFn = (
       } else if (error.status >= 500) {
         console.error(
           "%c💥 Server Error: Internal server error",
-          "color: #f44336; font-weight: bold;",
+          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
         );
         console.log("Check:");
         console.log("  - Backend server logs");

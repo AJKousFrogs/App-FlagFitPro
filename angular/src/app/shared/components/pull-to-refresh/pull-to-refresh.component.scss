@@ -44,12 +44,12 @@
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-md);
   color: var(--color-brand-primary);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .indicator-content i {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .pull-content {

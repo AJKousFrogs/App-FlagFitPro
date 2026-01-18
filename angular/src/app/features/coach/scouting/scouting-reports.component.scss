@@ -16,7 +16,7 @@
   color: var(--text-color-secondary);
 
   i {
-    font-size: var(--font-size-metric-md);
+    font-size: var(--ds-font-size-2xl);
   }
 }
 
@@ -31,8 +31,8 @@
 
   h3 {
     margin: 0;
-    font-size: var(--font-size-h2);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-semibold);
   }
 }
 
@@ -69,12 +69,12 @@
       flex-direction: column;
 
       .opponent-name {
-        font-weight: var(--font-weight-semibold);
-        font-size: var(--font-body-size);
+        font-weight: var(--ds-font-weight-semibold);
+        font-size: var(--ds-font-size-md);
       }
 
       .game-date {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--text-color-secondary);
       }
     }
@@ -83,7 +83,7 @@
   .report-summary {
     p {
       margin: 0;
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--text-color-secondary);
       display: -webkit-box;
       -webkit-line-clamp: 3;
@@ -105,7 +105,7 @@
       display: flex;
       align-items: center;
       gap: var(--ds-spacing-xs);
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--text-color-secondary);
     }
 
@@ -113,9 +113,9 @@
       display: flex;
       align-items: center;
       gap: var(--ds-spacing-xs);
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--red-600);
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--ds-font-weight-medium);
     }
   }
 }
@@ -142,18 +142,18 @@
       flex-direction: column;
 
       .team-name {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .conference {
-        font-size: var(--font-size-badge);
+        font-size: var(--ds-font-size-xs);
         color: var(--text-color-secondary);
       }
     }
 
     .record {
-      font-size: var(--font-size-h2);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--ds-font-size-2xl);
+      font-weight: var(--ds-font-weight-bold);
       color: var(--primary-color);
     }
   }
@@ -165,13 +165,13 @@
       padding: var(--ds-spacing-xs) 0;
 
       .label {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--text-color-secondary);
       }
 
       .value {
-        font-size: var(--font-size-h4);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-medium);
       }
     }
 
@@ -179,7 +179,7 @@
       margin-top: var(--ds-spacing-md);
 
       .label {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--text-color-secondary);
         display: block;
         margin-bottom: var(--ds-spacing-xs);
@@ -191,7 +191,7 @@
         gap: var(--ds-spacing-xs);
 
         .player-badge {
-          font-size: var(--font-size-badge);
+          font-size: var(--ds-font-size-xs);
           padding: var(--space-1) var(--space-2);
           border-radius: var(--ds-radius-sm);
           background: var(--surface-ground);
@@ -214,7 +214,7 @@
         }
 
         .more-players {
-          font-size: var(--font-size-badge);
+          font-size: var(--ds-font-size-xs);
           color: var(--text-color-secondary);
         }
       }
@@ -228,13 +228,13 @@
       gap: var(--ds-spacing-sm);
 
       .label {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--text-color-secondary);
       }
 
       .value {
-        font-size: var(--font-size-h4);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-medium);
       }
     }
   }
@@ -257,7 +257,7 @@
 
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--text-color-secondary);
       display: flex;
       align-items: center;
@@ -295,8 +295,8 @@
       gap: var(--ds-spacing-sm);
 
       .formation-name {
-        font-size: var(--font-size-h4);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .bar-container {
@@ -318,8 +318,8 @@
       }
 
       .percentage {
-        font-size: var(--font-size-h4);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         text-align: right;
       }
     }
@@ -338,11 +338,11 @@
       border-radius: var(--ds-radius-sm);
 
       .type-name {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
       }
 
       .type-value {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--primary-color);
       }
     }
@@ -354,7 +354,7 @@
 
     li {
       margin-bottom: var(--ds-spacing-xs);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
     }
   }
 
@@ -370,11 +370,11 @@
       }
 
       .target-name {
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .target-share {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--text-color-secondary);
       }
     }
@@ -387,13 +387,13 @@
     margin-bottom: var(--ds-spacing-sm);
 
     .rate-value {
-      font-size: var(--font-size-metric-md);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--ds-font-size-2xl);
+      font-weight: var(--ds-font-weight-bold);
       color: var(--red-600);
     }
 
     .rate-label {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--text-color-secondary);
     }
   }
@@ -407,7 +407,7 @@
     color: var(--text-color-secondary);
 
     i {
-      font-size: var(--font-h1-size);
+      font-size: var(--ds-font-size-3xl);
       margin-bottom: var(--ds-spacing-md);
       opacity: var(--opacity-dimmed);
     }
@@ -444,7 +444,7 @@
 
     p {
       margin: 0;
-      line-height: 1.6;
+      line-height: var(--ds-line-height-1-6);
     }
   }
 
@@ -456,7 +456,7 @@
     .plan-item {
       h5 {
         margin: 0 0 var(--ds-spacing-sm);
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--text-color-secondary);
       }
 
@@ -482,7 +482,7 @@
       margin-bottom: var(--ds-spacing-sm);
 
       .our-player {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--primary-color);
       }
 
@@ -491,13 +491,13 @@
       }
 
       .their-player {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--red-600);
       }
 
       .matchup-notes {
         margin-left: auto;
-        font-size: var(--font-size-badge);
+        font-size: var(--ds-font-size-xs);
         color: var(--text-color-secondary);
         font-style: italic;
       }
@@ -518,8 +518,8 @@
     gap: var(--ds-spacing-xs);
 
     label {
-      font-weight: var(--font-weight-medium);
-      font-size: var(--font-size-h4);
+      font-weight: var(--ds-font-weight-medium);
+      font-size: var(--ds-font-size-md);
     }
   }
 
@@ -530,7 +530,7 @@
 
     h4 {
       margin: 0 0 var(--ds-spacing-md);
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
     }
 
     .form-group {
@@ -566,7 +566,7 @@
   padding: var(--ds-spacing-3xl);
 
   i {
-    font-size: var(--font-h1-size);
+    font-size: var(--ds-font-size-3xl);
     color: var(--text-color-secondary);
     opacity: 0.5;
     margin-bottom: var(--ds-spacing-md);

@@ -9,11 +9,11 @@
 
 import { Injectable, computed, inject, signal } from "@angular/core";
 import {
-  ActivityItem,
-  DashboardData,
-  DashboardDataService,
-  DashboardStats,
-  UpcomingSession,
+    ActivityItem,
+    DashboardData,
+    DashboardDataService,
+    DashboardStats,
+    UpcomingSession,
 } from "../services/data/dashboard-data.service";
 import { BaseViewModel } from "./base.view-model";
 
@@ -41,7 +41,8 @@ export class DashboardViewModel extends BaseViewModel {
     () => this.stats()?.performanceScore ?? 0,
   );
   readonly weeklyLoad = computed(() => this.stats()?.weeklyLoad ?? 0);
-  readonly acwr = computed(() => this.stats()?.acwr ?? 0);
+  // CRITICAL: Return null when no ACWR data - do not use fake defaults
+  readonly acwr = computed(() => this.stats()?.acwr ?? null);
 
   /**
    * Initialize dashboard - loads all data

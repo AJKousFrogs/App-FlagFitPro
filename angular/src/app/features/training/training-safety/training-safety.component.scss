@@ -52,13 +52,13 @@
 
 .metric-value {
   display: block;
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
 }
 
 .metric-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -76,12 +76,12 @@
 }
 
 .detail-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .detail-value {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -92,7 +92,7 @@
 }
 
 .capacity-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   text-align: center;
 }
@@ -112,7 +112,7 @@
 .limit-header {
   display: flex;
   justify-content: space-between;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .limit-type {
@@ -120,7 +120,7 @@
 }
 
 .limit-count {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
 }
 
@@ -163,13 +163,13 @@
 }
 
 .rec-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .rec-content h4 {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .rec-content p {
@@ -186,7 +186,7 @@
 
 .no-recommendations i,
 .no-rtp i {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   color: var(--ds-primary-green);
   margin-bottom: var(--space-4);
   display: block;
@@ -234,13 +234,13 @@
 
 .summary-value {
   display: block;
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
 }
 
 .summary-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -250,14 +250,14 @@
 }
 
 .insufficient-data-notice i {
-  font-size: var(--font-size-metric-lg);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-3);
 }
 
 .insufficient-data-notice h4 {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   margin: 0 0 var(--space-2) 0;
   color: var(--color-text-primary);
 }
@@ -265,7 +265,7 @@
 .insufficient-data-notice p {
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-4) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 @include respond-to(md) {

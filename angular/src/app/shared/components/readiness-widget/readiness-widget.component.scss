@@ -4,17 +4,17 @@
 // ============================================================================
 
 .score-value {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   margin-bottom: var(--space-2);
 }
 
 .score-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .suggestion-text {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .metric-item {
@@ -26,7 +26,7 @@
 }
 
 .metric-value {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
 }
 
 .component-item {

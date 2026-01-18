@@ -501,7 +501,7 @@ export const MigrationExamples: Story = {
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
             <div>
               <h4 style="margin-bottom: 8px; color: var(--color-text-secondary);">Before (PrimeNG)</h4>
-              <pre style="background: var(--surface-secondary); padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto;">
+              <pre style="background: var(--surface-secondary); padding: 12px; border-radius: 8px; font-size: var(--ds-font-size-xs); overflow-x: auto;">
 &lt;p-button label="Save" (onClick)="save()"&gt;&lt;/p-button&gt;
 &lt;p-button label="Delete" severity="danger"&gt;&lt;/p-button&gt;
 &lt;p-button label="Cancel" [outlined]="true"&gt;&lt;/p-button&gt;
@@ -511,7 +511,7 @@ export const MigrationExamples: Story = {
             
             <div>
               <h4 style="margin-bottom: 8px; color: var(--color-text-secondary);">After (App Button)</h4>
-              <pre style="background: var(--surface-secondary); padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto;">
+              <pre style="background: var(--surface-secondary); padding: 12px; border-radius: 8px; font-size: var(--ds-font-size-xs); overflow-x: auto;">
 &lt;app-button (clicked)="save()"&gt;Save&lt;/app-button&gt;
 &lt;app-button variant="danger"&gt;Delete&lt;/app-button&gt;
 &lt;app-button variant="outlined"&gt;Cancel&lt;/app-button&gt;

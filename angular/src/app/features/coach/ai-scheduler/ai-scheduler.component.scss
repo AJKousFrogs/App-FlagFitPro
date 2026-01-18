@@ -38,15 +38,15 @@
   margin-bottom: var(--space-4);
 
   .merlin-avatar {
-    font-size: var(--font-h1-size);
+    font-size: var(--ds-font-size-3xl);
     flex-shrink: 0;
   }
 
   .merlin-message {
     h3 {
       margin: 0 0 var(--space-2) 0;
-      font-size: var(--font-body-size);
-      font-weight: var(--font-weight-semibold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--ds-primary-green);
     }
 
@@ -66,14 +66,14 @@
 
   h4 {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
   }
 
   .step-description {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 }
@@ -102,15 +102,15 @@
 
   label {
     display: block;
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-primary);
     margin-bottom: var(--space-1);
   }
 
   .event-info {
     margin-top: var(--space-2);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
 
     strong {
@@ -134,7 +134,7 @@
 
     label {
       cursor: pointer;
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
     }
   }
 }
@@ -154,7 +154,7 @@
 
     label {
       cursor: pointer;
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
     }
   }
 }
@@ -171,8 +171,8 @@
 
     label {
       display: block;
-      font-size: var(--font-size-h4);
-      font-weight: var(--font-weight-medium);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
       color: var(--ds-text-primary);
       margin-bottom: var(--space-1);
     }
@@ -197,7 +197,7 @@
 
     label {
       cursor: pointer;
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
     }
   }
 }
@@ -229,15 +229,15 @@
     border-left: 4px solid var(--ds-primary-green);
 
     .merlin-icon {
-      font-size: var(--font-size-metric-md);
+      font-size: var(--ds-font-size-2xl);
       flex-shrink: 0;
     }
 
     .recommendation-content {
       h3 {
         margin: 0 0 var(--space-2) 0;
-        font-size: var(--font-size-body);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--ds-primary-green);
       }
 
@@ -278,14 +278,14 @@
 
     .phase-dates {
       display: block;
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--ds-text-tertiary);
     }
 
     .phase-name {
       display: block;
-      font-size: var(--font-size-h4);
-      font-weight: var(--font-weight-semibold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--ds-text-primary);
     }
   }
@@ -294,7 +294,7 @@
     .load-label {
       display: block;
       margin-top: var(--space-1);
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--ds-text-secondary);
     }
   }
@@ -328,19 +328,19 @@
 
   .day-name {
     display: block;
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--ds-font-weight-bold);
     color: var(--ds-text-primary);
   }
 
   .day-date {
     display: block;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 
   .item-time {
     display: block;
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-tertiary);
   }
 }
@@ -355,19 +355,19 @@
     margin-bottom: var(--space-2);
 
     .session-icon {
-      font-size: var(--font-size-h2);
+      font-size: var(--ds-font-size-2xl);
     }
 
     h4 {
       margin: 0;
       flex: 1;
-      font-size: var(--font-size-body);
-      font-weight: var(--font-weight-semibold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--ds-text-primary);
     }
 
     .session-duration {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--ds-text-tertiary);
     }
   }
@@ -375,7 +375,7 @@
   .session-activities {
     margin: 0 0 var(--space-2) 0;
     padding-left: var(--space-4);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
 
     li {
@@ -386,13 +386,13 @@
   .session-meta {
     display: flex;
     gap: var(--space-3);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-tertiary);
   }
 
   .session-location {
     margin: var(--space-2) 0 0 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 }
@@ -417,8 +417,8 @@
 
   h4 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
   }
 }
@@ -437,7 +437,7 @@
 
   p {
     margin: 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
 
     &.cleared {

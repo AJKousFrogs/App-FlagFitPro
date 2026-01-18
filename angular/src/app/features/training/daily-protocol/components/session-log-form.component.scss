@@ -8,25 +8,25 @@
 .session-log-form {
   background: var(--surface-primary);
   border: 1px solid var(--primitive-neutral-200);
-  border-radius: var(--radius-xl, 12px);
-  padding: var(--space-5, 20px);
-  margin-top: var(--space-4, 16px);
+  border-radius: var(--radius-xl, var(--ds-font-size-xs));
+  padding: var(--space-5, var(--ds-font-size-xl));
+  margin-top: var(--space-4, var(--ds-font-size-md));
 }
 
 .form-header {
-  margin-bottom: var(--space-5, 20px);
+  margin-bottom: var(--space-5, var(--ds-font-size-xl));
 }
 
 .form-header h4 {
   margin: 0 0 var(--space-1, 4px) 0;
-  font-size: var(--font-body-size, 18px);
-  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .form-header p {
   margin: 0;
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 
@@ -34,8 +34,8 @@
 .form-fields {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5, 20px);
-  margin-bottom: var(--space-5, 20px);
+  gap: var(--space-5, var(--ds-font-size-xl));
+  margin-bottom: var(--space-5, var(--ds-font-size-xl));
 }
 
 .form-field {
@@ -45,8 +45,8 @@
 }
 
 .form-field label {
-  font-size: var(--font-body-sm-size, 14px);
-  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -57,7 +57,7 @@
 /* Info icon for tooltips (UX Audit Fix #7) */
 .info-icon {
   color: var(--color-text-tertiary);
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   cursor: help;
   transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
   margin-left: var(--space-1, 4px);
@@ -68,7 +68,7 @@
 }
 
 .rpe-description {
-  font-weight: var(--font-weight-normal, 400);
+  font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-secondary);
 }
 
@@ -76,14 +76,14 @@
 .rpe-slider-container {
   display: flex;
   align-items: center;
-  gap: var(--space-3, 12px);
-  padding: var(--space-4, 16px);
+  gap: var(--space-3, var(--ds-font-size-xs));
+  padding: var(--space-4, var(--ds-font-size-md));
   background: var(--primitive-neutral-50);
   border-radius: var(--radius-lg, 8px);
 }
 
 .rpe-emoji {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .rpe-slider {
@@ -94,8 +94,8 @@
 
 .rpe-value {
   text-align: center;
-  font-size: var(--font-h4-size, 20px);
-  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
   margin-top: var(--space-2, 8px);
 }
@@ -104,7 +104,7 @@
 .duration-input-row {
   display: flex;
   align-items: center;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
 }
 
 .duration-input {
@@ -112,7 +112,7 @@
 }
 
 .expected-duration {
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 
@@ -127,10 +127,10 @@
 /* Notes */
 .notes-textarea {
   width: 100%;
-  padding: var(--space-3, 12px);
+  padding: var(--space-3, var(--ds-font-size-xs));
   border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-lg, 8px);
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   resize: vertical;
   transition: border-color var(--transition-fast) var(--ease-standard);
 }
@@ -145,8 +145,8 @@
 .load-preview {
   background: var(--ds-primary-green-subtle);
   border-radius: var(--radius-lg, 8px);
-  padding: var(--space-4, 16px);
-  margin-bottom: var(--space-5, 20px);
+  padding: var(--space-4, var(--ds-font-size-md));
+  margin-bottom: var(--space-5, var(--ds-font-size-xl));
 }
 
 .load-item {
@@ -157,19 +157,19 @@
 }
 
 .load-label {
-  font-size: var(--font-body-sm-size, 14px);
-  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--ds-primary-green-hover);
 }
 
 .load-value {
-  font-size: var(--font-h3-size, 24px);
-  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
 }
 
 .load-formula {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--ds-primary-green-hover);
   opacity: 0.8;
 }

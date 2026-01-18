@@ -43,12 +43,12 @@
 }
 
 .consent-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--primitive-info-600);
 }
 
 .consent-blocked.card .consent-icon i {
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .consent-content {
@@ -57,21 +57,21 @@
 
 .consent-title {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .consent-message {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .consent-reason {
   margin: 0;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   font-style: italic;
 }
@@ -84,7 +84,7 @@
 
 .action-text {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -92,8 +92,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-brand-primary);
   text-decoration: none;
   transition: color 0.2s;
@@ -105,5 +105,5 @@
 }
 
 .action-link i {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }

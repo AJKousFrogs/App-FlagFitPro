@@ -555,17 +555,63 @@ export class LoadMonitoringService {
 
   /**
    * Calculate readiness score from wellness metrics
-   * Returns 0-100 score indicating player readiness
+   * Returns 0-100 score indicating player readiness, or null if required data is missing
+   * 
+   * IMPORTANT: Do NOT use default values. Returns null if required data is missing.
+   * Required: sleepQuality AND energyLevel (minimum for valid calculation)
+   * 
+   * Evidence-based weights (team-sport optimized):
+   * - Sleep Quality: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
+   * - Energy Level: 25% (correlates with perceived performance)
+   * - Stress Level: 25% (inverted - lower stress = better readiness)
+   * - Muscle Soreness: 20% (inverted - lower soreness = better readiness)
    */
-  public calculateReadinessScore(wellness: WellnessMetrics): number {
-    const score =
-      wellness.sleepQuality * 15 + // 15%
-      (wellness.sleepDuration >= 7 ? 15 : wellness.sleepDuration * 2.14) + // 15%
-      wellness.muscleSoreness * 10 + // 10%
-      (10 - wellness.stressLevel) * 10 + // 10%
-      wellness.energyLevel * 25 + // 25%
-      wellness.mood * 25; // 25%
+  public calculateReadinessScore(wellness: WellnessMetrics): number | null {
+    // CRITICAL: Require at least sleep quality AND energy level
+    // DO NOT use defaults - user must provide real data
+    if (
+      wellness.sleepQuality === undefined ||
+      wellness.sleepQuality === null ||
+      wellness.energyLevel === undefined ||
+      wellness.energyLevel === null
+    ) {
+      return null;
+    }
 
-    return Math.round(Math.min(100, score));
+    // All values on 0-10 scale, convert to 0-100
+    const sleepScore = (wellness.sleepQuality / 10) * 100;
+    const energyScore = (wellness.energyLevel / 10) * 100;
+
+    // Check which optional metrics are available
+    const hasStress =
+      wellness.stressLevel !== undefined && wellness.stressLevel !== null;
+    const hasSoreness =
+      wellness.muscleSoreness !== undefined && wellness.muscleSoreness !== null;
+
+    let score: number;
+
+    if (hasStress && hasSoreness) {
+      // Full calculation
+      const stressScore = ((10 - wellness.stressLevel) / 10) * 100; // Invert
+      const sorenessScore = ((10 - wellness.muscleSoreness) / 10) * 100; // Invert
+      score =
+        sleepScore * 0.3 +
+        energyScore * 0.25 +
+        stressScore * 0.25 +
+        sorenessScore * 0.2;
+    } else if (hasStress) {
+      // Sleep, energy, stress only
+      const stressScore = ((10 - wellness.stressLevel) / 10) * 100;
+      score = sleepScore * 0.375 + energyScore * 0.3125 + stressScore * 0.3125;
+    } else if (hasSoreness) {
+      // Sleep, energy, soreness only
+      const sorenessScore = ((10 - wellness.muscleSoreness) / 10) * 100;
+      score = sleepScore * 0.4 + energyScore * 0.333 + sorenessScore * 0.267;
+    } else {
+      // Minimal: sleep and energy only
+      score = sleepScore * 0.55 + energyScore * 0.45;
+    }
+
+    return Math.round(Math.min(100, Math.max(0, score)));
   }
 }

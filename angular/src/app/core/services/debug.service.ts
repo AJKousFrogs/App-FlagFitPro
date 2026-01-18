@@ -88,11 +88,11 @@ export class DebugService {
 
       console.log(
         "%c🔧 Angular Debug Mode Enabled",
-        "color: #00ff00; font-weight: bold; font-size: 14px;",
+        "color: #00ff00; font-weight: var(--ds-font-weight-bold); font-size: var(--ds-font-size-sm);",
       );
       console.log(
         "%cAccess debug utilities via window.angularDebug",
-        "color: #00aaff; font-size: 12px;",
+        "color: #00aaff; font-size: var(--ds-font-size-xs);",
       );
       console.log("Available commands:");
       console.log("  - window.angularDebug.getSignalLogs()");
@@ -127,7 +127,7 @@ export class DebugService {
       const componentPrefix = componentName ? `[${componentName}]` : "";
       console.log(
         `%c📊 Signal Update ${componentPrefix} ${signalName}`,
-        "color: #ff9800; font-weight: bold;",
+        "color: #ff9800; font-weight: var(--ds-font-weight-bold);",
         value,
       );
 
@@ -165,7 +165,7 @@ export class DebugService {
       const componentPrefix = componentName ? `[${componentName}]` : "";
       console.log(
         `%c⚡ Effect Executed ${componentPrefix} ${effectName}`,
-        "color: #9c27b0; font-weight: bold;",
+        "color: #9c27b0; font-weight: var(--ds-font-weight-bold);",
         `(${duration.toFixed(2)}ms)`,
       );
 
@@ -204,7 +204,7 @@ export class DebugService {
 
     console.log(
       `%c🌐 API Call ${method} ${statusText}`,
-      `color: ${statusColor}; font-weight: bold;`,
+      `color: ${statusColor}; font-weight: var(--ds-font-weight-bold);`,
       {
         url,
         duration: duration ? `${duration.toFixed(2)}ms` : "N/A",
@@ -225,7 +225,7 @@ export class DebugService {
 
     console.log(
       `%c🔄 Lifecycle [${componentName}] ${event}`,
-      "color: #2196f3; font-weight: bold;",
+      "color: #2196f3; font-weight: var(--ds-font-weight-bold);",
       data || "",
     );
   }
@@ -242,7 +242,7 @@ export class DebugService {
 
     console.log(
       `%c${prefix} Performance: ${label}`,
-      `color: ${color}; font-weight: bold;`,
+      `color: ${color}; font-weight: var(--ds-font-weight-bold);`,
       `${duration.toFixed(2)}ms`,
     );
 

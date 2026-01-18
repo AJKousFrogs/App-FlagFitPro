@@ -53,25 +53,25 @@
 }
 
 .cookie-icon {
-  font-size: var(--font-size-metric-lg);
-  line-height: 1;
+  font-size: var(--ds-font-size-3xl);
+  line-height: var(--ds-line-height-1);
 }
 
 .cookie-title {
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-extrabold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--ds-letter-spacing-tight);
 }
 
 /* ================================
  DESCRIPTION
  ================================ */
 .cookie-description {
-  font-size: var(--font-size-h3);
+  font-size: var(--ds-font-size-xl);
   color: var(--color-text-secondary);
-  line-height: 1.7;
+  line-height: var(--ds-line-height-1-7);
   margin: 0;
   max-width: 85ch;
 }
@@ -80,7 +80,7 @@
   color: var(--ds-primary-green-dark); /* Darker green for better contrast: #036d35 (7.2:1 on white) */
   text-decoration: underline;
   text-underline-offset: var(--space-1);
-  font-weight: var(--font-weight-medium); /* Slightly bolder for better visibility */
+  font-weight: var(--ds-font-weight-medium); /* Slightly bolder for better visibility */
 }
 
 .cookie-link:hover {
@@ -131,13 +131,13 @@
 }
 
 .preference-name {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .preference-description {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -146,8 +146,8 @@
   color: var(--ds-primary-green-hover);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-lg);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 /* Toggle Switch */
@@ -216,7 +216,7 @@
  FOOTER
  ================================ */
 .cookie-footer {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary); /* Changed from tertiary to secondary for better contrast */
   margin: 0;
   padding-top: var(--space-3);
@@ -225,7 +225,7 @@
 }
 
 .club-name {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 /* ================================
@@ -243,11 +243,11 @@
   }
 
   .cookie-title {
-    font-size: var(--font-size-h3);
+    font-size: var(--ds-font-size-xl);
   }
 
   .cookie-description {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 
   .cookie-actions {
@@ -278,11 +278,11 @@
   }
 
   .cookie-icon {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .cookie-title {
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-md);
   }
 }
 

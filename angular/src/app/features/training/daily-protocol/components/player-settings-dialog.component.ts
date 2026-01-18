@@ -179,7 +179,7 @@ interface DayOption {
           </p>
           <p
             class="section-description"
-            style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;"
+            style="font-size: var(--ds-font-size-sm); color: var(--text-secondary); margin-top: 0.5rem;"
           >
             Add your typical training times for reference. This information
             helps coaches understand your availability but does not create team

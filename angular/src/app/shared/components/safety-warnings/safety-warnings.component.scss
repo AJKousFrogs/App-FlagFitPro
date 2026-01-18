@@ -34,14 +34,14 @@
 }
 
 .header-title {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-1) 0;
 }
 
 .header-subtitle {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -132,21 +132,21 @@
 }
 
 .warning-title {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0;
 }
 
 .warning-message {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-2) 0;
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .warning-recommendation {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0;
   padding: var(--space-2);
@@ -159,7 +159,7 @@
   align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .metric-label {
@@ -167,7 +167,7 @@
 }
 
 .metric-value {
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
@@ -190,8 +190,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-3) 0;
 }
@@ -206,10 +206,10 @@
 }
 
 .recommendations-list li {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-2);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .recommendations-list li:last-child {

@@ -310,8 +310,8 @@ import { Textarea } from "primeng/textarea";
       }
 
       .step-panel h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         margin: 0;
       }
 
@@ -325,7 +325,7 @@ import { Textarea } from "primeng/textarea";
       }
 
       .char-count {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
         text-align: right;
       }
@@ -369,7 +369,7 @@ import { Textarea } from "primeng/textarea";
       }
 
       .summary-item label {
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         min-width: 120px;
       }
 

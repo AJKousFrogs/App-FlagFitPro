@@ -31,9 +31,9 @@
 
 .loading-message {
   margin-top: var(--space-4);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 /* Spinner/Inline Variant */
@@ -56,9 +56,9 @@
 }
 
 .loading-message-inline {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 /* Skeleton Variant */
@@ -78,7 +78,7 @@
   margin-top: var(--space-4);
   text-align: center;
   color: var(--color-text-tertiary);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   font-style: italic;
 }
 

@@ -55,7 +55,7 @@
 }
 
 .rating-sm .rating-star {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .rating-lg {
@@ -63,20 +63,20 @@
 }
 
 .rating-lg .rating-star {
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .rating-value {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .form-help {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .form-error {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-status-error);
 }

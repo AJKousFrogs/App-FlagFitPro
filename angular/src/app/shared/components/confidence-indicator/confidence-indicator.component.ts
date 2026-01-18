@@ -138,13 +138,13 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       .score-value {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
       }
 
       .score-label {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -202,9 +202,9 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       .explanation-text {
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
-        line-height: 1.5;
+        line-height: var(--ds-line-height-body);
       }
 
       .missing-inputs {
@@ -212,7 +212,7 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       .missing-inputs strong {
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-primary);
         display: block;
         margin-bottom: var(--space-1);
@@ -223,7 +223,7 @@ import { ButtonComponent } from "../button/button.component";
         padding: 0;
         list-style: disc;
         color: var(--color-text-secondary);
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
       }
 
       .confidence-actions {
@@ -233,7 +233,7 @@ import { ButtonComponent } from "../button/button.component";
       }
 
       .confidence-actions strong {
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-primary);
         display: block;
         margin-bottom: var(--space-2);

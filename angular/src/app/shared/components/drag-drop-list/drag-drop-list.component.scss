@@ -17,8 +17,8 @@
 }
 
 .list-title {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   margin-bottom: var(--space-4);
   color: var(--color-text-primary);
 }
@@ -86,13 +86,13 @@
 }
 
 .item-title {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-1);
 }
 
 .item-description {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 

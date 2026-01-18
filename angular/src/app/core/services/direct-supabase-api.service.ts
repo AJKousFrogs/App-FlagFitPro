@@ -921,34 +921,82 @@ export class DirectSupabaseApiService {
 
   /**
    * Calculate readiness score from wellness data
-   * Uses evidence-based formula similar to backend
+   * 
+   * IMPORTANT: Returns null if required data is missing.
+   * DO NOT use default/mock values - readiness must be calculated from real user input.
+   * 
+   * Required fields: sleepQuality AND energyLevel (minimum for valid calculation)
+   * 
+   * Evidence-based weights:
+   * - Sleep: 30% (strong evidence base - Halson 2014, Fullagar et al. 2015)
+   * - Energy: 25% (correlates with perceived performance)
+   * - Stress: 25% (inverted - lower stress = better readiness)
+   * - Soreness: 20% (inverted - lower soreness = better readiness)
    */
   private calculateReadiness(data: {
     sleepQuality?: number | null;
     energyLevel?: number | null;
     stressLevel?: number | null;
     muscleSoreness?: number | null;
-  }): number {
-    // Default to moderate values if not provided
-    const sleep = data.sleepQuality ?? 5;
-    const energy = data.energyLevel ?? 5;
-    const stress = data.stressLevel ?? 5;
-    const soreness = data.muscleSoreness ?? 3;
+  }): number | null {
+    // CRITICAL: Require at least sleep AND energy for valid readiness calculation
+    // DO NOT use defaults - user must provide real data
+    if (data.sleepQuality === null || data.sleepQuality === undefined ||
+        data.energyLevel === null || data.energyLevel === undefined) {
+      this.logger.warn(
+        "[DirectSupabaseApi] Cannot calculate readiness: missing required fields (sleepQuality and/or energyLevel)"
+      );
+      return null;
+    }
 
-    // Weighted formula (similar to wellness-checkin.cjs)
-    // Higher is better for sleep, energy; lower is better for stress, soreness
+    const sleep = data.sleepQuality;
+    const energy = data.energyLevel;
+    
+    // Stress and soreness are optional but improve accuracy when provided
+    const hasStress = data.stressLevel !== null && data.stressLevel !== undefined;
+    const hasSoreness = data.muscleSoreness !== null && data.muscleSoreness !== undefined;
+
+    // Calculate scores (all on 0-100 scale)
     const sleepScore = (sleep / 10) * 100;
     const energyScore = (energy / 10) * 100;
-    const stressScore = ((10 - stress) / 10) * 100; // Invert stress
-    const sorenessScore = ((10 - soreness) / 10) * 100; // Invert soreness
 
-    // Weights: sleep 30%, energy 25%, stress 25%, soreness 20%
-    const readiness = Math.round(
-      sleepScore * 0.3 +
-      energyScore * 0.25 +
-      stressScore * 0.25 +
-      sorenessScore * 0.2
-    );
+    let readiness: number;
+    
+    if (hasStress && hasSoreness) {
+      // Full calculation with all 4 metrics
+      const stressScore = ((10 - data.stressLevel!) / 10) * 100; // Invert stress
+      const sorenessScore = ((10 - data.muscleSoreness!) / 10) * 100; // Invert soreness
+      
+      readiness = Math.round(
+        sleepScore * 0.30 +
+        energyScore * 0.25 +
+        stressScore * 0.25 +
+        sorenessScore * 0.20
+      );
+    } else if (hasStress) {
+      // Calculation with sleep, energy, stress (redistribute soreness weight)
+      const stressScore = ((10 - data.stressLevel!) / 10) * 100;
+      readiness = Math.round(
+        sleepScore * 0.375 +  // 30 + (20 * 30/80)
+        energyScore * 0.3125 + // 25 + (20 * 25/80)
+        stressScore * 0.3125   // 25 + (20 * 25/80)
+      );
+    } else if (hasSoreness) {
+      // Calculation with sleep, energy, soreness (redistribute stress weight)
+      const sorenessScore = ((10 - data.muscleSoreness!) / 10) * 100;
+      readiness = Math.round(
+        sleepScore * 0.40 +   // 30 + (25 * 30/75)
+        energyScore * 0.333 + // 25 + (25 * 25/75)
+        sorenessScore * 0.267 // 20 + (25 * 20/75)
+      );
+    } else {
+      // Minimal calculation with just sleep and energy
+      // Weights: sleep 55%, energy 45% (based on relative original weights)
+      readiness = Math.round(
+        sleepScore * 0.55 +
+        energyScore * 0.45
+      );
+    }
 
     return Math.max(0, Math.min(100, readiness));
   }

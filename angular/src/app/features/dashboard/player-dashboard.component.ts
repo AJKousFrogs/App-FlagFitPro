@@ -1098,22 +1098,22 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .no-program-icon i {
-        font-size: var(--font-h1-size);
+        font-size: var(--ds-font-size-3xl);
       }
 
       .no-program-title {
-        font-size: var(--font-size-xl);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-color);
         margin: 0;
       }
 
       .no-program-message {
-        font-size: var(--font-size-sm);
+        font-size: var(--ds-font-size-sm);
         color: var(--text-color-secondary);
         max-width: var(--content-max-width-sm);
         margin: 0;
-        line-height: 1.5;
+        line-height: var(--ds-line-height-body);
       }
 
       .no-program-actions {
@@ -1183,13 +1183,13 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .checklist-label {
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-primary);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
       }
 
       .checklist-status {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
@@ -1204,8 +1204,8 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .next-steps-title {
-        font-size: var(--font-body-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         margin: 0 0 var(--space-3) 0;
         color: var(--color-text-primary);
       }
@@ -1218,20 +1218,20 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .next-steps-list li {
         margin-bottom: var(--space-2);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-primary);
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
       }
 
       .next-steps-message {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-primary);
         margin: 0 0 var(--space-3) 0;
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
       }
 
       .next-steps-tip {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
         margin: 0;
         padding: var(--space-3);
@@ -1247,7 +1247,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         padding: var(--space-3);
         background: var(--surface-ground);
         border-radius: var(--radius-md);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
         margin-top: var(--space-4);
       }
@@ -1311,7 +1311,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .announcement-icon {
-        font-size: var(--font-size-h2);
+        font-size: var(--ds-font-size-2xl);
         flex-shrink: 0;
         color: var(--color-text-on-primary);
         width: var(--space-10);
@@ -1324,13 +1324,13 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .announcement-message {
-        font-weight: var(--font-weight-semibold);
-        font-size: var(--font-body-size);
+        font-weight: var(--ds-font-weight-semibold);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-on-primary);
       }
 
       .announcement-meta {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-on-primary);
         opacity: 0.85;
         margin-left: 0;
@@ -1359,7 +1359,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--font-h2-size);
+        font-size: var(--ds-font-size-2xl);
         color: var(--color-text-on-primary);
         flex-shrink: 0;
       }
@@ -1371,17 +1371,17 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .welcome-greeting {
         margin: 0 0 var(--space-1);
-        font-size: var(--font-h1-size);
-        font-weight: var(--font-h1-weight);
+        font-size: var(--ds-font-size-3xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
-        line-height: var(--font-h1-line-height);
+        line-height: var(--ds-line-height-h1);
       }
 
       .merlin-insight {
         margin: 0 0 var(--space-3);
         color: var(--color-text-muted);
-        font-size: var(--font-body-sm-size);
-        line-height: var(--font-body-sm-line-height);
+        font-size: var(--ds-font-size-sm);
+        line-height: var(--ds-line-height-body-sm);
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -1426,7 +1426,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--font-body-size);
+        font-size: var(--ds-font-size-md);
       }
 
       .readiness-icon {
@@ -1458,19 +1458,19 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .stat-block__value {
-        font-size: var(--font-size-metric-md);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-2xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
-        line-height: var(--line-height-tight);
+        line-height: var(--ds-line-height-tight);
       }
 
       .stat-block__label {
-        font-size: var(--font-caption-size);
-        font-weight: var(--font-caption-weight);
+        font-size: var(--ds-font-size-xs);
+        font-weight: var(--ds-font-size-xs);
         color: var(--color-text-muted);
-        line-height: var(--font-caption-line-height);
-        letter-spacing: var(--letter-spacing-caption);
-        text-transform: uppercase;
+        line-height: var(--ds-font-size-xs);
+        letter-spacing: var(--ds-letter-spacing-caption);
+        text-transform: var(--ds-text-transform-uppercase);
       }
 
       /* Wellness Check-in Status Styles (UX Audit Fix #4) */
@@ -1484,13 +1484,13 @@ Keep logging sessions to unlock this injury prevention metric!'
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         padding: var(--space-2);
         border-radius: var(--radius-sm);
       }
 
       .checkin-status i {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
       }
 
       .checkin-complete {
@@ -1510,8 +1510,8 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .checkin-streak {
         margin-top: var(--space-2);
-        font-size: var(--font-caption-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xs);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--primitive-warning-600);
         padding: var(--space-1) var(--space-2);
         background: var(--color-status-warning-bg);
@@ -1546,16 +1546,16 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .card-header-icon {
-        font-size: var(--font-body-size);
+        font-size: var(--ds-font-size-md);
         color: var(--color-brand-primary);
         opacity: 0.85;
       }
 
       .card-header-title {
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
-        line-height: var(--line-height-tight);
+        line-height: var(--ds-line-height-tight);
         margin: 0;
       }
 
@@ -1584,7 +1584,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         background: var(--surface-tertiary);
         color: var(--color-text-muted);
         border: var(--border-2) solid transparent;
@@ -1609,10 +1609,10 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .day-name {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
-        text-transform: uppercase;
-        font-weight: var(--font-weight-medium);
+        text-transform: var(--ds-text-transform-uppercase);
+        font-weight: var(--ds-font-weight-medium);
         opacity: 0.75;
       }
 
@@ -1623,7 +1623,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .progress-text {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
         text-align: center;
         opacity: 0.75;
@@ -1641,7 +1641,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         justify-content: center;
         background: var(--surface-tertiary);
         color: var(--color-text-muted);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
 
       .timeline-marker.completed {
@@ -1661,8 +1661,8 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .item-time {
-        font-size: var(--font-caption-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xs);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-brand-primary);
         min-width: var(--touch-target-min);
       }
@@ -1675,20 +1675,20 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .item-title {
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-primary);
-        font-size: var(--font-body-sm-size);
-        line-height: 1.3;
+        font-size: var(--ds-font-size-sm);
+        line-height: var(--ds-line-height-h3);
       }
 
       .item-duration {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
         opacity: 0.7;
       }
 
       .more-items {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-muted);
         text-align: center;
         margin: var(--space-1) 0;
@@ -1715,12 +1715,12 @@ Keep logging sessions to unlock this injury prevention metric!'
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: var(--font-body-size);
+        font-size: var(--ds-font-size-md);
         padding: var(--space-4) var(--space-5); /* Inner padding for the message */
       }
 
       .empty-icon {
-        font-size: var(--font-size-h2);
+        font-size: var(--ds-font-size-2xl);
         opacity: 0.7;
       }
 
@@ -1752,8 +1752,8 @@ Keep logging sessions to unlock this injury prevention metric!'
         align-items: center;
         gap: var(--space-2);
         margin-bottom: var(--space-3);
-        font-size: var(--font-body-size);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-primary);
       }
 
@@ -1785,7 +1785,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .event-icon {
-        font-size: var(--font-h2-size);
+        font-size: var(--ds-font-size-2xl);
         flex-shrink: 0;
       }
 
@@ -1798,14 +1798,14 @@ Keep logging sessions to unlock this injury prevention metric!'
 
       .event-details h4 {
         margin: 0;
-        font-size: var(--font-body-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
       }
 
       .event-details p {
         margin: 0;
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -1833,17 +1833,17 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .date-day {
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
-        line-height: 1;
+        line-height: var(--ds-line-height-1);
       }
 
       .date-month {
-        font-size: var(--font-compact-md);
+        font-size: var(--ds-font-size-compact-md);
         color: var(--color-text-secondary);
-        text-transform: uppercase;
-        letter-spacing: var(--letter-spacing-wide);
+        text-transform: var(--ds-text-transform-uppercase);
+        letter-spacing: var(--ds-letter-spacing-wide);
       }
 
       .event-info {
@@ -1855,10 +1855,10 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .event-title {
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-primary);
-        font-size: var(--font-body-sm-size);
-        line-height: 1.3;
+        font-size: var(--ds-font-size-sm);
+        line-height: var(--ds-line-height-h3);
       }
 
       /* ==========================================

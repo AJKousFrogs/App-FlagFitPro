@@ -23,8 +23,8 @@
 .month-title {
   flex: 1;
   text-align: center;
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   margin: 0;
   color: var(--color-text-primary);
 }
@@ -48,8 +48,8 @@
   border: none;
   background: transparent;
   border-radius: var(--radius-md);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   cursor: pointer;
   transition:
     transform var(--transition-fast),
@@ -73,10 +73,10 @@
 
 .weekday {
   text-align: center;
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
   padding: var(--space-2);
 }
 
@@ -136,8 +136,8 @@
 }
 
 .day-number {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -171,9 +171,9 @@
 }
 
 .more-indicator {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 /* Workout type colors */
@@ -209,7 +209,7 @@
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   background: var(--surface-tertiary);
   transition:
     transform var(--transition-fast),
@@ -227,7 +227,7 @@
 }
 
 .workout-item i:first-child {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .workout-title {
@@ -238,13 +238,13 @@
 }
 
 .workout-duration {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .completed-icon {
   color: var(--color-status-success);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .calendar-legend {
@@ -260,7 +260,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -286,13 +286,13 @@
 
 .stat-block__value {
   display: block;
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
 }
 
 .stat-block__label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 

@@ -195,7 +195,7 @@ export type IconButtonSize = "sm" | "md" | "lg";
       }
 
       .icon-btn-sm i {
-        font-size: var(--font-body-sm-size, 14px);
+        font-size: var(--ds-font-size-sm);
       }
 
       .icon-btn-sm .spinner-svg {
@@ -208,11 +208,11 @@ export type IconButtonSize = "sm" | "md" | "lg";
         height: 52px;
         min-width: 52px;
         min-height: 52px;
-        border-radius: var(--radius-xl, 12px);
+        border-radius: var(--radius-xl, var(--ds-font-size-xs));
       }
 
       .icon-btn-lg i {
-        font-size: var(--font-h4-size, 20px);
+        font-size: var(--ds-font-size-md);
       }
 
       .icon-btn-lg .spinner-svg {
@@ -295,8 +295,8 @@ export type IconButtonSize = "sm" | "md" | "lg";
        ================================ */
 
       .icon-btn i {
-        font-size: var(--font-body-size);
-        line-height: 1;
+        font-size: var(--ds-font-size-md);
+        line-height: var(--ds-line-height-1);
       }
 
       /* ================================

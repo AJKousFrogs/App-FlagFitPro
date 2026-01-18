@@ -30,7 +30,7 @@
 }
 
 .banner-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .banner-content {
@@ -39,14 +39,14 @@
 
 .banner-content h3 {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--green-700);
 }
 
 .banner-content p {
   margin: 0.125rem 0 0;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -59,8 +59,8 @@
   padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
   background: var(--orange-100);
   border-radius: var(--radius-lg);
-  font-size: var(--font-body-sm-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 // ============================================================================
@@ -90,26 +90,26 @@
 }
 
 .position-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .position-label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--primary-600);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-5px);
 }
 
 .page-title {
   margin: 0;
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
 }
 
 .page-subtitle {
   margin: 0.25rem 0 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -139,14 +139,14 @@
 }
 
 .readiness-value {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
 }
 
 .readiness-label {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 }
 
 // ============================================================================
@@ -163,12 +163,12 @@
 }
 
 .wellness-alert-banner.compact .alert-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .wellness-alert-banner.compact .alert-content {
   flex: 1;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .wellness-alert-banner.alert-critical {
@@ -214,11 +214,11 @@
 }
 
 .action-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .action-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   text-align: center;
 }
@@ -229,8 +229,8 @@
   right: calc(var(--space-2) * -1);
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   padding: var(--space-1) var(--space-2); /* Compact badge: 4px 8px */
   border-radius: var(--radius-md);
   min-width: 1rem;
@@ -267,7 +267,7 @@
 }
 
 .priority-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .priority-info {
@@ -277,12 +277,12 @@
 }
 
 .priority-title {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
 }
 
 .priority-desc {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -292,11 +292,11 @@
   right: calc(var(--space-2) * -1);
   background: var(--color-status-success);
   color: var(--color-text-on-primary);
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   padding: var(--space-1) var(--space-2); /* Compact badge: 4px 8px */
   border-radius: var(--radius-md);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 }
 
 // ============================================================================
@@ -318,7 +318,7 @@
 
 .section-header h2 {
   margin: 0;
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -356,9 +356,9 @@
 }
 
 .day-abbrev {
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
+  text-transform: var(--ds-text-transform-uppercase);
   color: var(--color-text-secondary);
 }
 
@@ -370,7 +370,7 @@
 }
 
 .day-session-preview {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   text-align: center;
   margin-top: 0.25rem;
@@ -418,7 +418,7 @@
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .workout-info {
@@ -428,12 +428,12 @@
 }
 
 .workout-name {
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-md);
 }
 
 .workout-meta-compact {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -470,12 +470,12 @@
 }
 
 .ach-icon {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .ach-name {
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 // ============================================================================
@@ -505,7 +505,7 @@
 }
 
 .teaser-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .teaser-text {
@@ -514,12 +514,12 @@
 }
 
 .teaser-title {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-body);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
 }
 
 .teaser-subtitle {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   opacity: 0.9;
 }
 
@@ -536,8 +536,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .la28-teaser-content .pi-chevron-right {

@@ -110,7 +110,7 @@ import { getTimeAgo } from "../../utils/date.utils";
       }
 
       .badge-content i {
-        font-size: var(--font-size-h3);
+        font-size: var(--ds-font-size-xl);
         color: var(--color-text-primary);
       }
 
@@ -122,18 +122,18 @@ import { getTimeAgo } from "../../utils/date.utils";
       }
 
       .badge-title {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
       }
 
       .badge-subtitle {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
       }
 
       .status-tag {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
       }
 
       .badge-details {
@@ -148,11 +148,11 @@ import { getTimeAgo } from "../../utils/date.utils";
       .detail-item {
         display: flex;
         gap: var(--space-2);
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
       }
 
       .detail-label {
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-secondary);
         min-width: 120px;
       }

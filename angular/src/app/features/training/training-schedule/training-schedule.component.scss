@@ -44,7 +44,7 @@
 }
 
 .card-empty-state__icon {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
   opacity: 0.5;
@@ -57,14 +57,14 @@
 }
 
 .card-empty-state__title {
-  font-size: var(--font-size-h3);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0;
 }
 
 .card-empty-state__text {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -204,26 +204,26 @@
 }
 
 .stat-item .stat-block__label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--ds-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 
   @include respond-to(md) {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
 }
 
 .stat-item .stat-block__value {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-text-primary);
 
   @include respond-to(md) {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   @include respond-to(sm) {
-    font-size: var(--font-size-h3);
+    font-size: var(--ds-font-size-xl);
   }
 }
 
@@ -232,12 +232,12 @@
 }
 
 .stat-subtitle {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--ds-text-tertiary);
   margin-top: var(--space-1);
 
   @include respond-to(md) {
-    font-size: var(--font-caption-size); // ~12px (closest to 11px)
+    font-size: var(--ds-font-size-xs); // ~12px (closest to 11px)
   }
 }
 
@@ -310,14 +310,14 @@
 
 .session-title {
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .session-date {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(
     --primitive-neutral-600
   ); /* #737373 - ensures readable contrast on light backgrounds */
@@ -325,7 +325,7 @@
 
 .session-duration {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(
     --primitive-neutral-500
   ); /* #a3a3a3 - ensures readable contrast on light backgrounds */
@@ -350,8 +350,8 @@
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
 
   &.status-completed {
     background: var(--color-status-success-subtle);
@@ -384,7 +384,7 @@
 }
 
 .error-icon {
-  font-size: var(--font-size-metric-lg);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-status-error);
 }
 
@@ -394,13 +394,13 @@
   gap: var(--space-2);
 
   strong {
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
   }
 
   p {
     margin: 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
   }
 }
@@ -432,12 +432,12 @@
 }
 
 .session-list-title {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-text-primary);
 
   @include respond-to(md) {
-    font-size: var(--font-size-h1);
+    font-size: var(--ds-font-size-3xl);
   }
 }
 
@@ -519,12 +519,12 @@
 }
 
 .session-date {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-text-primary);
 
   @include respond-to(md) {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -533,13 +533,13 @@
 }
 
 .session-type {
-  font-size: var(--font-size-h3);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-text-primary);
   margin-bottom: var(--space-2);
 
   @include respond-to(md) {
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
     margin-bottom: var(--space-1);
   }
 }
@@ -560,7 +560,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--ds-text-secondary);
 
   i {
@@ -568,7 +568,7 @@
   }
 
   @include respond-to(md) {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
 }
 
@@ -607,16 +607,16 @@
   background: var(--primitive-info-50);
   color: var(--primitive-info-700);
   border-radius: var(--radius-sm);
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   margin-top: var(--space-2);
 
   i {
-    font-size: var(--font-caption-size); // 12px
+    font-size: var(--ds-font-size-xs); // 12px
   }
 
   @include respond-to(md) {
-    font-size: var(--font-caption-size); // 10px
+    font-size: var(--ds-font-size-xs); // 10px
     padding: var(--space-1) var(--space-1);
   }
 }
@@ -667,34 +667,34 @@
   align-items: center;
   justify-content: center;
   margin: 0 auto var(--space-4);
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
 
   @include respond-to(md) {
     width: var(--avatar-size-2xl);
     height: var(--avatar-size-2xl);
-    font-size: var(--font-h1-size);
+    font-size: var(--ds-font-size-3xl);
   }
 }
 
 .empty-title {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-text-primary);
   margin-bottom: var(--space-2);
 
   @include respond-to(md) {
-    font-size: var(--font-size-h1);
+    font-size: var(--ds-font-size-3xl);
   }
 }
 
 .empty-message {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--ds-text-secondary);
   max-width: var(--dialog-max-width-lg);
   margin: 0 auto var(--space-4);
 
   @include respond-to(md) {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -722,15 +722,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   margin: 0;
 }
 
 .legend-today-icon {
   color: var(--ds-primary-green);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .legend-section {
@@ -740,8 +740,8 @@
 }
 
 .legend-label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -759,15 +759,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--ds-text-secondary);
 
   @include respond-to(md) {
-    font-size: var(--font-caption-size);
+    font-size: var(--ds-font-size-xs);
   }
 
   i {
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
 
     &.legend-completed {
       color: var(--primitive-success-500);
@@ -793,7 +793,7 @@
   gap: var(--space-2);
 
   label {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
     cursor: pointer;
     margin: 0;
@@ -854,12 +854,12 @@
 }
 
 .week-title {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-text-primary);
 
   @include respond-to(md) {
-    font-size: var(--font-size-h3);
+    font-size: var(--ds-font-size-xl);
   }
 }
 

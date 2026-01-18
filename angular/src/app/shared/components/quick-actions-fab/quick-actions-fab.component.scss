@@ -102,8 +102,8 @@
     "Segoe UI",
     Roboto,
     sans-serif;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--text-color);
   white-space: nowrap;
   text-align: center;
@@ -114,7 +114,7 @@
     background-color var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard),
     transform var(--motion-fast) var(--ease-standard);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ds-letter-spacing-0-01em);
 }
 
 .action-item:hover .action-label {
@@ -147,7 +147,7 @@
 }
 
 .action-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-text-on-primary);
   display: flex;
   align-items: center;
@@ -212,7 +212,7 @@
 
 /* Merlin Icon */
 .merlin-icon {
-  font-size: var(--font-h2-size);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-text-on-primary);
   transition:
     opacity var(--motion-base) var(--ease-standard),
@@ -240,7 +240,7 @@
 }
 
 .fab-close i {
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-text-on-primary);
 }
 

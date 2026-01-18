@@ -24,8 +24,8 @@
     background: none;
     border: none;
     border-radius: var(--radius-md);
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-secondary);
     cursor: pointer;
     transition:
@@ -78,7 +78,7 @@
   border-radius: var(--radius-lg);
 
   .stat-icon {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .stat-content {
@@ -86,13 +86,13 @@
     flex-direction: column;
 
     .stat-block__value {
-      font-size: var(--font-size-h2);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--ds-font-size-2xl);
+      font-weight: var(--ds-font-weight-bold);
       color: var(--ds-text-primary);
     }
 
     .stat-block__label {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--ds-text-secondary);
     }
   }
@@ -140,9 +140,9 @@
     align-items: center;
 
     .formation-label {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--overlay-white-80);
-      text-transform: uppercase;
+      text-transform: var(--ds-text-transform-uppercase);
       margin-bottom: var(--space-2);
     }
 
@@ -186,8 +186,8 @@
         border-radius: 50%;
         background: white;
         color: var(--ds-primary-green-hover);
-        font-size: var(--font-caption-size);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-xs);
+        font-weight: var(--ds-font-weight-bold);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -206,14 +206,14 @@
 
   h4 {
     margin: 0 0 var(--space-1) 0;
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
   }
 
   .play-details {
     margin: 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-secondary);
   }
 }
@@ -223,14 +223,14 @@
   border-bottom: 1px solid var(--ds-border-subtle);
 
   .mem-label {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-secondary);
   }
 
   .mem-warning {
     display: block;
     margin-top: var(--space-1);
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--primitive-warning-500);
   }
 }
@@ -252,7 +252,7 @@
     text-align: center;
 
     i {
-      font-size: var(--font-h1-size);
+      font-size: var(--ds-font-size-3xl);
       color: var(--ds-text-tertiary);
       margin-bottom: var(--space-3);
     }
@@ -285,8 +285,8 @@
 .details-column {
   h4 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
     padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--ds-border-subtle);
@@ -305,7 +305,7 @@
       padding: var(--space-2);
         background: var(--overlay-white-10);
       text-align: center;
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--overlay-white-80);
       border-bottom: 2px dashed var(--overlay-white-30);
     }
@@ -325,8 +325,8 @@
       border-radius: 50%;
       background: white;
       color: var(--ds-primary-green-hover);
-      font-size: var(--font-size-badge);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--ds-font-size-xs);
+      font-weight: var(--ds-font-weight-bold);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -340,7 +340,7 @@
     .scrimmage-line {
       padding: var(--space-2);
       text-align: center;
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--overlay-white-80);
       border-top: 2px solid var(--overlay-white-50);
     }
@@ -355,7 +355,7 @@
     margin-bottom: var(--space-2);
 
     .tool-label {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--ds-text-tertiary);
       min-width: var(--badge-min-width-sm);
     }
@@ -368,8 +368,8 @@
   label {
     display: block;
     margin-bottom: var(--space-1);
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-primary);
   }
 
@@ -418,13 +418,13 @@
     margin-bottom: var(--space-1);
 
     strong {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
     }
   }
 
   textarea {
     width: 100%;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -450,10 +450,10 @@
 
   h4 {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-secondary);
-    text-transform: uppercase;
+    text-transform: var(--ds-text-transform-uppercase);
   }
 }
 
@@ -471,25 +471,25 @@
     border-radius: var(--radius-md);
 
     .status-icon {
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
     }
 
     .player-name {
       flex: 1;
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--ds-font-weight-medium);
       color: var(--ds-text-primary);
     }
 
     .memorized-date,
     .last-studied {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--ds-text-tertiary);
     }
 
     .quiz-score {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--ds-primary-green);
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--ds-font-weight-medium);
     }
   }
 }

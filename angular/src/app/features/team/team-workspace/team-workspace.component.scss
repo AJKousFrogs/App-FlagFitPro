@@ -94,14 +94,14 @@
 
   // Icon styling
   i {
-    font-size: var(--font-h1-size); // 32px - feature icon
+    font-size: var(--ds-font-size-3xl); // 32px - feature icon
     color: var(--ds-primary-green);
     margin-bottom: var(--space-4);
     transition: transform var(--transition-fast);
     flex-shrink: 0;
 
     @include respond-to(md) {
-      font-size: calc(var(--font-h2-size) + var(--space-1)); // 28px on mobile
+      font-size: calc(var(--ds-font-size-2xl) + var(--space-1)); // 28px on mobile
       margin-bottom: var(--space-3);
     }
   }
@@ -112,28 +112,28 @@
 
   // Card title
   h3 {
-    font-size: var(--font-size-h2); // 18px
-    font-weight: var(--font-weight-semibold); // 600
+    font-size: var(--ds-font-size-2xl); // 18px
+    font-weight: var(--ds-font-weight-semibold); // 600
     color: var(--color-text-primary);
     margin: 0 0 var(--space-2) 0;
-    line-height: var(--font-h3-line-height);
+    line-height: var(--ds-line-height-h3);
 
     @include respond-to(md) {
-      font-size: var(--font-size-body); // 16px on mobile
+      font-size: var(--ds-font-size-md); // 16px on mobile
       margin-bottom: var(--space-1);
     }
   }
 
   // Card description
   p {
-    font-size: var(--font-size-h4); // 14px
+    font-size: var(--ds-font-size-md); // 14px
     color: var(--color-text-secondary);
     margin: 0;
-    line-height: 1.5;
+    line-height: var(--ds-line-height-body);
 
     @include respond-to(md) {
-      font-size: var(--font-caption-size); // 12px on mobile
-      line-height: var(--font-body-sm-line-height);
+      font-size: var(--ds-font-size-xs); // 12px on mobile
+      line-height: var(--ds-line-height-body-sm);
     }
   }
 }

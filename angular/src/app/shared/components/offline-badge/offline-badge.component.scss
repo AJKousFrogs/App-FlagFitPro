@@ -9,8 +9,8 @@
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-lg);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
   cursor: help;
   transition:
     transform var(--transition-fast),
@@ -18,7 +18,7 @@
 }
 
 .offline-badge i {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 /* Capability states */
@@ -83,8 +83,8 @@
 .pending-count {
   background: var(--color-status-warning);
   color: var(--color-text-on-primary);
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-lg);
   margin-left: var(--space-1);

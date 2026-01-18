@@ -11,12 +11,12 @@
 
 .valid {
   color: var(--color-status-success);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .invalid {
   color: var(--color-status-error);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 label.required::after {

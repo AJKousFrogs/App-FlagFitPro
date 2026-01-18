@@ -263,13 +263,13 @@ interface User {
       }
 
       .stat-block__value {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-2xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--primary-color);
       }
 
       .stat-block__label {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         color: var(--text-secondary);
       }
 
@@ -286,7 +286,7 @@ interface User {
 
       .empty-state i,
       .loading-state i {
-        font-size: 2.5rem;
+        font-size: var(--ds-font-size-2-5rem);
         margin-bottom: var(--spacing-md);
         opacity: 0.5;
       }

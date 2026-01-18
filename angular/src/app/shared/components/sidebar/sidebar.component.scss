@@ -82,7 +82,7 @@
     transform var(--transition-fast),
     opacity var(--transition-fast),
     background var(--transition-fast);
-  min-height: var(--header-height, 64px);
+  min-height: var(--header-height, var(--ds-font-size-4rem));
   text-decoration: none;
 }
 
@@ -116,15 +116,15 @@
 }
 
 .logo-icon-wrapper i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-text-on-primary);
 }
 
 .logo-text {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--ds-letter-spacing-0-01em);
 }
 
 .user-section {
@@ -145,8 +145,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-md);
 }
 
 .user-info {
@@ -156,18 +156,18 @@
 }
 
 .user-name {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .user-role {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  text-transform: capitalize;
+  text-transform: var(--ds-text-transform-capitalize);
 }
 
 .nav-section {
@@ -188,11 +188,11 @@
 
 .nav-group-title {
   padding: var(--space-2) var(--space-4);
-  font-size: var(--font-caption-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-08em);
 }
 
 .nav-group-items {
@@ -216,8 +216,8 @@
   border: none;
   background: transparent;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   font-family: inherit;
   cursor: pointer;
   border-radius: var(--radius-md);
@@ -299,7 +299,7 @@
 // ============================================
 @media (max-width: 1024px) and (min-width: 769px) {
   .sidebar {
-    width: var(--sidebar-collapsed-width, 64px);
+    width: var(--sidebar-collapsed-width, var(--ds-font-size-4rem));
   }
 
   .logo-text,

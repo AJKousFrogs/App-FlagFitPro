@@ -199,22 +199,22 @@
   align-items: center;
   justify-content: center;
   color: var(--color-text-on-primary);
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .compact .locked-overlay {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 /* Badge icon */
 .badge-icon {
   color: var(--color-text-on-primary);
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
   text-shadow: var(--shadow-sm);
 }
 
 .compact .badge-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .locked .badge-icon {
@@ -230,7 +230,7 @@
 }
 
 .star {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
   color: var(--overlay-white-90);
   text-shadow: var(--shadow-sm);
 }
@@ -295,17 +295,17 @@
 
 .badge-title {
   margin: 0;
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  line-height: var(--line-height-tight);
+  line-height: var(--ds-line-height-tight);
 }
 
 .badge-description {
   margin: var(--space-1) 0 0 0;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .badge-date {
@@ -314,7 +314,7 @@
   justify-content: center;
   gap: var(--space-1);
   margin-top: var(--space-2);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -342,7 +342,7 @@
 }
 
 .progress-text {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   min-width: var(--touch-target-sm); /* 36px */
   text-align: right;

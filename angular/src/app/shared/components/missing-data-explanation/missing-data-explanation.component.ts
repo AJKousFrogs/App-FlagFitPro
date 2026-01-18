@@ -141,7 +141,7 @@ import { LoggerService } from "../../../core/services/logger.service";
       }
 
       .header-content i {
-        font-size: var(--font-size-h2);
+        font-size: var(--ds-font-size-2xl);
         color: var(--color-status-warning);
       }
 
@@ -151,19 +151,19 @@ import { LoggerService } from "../../../core/services/logger.service";
 
       .header-text h3 {
         margin: 0 0 var(--space-1) 0;
-        font-size: var(--font-size-h3);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
       }
 
       .days-missing {
         margin: 0;
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
       }
 
       .severity-badge {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
       }
 
       .missing-data-content {
@@ -181,16 +181,16 @@ import { LoggerService } from "../../../core/services/logger.service";
 
       .explanation-section strong,
       .impact-section strong {
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-primary);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .explanation-section p {
         margin: 0;
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
       }
 
       .impact-list {
@@ -198,7 +198,7 @@ import { LoggerService } from "../../../core/services/logger.service";
         padding: 0;
         list-style: disc;
         color: var(--color-text-secondary);
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
       }
 
       .impact-list li {
@@ -220,14 +220,14 @@ import { LoggerService } from "../../../core/services/logger.service";
       }
 
       .escalation-badge i {
-        font-size: var(--font-size-h3);
+        font-size: var(--ds-font-size-xl);
         color: var(--color-status-info);
       }
 
       .escalation-badge span {
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-primary);
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .action-section {

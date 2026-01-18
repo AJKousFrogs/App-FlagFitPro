@@ -26,8 +26,8 @@
 
 .skills-breakdown h4 {
   margin: 0 0 var(--space-5) 0;
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -48,9 +48,9 @@
 }
 
 .sub-skill-name {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 @media (min-width: 768px) {

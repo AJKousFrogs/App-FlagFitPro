@@ -26,7 +26,7 @@
 }
 
 .supp-purpose {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -34,7 +34,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -134,7 +134,7 @@
 }
 
 .venue-flag {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   width: var(--space-10); /* 40px icon container */
   height: var(--space-10);
   display: flex;
@@ -146,13 +146,13 @@
 }
 
 .venue-name {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .venue-tz {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -177,7 +177,7 @@
 }
 
 .impact-stat .stat-block__label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 // ===== Form Grid =====
@@ -194,7 +194,7 @@
   gap: var(--space-2);
 
   label {
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-primary);
   }
 
@@ -268,14 +268,14 @@
 
 .gauge-value {
   position: relative;
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
 .gauge-label {
   position: relative;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -284,7 +284,7 @@
 
   h2 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
     color: var(--color-text-primary);
   }
 }
@@ -301,7 +301,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-top: var(--space-2);
 
@@ -321,7 +321,7 @@
 
   h4 {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
   }
 }
@@ -336,7 +336,7 @@
   padding: var(--space-1) var(--space-3);
   background: var(--surface-tertiary);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -362,7 +362,7 @@
   background: var(--color-brand-primary);
   color: var(--color-text-on-primary);
   border-radius: var(--radius-full);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .protocol-grid {
@@ -382,7 +382,7 @@
     align-items: center;
     gap: var(--space-2);
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
 
     i {
@@ -406,13 +406,13 @@
 }
 
 .time-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .time-value {
-  font-size: var(--font-size-metric-lg);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
@@ -439,7 +439,7 @@
 }
 
 .light-icon {
-  font-size: var(--font-size-metric-lg);
+  font-size: var(--ds-font-size-3xl);
 }
 
 .light-details {
@@ -449,17 +449,17 @@
 }
 
 .light-action {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .light-time {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .light-reason {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -472,7 +472,7 @@
 }
 
 .max-duration {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -497,13 +497,13 @@
   ul {
     margin: var(--space-1) 0 0 var(--space-4);
     padding: 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
 .list-label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 // ===== Hydration =====
@@ -513,13 +513,13 @@
 
 .hydration-value {
   display: block;
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
 }
 
 .hydration-note {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -561,7 +561,7 @@
 }
 
 .rec-time {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   min-width: calc(var(--space-24) + var(--space-1));
 }
@@ -603,12 +603,12 @@
 }
 
 .supp-name {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .supp-dosage {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-brand-primary);
 }
 
@@ -616,7 +616,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -625,7 +625,7 @@
   padding: var(--space-2);
   background: rgba(var(--primitive-amber-500-rgb, 245, 158, 11), 0.1);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-status-warning);
 }
 
@@ -642,7 +642,7 @@
 }
 
 .timeline-day {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   min-width: calc(var(--space-20) + var(--space-10));
 }
@@ -667,7 +667,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 
   i {
@@ -685,12 +685,12 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .rec-bullet {
-  font-size: var(--font-caption-size);
+  font-size: var(--ds-font-size-xs);
 
   &.importance-critical {
     color: var(--color-status-error);
@@ -735,7 +735,7 @@
 }
 
 .essential-badge {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   padding: var(--space-1) calc(var(--space-1) + (var(--space-1) / 2));
   background: var(--color-status-warning);
   color: var(--color-text-on-primary);
@@ -744,7 +744,7 @@
 }
 
 .item-note {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -799,7 +799,7 @@
   }
 
   i {
-    font-size: var(--font-size-h2); /* 18px - consistent icon size */
+    font-size: var(--ds-font-size-2xl); /* 18px - consistent icon size */
     color: var(--ds-primary-green);
     width: var(--space-10); /* 40px icon container */
     height: var(--space-10);
@@ -819,13 +819,13 @@
   }
 
   span {
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
   }
 
   small {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--color-text-secondary);
   }
 }
@@ -914,13 +914,13 @@
 }
 
 .risk-score {
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
 .risk-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -932,14 +932,14 @@
 
   h4 {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
   }
 
   ul {
     margin: 0;
     padding-left: var(--space-4);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -1002,7 +1002,7 @@
   background: var(--surface-primary);
   border: var(--border-1) solid var(--color-status-error);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-status-error);
 }
 
@@ -1024,7 +1024,7 @@
 .compression-icon,
 .massage-icon,
 .exercises-icon {
-  font-size: var(--font-size-h1);
+  font-size: var(--ds-font-size-3xl);
 }
 
 .compression-content {
@@ -1057,7 +1057,7 @@
   border-radius: var(--radius-md);
 
   i {
-    font-size: var(--font-size-metric-lg);
+    font-size: var(--ds-font-size-3xl);
     color: var(--color-brand-primary);
   }
 
@@ -1068,7 +1068,7 @@
 
   p {
     margin: 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
   }
 }
@@ -1084,13 +1084,13 @@
     align-items: center;
     gap: var(--space-2);
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 
   ul {
     margin: 0;
     padding-left: var(--space-4);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -1135,7 +1135,7 @@
 }
 
 .frequency {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -1162,18 +1162,18 @@
   background: var(--color-brand-primary);
   color: var(--color-text-on-primary);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .muscle-technique {
   margin: 0 0 var(--space-1) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .muscle-purpose {
   margin: 0;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   font-style: italic;
 }
@@ -1186,13 +1186,13 @@
 
   h5 {
     margin: 0 0 var(--space-2) 0;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 
   ul {
     margin: 0;
     padding-left: var(--space-4);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -1233,28 +1233,28 @@
 
   h4 {
     margin: 0;
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
   }
 }
 
 .exercise-description {
   margin: 0 0 var(--space-2) 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .exercise-details {
   display: flex;
   gap: var(--space-3);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-brand-primary);
 }
 
 .exercise-card .evidence {
   display: block;
   margin-top: var(--space-2);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   font-style: italic;
 }
@@ -1303,7 +1303,7 @@
     background: var(--color-brand-primary);
     color: var(--color-text-on-primary);
     border-radius: var(--radius-md);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--ds-font-weight-semibold);
   }
 }
 
@@ -1354,12 +1354,12 @@
 
   .finding {
     margin: 0 0 var(--space-3) 0;
-    line-height: var(--line-height-relaxed);
+    line-height: var(--ds-line-height-relaxed);
   }
 
   .source {
     margin-bottom: var(--space-2);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
   }
 
@@ -1367,7 +1367,7 @@
     padding: var(--space-3);
     background: var(--color-brand-light);
     border-radius: var(--radius-md);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -1528,14 +1528,14 @@
   }
 
   .gauge-value {
-    font-size: var(--font-size-metric-lg);
+    font-size: var(--ds-font-size-3xl);
   }
 
   .protocol-section {
     padding: var(--space-3);
 
     h4 {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
     }
   }
 
@@ -1549,11 +1549,11 @@
   }
 
   .symptom-chip {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
   }
 
   .impact-stat .stat-block__value {
-    font-size: var(--font-size-metric-md);
+    font-size: var(--ds-font-size-2xl);
   }
 }
 
@@ -1567,12 +1567,12 @@
   }
 
   .venue-flag {
-    font-size: var(--font-size-metric-lg);
+    font-size: var(--ds-font-size-3xl);
   }
 
   .day-badge {
     padding: var(--space-1) var(--space-2);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
   }
 }
 

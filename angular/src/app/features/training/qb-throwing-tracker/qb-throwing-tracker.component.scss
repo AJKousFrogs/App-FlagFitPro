@@ -14,13 +14,13 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-5, 20px);
+  margin-bottom: var(--space-5, var(--ds-font-size-xl));
 }
 
 .page-title {
   margin: 0;
-  font-size: var(--font-h2-size, 28px);
-  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -50,19 +50,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-4, 16px);
+  margin-bottom: var(--space-4, var(--ds-font-size-md));
 }
 
 .phase-badge {
-  font-size: var(--font-body-size, 18px);
-  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green-hover);
 }
 
 .status-metrics {
   display: flex;
   justify-content: space-around;
-  margin-bottom: var(--space-4, 16px);
+  margin-bottom: var(--space-4, var(--ds-font-size-md));
 }
 
 .metric {
@@ -70,8 +70,8 @@
 }
 
 .metric-value {
-  font-size: var(--font-h3-size, 24px);
-  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
@@ -80,18 +80,18 @@
 }
 
 .metric-label {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .progress-section {
-  margin-bottom: var(--space-4, 16px);
+  margin-bottom: var(--space-4, var(--ds-font-size-md));
 }
 
 .progress-label {
   display: flex;
   justify-content: space-between;
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   margin-bottom: var(--space-2, 8px);
 }
 
@@ -99,10 +99,10 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-2, 8px);
-  padding: var(--space-3, 12px);
+  padding: var(--space-3, var(--ds-font-size-xs));
   background: var(--surface-primary);
   border-radius: var(--radius-md, 6px);
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
 }
 
 .recommendation i {
@@ -120,9 +120,9 @@
 }
 
 .section-title {
-  margin: 0 0 var(--space-4, 16px) 0;
-  font-size: var(--font-body-size, 18px);
-  font-weight: var(--font-weight-semibold, 600);
+  margin: 0 0 var(--space-4, var(--ds-font-size-md)) 0;
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 /* Weekly Chart */
@@ -162,14 +162,14 @@
 }
 
 .bar-value {
-  font-size: var(--font-caption-size, 12px);
-  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: white;
   padding: var(--space-1, 4px);
 }
 
 .bar-label {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   margin-top: var(--space-1, 4px);
 }
@@ -178,7 +178,7 @@
 .sessions-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
 }
 
 .session-card {
@@ -192,11 +192,11 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
 }
 
 .session-date {
-  font-weight: var(--font-weight-semibold, 600);
+  font-weight: var(--ds-font-weight-semibold);
   display: flex;
   align-items: center;
   gap: var(--space-2, 8px);
@@ -204,11 +204,11 @@
 }
 
 .throw-breakdown {
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
 }
 
 .throw-total {
-  font-weight: var(--font-weight-semibold, 600);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--ds-primary-green);
 }
 
@@ -226,7 +226,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-1, 4px);
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--primitive-error-500);
 }
 
@@ -244,7 +244,7 @@
 }
 
 .feeling-label {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -273,13 +273,13 @@
 }
 
 .feeling-value {
-  font-size: var(--font-caption-size, 12px);
-  font-weight: var(--font-weight-semibold, 600);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .session-notes {
   margin-top: var(--space-2, 8px);
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   display: flex;
   align-items: flex-start;
@@ -294,16 +294,16 @@
 .arm-care-reminder {
   display: flex;
   align-items: center;
-  gap: var(--space-3, 12px);
-  padding: var(--space-4, 16px);
+  gap: var(--space-3, var(--ds-font-size-xs));
+  padding: var(--space-4, var(--ds-font-size-md));
   background: var(--primitive-warning-50);
   border: 1px solid var(--primitive-warning-300);
   border-radius: var(--radius-lg, 8px);
-  margin-bottom: var(--space-4, 16px);
+  margin-bottom: var(--space-4, var(--ds-font-size-md));
 }
 
 .reminder-icon {
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .reminder-content {
@@ -312,12 +312,12 @@
 
 .reminder-content h4 {
   margin: 0 0 var(--space-1, 4px) 0;
-  font-size: var(--font-body-size, 16px);
+  font-size: var(--ds-font-size-md);
 }
 
 .reminder-content p {
   margin: 0;
-  font-size: var(--font-body-sm-size, 14px);
+  font-size: var(--ds-font-size-sm);
   color: var(--primitive-warning-700);
 }
 
@@ -326,12 +326,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-6, 24px);
+  padding: var(--space-6, var(--ds-font-size-2xl));
   color: var(--color-text-muted);
 }
 
 .empty-state i {
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
   margin-bottom: var(--space-2, 8px);
 }
 
@@ -339,7 +339,7 @@
 .log-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4, 16px);
+  gap: var(--space-4, var(--ds-font-size-md));
 }
 
 .form-field {
@@ -349,37 +349,37 @@
 }
 
 .form-field label {
-  font-size: var(--font-body-sm-size, 14px);
-  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-secondary);
 }
 
 .field-hint {
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
 .form-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3, 12px);
+  gap: var(--space-3, var(--ds-font-size-xs));
 }
 
 .slider-labels {
   display: flex;
   justify-content: space-between;
-  font-size: var(--font-caption-size, 12px);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   margin-top: var(--space-1, 4px);
 }
 
 .current-value {
-  font-weight: var(--font-weight-semibold, 600);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .compliance-section {
-  padding: var(--space-3, 12px);
+  padding: var(--space-3, var(--ds-font-size-xs));
   background: var(--primitive-neutral-50);
   border-radius: var(--radius-md, 6px);
 }
@@ -391,14 +391,14 @@
 }
 
 .checkbox-group label {
-  font-weight: var(--font-weight-normal);
+  font-weight: var(--ds-font-weight-regular);
   color: var(--color-text-primary);
 }
 
 @include respond-to(sm) {
   .tracker-header {
     flex-direction: column;
-    gap: var(--space-3, 12px);
+    gap: var(--space-3, var(--ds-font-size-xs));
   }
 
   .form-row {
@@ -407,7 +407,7 @@
 
   .status-metrics {
     flex-wrap: wrap;
-    gap: var(--space-3, 12px);
+    gap: var(--space-3, var(--ds-font-size-xs));
   }
 
   .session-main {

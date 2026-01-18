@@ -72,10 +72,10 @@ a.btn {
   padding: 0 var(--space-6);
 
   // FIXED TYPOGRAPHY - identical for all variants
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   font-family: var(--font-family-sans);
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
   text-decoration: none;
   text-align: center;
 
@@ -329,14 +329,14 @@ a.btn {
 .btn.btn-sm {
   height: var(--button-height-sm); /* 36px */
   padding: 0 var(--space-4);
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
   gap: var(--space-1);
 }
 
 .btn.btn-lg {
   height: var(--button-height-lg); /* 52px */
   padding: 0 var(--space-8);
-  font-size: var(--font-h3-size);
+  font-size: var(--ds-font-size-xl);
   gap: var(--space-3);
 }
 
@@ -375,18 +375,18 @@ a.btn {
 // ============================================
 
 .btn-icon {
-  font-size: var(--font-h3-size);
-  line-height: 1;
+  font-size: var(--ds-font-size-xl);
+  line-height: var(--ds-line-height-1);
   flex-shrink: 0;
   color: inherit;
 }
 
 .btn.btn-sm .btn-icon {
-  font-size: var(--font-body-sm-size);
+  font-size: var(--ds-font-size-sm);
 }
 
 .btn.btn-lg .btn-icon {
-  font-size: var(--font-h3-size);
+  font-size: var(--ds-font-size-xl);
 }
 
 // ============================================

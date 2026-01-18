@@ -30,8 +30,8 @@
   }
 
   .prompt-icon {
-    font-size: var(--font-size-metric-md);
-    line-height: 1;
+    font-size: var(--ds-font-size-2xl);
+    line-height: var(--ds-line-height-1);
   }
 
   .prompt-content {
@@ -41,22 +41,22 @@
     gap: var(--space-1);
 
     .prompt-title {
-      font-size: var(--font-size-body);
-      font-weight: var(--font-weight-semibold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--color-brand-primary);
-      line-height: var(--line-height-base);
+      line-height: var(--ds-line-height-normal);
     }
 
     .prompt-subtitle {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
-      line-height: var(--line-height-base);
+      line-height: var(--ds-line-height-normal);
     }
   }
 
   .pi-chevron-right {
     color: var(--color-brand-primary);
-    font-size: var(--font-size-body);
+    font-size: var(--ds-font-size-md);
   }
 }
 
@@ -90,11 +90,11 @@
     gap: var(--space-1);
 
     .readiness-score {
-      font-size: var(--font-size-h2);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--ds-font-size-2xl);
+      font-weight: var(--ds-font-weight-bold);
       padding: var(--space-1) var(--space-2);
       border-radius: var(--radius-md);
-      line-height: 1;
+      line-height: var(--ds-line-height-1);
 
       &.high {
         background: var(--color-status-success-light);
@@ -113,11 +113,11 @@
     }
 
     .readiness-label {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: var(--font-weight-medium);
+      text-transform: var(--ds-text-transform-uppercase);
+      letter-spacing: var(--ds-letter-spacing-0-5px);
+      font-weight: var(--ds-font-weight-medium);
     }
   }
 
@@ -131,7 +131,7 @@
       display: flex;
       align-items: center;
       gap: var(--space-1);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
     }
   }
@@ -155,13 +155,13 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
 
     .label-icon {
-      font-size: var(--font-size-h2);
-      line-height: 1;
+      font-size: var(--ds-font-size-2xl);
+      line-height: var(--ds-line-height-1);
     }
 
     .value-badge {
@@ -170,10 +170,10 @@
       background: var(--ds-primary-green-ultra-subtle);
       color: var(--color-brand-primary);
       border-radius: var(--radius-full);
-      font-size: var(--font-size-h4);
-      font-weight: var(--font-weight-semibold);
-      text-transform: uppercase;
-      letter-spacing: 0.25px;
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
+      text-transform: var(--ds-text-transform-uppercase);
+      letter-spacing: var(--ds-letter-spacing-0-25px);
     }
   }
 }
@@ -187,10 +187,10 @@
   gap: var(--space-3);
 
   .slider-label {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--color-text-secondary);
     min-width: var(--badge-min-width-lg);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
 
     &:first-child {
       text-align: left;
@@ -221,7 +221,7 @@
     border: 1px solid var(--color-border-secondary);
     border-radius: var(--radius-md);
     cursor: pointer;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-primary);
     transition:
       background-color var(--motion-fast) var(--ease-standard),
@@ -251,19 +251,19 @@
   gap: var(--space-2);
 
   .preview-label {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: var(--font-weight-medium);
+    text-transform: var(--ds-text-transform-uppercase);
+    letter-spacing: var(--ds-letter-spacing-0-5px);
+    font-weight: var(--ds-font-weight-medium);
   }
 
   .preview-score {
-    font-size: var(--font-h1-size);
-    font-weight: var(--font-weight-bold);
+    font-size: var(--ds-font-size-3xl);
+    font-weight: var(--ds-font-weight-bold);
     padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-lg);
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
 
     &.high {
       background: var(--color-status-success-light);
@@ -282,10 +282,10 @@
   }
 
   .preview-recommendation {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--color-text-secondary);
     text-align: center;
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
   }
 }
 
@@ -323,9 +323,9 @@
    ======================================================================== */
 .state-narration {
   display: block;
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
   margin-top: var(--space-2);
   padding: var(--space-2);
   background: var(--surface-secondary);
@@ -333,18 +333,18 @@
   border-left: 3px solid var(--color-brand-primary);
 
   strong {
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
   }
 }
 
 .state-narration-inline {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 
   strong {
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-primary);
   }
 }

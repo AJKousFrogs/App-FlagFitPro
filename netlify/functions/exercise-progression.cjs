@@ -135,8 +135,12 @@ exports.handler = async (event) => {
     }
 
     const targetDate = date || new Date().toISOString().split("T")[0];
-    const acwr = acwrValue || 1.0;
-    const readiness = readinessScore || 70;
+    
+    // CRITICAL: Do NOT use defaults for ACWR and readiness
+    // These must come from actual user data. Use null to indicate no data.
+    // Progression logic should handle missing data gracefully (conservative defaults)
+    const acwr = acwrValue !== undefined && acwrValue !== null ? acwrValue : null;
+    const readiness = readinessScore !== undefined && readinessScore !== null ? readinessScore : null;
 
     // Get yesterday's date
     const yesterday = new Date(targetDate);
@@ -315,30 +319,50 @@ function calculateProgression(exercise, yesterdayPerf, acwr, readiness) {
 
 /**
  * Get the combined adjustment factor based on ACWR and readiness
+ * 
+ * IMPORTANT: When data is missing (null), use conservative factor of 1.0 (no change)
+ * This prevents artificially inflating or deflating progression when we don't have real data
  */
 function getAdjustmentFactor(acwr, readiness) {
-  // ACWR factor
+  // ACWR factor - use 1.0 if no data (conservative, no change)
   let acwrFactor = 1.0;
-  if (acwr >= ACWR_ADJUSTMENTS.danger.threshold) {
-    acwrFactor = ACWR_ADJUSTMENTS.danger.factor;
-  } else if (acwr >= ACWR_ADJUSTMENTS.high.threshold) {
-    acwrFactor = ACWR_ADJUSTMENTS.high.factor;
-  } else if (acwr < ACWR_ADJUSTMENTS.low.threshold) {
-    acwrFactor = ACWR_ADJUSTMENTS.low.factor;
+  if (acwr !== null && acwr !== undefined) {
+    if (acwr >= ACWR_ADJUSTMENTS.danger.threshold) {
+      acwrFactor = ACWR_ADJUSTMENTS.danger.factor;
+    } else if (acwr >= ACWR_ADJUSTMENTS.high.threshold) {
+      acwrFactor = ACWR_ADJUSTMENTS.high.factor;
+    } else if (acwr < ACWR_ADJUSTMENTS.low.threshold) {
+      acwrFactor = ACWR_ADJUSTMENTS.low.factor;
+    }
   }
 
-  // Readiness factor
+  // Readiness factor - use 1.0 if no data (conservative, no change)
   let readinessFactor = 1.0;
-  if (readiness >= READINESS_ADJUSTMENTS.high.threshold) {
-    readinessFactor = READINESS_ADJUSTMENTS.high.factor;
-  } else if (readiness >= READINESS_ADJUSTMENTS.good.thresholdMin) {
-    readinessFactor = READINESS_ADJUSTMENTS.good.factor;
-  } else if (readiness >= READINESS_ADJUSTMENTS.moderate.thresholdMin) {
-    readinessFactor = READINESS_ADJUSTMENTS.moderate.factor;
-  } else {
-    readinessFactor = READINESS_ADJUSTMENTS.low.factor;
+  if (readiness !== null && readiness !== undefined) {
+    if (readiness >= READINESS_ADJUSTMENTS.high.threshold) {
+      readinessFactor = READINESS_ADJUSTMENTS.high.factor;
+    } else if (readiness >= READINESS_ADJUSTMENTS.good.thresholdMin) {
+      readinessFactor = READINESS_ADJUSTMENTS.good.factor;
+    } else if (readiness >= READINESS_ADJUSTMENTS.moderate.thresholdMin) {
+      readinessFactor = READINESS_ADJUSTMENTS.moderate.factor;
+    } else {
+      readinessFactor = READINESS_ADJUSTMENTS.low.factor;
+    }
   }
 
-  // Combined factor (average of both)
-  return (acwrFactor + readinessFactor) / 2;
+  // Combined factor
+  // If we have both values, average them
+  // If we only have one, use just that one
+  // If we have neither, return 1.0 (no adjustment)
+  const hasAcwr = acwr !== null && acwr !== undefined;
+  const hasReadiness = readiness !== null && readiness !== undefined;
+  
+  if (hasAcwr && hasReadiness) {
+    return (acwrFactor + readinessFactor) / 2;
+  } else if (hasAcwr) {
+    return acwrFactor;
+  } else if (hasReadiness) {
+    return readinessFactor;
+  }
+  return 1.0; // No data, no adjustment
 }

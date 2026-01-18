@@ -45,7 +45,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .stat-icon.pending {
@@ -83,7 +83,7 @@
 }
 
 .loading-state i {
-  font-size: var(--font-size-metric-lg);
+  font-size: var(--ds-font-size-3xl);
   margin-bottom: var(--space-3);
 }
 
@@ -127,7 +127,7 @@
 }
 
 .approval-date {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-muted);
 }
 
@@ -137,8 +137,8 @@
 
 .approval-body h4 {
   margin: 0 0 var(--space-2);
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -154,20 +154,20 @@
   padding: var(--space-1) var(--space-2);
   background: var(--surface-tertiary);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .meta-tag.olympic {
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .role-request,
 .team-ref,
 .federation {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: var(--space-1) 0;
 }
@@ -185,13 +185,13 @@
 
 .olympic-goals strong {
   color: var(--ds-primary-green);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .olympic-goals p {
   margin: var(--space-2) 0 0;
   color: var(--color-text-primary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .approval-actions {
@@ -209,8 +209,8 @@
 
 .quick-actions h3 {
   margin: 0 0 var(--space-4);
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -241,11 +241,11 @@
 // @see docs/CARD_SHELL_CONTRACT.md §2.8
 
 .action-card i {
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .action-card span {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 /* Reject Modal */
@@ -277,8 +277,8 @@
 
 .modal-header h3 {
   margin: 0;
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -310,7 +310,7 @@
   border: 1px solid var(--color-border-primary);
   border-radius: var(--radius-md);
   font-family: inherit;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   resize: vertical;
 }
 

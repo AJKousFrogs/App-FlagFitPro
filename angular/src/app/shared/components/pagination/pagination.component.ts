@@ -137,8 +137,8 @@ import { IconButtonComponent } from "../button/icon-button.component";
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: var(--space-4, 1rem);
-        padding: var(--space-4, 1rem);
+        gap: var(--space-4, var(--ds-font-size-md));
+        padding: var(--space-4, var(--ds-font-size-md));
         flex-wrap: wrap;
       }
 
@@ -148,7 +148,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
       }
 
       .pagination-text {
-        font-size: var(--font-body-sm-size, 0.875rem);
+        font-size: var(--ds-font-size-sm);
         color: var(--text-secondary, #6b7280);
       }
 
@@ -172,14 +172,14 @@ import { IconButtonComponent } from "../button/icon-button.component";
       .pagination-page {
         min-width: 2.5rem;
         height: 2.5rem;
-        padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+        padding: var(--space-1, 0.25rem) var(--space-2, var(--ds-font-size-0-5rem));
         border: 1px solid var(--p-surface-border, #dee2e6);
         background: var(--p-surface-0, #ffffff);
         color: var(--text-primary, #1a1a1a);
-        border-radius: var(--p-border-radius, 0.5rem);
+        border-radius: var(--p-border-radius, var(--ds-font-size-0-5rem));
         cursor: pointer;
         transition: all 0.2s;
-        font-size: var(--font-body-size, 1rem);
+        font-size: var(--ds-font-size-md);
       }
 
       .pagination-page:hover:not(.active):not(:disabled) {
@@ -191,7 +191,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
         background: var(--color-brand-primary, #089949);
         color: var(--color-text-on-primary, #ffffff);
         border-color: var(--color-brand-primary, #089949);
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .pagination-page:disabled {
@@ -200,7 +200,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
       }
 
       .pagination-ellipsis {
-        padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+        padding: var(--space-1, 0.25rem) var(--space-2, var(--ds-font-size-0-5rem));
         color: var(--text-secondary, #6b7280);
       }
 
@@ -208,13 +208,13 @@ import { IconButtonComponent } from "../button/icon-button.component";
         display: flex;
         align-items: center;
         gap: var(--space-1, 0.25rem);
-        padding: 0 var(--space-2, 0.5rem);
-        font-size: var(--font-body-size, 1rem);
+        padding: 0 var(--space-2, var(--ds-font-size-0-5rem));
+        font-size: var(--ds-font-size-md);
         color: var(--text-primary, #1a1a1a);
       }
 
       .current-page {
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .separator {
@@ -224,21 +224,21 @@ import { IconButtonComponent } from "../button/icon-button.component";
       .pagination-items-per-page {
         display: flex;
         align-items: center;
-        gap: var(--space-2, 0.5rem);
+        gap: var(--space-2, var(--ds-font-size-0-5rem));
       }
 
       .pagination-items-per-page label {
-        font-size: var(--font-body-sm-size, 0.875rem);
+        font-size: var(--ds-font-size-sm);
         color: var(--text-secondary, #6b7280);
       }
 
       .items-per-page-select {
-        padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+        padding: var(--space-1, 0.25rem) var(--space-2, var(--ds-font-size-0-5rem));
         border: 1px solid var(--p-surface-border, #dee2e6);
-        border-radius: var(--p-border-radius, 0.5rem);
+        border-radius: var(--p-border-radius, var(--ds-font-size-0-5rem));
         background: var(--p-surface-0, #ffffff);
         color: var(--text-primary, #1a1a1a);
-        font-size: var(--font-body-sm-size, 0.875rem);
+        font-size: var(--ds-font-size-sm);
         cursor: pointer;
       }
 

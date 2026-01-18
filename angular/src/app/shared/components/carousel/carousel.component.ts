@@ -147,12 +147,12 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
       .carousel-caption h3 {
         margin: 0 0 0.5rem 0;
-        font-size: 1.5rem;
+        font-size: var(--ds-font-size-2xl);
       }
 
       .carousel-caption p {
         margin: 0;
-        font-size: 1rem;
+        font-size: var(--ds-font-size-md);
       }
 
       .carousel-nav {

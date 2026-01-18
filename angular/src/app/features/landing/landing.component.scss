@@ -73,7 +73,7 @@
     transform: translate(30px, -30px) scale(1.05);
   }
   50% {
-    transform: translate(-20px, 20px) scale(0.95);
+    transform: translate(-20px, var(--ds-font-size-xl)) scale(0.95);
   }
   75% {
     transform: translate(20px, 10px) scale(1.02);
@@ -163,8 +163,8 @@
 }
 
 .merlin-icon {
-  font-size: var(--font-h1-size);
-  line-height: 1;
+  font-size: var(--ds-font-size-3xl);
+  line-height: var(--ds-line-height-1);
   filter: drop-shadow(0 2px 4px var(--surface-overlay-light));
 }
 
@@ -190,8 +190,8 @@
   border: var(--border-1) solid
     rgba(var(--color-brand-primary-rgb, 59, 130, 246), 0.2);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   animation: badge-glow 2s ease-in-out infinite alternate;
 }
 
@@ -230,20 +230,20 @@
 
 .countdown-label-text {
   font-family: var(--font-family-sans);
-  font-size: clamp(0.625rem, 1.5vw, 0.875rem);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-size: clamp(var(--ds-font-size-0-625rem), 1.5vw, var(--ds-font-size-sm));
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: var(--ds-letter-spacing-wide);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 }
 
 .countdown-label-event {
   font-family: var(--font-family-sans);
-  font-size: clamp(0.875rem, 2vw, 1.25rem);
-  font-weight: var(--font-weight-extrabold);
-  letter-spacing: 0.1em;
+  font-size: clamp(var(--ds-font-size-sm), 2vw, var(--ds-font-size-xl));
+  font-weight: var(--ds-font-weight-bold);
+  letter-spacing: var(--ds-letter-spacing-0-1em);
   color: var(--color-text-primary);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 }
 
 .countdown-timer {
@@ -262,11 +262,11 @@
 .countdown-value {
   font-family:
     "JetBrains Mono", "SF Mono", "Fira Code", "Roboto Mono", monospace;
-  font-size: clamp(2rem, 8vw, 4.5rem);
-  font-weight: var(--font-weight-black);
-  line-height: 1;
+  font-size: clamp(var(--ds-font-size-3xl), 8vw, var(--ds-font-size-4-5rem));
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-line-height-1);
   color: var(--color-text-primary);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--ds-letter-spacing-tight);
   font-variant-numeric: tabular-nums;
   min-width: 1.8ch;
   text-align: center;
@@ -278,29 +278,29 @@
 
 .countdown-unit {
   font-family: var(--font-family-sans);
-  font-size: clamp(0.5rem, 1.5vw, 0.875rem);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  font-size: clamp(var(--ds-font-size-0-5rem), 1.5vw, var(--ds-font-size-sm));
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: var(--ds-letter-spacing-wide);
   color: var(--color-text-secondary);
-  text-transform: uppercase;
+  text-transform: var(--ds-text-transform-uppercase);
 }
 
 .countdown-separator {
   font-family: "JetBrains Mono", "SF Mono", "Roboto Mono", monospace;
-  font-size: clamp(2rem, 8vw, 4.5rem);
-  font-weight: var(--font-weight-black);
-  line-height: 1;
+  font-size: clamp(var(--ds-font-size-3xl), 8vw, var(--ds-font-size-4-5rem));
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-line-height-1);
   color: var(--color-text-primary);
   opacity: 0.3;
   padding-top: 0;
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 8vw, var(--font-h1-size, 4.5rem));
-  font-weight: var(--font-weight-extrabold);
+  font-size: clamp(var(--ds-font-size-2-5rem), 8vw, var(--ds-font-size-3xl));
+  font-weight: var(--ds-font-weight-bold);
   margin-bottom: var(--space-6);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: var(--ds-line-height-1-1);
+  letter-spacing: var(--ds-letter-spacing-tight);
 }
 
 .hero-title-accent {
@@ -315,13 +315,13 @@
 }
 
 .hero-description {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-10);
   max-width: var(--dialog-max-width-2xl);
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.7;
+  line-height: var(--ds-line-height-1-7);
 }
 
 .hero-actions {
@@ -355,8 +355,8 @@
 }
 
 .hero-stat-number {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   background: linear-gradient(
     135deg,
     var(--color-brand-primary) 0%,
@@ -368,7 +368,7 @@
 }
 
 .hero-stat-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-top: var(--space-1);
 }
@@ -433,10 +433,10 @@
 }
 
 .scroll-indicator span {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-1em);
 }
 
 /* ===== FEATURES SECTION ===== */
@@ -457,14 +457,14 @@
 }
 
 .features-title {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   margin-bottom: var(--space-4);
-  letter-spacing: -0.02em;
+  letter-spacing: var(--ds-letter-spacing-tight);
 }
 
 .features-subtitle {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   max-width: var(--dialog-max-width-2xl);
   margin: 0 auto;
@@ -489,7 +489,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-full);
-  font-size: var(--font-size-metric-md);
+  font-size: var(--ds-font-size-2xl);
   transition: transform var(--transition-normal);
 }
 
@@ -548,15 +548,15 @@
 }
 
 .feature-card-title {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   margin-bottom: var(--space-3);
 }
 
 .feature-card-description {
   color: var(--color-text-secondary);
   margin-bottom: var(--space-6);
-  line-height: 1.6;
+  line-height: var(--ds-line-height-1-6);
 }
 
 .feature-card-link {
@@ -564,7 +564,7 @@
   align-items: center;
   gap: var(--space-2);
   color: var(--color-brand-primary);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   cursor: pointer;
   transition:
     background var(--transition-fast),
@@ -613,8 +613,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   margin-bottom: var(--space-4);
 
   i,
@@ -630,20 +630,20 @@
   }
 
   i {
-    font-size: var(--font-size-metric-lg);
+    font-size: var(--ds-font-size-3xl);
   }
 }
 
 .footer-tagline {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
-  line-height: 1.7;
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-line-height-1-7);
   margin: 0;
 }
 
 .footer-links h4 {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-5) 0;
 }
@@ -661,7 +661,7 @@
 .footer-links a {
   color: var(--color-text-secondary);
   text-decoration: none;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   transition:
     color var(--transition-fast),
     transform var(--transition-fast);
@@ -680,7 +680,7 @@
 
   p {
     color: var(--color-text-muted);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     margin: 0;
   }
 }
@@ -704,7 +704,7 @@
   }
 
   .merlin-icon {
-    font-size: var(--font-size-h1);
+    font-size: var(--ds-font-size-3xl);
   }
 
   .hero-actions {
@@ -769,11 +769,11 @@
 
 @include respond-to(xs) {
   .countdown-value {
-    font-size: var(--font-size-metric-lg);
+    font-size: var(--ds-font-size-3xl);
   }
 
   .countdown-separator {
-    font-size: var(--font-size-metric-lg);
+    font-size: var(--ds-font-size-3xl);
   }
 }
 

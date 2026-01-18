@@ -19,7 +19,7 @@
   gap: var(--space-3);
   cursor: pointer;
   user-select: none;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
 }
 
@@ -88,13 +88,13 @@
 }
 
 .form-help {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
   margin-left: 2rem;
 }
 
 .form-error {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-status-error);
   margin-left: 2rem;
 }

@@ -14,7 +14,7 @@
 .upload-dropzone {
   border: 2px dashed var(--color-border-primary);
   border-radius: var(--radius-md);
-  padding: var(--space-6, 1.5rem);
+  padding: var(--space-6, var(--ds-font-size-2xl));
   background: var(--surface-primary);
   cursor: pointer;
   transition:
@@ -54,24 +54,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--space-2, var(--ds-font-size-0-5rem));
 }
 
 .upload-icon {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-brand-primary);
-  margin-bottom: var(--space-2, 0.5rem);
+  margin-bottom: var(--space-2, var(--ds-font-size-0-5rem));
 }
 
 .upload-label {
-  font-size: var(--font-body-size, 1.125rem);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0;
 }
 
 .upload-hint {
-  font-size: var(--font-body-sm-size, 0.875rem);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -79,7 +79,7 @@
 .uploaded-files-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2, 0.5rem);
+  gap: var(--space-2, var(--ds-font-size-0-5rem));
   text-align: left;
 }
 
@@ -87,7 +87,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3, 0.75rem);
+  padding: var(--space-3, var(--ds-font-size-xs));
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border-primary);
@@ -96,12 +96,12 @@
 .file-info {
   display: flex;
   align-items: center;
-  gap: var(--space-3, 0.75rem);
+  gap: var(--space-3, var(--ds-font-size-xs));
   flex: 1;
 }
 
 .file-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-brand-primary);
 }
 
@@ -112,12 +112,12 @@
 }
 
 .file-name {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .file-size {
-  font-size: var(--font-body-sm-size, 0.875rem);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 
@@ -136,32 +136,32 @@
 }
 
 .upload-progress {
-  margin-top: var(--space-4, 1rem);
+  margin-top: var(--space-4, var(--ds-font-size-md));
 }
 
 .progress-text {
   display: block;
   text-align: center;
-  margin-top: var(--space-2, 0.5rem);
-  font-size: var(--font-body-sm-size, 0.875rem);
+  margin-top: var(--space-2, var(--ds-font-size-0-5rem));
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
 }
 
 .file-preview {
-  margin-top: var(--space-4, 1rem);
-  padding: var(--space-4, 1rem);
+  margin-top: var(--space-4, var(--ds-font-size-md));
+  padding: var(--space-4, var(--ds-font-size-md));
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
 }
 
 .file-preview h4 {
-  margin: 0 0 var(--space-3, 0.75rem) 0;
-  font-size: var(--font-h3-size, 1.25rem);
+  margin: 0 0 var(--space-3, var(--ds-font-size-xs)) 0;
+  font-size: var(--ds-font-size-xl);
   color: var(--color-text-primary);
 }
 
 .preview-item {
-  margin-top: var(--space-3, 0.75rem);
+  margin-top: var(--space-3, var(--ds-font-size-xs));
 }
 
 .preview-item img {
@@ -172,8 +172,8 @@
 
 .preview-item pre {
   background: var(--surface-primary);
-  padding: var(--space-3, 0.75rem);
+  padding: var(--space-3, var(--ds-font-size-xs));
   border-radius: var(--radius-md);
   overflow-x: auto;
-  font-size: var(--font-body-sm-size, 0.875rem);
+  font-size: var(--ds-font-size-sm);
 }

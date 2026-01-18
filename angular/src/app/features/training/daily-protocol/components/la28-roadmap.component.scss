@@ -28,12 +28,12 @@
 
       h3 {
         margin: 0;
-        font-size: var(--font-size-body);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .days-count {
-        font-size: var(--font-size-badge);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
     }
@@ -79,14 +79,14 @@
       text-align: center;
 
       .ring-value {
-        font-size: var(--font-size-h2);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-2xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--primary-700);
         display: block;
       }
 
       .ring-label {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
     }
@@ -99,17 +99,17 @@
     gap: var(--space-1);
 
     .phase-label {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
     }
 
     .phase-name {
-      font-weight: var(--font-weight-semibold);
-      font-size: var(--font-size-h4);
+      font-weight: var(--ds-font-weight-semibold);
+      font-size: var(--ds-font-size-md);
     }
 
     .phase-focus {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--primary-600);
     }
   }
@@ -127,7 +127,7 @@
     padding: var(--space-2);
     background: var(--surface-card);
     border-radius: var(--radius-lg);
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
 
     &.current {
       border-left: var(--border-3) solid var(--primary-500);
@@ -138,7 +138,7 @@
     }
 
     .milestone-icon {
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
     }
 
     .milestone-info {
@@ -148,11 +148,11 @@
       align-items: center;
 
       .milestone-title {
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .milestone-date {
-        font-size: var(--font-size-badge);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
     }
@@ -178,13 +178,13 @@
     }
 
     .stat-block__value {
-      font-size: var(--font-size-metric-md);
-      font-weight: var(--font-weight-bold);
+      font-size: var(--ds-font-size-2xl);
+      font-weight: var(--ds-font-weight-bold);
       color: var(--primary-700);
     }
 
     .stat-block__label {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
     }
   }
@@ -194,7 +194,7 @@
 
     h4 {
       margin: 0 0 var(--space-4) 0;
-      font-size: var(--font-body-size);
+      font-size: var(--ds-font-size-md);
     }
   }
 
@@ -227,19 +227,19 @@
       margin-bottom: var(--space-2);
 
       .cycle-year {
-        font-size: var(--font-size-badge);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
     }
 
     h5 {
       margin: 0 0 var(--space-1) 0;
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
     }
 
     .cycle-focus {
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
       margin: 0 0 var(--space-2) 0;
     }
@@ -248,7 +248,7 @@
       display: flex;
       align-items: center;
       gap: var(--space-2);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--primary-600);
       margin-bottom: var(--space-2);
     }
@@ -260,13 +260,13 @@
       margin-bottom: var(--space-2);
 
       .progress-text {
-        font-size: var(--font-size-badge);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
     }
 
     .cycle-dates {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--color-text-secondary);
       margin: 0;
     }
@@ -277,12 +277,12 @@
 
     h4 {
       margin: 0 0 var(--space-4) 0;
-      font-size: var(--font-body-size);
+      font-size: var(--ds-font-size-md);
     }
   }
 
   .milestone-icon-large {
-    font-size: var(--font-size-metric-md);
+    font-size: var(--ds-font-size-2xl);
   }
 
   /* Ukraine/Olympic colors - intentional brand styling */
@@ -305,13 +305,13 @@
     }
 
     .olympic-rings {
-      font-size: var(--font-h1-size);
+      font-size: var(--ds-font-size-3xl);
     }
 
     .countdown-text {
       h3 {
         margin: 0;
-        font-size: var(--font-size-h2);
+        font-size: var(--ds-font-size-2xl);
       }
 
       p {
@@ -331,13 +331,13 @@
         align-items: center;
 
         .number {
-          font-size: var(--font-size-metric-lg);
-          font-weight: var(--font-weight-bold);
+          font-size: var(--ds-font-size-3xl);
+          font-weight: var(--ds-font-weight-bold);
           text-shadow: 0 2px 4px var(--surface-overlay-light);
         }
 
         .label {
-          font-size: var(--font-size-h4);
+          font-size: var(--ds-font-size-md);
           opacity: 0.9;
         }
       }

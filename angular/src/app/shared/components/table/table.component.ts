@@ -102,7 +102,7 @@ export interface TableColumn {
       .table th {
         padding: 1rem;
         text-align: left;
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--p-text-color);
         background: var(--p-surface-50);
         border-bottom: 2px solid var(--p-surface-border);

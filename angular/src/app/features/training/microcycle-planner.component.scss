@@ -42,16 +42,16 @@
 }
 
 .stat-block__label {
-  font-size: var(--font-size-badge);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: var(--ds-font-size-xs);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-5px);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-1);
 }
 
 .stat-block__value {
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
@@ -80,8 +80,8 @@
   display: inline-block;
   padding: var(--space-1) 8px;
   border-radius: var(--radius-full);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
   color: white;
 }
 

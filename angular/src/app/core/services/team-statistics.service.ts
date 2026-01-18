@@ -431,17 +431,26 @@ export class TeamStatisticsService {
     return players.map((p: unknown) => {
       const player = p as Record<string, unknown>;
       const name = String(player["name"] || player["full_name"] || "Unknown");
-      const acwr = Number(player["acwr"]) || 1.0;
-      const readiness = Number(player["readiness"]) || 75;
+      
+      // CRITICAL: Do NOT use defaults for metrics - null means no data
+      const acwrRaw = player["acwr"];
+      const readinessRaw = player["readiness"];
+      const acwr = acwrRaw !== undefined && acwrRaw !== null ? Number(acwrRaw) : null;
+      const readiness = readinessRaw !== undefined && readinessRaw !== null ? Number(readinessRaw) : null;
 
-      let riskLevel: "low" | "medium" | "high" = "low";
-      // Enhanced risk calculation: wellness < 40% is high risk (per user flow design)
-      if (acwr > 1.5 || readiness < 40) {
-        riskLevel = "high";
-      } else if (acwr > 1.3 || readiness < 55) {
-        riskLevel = "high";
-      } else if (readiness < 70) {
-        riskLevel = "medium";
+      let riskLevel: "low" | "medium" | "high" | "unknown" = "unknown";
+      
+      // Risk calculation only if we have data
+      if (acwr !== null || readiness !== null) {
+        riskLevel = "low"; // Start with low if we have any data
+        // Enhanced risk calculation: wellness < 40% is high risk (per user flow design)
+        if ((acwr !== null && acwr > 1.5) || (readiness !== null && readiness < 40)) {
+          riskLevel = "high";
+        } else if ((acwr !== null && acwr > 1.3) || (readiness !== null && readiness < 55)) {
+          riskLevel = "high";
+        } else if (readiness !== null && readiness < 70) {
+          riskLevel = "medium";
+        }
       }
 
       let status: "active" | "injured" | "inactive" | "at_risk" = "active";

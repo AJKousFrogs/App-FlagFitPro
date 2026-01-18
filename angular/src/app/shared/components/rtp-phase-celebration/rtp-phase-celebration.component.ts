@@ -145,8 +145,8 @@ export interface RTPPhaseInfo {
       }
 
       .celebration-icon {
-        font-size: var(--font-h1-size);
-        line-height: 1;
+        font-size: var(--ds-font-size-3xl);
+        line-height: var(--ds-line-height-1);
       }
 
       .celebration-content {
@@ -155,14 +155,14 @@ export interface RTPPhaseInfo {
 
       .celebration-content h2 {
         margin: 0 0 var(--space-2) 0;
-        font-size: var(--font-size-h2);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-2xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
       }
 
       .celebration-subtitle {
         margin: 0;
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
       }
 
@@ -179,17 +179,17 @@ export interface RTPPhaseInfo {
       .context-item {
         display: flex;
         gap: var(--space-2);
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
       }
 
       .context-label {
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--ds-font-weight-medium);
         color: var(--color-text-secondary);
       }
 
       .context-value {
         color: var(--color-text-primary);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .instructions-section {
@@ -198,8 +198,8 @@ export interface RTPPhaseInfo {
 
       .instructions-section h3 {
         margin: 0 0 var(--space-2) 0;
-        font-size: var(--font-size-h3);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
         display: flex;
         align-items: center;
@@ -215,7 +215,7 @@ export interface RTPPhaseInfo {
         padding: 0;
         list-style: disc;
         color: var(--color-text-primary);
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
       }
 
       .activities-list.allowed li {
@@ -235,8 +235,8 @@ export interface RTPPhaseInfo {
 
       .next-phase-section h3 {
         margin: 0 0 var(--space-2) 0;
-        font-size: var(--font-size-h3);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
         display: flex;
         align-items: center;
@@ -249,8 +249,8 @@ export interface RTPPhaseInfo {
 
       .next-phase-name {
         margin: 0 0 var(--space-2) 0;
-        font-size: var(--font-size-body);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-brand-primary);
       }
 
@@ -259,7 +259,7 @@ export interface RTPPhaseInfo {
         padding: 0;
         list-style: disc;
         color: var(--color-text-secondary);
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
       }
 
       .coach-notification {
@@ -270,13 +270,13 @@ export interface RTPPhaseInfo {
         background: var(--color-status-info-subtle);
         border-radius: var(--radius-md);
         margin-bottom: var(--space-4);
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-primary);
       }
 
       .coach-notification i {
         color: var(--color-status-info);
-        font-size: var(--font-size-h3);
+        font-size: var(--ds-font-size-xl);
       }
 
       .celebration-actions {

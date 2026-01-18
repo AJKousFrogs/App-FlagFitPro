@@ -110,7 +110,7 @@ interface ChartInstance {
         gap: 0.5rem;
         padding: 2rem;
         color: var(--text-color-secondary, #6c757d);
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
       }
       .chart-error i {
         color: var(--yellow-500, #f59e0b);

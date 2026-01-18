@@ -20,13 +20,13 @@
 }
 
 .score-value {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
 }
 
 .score-label {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--color-text-secondary);
   margin-top: var(--space-2);
 }

@@ -21,8 +21,8 @@
     background: none;
     border: none;
     border-radius: var(--radius-md);
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-secondary);
     cursor: pointer;
     transition:
@@ -46,8 +46,8 @@
 .programs-section {
   h3 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-body-size);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
   }
 }
@@ -80,13 +80,13 @@
     gap: var(--space-2);
 
     .program-icon {
-      font-size: var(--font-size-h2);
+      font-size: var(--ds-font-size-2xl);
     }
 
     h4 {
       margin: 0;
-      font-size: var(--font-body-size);
-      font-weight: var(--font-weight-semibold);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-semibold);
       color: var(--ds-text-primary);
     }
   }
@@ -108,7 +108,7 @@
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: center;
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
 
     .detail-label {
       color: var(--ds-text-tertiary);
@@ -116,7 +116,7 @@
     }
 
     .compliance {
-      font-weight: var(--font-weight-semibold);
+      font-weight: var(--ds-font-weight-semibold);
 
       &.good {
         color: var(--ds-primary-green);
@@ -131,7 +131,7 @@
   .progress-label {
     display: block;
     margin-top: var(--space-1);
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-tertiary);
     text-align: right;
   }
@@ -149,19 +149,19 @@
     padding: var(--space-1) var(--space-2);
     background: var(--ds-surface-base);
     border-radius: var(--radius-full);
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-text-secondary);
     white-space: nowrap;
 
     &.current {
       background: var(--ds-primary-green);
       color: white;
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--ds-font-weight-medium);
     }
   }
 
   i {
-    font-size: var(--font-caption-size); /* 10px - micro icon */
+    font-size: var(--ds-font-size-xs); /* 10px - micro icon */
     color: var(--ds-text-tertiary);
   }
 }
@@ -193,8 +193,8 @@
 
   h4 {
     margin: 0 0 var(--space-3) 0;
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
     color: var(--ds-text-primary);
     padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--ds-border-subtle);
@@ -207,8 +207,8 @@
   label {
     display: block;
     margin-bottom: var(--space-1);
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-medium);
     color: var(--ds-text-primary);
   }
 
@@ -248,22 +248,22 @@
     gap: var(--space-1);
 
     .phase-name {
-      font-weight: var(--font-weight-semibold);
-      font-size: var(--font-size-h4);
+      font-weight: var(--ds-font-weight-semibold);
+      font-size: var(--ds-font-size-md);
       color: var(--ds-text-primary);
     }
 
     .phase-weeks {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--ds-text-tertiary);
     }
   }
 
   .phase-load {
     margin-top: var(--space-2);
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--ds-primary-green);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--ds-font-weight-medium);
   }
 }
 
@@ -285,13 +285,13 @@
 
   .day-label {
     min-width: var(--icon-min-width-md);
-    font-weight: var(--font-weight-semibold);
-    font-size: var(--font-size-h4);
+    font-weight: var(--ds-font-weight-semibold);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-primary);
   }
 
   .rpe-label {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     color: var(--ds-text-tertiary);
   }
 }
@@ -308,7 +308,7 @@
     margin-bottom: var(--space-3);
 
     label {
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--ds-font-weight-medium);
       cursor: pointer;
     }
   }
@@ -333,19 +333,19 @@
   }
 
   label {
-    font-size: var(--font-size-h4);
+    font-size: var(--ds-font-size-md);
     cursor: pointer;
 
     .player-status {
       color: var(--ds-text-tertiary);
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
     }
   }
 }
 
 .selected-count {
   margin: var(--space-3) 0 0 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--ds-text-secondary);
 }
 

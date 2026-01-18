@@ -98,9 +98,9 @@ export type ActionPanelType =
     `
       .action-panel {
         background: var(--surface-primary, #ffffff);
-        border-radius: var(--radius-lg, 12px);
-        padding: var(--space-6, 1.5rem);
-        margin: var(--space-4, 1rem) 0;
+        border-radius: var(--radius-lg, var(--ds-font-size-xs));
+        padding: var(--space-6, var(--ds-font-size-2xl));
+        margin: var(--space-4, var(--ds-font-size-md)) 0;
         border: 2px solid var(--color-border-secondary);
         transition: all 0.3s ease;
       }
@@ -149,7 +149,7 @@ export type ActionPanelType =
         content: "";
         position: absolute;
         inset: -4px;
-        border-radius: calc(var(--radius-lg, 12px) + 4px);
+        border-radius: calc(var(--radius-lg, var(--ds-font-size-xs)) + 4px);
         background: linear-gradient(
           135deg,
           rgba(249, 115, 22, 0.1) 0%,
@@ -169,7 +169,7 @@ export type ActionPanelType =
       .action-panel-content {
         display: flex;
         align-items: flex-start;
-        gap: var(--space-4, 1rem);
+        gap: var(--space-4, var(--ds-font-size-md));
       }
 
       .action-panel-icon {
@@ -180,7 +180,7 @@ export type ActionPanelType =
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: var(--ds-font-size-2xl);
       }
 
       .urgency-low .action-panel-icon {
@@ -210,19 +210,19 @@ export type ActionPanelType =
 
       .action-panel-title {
         font-family: var(--font-family-sans);
-        font-size: var(--font-size-body, 1rem);
-        font-weight: var(--font-weight-semibold, 600);
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
         margin: 0 0 var(--space-1, 0.25rem) 0;
-        line-height: var(--line-height-tight, 1.25);
+        line-height: var(--ds-line-height-tight);
       }
 
       .action-panel-message {
         font-family: var(--font-family-sans);
-        font-size: var(--font-size-h4, 0.875rem);
+        font-size: var(--ds-font-size-md);
         color: var(--color-text-secondary);
         margin: 0;
-        line-height: var(--line-height-normal, 1.5);
+        line-height: var(--ds-line-height-normal);
       }
 
       .action-panel-actions {
@@ -232,7 +232,7 @@ export type ActionPanelType =
       }
 
       .action-panel-btn {
-        font-weight: var(--font-weight-semibold, 600);
+        font-weight: var(--ds-font-weight-semibold);
         white-space: nowrap;
       }
 
@@ -271,17 +271,17 @@ export type ActionPanelType =
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: var(--space-2, 0.5rem);
-        margin-top: var(--space-4, 1rem);
-        padding-top: var(--space-3, 0.75rem);
+        gap: var(--space-2, var(--ds-font-size-0-5rem));
+        margin-top: var(--space-4, var(--ds-font-size-md));
+        padding-top: var(--space-3, var(--ds-font-size-xs));
         border-top: 1px dashed var(--color-border-secondary);
-        font-size: var(--font-size-badge, 0.75rem);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-tertiary);
-        font-weight: var(--font-weight-medium, 500);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .blocking-overlay-indicator i {
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
       }
 
       /* Responsive */
@@ -298,7 +298,7 @@ export type ActionPanelType =
 
         .action-panel-actions {
           justify-content: center;
-          margin-top: var(--space-2, 0.5rem);
+          margin-top: var(--space-2, var(--ds-font-size-0-5rem));
         }
 
         .action-panel-btn {

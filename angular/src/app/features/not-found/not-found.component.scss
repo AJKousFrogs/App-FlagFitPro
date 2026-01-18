@@ -25,26 +25,26 @@
 }
 
 .error-code {
-  font-size: var(--font-h1-size);
-  font-weight: var(--font-weight-extrabold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
-  line-height: 1;
+  line-height: var(--ds-line-height-1);
   margin-bottom: var(--space-4);
   text-shadow: var(--shadow-sm);
 }
 
 .error-title {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-4);
 }
 
 .error-message {
-  font-size: var(--font-body-size);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-6);
-  line-height: 1.6;
+  line-height: var(--ds-line-height-1-6);
 }
 
 .error-actions {
@@ -60,7 +60,7 @@
 }
 
 .helpful-links p {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin-bottom: var(--space-3);
 }
@@ -78,7 +78,7 @@
 .helpful-links a {
   color: var(--color-brand-primary);
   text-decoration: none;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   transition: color var(--transition-base) var(--ease-standard);
 }
 
@@ -89,11 +89,11 @@
 
 @include respond-to(md) {
   .error-code {
-    font-size: var(--font-h1-size);
+    font-size: var(--ds-font-size-3xl);
   }
 
   .error-title {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 
   .error-actions {

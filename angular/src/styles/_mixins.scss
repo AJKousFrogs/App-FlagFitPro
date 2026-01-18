@@ -119,27 +119,27 @@
   }
 
   .stat-block__value {
-    font-size: var(--font-size-metric-md);
-    font-weight: var(--font-weight-bold);
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
     color: var(--color-text-primary);
-    line-height: var(--line-height-tight);
+    line-height: var(--ds-line-height-tight);
   }
 
   .stat-block__label {
-    font-size: var(--font-size-caption);
-    font-weight: var(--font-weight-regular);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-regular);
     color: var(--color-text-muted);
-    line-height: var(--line-height-base);
-    letter-spacing: var(--letter-spacing-caption);
-    text-transform: uppercase;
+    line-height: var(--ds-line-height-normal);
+    letter-spacing: var(--ds-letter-spacing-caption);
+    text-transform: var(--ds-text-transform-uppercase);
   }
 
   .stat-block--large .stat-block__value {
-    font-size: var(--font-size-metric-lg);
+    font-size: var(--ds-font-size-3xl);
   }
 
   .stat-block--compact .stat-block__value {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 }
 

@@ -16,7 +16,7 @@
    @see docs/CARD_SHELL_CONTRACT.md */
 
 .olympic-icon {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 /* Status Card */
@@ -38,16 +38,16 @@
 }
 
 .status-label {
-  font-size: var(--font-size-badge);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: var(--ds-font-size-xs);
+  text-transform: var(--ds-text-transform-uppercase);
+  letter-spacing: var(--ds-letter-spacing-0-5px);
   color: var(--color-text-muted);
 }
 
 .status-value {
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .status-active {
@@ -117,7 +117,7 @@
 .info-notice p,
 .warning-notice p {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -132,13 +132,13 @@
    @see docs/CARD_SHELL_CONTRACT.md §8 */
 
 .loading-state i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   margin-bottom: var(--space-2);
 }
 
 /* Table Styles */
 .admin-email {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -148,8 +148,8 @@
   background: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
   border-radius: var(--radius-full);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 /* Settings List */
@@ -170,14 +170,14 @@
 
 .setting-info h4 {
   margin: 0 0 var(--space-1);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .setting-info p {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -208,27 +208,27 @@
 .track-card h4 {
   margin: 0 0 var(--space-2);
   color: var(--ds-primary-green);
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .track-date {
   margin: 0 0 var(--space-1);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
 .track-desc {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .mission-text {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: var(--ds-line-height-1-6);
 }
 
 /* Toggle Switch */
@@ -311,8 +311,8 @@
 
 .modal-header h3 {
   margin: 0;
-  font-size: var(--font-body-size);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -348,8 +348,8 @@
 .form-group label {
   display: block;
   margin-bottom: var(--space-2);
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
 
@@ -360,7 +360,7 @@
   border: 1px solid var(--color-border-primary);
   border-radius: var(--radius-md);
   font-family: inherit;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .form-group input:focus-visible,

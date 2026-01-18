@@ -16,7 +16,7 @@
   color: var(--text-color-secondary);
 
   i {
-    font-size: var(--font-size-metric-md);
+    font-size: var(--ds-font-size-2xl);
   }
 }
 
@@ -46,7 +46,7 @@
     justify-content: center;
 
     i {
-      font-size: var(--font-size-h2);
+      font-size: var(--ds-font-size-2xl);
       color: var(--surface-0);
     }
 
@@ -80,8 +80,8 @@
 
   h3 {
     margin: 0;
-    font-size: var(--font-size-h2);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-semibold);
   }
 
   .search-box {
@@ -112,17 +112,17 @@
     flex-direction: column;
 
     .athlete-name {
-      font-weight: var(--font-weight-semibold);
+      font-weight: var(--ds-font-weight-semibold);
     }
 
     .athlete-age {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--text-color-secondary);
     }
   }
 
   .target-weight {
-    font-size: var(--font-size-badge);
+    font-size: var(--ds-font-size-xs);
     color: var(--text-color-secondary);
   }
 
@@ -142,8 +142,8 @@
     }
 
     span {
-      font-size: var(--font-size-h4);
-      font-weight: var(--font-weight-medium);
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
     }
   }
 
@@ -156,8 +156,8 @@
     border-radius: 50%;
     background: var(--red-500);
     color: var(--surface-0);
-    font-size: var(--font-size-badge);
-    font-weight: var(--font-weight-medium);
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-medium);
   }
 
   .ok-icon {
@@ -198,7 +198,7 @@
       color: var(--orange-700);
 
       i {
-        font-size: var(--font-size-body);
+        font-size: var(--ds-font-size-md);
       }
     }
 
@@ -222,7 +222,7 @@
     color: var(--text-color-secondary);
 
     i {
-      font-size: var(--font-h1-size);
+      font-size: var(--ds-font-size-3xl);
       margin-bottom: var(--ds-spacing-md);
       opacity: var(--opacity-dimmed);
     }
@@ -251,7 +251,7 @@
     align-items: center;
 
     .athlete-name {
-      font-weight: var(--font-weight-semibold);
+      font-weight: var(--ds-font-weight-semibold);
     }
   }
 
@@ -274,7 +274,7 @@
     }
 
     .supplement-name {
-      font-weight: var(--font-weight-medium);
+      font-weight: var(--ds-font-weight-medium);
     }
 
     .supplement-stats {
@@ -288,14 +288,14 @@
       }
 
       span {
-        font-size: var(--font-size-badge);
+        font-size: var(--ds-font-size-xs);
         min-width: var(--icon-min-width-sm);
         text-align: right;
       }
     }
 
     .missed-days {
-      font-size: var(--font-size-badge);
+      font-size: var(--ds-font-size-xs);
       color: var(--red-500);
     }
   }
@@ -309,13 +309,13 @@
       display: block;
       margin-bottom: var(--ds-spacing-xs);
       color: var(--orange-600);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
     }
 
     ul {
       margin: 0;
       padding-left: var(--ds-spacing-lg);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--text-color-secondary);
     }
   }
@@ -340,7 +340,7 @@
 
     h4 {
       margin: 0;
-      font-size: var(--font-size-body);
+      font-size: var(--ds-font-size-md);
     }
   }
 
@@ -368,7 +368,7 @@
 
     h5 {
       margin: 0 0 var(--ds-spacing-sm);
-      font-size: var(--font-size-h4);
+      font-size: var(--ds-font-size-md);
       color: var(--text-color-secondary);
     }
 
@@ -382,12 +382,12 @@
         flex-direction: column;
 
         .need-value {
-          font-weight: var(--font-weight-bold);
+          font-weight: var(--ds-font-weight-bold);
           color: var(--primary-color);
         }
 
         .need-label {
-          font-size: var(--font-size-badge);
+          font-size: var(--ds-font-size-xs);
           color: var(--text-color-secondary);
         }
       }
@@ -422,12 +422,12 @@
 
       .current-weight {
         display: block;
-        font-size: var(--font-size-metric-md);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-2xl);
+        font-weight: var(--ds-font-weight-bold);
       }
 
       .target {
-        font-size: var(--font-size-h4);
+        font-size: var(--ds-font-size-md);
         color: var(--text-color-secondary);
       }
     }
@@ -486,8 +486,8 @@
     gap: var(--ds-spacing-xs);
 
     label {
-      font-weight: var(--font-weight-medium);
-      font-size: var(--font-size-h4);
+      font-weight: var(--ds-font-weight-medium);
+      font-size: var(--ds-font-size-md);
     }
   }
 

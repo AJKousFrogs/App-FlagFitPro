@@ -558,14 +558,14 @@ interface ScheduleBlock {
       }
 
       .greeting-text {
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: var(--ds-font-size-3xl);
+        font-weight: var(--ds-font-weight-bold);
         margin: 0 0 var(--space-2) 0;
         font-family: "Space Grotesk", sans-serif;
       }
 
       .date-text {
-        font-size: 1.1rem;
+        font-size: var(--ds-font-size-1-1rem);
         opacity: 0.9;
         margin: 0;
       }
@@ -579,12 +579,12 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         gap: var(--space-3);
-        font-size: var(--font-body-size);
+        font-size: var(--ds-font-size-md);
         max-width: 400px;
       }
 
       .motivation-badge i {
-        font-size: 1.25rem;
+        font-size: var(--ds-font-size-xl);
         color: var(--p-yellow-400);
       }
 
@@ -642,7 +642,7 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: var(--ds-font-size-xl);
       }
 
       .season-winter .seasonal-icon {
@@ -673,15 +673,15 @@ interface ScheduleBlock {
       }
 
       .seasonal-focus {
-        font-weight: 600;
-        font-size: 1rem;
+        font-weight: var(--ds-font-weight-semibold);
+        font-size: var(--ds-font-size-md);
         color: var(--text-primary);
       }
 
       .seasonal-notes {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
-        line-height: 1.4;
+        line-height: var(--ds-line-height-1-4);
       }
 
       .weather-warning {
@@ -692,12 +692,12 @@ interface ScheduleBlock {
         color: var(--primitive-info-700);
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-md);
-        font-size: var(--font-body-sm-size);
-        font-weight: var(--font-weight-medium);
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-medium);
       }
 
       .weather-warning i {
-        font-size: 1rem;
+        font-size: var(--ds-font-size-md);
       }
 
       /* Status Cards */
@@ -733,7 +733,7 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: var(--ds-font-size-xl);
       }
 
       .phase-card .status-icon {
@@ -772,20 +772,20 @@ interface ScheduleBlock {
       }
 
       .status-label {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        text-transform: var(--ds-text-transform-uppercase);
+        letter-spacing: var(--ds-letter-spacing-0-5px);
       }
 
       .status-value {
-        font-size: var(--font-h3-size);
-        font-weight: var(--font-weight-bold);
+        font-size: var(--ds-font-size-xl);
+        font-weight: var(--ds-font-weight-bold);
         color: var(--color-text-primary);
       }
 
       .status-subtitle {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
@@ -803,11 +803,11 @@ interface ScheduleBlock {
         justify-content: space-between;
         align-items: center;
         margin-bottom: var(--space-3);
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .progress-text {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -817,8 +817,8 @@ interface ScheduleBlock {
       }
 
       .focus-section h3 {
-        font-size: 1rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-md);
+        font-weight: var(--ds-font-weight-semibold);
         margin-bottom: var(--space-3);
         color: var(--text-primary);
       }
@@ -869,19 +869,19 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 1rem;
+        font-weight: var(--ds-font-weight-bold);
+        font-size: var(--ds-font-size-md);
       }
 
       .block-details h3 {
         margin: 0;
-        font-size: 1.1rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-1-1rem);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-primary);
       }
 
       .block-duration {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
       }
 
@@ -893,7 +893,7 @@ interface ScheduleBlock {
 
       .completed-icon {
         color: var(--p-green-500);
-        font-size: 1.5rem;
+        font-size: var(--ds-font-size-2xl);
       }
 
       /* Exercise List */
@@ -910,7 +910,7 @@ interface ScheduleBlock {
       }
 
       .exercise-name {
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-primary);
         margin-bottom: var(--space-2);
       }
@@ -925,7 +925,7 @@ interface ScheduleBlock {
         background: var(--surface-secondary);
         padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-sm);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
@@ -934,7 +934,7 @@ interface ScheduleBlock {
         color: var(--ds-primary-green);
         padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-sm);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
 
       .variations,
@@ -950,11 +950,11 @@ interface ScheduleBlock {
         color: var(--primitive-info-700);
         padding: var(--space-1) var(--space-2);
         border-radius: var(--radius-sm);
-        font-size: var(--font-compact-md);
+        font-size: var(--ds-font-size-compact-md);
       }
 
       .breakdown-item {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
         color: var(--color-text-secondary);
       }
 
@@ -973,7 +973,7 @@ interface ScheduleBlock {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-primary);
       }
 
@@ -982,7 +982,7 @@ interface ScheduleBlock {
       }
 
       .summary-note {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
         font-style: italic;
       }
@@ -995,7 +995,7 @@ interface ScheduleBlock {
       .exercise-description {
         color: var(--text-secondary);
         margin-bottom: var(--space-4);
-        line-height: 1.6;
+        line-height: var(--ds-line-height-1-6);
       }
 
       .exercise-meta {
@@ -1007,7 +1007,7 @@ interface ScheduleBlock {
       }
 
       .meta-item {
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
         color: var(--color-text-secondary);
         background: var(--surface-secondary);
         padding: var(--space-1) var(--space-3);
@@ -1024,8 +1024,8 @@ interface ScheduleBlock {
       .setup h4,
       .cues h4,
       .safety-notes h4 {
-        font-size: var(--font-body-sm-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--color-text-primary);
         margin-bottom: var(--space-2);
       }
@@ -1071,7 +1071,7 @@ interface ScheduleBlock {
         color: var(--ds-primary-green);
         padding: var(--space-1) var(--space-3);
         border-radius: var(--radius-md);
-        font-size: var(--font-body-sm-size);
+        font-size: var(--ds-font-size-sm);
       }
 
       /* Main Session Content */
@@ -1087,13 +1087,13 @@ interface ScheduleBlock {
         color: var(--p-purple-700);
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-full);
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         margin-bottom: var(--space-4);
       }
 
       .session-focus h4 {
-        font-size: var(--font-body-sm-size);
-        font-weight: var(--font-weight-semibold);
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
         margin-bottom: var(--space-3);
       }
 
@@ -1112,7 +1112,7 @@ interface ScheduleBlock {
 
       .focus-item i {
         color: var(--color-status-success);
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
 
       /* Cool-Down Content */
@@ -1134,7 +1134,7 @@ interface ScheduleBlock {
       }
 
       .activity-item i {
-        font-size: var(--font-compact-md);
+        font-size: var(--ds-font-size-compact-md);
         color: var(--primitive-primary-500);
       }
 
@@ -1155,7 +1155,7 @@ interface ScheduleBlock {
       }
 
       .loading-overlay i {
-        font-size: 3rem;
+        font-size: var(--ds-font-size-3rem);
         color: var(--p-primary-500);
       }
 
@@ -1167,7 +1167,7 @@ interface ScheduleBlock {
         }
 
         .greeting-text {
-          font-size: 1.5rem;
+          font-size: var(--ds-font-size-2xl);
         }
 
         .motivation-badge {

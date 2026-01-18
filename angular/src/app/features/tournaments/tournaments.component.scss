@@ -125,35 +125,35 @@
 }
 
 .visibility-info-banner .banner-icon i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .visibility-info-banner .banner-content strong {
   display: block;
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
   margin-bottom: var(--space-1);
   color: var(--color-text-primary);
 }
 
 .visibility-info-banner .banner-content p {
   margin: 0;
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .tournament-title {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-semibold);
   margin: var(--space-2) 0;
   color: var(--color-text-primary);
 }
 
 .tournament-subtitle {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0;
-  text-transform: capitalize;
+  text-transform: var(--ds-text-transform-capitalize);
 }
 
 .tournament-info {
@@ -182,13 +182,13 @@
 }
 
 .info-value {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin-bottom: var(--space-1);
 }
 
 .info-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -203,13 +203,13 @@
 }
 
 .countdown-value {
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
 }
 
 .countdown-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -218,7 +218,7 @@
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-4);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -264,14 +264,14 @@
 }
 
 .section-header i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   color: var(--ds-primary-green);
 }
 
 .section-header span {
   font-family: var(--font-family-sans);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
@@ -307,19 +307,19 @@
   align-items: center;
   gap: var(--space-2);
   font-family: var(--font-family-sans);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-h4);
+  font-weight: var(--ds-font-weight-medium);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
 .form-field label i {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-muted);
 }
 
 .form-field label .required {
   color: var(--color-status-error);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .form-field.checkbox-field {
@@ -339,7 +339,7 @@
   margin: 0;
   cursor: pointer;
   color: var(--color-text-primary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .form-field .checkbox-label i {
@@ -387,7 +387,7 @@
 
 .tournament-summary h3 {
   margin: 0 0 var(--space-2);
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .tournament-dates,
@@ -397,7 +397,7 @@
   gap: var(--space-2);
   margin: var(--space-1) 0;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 .availability-form {
@@ -455,7 +455,7 @@
 }
 
 .availability-option i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
 }
 
 .form-grid-2 {
@@ -476,7 +476,7 @@
   align-items: center;
   gap: var(--space-2);
   margin: 0 0 var(--space-3);
-  font-size: var(--font-size-body);
+  font-size: var(--ds-font-size-md);
 }
 
 .cost-breakdown {
@@ -499,11 +499,11 @@
 
 .cost-item.remaining {
   background: var(--color-warning-bg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .cost-value {
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
 }
 
@@ -580,13 +580,13 @@
 }
 
 .budget-label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
 .budget-value {
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-body-size);
+  font-weight: var(--ds-font-weight-bold);
+  font-size: var(--ds-font-size-md);
 }
 
 /* Player Availability List */
@@ -622,11 +622,11 @@
 }
 
 .player-name {
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .player-position {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -645,7 +645,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   padding: var(--space-2);
   background: var(--surface-secondary);
@@ -696,8 +696,8 @@
 }
 
 .calc-row.highlight {
-  font-weight: var(--font-weight-bold);
-  font-size: var(--font-body-size);
+  font-weight: var(--ds-font-weight-bold);
+  font-size: var(--ds-font-size-md);
   background: var(--ds-primary-green-ultra-subtle);
   padding: var(--space-3);
   border-radius: var(--radius-md);
@@ -705,7 +705,7 @@
 }
 
 .calc-value {
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
 }
 
@@ -887,7 +887,7 @@
   }
 
   .tournament-title {
-    font-size: var(--font-body-size);
+    font-size: var(--ds-font-size-md);
   }
 
   .tournament-meta {
@@ -928,7 +928,7 @@
  * Scope: .personal-badge class only
  */
 .personal-badge {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 /*

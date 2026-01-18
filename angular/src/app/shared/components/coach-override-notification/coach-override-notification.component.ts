@@ -223,7 +223,7 @@ import { getTimeAgo } from "../../utils/date.utils";
 
       .override-icon {
         color: var(--primary-color);
-        font-size: 1.25rem;
+        font-size: var(--ds-font-size-xl);
       }
 
       .override-content {
@@ -239,8 +239,8 @@ import { getTimeAgo } from "../../utils/date.utils";
       }
 
       .contract-question {
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-color-secondary);
         margin-bottom: 0.5rem;
       }
@@ -255,14 +255,14 @@ import { getTimeAgo } from "../../utils/date.utils";
         padding: 0.5rem;
         background: var(--surface-100);
         border-radius: 0.25rem;
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
       }
 
       .timestamp {
         display: block;
         margin-top: 0.5rem;
         color: var(--text-color-secondary);
-        font-size: 0.75rem;
+        font-size: var(--ds-font-size-xs);
       }
 
       .action-buttons {
@@ -326,13 +326,13 @@ import { getTimeAgo } from "../../utils/date.utils";
 
       .comparison-item h5 {
         margin: 0 0 0.5rem 0;
-        font-size: 0.875rem;
-        font-weight: 600;
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .comparison-item pre {
         margin: 0;
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
         white-space: pre-wrap;
         word-break: break-word;
       }
@@ -357,14 +357,14 @@ import { getTimeAgo } from "../../utils/date.utils";
       }
 
       .history-date {
-        font-weight: 600;
+        font-weight: var(--ds-font-weight-semibold);
         color: var(--text-color);
       }
 
       .history-reason {
         margin: 0;
         color: var(--text-color-secondary);
-        font-size: 0.875rem;
+        font-size: var(--ds-font-size-sm);
       }
     `,
   ],

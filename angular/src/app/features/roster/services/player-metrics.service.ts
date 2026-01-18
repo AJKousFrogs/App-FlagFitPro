@@ -255,52 +255,38 @@ export class PlayerMetricsService {
   }
 
   /**
-   * Calculate readiness from wellness data
+   * Get readiness from player data
+   * 
+   * IMPORTANT: Returns null if no real readiness data exists.
+   * DO NOT generate fake/mock readiness values - data must come from actual wellness check-ins.
    */
-  private calculateReadiness(player: Player): number {
-    // In a real implementation, this would fetch from WellnessService
-    // For now, use existing value or generate based on status
-    if (player.readiness !== undefined) return player.readiness;
-
-    // Default based on status
-    switch (player.status) {
-      case "active":
-        return 75 + Math.floor(Math.random() * 20);
-      case "limited":
-        return 55 + Math.floor(Math.random() * 15);
-      case "returning":
-        return 50 + Math.floor(Math.random() * 20);
-      case "injured":
-        return 20 + Math.floor(Math.random() * 20);
-      case "inactive":
-        return 40 + Math.floor(Math.random() * 20);
-      default:
-        return WELLNESS.DEFAULT_READINESS_SCORE;
+  private calculateReadiness(player: Player): number | null {
+    // Only return actual readiness data - no mock values
+    if (player.readiness !== undefined && player.readiness !== null) {
+      return player.readiness;
     }
+    
+    // Return null to indicate no data available
+    // UI should show "No data" or prompt for wellness check-in
+    return null;
   }
 
   /**
-   * Calculate ACWR from training data
+   * Get ACWR from player data
+   * 
+   * IMPORTANT: Returns null if no real ACWR data exists.
+   * DO NOT generate fake/mock ACWR values - data must come from actual training sessions.
+   * ACWR requires at least 7 days of training data for acute load and 28 days for chronic load.
    */
-  private calculateACWR(player: Player): number {
-    // In a real implementation, this would fetch from ACWRService
-    if (player.acwr !== undefined) return player.acwr;
-
-    // Generate realistic ACWR based on status
-    switch (player.status) {
-      case "active":
-        return 0.9 + Math.random() * 0.4; // 0.9 - 1.3
-      case "limited":
-        return 0.7 + Math.random() * 0.3; // 0.7 - 1.0
-      case "returning":
-        return 0.5 + Math.random() * 0.4; // 0.5 - 0.9
-      case "injured":
-        return 0.1 + Math.random() * 0.3; // 0.1 - 0.4
-      case "inactive":
-        return 0.3 + Math.random() * 0.4; // 0.3 - 0.7
-      default:
-        return 1.0;
+  private calculateACWR(player: Player): number | null {
+    // Only return actual ACWR data - no mock values
+    if (player.acwr !== undefined && player.acwr !== null) {
+      return player.acwr;
     }
+    
+    // Return null to indicate no data available
+    // UI should show "Building baseline" or similar message
+    return null;
   }
 
   /**

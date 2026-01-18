@@ -13,8 +13,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--font-size-metric-md);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   margin: 0;
   color: var(--color-text-primary);
 }
@@ -42,16 +42,16 @@
 }
 
 .overview-value {
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-3xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-brand-primary);
   margin-bottom: var(--space-2);
 }
 
 .overview-label {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--ds-font-weight-medium);
 }
 
 /* Responsive */
@@ -85,7 +85,7 @@
   }
 
   .card-title {
-    font-size: var(--font-size-h2);
+    font-size: var(--ds-font-size-2xl);
   }
 }
 
@@ -100,7 +100,7 @@
   }
 
   .overview-value {
-    font-size: var(--font-size-metric-md);
+    font-size: var(--ds-font-size-2xl);
   }
 }
 

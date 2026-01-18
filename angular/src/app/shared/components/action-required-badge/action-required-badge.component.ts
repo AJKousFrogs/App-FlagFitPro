@@ -80,11 +80,11 @@ export type ActionType =
         padding: var(--space-2) var(--space-4);
         border-radius: var(--radius-md);
         font-family: var(--font-family-sans);
-        font-size: var(--font-body-sm-size);
-        font-weight: var(--font-weight-semibold);
-        text-transform: none;
-        letter-spacing: 0;
-        line-height: var(--line-height-tight);
+        font-size: var(--ds-font-size-sm);
+        font-weight: var(--ds-font-weight-semibold);
+        text-transform: var(--ds-text-transform-none);
+        letter-spacing: var(--ds-letter-spacing-normal);
+        line-height: var(--ds-line-height-tight);
         min-height: var(--space-8);
         transition: all var(--motion-fast) var(--ease-standard);
         cursor: pointer;
@@ -108,14 +108,14 @@ export type ActionType =
         background: var(--surface-primary);
         color: var(--color-text-primary);
         border: var(--border-2) solid var(--ds-primary-orange);
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .action-required-badge.urgency-critical {
         background: var(--surface-primary);
         color: var(--color-text-primary);
         border: var(--border-2) solid var(--color-status-error);
-        font-weight: var(--font-weight-bold);
+        font-weight: var(--ds-font-weight-bold);
         animation: pulse-action var(--motion-slow) infinite;
       }
 
@@ -150,11 +150,11 @@ export type ActionType =
       }
 
       .action-icon {
-        font-size: var(--font-caption-size);
+        font-size: var(--ds-font-size-xs);
       }
 
       .action-label {
-        font-weight: var(--font-weight-semibold);
+        font-weight: var(--ds-font-weight-semibold);
       }
 
       .urgency-tag {
@@ -181,7 +181,7 @@ export type ActionType =
       /* Responsive */
       @media (max-width: 768px) {
         .action-required-badge {
-          font-size: var(--font-h4-size);
+          font-size: var(--ds-font-size-md);
           padding: var(--space-2) var(--space-3);
         }
       }

@@ -1,34 +1,34 @@
 import { CommonModule } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  OnInit,
-  signal
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    OnInit,
+    signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 import { Card } from "primeng/card";
+import { Dialog } from "primeng/dialog";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
-import { Dialog } from "primeng/dialog";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
-import {
-  SharedInsight,
-  SharedInsightFeedService
-} from "../../../core/services/shared-insight-feed.service";
 import { LoggerService } from "../../../core/services/logger.service";
+import {
+    SharedInsight,
+    SharedInsightFeedService
+} from "../../../core/services/shared-insight-feed.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../../shared/components/page-header/page-header.component";
@@ -1299,12 +1299,15 @@ export class PhysiotherapistDashboardComponent implements OnInit {
               ? "high"
               : a.riskLevel === "medium"
                 ? "moderate"
-                : "low",
-          acwrValue: a.acwr || 1.0,
+                : a.acwr === null || a.acwr === undefined
+                  ? "unknown"
+                  : "low",
+          // CRITICAL: Do not use default for ACWR - null means no data
+          acwrValue: a.acwr ?? null,
           trainingLoadSpike: a.acwr !== null && a.acwr > 1.4,
           sleepDeficit: false,
           weightFluctuation: false,
-          soreness: 3,
+          soreness: null, // null = no data
           asymmetries: [],
         }));
         this.riskIndicators.set(risks);

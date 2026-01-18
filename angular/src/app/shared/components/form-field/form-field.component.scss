@@ -11,9 +11,9 @@
 }
 
 label {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
 }
 
 label.required::after {
@@ -35,12 +35,12 @@ textarea {
 
 .hint {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 .error-message {
   color: var(--color-status-error);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
 }
 
 /* Validation states - uses global error state styling */

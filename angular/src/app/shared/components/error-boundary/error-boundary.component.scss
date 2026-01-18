@@ -24,27 +24,27 @@
 }
 
 .error-icon {
-  font-size: var(--font-h1-size);
+  font-size: var(--ds-font-size-3xl);
   color: var(--color-status-warning);
   margin-bottom: var(--space-4);
 }
 
 .error-title {
-  font-size: var(--font-h2-size, 1.5rem);
-  font-weight: var(--font-weight-bold, 700);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-3) 0;
 }
 
 .error-message {
-  font-size: var(--font-body-size, 1rem);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-2) 0;
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .error-component {
-  font-size: var(--font-body-sm-size, 0.875rem);
+  font-size: var(--ds-font-size-sm);
   color: var(--color-text-muted);
   margin: 0 0 var(--space-6) 0;
   font-family: monospace;
@@ -58,7 +58,7 @@
 }
 
 .error-help {
-  font-size: var(--font-caption-size, 0.75rem);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
   margin: 0;
 }

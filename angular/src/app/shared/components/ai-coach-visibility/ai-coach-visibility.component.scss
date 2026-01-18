@@ -72,13 +72,13 @@
 }
 
 .stat-block__value {
-  font-size: var(--font-h2-size);
-  font-weight: var(--font-weight-bold);
+  font-size: var(--ds-font-size-2xl);
+  font-weight: var(--ds-font-weight-bold);
   color: var(--color-text-primary);
 }
 
 .stat-block__label {
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-secondary);
 }
 
@@ -94,8 +94,8 @@
   align-items: center;
   gap: var(--space-2);
   margin: 0;
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .alert-count {
@@ -103,8 +103,8 @@
   color: var(--color-text-on-primary);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-xl);
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .alerts-list {
@@ -155,21 +155,21 @@
 }
 
 .player-name {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
 }
 
 .alert-message {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0 0 var(--space-2) 0;
-  line-height: var(--line-height-base);
+  line-height: var(--ds-line-height-normal);
 }
 
 .alert-meta {
   display: flex;
   gap: var(--space-4);
-  font-size: var(--font-size-badge);
+  font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
 
@@ -198,13 +198,13 @@
 }
 
 .empty-state p {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0 0 var(--space-2) 0;
 }
 
 .empty-state span {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -223,8 +223,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--font-size-badge);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-semibold);
 }
 
 .reason-cell {
@@ -235,7 +235,7 @@
 }
 
 .date-cell {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
 }
 
@@ -251,7 +251,7 @@
 }
 
 .dialog-context {
-  font-size: var(--font-size-h4);
+  font-size: var(--ds-font-size-md);
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -266,19 +266,19 @@
 }
 
 .override-warning i {
-  font-size: var(--font-size-h2);
+  font-size: var(--ds-font-size-2xl);
   flex-shrink: 0;
 }
 
 .override-warning p {
   margin: 0;
-  font-size: var(--font-size-h4);
-  line-height: var(--line-height-base);
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-line-height-normal);
 }
 
 .field-label {
-  font-size: var(--font-size-h4);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
   margin-bottom: var(--space-1);
 }
