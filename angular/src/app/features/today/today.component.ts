@@ -1605,7 +1605,13 @@ export class TodayComponent {
         next: (response) => {
           if (response?.success && response.data) {
             // Protocol found, resolve state
-            const protocolData = response.data as ProtocolJson;
+            // Map API response (camelCase confidenceMetadata) to resolver format (snake_case confidence_metadata)
+            const apiData = response.data as ProtocolJson & { confidenceMetadata?: ProtocolJson['confidence_metadata'] };
+            const protocolData: ProtocolJson = {
+              ...apiData,
+              // Ensure confidence_metadata is set from either snake_case or camelCase
+              confidence_metadata: apiData.confidence_metadata || apiData.confidenceMetadata,
+            };
             this.protocolJson.set(protocolData);
             this.resolveAndUpdateViewModel(protocolData);
             this.error.set(null);
