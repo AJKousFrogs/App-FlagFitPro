@@ -12,6 +12,7 @@ import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { Tooltip } from "primeng/tooltip";
 import { Textarea } from "primeng/textarea";
@@ -64,6 +65,7 @@ interface TeamMember {
     Tag,
     StatusTagComponent,
     Dialog,
+    PrimeTemplate,
     InputText,
     Tooltip,
     Textarea,

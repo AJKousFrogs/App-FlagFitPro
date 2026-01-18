@@ -23,6 +23,7 @@ import { IconButtonComponent } from "../../../../shared/components/button/icon-b
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -66,6 +67,7 @@ interface EventTypeOption {
   imports: [
     FormsModule,
     Dialog,
+    PrimeTemplate,
     InputText,
     InputNumber,
     DatePicker,

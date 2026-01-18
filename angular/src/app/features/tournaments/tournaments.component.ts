@@ -8,7 +8,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
-import { ConfirmationService, MessageService } from "primeng/api";
+import { ConfirmationService, MessageService , PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ConfirmDialog } from "primeng/confirmdialog";
@@ -70,6 +70,7 @@ interface TournamentBudget {
     Tabs,
     TabPanel,
     Dialog,
+    PrimeTemplate,
     InputText,
     Textarea,
     DatePicker,
@@ -78,6 +79,7 @@ interface TournamentBudget {
     Checkbox,
     Toast,
     ConfirmDialog,
+    PrimeTemplate,
     MainLayoutComponent,
     PageHeaderComponent,
     DecimalPipe,

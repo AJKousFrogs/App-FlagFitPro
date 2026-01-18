@@ -16,6 +16,7 @@ import { FormsModule } from "@angular/forms";
 
 // PrimeNG
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
 import { Select } from "primeng/select";
@@ -33,6 +34,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
     CommonModule,
     FormsModule,
     Dialog,
+    PrimeTemplate,
     InputText,
     Textarea,
     Select,

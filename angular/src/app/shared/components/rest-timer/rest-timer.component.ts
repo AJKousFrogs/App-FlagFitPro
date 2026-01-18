@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { Slider } from "primeng/slider";
 import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
@@ -21,6 +22,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
   imports: [
     CommonModule,
     Dialog,
+    PrimeTemplate,
     Slider,
     FormsModule,
     ButtonComponent,

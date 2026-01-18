@@ -18,6 +18,7 @@ import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 
 import { Select } from "primeng/select";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
@@ -61,6 +62,7 @@ interface PositionGroup {
     TabPanels,
     TabPanel,
     Dialog,
+    PrimeTemplate,
     Select,
     Avatar,
     StatusTagComponent,

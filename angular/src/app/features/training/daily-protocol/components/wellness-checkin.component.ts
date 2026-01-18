@@ -9,6 +9,7 @@ import {
   signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { PrimeTemplate } from "primeng/api";
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
 import { Slider } from "primeng/slider";
@@ -48,6 +49,8 @@ export interface ReadinessResult {
     Slider,
     Checkbox,
     Dialog,
+    PrimeTemplate,
+    PrimeTemplate,
     Tag,
     Tooltip,
     ButtonComponent,

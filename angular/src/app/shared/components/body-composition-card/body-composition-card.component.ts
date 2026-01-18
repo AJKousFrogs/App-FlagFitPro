@@ -22,6 +22,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { InputNumber } from "primeng/inputnumber";
 
@@ -58,6 +59,8 @@ interface BodyCompositionData {
     Tooltip,
     DecimalPipe,
     Dialog,
+    PrimeTemplate,
+    PrimeTemplate,
     InputNumber
   ],
   template: `

@@ -15,6 +15,7 @@ import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -59,6 +60,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     TableModule,
     StatusTagComponent,
     Dialog,
+    PrimeTemplate,
     InputText,
     Textarea,
     Select,

@@ -29,7 +29,7 @@ import { Slider } from "primeng/slider";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Toast } from "primeng/toast";
 import { Tooltip } from "primeng/tooltip";
-import { MessageService } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
@@ -89,6 +89,7 @@ interface SessionTypeOption {
     FormsModule,
     Checkbox,
     Dialog,
+    PrimeTemplate,
     InputNumber,
     InputText,
     ProgressBar,

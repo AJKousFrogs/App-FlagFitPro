@@ -18,6 +18,7 @@ import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 
 import { Textarea } from "primeng/textarea";
@@ -145,6 +146,7 @@ interface ApiPollVoteResponse {
     RouterModule,
     ScrollingModule,
     Dialog,
+    PrimeTemplate,
     Textarea,
     Avatar,
     InputText,

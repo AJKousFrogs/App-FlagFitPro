@@ -9,7 +9,7 @@ import {
 
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
-import { MessageService } from "primeng/api";
+import { MessageService , PrimeTemplate } from "primeng/api";
 
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
@@ -70,6 +70,7 @@ interface Category {
     Tooltip,
     Ripple,
     Dialog,
+    PrimeTemplate,
     Toast,
     MainLayoutComponent,
     ButtonComponent

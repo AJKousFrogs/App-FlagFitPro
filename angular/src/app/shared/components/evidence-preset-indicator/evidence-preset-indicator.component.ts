@@ -18,6 +18,7 @@ import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { Tooltip } from "primeng/tooltip";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { EvidenceConfigService } from "../../../core/services/evidence-config.service";
 import { EvidencePreset } from "../../../core/config/evidence-config";
 
@@ -30,6 +31,7 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
     Card,
     Tooltip,
     Dialog,
+    PrimeTemplate,
 
     ButtonComponent,
     IconButtonComponent,

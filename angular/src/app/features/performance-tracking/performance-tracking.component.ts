@@ -10,6 +10,7 @@ import { RouterModule } from "@angular/router";
 import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
@@ -123,6 +124,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     LazyChartComponent,
     TableModule,
     Dialog,
+    PrimeTemplate,
     InputText,
     InputNumber,
     ProgressBar,

@@ -23,6 +23,7 @@ import { FormsModule } from "@angular/forms";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { MultiSelect } from "primeng/multiselect";
 import { Select } from "primeng/select";
@@ -83,6 +84,7 @@ interface DayOption {
   imports: [
     FormsModule,
     Dialog,
+    PrimeTemplate,
     Select,
     DatePicker,
     Checkbox,

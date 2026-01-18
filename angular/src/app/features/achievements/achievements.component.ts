@@ -17,7 +17,7 @@ import {
   signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { MessageService , PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";

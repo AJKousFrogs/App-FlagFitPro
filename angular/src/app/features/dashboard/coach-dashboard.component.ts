@@ -14,6 +14,7 @@ import { Badge } from "primeng/badge";
 
 import { DatePicker } from "primeng/datepicker";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TableModule } from "primeng/table";
@@ -104,6 +105,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     LazyChartComponent,
     ChartSkeletonComponent,
     Dialog,
+    PrimeTemplate,
     Tooltip,
     Avatar,
     Badge,

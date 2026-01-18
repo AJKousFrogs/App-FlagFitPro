@@ -15,6 +15,7 @@ import {
   ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { ButtonComponent } from "../button/button.component";
 import { Divider } from "primeng/divider";
@@ -24,7 +25,7 @@ import { KeyboardShortcutsService } from "../../../core/services/keyboard-shortc
   selector: "app-keyboard-shortcuts-modal",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, Dialog, Divider, ButtonComponent],
+  imports: [CommonModule, Dialog, PrimeTemplate, Divider, ButtonComponent],
   template: `
     <p-dialog
       [visible]="shortcutsService.isHelpModalOpen()"

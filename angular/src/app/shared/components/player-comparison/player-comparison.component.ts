@@ -13,6 +13,7 @@ import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { UIChart } from "primeng/chart";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { Select } from "primeng/select";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
@@ -45,6 +46,7 @@ interface StatComparison {
     StatusTagComponent,
     Tooltip,
     Dialog,
+    PrimeTemplate,
   ],
   template: `
     <div class="player-comparison">

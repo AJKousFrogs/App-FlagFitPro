@@ -11,6 +11,7 @@ import { Accordion, AccordionPanel } from "primeng/accordion";
 import { Card } from "primeng/card";
 import { Chip } from "primeng/chip";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { Divider } from "primeng/divider";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -62,6 +63,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     InputText,
     Toast,
     Dialog,
+    PrimeTemplate,
     Divider,
     Tooltip,
     Chip,

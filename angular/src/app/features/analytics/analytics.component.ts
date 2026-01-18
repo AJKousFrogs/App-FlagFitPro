@@ -13,6 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -92,6 +93,7 @@ interface DevelopmentGoal {
 
     LazyChartComponent,
     Dialog,
+    PrimeTemplate,
     ProgressBar,
     TableModule,
     StatusTagComponent,

@@ -19,7 +19,7 @@ import {
   signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { MessageService , PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -294,6 +294,7 @@ const RETENTION_OPTIONS = [
     Checkbox,
     DatePicker,
     Dialog,
+    PrimeTemplate,
     Message,
     RadioButton,
     Select,

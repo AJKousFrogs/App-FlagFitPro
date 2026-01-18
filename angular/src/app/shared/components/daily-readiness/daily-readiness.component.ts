@@ -24,6 +24,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
+import { PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { Slider } from "primeng/slider";
 import { Dialog } from "primeng/dialog";
@@ -62,6 +63,8 @@ interface DailyState {
     Card,
     Slider,
     Dialog,
+    PrimeTemplate,
+    PrimeTemplate,
     InputNumber,
     ButtonComponent
   ],

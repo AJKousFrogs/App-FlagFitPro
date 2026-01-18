@@ -25,7 +25,7 @@ import { Chip } from "primeng/chip";
 import { Skeleton } from "primeng/skeleton";
 import { Badge } from "primeng/badge";
 
-import { MessageService } from "primeng/api";
+import { MessageService , PrimeTemplate } from "primeng/api";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
@@ -53,6 +53,7 @@ import { capitalize } from "../../shared/utils/format.utils";
     Select,
     MultiSelect,
     Dialog,
+    PrimeTemplate,
     Toast,
     ProgressBar,
     Tabs,

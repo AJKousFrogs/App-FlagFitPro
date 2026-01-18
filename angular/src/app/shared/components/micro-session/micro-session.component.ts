@@ -27,6 +27,7 @@ import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { ProgressBar } from "primeng/progressbar";
 import { Slider } from "primeng/slider";
 import { Textarea } from "primeng/textarea";
@@ -79,6 +80,7 @@ type SessionStatus =
     FormsModule,
     Card,
     Dialog,
+    PrimeTemplate,
     ProgressBar,
     Checkbox,
     Slider,

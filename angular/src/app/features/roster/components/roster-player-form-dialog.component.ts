@@ -20,6 +20,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
+import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -52,6 +53,8 @@ export interface PlayerFormData {
   imports: [
     ReactiveFormsModule,
     Dialog,
+    PrimeTemplate,
+    PrimeTemplate,
     InputText,
     Select,
     InputNumber,

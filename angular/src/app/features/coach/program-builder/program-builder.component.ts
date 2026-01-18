@@ -17,7 +17,7 @@ import {
   signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { MessageService , PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -152,6 +152,7 @@ const PHASE_PRESETS = [
     Checkbox,
     DatePicker,
     Dialog,
+    PrimeTemplate,
     InputNumber,
     InputText,
     ProgressBar,

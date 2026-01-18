@@ -9,6 +9,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
+import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { Textarea } from "primeng/textarea";
 import { RadioButton } from "primeng/radiobutton";
@@ -54,6 +55,8 @@ interface FeedbackData {
     CommonModule,
     FormsModule,
     Dialog,
+    PrimeTemplate,
+    PrimeTemplate,
     Textarea,
     RadioButton,
     Tooltip,

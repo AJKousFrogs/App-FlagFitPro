@@ -17,7 +17,7 @@ import {
   signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { MessageService , PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 import { Checkbox } from "primeng/checkbox";
@@ -95,6 +95,7 @@ const TAG_TYPES = [
     FormsModule,
     Checkbox,
     Dialog,
+    PrimeTemplate,
     InputText,
     ProgressBar,
     RadioButton,

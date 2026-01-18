@@ -11,6 +11,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { Skeleton } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
@@ -94,6 +95,7 @@ interface CoachVisibilityRecord {
     Tag,
     StatusTagComponent,
     Dialog,
+    PrimeTemplate,
     Textarea,
     FormsModule,
     Tooltip,

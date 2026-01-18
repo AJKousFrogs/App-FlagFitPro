@@ -13,6 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -58,6 +59,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     TableModule,
     StatusTagComponent,
     Dialog,
+    PrimeTemplate,
     InputText,
     InputNumber,
     Select,

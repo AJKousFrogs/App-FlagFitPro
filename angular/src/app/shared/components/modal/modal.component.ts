@@ -8,6 +8,7 @@ import {
   model,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { PrimeTemplate } from "primeng/api";
 import { Dialog } from "primeng/dialog";
 import { ButtonComponent } from "../button/button.component";
 
@@ -28,7 +29,7 @@ import { ButtonComponent } from "../button/button.component";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [CommonModule, Dialog, ButtonComponent],
+  imports: [CommonModule, Dialog, PrimeTemplate, ButtonComponent],
   template: `
     <p-dialog
       [visible]="visible()"

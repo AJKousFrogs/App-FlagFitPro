@@ -18,7 +18,7 @@ import {
   signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService } from "primeng/api";
+import { MessageService , PrimeTemplate } from "primeng/api";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -131,6 +131,7 @@ const STATUS_CONFIG: Record<
     Checkbox,
     ColorPicker,
     Dialog,
+    PrimeTemplate,
     InputText,
     RadioButton,
     Select,

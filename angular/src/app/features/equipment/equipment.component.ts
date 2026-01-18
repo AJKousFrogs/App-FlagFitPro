@@ -13,6 +13,7 @@ import { FormsModule } from "@angular/forms";
 import { Badge } from "primeng/badge";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -59,6 +60,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     TableModule,
     StatusTagComponent,
     Dialog,
+    PrimeTemplate,
     InputText,
     InputNumber,
     Select,

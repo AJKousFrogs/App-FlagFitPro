@@ -29,6 +29,7 @@ import { Avatar } from "primeng/avatar";
 import { Badge } from "primeng/badge";
 
 import { Dialog } from "primeng/dialog";
+import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 
 import { Select } from "primeng/select";
@@ -71,6 +72,7 @@ import { getInitials } from "../../shared/utils/format.utils";
     Badge,
     ScrollingModule,
     Dialog,
+    PrimeTemplate,
     Select,
     Textarea,
     Tooltip,

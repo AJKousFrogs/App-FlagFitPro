@@ -38,7 +38,7 @@ import {
   signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ConfirmationService } from "primeng/api";
+import { ConfirmationService, PrimeTemplate } from "primeng/api";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Dialog } from "primeng/dialog";
@@ -108,8 +108,11 @@ import {
     StatusTagComponent,
     ProgressSpinner,
     Dialog,
+    PrimeTemplate,
+    PrimeTemplate,
     Tooltip,
     ConfirmDialog,
+    PrimeTemplate,
     Select,
     FormsModule,
     DatePipe,
