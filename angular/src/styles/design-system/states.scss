@@ -1,0 +1,48 @@
+/* Interaction state mixins and utility classes. */
+
+@mixin ds-interactive-base {
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+@mixin ds-interactive-hover {
+  background-color: var(--ds-state-hover-bg);
+}
+
+@mixin ds-interactive-active {
+  background-color: var(--ds-state-active-bg);
+}
+
+@mixin ds-interactive-focus {
+  outline: none;
+  box-shadow: var(--ds-state-focus-ring);
+}
+
+@mixin ds-interactive-disabled {
+  opacity: var(--ds-state-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.ds-interactive {
+  @include ds-interactive-base;
+}
+
+.ds-interactive:hover:not(:disabled):not([aria-disabled="true"]) {
+  @include ds-interactive-hover;
+}
+
+.ds-interactive:active:not(:disabled):not([aria-disabled="true"]) {
+  @include ds-interactive-active;
+}
+
+.ds-interactive:focus-visible {
+  @include ds-interactive-focus;
+}
+
+.ds-interactive:disabled,
+.ds-interactive[aria-disabled="true"] {
+  @include ds-interactive-disabled;
+}

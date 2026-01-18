@@ -18,6 +18,7 @@
 
 /* TIER 1: CRITICAL - Required for FCP/LCP */
 @use "./assets/styles/design-system-tokens.scss" as *;
+@use "./styles/design-system/index" as *;
 @use "./assets/styles/typography-system.scss" as *;
 @use "./assets/styles/spacing-system.scss" as *;
 @use "./assets/styles/layout-system.scss" as *;
