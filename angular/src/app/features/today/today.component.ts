@@ -388,9 +388,7 @@ interface QuickFormData {
         font-weight: var(--ds-font-weight-regular); /* Caption: Regular (400) */
         color: var(--color-text-muted);
         text-transform: var(--ds-text-transform-uppercase);
-        letter-spacing: var(
-          --letter-spacing-caption
-        ); /* 0.04em for labels like READINESS, ACWR */
+        letter-spacing: var(--ds-letter-spacing-caption);
       }
 
       /* --------------------------------------------------------------------------
@@ -1876,45 +1874,54 @@ export class TodayComponent {
       progressPercent: 0,
     });
 
-    // Map blocks from API to named properties
-    const blockData = data.blocks || [];
+    // Map API response block properties to ProtocolBlock format
+    // The API returns blocks as named properties (morningMobility, foamRoll, etc.)
+    // Each contains { type, title, icon, status, exercises[], completedCount, totalCount, ... }
     const getBlock = (
-      blockType: string,
+      blockKey: string,  // camelCase key in API response
+      blockType: string, // snake_case block type
       title: string,
       icon: string,
     ): ProtocolBlock => {
-      const apiBlock = blockData.find((b: any) => b.type === blockType);
+      // Get the block directly from the API response by its property name
+      const apiBlock = data[blockKey];
+      
       if (!apiBlock || !apiBlock.exercises || apiBlock.exercises.length === 0) {
         return createEmptyBlock(blockType, title, icon);
       }
 
       // Map exercises to PrescribedExercise format
+      // API returns exercises in the format from transformExercise()
       const exercises: PrescribedExercise[] = apiBlock.exercises.map(
         (ex: any, index: number) => ({
           id: ex.id || `${blockType}-${index}`,
-          exerciseId: ex.id || `${blockType}-${index}`,
+          exerciseId: ex.exerciseId || ex.id || `${blockType}-${index}`,
           // Nested exercise object with video data for UI rendering
-          exercise: {
+          exercise: ex.exercise || {
             id: ex.id || `${blockType}-${index}`,
             name: ex.name || "Exercise",
-            slug: ex.name?.toLowerCase().replace(/\s+/g, "-") || "exercise",
+            slug: ex.slug || ex.name?.toLowerCase().replace(/\s+/g, "-") || "exercise",
             category: (ex.category || blockType) as ExerciseCategory,
             videoUrl: ex.videoUrl,
             videoId: ex.videoId,
-            howText: ex.notes || "",
-            defaultSets: 1,
+            howText: ex.howText || ex.aiNote || "",
+            defaultSets: ex.prescribedSets || 1,
             difficultyLevel: "intermediate" as const,
-            loadContributionAu: 0,
-            isHighIntensity: false,
+            loadContributionAu: ex.loadContributionAu || 0,
+            isHighIntensity: ex.isHighIntensity || false,
           },
           blockType: blockType as BlockType,
-          sequenceOrder: index + 1,
-          prescribedSets: 1,
+          sequenceOrder: ex.sequenceOrder || index + 1,
+          prescribedSets: ex.prescribedSets || 1,
+          prescribedReps: ex.prescribedReps,
+          prescribedHoldSeconds: ex.prescribedHoldSeconds,
+          prescribedDurationSeconds: ex.prescribedDurationSeconds,
+          aiNote: ex.aiNote,
           status:
-            ex.status === "completed"
+            ex.status === "complete"
               ? ("complete" as const)
               : ("pending" as const),
-          loadContributionAu: 0,
+          loadContributionAu: ex.loadContributionAu || 0,
         }),
       );
 
@@ -1925,8 +1932,8 @@ export class TodayComponent {
 
       return {
         type: blockType as BlockType,
-        title,
-        icon,
+        title: apiBlock.title || title,
+        icon: apiBlock.icon || icon,
         status:
           completedCount === totalCount && totalCount > 0
             ? ("complete" as const)
@@ -1938,28 +1945,31 @@ export class TodayComponent {
         totalCount,
         progressPercent:
           totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0,
-        estimatedDurationMinutes: apiBlock.estimatedMinutes,
+        estimatedDurationMinutes: apiBlock.estimatedDurationMinutes,
       };
     };
 
+    // Map blocks using camelCase API keys to snake_case block types
     const morningMobility = getBlock(
-      "morning_mobility",
+      "morningMobility",  // API key (camelCase)
+      "morning_mobility", // block type (snake_case)
       "Morning Mobility",
       "pi-sun",
     );
-    const foamRoll = getBlock("foam_roll", "Foam Rolling", "pi-circle");
-    const warmUp = getBlock("warm_up", "Warm-Up (15 min)", "pi-bolt");
+    const foamRoll = getBlock("foamRoll", "foam_roll", "Foam Rolling", "pi-circle");
+    const warmUp = getBlock("warmUp", "warm_up", "Warm-Up (15 min)", "pi-bolt");
     
     // Evidence-based training blocks (1.5h gym structure)
-    const isometrics = getBlock("isometrics", "Isometrics (15 min)", "pi-pause-circle");
-    const plyometrics = getBlock("plyometrics", "Plyometrics (15 min)", "pi-arrow-up");
-    const strength = getBlock("strength", "Strength (15 min)", "pi-heart");
-    const conditioning = getBlock("conditioning", "Conditioning (15 min)", "pi-directions-run");
-    const skillDrills = getBlock("skill_drills", "Skill Drills (15 min)", "pi-bolt");
+    const isometrics = getBlock("isometrics", "isometrics", "Isometrics (15 min)", "pi-pause-circle");
+    const plyometrics = getBlock("plyometrics", "plyometrics", "Plyometrics (15 min)", "pi-arrow-up");
+    const strength = getBlock("strength", "strength", "Strength (15 min)", "pi-heart");
+    const conditioning = getBlock("conditioning", "conditioning", "Conditioning (15 min)", "pi-directions-run");
+    const skillDrills = getBlock("skillDrills", "skill_drills", "Skill Drills (15 min)", "pi-bolt");
     
-    const mainSession = getBlock("main_session", "Main Session", "pi-play");
-    const coolDown = getBlock("cool_down", "Cool-Down (15 min)", "pi-stop");
+    const mainSession = getBlock("mainSession", "main_session", "Main Session", "pi-play");
+    const coolDown = getBlock("coolDown", "cool_down", "Cool-Down (15 min)", "pi-stop");
     const eveningRecovery = getBlock(
+      "eveningRecovery",
       "evening_recovery",
       "Evening Recovery",
       "pi-moon",
