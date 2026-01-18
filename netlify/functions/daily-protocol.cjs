@@ -1257,7 +1257,7 @@ async function getProtocol(supabase, userId, params, headers) {
   }
 
   // Get all exercises for this protocol
-  const { data: protocolExercises, error: exercisesError } = await supabase
+  let { data: protocolExercises, error: exercisesError } = await supabase
     .from("protocol_exercises")
     .select(
       `
@@ -1276,6 +1276,80 @@ async function getProtocol(supabase, userId, params, headers) {
 
   if (exercisesError) {
     throw exercisesError;
+  }
+
+  // ============================================================================
+  // AUTO-FIX: If protocol exists but has 0 exercises, regenerate using fallback
+  // This fixes protocols that were created when the DB was empty
+  // ============================================================================
+  if (!protocolExercises || protocolExercises.length === 0) {
+    console.log("[daily-protocol] Protocol has 0 exercises - auto-regenerating with fallback");
+    
+    // Check if exercises table is empty (triggers fallback)
+    const { count: exerciseCount } = await supabase
+      .from("exercises")
+      .select("*", { count: "exact", head: true })
+      .eq("active", true);
+    
+    if (!exerciseCount || exerciseCount < 10) {
+      // Use inline fallback
+      const dayOfYear = Math.floor((new Date(date) - new Date(new Date(date).getFullYear(), 0, 0)) / (24 * 60 * 60 * 1000));
+      const weekNumber = Math.ceil(dayOfYear / 7);
+      
+      // Get basic context for fallback generation
+      const trainingFocus = protocol.training_focus || "strength";
+      const isPracticeDay = teamActivity?.type === "practice";
+      const isFilmRoomDay = teamActivity?.type === "film_room";
+      const readinessForLogic = protocol.readiness_score || 70;
+      
+      const fallbackExercises = await generateFallbackProtocolExercises(
+        protocol.id,
+        dayOfYear,
+        weekNumber,
+        trainingFocus,
+        { position: null, isQB: false, isCenter: false, dayOfWeek: new Date(date).getDay() },
+        isPracticeDay,
+        isFilmRoomDay,
+        readinessForLogic
+      );
+      
+      if (fallbackExercises.length > 0) {
+        const { error: insertError } = await supabase
+          .from("protocol_exercises")
+          .insert(fallbackExercises);
+        
+        if (insertError) {
+          console.error("[daily-protocol] Error inserting fallback exercises:", insertError);
+        } else {
+          // Update protocol total_exercises count
+          await supabase
+            .from("daily_protocols")
+            .update({ total_exercises: fallbackExercises.length })
+            .eq("id", protocol.id);
+          
+          // Re-fetch exercises after inserting
+          const { data: newExercises } = await supabase
+            .from("protocol_exercises")
+            .select(
+              `
+              *,
+              exercises (
+                id, name, slug, category, subcategory,
+                video_url, video_id, video_duration_seconds, thumbnail_url,
+                how_text, feel_text, compensation_text,
+                default_sets, default_reps, default_hold_seconds, default_duration_seconds,
+                difficulty_level, load_contribution_au, is_high_intensity
+              )
+            `,
+            )
+            .eq("protocol_id", protocol.id)
+            .order("sequence_order");
+          
+          protocolExercises = newExercises || [];
+          console.log(`[daily-protocol] Auto-fix complete: ${protocolExercises.length} exercises added`);
+        }
+      }
+    }
   }
 
   // DYNAMICALLY compute confidence_metadata based on CURRENT wellness status
