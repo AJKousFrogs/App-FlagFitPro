@@ -1283,6 +1283,14 @@ async function getProtocol(supabase, userId, params, headers) {
     count: protocolExercises?.length || 0,
     protocolId: protocol.id,
     totalExercisesStored: protocol.total_exercises,
+    // Sample first exercise to check structure
+    firstExercise: protocolExercises?.[0] ? {
+      id: protocolExercises[0].id,
+      block_type: protocolExercises[0].block_type,
+      exercise_id: protocolExercises[0].exercise_id,
+      hasExerciseData: !!protocolExercises[0].exercises,
+      exerciseName: protocolExercises[0].exercises?.name || 'NO_EXERCISE_DATA',
+    } : null,
   });
 
   // ============================================================================
@@ -3654,10 +3662,68 @@ function transformProtocolResponse(
 
 /**
  * Transform a single exercise for frontend
+ * Handles both:
+ * 1. Normal exercises with linked exercise_id (joined data in protocolExercise.exercises)
+ * 2. Fallback exercises with exercise_id=null (inline data from ai_note and prescribed fields)
  */
 function transformExercise(protocolExercise) {
   const ex = protocolExercise.exercises;
+  
+  // Handle fallback exercises (no linked exercise_id, exercise data comes from protocol_exercises directly)
+  if (!ex) {
+    // Extract exercise name from ai_note (format: "emoji Name - description" or just description)
+    const aiNote = protocolExercise.ai_note || '';
+    const blockType = protocolExercise.block_type || 'general';
+    
+    // Generate a name from the sequence and block type if not available
+    const exerciseName = `${blockType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Exercise ${protocolExercise.sequence_order || 1}`;
+    
+    return {
+      id: protocolExercise.id,
+      exerciseId: protocolExercise.id, // Use protocol_exercise id as fallback
+      exercise: {
+        id: protocolExercise.id,
+        name: exerciseName,
+        slug: exerciseName.toLowerCase().replace(/\s+/g, '-'),
+        category: blockType,
+        subcategory: null,
+        videoUrl: protocolExercise.video_url || null,
+        videoId: null,
+        videoDurationSeconds: protocolExercise.prescribed_duration_seconds,
+        thumbnailUrl: null,
+        howText: aiNote, // Use AI note as instructions
+        feelText: null,
+        compensationText: null,
+        defaultSets: protocolExercise.prescribed_sets || 1,
+        defaultReps: protocolExercise.prescribed_reps,
+        defaultHoldSeconds: protocolExercise.prescribed_hold_seconds,
+        defaultDurationSeconds: protocolExercise.prescribed_duration_seconds,
+        difficultyLevel: 'intermediate',
+        loadContributionAu: protocolExercise.load_contribution_au || 0,
+        isHighIntensity: false,
+      },
+      blockType: protocolExercise.block_type,
+      sequenceOrder: protocolExercise.sequence_order,
+      prescribedSets: protocolExercise.prescribed_sets,
+      prescribedReps: protocolExercise.prescribed_reps,
+      prescribedHoldSeconds: protocolExercise.prescribed_hold_seconds,
+      prescribedDurationSeconds: protocolExercise.prescribed_duration_seconds,
+      prescribedWeightKg: protocolExercise.prescribed_weight_kg,
+      yesterdaySets: protocolExercise.yesterday_sets,
+      yesterdayReps: protocolExercise.yesterday_reps,
+      yesterdayHoldSeconds: protocolExercise.yesterday_hold_seconds,
+      progressionNote: protocolExercise.progression_note,
+      aiNote: protocolExercise.ai_note,
+      status: protocolExercise.status || 'pending',
+      completedAt: protocolExercise.completed_at,
+      actualSets: protocolExercise.actual_sets,
+      actualReps: protocolExercise.actual_reps,
+      actualHoldSeconds: protocolExercise.actual_hold_seconds,
+      loadContributionAu: protocolExercise.load_contribution_au,
+    };
+  }
 
+  // Normal path: exercise data from joined exercises table
   return {
     id: protocolExercise.id,
     exerciseId: ex.id,
