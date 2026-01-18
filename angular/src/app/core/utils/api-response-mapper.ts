@@ -1,111 +1,106 @@
 /**
  * API Response Mapper Utility
- * 
+ *
  * Normalizes API responses to handle camelCase ↔ snake_case field name mismatches
  * between backend Netlify functions and frontend TypeScript interfaces.
- * 
+ *
  * The backend may return either format (or both), and the frontend expects snake_case
  * for most fields to match the ProtocolJson interface.
  */
 
-/**
- * Maps a single field from camelCase to snake_case equivalent
- */
-function camelToSnake(str: string): string {
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-}
-
-/**
- * Generic type for API response with potential camelCase variants
- */
-type ApiResponseData = Record<string, unknown>;
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
  * Normalizes Daily Protocol API response
  * Maps camelCase fields from backend to snake_case expected by ProtocolJson interface
  */
-export function mapDailyProtocolResponse<T extends ApiResponseData>(data: T): T {
+export function mapDailyProtocolResponse<T>(data: T): T {
   if (!data || typeof data !== 'object') return data;
 
-  const mapped = { ...data } as T & Record<string, unknown>;
+  const mapped = { ...data } as any;
+  const source = data as any;
 
   // confidence_metadata mapping (CRITICAL - affects "Check-in not logged" banner)
-  if ('confidenceMetadata' in data && !('confidence_metadata' in data)) {
-    mapped.confidence_metadata = data.confidenceMetadata;
+  if ('confidenceMetadata' in source && !('confidence_metadata' in source)) {
+    mapped.confidence_metadata = source.confidenceMetadata;
   }
 
   // readiness_score mapping
-  if ('readinessScore' in data && !('readiness_score' in data)) {
-    mapped.readiness_score = data.readinessScore;
+  if ('readinessScore' in source && !('readiness_score' in source)) {
+    mapped.readiness_score = source.readinessScore;
   }
 
-  // acwr_value mapping  
-  if ('acwrValue' in data && !('acwr_value' in data)) {
-    mapped.acwr_value = data.acwrValue;
+  // acwr_value mapping
+  if ('acwrValue' in source && !('acwr_value' in source)) {
+    mapped.acwr_value = source.acwrValue;
   }
 
   // protocol_date mapping
-  if ('protocolDate' in data && !('protocol_date' in data)) {
-    mapped.protocol_date = data.protocolDate;
+  if ('protocolDate' in source && !('protocol_date' in source)) {
+    mapped.protocol_date = source.protocolDate;
   }
 
   // session_resolution mapping
-  if ('sessionResolution' in data && !('session_resolution' in data)) {
-    mapped.session_resolution = data.sessionResolution;
+  if ('sessionResolution' in source && !('session_resolution' in source)) {
+    mapped.session_resolution = source.sessionResolution;
   }
 
   // coach_note mapping
-  if ('coachNote' in data && !('coach_note' in data)) {
-    mapped.coach_note = data.coachNote;
+  if ('coachNote' in source && !('coach_note' in source)) {
+    mapped.coach_note = source.coachNote;
   }
 
   // ai_rationale mapping
-  if ('aiRationale' in data && !('ai_rationale' in data)) {
-    mapped.ai_rationale = data.aiRationale;
+  if ('aiRationale' in source && !('ai_rationale' in source)) {
+    mapped.ai_rationale = source.aiRationale;
   }
 
   // coach_alert fields
-  if ('coachAlertActive' in data && !('coach_alert_active' in data)) {
-    mapped.coach_alert_active = data.coachAlertActive;
+  if ('coachAlertActive' in source && !('coach_alert_active' in source)) {
+    mapped.coach_alert_active = source.coachAlertActive;
   }
-  if ('coachAlertMessage' in data && !('coach_alert_message' in data)) {
-    mapped.coach_alert_message = data.coachAlertMessage;
+  if ('coachAlertMessage' in source && !('coach_alert_message' in source)) {
+    mapped.coach_alert_message = source.coachAlertMessage;
   }
-  if ('coachAlertRequiresAcknowledgment' in data && !('coach_alert_requires_acknowledgment' in data)) {
-    mapped.coach_alert_requires_acknowledgment = data.coachAlertRequiresAcknowledgment;
+  if (
+    'coachAlertRequiresAcknowledgment' in source &&
+    !('coach_alert_requires_acknowledgment' in source)
+  ) {
+    mapped.coach_alert_requires_acknowledgment =
+      source.coachAlertRequiresAcknowledgment;
   }
-  if ('coachAcknowledged' in data && !('coach_acknowledged' in data)) {
-    mapped.coach_acknowledged = data.coachAcknowledged;
+  if ('coachAcknowledged' in source && !('coach_acknowledged' in source)) {
+    mapped.coach_acknowledged = source.coachAcknowledged;
   }
 
   // modified_by fields
-  if ('modifiedByCoachId' in data && !('modified_by_coach_id' in data)) {
-    mapped.modified_by_coach_id = data.modifiedByCoachId;
+  if ('modifiedByCoachId' in source && !('modified_by_coach_id' in source)) {
+    mapped.modified_by_coach_id = source.modifiedByCoachId;
   }
-  if ('modifiedByCoachName' in data && !('modified_by_coach_name' in data)) {
-    mapped.modified_by_coach_name = data.modifiedByCoachName;
+  if ('modifiedByCoachName' in source && !('modified_by_coach_name' in source)) {
+    mapped.modified_by_coach_name = source.modifiedByCoachName;
   }
-  if ('modifiedAt' in data && !('modified_at' in data)) {
-    mapped.modified_at = data.modifiedAt;
+  if ('modifiedAt' in source && !('modified_at' in source)) {
+    mapped.modified_at = source.modifiedAt;
   }
 
   // taper fields
-  if ('taperActive' in data && !('taper_active' in data)) {
-    mapped.taper_active = data.taperActive;
+  if ('taperActive' in source && !('taper_active' in source)) {
+    mapped.taper_active = source.taperActive;
   }
-  if ('taperDaysUntil' in data && !('taper_days_until' in data)) {
-    mapped.taper_days_until = data.taperDaysUntil;
+  if ('taperDaysUntil' in source && !('taper_days_until' in source)) {
+    mapped.taper_days_until = source.taperDaysUntil;
   }
-  if ('tournamentName' in data && !('tournament_name' in data)) {
-    mapped.tournament_name = data.tournamentName;
+  if ('tournamentName' in source && !('tournament_name' in source)) {
+    mapped.tournament_name = source.tournamentName;
   }
 
   // weather fields
-  if ('weatherOverride' in data && !('weather_override' in data)) {
-    mapped.weather_override = data.weatherOverride;
+  if ('weatherOverride' in source && !('weather_override' in source)) {
+    mapped.weather_override = source.weatherOverride;
   }
-  if ('weatherCondition' in data && !('weather_condition' in data)) {
-    mapped.weather_condition = data.weatherCondition;
+  if ('weatherCondition' in source && !('weather_condition' in source)) {
+    mapped.weather_condition = source.weatherCondition;
   }
 
   return mapped as T;
@@ -115,62 +110,63 @@ export function mapDailyProtocolResponse<T extends ApiResponseData>(data: T): T 
  * Normalizes Wellness Check-in API response
  * Maps camelCase wellness fields to the format expected by WellnessService
  */
-export function mapWellnessResponse<T extends ApiResponseData>(data: T): T {
+export function mapWellnessResponse<T>(data: T): T {
   if (!data || typeof data !== 'object') return data;
 
-  const mapped = { ...data } as T & Record<string, unknown>;
+  const mapped = { ...data } as any;
+  const source = data as any;
 
   // Core wellness fields - map to short names used in frontend
-  if ('sleepQuality' in data && !('sleep' in data)) {
-    mapped.sleep = data.sleepQuality;
+  if ('sleepQuality' in source && !('sleep' in source)) {
+    mapped.sleep = source.sleepQuality;
   }
-  if ('sleep_quality' in data && !('sleep' in data)) {
-    mapped.sleep = data.sleep_quality;
-  }
-
-  if ('energyLevel' in data && !('energy' in data)) {
-    mapped.energy = data.energyLevel;
-  }
-  if ('energy_level' in data && !('energy' in data)) {
-    mapped.energy = data.energy_level;
+  if ('sleep_quality' in source && !('sleep' in source)) {
+    mapped.sleep = source.sleep_quality;
   }
 
-  if ('stressLevel' in data && !('stress' in data)) {
-    mapped.stress = data.stressLevel;
+  if ('energyLevel' in source && !('energy' in source)) {
+    mapped.energy = source.energyLevel;
   }
-  if ('stress_level' in data && !('stress' in data)) {
-    mapped.stress = data.stress_level;
+  if ('energy_level' in source && !('energy' in source)) {
+    mapped.energy = source.energy_level;
   }
 
-  if ('muscleSoreness' in data && !('soreness' in data)) {
-    mapped.soreness = data.muscleSoreness;
+  if ('stressLevel' in source && !('stress' in source)) {
+    mapped.stress = source.stressLevel;
   }
-  if ('muscle_soreness' in data && !('soreness' in data)) {
-    mapped.soreness = data.muscle_soreness;
+  if ('stress_level' in source && !('stress' in source)) {
+    mapped.stress = source.stress_level;
+  }
+
+  if ('muscleSoreness' in source && !('soreness' in source)) {
+    mapped.soreness = source.muscleSoreness;
+  }
+  if ('muscle_soreness' in source && !('soreness' in source)) {
+    mapped.soreness = source.muscle_soreness;
   }
 
   // Date field
-  if ('checkinDate' in data && !('date' in data)) {
-    mapped.date = data.checkinDate;
+  if ('checkinDate' in source && !('date' in source)) {
+    mapped.date = source.checkinDate;
   }
-  if ('checkin_date' in data && !('date' in data)) {
-    mapped.date = data.checkin_date;
+  if ('checkin_date' in source && !('date' in source)) {
+    mapped.date = source.checkin_date;
   }
 
   // Sleep hours
-  if ('sleepHours' in data && !('sleepHours' in mapped)) {
-    mapped.sleepHours = data.sleepHours;
+  if ('sleepHours' in source && !('sleepHours' in mapped)) {
+    mapped.sleepHours = source.sleepHours;
   }
-  if ('sleep_hours' in data && !('sleepHours' in mapped)) {
-    mapped.sleepHours = data.sleep_hours;
+  if ('sleep_hours' in source && !('sleepHours' in mapped)) {
+    mapped.sleepHours = source.sleep_hours;
   }
 
   // Readiness
-  if ('calculatedReadiness' in data && !('readinessScore' in data)) {
-    mapped.readinessScore = data.calculatedReadiness;
+  if ('calculatedReadiness' in source && !('readinessScore' in source)) {
+    mapped.readinessScore = source.calculatedReadiness;
   }
-  if ('calculated_readiness' in data && !('readinessScore' in data)) {
-    mapped.readinessScore = data.calculated_readiness;
+  if ('calculated_readiness' in source && !('readinessScore' in source)) {
+    mapped.readinessScore = source.calculated_readiness;
   }
 
   return mapped as T;
@@ -179,41 +175,42 @@ export function mapWellnessResponse<T extends ApiResponseData>(data: T): T {
 /**
  * Normalizes Training Session API response
  */
-export function mapTrainingSessionResponse<T extends ApiResponseData>(data: T): T {
+export function mapTrainingSessionResponse<T>(data: T): T {
   if (!data || typeof data !== 'object') return data;
 
-  const mapped = { ...data } as T & Record<string, unknown>;
+  const mapped = { ...data } as any;
+  const source = data as any;
 
-  if ('sessionType' in data && !('session_type' in data)) {
-    mapped.session_type = data.sessionType;
+  if ('sessionType' in source && !('session_type' in source)) {
+    mapped.session_type = source.sessionType;
   }
 
-  if ('durationMinutes' in data && !('duration_minutes' in data)) {
-    mapped.duration_minutes = data.durationMinutes;
+  if ('durationMinutes' in source && !('duration_minutes' in source)) {
+    mapped.duration_minutes = source.durationMinutes;
   }
 
-  if ('sessionDate' in data && !('session_date' in data)) {
-    mapped.session_date = data.sessionDate;
+  if ('sessionDate' in source && !('session_date' in source)) {
+    mapped.session_date = source.sessionDate;
   }
 
-  if ('actualRpe' in data && !('actual_rpe' in data)) {
-    mapped.actual_rpe = data.actualRpe;
+  if ('actualRpe' in source && !('actual_rpe' in source)) {
+    mapped.actual_rpe = source.actualRpe;
   }
 
-  if ('completedAt' in data && !('completed_at' in data)) {
-    mapped.completed_at = data.completedAt;
+  if ('completedAt' in source && !('completed_at' in source)) {
+    mapped.completed_at = source.completedAt;
   }
 
-  if ('trainingType' in data && !('training_type' in data)) {
-    mapped.training_type = data.trainingType;
+  if ('trainingType' in source && !('training_type' in source)) {
+    mapped.training_type = source.trainingType;
   }
 
-  if ('userId' in data && !('user_id' in data)) {
-    mapped.user_id = data.userId;
+  if ('userId' in source && !('user_id' in source)) {
+    mapped.user_id = source.userId;
   }
 
-  if ('athleteId' in data && !('athlete_id' in data)) {
-    mapped.athlete_id = data.athleteId;
+  if ('athleteId' in source && !('athlete_id' in source)) {
+    mapped.athlete_id = source.athleteId;
   }
 
   return mapped as T;
@@ -222,78 +219,82 @@ export function mapTrainingSessionResponse<T extends ApiResponseData>(data: T): 
 /**
  * Normalizes Performance Data API response
  */
-export function mapPerformanceDataResponse<T extends ApiResponseData>(data: T): T {
+export function mapPerformanceDataResponse<T>(data: T): T {
   if (!data || typeof data !== 'object') return data;
 
-  const mapped = { ...data } as T & Record<string, unknown>;
+  const mapped = { ...data } as any;
+  const source = data as any;
 
   // Body composition fields
-  if ('bodyFat' in data && !('body_fat' in data)) {
-    mapped.body_fat = data.bodyFat;
+  if ('bodyFat' in source && !('body_fat' in source)) {
+    mapped.body_fat = source.bodyFat;
   }
-  if ('muscleMass' in data && !('muscle_mass' in data)) {
-    mapped.muscle_mass = data.muscleMass;
+  if ('muscleMass' in source && !('muscle_mass' in source)) {
+    mapped.muscle_mass = source.muscleMass;
   }
-  if ('bodyWaterMass' in data && !('body_water_mass' in data)) {
-    mapped.body_water_mass = data.bodyWaterMass;
+  if ('bodyWaterMass' in source && !('body_water_mass' in source)) {
+    mapped.body_water_mass = source.bodyWaterMass;
   }
-  if ('fatMass' in data && !('fat_mass' in data)) {
-    mapped.fat_mass = data.fatMass;
+  if ('fatMass' in source && !('fat_mass' in source)) {
+    mapped.fat_mass = source.fatMass;
   }
-  if ('proteinMass' in data && !('protein_mass' in data)) {
-    mapped.protein_mass = data.proteinMass;
+  if ('proteinMass' in source && !('protein_mass' in source)) {
+    mapped.protein_mass = source.proteinMass;
   }
-  if ('boneMineralContent' in data && !('bone_mineral_content' in data)) {
-    mapped.bone_mineral_content = data.boneMineralContent;
+  if ('boneMineralContent' in source && !('bone_mineral_content' in source)) {
+    mapped.bone_mineral_content = source.boneMineralContent;
   }
-  if ('skeletalMuscleMass' in data && !('skeletal_muscle_mass' in data)) {
-    mapped.skeletal_muscle_mass = data.skeletalMuscleMass;
+  if ('skeletalMuscleMass' in source && !('skeletal_muscle_mass' in source)) {
+    mapped.skeletal_muscle_mass = source.skeletalMuscleMass;
   }
-  if ('musclePercentage' in data && !('muscle_percentage' in data)) {
-    mapped.muscle_percentage = data.musclePercentage;
+  if ('musclePercentage' in source && !('muscle_percentage' in source)) {
+    mapped.muscle_percentage = source.musclePercentage;
   }
-  if ('bodyWaterPercentage' in data && !('body_water_percentage' in data)) {
-    mapped.body_water_percentage = data.bodyWaterPercentage;
+  if ('bodyWaterPercentage' in source && !('body_water_percentage' in source)) {
+    mapped.body_water_percentage = source.bodyWaterPercentage;
   }
-  if ('proteinPercentage' in data && !('protein_percentage' in data)) {
-    mapped.protein_percentage = data.proteinPercentage;
+  if ('proteinPercentage' in source && !('protein_percentage' in source)) {
+    mapped.protein_percentage = source.proteinPercentage;
   }
-  if ('boneMineralPercentage' in data && !('bone_mineral_percentage' in data)) {
-    mapped.bone_mineral_percentage = data.boneMineralPercentage;
+  if (
+    'boneMineralPercentage' in source &&
+    !('bone_mineral_percentage' in source)
+  ) {
+    mapped.bone_mineral_percentage = source.boneMineralPercentage;
   }
-  if ('visceralFatRating' in data && !('visceral_fat_rating' in data)) {
-    mapped.visceral_fat_rating = data.visceralFatRating;
+  if ('visceralFatRating' in source && !('visceral_fat_rating' in source)) {
+    mapped.visceral_fat_rating = source.visceralFatRating;
   }
-  if ('basalMetabolicRate' in data && !('basal_metabolic_rate' in data)) {
-    mapped.basal_metabolic_rate = data.basalMetabolicRate;
+  if ('basalMetabolicRate' in source && !('basal_metabolic_rate' in source)) {
+    mapped.basal_metabolic_rate = source.basalMetabolicRate;
   }
-  if ('waistToHipRatio' in data && !('waist_to_hip_ratio' in data)) {
-    mapped.waist_to_hip_ratio = data.waistToHipRatio;
+  if ('waistToHipRatio' in source && !('waist_to_hip_ratio' in source)) {
+    mapped.waist_to_hip_ratio = source.waistToHipRatio;
   }
-  if ('bodyAge' in data && !('body_age' in data)) {
-    mapped.body_age = data.bodyAge;
+  if ('bodyAge' in source && !('body_age' in source)) {
+    mapped.body_age = source.bodyAge;
   }
 
   // Performance test fields
-  if ('testType' in data && !('test_type' in data)) {
-    mapped.test_type = data.testType;
+  if ('testType' in source && !('test_type' in source)) {
+    mapped.test_type = source.testType;
   }
-  if ('resultValue' in data && !('result_value' in data)) {
-    mapped.result_value = data.resultValue;
+  if ('resultValue' in source && !('result_value' in source)) {
+    mapped.result_value = source.resultValue;
   }
-  if ('targetValue' in data && !('target_value' in data)) {
-    mapped.target_value = data.targetValue;
+  if ('targetValue' in source && !('target_value' in source)) {
+    mapped.target_value = source.targetValue;
   }
-  if ('testDate' in data && !('test_date' in data)) {
-    mapped.test_date = data.testDate;
+  if ('testDate' in source && !('test_date' in source)) {
+    mapped.test_date = source.testDate;
   }
 
   // Common fields
-  if ('createdAt' in data && !('created_at' in data)) {
-    mapped.created_at = data.createdAt;
+  if ('createdAt' in source && !('created_at' in source)) {
+    mapped.created_at = source.createdAt;
   }
-  if ('userId' in data && !('user_id' in data)) {
-    mapped.user_id = data.userId;
+  if ('userId' in source && !('user_id' in source)) {
+    mapped.user_id = source.userId;
   }
 
   return mapped as T;
@@ -302,7 +303,7 @@ export function mapPerformanceDataResponse<T extends ApiResponseData>(data: T): 
 /**
  * Maps an array of items using the provided mapper function
  */
-export function mapArrayResponse<T extends ApiResponseData>(
+export function mapArrayResponse<T>(
   data: T[] | undefined | null,
   mapper: (item: T) => T
 ): T[] {
@@ -314,17 +315,18 @@ export function mapArrayResponse<T extends ApiResponseData>(
  * Generic API response normalizer that handles common patterns
  * Use specific mappers above for better type safety
  */
-export function normalizeApiResponse<T extends ApiResponseData>(
+export function normalizeApiResponse<T>(
   data: T,
   fieldMappings: Record<string, string>
 ): T {
   if (!data || typeof data !== 'object') return data;
 
-  const mapped = { ...data } as T & Record<string, unknown>;
+  const mapped = { ...data } as any;
+  const source = data as any;
 
   for (const [camelCase, snakeCase] of Object.entries(fieldMappings)) {
-    if (camelCase in data && !(snakeCase in data)) {
-      mapped[snakeCase] = data[camelCase];
+    if (camelCase in source && !(snakeCase in source)) {
+      mapped[snakeCase] = source[camelCase];
     }
   }
 
