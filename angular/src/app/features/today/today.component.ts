@@ -33,7 +33,7 @@ import {
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
-import { MessageService } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 
@@ -126,6 +126,7 @@ interface QuickFormData {
     RouterModule,
     Card,
     Dialog,
+    PrimeTemplate,
     ProgressBar,
     Skeleton,
     Toast,
