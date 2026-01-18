@@ -12,13 +12,13 @@
 
 import { CommonModule, DecimalPipe } from "@angular/common";
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  OnInit,
-  computed,
-  inject,
-  signal
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    OnInit,
+    computed,
+    inject,
+    signal
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -216,7 +216,9 @@ interface BodyCompositionData {
       header="Log Body Composition"
       [(visible)]="showLogDialog"
       [modal]="true"
-      [style]="{ width: '450px' }"
+      [style]="{ width: '450px', maxWidth: '95vw' }"
+      [contentStyle]="{ maxHeight: 'calc(80dvh - 140px)', overflowY: 'auto' }"
+      styleClass="body-comp-dialog"
       [closable]="true"
     >
       <div class="measurement-form">

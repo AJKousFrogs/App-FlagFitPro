@@ -336,8 +336,10 @@
     .p-dialog {
       width: 95vw;
       max-width: 95vw;
-      max-height: 90vh;
-      max-height: 90dvh; /* Modern: accounts for mobile browser chrome */
+      max-height: 85vh;
+      max-height: 85dvh; /* Modern: accounts for mobile browser chrome */
+      display: flex;
+      flex-direction: column;
 
       // CRITICAL: Ensure dialog doesn't block touches
       pointer-events: auto;
@@ -345,21 +347,29 @@
 
     .p-dialog-content {
       padding: var(--space-3);
-      max-height: calc(90vh - 120px);
-      max-height: calc(
-        90dvh - 120px
-      ); /* Modern: accounts for mobile browser chrome */
+      max-height: none; /* Let flexbox handle height */
+      flex: 1 1 auto;
+      min-height: 0; /* Allow shrinking */
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
 
       // CRITICAL: Ensure content doesn't block touches
       pointer-events: auto;
     }
 
-    // CRITICAL: Dialog footer must receive touch events
+    // CRITICAL: Dialog footer must always be visible and receive touch events
     .p-dialog-footer {
       pointer-events: auto;
       position: relative;
       z-index: 2;
+      flex-shrink: 0; /* Never shrink the footer */
+      padding: var(--space-3) var(--space-4);
+      padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+      border-top: 1px solid var(--color-border-muted, #e5e7eb);
+      background: var(--surface-primary, #fff);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
 
       // Ensure buttons in footer work
       button,
@@ -395,16 +405,28 @@
     .p-dialog {
       width: 100vw;
       max-width: 100vw;
+      max-height: 80vh;
+      max-height: 80dvh; /* Modern: accounts for mobile browser chrome */
       margin: 0;
       border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      display: flex;
+      flex-direction: column;
 
       // CRITICAL: Ensure dialog receives touches
       pointer-events: auto;
     }
 
+    .p-dialog-header {
+      flex-shrink: 0;
+      pointer-events: auto;
+    }
+
     .p-dialog-content {
       padding: var(--space-4);
-      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
 
       // CRITICAL: All form elements must be touchable
       pointer-events: auto;
@@ -418,6 +440,11 @@
       pointer-events: auto;
       position: relative;
       z-index: 10;
+      flex-shrink: 0;
+      padding: var(--space-4);
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      background: var(--surface-primary, #fff);
+      border-top: 1px solid var(--color-border-muted, #e5e7eb);
     }
 
     // Ensure dialog actions don't get cut off
@@ -441,8 +468,10 @@
     .p-dialog {
       width: 100vw;
       max-width: 100vw;
-      max-height: 95vh;
-      max-height: 95dvh; /* Modern: accounts for mobile browser chrome */
+      max-height: 80vh;
+      max-height: 80dvh; /* Modern: accounts for mobile browser chrome */
+      display: flex;
+      flex-direction: column;
 
       // CRITICAL: Ensure dialog receives touches
       pointer-events: auto;
@@ -450,11 +479,16 @@
 
     .p-dialog-header {
       padding: var(--space-3);
+      flex-shrink: 0;
       pointer-events: auto;
     }
 
     .p-dialog-content {
       padding: var(--space-3);
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       pointer-events: auto;
 
       // CRITICAL: All interactive elements must be touchable
@@ -465,9 +499,13 @@
 
     .p-dialog-footer {
       padding: var(--space-3);
+      padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
       pointer-events: auto;
       position: relative;
       z-index: 10;
+      flex-shrink: 0;
+      background: var(--surface-primary, #fff);
+      border-top: 1px solid var(--color-border-muted, #e5e7eb);
     }
 
     // Stack dialog action buttons on very narrow screens

@@ -230,3 +230,31 @@
     transition: none;
   }
 }
+
+/* Mobile dialog fixes for iOS Safari */
+@include respond-to(sm) {
+  :host ::ng-deep .body-comp-dialog {
+    &.p-dialog {
+      max-height: 80vh;
+      max-height: 80dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .p-dialog-content {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .p-dialog-footer {
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+      background: var(--surface-primary, #fff);
+      padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+      border-top: 1px solid var(--color-border-muted, #e5e7eb);
+    }
+  }
+}
