@@ -28,9 +28,6 @@ import { Router } from "@angular/router";
 import { firstValueFrom } from "rxjs";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { ProgressBar } from "primeng/progressbar";
-import { Toast } from "primeng/toast";
-import { Dialog } from "primeng/dialog";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Tooltip } from "primeng/tooltip";
 import { ToastService } from "../../core/services/toast.service";
@@ -59,9 +56,6 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     StatusTagComponent,
-    ProgressBar,
-    Toast,
-    Dialog,
     Tooltip,
     MainLayoutComponent,
     StatsGridComponent,
@@ -71,7 +65,7 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
     CardShellComponent,
   ],
   template: `
-    <p-toast></p-toast>
+    <!-- UX AUDIT FIX: Removed duplicate p-toast - using global toast in app.component.ts -->
     <app-main-layout>
       <div
         class="training-page"
@@ -111,7 +105,7 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
               training sessions
             </p>
           </div>
-          @if (readinessScore() > 0) {
+          @if (readinessScore() !== null && readinessScore()! > 0) {
             <div class="readiness-badge-compact" [class]="readinessStatus()">
               <span class="readiness-value">{{ readinessScore() }}</span>
               <span class="readiness-label">Readiness</span>
@@ -451,6 +445,7 @@ export class TrainingComponent {
 
   /**
    * Load achievements and streaks data
+   * UX AUDIT FIX: Added user feedback on error (previously silent)
    */
   private async loadAchievementsData(): Promise<void> {
     try {
@@ -501,6 +496,14 @@ export class TrainingComponent {
       }
     } catch (error) {
       this.logger.error("Error loading achievements data", error);
+      // UX FIX: Show non-blocking toast instead of silent failure
+      // Only show on non-404 errors (404 means user has no achievements yet - expected)
+      if (error && typeof error === "object" && "status" in error) {
+        const status = (error as { status: number }).status;
+        if (status !== 404) {
+          this.toastService.warn(TOAST.ERROR.ACHIEVEMENTS_LOAD_FAILED);
+        }
+      }
     }
   }
 

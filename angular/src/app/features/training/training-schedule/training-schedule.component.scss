@@ -880,3 +880,342 @@
     }
   }
 }
+
+// ================================================================
+// WEATHER ALERT - RESPONSIVE
+// ================================================================
+
+.weather-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  grid-column: 1 / -1; // Span full width in grid
+
+  @include respond-to(md) {
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3);
+  }
+
+  &--danger {
+    background: var(--primitive-error-50);
+    border: 1px solid var(--primitive-error-200);
+    border-left: 4px solid var(--primitive-error-500);
+
+    .weather-alert__icon {
+      color: var(--primitive-error-500);
+    }
+
+    .weather-alert__title {
+      color: var(--primitive-error-700);
+    }
+  }
+
+  &--warning {
+    background: var(--primitive-warning-50);
+    border: 1px solid var(--primitive-warning-200);
+    border-left: 4px solid var(--primitive-warning-500);
+
+    .weather-alert__icon {
+      color: var(--primitive-warning-500);
+    }
+
+    .weather-alert__title {
+      color: var(--primitive-warning-700);
+    }
+  }
+}
+
+.weather-alert__icon {
+  font-size: var(--ds-font-size-2xl);
+  flex-shrink: 0;
+}
+
+.weather-alert__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.weather-alert__title {
+  margin: 0;
+  font-size: var(--ds-font-size-lg);
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.weather-alert__reason {
+  margin: 0;
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--color-text-primary);
+}
+
+.weather-alert__recommendation {
+  margin: 0;
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.weather-alert__conditions {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-tertiary);
+
+  i {
+    margin-right: var(--space-1);
+  }
+}
+
+.weather-wind {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.weather-alert__actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+
+  @include respond-to(md) {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
+// ================================================================
+// SUBSTITUTE WORKOUT CARD - RESPONSIVE
+// ================================================================
+
+.substitute-workout-card {
+  grid-column: 1 / -1; // Span full width in grid
+}
+
+.substitute-workout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.substitute-workout__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.substitute-workout__name {
+  margin: 0;
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.substitute-workout__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+
+  &--info {
+    background: var(--primitive-blue-50);
+    color: var(--primitive-blue-700);
+  }
+
+  &--secondary {
+    background: var(--surface-ground);
+    color: var(--color-text-secondary);
+  }
+
+  &--success {
+    background: var(--primitive-success-50);
+    color: var(--primitive-success-700);
+  }
+}
+
+.substitute-workout__description {
+  margin: 0;
+  font-size: var(--ds-font-size-md);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.substitute-workout__equipment {
+  h4 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    i {
+      color: var(--ds-primary-green);
+    }
+  }
+}
+
+.equipment-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.equipment-item {
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-ground);
+  border-radius: var(--radius-sm);
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.substitute-workout__preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-ground);
+  border-radius: var(--radius-md);
+}
+
+.workout-phase {
+  h4 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    i {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-secondary);
+    padding-left: var(--space-5);
+  }
+}
+
+.exercise-preview-list {
+  margin: 0;
+  padding-left: var(--space-5);
+  list-style: none;
+
+  li {
+    margin-bottom: var(--space-1);
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-secondary);
+
+    strong {
+      color: var(--color-text-primary);
+    }
+
+    &.more-exercises {
+      color: var(--ds-primary-green);
+      font-style: italic;
+    }
+  }
+}
+
+.substitute-workout__goals {
+  h4 {
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--ds-font-size-md);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    i {
+      color: var(--ds-primary-green);
+    }
+  }
+}
+
+.goals-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.goal-tag {
+  padding: var(--space-1) var(--space-2);
+  background: var(--ds-primary-green-subtle);
+  color: var(--ds-primary-green);
+  border-radius: var(--radius-sm);
+  font-size: var(--ds-font-size-sm);
+  font-weight: var(--ds-font-weight-medium);
+}
+
+.substitute-workout__actions {
+  display: flex;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--surface-border);
+
+  @include respond-to(md) {
+    flex-direction: column;
+  }
+}
+
+// ================================================================
+// SESSION BADGES (Team, Outdoor)
+// ================================================================
+
+.team-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-0) var(--space-2);
+  background: var(--primitive-blue-50);
+  color: var(--primitive-blue-700);
+  border-radius: var(--radius-sm);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-medium);
+  margin-left: var(--space-2);
+  vertical-align: middle;
+
+  i {
+    font-size: var(--ds-font-size-xs);
+  }
+}
+
+.outdoor-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-5);
+  height: var(--space-5);
+  background: var(--primitive-warning-50);
+  color: var(--primitive-warning-600);
+  border-radius: 50%;
+  margin-left: var(--space-2);
+  vertical-align: middle;
+  cursor: help;
+
+  i {
+    font-size: var(--ds-font-size-xs);
+  }
+}

@@ -247,6 +247,284 @@
   color: var(--color-text-secondary);
 }
 
+// ===== Team Rankings Section =====
+.team-rankings-card {
+  margin-bottom: var(--space-6);
+}
+
+.rankings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
+}
+
+.rankings-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  i {
+    color: var(--ds-primary-green);
+    font-size: var(--ds-font-size-md);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+}
+
+.badge-summary {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.badge-count {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+
+  &.gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+    color: #5c4a00;
+  }
+
+  &.silver {
+    background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+    color: #4a4a4a;
+  }
+
+  &.bronze {
+    background: linear-gradient(135deg, #cd7f32 0%, #d4a574 100%);
+    color: #3d2914;
+  }
+}
+
+.achievements-row {
+  padding: var(--space-4);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
+}
+
+.achievements-title {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.achievements-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.rankings-table {
+  padding: var(--space-4);
+}
+
+.rankings-subtitle {
+  margin: 0 0 var(--space-3) 0;
+  font-size: var(--ds-font-size-md);
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.rankings-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ranking-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  align-items: center;
+
+  &.top-three {
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(16, 201, 107, 0.05) 100%);
+    border-left: var(--space-1) solid var(--ds-primary-green);
+  }
+}
+
+.ranking-metric {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--space-10);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--ds-font-size-xs);
+  font-weight: var(--ds-font-weight-bold);
+  background: var(--surface-tertiary);
+  color: var(--color-text-secondary);
+
+  &.gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+    color: #5c4a00;
+  }
+
+  &.silver {
+    background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+    color: #4a4a4a;
+  }
+
+  &.bronze {
+    background: linear-gradient(135deg, #cd7f32 0%, #d4a574 100%);
+    color: #3d2914;
+  }
+}
+
+.ranking-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  .your-value {
+    font-weight: var(--ds-font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .rank-of-total {
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
+  }
+}
+
+.gap-from-leader {
+  text-align: right;
+
+  &.is-leader {
+    color: var(--ds-primary-green);
+  }
+
+  .leader-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    background: rgba(16, 201, 107, 0.1);
+    border-radius: var(--radius-full);
+    color: var(--ds-primary-green);
+    font-weight: var(--ds-font-weight-semibold);
+    font-size: var(--ds-font-size-sm);
+  }
+
+  .gap-text {
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-secondary);
+  }
+}
+
+.performance-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-top: var(--border-1) solid var(--color-border-secondary);
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+
+  i {
+    font-size: var(--ds-font-size-lg);
+  }
+
+  &.strongest {
+    i {
+      color: var(--ds-primary-green);
+    }
+  }
+
+  &.weakest {
+    i {
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+.summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.summary-label {
+  font-size: var(--ds-font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.summary-value {
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.no-data-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+
+  i {
+    color: var(--ds-primary-green);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  text-align: center;
+
+  .empty-icon {
+    font-size: var(--ds-font-size-3xl);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-4);
+  }
+
+  h4 {
+    margin: 0 0 var(--space-2) 0;
+    color: var(--color-text-primary);
+  }
+
+  p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    max-width: var(--content-max-width-xs);
+  }
+}
+
 @include respond-to(md) {
   .form-grid {
     grid-template-columns: 1fr;
@@ -261,5 +539,24 @@
   .gap-stats {
     flex-direction: column;
     gap: var(--space-2);
+  }
+
+  .ranking-item {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .gap-from-leader {
+    text-align: left;
+  }
+
+  .performance-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .rankings-header {
+    flex-direction: column;
+    gap: var(--space-3);
+    align-items: flex-start;
   }
 }

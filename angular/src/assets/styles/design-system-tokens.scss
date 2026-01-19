@@ -139,6 +139,8 @@
   --surface-overlay-medium: rgba(0, 0, 0, 0.4);
   --surface-overlay-dark: rgba(0, 0, 0, 0.6);
   --surface-overlay-darkest: rgba(0, 0, 0, 0.8);
+  --overlay-blur-none: 0;
+  --overlay-blur: 4px;
 
   /* Neutral Grays */
   --neutral-50: #fafafa;
@@ -265,6 +267,7 @@
 
   /* Semantic Opacity Tokens - For common UI states */
   --opacity-dimmed: 0.5; /* For disabled/dimmed states */
+  --opacity-muted: 0.6; /* For disabled controls with visible state */
   --opacity-subtle: 0.7; /* For subtle overlays and secondary content */
   --opacity-strong: 0.9; /* For strong overlays and emphasized content */
   --opacity-minimal: 0.4; /* For very subtle states */
@@ -585,6 +588,7 @@
   --shadow-md: var(--ds-shadow-2);
   --shadow-lg: var(--ds-shadow-3);
   --shadow-xl: var(--ds-shadow-4);
+  --text-shadow-subtle: 0 1px 1px rgba(0, 0, 0, 0.1);
 
   /* Elevation Aliases */
   --elevation-low: var(--shadow-sm);
@@ -593,6 +597,12 @@
 
   /* Focus Shadows */
   --shadow-focus: var(--ds-state-focus-ring);
+  --shadow-error-focus: 0 0 0 var(--focus-ring-width)
+    rgba(var(--primitive-error-500-rgb), 0.2);
+  --shadow-success-focus: 0 0 0 var(--focus-ring-width)
+    rgba(var(--primitive-success-500-rgb), 0.2);
+  --shadow-warning-focus: 0 0 0 var(--focus-ring-width)
+    rgba(var(--primitive-warning-500-rgb), 0.2);
   --shadow-focus-inset: inset 0 0 0 0.2rem
     rgba(var(--ds-primary-green-rgb), 0.2);
 
@@ -768,6 +778,7 @@
   --button-height-sm: var(--ds-button-height-sm);
   --button-height-md: var(--ds-button-height-md);
   --button-height-lg: var(--ds-button-height-lg);
+  --button-height-xl: 3.75rem; /* 60px */
 
   /* Touch Target Minimum */
   --touch-target-min: 44px;
@@ -822,6 +833,7 @@
   /* Icon Sizes - Standardized Scale */
   --icon-xs: 0.75rem; /* 12px - inline with small text */
   --icon-sm: 0.875rem; /* 14px - inline with body text */
+  --icon-base: 1.125rem; /* 18px - default button icons */
   --icon-md: 1rem; /* 16px - default icon size */
   --icon-lg: 1.25rem; /* 20px - emphasized icons */
   --icon-xl: 1.5rem; /* 24px - large icons, metric icons */
@@ -851,6 +863,38 @@
   --touch-target-sm: 2.25rem; /* 36px - minimum for secondary actions */
   --touch-target-md: 2.75rem; /* 44px - recommended minimum */
   --touch-target-lg: 3.25rem; /* 52px - comfortable touch */
+  --tag-height-md: 1.75rem; /* 28px - compact tags */
+  --tag-height-sm: 1.5rem; /* 24px - small tags */
+  --tag-height-xs: 1.375rem; /* 22px - micro tags */
+  --dialog-max-height: 90vh;
+  --dialog-width-sm: 25rem; /* 400px */
+  --dialog-width-md: 35rem; /* 560px */
+  --dialog-width-lg: 50rem; /* 800px */
+  --dialog-width-xl: 90vw;
+  --panel-max-height-md: 18.75rem; /* 300px */
+  --panel-width-md: 20rem; /* 320px */
+  --panel-width-lg: 22.5rem; /* 360px */
+  --panel-width-sm: 17.5rem; /* 280px */
+  --tooltip-max-width: 20rem; /* 320px */
+  --layout-width-xxs: 7.5rem; /* 120px */
+  --layout-width-xs: 12.5rem; /* 200px */
+  --layout-width-sm: 17.5rem; /* 280px */
+  --layout-width-md: 18.75rem; /* 300px */
+  --layout-width-lg: 25rem; /* 400px */
+  --layout-width-xl: 37.5rem; /* 600px */
+  --layout-width-2xl: 50rem; /* 800px */
+  --layout-width-3xl: 75rem; /* 1200px */
+  --layout-width-4xl: 87.5rem; /* 1400px */
+  --layout-width-5xl: 100rem; /* 1600px */
+  --layout-width-6xl: 112.5rem; /* 1800px */
+  --layout-width-sidebar-collapsed: 4.5rem; /* 72px */
+  --layout-height-full: 100vh;
+  --layout-height-sm: 7.5rem; /* 120px */
+  --layout-height-md: 3rem; /* 48px */
+  --layout-height-lg: 3.5rem; /* 56px */
+  --grid-min-width-xs: 7.5rem; /* 120px */
+  --grid-min-width-sm: 8.75rem; /* 140px */
+  --grid-min-width-md: 12.5rem; /* 200px */
 
   /* Progress Bar Heights */
   --progress-xs: 0.125rem; /* 2px - subtle progress */

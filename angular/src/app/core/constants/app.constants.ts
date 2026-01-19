@@ -41,6 +41,9 @@ export const TIMEOUTS = {
   CACHE_TTL_DEFAULT: 300000, // 5 minutes default TTL
   CACHE_TTL_STATIC: 3600000, // 1 hour for static resources
   IDLE_TIMEOUT: 300000, // 5 minutes before marking idle
+
+  // UX Audit: Slow Operation Thresholds
+  SLOW_OPERATION_THRESHOLD: 10000, // 10 seconds before showing "taking longer" message
 } as const;
 
 /**

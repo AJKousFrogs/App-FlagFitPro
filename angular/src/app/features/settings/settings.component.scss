@@ -1766,6 +1766,17 @@
   color: var(--color-text-secondary);
 }
 
+/* UX AUDIT FIX: Slow operation reassurance message */
+.export-progress-section .slow-operation-message {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  background: var(--ds-color-warning-subtle);
+  border-radius: var(--radius-sm);
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-warning);
+  text-align: center;
+}
+
 /* ================================================================
    NEW TEAM REQUEST DIALOG
    ================================================================ */

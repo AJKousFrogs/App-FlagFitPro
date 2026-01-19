@@ -11,7 +11,7 @@ import { SupabaseService } from "./supabase.service";
 import { LoggerService } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { TOAST } from "../constants/toast-messages.constants";
-import { ApiService } from "./api.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 
 export interface Season {
   id: string;
@@ -166,7 +166,7 @@ export class OffboardingService {
   async archiveSeason(seasonId: string): Promise<void> {
     try {
       const response = await firstValueFrom(
-        this.apiService.post("/api/season/archive", {
+        this.apiService.post(API_ENDPOINTS.season.archive, {
           season_id: seasonId,
         }),
       );
@@ -271,7 +271,7 @@ export class OffboardingService {
   async resumeAccount(userId: string): Promise<void> {
     try {
       const response = await firstValueFrom(
-        this.apiService.post("/api/account/resume", {
+        this.apiService.post(API_ENDPOINTS.account.resume, {
           user_id: userId,
         }),
       );
@@ -326,7 +326,7 @@ export class OffboardingService {
   ): Promise<void> {
     try {
       const response = await firstValueFrom(
-        this.apiService.post("/api/player/notify-inactive", {
+        this.apiService.post(API_ENDPOINTS.player.notifyInactive, {
           user_id: userId,
           days_inactive: daysInactive,
         }),

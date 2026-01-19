@@ -365,6 +365,16 @@ export const TOAST_ERROR = {
   PLAYERS_REMOVE_FAILED: "Failed to remove players",
   INVITATION_SEND_FAILED: "Failed to send invitation",
   INVITATION_RESEND_FAILED: "Failed to resend invitation",
+  // Note: PLAYER_REMOVE_FAILED is defined above (line 289)
+
+  // Settings & Security
+  SETTINGS_SAVE_FAILED: "Failed to save settings. Please try again.",
+  PASSWORD_CHANGE_FAILED: "Failed to change password. Please try again.",
+  ACCOUNT_DELETE_FAILED: "Failed to delete account. Please try again.",
+  TWO_FA_VERIFICATION_FAILED: "2FA verification failed. Please try again.",
+  TWO_FA_DISABLE_FAILED: "Failed to disable 2FA. Please try again.",
+  TEAM_REQUEST_FAILED: "Failed to submit team request. Please try again.",
+  ACHIEVEMENTS_LOAD_FAILED: "Failed to load achievements.",
 
   // Other
   NOT_FOUND: "The requested resource was not found.",

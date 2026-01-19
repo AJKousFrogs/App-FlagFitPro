@@ -42,7 +42,6 @@ import { ConfirmationService, PrimeTemplate } from "primeng/api";
 
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { Dialog } from "primeng/dialog";
-import { ProgressSpinner } from "primeng/progressspinner";
 import { Select } from "primeng/select";
 import { Tooltip } from "primeng/tooltip";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -57,10 +56,7 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
-import {
-  COMPONENT_SIZES,
-  DIALOG_STYLES
-} from "../../core/utils/design-tokens.util";
+import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import {
   PlayerFormData,
   RosterFiltersComponent,
@@ -109,13 +105,10 @@ import {
   providers: [ConfirmationService],
   imports: [
     StatusTagComponent,
-    ProgressSpinner,
     Dialog,
-    PrimeTemplate,
     PrimeTemplate,
     Tooltip,
     ConfirmDialog,
-    PrimeTemplate,
     Select,
     FormsModule,
     DatePipe,
@@ -210,19 +203,8 @@ import {
             (clearSelection)="clearSelection()"
           ></app-roster-filters>
 
-          <!-- Loading State -->
-          @if (rosterService.isLoading()) {
-            <div class="loading-state">
-              <p-progressSpinner
-                [style]="{
-                  width: componentSizes.avatar.lg,
-                  height: componentSizes.avatar.lg,
-                }"
-                strokeWidth="4"
-              ></p-progressSpinner>
-              <p class="loading-message">Loading roster data...</p>
-            </div>
-          }
+          <!-- UX AUDIT FIX: Removed duplicate loading state - page-level app-loading handles initial load -->
+          <!-- rosterService.isLoading() is used for refresh/filter operations, not displayed separately -->
 
           <!-- Empty State -->
           @if (
@@ -248,23 +230,20 @@ import {
             ></app-empty-state>
           }
 
-          <!-- No Results State -->
+          <!-- No Results State - UX AUDIT FIX: Use EmptyStateComponent for consistency -->
           @if (
             !rosterService.isLoading() &&
             filteredPlayers().length === 0 &&
             (searchQuery() || positionFilter || statusFilter)
           ) {
-            <div class="no-results" role="status">
-              <i class="pi pi-search" aria-hidden="true"></i>
-              <h3>No players match your filters</h3>
-              <p>Try adjusting your search or filter criteria</p>
-              <app-button
-                variant="outlined"
-                iconLeft="pi-filter-slash"
-                (clicked)="clearFilters()"
-                >Clear Filters</app-button
-              >
-            </div>
+            <app-empty-state
+              icon="pi-search"
+              title="No players match your filters"
+              message="Try adjusting your search or filter criteria"
+              actionLabel="Clear Filters"
+              actionIcon="pi pi-filter-slash"
+              [actionHandler]="clearFilters.bind(this)"
+            ></app-empty-state>
           }
 
           <!-- Content -->
@@ -935,7 +914,6 @@ export class RosterComponent implements OnInit {
 
   // Design system tokens
   protected readonly dialogStyles = DIALOG_STYLES;
-  protected readonly componentSizes = COMPONENT_SIZES;
 
   // Page state
   isPageLoading = signal(true);

@@ -35,7 +35,7 @@ import { Ripple } from "primeng/ripple";
 import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
 import { TIMEOUTS, UI_LIMITS } from "../../core/constants/app.constants";
-import { ApiService } from "../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import { DataConfidenceService } from "../../core/services/data-confidence.service";
 import {
@@ -1488,7 +1488,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
 
     try {
       await firstValueFrom(
-        this.apiService.post("/api/response-feedback", {
+        this.apiService.post(API_ENDPOINTS.responseFeedback, {
           messageId: message.id,
           wasHelpful: helpful,
         }),

@@ -304,11 +304,16 @@ export const API_ENDPOINTS = {
     programSessions: (id: string) => `/api/training/programs/${id}/sessions`,
     programExercises: (id: string) => `/api/training/programs/${id}/exercises`,
     programCurrentWeek: "/api/training/programs/current-week",
+    generateSubstitute: "/api/training/generate-substitute",
   },
   performance: {
     metrics: "/api/performance/metrics",
     trends: "/api/performance/trends",
     heatmap: "/api/performance/heatmap",
+    // Performance records (fitness tests: sprints, jumps, strength)
+    records: "/api/performance/records",
+    latestRecord: "/api/performance/records/latest",
+    speedInsights: "/api/performance/speed-insights",
   },
   weather: {
     current: "/api/weather/current",
@@ -582,4 +587,27 @@ export const API_ENDPOINTS = {
     update: (eventId: string) => `/api/coach/calendar?id=${eventId}`,
     delete: (eventId: string) => `/api/coach/calendar?id=${eventId}`,
   },
+  // Season/Account management endpoints
+  season: {
+    archive: "/api/season/archive",
+  },
+  account: {
+    resume: "/api/account/resume",
+  },
+  player: {
+    notifyInactive: "/api/player/notify-inactive",
+  },
+  // Calibration logging endpoints
+  calibration: {
+    logs: "/api/calibration-logs",
+    outcome: "/api/calibration-logs/outcome",
+  },
+  // Micro-sessions endpoints
+  microSessions: {
+    analytics: "/api/micro-sessions/analytics",
+  },
+  // Response feedback (AI response rating)
+  responseFeedback: "/api/response-feedback",
+  // Performance live data
+  performanceLive: "/api/performance/live",
 };

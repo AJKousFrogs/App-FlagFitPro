@@ -30,7 +30,7 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
 import { COLORS } from "../../../core/constants/app.constants";
 import { LazyChartComponent } from "../lazy-chart/lazy-chart.component";
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
 interface WeeklyBreakdown {
@@ -326,7 +326,7 @@ export class SessionAnalyticsComponent implements OnInit {
 
     try {
       const response = await firstValueFrom(
-        this.apiService.get<AnalyticsData>("/api/micro-sessions/analytics", {
+        this.apiService.get<AnalyticsData>(API_ENDPOINTS.microSessions.analytics, {
           weeks: 4,
         }),
       );

@@ -31,45 +31,45 @@
     // ─────────────────────────────────────────
     font-family: var(--font-family-sans);
     font-weight: var(--p-button-font-weight, var(--font-weight-semibold));
-    font-size: var(--p-button-font-size, var(--font-body-size, 16px));
-    letter-spacing: 0.01em;
-    line-height: 1.5;
+    font-size: var(--p-button-font-size, var(--font-body-size));
+    letter-spacing: var(--ds-letter-spacing-label);
+    line-height: var(--line-height-normal);
 
     // LOCKED SHAPE - RAISED RECTANGULAR (NOT PILL)
-    border-radius: var(--p-button-border-radius, var(--radius-lg, 8px));
+    border-radius: var(--p-button-border-radius, var(--radius-lg));
 
     // LOCKED SIZE
-    min-height: var(--p-form-control-height, 44px);
-    padding: var(--p-button-padding-y, var(--space-3, 12px))
-      var(--p-button-padding-x, var(--space-6, 24px));
+    min-height: var(--p-form-control-height);
+    padding: var(--p-button-padding-y, var(--space-3))
+      var(--p-button-padding-x, var(--space-6));
 
     // LOCKED BORDER for hover state support
-    border: 2px solid transparent;
+    border: var(--border-2) solid transparent;
 
     transition:
-      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      transform var(--motion-fast) var(--ease-micro-bounce),
+      box-shadow var(--motion-fast) var(--ease-standard),
+      background-color var(--motion-fast) var(--ease-standard),
+      border-color var(--motion-fast) var(--ease-standard),
+      color var(--motion-fast) var(--ease-standard);
     position: relative;
     overflow: hidden;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2, 8px);
+    gap: var(--space-2);
 
     &.p-button-sm {
-      padding: var(--p-button-sm-padding-y, var(--space-2, 8px))
-        var(--p-button-sm-padding-x, var(--space-3, 12px));
-      font-size: var(--p-button-sm-font-size, var(--font-body-sm-size, 14px));
+      padding: var(--p-button-sm-padding-y, var(--space-2))
+        var(--p-button-sm-padding-x, var(--space-3));
+      font-size: var(--p-button-sm-font-size, var(--font-body-sm-size));
     }
 
     &.p-button-lg {
-      padding: var(--p-button-lg-padding-y, var(--space-4, 16px))
-        var(--p-button-lg-padding-x, var(--space-5, 20px));
-      font-size: var(--p-button-lg-font-size, var(--font-body-size, 16px));
+      padding: var(--p-button-lg-padding-y, var(--space-4))
+        var(--p-button-lg-padding-x, var(--space-5));
+      font-size: var(--p-button-lg-font-size, var(--font-body-size));
     }
 
     /* Subtle inner glow effect */
@@ -79,8 +79,8 @@
       inset: 0;
       background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.15) 0%,
-        rgba(255, 255, 255, 0) 50%
+        var(--overlay-white-15) 0%,
+        transparent 50%
       );
       opacity: 1;
       pointer-events: none;
@@ -93,15 +93,15 @@
       position: absolute;
       inset: 0;
       background: radial-gradient(
-        circle at var(--ripple-x, 50%) var(--ripple-y, 50%),
-        rgba(255, 255, 255, 0.3) 0%,
+        circle at var(--ripple-x) var(--ripple-y),
+        var(--overlay-white-30) 0%,
         transparent 60%
       );
       transform: scale(0);
       opacity: 0;
       transition:
-        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-        opacity 0.3s;
+        transform var(--transition-slower) var(--ease-standard),
+        opacity var(--transition-slow) var(--ease-standard);
       pointer-events: none;
     }
 
@@ -121,25 +121,25 @@
 
     /* Icon spacing - left icon */
     .p-button-icon-left {
-      margin-right: 0.5rem;
+      margin-right: var(--space-2);
     }
 
     /* Icon spacing - right icon */
     .p-button-icon-right {
-      margin-left: 0.5rem;
+      margin-left: var(--space-2);
     }
 
     /* Arrow icon animation on hover */
     &:hover .pi-arrow-right,
     &:hover .pi-chevron-right {
-      transform: translateX(3px);
+      transform: translateX(calc(var(--space-1) * 0.75));
     }
   }
 
   /* Hover state for pointer devices */
   @media (hover: hover) and (pointer: fine) {
     .p-button:hover:not(:disabled) {
-      transform: translateY(-2px);
+      transform: translateY(calc(-1 * var(--space-1) / 2));
     }
   }
 
@@ -151,14 +151,15 @@
   .p-button:focus-visible {
     outline: none;
     box-shadow:
-      0 0 0 3px var(--surface-primary),
-      0 0 0 5px var(--ds-primary-green);
+      0 0 0 var(--focus-ring-width) var(--surface-primary),
+      0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+        var(--ds-primary-green);
   }
 
   /* Disabled state */
   .p-button:disabled,
   .p-button.p-disabled {
-    opacity: 0.5;
+    opacity: var(--opacity-dimmed);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -178,14 +179,12 @@
     color: var(--color-text-on-primary);
     border-color: transparent;
     /* Raised button elevation */
-    box-shadow:
-      0 4px 6px rgba(0, 0, 0, 0.15),
-      0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-md);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         /* HOVER: White background + green text (inverted) */
-        background: var(--color-text-on-primary, #fff);
+        background: var(--color-text-on-primary);
         color: var(--ds-primary-green);
         border-color: var(--ds-primary-green);
         box-shadow: var(--hover-shadow-md);
@@ -197,16 +196,15 @@
       color: var(--color-text-on-primary);
       border-color: transparent;
       /* Pressed state - reduced elevation */
-      box-shadow:
-        0 2px 4px rgba(0, 0, 0, 0.15),
-        0 1px 2px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow-sm);
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--ds-primary-green),
-        0 4px 6px rgba(0, 0, 0, 0.15);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--ds-primary-green),
+        var(--shadow-md);
     }
   }
 
@@ -219,8 +217,8 @@
     border-color: var(--color-border-primary);
     color: var(--color-text-primary);
     box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      var(--shadow-sm),
+      inset 0 var(--border-1) 0 var(--overlay-white-50);
 
     &::before {
       background: none;
@@ -232,20 +230,22 @@
         border-color: var(--ds-primary-green);
         color: var(--ds-primary-green);
         box-shadow:
-          0 4px 12px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+          var(--shadow-md),
+          inset 0 var(--border-1) 0 var(--overlay-white-50);
       }
     }
 
     &:active:not(:disabled) {
       background: var(--surface-tertiary);
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+      box-shadow: inset 0 var(--border-2) var(--space-1)
+        var(--color-surface-active);
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--color-text-secondary);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--color-text-secondary);
     }
   }
 
@@ -255,7 +255,7 @@
      ================================ */
   .p-button-outlined {
     background: transparent;
-    border: 2px solid var(--ds-primary-green);
+    border: var(--border-2) solid var(--ds-primary-green);
     color: var(--ds-primary-green);
     box-shadow: none;
 
@@ -265,7 +265,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: rgba(var(--ds-primary-green-rgb), 0.08);
+        background: var(--ds-primary-green-subtle);
         border-color: var(--ds-primary-green-hover);
         color: var(--ds-primary-green-hover);
         box-shadow: var(--hover-shadow-md);
@@ -273,13 +273,14 @@
     }
 
     &:active:not(:disabled) {
-      background: rgba(var(--ds-primary-green-rgb), 0.12);
+      background: var(--ds-primary-green-subtle);
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--ds-primary-green);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--ds-primary-green);
     }
 
     /* Outlined variants for different severities */
@@ -346,7 +347,7 @@
 
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
-          background: rgba(139, 92, 246, 0.1);
+          background: var(--color-status-help-light);
         }
       }
     }
@@ -372,7 +373,7 @@
     background: transparent;
     border-color: transparent;
     color: var(--ds-primary-green);
-    padding: 0.5rem 1rem;
+    padding: var(--space-2) var(--space-4);
     box-shadow: none;
 
     &::before {
@@ -381,14 +382,14 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
-        background: rgba(var(--ds-primary-green-rgb), 0.08);
+        background: var(--ds-primary-green-subtle);
         color: var(--ds-primary-green-hover);
-        transform: translateY(-1px);
+        transform: translateY(calc(-1 * var(--space-1) / 4));
       }
     }
 
     &:active:not(:disabled) {
-      background: rgba(var(--ds-primary-green-rgb), 0.12);
+      background: var(--ds-primary-green-subtle);
     }
 
     /* Text button severity variants */
@@ -448,7 +449,7 @@
 
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
-          background: rgba(139, 92, 246, 0.1);
+          background: var(--color-status-help-light);
         }
       }
     }
@@ -473,34 +474,33 @@
     // allowed: gradient intermediate
     background: linear-gradient(
       180deg,
-      #74c41e 0%,
+      var(--color-status-success) 0%,
       var(--color-status-success) 100%
     );
     border-color: var(--color-status-success);
     color: var(--color-text-on-primary);
     box-shadow:
-      0 2px 8px rgba(99, 173, 14, 0.25),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      var(--shadow-md),
+      inset 0 var(--border-1) 0 var(--overlay-white-20);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
           var(--color-status-success) 0%,
-          #569a0b 100%
+          var(--color-status-success) 100%
         );
         box-shadow:
-          0 8px 20px rgba(99, 173, 14, 0.35),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          var(--shadow-lg),
+          inset 0 var(--border-1) 0 var(--overlay-white-20);
       }
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--color-status-success);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--color-status-success);
     }
   }
 
@@ -513,34 +513,33 @@
     // allowed: gradient intermediate
     background: linear-gradient(
       180deg,
-      #38bdf8 0%,
+      var(--color-status-info) 0%,
       var(--color-status-info) 100%
     );
     border-color: var(--color-status-info);
     color: var(--color-text-on-primary);
     box-shadow:
-      0 2px 8px rgba(14, 165, 233, 0.25),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      var(--shadow-md),
+      inset 0 var(--border-1) 0 var(--overlay-white-20);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
           var(--color-status-info) 0%,
-          #0284c7 100%
+          var(--color-status-info) 100%
         );
         box-shadow:
-          0 8px 20px rgba(14, 165, 233, 0.35),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          var(--shadow-lg),
+          inset 0 var(--border-1) 0 var(--overlay-white-20);
       }
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--color-status-info);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--color-status-info);
     }
   }
 
@@ -554,21 +553,20 @@
     // allowed: gradient intermediate
     background: linear-gradient(
       180deg,
-      #fcd34d 0%,
+      var(--color-status-warning) 0%,
       var(--color-status-warning) 100%
     );
     border-color: var(--color-status-warning);
     color: var(--primitive-warning-900);
     box-shadow:
-      0 2px 8px rgba(255, 192, 0, 0.25),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      var(--shadow-md),
+      inset 0 var(--border-1) 0 var(--overlay-white-30);
 
     &::before {
       background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.25) 0%,
-        rgba(255, 255, 255, 0) 50%
+        var(--overlay-white-20) 0%,
+        transparent 50%
       );
     }
 
@@ -577,19 +575,19 @@
         background: linear-gradient(
           180deg,
           var(--color-status-warning) 0%,
-          #e6ac00 100%
+          var(--primitive-warning-600) 100%
         );
         box-shadow:
-          0 8px 20px rgba(255, 192, 0, 0.35),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+          var(--shadow-lg),
+          inset 0 var(--border-1) 0 var(--overlay-white-30);
       }
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--color-status-warning);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--color-status-warning);
     }
   }
 
@@ -602,34 +600,33 @@
     // allowed: gradient intermediate
     background: linear-gradient(
       180deg,
-      #ff4d6a 0%,
+      var(--color-status-error) 0%,
       var(--color-status-error) 100%
     );
     border-color: var(--color-status-error);
     color: var(--color-text-on-primary);
     box-shadow:
-      0 2px 8px rgba(255, 0, 60, 0.25),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      var(--shadow-md),
+      inset 0 var(--border-1) 0 var(--overlay-white-15);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
         background: linear-gradient(
           180deg,
           var(--color-status-error) 0%,
-          #d9002f 100%
+          var(--primitive-error-600) 100%
         );
         box-shadow:
-          0 8px 20px rgba(255, 0, 60, 0.35),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          var(--shadow-lg),
+          inset 0 var(--border-1) 0 var(--overlay-white-15);
       }
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--color-status-error);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--color-status-error);
     }
   }
 
@@ -642,15 +639,14 @@
     // allowed: purple severity gradient
     background: linear-gradient(
       180deg,
-      #a78bfa 0%,
+      var(--color-status-help) 0%,
       var(--color-status-help) 100%
     );
     border-color: var(--color-status-help);
     color: var(--color-text-on-primary);
     box-shadow:
-      0 2px 8px rgba(139, 92, 246, 0.25),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      var(--shadow-md),
+      inset 0 var(--border-1) 0 var(--overlay-white-15);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
@@ -660,16 +656,16 @@
           var(--color-status-help-hover) 100%
         );
         box-shadow:
-          0 8px 20px rgba(139, 92, 246, 0.35),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.15);
+          var(--shadow-lg),
+          inset 0 var(--border-1) 0 var(--overlay-white-15);
       }
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--color-status-help);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--color-status-help);
     }
   }
 
@@ -686,9 +682,8 @@
     border-color: var(--color-text-primary);
     color: var(--surface-primary);
     box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.25),
-      0 1px 2px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      var(--shadow-md),
+      inset 0 var(--border-1) 0 var(--overlay-white-10);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover:not(:disabled) {
@@ -698,16 +693,16 @@
           var(--primitive-neutral-800) 100%
         );
         box-shadow:
-          0 8px 20px rgba(0, 0, 0, 0.35),
-          0 4px 8px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          var(--shadow-lg),
+          inset 0 var(--border-1) 0 var(--overlay-white-10);
       }
     }
 
     &:focus-visible {
       box-shadow:
-        0 0 0 3px var(--surface-primary),
-        0 0 0 5px var(--color-text-primary);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) + var(--focus-ring-offset))
+          var(--color-text-primary);
     }
   }
 
@@ -720,40 +715,40 @@
   .p-button-rounded,
   .p-button.p-button-rounded {
     /* Override: Use standard radius instead of pill shape */
-    border-radius: var(--radius-button, 8px); /* RAISED style - NOT pill */
-    padding: var(--space-3, 12px) var(--space-6, 24px); /* Standard padding */
+    border-radius: var(--radius-button); /* RAISED style - NOT pill */
+    padding: var(--space-3) var(--space-6); /* Standard padding */
   }
 
   /* ================================
      BUTTON SIZES - DESIGN CONTRACT
      ================================ */
   .p-button-sm {
-    min-height: 36px;
-    padding: var(--space-2, 8px) var(--space-4, 16px);
-    font-size: var(--font-body-sm-size, 14px);
+    min-height: var(--button-height-sm);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-body-sm-size);
 
     .p-button-icon {
-      font-size: var(--font-body-sm-size, 14px);
+      font-size: var(--font-body-sm-size);
     }
 
     &.p-button-rounded {
       /* Override: Standard padding for small buttons */
-      padding: var(--space-2, 8px) var(--space-4, 16px);
+      padding: var(--space-2) var(--space-4);
     }
   }
 
   .p-button-lg {
-    min-height: 52px;
-    padding: var(--space-4, 16px) 2rem;
-    font-size: var(--font-body-size, 18px);
+    min-height: var(--button-height-lg);
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--font-body-size);
 
     .p-button-icon {
-      font-size: var(--font-h4-size, 18px);
+      font-size: var(--font-h4-size);
     }
 
     &.p-button-rounded {
       /* Override: Standard padding for large buttons */
-      padding: var(--space-4, 16px) 2rem;
+      padding: var(--space-4) var(--space-8);
     }
   }
 
@@ -761,32 +756,32 @@
      ICON ONLY BUTTONS - DESIGN CONTRACT
      ================================ */
   .p-button-icon-only {
-    padding: var(--space-3, 12px);
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
+    padding: var(--space-3);
+    width: var(--button-height-md);
+    height: var(--button-height-md);
+    min-width: var(--button-height-md);
+    min-height: var(--button-height-md);
     justify-content: center;
 
     &.p-button-rounded {
       /* Override: Use standard radius instead of circle for icon-only buttons */
-      border-radius: var(--radius-button, 8px);
+      border-radius: var(--radius-button);
     }
 
     &.p-button-sm {
-      width: 36px;
-      height: 36px;
-      min-width: 36px;
-      min-height: 36px;
-      padding: var(--space-2, 8px);
+      width: var(--button-height-sm);
+      height: var(--button-height-sm);
+      min-width: var(--button-height-sm);
+      min-height: var(--button-height-sm);
+      padding: var(--space-2);
     }
 
     &.p-button-lg {
-      width: 52px;
-      height: 52px;
-      min-width: 52px;
-      min-height: 52px;
-      padding: var(--space-4, 16px);
+      width: var(--button-height-lg);
+      height: var(--button-height-lg);
+      min-width: var(--button-height-lg);
+      min-height: var(--button-height-lg);
+      padding: var(--space-4);
     }
   }
 
@@ -800,17 +795,17 @@
       border-radius: 0;
 
       &:first-child {
-        border-top-left-radius: var(--radius-full, 9999px);
-        border-bottom-left-radius: var(--radius-full, 9999px);
+        border-top-left-radius: var(--radius-full);
+        border-bottom-left-radius: var(--radius-full);
       }
 
       &:last-child {
-        border-top-right-radius: var(--radius-full, 9999px);
-        border-bottom-right-radius: var(--radius-full, 9999px);
+        border-top-right-radius: var(--radius-full);
+        border-bottom-right-radius: var(--radius-full);
       }
 
       &:not(:last-child) {
-        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        border-right: var(--border-1) solid var(--overlay-white-20);
       }
     }
   }
@@ -866,7 +861,7 @@
     .p-button-outlined {
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
-          background: rgba(var(--ds-primary-green-rgb), 0.15);
+          background: var(--ds-primary-green-subtle);
         }
       }
 
@@ -886,7 +881,7 @@
     .p-button-text {
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(:disabled) {
-          background: rgba(var(--ds-primary-green-rgb), 0.15);
+          background: var(--ds-primary-green-subtle);
         }
       }
     }
@@ -980,14 +975,13 @@
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     overflow: hidden;
-    animation: dialog-scale-in 250ms
-      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: dialog-scale-in var(--transition-base) var(--ease-decelerate);
   }
 
   @keyframes dialog-scale-in {
     from {
       opacity: 0;
-      transform: scale(0.95) translateY(-20px);
+      transform: scale(0.95) translateY(calc(-1 * var(--space-5)));
     }
     to {
       opacity: 1;
@@ -996,30 +990,29 @@
   }
 
   .p-dialog-mask {
-    background: rgba(0, 0, 0, 0.5);
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
-    animation: backdrop-fade-in 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    background: var(--surface-overlay);
+    -webkit-backdrop-filter: blur(var(--overlay-blur));
+    backdrop-filter: blur(var(--overlay-blur));
+    animation: backdrop-fade-in var(--transition-base) var(--ease-standard);
   }
 
   @keyframes backdrop-fade-in {
     from {
       opacity: 0;
-      -webkit-backdrop-filter: blur(0);
-      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(var(--overlay-blur-none));
+      backdrop-filter: blur(var(--overlay-blur-none));
     }
     to {
       opacity: 1;
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(var(--overlay-blur));
+      backdrop-filter: blur(var(--overlay-blur));
     }
   }
 
   .p-dialog-header {
     padding: var(--space-5) var(--space-6);
-    border-bottom: 1px solid
-      var(--color-border-secondary, var(--primitive-neutral-300));
-    background: var(--surface-primary, var(--color-text-on-primary));
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
+    background: var(--surface-primary);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1028,11 +1021,11 @@
 
   .p-dialog-title {
     font-family: var(--font-family-sans);
-    font-size: var(--font-h2-size, 1.5rem); /* 24px - H2 unified typography */
-    font-weight: var(--font-h2-weight, 600); /* semibold */
-    line-height: var(--font-h2-line-height, 1.25);
-    letter-spacing: 0;
-    color: var(--color-text-primary, var(--primitive-neutral-900));
+    font-size: var(--font-h2-size); /* 24px - H2 unified typography */
+    font-weight: var(--font-h2-weight); /* semibold */
+    line-height: var(--font-h2-line-height);
+    letter-spacing: var(--ds-letter-spacing-normal);
+    color: var(--color-text-primary);
     margin: 0;
   }
 
@@ -1043,7 +1036,7 @@
 
   .p-dialog-footer {
     padding: var(--space-4) var(--space-5);
-    border-top: 1px solid var(--color-border-secondary);
+    border-top: var(--border-1) solid var(--color-border-secondary);
     background: var(--surface-secondary);
     display: flex;
     justify-content: flex-end;
@@ -1064,10 +1057,10 @@
   .close-button,
   [class*="close-btn"] {
     /* Base sizing - Touch-friendly 44px minimum */
-    width: 2.5rem;
-    height: 2.5rem;
-    min-width: 2.5rem;
-    min-height: 2.5rem;
+    width: var(--button-height-md);
+    height: var(--button-height-md);
+    min-width: var(--button-height-md);
+    min-height: var(--button-height-md);
 
     /* Circular design - modern & clean */
     border-radius: 50%;
@@ -1079,10 +1072,9 @@
     flex-shrink: 0;
 
     /* Base appearance */
-    background: var(--surface-secondary, var(--primitive-neutral-50));
-    border: 1px solid
-      var(--color-border-secondary, var(--primitive-neutral-300));
-    color: var(--color-text-secondary, var(--primitive-neutral-600));
+    background: var(--surface-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
+    color: var(--color-text-secondary);
 
     /* Interaction */
     cursor: pointer;
@@ -1092,11 +1084,11 @@
 
     /* Smooth transitions */
     transition:
-      background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      background-color var(--motion-base) var(--ease-standard),
+      border-color var(--motion-base) var(--ease-standard),
+      color var(--motion-base) var(--ease-standard),
+      box-shadow var(--motion-base) var(--ease-standard),
+      transform var(--motion-base) var(--ease-micro-bounce);
 
     /* Icon styling */
     .pi,
@@ -1104,29 +1096,26 @@
     svg,
     i {
       font-size: var(--font-body-sm-size);
-      width: 0.875rem;
-      height: 0.875rem;
-      line-height: 1;
+      width: var(--font-body-sm-size);
+      height: var(--font-body-sm-size);
+      line-height: var(--ds-line-height-1);
       transition: transform var(--transition-base) var(--ease-micro-bounce);
     }
 
     /* Subtle inner shadow for depth */
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      0 1px 2px rgba(0, 0, 0, 0.05);
+      inset 0 var(--border-1) 0 var(--overlay-white-80),
+      var(--shadow-sm);
 
     /* Hover state - Green accent */
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: var(
-          --ds-primary-green-ultra-subtle,
-          rgba(8, 153, 73, 0.08)
-        );
-        border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2));
+        background: var(--ds-primary-green-ultra-subtle);
+        border-color: var(--ds-primary-green-subtle);
         color: var(--ds-primary-green);
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.8),
-          0 2px 8px rgba(8, 153, 73, 0.15);
+          inset 0 var(--border-1) 0 var(--overlay-white-80),
+          var(--hover-shadow-md);
 
         .pi,
         .p-icon,
@@ -1140,20 +1129,20 @@
     /* Focus visible - Accessibility */
     &:focus-visible {
       box-shadow:
-        0 0 0 2px var(--surface-primary, var(--color-text-on-primary)),
-        0 0 0 4px var(--ds-primary-green);
+        0 0 0 var(--focus-ring-width) var(--surface-primary),
+        0 0 0 calc(var(--focus-ring-width) * 2) var(--ds-primary-green);
       border-color: var(--ds-primary-green);
     }
 
     /* Active/Pressed state */
     &:active {
       transform: scale(0.92);
-      background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.15));
+      background: var(--ds-primary-green-subtle);
       border-color: var(--ds-primary-green);
       color: var(--ds-primary-green);
       box-shadow:
-        inset 0 2px 4px rgba(0, 0, 0, 0.1),
-        0 1px 2px rgba(0, 0, 0, 0.05);
+        inset 0 var(--border-2) var(--space-1) var(--color-surface-active),
+        var(--shadow-sm);
     }
   }
 
@@ -1166,12 +1155,13 @@
   .p-dialog-header-close.danger {
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: rgba(239, 68, 68, 0.08);
-        border-color: rgba(239, 68, 68, 0.2);
+        background: var(--color-status-error-light);
+        border-color: var(--color-status-error);
         color: var(--color-status-error);
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.8),
-          0 2px 8px rgba(239, 68, 68, 0.15);
+          inset 0 var(--border-1) 0 var(--overlay-white-80),
+          0 var(--space-1) var(--space-4)
+            rgba(var(--primitive-error-500-rgb), 0.15);
 
         .pi,
         .p-icon,
@@ -1183,7 +1173,7 @@
     }
 
     &:active {
-      background: rgba(239, 68, 68, 0.15);
+      background: var(--color-status-error-light);
       border-color: var(--color-status-error);
       color: var(--color-status-error);
     }
@@ -1198,7 +1188,7 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: var(--surface-secondary, var(--primitive-neutral-50));
+        background: var(--surface-secondary);
         border-color: transparent;
         box-shadow: none;
       }
@@ -1207,35 +1197,35 @@
 
   /* Small variant */
   .close-button-sm {
-    width: 2rem;
-    height: 2rem;
-    min-width: 2rem;
-    min-height: 2rem;
+    width: var(--space-8);
+    height: var(--space-8);
+    min-width: var(--space-8);
+    min-height: var(--space-8);
 
     .pi,
     .p-icon,
     svg,
     i {
       font-size: var(--font-caption-size);
-      width: 0.75rem;
-      height: 0.75rem;
+      width: var(--space-3);
+      height: var(--space-3);
     }
   }
 
   /* Large variant */
   .close-button-lg {
-    width: 3rem;
-    height: 3rem;
-    min-width: 3rem;
-    min-height: 3rem;
+    width: var(--space-12);
+    height: var(--space-12);
+    min-width: var(--space-12);
+    min-height: var(--space-12);
 
     .pi,
     .p-icon,
     svg,
     i {
       font-size: var(--font-body-size);
-      width: 1.125rem;
-      height: 1.125rem;
+      width: calc(var(--space-4) + var(--space-1) / 2);
+      height: calc(var(--space-4) + var(--space-1) / 2);
     }
   }
 
@@ -1253,28 +1243,28 @@
     .p-drawer-close,
     .close-button,
     [class*="close-btn"] {
-      background: var(--primitive-neutral-800, var(--primitive-neutral-800));
-      border-color: var(--primitive-neutral-700, var(--primitive-neutral-700));
-      color: var(--primitive-neutral-400, var(--primitive-neutral-500));
+      background: var(--primitive-neutral-800);
+      border-color: var(--primitive-neutral-700);
+      color: var(--primitive-neutral-400);
       box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.05),
-        0 1px 2px rgba(0, 0, 0, 0.2);
+        inset 0 var(--border-1) 0 var(--overlay-white-10),
+        var(--shadow-sm);
 
       @media (hover: hover) and (pointer: fine) {
         &:hover {
-          background: rgba(16, 201, 107, 0.15);
-          border-color: rgba(16, 201, 107, 0.3);
-          color: var(--primitive-primary-500);
+          background: var(--hover-bg-tertiary);
+          border-color: var(--hover-border-subtle);
+          color: var(--ds-primary-green-light);
           box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
-            0 2px 8px rgba(16, 201, 107, 0.2);
+            inset 0 var(--border-1) 0 var(--overlay-white-10),
+            var(--hover-shadow-sm);
         }
       }
 
       &:active {
-        background: rgba(16, 201, 107, 0.2);
-        border-color: var(--primitive-primary-500);
-        color: var(--primitive-primary-500);
+        background: var(--ds-primary-green-subtle);
+        border-color: var(--ds-primary-green);
+        color: var(--ds-primary-green);
       }
     }
   }
@@ -1290,8 +1280,7 @@
   .p-toast-message {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    animation: toast-slide-in 250ms
-      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: toast-slide-in var(--transition-base) var(--ease-decelerate);
     overflow: hidden;
   }
 
@@ -1312,7 +1301,7 @@
       var(--color-status-success-light) 0%,
       var(--surface-primary) 100%
     );
-    border-left: 4px solid var(--color-status-success);
+    border-left: calc(var(--border-2) * 2) solid var(--color-status-success);
   }
 
   .p-toast-message-info {
@@ -1321,7 +1310,7 @@
       var(--ds-primary-green-subtle) 0%,
       var(--surface-primary) 100%
     );
-    border-left: 4px solid var(--ds-primary-green);
+    border-left: calc(var(--border-2) * 2) solid var(--ds-primary-green);
   }
 
   .p-toast-message-warn {
@@ -1330,7 +1319,7 @@
       var(--color-status-warning-light) 0%,
       var(--surface-primary) 100%
     );
-    border-left: 4px solid var(--color-status-warning);
+    border-left: calc(var(--border-2) * 2) solid var(--color-status-warning);
   }
 
   .p-toast-message-error {
@@ -1339,7 +1328,7 @@
       var(--color-status-error-light) 0%,
       var(--surface-primary) 100%
     );
-    border-left: 4px solid var(--color-status-error);
+    border-left: calc(var(--border-2) * 2) solid var(--color-status-error);
   }
 
   .p-toast-message-content {
@@ -1348,36 +1337,36 @@
 
   .p-toast-close-button {
     /* Smaller circular close button for toasts */
-    width: 1.75rem;
-    height: 1.75rem;
-    min-width: 1.75rem;
-    min-height: 1.75rem;
+    width: calc(var(--space-6) + var(--space-1));
+    height: calc(var(--space-6) + var(--space-1));
+    min-width: calc(var(--space-6) + var(--space-1));
+    min-height: calc(var(--space-6) + var(--space-1));
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--overlay-white-15);
     border: none;
     color: inherit;
     cursor: pointer;
     opacity: 0.7;
     transition:
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      opacity 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      background-color var(--motion-fast) var(--ease-standard),
+      opacity var(--motion-fast) var(--ease-standard),
+      transform var(--motion-base) var(--ease-micro-bounce);
 
     .pi,
     .p-icon,
     svg {
       font-size: var(--font-caption-size);
-      width: 0.75rem;
-      height: 0.75rem;
+      width: var(--space-3);
+      height: var(--space-3);
       transition: transform var(--transition-base) var(--ease-micro-bounce);
     }
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: rgba(255, 255, 255, 0.25);
+        background: var(--overlay-white-30);
         opacity: 1;
 
         .pi,
@@ -1390,7 +1379,7 @@
 
     &:active {
       transform: scale(0.9);
-      background: rgba(255, 255, 255, 0.3);
+      background: var(--overlay-white-30);
     }
   }
 
@@ -1401,17 +1390,16 @@
   .p-menu {
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
     overflow: hidden;
-    animation: menu-scale-in 180ms
-      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: menu-scale-in var(--transition-fast) var(--ease-decelerate);
     transform-origin: top left;
   }
 
   @keyframes menu-scale-in {
     from {
       opacity: 0;
-      transform: scale(0.95) translateY(-8px);
+      transform: scale(0.95) translateY(calc(-1 * var(--space-2)));
     }
     to {
       opacity: 1;
@@ -1427,27 +1415,27 @@
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     transition:
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      padding-left 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      background-color var(--motion-fast) var(--ease-standard),
+      color var(--motion-fast) var(--ease-standard),
+      padding-left var(--motion-fast) var(--ease-standard);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         background: var(--ds-primary-green-subtle);
         color: var(--ds-primary-green);
-        padding-left: calc(var(--space-4) + 4px);
+        padding-left: calc(var(--space-4) + var(--space-1));
       }
     }
 
-    &:focus-visible {
-      box-shadow: inset 0 0 0 2px var(--ds-primary-green);
-    }
+      &:focus-visible {
+        box-shadow: inset 0 0 0 var(--border-2) var(--ds-primary-green);
+      }
   }
 
   .p-menuitem-icon {
     margin-right: var(--space-3);
     color: var(--color-text-secondary);
-    transition: color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: color var(--motion-fast) var(--ease-standard);
   }
 
   .p-menuitem-link:hover .p-menuitem-icon {
@@ -1469,28 +1457,29 @@
      ================================ */
   .p-inputtext {
     /* Geometry - Design Contract */
-    height: var(--p-form-control-height, 44px);
-    min-height: var(--p-form-control-min-height, 44px);
-    border-radius: var(--p-form-control-border-radius, 8px);
-    padding: var(--p-form-control-padding-y, 10px)
-      var(--p-form-control-padding-x, 16px);
+    height: var(--p-form-control-height);
+    min-height: var(--p-form-control-min-height);
+    border-radius: var(--p-form-control-border-radius);
+    padding: var(--p-form-control-padding-y)
+      var(--p-form-control-padding-x);
 
     /* Typography */
-    font-size: var(--p-form-control-font-size, 16px);
-    font-weight: var(--p-form-control-font-weight, 400);
-    line-height: var(--p-form-control-line-height, 1.5);
+    font-size: var(--p-form-control-font-size);
+    font-weight: var(--p-form-control-font-weight);
+    line-height: var(--p-form-control-line-height);
     font-family: var(--font-family-sans);
 
     /* Colors */
     background: var(--p-input-background, var(--surface-primary));
-    border: 1px solid var(--p-input-border-color, var(--color-border-primary));
+    border: var(--border-1) solid
+      var(--p-input-border-color, var(--color-border-primary));
     color: var(--p-input-text-color, var(--color-text-primary));
 
     /* Transitions */
     transition:
-      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      border-color var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard),
+      background-color var(--motion-fast) var(--ease-standard);
 
     /* Hover - subtle border change only */
     &:hover:not(:disabled):not(:focus-visible):not(.p-invalid) {
@@ -1504,8 +1493,9 @@
     &:focus-visible,
     &:focus-visible {
       border-color: var(--p-input-focus-border-color, var(--ds-primary-green));
-      box-shadow: 0 0 0 3px
-        var(--p-input-focus-ring-color, rgba(8, 153, 73, 0.15));
+      box-shadow: 0 0 0
+        var(--p-input-focus-ring-width, var(--focus-ring-width))
+        var(--p-input-focus-ring-color, var(--color-focus-ring));
       outline: none;
     }
 
@@ -1518,8 +1508,9 @@
       );
 
       &:focus-visible {
-        box-shadow: 0 0 0 3px
-          var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+        box-shadow: 0 0 0
+          var(--p-input-focus-ring-width, var(--focus-ring-width))
+          var(--p-input-invalid-focus-ring-color, var(--color-status-error));
       }
     }
 
@@ -1530,14 +1521,14 @@
         --p-input-disabled-border-color,
         var(--color-border-primary)
       );
-      opacity: var(--p-input-disabled-opacity, 0.6);
+      opacity: var(--p-input-disabled-opacity);
       cursor: not-allowed;
     }
   }
 
   .p-inputtext::placeholder {
     color: var(--p-input-placeholder-color, var(--color-text-muted));
-    font-size: var(--p-input-placeholder-font-size, 14px);
+    font-size: var(--p-input-placeholder-font-size);
     font-weight: var(--font-weight-normal);
   }
 
@@ -1546,7 +1537,7 @@
     .p-inputtext:focus-visible ~ label,
     .p-inputtext.p-filled ~ label {
       color: var(--ds-primary-green);
-      transform: translateY(-1.5rem) scale(0.85);
+      transform: translateY(calc(-1 * var(--space-6))) scale(0.85);
     }
   }
 
@@ -1555,20 +1546,20 @@
      ================================ */
   .p-dropdown {
     /* Geometry - Design Contract */
-    height: var(--p-form-control-height, 44px);
-    min-height: var(--p-form-control-min-height, 44px);
-    border-radius: var(--p-form-control-border-radius, 8px);
-    padding: 0 var(--p-form-control-padding-x, 16px);
+    height: var(--p-form-control-height);
+    min-height: var(--p-form-control-min-height);
+    border-radius: var(--p-form-control-border-radius);
+    padding: 0 var(--p-form-control-padding-x);
 
     /* Colors */
     background: var(--p-dropdown-background, var(--surface-primary));
-    border: 1px solid
+    border: var(--border-1) solid
       var(--p-dropdown-border-color, var(--color-border-primary));
 
     /* Transitions */
     transition:
-      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      border-color var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard);
 
     /* Hover */
     &:hover:not(.p-disabled):not(.p-focus) {
@@ -1585,8 +1576,9 @@
         --p-dropdown-focus-border-color,
         var(--ds-primary-green)
       );
-      box-shadow: 0 0 0 3px
-        var(--p-dropdown-focus-ring-color, rgba(8, 153, 73, 0.15));
+      box-shadow: 0 0 0
+        var(--p-input-focus-ring-width, var(--focus-ring-width))
+        var(--p-dropdown-focus-ring-color, var(--color-focus-ring));
       outline: none;
     }
 
@@ -1598,15 +1590,16 @@
       );
 
       &.p-focus {
-        box-shadow: 0 0 0 3px
-          var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+        box-shadow: 0 0 0
+          var(--p-input-focus-ring-width, var(--focus-ring-width))
+          var(--p-input-invalid-focus-ring-color, var(--color-status-error));
       }
     }
 
     /* Disabled */
     &.p-disabled {
       background: var(--p-input-disabled-background, var(--surface-secondary));
-      opacity: var(--p-input-disabled-opacity, 0.6);
+      opacity: var(--p-input-disabled-opacity);
       cursor: not-allowed;
     }
 
@@ -1616,26 +1609,26 @@
       display: flex;
       align-items: center;
       height: 100%;
-      font-size: var(--p-form-control-font-size, 16px);
-      font-weight: var(--p-form-control-font-weight, 400);
+      font-size: var(--p-form-control-font-size);
+      font-weight: var(--p-form-control-font-weight);
       color: var(--p-input-text-color, var(--color-text-primary));
     }
 
     .p-dropdown-label.p-placeholder {
       color: var(--p-input-placeholder-color, var(--color-text-muted));
-      font-size: var(--p-input-placeholder-font-size, 14px);
+      font-size: var(--p-input-placeholder-font-size);
     }
 
     /* Trigger icon */
     .p-dropdown-trigger {
-      width: 2.5rem;
+      width: var(--p-dropdown-trigger-width);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--color-text-secondary);
       transition:
-        color 0.15s ease,
-        transform 0.2s ease;
+        color var(--motion-fast) var(--ease-standard),
+        transform var(--motion-base) var(--ease-standard);
     }
 
     &.p-focus .p-dropdown-trigger,
@@ -1650,14 +1643,13 @@
 
   /* Dropdown Panel */
   .p-dropdown-panel {
-    border-radius: var(--p-dropdown-panel-border-radius, 8px);
-    box-shadow: var(--p-dropdown-panel-shadow, 0 10px 40px rgba(0, 0, 0, 0.12));
-    border: 1px solid var(--color-border-primary);
+    border-radius: var(--p-dropdown-panel-border-radius);
+    box-shadow: var(--p-dropdown-panel-shadow);
+    border: var(--border-1) solid var(--p-dropdown-panel-border-color);
     background: var(--surface-primary);
-    margin-top: 4px;
+    margin-top: var(--p-dropdown-panel-margin-top);
     overflow: hidden;
-    animation: dropdown-scale-in 180ms
-      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: dropdown-scale-in var(--transition-fast) var(--ease-decelerate);
     transform-origin: top center;
   }
 
@@ -1674,16 +1666,16 @@
 
   .p-dropdown-items-wrapper {
     padding: var(--space-2);
-    max-height: 300px;
+    max-height: var(--p-dropdown-panel-max-height);
     overflow-y: auto;
   }
 
   .p-dropdown-item {
-    padding: var(--p-dropdown-option-padding, var(--space-3) var(--space-4));
-    border-radius: var(--p-dropdown-option-border-radius, var(--radius-md));
-    min-height: var(--p-dropdown-option-min-height, 40px);
+    padding: var(--p-dropdown-option-padding);
+    border-radius: var(--p-dropdown-option-border-radius);
+    min-height: var(--p-dropdown-option-min-height);
     margin: var(--space-1) 0;
-    font-size: var(--p-dropdown-option-font-size, var(--font-body-size));
+    font-size: var(--p-dropdown-option-font-size);
     font-weight: var(--font-weight-normal);
     color: var(--color-text-primary);
     display: flex;
@@ -1714,19 +1706,20 @@
      ================================ */
   .p-select {
     /* Geometry - Design Contract */
-    height: var(--p-form-control-height, 44px);
-    min-height: var(--p-form-control-min-height, 44px);
-    border-radius: var(--p-form-control-border-radius, 8px);
-    padding: 0 var(--p-form-control-padding-x, 16px);
+    height: var(--p-form-control-height);
+    min-height: var(--p-form-control-min-height);
+    border-radius: var(--p-form-control-border-radius);
+    padding: 0 var(--p-form-control-padding-x);
 
     /* Colors */
     background: var(--p-select-background, var(--surface-primary));
-    border: 1px solid var(--p-select-border-color, var(--color-border-primary));
+    border: var(--border-1) solid
+      var(--p-select-border-color, var(--color-border-primary));
 
     /* Transitions */
     transition:
-      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      border-color var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard);
 
     /* Hover */
     &:hover:not(.p-disabled):not(.p-focus) {
@@ -1740,8 +1733,9 @@
     &.p-focus,
     &:focus-visible {
       border-color: var(--p-select-focus-border-color, var(--ds-primary-green));
-      box-shadow: 0 0 0 3px
-        var(--p-select-focus-ring-color, rgba(8, 153, 73, 0.15));
+      box-shadow: 0 0 0
+        var(--p-input-focus-ring-width, var(--focus-ring-width))
+        var(--p-select-focus-ring-color, var(--color-focus-ring));
       outline: none;
     }
 
@@ -1753,15 +1747,16 @@
       );
 
       &.p-focus {
-        box-shadow: 0 0 0 3px
-          var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+        box-shadow: 0 0 0
+          var(--p-input-focus-ring-width, var(--focus-ring-width))
+          var(--p-input-invalid-focus-ring-color, var(--color-status-error));
       }
     }
 
     /* Disabled */
     &.p-disabled {
       background: var(--p-input-disabled-background, var(--surface-secondary));
-      opacity: var(--p-input-disabled-opacity, 0.6);
+      opacity: var(--p-input-disabled-opacity);
       cursor: not-allowed;
     }
 
@@ -1771,26 +1766,26 @@
       display: flex;
       align-items: center;
       height: 100%;
-      font-size: var(--p-form-control-font-size, 16px);
-      font-weight: var(--p-form-control-font-weight, 400);
+      font-size: var(--p-form-control-font-size);
+      font-weight: var(--p-form-control-font-weight);
       color: var(--p-input-text-color, var(--color-text-primary));
     }
 
     .p-select-label.p-placeholder {
       color: var(--p-input-placeholder-color, var(--color-text-muted));
-      font-size: var(--p-input-placeholder-font-size, 14px);
+      font-size: var(--p-input-placeholder-font-size);
     }
 
     /* Dropdown icon */
     .p-select-dropdown {
-      width: 2.5rem;
+      width: var(--p-form-control-icon-width);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--color-text-secondary);
       transition:
-        color 0.15s ease,
-        transform 0.2s ease;
+        color var(--motion-fast) var(--ease-standard),
+        transform var(--motion-base) var(--ease-standard);
     }
 
     &.p-focus .p-select-dropdown,
@@ -1805,29 +1800,28 @@
 
   /* Select Panel */
   .p-select-overlay {
-    border-radius: var(--p-dropdown-panel-border-radius, 8px);
-    box-shadow: var(--p-dropdown-panel-shadow, 0 10px 40px rgba(0, 0, 0, 0.12));
-    border: 1px solid var(--color-border-primary);
+    border-radius: var(--p-dropdown-panel-border-radius);
+    box-shadow: var(--p-dropdown-panel-shadow);
+    border: var(--border-1) solid var(--p-dropdown-panel-border-color);
     background: var(--surface-primary);
-    margin-top: 4px;
+    margin-top: var(--p-dropdown-panel-margin-top);
     overflow: hidden;
-    animation: dropdown-scale-in 180ms
-      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: dropdown-scale-in var(--transition-fast) var(--ease-decelerate);
     transform-origin: top center;
   }
 
   .p-select-list-container {
     padding: var(--space-2);
-    max-height: 300px;
+    max-height: var(--p-dropdown-panel-max-height);
     overflow-y: auto;
   }
 
   .p-select-option {
-    padding: var(--p-dropdown-option-padding, var(--space-3) var(--space-4));
-    border-radius: var(--p-dropdown-option-border-radius, var(--radius-md));
-    min-height: var(--p-dropdown-option-min-height, 40px);
+    padding: var(--p-dropdown-option-padding);
+    border-radius: var(--p-dropdown-option-border-radius);
+    min-height: var(--p-dropdown-option-min-height);
     margin: var(--space-1) 0;
-    font-size: var(--p-dropdown-option-font-size, var(--font-body-size));
+    font-size: var(--p-dropdown-option-font-size);
     font-weight: var(--font-weight-normal);
     color: var(--color-text-primary);
     display: flex;
@@ -1859,20 +1853,20 @@
      ================================ */
   .p-multiselect {
     /* Geometry - Design Contract */
-    height: var(--p-form-control-height, 44px);
-    min-height: var(--p-form-control-min-height, 44px);
-    border-radius: var(--p-form-control-border-radius, 8px);
-    padding: 0 var(--p-form-control-padding-x, 16px);
+    height: var(--p-form-control-height);
+    min-height: var(--p-form-control-min-height);
+    border-radius: var(--p-form-control-border-radius);
+    padding: 0 var(--p-form-control-padding-x);
 
     /* Colors */
     background: var(--p-multiselect-background, var(--surface-primary));
-    border: 1px solid
+    border: var(--border-1) solid
       var(--p-multiselect-border-color, var(--color-border-primary));
 
     /* Transitions */
     transition:
-      border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      box-shadow 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      border-color var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard);
 
     /* Hover */
     &:hover:not(.p-disabled):not(.p-focus) {
@@ -1889,8 +1883,9 @@
         --p-multiselect-focus-border-color,
         var(--ds-primary-green)
       );
-      box-shadow: 0 0 0 3px
-        var(--p-multiselect-focus-ring-color, rgba(8, 153, 73, 0.15));
+      box-shadow: 0 0 0
+        var(--p-input-focus-ring-width, var(--focus-ring-width))
+        var(--p-multiselect-focus-ring-color, var(--color-focus-ring));
       outline: none;
     }
 
@@ -1902,15 +1897,16 @@
       );
 
       &.p-focus {
-        box-shadow: 0 0 0 3px
-          var(--p-input-invalid-focus-ring-color, rgba(239, 68, 68, 0.15));
+        box-shadow: 0 0 0
+          var(--p-input-focus-ring-width, var(--focus-ring-width))
+          var(--p-input-invalid-focus-ring-color, var(--color-status-error));
       }
     }
 
     /* Disabled */
     &.p-disabled {
       background: var(--p-input-disabled-background, var(--surface-secondary));
-      opacity: var(--p-input-disabled-opacity, 0.6);
+      opacity: var(--p-input-disabled-opacity);
       cursor: not-allowed;
     }
 
@@ -1920,26 +1916,26 @@
       display: flex;
       align-items: center;
       height: 100%;
-      font-size: var(--p-form-control-font-size, 16px);
-      font-weight: var(--p-form-control-font-weight, 400);
+      font-size: var(--p-form-control-font-size);
+      font-weight: var(--p-form-control-font-weight);
       color: var(--p-input-text-color, var(--color-text-primary));
     }
 
     .p-multiselect-label.p-placeholder {
       color: var(--p-input-placeholder-color, var(--color-text-muted));
-      font-size: var(--p-input-placeholder-font-size, 14px);
+      font-size: var(--p-input-placeholder-font-size);
     }
 
     /* Trigger icon */
     .p-multiselect-trigger {
-      width: 2.5rem;
+      width: var(--p-form-control-icon-width);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--color-text-secondary);
       transition:
-        color 0.15s ease,
-        transform 0.2s ease;
+        color var(--motion-fast) var(--ease-standard),
+        transform var(--motion-base) var(--ease-standard);
     }
 
     &.p-focus .p-multiselect-trigger {
@@ -1949,26 +1945,26 @@
 
   /* Multiselect Panel */
   .p-multiselect-panel {
-    border-radius: var(--p-dropdown-panel-border-radius, 8px);
-    box-shadow: var(--p-dropdown-panel-shadow, 0 10px 40px rgba(0, 0, 0, 0.12));
-    border: 1px solid var(--color-border-primary);
+    border-radius: var(--p-dropdown-panel-border-radius);
+    box-shadow: var(--p-dropdown-panel-shadow);
+    border: var(--border-1) solid var(--p-dropdown-panel-border-color);
     background: var(--surface-primary);
-    margin-top: 4px;
+    margin-top: var(--p-dropdown-panel-margin-top);
     overflow: hidden;
   }
 
   .p-multiselect-items-wrapper {
     padding: var(--space-2);
-    max-height: 300px;
+    max-height: var(--p-dropdown-panel-max-height);
     overflow-y: auto;
   }
 
   .p-multiselect-item {
-    padding: var(--p-dropdown-option-padding, var(--space-3) var(--space-4));
-    border-radius: var(--p-dropdown-option-border-radius, var(--radius-md));
-    min-height: var(--p-dropdown-option-min-height, 40px);
+    padding: var(--p-dropdown-option-padding);
+    border-radius: var(--p-dropdown-option-border-radius);
+    min-height: var(--p-dropdown-option-min-height);
     margin: var(--space-1) 0;
-    font-size: var(--p-dropdown-option-font-size, var(--font-body-size));
+    font-size: var(--p-dropdown-option-font-size);
     font-weight: var(--font-weight-normal);
     color: var(--color-text-primary);
     display: flex;
@@ -1976,8 +1972,8 @@
     gap: var(--space-3);
     cursor: pointer;
     transition:
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      background-color var(--motion-fast) var(--ease-standard),
+      color var(--motion-fast) var(--ease-standard);
 
     &:hover {
       background: var(--surface-secondary);
@@ -2004,12 +2000,12 @@
 
     .p-inputtext {
       /* Geometry - Design Contract */
-      height: var(--p-form-control-height, 44px);
-      min-height: var(--p-form-control-min-height, 44px);
-      border-radius: var(--p-form-control-border-radius, 8px);
-      padding: var(--p-form-control-padding-y, 10px) 2.75rem
-        var(--p-form-control-padding-y, 10px)
-        var(--p-form-control-padding-x, 16px);
+      height: var(--p-form-control-height);
+      min-height: var(--p-form-control-min-height);
+      border-radius: var(--p-form-control-border-radius);
+      padding: var(--p-form-control-padding-y)
+        var(--p-calendar-input-icon-padding) var(--p-form-control-padding-y)
+        var(--p-form-control-padding-x);
       width: 100%;
     }
 
@@ -2018,17 +2014,17 @@
       right: 0;
       top: 0;
       height: 100%;
-      width: 2.75rem;
+      width: var(--p-calendar-trigger-width);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--color-text-secondary);
       background: transparent;
       border: none;
-      border-radius: 0 var(--p-form-control-border-radius, 8px)
-        var(--p-form-control-border-radius, 8px) 0;
+      border-radius: 0 var(--p-form-control-border-radius)
+        var(--p-form-control-border-radius) 0;
       cursor: pointer;
-      transition: color 0.15s ease;
+      transition: color var(--motion-fast) var(--ease-standard);
 
       &:hover {
         color: var(--ds-primary-green);
@@ -2044,23 +2040,23 @@
 
     .p-inputtext {
       /* Geometry - Design Contract */
-      height: var(--p-form-control-height, 44px);
-      min-height: var(--p-form-control-min-height, 44px);
-      border-radius: var(--p-form-control-border-radius, 8px);
+      height: var(--p-form-control-height);
+      min-height: var(--p-form-control-min-height);
+      border-radius: var(--p-form-control-border-radius);
     }
 
     &.p-inputnumber-buttons-stacked .p-inputtext {
-      border-radius: var(--p-form-control-border-radius, 8px) 0 0
-        var(--p-form-control-border-radius, 8px);
+      border-radius: var(--p-form-control-border-radius) 0 0
+        var(--p-form-control-border-radius);
     }
 
     .p-inputnumber-button {
       background: var(--surface-secondary);
-      border: 1px solid var(--color-border-primary);
+      border: var(--border-1) solid var(--color-border-primary);
       color: var(--color-text-secondary);
       transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
+        background-color var(--motion-fast) var(--ease-standard),
+        color var(--motion-fast) var(--ease-standard);
 
       &:hover {
         background: var(--ds-primary-green-subtle);
@@ -2078,9 +2074,9 @@
       border-radius: var(--radius-md);
       border-color: var(--color-border-primary);
       transition:
-        background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-        border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-        transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        background-color var(--motion-fast) var(--ease-standard),
+        border-color var(--motion-fast) var(--ease-standard),
+        transform var(--motion-fast) var(--ease-micro-bounce);
 
       &:hover {
         border-color: var(--ds-primary-green);
@@ -2091,8 +2087,8 @@
         border-color: var(--ds-primary-green);
 
         .p-checkbox-icon {
-          animation: checkbox-check 200ms
-            var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+          animation: checkbox-check var(--transition-fast)
+            var(--ease-micro-bounce);
         }
       }
     }
@@ -2115,9 +2111,9 @@
     .p-radiobutton-box {
       border-color: var(--color-border-primary);
       transition:
-        background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-        border-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-        transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        background-color var(--motion-fast) var(--ease-standard),
+        border-color var(--motion-fast) var(--ease-standard),
+        transform var(--motion-fast) var(--ease-micro-bounce);
 
       &:hover {
         border-color: var(--ds-primary-green);
@@ -2128,8 +2124,8 @@
 
         .p-radiobutton-icon {
           background: var(--ds-primary-green);
-          animation: radio-select 200ms
-            var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+          animation: radio-select var(--transition-fast)
+            var(--ease-micro-bounce);
         }
       }
     }
@@ -2160,11 +2156,8 @@
   .p-badge {
     border-radius: var(--radius-md);
     font-weight: var(--font-weight-semibold);
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.1),
-      0 1px 2px rgba(0, 0, 0, 0.06);
-    animation: badge-pop-in 250ms
-      var(--ease-micro-bounce, cubic-bezier(0.34, 1.56, 0.64, 1));
+    box-shadow: var(--shadow-sm);
+    animation: badge-pop-in var(--transition-base) var(--ease-micro-bounce);
   }
 
   @keyframes badge-pop-in {
@@ -2214,7 +2207,7 @@
     font-family: var(--font-family-sans);
     font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-semibold);
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
     text-transform: none;
 
     /* Shape: RAISED RECTANGULAR (not pill) */
@@ -2222,7 +2215,7 @@
 
     /* Raised effect with shadow */
     text-decoration: none;
-    letter-spacing: 0;
+    letter-spacing: var(--ds-letter-spacing-normal);
     white-space: nowrap;
 
     /* Note: Shape and shadow defined above in the unified section */
@@ -2245,7 +2238,7 @@
   .p-tag .p-tag-icon,
   .p-tag span {
     text-decoration: none;
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
   }
 
   /* Default/Primary tag - Brand green with white text */
@@ -2272,7 +2265,7 @@
   .p-tag-warning,
   .p-tag-warn {
     background: var(--color-status-warning);
-    color: var(--primitive-amber-900);
+    color: var(--color-status-warning-text);
   }
 
   /* Danger tag - Red with white text */
@@ -2296,13 +2289,13 @@
   /* Tag icon styling */
   .p-tag .p-tag-icon {
     font-size: var(--font-caption-size);
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
     text-decoration: none;
   }
 
   /* Tag text/value styling */
   .p-tag .p-tag-value {
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
     text-decoration: none;
   }
 
@@ -2331,7 +2324,7 @@
     font-family: var(--font-family-sans);
     font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-semibold);
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
     text-transform: none;
     text-decoration: none;
     white-space: nowrap;
@@ -2348,7 +2341,7 @@
   .p-badge *,
   .p-badge span {
     text-decoration: none;
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
   }
 
   .p-badge-success {
@@ -2363,7 +2356,7 @@
 
   .p-badge-warning {
     background: var(--color-status-warning);
-    color: var(--primitive-amber-900);
+    color: var(--color-status-warning-text);
   }
 
   .p-badge-danger {
@@ -2402,7 +2395,7 @@
     font-family: var(--font-family-sans);
     font-size: var(--font-body-sm-size);
     font-weight: var(--font-weight-semibold);
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
     text-transform: none;
     text-decoration: none;
     white-space: nowrap;
@@ -2423,27 +2416,27 @@
   .p-chip .p-chip-text,
   .p-chip span {
     text-decoration: none;
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
   }
 
   .p-chip .p-chip-icon {
     font-size: var(--font-caption-size);
-    line-height: 1;
+    line-height: var(--ds-line-height-1);
     text-decoration: none;
   }
 
   /* Chip remove button - ensure touch target */
   .p-chip .p-chip-remove-icon {
-    width: 20px;
-    height: 20px;
-    margin-left: 4px;
+    width: var(--space-5);
+    height: var(--space-5);
+    margin-left: var(--space-1);
     border-radius: 50%;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: background-color var(--transition-fast) var(--ease-standard);
   }
 
   .p-chip .p-chip-remove-icon:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--color-surface-active);
   }
 
   /* Dark mode for chips */
@@ -2460,23 +2453,21 @@
 
   .p-tooltip {
     .p-tooltip-text {
-      background: var(--surface-primary, var(--color-text-on-primary));
-      color: var(--color-text-primary, var(--primitive-neutral-900));
-      border: 1px solid var(--ds-primary-green);
-      border-radius: var(--radius-md, 8px);
+      background: var(--surface-primary);
+      color: var(--color-text-primary);
+      border: var(--border-1) solid var(--ds-primary-green);
+      border-radius: var(--radius-md);
       /* TOOLTIP FIX: Consistent padding from design system */
-      padding: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+      padding: var(--p-tooltip-padding);
       font-family: var(--font-family-sans);
-      font-size: var(--font-caption-size, 0.8125rem);
-      font-weight: var(--font-weight-medium, 500);
+      font-size: var(--font-caption-size);
+      font-weight: var(--font-weight-medium);
       /* TOOLTIP FIX: Explicit line-height for readability */
-      line-height: 1.5;
-      box-shadow:
-        0 4px 12px rgba(8, 153, 73, 0.1),
-        0 2px 6px rgba(0, 0, 0, 0.06);
-      animation: tooltip-scale-in 180ms ease-out;
+      line-height: var(--p-tooltip-line-height);
+      box-shadow: var(--p-tooltip-shadow);
+      animation: tooltip-scale-in var(--transition-fast) var(--ease-decelerate);
       /* TOOLTIP FIX: Consistent max-width prevents overflow */
-      max-width: 280px;
+      max-width: var(--p-tooltip-max-width);
       /* TOOLTIP FIX: Proper text wrapping */
       overflow-wrap: break-word;
       white-space: normal;
@@ -2508,7 +2499,7 @@
   @keyframes tooltip-scale-in {
     from {
       opacity: 0;
-      transform: translateY(2px);
+      transform: translateY(calc(var(--space-1) / 2));
     }
     to {
       opacity: 1;
@@ -2520,12 +2511,10 @@
   [data-theme="dark"] .p-tooltip,
   .dark-theme .p-tooltip {
     .p-tooltip-text {
-      background: var(--primitive-neutral-800, var(--primitive-neutral-800));
+      background: var(--primitive-neutral-800);
       color: var(--color-text-on-primary);
-      border-color: var(--ds-primary-green-light, var(--primitive-primary-500));
-      box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.4),
-        0 4px 12px rgba(16, 201, 107, 0.15);
+      border-color: var(--ds-primary-green-light);
+      box-shadow: var(--shadow-lg);
     }
   }
 
@@ -2537,27 +2526,27 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
-    border: 1px solid var(--color-border-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
   }
 
   .p-datatable-header {
     background: var(--surface-secondary);
-    border-bottom: 1px solid var(--color-border-secondary);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
     padding: var(--space-4);
   }
 
   .p-datatable-thead > tr > th {
     background: var(--surface-secondary);
-    border-bottom: 2px solid var(--color-border-primary);
+    border-bottom: var(--border-2) solid var(--color-border-primary);
     padding: var(--space-4);
     /* Typography: Label (14px/600) - unified system */
-    font-size: var(--font-label-size, 0.875rem);
-    font-weight: var(--font-label-weight, 600);
-    line-height: var(--font-label-line-height, 1.2);
+    font-size: var(--font-label-size);
+    font-weight: var(--font-label-weight);
+    line-height: var(--font-label-line-height);
     text-transform: uppercase;
-    letter-spacing: var(--letter-spacing-wide, 0.05em);
+    letter-spacing: var(--letter-spacing-wide);
     color: var(--color-text-secondary);
-    transition: background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: background-color var(--motion-fast) var(--ease-standard);
 
     &.p-sortable-column:hover {
       background: var(--surface-tertiary);
@@ -2566,13 +2555,13 @@
 
   .p-datatable-tbody > tr {
     transition:
-      background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      transform 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+      background-color var(--motion-fast) var(--ease-standard),
+      transform var(--motion-fast) var(--ease-standard);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
         background: var(--ds-primary-green-ultra-subtle);
-        transform: translateX(4px);
+        transform: translateX(var(--space-1));
       }
     }
 
@@ -2584,11 +2573,11 @@
 
   .p-datatable-tbody > tr > td {
     padding: var(--space-4);
-    border-bottom: 1px solid var(--color-border-secondary);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
     /* Typography: Body (16px/400) - unified system */
-    font-size: var(--font-body-size, 1rem);
-    font-weight: var(--font-body-weight, 400);
-    line-height: var(--font-body-line-height, 1.5);
+    font-size: var(--font-body-size);
+    font-weight: var(--font-body-weight);
+    line-height: var(--font-body-line-height);
     color: var(--color-text-primary);
   }
 
@@ -2614,7 +2603,7 @@
         display: flex;
         flex-direction: column;
         margin-bottom: var(--space-4);
-        border: 1px solid var(--color-border-primary);
+        border: var(--border-1) solid var(--color-border-primary);
         border-radius: var(--radius-lg);
         padding: var(--space-3);
         background: var(--surface-primary);
@@ -2626,7 +2615,7 @@
         justify-content: space-between;
         align-items: center;
         padding: var(--space-2) var(--space-3);
-        border-bottom: 1px solid var(--color-border-secondary);
+        border-bottom: var(--border-1) solid var(--color-border-secondary);
         gap: var(--space-3);
       }
 
@@ -2641,7 +2630,7 @@
         color: var(--color-text-secondary);
         font-size: var(--font-body-sm-size);
         flex-shrink: 0;
-        min-width: 100px;
+        min-width: calc(var(--space-24) + var(--space-1));
       }
 
       /* Cell content alignment */
@@ -2654,7 +2643,7 @@
         justify-content: flex-end;
         padding-top: var(--space-3);
         margin-top: var(--space-2);
-        border-top: 1px solid var(--color-border-secondary);
+        border-top: var(--border-1) solid var(--color-border-secondary);
         border-bottom: none;
       }
 
@@ -2705,8 +2694,8 @@
 
     /* Larger touch targets for action buttons */
     .p-datatable-tbody .p-button {
-      min-height: 44px;
-      min-width: 44px;
+      min-height: var(--touch-target-md);
+      min-width: var(--touch-target-md);
     }
   }
 
@@ -2724,8 +2713,8 @@
     .p-accordion-header-link {
       padding: var(--space-4) var(--space-5);
       transition:
-        background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-        color 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        background-color var(--motion-fast) var(--ease-standard),
+        color var(--motion-fast) var(--ease-standard);
 
       @media (hover: hover) and (pointer: fine) {
         &:hover {
@@ -2736,7 +2725,7 @@
     }
 
     .p-accordion-toggle-icon {
-      transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform var(--motion-slow) var(--ease-micro-bounce);
     }
 
     &.p-highlight .p-accordion-toggle-icon {
@@ -2746,14 +2735,13 @@
 
   .p-accordion-content {
     padding: var(--space-5);
-    animation: accordion-expand 250ms
-      var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+    animation: accordion-expand var(--transition-base) var(--ease-decelerate);
   }
 
   @keyframes accordion-expand {
     from {
       opacity: 0;
-      transform: translateY(-10px);
+      transform: translateY(calc(-1 * var(--space-2)));
     }
     to {
       opacity: 1;
@@ -2786,7 +2774,7 @@
       @media (hover: hover) and (pointer: fine) {
         &:hover:not(.p-highlight) {
           color: var(--ds-primary-green);
-          border-color: rgba(var(--ds-primary-green-rgb), 0.3);
+          border-color: var(--ds-primary-green);
         }
       }
     }
@@ -2833,7 +2821,7 @@
       border-radius: var(--radius-lg);
       padding: var(--space-1); /* 4px */
       gap: var(--space-2); /* 8px for breathing room */
-      border: 1px solid var(--color-border-secondary);
+      border: var(--border-1) solid var(--color-border-secondary);
       box-shadow: none;
       margin-bottom: var(--space-5);
       overflow-x: auto;
@@ -2904,7 +2892,7 @@
 
       /* Focus state for accessibility */
       &:focus-visible {
-        box-shadow: 0 0 0 2px var(--ds-primary-green);
+        box-shadow: 0 0 0 var(--focus-ring-width) var(--ds-primary-green);
       }
 
       /* Active/Selected state - Green accent */
@@ -2915,7 +2903,7 @@
         color: var(--ds-primary-green);
         font-weight: var(--font-weight-semibold);
         box-shadow: var(--shadow-sm);
-        border: 1px solid var(--ds-primary-green);
+        border: var(--border-1) solid var(--ds-primary-green);
 
         i,
         .pi {
@@ -3029,7 +3017,7 @@
         &:hover:not(.p-tab-active):not([aria-selected="true"]) {
           background: transparent;
           color: var(--ds-primary-green);
-          border-bottom-color: rgba(var(--ds-primary-green-rgb), 0.3);
+          border-bottom-color: var(--ds-primary-green);
         }
       }
     }
@@ -3076,7 +3064,7 @@
   .dark-theme {
     .p-tabs {
       .p-tablist {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--overlay-white-10);
         border-color: var(--color-border-primary);
       }
 
@@ -3091,7 +3079,7 @@
         &:hover:not(.p-tab-active):not([aria-selected="true"]):not(
             [data-p-active="true"]
           ) {
-          background: rgba(255, 255, 255, 0.08);
+          background: var(--overlay-white-20);
           color: var(--color-text-primary);
         }
 
@@ -3119,13 +3107,11 @@
     box-shadow: var(--shadow-xl);
 
     &.p-sidebar-left {
-      animation: sidebar-slide-left 280ms
-        var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+      animation: sidebar-slide-left var(--transition-base) var(--ease-decelerate);
     }
 
     &.p-sidebar-right {
-      animation: sidebar-slide-right 280ms
-        var(--ease-decelerate, cubic-bezier(0, 0, 0.2, 1));
+      animation: sidebar-slide-right var(--transition-base) var(--ease-decelerate);
     }
   }
 
@@ -3149,7 +3135,7 @@
 
   .p-sidebar-header {
     padding: var(--space-5);
-    border-bottom: 1px solid var(--color-border-secondary);
+    border-bottom: var(--border-1) solid var(--color-border-secondary);
   }
 
   .p-sidebar-content {
@@ -3164,7 +3150,7 @@
 
   .p-progressbar {
     border-radius: var(--radius-full);
-    height: 8px;
+    height: var(--space-2);
     background: var(--surface-tertiary);
     overflow: hidden;
   }
@@ -3176,7 +3162,7 @@
       var(--ds-primary-green) 0%,
       var(--ds-primary-green-light) 100%
     );
-    transition: width 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: width var(--transition-slower) var(--ease-standard);
     position: relative;
     overflow: hidden;
 
@@ -3187,7 +3173,7 @@
       background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(255, 255, 255, 0.3) 50%,
+        var(--overlay-white-30) 50%,
         transparent 100%
       );
       animation: progress-shine 2s infinite;
@@ -3208,7 +3194,7 @@
      ================================================================ */
 
   .p-avatar {
-    transition: transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform var(--motion-fast) var(--ease-micro-bounce);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
@@ -3219,14 +3205,14 @@
 
   .p-avatar-group {
     .p-avatar {
-      border: 2px solid var(--surface-primary);
+      border: var(--border-2) solid var(--surface-primary);
       transition:
-        transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1),
-        z-index 0ms;
+        transform var(--motion-fast) var(--ease-micro-bounce),
+        z-index var(--transition-fast);
 
       @media (hover: hover) and (pointer: fine) {
         &:hover {
-          transform: scale(1.15) translateY(-4px);
+          transform: scale(1.15) translateY(calc(-1 * var(--space-1)));
           z-index: var(--z-dropdown);
         }
       }
@@ -3242,8 +3228,8 @@
 
   .p-chip-remove-icon {
     transition:
-      color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      color var(--motion-fast) var(--ease-standard),
+      transform var(--motion-fast) var(--ease-micro-bounce);
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
@@ -3260,11 +3246,11 @@
    ================================================================ */
 
 .p-button .p-button-icon-left {
-  margin-right: 0.5rem;
+  margin-right: var(--space-2);
 }
 
 .p-button .p-button-icon-right {
-  margin-left: 0.5rem;
+  margin-left: var(--space-2);
 }
 
 /* ================================================================
@@ -3294,7 +3280,7 @@
 *[style*="089949"],
 *[style*="green"] {
   color: var(--color-text-on-primary);
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  text-shadow: var(--text-shadow-subtle);
 
   &,
   & *,
@@ -3321,7 +3307,7 @@
 .primary-bg,
 .bg-brand {
   color: var(--color-text-on-primary);
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  text-shadow: var(--text-shadow-subtle);
 
   &,
   & * {
@@ -3397,18 +3383,18 @@
 /* Warning button - dark text for contrast on yellow/amber */
 .p-button-warning:not(.p-button-outlined):not(.p-button-text),
 .p-button-warn:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--primitive-warning-900);
+  color: var(--color-status-warning-text);
 
   .p-button-label {
-    color: var(--primitive-warning-900);
+    color: var(--color-status-warning-text);
   }
 
   .p-button-icon {
-    color: var(--primitive-warning-900);
+    color: var(--color-status-warning-text);
   }
 
   span {
-    color: var(--primitive-warning-900);
+    color: var(--color-status-warning-text);
   }
 }
 
@@ -3429,24 +3415,24 @@
 
 /* Secondary button - inherit text color or use secondary text */
 .p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
-  color: var(--color-text-primary, var(--primitive-neutral-900));
+  color: var(--color-text-primary);
 
   .p-button-label {
-    color: var(--color-text-primary, var(--primitive-neutral-900));
+    color: var(--color-text-primary);
   }
 
   .p-button-icon {
-    color: var(--color-text-primary, var(--primitive-neutral-900));
+    color: var(--color-text-primary);
   }
 }
 
 /* Outlined severity variants */
 .p-button-outlined.p-button-secondary {
-  color: var(--color-text-secondary, var(--primitive-neutral-700));
+  color: var(--color-text-secondary);
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-text-secondary, var(--primitive-neutral-700));
+    color: var(--color-text-secondary);
   }
 }
 
@@ -3460,11 +3446,11 @@
 }
 
 .p-button-outlined.p-button-info {
-  color: var(--color-status-info, var(--color-status-info));
+  color: var(--color-status-info);
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-status-info, var(--color-status-info));
+    color: var(--color-status-info);
   }
 }
 
@@ -3488,26 +3474,26 @@
 }
 
 .p-button-outlined.p-button-help {
-  color: var(--primitive-purple-500, #8b5cf6);
+  color: var(--primitive-purple-500);
 
   .p-button-label,
   .p-button-icon {
-    color: var(--primitive-purple-500, #8b5cf6);
+    color: var(--primitive-purple-500);
   }
 }
 
 .p-button-outlined.p-button-contrast {
-  color: var(--color-text-primary, var(--primitive-neutral-900));
+  color: var(--color-text-primary);
 
   .p-button-label,
   .p-button-icon {
-    color: var(--color-text-primary, var(--primitive-neutral-900));
+    color: var(--color-text-primary);
   }
 }
 
 /* Text button severity variants */
 .p-button-text.p-button-secondary {
-  color: var(--color-text-secondary, var(--primitive-neutral-700));
+  color: var(--color-text-secondary);
 }
 
 .p-button-text.p-button-success {
@@ -3515,7 +3501,7 @@
 }
 
 .p-button-text.p-button-info {
-  color: var(--color-status-info, var(--color-status-info));
+  color: var(--color-status-info);
 }
 
 .p-button-text.p-button-warning,
@@ -3528,11 +3514,11 @@
 }
 
 .p-button-text.p-button-help {
-  color: var(--primitive-purple-500, #8b5cf6);
+  color: var(--primitive-purple-500);
 }
 
 .p-button-text.p-button-contrast {
-  color: var(--color-text-primary, var(--primitive-neutral-900));
+  color: var(--color-text-primary);
 }
 
 /* ================================================================
@@ -3551,15 +3537,15 @@ button.p-button,
 .p-button.p-component,
 p-button .p-button,
 .p-button:not(.p-button-icon-only) {
-  border-radius: var(--radius-button, 8px);
-  min-height: 44px;
+  border-radius: var(--radius-button);
+  min-height: var(--button-height-md);
 }
 
 /* Icon-only buttons - square with same radius */
 .p-button.p-button-icon-only {
-  border-radius: var(--radius-button, 8px);
-  min-width: 44px;
-  min-height: 44px;
+  border-radius: var(--radius-button);
+  min-width: var(--button-height-md);
+  min-height: var(--button-height-md);
 }
 
 /* Primary button - GREEN background with WHITE text */
@@ -3568,11 +3554,9 @@ p-button .p-button,
   ):not(.p-button-link),
 .p-button.p-button-primary {
   background: var(--ds-primary-green);
-  border: 2px solid transparent;
+  border: var(--border-2) solid transparent;
   color: var(--color-text-on-primary);
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.15),
-    0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 /* Primary button hover - WHITE background with GREEN text (inverted) */
@@ -3580,7 +3564,7 @@ p-button .p-button,
     .p-button-secondary
   ):not(.p-button-link):hover:not(:disabled),
 .p-button.p-button-primary:hover:not(:disabled) {
-  background: var(--color-text-on-primary, #fff);
+  background: var(--color-text-on-primary);
   color: var(--ds-primary-green);
   border-color: var(--ds-primary-green);
   box-shadow: var(--hover-shadow-md);
@@ -3606,31 +3590,29 @@ p-button .p-button,
 [data-theme="dark"],
 .dark-theme {
   .p-dialog-mask {
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--surface-overlay-dark);
   }
 
   /* ✅ No .p-card:hover in dark mode either (Option A) */
 
   .p-button:hover:not(:disabled) {
-    box-shadow:
-      0 4px 12px rgba(0, 0, 0, 0.3),
-      0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-lg);
   }
 
   /* Dark mode: Outlined contrast button should be white */
   .p-button-outlined.p-button-contrast {
-    color: var(--surface-primary, var(--color-text-on-primary));
-    border-color: var(--surface-primary, var(--color-text-on-primary));
+    color: var(--surface-primary);
+    border-color: var(--surface-primary);
 
     .p-button-label,
     .p-button-icon {
-      color: var(--surface-primary, var(--color-text-on-primary));
+      color: var(--surface-primary);
     }
   }
 
   /* Dark mode: Text contrast button should be white */
   .p-button-text.p-button-contrast {
-    color: var(--surface-primary, var(--color-text-on-primary));
+    color: var(--surface-primary);
   }
 }
 
@@ -3646,24 +3628,23 @@ p-button .p-button,
 .p-datepicker-panel,
 .p-datepicker-overlay,
 .p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
-  z-index: 10000;
+  z-index: var(--p-overlay-z-index);
   background: var(--surface-primary);
   border-radius: var(--radius-xl); /* Slightly larger for calendar panels */
-  box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.12),
-    0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--color-border-primary);
+  box-shadow: var(--p-overlay-panel-shadow);
+  border: var(--border-1) solid var(--color-border-primary);
   overflow: hidden;
-  min-width: 320px;
-  max-width: 360px;
+  min-width: var(--p-datepicker-panel-min-width);
+  max-width: var(--p-datepicker-panel-max-width);
   padding: 0;
-  animation: calendarSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: calendarSlideIn var(--p-datepicker-panel-animation-duration)
+    var(--ease-decelerate);
 }
 
 @keyframes calendarSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-8px) scale(0.98);
+    transform: translateY(calc(-1 * var(--space-2))) scale(0.98);
   }
   to {
     opacity: 1;
@@ -3676,10 +3657,10 @@ p-button .p-button,
   .p-datepicker-panel,
   .p-datepicker-overlay,
   .p-datepicker:not(.p-datepicker-inline) .p-datepicker-panel {
-    min-width: 280px;
-    max-width: calc(100vw - 32px);
-    left: 16px;
-    right: 16px;
+    min-width: var(--p-datepicker-panel-min-width-sm);
+    max-width: calc(100vw - var(--space-8));
+    left: var(--space-4);
+    right: var(--space-4);
   }
 }
 
@@ -3690,15 +3671,13 @@ p-button .p-button,
 .p-multiselect-panel,
 .p-autocomplete-panel,
 .p-cascadeselect-panel {
-  z-index: 10000;
+  z-index: var(--p-overlay-z-index);
   background: var(--surface-primary);
-  border-radius: var(--radius-lg);
-  box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.12),
-    0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--color-border-primary);
+  border-radius: var(--p-overlay-panel-border-radius);
+  box-shadow: var(--p-overlay-panel-shadow);
+  border: var(--border-1) solid var(--p-overlay-panel-border-color);
   overflow: hidden;
-  margin-top: 4px;
+  margin-top: var(--p-overlay-panel-margin-top);
 }
 
 /* Ensure overlay container has high z-index */
@@ -3730,7 +3709,7 @@ p-button .p-button,
 .p-listbox-item {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
-  min-height: 40px;
+  min-height: var(--touch-target-sm);
   margin: var(--space-1) 0;
   font-size: var(--font-body-size);
   font-weight: var(--font-weight-normal);
@@ -3767,12 +3746,11 @@ p-button .p-button,
 /* Calendar Header */
 .p-datepicker-panel .p-datepicker-header {
   padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid
-    var(--color-border-secondary, var(--primitive-neutral-300));
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
   background: linear-gradient(
     to bottom,
-    var(--surface-secondary, var(--primitive-neutral-50)),
-    var(--surface-primary, var(--color-text-on-primary))
+    var(--surface-secondary),
+    var(--surface-primary)
   );
   display: flex;
   align-items: center;
@@ -3794,58 +3772,54 @@ p-button .p-button,
 .p-datepicker-panel .p-datepicker-title .p-datepicker-year,
 .p-datepicker-panel .p-datepicker-title button,
 .p-datepicker-panel .p-datepicker-title span {
-  font-family:
-    Poppins,
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
+  font-family: var(--font-family-sans);
   font-weight: 600;
-  font-size: var(--font-body-size, 1rem);
-  color: var(--color-text-primary, var(--primitive-neutral-900));
-  margin: 0 0.125rem;
+  font-size: var(--font-body-size);
+  color: var(--color-text-primary);
+  margin: 0 calc(var(--space-1) / 2);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-md);
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
 }
 
 .p-datepicker-panel .p-datepicker-title button:hover,
 .p-datepicker-panel .p-datepicker-title .p-datepicker-select-month:hover,
 .p-datepicker-panel .p-datepicker-title .p-datepicker-select-year:hover {
-  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
+  background: var(--ds-primary-green-ultra-subtle);
   color: var(--ds-primary-green);
 }
 
 /* Navigation Arrows */
 .p-datepicker-panel .p-datepicker-prev,
 .p-datepicker-panel .p-datepicker-next {
-  width: 2.5rem;
-  height: 2.5rem;
-  min-width: 2.5rem;
+  width: var(--p-form-control-icon-width);
+  height: var(--p-form-control-icon-width);
+  min-width: var(--p-form-control-icon-width);
   border-radius: 50%;
-  color: var(--color-text-secondary, var(--primitive-neutral-600));
-  background: var(--surface-secondary, var(--primitive-neutral-100));
-  border: 1px solid var(--color-border-secondary, var(--primitive-neutral-300));
+  color: var(--color-text-secondary);
+  background: var(--surface-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition:
-    background-color 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    border-color 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    color 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background-color var(--motion-base) var(--ease-micro-bounce),
+    border-color var(--motion-base) var(--ease-micro-bounce),
+    color var(--motion-base) var(--ease-micro-bounce),
+    box-shadow var(--motion-base) var(--ease-micro-bounce);
   flex-shrink: 0;
 }
 
 .p-datepicker-panel .p-datepicker-prev:hover,
 .p-datepicker-panel .p-datepicker-next:hover {
-  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.1));
-  border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2));
+  background: var(--ds-primary-green-ultra-subtle);
+  border-color: var(--ds-primary-green-subtle);
   color: var(--ds-primary-green);
   transform: scale(1.05);
 }
@@ -3862,48 +3836,40 @@ p-button .p-button,
 
 /* Calendar Body */
 .p-datepicker-panel .p-datepicker-calendar-container {
-  padding: 0.75rem 1rem 1rem;
+  padding: var(--space-3) var(--space-4) var(--space-4);
 }
 
 .p-datepicker-panel .p-datepicker-calendar {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 4px;
+  border-spacing: var(--space-1);
   margin: 0;
 }
 
 /* Weekday Headers */
 .p-datepicker-panel .p-datepicker-calendar th {
   padding: var(--space-2) 0;
-  font-family:
-    Poppins,
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
+  font-family: var(--font-family-sans);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-compact-md);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--letter-spacing-wide);
   color: var(--color-text-muted);
   text-align: center;
 }
 
 /* Date Cells */
 .p-datepicker-panel .p-datepicker-calendar td {
-  padding: 2px; /* Intentionally small for compact calendar grid */
+  padding: calc(var(--space-1) / 2); /* Intentionally small for compact grid */
   text-align: center;
 }
 
 .p-datepicker-panel .p-datepicker-calendar td > span,
 .p-datepicker-panel .p-datepicker-calendar td > button {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--p-form-control-icon-width);
+  height: var(--p-form-control-icon-width);
   border-radius: var(--radius-lg); /* 8px */
-  font-family:
-    Poppins,
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
+  font-family: var(--font-family-sans);
   font-size: var(--font-body-sm-size);
   font-weight: var(--font-weight-medium);
   display: flex;
@@ -3911,11 +3877,11 @@ p-button .p-button,
   justify-content: center;
   cursor: pointer;
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
   border: none;
   background: transparent;
-  color: var(--color-text-primary, var(--primitive-neutral-900));
+  color: var(--color-text-primary);
 }
 
 /* Hover State */
@@ -3927,7 +3893,7 @@ p-button .p-button,
   .p-datepicker-calendar
   td
   > button:hover:not(.p-disabled):not(.p-highlight) {
-  background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
+  background: var(--ds-primary-green-ultra-subtle);
   color: var(--ds-primary-green);
 }
 
@@ -3973,7 +3939,7 @@ p-button .p-button,
   .p-datepicker-calendar
   td.p-datepicker-other-month
   > button {
-  color: var(--color-text-disabled, var(--primitive-neutral-300));
+  color: var(--color-text-disabled);
   cursor: not-allowed;
 }
 
@@ -3981,14 +3947,14 @@ p-button .p-button,
 @include respond-to(xs) {
   .p-datepicker-panel .p-datepicker-calendar td > span,
   .p-datepicker-panel .p-datepicker-calendar td > button {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: calc(var(--space-8) + var(--space-1));
+    height: calc(var(--space-8) + var(--space-1));
     font-size: var(--font-compact-lg);
     border-radius: var(--radius-lg);
   }
 
   .p-datepicker-panel .p-datepicker-header {
-    padding: 0.875rem 1rem;
+    padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-4);
   }
 
   .p-datepicker-panel .p-datepicker-title span,
@@ -3998,27 +3964,27 @@ p-button .p-button,
 
   .p-datepicker-panel .p-datepicker-prev,
   .p-datepicker-panel .p-datepicker-next {
-    width: 2.25rem;
-    height: 2.25rem;
-    min-width: 2.25rem;
+    width: calc(var(--space-8) + var(--space-1));
+    height: calc(var(--space-8) + var(--space-1));
+    min-width: calc(var(--space-8) + var(--space-1));
   }
 }
 
 /* Dark Mode - DatePicker */
 [data-theme="dark"] .p-datepicker-panel,
 .dark-theme .p-datepicker-panel {
-  background: var(--primitive-neutral-800, var(--primitive-neutral-800));
-  border-color: var(--primitive-neutral-700, var(--primitive-neutral-700));
+  background: var(--primitive-neutral-800);
+  border-color: var(--primitive-neutral-700);
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-header,
 .dark-theme .p-datepicker-panel .p-datepicker-header {
   background: linear-gradient(
     to bottom,
-    var(--primitive-neutral-700, var(--primitive-neutral-700)),
-    var(--primitive-neutral-800, var(--primitive-neutral-800))
+    var(--primitive-neutral-700),
+    var(--primitive-neutral-800)
   );
-  border-color: var(--primitive-neutral-700, var(--primitive-neutral-700));
+  border-color: var(--primitive-neutral-700);
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-title span,
@@ -4032,21 +3998,21 @@ p-button .p-button,
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-next,
 .dark-theme .p-datepicker-panel .p-datepicker-prev,
 .dark-theme .p-datepicker-panel .p-datepicker-next {
-  background: var(--primitive-neutral-700, var(--primitive-neutral-700));
-  border-color: var(--primitive-neutral-600, var(--primitive-neutral-600));
-  color: var(--primitive-neutral-300, var(--primitive-neutral-400));
+  background: var(--primitive-neutral-700);
+  border-color: var(--primitive-neutral-600);
+  color: var(--primitive-neutral-300);
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar th,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar th {
-  color: var(--primitive-neutral-500, var(--primitive-neutral-600));
+  color: var(--primitive-neutral-500);
 }
 
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > span,
 [data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > button,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar td > span,
 .dark-theme .p-datepicker-panel .p-datepicker-calendar td > button {
-  color: var(--primitive-neutral-200, var(--primitive-neutral-300));
+  color: var(--primitive-neutral-200);
 }
 
 [data-theme="dark"]
@@ -4059,7 +4025,7 @@ p-button .p-button,
   .p-datepicker-calendar
   td.p-datepicker-other-month
   > span {
-  color: var(--primitive-neutral-600, var(--primitive-neutral-600));
+  color: var(--primitive-neutral-600);
 }
 
 /* Input wrapper positioning fix */
@@ -4087,13 +4053,13 @@ p-button .p-button,
 .p-dropdown-panel,
 .p-multiselect-panel,
 .p-datepicker-panel {
-  animation: overlayFadeIn 0.2s ease-out;
+  animation: overlayFadeIn var(--transition-base) var(--ease-decelerate);
 }
 
 @keyframes overlayFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(calc(-1 * var(--space-2)));
   }
   to {
     opacity: 1;
@@ -4111,28 +4077,27 @@ p-button .p-button,
   .p-dialog-header-close,
   .p-confirmpopup-close {
     /* Inherits global close button styles */
-    width: 2.5rem;
-    height: 2.5rem;
-    min-width: 2.5rem;
-    min-height: 2.5rem;
+    width: var(--button-height-md);
+    height: var(--button-height-md);
+    min-width: var(--button-height-md);
+    min-height: var(--button-height-md);
     border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: var(--surface-secondary, var(--primitive-neutral-50));
-    border: 1px solid
-      var(--color-border-secondary, var(--primitive-neutral-300));
-    color: var(--color-text-secondary, var(--primitive-neutral-600));
+    background: var(--surface-secondary);
+    border: var(--border-1) solid var(--color-border-secondary);
+    color: var(--color-text-secondary);
     cursor: pointer;
     transition:
-      background-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      border-color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      color 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      box-shadow 200ms cubic-bezier(0.25, 0.1, 0.25, 1),
-      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      background-color var(--motion-base) var(--ease-standard),
+      border-color var(--motion-base) var(--ease-standard),
+      color var(--motion-base) var(--ease-standard),
+      box-shadow var(--motion-base) var(--ease-standard),
+      transform var(--motion-base) var(--ease-micro-bounce);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.8),
-      0 1px 2px rgba(0, 0, 0, 0.05);
+      inset 0 var(--border-1) 0 var(--overlay-white-80),
+      var(--shadow-sm);
 
     .pi,
     .p-icon {
@@ -4142,15 +4107,12 @@ p-button .p-button,
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        background: var(
-          --ds-primary-green-ultra-subtle,
-          rgba(8, 153, 73, 0.08)
-        );
-        border-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.2));
+        background: var(--ds-primary-green-ultra-subtle);
+        border-color: var(--ds-primary-green-subtle);
         color: var(--ds-primary-green);
         box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.8),
-          0 2px 8px rgba(8, 153, 73, 0.15);
+          inset 0 var(--border-1) 0 var(--overlay-white-80),
+          var(--hover-shadow-md);
 
         .pi,
         .p-icon {
@@ -4161,7 +4123,7 @@ p-button .p-button,
 
     &:active {
       transform: scale(0.92);
-      background: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.15));
+      background: var(--ds-primary-green-subtle);
     }
   }
 }
@@ -4170,24 +4132,24 @@ p-button .p-button,
 .p-message-close,
 .p-chip-remove-icon,
 .p-tag-close {
-  width: 1.5rem;
-  height: 1.5rem;
-  min-width: 1.5rem;
-  min-height: 1.5rem;
+  width: var(--space-6);
+  height: var(--space-6);
+  min-width: var(--space-6);
+  min-height: var(--space-6);
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--color-surface-hover);
   border: none;
   color: inherit;
   cursor: pointer;
   opacity: 0.7;
-  margin-left: 0.5rem;
+  margin-left: var(--space-2);
   transition:
-    background-color 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    opacity 150ms cubic-bezier(0.25, 0.1, 0.25, 1),
-    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    background-color var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-fast) var(--ease-standard),
+    transform var(--motion-base) var(--ease-micro-bounce);
 
   .pi,
   .p-icon {
@@ -4197,7 +4159,7 @@ p-button .p-button,
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background: rgba(0, 0, 0, 0.1);
+      background: var(--color-surface-active);
       opacity: 1;
 
       .pi,
@@ -4217,19 +4179,19 @@ p-button .p-button,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: var(--space-5);
+  height: var(--space-5);
   border-radius: 50%;
   background: transparent;
-  color: var(--color-text-muted, var(--primitive-neutral-600));
+  color: var(--color-text-muted);
   cursor: pointer;
   transition:
-    background-color 150ms ease,
-    color 150ms ease,
-    transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    background-color var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard),
+    transform var(--motion-base) var(--ease-micro-bounce);
 
   &:hover {
-    background: var(--ds-primary-green-ultra-subtle, rgba(8, 153, 73, 0.08));
+    background: var(--ds-primary-green-ultra-subtle);
     color: var(--ds-primary-green);
   }
 

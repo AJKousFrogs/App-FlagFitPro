@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal
+  signal,
+  computed,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -21,6 +22,7 @@ import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
+import { LoggerService } from "../../core/services/logger.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -31,10 +33,42 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   StatItem,
-  StatsGridComponent
+  StatsGridComponent,
 } from "../../shared/components/stats-grid/stats-grid.component";
+import { AchievementBadgeComponent } from "../../shared/components/achievement-badge/achievement-badge.component";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
+import {
+  TeamPerformanceRankingService,
+  MetricRanking,
+  PerformanceAchievement,
+} from "../../core/services/team-performance-ranking.service";
+import { TeamMembershipService } from "../../core/services/team-membership.service";
+import { Tooltip } from "primeng/tooltip";
+
+/**
+ * Database record shape for performance_records table
+ */
+interface PerformanceRecord {
+  id: string;
+  user_id: string;
+  sprint_10m: number | null;
+  sprint_20m: number | null;
+  dash_40: number | null;
+  pro_agility: number | null;
+  l_drill: number | null;
+  reactive_agility: number | null;
+  vertical_jump: number | null;
+  broad_jump: number | null;
+  rsi: number | null;
+  bench_press: number | null;
+  back_squat: number | null;
+  deadlift: number | null;
+  body_weight: number | null;
+  notes: string | null;
+  overall_score: number | null;
+  recorded_at: string;
+}
 
 interface PerformanceMetric {
   name: string;
@@ -139,7 +173,9 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     RouterModule,
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
+    AchievementBadgeComponent,
+    Tooltip,
   ],
   template: `
     <app-main-layout>
@@ -173,7 +209,138 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
           </app-page-header>
 
           <!-- Performance Metrics -->
-          <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
+          @if (hasData()) {
+            <app-stats-grid [stats]="performanceStats()"></app-stats-grid>
+          } @else {
+            <div class="no-data-banner">
+              <i class="pi pi-info-circle"></i>
+              <span>No performance data yet. Log your first test to see metrics here.</span>
+            </div>
+          }
+
+          <!-- Team Rankings & Achievement Badges -->
+          @if (teamRankings() && teamRankings()!.rankings.length > 0) {
+            <p-card class="team-rankings-card">
+              <ng-template pTemplate="header">
+                <div class="rankings-header">
+                  <div class="rankings-title">
+                    <i class="pi pi-users"></i>
+                    <h3>Your Team Rankings</h3>
+                  </div>
+                  @if (performanceAchievements().length > 0) {
+                    <div class="badge-summary">
+                      @if (goldBadgeCount() > 0) {
+                        <span class="badge-count gold" pTooltip="Team Leader">
+                          🥇 {{ goldBadgeCount() }}
+                        </span>
+                      }
+                      @if (silverBadgeCount() > 0) {
+                        <span class="badge-count silver" pTooltip="2nd Place">
+                          🥈 {{ silverBadgeCount() }}
+                        </span>
+                      }
+                      @if (bronzeBadgeCount() > 0) {
+                        <span class="badge-count bronze" pTooltip="3rd Place">
+                          🥉 {{ bronzeBadgeCount() }}
+                        </span>
+                      }
+                    </div>
+                  }
+                </div>
+              </ng-template>
+
+              <!-- Achievement Badges Row -->
+              @if (performanceAchievements().length > 0) {
+                <div class="achievements-row">
+                  <h4 class="achievements-title">Your Top Performance Badges</h4>
+                  <div class="achievements-grid">
+                    @for (achievement of performanceAchievements(); track achievement.id) {
+                      <app-achievement-badge
+                        [icon]="getAchievementIcon(achievement.metric)"
+                        [title]="achievement.metricLabel"
+                        [description]="getRankDescription(achievement)"
+                        [tier]="achievement.tier"
+                        [unlocked]="true"
+                        [unlockedDate]="achievement.awardedAt"
+                        [compact]="false"
+                      />
+                    }
+                  </div>
+                </div>
+              }
+
+              <!-- Rankings Table -->
+              <div class="rankings-table">
+                <h4 class="rankings-subtitle">How You Compare to Teammates</h4>
+                <div class="rankings-list">
+                  @for (ranking of teamRankings()!.rankings; track ranking.metric) {
+                    <div class="ranking-item" [class.top-three]="ranking.achievementTier">
+                      <div class="ranking-metric">
+                        <span class="rank-badge" [class]="ranking.achievementTier || 'default'">
+                          @if (ranking.achievementTier) {
+                            {{ getRankEmoji(ranking.yourRank) }}
+                          }
+                          {{ formatRank(ranking.yourRank) }}
+                        </span>
+                        <span class="metric-name">{{ ranking.metricLabel }}</span>
+                      </div>
+                      <div class="ranking-details">
+                        <span class="your-value">
+                          {{ ranking.yourValue }}{{ ranking.isLowerBetter ? 's' : getMetricUnit(ranking.metric) }}
+                        </span>
+                        <span class="rank-of-total">
+                          of {{ ranking.totalPlayers }} players
+                        </span>
+                      </div>
+                      <div class="gap-from-leader" [class.is-leader]="ranking.yourRank === 1">
+                        @if (ranking.yourRank === 1) {
+                          <span class="leader-badge">🏆 Team Leader!</span>
+                        } @else {
+                          <span class="gap-text">{{ ranking.gapFormatted }}</span>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Strongest/Weakest Summary -->
+              <div class="performance-summary">
+                @if (teamRankings()!.strongestMetric) {
+                  <div class="summary-item strongest">
+                    <i class="pi pi-arrow-up"></i>
+                    <div class="summary-content">
+                      <span class="summary-label">Your Strongest</span>
+                      <span class="summary-value">
+                        {{ teamRankings()!.strongestMetric!.metricLabel }}
+                        (Top {{ 100 - teamRankings()!.strongestMetric!.percentile + 1 }}%)
+                      </span>
+                    </div>
+                  </div>
+                }
+                @if (teamRankings()!.weakestMetric && teamRankings()!.weakestMetric !== teamRankings()!.strongestMetric) {
+                  <div class="summary-item weakest">
+                    <i class="pi pi-arrow-down"></i>
+                    <div class="summary-content">
+                      <span class="summary-label">Room to Improve</span>
+                      <span class="summary-value">
+                        {{ teamRankings()!.weakestMetric!.metricLabel }}
+                        ({{ teamRankings()!.weakestMetric!.gapFormatted }})
+                      </span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </p-card>
+          } @else if (hasTeam() && hasData()) {
+            <p-card class="team-rankings-card">
+              <div class="empty-state">
+                <i class="pi pi-users empty-icon"></i>
+                <h4>Team Rankings Coming Soon</h4>
+                <p>Once more teammates log their performance tests, you'll see how you compare.</p>
+              </div>
+            </p-card>
+          }
 
           <!-- Performance Charts -->
           <div class="charts-grid">
@@ -188,6 +355,12 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                     [data]="performanceChartData()"
                     [options]="chartOptions"
                   ></app-lazy-chart>
+                } @else {
+                  <div class="empty-state">
+                    <i class="pi pi-chart-line empty-icon"></i>
+                    <h4>No Performance Data Yet</h4>
+                    <p>Log at least 2 performance tests to see your progress over time.</p>
+                  </div>
                 }
               </p-card>
             } @placeholder {
@@ -201,7 +374,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             @defer (on viewport) {
               <p-card class="chart-card">
                 <ng-template pTemplate="header">
-                  <h3>Speed Metrics</h3>
+                  <h3>Speed Metrics (10yd, 20yd, 40yd)</h3>
                 </ng-template>
                 @if (speedChartData()) {
                   <app-lazy-chart
@@ -209,6 +382,12 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                     [data]="speedChartData()"
                     [options]="chartOptions"
                   ></app-lazy-chart>
+                } @else {
+                  <div class="empty-state">
+                    <i class="pi pi-bolt empty-icon"></i>
+                    <h4>No Speed Data Yet</h4>
+                    <p>Log your 10-yard, 20-yard, or 40-yard times to see speed metrics.</p>
+                  </div>
                 }
               </p-card>
             } @placeholder {
@@ -235,30 +414,38 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                 ></p-select>
               </div>
             </ng-template>
-            <div class="benchmarks-list">
-              @for (benchmark of positionBenchmarks(); track benchmark.metric) {
-                <div class="benchmark-item">
-                  <div class="benchmark-metric">
-                    <span class="metric-name">{{ benchmark.metric }}</span>
-                    <span class="metric-values">
-                      You: {{ benchmark.current
-                      }}{{ benchmark.unit }} &nbsp;|&nbsp; Elite:
-                      {{ benchmark.elite }}{{ benchmark.unit }}
-                    </span>
+            @if (positionBenchmarks().length > 0) {
+              <div class="benchmarks-list">
+                @for (benchmark of positionBenchmarks(); track benchmark.metric) {
+                  <div class="benchmark-item">
+                    <div class="benchmark-metric">
+                      <span class="metric-name">{{ benchmark.metric }}</span>
+                      <span class="metric-values">
+                        You: {{ benchmark.current
+                        }}{{ benchmark.unit }} &nbsp;|&nbsp; Elite:
+                        {{ benchmark.elite }}{{ benchmark.unit }}
+                      </span>
+                    </div>
+                    <div class="benchmark-progress">
+                      <p-progressBar
+                        [value]="benchmark.percentOfElite"
+                        [showValue]="false"
+                        styleClass="benchmark-bar"
+                      ></p-progressBar>
+                      <span class="gap-text"
+                        >({{ benchmark.gapFromElite }} away)</span
+                      >
+                    </div>
                   </div>
-                  <div class="benchmark-progress">
-                    <p-progressBar
-                      [value]="benchmark.percentOfElite"
-                      [showValue]="false"
-                      styleClass="benchmark-bar"
-                    ></p-progressBar>
-                    <span class="gap-text"
-                      >({{ benchmark.gapFromElite }} away)</span
-                    >
-                  </div>
-                </div>
-              }
-            </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-state">
+                <i class="pi pi-bullseye empty-icon"></i>
+                <h4>No Benchmark Data Yet</h4>
+                <p>Log your performance tests to compare against elite position benchmarks.</p>
+              </div>
+            }
           </p-card>
 
           <!-- Gap Analysis & Training Priorities -->
@@ -615,6 +802,9 @@ export class PerformanceTrackingComponent {
   private readonly apiService = inject(ApiService);
   private readonly toastService = inject(ToastService);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly logger = inject(LoggerService);
+  private readonly teamRankingService = inject(TeamPerformanceRankingService);
+  private readonly teamMembershipService = inject(TeamMembershipService);
 
   // Runtime guard signals - prevent white screen crashes
   readonly isPageLoading = signal<boolean>(true);
@@ -637,6 +827,28 @@ export class PerformanceTrackingComponent {
   readonly positionBenchmarks = signal<PositionBenchmark[]>([]);
   readonly gapAnalysis = signal<GapAnalysis[]>([]);
   readonly selectedPosition = signal<string>("WR");
+
+  // Store the latest record for benchmark calculations
+  private latestRecord = signal<PerformanceRecord | null>(null);
+
+  // Computed: check if we have any real data
+  readonly hasData = computed(() => this.performanceHistory().length > 0);
+
+  // Team ranking signals - compare against teammates
+  readonly teamRankings = computed(() => this.teamRankingService.rankings());
+  readonly performanceAchievements = computed(() => this.teamRankingService.achievements());
+  readonly hasTeam = computed(() => this.teamMembershipService.hasTeam());
+
+  // Badge counts
+  readonly goldBadgeCount = computed(
+    () => this.teamRankings()?.totalGoldBadges || 0,
+  );
+  readonly silverBadgeCount = computed(
+    () => this.teamRankings()?.totalSilverBadges || 0,
+  );
+  readonly bronzeBadgeCount = computed(
+    () => this.teamRankings()?.totalBronzeBadges || 0,
+  );
 
   // Position selector
   selectedPositionValue = "WR";
@@ -690,102 +902,277 @@ export class PerformanceTrackingComponent {
     this.initializePage();
   }
 
-  loadPerformanceData(): void {
-    // Load stats for StatsGridComponent
-    this.performanceStats.set([
-      {
+  /**
+   * Load real performance data from database
+   * NO MOCK DATA - shows empty states when no data exists
+   */
+  async loadPerformanceData(): Promise<void> {
+    try {
+      const user = this.supabaseService.getCurrentUser();
+      if (!user) {
+        // Not logged in - show empty state
+        this.setEmptyState();
+        this.isPageLoading.set(false);
+        return;
+      }
+
+      // Fetch performance records from Supabase
+      const { data: records, error } = await this.supabaseService.client
+        .from("performance_records")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("recorded_at", { ascending: false });
+
+      if (error) {
+        this.logger.error("[PerformanceTracking] Error fetching records:", error);
+        this.setEmptyState();
+        this.isPageLoading.set(false);
+        return;
+      }
+
+      if (!records || records.length === 0) {
+        // No data yet - show empty states (not mock data)
+        this.logger.info("[PerformanceTracking] No performance records found - showing empty state");
+        this.setEmptyState();
+        this.isPageLoading.set(false);
+        return;
+      }
+
+      // Process real data
+      this.processPerformanceRecords(records as PerformanceRecord[]);
+
+      // Load team rankings (compare against teammates)
+      await this.teamRankingService.loadTeamRankings();
+
+      this.isPageLoading.set(false);
+      this.hasPageError.set(false);
+    } catch (error) {
+      this.logger.error("[PerformanceTracking] Unexpected error:", error);
+      this.setEmptyState();
+      this.isPageLoading.set(false);
+    }
+  }
+
+  /**
+   * Set empty state - NO mock data
+   */
+  private setEmptyState(): void {
+    this.performanceStats.set([]);
+    this.performanceChartData.set(null);
+    this.speedChartData.set(null);
+    this.performanceHistory.set([]);
+    this.positionBenchmarks.set([]);
+    this.gapAnalysis.set([]);
+    this.latestRecord.set(null);
+  }
+
+  /**
+   * Process real performance records from database
+   */
+  private processPerformanceRecords(records: PerformanceRecord[]): void {
+    // Store latest record for benchmark calculations
+    this.latestRecord.set(records[0]);
+
+    // Build performance history for table
+    const history = records.map((record) => ({
+      date: new Date(record.recorded_at).toLocaleDateString(),
+      sprint10: record.sprint_10m ? `${record.sprint_10m}s` : "-",
+      sprint20: record.sprint_20m ? `${record.sprint_20m}s` : "-",
+      dash40: record.dash_40 ? `${record.dash_40}s` : "-",
+      proAgility: record.pro_agility ? `${record.pro_agility}s` : "-",
+      vertical: record.vertical_jump ? `${record.vertical_jump}"` : "-",
+      broad: record.broad_jump ? `${record.broad_jump}"` : "-",
+      squat: record.back_squat ? `${record.back_squat}lb` : "-",
+      deadlift: record.deadlift ? `${record.deadlift}lb` : "-",
+      score: record.overall_score || 0,
+    }));
+    this.performanceHistory.set(history);
+
+    // Build stats grid from latest record
+    this.buildStatsFromLatestRecord(records[0], records[1] || null);
+
+    // Build speed chart (10-yard, 20-yard, 40-yard - NOT 100-yard)
+    this.buildSpeedChart(records[0]);
+
+    // Build performance over time chart
+    this.buildPerformanceChart(records);
+
+    // Update position benchmarks with real data
+    this.updatePositionBenchmarks();
+  }
+
+  /**
+   * Build stats grid from latest performance record
+   */
+  private buildStatsFromLatestRecord(
+    latest: PerformanceRecord,
+    previous: PerformanceRecord | null,
+  ): void {
+    const stats: StatItem[] = [];
+
+    // 40-Yard Dash
+    if (latest.dash_40) {
+      const trend = previous?.dash_40
+        ? `${(previous.dash_40 - latest.dash_40).toFixed(2)}s`
+        : "First test";
+      const trendType = previous?.dash_40
+        ? latest.dash_40 < previous.dash_40
+          ? "positive"
+          : latest.dash_40 > previous.dash_40
+            ? "negative"
+            : "neutral"
+        : "neutral";
+      stats.push({
         label: "40-Yard Dash",
-        value: "4.45s",
+        value: `${latest.dash_40}s`,
         icon: "pi-bolt",
         color: "var(--ds-primary-green)",
-        trend: "+0.05s",
-        trendType: "positive",
-      },
-      {
+        trend,
+        trendType: trendType as "positive" | "negative" | "neutral",
+      });
+    }
+
+    // Vertical Jump
+    if (latest.vertical_jump) {
+      const trend = previous?.vertical_jump
+        ? `${latest.vertical_jump - previous.vertical_jump > 0 ? "+" : ""}${(latest.vertical_jump - previous.vertical_jump).toFixed(0)}"`
+        : "First test";
+      const trendType = previous?.vertical_jump
+        ? latest.vertical_jump > previous.vertical_jump
+          ? "positive"
+          : latest.vertical_jump < previous.vertical_jump
+            ? "negative"
+            : "neutral"
+        : "neutral";
+      stats.push({
         label: "Vertical Jump",
-        value: '38"',
+        value: `${latest.vertical_jump}"`,
         icon: "pi-arrow-up",
         color: COLORS.PRIMARY_LIGHT,
-        trend: '+2"',
-        trendType: "positive",
-      },
-      {
+        trend,
+        trendType: trendType as "positive" | "negative" | "neutral",
+      });
+    }
+
+    // Broad Jump
+    if (latest.broad_jump) {
+      const feet = Math.floor(latest.broad_jump / 12);
+      const inches = latest.broad_jump % 12;
+      const trend = previous?.broad_jump
+        ? `${latest.broad_jump - previous.broad_jump > 0 ? "+" : ""}${(latest.broad_jump - previous.broad_jump).toFixed(0)}"`
+        : "First test";
+      const trendType = previous?.broad_jump
+        ? latest.broad_jump > previous.broad_jump
+          ? "positive"
+          : latest.broad_jump < previous.broad_jump
+            ? "negative"
+            : "neutral"
+        : "neutral";
+      stats.push({
         label: "Broad Jump",
-        value: "10'2\"",
+        value: `${feet}'${inches}"`,
         icon: "pi-arrow-right",
         color: COLORS.WARNING,
-        trend: '+6"',
-        trendType: "positive",
-      },
-      {
-        label: "Bench Press",
-        value: "225 lbs",
-        icon: "pi-weight",
-        color: COLORS.ERROR,
-        trend: "+10 lbs",
-        trendType: "positive",
-      },
-    ]);
+        trend,
+        trendType: trendType as "positive" | "negative" | "neutral",
+      });
+    }
 
-    // Load performance chart
+    // Bench Press
+    if (latest.bench_press) {
+      const trend = previous?.bench_press
+        ? `${latest.bench_press - previous.bench_press > 0 ? "+" : ""}${latest.bench_press - previous.bench_press} lbs`
+        : "First test";
+      const trendType = previous?.bench_press
+        ? latest.bench_press > previous.bench_press
+          ? "positive"
+          : latest.bench_press < previous.bench_press
+            ? "negative"
+            : "neutral"
+        : "neutral";
+      stats.push({
+        label: "Bench Press",
+        value: `${latest.bench_press} lbs`,
+        icon: "pi-heart-fill",
+        color: COLORS.ERROR,
+        trend,
+        trendType: trendType as "positive" | "negative" | "neutral",
+      });
+    }
+
+    this.performanceStats.set(stats);
+  }
+
+  /**
+   * Build speed chart with 10-yard, 20-yard, 40-yard times
+   * FIXED: Removed incorrect 100-yard metric
+   */
+  private buildSpeedChart(latest: PerformanceRecord): void {
+    const labels: string[] = [];
+    const data: number[] = [];
+
+    // Only include metrics that have data
+    if (latest.sprint_10m) {
+      labels.push("10-Yard");
+      data.push(latest.sprint_10m);
+    }
+    if (latest.sprint_20m) {
+      labels.push("20-Yard");
+      data.push(latest.sprint_20m);
+    }
+    if (latest.dash_40) {
+      labels.push("40-Yard");
+      data.push(latest.dash_40);
+    }
+
+    if (data.length > 0) {
+      this.speedChartData.set({
+        labels,
+        datasets: [
+          {
+            label: "Speed (seconds)",
+            data,
+            backgroundColor: COLORS.PRIMARY_LIGHT,
+          },
+        ],
+      });
+    } else {
+      this.speedChartData.set(null);
+    }
+  }
+
+  /**
+   * Build performance over time chart from historical records
+   */
+  private buildPerformanceChart(records: PerformanceRecord[]): void {
+    if (records.length < 2) {
+      // Need at least 2 records for a trend chart
+      this.performanceChartData.set(null);
+      return;
+    }
+
+    // Take last 6 records, reversed for chronological order
+    const chartRecords = records.slice(0, 6).reverse();
+
+    const labels = chartRecords.map((r) =>
+      new Date(r.recorded_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+    );
+
+    const scores = chartRecords.map((r) => r.overall_score || 0);
+
     this.performanceChartData.set({
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      labels,
       datasets: [
         {
-          label: "Overall Performance",
-          data: [82, 84, 85, 87, 86, 88],
+          label: "Overall Performance Score",
+          data: scores,
           borderColor: "var(--ds-primary-green)",
           backgroundColor: "var(--ds-primary-green-subtle)",
+          fill: true,
+          tension: 0.4,
         },
       ],
     });
-
-    // Load speed chart
-    this.speedChartData.set({
-      labels: ["40-Yard", "100-Yard", "Shuttle"],
-      datasets: [
-        {
-          label: "Speed (seconds)",
-          data: [4.45, 11.2, 4.8],
-          backgroundColor: COLORS.PRIMARY_LIGHT,
-        },
-      ],
-    });
-
-    // Load history
-    this.performanceHistory.set([
-      {
-        date: "2024-01-15",
-        dash40: "4.50s",
-        vertical: '36"',
-        broad: "9'8\"",
-        bench: "215 lbs",
-        score: 85,
-      },
-      {
-        date: "2024-02-15",
-        dash40: "4.48s",
-        vertical: '37"',
-        broad: "9'10\"",
-        bench: "220 lbs",
-        score: 86,
-      },
-      {
-        date: "2024-03-15",
-        dash40: "4.45s",
-        vertical: '38"',
-        broad: "10'2\"",
-        bench: "225 lbs",
-        score: 88,
-      },
-    ]);
-
-    // Load position benchmarks and gap analysis
-    this.updatePositionBenchmarks();
-
-    // Mark page as loaded
-    this.isPageLoading.set(false);
-    this.hasPageError.set(false);
   }
 
   onPositionChange(event: { value: string }): void {
@@ -793,78 +1180,94 @@ export class PerformanceTrackingComponent {
     this.updatePositionBenchmarks();
   }
 
+  /**
+   * Update position benchmarks using REAL data from latest record
+   * NO mock data - if no data exists, shows empty state
+   */
   private updatePositionBenchmarks(): void {
     const position = this.selectedPosition();
     const benchmarks = POSITION_BENCHMARKS[position];
-    if (!benchmarks) return;
+    const latest = this.latestRecord();
 
-    // Sample current values - in real app these would come from latest performance record
-    const currentMetrics = {
-      sprint40: 4.45,
-      proAgility: 4.12,
-      verticalJump: 38,
-      relativeSquat: 1.89,
-    };
+    if (!benchmarks || !latest) {
+      // No benchmarks or no data - show empty state
+      this.positionBenchmarks.set([]);
+      this.gapAnalysis.set([]);
+      return;
+    }
 
-    const positionBenchmarksList: PositionBenchmark[] = [
-      {
+    // Use REAL values from latest record, not mock data
+    const positionBenchmarksList: PositionBenchmark[] = [];
+
+    // 40-Yard Dash
+    if (latest.dash_40) {
+      positionBenchmarksList.push({
         metric: "40-Yard Dash",
-        current: currentMetrics.sprint40,
+        current: latest.dash_40,
         elite: benchmarks.sprint40.elite,
         unit: "s",
         percentOfElite: Math.min(
           100,
-          (benchmarks.sprint40.elite / currentMetrics.sprint40) * 100,
+          (benchmarks.sprint40.elite / latest.dash_40) * 100,
         ),
-        gapFromElite: `${(currentMetrics.sprint40 - benchmarks.sprint40.elite).toFixed(2)}s`,
-      },
-      {
+        gapFromElite: `${(latest.dash_40 - benchmarks.sprint40.elite).toFixed(2)}s`,
+      });
+    }
+
+    // Pro Agility
+    if (latest.pro_agility) {
+      positionBenchmarksList.push({
         metric: "Pro Agility",
-        current: currentMetrics.proAgility,
+        current: latest.pro_agility,
         elite: benchmarks.proAgility.elite,
         unit: "s",
         percentOfElite: Math.min(
           100,
-          (benchmarks.proAgility.elite / currentMetrics.proAgility) * 100,
+          (benchmarks.proAgility.elite / latest.pro_agility) * 100,
         ),
-        gapFromElite: `${(currentMetrics.proAgility - benchmarks.proAgility.elite).toFixed(2)}s`,
-      },
-      {
+        gapFromElite: `${(latest.pro_agility - benchmarks.proAgility.elite).toFixed(2)}s`,
+      });
+    }
+
+    // Vertical Jump
+    if (latest.vertical_jump) {
+      positionBenchmarksList.push({
         metric: "Vertical Jump",
-        current: currentMetrics.verticalJump,
+        current: latest.vertical_jump,
         elite: benchmarks.verticalJump.elite,
         unit: '"',
         percentOfElite: Math.min(
           100,
-          (currentMetrics.verticalJump / benchmarks.verticalJump.elite) * 100,
+          (latest.vertical_jump / benchmarks.verticalJump.elite) * 100,
         ),
-        gapFromElite: `${(benchmarks.verticalJump.elite - currentMetrics.verticalJump).toFixed(0)}"`,
-      },
-      {
+        gapFromElite: `${(benchmarks.verticalJump.elite - latest.vertical_jump).toFixed(0)}"`,
+      });
+    }
+
+    // Relative Squat (requires body weight and squat)
+    if (latest.back_squat && latest.body_weight && latest.body_weight > 0) {
+      const relativeSquat = latest.back_squat / latest.body_weight;
+      positionBenchmarksList.push({
         metric: "Relative Squat (× BW)",
-        current: currentMetrics.relativeSquat,
+        current: Number(relativeSquat.toFixed(2)),
         elite: benchmarks.relativeSquat.elite,
         unit: "×",
         percentOfElite: Math.min(
           100,
-          (currentMetrics.relativeSquat / benchmarks.relativeSquat.elite) * 100,
+          (relativeSquat / benchmarks.relativeSquat.elite) * 100,
         ),
-        gapFromElite: `${(benchmarks.relativeSquat.elite - currentMetrics.relativeSquat).toFixed(2)}×`,
-      },
-    ];
+        gapFromElite: `${(benchmarks.relativeSquat.elite - relativeSquat).toFixed(2)}×`,
+      });
+    }
 
     this.positionBenchmarks.set(positionBenchmarksList);
 
-    // Calculate gap analysis
+    // Calculate gap analysis from real benchmarks
     const gaps: GapAnalysis[] = positionBenchmarksList
       .map((b, index) => {
         const gapPercentage = 100 - b.percentOfElite;
-        const metricKey = [
-          "sprint40",
-          "proAgility",
-          "verticalJump",
-          "relativeSquat",
-        ][index];
+        const metricKeys = ["sprint40", "proAgility", "verticalJump", "relativeSquat"];
+        const metricKey = metricKeys[index] || "";
         return {
           metric: b.metric,
           current: b.current,
@@ -877,7 +1280,7 @@ export class PerformanceTrackingComponent {
       })
       .filter((g) => g.gapPercentage > 0)
       .sort((a, b) => b.gapPercentage - a.gapPercentage)
-      .slice(0, UI_LIMITS.TOP_PRIORITIES_COUNT); // Top priorities
+      .slice(0, UI_LIMITS.TOP_PRIORITIES_COUNT);
 
     this.gapAnalysis.set(gaps);
   }
@@ -963,40 +1366,8 @@ export class PerformanceTrackingComponent {
         throw new Error(error.message);
       }
 
-      // Add to local history
-      const newRecord = {
-        date: new Date().toISOString().split("T")[0],
-        sprint10: this.newPerformance.sprint10
-          ? `${this.newPerformance.sprint10}s`
-          : "-",
-        sprint20: this.newPerformance.sprint20
-          ? `${this.newPerformance.sprint20}s`
-          : "-",
-        dash40: this.newPerformance.dash40
-          ? `${this.newPerformance.dash40}s`
-          : "-",
-        proAgility: this.newPerformance.proAgility
-          ? `${this.newPerformance.proAgility}s`
-          : "-",
-        vertical: this.newPerformance.vertical
-          ? `${this.newPerformance.vertical}"`
-          : "-",
-        broad: this.newPerformance.broad
-          ? `${this.newPerformance.broad}"`
-          : "-",
-        squat: this.newPerformance.squat
-          ? `${this.newPerformance.squat}lb`
-          : "-",
-        deadlift: this.newPerformance.deadlift
-          ? `${this.newPerformance.deadlift}lb`
-          : "-",
-        score: score,
-      };
-
-      this.performanceHistory.update((history) => [newRecord, ...history]);
-
-      // Update benchmarks after new record
-      this.updatePositionBenchmarks();
+      // Reload all data from database to ensure consistency
+      await this.loadPerformanceData();
 
       this.toastService.success(TOAST.SUCCESS.PERFORMANCE_LOGGED);
       this.showLogDialog = false;
@@ -1075,5 +1446,68 @@ export class PerformanceTrackingComponent {
 
   trackByMetricName(index: number, metric: PerformanceMetric): string {
     return metric.name;
+  }
+
+  // ============================================================================
+  // TEAM RANKING HELPER METHODS
+  // ============================================================================
+
+  /**
+   * Get icon for achievement badge based on metric
+   */
+  getAchievementIcon(metric: string): string {
+    const iconMap: Record<string, string> = {
+      dash_40: "pi-bolt",
+      sprint_10m: "pi-bolt",
+      sprint_20m: "pi-bolt",
+      pro_agility: "pi-sync",
+      vertical_jump: "pi-arrow-up",
+      broad_jump: "pi-arrows-h",
+      bench_press: "pi-heart-fill",
+      back_squat: "pi-chart-bar",
+      deadlift: "pi-chart-bar",
+    };
+    return iconMap[metric] || "pi-trophy";
+  }
+
+  /**
+   * Get description for achievement badge
+   */
+  getRankDescription(achievement: PerformanceAchievement): string {
+    const rankText =
+      achievement.rank === 1
+        ? "Team Leader"
+        : achievement.rank === 2
+          ? "2nd on Team"
+          : "3rd on Team";
+    return `${rankText} - ${achievement.valueFormatted}`;
+  }
+
+  /**
+   * Format rank number (1st, 2nd, 3rd, etc.)
+   */
+  formatRank(rank: number): string {
+    return this.teamRankingService.formatRank(rank);
+  }
+
+  /**
+   * Get emoji for rank
+   */
+  getRankEmoji(rank: number): string {
+    return this.teamRankingService.getRankEmoji(rank);
+  }
+
+  /**
+   * Get unit for metric display
+   */
+  getMetricUnit(metric: string): string {
+    const unitMap: Record<string, string> = {
+      vertical_jump: '"',
+      broad_jump: '"',
+      bench_press: " lbs",
+      back_squat: " lbs",
+      deadlift: " lbs",
+    };
+    return unitMap[metric] || "";
   }
 }

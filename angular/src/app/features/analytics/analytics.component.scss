@@ -1723,3 +1723,167 @@
     gap: var(--space-2);
   }
 }
+
+// ===== Team Performance Badges Section =====
+.team-badges-card {
+  margin-bottom: var(--space-6);
+}
+
+.badges-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
+
+  .badges-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    i {
+      color: #ffd700;
+      font-size: var(--ds-font-size-md);
+    }
+
+    h3 {
+      margin: 0;
+      font-size: var(--ds-font-size-lg);
+      font-weight: var(--ds-font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+  }
+
+  .view-details-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--ds-primary-green);
+    text-decoration: none;
+    font-size: var(--ds-font-size-sm);
+    font-weight: var(--ds-font-weight-medium);
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    i {
+      font-size: var(--ds-font-size-xs);
+    }
+  }
+}
+
+.badges-content {
+  padding: var(--space-4);
+}
+
+.badges-summary {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: var(--border-1) solid var(--color-border-secondary);
+}
+
+.badge-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-secondary);
+
+  .badge-emoji {
+    font-size: var(--ds-font-size-lg);
+  }
+
+  .badge-count {
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
+  }
+
+  .badge-label {
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  &.gold {
+    .badge-count {
+      color: #d4a500;
+    }
+  }
+
+  &.silver {
+    .badge-count {
+      color: #888;
+    }
+  }
+
+  &.bronze {
+    .badge-count {
+      color: #cd7f32;
+    }
+  }
+}
+
+.badges-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-2);
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-secondary);
+  border-radius: var(--radius-md);
+  border-left: var(--space-1) solid transparent;
+
+  .badge-rank {
+    font-size: var(--ds-font-size-md);
+  }
+
+  .badge-metric {
+    flex: 1;
+    font-weight: var(--ds-font-weight-medium);
+    color: var(--color-text-primary);
+  }
+
+  .badge-value {
+    font-size: var(--ds-font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  &.gold {
+    border-left-color: #ffd700;
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(255, 215, 0, 0.05) 100%);
+  }
+
+  &.silver {
+    border-left-color: #c0c0c0;
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(192, 192, 192, 0.05) 100%);
+  }
+
+  &.bronze {
+    border-left-color: #cd7f32;
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(205, 127, 50, 0.05) 100%);
+  }
+}
+
+@include respond-to(md) {
+  .badges-header {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+
+  .badges-summary {
+    flex-wrap: wrap;
+  }
+
+  .badges-list {
+    grid-template-columns: 1fr;
+  }
+}

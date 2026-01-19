@@ -1351,6 +1351,7 @@
         </div>
       </div>
 
+      <!-- UX AUDIT FIX: Added slow operation indicator with reassurance messaging -->
       @if (isExportingData()) {
         <div class="export-progress-section">
           <p-progressBar
@@ -1358,6 +1359,11 @@
             [showValue]="true"
           ></p-progressBar>
           <span class="progress-label">Preparing your data...</span>
+          @if (exportTakingLong()) {
+            <p class="slow-operation-message">
+              This is taking a bit longer than usual. Please don't close this page.
+            </p>
+          }
         </div>
       }
     </div>

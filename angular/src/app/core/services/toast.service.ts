@@ -4,6 +4,10 @@
  * Centralized service for displaying toast notifications using PrimeNG MessageService.
  * Provides simple, type-safe methods for common notification types.
  *
+ * UX AUDIT FIX: Added deduplication to prevent toast stacking on rapid failures.
+ * - Tracks recent messages to prevent duplicates within 2 seconds
+ * - Limits max visible toasts to prevent UI overflow
+ *
  * @example
  * ```typescript
  * constructor(private toastService = inject(ToastService)) {}
@@ -44,11 +48,34 @@ export interface ToastMethodOptions {
   sticky?: boolean;
 }
 
+/**
+ * Maximum number of toasts that can be visible at once
+ * Prevents UI overflow during rapid failure scenarios
+ */
+const MAX_VISIBLE_TOASTS = 5;
+
+/**
+ * Deduplication window in milliseconds
+ * Same message within this window will be ignored
+ */
+const DEDUP_WINDOW_MS = 2000;
+
 @Injectable({
   providedIn: "root",
 })
 export class ToastService {
   private messageService = inject(MessageService);
+
+  /**
+   * Track recent messages to prevent duplicates
+   * Map of message key -> timestamp
+   */
+  private recentMessages = new Map<string, number>();
+
+  /**
+   * Current visible toast count (approximate)
+   */
+  private visibleCount = 0;
 
   constructor() {}
 
@@ -68,7 +95,7 @@ export class ToastService {
       "Success",
       life,
     );
-    this.messageService.add({
+    this.addWithDedup({
       severity: "success",
       summary,
       detail,
@@ -93,7 +120,7 @@ export class ToastService {
       "Error",
       life,
     );
-    this.messageService.add({
+    this.addWithDedup({
       severity: "error",
       summary,
       detail,
@@ -118,7 +145,7 @@ export class ToastService {
       "Warning",
       life,
     );
-    this.messageService.add({
+    this.addWithDedup({
       severity: "warning",
       summary,
       detail,
@@ -143,7 +170,7 @@ export class ToastService {
       "Info",
       life,
     );
-    this.messageService.add({
+    this.addWithDedup({
       severity: "info",
       summary,
       detail,
@@ -178,7 +205,7 @@ export class ToastService {
    * @param options - Full toast options
    */
   show(options: ToastOptions): void {
-    this.messageService.add({
+    this.addWithDedup({
       severity: options.severity || "info",
       summary: options.summary || "",
       detail: options.detail,
@@ -186,6 +213,65 @@ export class ToastService {
       sticky: options.sticky,
       closable: options.closable,
     });
+  }
+
+  /**
+   * Add a toast with deduplication
+   * Prevents duplicate messages within DEDUP_WINDOW_MS
+   * Limits max visible toasts to MAX_VISIBLE_TOASTS
+   */
+  private addWithDedup(message: {
+    severity: string;
+    summary: string;
+    detail?: string;
+    life?: number;
+    sticky?: boolean;
+    closable?: boolean;
+  }): void {
+    // Create a unique key for this message
+    const key = `${message.severity}:${message.summary}:${message.detail || ""}`;
+    const now = Date.now();
+
+    // Check for duplicate within dedup window
+    const lastShown = this.recentMessages.get(key);
+    if (lastShown && now - lastShown < DEDUP_WINDOW_MS) {
+      // Duplicate within window, skip
+      return;
+    }
+
+    // Check max visible limit
+    if (this.visibleCount >= MAX_VISIBLE_TOASTS) {
+      // Clear oldest messages to make room
+      this.messageService.clear();
+      this.visibleCount = 0;
+    }
+
+    // Track this message
+    this.recentMessages.set(key, now);
+    this.visibleCount++;
+
+    // Schedule cleanup
+    const lifeMs = message.life || 3000;
+    setTimeout(() => {
+      this.visibleCount = Math.max(0, this.visibleCount - 1);
+    }, lifeMs);
+
+    // Clean up old entries from recentMessages map
+    this.cleanupOldEntries(now);
+
+    // Add the message
+    this.messageService.add(message);
+  }
+
+  /**
+   * Clean up old entries from the recent messages map
+   */
+  private cleanupOldEntries(now: number): void {
+    for (const [key, timestamp] of this.recentMessages.entries()) {
+      if (now - timestamp > DEDUP_WINDOW_MS * 2) {
+        this.recentMessages.delete(key);
+      }
+    }
   }
 
   /**

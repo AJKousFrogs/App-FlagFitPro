@@ -495,6 +495,7 @@ export class SmartTrainingFormComponent implements OnInit {
 
       // Save to Supabase
       // Note: 'equipment' is stored in notes as JSON since column doesn't exist in schema
+      // Note: athlete_id is required by RLS policy, user_id is for backward compatibility
       const equipmentList = formValue.equipment?.length > 0 
         ? `Equipment: ${formValue.equipment.join(', ')}`
         : '';
@@ -502,6 +503,7 @@ export class SmartTrainingFormComponent implements OnInit {
       const { error } = await this.supabaseService.client
         .from("training_sessions")
         .insert({
+          athlete_id: user.id,
           user_id: user.id,
           session_type: formValue.sessionType,
           duration_minutes: formValue.duration,
@@ -520,9 +522,9 @@ export class SmartTrainingFormComponent implements OnInit {
 
       this.toastService.success(TOAST.SUCCESS.SESSION_CREATED_SUCCESS);
 
-      // Navigate to training schedule
+      // Navigate to training calendar (canonical route)
       setTimeout(() => {
-        this.router.navigate(["/training/schedule"]);
+        this.router.navigate(["/training"]);
       }, 1000);
     } catch (error) {
       const message =

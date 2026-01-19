@@ -102,60 +102,6 @@ export class ToastComponent implements OnInit, OnDestroy {
     return icons[severity] || "pi pi-info-circle";
   }
 
-  // Static methods for showing toasts (can be called from anywhere)
-  static showSuccess(
-    messageService: MessageService,
-    summary: string,
-    detail?: string,
-    life?: number,
-  ): void {
-    messageService.add({
-      severity: "success",
-      summary,
-      detail,
-      life: life || 3000,
-    });
-  }
-
-  static showError(
-    messageService: MessageService,
-    summary: string,
-    detail?: string,
-    life?: number,
-  ): void {
-    messageService.add({
-      severity: "error",
-      summary,
-      detail,
-      life: life || 5000,
-    });
-  }
-
-  static showInfo(
-    messageService: MessageService,
-    summary: string,
-    detail?: string,
-    life?: number,
-  ): void {
-    messageService.add({
-      severity: "info",
-      summary,
-      detail,
-      life: life || 3000,
-    });
-  }
-
-  static showWarning(
-    messageService: MessageService,
-    summary: string,
-    detail?: string,
-    life?: number,
-  ): void {
-    messageService.add({
-      severity: "warning",
-      summary,
-      detail,
-      life: life || 4000,
-    });
-  }
+  // UX AUDIT: Removed unused static methods (showSuccess, showError, showInfo, showWarning)
+  // Use ToastService instead for all toast notifications - provides deduplication and consistency
 }

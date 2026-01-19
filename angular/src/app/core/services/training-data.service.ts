@@ -342,9 +342,10 @@ export class TrainingDataService {
     // Detect late logging and conflicts
     const detection = this.detectLateLoggingAndConflicts(session);
 
-    // Ensure user_id is set
+    // Ensure user_id AND athlete_id are set (athlete_id required by RLS policy)
     const sessionData = {
       ...session,
+      athlete_id: userId,
       user_id: userId,
       log_status: detection.logStatus,
       requires_coach_approval: detection.requiresApproval,

@@ -15,7 +15,7 @@ import { Textarea } from "primeng/textarea";
 import { RadioButton } from "primeng/radiobutton";
 import { Tooltip } from "primeng/tooltip";
 import { firstValueFrom } from "rxjs";
-import { ApiService } from "../../../core/services/api.service";
+import { ApiService, API_ENDPOINTS } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 
 /**
@@ -299,7 +299,7 @@ export class AiFeedbackComponent {
 
     try {
       await firstValueFrom(
-        this.apiService.post("/api/ai/feedback", feedbackData),
+        this.apiService.post(API_ENDPOINTS.aiChat.feedback, feedbackData),
       );
 
       this.selectedFeedback.set(type);

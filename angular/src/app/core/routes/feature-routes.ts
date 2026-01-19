@@ -234,14 +234,11 @@ export const trainingRoutes: Routes = [
     canActivate: [authGuard],
     data: { preload: false }, // Coach-only feature, load on demand
   },
+  // Redirect duplicate route to canonical /training
   {
     path: "training/schedule",
-    loadComponent: () =>
-      import("../../features/training/training-schedule/training-schedule.component").then(
-        (m) => m.TrainingScheduleComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: false }, // Duplicate of /training
+    redirectTo: "/training",
+    pathMatch: "full",
   },
   {
     path: "training/qb",
@@ -303,14 +300,12 @@ export const trainingRoutes: Routes = [
     canActivate: [authGuard],
     data: { preload: false }, // Form feature - on demand
   },
+  // Session detail route - redirects to training log with session context
+  // TODO: Create dedicated TrainingSessionDetailComponent for better UX
   {
     path: "training/session/:id",
-    loadComponent: () =>
-      import("../../features/training/training-schedule/training-schedule.component").then(
-        (m) => m.TrainingScheduleComponent,
-      ),
-    canActivate: [authGuard],
-    data: { preload: false }, // Dynamic route
+    redirectTo: "training/log",
+    pathMatch: "full",
   },
   {
     path: "training/videos",

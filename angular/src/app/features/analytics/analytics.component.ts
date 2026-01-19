@@ -39,6 +39,11 @@ import {
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingDataService } from "../../core/services/training-data.service";
+import { SupabaseService } from "../../core/services/supabase.service";
+import {
+  TeamPerformanceRankingService,
+  PerformanceAchievement,
+} from "../../core/services/team-performance-ranking.service";
 import { TrainingStatsCalculationService } from "../../core/services/training-stats-calculation.service";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
@@ -265,6 +270,57 @@ interface DevelopmentGoal {
               </p-card>
             }
           </div>
+
+          <!-- Team Performance Badges -->
+          @if (teamPerformanceAchievements().length > 0) {
+            <p-card class="team-badges-card">
+              <ng-template pTemplate="header">
+                <div class="badges-header">
+                  <div class="badges-title">
+                    <i class="pi pi-trophy"></i>
+                    <h3>Your Team Performance Badges</h3>
+                  </div>
+                  <a routerLink="/performance-tracking" class="view-details-link">
+                    View Details <i class="pi pi-arrow-right"></i>
+                  </a>
+                </div>
+              </ng-template>
+              <div class="badges-content">
+                <div class="badges-summary">
+                  @if (teamRankingBadgeCounts().gold > 0) {
+                    <div class="badge-stat gold">
+                      <span class="badge-emoji">🥇</span>
+                      <span class="badge-count">{{ teamRankingBadgeCounts().gold }}</span>
+                      <span class="badge-label">Team Leader</span>
+                    </div>
+                  }
+                  @if (teamRankingBadgeCounts().silver > 0) {
+                    <div class="badge-stat silver">
+                      <span class="badge-emoji">🥈</span>
+                      <span class="badge-count">{{ teamRankingBadgeCounts().silver }}</span>
+                      <span class="badge-label">2nd Place</span>
+                    </div>
+                  }
+                  @if (teamRankingBadgeCounts().bronze > 0) {
+                    <div class="badge-stat bronze">
+                      <span class="badge-emoji">🥉</span>
+                      <span class="badge-count">{{ teamRankingBadgeCounts().bronze }}</span>
+                      <span class="badge-label">3rd Place</span>
+                    </div>
+                  }
+                </div>
+                <div class="badges-list">
+                  @for (achievement of teamPerformanceAchievements().slice(0, 4); track achievement.id) {
+                    <div class="badge-item" [class]="achievement.tier">
+                      <span class="badge-rank">{{ getRankEmoji(achievement.rank) }}</span>
+                      <span class="badge-metric">{{ achievement.metricLabel }}</span>
+                      <span class="badge-value">{{ achievement.valueFormatted }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </p-card>
+          }
 
           <!-- Charts Grid -->
           <div class="charts-grid">
@@ -608,25 +664,41 @@ interface DevelopmentGoal {
                 [data]="speedChartData()"
                 [options]="lineChartOptions"
               ></app-lazy-chart>
+              <div class="chart-insights">
+                @if (speedInsights()) {
+                  <div class="insight-item">
+                    <div class="insight-value">{{ speedInsights()!.best40 || 'N/A' }}</div>
+                    <div class="insight-label">Best 40-Yard</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">{{ speedInsights()!.best10 || 'N/A' }}</div>
+                    <div class="insight-label">Best 10-Yard</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">{{ speedInsights()!.improvement || 'N/A' }}</div>
+                    <div class="insight-label">Total Improvement</div>
+                  </div>
+                  <div class="insight-item">
+                    <div class="insight-value">4.40s</div>
+                    <div class="insight-label">Olympic Target</div>
+                  </div>
+                } @else {
+                  <div class="insight-item">
+                    <div class="insight-value">-</div>
+                    <div class="insight-label">No data yet</div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-chart-state">
+                <i class="pi pi-bolt empty-icon"></i>
+                <h4>No Speed Data Yet</h4>
+                <p>Log your sprint times in Performance Tracking to see speed development progress.</p>
+                <a routerLink="/performance-tracking" class="empty-state-link">
+                  <i class="pi pi-arrow-right"></i> Go to Performance Tracking
+                </a>
+              </div>
             }
-            <div class="chart-insights">
-              <div class="insight-item">
-                <div class="insight-value">4.46s</div>
-                <div class="insight-label">Best 40-Yard</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">1.54s</div>
-                <div class="insight-label">Best 10-Yard</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">-0.19s</div>
-                <div class="insight-label">Total Improvement</div>
-              </div>
-              <div class="insight-item">
-                <div class="insight-value">4.40s</div>
-                <div class="insight-label">Olympic Target</div>
-              </div>
-            </div>
           </p-card>
 
           <!-- Player Statistics Section -->
@@ -1083,6 +1155,8 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly logger = inject(LoggerService);
   private readonly acwrService = inject(AcwrService);
   private readonly toastService = inject(ToastService);
+  private readonly supabaseService = inject(SupabaseService);
+  private readonly teamRankingService = inject(TeamPerformanceRankingService);
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(true);
@@ -1096,6 +1170,16 @@ export class AnalyticsComponent implements AfterViewInit {
 
   // Expose UI_LIMITS for template usage
   readonly UI_LIMITS = UI_LIMITS;
+
+  // Team performance achievements (compare against teammates)
+  readonly teamPerformanceAchievements = computed(() =>
+    this.teamRankingService.achievements(),
+  );
+  readonly teamRankingBadgeCounts = computed(() => ({
+    gold: this.teamRankingService.goldBadges().length,
+    silver: this.teamRankingService.silverBadges().length,
+    bronze: this.teamRankingService.bronzeBadges().length,
+  }));
 
   metrics = signal<Metric[]>([]);
   developmentGoals = signal<DevelopmentGoal[]>([]);
@@ -1133,6 +1217,13 @@ export class AnalyticsComponent implements AfterViewInit {
     needsWork: number;
     overallScore: number;
   }>({ achieved: 0, close: 0, needsWork: 0, overallScore: 0 });
+
+  // Speed insights - loaded from real performance data, NOT hardcoded
+  speedInsights = signal<{
+    best40: string | null;
+    best10: string | null;
+    improvement: string | null;
+  } | null>(null);
 
   selectedTimePeriod: string = "Last 7 Weeks";
   selectedMetric: string = "40-Yard & 10-Yard";
@@ -1254,6 +1345,8 @@ export class AnalyticsComponent implements AfterViewInit {
       this.loadTrainingStatistics();
       this.loadDevelopmentGoals();
       this.loadGapAnalysis();
+      this.loadSpeedInsightsFromRealData();
+      this.loadTeamRankings();
 
       // Set loading to false after initial data load starts
       setTimeout(
@@ -1931,18 +2024,14 @@ export class AnalyticsComponent implements AfterViewInit {
             this.showShareDialog.set(false);
             this.shareMessage.set("");
             this.toastService.success(
-              "Analytics report sent to your coach! 📊",
+              "Analytics report sent to your coach!",
             );
           },
           error: (error) => {
             this.isSharing.set(false);
             this.logger.error("Error sharing with coach:", error);
-            // Still show success for demo purposes (API might not exist yet)
-            this.showShareDialog.set(false);
-            this.shareMessage.set("");
-            this.toastService.success(
-              "Analytics report sent to your coach! 📊",
-            );
+            // UX AUDIT FIX: Show actual error instead of false success
+            this.toastService.error(TOAST.ERROR.ANALYTICS_SHARE_FAILED);
           },
         });
     } catch (error) {
@@ -2052,6 +2141,114 @@ export class AnalyticsComponent implements AfterViewInit {
     this.logger.info(
       "[Analytics] Gap analysis showing empty state - no mock data",
     );
+  }
+
+  /**
+   * Load speed insights from real performance records
+   * NO MOCK DATA - shows null when no data exists
+   */
+  private async loadSpeedInsightsFromRealData(): Promise<void> {
+    const user = this.supabaseService.getCurrentUser();
+    if (!user) {
+      this.speedInsights.set(null);
+      this.speedChartData.set(null);
+      return;
+    }
+
+    try {
+      // Fetch performance records from Supabase
+      const { data: records, error } = await this.supabaseService.client
+        .from("performance_records")
+        .select("dash_40, sprint_10m, recorded_at")
+        .eq("user_id", user.id)
+        .order("recorded_at", { ascending: false })
+        .limit(20);
+
+      if (error || !records || records.length === 0) {
+        this.logger.info("[Analytics] No performance records found for speed insights");
+        this.speedInsights.set(null);
+        this.speedChartData.set(null);
+        return;
+      }
+
+      // Calculate best times from real data
+      const dash40Times = records
+        .map((r) => r.dash_40)
+        .filter((t): t is number => t !== null && t > 0);
+      const sprint10Times = records
+        .map((r) => r.sprint_10m)
+        .filter((t): t is number => t !== null && t > 0);
+
+      const best40 = dash40Times.length > 0 ? Math.min(...dash40Times) : null;
+      const best10 = sprint10Times.length > 0 ? Math.min(...sprint10Times) : null;
+
+      // Calculate improvement (first vs best for 40-yard)
+      let improvement: string | null = null;
+      if (dash40Times.length >= 2) {
+        // Get the oldest (first) and best 40-yard times
+        const oldest40 = records
+          .filter((r) => r.dash_40 !== null && r.dash_40 > 0)
+          .slice(-1)[0]?.dash_40;
+        if (oldest40 && best40) {
+          const diff = oldest40 - best40;
+          improvement = diff > 0 ? `-${diff.toFixed(2)}s` : `+${Math.abs(diff).toFixed(2)}s`;
+        }
+      }
+
+      this.speedInsights.set({
+        best40: best40 ? `${best40.toFixed(2)}s` : null,
+        best10: best10 ? `${best10.toFixed(2)}s` : null,
+        improvement,
+      });
+
+      // Build speed chart from real data
+      if (records.length >= 2) {
+        const chartRecords = records.slice(0, 7).reverse();
+        const labels = chartRecords.map((r) =>
+          new Date(r.recorded_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        );
+
+        const datasets = [];
+
+        // 40-yard dataset
+        const dash40Data = chartRecords.map((r) => r.dash_40 || null);
+        if (dash40Data.some((v) => v !== null)) {
+          datasets.push({
+            label: "40-Yard Dash",
+            data: dash40Data,
+            borderColor: "var(--ds-primary-green)",
+            backgroundColor: "var(--ds-primary-green-subtle)",
+            tension: 0.4,
+          });
+        }
+
+        // 10-yard dataset
+        const sprint10Data = chartRecords.map((r) => r.sprint_10m || null);
+        if (sprint10Data.some((v) => v !== null)) {
+          datasets.push({
+            label: "10-Yard Sprint",
+            data: sprint10Data,
+            borderColor: "rgba(16, 201, 107, 0.6)",
+            backgroundColor: "rgba(16, 201, 107, 0.1)",
+            tension: 0.4,
+          });
+        }
+
+        if (datasets.length > 0) {
+          this.speedChartData.set({ labels, datasets });
+        } else {
+          this.speedChartData.set(null);
+        }
+      } else {
+        this.speedChartData.set(null);
+      }
+
+      this.logger.info("[Analytics] Speed insights loaded from real data");
+    } catch (error) {
+      this.logger.error("[Analytics] Error loading speed insights:", error);
+      this.speedInsights.set(null);
+      this.speedChartData.set(null);
+    }
   }
 
   /**
@@ -2310,5 +2507,19 @@ export class AnalyticsComponent implements AfterViewInit {
       </body>
       </html>
     `;
+  }
+
+  /**
+   * Load team rankings for comparison badges
+   */
+  private loadTeamRankings(): void {
+    this.teamRankingService.loadTeamRankings();
+  }
+
+  /**
+   * Get emoji for rank display
+   */
+  getRankEmoji(rank: number): string {
+    return this.teamRankingService.getRankEmoji(rank);
   }
 }

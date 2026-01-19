@@ -4,8 +4,10 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
+  DestroyRef
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -21,6 +23,13 @@ import { toLogContext } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
+import {
+  WeatherCancellationService,
+  WeatherAlert,
+  SubstituteWorkout,
+  WeatherSensitiveSession,
+} from "../../../core/services/weather-cancellation.service";
+import { WeatherData } from "../../../core/services/weather.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { CardShellComponent } from "../../../shared/components/card-shell/card-shell.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -36,6 +45,12 @@ interface TrainingSession {
   status: "scheduled" | "completed" | "missed" | "in_progress";
   /** Whether this is a template (from 52-week program) or actual logged session */
   isTemplate: boolean;
+  /** Whether this is a team practice session */
+  isTeamPractice?: boolean;
+  /** Whether this session is outdoors and weather-sensitive */
+  isOutdoor?: boolean;
+  /** Whether weather alerts should be shown for this session */
+  weatherSensitive?: boolean;
 }
 
 interface CalendarDateMarker {
@@ -157,6 +172,180 @@ interface MonthlyStats {
               </div>
             </div>
           </app-card-shell>
+
+          <!-- Weather Alert Card -->
+          @if (weatherAlert()) {
+            <div 
+              class="weather-alert"
+              [class.weather-alert--danger]="weatherAlert()?.severity === 'danger'"
+              [class.weather-alert--warning]="weatherAlert()?.severity === 'warning'"
+            >
+              <div class="weather-alert__icon">
+                <i 
+                  class="pi" 
+                  [class.pi-exclamation-triangle]="weatherAlert()?.severity === 'danger'"
+                  [class.pi-info-circle]="weatherAlert()?.severity === 'warning'"
+                ></i>
+              </div>
+              <div class="weather-alert__content">
+                <h4 class="weather-alert__title">
+                  @if (weatherAlert()?.severity === 'danger') {
+                    Weather Advisory
+                  } @else {
+                    Weather Notice
+                  }
+                </h4>
+                <p class="weather-alert__reason">{{ weatherAlert()?.reason }}</p>
+                <p class="weather-alert__recommendation">{{ weatherAlert()?.recommendation }}</p>
+                @if (currentWeather()) {
+                  <p class="weather-alert__conditions">
+                    <i class="pi pi-cloud"></i>
+                    Current: {{ currentWeather()?.temp }}°F, {{ currentWeather()?.condition }}
+                    @if (currentWeather()?.windSpeed) {
+                      <span class="weather-wind">
+                        <i class="pi pi-arrows-h"></i> {{ currentWeather()?.windSpeed }} mph wind
+                      </span>
+                    }
+                  </p>
+                }
+              </div>
+              <div class="weather-alert__actions">
+                @if (!weatherAlert()?.canProceed) {
+                  <app-button
+                    variant="primary"
+                    size="sm"
+                    iconLeft="pi-home"
+                    (clicked)="generateSubstituteWorkout()"
+                    [loading]="isGeneratingSubstitute()"
+                  >
+                    Get Indoor Alternative
+                  </app-button>
+                }
+                <app-button
+                  variant="text"
+                  size="sm"
+                  (clicked)="dismissWeatherAlert()"
+                >
+                  Dismiss
+                </app-button>
+              </div>
+            </div>
+          }
+
+          <!-- Substitute Workout Card -->
+          @if (suggestedSubstitute()) {
+            <app-card-shell 
+              title="Substitute Workout Available" 
+              headerIcon="pi-bolt"
+              class="substitute-workout-card"
+            >
+              <div class="substitute-workout">
+                <div class="substitute-workout__header">
+                  <h3 class="substitute-workout__name">{{ suggestedSubstitute()?.workoutName }}</h3>
+                  <div class="substitute-workout__badges">
+                    <span class="badge badge--info">
+                      <i class="pi pi-map-marker"></i>
+                      {{ getLocationLabel(suggestedSubstitute()?.locationType) }}
+                    </span>
+                    <span class="badge badge--secondary">
+                      <i class="pi pi-clock"></i>
+                      {{ suggestedSubstitute()?.durationMinutes }} min
+                    </span>
+                    <span class="badge badge--secondary">
+                      {{ suggestedSubstitute()?.intensityLevel | titlecase }} intensity
+                    </span>
+                  </div>
+                </div>
+
+                <p class="substitute-workout__description">
+                  {{ suggestedSubstitute()?.description }}
+                </p>
+
+                <!-- Equipment Needed -->
+                @if (suggestedSubstitute()?.equipmentNeeded?.length) {
+                  <div class="substitute-workout__equipment">
+                    <h4><i class="pi pi-box"></i> Equipment Needed</h4>
+                    <div class="equipment-list">
+                      @for (item of suggestedSubstitute()?.equipmentNeeded; track item) {
+                        <span class="equipment-item">{{ item }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Workout Structure Preview -->
+                <div class="substitute-workout__preview">
+                  <div class="workout-phase">
+                    <h4><i class="pi pi-play"></i> Warm-Up</h4>
+                    <p>{{ getWarmUpPreview(suggestedSubstitute()?.warmUp) }}</p>
+                  </div>
+                  
+                  <div class="workout-phase">
+                    <h4><i class="pi pi-bolt"></i> Main Workout ({{ suggestedSubstitute()?.mainWorkout?.length }} exercises)</h4>
+                    <ul class="exercise-preview-list">
+                      @for (exercise of suggestedSubstitute()?.mainWorkout?.slice(0, 3); track exercise.name) {
+                        <li>
+                          <strong>{{ exercise.name }}</strong>
+                          @if (exercise.sets && exercise.reps) {
+                            - {{ exercise.sets }} × {{ exercise.reps }}
+                          } @else if (exercise.durationSeconds) {
+                            - {{ exercise.durationSeconds }}s
+                          }
+                        </li>
+                      }
+                      @if ((suggestedSubstitute()?.mainWorkout?.length || 0) > 3) {
+                        <li class="more-exercises">
+                          + {{ (suggestedSubstitute()?.mainWorkout?.length || 0) - 3 }} more exercises...
+                        </li>
+                      }
+                    </ul>
+                  </div>
+
+                  <div class="workout-phase">
+                    <h4><i class="pi pi-stop"></i> Cool-Down</h4>
+                    <p>{{ getCoolDownPreview(suggestedSubstitute()?.coolDown) }}</p>
+                  </div>
+                </div>
+
+                <!-- Training Goals -->
+                @if (suggestedSubstitute()?.trainingGoals?.length) {
+                  <div class="substitute-workout__goals">
+                    <h4><i class="pi pi-flag"></i> Training Goals</h4>
+                    <div class="goals-list">
+                      @for (goal of suggestedSubstitute()?.trainingGoals; track goal) {
+                        <span class="goal-tag">{{ goal }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Action Buttons -->
+                <div class="substitute-workout__actions">
+                  <app-button
+                    variant="primary"
+                    iconLeft="pi-check"
+                    (clicked)="acceptSubstituteWorkout()"
+                  >
+                    Start This Workout
+                  </app-button>
+                  <app-button
+                    variant="outlined"
+                    iconLeft="pi-refresh"
+                    (clicked)="generateSubstituteWorkout()"
+                    [loading]="isGeneratingSubstitute()"
+                  >
+                    Generate Different
+                  </app-button>
+                  <app-button
+                    variant="text"
+                    (clicked)="declineSubstituteWorkout()"
+                  >
+                    Not Today
+                  </app-button>
+                </div>
+              </div>
+            </app-card-shell>
+          }
 
           <!-- Monthly Statistics Summary -->
           @if (viewMode() === "month" && monthlyStats().totalSessions > 0) {
@@ -296,7 +485,19 @@ interface MonthlyStats {
                         "
                       ></span>
                       <!-- Title visually dominant -->
-                      <h4 class="session-title">{{ session.type }}</h4>
+                      <h4 class="session-title">
+                        {{ session.type }}
+                        @if (session.isTeamPractice) {
+                          <span class="team-badge">
+                            <i class="pi pi-users"></i> Team
+                          </span>
+                        }
+                        @if (session.isOutdoor && session.weatherSensitive) {
+                          <span class="outdoor-badge" [title]="'Weather-sensitive outdoor session'">
+                            <i class="pi pi-sun"></i>
+                          </span>
+                        }
+                      </h4>
                       <!-- Date/time secondary -->
                       <p class="session-date">
                         {{ session.date | date: "MMM d, y 'at' h:mm a" }}
@@ -312,6 +513,18 @@ interface MonthlyStats {
                         <i [class]="getStatusIcon(session.status)"></i>
                         {{ getStatusLabel(session.status) }}
                       </span>
+                      <!-- Weather cancel button for outdoor sessions -->
+                      @if (session.isOutdoor && session.weatherSensitive && session.isTemplate && weatherAlert()?.severity === 'danger') {
+                        <app-button
+                          variant="outlined"
+                          size="sm"
+                          iconLeft="pi-cloud"
+                          severity="warning"
+                          (clicked)="cancelForWeather($event, session)"
+                        >
+                          Cancel &amp; Get Alternative
+                        </app-button>
+                      }
                       <!-- Mark-complete button: only for actual sessions (not templates) -->
                       @if (
                         session.status === "scheduled" && !session.isTemplate
@@ -353,12 +566,20 @@ export class TrainingScheduleComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private logger = inject(LoggerService);
+  private weatherCancellationService = inject(WeatherCancellationService);
+  private destroyRef = inject(DestroyRef);
 
   selectedDate = signal<Date>(new Date());
   sessions = signal<TrainingSession[]>([]);
   isLoading = signal<boolean>(false);
   showWeekNumbers = signal<boolean>(true);
   today = new Date();
+
+  // Weather-related signals (delegate to service)
+  readonly weatherAlert = this.weatherCancellationService.weatherAlert;
+  readonly currentWeather = this.weatherCancellationService.currentWeather;
+  readonly suggestedSubstitute = this.weatherCancellationService.suggestedSubstitute;
+  readonly isGeneratingSubstitute = this.weatherCancellationService.isGeneratingSubstitute;
 
   // Calendar date markers for visual indicators
   dateMarkers = signal<CalendarDateMarker[]>([]);
@@ -464,6 +685,55 @@ export class TrainingScheduleComponent implements OnInit {
     this.loadSessions();
     this.loadMonthlyStats();
     this.loadDateMarkers();
+    this.checkWeatherForTodaysSessions();
+  }
+
+  /**
+   * Check weather conditions for today's outdoor sessions
+   */
+  private checkWeatherForTodaysSessions(): void {
+    // Only check weather if viewing today or a date in the next 24 hours
+    const selected = this.selectedDate();
+    const now = new Date();
+    const hoursDiff = (selected.getTime() - now.getTime()) / (1000 * 60 * 60);
+    
+    if (hoursDiff > 24 || hoursDiff < -24) {
+      return; // Don't check weather for dates far in the past/future
+    }
+
+    // Get today's weather-sensitive sessions and check weather
+    this.weatherCancellationService
+      .getTodaysWeatherSensitiveSessions()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (weatherSessions) => {
+          if (weatherSessions.length > 0) {
+            // Check weather for the first outdoor session found
+            const outdoorSession = weatherSessions.find(s => s.isOutdoor);
+            if (outdoorSession) {
+              this.weatherCancellationService
+                .checkWeatherForTraining(outdoorSession)
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe({
+                  next: ({ weather, alert }) => {
+                    if (alert) {
+                      this.logger.info("Weather alert detected", {
+                        severity: alert.severity,
+                        reason: alert.reason,
+                      });
+                    }
+                  },
+                  error: (error) => {
+                    this.logger.warn("Failed to check weather:", toLogContext(error));
+                  },
+                });
+            }
+          }
+        },
+        error: (error) => {
+          this.logger.warn("Failed to load weather-sensitive sessions:", toLogContext(error));
+        },
+      });
   }
 
   async loadSessions(): Promise<void> {
@@ -541,6 +811,9 @@ export class TrainingScheduleComponent implements OnInit {
           duration_minutes,
           intensity_level,
           description,
+          is_team_practice,
+          is_outdoor,
+          weather_sensitive,
           training_weeks!inner (
             id,
             week_number,
@@ -612,6 +885,9 @@ export class TrainingScheduleComponent implements OnInit {
               duration: template.duration_minutes || 60,
               status: "scheduled" as const,
               isTemplate: true,
+              isTeamPractice: (template as Record<string, unknown>).is_team_practice as boolean || false,
+              isOutdoor: (template as Record<string, unknown>).is_outdoor as boolean || false,
+              weatherSensitive: (template as Record<string, unknown>).weather_sensitive as boolean || false,
             };
           });
 
@@ -740,8 +1016,14 @@ export class TrainingScheduleComponent implements OnInit {
         },
       });
     } else {
-      // For actual sessions, navigate to session detail
-      this.router.navigate(["/training/session", session.id]);
+      // For actual sessions, navigate to training log to view/edit details
+      this.router.navigate(["/training/log"], {
+        queryParams: {
+          sessionId: session.id,
+          type: session.type,
+          duration: session.duration,
+        },
+      });
     }
   }
 
@@ -799,9 +1081,11 @@ export class TrainingScheduleComponent implements OnInit {
 
     try {
       // Create a new training session from the template
+      // Note: athlete_id is required by RLS policy, user_id is for backward compatibility
       const { data, error } = await this.supabaseService.client
         .from("training_sessions")
         .insert({
+          athlete_id: user.id,
           user_id: user.id,
           session_date: session.date.toISOString().split("T")[0],
           session_type: session.type,
@@ -831,8 +1115,15 @@ export class TrainingScheduleComponent implements OnInit {
 
       this.toastService.success(TOAST.SUCCESS.SESSION_STARTED);
 
-      // Navigate to the session detail page
-      this.router.navigate(["/training/session", data.id]);
+      // Navigate to the training log to complete the session
+      // The training log allows logging RPE, duration, and completing the session
+      this.router.navigate(["/training/log"], {
+        queryParams: {
+          sessionId: data.id,
+          type: session.type,
+          duration: session.duration,
+        },
+      });
     } catch (error) {
       this.logger.error("Error starting session:", error);
       this.toastService.error(TOAST.ERROR.SESSION_START_FAILED);
@@ -1024,5 +1315,207 @@ export class TrainingScheduleComponent implements OnInit {
       default:
         return "var(--primitive-blue-500)";
     }
+  }
+
+  // ============================================================================
+  // Weather Cancellation & Substitute Workout Methods
+  // ============================================================================
+
+  /**
+   * Dismiss the weather alert
+   */
+  dismissWeatherAlert(): void {
+    this.weatherCancellationService.clearWeatherAlert();
+  }
+
+  /**
+   * Generate a substitute workout for the current weather alert
+   */
+  generateSubstituteWorkout(): void {
+    // Find the first outdoor, weather-sensitive session for today
+    const outdoorSession = this.filteredSessions().find(
+      (s) => s.isOutdoor && s.weatherSensitive && s.isTemplate,
+    );
+
+    if (!outdoorSession) {
+      this.toastService.warn("No outdoor sessions found to generate substitute for");
+      return;
+    }
+
+    const weatherSensitiveSession: WeatherSensitiveSession = {
+      id: outdoorSession.id,
+      sessionName: outdoorSession.type,
+      sessionType: outdoorSession.type,
+      isOutdoor: true,
+      isTeamPractice: outdoorSession.isTeamPractice || false,
+      weatherSensitive: true,
+      durationMinutes: outdoorSession.duration,
+    };
+
+    const weather = this.currentWeather();
+
+    this.weatherCancellationService
+      .generateSubstituteWorkout(weatherSensitiveSession, weather, "weather")
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (substitute) => {
+          if (substitute) {
+            this.toastService.success("Alternative workout generated!");
+          } else {
+            this.toastService.error("Failed to generate alternative workout");
+          }
+        },
+        error: (error) => {
+          this.logger.error("Error generating substitute:", error);
+          this.toastService.error("Failed to generate alternative workout");
+        },
+      });
+  }
+
+  /**
+   * Cancel a specific session due to weather and get substitute
+   */
+  cancelForWeather(event: Event, session: TrainingSession): void {
+    event.stopPropagation();
+
+    const weather = this.currentWeather();
+    if (!weather) {
+      this.toastService.warn("Weather data not available");
+      return;
+    }
+
+    const weatherSensitiveSession: WeatherSensitiveSession = {
+      id: session.id,
+      sessionName: session.type,
+      sessionType: session.type,
+      isOutdoor: session.isOutdoor || true,
+      isTeamPractice: session.isTeamPractice || false,
+      weatherSensitive: true,
+      durationMinutes: session.duration,
+    };
+
+    this.weatherCancellationService
+      .cancelSessionForWeather(session.id, weatherSensitiveSession, weather)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (substitute) => {
+          if (substitute) {
+            this.toastService.success("Session cancelled. Alternative workout ready!");
+            // Update the session in local state to show as cancelled
+            this.sessions.update((sessions) =>
+              sessions.map((s) =>
+                s.id === session.id ? { ...s, status: "missed" as const } : s,
+              ),
+            );
+          } else {
+            this.toastService.error("Failed to cancel session");
+          }
+        },
+        error: (error) => {
+          this.logger.error("Error cancelling session:", error);
+          this.toastService.error("Failed to cancel session");
+        },
+      });
+  }
+
+  /**
+   * Accept the suggested substitute workout
+   */
+  acceptSubstituteWorkout(): void {
+    const substitute = this.suggestedSubstitute();
+    if (!substitute?.id) {
+      // If no ID, the substitute wasn't saved yet - just navigate to start it
+      this.toastService.success("Starting substitute workout...");
+      this.router.navigate(["/training/smart-form"], {
+        queryParams: {
+          substituteType: substitute?.workoutType,
+          duration: substitute?.durationMinutes,
+        },
+      });
+      this.weatherCancellationService.clearSuggestedSubstitute();
+      return;
+    }
+
+    this.weatherCancellationService
+      .acceptSubstituteWorkout(substitute.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (success) => {
+          if (success) {
+            this.toastService.success("Workout accepted! Let's go!");
+            // Navigate to workout execution page or show workout details
+            this.router.navigate(["/training/smart-form"], {
+              queryParams: {
+                substituteId: substitute.id,
+                substituteType: substitute.workoutType,
+              },
+            });
+          } else {
+            this.toastService.error("Failed to accept workout");
+          }
+        },
+        error: () => {
+          this.toastService.error("Failed to accept workout");
+        },
+      });
+  }
+
+  /**
+   * Decline the suggested substitute workout
+   */
+  declineSubstituteWorkout(): void {
+    const substitute = this.suggestedSubstitute();
+    if (!substitute?.id) {
+      this.weatherCancellationService.clearSuggestedSubstitute();
+      this.toastService.info("Maybe next time!");
+      return;
+    }
+
+    this.weatherCancellationService
+      .declineSubstituteWorkout(substitute.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.info("Workout declined. Rest up!");
+        },
+        error: () => {
+          // Still clear it locally even if the API call failed
+          this.weatherCancellationService.clearSuggestedSubstitute();
+        },
+      });
+  }
+
+  /**
+   * Get human-readable location label
+   */
+  getLocationLabel(locationType: string | undefined): string {
+    switch (locationType) {
+      case "home":
+        return "At Home";
+      case "gym":
+        return "Gym";
+      case "indoor_facility":
+        return "Indoor Facility";
+      default:
+        return "Indoor";
+    }
+  }
+
+  /**
+   * Get warm-up preview text (first line or truncated)
+   */
+  getWarmUpPreview(warmUp: string | undefined): string {
+    if (!warmUp) return "Dynamic warm-up routine";
+    const firstLine = warmUp.split("\n")[0];
+    return firstLine.length > 100 ? firstLine.substring(0, 100) + "..." : firstLine;
+  }
+
+  /**
+   * Get cool-down preview text (first line or truncated)
+   */
+  getCoolDownPreview(coolDown: string | undefined): string {
+    if (!coolDown) return "Static stretching and recovery";
+    const firstLine = coolDown.split("\n")[0];
+    return firstLine.length > 100 ? firstLine.substring(0, 100) + "..." : firstLine;
   }
 }

@@ -13,7 +13,7 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { map } from "rxjs/operators";
-import { ApiService } from "./api.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
 import { LoggerService } from "./logger.service";
 
 export interface CalibrationLogEntry {
@@ -72,7 +72,7 @@ export class CalibrationLoggingService {
     });
 
     // Send to backend (async, don't block)
-    this.apiService.post("/api/calibration-logs", entry).subscribe({
+    this.apiService.post(API_ENDPOINTS.calibration.logs, entry).subscribe({
       next: () => {
         this.logger.info(
           "[CalibrationLogging] Recommendation logged:",
@@ -122,7 +122,7 @@ export class CalibrationLoggingService {
     }
 
     // Send to backend
-    this.apiService.post("/api/calibration-logs/outcome", entry).subscribe({
+    this.apiService.post(API_ENDPOINTS.calibration.outcome, entry).subscribe({
       next: () => {
         this.logger.info("[CalibrationLogging] Outcome logged");
       },

@@ -140,10 +140,10 @@
     --p-dialog-footer-gap: var(--space-3);
 
     // Dialog sizes
-    --p-dialog-sm-width: 400px;
-    --p-dialog-md-width: 560px;
-    --p-dialog-lg-width: 800px;
-    --p-dialog-xl-width: 90vw;
+    --p-dialog-sm-width: var(--dialog-width-sm);
+    --p-dialog-md-width: var(--dialog-width-md);
+    --p-dialog-lg-width: var(--dialog-width-lg);
+    --p-dialog-xl-width: var(--dialog-width-xl);
 
     // ============================================
     // INPUTS (Decision 23)
@@ -154,9 +154,9 @@
     --p-inputtext-padding-y: var(--space-3);
     --p-inputtext-font-size: var(--font-body-size);
     --p-inputtext-font-family: var(--font-family-sans);
-    --p-inputtext-min-height: 44px; // Standard touch target height
-    --p-inputtext-height-sm: 36px;
-    --p-inputtext-height-lg: 52px;
+    --p-inputtext-min-height: var(--button-height-md); // Standard touch target
+    --p-inputtext-height-sm: var(--button-height-sm);
+    --p-inputtext-height-lg: var(--button-height-lg);
 
     // Input borders
     --p-inputtext-border-color: var(--color-border-default);
@@ -165,8 +165,9 @@
     // Input focus state
     --p-inputtext-focus-border-color: var(--color-border-focus);
     --p-inputtext-focus-ring-color: var(--color-focus-ring);
-    --p-inputtext-focus-ring-width: 3px;
+    --p-inputtext-focus-ring-width: var(--focus-ring-width);
     --p-inputtext-focus-ring-offset: 0;
+    --p-input-focus-ring-width: var(--focus-ring-width);
 
     // Input error state (Decision 32)
     --p-inputtext-invalid-border-color: var(--color-border-danger);
@@ -193,11 +194,24 @@
     --p-select-panel-border-radius: var(--radius-xl);
     --p-select-panel-shadow: var(--shadow-3);
     --p-select-panel-border: var(--border-1) solid var(--color-border-default);
+    --p-dropdown-panel-border-radius: var(--radius-lg);
+    --p-dropdown-panel-shadow: var(--shadow-3);
+    --p-dropdown-panel-border-color: var(--color-border-default);
+    --p-dropdown-panel-margin-top: var(--space-1);
+    --p-dropdown-panel-max-height: var(--panel-max-height-md);
+    --p-dropdown-trigger-width: var(--space-10); /* 40px */
+    --p-form-control-icon-width: var(--space-10); /* 40px */
+    --p-calendar-trigger-width: var(--button-height-md); /* 44px */
+    --p-calendar-input-icon-padding: var(--button-height-md); /* 44px */
 
     // Option items
     --p-select-option-padding: var(--space-2) var(--space-3);
     --p-select-option-hover-background: var(--color-surface-hover);
     --p-select-option-selected-background: var(--color-surface-selected);
+    --p-dropdown-option-padding: var(--space-3) var(--space-4);
+    --p-dropdown-option-border-radius: var(--radius-md);
+    --p-dropdown-option-min-height: var(--touch-target-sm);
+    --p-dropdown-option-font-size: var(--font-body-size);
 
     // ============================================
     // DATATABLE (Decision 24)
@@ -253,9 +267,23 @@
     --p-tooltip-border-radius: var(--radius-lg);
     --p-tooltip-padding: var(--space-4) var(--space-5);
     --p-tooltip-font-size: var(--font-body-sm-size);
-    --p-tooltip-max-width: 320px;
+    --p-tooltip-max-width: var(--tooltip-max-width);
     --p-tooltip-shadow: var(--shadow-3);
     --p-tooltip-line-height: 1.5;
+
+    // ============================================
+    // OVERLAYS / PANELS
+    // ============================================
+
+    --p-overlay-z-index: var(--z-index-skiplink);
+    --p-overlay-panel-shadow: var(--shadow-lg);
+    --p-overlay-panel-border-radius: var(--radius-lg);
+    --p-overlay-panel-border-color: var(--color-border-default);
+    --p-overlay-panel-margin-top: var(--space-1);
+    --p-datepicker-panel-min-width: var(--panel-width-md);
+    --p-datepicker-panel-max-width: var(--panel-width-lg);
+    --p-datepicker-panel-min-width-sm: var(--panel-width-sm);
+    --p-datepicker-panel-animation-duration: var(--transition-base);
 
     // ============================================
     // PROGRESSBAR
@@ -264,31 +292,33 @@
     --p-progressbar-background: var(--color-surface-secondary);
     --p-progressbar-value-background: var(--ds-primary-green);
     --p-progressbar-border-radius: var(--radius-full);
-    --p-progressbar-height: 8px;
+    --p-progressbar-height: var(--space-2);
 
     // ============================================
     // CHECKBOX / RADIO (Decision 42)
     // Checkbox: 20px box, 6px radius, green check when checked
     // ============================================
 
-    --p-checkbox-width: 20px;
-    --p-checkbox-height: 20px;
+    --p-checkbox-width: var(--space-5);
+    --p-checkbox-height: var(--space-5);
     --p-checkbox-border-radius: var(--radius-md);
-    --p-checkbox-border-width: 2px;
+    --p-checkbox-border-width: var(--border-2);
     --p-checkbox-border-color: var(--color-border-default);
     --p-checkbox-background: var(--color-surface-primary);
     --p-checkbox-hover-border-color: var(--ds-primary-green);
     --p-checkbox-checked-background: var(--ds-primary-green);
     --p-checkbox-checked-border-color: var(--ds-primary-green);
-    --p-checkbox-check-color: white;
-    --p-checkbox-disabled-opacity: 0.6;
-    --p-checkbox-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
-    --p-radio-width: 20px;
-    --p-radio-height: 20px;
+    --p-checkbox-check-color: var(--color-text-on-primary);
+    --p-checkbox-disabled-opacity: var(--opacity-muted);
+    --p-checkbox-focus-ring: 0 0 0 var(--focus-ring-width)
+      var(--color-focus-ring);
+    --p-radio-width: var(--space-5);
+    --p-radio-height: var(--space-5);
     --p-radio-border-color: var(--color-border-default);
     --p-radio-checked-background: var(--ds-primary-green);
     --p-radio-checked-border-color: var(--ds-primary-green);
-    --p-radio-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
+    --p-radio-focus-ring: 0 0 0 var(--focus-ring-width)
+      var(--color-focus-ring);
 
     // ============================================
     // TOGGLESWITCH (Decision 9B)
@@ -296,17 +326,20 @@
     // Green = ON, neutral = OFF
     // ============================================
 
-    --p-toggleswitch-width: 44px;
-    --p-toggleswitch-height: 24px;
+    --p-toggleswitch-width: var(--button-height-md);
+    --p-toggleswitch-height: var(--space-6);
     --p-toggleswitch-border-radius: var(--radius-full);
     --p-toggleswitch-background: var(--color-border-default);
     --p-toggleswitch-checked-background: var(--ds-primary-green);
-    --p-toggleswitch-handle-size: 18px;
-    --p-toggleswitch-handle-offset: 3px;
+    --p-toggleswitch-handle-size: calc(
+      var(--space-4) + var(--space-1) / 2
+    );
+    --p-toggleswitch-handle-offset: calc(var(--space-1) * 0.75);
     --p-toggleswitch-handle-background: var(--color-surface-primary);
-    --p-toggleswitch-handle-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    --p-toggleswitch-disabled-opacity: 0.6;
-    --p-toggleswitch-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
+    --p-toggleswitch-handle-shadow: var(--shadow-sm);
+    --p-toggleswitch-disabled-opacity: var(--opacity-muted);
+    --p-toggleswitch-focus-ring: 0 0 0 var(--focus-ring-width)
+      var(--color-focus-ring);
 
     // ============================================
     // ACCORDION
@@ -344,12 +377,12 @@
     // AVATAR
     // ============================================
 
-    --p-avatar-sm-width: 32px;
-    --p-avatar-sm-height: 32px;
-    --p-avatar-md-width: 40px;
-    --p-avatar-md-height: 40px;
-    --p-avatar-lg-width: 56px;
-    --p-avatar-lg-height: 56px;
+    --p-avatar-sm-width: var(--avatar-size-sm);
+    --p-avatar-sm-height: var(--avatar-size-sm);
+    --p-avatar-md-width: var(--avatar-size-md);
+    --p-avatar-md-height: var(--avatar-size-md);
+    --p-avatar-lg-width: var(--avatar-size-xl);
+    --p-avatar-lg-height: var(--avatar-size-xl);
     --p-avatar-border-radius: var(--radius-full);
     --p-avatar-background: var(--color-surface-secondary);
 
@@ -381,8 +414,6 @@
     // ============================================
     // Unified focus ring tokens for all interactive elements
 
-    --focus-ring-width: 3px;
-    --focus-ring-offset: 2px;
     --color-focus-ring: var(--ds-primary-green);
   }
 }

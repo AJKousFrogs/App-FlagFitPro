@@ -52,6 +52,7 @@ import {
 } from "../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { calculateAge } from "../../shared/utils/date.utils";
+import { getErrorMessage } from "../../shared/utils/error.utils";
 
 @Component({
   selector: "app-settings",
@@ -65,7 +66,6 @@ import { calculateAge } from "../../shared/utils/date.utils";
     InputText,
     ProgressBar,
     Select,
-    Toast,
     ButtonComponent,
     IconButtonComponent,
     CardComponent,
@@ -78,6 +78,7 @@ import { calculateAge } from "../../shared/utils/date.utils";
     Password,
     Dialog,
     Divider,
+    Toast,
     ToggleSwitch,
     RouterLink
   ],
@@ -144,6 +145,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   isRevokingAll = signal(false);
   isExportingData = signal(false);
   exportProgress = signal(0);
+  exportTakingLong = signal(false);
+  private exportTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   // Data export dialog
   showDataExportDialog = false;
@@ -1028,9 +1031,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       }
     } catch (error) {
       this.logger.error("Save settings error", error, { context: "saveSettings" });
-      const message =
-        error instanceof Error ? error.message : "Failed to save settings";
-      this.toastService.error(message);
+      this.toastService.error(getErrorMessage(error, TOAST.ERROR.SETTINGS_SAVE_FAILED));
     } finally {
       this.isSavingSettings.set(false);
     }
@@ -1064,9 +1065,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("[changePassword] Password changed successfully");
     } catch (error) {
       this.logger.error("[changePassword] Failed to change password:", error);
-      const message =
-        error instanceof Error ? error.message : "Failed to update password";
-      this.toastService.error(message);
+      this.toastService.error(getErrorMessage(error, TOAST.ERROR.PASSWORD_CHANGE_FAILED));
     } finally {
       this.isChangingPassword.set(false);
     }
@@ -1120,9 +1119,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("[deleteAccount] Deletion request submitted successfully");
     } catch (error) {
       this.logger.error("[deleteAccount] Failed to delete account:", error);
-      const message =
-        error instanceof Error ? error.message : "Failed to delete account";
-      this.toastService.error(message);
+      this.toastService.error(getErrorMessage(error, TOAST.ERROR.ACCOUNT_DELETE_FAILED));
     } finally {
       this.isDeletingAccount.set(false);
     }
@@ -1227,9 +1224,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("[verify2FA] 2FA enabled successfully");
     } catch (error) {
       this.logger.error("[verify2FA] Verification failed:", error);
-      const message =
-        error instanceof Error ? error.message : "Verification failed";
-      this.twoFAError.set(message);
+      this.twoFAError.set(getErrorMessage(error, TOAST.ERROR.TWO_FA_VERIFICATION_FAILED));
     } finally {
       this.isEnabling2FA.set(false);
     }
@@ -1305,9 +1300,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("[disable2FA] 2FA disabled successfully");
     } catch (error) {
       this.logger.error("[disable2FA] Failed to disable 2FA:", error);
-      const message =
-        error instanceof Error ? error.message : "Failed to disable 2FA";
-      this.toastService.error(message);
+      this.toastService.error(getErrorMessage(error, TOAST.ERROR.TWO_FA_DISABLE_FAILED));
     } finally {
       this.isDisabling2FA.set(false);
     }
@@ -1402,6 +1395,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
 
     this.isExportingData.set(true);
     this.exportProgress.set(0);
+    this.exportTakingLong.set(false);
+
+    // UX AUDIT FIX: Show reassurance message after 10 seconds
+    this.exportTimeoutId = setTimeout(() => {
+      if (this.isExportingData()) {
+        this.exportTakingLong.set(true);
+      }
+    }, TIMEOUTS.SLOW_OPERATION_THRESHOLD);
 
     try {
       const user = this.supabaseService.getCurrentUser();
@@ -1517,6 +1518,11 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     } finally {
       this.isExportingData.set(false);
       this.exportProgress.set(0);
+      this.exportTakingLong.set(false);
+      if (this.exportTimeoutId) {
+        clearTimeout(this.exportTimeoutId);
+        this.exportTimeoutId = null;
+      }
     }
   }
 
@@ -1718,11 +1724,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("[submitNewTeamRequest] Team request submitted successfully");
     } catch (error) {
       this.logger.error("[submitNewTeamRequest] Failed to submit team request:", error);
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Failed to submit team request";
-      this.toastService.error(message);
+      this.toastService.error(getErrorMessage(error, TOAST.ERROR.TEAM_REQUEST_FAILED));
     } finally {
       this.isSubmittingTeamRequest.set(false);
     }
