@@ -28,7 +28,7 @@ import { Message } from "primeng/message";
 
 import { Select } from "primeng/select";
 import { Stepper, StepList, Step } from "primeng/stepper";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
@@ -191,7 +191,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     Stepper,
     StepList,
     Step,
-    Table,
+    TableModule,
     TableModule,
     Toast,
     MainLayoutComponent,

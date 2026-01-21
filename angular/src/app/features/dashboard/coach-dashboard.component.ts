@@ -17,7 +17,7 @@ import { Dialog } from "primeng/dialog";
 import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
 import { forkJoin } from "rxjs";
@@ -105,7 +105,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
   imports: [
     FormsModule,
     RouterModule,
-    Table,
+    TableModule,
     TableModule,
     StatusTagComponent,
     LazyChartComponent,

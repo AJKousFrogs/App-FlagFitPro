@@ -63,11 +63,20 @@ export interface SupplementCompliance {
  * Helper function to convert Supplement to SupplementDisplay
  */
 export function supplementToDisplay(supplement: Supplement): SupplementDisplay {
+  // Map "afternoon" to "anytime" since SupplementDisplay doesn't support "afternoon"
+  const timingMap: Record<string, SupplementDisplay["timing"]> = {
+    morning: "morning",
+    afternoon: "anytime", // Map afternoon to anytime
+    evening: "evening",
+    "pre-workout": "pre-workout",
+    "post-workout": "post-workout",
+  };
+  
   return {
     id: supplement.id?.toString() || "",
     name: supplement.name,
     dosage: supplement.dosage,
-    timing: supplement.timeOfDay || "anytime",
+    timing: supplement.timeOfDay ? (timingMap[supplement.timeOfDay] || "anytime") : "anytime",
     category: "other", // Default category, can be enhanced with mapping logic
     taken: supplement.taken,
     takenAt: supplement.timestamp ? new Date(supplement.timestamp) : undefined,

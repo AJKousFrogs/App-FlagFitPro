@@ -1005,26 +1005,8 @@ export class TrainingScheduleComponent implements OnInit {
   }
 
   viewSession(session: TrainingSession): void {
-    if (session.isTemplate) {
-      // For templates, navigate to start a new session with pre-filled data
-      this.router.navigate(["/training/smart-form"], {
-        queryParams: {
-          templateId: session.id,
-          date: session.date.toISOString().split("T")[0],
-          type: session.type,
-          duration: session.duration,
-        },
-      });
-    } else {
-      // For actual sessions, navigate to training log to view/edit details
-      this.router.navigate(["/training/log"], {
-        queryParams: {
-          sessionId: session.id,
-          type: session.type,
-          duration: session.duration,
-        },
-      });
-    }
+    // Navigate to session detail view for both templates and actual sessions
+    this.router.navigate(["/training/session", session.id]);
   }
 
   async markComplete(event: Event, session: TrainingSession): Promise<void> {

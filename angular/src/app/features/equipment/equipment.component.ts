@@ -17,7 +17,7 @@ import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 
@@ -57,7 +57,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     CommonModule,
     FormsModule,
     Card,
-    Table,
+    TableModule,
     TableModule,
     StatusTagComponent,
     Dialog,

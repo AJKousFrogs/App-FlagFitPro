@@ -28,7 +28,7 @@ import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import {
@@ -133,7 +133,7 @@ const BALANCE_FILTERS = [
     ProgressBar,
     RadioButton,
     Select,
-    Table,
+    TableModule,
     TableModule,
     StatusTagComponent,
     Textarea,

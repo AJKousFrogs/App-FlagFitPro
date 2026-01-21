@@ -300,12 +300,15 @@ export const trainingRoutes: Routes = [
     canActivate: [authGuard],
     data: { preload: false }, // Form feature - on demand
   },
-  // Session detail route - redirects to training log with session context
-  // TODO: Create dedicated TrainingSessionDetailComponent for better UX
+  // Session detail route - shows session details
   {
     path: "training/session/:id",
-    redirectTo: "training/log",
-    pathMatch: "full",
+    loadComponent: () =>
+      import("../../features/training/training-session-detail/training-session-detail.component").then(
+        (m) => m.TrainingSessionDetailComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false },
   },
   {
     path: "training/videos",

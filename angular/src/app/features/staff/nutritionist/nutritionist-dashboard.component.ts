@@ -16,7 +16,7 @@ import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -129,7 +129,7 @@ interface TournamentNutritionBrief {
     InputText,
     ProgressBar,
     Select,
-    Table,
+    TableModule,
     TableModule,
     Tabs,
     TabList,

@@ -28,7 +28,7 @@ import { InputNumber } from "primeng/inputnumber";
 
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { firstValueFrom } from "rxjs";
@@ -202,7 +202,7 @@ const RTP_STAGES: RtpStage[] = [
     InputNumber,
     RadioButton,
     Select,
-    Table,
+    TableModule,
     TableModule,
     Textarea,
     Toast,

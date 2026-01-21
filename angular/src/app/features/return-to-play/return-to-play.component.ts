@@ -26,7 +26,7 @@ import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
@@ -289,7 +289,7 @@ const SEVERITY_LEVELS = [
     RadioButton,
     Select,
     Slider,
-    Table,
+    TableModule,
     TableModule,
     StatusTagComponent,
     Textarea,

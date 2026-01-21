@@ -9,7 +9,7 @@ import {
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import {
   TrainingMetricsService,
   ACWRData,
@@ -26,7 +26,7 @@ import { formatDate } from "../../shared/utils/date.utils";
   imports: [
     CommonModule,
     RouterModule,
-    Table,
+    TableModule,
     TableModule,
     LazyChartComponent
   ],

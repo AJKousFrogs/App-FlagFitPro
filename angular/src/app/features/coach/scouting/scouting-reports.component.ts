@@ -13,7 +13,7 @@ import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -117,7 +117,7 @@ interface ScoutingReport {
     Dialog,
     InputText,
     Select,
-    Table,
+    TableModule,
     TableModule,
     Tabs,
     TabList,

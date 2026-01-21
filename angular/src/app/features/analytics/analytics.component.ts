@@ -18,7 +18,7 @@ import { PrimeTemplate } from "primeng/api";
 import { UIChart } from "primeng/chart"; // Still needed for @ViewChildren type
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TabPanel, Tabs } from "primeng/tabs";
 import { Tooltip } from "primeng/tooltip";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -101,7 +101,6 @@ interface DevelopmentGoal {
     Dialog,
     PrimeTemplate,
     ProgressBar,
-    Table,
     TableModule,
     StatusTagComponent,
     Tooltip,

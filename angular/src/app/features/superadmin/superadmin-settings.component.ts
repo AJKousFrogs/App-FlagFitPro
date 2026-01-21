@@ -10,7 +10,7 @@ import { RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { ButtonComponent } from "../../shared/components/button/button.component";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SuperadminService } from "../../core/services/superadmin.service";
@@ -33,7 +33,7 @@ interface SuperadminUser {
     RouterLink,
     FormsModule,
     Card,
-    Table,
+    TableModule,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,

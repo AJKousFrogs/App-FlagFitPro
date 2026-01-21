@@ -28,7 +28,7 @@ import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
@@ -135,7 +135,7 @@ const STATUS_CONFIG: Record<
     InputText,
     RadioButton,
     Select,
-    Table,
+    TableModule,
     TableModule,
     StatusTagComponent,
     Textarea,

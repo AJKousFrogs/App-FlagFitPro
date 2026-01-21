@@ -22,7 +22,7 @@ import { Divider } from "primeng/divider";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
 import { Skeleton } from "primeng/skeleton";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { COLORS } from "../../../core/constants/app.constants";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -104,7 +104,7 @@ interface TeamOption {
     ProgressBar,
     Select,
     Skeleton,
-    Table,
+    TableModule,
     TableModule,
     StatusTagComponent,
     MainLayoutComponent,

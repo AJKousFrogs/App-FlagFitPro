@@ -24,7 +24,7 @@ import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
@@ -125,7 +125,7 @@ interface Play {
     InputNumber,
     DatePicker,
     Select,
-    Table,
+    TableModule,
     TableModule,
     RadioButton,
     MainLayoutComponent,

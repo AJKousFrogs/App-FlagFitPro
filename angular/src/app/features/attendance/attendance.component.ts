@@ -19,7 +19,7 @@ import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -57,7 +57,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     CommonModule,
     FormsModule,
     Card,
-    Table,
+    TableModule,
     TableModule,
     StatusTagComponent,
     Dialog,

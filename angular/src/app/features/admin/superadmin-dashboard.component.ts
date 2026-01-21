@@ -16,7 +16,7 @@ import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Toast } from "primeng/toast";
@@ -89,7 +89,7 @@ interface AdminTeam {
     PrimeTemplate,
     InputText,
     Select,
-    Table,
+    TableModule,
     TableModule,
     Tag,
     Toast,

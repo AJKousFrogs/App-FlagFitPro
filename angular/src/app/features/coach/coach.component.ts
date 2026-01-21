@@ -8,7 +8,7 @@ import {
 import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
@@ -65,7 +65,7 @@ interface TeamMember {
     IconButtonComponent,
 
     LazyChartComponent,
-    Table,
+    TableModule,
     TableModule,
     Tag,
     StatusTagComponent,

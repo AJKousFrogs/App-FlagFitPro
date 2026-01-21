@@ -16,7 +16,7 @@ import {
   accountStatusSeverityMap,
   getMappedStatusSeverity
 } from "../../shared/utils/status.utils";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { InputText } from "primeng/inputtext";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -42,7 +42,7 @@ interface Team {
     FormsModule,
     Card,
     StatusTagComponent,
-    Table,
+    TableModule,
     TableModule,
     InputText,
     MainLayoutComponent,

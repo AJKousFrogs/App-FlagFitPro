@@ -30,7 +30,7 @@ import { MessageService , PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { firstValueFrom } from "rxjs";
@@ -125,7 +125,7 @@ const PAYMENT_METHOD_CONFIG: Record<
     Card,
     Dialog,
     PrimeTemplate,
-    Table,
+    TableModule,
     TableModule,
     Toast,
     MainLayoutComponent,

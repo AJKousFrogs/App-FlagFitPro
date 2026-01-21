@@ -24,7 +24,7 @@ import { Dialog } from "primeng/dialog";
 
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { Table, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
@@ -127,7 +127,7 @@ const POSITIONS = [
     Dialog,
     ProgressBar,
     Select,
-    Table,
+    TableModule,
     TableModule,
     StatusTagComponent,
     Textarea,
