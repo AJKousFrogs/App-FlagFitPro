@@ -66,7 +66,7 @@
     "@angular/youtube-player": "^21.0.0",
     "@primeuix/themes": "^2.0.2",
     "@standard-schema/spec": "^1.0.0",
-    "@supabase/supabase-js": "^2.89.0",
+    "@supabase/supabase-js": "^2.91.0",
     "chart.js": "^4.5.1",
     "date-fns": "^4.1.0",
     "express": "^5.1.0",
