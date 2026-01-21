@@ -234,7 +234,7 @@
                   }
 
                   <!-- Protocol Blocks (ordered by ViewModel) -->
-                  <div class="protocol-blocks" data-testid="protocol-blocks">
+                  <div class="protocol-blocks" data-testid="protocol-blocks" #protocolBlocks>
                     @for (blockType of vm.blocksDisplayed; track blockType) {
                       @if (getBlockByType(p, blockType); as block) {
                         <app-protocol-block

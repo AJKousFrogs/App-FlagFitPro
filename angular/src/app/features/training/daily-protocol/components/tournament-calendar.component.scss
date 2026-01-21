@@ -6,8 +6,8 @@
 @use "styles/mixins" as *;
 
 .tournament-calendar {
-  background: var(--surface-primary, #fff);
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  background: var(--surface-primary);
+  border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-xl, var(--ds-font-size-xs));
   padding: var(--space-4, var(--ds-font-size-md));
   margin-bottom: var(--space-4, var(--ds-font-size-md));
@@ -24,14 +24,14 @@
   margin: 0;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   gap: var(--ds-space-2);
 }
 
 .calendar-header h3 i {
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
 }
 
 /* Tournament List */
@@ -42,7 +42,7 @@
 }
 
 .tournament-card {
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-lg, 8px);
   padding: var(--space-3, var(--ds-font-size-xs));
   transition:
@@ -54,13 +54,13 @@
 // @see docs/CARD_SHELL_CONTRACT.md §2.8
 
 .tournament-card.peak-event {
-  border-color: var(--primitive-error-300, #fca5a5);
-  background: var(--primitive-error-50, #fef2f2);
+  border-color: var(--primitive-error-300);
+  background: var(--primitive-error-50);
 }
 
 .tournament-card.in-taper {
-  border-color: var(--primitive-warning-300, #fcd34d);
-  background: var(--primitive-warning-50, #fffbeb);
+  border-color: var(--primitive-warning-300);
+  background: var(--primitive-warning-50);
 }
 
 .tournament-main {
@@ -76,7 +76,7 @@
 
 .tournament-name {
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
   display: flex;
   align-items: center;
   gap: var(--ds-space-2);
@@ -95,7 +95,7 @@
   align-items: center;
   gap: var(--ds-space-1);
   font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .tournament-details .detail i {
@@ -106,29 +106,29 @@
 .tournament-countdown {
   text-align: center;
   padding: var(--ds-space-2) var(--ds-space-3);
-  background: var(--primitive-neutral-100, #f5f5f5);
+  background: var(--primitive-neutral-100);
   border-radius: var(--radius-md, 6px);
   min-width: var(--badge-min-width-md);
 }
 
 .peak-event .tournament-countdown {
-  background: var(--primitive-error-100, #fee2e2);
+  background: var(--primitive-error-100);
 }
 
 .countdown-number {
   font-size: var(--ds-font-size-xl);
   font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
   line-height: var(--ds-line-height-1);
 }
 
 .countdown-label {
   font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .countdown-label.past {
-  color: var(--color-text-muted, #a3a3a3);
+  color: var(--color-text-muted);
 }
 
 /* Taper Banners */
@@ -138,10 +138,10 @@
   gap: var(--ds-space-2);
   margin-top: var(--space-3, var(--ds-font-size-xs));
   padding: var(--ds-space-2) var(--ds-space-3);
-  background: var(--primitive-warning-100, #fef3c7);
+  background: var(--primitive-warning-100);
   border-radius: var(--radius-md, 6px);
   font-size: var(--ds-font-size-sm);
-  color: var(--primitive-warning-800, #92400e);
+  color: var(--primitive-warning-800);
 }
 
 .taper-banner i {
@@ -154,7 +154,7 @@
   gap: var(--ds-space-2);
   margin-top: var(--space-2, 8px);
   font-size: var(--ds-font-size-xs);
-  color: var(--color-text-muted, #a3a3a3);
+  color: var(--color-text-muted);
 }
 
 /* Actions */
@@ -163,7 +163,7 @@
   justify-content: flex-end;
   gap: var(--ds-space-1);
   margin-top: var(--space-2, 8px);
-  border-top: 1px solid var(--primitive-neutral-100, #f5f5f5);
+  border-top: 1px solid var(--primitive-neutral-100);
   padding-top: var(--space-2, 8px);
 }
 
@@ -176,13 +176,13 @@
   gap: var(--space-3, var(--ds-font-size-xs));
   padding: var(--space-6, var(--ds-font-size-2xl));
   text-align: center;
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .loading-state i,
 .empty-state i {
   font-size: var(--ds-font-size-2xl);
-  color: var(--color-text-muted, #a3a3a3);
+  color: var(--color-text-muted);
 }
 
 /* Form */
@@ -201,7 +201,7 @@
 .form-field label {
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .form-row {
@@ -218,7 +218,7 @@
 
 .checkbox-group label {
   font-weight: var(--ds-font-weight-regular);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
 }
 
 @include respond-to(sm) {

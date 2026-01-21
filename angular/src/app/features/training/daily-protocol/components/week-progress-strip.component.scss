@@ -8,8 +8,8 @@
 @include stat-block;
 
 .week-progress-strip {
-  background: var(--surface-primary, #fff);
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  background: var(--surface-primary);
+  border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-xl, var(--ds-font-size-xs));
   padding: var(--space-4, var(--ds-font-size-md)) var(--space-5, var(--ds-font-size-xl));
   display: flex;
@@ -38,18 +38,18 @@
 }
 
 .day-item.today {
-  background: var(--ds-primary-green-light, #e6f4ec);
+  background: var(--ds-primary-green-light);
 }
 
 .day-name {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
   text-transform: var(--ds-text-transform-uppercase);
 }
 
 .day-item.today .day-name {
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
   font-weight: var(--ds-font-weight-semibold);
 }
 
@@ -65,40 +65,40 @@
 
 /* Status Colors */
 .status-complete .day-indicator {
-  background: var(--primitive-success-500, #22c55e);
-  color: white;
+  background: var(--primitive-success-500);
+  color: var(--color-text-on-primary);
 }
 
 .status-partial .day-indicator {
-  background: var(--primitive-warning-500, #f59e0b);
-  color: white;
+  background: var(--primitive-warning-500);
+  color: var(--color-text-on-primary);
 }
 
 .status-planned .day-indicator {
-  background: var(--primitive-neutral-200, #e5e5e5);
+  background: var(--primitive-neutral-200);
 }
 
 .status-planned .day-indicator .dot {
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
   border-radius: var(--radius-full, 9999px);
-  background: var(--primitive-neutral-400, #a3a3a3);
+  background: var(--primitive-neutral-400);
 }
 
 .status-rest .day-indicator {
-  background: var(--primitive-info-100, #dbeafe);
-  color: var(--primitive-info-500, #3b82f6);
+  background: var(--primitive-info-100);
+  color: var(--primitive-info-500);
 }
 
 .status-empty .day-indicator {
-  background: var(--primitive-neutral-100, #f5f5f5);
+  background: var(--primitive-neutral-100);
 }
 
 .status-empty .day-indicator .empty-dot {
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
   border-radius: var(--radius-full, 9999px);
-  background: var(--primitive-neutral-300, #d4d4d4);
+  background: var(--primitive-neutral-300);
 }
 
 .today-label {
@@ -106,7 +106,7 @@
   bottom: -4px;
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-bold);
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
   letter-spacing: var(--ds-letter-spacing-0-5px);
 }
 
@@ -115,7 +115,7 @@
   display: flex;
   gap: var(--space-4, var(--ds-font-size-md));
   padding-left: var(--space-4, var(--ds-font-size-md));
-  border-left: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  border-left: 1px solid var(--primitive-neutral-200);
 }
 
 .stat-item {
@@ -128,16 +128,16 @@
 .stat-block__value {
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-bold);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
 }
 
 .stat-item.streak .stat-block__value {
-  color: var(--primitive-warning-600, #d97706);
+  color: var(--primitive-warning-600);
 }
 
 .stat-block__label {
   font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 /* Mobile Adjustments */
@@ -160,7 +160,7 @@
     padding-left: 0;
     padding-top: var(--space-3, var(--ds-font-size-xs));
     border-left: none;
-    border-top: 1px solid var(--primitive-neutral-200, #e5e5e5);
+    border-top: 1px solid var(--primitive-neutral-200);
     justify-content: center;
   }
 }

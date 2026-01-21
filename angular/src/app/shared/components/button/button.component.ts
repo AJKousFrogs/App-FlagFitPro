@@ -274,7 +274,9 @@ export class ButtonComponent {
     // Icon-only buttons must have an aria-label
     if (this.iconOnly()) {
       // Development warning only - will be stripped in production
+      // Using console.warn here is acceptable for dev-time accessibility warnings
       if (typeof ngDevMode !== "undefined" && ngDevMode) {
+        // eslint-disable-next-line no-console
         console.warn(
           "[app-button] Icon-only buttons require an ariaLabel for accessibility.",
         );

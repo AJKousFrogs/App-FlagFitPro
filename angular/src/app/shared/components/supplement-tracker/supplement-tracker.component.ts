@@ -15,11 +15,13 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
   signal
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { PrimeTemplate } from "primeng/api";
 import { Checkbox } from "primeng/checkbox";
@@ -37,23 +39,10 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { API_ENDPOINTS, ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { ToastService } from "../../../core/services/toast.service";
+import { SupplementDisplay } from "../../../core/models/supplement.models";
 
-export interface Supplement {
-  id: string;
-  name: string;
-  dosage?: string;
-  timing: "morning" | "pre-workout" | "post-workout" | "evening" | "anytime";
-  category:
-    | "vitamin"
-    | "mineral"
-    | "amino"
-    | "performance"
-    | "recovery"
-    | "other";
-  taken: boolean;
-  takenAt?: Date;
-  notes?: string;
-}
+// Use SupplementDisplay for component display logic
+type Supplement = SupplementDisplay;
 
 // Default supplements for athletes
 const DEFAULT_SUPPLEMENTS: Supplement[] = [
@@ -204,6 +193,7 @@ export class SupplementTrackerComponent implements OnInit {
   private apiService = inject(ApiService);
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
 
   // State
   isLoading = signal(true);
@@ -289,6 +279,7 @@ export class SupplementTrackerComponent implements OnInit {
     // Try to fetch user's supplement list from API
     this.apiService
       .get<{ supplements: SupplementResponse[] }>("/api/supplements")
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
           if (
@@ -351,6 +342,7 @@ export class SupplementTrackerComponent implements OnInit {
           takenAt: new Date().toISOString(),
           notes: `Dosage: ${supplement.dosage || "standard"}`,
         })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.toastService.success(`${supplement.name} logged ✓`);

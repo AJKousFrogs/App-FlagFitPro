@@ -288,14 +288,14 @@
   min-width: 22px;
   height: 22px;
   padding: 0 calc(var(--ds-space-3) / 2);
-  background: var(--surface-100, #f3f4f6);
-  border: 1px solid var(--surface-border, #e5e7eb);
+  background: var(--surface-100, var(--surface-secondary));
+  border: 1px solid var(--surface-border, var(--color-border-primary));
   border-radius: 6px;
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
   line-height: var(--ds-line-height-1);
-  box-shadow: 0 1px 0 var(--surface-border, #e5e7eb);
+  box-shadow: 0 1px 0 var(--surface-border, var(--color-border-primary));
 }
 
 // PrimeNG input group hover override moved to _exceptions.scss (DS-EXC-004)

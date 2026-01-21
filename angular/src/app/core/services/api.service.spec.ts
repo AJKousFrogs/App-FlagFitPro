@@ -13,7 +13,8 @@ import {
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { ApiService, ApiResponse, API_ENDPOINTS } from "./api.service";
+import { ApiService, API_ENDPOINTS } from "./api.service";
+import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
 
 // Mock LoggerService

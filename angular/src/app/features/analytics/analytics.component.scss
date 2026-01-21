@@ -1742,7 +1742,7 @@
     gap: var(--space-2);
 
     i {
-      color: #ffd700;
+      color: var(--color-medal-gold);
       font-size: var(--ds-font-size-md);
     }
 
@@ -1809,19 +1809,19 @@
 
   &.gold {
     .badge-count {
-      color: #d4a500;
+      color: var(--color-medal-gold-text);
     }
   }
 
   &.silver {
     .badge-count {
-      color: #888;
+      color: var(--color-medal-silver-text);
     }
   }
 
   &.bronze {
     .badge-count {
-      color: #cd7f32;
+      color: var(--color-medal-bronze);
     }
   }
 }
@@ -1857,18 +1857,18 @@
   }
 
   &.gold {
-    border-left-color: #ffd700;
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(255, 215, 0, 0.05) 100%);
+    border-left-color: var(--color-medal-gold);
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(var(--color-medal-gold-rgb), 0.05) 100%);
   }
 
   &.silver {
-    border-left-color: #c0c0c0;
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(192, 192, 192, 0.05) 100%);
+    border-left-color: var(--color-medal-silver);
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(var(--color-medal-silver-rgb), 0.05) 100%);
   }
 
   &.bronze {
-    border-left-color: #cd7f32;
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(205, 127, 50, 0.05) 100%);
+    border-left-color: var(--color-medal-bronze);
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(var(--color-medal-bronze-rgb), 0.05) 100%);
   }
 }
 

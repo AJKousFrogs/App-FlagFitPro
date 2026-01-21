@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   OnInit,
   computed,
   inject,
-  signal
+  signal,
+  viewChild
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -164,7 +166,7 @@ interface Category {
         }
 
         <!-- Exercises Grid -->
-        <div class="exercises-grid">
+        <div class="exercises-grid" #exercisesGrid>
           @for (exercise of paginatedExercises(); track exercise.id) {
             <div class="exercise-card ds-card-surface">
               <div class="card-header">
@@ -482,6 +484,9 @@ export class ExerciseLibraryComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   private logger = inject(LoggerService);
 
+  // ViewChild references for scroll operations
+  private readonly exercisesGrid = viewChild<ElementRef<HTMLElement>>('exercisesGrid');
+
   searchQuery = "";
   selectedCategory = signal<string>("all");
   showDetailsDialog = signal(false);
@@ -635,9 +640,9 @@ export class ExerciseLibraryComponent implements OnInit {
     this.currentPage = event.page ?? 0;
     this.itemsPerPage = event.rows ?? 8;
     // Scroll to the exercises grid, not the top of the page
-    const grid = document.querySelector('.exercises-grid');
-    if (grid) {
-      grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const gridEl = this.exercisesGrid();
+    if (gridEl) {
+      gridEl.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 

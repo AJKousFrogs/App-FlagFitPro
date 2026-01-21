@@ -4,9 +4,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   inject,
   OnInit,
   signal,
+  viewChild,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -129,7 +131,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
       </div>
     </section>
 
-    <section class="features-section">
+    <section class="features-section" #featuresSection>
       <div class="features-container">
         <div class="features-header">
           <h2 class="features-title">Everything You Need to Excel</h2>
@@ -220,6 +222,9 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 export class LandingComponent implements OnInit {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+
+  // ViewChild reference for scroll operation
+  private readonly featuresSection = viewChild<ElementRef<HTMLElement>>('featuresSection');
 
   // Signals for reactive state
   isLoaded = signal(false);
@@ -355,9 +360,9 @@ export class LandingComponent implements OnInit {
 
   scrollToFeatures(event: Event): void {
     event.preventDefault();
-    const featuresSection = document.querySelector(".features-section");
-    if (featuresSection) {
-      featuresSection.scrollIntoView({ behavior: "smooth" });
+    const sectionEl = this.featuresSection();
+    if (sectionEl) {
+      sectionEl.nativeElement.scrollIntoView({ behavior: "smooth" });
     }
   }
 

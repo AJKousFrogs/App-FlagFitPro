@@ -19,8 +19,10 @@ import {
   computed,
   ChangeDetectionStrategy,
   input,
-  output
+  output,
+  DestroyRef
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ButtonComponent } from "../button/button.component";
@@ -301,6 +303,7 @@ export class DailyReadinessComponent implements OnInit {
   private toastService = inject(ToastService);
   private logger = inject(LoggerService);
   private profileCompletionService = inject(ProfileCompletionService);
+  private destroyRef = inject(DestroyRef);
 
   readonly mode = input<"modal" | "card">("modal");
   readonly showOnInit = input<boolean>(true);
@@ -383,7 +386,9 @@ export class DailyReadinessComponent implements OnInit {
     try {
       const today = new Date().toISOString().split("T")[0];
       // Check daily_wellness_checkin via API (single source of truth)
-      this.api.get(`/api/wellness-checkin?date=${today}`).subscribe({
+      this.api.get(`/api/wellness-checkin?date=${today}`).pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe({
         next: (response) => {
           if (response?.data === null || !response?.data) {
             this.dialogVisible = true;
@@ -448,7 +453,9 @@ export class DailyReadinessComponent implements OnInit {
     };
 
     // POST to /api/wellness-checkin (UPSERT on user_id, checkin_date)
-    this.api.post("/api/wellness-checkin", wellnessPayload).subscribe({
+    this.api.post("/api/wellness-checkin", wellnessPayload).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: async () => {
         // Save weight if provided (updates both body_measurements for history + users for profile)
         if (state.weight_kg && state.weight_kg > 0) {

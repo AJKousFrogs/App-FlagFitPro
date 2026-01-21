@@ -5,11 +5,13 @@ import {
   ChangeDetectorRef,
   Component,
   DestroyRef,
+  ElementRef,
   HostListener,
   OnInit,
   computed,
   inject,
-  signal
+  signal,
+  viewChild
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -384,7 +386,7 @@ interface ApiPollVoteResponse {
             }
 
             <!-- Posts Feed -->
-            <div class="posts-feed">
+            <div class="posts-feed" #postsFeed>
               @for (post of filteredPosts(); track post.id; let i = $index) {
                 <div
                   class="post-card"
@@ -831,6 +833,10 @@ export class CommunityComponent implements OnInit {
   private toastService = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
 
+  // Template references using Angular viewChild signals
+  readonly createPostCard = viewChild<ElementRef<HTMLElement>>("createPostCard");
+  readonly postsFeed = viewChild<ElementRef<HTMLElement>>("postsFeed");
+
   newPostContent = "";
   posts = signal<Post[]>([]);
   leaderboard = signal<
@@ -1106,13 +1112,15 @@ export class CommunityComponent implements OnInit {
   }
 
   scrollToCreatePost(): void {
-    const element = document.querySelector(".create-post-card");
-    element?.scrollIntoView({ behavior: "smooth", block: "start" });
-    // Focus the textarea
-    setTimeout(() => {
-      const textarea = element?.querySelector("textarea");
-      textarea?.focus();
-    }, 500);
+    const cardRef = this.createPostCard();
+    if (cardRef) {
+      cardRef.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Focus the textarea
+      setTimeout(() => {
+        const textarea = cardRef.nativeElement.querySelector("textarea");
+        textarea?.focus();
+      }, 500);
+    }
   }
 
   async createPost(): Promise<void> {
@@ -1794,8 +1802,8 @@ export class CommunityComponent implements OnInit {
 
       // Scroll to posts feed
       setTimeout(() => {
-        const feedElement = document.querySelector(".posts-feed");
-        feedElement?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const feedRef = this.postsFeed();
+        feedRef?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
     }
   }

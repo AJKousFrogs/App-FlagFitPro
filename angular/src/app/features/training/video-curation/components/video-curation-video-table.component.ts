@@ -18,7 +18,7 @@ import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 
 import { IconButtonComponent } from "../../../../shared/components/button/icon-button.component";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
@@ -42,6 +42,7 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    Table,
     TableModule,
     StatusTagComponent,
     InputText,

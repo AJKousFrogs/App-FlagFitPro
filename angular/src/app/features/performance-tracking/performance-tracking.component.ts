@@ -16,7 +16,7 @@ import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 import { COLORS, UI_LIMITS } from "../../core/constants/app.constants";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
@@ -156,6 +156,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
     FormsModule,
     Card,
     LazyChartComponent,
+    Table,
     TableModule,
     Dialog,
     PrimeTemplate,

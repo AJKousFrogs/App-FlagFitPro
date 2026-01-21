@@ -24,8 +24,10 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
-  OnInit
+  OnInit,
+  DestroyRef
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -276,6 +278,7 @@ export class WellnessScoreDisplayComponent implements OnInit {
   private wellnessService = inject(WellnessService);
   private router = inject(Router);
   private logger = inject(LoggerService);
+  private destroyRef = inject(DestroyRef);
 
   // State
   loading = signal(true);
@@ -311,7 +314,9 @@ export class WellnessScoreDisplayComponent implements OnInit {
   loadWellnessData(): void {
     this.loading.set(true);
 
-    this.wellnessService.getWellnessData("7d").subscribe({
+    this.wellnessService.getWellnessData("7d").pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
       next: (response) => {
         if (response.success && response.data && response.data.length > 0) {
           const latestData = response.data[0];

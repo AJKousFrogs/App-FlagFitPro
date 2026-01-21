@@ -9,6 +9,7 @@
  * - onClick handlers for drill-down
  */
 
+import { isDevMode } from "@angular/core";
 import {
   ChartOptions,
   TooltipItem,
@@ -576,7 +577,12 @@ export function exportChartAsPNG(
 ): void {
   // Defensive guard: ensure chart and canvas exist
   if (!chart?.canvas) {
-    console.warn("[exportChartAsPNG] Chart or canvas not available");
+    // Note: LoggerService not available in utility function context
+    // Dev mode warning is acceptable for debugging
+    if (isDevMode()) {
+      // eslint-disable-next-line no-console
+      console.warn("[exportChartAsPNG] Chart or canvas not available");
+    }
     return;
   }
   const canvas = chart.canvas;
@@ -606,7 +612,9 @@ export function resetChartZoom(chart: Chart): void {
 export function toggleDataset(chart: Chart, datasetIndex: number): void {
   // Defensive guard: ensure chart methods exist
   if (!chart || typeof chart.isDatasetVisible !== "function") {
-    console.warn("[toggleDataset] Chart instance not properly initialized");
+    if (isDevMode()) {
+      console.warn("[toggleDataset] Chart instance not properly initialized");
+    }
     return;
   }
   if (chart.isDatasetVisible(datasetIndex)) {
@@ -625,7 +633,10 @@ export function updateChartFontSizes(chart: Chart): void {
   // Defensive guard: ensure chart and its methods exist
   // This prevents "t.clear is not a function" when chart isn't fully initialized
   if (!chart || typeof chart.update !== "function") {
-    console.warn("[updateChartFontSizes] Chart instance not properly initialized");
+    if (isDevMode()) {
+      // eslint-disable-next-line no-console
+      console.warn("[updateChartFontSizes] Chart instance not properly initialized");
+    }
     return;
   }
   const options = chart.options;

@@ -28,7 +28,7 @@ import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { Textarea } from "primeng/textarea";
@@ -135,6 +135,7 @@ const STATUS_CONFIG: Record<
     InputText,
     RadioButton,
     Select,
+    Table,
     TableModule,
     StatusTagComponent,
     Textarea,
@@ -624,7 +625,7 @@ const STATUS_CONFIG: Record<
         [modal]="true"
         [style]="{ width: '90vw', maxWidth: '500px' }"
       >
-        <div class="invite-form">
+        <form #inviteFormRef="ngForm" class="invite-form">
           <div class="form-field">
             <label for="inviteEmail">Email Address *</label>
             <input
@@ -632,13 +633,27 @@ const STATUS_CONFIG: Record<
               type="email"
               pInputText
               [(ngModel)]="inviteForm.email"
+              name="email"
+              #emailField="ngModel"
+              required
+              email
               placeholder="player@email.com"
               class="w-full"
+              [class.ng-invalid]="emailField.invalid && emailField.touched"
             />
+            @if (emailField.invalid && emailField.touched) {
+              <small class="p-error">
+                @if (emailField.errors?.['required']) {
+                  Email address is required
+                } @else if (emailField.errors?.['email']) {
+                  Please enter a valid email address
+                }
+              </small>
+            }
           </div>
 
           <div class="form-field">
-            <label>Role</label>
+            <label>Role *</label>
             <div class="role-options">
               <div class="role-option">
                 <p-radioButton
@@ -646,6 +661,7 @@ const STATUS_CONFIG: Record<
                   value="player"
                   [(ngModel)]="inviteForm.role"
                   inputId="rolePlayer"
+                  required
                 ></p-radioButton>
                 <label for="rolePlayer">Player</label>
               </div>
@@ -676,8 +692,10 @@ const STATUS_CONFIG: Record<
               pTextarea
               id="inviteMessage"
               [(ngModel)]="inviteForm.message"
+              name="message"
               placeholder="Welcome to the team!"
               rows="3"
+              maxlength="500"
             ></textarea>
           </div>
 
@@ -685,7 +703,7 @@ const STATUS_CONFIG: Record<
             <i class="pi pi-info-circle"></i>
             Invitation expires after 7 days
           </p>
-        </div>
+        </form>
 
         <ng-template pTemplate="footer">
           <app-button variant="secondary" (clicked)="showInviteDialog = false"
@@ -693,7 +711,8 @@ const STATUS_CONFIG: Record<
           >
           <app-button
             iconLeft="pi-send"
-            [disabled]="!inviteForm.email"
+            [disabled]="inviteFormRef.invalid || isSendingInvite()"
+            [loading]="isSendingInvite()"
             (clicked)="sendInvitation()"
             >Send Invitation</app-button
           >
@@ -858,6 +877,7 @@ export class TeamManagementComponent implements OnInit {
   });
   readonly selectedPlayer = signal<TeamMember | null>(null);
   readonly isLoading = signal(true);
+  readonly isSendingInvite = signal(false);
 
   // Filter state
   searchQuery = "";
@@ -993,7 +1013,9 @@ export class TeamManagementComponent implements OnInit {
   }
 
   sendInvitation(): void {
-    if (!this.inviteForm.email) return;
+    if (!this.inviteForm.email || this.isSendingInvite()) return;
+
+    this.isSendingInvite.set(true);
 
     const newInvitation: Invitation = {
       id: `inv-${Date.now()}`,
@@ -1004,20 +1026,27 @@ export class TeamManagementComponent implements OnInit {
       status: "pending",
     };
 
-    this.invitations.update((inv) => [...inv, newInvitation]);
-
     this.api.post("/api/team/invite", this.inviteForm).subscribe({
       next: () => {
+        this.invitations.update((inv) => [...inv, newInvitation]);
         this.messageService.add({
           severity: "success",
           summary: "Invitation Sent",
           detail: `Invitation sent to ${this.inviteForm.email}`,
         });
+        this.showInviteDialog = false;
+        this.isSendingInvite.set(false);
       },
-      error: (err) => this.logger.error("Failed to send invitation", err),
+      error: (err) => {
+        this.logger.error("Failed to send invitation", err);
+        this.messageService.add({
+          severity: "error",
+          summary: "Failed to Send",
+          detail: "Could not send the invitation. Please try again.",
+        });
+        this.isSendingInvite.set(false);
+      },
     });
-
-    this.showInviteDialog = false;
   }
 
   resendInvitation(inv: Invitation): void {

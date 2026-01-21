@@ -115,9 +115,10 @@ import { ButtonComponent } from "../button/button.component";
       margin: 0;
     }
 
-    :host ::ng-deep .slow-operation-progress {
-      height: 8px;
-      border-radius: var(--radius-full);
+    /* Progress bar styling - uses PrimeNG's styleClass prop */
+    :host {
+      --p-progressbar-height: 8px;
+      --p-progressbar-border-radius: var(--radius-full);
     }
   `],
 })

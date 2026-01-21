@@ -96,7 +96,7 @@
 | Document | Description |
 |----------|-------------|
 | [AUDITS.md](./AUDITS.md) | **Consolidated audit report** - Code quality, refactoring, conflicts |
-| [CODEBASE_AUDIT_FINDINGS.md](./CODEBASE_AUDIT_FINDINGS.md) | Angular patterns, loading states, API routing |
+| [AUDIT_ROUND_2_FIXES.md](../AUDIT_ROUND_2_FIXES.md) | Codebase audit fixes and consolidation |
 | [UI_DESIGN_CONSISTENCY_AUDIT.md](./UI_DESIGN_CONSISTENCY_AUDIT.md) | Design token compliance audit |
 | [DESIGN_SYSTEM_COMPLIANCE_CHECK.md](./DESIGN_SYSTEM_COMPLIANCE_CHECK.md) | Design system rules compliance check |
 

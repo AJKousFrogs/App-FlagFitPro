@@ -1,7 +1,8 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { map, catchError } from "rxjs/operators";
-import { ApiService, ApiResponse } from "./api.service";
+import { ApiService } from "./api.service";
+import { ApiResponse } from "../models/common.models";
 import { LoggerService } from "./logger.service";
 
 export interface DepthChartTemplate {

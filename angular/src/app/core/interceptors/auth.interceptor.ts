@@ -2,10 +2,12 @@ import { HttpInterceptorFn } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { from, switchMap } from "rxjs";
 import { AuthService } from "../services/auth.service";
+import { LoggerService } from "../services/logger.service";
 import { SupabaseService } from "../services/supabase.service";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const logger = inject(LoggerService);
   const supabaseService = inject(SupabaseService);
 
   // For Supabase REST API requests, use apikey header and fetch fresh token
@@ -73,7 +75,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (hasSession) {
         // Session exists but token retrieval failed - this is an error condition
         // Log warning but proceed - backend will return 401 which error interceptor handles
-        console.warn(
+        logger.warn(
           "[AuthInterceptor] Session exists but token unavailable - request may fail",
         );
       }

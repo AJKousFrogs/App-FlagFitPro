@@ -316,7 +316,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                 itemSize="80"
                 class="messages-scroll"
               >
-                <div class="messages-list">
+                <div class="messages-list" #messagesList>
                   @for (message of messages(); track message.id) {
                     <div
                       class="message"
@@ -810,6 +810,8 @@ import { getInitials } from "../../shared/utils/format.utils";
 export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   // Angular 21: Use viewChild() signal instead of @ViewChild()
   scrollViewport = viewChild.required<ElementRef>("scrollViewport");
+  // Template reference for messages list scrolling
+  readonly messagesList = viewChild<ElementRef<HTMLElement>>("messagesList");
 
   // Services
   private toastService = inject(ToastService);
@@ -1330,9 +1332,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
 
   scrollToBottom(): void {
     setTimeout(() => {
-      const messagesList = document.querySelector(".messages-list");
-      if (messagesList) {
-        messagesList.scrollTop = messagesList.scrollHeight;
+      const messagesRef = this.messagesList();
+      if (messagesRef) {
+        messagesRef.nativeElement.scrollTop = messagesRef.nativeElement.scrollHeight;
       }
     }, 100);
   }

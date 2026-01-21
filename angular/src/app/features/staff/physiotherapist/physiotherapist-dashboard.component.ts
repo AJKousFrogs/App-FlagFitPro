@@ -17,7 +17,7 @@ import { IconButtonComponent } from "../../../shared/components/button/icon-butt
 
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -201,6 +201,7 @@ const RTP_PHASES = [
     Dialog,
     ProgressBar,
     Select,
+    Table,
     TableModule,
     Tabs,
     TabList,

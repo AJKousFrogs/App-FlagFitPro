@@ -102,7 +102,7 @@
 .progress-indicator {
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .expand-toggle {
@@ -185,7 +185,7 @@
 /* Simple List View (Wireframe Style) */
 .exercise-list-item {
   padding: var(--ds-space-2) 0;
-  border-bottom: 1px solid var(--primitive-neutral-100, #f5f5f5);
+  border-bottom: 1px solid var(--primitive-neutral-100);
 }
 
 .exercise-list-item:last-child {
@@ -198,7 +198,7 @@
   gap: var(--space-3, var(--ds-font-size-xs));
   cursor: pointer;
   font-size: var(--ds-font-size-md);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
   user-select: none;
   width: 100%;
 }
@@ -213,7 +213,7 @@
 }
 
 .exercise-checkbox:has(input:checked) {
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .exercise-checkbox:has(input:checked) .exercise-name,
@@ -227,7 +227,7 @@
 }
 
 .exercise-prescription {
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
   font-size: var(--ds-font-size-sm);
   white-space: nowrap;
 }

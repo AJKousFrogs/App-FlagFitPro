@@ -5,13 +5,7 @@ import { catchError, map } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
 import { type MinimalSchema, validateApiResponse } from "../schemas/api-response.schema";
-
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
+import { ApiResponse } from "../models/common.models";
 
 /**
  * Options for API requests with optional schema validation.

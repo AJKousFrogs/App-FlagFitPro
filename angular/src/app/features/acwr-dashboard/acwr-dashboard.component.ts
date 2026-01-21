@@ -31,10 +31,12 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   OnInit,
   computed,
   inject,
   signal,
+  viewChild,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { AcwrAlertsService } from "../../core/services/acwr-alerts.service";
@@ -103,7 +105,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 
       <!-- Content -->
       @else {
-        <div class="acwr-dashboard">
+        <div class="acwr-dashboard" #dashboardContainer>
           <!-- Header -->
           <div class="dashboard-header">
             <h1>
@@ -570,6 +572,9 @@ export class AcwrDashboardComponent implements OnInit {
     OwnershipTransitionService,
   );
   private logger = inject(LoggerService);
+
+  // Angular 21: viewChild signal for PDF export dashboard reference
+  private readonly dashboardElement = viewChild<ElementRef>('dashboardContainer');
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(false);
@@ -1182,9 +1187,9 @@ export class AcwrDashboardComponent implements OnInit {
         import("html2canvas"),
       ]);
 
-      const dashboard = document.querySelector(
-        ".acwr-dashboard",
-      ) as HTMLElement;
+      // Use viewChild reference instead of document.querySelector
+      const dashboardRef = this.dashboardElement();
+      const dashboard = dashboardRef?.nativeElement as HTMLElement;
       if (!dashboard) {
         this.toastService.error(TOAST.ERROR.DASHBOARD_NOT_FOUND);
         return;

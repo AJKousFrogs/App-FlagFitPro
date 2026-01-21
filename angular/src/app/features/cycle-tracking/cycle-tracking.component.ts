@@ -29,7 +29,7 @@ import { Message } from "primeng/message";
 
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
@@ -298,6 +298,7 @@ const RETENTION_OPTIONS = [
     Message,
     RadioButton,
     Select,
+    Table,
     TableModule,
     Textarea,
     Toast,

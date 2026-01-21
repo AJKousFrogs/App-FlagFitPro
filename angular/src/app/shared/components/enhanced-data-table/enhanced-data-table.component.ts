@@ -9,6 +9,7 @@ import {
   viewChild,
   ElementRef,
   HostListener,
+  inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -21,6 +22,7 @@ import { ButtonComponent } from "../button/button.component";
 import { IconButtonComponent } from "../button/icon-button.component";
 import { Checkbox } from "primeng/checkbox";
 import { MultiSelect } from "primeng/multiselect";
+import { LoggerService } from "../../../core/services/logger.service";
 
 /**
  * Generic table row type with selection support
@@ -361,6 +363,8 @@ export interface TablePreferences {
   styleUrl: "./enhanced-data-table.component.scss",
 })
 export class EnhancedDataTableComponent {
+  private readonly logger = inject(LoggerService);
+
   // Inputs
   data = input<TableRow[]>([]);
   columns = input<EnhancedTableColumn[]>([]);
@@ -615,7 +619,7 @@ export class EnhancedDataTableComponent {
         this.columnOrderState.set(prefs.columnOrder);
       }
     } catch (e) {
-      console.error("Failed to load table preferences", e);
+      this.logger.error("Failed to load table preferences", e);
     }
   }
 

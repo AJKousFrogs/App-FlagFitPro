@@ -5,8 +5,9 @@
  * This prevents ~80 KB from being in the initial bundle
  */
 
-import { Injectable, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { TIMEOUTS } from "../constants/app.constants";
+import { LoggerService } from "./logger.service";
 
 export interface ScreenshotOptions {
   scale?: number;
@@ -32,11 +33,10 @@ type Html2CanvasFunction = (
   providedIn: "root",
 })
 export class LazyScreenshotService {
+  private logger = inject(LoggerService);
   private html2canvas: Html2CanvasFunction | null = null;
   private loading = signal(false);
   private loaded = signal(false);
-
-  constructor() {}
 
   /**
    * Load html2canvas library
@@ -62,7 +62,7 @@ export class LazyScreenshotService {
       this.html2canvas = module.default;
       this.loaded.set(true);
     } catch (error) {
-      console.error("Failed to load html2canvas:", error);
+      this.logger.error("Failed to load html2canvas:", error);
       throw new Error("Failed to load screenshot library");
     } finally {
       this.loading.set(false);
@@ -94,7 +94,7 @@ export class LazyScreenshotService {
       const canvas = await this.html2canvas(element, defaultOptions);
       return canvas;
     } catch (error) {
-      console.error("Failed to capture screenshot:", error);
+      this.logger.error("Failed to capture screenshot:", error);
       throw new Error("Failed to capture screenshot");
     }
   }

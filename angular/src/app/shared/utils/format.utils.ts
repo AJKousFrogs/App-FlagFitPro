@@ -223,12 +223,20 @@ export function pluralize(
 
 /**
  * Generate initials from name
+ * Handles empty/null names gracefully
  * @example
  * getInitials('John Doe') // 'JD'
+ * getInitials('John') // 'J'
+ * getInitials('') // ''
  */
 export function getInitials(name: string, maxLength: number = 2): string {
+  if (!name || !name.trim()) {
+    return "";
+  }
   return name
+    .trim()
     .split(" ")
+    .filter((word) => word.length > 0)
     .map((word) => word.charAt(0).toUpperCase())
     .slice(0, maxLength)
     .join("");

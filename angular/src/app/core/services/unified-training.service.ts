@@ -46,7 +46,8 @@ import { ReadinessService } from "./readiness.service";
 import { SupabaseService } from "./supabase.service";
 import { TrainingDataService } from "./training-data.service";
 import { WellnessService } from "./wellness.service";
-// Note: WellnessCheckinData and ApiResponseWrapper are defined locally below
+// Note: WellnessCheckinData is defined locally below
+// ApiResponseWrapper is deprecated - use ApiResponse from core/models/common.models
 
 /**
  * Wellness checkin record from database

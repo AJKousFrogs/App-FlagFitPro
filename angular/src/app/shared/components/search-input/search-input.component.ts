@@ -2,10 +2,12 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   forwardRef,
   input,
   output,
   signal,
+  viewChild,
 } from "@angular/core";
 import {
   ControlValueAccessor,
@@ -40,6 +42,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
     <span class="p-input-icon-left ds-search-input">
       <i class="pi pi-search ds-search-icon" aria-hidden="true"></i>
       <input
+        #inputField
         pInputText
         [id]="inputId() || null"
         [name]="name() || null"
@@ -79,6 +82,9 @@ export class SearchInputComponent implements ControlValueAccessor {
 
   cleared = output<void>();
 
+  // Angular 21: viewChild signal for DOM element reference
+  private readonly inputField = viewChild<ElementRef<HTMLInputElement>>('inputField');
+
   value = signal<string>("");
   private onChangeFn = (_value: string) => {};
   private onTouchedFn = () => {};
@@ -114,5 +120,13 @@ export class SearchInputComponent implements ControlValueAccessor {
 
   setDisabledState(_isDisabled: boolean): void {
     // Disabled is managed via input() for explicit control.
+  }
+
+  /**
+   * Focus the input field programmatically.
+   * Used by parent components to set focus on the search input.
+   */
+  focus(): void {
+    this.inputField()?.nativeElement?.focus();
   }
 }

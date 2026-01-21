@@ -69,21 +69,102 @@ export const VALIDATION = {
 
 /**
  * Application routes
+ * Single source of truth for all route paths
+ * Use these constants instead of hardcoding paths in router.navigate() and routerLink
  */
 export const ROUTES = {
+  // Public routes
   HOME: "/",
   LOGIN: "/login",
   REGISTER: "/register",
   RESET_PASSWORD: "/reset-password",
+  UPDATE_PASSWORD: "/update-password",
   VERIFY_EMAIL: "/verify-email",
+  AUTH_CALLBACK: "/auth-callback",
+  ACCEPT_INVITATION: "/accept-invitation",
+
+  // Main navigation
   DASHBOARD: "/dashboard",
+  PLAYER_DASHBOARD: "/player-dashboard",
+  COACH_DASHBOARD: "/coach-dashboard",
+  ATHLETE_DASHBOARD: "/athlete-dashboard",
+
+  // Training
+  TRAINING: "/training",
+  TRAINING_SCHEDULE: "/training/schedule",
+  TRAINING_LOG: "/training/log",
+  TRAINING_PROTOCOL: "/training/protocol",
+  TRAINING_SMART_FORM: "/training/smart-form",
+  TODAY: "/today",
+
+  // Analytics & Performance
+  ANALYTICS: "/analytics",
+  ACWR: "/acwr",
+  ACWR_DASHBOARD: "/acwr-dashboard",
+  PERFORMANCE_TRACKING: "/performance-tracking",
+  GAME_TRACKER: "/game-tracker",
+
+  // Team Management
+  ROSTER: "/roster",
+  DEPTH_CHART: "/depth-chart",
+  ATTENDANCE: "/attendance",
+  TEAM_WORKSPACE: "/team/workspace",
+  TEAM_CREATE: "/team/create",
+
+  // User
   PROFILE: "/profile",
   SETTINGS: "/settings",
-  TRAINING: "/training",
-  ANALYTICS: "/analytics",
-  ROSTER: "/roster",
-  GAME_TRACKER: "/game-tracker",
+  ONBOARDING: "/onboarding",
+
+  // Wellness
+  WELLNESS: "/wellness",
+  CYCLE_TRACKING: "/cycle-tracking",
+  SLEEP_DEBT: "/sleep-debt",
+  TRAVEL_RECOVERY: "/travel/recovery",
+
+  // Game
+  PLAYBOOK: "/playbook",
+  FILM_ROOM: "/film-room",
+  TOURNAMENTS: "/tournaments",
+
+  // Social
+  COMMUNITY: "/community",
+  CHAT: "/chat",
+
+  // Coach Features
+  COACH: "/coach",
+  COACH_ANALYTICS: "/coach/analytics",
+  COACH_TEAM_MANAGEMENT: "/coach/team-management",
+  COACH_PRACTICE_PLANNER: "/coach/practice-planner",
+  COACH_INJURY_MANAGEMENT: "/coach/injury-management",
+  COACH_KNOWLEDGE_BASE: "/coach/knowledge-base",
+  COACH_PROGRAM_BUILDER: "/coach/program-builder",
+  COACH_PLAYER_DEVELOPMENT: "/coach/player-development",
+  COACH_PAYMENT_MANAGEMENT: "/coach/payment-management",
+
+  // Staff
+  STAFF_NUTRITIONIST: "/staff/nutritionist",
+  STAFF_PHYSIOTHERAPIST: "/staff/physiotherapist",
+  STAFF_PSYCHOLOGY: "/staff/psychology",
+
+  // Admin
   ADMIN: "/admin",
+  SUPERADMIN: "/superadmin",
+  SUPERADMIN_DASHBOARD: "/superadmin/dashboard",
+  SUPERADMIN_USERS: "/superadmin/users",
+  SUPERADMIN_TEAMS: "/superadmin/teams",
+  SUPERADMIN_SETTINGS: "/superadmin/settings",
+
+  // Other
+  EQUIPMENT: "/equipment",
+  ACHIEVEMENTS: "/achievements",
+  EXERCISE_LIBRARY: "/exercise-library",
+  DATA_IMPORT: "/data-import",
+  RETURN_TO_PLAY: "/return-to-play",
+  HELP: "/help",
+  OFFICIALS: "/officials",
+  PAYMENTS: "/payments",
+  NOT_FOUND: "/404",
 } as const;
 
 /**

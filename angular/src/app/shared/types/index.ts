@@ -9,13 +9,9 @@
 
 /**
  * Generic API response wrapper
+ * @deprecated Use ApiResponse from core/models/common.models instead
  */
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: ApiError;
-  meta?: ResponseMeta;
-}
+export type ApiResponse<T> = import("../../core/models/common.models").ApiResponse<T>;
 
 export interface ApiError {
   code: string;

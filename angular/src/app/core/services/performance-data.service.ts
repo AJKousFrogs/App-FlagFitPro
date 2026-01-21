@@ -40,30 +40,8 @@ export interface MeasurementsSummary {
   };
 }
 
-// Supplement Interfaces
-export interface Supplement {
-  id?: number;
-  userId?: string;
-  name: string;
-  dosage?: string;
-  taken: boolean;
-  date: string;
-  timeOfDay?:
-    | "morning"
-    | "afternoon"
-    | "evening"
-    | "pre-workout"
-    | "post-workout";
-  notes?: string;
-  timestamp?: string;
-}
-
-export interface SupplementCompliance {
-  complianceRate: number;
-  totalDays: number;
-  missedDays: number;
-  bySupplement?: Record<string, { taken: number; missed: number }>;
-}
+// Supplement Interfaces - Import from canonical models
+import { Supplement, SupplementCompliance } from "../models/supplement.models";
 
 // Performance Test Interfaces
 export interface PerformanceTest {

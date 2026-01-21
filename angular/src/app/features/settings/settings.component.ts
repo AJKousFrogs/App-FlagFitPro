@@ -1851,7 +1851,8 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Scroll to a settings section smoothly
+   * Scroll to a settings section smoothly using Angular-friendly approach
+   * Uses ElementRef and querySelector through the component's element reference
    * @param sectionId The ID of the section to scroll to
    */
   scrollToSection(sectionId: string, event?: Event): void {
@@ -1861,9 +1862,19 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       event.stopPropagation();
     }
 
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    // Use setTimeout to ensure the DOM is stable before scrolling
+    setTimeout(() => {
+      // Use the component's ElementRef to find the section (stays within Angular's scope)
+      const settingsContainer = this.elementRef?.nativeElement;
+      if (settingsContainer) {
+        const element = settingsContainer.querySelector(`#${sectionId}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }, 0);
   }
+
+  // Inject ElementRef for scoped DOM queries
+  private elementRef = inject(ElementRef);
 }

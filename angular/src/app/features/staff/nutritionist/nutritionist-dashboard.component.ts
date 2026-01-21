@@ -16,7 +16,7 @@ import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
@@ -64,7 +64,8 @@ interface TrainingLoadData {
   trainingPhase: "off-season" | "pre-season" | "in-season" | "tournament";
 }
 
-interface SupplementCompliance {
+// Extended interface for nutritionist dashboard with additional fields
+interface NutritionistSupplementCompliance {
   athleteId: string;
   supplements: {
     name: string;
@@ -128,6 +129,7 @@ interface TournamentNutritionBrief {
     InputText,
     ProgressBar,
     Select,
+    Table,
     TableModule,
     Tabs,
     TabList,
@@ -815,7 +817,7 @@ export class NutritionistDashboardComponent implements OnInit {
   athletes = signal<AthleteNutritionData[]>([]);
   bodyCompositionData = signal<Map<string, BodyCompositionData>>(new Map());
   trainingLoadData = signal<Map<string, TrainingLoadData>>(new Map());
-  supplementCompliance = signal<SupplementCompliance[]>([]);
+  supplementCompliance = signal<NutritionistSupplementCompliance[]>([]);
   wellnessMetrics = signal<Map<string, WellnessMetrics>>(new Map());
   upcomingTournaments = signal<TournamentNutritionBrief[]>([]);
 
@@ -1102,7 +1104,7 @@ export class NutritionistDashboardComponent implements OnInit {
       );
 
       if (response?.data?.compliance) {
-        const supplements: SupplementCompliance[] =
+        const supplements: NutritionistSupplementCompliance[] =
           response.data.compliance.map((c) => ({
             athleteId: c.athleteId,
             overallComplianceRate: c.compliance,

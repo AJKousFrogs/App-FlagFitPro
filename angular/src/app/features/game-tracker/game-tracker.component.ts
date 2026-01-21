@@ -2,9 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   OnInit,
   inject,
-  signal
+  signal,
+  viewChild
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -22,7 +24,7 @@ import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 import { Textarea } from "primeng/textarea";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
@@ -123,6 +125,7 @@ interface Play {
     InputNumber,
     DatePicker,
     Select,
+    Table,
     TableModule,
     RadioButton,
     MainLayoutComponent,
@@ -145,6 +148,10 @@ export class GameTrackerComponent implements OnInit {
   private offlineQueue = inject(OfflineQueueService);
   private networkStatus = inject(NetworkStatusService);
   private logger = inject(LoggerService);
+
+  // ViewChild references for scroll operations
+  private readonly gamesListCard = viewChild<ElementRef<HTMLElement>>('gamesListCard');
+  private readonly playTrackerCard = viewChild<ElementRef<HTMLElement>>('playTrackerCard');
 
   showGameForm = signal(false);
   games = signal<Game[]>([]);
@@ -1008,8 +1015,8 @@ export class GameTrackerComponent implements OnInit {
 
   viewGames(): void {
     // Scroll to games list
-    const element = document.querySelector(".games-list-card");
-    element?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const element = this.gamesListCard();
+    element?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   viewGameDetails(game: Game): void {
@@ -1036,8 +1043,8 @@ export class GameTrackerComponent implements OnInit {
 
     // Scroll to play tracker
     setTimeout(() => {
-      const element = document.querySelector(".play-tracker-card");
-      element?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const element = this.playTrackerCard();
+      element?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
   }
 

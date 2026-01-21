@@ -432,6 +432,31 @@ export const DesignTokens = {
     lg: "1024px",
     xl: "1280px",
     "2xl": "1536px",
+    // Semantic aliases
+    mobile: "640px",
+    tablet: "768px",
+    desktop: "1024px",
+    wide: "1280px",
+  },
+  medal: {
+    gold: {
+      main: "#ffd700",
+      rgb: "255, 215, 0",
+      gradient: "linear-gradient(135deg, #ffd700 0%, #ffb347 100%)",
+      text: "#5c4a00",
+    },
+    silver: {
+      main: "#c0c0c0",
+      rgb: "192, 192, 192",
+      gradient: "linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%)",
+      text: "#4a4a4a",
+    },
+    bronze: {
+      main: "#cd7f32",
+      rgb: "205, 127, 50",
+      gradient: "linear-gradient(135deg, #cd7f32 0%, #d4a574 100%)",
+      text: "#3d2914",
+    },
   },
   containers: {
     sm: "640px",

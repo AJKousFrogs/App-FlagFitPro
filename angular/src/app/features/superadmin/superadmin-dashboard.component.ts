@@ -13,7 +13,7 @@ import { ButtonComponent } from "../../shared/components/button/button.component
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
@@ -31,6 +31,7 @@ import {
     FormsModule,
     Card,
     StatusTagComponent,
+    Table,
     TableModule,
     MainLayoutComponent,
     PageHeaderComponent,

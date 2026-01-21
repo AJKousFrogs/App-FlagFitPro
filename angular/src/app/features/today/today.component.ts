@@ -26,10 +26,12 @@ import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
+    ElementRef,
     computed,
     effect,
     inject,
-    signal
+    signal,
+    viewChild
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
@@ -832,48 +834,9 @@ interface QuickFormData {
       }
 
       /* --------------------------------------------------------------------------
-       QUICK CHECK-IN MODAL - Ensure footer is always visible
+       QUICK CHECK-IN MODAL - Styles moved to global exceptions file
+       See: angular/src/assets/styles/overrides/_exceptions.scss (DS-EXC-036b)
        -------------------------------------------------------------------------- */
-      :host ::ng-deep .quick-checkin-modal {
-        .p-dialog {
-          display: flex;
-          flex-direction: column;
-          max-height: 90vh;
-        }
-
-        .p-dialog-content {
-          flex: 1;
-          overflow-y: auto;
-          max-height: 60vh;
-        }
-
-        .p-dialog-footer {
-          flex-shrink: 0;
-          padding: var(--space-4) var(--space-5);
-          border-top: var(--border-1) solid var(--color-border-secondary);
-          background: var(--surface-primary);
-          display: flex;
-          justify-content: flex-end;
-          gap: var(--space-3);
-        }
-      }
-
-      @media (max-width: 480px) {
-        :host ::ng-deep .quick-checkin-modal {
-          .p-dialog {
-            max-height: 85vh;
-            margin: var(--space-3);
-          }
-
-          .p-dialog-content {
-            max-height: 50vh;
-          }
-
-          .p-dialog-footer {
-            padding: var(--space-3) var(--space-4);
-          }
-        }
-      }
 
       /* --------------------------------------------------------------------------
        CELEBRATION OVERLAY
@@ -1253,6 +1216,10 @@ export class TodayComponent {
   private readonly api = inject(ApiService);
   private readonly directApi = inject(DirectSupabaseApiService);
   private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
+
+  // Angular 21: viewChild signals for DOM element references
+  private readonly wellnessSection = viewChild<ElementRef>('wellnessSection');
+  private readonly protocolBlocks = viewChild<ElementRef>('protocolBlocks');
 
   // Environment flag for API routing
   private readonly useDirectSupabase = environment.useDirectSupabase;
@@ -2051,9 +2018,8 @@ export class TodayComponent {
   }
 
   scrollToWellness(): void {
-    document
-      .getElementById("wellness-section")
-      ?.scrollIntoView({ behavior: "smooth" });
+    const section = this.wellnessSection();
+    section?.nativeElement?.scrollIntoView({ behavior: "smooth" });
   }
 
   // ============================================================================
@@ -2394,9 +2360,13 @@ export class TodayComponent {
   }
 
   private scrollToFirstBlock(): void {
-    const firstBlock = document.querySelector("[data-block-type]");
-    if (firstBlock) {
-      firstBlock.scrollIntoView({ behavior: "smooth", block: "start" });
+    const blocksContainer = this.protocolBlocks();
+    if (blocksContainer?.nativeElement) {
+      // Query within the component's scoped element for the first block
+      const firstBlock = blocksContainer.nativeElement.querySelector("[data-block-type]");
+      if (firstBlock) {
+        firstBlock.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   }
 

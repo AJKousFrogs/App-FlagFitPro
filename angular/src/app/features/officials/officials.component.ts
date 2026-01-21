@@ -17,7 +17,7 @@ import { PrimeTemplate } from "primeng/api";
 import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
@@ -60,6 +60,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
     CommonModule,
     FormsModule,
     Card,
+    Table,
     TableModule,
     StatusTagComponent,
     Dialog,

@@ -184,7 +184,7 @@
         width: var(--space-6);
         height: var(--space-6);
         border-radius: 50%;
-        background: white;
+        background: var(--color-text-on-primary);
         color: var(--ds-primary-green-hover);
         font-size: var(--ds-font-size-xs);
         font-weight: var(--ds-font-weight-bold);
@@ -323,7 +323,7 @@
       width: var(--touch-target-sm); /* 36px */
       height: var(--touch-target-sm);
       border-radius: 50%;
-      background: white;
+      background: var(--color-text-on-primary);
       color: var(--ds-primary-green-hover);
       font-size: var(--ds-font-size-xs);
       font-weight: var(--ds-font-weight-bold);

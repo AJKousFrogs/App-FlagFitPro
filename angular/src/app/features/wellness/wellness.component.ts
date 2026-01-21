@@ -2,8 +2,10 @@ import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
+    ElementRef,
     inject,
-    signal
+    signal,
+    viewChild
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -306,6 +308,7 @@ interface WellnessMetric {
           <app-card
             title="Daily Wellness Check-in"
             class="checkin-card"
+            #checkinCard
             [flush]="true"
           >
             <div class="checkin-form">
@@ -494,6 +497,9 @@ export class WellnessComponent {
   private readonly confidenceService = inject(DataConfidenceService);
   private readonly offlineQueue = inject(OfflineQueueService);
   private readonly profileService = inject(ProfileCompletionService);
+
+  // Template reference for scrolling to check-in card
+  readonly checkinCard = viewChild<ElementRef<HTMLElement>>("checkinCard");
 
   /** Cycle tracking is only shown to female athletes */
   readonly isFemaleAthlete = this.profileService.isFemale;
@@ -779,9 +785,9 @@ export class WellnessComponent {
   }
 
   openCheckIn(): void {
-    // Scroll to check-in form
-    const element = document.querySelector(".checkin-card");
-    element?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Scroll to check-in form using Angular viewChild reference
+    const cardRef = this.checkinCard();
+    cardRef?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   submitCheckIn(): void {

@@ -171,6 +171,7 @@
     <!-- Active Game Play Tracker -->
     @if (activeGameId()) {
       <app-card
+        #playTrackerCard
         [title]="'Track Play - ' + getActiveGameOpponent()"
         class="play-tracker-card"
       >
@@ -693,6 +694,7 @@
 
     <!-- Games List -->
     <app-card
+      #gamesListCard
       [title]="isCoachOrAdmin() ? 'Team & Personal Games' : 'My Games'"
       class="games-list-card"
     >

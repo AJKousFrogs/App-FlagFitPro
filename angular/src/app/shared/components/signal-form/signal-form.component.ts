@@ -12,6 +12,8 @@ import {
   computed,
   output,
   inject,
+  viewChild,
+  ElementRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -50,6 +52,7 @@ import { toLogContext } from "../../../core/services/logger.service";
         <div class="p-field mb-3">
           <label for="name" [class.required]="true"> Name </label>
           <input
+            #nameInput
             id="name"
             type="text"
             pInputText
@@ -84,6 +87,7 @@ import { toLogContext } from "../../../core/services/logger.service";
         <div class="p-field mb-3">
           <label for="email" [class.required]="true"> Email </label>
           <input
+            #emailInput
             id="email"
             type="email"
             pInputText
@@ -118,6 +122,7 @@ import { toLogContext } from "../../../core/services/logger.service";
         <div class="p-field mb-3">
           <label for="password" [class.required]="true"> Password </label>
           <input
+            #passwordInput
             id="password"
             type="password"
             pInputText
@@ -180,6 +185,11 @@ export class SignalFormComponent {
   private logger = inject(LoggerService);
   password = model<string>("");
 
+  // ViewChild references for focusing (Angular 21 signal-based)
+  private nameInput = viewChild<ElementRef<HTMLInputElement>>("nameInput");
+  private emailInput = viewChild<ElementRef<HTMLInputElement>>("emailInput");
+  private passwordInput = viewChild<ElementRef<HTMLInputElement>>("passwordInput");
+
   // Form submission event
   formSubmit = output<{ name: string; email: string; password: string }>();
 
@@ -230,14 +240,14 @@ export class SignalFormComponent {
     }
   }
 
-  // Accessibility: Focus first invalid field
+  // Accessibility: Focus first invalid field using viewChild references
   private focusFirstInvalidField(): void {
     if (this.nameField.showError()) {
-      document.getElementById("name")?.focus();
+      this.nameInput()?.nativeElement.focus();
     } else if (this.emailField.showError()) {
-      document.getElementById("email")?.focus();
+      this.emailInput()?.nativeElement.focus();
     } else if (this.passwordField.showError()) {
-      document.getElementById("password")?.focus();
+      this.passwordInput()?.nativeElement.focus();
     }
   }
 }

@@ -8,6 +8,7 @@
  * DEPRECATED: ErrorHandlerUtil.extractErrorMessage (use getErrorMessage instead)
  */
 
+import { isDevMode } from "@angular/core";
 import {
   ERROR_MESSAGES,
   HTTP_ERROR_MESSAGES,
@@ -259,7 +260,7 @@ export function logError(
 
   if (logger) {
     logger.error(logMessage, error);
-  } else {
+  } else if (isDevMode()) {
     console.error(logMessage, error);
   }
 }

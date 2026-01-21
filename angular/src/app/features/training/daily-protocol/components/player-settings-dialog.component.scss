@@ -19,15 +19,15 @@
   margin: 0;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
   padding-bottom: var(--space-2, 8px);
-  border-bottom: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  border-bottom: 1px solid var(--primitive-neutral-200);
 }
 
 .section-description {
   margin: 0;
   font-size: var(--ds-font-size-sm);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .form-field {
@@ -39,22 +39,22 @@
 .form-field label {
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--color-text-secondary, #737373);
+  color: var(--color-text-secondary);
 }
 
 .field-hint {
   font-size: var(--ds-font-size-xs);
-  color: var(--color-text-muted, #a3a3a3);
+  color: var(--color-text-muted);
 }
 
 .recovery-note {
-  color: var(--ds-primary-green, #089949);
+  color: var(--ds-primary-green);
 }
 
 /* Practice Slots */
 .practice-slot {
-  background: var(--primitive-neutral-50, #fafafa);
-  border: 1px solid var(--primitive-neutral-200, #e5e5e5);
+  background: var(--primitive-neutral-50);
+  border: 1px solid var(--primitive-neutral-200);
   border-radius: var(--radius-md, 6px);
   padding: var(--space-3, var(--ds-font-size-xs));
 }
@@ -68,7 +68,7 @@
 
 .day-name {
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
 }
 
 .slot-times {
@@ -87,7 +87,7 @@
 
 .time-field label {
   font-size: var(--ds-font-size-xs);
-  color: var(--color-text-muted, #a3a3a3);
+  color: var(--color-text-muted);
 }
 
 .time-field input {
@@ -148,5 +148,5 @@
 
 .checkbox-group label {
   font-weight: var(--ds-font-weight-regular);
-  color: var(--color-text-primary, #171717);
+  color: var(--color-text-primary);
 }

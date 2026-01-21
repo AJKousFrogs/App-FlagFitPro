@@ -375,18 +375,10 @@ export interface TodayScheduleItem {
 
 /**
  * Supplement entry
+ * @deprecated Use SupplementEntry from core/models/supplement.models instead
+ * Re-exported for backward compatibility
  */
-export interface SupplementEntry {
-  name: string;
-  taken: boolean;
-  timeOfDay:
-    | "morning"
-    | "afternoon"
-    | "evening"
-    | "pre-workout"
-    | "post-workout";
-  dosage?: string;
-}
+export { SupplementEntry } from "./supplement.models";
 
 // ============================================================================
 // TEAM MEMBER TYPES
@@ -512,27 +504,17 @@ export interface ApiErrorResponse {
 
 /**
  * Standard API response wrapper
+ * @deprecated Use ApiResponse from core/models/common.models instead
+ * Re-exported for backward compatibility
  */
-export interface ApiResponseWrapper<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-  timestamp?: string;
-}
+export type ApiResponseWrapper<T> = import("./common.models").ApiResponse<T>;
 
 /**
  * Paginated API response
+ * @deprecated Use PaginatedResponse from core/models/common.models instead
+ * Re-exported for backward compatibility
  */
-export interface PaginatedApiResponse<T> extends ApiResponseWrapper<T[]> {
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasMore: boolean;
-  };
-}
+export type PaginatedApiResponse<T> = import("./common.models").PaginatedResponse<T>;
 
 /**
  * Batch operation result

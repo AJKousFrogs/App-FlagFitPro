@@ -293,18 +293,18 @@
   font-weight: var(--ds-font-weight-semibold);
 
   &.gold {
-    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
-    color: #5c4a00;
+    background: var(--color-medal-gold-gradient);
+    color: var(--color-medal-gold-text);
   }
 
   &.silver {
-    background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-    color: #4a4a4a;
+    background: var(--color-medal-silver-gradient);
+    color: var(--color-medal-silver-text);
   }
 
   &.bronze {
-    background: linear-gradient(135deg, #cd7f32 0%, #d4a574 100%);
-    color: #3d2914;
+    background: var(--color-medal-bronze-gradient);
+    color: var(--color-medal-bronze-text);
   }
 }
 
@@ -377,18 +377,18 @@
   color: var(--color-text-secondary);
 
   &.gold {
-    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
-    color: #5c4a00;
+    background: var(--color-medal-gold-gradient);
+    color: var(--color-medal-gold-text);
   }
 
   &.silver {
-    background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-    color: #4a4a4a;
+    background: var(--color-medal-silver-gradient);
+    color: var(--color-medal-silver-text);
   }
 
   &.bronze {
-    background: linear-gradient(135deg, #cd7f32 0%, #d4a574 100%);
-    color: #3d2914;
+    background: var(--color-medal-bronze-gradient);
+    color: var(--color-medal-bronze-text);
   }
 }
 

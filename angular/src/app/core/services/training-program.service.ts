@@ -155,14 +155,8 @@ export interface WarmupProtocol {
   notes: string;
 }
 
-interface ApiResponse<T> {
-  data: T;
-  meta?: {
-    requestId: string;
-    timestamp: string;
-    count: number;
-  };
-}
+// Note: This service uses ApiResponse from api.service.ts (canonical)
+// The local interface was removed as it's not used
 
 // ============================================================================
 // SERVICE

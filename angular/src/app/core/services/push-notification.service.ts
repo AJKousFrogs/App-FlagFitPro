@@ -11,6 +11,7 @@ import { LoggerService } from "./logger.service";
 import { toLogContext } from "./logger.service";
 import { ToastService } from "./toast.service";
 import { TOAST } from "../constants/toast-messages.constants";
+import { environment } from "../../../environments/environment";
 
 export interface PushNotificationOptions {
   title: string;
@@ -64,8 +65,10 @@ export class PushNotificationService {
       this._isSubscribed(),
   );
 
-  // VAPID public key - In production, get this from environment variables
+  // VAPID public key - from environment configuration
+  // Fallback to hardcoded value for development only
   private readonly VAPID_PUBLIC_KEY =
+    environment.vapidPublicKey ||
     "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U";
 
   constructor() {

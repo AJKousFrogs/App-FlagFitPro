@@ -4,6 +4,7 @@ import { Observable, of } from "rxjs";
 import { map, catchError, tap, shareReplay } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
+import { ApiResponse } from "../models/common.models";
 
 /**
  * ExerciseDB Exercise interface
@@ -106,16 +107,15 @@ export interface ExerciseApprovalData {
   coaching_cues?: string[];
 }
 
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
+// Service-specific response interface (extends canonical ApiResponse)
+// This includes ExerciseDB-specific fields like exercises, filters, etc.
+interface ExerciseDBApiResponse<T> extends ApiResponse<T> {
   exercises?: T;
   filters?: T;
   logs?: T;
   stats?: ImportStats;
   exercise?: ExerciseDBExercise;
   count?: number;
-  error?: string;
 }
 
 @Injectable({
@@ -221,7 +221,7 @@ export class ExerciseDBService {
     }
 
     return this.http
-      .get<ApiResponse<ExerciseDBExercise[]>>(
+      .get<ExerciseDBApiResponse<ExerciseDBExercise[]>>(
         `${this.baseUrl}/api/exercisedb`,
         {
           params: httpParams,
@@ -245,7 +245,7 @@ export class ExerciseDBService {
     if (!this.filtersCache$) {
       this.filtersCache$ = this.http
         .get<
-          ApiResponse<ExerciseDBFilters>
+          ExerciseDBApiResponse<ExerciseDBFilters>
         >(`${this.baseUrl}/api/exercisedb/filters`)
         .pipe(
           map((response) => {
@@ -285,7 +285,7 @@ export class ExerciseDBService {
 
     return this.http
       .get<
-        ApiResponse<ExerciseDBExercise[]>
+        ExerciseDBApiResponse<ExerciseDBExercise[]>
       >(`${this.baseUrl}/api/exercisedb/search`, { params: httpParams })
       .pipe(
         map((response) => response.exercises || []),
@@ -310,7 +310,7 @@ export class ExerciseDBService {
 
     return this.http
       .post<
-        ApiResponse<ImportStats>
+        ExerciseDBApiResponse<ImportStats>
       >(`${this.baseUrl}/api/exercisedb/import`, params)
       .pipe(
         map((response) => ({
@@ -346,7 +346,7 @@ export class ExerciseDBService {
   }> {
     return this.http
       .post<
-        ApiResponse<ExerciseDBExercise>
+        ExerciseDBApiResponse<ExerciseDBExercise>
       >(`${this.baseUrl}/api/exercisedb/approve/${exerciseId}`, approvalData)
       .pipe(
         map((response) => ({
@@ -368,7 +368,7 @@ export class ExerciseDBService {
    */
   getImportLogs(): Observable<ImportLog[]> {
     return this.http
-      .get<ApiResponse<ImportLog[]>>(`${this.baseUrl}/api/exercisedb/logs`)
+      .get<ExerciseDBApiResponse<ImportLog[]>>(`${this.baseUrl}/api/exercisedb/logs`)
       .pipe(
         map((response) => (response.logs as ImportLog[]) || []),
         catchError((error) => {

@@ -17,12 +17,14 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   computed,
   inject,
   output,
   signal
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { firstValueFrom } from "rxjs";
@@ -497,6 +499,7 @@ export class MorningBriefingComponent implements OnInit {
   private apiService = inject(ApiService);
   private dailyTrainingService = inject(DailyTrainingService);
   private wellnessService = inject(WellnessService);
+  private destroyRef = inject(DestroyRef);
 
   // Outputs
   checkInComplete = output<void>();
@@ -553,25 +556,28 @@ export class MorningBriefingComponent implements OnInit {
 
   private loadDailyTrainingPlan(): void {
     this.isLoadingPlan.set(true);
-    this.dailyTrainingService.getDailyTraining().subscribe({
-      next: (response) => {
-        if (response && response.todaysPractice) {
-          this.todaysPlan.set({
-            sessionType: response.todaysPractice.sessionType,
-            duration: response.todaysPractice.totalDuration,
-            focus: response.todaysPractice.focus,
-            phase: response.trainingStatus.phase || "Foundation",
-          });
-        }
-        this.isLoadingPlan.set(false);
-      },
-      error: (err) => {
-        this.logger.error("Error loading daily training plan:", err);
-        // Fallback or default
-        this.todaysPlan.set(null);
-        this.isLoadingPlan.set(false);
-      },
-    });
+    this.dailyTrainingService
+      .getDailyTraining()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          if (response && response.todaysPractice) {
+            this.todaysPlan.set({
+              sessionType: response.todaysPractice.sessionType,
+              duration: response.todaysPractice.totalDuration,
+              focus: response.todaysPractice.focus,
+              phase: response.trainingStatus.phase || "Foundation",
+            });
+          }
+          this.isLoadingPlan.set(false);
+        },
+        error: (err) => {
+          this.logger.error("Error loading daily training plan:", err);
+          // Fallback or default
+          this.todaysPlan.set(null);
+          this.isLoadingPlan.set(false);
+        },
+      });
   }
 
   expand(): void {

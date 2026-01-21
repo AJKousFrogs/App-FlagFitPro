@@ -20,9 +20,11 @@ import {
   effect,
   ElementRef,
   viewChild,
+  inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ChartSkeletonComponent } from "../chart-skeleton/chart-skeleton.component";
+import { LoggerService } from "../../../core/services/logger.service";
 
 export interface ChartDatasetConfig {
   label?: string;
@@ -122,6 +124,8 @@ interface ChartInstance {
   ],
 })
 export class LazyChartComponent implements OnInit, OnDestroy {
+  private readonly logger = inject(LoggerService);
+
   // Canvas reference for Chart.js
   chartCanvas = viewChild<ElementRef<HTMLCanvasElement>>("chartCanvas");
 
@@ -173,7 +177,7 @@ export class LazyChartComponent implements OnInit, OnDestroy {
       // Wait for canvas to be available in next tick
       setTimeout(() => this.initChart(), 0);
     } catch (error) {
-      console.error("Failed to load Chart.js:", error);
+      this.logger.error("Failed to load Chart.js:", error);
       this.loading.set(false);
       this.hasError.set(true);
     }
@@ -219,7 +223,7 @@ export class LazyChartComponent implements OnInit, OnDestroy {
         } as import("chart.js").ChartOptions,
       }) as unknown as ChartInstance;
     } catch (error) {
-      console.error("Failed to initialize chart:", error);
+      this.logger.error("Failed to initialize chart:", error);
       this.hasError.set(true);
     }
   }

@@ -18,13 +18,11 @@ import { ApiService } from "./api.service";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
+import { ApiResponse } from "../models/common.models";
 
-export interface DirectApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-}
+// Service-specific response interface (extends canonical ApiResponse)
+// DirectSupabaseApiService uses the same structure as canonical ApiResponse
+export type DirectApiResponse<T = unknown> = ApiResponse<T>;
 
 // Protocol block types
 interface ProtocolBlock {

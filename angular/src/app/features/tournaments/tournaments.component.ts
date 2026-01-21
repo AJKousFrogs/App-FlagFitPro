@@ -2,6 +2,7 @@ import { CommonModule, DecimalPipe } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   OnInit,
   inject,
   signal
@@ -1464,6 +1465,7 @@ export class TournamentsComponent implements OnInit {
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
   private logger = inject(LoggerService);
+  private elementRef = inject(ElementRef);
 
   // Computed signals from service
   tournaments = this.tournamentService.tournaments;
@@ -1837,7 +1839,8 @@ export class TournamentsComponent implements OnInit {
   }
 
   scrollToTournament(id: string): void {
-    const element = document.querySelector(`[data-id="${id}"]`);
+    // Use scoped query within component's element
+    const element = this.elementRef.nativeElement.querySelector(`[data-id="${id}"]`);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
     }

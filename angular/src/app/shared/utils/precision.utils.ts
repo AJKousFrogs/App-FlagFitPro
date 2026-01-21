@@ -201,8 +201,18 @@ export function calculateACWRRatio(
 }
 
 /**
- * Format number for display with specified decimal places.
- * Ensures consistent formatting across the app.
+ * Format number for display with specified decimal places and null safety.
+ * Ensures consistent formatting across the app with proper fallback handling.
+ *
+ * NOTE: This is different from format.utils.ts formatNumber() which adds thousands separators.
+ * Use this version when you need:
+ * - Null/undefined safety with fallback
+ * - Fixed decimal places without thousands separators
+ * - ACWR calculations and precision-critical displays
+ *
+ * Use format.utils.ts formatNumber() when you need:
+ * - Thousands separators (e.g., "1,234.56")
+ * - General number formatting
  *
  * @param value - The number to format
  * @param decimals - Number of decimal places (default: 2)
@@ -210,10 +220,11 @@ export function calculateACWRRatio(
  * @returns Formatted string
  *
  * @example
- * formatNumber(1.5, 2)       // "1.50"
- * formatNumber(NaN, 2, '-')  // "-"
+ * formatNumberSafe(1.5, 2)       // "1.50"
+ * formatNumberSafe(NaN, 2, '-')  // "-"
+ * formatNumberSafe(null, 2)      // "—"
  */
-export function formatNumber(
+export function formatNumberSafe(
   value: number | null | undefined,
   decimals: number = 2,
   fallback: string = "—",
@@ -223,3 +234,9 @@ export function formatNumber(
   }
   return value.toFixed(decimals);
 }
+
+/**
+ * @deprecated Use formatNumberSafe() instead for clarity
+ * Kept for backward compatibility
+ */
+export const formatNumber = formatNumberSafe;

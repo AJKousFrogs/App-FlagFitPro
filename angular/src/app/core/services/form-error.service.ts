@@ -9,12 +9,14 @@
  * Evidence-Based: WCAG 2.1 Success Criterion 3.3.1, 3.3.3
  */
 
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
+import { LoggerService } from "./logger.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class FormErrorService {
+  private logger = inject(LoggerService);
   /**
    * Scroll to a form field and focus it
    *
@@ -43,7 +45,7 @@ export class FormErrorService {
     }
 
     if (!element) {
-      console.warn(`[FormErrorService] Could not find field: ${fieldId}`);
+      this.logger.warn(`[FormErrorService] Could not find field: ${fieldId}`);
       return;
     }
 

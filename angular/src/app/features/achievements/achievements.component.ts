@@ -21,7 +21,7 @@ import { MessageService , PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { Toast } from "primeng/toast";
@@ -266,6 +266,7 @@ const CATEGORY_LABELS: Record<
     Card,
     ProgressBar,
     Select,
+    Table,
     TableModule,
     StatusTagComponent,
     Toast,

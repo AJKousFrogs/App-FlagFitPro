@@ -26,7 +26,7 @@ import { InputNumber } from "primeng/inputnumber";
 import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import {
@@ -161,6 +161,7 @@ const PHASE_PRESETS = [
     InputText,
     ProgressBar,
     Select,
+    Table,
     TableModule,
     StatusTagComponent,
     Textarea,

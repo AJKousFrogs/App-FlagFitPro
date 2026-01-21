@@ -26,7 +26,7 @@ import { InputText } from "primeng/inputtext";
 import { ProgressBar } from "primeng/progressbar";
 import { RadioButton } from "primeng/radiobutton";
 import { Select } from "primeng/select";
-import { TableModule } from "primeng/table";
+import { Table, TableModule } from "primeng/table";
 
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import {
@@ -126,6 +126,7 @@ const COMPARE_OPTIONS = [
     ProgressBar,
     RadioButton,
     Select,
+    Table,
     TableModule,
     StatusTagComponent,
     Textarea,

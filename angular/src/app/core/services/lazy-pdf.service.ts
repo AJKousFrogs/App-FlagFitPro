@@ -5,8 +5,9 @@
  * This prevents ~150 KB of libraries from being in the initial bundle
  */
 
-import { Injectable, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { TIMEOUTS } from "../constants/app.constants";
+import { LoggerService } from "./logger.service";
 
 export interface PDFExportOptions {
   filename?: string;
@@ -44,12 +45,11 @@ type Html2CanvasFunction = (
   providedIn: "root",
 })
 export class LazyPdfService {
+  private logger = inject(LoggerService);
   private jsPDF: JsPDFConstructor | null = null;
   private html2canvas: Html2CanvasFunction | null = null;
   private loading = signal(false);
   private loaded = signal(false);
-
-  constructor() {}
 
   /**
    * Load jsPDF and html2canvas libraries
@@ -82,7 +82,7 @@ export class LazyPdfService {
       this.html2canvas = html2canvasModule.default;
       this.loaded.set(true);
     } catch (error) {
-      console.error("Failed to load PDF libraries:", error);
+      this.logger.error("Failed to load PDF libraries:", error);
       throw new Error("Failed to load PDF export libraries");
     } finally {
       this.loading.set(false);
@@ -139,7 +139,7 @@ export class LazyPdfService {
       // Save PDF
       pdf.save(filename);
     } catch (error) {
-      console.error("Failed to export PDF:", error);
+      this.logger.error("Failed to export PDF:", error);
       throw new Error("Failed to generate PDF");
     }
   }
@@ -201,7 +201,7 @@ export class LazyPdfService {
 
       pdf.save(filename);
     } catch (error) {
-      console.error("Failed to export PDF:", error);
+      this.logger.error("Failed to export PDF:", error);
       throw new Error("Failed to generate PDF");
     }
   }

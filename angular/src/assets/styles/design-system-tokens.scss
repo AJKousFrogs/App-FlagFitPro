@@ -1502,6 +1502,34 @@ body.light-theme {
   --breakpoint-2xl: 1536px;
 
   /* ================================
+     SEMANTIC BREAKPOINTS
+     Human-readable breakpoint aliases
+     ================================ */
+  --breakpoint-mobile: var(--breakpoint-sm); /* 640px - Mobile devices */
+  --breakpoint-tablet: var(--breakpoint-md); /* 768px - Tablet devices */
+  --breakpoint-desktop: var(--breakpoint-lg); /* 1024px - Desktop */
+  --breakpoint-wide: var(--breakpoint-xl); /* 1280px - Wide screens */
+
+  /* ================================
+     MEDAL COLORS
+     Achievement/ranking color palette
+     ================================ */
+  --color-medal-gold: #ffd700;
+  --color-medal-gold-rgb: 255, 215, 0;
+  --color-medal-gold-gradient: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+  --color-medal-gold-text: #5c4a00; /* Dark text for gold background */
+
+  --color-medal-silver: #c0c0c0;
+  --color-medal-silver-rgb: 192, 192, 192;
+  --color-medal-silver-gradient: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+  --color-medal-silver-text: #4a4a4a; /* Dark text for silver background */
+
+  --color-medal-bronze: #cd7f32;
+  --color-medal-bronze-rgb: 205, 127, 50;
+  --color-medal-bronze-gradient: linear-gradient(135deg, #cd7f32 0%, #d4a574 100%);
+  --color-medal-bronze-text: #3d2914; /* Dark text for bronze background */
+
+  /* ================================
      SAFE AREA INSETS (iOS/Android)
      For notch, home indicator, etc.
      ================================ */

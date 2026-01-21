@@ -10,8 +10,10 @@
  * - Other critical constant relationships
  */
 
+import { isDevMode, inject } from "@angular/core";
 import { WELLNESS } from "./wellness.constants";
 import { TRAINING } from "./app.constants";
+import { LoggerService } from "../services/logger.service";
 
 /**
  * Validates that weights sum to expected value (default 1.0)
@@ -120,10 +122,12 @@ function isDevelopment(): boolean {
 
 // Run validation in development mode only
 // This code will be tree-shaken in production builds
-if (isDevelopment()) {
+if (isDevMode()) {
   try {
     validateAllConstants();
   } catch (error) {
+    // Use console.error here since LoggerService may not be initialized yet
+    // This is a bootstrap-time validation, so console is acceptable
     console.error("❌ Constants validation failed:", error);
     throw error;
   }

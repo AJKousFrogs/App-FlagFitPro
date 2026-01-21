@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   HostListener,
   inject,
@@ -13,7 +14,7 @@ import {
   viewChild,
 } from "@angular/core";
 
-import { toSignal } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { NavigationEnd, Router, RouterModule } from "@angular/router";
 import { MenuItem } from "primeng/api";
 import { Avatar } from "primeng/avatar";
@@ -79,6 +80,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private trainingStatsService = inject(TrainingStatsCalculationService);
   private weatherService = inject(WeatherService);
   private confirmDialog = inject(ConfirmDialogService);
+  private destroyRef = inject(DestroyRef);
 
   // Angular 21: Use viewChild() signal instead of @ViewChild()
   notificationsPanel = viewChild<NotificationsPanelComponent>("notificationsPanel");
@@ -420,27 +422,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private loadUserStats(): void {
     // Fetch real training stats from the service
-    this.trainingStatsService.getTrainingStats().subscribe({
-      next: (stats) => {
-        // Calculate level based on total sessions (simple formula: 1 level per 10 sessions)
-        const level = Math.floor(stats.totalSessions / 10);
+    this.trainingStatsService
+      .getTrainingStats()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (stats) => {
+          // Calculate level based on total sessions (simple formula: 1 level per 10 sessions)
+          const level = Math.floor(stats.totalSessions / 10);
 
-        this.userStats.set({
-          trainingSessions: stats.totalSessions || 0,
-          streak: stats.currentStreak || 0,
-          level: level,
-        });
-      },
-      error: (err) => {
-        this.logger.error("Failed to load user stats:", err);
-        // Keep default zeros on error
-        this.userStats.set({
-          trainingSessions: 0,
-          streak: 0,
-          level: 0,
-        });
-      },
-    });
+          this.userStats.set({
+            trainingSessions: stats.totalSessions || 0,
+            streak: stats.currentStreak || 0,
+            level: level,
+          });
+        },
+        error: (err) => {
+          this.logger.error("Failed to load user stats:", err);
+          // Keep default zeros on error
+          this.userStats.set({
+            trainingSessions: 0,
+            streak: 0,
+            level: 0,
+          });
+        },
+      });
   }
 
   private loadNotifications(): void {
@@ -520,35 +525,41 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   private fetchWeatherWithCoords(coords: { lat: number; lon: number }): void {
-    this.weatherService.getWeatherData(undefined, coords).subscribe({
-      next: (data) => {
-        if (data) {
-          this.weatherData.set(data);
-        }
-        this.weatherLoading.set(false);
-      },
-      error: (err) => {
-        this.logger.error("Failed to load weather data with coords:", err);
-        // Fallback to location-based
-        this.fetchWeatherByLocation();
-      },
-    });
+    this.weatherService
+      .getWeatherData(undefined, coords)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          if (data) {
+            this.weatherData.set(data);
+          }
+          this.weatherLoading.set(false);
+        },
+        error: (err) => {
+          this.logger.error("Failed to load weather data with coords:", err);
+          // Fallback to location-based
+          this.fetchWeatherByLocation();
+        },
+      });
   }
 
   private fetchWeatherByLocation(): void {
     // Don't pass a location - let the API use its defaults
     // The actual location will be returned in the response
-    this.weatherService.getWeatherData().subscribe({
-      next: (data) => {
-        this.weatherData.set(data);
-        this.weatherLoading.set(false);
-      },
-      error: (err) => {
-        this.logger.error("Failed to load weather data:", err);
-        this.weatherData.set(null);
-        this.weatherLoading.set(false);
-      },
-    });
+    this.weatherService
+      .getWeatherData()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data) => {
+          this.weatherData.set(data);
+          this.weatherLoading.set(false);
+        },
+        error: (err) => {
+          this.logger.error("Failed to load weather data:", err);
+          this.weatherData.set(null);
+          this.weatherLoading.set(false);
+        },
+      });
   }
 
   getWeatherSeverityClass(): string {

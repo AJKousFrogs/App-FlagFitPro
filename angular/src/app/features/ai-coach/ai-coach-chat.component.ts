@@ -832,6 +832,7 @@ export class AiCoachChatComponent implements AfterViewChecked {
   // Angular 21: Use viewChild() signal instead of @ViewChild()
   messagesContainer = viewChild.required<ElementRef>("messagesContainer");
   messageInput = viewChild.required<ElementRef>("messageInput");
+  searchInputElement = viewChild<SearchInputComponent>("searchInput");
 
   messages = signal<ChatMessage[]>([]);
   isLoading = signal(false);
@@ -1756,12 +1757,9 @@ export class AiCoachChatComponent implements AfterViewChecked {
     this.searchQuery = "";
 
     if (this.searchMode()) {
-      // Focus search input after render
+      // Focus search input after render using viewChild reference
       setTimeout(() => {
-        const searchInput = document.querySelector(
-          ".search-input",
-        ) as HTMLInputElement;
-        searchInput?.focus();
+        this.searchInputElement()?.focus();
       }, 100);
     }
   }
