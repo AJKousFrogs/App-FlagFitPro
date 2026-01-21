@@ -189,6 +189,27 @@
   height: var(--profile-header-bg-height, 140px);
   background: var(--gradient-primary);
   overflow: hidden;
+  
+  /* Ensure all text on green background is white - CRITICAL for accessibility */
+  color: var(--color-text-on-primary);
+  
+  /* Force white text for any content that appears on green background */
+  &,
+  & *,
+  & span,
+  & p,
+  & h1,
+  & h2,
+  & h3,
+  & h4,
+  & h5,
+  & h6,
+  & label,
+  & a,
+  & i,
+  & div {
+    color: var(--color-text-on-primary);
+  }
 }
 
 .profile-page .bg-pattern {

@@ -26,38 +26,11 @@
     <!-- Preconnect to critical origins for faster loading -->
     <link rel="preconnect" href="https://pvziciccwxgftcielknm.supabase.co" crossorigin />
     <link rel="dns-prefetch" href="https://pvziciccwxgftcielknm.supabase.co" />
-    <!-- Local font assets: no external font preconnect needed -->
-    <link
-      rel="preload"
-      href="/assets/fonts/Poppins-Light.ttf"
-      as="font"
-      type="font/ttf"
-      crossorigin
-    />
+    <!-- Local font assets: Preload only the critical Regular weight font -->
+    <!-- Other weights will load on-demand via CSS @font-face -->
     <link
       rel="preload"
       href="/assets/fonts/Poppins-Regular.ttf"
-      as="font"
-      type="font/ttf"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/assets/fonts/Poppins-Medium.ttf"
-      as="font"
-      type="font/ttf"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/assets/fonts/Poppins-SemiBold.ttf"
-      as="font"
-      type="font/ttf"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/assets/fonts/Poppins-Bold.ttf"
       as="font"
       type="font/ttf"
       crossorigin
@@ -172,7 +145,8 @@
         };
 
         if (document.fonts && document.fonts.load) {
-          document.fonts.load("1em Poppins").then(markReady).catch(markReady);
+          // Load the Regular weight font (400) which is preloaded and most commonly used
+          document.fonts.load("400 1em Poppins").then(markReady).catch(markReady);
           setTimeout(markReady, 3000);
         } else {
           markReady();

@@ -11,7 +11,7 @@
  * - POST /api/daily-protocol/log-session - Log session RPE and duration
  */
 
-const { supabaseAdmin } = require("./supabase-client.cjs");
+const { supabaseAdmin, getSupabaseClient } = require("./supabase-client.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
 const {
   createErrorResponse,
@@ -21,11 +21,16 @@ const { resolveTodaySession } = require("./utils/session-resolver.cjs");
 const {
   resolveTeamActivityForAthleteDay,
 } = require("./utils/team-activity-resolver.cjs");
+const crypto = require("crypto");
 
-// Use shared Supabase admin client
-const getSupabase = (_authHeader) => {
-  // Note: Using admin client for all operations
-  // RLS policies are enforced at the database level
+// Get appropriate Supabase client based on operation
+// Use user JWT client for user-scoped operations, admin for cross-user operations
+const getSupabase = (token = null) => {
+  // For user-scoped reads/writes, use JWT client with RLS
+  if (token) {
+    return getSupabaseClient(token);
+  }
+  // Fallback to admin for operations that truly need it
   return supabaseAdmin;
 };
 
@@ -1087,8 +1092,9 @@ exports.handler = async (event) => {
   if (!auth.success) {
     return withHeaders(auth.error);
   }
-  const { user } = auth;
-  const supabase = getSupabase();
+  const { user, token } = auth;
+  // Use user JWT client for user-scoped operations
+  const supabase = getSupabase(token);
 
   try {
     // Route to appropriate handler
@@ -1515,7 +1521,7 @@ async function generateReturnToPlayProtocol(
   // Add day-specific mobility video first
   if (dayMobility) {
     protocolExercises.push({
-      protocol_id: protocol.id,
+      // protocol_id will be assigned by RPC
       exercise_id: dayMobility.id,
       block_type: "morning_mobility",
       block_order: 1,
@@ -1534,7 +1540,7 @@ async function generateReturnToPlayProtocol(
   if (mobilityExercises && mobilityExercises.length > 0) {
     mobilityExercises.forEach((ex) => {
       protocolExercises.push({
-        protocol_id: protocol.id,
+        // protocol_id will be assigned by RPC
         exercise_id: ex.id,
         block_type: "morning_mobility",
         block_order: 1,
@@ -1566,7 +1572,7 @@ async function generateReturnToPlayProtocol(
       rehabExercises.forEach((ex) => {
         const loadModifier = rtpPhase === 2 ? 0.3 : 0.5; // 30% or 50% normal load
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "rehab_progression",
           block_order: 2,
@@ -1600,7 +1606,7 @@ async function generateReturnToPlayProtocol(
     if (conditioningExercises && conditioningExercises.length > 0) {
       conditioningExercises.forEach((ex) => {
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "conditioning",
           block_order: 3,
@@ -1630,7 +1636,7 @@ async function generateReturnToPlayProtocol(
   if (eveningMobility && eveningMobility.length > 0) {
     eveningMobility.forEach((ex) => {
       protocolExercises.push({
-        protocol_id: protocol.id,
+        // protocol_id will be assigned by RPC
         exercise_id: ex.id,
         block_type: "evening_mobility",
         block_order: 4,
@@ -1688,6 +1694,47 @@ async function generateReturnToPlayProtocol(
 async function generateProtocol(supabase, userId, payload, headers) {
   const date = payload.date || new Date().toISOString().split("T")[0];
 
+  // ============================================================================
+  // IDEMPOTENCY SUPPORT
+  // ============================================================================
+  // Generate or use provided idempotency key
+  let idempotencyKey = payload.idempotencyKey;
+  
+  if (!idempotencyKey) {
+    // Derive deterministic key from userId + date + trainingFocus inputs
+    // This ensures same inputs = same protocol
+    const keyInputs = {
+      userId,
+      date,
+      // Include key context that affects protocol generation
+      // Note: We'll compute trainingFocus later, so use a hash of context
+      timestamp: date, // Use date as deterministic seed
+    };
+    const keyString = JSON.stringify(keyInputs);
+    idempotencyKey = crypto.createHash("sha256").update(keyString).digest("hex").substring(0, 32);
+  }
+
+  // Check if this idempotency key was already processed
+  const { data: existingRequest } = await supabase
+    .from("protocol_generation_requests")
+    .select("status, protocol_id, error")
+    .eq("user_id", userId)
+    .eq("protocol_date", date)
+    .eq("idempotency_key", idempotencyKey)
+    .maybeSingle();
+
+  if (existingRequest) {
+    if (existingRequest.status === "completed" && existingRequest.protocol_id) {
+      // Return existing protocol
+      console.log("[daily-protocol] Idempotent request - returning existing protocol:", existingRequest.protocol_id);
+      return await getProtocol(supabase, userId, { date }, headers);
+    } else if (existingRequest.status === "failed") {
+      // Previous attempt failed - allow retry but log the error
+      console.warn("[daily-protocol] Previous generation failed:", existingRequest.error);
+    }
+    // If status is 'pending', continue (might be concurrent request, will be handled by unique constraint)
+  }
+
   // Get user's full training context
   const context = await getUserTrainingContext(supabase, userId, date);
 
@@ -1725,20 +1772,46 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
   // ============================================================================
 
-  // Check if protocol already exists
-  const { data: existing } = await supabase
-    .from("daily_protocols")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("protocol_date", date)
-    .maybeSingle();
+  // Record generation request (with unique constraint for concurrency safety)
+  let requestRecord;
+  try {
+    const { data: request, error: requestError } = await supabase
+      .from("protocol_generation_requests")
+      .insert({
+        user_id: userId,
+        protocol_date: date,
+        idempotency_key: idempotencyKey,
+        status: "pending",
+      })
+      .select()
+      .single();
 
-  if (existing) {
-    await supabase
-      .from("protocol_exercises")
-      .delete()
-      .eq("protocol_id", existing.id);
-    await supabase.from("daily_protocols").delete().eq("id", existing.id);
+    if (requestError) {
+      // If unique constraint violation, another request is in progress
+      if (requestError.code === "23505") {
+        // Wait briefly and check if it completed
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        const { data: completedRequest } = await supabase
+          .from("protocol_generation_requests")
+          .select("status, protocol_id")
+          .eq("user_id", userId)
+          .eq("protocol_date", date)
+          .eq("idempotency_key", idempotencyKey)
+          .maybeSingle();
+
+        if (completedRequest?.status === "completed" && completedRequest.protocol_id) {
+          return await getProtocol(supabase, userId, { date }, headers);
+        }
+        // If still pending or failed, proceed (will handle conflict in RPC)
+      } else {
+        throw requestError;
+      }
+    } else {
+      requestRecord = request;
+    }
+  } catch (err) {
+    // If insert fails for other reasons, log but continue
+    console.warn("[daily-protocol] Failed to record generation request:", err.message);
   }
 
   // ============================================================================
@@ -1907,26 +1980,8 @@ async function generateProtocol(supabase, userId, payload, headers) {
     adjustedLoadTarget = Math.round(adjustedLoadTarget * taperLoadMultiplier);
   }
 
-  // Create the protocol (TRUTHFULNESS: store actual values, not defaults)
-  const { data: protocol, error: createError } = await supabase
-    .from("daily_protocols")
-    .insert({
-      user_id: userId,
-      protocol_date: date,
-      readiness_score: readinessScore, // NULL if no checkin (truthful)
-      acwr_value: acwrValue, // NULL if no training history (truthful)
-      training_focus: trainingFocus,
-      ai_rationale: aiRationale,
-      total_load_target_au: adjustedLoadTarget,
-      // Add confidence metadata to protocol
-      confidence_metadata: confidenceMetadata,
-    })
-    .select()
-    .single();
-
-  if (createError) {
-    throw createError;
-  }
+  // Protocol and exercises will be created transactionally via RPC
+  // We'll collect exercises first, then call RPC
 
   const protocolExercises = [];
 
@@ -1945,8 +2000,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
     const dayOfYear = Math.floor((new Date(date) - new Date(new Date(date).getFullYear(), 0, 0)) / (24 * 60 * 60 * 1000));
     const weekNumber = Math.ceil(dayOfYear / 7);
     
+    // Generate fallback exercises (protocol_id will be assigned by RPC)
     const fallbackExercises = await generateFallbackProtocolExercises(
-      protocol.id,
+      null, // protocol_id - will be assigned by RPC
       dayOfYear,
       weekNumber,
       trainingFocus,
@@ -1957,19 +2013,55 @@ async function generateProtocol(supabase, userId, payload, headers) {
     );
     
     if (fallbackExercises.length > 0) {
-      const { error: insertError } = await supabase
-        .from("protocol_exercises")
-        .insert(fallbackExercises);
-      
-      if (insertError) {
-        console.error("[daily-protocol] Error inserting fallback exercises:", insertError);
+      // Use RPC for transactional creation
+      const exercisesJson = fallbackExercises.map((ex) => ({
+        exercise_id: ex.exercise_id,
+        block_type: ex.block_type,
+        sequence_order: ex.sequence_order,
+        prescribed_sets: ex.prescribed_sets,
+        prescribed_reps: ex.prescribed_reps || null,
+        prescribed_hold_seconds: ex.prescribed_hold_seconds || null,
+        prescribed_duration_seconds: ex.prescribed_duration_seconds || null,
+        load_contribution_au: ex.load_contribution_au || 0,
+        ai_note: ex.ai_note || null,
+      }));
+
+      const { data: protocolId, error: rpcError } = await supabase.rpc(
+        "generate_protocol_transactional",
+        {
+          p_user_id: userId,
+          p_protocol_date: date,
+          p_readiness_score: readinessScore,
+          p_acwr_value: acwrValue,
+          p_training_focus: trainingFocus,
+          p_ai_rationale: aiRationale,
+          p_total_load_target_au: adjustedLoadTarget,
+          p_confidence_metadata: confidenceMetadata,
+          p_exercises: exercisesJson,
+        }
+      );
+
+      if (rpcError) {
+        if (requestRecord) {
+          await supabase
+            .from("protocol_generation_requests")
+            .update({ status: "failed", error: rpcError.message })
+            .eq("id", requestRecord.id);
+        }
+        throw rpcError;
       }
-      
-      // Update protocol with total exercises count
-      await supabase
-        .from("daily_protocols")
-        .update({ total_exercises: fallbackExercises.length })
-        .eq("id", protocol.id);
+
+      // Update request status
+      if (requestRecord) {
+        await supabase
+          .from("protocol_generation_requests")
+          .update({ 
+            status: "completed", 
+            protocol_id: protocolId,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", requestRecord.id);
+      }
       
       // Return the completed protocol
       return await getProtocol(supabase, userId, { date }, headers);
@@ -1991,7 +2083,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   if (morningMobility) {
     mobilitySequence++;
     protocolExercises.push({
-      protocol_id: protocol.id,
+      // protocol_id will be assigned by RPC
       exercise_id: morningMobility.id,
       block_type: "morning_mobility",
       sequence_order: mobilitySequence,
@@ -2021,7 +2113,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       qbMobilityExercises.forEach((ex) => {
         mobilitySequence++;
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "morning_mobility",
           sequence_order: mobilitySequence,
@@ -2049,7 +2141,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       centerMobilityExercises.forEach((ex) => {
         mobilitySequence++;
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "morning_mobility",
           sequence_order: mobilitySequence,
@@ -2077,7 +2169,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       wrDbMobility.forEach((ex) => {
         mobilitySequence++;
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "morning_mobility",
           sequence_order: mobilitySequence,
@@ -2104,7 +2196,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       rushMobility.forEach((ex) => {
         mobilitySequence++;
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "morning_mobility",
           sequence_order: mobilitySequence,
@@ -2132,7 +2224,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     if (generalMobility && generalMobility.length > 0) {
       generalMobility.slice(0, 4).forEach((ex, idx) => {
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "morning_mobility",
           sequence_order: idx + 1,
@@ -2160,7 +2252,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .slice(0, 5);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
-        protocol_id: protocol.id,
+        // protocol_id will be assigned by RPC
         exercise_id: ex.id,
         block_type: "foam_roll",
         sequence_order: idx + 1,
@@ -2300,7 +2392,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         }
         
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "warm_up",
           sequence_order: idx + 1,
@@ -2320,7 +2412,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         const shuffled = warmUpExercises.sort(() => Math.random() - 0.5).slice(0, 6);
         shuffled.forEach((ex, idx) => {
           protocolExercises.push({
-            protocol_id: protocol.id,
+            // protocol_id will be assigned by RPC
             exercise_id: ex.id,
             block_type: "warm_up",
             sequence_order: idx + 1,
@@ -2352,7 +2444,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     if (throwingWarmUp && throwingWarmUp.length > 0) {
       throwingWarmUp.forEach((ex, idx) => {
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "warm_up",
           sequence_order: idx + 1,
@@ -2376,7 +2468,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         .slice(0, 6);
       shuffled.forEach((ex, idx) => {
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "warm_up",
           sequence_order: idx + 1,
@@ -2468,7 +2560,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         const holdSeconds = EVIDENCE_BASED_PROTOCOLS.isometrics.holdSeconds.max;
         
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.source === "exercises" ? ex.id : null,
           block_type: "isometrics",
           sequence_order: idx + 1,
@@ -2563,7 +2655,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       
       selectedPlyos.forEach((ex, idx) => {
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.source === "exercises" ? ex.id : null,
           block_type: "plyometrics",
           sequence_order: idx + 1,
@@ -2608,7 +2700,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
             : EVIDENCE_BASED_PROTOCOLS.nordicCurls.intermediate;
           
           protocolExercises.push({
-            protocol_id: protocol.id,
+            // protocol_id will be assigned by RPC
             exercise_id: nordicExercise.id,
             block_type: "strength",
             sequence_order: 1, // Nordic curls FIRST in strength block
@@ -2639,7 +2731,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         
         selectedHip.forEach((ex, idx) => {
           protocolExercises.push({
-            protocol_id: protocol.id,
+            // protocol_id will be assigned by RPC
             exercise_id: ex.id,
             block_type: "strength",
             sequence_order: (includeNordics ? 2 : 1) + idx,
@@ -2665,7 +2757,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       generalStrength.forEach((ex, idx) => {
         const sequenceStart = (includeNordics ? 2 : 1) + (hipExercises.length > 0 ? 2 : 0);
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "strength",
           sequence_order: sequenceStart + idx,
@@ -2716,7 +2808,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       
       selectedConditioning.forEach((ex, idx) => {
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "conditioning",
           sequence_order: idx + 1,
@@ -2773,7 +2865,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       
       selectedSkills.forEach((ex, idx) => {
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: ex.id,
           block_type: "skill_drills",
           sequence_order: idx + 1,
@@ -2786,6 +2878,42 @@ async function generateProtocol(supabase, userId, payload, headers) {
       });
       
       console.log(`[daily-protocol] Added ${selectedSkills.length} skill/twitching drills`);
+    }
+    
+    // ============================================================================
+    // Add gym block exercises to main_session for display
+    // Main Session should always have exercises (except recovery days)
+    // ============================================================================
+    // Collect all exercises from gym blocks and add them to main_session
+    const gymBlockTypes = ["isometrics", "plyometrics", "strength", "conditioning", "skill_drills"];
+    let mainSessionSequence = 1;
+    
+    gymBlockTypes.forEach((blockType) => {
+      // Find all exercises for this block type that were just added
+      const blockExercises = protocolExercises.filter(
+        (pe) => pe.block_type === blockType
+      );
+      
+      // Add them to main_session as well
+      blockExercises.forEach((ex) => {
+        protocolExercises.push({
+          // protocol_id will be assigned by RPC
+          exercise_id: ex.exercise_id,
+          block_type: "main_session",
+          sequence_order: mainSessionSequence++,
+          prescribed_sets: ex.prescribed_sets,
+          prescribed_reps: ex.prescribed_reps,
+          prescribed_hold_seconds: ex.prescribed_hold_seconds,
+          prescribed_duration_seconds: ex.prescribed_duration_seconds,
+          rest_seconds: ex.rest_seconds,
+          load_contribution_au: ex.load_contribution_au,
+          ai_note: ex.ai_note || `Gym Training - ${blockType}`,
+        });
+      });
+    });
+    
+    if (mainSessionSequence > 1) {
+      console.log(`[daily-protocol] Added ${mainSessionSequence - 1} exercises to main_session from gym blocks`);
     }
   } else {
     console.log("[daily-protocol] Skipping gym blocks - practice/recovery day");
@@ -2898,7 +3026,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         }
 
         protocolExercises.push({
-          protocol_id: protocol.id,
+          // protocol_id will be assigned by RPC
           exercise_id: exerciseId,
           block_type: "main_session",
           sequence_order: idx + 1,
@@ -3102,7 +3230,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
           }
           
           protocolExercises.push({
-            protocol_id: protocol.id,
+            // protocol_id will be assigned by RPC
             exercise_id: ex.id,
             block_type: "main_session",
             sequence_order: idx + 1,
@@ -3119,14 +3247,22 @@ async function generateProtocol(supabase, userId, payload, headers) {
         console.log(`[daily-protocol] Generated evidence-based sprint session: phase=${sprintPhase}, protocols=${sprintProtocols.join(", ")}, hillSprints=${useHillSprints}, stairSprints=${useStairSprints}`);
       }
     } else if (hasGymAccess && isGymTrainingDay) {
-      // Gym training - use existing gym blocks (isometrics, plyometrics, strength) as main session
-      // The gym blocks are already generated above, so we just mark main session as generated
-      // But we should add a summary/main session marker
-      sessionType = "gym";
-      sessionCategory = "strength";
-      // Main session is already covered by gym blocks above
-      mainSessionGenerated = true;
-      console.log("[daily-protocol] Gym training day - main session covered by gym blocks");
+      // Gym training - exercises already added to main_session above
+      // Check if main_session has exercises (they should have been added from gym blocks)
+      const mainSessionExercises = protocolExercises.filter(
+        (pe) => pe.block_type === "main_session"
+      );
+      
+      if (mainSessionExercises.length > 0) {
+        sessionType = "gym";
+        sessionCategory = "strength";
+        mainSessionGenerated = true;
+        console.log(`[daily-protocol] Gym training day - main session has ${mainSessionExercises.length} exercises from gym blocks`);
+      } else {
+        // Fallback: if somehow no exercises were added, generate them now
+        console.warn("[daily-protocol] Gym training day but no main_session exercises found - this should not happen");
+        mainSessionGenerated = false; // Will trigger fallback below
+      }
     } else if (hasFieldAccess && !hasGymAccess) {
       // Flag training - generate flag football-specific exercises
       sessionType = "flag";
@@ -3141,7 +3277,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       if (flagExercises && flagExercises.length > 0) {
         flagExercises.slice(0, 6).forEach((ex, idx) => {
           protocolExercises.push({
-            protocol_id: protocol.id,
+            // protocol_id will be assigned by RPC
             exercise_id: ex.id,
             block_type: "main_session",
             sequence_order: idx + 1,
@@ -3183,7 +3319,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       if (fallbackExercises && fallbackExercises.length > 0) {
         fallbackExercises.forEach((ex, idx) => {
           protocolExercises.push({
-            protocol_id: protocol.id,
+            // protocol_id will be assigned by RPC
             exercise_id: ex.id,
             block_type: "main_session",
             sequence_order: idx + 1,
@@ -3223,7 +3359,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .slice(0, 5);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
-        protocol_id: protocol.id,
+        // protocol_id will be assigned by RPC
         exercise_id: ex.id,
         block_type: "cool_down",
         sequence_order: idx + 1,
@@ -3253,7 +3389,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .slice(0, recoveryCount);
     shuffled.forEach((ex, idx) => {
       protocolExercises.push({
-        protocol_id: protocol.id,
+        // protocol_id will be assigned by RPC
         exercise_id: ex.id,
         block_type: "evening_recovery",
         sequence_order: idx + 1,
@@ -3270,25 +3406,89 @@ async function generateProtocol(supabase, userId, payload, headers) {
     });
   }
 
-  // Insert all protocol exercises
-  if (protocolExercises.length > 0) {
-    const { error: insertError } = await supabase
-      .from("protocol_exercises")
-      .insert(protocolExercises);
-
-    if (insertError) {
-      throw insertError;
+  // ============================================================================
+  // TRANSACTIONAL PROTOCOL GENERATION VIA RPC
+  // ============================================================================
+  // Use RPC function to atomically create protocol + exercises
+  // This ensures we never leave a protocol with 0 exercises
+  // ============================================================================
+  
+  if (protocolExercises.length === 0) {
+    // Update request status to failed
+    if (requestRecord) {
+      await supabase
+        .from("protocol_generation_requests")
+        .update({ status: "failed", error: "No exercises generated" })
+        .eq("id", requestRecord.id);
     }
+    throw new Error("Cannot create protocol without exercises");
   }
 
-  // Update protocol with total exercises count
-  await supabase
-    .from("daily_protocols")
-    .update({ total_exercises: protocolExercises.length })
-    .eq("id", protocol.id);
+  // Prepare exercises JSON for RPC
+  const exercisesJson = protocolExercises.map((ex) => ({
+    exercise_id: ex.exercise_id,
+    block_type: ex.block_type,
+    sequence_order: ex.sequence_order,
+    prescribed_sets: ex.prescribed_sets,
+    prescribed_reps: ex.prescribed_reps || null,
+    prescribed_hold_seconds: ex.prescribed_hold_seconds || null,
+    prescribed_duration_seconds: ex.prescribed_duration_seconds || null,
+    load_contribution_au: ex.load_contribution_au || 0,
+    ai_note: ex.ai_note || null,
+  }));
 
-  // Fetch the complete protocol
-  return await getProtocol(supabase, userId, { date }, headers);
+  try {
+    // Call transactional RPC function
+    const { data: protocolId, error: rpcError } = await supabase.rpc(
+      "generate_protocol_transactional",
+      {
+        p_user_id: userId,
+        p_protocol_date: date,
+        p_readiness_score: readinessScore,
+        p_acwr_value: acwrValue,
+        p_training_focus: trainingFocus,
+        p_ai_rationale: aiRationale,
+        p_total_load_target_au: adjustedLoadTarget,
+        p_confidence_metadata: confidenceMetadata,
+        p_exercises: exercisesJson,
+      }
+    );
+
+    if (rpcError) {
+      // Update request status to failed
+      if (requestRecord) {
+        await supabase
+          .from("protocol_generation_requests")
+          .update({ status: "failed", error: rpcError.message })
+          .eq("id", requestRecord.id);
+      }
+      throw rpcError;
+    }
+
+    // Update request status to completed
+    if (requestRecord) {
+      await supabase
+        .from("protocol_generation_requests")
+        .update({ 
+          status: "completed", 
+          protocol_id: protocolId,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", requestRecord.id);
+    }
+
+    // Fetch the complete protocol
+    return await getProtocol(supabase, userId, { date }, headers);
+  } catch (error) {
+    // Update request status to failed
+    if (requestRecord) {
+      await supabase
+        .from("protocol_generation_requests")
+        .update({ status: "failed", error: error.message })
+        .eq("id", requestRecord.id);
+    }
+    throw error;
+  }
 }
 
 /**
@@ -3303,8 +3503,27 @@ async function completeExercise(supabase, userId, payload, headers) {
     return { ...handleValidationError("protocolExerciseId required"), headers };
   }
 
-  // Update the exercise
-  const { data: exercise, error: updateError } = await supabase
+  // Verify ownership first (RLS will enforce, but explicit check for clarity)
+  const { data: exercise, error: fetchError } = await supabase
+    .from("protocol_exercises")
+    .select("*, daily_protocols!inner(user_id, protocol_date, id)")
+    .eq("id", protocolExerciseId)
+    .single();
+
+  if (fetchError) {
+    throw fetchError;
+  }
+
+  // Verify user owns this protocol (RLS should enforce, but double-check)
+  if (exercise.daily_protocols.user_id !== userId) {
+    return {
+      ...createErrorResponse("Not authorized", 403, "authorization_error"),
+      headers,
+    };
+  }
+
+  // Update the exercise (RLS ensures user can only update their own)
+  const { error: updateError } = await supabase
     .from("protocol_exercises")
     .update({
       status: "complete",
@@ -3313,20 +3532,10 @@ async function completeExercise(supabase, userId, payload, headers) {
       actual_reps: actualReps,
       actual_hold_seconds: actualHoldSeconds,
     })
-    .eq("id", protocolExerciseId)
-    .select("*, daily_protocols!inner(user_id, protocol_date, id)")
-    .single();
+    .eq("id", protocolExerciseId);
 
   if (updateError) {
     throw updateError;
-  }
-
-  // Verify user owns this
-  if (exercise.daily_protocols.user_id !== userId) {
-    return {
-      ...createErrorResponse("Not authorized", 403, "authorization_error"),
-      headers,
-    };
   }
 
   // Log the completion

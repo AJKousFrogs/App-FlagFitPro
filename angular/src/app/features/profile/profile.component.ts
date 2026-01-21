@@ -1229,8 +1229,20 @@ export class ProfileComponent implements OnInit {
    * Load extended profile data using TeamMembershipService
    * Uses centralized service for position, jersey number, and team info
    */
-  private async loadExtendedProfileData(_userId: string): Promise<void> {
+  private async loadExtendedProfileData(userId: string): Promise<void> {
     try {
+      // Load profile photo from database (profile_photo_url)
+      // This ensures the avatar persists after refresh
+      const { data: userData } = await this.supabaseService.client
+        .from("users")
+        .select("profile_photo_url")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (userData?.profile_photo_url) {
+        this.avatarUrl.set(userData.profile_photo_url);
+      }
+
       // Load team membership using centralized service
       await this.teamMembershipService.loadMembership();
       const membership = this.teamMembershipService.membership();

@@ -113,9 +113,9 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           <button
             class="expand-toggle"
             [attr.aria-expanded]="isExpanded()"
-            (click)="$event.stopPropagation()"
+            (click)="toggleExpand(); $event.stopPropagation()"
           >
-            <span class="expand-text">▼ Expand</span>
+            <span class="expand-text">{{ isExpanded() ? '▲ Collapse' : '▼ Expand' }}</span>
           </button>
         </div>
       </div>

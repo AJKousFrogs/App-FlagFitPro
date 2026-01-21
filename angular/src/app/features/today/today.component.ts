@@ -2537,6 +2537,7 @@ export class TodayComponent {
     const block = protocol[prop] as ProtocolBlock | undefined;
     
     // Return null if block doesn't exist or has no exercises
+    // Main Session should always have exercises (except recovery days)
     // This prevents rendering empty block cards
     if (!block || !block.exercises || block.exercises.length === 0) {
       return null;
