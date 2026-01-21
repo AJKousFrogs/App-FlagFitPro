@@ -92,7 +92,7 @@
     "@storybook/addon-links": "^10.1.11",
     "@storybook/angular": "^10.1.11",
     "@types/express": "^5.0.1",
-    "@types/node": "^22.15.0",
+    "@types/node": "^25.0.9",
     "@vitest/ui": "^4.0.8",
     "angular-eslint": "^21.1.0",
     "eslint": "^9.39.2",
