@@ -214,18 +214,22 @@ const STATUS_CONFIG: Record<
                 />
               </span>
               <p-select
+                inputId="position-filter"
                 [options]="positionOptions"
                 [(ngModel)]="positionFilter"
                 placeholder="Position"
                 [showClear]="true"
                 [style]="{ width: '160px' }"
+                [attr.aria-label]="'Filter by position'"
               ></p-select>
               <p-select
+                inputId="status-filter"
                 [options]="statusOptions"
                 [(ngModel)]="statusFilter"
                 placeholder="Status"
                 [showClear]="true"
                 [style]="{ width: '160px' }"
+                [attr.aria-label]="'Filter by status'"
               ></p-select>
             </div>
 

@@ -253,24 +253,26 @@ interface TeamMember {
           <div class="p-field mb-4">
             <label for="sessionType" class="p-label">Session Type</label>
             <p-select
-              id="sessionType"
+              inputId="sessionType"
               [(ngModel)]="newSession.type"
               [options]="sessionTypes"
               optionLabel="label"
               optionValue="value"
               placeholder="Select session type"
               styleClass="w-full"
+              [attr.aria-label]="'Select session type'"
             ></p-select>
           </div>
           <div class="p-field mb-4">
             <label for="sessionDate" class="p-label">Date & Time</label>
             <p-datepicker
-              id="sessionDate"
+              inputId="sessionDate"
               [(ngModel)]="newSession.date"
               [showTime]="true"
               [showIcon]="true"
               dateFormat="mm/dd/yy"
               styleClass="w-full"
+              [attr.aria-label]="'Select session date and time'"
             ></p-datepicker>
           </div>
           <div class="p-field mb-4">
@@ -310,7 +312,10 @@ interface TeamMember {
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <app-button variant="text" (clicked)="showCreateSessionDialog = false"
+          <app-button 
+            variant="text" 
+            (clicked)="showCreateSessionDialog = false"
+            ariaLabel="Cancel and close dialog"
             >Cancel</app-button
           >
           <app-button
@@ -318,6 +323,7 @@ interface TeamMember {
             [loading]="isCreatingSession()"
             [disabled]="!isSessionValid()"
             (clicked)="createSession()"
+            [attr.aria-label]="'Create training session'"
             >Create Session</app-button
           >
         </ng-template>

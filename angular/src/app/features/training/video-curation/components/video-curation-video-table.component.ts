@@ -67,22 +67,24 @@ import {
           />
         </span>
         <p-select
+          inputId="position-filter"
           [ngModel]="positionValue()"
           (ngModelChange)="positionValue.set($event); onFilterChange()"
           [options]="positionOptions"
           placeholder="All Positions"
           [showClear]="true"
           styleClass="filter-select"
-          ariaLabel="Filter by position"
+          [attr.aria-label]="'Filter videos by position'"
         ></p-select>
         <p-select
+          inputId="status-filter"
           [ngModel]="statusValue()"
           (ngModelChange)="statusValue.set($event); onFilterChange()"
           [options]="statusOptions"
           placeholder="All Statuses"
           [showClear]="true"
           styleClass="filter-select"
-          ariaLabel="Filter by status"
+          [attr.aria-label]="'Filter videos by status'"
         ></p-select>
       </div>
 

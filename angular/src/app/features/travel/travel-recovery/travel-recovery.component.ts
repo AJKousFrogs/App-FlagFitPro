@@ -228,8 +228,9 @@ interface TimezoneOption {
                 </div>
 
                 <div class="form-field">
-                  <label>Home Timezone</label>
+                  <label for="departure-timezone">Home Timezone</label>
                   <p-select
+                    inputId="departure-timezone"
                     [(ngModel)]="tripForm.departureTimezone"
                     [options]="timezones"
                     optionLabel="label"
@@ -238,12 +239,14 @@ interface TimezoneOption {
                     [filter]="true"
                     filterBy="label"
                     styleClass="w-full"
+                    [attr.aria-label]="'Select your home timezone'"
                   ></p-select>
                 </div>
 
                 <div class="form-field">
-                  <label>Destination Timezone</label>
+                  <label for="arrival-timezone">Destination Timezone</label>
                   <p-select
+                    inputId="arrival-timezone"
                     [(ngModel)]="tripForm.arrivalTimezone"
                     [options]="timezones"
                     optionLabel="label"
@@ -252,60 +255,71 @@ interface TimezoneOption {
                     [filter]="true"
                     filterBy="label"
                     styleClass="w-full"
+                    [attr.aria-label]="'Select destination timezone'"
                   ></p-select>
                 </div>
 
                 <div class="form-field">
-                  <label>Departure Date</label>
+                  <label for="departure-date">Departure Date</label>
                   <p-datepicker
+                    inputId="departure-date"
                     [(ngModel)]="tripForm.departureDate"
                     [showIcon]="true"
                     [minDate]="minDate"
                     dateFormat="dd/mm/yy"
                     styleClass="w-full"
+                    [attr.aria-label]="'Select departure date'"
                   ></p-datepicker>
                 </div>
 
                 <div class="form-field">
-                  <label>Arrival Date</label>
+                  <label for="arrival-date">Arrival Date</label>
                   <p-datepicker
+                    inputId="arrival-date"
                     [(ngModel)]="tripForm.arrivalDate"
                     [showIcon]="true"
                     [minDate]="tripForm.departureDate || minDate"
                     dateFormat="dd/mm/yy"
                     styleClass="w-full"
+                    [attr.aria-label]="'Select arrival date'"
                   ></p-datepicker>
                 </div>
 
                 <div class="form-field">
-                  <label>Competition Date (Optional)</label>
+                  <label for="competition-date">Competition Date (Optional)</label>
                   <p-datepicker
+                    inputId="competition-date"
                     [(ngModel)]="tripForm.competitionDate"
                     [showIcon]="true"
                     [minDate]="tripForm.arrivalDate || minDate"
                     dateFormat="dd/mm/yy"
                     styleClass="w-full"
+                    [attr.aria-label]="'Select competition date (optional)'"
                   ></p-datepicker>
                 </div>
 
                 <div class="form-field">
-                  <label>Flight Duration (hours)</label>
+                  <label for="flight-duration">Flight Duration (hours)</label>
                   <p-inputNumber
+                    inputId="flight-duration"
                     [(ngModel)]="tripForm.flightDuration"
                     [min]="1"
                     [max]="30"
                     [showButtons]="true"
                     suffix=" hrs"
+                    [attr.aria-label]="'Flight duration in hours'"
                   ></p-inputNumber>
                 </div>
 
                 <div class="form-field">
-                  <label>Number of Layovers</label>
+                  <label for="layovers">Number of Layovers</label>
                   <p-inputNumber
+                    inputId="layovers"
                     [(ngModel)]="tripForm.layovers"
                     [min]="0"
                     [max]="5"
                     [showButtons]="true"
+                    [attr.aria-label]="'Number of layovers'"
                   ></p-inputNumber>
                 </div>
               </div>
@@ -789,13 +803,15 @@ interface TimezoneOption {
                   </div>
 
                   <div class="form-field">
-                    <label>Estimated Drive Duration (hours)</label>
+                    <label for="car-duration">Estimated Drive Duration (hours)</label>
                     <p-inputNumber
+                      inputId="car-duration"
                       [(ngModel)]="carTripForm.duration"
                       [min]="1"
                       [max]="18"
                       [showButtons]="true"
                       suffix=" hrs"
+                      [attr.aria-label]="'Estimated car travel duration in hours'"
                     ></p-inputNumber>
                   </div>
 
@@ -803,22 +819,26 @@ interface TimezoneOption {
                     <label>Are you driving?</label>
                     <div class="driver-toggle">
                       <p-checkbox
+                        inputId="car-is-driver"
                         [(ngModel)]="carTripForm.isDriver"
                         [binary]="true"
                         variant="filled"
                         label="Yes, I'm driving"
+                        [attr.aria-label]="'Are you driving this trip'"
                       ></p-checkbox>
                     </div>
                   </div>
 
                   <div class="form-field">
-                    <label>Competition Date (Optional)</label>
+                    <label for="car-competition-date">Competition Date (Optional)</label>
                     <p-datepicker
+                      inputId="car-competition-date"
                       [(ngModel)]="carTripForm.competitionDate"
                       [showIcon]="true"
                       [minDate]="minDate"
                       dateFormat="dd/mm/yy"
                       styleClass="w-full"
+                      [attr.aria-label]="'Select competition date for car trip (optional)'"
                     ></p-datepicker>
                   </div>
                 </div>

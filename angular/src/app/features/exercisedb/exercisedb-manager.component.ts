@@ -151,51 +151,61 @@ import { capitalize } from "../../shared/utils/format.utils";
                       />
                     </div>
                     <div class="filter-group">
-                      <label>Body Part</label>
+                      <label for="body-part-filter">Body Part</label>
                       <p-select
+                        inputId="body-part-filter"
                         [options]="bodyPartOptions()"
                         [(ngModel)]="selectedBodyPart"
                         placeholder="All Body Parts"
                         [showClear]="true"
                         (onValueChange)="applyFilters()"
+                        [attr.aria-label]="'Filter by body part'"
                       ></p-select>
                     </div>
                     <div class="filter-group">
-                      <label>Equipment</label>
+                      <label for="equipment-filter">Equipment</label>
                       <p-select
+                        inputId="equipment-filter"
                         [options]="equipmentOptions()"
                         [(ngModel)]="selectedEquipment"
                         placeholder="All Equipment"
                         [showClear]="true"
                         (onValueChange)="applyFilters()"
+                        [attr.aria-label]="'Filter by equipment'"
                       ></p-select>
                     </div>
                     <div class="filter-group">
-                      <label>Position</label>
+                      <label for="position-filter">Position</label>
                       <p-select
+                        inputId="position-filter"
                         [options]="positionOptions"
                         [(ngModel)]="selectedPosition"
                         placeholder="All Positions"
                         [showClear]="true"
                         (onValueChange)="applyFilters()"
+                        [attr.aria-label]="'Filter by position'"
                       ></p-select>
                     </div>
                     <div class="filter-group">
-                      <label>Category</label>
+                      <label for="category-filter">Category</label>
                       <p-select
+                        inputId="category-filter"
                         [options]="categoryOptions()"
                         [(ngModel)]="selectedCategory"
                         placeholder="All Categories"
                         [showClear]="true"
                         (onValueChange)="applyFilters()"
+                        [attr.aria-label]="'Filter by category'"
                       ></p-select>
                     </div>
                     <div class="filter-group status-filter">
-                      <label>Status</label>
+                      <label for="status-filter">Status</label>
                       <p-select
+                        inputId="status-filter"
                         [options]="statusOptions"
                         [(ngModel)]="selectedStatus"
                         (onValueChange)="applyFilters()"
+                        [attr.aria-label]="'Filter by status'"
                       ></p-select>
                     </div>
                   </div>
@@ -361,12 +371,14 @@ import { capitalize } from "../../shared/utils/format.utils";
                       ></p-multiSelect>
                     </div>
                     <div class="option-group">
-                      <label>Equipment Filter</label>
+                      <label for="import-equipment-filter">Equipment Filter</label>
                       <p-select
+                        inputId="import-equipment-filter"
                         [options]="importEquipmentOptions"
                         [(ngModel)]="importEquipment"
                         placeholder="All equipment"
                         [showClear]="true"
+                        [attr.aria-label]="'Filter import by equipment'"
                       ></p-select>
                     </div>
                     <div class="option-group checkbox-group">
@@ -756,40 +768,48 @@ import { capitalize } from "../../shared/utils/format.utils";
               </div>
 
               <div class="form-group">
-                <label>Category</label>
+                <label for="approval-category">Category</label>
                 <p-select
+                  inputId="approval-category"
                   [options]="ffCategoryOptions"
                   [(ngModel)]="approvalData.ff_category"
                   placeholder="Select category"
+                  [attr.aria-label]="'Select flag football category'"
                 ></p-select>
               </div>
 
               <div class="form-group">
-                <label>Training Focus</label>
+                <label for="approval-focus">Training Focus</label>
                 <p-multiSelect
+                  inputId="approval-focus"
                   [options]="trainingFocusOptions"
                   [(ngModel)]="approvalData.ff_training_focus"
                   placeholder="Select training focuses"
                   display="chip"
+                  [attr.aria-label]="'Select training focus areas'"
                 ></p-multiSelect>
               </div>
 
               <div class="form-group">
-                <label>Applicable Positions</label>
+                <label for="approval-positions">Applicable Positions</label>
                 <p-multiSelect
+                  inputId="approval-positions"
                   [options]="positionOptions"
                   [(ngModel)]="approvalData.applicable_positions"
                   placeholder="Select positions"
                   display="chip"
+                  [attr.aria-label]="'Select applicable positions'"
                 ></p-multiSelect>
               </div>
 
               <div class="form-group">
-                <label>Difficulty Level</label>
+                <label for="approval-difficulty">Difficulty Level</label>
                 <p-select
+                  inputId="approval-difficulty"
                   [options]="difficultyOptions"
                   [(ngModel)]="approvalData.difficulty_level"
                   placeholder="Select difficulty"
+                  [attr.aria-label]="'Select difficulty level'"
                 ></p-select>
               </div>
 

@@ -157,8 +157,9 @@ const COMPARE_OPTIONS = [
         <!-- Player/Compare Selection -->
         <div class="selection-row">
           <div class="selection-field">
-            <label>Player</label>
+            <label for="player-select">Player</label>
             <p-select
+              inputId="player-select"
               [options]="playerOptions()"
               [(ngModel)]="selectedPlayerId"
               optionLabel="name"
@@ -166,17 +167,20 @@ const COMPARE_OPTIONS = [
               placeholder="Select Player"
               (onValueChange)="onPlayerChange()"
               styleClass="w-full"
+              [attr.aria-label]="'Select player'"
             ></p-select>
           </div>
           <div class="selection-field">
-            <label>Compare To</label>
+            <label for="compare-select">Compare To</label>
             <p-select
+              inputId="compare-select"
               [options]="compareOptions"
               [(ngModel)]="compareToValue"
               optionLabel="label"
               optionValue="value"
               placeholder="Position Avg"
               styleClass="w-full"
+              [attr.aria-label]="'Select comparison baseline'"
             ></p-select>
           </div>
         </div>
@@ -353,20 +357,24 @@ const COMPARE_OPTIONS = [
             </ng-template>
             <div class="history-filters">
               <p-select
+                inputId="metric-filter"
                 [options]="physicalMetrics"
                 [(ngModel)]="selectedMetric"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
                 (onValueChange)="onMetricChange()"
+                [attr.aria-label]="'Select performance metric'"
               ></p-select>
               <p-select
+                inputId="period-filter"
                 [options]="periodOptions"
                 [(ngModel)]="selectedPeriod"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Period"
                 (onValueChange)="onMetricChange()"
+                [attr.aria-label]="'Select time period'"
               ></p-select>
             </div>
             <div class="history-chart">
@@ -471,14 +479,16 @@ const COMPARE_OPTIONS = [
       >
         <div class="goal-form">
           <div class="form-field">
-            <label>Player</label>
+            <label for="goal-player-select">Player</label>
             <p-select
+              inputId="goal-player-select"
               [options]="playerOptions()"
               [(ngModel)]="goalForm.playerId"
               optionLabel="name"
               optionValue="id"
               placeholder="Select Player"
               styleClass="w-full"
+              [attr.aria-label]="'Select player for goal'"
             ></p-select>
           </div>
 
@@ -501,14 +511,16 @@ const COMPARE_OPTIONS = [
 
           <div class="form-row">
             <div class="form-field">
-              <label>Metric</label>
+              <label for="goal-metric-select">Metric</label>
               <p-select
+                inputId="goal-metric-select"
                 [options]="physicalMetrics"
                 [(ngModel)]="goalForm.metric"
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select Metric"
                 styleClass="w-full"
+                [attr.aria-label]="'Select goal metric'"
               ></p-select>
             </div>
             <div class="form-field">
@@ -533,11 +545,13 @@ const COMPARE_OPTIONS = [
               />
             </div>
             <div class="form-field">
-              <label>Target Date</label>
+              <label for="goal-due-date">Target Date</label>
               <p-datepicker
+                inputId="goal-due-date"
                 [(ngModel)]="goalForm.dueDate"
                 [showIcon]="true"
                 styleClass="w-full"
+                [attr.aria-label]="'Select target date for goal'"
               ></p-datepicker>
             </div>
           </div>

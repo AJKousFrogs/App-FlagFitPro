@@ -103,6 +103,7 @@ export interface PlayerFormData {
               optionValue="value"
               placeholder="Select primary position"
               styleClass="w-full"
+              [attr.aria-label]="'Select player position'"
             ></p-select>
           </div>
 
@@ -144,6 +145,7 @@ export interface PlayerFormData {
               [max]="60"
               placeholder="16-60"
               styleClass="w-full"
+              [attr.aria-label]="'Player age'"
             ></p-inputNumber>
           </div>
         </div>
@@ -218,6 +220,7 @@ export interface PlayerFormData {
               optionValue="value"
               placeholder="Select status"
               styleClass="w-full"
+              [attr.aria-label]="'Select player status'"
             ></p-select>
           </div>
         }
@@ -228,6 +231,7 @@ export interface PlayerFormData {
           variant="text"
           iconLeft="pi-times"
           (clicked)="visibleChange.emit(false)"
+          ariaLabel="Cancel and close dialog"
           >Cancel</app-button
         >
         <app-button
@@ -235,6 +239,7 @@ export interface PlayerFormData {
           [loading]="isSaving()"
           [disabled]="!playerForm.valid || isSaving()"
           (clicked)="onSave()"
+          [attr.aria-label]="editingPlayer() ? 'Save player changes' : 'Add new player'"
           >{{ editingPlayer() ? 'Save Changes' : 'Add Player' }}</app-button
         >
       </ng-template>

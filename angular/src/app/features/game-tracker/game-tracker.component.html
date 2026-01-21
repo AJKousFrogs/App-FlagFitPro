@@ -236,54 +236,59 @@
             <div class="form-field">
               <label for="half">Half</label>
               <p-select
-                id="half"
+                inputId="half"
                 formControlName="half"
                 [options]="halfOptions"
                 optionLabel="label"
                 optionValue="value"
+                [attr.aria-label]="'Select half'"
               >
               </p-select>
             </div>
             <div class="form-field">
               <label for="timeRemaining">Time Remaining (seconds)</label>
               <p-inputNumber
-                id="timeRemaining"
+                inputId="timeRemaining"
                 formControlName="timeRemaining"
                 [min]="0"
                 [max]="1200"
                 [showButtons]="true"
+                [attr.aria-label]="'Time remaining in seconds'"
               >
               </p-inputNumber>
             </div>
             <div class="form-field">
               <label for="down">Down</label>
               <p-inputNumber
-                id="down"
+                inputId="down"
                 formControlName="down"
                 [min]="1"
                 [max]="4"
                 [showButtons]="true"
+                [attr.aria-label]="'Down number'"
               >
               </p-inputNumber>
             </div>
             <div class="form-field">
               <label for="distance">Distance (yards)</label>
               <p-inputNumber
-                id="distance"
+                inputId="distance"
                 formControlName="distance"
                 [min]="0"
                 [showButtons]="true"
+                [attr.aria-label]="'Distance in yards'"
               >
               </p-inputNumber>
             </div>
             <div class="form-field">
               <label for="yardLine">Yard Line</label>
               <p-inputNumber
-                id="yardLine"
+                inputId="yardLine"
                 formControlName="yardLine"
                 [min]="1"
                 [max]="100"
                 [showButtons]="true"
+                [attr.aria-label]="'Yard line'"
               >
               </p-inputNumber>
             </div>
@@ -362,72 +367,78 @@
                 <div class="form-field">
                   <label for="quarterbackId">Quarterback</label>
                   <p-select
-                    id="quarterbackId"
+                    inputId="quarterbackId"
                     formControlName="quarterbackId"
                     [options]="players()"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select QB"
                     [filter]="true"
+                    [attr.aria-label]="'Select quarterback'"
                   >
                   </p-select>
                 </div>
                 <div class="form-field">
                   <label for="receiverId">Receiver</label>
                   <p-select
-                    id="receiverId"
+                    inputId="receiverId"
                     formControlName="receiverId"
                     [options]="players()"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select Receiver"
                     [filter]="true"
+                    [attr.aria-label]="'Select receiver'"
                   >
                   </p-select>
                 </div>
                 <div class="form-field">
                   <label for="routeType">Route Type</label>
                   <p-select
-                    id="routeType"
+                    inputId="routeType"
                     formControlName="routeType"
                     [options]="routeTypeOptions"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select route"
+                    [attr.aria-label]="'Select route type'"
                   >
                   </p-select>
                 </div>
                 <div class="form-field">
                   <label for="routeDepth">Route Depth (yards)</label>
                   <p-inputNumber
-                    id="routeDepth"
+                    inputId="routeDepth"
                     formControlName="routeDepth"
                     [min]="0"
                     [showButtons]="true"
+                    [attr.aria-label]="'Route depth in yards'"
                   >
                   </p-inputNumber>
                 </div>
                 <div class="form-field">
                   <label for="snapAccuracy">Snap Accuracy</label>
                   <p-select
-                    id="snapAccuracy"
+                    inputId="snapAccuracy"
                     formControlName="snapAccuracy"
                     [options]="accuracyOptions"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select accuracy"
+                    [attr.aria-label]="'Select snap accuracy'"
                   >
                   </p-select>
                 </div>
                 <div class="form-field">
                   <label for="throwAccuracy">Throw Accuracy</label>
                   <p-select
-                    id="throwAccuracy"
+                    inputId="throwAccuracy"
                     formControlName="throwAccuracy"
                     [options]="accuracyOptions"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select accuracy"
+                    [attr.aria-label]="'Select throw accuracy'"
                   >
                   </p-select>
                 </div>
@@ -457,24 +468,26 @@
                     <div class="form-field">
                       <label for="dropSeverity">Drop Severity</label>
                       <p-select
-                        id="dropSeverity"
+                        inputId="dropSeverity"
                         formControlName="dropSeverity"
                         [options]="dropSeverityOptions"
                         optionLabel="label"
                         optionValue="value"
                         placeholder="Select severity"
+                        [attr.aria-label]="'Select drop severity'"
                       >
                       </p-select>
                     </div>
                     <div class="form-field">
                       <label for="dropReason">Drop Reason</label>
                       <p-select
-                        id="dropReason"
+                        inputId="dropReason"
                         formControlName="dropReason"
                         [options]="dropReasonOptions"
                         optionLabel="label"
                         optionValue="value"
                         placeholder="Select reason"
+                        [attr.aria-label]="'Select drop reason'"
                       >
                       </p-select>
                     </div>
@@ -491,23 +504,25 @@
                 <div class="form-field">
                   <label for="ballCarrierId">Ball Carrier</label>
                   <p-select
-                    id="ballCarrierId"
+                    inputId="ballCarrierId"
                     formControlName="ballCarrierId"
                     [options]="players()"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select player"
                     [filter]="true"
+                    [attr.aria-label]="'Select ball carrier'"
                   >
                   </p-select>
                 </div>
                 <div class="form-field">
                   <label for="yardsGained">Yards Gained</label>
                   <p-inputNumber
-                    id="yardsGained"
+                    inputId="yardsGained"
                     formControlName="yardsGained"
                     [min]="0"
                     [showButtons]="true"
+                    [attr.aria-label]="'Yards gained'"
                   >
                   </p-inputNumber>
                 </div>
@@ -522,38 +537,41 @@
                 <div class="form-field">
                   <label for="defenderId">Defender</label>
                   <p-select
-                    id="defenderId"
+                    inputId="defenderId"
                     formControlName="defenderId"
                     [options]="players()"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select defender"
                     [filter]="true"
+                    [attr.aria-label]="'Select defender'"
                   >
                   </p-select>
                 </div>
                 <div class="form-field">
                   <label for="ballCarrierIdFlag">Ball Carrier</label>
                   <p-select
-                    id="ballCarrierIdFlag"
+                    inputId="ballCarrierIdFlag"
                     formControlName="ballCarrierIdFlag"
                     [options]="players()"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select carrier"
                     [filter]="true"
+                    [attr.aria-label]="'Select ball carrier'"
                   >
                   </p-select>
                 </div>
                 <div class="form-field">
                   <label for="isSuccessful">Successful Pull</label>
                   <p-select
-                    id="isSuccessful"
+                    inputId="isSuccessful"
                     formControlName="isSuccessful"
                     [options]="successOptions"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Select outcome"
+                    [attr.aria-label]="'Select if pull was successful'"
                   >
                   </p-select>
                 </div>
@@ -564,12 +582,13 @@
                   <div class="form-field">
                     <label for="missReason">Miss Reason</label>
                     <p-select
-                      id="missReason"
+                      inputId="missReason"
                       formControlName="missReason"
                       [options]="missReasonOptions"
                       optionLabel="label"
                       optionValue="value"
                       placeholder="Select reason"
+                      [attr.aria-label]="'Select miss reason'"
                     >
                     </p-select>
                   </div>
@@ -585,13 +604,14 @@
                 <div class="form-field">
                   <label for="interceptorId">Interceptor</label>
                   <p-select
-                    id="interceptorId"
+                    inputId="interceptorId"
                     formControlName="interceptorId"
                     [options]="players()"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select interceptor"
                     [filter]="true"
+                    [attr.aria-label]="'Select interceptor'"
                   >
                   </p-select>
                 </div>

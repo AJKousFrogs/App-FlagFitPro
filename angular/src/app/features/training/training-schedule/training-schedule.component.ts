@@ -152,7 +152,9 @@ interface MonthlyStats {
                   variant="filled"
                   inputId="showWeekNumbers"
                 ></p-checkbox>
-                <label for="showWeekNumbers">Show Week Numbers</label>
+                <label for="showWeekNumbers" [attr.aria-label]="'Toggle week numbers display on calendar'">
+                  Show Week Numbers
+                </label>
               </div>
 
               <!-- View Mode Toggle -->

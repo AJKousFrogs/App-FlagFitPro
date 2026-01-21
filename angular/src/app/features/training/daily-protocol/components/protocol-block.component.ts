@@ -113,9 +113,10 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           <button
             class="expand-toggle"
             [attr.aria-expanded]="isExpanded()"
+            [attr.aria-label]="isExpanded() ? 'Collapse ' + block().title : 'Expand ' + block().title"
             (click)="toggleExpand(); $event.stopPropagation()"
           >
-            <span class="expand-text">{{ isExpanded() ? '▲ Collapse' : '▼ Expand' }}</span>
+            <span class="expand-text" aria-hidden="true">{{ isExpanded() ? '▲ Collapse' : '▼ Expand' }}</span>
           </button>
         </div>
       </div>
@@ -156,9 +157,11 @@ import { ExerciseCardComponent } from "./exercise-card.component";
                   <label class="exercise-checkbox">
                     <input
                       type="checkbox"
+                      [id]="'exercise-checkbox-' + exercise.id"
                       [attr.data-testid]="'exercise-checkbox-' + exercise.id"
                       [checked]="exercise.status === 'complete'"
                       (change)="onExerciseToggle(exercise)"
+                      [attr.aria-label]="'Mark ' + exercise.exercise.name + ' as complete'"
                     />
                     <span class="exercise-name">{{
                       exercise.exercise.name

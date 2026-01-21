@@ -329,6 +329,7 @@ interface WellnessMetric {
                       [minFractionDigits]="1"
                       [maxFractionDigits]="1"
                       placeholder="Hours"
+                      [attr.aria-label]="'Sleep hours'"
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
@@ -340,6 +341,7 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Quality"
+                      [attr.aria-label]="'Sleep quality from 1 to 10'"
                     ></p-inputNumber>
                   </div>
                 </div>
@@ -360,6 +362,7 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Level"
+                      [attr.aria-label]="'Energy level from 1 to 10'"
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
@@ -371,6 +374,7 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="1=None, 10=Severe"
+                      [attr.aria-label]="'Muscle soreness from 1 to 10, where 1 is no soreness and 10 is very sore'"
                     ></p-inputNumber>
                     <small class="help-text"
                       >1 = No soreness, 10 = Very sore</small
@@ -389,6 +393,7 @@ interface WellnessMetric {
                       [max]="20"
                       [showButtons]="true"
                       placeholder="Glasses (8oz)"
+                      [attr.aria-label]="'Number of glasses of water consumed'"
                     ></p-inputNumber>
                     <small class="help-text">Target: 8+ glasses daily</small>
                   </div>
@@ -401,6 +406,7 @@ interface WellnessMetric {
                       [max]="120"
                       [showButtons]="true"
                       placeholder="Optional"
+                      [attr.aria-label]="'Resting heart rate in beats per minute'"
                     ></p-inputNumber>
                     <small class="help-text"
                       >Elevated HR may indicate fatigue</small
@@ -424,6 +430,7 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Mood"
+                      [attr.aria-label]="'Mood level from 1 to 10'"
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
@@ -435,6 +442,7 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="1=Relaxed, 10=Very stressed"
+                      [attr.aria-label]="'Stress level from 1 to 10, where 1 is very relaxed and 10 is very stressed'"
                     ></p-inputNumber>
                     <small class="help-text"
                       >1 = Very relaxed, 10 = Very stressed</small
@@ -451,6 +459,7 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Motivation"
+                      [attr.aria-label]="'Training motivation level from 1 to 10'"
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
@@ -462,6 +471,7 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Readiness"
+                      [attr.aria-label]="'Readiness to train level from 1 to 10'"
                     ></p-inputNumber>
                   </div>
                 </div>

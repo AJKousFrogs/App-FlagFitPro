@@ -75,29 +75,31 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
         <div class="form-field">
           <label for="playlistPosition">Target Position</label>
           <p-select
-            id="playlistPosition"
+            inputId="playlistPosition"
             [(ngModel)]="form.position"
             [options]="positionOptions"
             placeholder="Select position (optional)"
             [showClear]="true"
+            [attr.aria-label]="'Select target position for playlist'"
           ></p-select>
         </div>
 
         <div class="form-field">
           <label for="playlistFocus">Training Focus</label>
           <p-multiselect
-            id="playlistFocus"
+            inputId="playlistFocus"
             [(ngModel)]="form.focus"
             [options]="focusOptions"
             placeholder="Select focus areas"
             [maxSelectedLabels]="3"
+            [attr.aria-label]="'Select training focus areas'"
           ></p-multiselect>
         </div>
 
         <div class="form-field">
           <label for="playlistVideos">Select Videos</label>
           <p-multiselect
-            id="playlistVideos"
+            inputId="playlistVideos"
             [(ngModel)]="form.videoIds"
             [options]="videoOptions()"
             optionLabel="label"
@@ -106,7 +108,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
             [filter]="true"
             filterPlaceholder="Search videos..."
             [maxSelectedLabels]="5"
-            ariaLabel="Select videos to add to playlist"
+            [attr.aria-label]="'Select videos to add to playlist'"
           ></p-multiselect>
         </div>
       </div>

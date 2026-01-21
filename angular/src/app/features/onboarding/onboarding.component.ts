@@ -192,6 +192,7 @@ interface InjuryEntry {
                       [(ngModel)]="onboardingData.gender"
                       placeholder="Select gender"
                       class="w-full"
+                      [attr.aria-label]="'Select gender'"
                     ></p-select>
                   </div>
 
@@ -207,6 +208,7 @@ interface InjuryEntry {
                       [filter]="true"
                       filterPlaceholder="Search countries..."
                       class="w-full"
+                      [attr.aria-label]="'Select your country'"
                     ></p-select>
                   </div>
 
@@ -338,6 +340,7 @@ interface InjuryEntry {
                         [(ngModel)]="onboardingData.staffRole"
                         placeholder="Select your role"
                         class="w-full"
+                        [attr.aria-label]="'Select your staff role'"
                       ></p-select>
                     </div>
 
@@ -462,6 +465,7 @@ interface InjuryEntry {
                         [(ngModel)]="onboardingData.position"
                         placeholder="Select position"
                         class="w-full"
+                        [attr.aria-label]="'Select primary position'"
                       ></p-select>
                     </div>
 
@@ -476,6 +480,7 @@ interface InjuryEntry {
                         placeholder="Optional"
                         [showClear]="true"
                         class="w-full"
+                        [attr.aria-label]="'Select secondary position'"
                       ></p-select>
                     </div>
 
@@ -532,6 +537,7 @@ interface InjuryEntry {
                         [(ngModel)]="onboardingData.experience"
                         placeholder="Select your experience"
                         class="w-full"
+                        [attr.aria-label]="'Select your experience level'"
                       ></p-select>
                     </div>
                   }
@@ -960,11 +966,12 @@ interface InjuryEntry {
                       >Work Schedule Type <span class="required">*</span></label
                     >
                     <p-select
-                      id="scheduleType"
+                      inputId="scheduleType"
                       [options]="scheduleTypes"
                       [(ngModel)]="onboardingData.scheduleType"
                       placeholder="Select your schedule type"
                       class="w-full"
+                      [attr.aria-label]="'Select work schedule type'"
                     ></p-select>
                   </div>
 
@@ -973,11 +980,12 @@ interface InjuryEntry {
                       >Team Practices Per Week</label
                     >
                     <p-select
-                      id="practicesPerWeek"
+                      inputId="practicesPerWeek"
                       [options]="practiceFrequencies"
                       [(ngModel)]="onboardingData.practicesPerWeek"
                       placeholder="How many team practices?"
                       class="w-full"
+                      [attr.aria-label]="'Select number of team practices per week'"
                     ></p-select>
                   </div>
 

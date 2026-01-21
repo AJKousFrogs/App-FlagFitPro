@@ -112,7 +112,9 @@ interface Workout {
                       inputId="exercise-{{ exercise.id }}"
                     >
                     </p-checkbox>
-                    <label for="exercise-{{ exercise.id }}">Done</label>
+                    <label for="exercise-{{ exercise.id }}">
+                      Mark {{ exercise.name }} as complete
+                    </label>
                   </div>
                 </div>
               }

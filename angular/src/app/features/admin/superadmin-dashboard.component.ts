@@ -341,22 +341,33 @@ interface AdminTeam {
             />
           </span>
           <p-select
+            inputId="user-role-filter"
             [options]="roleOptions"
             [(ngModel)]="roleFilter"
             optionLabel="label"
             optionValue="value"
             placeholder="Role"
+            [attr.aria-label]="'Filter users by role'"
           ></p-select>
           <p-select
+            inputId="user-status-filter"
             [options]="statusOptions"
             [(ngModel)]="statusFilter"
             optionLabel="label"
             optionValue="value"
             placeholder="Status"
+            [attr.aria-label]="'Filter users by status'"
           ></p-select>
         </div>
 
-        <p-table [value]="filteredUsers()" [paginator]="true" [rows]="10">
+        <p-table 
+          [value]="filteredUsers()" 
+          [paginator]="true" 
+          [rows]="10"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          [virtualScroll]="filteredUsers().length > 50"
+          [virtualScrollItemSize]="46"
+        >
           <ng-template pTemplate="header">
             <tr>
               <th>User</th>
@@ -398,7 +409,14 @@ interface AdminTeam {
         [modal]="true"
         [style]="{ width: '95vw', maxWidth: '900px' }"
       >
-        <p-table [value]="teams()" [paginator]="true" [rows]="10">
+        <p-table 
+          [value]="teams()" 
+          [paginator]="true" 
+          [rows]="10"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          [virtualScroll]="teams().length > 50"
+          [virtualScrollItemSize]="46"
+        >
           <ng-template pTemplate="header">
             <tr>
               <th>Team</th>

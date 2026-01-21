@@ -92,22 +92,26 @@ import type {
         <div class="review-options">
           <h3>Review Outcome</h3>
           <p-select
+            inputId="review-outcome-select"
             [options]="reviewOutcomeOptions"
             [(ngModel)]="formData.reviewOutcome"
             placeholder="Select review outcome"
             styleClass="w-full"
             (onValueChange)="onOutcomeChange()"
+            [attr.aria-label]="'Select review outcome'"
           ></p-select>
 
           @if (formData.reviewOutcome === "extended") {
             <div class="extension-options">
-              <label>New Review Date</label>
+              <label for="new-review-date">New Review Date</label>
               <p-datepicker
+                inputId="new-review-date"
                 [(ngModel)]="formData.newReviewDate"
                 [minDate]="minDate"
                 [showIcon]="true"
                 dateFormat="mm/dd/yy"
                 styleClass="w-full"
+                [attr.aria-label]="'Select new review date'"
               ></p-datepicker>
             </div>
           }

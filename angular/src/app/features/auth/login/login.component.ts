@@ -129,9 +129,14 @@ import {
           </div>
 
           <div class="login-form-options">
-            <label class="checkbox-wrapper">
-              <input type="checkbox" formControlName="remember" id="remember" />
-              <span class="checkmark"></span>
+            <label class="checkbox-wrapper" for="remember">
+              <input 
+                type="checkbox" 
+                formControlName="remember" 
+                id="remember"
+                [attr.aria-label]="'Remember me on this device'"
+              />
+              <span class="checkmark" aria-hidden="true"></span>
               <span class="checkbox-label">Remember me</span>
             </label>
             <a [routerLink]="['/reset-password']" class="forgot-link">

@@ -77,16 +77,21 @@ import { Textarea } from "primeng/textarea";
         @if (currentStep() === 0) {
           <div class="step-panel">
             <h3>Select Athlete</h3>
-            <p-select
-              [options]="athletes()"
-              [(ngModel)]="formData.athleteId"
-              optionLabel="name"
-              optionValue="id"
-              placeholder="Select an athlete"
-              [filter]="true"
-              [showClear]="true"
-              styleClass="w-full"
-            ></p-select>
+            <div class="field">
+              <label for="athlete-select" class="block mb-2">Athlete</label>
+              <p-select
+                inputId="athlete-select"
+                [options]="athletes()"
+                [(ngModel)]="formData.athleteId"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select an athlete"
+                [filter]="true"
+                [showClear]="true"
+                styleClass="w-full"
+                [attr.aria-label]="'Select athlete'"
+              ></p-select>
+            </div>
             @if (formData.athleteId) {
               <div class="athlete-info">
                 <p>Selected: {{ getAthleteName(formData.athleteId) }}</p>
@@ -99,13 +104,18 @@ import { Textarea } from "primeng/textarea";
         @if (currentStep() === 1) {
           <div class="step-panel">
             <h3>Select Decision Type</h3>
-            <p-select
-              [options]="decisionTypeOptions"
-              [(ngModel)]="formData.decisionType"
-              placeholder="Select decision type"
-              styleClass="w-full"
-              (onValueChange)="onDecisionTypeChange()"
-            ></p-select>
+            <div class="field">
+              <label for="decision-type-select" class="block mb-2">Decision Type</label>
+              <p-select
+                inputId="decision-type-select"
+                [options]="decisionTypeOptions"
+                [(ngModel)]="formData.decisionType"
+                placeholder="Select decision type"
+                styleClass="w-full"
+                (onValueChange)="onDecisionTypeChange()"
+                [attr.aria-label]="'Select decision type'"
+              ></p-select>
+            </div>
             @if (formData.decisionType) {
               <div class="info-box">
                 <p>
@@ -121,15 +131,25 @@ import { Textarea } from "primeng/textarea";
         @if (currentStep() === 2) {
           <div class="step-panel">
             <h3>Decision Summary</h3>
-            <p>Provide a clear, concise summary of the decision</p>
-            <textarea
-              pInputTextarea
-              [(ngModel)]="formData.decisionSummary"
-              placeholder="e.g., Reduced sprint volume by 50% due to elevated ACWR"
-              rows="3"
-              [maxlength]="500"
-              styleClass="w-full"
-            ></textarea>
+            <div class="field">
+              <label for="decision-summary" class="block mb-2">
+                Provide a clear, concise summary of the decision
+              </label>
+              <textarea
+                pInputTextarea
+                id="decision-summary"
+                [(ngModel)]="formData.decisionSummary"
+                placeholder="e.g., Reduced sprint volume by 50% due to elevated ACWR"
+                rows="3"
+                [maxlength]="500"
+                styleClass="w-full"
+                [attr.aria-label]="'Decision summary'"
+                [attr.aria-describedby]="'decision-summary-hint'"
+              ></textarea>
+              <small id="decision-summary-hint" class="p-field-hint">
+                Maximum 500 characters
+              </small>
+            </div>
             <div class="char-count">
               {{ formData.decisionSummary.length }}/500 characters
             </div>
@@ -183,6 +203,8 @@ import { Textarea } from "primeng/textarea";
                   <app-button
                     iconLeft="pi-times"
                     variant="danger"
+                    [iconOnly]="true"
+                    ariaLabel="Remove constraint"
                     (clicked)="removeConstraint($index)"
                   />
                 </div>
@@ -191,6 +213,7 @@ import { Textarea } from "primeng/textarea";
                 iconLeft="pi-plus"
                 variant="outlined"
                 (clicked)="addConstraint()"
+                ariaLabel="Add new constraint"
                 >Add Constraint</app-button
               >
             </div>
@@ -201,14 +224,20 @@ import { Textarea } from "primeng/textarea";
         @if (currentStep() === 5) {
           <div class="step-panel">
             <h3>Review Trigger</h3>
-            <p>When should this decision be reviewed?</p>
-            <p-select
-              [options]="reviewTriggerOptions"
-              [(ngModel)]="formData.reviewTrigger"
-              placeholder="Select review trigger"
-              styleClass="w-full"
-              (onValueChange)="onReviewTriggerChange()"
-            ></p-select>
+            <div class="field">
+              <label for="review-trigger-select" class="block mb-2">
+                When should this decision be reviewed?
+              </label>
+              <p-select
+                inputId="review-trigger-select"
+                [options]="reviewTriggerOptions"
+                [(ngModel)]="formData.reviewTrigger"
+                placeholder="Select review trigger"
+                styleClass="w-full"
+                (onValueChange)="onReviewTriggerChange()"
+                [attr.aria-label]="'Select review trigger'"
+              ></p-select>
+            </div>
             @if (formData.reviewTrigger) {
               <div class="review-info">
                 <p>

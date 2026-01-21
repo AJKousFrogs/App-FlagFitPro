@@ -221,6 +221,9 @@ declare global {
               <app-button
                 [loading]="processingVoice()"
                 (clicked)="toggleVoiceRecognition()"
+                [iconOnly]="true"
+                iconLeft="pi-microphone"
+                ariaLabel="Toggle voice recognition"
               ></app-button>
 
               @if (lastVoiceCommand()) {

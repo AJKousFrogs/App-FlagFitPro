@@ -22,9 +22,11 @@ export { CardComponent } from "./card/card.component";
 // FORM COMPONENTS
 // ============================================================================
 export { InputComponent } from "./input/input.component";
-// SelectComponent removed - use PrimeNG p-select directly
-export { CheckboxComponent } from "./checkbox/checkbox.component";
-export { RadioComponent } from "./radio/radio.component";
+// DEPRECATED & REMOVED: These components were unused and have been removed
+// Use PrimeNG components directly:
+// - SelectComponent → Use PrimeNG p-select (removed 2025-01-XX)
+// - CheckboxComponent → Use PrimeNG p-checkbox (removed 2025-01-XX)
+// - RadioComponent → Use PrimeNG p-radioButton (removed 2025-01-XX)
 export { TextareaComponent } from "./textarea/textarea.component";
 export { ControlRowComponent } from "./control-row/control-row.component";
 

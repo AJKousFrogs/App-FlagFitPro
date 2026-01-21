@@ -251,24 +251,26 @@ interface VideoSuggestion {
                     <div class="form-field">
                       <label for="positions">Target Position(s)</label>
                       <p-multiselect
-                        id="positions"
+                        inputId="positions"
                         formControlName="positions"
                         [options]="positionOptions"
                         placeholder="Select positions"
                         [maxSelectedLabels]="3"
                         styleClass="category-select"
+                        [attr.aria-label]="'Select target positions'"
                       ></p-multiselect>
                     </div>
 
                     <div class="form-field">
                       <label for="focus">Training Focus</label>
                       <p-multiselect
-                        id="focus"
+                        inputId="focus"
                         formControlName="trainingFocus"
                         [options]="focusOptions"
                         placeholder="Select focus areas"
                         [maxSelectedLabels]="3"
                         styleClass="category-select"
+                        [attr.aria-label]="'Select training focus areas'"
                       ></p-multiselect>
                     </div>
                   </div>

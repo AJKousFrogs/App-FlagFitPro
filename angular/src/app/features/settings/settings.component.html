@@ -156,6 +156,7 @@
                   optionValue="value"
                   placeholder="Select your position"
                   appendTo="body"
+                  [attr.aria-label]="'Select your position'"
                 ></p-select>
               </div>
               <div class="form-field">
@@ -215,6 +216,7 @@
                 placeholder="Select your team"
                 appendTo="body"
                 (ngModelChange)="onTeamChange({ value: $event })"
+                [attr.aria-label]="'Select your team'"
               ></p-select>
               <small class="field-hint">
                 <i class="pi pi-info-circle"></i>

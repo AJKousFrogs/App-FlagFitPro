@@ -501,7 +501,14 @@ const RTP_STAGES: RtpStage[] = [
         <!-- History Table -->
         @if (activeTab() === "history") {
           <p-card styleClass="history-card">
-            <p-table [value]="injuries()" [paginator]="true" [rows]="10">
+            <p-table 
+            [value]="injuries()" 
+            [paginator]="true" 
+            [rows]="10"
+            [rowsPerPageOptions]="[10, 25, 50]"
+            [virtualScroll]="injuries().length > 50"
+            [virtualScrollItemSize]="46"
+          >
               <ng-template pTemplate="header">
                 <tr>
                   <th>Player</th>
@@ -614,6 +621,7 @@ const RTP_STAGES: RtpStage[] = [
               placeholder="Select player"
               [filter]="true"
               styleClass="w-full"
+              [attr.aria-label]="'Select player'"
             ></p-select>
           </div>
 
@@ -625,6 +633,7 @@ const RTP_STAGES: RtpStage[] = [
                 [(ngModel)]="reportForm.injuryDate"
                 [showIcon]="true"
                 dateFormat="M d, yy"
+                [attr.aria-label]="'Select injury date'"
               ></p-datepicker>
             </div>
             <div class="form-field">
@@ -635,6 +644,7 @@ const RTP_STAGES: RtpStage[] = [
                 [(ngModel)]="reportForm.injuryTime"
                 optionLabel="label"
                 optionValue="value"
+                [attr.aria-label]="'Select time of injury'"
               ></p-select>
             </div>
           </div>
@@ -648,6 +658,7 @@ const RTP_STAGES: RtpStage[] = [
                 [(ngModel)]="reportForm.bodyPart"
                 optionLabel="label"
                 optionValue="value"
+                [attr.aria-label]="'Select body part'"
               ></p-select>
             </div>
             <div class="form-field">
@@ -658,6 +669,7 @@ const RTP_STAGES: RtpStage[] = [
                 [(ngModel)]="reportForm.injuryType"
                 optionLabel="label"
                 optionValue="value"
+                [attr.aria-label]="'Select injury type'"
               ></p-select>
             </div>
           </div>
@@ -728,6 +740,7 @@ const RTP_STAGES: RtpStage[] = [
               [(ngModel)]="reportForm.howHappened"
               optionLabel="label"
               optionValue="value"
+              [attr.aria-label]="'Select how injury happened'"
             ></p-select>
           </div>
 

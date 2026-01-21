@@ -307,11 +307,14 @@ const RTP_PHASES = [
                   <div class="section-header">
                     <h3>Athletes Under Care</h3>
                     <div class="filter-group">
+                      <label for="clearance-filter" class="sr-only">Filter by clearance status</label>
                       <p-select
+                        inputId="clearance-filter"
                         [options]="clearanceFilterOptions"
                         [(ngModel)]="clearanceFilter"
                         placeholder="Filter by status"
                         [showClear]="true"
+                        [attr.aria-label]="'Filter athletes by clearance status'"
                       ></p-select>
                     </div>
                   </div>
@@ -320,6 +323,9 @@ const RTP_PHASES = [
                     [value]="filteredAthletes()"
                     [paginator]="true"
                     [rows]="10"
+                    [rowsPerPageOptions]="[10, 25, 50]"
+                    [virtualScroll]="filteredAthletes().length > 50"
+                    [virtualScrollItemSize]="46"
                     styleClass="p-datatable-sm"
                   >
                     <ng-template #header>
@@ -736,10 +742,12 @@ const RTP_PHASES = [
                   <div class="section-header">
                     <h3>Injury History Analysis</h3>
                     <p-select
+                      inputId="history-athlete-select"
                       [options]="athleteSelectOptions()"
                       [(ngModel)]="selectedHistoryAthlete"
                       placeholder="Select athlete"
                       (onValueChange)="loadInjuryHistory()"
+                      [attr.aria-label]="'Select athlete to view injury history'"
                     ></p-select>
                   </div>
 
@@ -1066,21 +1074,25 @@ const RTP_PHASES = [
         >
           <div class="report-form">
             <div class="form-group">
-              <label>Report Type</label>
+              <label for="report-type-select">Report Type</label>
               <p-select
+                inputId="report-type-select"
                 [options]="reportTypes"
                 [(ngModel)]="selectedReportType"
                 placeholder="Select report type"
                 styleClass="w-full"
+                [attr.aria-label]="'Select report type'"
               ></p-select>
             </div>
             <div class="form-group">
-              <label>Athlete</label>
+              <label for="report-athlete-select">Athlete</label>
               <p-select
+                inputId="report-athlete-select"
                 [options]="athleteSelectOptions()"
                 [(ngModel)]="reportAthleteId"
                 placeholder="Select athlete"
                 styleClass="w-full"
+                [attr.aria-label]="'Select athlete for report'"
               ></p-select>
             </div>
           </div>

@@ -173,14 +173,16 @@ const PRACTICE_DURATIONS = [
                 formData.targetType === "game"
               ) {
                 <div class="event-selector">
-                  <label>Select event:</label>
+                  <label for="event-select">Select event:</label>
                   <p-select
+                    inputId="event-select"
                     [options]="upcomingEvents()"
                     [(ngModel)]="formData.eventId"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select upcoming event"
                     styleClass="w-full"
+                    [attr.aria-label]="'Select upcoming event'"
                   ></p-select>
                   @if (selectedEvent()) {
                     <p class="event-info">
@@ -241,22 +243,26 @@ const PRACTICE_DURATIONS = [
 
               <div class="constraints-row">
                 <div class="constraint-field">
-                  <label>Practice duration:</label>
+                  <label for="practice-duration">Practice duration:</label>
                   <p-select
+                    inputId="practice-duration"
                     [options]="practiceDurations"
                     [(ngModel)]="formData.duration"
                     optionLabel="label"
                     optionValue="value"
+                    [attr.aria-label]="'Select practice duration'"
                   ></p-select>
                 </div>
                 <div class="constraint-field">
-                  <label>Facility:</label>
+                  <label for="facility-select">Facility:</label>
                   <p-select
+                    inputId="facility-select"
                     [options]="facilities()"
                     [(ngModel)]="formData.facility"
                     optionLabel="name"
                     optionValue="id"
                     placeholder="Select facility"
+                    [attr.aria-label]="'Select facility'"
                   ></p-select>
                 </div>
               </div>
