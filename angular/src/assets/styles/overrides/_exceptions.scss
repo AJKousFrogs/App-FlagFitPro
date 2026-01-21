@@ -1151,7 +1151,7 @@
     .p-tablist-tab-list {
       display: flex;
       align-items: stretch;
-      gap: var(--space-1);
+      gap: var(--space-2); /* Increased from space-1 (4px) to space-2 (8px) for better tab separation */
       background: transparent;
       border: none;
     }
@@ -1164,8 +1164,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: var(--space-2);
-      padding: 0 var(--space-4);
+      gap: var(--space-3); /* Increased from space-2 (8px) to space-3 (12px) for better icon-text spacing */
+      padding: 0 var(--space-5); /* Increased padding for better breathing room */
       font-family: var(--font-family-sans);
       font-size: var(--font-body-sm-size);
       font-weight: 500;
@@ -1188,6 +1188,16 @@
         font-size: var(--font-body-size);
         color: var(--color-text-tertiary);
         transition: color 0.2s ease;
+        display: inline-flex; /* Ensure icon is properly aligned */
+        align-items: center; /* Vertical alignment */
+        line-height: 1; /* Prevent line-height from affecting alignment */
+        flex-shrink: 0; /* Prevent icon from shrinking */
+      }
+
+      .tab-label {
+        display: inline-flex;
+        align-items: center;
+        line-height: 1.4; /* Proper line height for text */
       }
 
       &:hover:not(.p-tab-active):not([data-p-active="true"]) {

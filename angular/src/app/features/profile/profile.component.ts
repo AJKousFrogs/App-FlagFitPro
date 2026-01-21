@@ -1,31 +1,32 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  OnInit,
-  viewChild,
-  inject,
-  signal
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    ElementRef,
+    inject,
+    OnInit,
+    signal,
+    viewChild
 } from "@angular/core";
 
 import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
 import { RouterModule } from "@angular/router";
 
-import { ButtonComponent } from "../../shared/components/button/button.component";
-import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
-import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 import { ProgressBar } from "primeng/progressbar";
 import { ProgressSpinner } from "primeng/progressspinner";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "primeng/tabs";
+import { ButtonComponent } from "../../shared/components/button/button.component";
+import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
+import { CardShellComponent } from "../../shared/components/card-shell/card-shell.component";
 
-import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
+import { UI_LIMITS } from "../../core/constants/app.constants";
+import { TOAST } from "../../core/constants/toast-messages.constants";
 import { AccountDeletionService } from "../../core/services/account-deletion.service";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import {
-  LoggerService,
-  toLogContext
+    LoggerService,
+    toLogContext
 } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -34,15 +35,14 @@ import { ToastService } from "../../core/services/toast.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { StatsGridComponent } from "../../shared/components/stats-grid/stats-grid.component";
-import {
-  DELETION_MESSAGES,
-  getDeletionMessage
-} from "../../shared/utils/privacy-ux-copy";
+import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
-import { UI_LIMITS } from "../../core/constants/app.constants";
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
-import { TOAST } from "../../core/constants/toast-messages.constants";
+import {
+    DELETION_MESSAGES,
+    getDeletionMessage
+} from "../../shared/utils/privacy-ux-copy";
 
 interface PendingInvitation {
   id: string;
@@ -1186,6 +1186,10 @@ export class ProfileComponent implements OnInit {
 
       // Update local state
       this.avatarUrl.set(avatarUrl);
+      
+      // Refresh profile completion service to recalculate completion percentage
+      await this.profileCompletionService.refresh();
+      
       this.toastService.success(TOAST.SUCCESS.AVATAR_UPDATED);
     } catch (error) {
       this.logger.error("Error uploading avatar:", error);

@@ -233,6 +233,20 @@
                 autocomplete="tel"
               />
             </div>
+            <div class="p-field mb-4">
+              <label for="settings-country" class="p-label">Country</label>
+              <p-select
+                inputId="settings-country"
+                formControlName="country"
+                [options]="countryOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select your country"
+                [filter]="true"
+                filterPlaceholder="Search countries..."
+                appendTo="body"
+              ></p-select>
+            </div>
           </form>
         </app-card>
       </div>

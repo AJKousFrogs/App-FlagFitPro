@@ -2173,7 +2173,15 @@ async function generateProtocol(supabase, userId, payload, headers) {
     });
   }
 
-  // 3. Warm-up - Position-aware
+  // Check if it's a sprint session (Saturday or session type is speed/sprint)
+  // Declare early so it can be used in both warmup and main session generation
+  const isSprintSession = 
+    context.dayOfWeek === 6 || // Saturday
+    context.sessionResolution?.override?.type === "sprint_saturday" ||
+    context.sessionTemplate?.session_type?.toLowerCase() === "speed" ||
+    context.sessionTemplate?.session_type?.toLowerCase() === "sprint";
+
+  // 3. Warm-up - Position-aware and Sprint-Session aware
   const warmUpQuery = supabase
     .from("exercises")
     .select("*")
@@ -2181,11 +2189,154 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .eq("active", true)
     .not("subcategory", "eq", "morning_routine");
 
-  // For QB and Center, include position-specific warm-up exercises (unless practice day)
-  // Note: isPracticeDay and isFilmRoomDay already declared above in training focus section
-  if ((context.isQB || context.isCenter) && !isPracticeDay) {
-    // Add QB/Center pre-throwing warm-up (rotator cuff, scapular, wrist)
-    // Centers need similar arm care since they snap and throw
+  // For sprint sessions, use sprint-specific warmup (Askips, Bskips, hamstring stretches, toy soldiers, pogos, jump rope)
+  // Evidence: Sprint warmup activates sprint mechanics and neural patterns (shared-protocols.js, sprint-training-knowledge.service.ts)
+  if (isSprintSession && !isPracticeDay) {
+    // Sprint-specific warmup exercises - Phase 3: Sprint Drill Series from UNIVERSAL_WARMUP
+    // Essential exercises: A-march, A-skip, B-skip, High knees, Butt kicks, Toy soldiers, Hamstring stretch, Pogos
+    const sprintWarmupNames = [
+      "a-march", "a march", "amarch",
+      "a-skip", "a skip", "askip", "askips",
+      "b-skip", "b skip", "bskip", "bskips",
+      "c-skip", "c skip", "cskip", "cskips",
+      "high knee", "high knees",
+      "butt kick", "butt kicks",
+      "hamstring stretch", "hamstring stretches", "hamstring",
+      "toy soldier", "toy soldiers",
+      "pogo", "pogos", "pogo jump", "pogo jumps", "ankle hop", "ankle hops",
+      "jump rope", "jumping rope", "rope jump",
+      "scissors", "leg scissors"
+    ];
+    
+    const { data: sprintWarmUpExercises } = await supabase
+      .from("exercises")
+      .select("*")
+      .eq("category", "warm_up")
+      .eq("active", true)
+      .or(sprintWarmupNames.map(name => `name.ilike.%${name}%`).join(","))
+      .limit(15);
+
+    if (sprintWarmUpExercises && sprintWarmUpExercises.length > 0) {
+      // Prioritize the key sprint warmup exercises in order of importance
+      // Order: A-march → A-skip → B-skip → High knees → Butt kicks → Toy soldiers → Hamstring stretch → Pogos → Jump rope
+      const prioritized = sprintWarmUpExercises.sort((a, b) => {
+        const aName = (a.name || "").toLowerCase();
+        const bName = (b.name || "").toLowerCase();
+        const priority = [
+          "a-march", "a march", "amarch",
+          "a-skip", "a skip", "askip",
+          "b-skip", "b skip", "bskip",
+          "high knee",
+          "butt kick",
+          "toy soldier",
+          "hamstring",
+          "pogo", "ankle hop",
+          "jump rope", "rope jump"
+        ];
+        const aIdx = priority.findIndex(p => aName.includes(p));
+        const bIdx = priority.findIndex(p => bName.includes(p));
+        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+        if (aIdx !== -1) return -1;
+        if (bIdx !== -1) return 1;
+        return 0;
+      });
+
+      // Select 6-8 key sprint warmup exercises
+      const selectedWarmups = prioritized.slice(0, 8);
+      
+      selectedWarmups.forEach((ex, idx) => {
+        const exName = (ex.name || "").toLowerCase();
+        let sets = ex.default_sets || 2;
+        let reps = ex.default_reps;
+        let duration = ex.default_duration_seconds;
+        let aiNote = "Sprint Session Warm-up - Essential for sprint mechanics and injury prevention";
+        
+        // Set appropriate parameters based on exercise type
+        if (exName.includes("a-march") || exName.includes("a march")) {
+          sets = 2;
+          reps = null;
+          duration = null;
+          aiNote = "A-March: Knee drive mechanics - activates hip flexors for sprint";
+        } else if (exName.includes("a-skip") || exName.includes("a skip")) {
+          sets = 2;
+          reps = 10;
+          duration = null;
+          aiNote = "A-Skip: Rhythm and coordination - high knee, dorsiflexed ankle";
+        } else if (exName.includes("b-skip") || exName.includes("b skip")) {
+          sets = 2;
+          reps = 10;
+          duration = null;
+          aiNote = "B-Skip: Pawing action - extend leg, pull back to ground aggressively";
+        } else if (exName.includes("high knee")) {
+          sets = 2;
+          reps = null;
+          duration = 30;
+          aiNote = "High Knees: Knee drive frequency - fast turnover, tall posture";
+        } else if (exName.includes("butt kick")) {
+          sets = 2;
+          reps = null;
+          duration = 30;
+          aiNote = "Butt Kicks: Hamstring recovery - heel to glute, fast turnover";
+        } else if (exName.includes("toy soldier")) {
+          sets = 2;
+          reps = null;
+          duration = null;
+          aiNote = "Toy Soldiers: Hamstring flexibility dynamic - straight leg, touch toe, controlled";
+        } else if (exName.includes("hamstring")) {
+          sets = 1;
+          reps = null;
+          duration = 30;
+          aiNote = "Hamstring Stretch: 30s each leg - gentle stretch, breathe, no bouncing";
+        } else if (exName.includes("pogo") || exName.includes("ankle hop")) {
+          sets = 3;
+          reps = 20;
+          duration = null;
+          aiNote = "Pogo Jumps: Ankle stiffness - minimal knee bend, ankle-only. Essential for sprint performance (Kubo et al., 2000)";
+        } else if (exName.includes("jump rope") || exName.includes("rope jump")) {
+          sets = 2;
+          reps = null;
+          duration = 30;
+          aiNote = "Jump Rope: Ankle stiffness and coordination";
+        }
+        
+        protocolExercises.push({
+          protocol_id: protocol.id,
+          exercise_id: ex.id,
+          block_type: "warm_up",
+          sequence_order: idx + 1,
+          prescribed_sets: sets,
+          prescribed_reps: reps,
+          prescribed_hold_seconds: ex.default_hold_seconds,
+          prescribed_duration_seconds: duration || ex.default_duration_seconds,
+          load_contribution_au: ex.load_contribution_au || 0,
+          ai_note: aiNote,
+        });
+      });
+    } else {
+      // Fallback: use standard warmup but log warning
+      console.warn("[daily-protocol] Sprint session detected but sprint warmup exercises not found in DB");
+      const { data: warmUpExercises } = await warmUpQuery.limit(12);
+      if (warmUpExercises && warmUpExercises.length > 0) {
+        const shuffled = warmUpExercises.sort(() => Math.random() - 0.5).slice(0, 6);
+        shuffled.forEach((ex, idx) => {
+          protocolExercises.push({
+            protocol_id: protocol.id,
+            exercise_id: ex.id,
+            block_type: "warm_up",
+            sequence_order: idx + 1,
+            prescribed_sets: ex.default_sets || 1,
+            prescribed_reps: ex.default_reps,
+            prescribed_hold_seconds: ex.default_hold_seconds,
+            prescribed_duration_seconds: ex.default_duration_seconds,
+            load_contribution_au: ex.load_contribution_au || 0,
+            ai_note: "Sprint Session Warm-up (fallback)",
+          });
+        });
+      }
+    }
+  } else if ((context.isQB || context.isCenter) && !isPracticeDay && !isSprintSession) {
+    // For QB and Center, include position-specific warm-up exercises (unless practice day or sprint session)
+    // Note: On sprint sessions, skip QB/Center wall slides - sprint warmup takes priority
     const positions = context.isCenter
       ? ["center", "quarterback"]
       : ["quarterback"];
@@ -2195,6 +2346,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .or(positions.map((p) => `position_specific.cs.{${p}}`).join(","))
       .eq("category", "warm_up")
       .eq("active", true)
+      .not("name", "ilike", "%wall slide%") // Skip wall slides on sprint days
       .limit(8);
 
     if (throwingWarmUp && throwingWarmUp.length > 0) {
@@ -2643,8 +2795,21 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // END OF EVIDENCE-BASED BLOCKS
   // ============================================================================
 
-  // 9. Main Session - From structured program templates (Legacy - kept for existing programs)
+  // 9. Main Session - From structured program templates OR generated based on training type
   // Note: isPracticeDay and isFilmRoomDay already declared above in training focus section
+  
+  // Determine main session type based on priority:
+  // 1. Sprint session (especially Saturday)
+  // 2. Gym training (if has_gym_access)
+  // 3. Flag training (if preferred)
+  // 4. Session template (if exists)
+  // Note: isSprintSession is already declared above before warmup section
+  const hasGymAccess = context.config?.has_gym_access !== false;
+  const hasFieldAccess = context.config?.has_field_access !== false;
+
+  let mainSessionGenerated = false;
+
+  // Priority 1: Use session template if it exists (unless it's a practice/film room day)
   if (context.sessionTemplate && !isPracticeDay && !isFilmRoomDay) {
     // Get exercises from session_exercises table
     const { data: sessionExercises } = await supabase
@@ -2747,29 +2912,297 @@ async function generateProtocol(supabase, userId, payload, headers) {
           load_contribution_au: se.exercises?.load_contribution_au || 10,
         });
       });
+      mainSessionGenerated = true;
     }
-  } else if (!isPracticeDay && !isFilmRoomDay) {
-    // No session template - this could be a recovery day or external program
-    // For recovery days (trainingFocus === "recovery"), skip main session but continue with other blocks
-    // For other cases, log a warning but still generate supporting blocks
-    if (trainingFocus === "recovery") {
-      console.log(
-        "[daily-protocol] Recovery day - skipping main session, generating recovery-focused protocol",
+  }
+
+  // Priority 2: Generate fallback main session if no template exists
+  if (!mainSessionGenerated && !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery") {
+    // Determine session type based on day and preferences
+    let sessionType = "strength"; // Default
+    let sessionCategory = "strength";
+    
+    if (isSprintSession) {
+      // Sprint session - generate evidence-based sprint exercises based on phase and ACWR
+      sessionType = "sprint";
+      sessionCategory = "sprint";
+      
+      // Map periodization phase to sprint phase guidelines
+      const sprintPhaseMap = {
+        foundation: "foundation",
+        strength_accumulation: "strength_accumulation",
+        power_development: "power_development",
+        speed_development: "speed_development",
+        competition_prep: "competition",
+        in_season_maintenance: "competition",
+        mid_season_reload: "mid_season_reload",
+        peak: "peak",
+        taper: "peak",
+        active_recovery: "foundation",
+        off_season_rest: "foundation",
+      };
+      
+      const sprintPhase = sprintPhaseMap[periodizationPhase] || "foundation";
+      
+      // Evidence-based sprint protocol selection based on phase
+      // Based on sprint-training-knowledge.service.ts PHASE_GUIDELINES
+      let sprintProtocols = [];
+      let useHillSprints = false;
+      let useStairSprints = false;
+      
+      if (sprintPhase === "foundation") {
+        sprintProtocols = ["short_acceleration", "deceleration_training"];
+        useHillSprints = true;
+      } else if (sprintPhase === "strength_accumulation") {
+        sprintProtocols = ["short_acceleration", "resisted_acceleration", "deceleration_training"];
+        useHillSprints = true;
+      } else if (sprintPhase === "power_development") {
+        sprintProtocols = ["short_acceleration", "resisted_acceleration", "flying_sprints"];
+        useHillSprints = false;
+      } else if (sprintPhase === "speed_development") {
+        sprintProtocols = ["short_acceleration", "flying_sprints", "in_and_out_sprints", "repeated_sprint_ability"];
+        useHillSprints = false;
+      } else if (sprintPhase === "competition") {
+        sprintProtocols = ["short_acceleration", "deceleration_training"];
+        useHillSprints = false;
+      } else if (sprintPhase === "mid_season_reload") {
+        sprintProtocols = ["short_acceleration", "resisted_acceleration", "flying_sprints", "speed_endurance"];
+        useHillSprints = true;
+        // Stair sprints ONLY if ACWR >= 0.8 and athlete is well-conditioned
+        if (acwrForLogic >= 0.8) {
+          useStairSprints = true;
+          sprintProtocols.push("stair_sprints");
+        }
+      } else if (sprintPhase === "peak") {
+        sprintProtocols = ["short_acceleration", "flying_sprints"];
+        useHillSprints = false;
+      }
+      
+      // Generate sprint exercises based on protocols
+      const sprintExerciseQueries = [];
+      
+      // Short acceleration (always included for sprint sessions)
+      sprintExerciseQueries.push(
+        supabase.from("exercises").select("*")
+          .or("category.eq.sprint,category.eq.speed,category.eq.acceleration")
+          .or("name.ilike.%acceleration%,name.ilike.%sprint%,name.ilike.%speed%")
+          .eq("active", true)
+          .limit(4)
       );
-      // Recovery days don't need main session - continue to cool_down and evening_recovery
-    } else {
-      // No session template and not a recovery day - log warning but still provide supporting blocks
+      
+      // Hill sprints (if phase-appropriate)
+      if (useHillSprints) {
+        sprintExerciseQueries.push(
+          supabase.from("exercises").select("*")
+            .or("name.ilike.%hill%,name.ilike.%uphill%,name.ilike.%incline%")
+            .eq("active", true)
+            .limit(2)
+        );
+      }
+      
+      // Stair sprints (if ACWR >= 0.8 and mid_season_reload)
+      if (useStairSprints && acwrForLogic >= 0.8) {
+        sprintExerciseQueries.push(
+          supabase.from("exercises").select("*")
+            .or("name.ilike.%stair%,name.ilike.%step%")
+            .eq("active", true)
+            .limit(2)
+        );
+      }
+      
+      // Flying sprints (if phase-appropriate)
+      if (sprintProtocols.includes("flying_sprints")) {
+        sprintExerciseQueries.push(
+          supabase.from("exercises").select("*")
+            .or("name.ilike.%flying%,name.ilike.%max velocity%,name.ilike.%top speed%")
+            .eq("active", true)
+            .limit(2)
+        );
+      }
+      
+      // Deceleration training (if phase-appropriate)
+      if (sprintProtocols.includes("deceleration_training")) {
+        sprintExerciseQueries.push(
+          supabase.from("exercises").select("*")
+            .or("category.eq.deceleration,name.ilike.%deceleration%,name.ilike.%braking%,name.ilike.%stop%")
+            .eq("active", true)
+            .limit(2)
+        );
+      }
+      
+      // Execute all queries
+      const sprintExerciseResults = await Promise.all(sprintExerciseQueries);
+      const allSprintExercises = [];
+      
+      sprintExerciseResults.forEach((result) => {
+        if (result.data && result.data.length > 0) {
+          allSprintExercises.push(...result.data);
+        }
+      });
+      
+      // Remove duplicates and select appropriate exercises
+      const uniqueSprintExercises = Array.from(
+        new Map(allSprintExercises.map(ex => [ex.id, ex])).values()
+      );
+      
+      if (uniqueSprintExercises.length > 0) {
+        // Prioritize exercises based on phase protocols
+        const prioritized = uniqueSprintExercises.sort((a, b) => {
+          const aName = (a.name || "").toLowerCase();
+          const bName = (b.name || "").toLowerCase();
+          
+          // Priority order: acceleration > hill/stair > flying > deceleration
+          const priority = ["acceleration", "sprint", "hill", "stair", "flying", "deceleration"];
+          const aIdx = priority.findIndex(p => aName.includes(p));
+          const bIdx = priority.findIndex(p => bName.includes(p));
+          
+          if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+          if (aIdx !== -1) return -1;
+          if (bIdx !== -1) return 1;
+          return 0;
+        });
+        
+        // Select 4-6 exercises based on phase volume guidelines
+        const exerciseCount = sprintPhase === "speed_development" || sprintPhase === "mid_season_reload" ? 6 : 4;
+        const selectedExercises = prioritized.slice(0, exerciseCount);
+        
+        selectedExercises.forEach((ex, idx) => {
+          // Set appropriate sets/reps based on sprint protocol
+          let sets = 3;
+          let reps = 4;
+          let restSeconds = 90;
+          let aiNote = `Sprint Session - ${sprintPhase} phase`;
+          
+          if (ex.name?.toLowerCase().includes("hill") || ex.name?.toLowerCase().includes("uphill")) {
+            sets = 3;
+            reps = 4;
+            restSeconds = 90;
+            aiNote = "Hill Sprints - Develops horizontal force and acceleration (Foundation/Strength/Mid-Season phases)";
+          } else if (ex.name?.toLowerCase().includes("stair") || ex.name?.toLowerCase().includes("step")) {
+            sets = 3;
+            reps = 4;
+            restSeconds = 90;
+            aiNote = "Stair Sprints - ADVANCED: Explosive hip flexor power. Only for well-conditioned athletes (ACWR >= 0.8, Mid-Season Reload phase)";
+          } else if (ex.name?.toLowerCase().includes("flying") || ex.name?.toLowerCase().includes("max velocity")) {
+            sets = 2;
+            reps = 3;
+            restSeconds = 180;
+            aiNote = "Flying Sprints - Maximum velocity development (Power/Speed/Peak phases)";
+          } else if (ex.name?.toLowerCase().includes("deceleration") || ex.name?.toLowerCase().includes("braking")) {
+            sets = 3;
+            reps = 4;
+            restSeconds = 60;
+            aiNote = "Deceleration Training - CRITICAL for flag football. Every cut and route break requires controlled deceleration.";
+          } else {
+            // Standard acceleration sprints
+            sets = 3;
+            reps = 4;
+            restSeconds = 90;
+            aiNote = `Acceleration Sprints - ${sprintPhase} phase. Focus on first 10m burst (most critical for flag football)`;
+          }
+          
+          protocolExercises.push({
+            protocol_id: protocol.id,
+            exercise_id: ex.id,
+            block_type: "main_session",
+            sequence_order: idx + 1,
+            prescribed_sets: sets,
+            prescribed_reps: reps,
+            rest_seconds: restSeconds,
+            prescribed_duration_seconds: ex.default_duration_seconds,
+            load_contribution_au: ex.load_contribution_au || 15,
+            ai_note: aiNote,
+          });
+        });
+        
+        mainSessionGenerated = true;
+        console.log(`[daily-protocol] Generated evidence-based sprint session: phase=${sprintPhase}, protocols=${sprintProtocols.join(", ")}, hillSprints=${useHillSprints}, stairSprints=${useStairSprints}`);
+      }
+    } else if (hasGymAccess && isGymTrainingDay) {
+      // Gym training - use existing gym blocks (isometrics, plyometrics, strength) as main session
+      // The gym blocks are already generated above, so we just mark main session as generated
+      // But we should add a summary/main session marker
+      sessionType = "gym";
+      sessionCategory = "strength";
+      // Main session is already covered by gym blocks above
+      mainSessionGenerated = true;
+      console.log("[daily-protocol] Gym training day - main session covered by gym blocks");
+    } else if (hasFieldAccess && !hasGymAccess) {
+      // Flag training - generate flag football-specific exercises
+      sessionType = "flag";
+      sessionCategory = "skill";
+      const { data: flagExercises } = await supabase
+        .from("exercises")
+        .select("*")
+        .or("category.eq.skill,category.eq.agility,category.eq.conditioning")
+        .eq("active", true)
+        .limit(8);
+
+      if (flagExercises && flagExercises.length > 0) {
+        flagExercises.slice(0, 6).forEach((ex, idx) => {
+          protocolExercises.push({
+            protocol_id: protocol.id,
+            exercise_id: ex.id,
+            block_type: "main_session",
+            sequence_order: idx + 1,
+            prescribed_sets: ex.default_sets || 3,
+            prescribed_reps: ex.default_reps || 8,
+            prescribed_duration_seconds: ex.default_duration_seconds,
+            load_contribution_au: ex.load_contribution_au || 12,
+            ai_note: "Flag Football Training - Skill and agility development",
+          });
+        });
+        mainSessionGenerated = true;
+        console.log("[daily-protocol] Generated flag training main session");
+      }
+    }
+
+    if (!mainSessionGenerated && trainingFocus !== "recovery") {
+      // Final fallback: generate generic training session
       console.warn(
-        "[daily-protocol] No session template found, generating supporting blocks only",
+        "[daily-protocol] No main session generated - attempting fallback",
         {
           hasProgram: !!context.playerProgram,
           hasSessionTemplate: !!context.sessionTemplate,
-          sessionResolution: context.sessionResolution,
+          hasGymAccess,
+          hasFieldAccess,
+          isSprintSession,
+          isGymTrainingDay,
           trainingFocus,
         },
       );
-      // Continue - users should still get mobility, foam roll, warm-up, cool-down, recovery
+      
+      // Try to get any available exercises as fallback
+      const { data: fallbackExercises } = await supabase
+        .from("exercises")
+        .select("*")
+        .eq("category", sessionCategory)
+        .eq("active", true)
+        .limit(6);
+
+      if (fallbackExercises && fallbackExercises.length > 0) {
+        fallbackExercises.forEach((ex, idx) => {
+          protocolExercises.push({
+            protocol_id: protocol.id,
+            exercise_id: ex.id,
+            block_type: "main_session",
+            sequence_order: idx + 1,
+            prescribed_sets: ex.default_sets || 3,
+            prescribed_reps: ex.default_reps || 8,
+            prescribed_duration_seconds: ex.default_duration_seconds,
+            load_contribution_au: ex.load_contribution_au || 10,
+            ai_note: `Main Training Session - ${sessionType}`,
+          });
+        });
+        mainSessionGenerated = true;
+        console.log("[daily-protocol] Generated fallback main session");
+      }
     }
+  } else if (trainingFocus === "recovery") {
+    console.log(
+      "[daily-protocol] Recovery day - skipping main session, generating recovery-focused protocol",
+    );
+    // Recovery days don't need main session - continue to cool_down and evening_recovery
   }
 
   // ============================================================================
