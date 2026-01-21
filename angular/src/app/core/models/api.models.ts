@@ -7,6 +7,8 @@
  * @module core/models/api
  */
 
+import type { SupplementEntry } from "./supplement.models";
+
 // ============================================================================
 // ML PREDICTION TYPES
 // ============================================================================

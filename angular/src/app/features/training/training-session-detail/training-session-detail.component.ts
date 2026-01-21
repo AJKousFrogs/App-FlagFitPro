@@ -476,17 +476,7 @@ export class TrainingSessionDetailComponent implements OnInit {
     }
   }
 
-  getStatusSeverity(
-    status: string,
-  ):
-    | "success"
-    | "info"
-    | "warning"
-    | "secondary"
-    | "contrast"
-    | "danger"
-    | null
-    | undefined {
+  getStatusSeverity(status: string): "success" | "info" | "warning" | "secondary" | "contrast" | "danger" {
     switch (status) {
       case "completed":
         return "success";

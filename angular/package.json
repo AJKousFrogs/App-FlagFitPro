@@ -10,7 +10,7 @@
     "ng": "ng",
     "start": "ng serve",
     "start:ssr": "ng serve-ssr",
-    "build": "ng build",
+    "build": "npx ng build",
     "build:analyze": "ng build && node scripts/check-bundle-size.js",
     "build:ssr": "ng build && ng run flagfit-pro:server",
     "build:prerender": "ng build && ng run flagfit-pro:prerender",
