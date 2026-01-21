@@ -370,8 +370,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 4px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--space-1);
       border-radius: var(--radius-xl);
     }
 
@@ -491,8 +491,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 4px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--space-1);
       border-radius: var(--radius-xl);
     }
 
@@ -657,8 +657,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 4px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--space-1);
       border-radius: var(--radius-xl);
     }
 
@@ -817,8 +817,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 4px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--space-1);
       border-radius: var(--radius-xl);
     }
 
@@ -930,8 +930,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 4px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--space-1);
       border-radius: var(--radius-full);
     }
 
@@ -1058,8 +1058,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 4px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--space-1);
       border-radius: var(--radius-xl);
     }
 
@@ -1203,8 +1203,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--color-status-warning);
-      outline-offset: 4px;
+      outline: var(--focus-outline-width) solid var(--color-status-warning);
+      outline-offset: var(--space-1);
       border-radius: var(--radius-xl);
     }
 
@@ -1401,7 +1401,7 @@
     .preference-icon {
       font-size: var(--ds-font-size-2xl);
       color: var(--color-brand-primary);
-      transition: transform 0.25s;
+      transition: transform var(--transition-base);
     }
 
     .preference-content {
@@ -1427,8 +1427,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--color-brand-primary);
-      outline-offset: 2px;
+      outline: var(--focus-outline-width) solid var(--color-brand-primary);
+      outline-offset: var(--focus-outline-offset);
     }
 
     &.selected {
@@ -1745,10 +1745,10 @@
     position: relative;
 
     input[type="checkbox"] {
-      margin-top: 0.25rem;
-      width: 1.25rem;
-      height: 1.25rem;
-      min-width: 1.25rem; /* Prevent shrinking */
+      margin-top: var(--space-1); // 0.25rem
+      width: var(--space-5); // 1.25rem
+      height: var(--space-5); // 1.25rem
+      min-width: var(--space-5); /* Prevent shrinking - 1.25rem */
       cursor: pointer;
       accent-color: var(--ds-primary-green);
       flex-shrink: 0;
@@ -1758,8 +1758,8 @@
 
       /* Ensure checkbox is always clickable */
       &:hover {
-        outline: 2px solid var(--ds-primary-green);
-        outline-offset: 1px;
+        outline: var(--focus-outline-width) solid var(--ds-primary-green);
+        outline-offset: var(--border-1);
       }
     }
 
@@ -1781,8 +1781,8 @@
 
         &:active,
         &:focus-visible {
-          outline: 2px solid var(--ds-primary-green);
-          outline-offset: 2px;
+          outline: var(--focus-outline-width) solid var(--ds-primary-green);
+          outline-offset: var(--focus-outline-offset);
         }
       }
     }

@@ -24,12 +24,12 @@
 .aria-dialog-backdrop.visible {
   visibility: visible;
   opacity: 1;
-  transition: opacity 0.2s ease, visibility 0s linear;
+  transition: opacity var(--transition-base) ease, visibility 0s linear;
 }
 
 // Ensure backdrop doesn't transition on close (instant hide after fade)
 .aria-dialog-backdrop:not(.visible) {
-  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+  transition: opacity var(--transition-base) ease, visibility 0s linear var(--transition-base);
 }
 
 .aria-dialog {

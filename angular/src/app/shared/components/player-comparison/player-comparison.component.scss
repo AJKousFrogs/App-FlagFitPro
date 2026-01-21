@@ -161,7 +161,7 @@
   align-items: center;
   padding: var(--space-2);
   border-radius: var(--radius-md);
-  transition: background 0.2s ease;
+  transition: background var(--transition-base) ease;
 }
 
 .stat-row:hover {
@@ -219,7 +219,7 @@
 
 .bar {
   height: 100%;
-  transition: width 0.3s ease;
+  transition: width var(--transition-slow) ease;
 }
 
 .player1-bar {

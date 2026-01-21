@@ -97,7 +97,7 @@ import {
       >
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: 50px"></th>
+            <th style="width: var(--space-12)"></th>
             <th pSortableColumn="title">
               Title <p-sortIcon field="title"></p-sortIcon>
             </th>

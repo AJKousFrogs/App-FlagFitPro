@@ -303,7 +303,7 @@ const PAYMENT_METHOD_CONFIG: Record<
                   <th>Description</th>
                   <th>Method</th>
                   <th style="text-align: right">Amount</th>
-                  <th style="width: 80px"></th>
+                  <th style="width: var(--space-20)"></th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-payment>

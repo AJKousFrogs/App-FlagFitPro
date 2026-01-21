@@ -238,7 +238,7 @@ const STATUS_CONFIG: Record<
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th style="width: 50px"></th>
+                  <th style="width: var(--space-12)"></th>
                   <th pSortableColumn="name">Player</th>
                   <th pSortableColumn="position">Position</th>
                   <th>Jersey</th>

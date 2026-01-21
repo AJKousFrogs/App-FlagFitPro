@@ -475,7 +475,7 @@
   font-size: var(--ds-font-size-xs);
   color: var(--text-color-secondary);
   opacity: 0;
-  transition: opacity 0.1s;
+  transition: opacity var(--transition-fast);
 }
 
 .search-result-item:hover .enter-icon,
@@ -579,8 +579,8 @@
 }
 
 .no-results-icon {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: var(--avatar-size-xl); // 3.5rem / 56px
+  height: var(--avatar-size-xl); // 3.5rem / 56px
   background: var(--surface-ground);
   border-radius: var(--radius-xl);
   display: flex;

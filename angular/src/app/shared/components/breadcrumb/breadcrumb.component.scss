@@ -47,8 +47,8 @@
 }
 
 .breadcrumb-link:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
-  outline-offset: 2px;
+  outline: var(--focus-outline-width) solid var(--color-brand-primary);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .breadcrumb-link:focus:not(:focus-visible) {

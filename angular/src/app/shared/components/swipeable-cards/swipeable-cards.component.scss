@@ -20,7 +20,7 @@
 /* Cards container */
 .cards-container {
   display: flex;
-  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: transform var(--transition-slow) cubic-bezier(0.25, 0.1, 0.25, 1);
   cursor: grab;
   user-select: none;
 }
@@ -35,8 +35,8 @@
   flex-shrink: 0;
   padding: 0 var(--space-2);
   transition:
-    transform 0.3s ease,
-    opacity 0.3s ease;
+    transform var(--transition-slow) ease,
+    opacity var(--transition-slow) ease;
 }
 
 .card-slide.active {
@@ -138,7 +138,7 @@
   height: 100%;
   background: var(--color-brand-primary);
   border-radius: var(--radius-full);
-  transition: width 0.3s ease;
+  transition: width var(--transition-slow) ease;
 }
 
 /* Touch feedback */

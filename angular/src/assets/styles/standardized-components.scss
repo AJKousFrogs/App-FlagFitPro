@@ -328,7 +328,7 @@
 /* Success Button */
 .btn-success {
   background-color: var(--color-status-success);
-  color: var(--color-text-primary);
+  color: var(--color-text-on-primary);
   border-color: var(--color-status-success);
   box-shadow: var(--shadow-sm);
 
@@ -1676,7 +1676,7 @@ select {
 .alert-info {
   background-color: var(--ds-primary-green-subtle);
   border-color: var(--ds-primary-green);
-  color: var(--color-text-primary);
+  color: var(--ds-primary-green);
 }
 
 /* Toast Notification */

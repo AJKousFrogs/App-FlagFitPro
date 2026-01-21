@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   HostListener,
   QueryList,
   viewChildren,
@@ -2331,8 +2332,8 @@ export class AnalyticsComponent implements AfterViewInit {
           }
           .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
+            margin-bottom: var(--ds-space-10);
+            padding-bottom: var(--ds-space-5);
             border-bottom: 2px solid #10c96b;
           }
           .header h1 {
@@ -2345,14 +2346,14 @@ export class AnalyticsComponent implements AfterViewInit {
             margin: calc(var(--ds-space-5) / 2) 0 0;
           }
           .section {
-            margin-bottom: 30px;
+            margin-bottom: var(--ds-space-8);
           }
           .section h2 {
             color: #1a1a2e;
             font-size: var(--ds-font-size-lg);
             border-bottom: 1px solid #eee;
-            padding-bottom: 8px;
-            margin-bottom: 16px;
+            padding-bottom: var(--ds-space-2);
+            margin-bottom: var(--ds-space-4);
           }
           .metrics-grid {
             display: grid;
@@ -2402,8 +2403,8 @@ export class AnalyticsComponent implements AfterViewInit {
             font-weight: var(--ds-font-weight-semibold);
           }
           .footer {
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: var(--ds-space-10);
+            padding-top: var(--ds-space-5);
             border-top: 1px solid #eee;
             text-align: center;
             color: #999;

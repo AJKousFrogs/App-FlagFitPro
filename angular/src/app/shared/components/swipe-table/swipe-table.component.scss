@@ -14,7 +14,7 @@
 
 .swipe-row {
   position: relative;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-slow) ease;
   touch-action: pan-y;
 }
 
@@ -42,7 +42,7 @@
   align-items: center;
   gap: var(--space-2);
   padding: 0 var(--ds-space-4);
-  transition: right 0.3s ease;
+  transition: right var(--transition-slow) ease;
   background: var(--surface-card);
   z-index: var(--z-dropdown);
 }
@@ -61,7 +61,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-base) ease;
 }
 
 .action-btn:hover {
@@ -99,13 +99,13 @@
 
 /* Focus styles for keyboard navigation */
 .action-btn:focus-visible {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: 2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
 }
 
 .action-btn:focus-visible {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: 2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
 }
 
 @media (min-width: 768px) {

@@ -146,8 +146,8 @@
 }
 
 .drawer-close:focus-visible {
-  outline: 2px solid var(--ds-primary-green, #089949);
-  outline-offset: 2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green, #089949);
+  outline-offset: var(--focus-outline-offset);
   box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb, 8, 153, 73), 0.3);
 }
 

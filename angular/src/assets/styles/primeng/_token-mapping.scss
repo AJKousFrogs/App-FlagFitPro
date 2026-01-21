@@ -174,7 +174,7 @@
 
     // Input disabled state (Decision 46)
     --p-inputtext-disabled-background: var(--color-surface-secondary);
-    --p-inputtext-disabled-opacity: 0.5;
+    --p-inputtext-disabled-opacity: var(--opacity-dimmed);
 
     // Input placeholder
     --p-inputtext-placeholder-color: var(--color-text-muted);
@@ -269,7 +269,7 @@
     --p-tooltip-font-size: var(--font-body-sm-size);
     --p-tooltip-max-width: var(--tooltip-max-width);
     --p-tooltip-shadow: var(--shadow-3);
-    --p-tooltip-line-height: 1.5;
+    --p-tooltip-line-height: var(--line-height-normal);
 
     // ============================================
     // OVERLAYS / PANELS

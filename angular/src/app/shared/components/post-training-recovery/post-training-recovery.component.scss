@@ -104,7 +104,7 @@
   height: 2px;
   background: var(--color-border-secondary);
   margin-bottom: var(--space-5); /* 20px */
-  transition: background 0.3s;
+  transition: background var(--transition-slow);
 }
 
 .step-line.active {
@@ -221,7 +221,7 @@
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-brand-primary);
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity var(--transition-slow);
 }
 
 .load-preview.visible {
@@ -280,7 +280,7 @@
   border-radius: 50%;
   background: var(--color-border-secondary);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background var(--transition-base);
 }
 
 .dot.active {

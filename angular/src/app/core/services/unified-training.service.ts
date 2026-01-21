@@ -1446,20 +1446,6 @@ export class UnifiedTrainingService {
   }
 
   /**
-   * @deprecated REMOVED: Default workouts method
-   * Previously returned hardcoded workout suggestions which could mislead athletes
-   * into thinking they had scheduled training when they didn't.
-   * Now returns empty array - athletes see their actual scheduled workouts only.
-   */
-  private getDefaultWorkouts(): Workout[] {
-    // NO-OP: Mock workouts removed to ensure data integrity
-    // Athletes should only see their actual scheduled workouts
-    // Empty state encourages them to schedule real training sessions
-    this.logger.info("[UnifiedTrainingService] getDefaultWorkouts called - returning empty (mock data removed)");
-    return [];
-  }
-
-  /**
    * Mark workout as complete
    */
   async markWorkoutComplete(workout: Workout): Promise<boolean> {

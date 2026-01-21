@@ -199,7 +199,7 @@ interface TeamOption {
                 <p-progressBar
                   [value]="overview()?.sessionCompletionRate || 0"
                   [showValue]="false"
-                  [style]="{ height: '6px', marginTop: '8px' }"
+                  [style]="{ height: '6px', marginTop: 'var(--space-2)' }"
                 ></p-progressBar>
               </div>
             </div>

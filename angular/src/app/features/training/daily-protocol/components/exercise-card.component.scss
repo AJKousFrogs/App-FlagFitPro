@@ -385,6 +385,6 @@
 }
 
 .exercise-card:focus-within {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: 2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
 }

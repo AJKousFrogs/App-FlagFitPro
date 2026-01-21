@@ -72,8 +72,8 @@
 }
 
 .aria-tab:focus-visible {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: -2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: calc(-1 * var(--focus-outline-offset));
   border-radius: var(--radius-md);
 }
 
@@ -86,8 +86,8 @@
 }
 
 .aria-tabpanel:focus-visible {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: 2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
   border-radius: var(--radius-md);
 }
 

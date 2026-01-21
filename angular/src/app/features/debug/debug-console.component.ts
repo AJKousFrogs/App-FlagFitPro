@@ -211,7 +211,7 @@ interface DebugLog {
       }
 
       .test-section {
-        margin-bottom: 30px;
+        margin-bottom: var(--space-8);
       }
 
       .test-grid {
@@ -251,7 +251,7 @@ interface DebugLog {
       }
 
       .logs-section {
-        margin-top: 30px;
+        margin-top: var(--space-8);
       }
 
       .logs-container {
@@ -265,7 +265,7 @@ interface DebugLog {
 
       .log-entry {
         padding: var(--ds-space-2);
-        margin-bottom: 4px;
+        margin-bottom: var(--space-1);
         border-left: 3px solid transparent;
         font-size: var(--ds-font-size-xs);
       }
@@ -318,7 +318,7 @@ interface DebugLog {
       }
 
       .log-details {
-        margin-top: 4px;
+        margin-top: var(--space-1);
         padding: var(--ds-space-2);
         background: #000;
         border-radius: 2px;

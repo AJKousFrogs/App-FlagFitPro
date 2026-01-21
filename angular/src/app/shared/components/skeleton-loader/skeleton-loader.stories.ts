@@ -315,7 +315,7 @@ export const AllVariants: Story = {
     template: `
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--ds-space-8);">
         <div>
-          <h4 style="margin-bottom: 16px; color: var(--color-text-secondary);">Text & Title</h4>
+          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Text & Title</h4>
           <div style="display: flex; flex-direction: column; gap: var(--ds-space-2);">
             <app-skeleton-loader variant="title" width="60%"></app-skeleton-loader>
             <app-skeleton-loader variant="text" width="100%"></app-skeleton-loader>
@@ -325,7 +325,7 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: 16px; color: var(--color-text-secondary);">Avatars & Badges</h4>
+          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Avatars & Badges</h4>
           <div style="display: flex; gap: var(--ds-space-4); align-items: center;">
             <app-skeleton-loader variant="avatar" size="32px"></app-skeleton-loader>
             <app-skeleton-loader variant="avatar" size="48px"></app-skeleton-loader>
@@ -335,22 +335,22 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: 16px; color: var(--color-text-secondary);">Card</h4>
+          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Card</h4>
           <app-skeleton-loader variant="card"></app-skeleton-loader>
         </div>
         
         <div>
-          <h4 style="margin-bottom: 16px; color: var(--color-text-secondary);">Stat Card</h4>
+          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Stat Card</h4>
           <app-skeleton-loader variant="stat-card"></app-skeleton-loader>
         </div>
         
         <div>
-          <h4 style="margin-bottom: 16px; color: var(--color-text-secondary);">List Items</h4>
+          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">List Items</h4>
           <app-skeleton-repeat variant="list-item" [count]="3" [staggerDelay]="75"></app-skeleton-repeat>
         </div>
         
         <div>
-          <h4 style="margin-bottom: 16px; color: var(--color-text-secondary);">Chart</h4>
+          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Chart</h4>
           <app-skeleton-loader variant="chart"></app-skeleton-loader>
         </div>
       </div>

@@ -149,8 +149,8 @@ a.btn {
 // ============================================
 
 .btn:focus-visible {
-  outline: 3px solid rgba(var(--ds-primary-green-rgb), 0.5);
-  outline-offset: 2px;
+  outline: var(--border-3) solid rgba(var(--ds-primary-green-rgb), 0.5);
+  outline-offset: var(--focus-outline-offset);
   box-shadow:
     var(--shadow-md),
     0 0 0 4px rgba(var(--ds-primary-green-rgb), 0.25);

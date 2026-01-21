@@ -96,7 +96,7 @@
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-brand-primary);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color var(--transition-base);
 }
 
 .action-link:hover {

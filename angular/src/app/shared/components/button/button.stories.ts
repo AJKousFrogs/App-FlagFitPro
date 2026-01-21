@@ -324,7 +324,7 @@ export const AllVariants: Story = {
     template: `
       <div style="display: flex; flex-direction: column; gap: var(--ds-space-6);">
         <div>
-          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Primary</h4>
+          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Primary</h4>
           <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
             <app-button variant="primary">Default</app-button>
             <app-button variant="primary" iconLeft="pi-check">With Icon</app-button>
@@ -334,7 +334,7 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Secondary</h4>
+          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Secondary</h4>
           <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
             <app-button variant="secondary">Default</app-button>
             <app-button variant="secondary" iconLeft="pi-check">With Icon</app-button>
@@ -344,7 +344,7 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Outlined</h4>
+          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Outlined</h4>
           <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
             <app-button variant="outlined">Default</app-button>
             <app-button variant="outlined" iconLeft="pi-check">With Icon</app-button>
@@ -354,7 +354,7 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Text</h4>
+          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Text</h4>
           <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
             <app-button variant="text">Default</app-button>
             <app-button variant="text" iconLeft="pi-check">With Icon</app-button>
@@ -364,7 +364,7 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Danger</h4>
+          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Danger</h4>
           <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
             <app-button variant="danger">Delete</app-button>
             <app-button variant="danger" iconLeft="pi-trash">With Icon</app-button>
@@ -374,7 +374,7 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Success</h4>
+          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Success</h4>
           <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
             <app-button variant="success">Complete</app-button>
             <app-button variant="success" iconLeft="pi-check-circle">With Icon</app-button>
@@ -496,12 +496,12 @@ export const MigrationExamples: Story = {
     template: `
       <div style="display: flex; flex-direction: column; gap: var(--ds-space-8);">
         <div>
-          <h3 style="margin-bottom: 16px; color: var(--color-text-primary);">Migration from PrimeNG</h3>
+          <h3 style="margin-bottom: var(--space-4); color: var(--color-text-primary);">Migration from PrimeNG</h3>
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--ds-space-6);">
             <div>
-              <h4 style="margin-bottom: 8px; color: var(--color-text-secondary);">Before (PrimeNG)</h4>
-              <pre style="background: var(--surface-secondary); padding: var(--ds-space-3); border-radius: 8px; font-size: var(--ds-font-size-xs); overflow-x: auto;">
+              <h4 style="margin-bottom: var(--space-2); color: var(--color-text-secondary);">Before (PrimeNG)</h4>
+              <pre style="background: var(--surface-secondary); padding: var(--ds-space-3); border-radius: var(--radius-lg); font-size: var(--ds-font-size-xs); overflow-x: auto;">
 &lt;p-button label="Save" (onClick)="save()"&gt;&lt;/p-button&gt;
 &lt;p-button label="Delete" severity="danger"&gt;&lt;/p-button&gt;
 &lt;p-button label="Cancel" [outlined]="true"&gt;&lt;/p-button&gt;
@@ -510,8 +510,8 @@ export const MigrationExamples: Story = {
             </div>
             
             <div>
-              <h4 style="margin-bottom: 8px; color: var(--color-text-secondary);">After (App Button)</h4>
-              <pre style="background: var(--surface-secondary); padding: var(--ds-space-3); border-radius: 8px; font-size: var(--ds-font-size-xs); overflow-x: auto;">
+              <h4 style="margin-bottom: var(--space-2); color: var(--color-text-secondary);">After (App Button)</h4>
+              <pre style="background: var(--surface-secondary); padding: var(--ds-space-3); border-radius: var(--radius-lg); font-size: var(--ds-font-size-xs); overflow-x: auto;">
 &lt;app-button (clicked)="save()"&gt;Save&lt;/app-button&gt;
 &lt;app-button variant="danger"&gt;Delete&lt;/app-button&gt;
 &lt;app-button variant="outlined"&gt;Cancel&lt;/app-button&gt;
@@ -522,7 +522,7 @@ export const MigrationExamples: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: 12px; color: var(--color-text-secondary);">Live Examples</h4>
+          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Live Examples</h4>
           <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
             <app-button (clicked)="alert('Saved!')">Save</app-button>
             <app-button variant="danger">Delete</app-button>

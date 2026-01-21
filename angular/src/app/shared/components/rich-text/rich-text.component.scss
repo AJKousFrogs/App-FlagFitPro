@@ -57,9 +57,9 @@
 
 .toolbar-separator {
   width: 1px;
-  height: 1.5rem;
+  height: var(--space-6);
   background: var(--color-border-primary);
-  margin: 0 0.25rem;
+  margin: 0 var(--space-1);
 }
 
 .rich-text-content {
@@ -74,12 +74,12 @@
 }
 
 .rich-text-content:focus-visible {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: -2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: calc(-1 * var(--focus-outline-offset));
 }
 
 .rich-text-content p {
-  margin: 0 0 0.75rem;
+  margin: 0 0 var(--space-3);
 }
 
 .rich-text-content p:last-child {
@@ -88,8 +88,8 @@
 
 .rich-text-content ul,
 .rich-text-content ol {
-  margin: 0.75rem 0;
-  padding-left: 2rem;
+  margin: var(--space-3) 0;
+  padding-left: var(--space-8);
 }
 
 .rich-text-content a {

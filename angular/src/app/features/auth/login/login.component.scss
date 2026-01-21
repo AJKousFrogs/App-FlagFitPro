@@ -80,7 +80,7 @@
   .login-logo {
     width: var(--avatar-size-3xl);
     height: var(--avatar-size-3xl);
-    margin: 0 auto 1.25rem;
+    margin: 0 auto var(--space-5); // 1.25rem
     display: flex;
     align-items: center;
     justify-content: center;
@@ -174,8 +174,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 2px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--focus-outline-offset);
     }
 
     i {
@@ -226,8 +226,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 2px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--focus-outline-offset);
       border-radius: var(--radius-sm);
     }
   }
@@ -347,8 +347,8 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--ds-primary-green);
-      outline-offset: 2px;
+      outline: var(--focus-outline-width) solid var(--ds-primary-green);
+      outline-offset: var(--focus-outline-offset);
     }
   }
 
@@ -382,7 +382,7 @@
     .login-page {
       padding: var(--space-4, var(--ds-font-size-md));
       align-items: flex-start;
-      padding-top: 2rem;
+      padding-top: var(--space-8); // 2rem
     }
 
     .login-logo {

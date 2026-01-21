@@ -159,8 +159,8 @@
    ================================================================ */
 
 .main-fab {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: var(--avatar-size-xl); // 3.5rem / 56px
+  height: var(--avatar-size-xl); // 3.5rem / 56px
   border-radius: var(--radius-xl); /* Raised style - NOT fully round */
   border: none;
   padding: 0;

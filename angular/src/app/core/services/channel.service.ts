@@ -1140,7 +1140,7 @@ export class ChannelService {
         return {
           ...m,
           full_name: normalizedName,
-          initials: this.getInitialsFromName(normalizedName || m.email || "U"),
+          initials: getInitials(normalizedName || m.email || "U"),
           is_online: false, // Will be populated by presence system
         };
       });
@@ -1194,13 +1194,6 @@ export class ChannelService {
       default:
         return "Team channel";
     }
-  }
-
-  /**
-   * Get initials from a name using centralized utility
-   */
-  private getInitialsFromName(name: string): string {
-    return getInitials(name);
   }
 
   /**
@@ -1278,7 +1271,7 @@ export class ChannelService {
             is_explicit_member: false,
             can_post: true,
             joined_at: m.joined_at,
-            initials: this.getInitialsFromName(fullName),
+            initials: getInitials(fullName),
           };
         })
         .filter(

@@ -86,8 +86,8 @@
 }
 
 .card-interactive:focus-visible {
-  outline: 2px solid var(--ds-primary-green);
-  outline-offset: 2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: var(--focus-outline-offset);
   box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
 }
 

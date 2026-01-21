@@ -34,7 +34,7 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  transition: transform 0.2s;
+  transition: transform var(--transition-base);
 }
 
 .overview-stat:hover {

@@ -134,7 +134,7 @@
   padding: var(--space-3);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform var(--transition-base);
 }
 
 .acwr-segment:hover {

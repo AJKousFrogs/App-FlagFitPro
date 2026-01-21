@@ -265,7 +265,7 @@
     var(--color-brand-secondary, var(--color-brand-primary))
   );
   border-radius: var(--radius-sm);
-  transition: width 0.3s ease;
+  transition: width var(--transition-slow) ease;
 }
 
 /* Team Settings */

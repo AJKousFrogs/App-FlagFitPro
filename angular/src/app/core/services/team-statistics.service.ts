@@ -465,7 +465,7 @@ export class TeamStatisticsService {
         jerseyNumber: player["jersey_number"]
           ? String(player["jersey_number"])
           : undefined,
-        avatarInitials: this.getInitialsFromName(name),
+        avatarInitials: getInitials(name),
         status,
         performanceScore:
           Number(player["performance_score"] || player["overall_rating"]) || 75,
@@ -566,13 +566,6 @@ export class TeamStatisticsService {
       interceptionsDef: player["interceptions_def"] as number | undefined,
       passDeflections: player["pass_deflections"] as number | undefined,
     };
-  }
-
-  /**
-   * Get initials from name using centralized utility
-   */
-  private getInitialsFromName(name: string): string {
-    return getInitials(name);
   }
 
   private getTrend(value: unknown): "up" | "down" | "stable" {

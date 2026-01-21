@@ -142,7 +142,7 @@ export type SkeletonVariant =
           <div class="stat-card-header">
             <div
               class="skeleton skeleton-avatar"
-              style="width: 40px; height: 40px"
+              style="width: var(--avatar-size-md); height: var(--avatar-size-md)"
             ></div>
             <div class="skeleton skeleton-text" style="width: 60%"></div>
           </div>
@@ -158,7 +158,7 @@ export type SkeletonVariant =
           <div class="workout-header">
             <div
               class="skeleton skeleton-avatar"
-              style="width: 48px; height: 48px"
+              style="width: var(--avatar-size-lg); height: var(--avatar-size-lg)"
             ></div>
             <div class="workout-info">
               <div class="skeleton skeleton-title" style="width: 70%"></div>
@@ -180,7 +180,7 @@ export type SkeletonVariant =
         >
           <div
             class="skeleton skeleton-avatar"
-            style="width: 80px; height: 80px"
+            style="width: var(--space-20); height: var(--space-20)"
           ></div>
           <div
             class="skeleton skeleton-title"
@@ -238,7 +238,7 @@ export type SkeletonVariant =
         >
           <div
             class="skeleton skeleton-avatar"
-            style="width: 96px; height: 96px"
+            style="width: var(--space-24); height: var(--space-24)"
           ></div>
           <div class="profile-info">
             <div class="skeleton skeleton-title" style="width: 50%"></div>
@@ -258,7 +258,7 @@ export type SkeletonVariant =
         >
           <div class="widget-header">
             <div class="skeleton skeleton-title" style="width: 40%"></div>
-            <div class="skeleton skeleton-button" style="width: 80px"></div>
+            <div class="skeleton skeleton-button" style="width: var(--space-20)"></div>
           </div>
           <div class="widget-content">
             @for (row of [1, 2, 3, 4]; track $index) {

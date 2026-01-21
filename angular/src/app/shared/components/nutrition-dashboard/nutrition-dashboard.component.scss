@@ -70,7 +70,7 @@
 
 .clickable-tag {
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-base) ease;
 }
 
 .clickable-tag:hover {

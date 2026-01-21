@@ -253,7 +253,7 @@ export const AllVariants: Story = {
   render: () => ({
     template: `
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--ds-space-6);">
-        <div style="border: 1px solid var(--color-border-secondary); border-radius: 12px; overflow: hidden;">
+        <div style="border: 1px solid var(--color-border-secondary); border-radius: var(--radius-xl); overflow: hidden;">
           <app-empty-state
             title="Default Empty State"
             message="Basic empty state with just title and message."
@@ -261,7 +261,7 @@ export const AllVariants: Story = {
           ></app-empty-state>
         </div>
         
-        <div style="border: 1px solid var(--color-border-secondary); border-radius: 12px; overflow: hidden;">
+        <div style="border: 1px solid var(--color-border-secondary); border-radius: var(--radius-xl); overflow: hidden;">
           <app-empty-state
             title="With Action"
             message="Empty state with a call-to-action button."
@@ -271,7 +271,7 @@ export const AllVariants: Story = {
           ></app-empty-state>
         </div>
         
-        <div style="border: 1px solid var(--color-border-secondary); border-radius: 12px; overflow: hidden;">
+        <div style="border: 1px solid var(--color-border-secondary); border-radius: var(--radius-xl); overflow: hidden;">
           <app-empty-state
             title="Compact Variant"
             message="Smaller version for inline use."

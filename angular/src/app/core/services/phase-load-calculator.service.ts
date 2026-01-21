@@ -249,12 +249,13 @@ const PHASE_LOAD_CONFIGS: Record<string, PhaseLoadConfig> = {
 // ============================================================================
 
 const LOAD_CONSTANTS = {
-  // ACWR zones (Gabbett 2016)
+  // ACWR zones (Gabbett 2016) - NOTE: Primary ACWR constants are in app.constants.ts TRAINING object
+  // These are kept for legacy compatibility but should migrate to TRAINING constants
   acwr: {
-    optimalMin: 0.8,
-    optimalMax: 1.3,
-    cautionMax: 1.5,
-    dangerThreshold: 1.5,
+    optimalMin: 0.8, // TRAINING.ACWR_SAFE_RANGE_MIN
+    optimalMax: 1.3, // TRAINING.ACWR_SAFE_RANGE_MAX
+    cautionMax: 1.5, // TRAINING.ACWR_WARNING_THRESHOLD
+    dangerThreshold: 2.0, // TRAINING.ACWR_DANGER_THRESHOLD (fixed: was incorrectly 1.5)
   },
 
   // Weekly load change limits (Hulin et al. 2014)

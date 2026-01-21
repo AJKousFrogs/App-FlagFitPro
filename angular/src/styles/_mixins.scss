@@ -230,7 +230,7 @@
 // Card styling
 @mixin card($padding: $card-padding, $radius: $card-border-radius) {
   background: var(--surface-primary);
-  border: 1px solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   border-radius: $radius;
   padding: $padding;
   box-shadow: get-shadow(sm);
@@ -266,9 +266,9 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
-    box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3);
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+    box-shadow: var(--shadow-focus);
   }
 
   @include hover-support {
@@ -294,8 +294,8 @@
   transition: border-color get-transition(fast) get-easing(smooth);
 
   &:focus-visible {
-    outline: 2px solid var(--ds-primary-green);
-    outline-offset: 2px;
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
     border-color: var(--ds-primary-green);
   }
 
@@ -314,9 +314,9 @@
 @mixin modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: var(--overlay-black-50);
+  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: blur(var(--blur-sm));
   z-index: get-z-index(modal-backdrop);
   animation: backdrop-fade-in get-transition(normal) get-easing(ease-out);
 }

@@ -69,8 +69,8 @@
 
 // Consistent focus ring
 .alert-close:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
+  outline: var(--focus-outline-width) solid currentColor;
+  outline-offset: var(--focus-outline-offset);
   opacity: 1;
 }
 

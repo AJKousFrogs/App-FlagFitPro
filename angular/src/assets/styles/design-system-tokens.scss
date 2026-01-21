@@ -141,6 +141,16 @@
   --surface-overlay-darkest: rgba(0, 0, 0, 0.8);
   --overlay-blur-none: 0;
   --overlay-blur: 4px;
+  
+  /* Blur Values - for backdrop-filter */
+  --blur-sm: 4px;
+  --blur-md: 10px;
+  --blur-lg: 20px;
+  
+  /* Black Overlay Tokens (for modal backdrops) */
+  --overlay-black-50: rgba(0, 0, 0, 0.5);
+  --overlay-black-60: rgba(0, 0, 0, 0.6);
+  --overlay-black-80: rgba(0, 0, 0, 0.8);
 
   /* Neutral Grays */
   --neutral-50: #fafafa;
@@ -605,6 +615,13 @@
     rgba(var(--primitive-warning-500-rgb), 0.2);
   --shadow-focus-inset: inset 0 0 0 0.2rem
     rgba(var(--ds-primary-green-rgb), 0.2);
+  
+  /* Specialty Shadows */
+  --shadow-toast: 0 20px 50px rgba(0, 0, 0, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.1),
+    0 2px 6px rgba(0, 0, 0, 0.05);
+  --shadow-dark-tooltip: 0 8px 24px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(16, 201, 107, 0.15);
 
   /* ================================
      DESIGN SYSTEM SEMANTIC ALIASES
@@ -911,6 +928,20 @@
   --input-height-sm: var(--ds-input-height-sm);
   --input-height-md: var(--ds-input-height-md);
   --input-height-lg: var(--ds-input-height-lg);
+  
+  /* Slider/Track Heights */
+  --slider-track-height: 6px;
+  
+  /* Dropdown/Menu Max Heights */
+  --dropdown-max-height: 20rem; /* 320px */
+  
+  /* Scrollbar Widths */
+  --scrollbar-width-thin: 6px;
+  --scrollbar-width-default: var(--space-2);
+  
+  /* Screen Reader Only (accessibility) */
+  --sr-only-size: 1px;
+  --sr-only-margin: -1px;
 
   /* Card/Panel Min Heights */
   --card-min-height-sm: 5rem; /* 80px */

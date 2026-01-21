@@ -48,8 +48,8 @@
   }
 
   &:focus-visible {
-    outline: 3px solid rgba(var(--ds-primary-green-rgb), 0.4);
-    outline-offset: 2px;
+    outline: var(--border-3) solid rgba(var(--ds-primary-green-rgb), 0.4);
+    outline-offset: var(--focus-outline-offset);
   }
 
   i {

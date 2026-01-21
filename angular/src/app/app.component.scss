@@ -10,8 +10,8 @@
 }
 
 main:focus-visible {
-  outline: 2px solid var(--ds-primary-green, #089949);
-  outline-offset: -2px;
+  outline: var(--focus-outline-width) solid var(--ds-primary-green);
+  outline-offset: calc(-1 * var(--focus-outline-offset));
 }
 
 main:focus:not(:focus-visible) {
@@ -21,10 +21,10 @@ main:focus:not(:focus-visible) {
 /* Screen reader only class (global) */
 .sr-only {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: var(--sr-only-size);
+  height: var(--sr-only-size);
   padding: 0;
-  margin: calc(-1 * (var(--ds-space-1) / 4));
+  margin: var(--sr-only-margin);
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;

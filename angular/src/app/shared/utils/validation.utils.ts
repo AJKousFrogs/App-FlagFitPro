@@ -106,13 +106,6 @@ export function isAlpha(str: string): boolean {
 }
 
 /**
- * Check if string contains only letters and numbers
- */
-export function isAlphaNumeric(str: string): boolean {
-  return /^[a-zA-Z0-9]+$/.test(str);
-}
-
-/**
  * Check if value is empty (null, undefined, empty string, empty array)
  */
 export function isEmpty(value: unknown): boolean {

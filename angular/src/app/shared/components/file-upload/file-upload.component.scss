@@ -128,7 +128,7 @@
   cursor: pointer;
   padding: var(--space-1, 0.25rem);
   border-radius: var(--radius-md);
-  transition: background 0.2s;
+  transition: background var(--transition-base);
 }
 
 .remove-file-btn:hover {

@@ -26,7 +26,7 @@
 .rating-star {
   cursor: pointer;
   color: var(--color-border-secondary);
-  transition: color 0.2s;
+  transition: color var(--transition-base);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,7 +51,7 @@
 }
 
 .rating-sm {
-  gap: 0.125rem;
+  gap: var(--space-1);
 }
 
 .rating-sm .rating-star {

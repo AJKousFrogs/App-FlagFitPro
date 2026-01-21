@@ -64,7 +64,7 @@
   padding: var(--space-4);
   border-bottom: 1px solid var(--surface-border);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color var(--transition-base);
 
   &:hover {
     background-color: var(--surface-hover);

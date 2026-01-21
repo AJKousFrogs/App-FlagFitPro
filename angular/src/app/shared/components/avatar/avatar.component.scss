@@ -27,8 +27,8 @@
   border: 2px solid var(--overlay-white-15);
   box-shadow: var(--shadow-1);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform var(--transition-base) ease,
+    box-shadow var(--transition-base) ease;
 }
 
 .avatar:hover {
@@ -37,29 +37,29 @@
 }
 
 .avatar-sm {
-  width: 2rem;
-  height: 2rem;
+  width: var(--space-8); // 2rem / 32px
+  height: var(--space-8); // 2rem / 32px
   font-size: var(--ds-font-size-xs);
   letter-spacing: var(--ds-letter-spacing-0-5px);
 }
 
 .avatar-md {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: var(--avatar-size-md); // 2.75rem / 44px
+  height: var(--avatar-size-md); // 2.75rem / 44px
   font-size: var(--ds-font-size-md);
   letter-spacing: var(--ds-letter-spacing-0-75px);
 }
 
 .avatar-lg {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: var(--avatar-size-xl); // 3.5rem / 56px
+  height: var(--avatar-size-xl); // 3.5rem / 56px
   font-size: var(--ds-font-size-md);
   letter-spacing: var(--ds-letter-spacing-1px);
 }
 
 .avatar-xl {
-  width: 5rem;
-  height: 5rem;
+  width: var(--avatar-size-2xl); // 5rem / 80px
+  height: var(--avatar-size-2xl); // 5rem / 80px
   font-size: var(--ds-font-size-2xl);
   letter-spacing: var(--ds-letter-spacing-1-5px);
 }
@@ -78,8 +78,8 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 0.75rem;
-  height: 0.75rem;
+  width: var(--space-3); // 0.75rem / 12px
+  height: var(--space-3); // 0.75rem / 12px
   border-radius: 50%;
   border: 2px solid var(--surface-primary);
 }

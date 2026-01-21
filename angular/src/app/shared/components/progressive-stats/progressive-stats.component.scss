@@ -92,7 +92,7 @@
 .expand-icon {
   color: var(--color-text-secondary);
   font-size: var(--ds-font-size-md);
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-slow) ease;
   flex-shrink: 0;
 }
 

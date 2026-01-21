@@ -16,8 +16,8 @@
 
   // Focus styles for keyboard navigation
   &:focus-visible {
-    outline: 3px solid rgba(var(--primitive-error-500-rgb), 0.4);
-    outline-offset: 2px;
+    outline: var(--border-3) solid rgba(var(--primitive-error-500-rgb), 0.4);
+    outline-offset: var(--focus-outline-offset);
   }
 
   @include respond-to(sm) {
@@ -85,8 +85,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primitive-error-600);
-    outline-offset: 2px;
+    outline: var(--focus-outline-width) solid var(--primitive-error-600);
+    outline-offset: var(--focus-outline-offset);
     border-radius: var(--radius-sm, 4px);
   }
 
@@ -133,8 +133,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--primitive-error-600);
-    outline-offset: 2px;
+    outline: var(--focus-outline-width) solid var(--primitive-error-600);
+    outline-offset: var(--focus-outline-offset);
   }
 }
 
