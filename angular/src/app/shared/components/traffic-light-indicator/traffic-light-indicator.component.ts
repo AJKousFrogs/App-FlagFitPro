@@ -6,7 +6,7 @@ import {
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
-export type TrafficLightStatus = "green" | "yellow" | "red" | "orange";
+export type TrafficLightStatus = "green" | "yellow" | "red" | "orange" | "gray";
 
 @Component({
   selector: "app-traffic-light-indicator",
@@ -20,6 +20,7 @@ export type TrafficLightStatus = "green" | "yellow" | "red" | "orange";
         <div class="light yellow" [class.active]="status() === 'yellow'"></div>
         <div class="light orange" [class.active]="status() === 'orange'"></div>
         <div class="light red" [class.active]="status() === 'red'"></div>
+        <div class="light gray" [class.active]="status() === 'gray'"></div>
       </div>
       @if (showLabel()) {
         <div class="label" [class]="statusClass()">
@@ -45,6 +46,7 @@ export class TrafficLightIndicatorComponent {
       yellow: "Caution",
       orange: "Warning",
       red: "Alert",
+      gray: "No Data",
     };
     return labels[this.status()] || "Unknown";
   });

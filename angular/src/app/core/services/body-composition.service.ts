@@ -97,7 +97,7 @@ export class BodyCompositionService {
     this._isLoading.set(true);
     this._error.set(null);
 
-    const userId = this.auth.getCurrentUserId();
+    const userId = this.auth.currentUser()?.id;
     if (!userId) {
       return of({ data: [], error: "Not authenticated" });
     }
@@ -139,7 +139,7 @@ export class BodyCompositionService {
   logMeasurement(
     measurement: Partial<PhysicalMeasurement>
   ): Observable<{ success: boolean; error?: string }> {
-    const userId = this.auth.getCurrentUserId();
+    const userId = this.auth.currentUser()?.id;
     if (!userId) {
       return of({ success: false, error: "Not authenticated" });
     }

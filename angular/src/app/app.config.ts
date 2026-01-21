@@ -19,7 +19,7 @@ import {
   withFetch,
   withInterceptors,
 } from "@angular/common/http";
-import { ConfirmationService, MessageService } from "primeng/api";
+import { ConfirmationService, MessageService, FilterMatchMode } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
 import Aura from "@primeuix/themes/aura";
 import { routes } from "./app.routes";
@@ -77,21 +77,111 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     ConfirmationService,
     providePrimeNG({
-      ripple: false, // Disable ripple effect (we use CSS transitions) - reduces JS execution
+      // Ripple: Disable ripple effect (we use CSS transitions) - reduces JS execution
+      ripple: false,
+
+      // Z-Index: Manage overlay component layering
+      // Custom values ensure modals appear above fixed headers/navigation
       zIndex: {
-        modal: 1100,
-        overlay: 1000,
-        menu: 1000,
-        tooltip: 1100,
+        modal: 1100,    // dialog, sidebar
+        overlay: 1000,   // dropdown, overlaypanel
+        menu: 1000,     // overlay menus
+        tooltip: 1100,  // tooltip
       },
-      // CRITICAL FIX: PrimeNG 21 requires theme preset for base styles
-      // Aura is the default PrimeNG 21 theme that provides foundational component styling
-      // Our custom CSS variables (in primeng-theme.scss) override Aura's defaults
+
+      // Input Variant: Default style for input fields
+      // "outlined" = borders around field (default)
+      // "filled" = background color alternative
+      inputVariant: "outlined",
+
+      // Overlay Append To: Where overlays are appended in the DOM
+      // "body" = document body (better for modals/dialogs, avoids z-index issues)
+      // "self" = host element (default, better for dropdowns within containers)
+      overlayAppendTo: "body",
+
+      // Filter Match Mode: Default filter options for DataTable filter menus
+      // Configured for text, numeric, and date filters
+      filterMatchModeOptions: {
+        text: [
+          FilterMatchMode.STARTS_WITH,
+          FilterMatchMode.CONTAINS,
+          FilterMatchMode.NOT_CONTAINS,
+          FilterMatchMode.ENDS_WITH,
+          FilterMatchMode.EQUALS,
+          FilterMatchMode.NOT_EQUALS,
+        ],
+        numeric: [
+          FilterMatchMode.EQUALS,
+          FilterMatchMode.NOT_EQUALS,
+          FilterMatchMode.LESS_THAN,
+          FilterMatchMode.LESS_THAN_OR_EQUAL_TO,
+          FilterMatchMode.GREATER_THAN,
+          FilterMatchMode.GREATER_THAN_OR_EQUAL_TO,
+        ],
+        date: [
+          FilterMatchMode.DATE_IS,
+          FilterMatchMode.DATE_IS_NOT,
+          FilterMatchMode.DATE_BEFORE,
+          FilterMatchMode.DATE_AFTER,
+        ],
+      },
+
+      // CSP Nonce: For Content Security Policy nonce support
+      // Uncomment and set nonce value if moving from 'unsafe-inline' to nonce-based CSP
+      // Currently using 'unsafe-inline' in netlify.toml for styles
+      // csp: {
+      //   nonce: 'your-nonce-value-here'
+      // },
+
+      // Theme: PrimeNG 21 Styled Mode Configuration
+      // 
+      // ARCHITECTURE:
+      // PrimeNG uses a design-agnostic theming system with three token tiers:
+      // 1. Primitive Tokens: Raw color palette (e.g., blue-500, green-400)
+      // 2. Semantic Tokens: Contextual design elements (e.g., primary.color, surface.ground)
+      // 3. Component Tokens: Component-specific (e.g., button.background, inputtext.border.color)
+      //
+      // CURRENT APPROACH:
+      // We use the Aura preset as the base and customize via CSS variables in:
+      // - primeng-theme.scss (component-specific overrides)
+      // - primeng-integration.scss (design token mapping)
+      //
+      // FUTURE ENHANCEMENT:
+      // To use definePreset() for token-based customization (recommended by PrimeNG docs):
+      // 1. Import: import { definePreset } from "primeng/config"
+      // 2. Replace preset: Aura with preset: definePreset(Aura, { primitive: {...}, semantic: {...}, components: {...} })
+      // 3. This ensures proper color scheme support (light/dark mode) and token hierarchy
+      // 4. See PrimeNG Styled Mode documentation for definePreset() API details
       theme: {
-        preset: Aura, // Provides base PrimeNG component styles
+        // Base preset: Aura (PrimeTek's modern vision)
+        // Alternative presets: Material, Lara, Nora
+        preset: Aura,
+        
         options: {
-          prefix: "p", // CSS variable prefix (e.g., --p-primary-color)
-          darkModeSelector: ".dark-theme", // Use class-based dark mode toggle
+          // CSS variable prefix (e.g., --p-primary-color)
+          // All PrimeNG tokens use this prefix
+          prefix: "p",
+          
+          // Dark mode selector: Use class-based toggle
+          // Toggle the .dark-theme class on document root to switch themes
+          // 
+          // Options:
+          // - ".dark-theme" = class-based toggle (current)
+          // - "system" = prefers-color-scheme media query
+          // - false or "none" = disable dark mode completely
+          darkModeSelector: ".dark-theme",
+          
+          // CSS Layer configuration for proper cascade order
+          // This ensures PrimeNG styles can be overridden cleanly without !important
+          // 
+          // Layer order (lowest to highest specificity):
+          // 1. reset = Browser normalization
+          // 2. tokens = Design tokens (CSS custom properties)
+          // 3. primeng-base = PrimeNG default styles
+          // 4. primeng-brand = PrimeNG customization to match brand
+          // 5. primitives = Shared components (cards, typography, spacing)
+          // 6. features = Feature-specific styles
+          // 7. overrides = Temporary fixes only (with ticket + expiry)
           cssLayer: {
             name: "primeng-base",
             order:
@@ -99,6 +189,14 @@ export const appConfig: ApplicationConfig = {
           },
         },
       },
+
+      // Translation: For i18n support
+      // Uncomment and configure translations when implementing multi-language support
+      // translation: {
+      //   accept: 'Accept',
+      //   reject: 'Reject',
+      //   // Add more translations as needed
+      // },
     }),
 
     // CRITICAL SERVICES: Only register services needed at startup

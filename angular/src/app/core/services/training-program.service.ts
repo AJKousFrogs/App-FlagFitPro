@@ -12,6 +12,7 @@ import { Injectable, inject, signal, computed } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { ApiService } from "./api.service";
 import { LoggerService } from "./logger.service";
+import { ApiResponse } from "../models/common.models";
 
 // ============================================================================
 // INTERFACES

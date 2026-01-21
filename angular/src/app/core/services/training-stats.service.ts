@@ -87,7 +87,7 @@ export class TrainingStatsService {
     this._isLoading.set(true);
     this._error.set(null);
 
-    const userId = this.auth.getCurrentUserId();
+    const userId = this.auth.currentUser()?.id;
     if (!userId) {
       return of({ data: null, error: "Not authenticated" });
     }
@@ -135,7 +135,7 @@ export class TrainingStatsService {
    * Get current streak info
    */
   getStreakInfo(): Observable<{ data: StreakInfo; error: string | null }> {
-    const userId = this.auth.getCurrentUserId();
+    const userId = this.auth.currentUser()?.id;
     if (!userId) {
       return of({
         data: { current: 0, longest: 0, lastTrainingDate: null },

@@ -83,7 +83,7 @@ export class NotificationRealtimeService implements OnDestroy {
     onUpdate?: (payload: RealtimeNotificationPayload, old?: RealtimeNotificationPayload) => void;
     onDelete?: (payload: RealtimeNotificationPayload) => void;
   }): void {
-    const userId = this.auth.getCurrentUserId();
+    const userId = this.auth.currentUser()?.id;
     if (!userId) {
       this.logger.warn("Cannot subscribe to notifications - not authenticated");
       return;

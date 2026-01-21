@@ -63,7 +63,7 @@ export class SupplementTrackingService {
     this._isLoading.set(true);
     this._error.set(null);
 
-    const userId = this.auth.getCurrentUserId();
+    const userId = this.auth.currentUser()?.id;
     if (!userId) {
       return of({ data: [], error: "Not authenticated" });
     }
@@ -112,7 +112,7 @@ export class SupplementTrackingService {
       return of({ success: false, error: validation.error });
     }
 
-    const userId = this.auth.getCurrentUserId();
+    const userId = this.auth.currentUser()?.id;
     if (!userId) {
       return of({ success: false, error: "Not authenticated" });
     }
