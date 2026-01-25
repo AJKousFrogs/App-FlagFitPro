@@ -14,7 +14,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-5, var(--ds-font-size-xl));
+  margin-bottom: var(--space-5);
 }
 
 .page-title {
@@ -39,7 +39,7 @@
 /* Status Card - Dashboard consistent */
 .status-card {
   background: var(--surface-primary);
-  border: 1px solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-xl); /* 12px */
   padding: var(--space-4);
   margin-bottom: var(--space-4);
@@ -50,7 +50,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-4, var(--ds-font-size-md));
+  margin-bottom: var(--space-4);
 }
 
 .phase-badge {
@@ -62,7 +62,7 @@
 .status-metrics {
   display: flex;
   justify-content: space-around;
-  margin-bottom: var(--space-4, var(--ds-font-size-md));
+  margin-bottom: var(--space-4);
 }
 
 .metric {
@@ -85,23 +85,23 @@
 }
 
 .progress-section {
-  margin-bottom: var(--space-4, var(--ds-font-size-md));
+  margin-bottom: var(--space-4);
 }
 
 .progress-label {
   display: flex;
   justify-content: space-between;
   font-size: var(--ds-font-size-sm);
-  margin-bottom: var(--space-2, 8px);
+  margin-bottom: var(--space-2);
 }
 
 .recommendation {
   display: flex;
   align-items: flex-start;
   gap: var(--ds-space-2);
-  padding: var(--space-3, var(--ds-font-size-xs));
+  padding: var(--space-3);
   background: var(--surface-primary);
-  border-radius: var(--radius-md, 6px);
+  border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
 }
 
@@ -112,7 +112,7 @@
 /* Sections - Dashboard consistent */
 .section {
   background: var(--surface-primary);
-  border: 1px solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-xl); /* 12px */
   padding: var(--space-4);
   margin-bottom: var(--space-4);
@@ -120,7 +120,7 @@
 }
 
 .section-title {
-  margin: 0 0 var(--space-4, var(--ds-font-size-md)) 0;
+  margin: 0 0 var(--space-4) 0;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
 }
@@ -130,7 +130,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  height: 150px;
+  height: var(--size-150);
   gap: var(--ds-space-2);
 }
 
@@ -145,7 +145,7 @@
 .bar-fill {
   width: 100%;
   background: var(--primitive-neutral-200);
-  border-radius: var(--radius-sm, 4px) var(--radius-sm, 4px) 0 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -171,18 +171,18 @@
 .bar-label {
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
-  margin-top: var(--space-1, 4px);
+  margin-top: var(--space-1);
 }
 
 /* Sessions List */
 .sessions-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .session-card {
-  border: 1px solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg); /* 8px */
   padding: var(--space-4);
   box-shadow: var(--shadow-sm);
@@ -192,7 +192,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .session-date {
@@ -200,7 +200,7 @@
   display: flex;
   align-items: center;
   gap: var(--ds-space-2);
-  margin-bottom: var(--space-1, 4px);
+  margin-bottom: var(--space-1);
 }
 
 .throw-breakdown {
@@ -214,7 +214,7 @@
 
 .throw-detail {
   color: var(--color-text-muted);
-  margin-left: var(--space-1, 4px);
+  margin-left: var(--space-1);
 }
 
 .session-compliance {
@@ -238,9 +238,9 @@
   display: flex;
   align-items: center;
   gap: var(--ds-space-2);
-  margin-top: var(--space-2, 8px);
-  padding-top: var(--space-2, 8px);
-  border-top: 1px solid var(--primitive-neutral-100);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: var(--border-1) solid var(--primitive-neutral-100);
 }
 
 .feeling-label {
@@ -278,7 +278,7 @@
 }
 
 .session-notes {
-  margin-top: var(--space-2, 8px);
+  margin-top: var(--space-2);
   font-size: var(--ds-font-size-sm);
   color: var(--color-text-secondary);
   display: flex;
@@ -294,12 +294,12 @@
 .arm-care-reminder {
   display: flex;
   align-items: center;
-  gap: var(--space-3, var(--ds-font-size-xs));
-  padding: var(--space-4, var(--ds-font-size-md));
+  gap: var(--space-3);
+  padding: var(--space-4);
   background: var(--primitive-warning-50);
-  border: 1px solid var(--primitive-warning-300);
-  border-radius: var(--radius-lg, 8px);
-  margin-bottom: var(--space-4, var(--ds-font-size-md));
+  border: var(--border-1) solid var(--primitive-warning-300);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
 }
 
 .reminder-icon {
@@ -326,20 +326,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--space-6, var(--ds-font-size-2xl));
+  padding: var(--space-6);
   color: var(--color-text-muted);
 }
 
 .empty-state i {
   font-size: var(--ds-font-size-2xl);
-  margin-bottom: var(--space-2, 8px);
+  margin-bottom: var(--space-2);
 }
 
 /* Form */
 .log-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4, var(--ds-font-size-md));
+  gap: var(--space-4);
 }
 
 .form-field {
@@ -362,7 +362,7 @@
 .form-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .slider-labels {
@@ -370,7 +370,7 @@
   justify-content: space-between;
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
-  margin-top: var(--space-1, 4px);
+  margin-top: var(--space-1);
 }
 
 .current-value {
@@ -379,9 +379,9 @@
 }
 
 .compliance-section {
-  padding: var(--space-3, var(--ds-font-size-xs));
+  padding: var(--space-3);
   background: var(--primitive-neutral-50);
-  border-radius: var(--radius-md, 6px);
+  border-radius: var(--radius-md);
 }
 
 .checkbox-group {
@@ -398,7 +398,7 @@
 @include respond-to(sm) {
   .tracker-header {
     flex-direction: column;
-    gap: var(--space-3, var(--ds-font-size-xs));
+    gap: var(--space-3);
   }
 
   .form-row {
@@ -407,7 +407,7 @@
 
   .status-metrics {
     flex-wrap: wrap;
-    gap: var(--space-3, var(--ds-font-size-xs));
+    gap: var(--space-3);
   }
 
   .session-main {

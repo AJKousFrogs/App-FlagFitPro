@@ -30,7 +30,6 @@ import {
   PrivacySettingsService
 } from "../../../core/services/privacy-settings.service";
 import { ToastService } from "../../../core/services/toast.service";
-import { DIALOG_STYLES } from "../../../core/utils/design-tokens.util";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -525,7 +524,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         header="Add Emergency Contact"
         [(visible)]="showAddContactDialog"
         [modal]="true"
-        [style]="dialogStyles.form"
+        styleClass="privacy-contact-dialog"
       >
         <div class="contact-form">
           <div class="form-field">
@@ -578,7 +577,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
         header="Delete Account"
         [(visible)]="showDeleteAccountDialog"
         [modal]="true"
-        [style]="dialogStyles.form"
+        styleClass="privacy-delete-dialog"
       >
         <div class="delete-warning" role="alert">
           <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
@@ -647,8 +646,6 @@ export class PrivacyControlsComponent implements OnInit {
   private toastService = inject(ToastService);
 
   // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
-
   // State from service
   settings = this.privacyService.settings;
   teamSettings = this.privacyService.teamSettings;

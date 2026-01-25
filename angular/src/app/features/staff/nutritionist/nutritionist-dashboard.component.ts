@@ -612,8 +612,8 @@ interface TournamentNutritionBrief {
           header="Athlete Nutrition Details"
           [(visible)]="showAthleteDialog"
           [modal]="true"
-          [style]="{ width: '800px' }"
           [dismissableMask]="true"
+          styleClass="nutritionist-athlete-dialog"
         >
           @if (selectedAthlete()) {
             <div class="athlete-details">
@@ -684,8 +684,8 @@ interface TournamentNutritionBrief {
           header="Generate Nutrition Report"
           [(visible)]="showReportDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
           [dismissableMask]="true"
+          styleClass="nutritionist-report-dialog"
         >
           <div class="report-form">
             <div class="form-group">
@@ -731,8 +731,8 @@ interface TournamentNutritionBrief {
           header="Create Tournament Nutrition Brief"
           [(visible)]="showTournamentDialog"
           [modal]="true"
-          [style]="{ width: '600px' }"
           [dismissableMask]="true"
+          styleClass="nutritionist-tournament-dialog"
         >
           <div class="tournament-form">
             <div class="form-group">

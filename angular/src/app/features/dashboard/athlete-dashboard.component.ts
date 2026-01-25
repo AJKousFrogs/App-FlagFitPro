@@ -303,13 +303,16 @@ interface TrainingSession {
 
       .metrics-row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(
+          auto-fit,
+          minmax(calc(var(--space-10) * 6.25), 1fr)
+        );
         gap: var(--space-4);
         margin-bottom: var(--space-6);
       }
 
       .metric-card {
-        min-height: 150px;
+        min-height: var(--size-150);
       }
 
       .metric-content {
@@ -328,7 +331,7 @@ interface TrainingSession {
       .metric-header h3 {
         font-size: var(--ds-font-size-sm);
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
         margin: 0;
       }
 
@@ -340,13 +343,13 @@ interface TrainingSession {
       .metric-value {
         font-size: var(--ds-font-size-3xl);
         font-weight: var(--ds-font-weight-bold);
-        color: var(--text-primary);
+        color: var(--color-text-primary);
         margin-bottom: var(--space-2);
       }
 
       .metric-subtitle {
         font-size: var(--ds-font-size-sm);
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
       }
 
       .readiness-section {
@@ -360,13 +363,13 @@ interface TrainingSession {
       .section-title {
         font-size: var(--ds-font-size-xl);
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--text-primary);
+        color: var(--color-text-primary);
         margin-bottom: var(--space-4);
       }
 
       .trends-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(var(--layout-width-md), 1fr));
         gap: var(--space-4);
       }
 

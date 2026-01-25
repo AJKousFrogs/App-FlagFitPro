@@ -77,14 +77,14 @@
 }
 
 .cookie-link {
-  color: var(--ds-primary-green-dark); /* Darker green for better contrast: #036d35 (7.2:1 on white) */
+  color: var(--ds-primary-green-dark);
   text-decoration: underline;
   text-underline-offset: var(--space-1);
-  font-weight: var(--ds-font-weight-medium); /* Slightly bolder for better visibility */
+  font-weight: var(--ds-font-weight-medium);
 }
 
 .cookie-link:hover {
-  color: var(--ds-primary-green); /* Lighter green on hover */
+  color: var(--ds-primary-green);
 }
 
 /* ================================

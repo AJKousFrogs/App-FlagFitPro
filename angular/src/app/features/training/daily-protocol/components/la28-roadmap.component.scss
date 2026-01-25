@@ -9,10 +9,14 @@
 
 .roadmap-panel {
   .summary-card {
-    background: linear-gradient(135deg, var(--primary-50), var(--surface-card));
+    background: linear-gradient(
+      135deg,
+      var(--ds-primary-green-ultra-subtle),
+      var(--surface-card)
+    );
     border-radius: var(--radius-lg);
     padding: var(--space-4);
-    border: var(--border-1) solid var(--primary-200);
+    border: var(--border-1) solid var(--ds-primary-green-subtle);
   }
 
   .summary-header {
@@ -48,8 +52,8 @@
 
   .progress-ring {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: var(--size-80);
+    height: var(--size-80);
 
     svg {
       transform: rotate(-90deg);
@@ -65,7 +69,7 @@
 
     .ring-fill {
       fill: none;
-      stroke: var(--primary-500);
+      stroke: var(--color-brand-primary);
       stroke-width: 8;
       stroke-linecap: round;
       transition: stroke-dashoffset var(--transition-slower) var(--ease-standard);
@@ -81,7 +85,7 @@
       .ring-value {
         font-size: var(--ds-font-size-2xl);
         font-weight: var(--ds-font-weight-bold);
-        color: var(--primary-700);
+        color: var(--ds-primary-green-dark);
         display: block;
       }
 
@@ -110,7 +114,7 @@
 
     .phase-focus {
       font-size: var(--ds-font-size-xs);
-      color: var(--primary-600);
+      color: var(--color-brand-primary);
     }
   }
 
@@ -130,7 +134,7 @@
     font-size: var(--ds-font-size-md);
 
     &.current {
-      border-left: var(--border-3) solid var(--primary-500);
+      border-left: var(--border-3) solid var(--color-brand-primary);
     }
 
     &.past {
@@ -165,7 +169,11 @@
     display: flex;
     justify-content: space-around;
     padding: var(--space-6);
-    background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+    background: linear-gradient(
+      135deg,
+      var(--ds-primary-green-subtle),
+      var(--ds-primary-green-ultra-subtle)
+    );
     border-radius: var(--radius-lg);
     margin-bottom: var(--space-6);
 
@@ -180,7 +188,7 @@
     .stat-block__value {
       font-size: var(--ds-font-size-2xl);
       font-weight: var(--ds-font-weight-bold);
-      color: var(--primary-700);
+      color: var(--ds-primary-green-dark);
     }
 
     .stat-block__label {
@@ -211,13 +219,13 @@
     border: var(--border-2) solid var(--surface-border);
 
     &.active {
-      border-color: var(--primary-500);
-      background: var(--primary-50);
+      border-color: var(--color-brand-primary);
+      background: var(--ds-primary-green-ultra-subtle);
     }
 
     &.completed {
-      border-color: var(--green-400);
-      background: var(--green-50);
+      border-color: var(--color-status-success);
+      background: var(--color-status-success-subtle);
     }
 
     .cycle-header {
@@ -249,7 +257,7 @@
       align-items: center;
       gap: var(--space-2);
       font-size: var(--ds-font-size-md);
-      color: var(--primary-600);
+      color: var(--color-brand-primary);
       margin-bottom: var(--space-2);
     }
 
@@ -333,7 +341,7 @@
         .number {
           font-size: var(--ds-font-size-3xl);
           font-weight: var(--ds-font-weight-bold);
-          text-shadow: 0 2px 4px var(--surface-overlay-light);
+          text-shadow: var(--shadow-text-sm);
         }
 
         .label {

@@ -49,10 +49,6 @@ import {
 import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
 import { ToastService } from "../../core/services/toast.service";
-import {
-  DIALOG_STYLES,
-  DROPDOWN_WIDTHS
-} from "../../core/utils/design-tokens.util";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -512,7 +508,7 @@ import { getInitials } from "../../shared/utils/format.utils";
       header="Create New Channel"
       [(visible)]="showCreateChannelDialog"
       [modal]="true"
-      [style]="dialogStyles.form"
+      styleClass="chat-create-channel-dialog"
     >
       <div class="create-channel-form">
         <div class="form-field">
@@ -586,7 +582,7 @@ import { getInitials } from "../../shared/utils/format.utils";
       header="Pinned Messages"
       [(visible)]="showPinnedMessages"
       [modal]="true"
-      [style]="dialogStyles.standard"
+      styleClass="chat-pinned-dialog"
     >
       <div class="pinned-messages-list">
         @for (message of pinnedMessages(); track message.id) {
@@ -619,7 +615,7 @@ import { getInitials } from "../../shared/utils/format.utils";
       header="Channel Members"
       [(visible)]="showMembersDialog"
       [modal]="true"
-      [style]="dialogStyles.scrollable"
+      styleClass="chat-members-dialog"
       (onShow)="loadChannelMembers()"
     >
       <ng-template pTemplate="header">
@@ -819,10 +815,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private channelService = inject(ChannelService);
   private notificationService = inject(TeamNotificationService);
   private presenceService = inject(PresenceService);
-
-  // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
-  protected readonly dropdownWidths = DROPDOWN_WIDTHS;
 
   // State from services
   readonly currentChannel = this.channelService.currentChannel;

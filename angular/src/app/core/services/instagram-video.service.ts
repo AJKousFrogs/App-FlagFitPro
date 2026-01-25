@@ -771,6 +771,10 @@ export class InstagramVideoService {
     } = {},
   ): string {
     const { width = 400, maxWidth = "100%", captioned = true } = options;
+    const containerClass =
+      maxWidth === "100%"
+        ? "instagram-embed-container"
+        : "instagram-embed-container instagram-embed-container--full";
 
     // Use iframe embed as primary method (more reliable)
     const embedUrl = captioned
@@ -781,44 +785,19 @@ export class InstagramVideoService {
     const embedId = `ig-embed-${video.id}-${Date.now()}`;
 
     return `
-      <div class="instagram-embed-container" style="max-width: ${maxWidth}; margin: 0 auto; position: relative;">
-        <div id="${embedId}-loading" style="
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: var(--surface-ground, #1a1a2e);
-          border-radius: var(--radius-xl, var(--ds-font-size-md));
-          z-index: 1;
-        ">
-          <div style="text-align: center; color: var(--text-color-secondary, #888);">
-            <i class="pi pi-spin pi-spinner" style="font-size: var(--ds-font-size-3xl); margin-bottom: 0.5rem; display: block;"></i>
-            <span style="font-size: var(--ds-font-size-sm);">Loading video...</span>
+      <div class="${containerClass}">
+        <div id="${embedId}-loading" class="instagram-embed-loading">
+          <div class="instagram-embed-message">
+            <i class="pi pi-spin pi-spinner instagram-embed-spinner"></i>
+            <span class="instagram-embed-text">Loading video...</span>
           </div>
         </div>
-        <div id="${embedId}-error" style="
-          display: none;
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          align-items: center;
-          justify-content: center;
-          background: var(--surface-ground, #1a1a2e);
-          border-radius: var(--radius-xl, var(--ds-font-size-md));
-          z-index: 2;
-        ">
-          <div style="text-align: center; color: var(--text-color-secondary, #888); padding: 2rem;">
-            <i class="pi pi-video" style="font-size: var(--ds-font-size-2-5rem); margin-bottom: 1rem; display: block; opacity: 0.5;"></i>
-            <p style="margin: 0 0 1rem 0; font-size: var(--ds-font-size-sm);">Video temporarily unavailable</p>
-            <a href="${video.url}" target="_blank" rel="noopener noreferrer" 
-               style="color: var(--primary-color, #3b82f6); text-decoration: none; font-size: var(--ds-font-size-sm);">
-              <i class="pi pi-external-link" style="margin-right: 0.25rem;"></i>
+        <div id="${embedId}-error" class="instagram-embed-error">
+          <div class="instagram-embed-message instagram-embed-message--error">
+            <i class="pi pi-video instagram-embed-error-icon"></i>
+            <p class="instagram-embed-text">Video temporarily unavailable</p>
+            <a href="${video.url}" target="_blank" rel="noopener noreferrer" class="instagram-embed-link">
+              <i class="pi pi-external-link instagram-embed-link-icon"></i>
               Watch on Instagram
             </a>
           </div>
@@ -833,16 +812,16 @@ export class InstagramVideoService {
           allowtransparency="true"
           allowfullscreen="true"
           loading="lazy"
-          style="max-width: 100%; border-radius: var(--radius-xl); background: transparent; position: relative; z-index: 3;"
+          class="instagram-embed-frame"
           onload="
             var loading = document.getElementById('${embedId}-loading');
-            if (loading) loading.style.display = 'none';
+            if (loading) loading.classList.add('is-hidden');
           "
           onerror="
             var loading = document.getElementById('${embedId}-loading');
             var error = document.getElementById('${embedId}-error');
-            if (loading) loading.style.display = 'none';
-            if (error) error.style.display = 'flex';
+            if (loading) loading.classList.add('is-hidden');
+            if (error) error.classList.add('is-visible');
           "
         ></iframe>
       </div>
@@ -853,9 +832,9 @@ export class InstagramVideoService {
             var iframe = document.getElementById('${embedId}');
             var loading = document.getElementById('${embedId}-loading');
             var error = document.getElementById('${embedId}-error');
-            if (loading && loading.style.display !== 'none') {
-              if (loading) loading.style.display = 'none';
-              if (error) error.style.display = 'flex';
+            if (loading && !loading.classList.contains('is-hidden')) {
+              if (loading) loading.classList.add('is-hidden');
+              if (error) error.classList.add('is-visible');
             }
           }, 15000); // 15 second timeout
           

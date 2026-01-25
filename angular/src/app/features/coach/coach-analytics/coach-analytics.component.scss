@@ -73,6 +73,11 @@
   box-shadow: var(--shadow-sm);
 }
 
+.session-completion-bar {
+  height: calc(var(--space-1) + var(--space-0-5));
+  margin-top: var(--space-2);
+}
+
 .metric-icon {
   width: var(--avatar-size-lg);
   height: var(--avatar-size-lg);
@@ -96,8 +101,8 @@
   color: var(--color-status-warning);
 }
 .metric-icon.accuracy {
-  background: var(--color-accent-purple-subtle, rgba(124, 58, 237, 0.1));
-  color: var(--color-accent-purple, #7c3aed);
+  background: var(--color-accent-purple-subtle);
+  color: var(--color-accent-purple);
 }
 
 .metric-content {
@@ -145,6 +150,9 @@
   height: 100%;
 }
 
+.leaderboard-rank-col {
+  width: var(--space-12);
+}
 .classification-stats {
   display: flex;
   flex-direction: column;

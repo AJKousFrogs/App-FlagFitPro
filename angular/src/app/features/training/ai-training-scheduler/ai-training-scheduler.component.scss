@@ -124,7 +124,7 @@
   padding: var(--space-4);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  border-left: 4px solid transparent;
+  border-left: var(--border-4) solid transparent;
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast);
@@ -203,7 +203,7 @@
 }
 
 .session-item.ai-optimized {
-  border-left: 3px solid var(--ds-primary-green);
+  border-left: var(--border-3) solid var(--ds-primary-green);
 }
 
 .session-info h4 {

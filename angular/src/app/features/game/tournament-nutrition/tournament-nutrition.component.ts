@@ -184,7 +184,7 @@ interface HydrationLog {
                 <p-progressBar
                   [value]="hydrationProgress()"
                   [showValue]="false"
-                  [style]="{ height: '8px', width: '120px' }"
+                  styleClass="hydration-progress-bar"
                 ></p-progressBar>
                 <span class="target">/ {{ dailyHydrationTarget() }}ml</span>
               </div>

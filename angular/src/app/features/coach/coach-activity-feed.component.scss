@@ -92,6 +92,11 @@
   padding: var(--space-2);
 }
 
+.activity-scroll-panel {
+  width: 100%;
+  height: var(--activity-feed-height, var(--size-200));
+}
+
 .date-group {
   margin-bottom: var(--space-4);
 }
@@ -135,6 +140,40 @@
 .activity-avatar {
   position: relative;
   flex-shrink: 0;
+}
+
+.activity-avatar-icon {
+  color: var(--color-text-on-primary);
+}
+
+.activity-avatar.activity-stats_uploaded .activity-avatar-icon,
+.activity-avatar.activity-stats_uploaded .activity-icon-badge {
+  background: var(--color-brand-primary);
+}
+
+.activity-avatar.activity-training_completed .activity-avatar-icon,
+.activity-avatar.activity-training_completed .activity-icon-badge {
+  background: var(--color-status-success);
+}
+
+.activity-avatar.activity-wellness_logged .activity-avatar-icon,
+.activity-avatar.activity-wellness_logged .activity-icon-badge {
+  background: var(--color-status-info);
+}
+
+.activity-avatar.activity-injury_reported .activity-avatar-icon,
+.activity-avatar.activity-injury_reported .activity-icon-badge {
+  background: var(--color-status-error);
+}
+
+.activity-avatar.activity-achievement_earned .activity-avatar-icon,
+.activity-avatar.activity-achievement_earned .activity-icon-badge {
+  background: var(--color-status-warning);
+}
+
+.activity-avatar.activity-message_sent .activity-avatar-icon,
+.activity-avatar.activity-message_sent .activity-icon-badge {
+  background: var(--color-text-secondary);
 }
 
 .activity-icon-badge {

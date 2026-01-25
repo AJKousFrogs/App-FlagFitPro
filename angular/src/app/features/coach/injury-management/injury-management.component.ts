@@ -607,7 +607,7 @@ const RTP_STAGES: RtpStage[] = [
         [(visible)]="showReportDialog"
         header="Report Injury"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '600px' }"
+        styleClass="injury-report-dialog"
       >
         <div class="report-form">
           <div class="form-field">
@@ -816,7 +816,7 @@ const RTP_STAGES: RtpStage[] = [
         [(visible)]="showCheckinDialog"
         header="Update Progress"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '500px' }"
+        styleClass="injury-checkin-dialog"
       >
         <div class="checkin-form">
           <div class="form-field">

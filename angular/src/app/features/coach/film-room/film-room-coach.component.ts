@@ -248,7 +248,7 @@ const TAG_TYPES = [
                   <p-progressBar
                     [value]="getWatchPercent(session)"
                     [showValue]="false"
-                    [style]="{ height: '12px' }"
+                    styleClass="film-watch-progress"
                   ></p-progressBar>
                 </div>
                 @if (session.notWatched.length > 0) {
@@ -303,7 +303,7 @@ const TAG_TYPES = [
         [(visible)]="showUploadDialog"
         header="Upload Film"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '500px' }"
+        styleClass="film-upload-dialog"
       >
         <div class="upload-form">
           <div class="form-field">
@@ -397,7 +397,7 @@ const TAG_TYPES = [
         [(visible)]="showTagDialog"
         header="Add Tag"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '500px' }"
+        styleClass="film-tag-dialog"
       >
         <div class="tag-form">
           <p class="tag-timestamp">

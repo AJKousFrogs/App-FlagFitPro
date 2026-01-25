@@ -47,7 +47,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
       [modal]="true"
       [draggable]="false"
       header="Create Playlist"
-      [style]="{ width: '500px' }"
+      styleClass="video-curation-playlist-dialog"
     >
       <div class="playlist-form">
         <div class="form-field">

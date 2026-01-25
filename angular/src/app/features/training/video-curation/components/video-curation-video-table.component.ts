@@ -100,7 +100,7 @@ import {
       >
         <ng-template pTemplate="header">
           <tr>
-            <th style="width: var(--space-12)"></th>
+            <th class="video-table__icon-col"></th>
             <th pSortableColumn="title">
               Title <p-sortIcon field="title"></p-sortIcon>
             </th>
@@ -111,7 +111,7 @@ import {
               Rating <p-sortIcon field="rating"></p-sortIcon>
             </th>
             <th>Status</th>
-            <th style="width: 150px">Actions</th>
+            <th class="video-table__actions-col">Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-video>

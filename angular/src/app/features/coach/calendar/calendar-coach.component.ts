@@ -366,7 +366,7 @@ const RECURRING_OPTIONS = [
         [(visible)]="showCreateDialog"
         [header]="isEditing() ? 'Edit Event' : 'Create Event'"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '600px' }"
+        styleClass="coach-calendar-event-dialog"
       >
         <div class="event-form">
           <div class="form-field">
@@ -545,7 +545,7 @@ const RECURRING_OPTIONS = [
         [(visible)]="showRsvpDialog"
         [header]="'RSVP Management: ' + (selectedEvent()?.title || '')"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '600px' }"
+        styleClass="coach-calendar-rsvp-dialog"
       >
         @if (selectedEvent()) {
           <div class="rsvp-content">

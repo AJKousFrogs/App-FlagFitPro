@@ -237,9 +237,9 @@ interface EventTypeOption {
       [modal]="true"
       [visible]="showDialog()"
       (visibleChange)="showDialog.set($event)"
-      [style]="{ width: '450px' }"
       [breakpoints]="{ '640px': '95vw' }"
       [draggable]="false"
+      styleClass="training-tournament-dialog"
     >
       <div class="tournament-form">
         <div class="form-field">
@@ -249,7 +249,7 @@ interface EventTypeOption {
             id="name"
             [(ngModel)]="formData.name"
             placeholder="e.g., Adria Bowl 2026"
-            [style]="{ width: '100%' }"
+            class="w-full"
           />
         </div>
 
@@ -261,7 +261,7 @@ interface EventTypeOption {
               [(ngModel)]="formData.startDate"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-datepicker>
           </div>
           <div class="form-field">
@@ -271,7 +271,7 @@ interface EventTypeOption {
               [(ngModel)]="formData.endDate"
               dateFormat="yy-mm-dd"
               [showIcon]="true"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-datepicker>
           </div>
         </div>
@@ -284,7 +284,7 @@ interface EventTypeOption {
               id="country"
               [(ngModel)]="formData.country"
               placeholder="e.g., Croatia"
-              [style]="{ width: '100%' }"
+              class="w-full"
             />
           </div>
           <div class="form-field">
@@ -294,7 +294,7 @@ interface EventTypeOption {
               id="city"
               [(ngModel)]="formData.city"
               placeholder="e.g., Zagreb"
-              [style]="{ width: '100%' }"
+              class="w-full"
             />
           </div>
         </div>
@@ -307,7 +307,7 @@ interface EventTypeOption {
             [(ngModel)]="formData.eventType"
             optionLabel="label"
             optionValue="value"
-            [style]="{ width: '100%' }"
+            styleClass="w-full"
           ></p-select>
         </div>
 
@@ -320,7 +320,7 @@ interface EventTypeOption {
               [min]="1"
               [max]="20"
               [showButtons]="true"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-inputNumber>
           </div>
           <div class="form-field">
@@ -331,7 +331,7 @@ interface EventTypeOption {
               [min]="0"
               [max]="4"
               [showButtons]="true"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-inputNumber>
           </div>
         </div>

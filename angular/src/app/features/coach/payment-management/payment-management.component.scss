@@ -2,6 +2,18 @@
 
 @include stat-block;
 
+
+
+
+
+.fees-preview-progress {
+  height: var(--space-3);
+}
+
+.fees-list-progress {
+  height: var(--space-4);
+}
+
 .payment-management-page {
   padding: var(--space-4);
   max-width: var(--content-max-width-xl);
@@ -31,7 +43,7 @@
 .tab-navigation {
   display: flex;
   gap: var(--space-2);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-subtle);
   padding-bottom: var(--space-2);
   overflow-x: auto;
 
@@ -42,7 +54,7 @@
     border-radius: var(--radius-md);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
     cursor: pointer;
     transition:
       background-color var(--motion-base) var(--ease-standard),
@@ -52,12 +64,12 @@
 
     &:hover {
       background: var(--ds-surface-base);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     &.active {
-      background: var(--ds-primary-green-subtle);
-      color: var(--ds-primary-green);
+      background: var(--color-brand-primary-subtle);
+      color: var(--color-brand-primary);
     }
   }
 }
@@ -76,22 +88,22 @@
   padding: var(--space-4);
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border-left: 4px solid var(--ds-border-default);
+  border-left: var(--border-4) solid var(--color-border-default);
 
   &.balance {
-    border-left-color: var(--primitive-error-500);
+    border-left-color: var(--color-status-error);
   }
 
   &.collected {
-    border-left-color: var(--ds-primary-green);
+    border-left-color: var(--color-brand-primary);
   }
 
   &.due {
-    border-left-color: var(--primitive-warning-500);
+    border-left-color: var(--color-status-warning);
   }
 
   &.overdue {
-    border-left-color: var(--primitive-error-500);
+    border-left-color: var(--color-status-error);
   }
 
   .stat-icon {
@@ -105,18 +117,18 @@
     .stat-block__value {
       font-size: var(--ds-font-size-2xl);
       font-weight: var(--ds-font-weight-bold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .stat-block__label {
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-medium);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .stat-sub {
       font-size: var(--ds-font-size-xs);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
   }
 }
@@ -143,10 +155,10 @@
   padding: var(--space-3);
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--ds-primary-green);
+  border-left: var(--border-3) solid var(--color-brand-primary);
 
   &.overdue {
-    border-left-color: var(--primitive-error-500);
+    border-left-color: var(--color-status-error);
   }
 
   .fee-header {
@@ -163,7 +175,7 @@
       margin: 0;
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-medium);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
       flex: 1;
     }
   }
@@ -173,7 +185,7 @@
       display: block;
       margin-top: var(--space-1);
       font-size: var(--ds-font-size-md);
-      color: var(--ds-text-secondary);
+      color: var(--color-text-secondary);
     }
   }
 }
@@ -188,11 +200,11 @@
 .fee-card {
   background: var(--ds-surface-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--ds-border-default);
+  border: var(--border-1) solid var(--color-border-default);
   overflow: hidden;
 
   &.overdue {
-    border-color: var(--primitive-error-500);
+    border-color: var(--color-status-error);
   }
 }
 
@@ -202,7 +214,7 @@
   align-items: center;
   padding: var(--space-3) var(--space-4);
   background: var(--ds-surface-base);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-subtle);
 
   .fee-title {
     display: flex;
@@ -217,7 +229,7 @@
       margin: 0;
       font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
   }
 
@@ -229,15 +241,15 @@
 
 .fee-details {
   padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-subtle);
 
   p {
     margin: 0 0 var(--space-1) 0;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     strong {
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     .guest-fee {
@@ -246,7 +258,7 @@
 
     .overdue-badge {
       margin-left: var(--space-2);
-      color: var(--primitive-error-500);
+      color: var(--color-status-error);
       font-weight: var(--ds-font-weight-medium);
     }
   }
@@ -254,38 +266,38 @@
 
 .fee-progress-section {
   padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-subtle);
 
   h4 {
     margin: 0 0 var(--space-2) 0;
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .progress-detail {
     display: block;
     margin-top: var(--space-1);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
   }
 
   .status-counts {
     margin: var(--space-2) 0 0 0;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
   }
 }
 
 .outstanding-section {
   padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--ds-border-subtle);
+  border-bottom: var(--border-1) solid var(--color-border-subtle);
 
   h4 {
     margin: 0 0 var(--space-2) 0;
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .outstanding-list {
@@ -294,7 +306,7 @@
 
     li {
       font-size: var(--ds-font-size-md);
-      color: var(--primitive-error-500);
+      color: var(--color-status-error);
       margin-bottom: var(--space-1);
     }
   }
@@ -314,11 +326,11 @@
   gap: var(--space-3);
   margin-top: var(--space-4);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--color-border-subtle);
 }
 
 .owes {
-  color: var(--primitive-error-500);
+  color: var(--color-status-error);
   font-weight: var(--ds-font-weight-medium);
 }
 
@@ -336,7 +348,7 @@
     margin-bottom: var(--space-1);
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-medium);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   input,
@@ -396,10 +408,10 @@
   background: var(--ds-surface-base);
   border-radius: var(--radius-md);
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-secondary);
+  color: var(--color-text-secondary);
 
   strong {
-    color: var(--primitive-error-500);
+    color: var(--color-status-error);
   }
 }
 

@@ -3,21 +3,7 @@
 /* ================================================================
    GAME TRACKER - Premium Professional Design
    Design System Compliant - January 4, 2026
-   Refactored: Removed ::ng-deep (deprecated)
-   ================================================================ */
 
-@include stat-block;
-
-.game-tracker-page {
-  @include page-container(var(--content-max-width-2xl));
-
-  /* ================================================================
-     PRIMENG COMPONENT STYLING VIA CSS CUSTOM PROPERTIES
-     These cascade into PrimeNG components without ::ng-deep
-     ================================================================ */
-
-
-}
 
 /* ================================================================
    HEADER
@@ -529,58 +515,7 @@
 
 /* ================================================================
    GAMES LIST TABLE - Column-specific styling
-   Using data attributes for column targeting (no ::ng-deep needed)
-   ================================================================ */
 
-.games-list-card {
-  /* Table column styling via CSS custom properties */
-  --table-date-font-weight: var(--ds-font-weight-medium);
-  --table-opponent-font-weight: var(--ds-font-weight-semibold);
-  --table-location-color: var(--color-text-secondary);
-  --table-score-font-family: var(--ds-font-family-mono); /* ds-exception: monospace */
-  --table-score-font-weight: var(--ds-font-weight-bold);
-
-  /* Tag styling - transparent background */
-  .tag-win {
-    color: var(--ds-primary-green);
-    font-weight: var(--ds-font-weight-bold);
-    letter-spacing: var(--ds-letter-spacing-wide);
-  }
-
-  .tag-loss {
-    color: var(--color-status-error);
-    font-weight: var(--ds-font-weight-bold);
-    letter-spacing: var(--ds-letter-spacing-wide);
-  }
-
-  .tag-tie {
-    color: var(--color-text-secondary);
-    font-weight: var(--ds-font-weight-bold);
-    letter-spacing: var(--ds-letter-spacing-wide);
-  }
-
-  /* Action buttons in table */
-  .action-cell {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  .action-btn {
-    width: var(--space-9);
-    height: var(--space-9);
-    border-radius: var(--radius-md);
-    color: var(--color-text-secondary);
-    transition:
-      background-color var(--transition-fast),
-      color var(--transition-fast);
-
-    &:hover {
-      background: var(--ds-primary-green-ultra-subtle);
-      color: var(--ds-primary-green);
-    }
-  }
-}
 
 /* Column-specific classes to apply in template */
 .col-date {

@@ -8,7 +8,7 @@
 
 /**
  * Pass-Through (pt) API Configuration
- * Allows component-level customization without ::ng-deep
+ * Allows component-level customization without encapsulation hacks
  */
 /** PrimeNG Button Props */
 interface ButtonPTProps {

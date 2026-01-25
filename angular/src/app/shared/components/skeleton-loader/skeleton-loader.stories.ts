@@ -80,6 +80,18 @@ const meta: Meta<SkeletonLoaderComponent> = {
   },
 };
 
+const storyStyles = `
+  .story-width-sm { width: 100%; max-width: var(--grid-card-min-sm); }
+  .story-width-md { width: 100%; max-width: var(--grid-card-min-md); }
+  .story-width-lg { width: 100%; max-width: var(--grid-card-min-lg); }
+  .story-width-xl { width: 100%; max-width: var(--grid-card-min-xl); }
+  .story-width-2xl { width: 100%; max-width: var(--dialog-max-width-xl); }
+  .story-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-md), 1fr)); gap: var(--space-8); }
+  .story-stack { display: flex; flex-direction: column; gap: var(--space-2); }
+  .story-row { display: flex; gap: var(--space-4); align-items: center; flex-wrap: wrap; }
+  .story-title { margin: 0 0 var(--space-4); color: var(--color-text-secondary); }
+`;
+
 export default meta;
 type Story = StoryObj<SkeletonLoaderComponent>;
 
@@ -140,10 +152,11 @@ export const Card: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div style="width: 300px;">
+      <div class="story-width-md">
         <app-skeleton-loader [variant]="variant"></app-skeleton-loader>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -154,10 +167,11 @@ export const StatCard: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div style="width: 250px;">
+      <div class="story-width-md">
         <app-skeleton-loader [variant]="variant"></app-skeleton-loader>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -168,10 +182,11 @@ export const WorkoutCard: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div style="width: 350px;">
+      <div class="story-width-lg">
         <app-skeleton-loader [variant]="variant"></app-skeleton-loader>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -182,10 +197,11 @@ export const PlayerCard: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div style="width: 200px;">
+      <div class="story-width-sm">
         <app-skeleton-loader [variant]="variant"></app-skeleton-loader>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -209,10 +225,11 @@ export const Chart: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div style="width: 500px;">
+      <div class="story-width-2xl">
         <app-skeleton-loader [variant]="variant"></app-skeleton-loader>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -229,10 +246,11 @@ export const ProfileHeader: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div style="width: 500px;">
+      <div class="story-width-2xl">
         <app-skeleton-loader [variant]="variant"></app-skeleton-loader>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -243,10 +261,11 @@ export const DashboardWidget: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div style="width: 400px;">
+      <div class="story-width-xl">
         <app-skeleton-loader [variant]="variant"></app-skeleton-loader>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -257,10 +276,11 @@ export const Metric: Story = {
   render: (args) => ({
     props: args,
     template: `
-      <div style="width: 200px;">
+      <div class="story-width-sm">
         <app-skeleton-loader [variant]="variant"></app-skeleton-loader>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -313,10 +333,10 @@ export const RepeatedTableRows: Story = {
 export const AllVariants: Story = {
   render: () => ({
     template: `
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--ds-space-8);">
+      <div class="story-grid">
         <div>
-          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Text & Title</h4>
-          <div style="display: flex; flex-direction: column; gap: var(--ds-space-2);">
+          <h4 class="story-title">Text & Title</h4>
+          <div class="story-stack">
             <app-skeleton-loader variant="title" width="60%"></app-skeleton-loader>
             <app-skeleton-loader variant="text" width="100%"></app-skeleton-loader>
             <app-skeleton-loader variant="text" width="80%"></app-skeleton-loader>
@@ -325,35 +345,36 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Avatars & Badges</h4>
-          <div style="display: flex; gap: var(--ds-space-4); align-items: center;">
-            <app-skeleton-loader variant="avatar" size="32px"></app-skeleton-loader>
-            <app-skeleton-loader variant="avatar" size="48px"></app-skeleton-loader>
-            <app-skeleton-loader variant="avatar" size="64px"></app-skeleton-loader>
+          <h4 class="story-title">Avatars & Badges</h4>
+          <div class="story-row">
+            <app-skeleton-loader variant="avatar" size="var(--avatar-size-sm)"></app-skeleton-loader>
+            <app-skeleton-loader variant="avatar" size="var(--avatar-size-lg)"></app-skeleton-loader>
+            <app-skeleton-loader variant="avatar" size="var(--avatar-size-2xl)"></app-skeleton-loader>
             <app-skeleton-loader variant="badge"></app-skeleton-loader>
           </div>
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Card</h4>
+          <h4 class="story-title">Card</h4>
           <app-skeleton-loader variant="card"></app-skeleton-loader>
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Stat Card</h4>
+          <h4 class="story-title">Stat Card</h4>
           <app-skeleton-loader variant="stat-card"></app-skeleton-loader>
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">List Items</h4>
+          <h4 class="story-title">List Items</h4>
           <app-skeleton-repeat variant="list-item" [count]="3" [staggerDelay]="75"></app-skeleton-repeat>
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">Chart</h4>
+          <h4 class="story-title">Chart</h4>
           <app-skeleton-loader variant="chart"></app-skeleton-loader>
         </div>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };

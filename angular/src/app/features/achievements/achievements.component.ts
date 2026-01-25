@@ -29,10 +29,7 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import {
-  DROPDOWN_WIDTHS,
-  TABLE_COLUMN_WIDTHS
-} from "../../core/utils/design-tokens.util";
+import { TABLE_COLUMN_WIDTHS } from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { getTimeAgo } from "../../shared/utils/date.utils";
@@ -480,7 +477,7 @@ const CATEGORY_LABELS: Record<
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Time Range"
-                  [style]="{ width: dropdownWidths.sm }"
+                  styleClass="leaderboard-range-select"
                 ></p-select>
               </div>
             </div>
@@ -545,7 +542,6 @@ export class AchievementsComponent implements OnInit {
   private readonly messageService = inject(MessageService);
 
   // Design system tokens
-  protected readonly dropdownWidths = DROPDOWN_WIDTHS;
   protected readonly tableColumnWidths = TABLE_COLUMN_WIDTHS;
 
   // State

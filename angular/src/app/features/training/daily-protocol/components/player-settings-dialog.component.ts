@@ -100,10 +100,10 @@ interface DayOption {
       [modal]="true"
       [visible]="visible()"
       (visibleChange)="onVisibleChange($event)"
-      [style]="{ width: '500px' }"
       [breakpoints]="{ '640px': '95vw' }"
       [draggable]="false"
       [resizable]="false"
+      styleClass="player-settings-dialog"
     >
       <div class="settings-form">
         <!-- Position Selection -->
@@ -118,7 +118,7 @@ interface DayOption {
               optionLabel="label"
               optionValue="value"
               placeholder="Select position"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
               (onValueChange)="updatePositionDescription()"
             ></p-select>
             @if (selectedPositionDescription()) {
@@ -138,7 +138,7 @@ interface DayOption {
               optionValue="value"
               placeholder="Optional"
               [showClear]="true"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-select>
           </div>
         </div>
@@ -154,7 +154,7 @@ interface DayOption {
               dateFormat="yy-mm-dd"
               [showIcon]="true"
               [maxDate]="maxBirthDate"
-              [style]="{ width: '100%' }"
+              styleClass="full-width"
               placeholder="Select birth date"
               (onSelect)="updateAge()"
             ></p-datepicker>
@@ -178,8 +178,7 @@ interface DayOption {
             activities.
           </p>
           <p
-            class="section-description"
-            style="font-size: var(--ds-font-size-sm); color: var(--text-secondary); margin-top: 0.5rem;"
+            class="section-description section-description--note"
           >
             Add your typical training times for reference. This information
             helps coaches understand your availability but does not create team
@@ -244,7 +243,7 @@ interface DayOption {
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Add practice day..."
-                [style]="{ width: '100%' }"
+                styleClass="w-full"
               ></p-select>
               <app-button
                 iconLeft="pi-plus"
@@ -293,7 +292,7 @@ interface DayOption {
               optionLabel="label"
               optionValue="value"
               placeholder="Select days"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-multiselect>
           </div>
 

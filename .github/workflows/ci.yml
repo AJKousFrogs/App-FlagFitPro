@@ -37,6 +37,13 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      - name: Enforce no encapsulation hacks
+        run: |
+          if rg -n "::ng-deep" angular/src; then
+            echo "::ng-deep usage detected. Use global overrides or CSS variables instead."
+            exit 1
+          fi
+
   design-system-enforcement:
     name: Design System Enforcement (Changed Files)
     runs-on: ubuntu-latest

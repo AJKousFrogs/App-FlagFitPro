@@ -3,23 +3,7 @@
 /* ================================================================
    COMMUNITY COMPONENT STYLES
    Design System Compliant - January 4, 2026
-   Refactored: Removed ::ng-deep (deprecated)
    ================================================================ */
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(calc(-1 * var(--space-2)));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 @keyframes scaleIn {
   from {
@@ -101,30 +85,53 @@
 
   /* ================================================================
      PRIMENG COMPONENT STYLING VIA CSS CUSTOM PROPERTIES
-     These cascade into PrimeNG components without ::ng-deep
      ================================================================ */
-
-}
-
-/* ============================================
-   HEADER SECTION
-   ============================================ */
-
-.community-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-4);
-  background: var(--surface-primary);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: var(--border-1) solid var(--color-border-secondary);
-}
 
 .header-content {
   display: flex;
   align-items: center;
   gap: var(--space-4);
+}
+
+.author-avatar,
+.comment-avatar,
+.leaderboard-avatar {
+  color: var(--color-text-on-primary);
+}
+
+.comment-avatar {
+  width: var(--space-8);
+  height: var(--space-8);
+  font-size: var(--ds-font-size-xs);
+}
+
+.leaderboard-avatar {
+  width: var(--touch-target-sm);
+  height: var(--touch-target-sm);
+}
+
+.avatar-color-0 {
+  background: var(--color-chart-1);
+}
+
+.avatar-color-1 {
+  background: var(--color-chart-2);
+}
+
+.avatar-color-2 {
+  background: var(--color-chart-3);
+}
+
+.avatar-color-3 {
+  background: var(--color-chart-4);
+}
+
+.avatar-color-4 {
+  background: var(--color-chart-5);
+}
+
+.avatar-color-5 {
+  background: var(--color-chart-6);
 }
 
 .header-icon {
@@ -1389,21 +1396,7 @@
 }
 
 /* ============================================
-   AVATAR STYLING - Using CSS classes instead of ::ng-deep
-   Apply these classes in the template
-   ============================================ */
 
-.user-avatar {
-  width: var(--space-11);
-  height: var(--space-11);
-  background: var(--ds-primary-green);
-  font-size: var(--ds-font-size-md);
-  transition: transform var(--transition-fast);
-
-  &:hover {
-    transform: scale(1.1);
-  }
-}
 
 .author-avatar {
   width: var(--space-12);

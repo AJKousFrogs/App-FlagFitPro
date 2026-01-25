@@ -290,7 +290,6 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
         [(visible)]="showDialog"
         [header]="isEditing() ? 'Edit Practice Plan' : 'Create Practice Plan'"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '900px' }"
         styleClass="practice-dialog"
       >
         <div class="practice-form">
@@ -403,7 +402,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
                       suffix=" min"
                       [min]="5"
                       [max]="60"
-                      [style]="{ width: '90px' }"
+                      styleClass="activity-duration-input"
                       (ngModelChange)="updateActivityTimes()"
                     ></p-inputNumber>
                     <app-button
@@ -496,7 +495,7 @@ const DEFAULT_EQUIPMENT: EquipmentItem[] = [
         [(visible)]="showActivityDialog"
         [header]="'Edit Activity: ' + (editingActivity?.title || '')"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '600px' }"
+        styleClass="practice-activity-dialog"
       >
         @if (editingActivity) {
           <div class="activity-form">

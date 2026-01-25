@@ -1065,7 +1065,6 @@ interface DevelopmentGoal {
           [closable]="true"
           header="Share Analytics with Coach"
           styleClass="share-dialog"
-          [style]="{ width: '500px' }"
         >
           <div class="share-content">
             <p class="share-intro">
@@ -2326,32 +2325,32 @@ export class AnalyticsComponent implements AfterViewInit {
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* ds-exception: PDF export font stack */
             padding: var(--ds-space-10);
-            max-width: 800px;
+            max-width: var(--dialog-max-width-2xl);
             margin: 0 auto;
-            color: #1a1a2e;
+            color: var(--color-text-primary);
           }
           .header {
             text-align: center;
             margin-bottom: var(--ds-space-10);
             padding-bottom: var(--ds-space-5);
-            border-bottom: 2px solid #10c96b;
+            border-bottom: var(--border-2) solid var(--color-brand-primary);
           }
           .header h1 {
-            color: #10c96b;
+            color: var(--color-brand-primary);
             margin: 0;
             font-size: var(--ds-font-size-1-75rem);
           }
           .header p {
-            color: #666;
+            color: var(--color-text-secondary);
             margin: calc(var(--ds-space-5) / 2) 0 0;
           }
           .section {
             margin-bottom: var(--ds-space-8);
           }
           .section h2 {
-            color: #1a1a2e;
+            color: var(--color-text-primary);
             font-size: var(--ds-font-size-lg);
-            border-bottom: 1px solid #eee;
+            border-bottom: var(--border-1) solid var(--color-border-secondary);
             padding-bottom: var(--ds-space-2);
             margin-bottom: var(--ds-space-4);
           }
@@ -2386,7 +2385,7 @@ export class AnalyticsComponent implements AfterViewInit {
             color: var(--color-text-primary);
           }
           .goal-progress {
-            color: #666;
+            color: var(--color-text-secondary);
             font-size: var(--ds-font-size-sm);
           }
           .stats-table {
@@ -2396,18 +2395,18 @@ export class AnalyticsComponent implements AfterViewInit {
           .stats-table th, .stats-table td {
             padding: var(--ds-space-2) var(--ds-space-3);
             text-align: left;
-            border-bottom: 1px solid #eee;
+            border-bottom: var(--border-1) solid var(--color-border-secondary);
           }
           .stats-table th {
-            background: #f8f9fa;
+            background: var(--surface-secondary);
             font-weight: var(--ds-font-weight-semibold);
           }
           .footer {
             margin-top: var(--ds-space-10);
             padding-top: var(--ds-space-5);
-            border-top: 1px solid #eee;
+            border-top: var(--border-1) solid var(--color-border-secondary);
             text-align: center;
-            color: #999;
+            color: var(--color-text-muted);
             font-size: var(--ds-font-size-xs);
           }
           @media print {

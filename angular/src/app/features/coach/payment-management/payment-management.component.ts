@@ -256,7 +256,7 @@ const BALANCE_FILTERS = [
                       <p-progressBar
                         [value]="getCollectionPercent(fee)"
                         [showValue]="false"
-                        [style]="{ height: '12px' }"
+                        styleClass="fees-preview-progress"
                       ></p-progressBar>
                       <span class="progress-text"
                         >\${{ fee.collected }} / \${{ fee.total }} ({{
@@ -315,7 +315,7 @@ const BALANCE_FILTERS = [
                     <p-progressBar
                       [value]="getCollectionPercent(fee)"
                       [showValue]="false"
-                      [style]="{ height: '16px' }"
+                      styleClass="fees-list-progress"
                     ></p-progressBar>
                     <span class="progress-detail"
                       >\${{ fee.collected }} / \${{ fee.total }} ({{
@@ -508,7 +508,7 @@ const BALANCE_FILTERS = [
         [(visible)]="showFeeDialog"
         header="Create Fee"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '600px' }"
+        styleClass="payment-fee-dialog"
       >
         <div class="fee-form">
           <div class="form-field">
@@ -655,7 +655,7 @@ const BALANCE_FILTERS = [
         [(visible)]="showPaymentDialog"
         header="Record Payment"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '500px' }"
+        styleClass="payment-record-dialog"
       >
         <div class="payment-form">
           <div class="form-field">

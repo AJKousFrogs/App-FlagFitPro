@@ -32,10 +32,6 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import {
-  DIALOG_STYLES,
-  DROPDOWN_WIDTHS
-} from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
@@ -174,7 +170,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             optionValue="value"
             placeholder="Category"
             [showClear]="true"
-            [style]="{ width: dropdownWidths.md }"
+            styleClass="playbook-filter-select"
           ></p-select>
 
           <p-select
@@ -184,7 +180,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
             optionValue="value"
             placeholder="Status"
             [showClear]="true"
-            [style]="{ width: dropdownWidths.md }"
+            styleClass="playbook-filter-select"
           ></p-select>
         </div>
 
@@ -247,7 +243,6 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
         [header]="selectedPlay()?.name || 'Play Details'"
         [modal]="true"
         [closable]="true"
-        [style]="dialogStyles.fullWidth"
         styleClass="play-detail-dialog"
       >
         @if (selectedPlay(); as play) {
@@ -357,7 +352,6 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
         header="Playbook Quiz"
         [modal]="true"
         [closable]="true"
-        [style]="dialogStyles.complex"
         styleClass="quiz-dialog"
       >
         @if (quizActive()) {
@@ -503,8 +497,6 @@ export class PlaybookComponent implements OnInit {
   private readonly messageService = inject(MessageService);
 
   // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
-  protected readonly dropdownWidths = DROPDOWN_WIDTHS;
 
   // State
   readonly plays = signal<Play[]>([]);

@@ -328,7 +328,7 @@ interface AdminTeam {
         [(visible)]="showUserDialog"
         header="User Management"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '900px' }"
+        styleClass="superadmin-user-dialog"
       >
         <div class="management-filters">
           <span class="p-input-icon-left">
@@ -407,7 +407,7 @@ interface AdminTeam {
         [(visible)]="showTeamDialog"
         header="Team Management"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '900px' }"
+        styleClass="superadmin-team-dialog"
       >
         <p-table 
           [value]="teams()" 

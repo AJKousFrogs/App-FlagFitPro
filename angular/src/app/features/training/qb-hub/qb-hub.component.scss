@@ -4,7 +4,23 @@
  * QB Hub Composite View Styles
  * ================================================================
  * Design System Compliant - Fixed January 9, 2026
- * Removed ::ng-deep - Using CSS custom property cascade
+
+
+.hub-tab-content {
+  padding: var(--space-6) 0;
+
+  /*
+   * COMPOSITE VIEW PATTERN
+   * Child components inherit this CSS variable which hides their headers.
+   * PageHeaderComponent reads --page-header-display on :host.
+
+}
+
+.mr-2 {
+  margin-right: var(--space-2);
+}
+
+ * Removed encapsulation piercing - Using CSS custom property cascade
  * ================================================================
  */
 
@@ -23,24 +39,4 @@
   @include respond-to(sm) {
     padding: var(--space-2);
   }
-}
-
-.hub-tab-content {
-  padding: var(--space-6) 0;
-
-  /*
-   * COMPOSITE VIEW PATTERN
-   * Child components inherit this CSS variable which hides their headers.
-   * PageHeaderComponent reads --page-header-display on :host.
-   * No ::ng-deep needed - CSS custom properties cascade through encapsulation.
-   */
-  --page-header-display: none;
-
-  @include respond-to(md) {
-    padding: var(--space-4) 0;
-  }
-}
-
-.mr-2 {
-  margin-right: var(--space-2);
 }

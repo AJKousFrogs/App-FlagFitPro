@@ -36,7 +36,7 @@
   padding: var(--space-3);
   background: var(--surface-primary);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
 }
 
 .stat-block__label {
@@ -58,11 +58,11 @@
     border-color var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard);
   background: var(--surface-primary);
-  border: 2px solid var(--color-border-secondary);
+  border: var(--border-2) solid var(--color-border-secondary);
 
   &:hover {
     box-shadow: var(--shadow-2);
-    transform: translateY(-4px);
+    transform: translateY(calc(-1 * var(--space-1)));
     border-color: var(--ds-primary-green);
   }
 }

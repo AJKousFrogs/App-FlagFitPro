@@ -2327,11 +2327,13 @@ export class TodayComponent {
         break;
 
       case "log_session":
-        // TODO: Open session logging
-        this.messageService.add({
-          severity: "info",
-          summary: "Log Session",
-          detail: "Session logging coming soon",
+        this.router.navigate(["/training/log"], {
+          queryParams: { date: this.todayDate() },
+        });
+        break;
+      case "log_workout":
+        this.router.navigate(["/training/log"], {
+          queryParams: { date: this.todayDate() },
         });
         break;
 
@@ -2368,6 +2370,10 @@ export class TodayComponent {
         firstBlock.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
+  }
+
+  private todayDate(): string {
+    return new Date().toISOString().split("T")[0];
   }
 
   private showCoachAlertDialog(): void {

@@ -567,7 +567,6 @@ interface VideoSuggestion {
           [dismissableMask]="true"
           [header]="selectedVideo()?.title || 'Video'"
           styleClass="video-preview-dialog"
-          [style]="{ width: '90vw', maxWidth: '600px' }"
         >
           @if (selectedVideo(); as video) {
             <div class="preview-content">
@@ -684,7 +683,7 @@ export class VideoSuggestionComponent implements OnInit {
     const video = this.selectedVideo();
     if (!video) return "";
     return `
-      <div style="max-width: 100%; margin: 0 auto;">
+      <div class="preview-embed__container">
         <iframe
           src="https://www.instagram.com/reel/${video.shortcode}/embed/"
           width="400"
@@ -694,7 +693,7 @@ export class VideoSuggestionComponent implements OnInit {
           allowtransparency="true"
           allowfullscreen="true"
           loading="lazy"
-          style="max-width: 100%; border-radius: var(--radius-xl); background: transparent;"
+          class="preview-embed__frame"
         ></iframe>
       </div>
     `;

@@ -20,7 +20,7 @@
   padding: var(--space-4);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-6); // 1.5rem
-  border-left: 4px solid var(--ds-primary-green);
+  border-left: var(--border-4) solid var(--ds-primary-green);
 }
 
 .ai-suggestions h5 {
@@ -146,7 +146,7 @@
   justify-content: flex-end;
   margin-top: var(--space-6); // 1.5rem
   padding-top: var(--space-6); // 1.5rem
-  border-top: 1px solid var(--color-border-primary);
+  border-top: var(--border-1) solid var(--color-border-primary);
 }
 
 @include respond-to(md) {

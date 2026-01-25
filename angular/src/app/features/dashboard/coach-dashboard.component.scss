@@ -8,6 +8,16 @@
 @use "styles/variables" as *;
 @use "styles/mixins" as *;
 
+
+
+
+
+
+
+
+
+
+
 .dashboard-content {
   padding: var(--space-6);
   background: var(--surface-ground);
@@ -122,10 +132,22 @@
         height: var(--space-1); /* 4px */
       }
       &::-webkit-scrollbar-thumb {
-        background: var(--surface-300);
+        background: var(--color-border-secondary);
         border-radius: var(--radius-full);
       }
     }
+  }
+
+  .priority-avatar {
+    color: var(--color-text-on-primary);
+  }
+
+  .priority-avatar--critical {
+    background: var(--color-status-error);
+  }
+
+  .priority-avatar--warning {
+    background: var(--color-status-warning);
   }
 
   .priority-athlete-card {
@@ -157,7 +179,7 @@
       .pa-reason {
         display: block;
         font-size: var(--ds-font-size-xs);
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -166,7 +188,7 @@
 
     i {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-secondary);
+      color: var(--color-text-secondary);
     }
   }
 
@@ -253,12 +275,12 @@
     border-radius: var(--radius-lg);
     font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-bold);
-    background: var(--surface-200);
+    background: var(--surface-secondary);
     color: var(--color-text-secondary);
 
     &.winning {
-      background: var(--green-100);
-      color: var(--green-700);
+      background: var(--color-status-success-subtle);
+      color: var(--color-status-success);
     }
   }
 
@@ -476,8 +498,8 @@
         color var(--motion-fast) var(--ease-standard);
 
       &:hover {
-        color: var(--text-primary);
-        background: var(--surface-200);
+        color: var(--color-text-primary);
+        background: var(--surface-secondary);
       }
 
       &.active {
@@ -553,7 +575,7 @@
     padding: var(--space-2);
     border-radius: var(--radius-md);
     background: var(--surface-ground);
-    border-left: var(--space-1) solid var(--surface-border); /* 4px - closest token */
+    border-left: var(--border-4) solid var(--surface-border); /* 4px - closest token */
 
     &.game {
       border-left-color: var(--color-status-warning);
@@ -798,7 +820,7 @@
     padding: var(--space-3);
     background: var(--color-status-warning-light);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--color-status-warning-subtle);
+    border: var(--border-1) solid var(--color-status-warning-subtle);
 
     &.critical {
       background: var(--color-status-error-light);
@@ -906,16 +928,7 @@
    ROSTER TABLE CUSTOMIZATIONS
    ============================================ */
 
-  // Removed ::ng-deep - table header styles now handled globally in styles.scss
 
-  .clickable-row {
-    cursor: pointer;
-    transition: background-color var(--transition-fast);
-
-    &:hover {
-      background: var(--surface-ground);
-    }
-  }
 
   .player-cell {
     display: flex;
@@ -935,7 +948,7 @@
 
     .jersey-number {
       font-size: var(--ds-font-size-xs);
-      color: var(--text-secondary);
+      color: var(--color-text-secondary);
     }
   }
 
@@ -1016,6 +1029,6 @@
   }
 
   .missing-data-strip {
-    border-left: var(--space-1) solid var(--color-status-warning); /* 4px */
+    border-left: var(--border-4) solid var(--color-status-warning); /* 4px */
   }
 } // End of @layer features

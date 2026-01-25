@@ -5,6 +5,12 @@
    Design System Compliant - January 2, 2026
    ================================================================ */
 
+
+
+
+
+
+
 .roster-page {
   padding: var(--space-6);
 }
@@ -71,7 +77,7 @@
 }
 
 .section-title i {
-  color: var(--ds-primary-green);
+  color: var(--color-brand-primary);
 }
 
 .position-count {
@@ -101,8 +107,8 @@
 }
 
 .details-jersey {
-  width: 80px;
-  height: 80px;
+  width: var(--size-80);
+  height: var(--size-80);
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
@@ -369,7 +375,7 @@
   }
 
   &.risk-level-high {
-    background: rgba(245, 158, 11, 0.15);
+    background: rgba(var(--primitive-warning-500-rgb), 0.15);
     border: 1px solid var(--color-status-warning);
   }
 

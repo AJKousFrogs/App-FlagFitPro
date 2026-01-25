@@ -79,6 +79,14 @@
   color: var(--color-text-on-primary);
 }
 
+.video-table__icon-col {
+  width: var(--space-12);
+}
+
+.video-table__actions-col {
+  width: calc(var(--space-12) * 3);
+}
+
 .empty-message {
   text-align: center;
   padding: var(--space-8);

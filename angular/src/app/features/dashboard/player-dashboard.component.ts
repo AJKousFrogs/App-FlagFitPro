@@ -427,7 +427,7 @@ interface AnnouncementBanner {
                         "
                         tooltipPosition="bottom"
                         [routerLink]="['/settings/privacy']"
-                        style="cursor: pointer;"
+                        class="status-tag-link"
                       ></app-status-tag>
                     }
                   </div>
@@ -452,8 +452,7 @@ interface AnnouncementBanner {
           <section class="stats-overview" aria-label="Key statistics">
             <!-- Readiness Card - Enhanced with Check-in Status (UX Audit Fix #4) -->
             <p-card
-              styleClass="stat-card stat-readiness"
-              [style]="{ cursor: 'pointer' }"
+              styleClass="stat-card stat-readiness stat-card--clickable"
               (click)="navigateToWellness()"
               pTooltip="Your overall readiness to train today based on sleep, soreness, stress, and energy levels. Checked daily via wellness survey."
               tooltipPosition="bottom"
@@ -521,8 +520,7 @@ interface AnnouncementBanner {
 
             <!-- ACWR Card - Enhanced with Progress Tracking (UX Audit Fix #5) -->
             <p-card
-              styleClass="stat-card stat-acwr"
-              [style]="{ cursor: 'pointer' }"
+              styleClass="stat-card stat-acwr cursor-pointer"
               (click)="navigateToACWR()"
               [pTooltip]="
                 acwrDataSufficient()
@@ -666,8 +664,7 @@ Keep logging sessions to unlock this injury prevention metric!'
 
             <!-- Streak Card -->
             <p-card
-              styleClass="stat-card stat-streak"
-              [style]="{ cursor: 'pointer' }"
+              styleClass="stat-card stat-streak cursor-pointer"
               pTooltip="Consecutive days with training logged. Building a streak helps maintain consistency and prevents gaps in your progress tracking."
               tooltipPosition="bottom"
               [showDelay]="500"
@@ -685,8 +682,7 @@ Keep logging sessions to unlock this injury prevention metric!'
 
             <!-- Weekly Sessions Card -->
             <p-card
-              styleClass="stat-card stat-sessions"
-              [style]="{ cursor: 'pointer' }"
+              styleClass="stat-card stat-sessions cursor-pointer"
             >
               <div class="stat-card-content">
                 <div class="stat-icon sessions-icon">
@@ -861,12 +857,18 @@ Keep logging sessions to unlock this injury prevention metric!'
                       type="line"
                       [data]="performanceChartData()"
                       [options]="chartOptions"
-                      height="180px"
+                      height="calc(var(--space-6) * 7.5)"
                     ></app-lazy-chart>
                   } @placeholder {
-                    <app-chart-skeleton type="line" height="180px" />
+                    <app-chart-skeleton
+                      type="line"
+                      height="calc(var(--space-6) * 7.5)"
+                    />
                   } @loading (minimum 500ms) {
-                    <app-chart-skeleton type="line" height="180px" />
+                    <app-chart-skeleton
+                      type="line"
+                      height="calc(var(--space-6) * 7.5)"
+                    />
                   }
                 </div>
                 <div class="card-footer-action">
@@ -1046,7 +1048,7 @@ Keep logging sessions to unlock this injury prevention metric!'
      * Design System Compliant - All tokens from design-system-tokens.scss
      * PrimeNG overrides moved to primeng/_brand-overrides.scss
      * 
-     * NOTE: ::ng-deep and !important removed per DESIGN_SYSTEM_RULES.md
+     * NOTE: Encapsulation hacks and !important removed per DESIGN_SYSTEM_RULES.md
      * PrimeNG component styling is handled globally via styleClass bindings
      * 
      * See docs/CANONICAL_PAGES.md for usage guidelines.
@@ -1094,7 +1096,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
       }
 
       .no-program-icon i {
@@ -1104,13 +1106,13 @@ Keep logging sessions to unlock this injury prevention metric!'
       .no-program-title {
         font-size: var(--ds-font-size-xl);
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--text-color);
+        color: var(--color-text-primary);
         margin: 0;
       }
 
       .no-program-message {
         font-size: var(--ds-font-size-sm);
-        color: var(--text-color-secondary);
+        color: var(--color-text-secondary);
         max-width: var(--content-max-width-sm);
         margin: 0;
         line-height: var(--ds-line-height-body);
@@ -1142,7 +1144,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         padding: var(--space-3);
         background: var(--surface-ground);
         border-radius: var(--radius-md);
-        border-left: var(--space-1) solid var(--color-border-primary);
+        border-left: var(--border-4) solid var(--color-border-primary);
       }
 
       .checklist-item.checklist-action-needed {
@@ -1237,7 +1239,7 @@ Keep logging sessions to unlock this injury prevention metric!'
         padding: var(--space-3);
         background: var(--surface-card);
         border-radius: var(--radius-sm);
-        border-left: var(--space-1) solid var(--ds-primary-green);
+        border-left: var(--border-4) solid var(--ds-primary-green);
       }
 
       .setup-timeline {
@@ -1525,7 +1527,7 @@ Keep logging sessions to unlock this injury prevention metric!'
       }
 
       .stat-readiness:hover {
-        transform: translateY(-2px);
+        transform: var(--transform-hover-lift);
         box-shadow: var(--shadow-2);
       }
 

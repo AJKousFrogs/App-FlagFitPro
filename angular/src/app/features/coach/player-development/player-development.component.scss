@@ -1,5 +1,12 @@
 @use "styles/mixins" as *;
 
+
+
+.goal-progress-bar {
+  height: var(--space-3);
+  flex: 1;
+}
+
 .player-development-page {
   padding: var(--space-4);
   max-width: var(--content-max-width-xl);

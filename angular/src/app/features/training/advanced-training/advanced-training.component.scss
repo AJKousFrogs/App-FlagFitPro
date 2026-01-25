@@ -56,7 +56,7 @@
 
 .tool-card {
   background: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  border: var(--border-1) solid var(--surface-border);
   border-radius: var(--radius-lg);
   padding: var(--space-6);
   display: flex;
@@ -74,13 +74,13 @@
 
   &:hover {
     border-color: var(--ds-primary-green);
-    transform: translateY(-4px);
+    transform: translateY(calc(-1 * var(--space-1)));
     box-shadow: var(--shadow-md);
     background: var(--surface-hover);
   }
 
   &:active {
-    transform: translateY(-2px);
+    transform: var(--transform-hover-lift);
   }
 
   // Tablet: Reduce padding

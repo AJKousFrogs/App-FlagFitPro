@@ -376,28 +376,28 @@
 }
 
 .protocol-card.category-cryotherapy .protocol-icon {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--primitive-info-500-rgb), 0.1);
 }
 .protocol-card.category-cryotherapy .protocol-icon i {
   color: var(--color-status-info);
 }
 
 .protocol-card.category-compression .protocol-icon {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(var(--primitive-primary-500-rgb), 0.1);
 }
 .protocol-card.category-compression .protocol-icon i {
   color: var(--color-status-success);
 }
 
 .protocol-card.category-manual .protocol-icon {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--primitive-warning-500-rgb), 0.1);
 }
 .protocol-card.category-manual .protocol-icon i {
   color: var(--color-status-warning);
 }
 
 .protocol-card.category-heat .protocol-icon {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--primitive-error-500-rgb), 0.1);
 }
 .protocol-card.category-heat .protocol-icon i {
   color: var(--color-status-error);
@@ -480,28 +480,28 @@
 }
 
 .detail-icon.category-cryotherapy {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--primitive-info-500-rgb), 0.1);
 }
 .detail-icon.category-cryotherapy i {
   color: var(--color-status-info);
 }
 
 .detail-icon.category-compression {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(var(--primitive-primary-500-rgb), 0.1);
 }
 .detail-icon.category-compression i {
   color: var(--color-status-success);
 }
 
 .detail-icon.category-manual-therapy {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--primitive-warning-500-rgb), 0.1);
 }
 .detail-icon.category-manual-therapy i {
   color: var(--color-status-warning);
 }
 
 .detail-icon.category-heat-therapy {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(var(--primitive-error-500-rgb), 0.1);
 }
 .detail-icon.category-heat-therapy i {
   color: var(--color-status-error);

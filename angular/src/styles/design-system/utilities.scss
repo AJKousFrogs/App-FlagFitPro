@@ -208,3 +208,95 @@
     --ds-search-input-height: var(--touch-target-md, 44px);
   }
 }
+
+/* ================================================================
+   INSTAGRAM EMBED UTILITIES
+   ================================================================ */
+.instagram-embed-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.instagram-embed-container--full {
+  max-width: var(--container-xl);
+}
+
+.instagram-embed-loading,
+.instagram-embed-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  text-align: center;
+}
+
+.instagram-embed-loading {
+  z-index: 2;
+}
+
+.instagram-embed-error {
+  display: none;
+  z-index: 3;
+}
+
+.instagram-embed-loading.is-hidden,
+.instagram-embed-error.is-hidden {
+  display: none;
+}
+
+.instagram-embed-error.is-visible {
+  display: flex;
+}
+
+.instagram-embed-message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+}
+
+.instagram-embed-message--error {
+  color: var(--color-text-primary);
+}
+
+.instagram-embed-spinner {
+  font-size: var(--ds-icon-size-xl);
+}
+
+.instagram-embed-text {
+  font-size: var(--ds-font-size-sm);
+}
+
+.instagram-embed-error-icon {
+  font-size: var(--ds-icon-size-2xl);
+  opacity: 0.7;
+}
+
+.instagram-embed-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-brand-primary);
+  text-decoration: none;
+  font-weight: var(--ds-font-weight-semibold);
+}
+
+.instagram-embed-link-icon {
+  font-size: var(--ds-icon-size-sm);
+}
+
+.instagram-embed-frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-xl);
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}

@@ -90,46 +90,7 @@
    * ------------------------------------------------ */
 
   /* ------------------------------------------------
-   * AUDIT NOTE: ::ng-deep Removal
-   * Ticket: DS-AUDIT-001
-   * Owner: @design-system-team
-   * Scope: All component SCSS files
-   * Remove by: COMPLETED 2026-01-04
-   * Reason: ::ng-deep is deprecated in Angular.
-   * Status: ✅ RESOLVED - Jan 2026
-   *         - All 27 instances removed from component files
-   *         - Replaced with CSS custom property cascade
-   *         - Components now use class-based styling
-   * ------------------------------------------------ */
 
-  /* ------------------------------------------------
-   * COMPONENT FILE: settings.component.scss
-   * Ticket: DS-COMP-001
-   * Owner: @feature-team
-   * Scope: Settings page only
-   * Remove by: 2026-Q1
-   * Reason: PrimeNG toggleswitch and card styling overrides.
-   *         Contains 103 !important declarations.
-   *         Needs component refactor to use primitives.
-   * Status: PENDING
-   * ------------------------------------------------ */
-
-  /* 
-   * Example exception (commented out - for reference only):
-   *
-   * Ticket: DS-001
-   * Owner: @dev-name
-   * Scope: analytics-dashboard only
-   * Remove by: 2026-03-15
-   * Reason: PrimeNG DataTable paginator cannot be styled via 
-   *         CSS variables due to internal component structure.
-   *         Waiting for PrimeNG v20 which exposes these as tokens.
-   */
-  // .analytics-dashboard {
-  //   .p-datatable-paginator {
-  //     padding: var(--space-2) !important;
-  //   }
-  // }
 
   /*
    * Example exception 2 (commented out - for reference only):
@@ -699,12 +660,7 @@
    * Owner: @design-system-team
    * Scope: body composition dialog overlay
    * Remove by: 2026-06-01
-   * Reason: PrimeNG dialog is appended to body; avoid ::ng-deep.
-   * ------------------------------------------------ */
-  .body-comp-dialog.p-dialog {
-    width: min(95vw, var(--dialog-max-width-md));
-    max-width: var(--dialog-max-width-md);
-  }
+
 
   .body-comp-dialog .p-dialog-content {
     max-height: calc(80dvh - var(--space-12));
@@ -3107,3 +3063,44 @@
    * END OF EXCEPTIONS
    * ================================================ */
 }
+
+   * AUDIT NOTE: Encapsulation hack removal
+   * Ticket: DS-AUDIT-001
+   * Owner: @design-system-team
+   * Scope: All component SCSS files
+   * Remove by: COMPLETED 2026-01-04
+   * Reason: Encapsulation piercing is deprecated in Angular.
+   * Status: ✅ RESOLVED - Jan 2026
+   *         - All 27 instances removed from component files
+   *         - Replaced with CSS custom property cascade
+   *         - Components now use class-based styling
+   * ------------------------------------------------ */
+
+  /* ------------------------------------------------
+   * COMPONENT FILE: settings.component.scss
+   * Ticket: DS-COMP-001
+   * Owner: @feature-team
+   * Scope: Settings page only
+   * Remove by: 2026-Q1
+   * Reason: PrimeNG toggleswitch and card styling overrides.
+   *         Contains 103 !important declarations.
+   *         Needs component refactor to use primitives.
+   * Status: PENDING
+   * ------------------------------------------------ */
+
+  /* 
+   * Example exception (commented out - for reference only):
+   *
+   * Ticket: DS-001
+   * Owner: @dev-name
+   * Scope: analytics-dashboard only
+   * Remove by: 2026-03-15
+   * Reason: PrimeNG DataTable paginator cannot be styled via 
+   *         CSS variables due to internal component structure.
+   *         Waiting for PrimeNG v20 which exposes these as tokens.
+   */
+  // .analytics-dashboard {
+  //   .p-datatable-paginator {
+  //     padding: var(--space-2) !important;
+  //   }
+  // }

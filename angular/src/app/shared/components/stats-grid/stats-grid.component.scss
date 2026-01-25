@@ -56,7 +56,7 @@
 
 // Icon color variants - matches Dashboard icon classes
 .icon-primary {
-  background: rgba(8, 153, 73, 0.08);
+  background: rgba(var(--ds-primary-green-rgb), 0.08);
   color: var(--color-brand-primary);
 }
 

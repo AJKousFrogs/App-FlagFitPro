@@ -3,28 +3,7 @@
 /* ================================================================
    AI COACH CHAT COMPONENT STYLES
    Design System Compliant - January 4, 2026
-   Refactored: Removed ::ng-deep (deprecated)
    ================================================================ */
-
-/* ========================================
-   CONTAINER
-   ======================================== */
-
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 80px);
-  height: calc(100dvh - 80px);
-  max-width: var(--content-max-width-lg);
-  margin: 0 auto;
-  background: var(--surface-secondary);
-  position: relative;
-
-  &.is-coach-mode {
-    border-left: 2px solid var(--ds-primary-green-subtle);
-    border-right: 2px solid var(--ds-primary-green-subtle);
-  }
-}
 
 /* ========================================
    HEADER

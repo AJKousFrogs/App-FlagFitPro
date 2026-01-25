@@ -18,7 +18,8 @@ import {
   computed,
   input,
   ChangeDetectionStrategy,
-  DestroyRef
+  DestroyRef,
+  HostBinding
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
@@ -110,7 +111,7 @@ import { getInitials } from "../../shared/utils/format.utils";
 
       <!-- Activity List -->
       @if (activities().length > 0) {
-        <p-scrollPanel [style]="{ width: '100%', height: maxHeight() }">
+        <p-scrollPanel styleClass="activity-scroll-panel">
           <div class="activity-list">
             @for (group of groupedActivities(); track group.date) {
               <div class="date-group">
@@ -122,24 +123,19 @@ import { getInitials } from "../../shared/utils/format.utils";
                     (click)="onActivityClick(activity)"
                   >
                     <!-- Player Avatar -->
-                    <div class="activity-avatar">
+                    <div
+                      class="activity-avatar"
+                      [class]="getActivityTypeClass(activity.activity_type)"
+                    >
                       <p-avatar
                         [label]="
                           getInitialsStr(activity.player?.full_name || 'P')
                         "
                         shape="circle"
-                        [style]="{
-                          'background-color': getActivityColor(
-                            activity.activity_type
-                          ),
-                          color: '#fff',
-                        }"
+                        styleClass="activity-avatar-icon"
                       ></p-avatar>
                       <div
                         class="activity-icon-badge"
-                        [style.background]="
-                          getActivityColor(activity.activity_type)
-                        "
                       >
                         <i
                           [class]="getActivityIcon(activity.activity_type)"
@@ -236,6 +232,11 @@ export class CoachActivityFeedComponent implements OnDestroy {
   readonly loadingMore = computed(() => this._loadingMore());
   readonly hasMore = computed(() => this._hasMore());
 
+  @HostBinding("style.--activity-feed-height")
+  get activityFeedHeight(): string {
+    return this.maxHeight();
+  }
+
   // Computed stats
   readonly todayStatsCount = computed(() => {
     const today = new Date().toDateString();
@@ -317,8 +318,8 @@ export class CoachActivityFeedComponent implements OnDestroy {
     return this.notificationService.getActivityIcon(type);
   }
 
-  getActivityColor(type: ActivityType): string {
-    return this.notificationService.getActivityColor(type);
+  getActivityTypeClass(type: ActivityType): string {
+    return `activity-${type}`;
   }
 
   formatTime(timestamp: string): string {

@@ -5,6 +5,8 @@
 
 @use "styles/mixins" as *;
 
+
+
 .performance-page {
   @include page-container(var(--content-max-width-2xl));
 }
@@ -353,7 +355,7 @@
   align-items: center;
 
   &.top-three {
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(16, 201, 107, 0.05) 100%);
+    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(var(--primitive-primary-500-rgb), 0.05) 100%);
     border-left: var(--space-1) solid var(--ds-primary-green);
   }
 }
@@ -420,7 +422,7 @@
     align-items: center;
     gap: var(--space-1);
     padding: var(--space-1) var(--space-2);
-    background: rgba(16, 201, 107, 0.1);
+    background: rgba(var(--primitive-primary-500-rgb), 0.1);
     border-radius: var(--radius-full);
     color: var(--ds-primary-green);
     font-weight: var(--ds-font-weight-semibold);

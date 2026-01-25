@@ -370,7 +370,7 @@ const PRACTICE_DURATIONS = [
                     <p-progressBar
                       [value]="phase.loadPercent"
                       [showValue]="false"
-                      [style]="{ height: '16px' }"
+                      styleClass="periodization-load-bar"
                     ></p-progressBar>
                     <span class="load-label">{{ phase.description }}</span>
                   </div>

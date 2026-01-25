@@ -1950,24 +1950,7 @@
 
 // ============================================================================
 // @layer overrides - PrimeNG Component Overrides
-// All PrimeNG overrides must be documented here (no ::ng-deep - use CSS custom properties)
-// ============================================================================
 
-/*
- * EXCEPTION: PrimeNG Progress Bar Styling
- * Reason: Custom height and border-radius for onboarding progress
- * Scope: onboarding only
- */
-.onboarding-progress {
-  height: var(--indicator-size-sm);
-  border-radius: var(--radius-full);
-  flex: 1;
-  background: var(--surface-secondary);
-  overflow: hidden;
-  box-shadow: inset 0 1px 2px var(--color-border-subtle);
-
-  // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-015)
-}
 
 // PrimeNG steps navigation override moved to _exceptions.scss (DS-EXC-015)
 
@@ -2010,13 +1993,13 @@
   &.pending {
     background: linear-gradient(
       135deg,
-      rgba(var(--color-warning-rgb, 245, 158, 11), 0.1) 0%,
-      rgba(var(--color-warning-rgb, 245, 158, 11), 0.05) 100%
+      rgba(var(--primitive-warning-500-rgb), 0.1) 0%,
+      rgba(var(--primitive-warning-500-rgb), 0.05) 100%
     );
-    border: 1px solid rgba(var(--color-warning-rgb, 245, 158, 11), 0.3);
+    border: 1px solid rgba(var(--primitive-warning-500-rgb), 0.3);
 
     > i {
-      color: var(--color-warning, #f59e0b);
+      color: var(--color-warning);
     }
   }
 
@@ -2039,4 +2022,23 @@
     gap: var(--space-3);
     flex-wrap: wrap;
   }
+}
+
+// All PrimeNG overrides must be documented here (no encapsulation hacks - use CSS custom properties)
+// ============================================================================
+
+/*
+ * EXCEPTION: PrimeNG Progress Bar Styling
+ * Reason: Custom height and border-radius for onboarding progress
+ * Scope: onboarding only
+ */
+.onboarding-progress {
+  height: var(--indicator-size-sm);
+  border-radius: var(--radius-full);
+  flex: 1;
+  background: var(--surface-secondary);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px var(--color-border-subtle);
+
+  // PrimeNG progressbar override moved to _exceptions.scss (DS-EXC-015)
 }

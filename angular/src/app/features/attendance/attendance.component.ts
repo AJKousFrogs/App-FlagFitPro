@@ -33,7 +33,6 @@ import {
 import { AuthService } from "../../core/services/auth.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
-import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -300,8 +299,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           header="Create Event"
           [(visible)]="showCreateEventDialog"
           [modal]="true"
-          [style]="dialogStyles.standard"
           [closable]="true"
+          styleClass="attendance-create-dialog"
         >
           <div class="dialog-form">
             <div class="form-field">
@@ -322,7 +321,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                 [options]="eventTypeOptions"
                 [(ngModel)]="newEvent.event_type"
                 placeholder="Select type"
-                [style]="{ width: '100%' }"
+                styleClass="w-full"
               ></p-select>
             </div>
 
@@ -334,7 +333,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   [(ngModel)]="newEvent.start_time"
                   [showTime]="true"
                   dateFormat="mm/dd/yy"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-datepicker>
               </div>
 
@@ -345,7 +344,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
                   [(ngModel)]="newEvent.end_time"
                   [showTime]="true"
                   dateFormat="mm/dd/yy"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-datepicker>
               </div>
             </div>
@@ -401,8 +400,8 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
           header="Take Attendance"
           [(visible)]="showAttendanceDialog"
           [modal]="true"
-          [style]="dialogStyles.complex"
           [closable]="true"
+          styleClass="attendance-take-dialog"
         >
           @if (selectedEvent()) {
             <div class="attendance-dialog">
@@ -464,8 +463,6 @@ export class AttendanceComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
-
   // State
   events = signal<TeamEvent[]>([]);
   playerStats = signal<PlayerAttendanceStats[]>([]);

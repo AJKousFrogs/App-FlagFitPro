@@ -166,7 +166,6 @@ interface ApiPollVoteResponse {
         header="Create a Poll"
         [(visible)]="showPollDialog"
         [modal]="true"
-        [style]="{ width: '450px' }"
         [draggable]="false"
         [resizable]="false"
         styleClass="poll-dialog"
@@ -234,7 +233,6 @@ interface ApiPollVoteResponse {
         header="Add Location"
         [(visible)]="showLocationDialog"
         [modal]="true"
-        [style]="{ width: '400px' }"
         [draggable]="false"
         [resizable]="false"
         styleClass="location-dialog"
@@ -398,11 +396,10 @@ interface ApiPollVoteResponse {
                       <p-avatar
                         [label]="post.authorInitials"
                         shape="circle"
-                        [style]="{
-                          background: getAvatarColor(post.authorInitials),
-                          color: '#fff',
-                        }"
-                        styleClass="author-avatar"
+                        [styleClass]="
+                          'author-avatar ' +
+                          getAvatarColorClass(post.authorInitials)
+                        "
                       ></p-avatar>
                       <div class="author-details">
                         <div class="author-name">
@@ -586,15 +583,10 @@ interface ApiPollVoteResponse {
                               <p-avatar
                                 [label]="comment.authorInitials"
                                 shape="circle"
-                                [style]="{
-                                  background: getAvatarColor(
-                                    comment.authorInitials
-                                  ),
-                                  color: '#fff',
-                                  width: 'var(--space-8)',
-                                  height: 'var(--space-8)',
-                                  'font-size': 'var(--ds-font-size-xs)',
-                                }"
+                                [styleClass]="
+                                  'comment-avatar ' +
+                                  getAvatarColorClass(comment.authorInitials)
+                                "
                               ></p-avatar>
                               <div class="comment-body">
                                 <div class="comment-bubble">
@@ -632,11 +624,10 @@ interface ApiPollVoteResponse {
                         <p-avatar
                           [label]="currentUserInitials()"
                           shape="circle"
-                          [style]="{
-                            width: 'var(--space-8)',
-                            height: 'var(--space-8)',
-                            'font-size': 'var(--ds-font-size-xs)',
-                          }"
+                          [styleClass]="
+                            'comment-avatar ' +
+                            getAvatarColorClass(currentUserInitials())
+                          "
                         ></p-avatar>
                         <div class="comment-input-wrapper">
                           <input
@@ -725,12 +716,10 @@ interface ApiPollVoteResponse {
                     <p-avatar
                       [label]="entry.initials"
                       shape="circle"
-                      [style]="{
-                        background: getAvatarColor(entry.initials),
-                        color: '#fff',
-                        width: 'var(--touch-target-sm)',
-                        height: 'var(--touch-target-sm)',
-                      }"
+                      [styleClass]="
+                        'leaderboard-avatar ' +
+                        getAvatarColorClass(entry.initials)
+                      "
                     ></p-avatar>
                     <div class="player-info">
                       <div class="player-name">{{ entry.name }}</div>
@@ -919,9 +908,9 @@ export class CommunityComponent implements OnInit {
   });
 
   // Avatar color generator based on initials
-  getAvatarColor(initials: string): string {
+  getAvatarColorClass(initials: string): string {
     const index = initials.charCodeAt(0) % COLORS.CHART.length;
-    return COLORS.CHART[index];
+    return `avatar-color-${index}`;
   }
 
   ngOnInit(): void {

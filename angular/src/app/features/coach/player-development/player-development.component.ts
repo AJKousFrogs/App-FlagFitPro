@@ -307,7 +307,7 @@ const COMPARE_OPTIONS = [
                       <p-progressBar
                         [value]="goal.progress"
                         [showValue]="false"
-                        [style]="{ height: '12px', flex: 1 }"
+                        styleClass="goal-progress-bar"
                       ></p-progressBar>
                       <span class="progress-value">{{ goal.progress }}%</span>
                     </div>
@@ -475,7 +475,7 @@ const COMPARE_OPTIONS = [
         [(visible)]="showGoalDialog"
         header="Add Development Goal"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '500px' }"
+        styleClass="development-goal-dialog"
       >
         <div class="goal-form">
           <div class="form-field">
@@ -582,7 +582,7 @@ const COMPARE_OPTIONS = [
         [(visible)]="showNoteDialog"
         header="Add Development Note"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '500px' }"
+        styleClass="development-note-dialog"
       >
         <div class="note-form">
           <div class="form-field">

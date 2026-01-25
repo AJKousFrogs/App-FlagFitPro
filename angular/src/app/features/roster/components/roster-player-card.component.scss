@@ -21,12 +21,12 @@
 // Risk level card styling
 .player-card.risk-high {
   border-color: var(--color-status-warning);
-  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), transparent);
+  background: linear-gradient(to bottom, rgba(var(--primitive-warning-500-rgb), 0.05), transparent);
 }
 
 .player-card.risk-critical {
   border-color: var(--color-status-error);
-  background: linear-gradient(to bottom, rgba(239, 68, 68, 0.05), transparent);
+  background: linear-gradient(to bottom, rgba(var(--primitive-error-500-rgb), 0.05), transparent);
 }
 
 .card-checkbox {
@@ -66,7 +66,7 @@
 
 .status-limited {
   background: var(--color-status-warning);
-  color: var(--primitive-warning-900, #78350f);
+  color: var(--primitive-warning-900);
 }
 
 .status-returning {
@@ -105,12 +105,12 @@
 
 .risk-moderate {
   background: var(--color-status-warning);
-  color: var(--primitive-warning-900, #78350f);
+  color: var(--primitive-warning-900);
 }
 
 .risk-high {
   background: var(--color-status-warning);
-  color: var(--primitive-warning-900, #78350f);
+  color: var(--primitive-warning-900);
 }
 
 .risk-critical {
@@ -234,6 +234,7 @@
 // PrimeNG progressbar overrides moved to _exceptions.scss (DS-EXC-007)
 .readiness-bar {
   // Component-specific styles remain here
+  height: calc(var(--space-1) + var(--space-0-5));
 }
 
 // ACWR colors

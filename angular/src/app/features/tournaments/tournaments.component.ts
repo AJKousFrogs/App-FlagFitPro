@@ -467,7 +467,6 @@ interface TournamentBudget {
         [(visible)]="showDialog"
         [header]="getDialogTitle()"
         [modal]="true"
-        [style]="{ width: '680px', maxWidth: '95vw' }"
         [draggable]="false"
         [resizable]="false"
         styleClass="tournament-dialog"
@@ -564,7 +563,7 @@ interface TournamentBudget {
                   [min]="2"
                   [max]="100"
                   placeholder="Number of teams"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-inputNumber>
               </div>
             </div>
@@ -643,7 +642,7 @@ interface TournamentBudget {
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
                   placeholder="Select start date"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                   appendTo="body"
                 ></p-datepicker>
               </div>
@@ -659,7 +658,7 @@ interface TournamentBudget {
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
                   placeholder="Select end date"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                   appendTo="body"
                 ></p-datepicker>
               </div>
@@ -677,7 +676,7 @@ interface TournamentBudget {
                   [iconDisplay]="'input'"
                   dateFormat="dd M yy"
                   placeholder="Select registration deadline"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                   appendTo="body"
                 ></p-datepicker>
               </div>
@@ -703,7 +702,7 @@ interface TournamentBudget {
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select type"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                   appendTo="body"
                 ></p-select>
               </div>
@@ -719,7 +718,7 @@ interface TournamentBudget {
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select level"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                   appendTo="body"
                 ></p-select>
               </div>
@@ -955,8 +954,8 @@ interface TournamentBudget {
         [(visible)]="showAvailabilityDialog"
         header="My Tournament Availability"
         [modal]="true"
-        [style]="{ width: '500px' }"
         [draggable]="false"
+        styleClass="tournament-availability-dialog"
       >
         @if (selectedTournament) {
           <div class="availability-dialog">
@@ -1025,7 +1024,7 @@ interface TournamentBudget {
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
                       placeholder="When do you arrive?"
-                      [style]="{ width: '100%' }"
+                      styleClass="w-full"
                     ></p-datepicker>
                   </div>
                   <div class="form-field">
@@ -1035,7 +1034,7 @@ interface TournamentBudget {
                       [showIcon]="true"
                       dateFormat="yy-mm-dd"
                       placeholder="When do you leave?"
-                      [style]="{ width: '100%' }"
+                      styleClass="w-full"
                     ></p-datepicker>
                   </div>
                 </div>
@@ -1130,8 +1129,8 @@ interface TournamentBudget {
         [(visible)]="showTeamAvailabilityDialog"
         header="Team Availability"
         [modal]="true"
-        [style]="{ width: '800px', maxHeight: '80vh' }"
         [draggable]="false"
+        styleClass="tournament-team-availability-dialog"
       >
         @if (selectedTournament) {
           <div class="team-availability-dialog">
@@ -1298,8 +1297,8 @@ interface TournamentBudget {
         [(visible)]="showBudgetDialog"
         header="Tournament Budget"
         [modal]="true"
-        [style]="{ width: '700px' }"
         [draggable]="false"
+        styleClass="tournament-budget-dialog"
       >
         @if (selectedTournament) {
           <div class="budget-dialog">
@@ -1311,7 +1310,7 @@ interface TournamentBudget {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1321,7 +1320,7 @@ interface TournamentBudget {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1331,7 +1330,7 @@ interface TournamentBudget {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1341,7 +1340,7 @@ interface TournamentBudget {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1349,7 +1348,7 @@ interface TournamentBudget {
                 <p-inputNumber
                   [(ngModel)]="budgetForm.totalNights"
                   [min]="0"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field">
@@ -1359,7 +1358,7 @@ interface TournamentBudget {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field full-width">
@@ -1369,7 +1368,7 @@ interface TournamentBudget {
                   mode="currency"
                   currency="EUR"
                   locale="en-US"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-inputNumber>
               </div>
               <div class="form-field full-width">
@@ -1393,7 +1392,7 @@ interface TournamentBudget {
                     mode="currency"
                     currency="EUR"
                     locale="en-US"
-                    [style]="{ width: '100%' }"
+                    styleClass="w-full"
                   ></p-inputNumber>
                 </div>
                 <div class="form-field">
@@ -1403,7 +1402,7 @@ interface TournamentBudget {
                     mode="currency"
                     currency="EUR"
                     locale="en-US"
-                    [style]="{ width: '100%' }"
+                    styleClass="w-full"
                   ></p-inputNumber>
                 </div>
               </div>

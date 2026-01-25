@@ -441,7 +441,20 @@
 
 // ============================================================================
 // @layer overrides - PrimeNG Component Overrides
-// All PrimeNG overrides must be documented here (no ::ng-deep - use CSS custom properties)
+
+
+// Mobile responsive - padding overrides REMOVED
+// Login card is an EXCEPTION: auth forms may need custom spacing
+// @see docs/CARD_SHELL_CONTRACT.md Section 11 Exceptions
+
+// Reduced motion - transition override
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms;
+  }
+}
+
+// All PrimeNG overrides must be documented here (no encapsulation hacks - use CSS custom properties)
 // ============================================================================
 
 /*
@@ -453,15 +466,4 @@
 .login-card,
 .login-submit-btn {
   // Component-specific styles remain here
-}
-
-// Mobile responsive - padding overrides REMOVED
-// Login card is an EXCEPTION: auth forms may need custom spacing
-// @see docs/CARD_SHELL_CONTRACT.md Section 11 Exceptions
-
-// Reduced motion - transition override
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition-duration: 0.01ms;
-  }
 }

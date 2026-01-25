@@ -2,6 +2,10 @@
 
 @include stat-block;
 
+
+
+
+
 .playbook-manager-page {
   padding: var(--space-4);
   max-width: var(--content-max-width-2xl);
@@ -62,6 +66,11 @@
   }
 }
 
+.playbook-filter-select {
+  width: var(--size-150);
+  max-width: 100%;
+}
+
 // Stats Summary
 .stats-summary {
   display: grid;
@@ -117,19 +126,13 @@
   }
 }
 
-/*
- * EXCEPTION: Football Field Visual Colors
- * Ticket: DESIGN-SYSTEM-003
- * Reason: Football field diagrams require realistic grass green colors (#1e4d2b, #2d5a3a)
- *         and yellow (#fbbf24) for QB marker to match standard football field visuals.
- *         These colors are specific to sports field representation.
- * Scope: .play-diagram, .field-canvas, .player-dot.qb only
- * Owner: @design-system
- * Remove by: Never - field colors are domain-specific visual requirements
- */
 .play-diagram {
   height: 150px;
-  background: linear-gradient(to bottom, #1e4d2b, #2d5a3a);
+  background: linear-gradient(
+    to bottom,
+    var(--field-grass-dark),
+    var(--field-grass-light)
+  );
   position: relative;
 
   .diagram-placeholder {
@@ -235,6 +238,10 @@
   }
 }
 
+.memorization-progress {
+  height: var(--space-2);
+}
+
 .play-actions {
   display: flex;
   gap: var(--space-1);
@@ -294,9 +301,12 @@
 }
 
 .play-designer {
-  /* Field canvas - see EXCEPTION comment for .play-diagram above (DESIGN-SYSTEM-003) */
   .field-canvas {
-    background: linear-gradient(to bottom, #1e4d2b, #2d5a3a);
+    background: linear-gradient(
+      to bottom,
+      var(--field-grass-dark),
+      var(--field-grass-light)
+    );
     border-radius: var(--radius-md);
     padding: var(--space-3);
     margin-bottom: var(--space-3);

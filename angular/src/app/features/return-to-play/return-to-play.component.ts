@@ -687,8 +687,7 @@ const SEVERITY_LEVELS = [
         [modal]="true"
         [visible]="showStartDialog()"
         (visibleChange)="showStartDialog.set($event)"
-        [style]="{ width: '550px' }"
-        [breakpoints]="{ '640px': '95vw' }"
+        styleClass="rtp-start-dialog"
         [draggable]="false"
       >
         <div class="start-form">
@@ -720,7 +719,7 @@ const SEVERITY_LEVELS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select location"
-                [style]="{ width: '100%' }"
+                styleClass="w-full"
               ></p-select>
             </div>
             <div class="form-field">
@@ -732,7 +731,7 @@ const SEVERITY_LEVELS = [
                 optionLabel="label"
                 optionValue="value"
                 placeholder="Select severity"
-                [style]="{ width: '100%' }"
+                styleClass="w-full"
                 (onValueChange)="onSeverityChange()"
               ></p-select>
             </div>
@@ -748,7 +747,7 @@ const SEVERITY_LEVELS = [
                 [maxDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                [style]="{ width: '100%' }"
+                styleClass="w-full"
               ></p-datepicker>
             </div>
             <div class="form-field">
@@ -759,7 +758,7 @@ const SEVERITY_LEVELS = [
                 [minDate]="today"
                 dateFormat="M dd, yy"
                 [showIcon]="true"
-                [style]="{ width: '100%' }"
+                styleClass="w-full"
                 placeholder="Auto-calculated"
               ></p-datepicker>
             </div>
@@ -918,15 +917,15 @@ export class ReturnToPlayComponent implements OnInit {
         {
           label: "Pain Level",
           data: reversed.map((c) => c.painLevel),
-          borderColor: "#ef4444",
-          backgroundColor: "rgba(239, 68, 68, 0.1)",
+          borderColor: "var(--color-status-error)",
+          backgroundColor: "rgba(var(--primitive-error-500-rgb), 0.1)",
           tension: 0.3,
         },
         {
           label: "Function Score (÷10)",
           data: reversed.map((c) => c.functionScore / 10),
-          borderColor: "#22c55e",
-          backgroundColor: "rgba(34, 197, 94, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "rgba(var(--ds-primary-green-rgb), 0.1)",
           tension: 0.3,
         },
       ],

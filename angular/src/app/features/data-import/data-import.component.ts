@@ -375,7 +375,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                               optionLabel="label"
                               optionValue="value"
                               placeholder="Select mapping"
-                              [style]="{ width: '200px' }"
+                              styleClass="mapping-select"
                             ></p-select>
                           } @else {
                             {{ mapping.mapsTo }}

@@ -188,7 +188,7 @@ export interface TablePreferences {
           <ng-template pTemplate="header" let-columns>
             <tr>
               @if (selectable()) {
-                <th style="width: var(--space-12)" scope="col">
+                <th class="enhanced-table__select-col" scope="col">
                   <p-checkbox
                     [(ngModel)]="selectAll"
                     [binary]="true"
@@ -217,7 +217,7 @@ export interface TablePreferences {
                 </th>
               }
               @if (hasActions()) {
-                <th style="width: 100px">Actions</th>
+                <th class="enhanced-table__actions-col">Actions</th>
               }
             </tr>
           </ng-template>

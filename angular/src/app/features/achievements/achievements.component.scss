@@ -326,6 +326,11 @@
         color: var(--ds-primary-green);
       }
     }
+
+    .leaderboard-range-select {
+      width: var(--size-150);
+      max-width: 100%;
+    }
   }
 
   .rank-medal {

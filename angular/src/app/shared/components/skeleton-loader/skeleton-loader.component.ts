@@ -88,18 +88,18 @@ export type SkeletonVariant =
       }
       @case ("metric") {
         <div class="skeleton-metric" [style.animation-delay]="animationDelay()">
-          <div class="skeleton skeleton-text" style="width: 50%"></div>
+          <div class="skeleton skeleton-text skeleton-w-50"></div>
           <div class="skeleton skeleton-metric-value"></div>
-          <div class="skeleton skeleton-text" style="width: 30%"></div>
+          <div class="skeleton skeleton-text skeleton-w-30"></div>
         </div>
       }
       @case ("card") {
         <div class="skeleton-card" [style.animation-delay]="animationDelay()">
-          <div class="skeleton skeleton-thumbnail" style="height: 160px"></div>
+          <div class="skeleton skeleton-thumbnail skeleton-h-thumb"></div>
           <div class="skeleton-card-content">
-            <div class="skeleton skeleton-title" style="width: 70%"></div>
-            <div class="skeleton skeleton-text" style="width: 100%"></div>
-            <div class="skeleton skeleton-text" style="width: 85%"></div>
+            <div class="skeleton skeleton-title skeleton-w-70"></div>
+            <div class="skeleton skeleton-text skeleton-w-100"></div>
+            <div class="skeleton skeleton-text skeleton-w-85"></div>
           </div>
         </div>
       }
@@ -119,10 +119,7 @@ export type SkeletonVariant =
       }
       @case ("chart") {
         <div class="skeleton-chart" [style.animation-delay]="animationDelay()">
-          <div
-            class="skeleton skeleton-title"
-            style="width: 40%; margin-bottom: var(--space-4)"
-          ></div>
+          <div class="skeleton skeleton-title skeleton-w-40 skeleton-mb-4"></div>
           <div class="chart-bars">
             @for (bar of chartBars; track $index) {
               <div
@@ -141,13 +138,12 @@ export type SkeletonVariant =
         >
           <div class="stat-card-header">
             <div
-              class="skeleton skeleton-avatar"
-              style="width: var(--avatar-size-md); height: var(--avatar-size-md)"
+              class="skeleton skeleton-avatar skeleton-avatar--md"
             ></div>
-            <div class="skeleton skeleton-text" style="width: 60%"></div>
+            <div class="skeleton skeleton-text skeleton-w-60"></div>
           </div>
           <div class="skeleton skeleton-stat-value"></div>
-          <div class="skeleton skeleton-text" style="width: 40%"></div>
+          <div class="skeleton skeleton-text skeleton-w-40"></div>
         </div>
       }
       @case ("workout-card") {
@@ -157,19 +153,18 @@ export type SkeletonVariant =
         >
           <div class="workout-header">
             <div
-              class="skeleton skeleton-avatar"
-              style="width: var(--avatar-size-lg); height: var(--avatar-size-lg)"
+              class="skeleton skeleton-avatar skeleton-avatar--lg"
             ></div>
             <div class="workout-info">
-              <div class="skeleton skeleton-title" style="width: 70%"></div>
-              <div class="skeleton skeleton-text" style="width: 50%"></div>
+              <div class="skeleton skeleton-title skeleton-w-70"></div>
+              <div class="skeleton skeleton-text skeleton-w-50"></div>
             </div>
           </div>
-          <div class="skeleton skeleton-text" style="width: 100%"></div>
-          <div class="skeleton skeleton-text" style="width: 80%"></div>
+          <div class="skeleton skeleton-text skeleton-w-100"></div>
+          <div class="skeleton skeleton-text skeleton-w-80"></div>
           <div class="workout-footer">
             <div class="skeleton skeleton-badge"></div>
-            <div class="skeleton skeleton-text" style="width: 25%"></div>
+            <div class="skeleton skeleton-text skeleton-w-25"></div>
           </div>
         </div>
       }
@@ -179,22 +174,18 @@ export type SkeletonVariant =
           [style.animation-delay]="animationDelay()"
         >
           <div
-            class="skeleton skeleton-avatar"
-            style="width: var(--space-20); height: var(--space-20)"
+            class="skeleton skeleton-avatar skeleton-avatar--space-20"
           ></div>
           <div
-            class="skeleton skeleton-title"
-            style="width: 60%; margin: var(--space-3) auto 0"
+            class="skeleton skeleton-title skeleton-w-60 skeleton-mt-3 skeleton-center"
           ></div>
           <div
-            class="skeleton skeleton-text"
-            style="width: 40%; margin: var(--space-2) auto 0"
+            class="skeleton skeleton-text skeleton-w-40 skeleton-mt-2 skeleton-center"
           ></div>
           <div class="player-stats">
             @for (stat of [1, 2, 3]; track $index) {
               <div
-                class="skeleton skeleton-text"
-                style="width: 100%"
+                class="skeleton skeleton-text skeleton-w-100"
                 [style.animation-delay.ms]="$index * 100"
               ></div>
             }
@@ -207,12 +198,11 @@ export type SkeletonVariant =
           [style.animation-delay]="animationDelay()"
         >
           <div
-            class="skeleton skeleton-avatar"
-            style="width: 44px; height: 44px"
+            class="skeleton skeleton-avatar skeleton-avatar--md"
           ></div>
           <div class="list-item-content">
-            <div class="skeleton skeleton-text" style="width: 60%"></div>
-            <div class="skeleton skeleton-text" style="width: 40%"></div>
+            <div class="skeleton skeleton-text skeleton-w-60"></div>
+            <div class="skeleton skeleton-text skeleton-w-40"></div>
           </div>
           <div class="skeleton skeleton-badge"></div>
         </div>
@@ -237,12 +227,11 @@ export type SkeletonVariant =
           [style.animation-delay]="animationDelay()"
         >
           <div
-            class="skeleton skeleton-avatar"
-            style="width: var(--space-24); height: var(--space-24)"
+            class="skeleton skeleton-avatar skeleton-avatar--space-24"
           ></div>
           <div class="profile-info">
-            <div class="skeleton skeleton-title" style="width: 50%"></div>
-            <div class="skeleton skeleton-text" style="width: 30%"></div>
+            <div class="skeleton skeleton-title skeleton-w-50"></div>
+            <div class="skeleton skeleton-text skeleton-w-30"></div>
             <div class="profile-stats">
               @for (stat of [1, 2, 3]; track $index) {
                 <div class="skeleton skeleton-metric-small"></div>
@@ -257,8 +246,8 @@ export type SkeletonVariant =
           [style.animation-delay]="animationDelay()"
         >
           <div class="widget-header">
-            <div class="skeleton skeleton-title" style="width: 40%"></div>
-            <div class="skeleton skeleton-button" style="width: var(--space-20)"></div>
+            <div class="skeleton skeleton-title skeleton-w-40"></div>
+            <div class="skeleton skeleton-button skeleton-w-space-20"></div>
           </div>
           <div class="widget-content">
             @for (row of [1, 2, 3, 4]; track $index) {
@@ -267,12 +256,11 @@ export type SkeletonVariant =
                 [style.animation-delay.ms]="$index * 75"
               >
                 <div
-                  class="skeleton skeleton-avatar"
-                  style="width: 36px; height: 36px"
+                  class="skeleton skeleton-avatar skeleton-avatar--sm"
                 ></div>
                 <div class="list-item-content">
-                  <div class="skeleton skeleton-text" style="width: 70%"></div>
-                  <div class="skeleton skeleton-text" style="width: 45%"></div>
+                  <div class="skeleton skeleton-text skeleton-w-70"></div>
+                  <div class="skeleton skeleton-text skeleton-w-45"></div>
                 </div>
               </div>
             }

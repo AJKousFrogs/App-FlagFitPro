@@ -592,7 +592,7 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
           header="Log Performance"
           [(visible)]="showLogDialog"
           [modal]="true"
-          [style]="{ width: '700px', maxHeight: '85vh' }"
+          styleClass="performance-dialog"
           [closable]="true"
         >
           <div class="log-form">

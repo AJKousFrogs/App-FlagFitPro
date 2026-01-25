@@ -1,5 +1,9 @@
 @use "styles/mixins" as *;
 
+
+
+
+
 .team-management-page {
   padding: var(--space-4);
   max-width: var(--content-max-width-xl);
@@ -74,6 +78,18 @@
       width: 100%;
     }
   }
+}
+
+.filter-select {
+  width: var(--input-min-width-md);
+}
+
+.roster-avatar-col {
+  width: var(--space-12);
+}
+
+.roster-actions-col {
+  width: var(--space-24);
 }
 
 // Player Name Cell

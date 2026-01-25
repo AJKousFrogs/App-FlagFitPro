@@ -99,7 +99,6 @@ export interface ReadinessResult {
         />
         <small
           class="state-narration-inline"
-          style="display: block; margin-top: var(--space-2); font-size: var(--ds-font-size-xs); color: var(--color-text-secondary);"
         >
           <strong>What changed:</strong> Check-in completed. Readiness score:
           {{ readinessScore() }}. <strong>Why:</strong> You saved your wellness
@@ -118,8 +117,7 @@ export interface ReadinessResult {
       (visibleChange)="showDialog.set($event)"
       header="Daily Wellness Check-in"
       [modal]="true"
-      [style]="{ width: '95vw', maxWidth: '500px' }"
-      [contentStyle]="{ 'padding-bottom': '1rem' }"
+      styleClass="wellness-dialog"
     >
       <div class="checkin-form">
         <!-- Sleep Quality -->
@@ -273,8 +271,7 @@ export interface ReadinessResult {
               <span>Where are you sore?</span>
             </label>
             <small
-              class="state-narration"
-              style="display: block; margin-bottom: var(--space-2);"
+              class="state-narration state-narration--compact"
             >
               <strong>What changed:</strong> Soreness areas section appeared.
               <strong>Why:</strong> Your muscle soreness is
@@ -373,8 +370,7 @@ export interface ReadinessResult {
             {{ getRecommendation(previewScore()) }}
           </div>
           <small
-            class="state-narration"
-            style="margin-top: var(--space-3); display: block; text-align: center;"
+            class="state-narration state-narration--centered state-narration--spaced"
           >
             <strong>What changed:</strong> Readiness score is
             {{ previewScore() }} ({{
@@ -413,7 +409,6 @@ export interface ReadinessResult {
         @if (isSaving()) {
           <div
             class="save-narration"
-            style="width: 100%; margin-top: var(--space-2); padding: var(--space-2); background: var(--surface-secondary); border-radius: var(--radius-md);"
           >
             <small class="state-narration">
               <strong>What changed:</strong> Check-in is being saved.

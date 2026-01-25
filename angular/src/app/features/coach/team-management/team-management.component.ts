@@ -219,7 +219,7 @@ const STATUS_CONFIG: Record<
                 [(ngModel)]="positionFilter"
                 placeholder="Position"
                 [showClear]="true"
-                [style]="{ width: '160px' }"
+                styleClass="filter-select"
                 [attr.aria-label]="'Filter by position'"
               ></p-select>
               <p-select
@@ -228,7 +228,7 @@ const STATUS_CONFIG: Record<
                 [(ngModel)]="statusFilter"
                 placeholder="Status"
                 [showClear]="true"
-                [style]="{ width: '160px' }"
+                styleClass="filter-select"
                 [attr.aria-label]="'Filter by status'"
               ></p-select>
             </div>
@@ -243,13 +243,13 @@ const STATUS_CONFIG: Record<
             >
               <ng-template pTemplate="header">
                 <tr>
-                  <th style="width: var(--space-12)"></th>
+                  <th class="roster-avatar-col"></th>
                   <th pSortableColumn="name">Player</th>
                   <th pSortableColumn="position">Position</th>
                   <th>Jersey</th>
                   <th pSortableColumn="status">Status</th>
                   <th>ACWR</th>
-                  <th style="width: 100px"></th>
+                  <th class="roster-actions-col"></th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-member>
@@ -627,7 +627,7 @@ const STATUS_CONFIG: Record<
         [(visible)]="showInviteDialog"
         header="Invite Player"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '500px' }"
+        styleClass="team-invite-dialog"
       >
         <form #inviteFormRef="ngForm" class="invite-form">
           <div class="form-field">
@@ -728,7 +728,7 @@ const STATUS_CONFIG: Record<
         [(visible)]="showEditPlayerDialog"
         [header]="'Edit Player: ' + (selectedPlayer()?.name || '')"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '600px' }"
+        styleClass="team-edit-player-dialog"
       >
         @if (selectedPlayer(); as player) {
           <div class="edit-player-form">

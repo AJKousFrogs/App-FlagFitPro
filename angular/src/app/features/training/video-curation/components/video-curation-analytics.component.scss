@@ -23,7 +23,7 @@
 
 .analytics-item {
   display: grid;
-  grid-template-columns: 100px 1fr 40px;
+  grid-template-columns: var(--size-100) 1fr var(--space-10);
   align-items: center;
   gap: var(--space-3);
 }

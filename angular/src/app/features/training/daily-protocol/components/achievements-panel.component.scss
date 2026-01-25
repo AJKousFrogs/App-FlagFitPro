@@ -43,7 +43,7 @@
   .summary-stats .stat-block__value {
     font-size: var(--ds-font-size-2xl);
     font-weight: var(--ds-font-weight-bold);
-    color: var(--primary-color);
+    color: var(--color-brand-primary);
   }
 
   .summary-stats .stat-block__label {
@@ -66,7 +66,7 @@
       font-size: var(--ds-font-size-md);
 
       &.at-risk {
-        background: var(--orange-100);
+        background: var(--ds-primary-orange-subtle);
         animation: pulse 2s infinite;
       }
 
@@ -79,7 +79,7 @@
       }
 
       .risk-badge {
-        background: var(--orange-500);
+        background: var(--ds-primary-orange);
         color: white;
         border-radius: 50%;
         width: var(--space-4);
@@ -181,7 +181,7 @@
     }
 
     &.tier-gold {
-      border-color: var(--yellow-400);
+      border-color: var(--color-status-warning);
     }
 
     &.tier-platinum {
@@ -235,7 +235,7 @@
 
       .earned-date {
         font-size: var(--ds-font-size-xs);
-        color: var(--green-500);
+        color: var(--color-status-success);
         margin-top: var(--space-1);
         display: block;
       }
@@ -261,13 +261,13 @@
     border: var(--border-2) solid var(--surface-border);
 
     &.active {
-      border-color: var(--green-400);
-      background: var(--green-50);
+      border-color: var(--color-status-success);
+      background: var(--color-status-success-subtle);
     }
 
     &.at-risk {
-      border-color: var(--orange-400);
-      background: var(--orange-50);
+      border-color: var(--ds-primary-orange);
+      background: var(--ds-primary-orange-subtle);
     }
 
     .streak-header {
@@ -309,7 +309,7 @@
     .risk-warning {
       margin-top: var(--space-3);
       font-size: var(--ds-font-size-md);
-      color: var(--orange-600);
+      color: var(--ds-primary-orange);
       font-weight: var(--ds-font-weight-medium);
     }
 
@@ -339,8 +339,8 @@
     text-align: center;
 
     &.highlight {
-      background: var(--primary-50);
-      border: var(--border-1) solid var(--primary-200);
+      background: var(--ds-primary-green-ultra-subtle);
+      border: var(--border-1) solid var(--ds-primary-green-subtle);
     }
 
     .stat-icon {
@@ -355,7 +355,7 @@
     .stat-block__value {
       font-size: var(--ds-font-size-2xl);
       font-weight: var(--ds-font-weight-bold);
-      color: var(--primary-color);
+      color: var(--color-brand-primary);
     }
 
     .stat-block__label {
@@ -367,18 +367,18 @@
   .points-summary {
     text-align: center;
     padding: var(--space-4);
-    background: var(--primary-100);
+    background: var(--ds-primary-green-subtle);
     border-radius: var(--radius-lg);
 
     h4 {
       margin: 0 0 var(--space-1) 0;
-      color: var(--primary-700);
+      color: var(--ds-primary-green-dark);
     }
 
     p {
       margin: 0;
       font-size: var(--ds-font-size-md);
-      color: var(--primary-600);
+      color: var(--color-brand-primary);
     }
   }
 }

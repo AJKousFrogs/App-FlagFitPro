@@ -9,14 +9,14 @@
 
 .week-progress-strip {
   background: var(--surface-primary);
-  border: 1px solid var(--primitive-neutral-200);
+  border: var(--border-1) solid var(--primitive-neutral-200);
   border-radius: var(--radius-xl, var(--ds-font-size-xs));
-  padding: var(--space-4, var(--ds-font-size-md)) var(--space-5, var(--ds-font-size-xl));
+  padding: var(--space-4) var(--space-5);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: var(--space-4, var(--ds-font-size-md));
-  margin-bottom: var(--space-4, var(--ds-font-size-md));
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 /* Week Days */
@@ -31,7 +31,7 @@
   align-items: center;
   gap: var(--ds-space-1);
   padding: var(--ds-space-2);
-  border-radius: var(--radius-lg, 8px);
+  border-radius: var(--radius-lg);
   min-width: var(--icon-min-width-lg);
   transition: background-color var(--transition-fast) var(--ease-standard);
   position: relative;
@@ -56,7 +56,7 @@
 .day-indicator {
   width: var(--avatar-size-sm);
   height: var(--avatar-size-sm);
-  border-radius: var(--radius-full, 9999px);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -81,7 +81,7 @@
 .status-planned .day-indicator .dot {
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
-  border-radius: var(--radius-full, 9999px);
+  border-radius: var(--radius-full);
   background: var(--primitive-neutral-400);
 }
 
@@ -97,13 +97,13 @@
 .status-empty .day-indicator .empty-dot {
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
-  border-radius: var(--radius-full, 9999px);
+  border-radius: var(--radius-full);
   background: var(--primitive-neutral-300);
 }
 
 .today-label {
   position: absolute;
-  bottom: -4px;
+  bottom: calc(-1 * var(--space-1));
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-bold);
   color: var(--ds-primary-green);
@@ -113,9 +113,9 @@
 /* Week Stats */
 .week-stats {
   display: flex;
-  gap: var(--space-4, var(--ds-font-size-md));
-  padding-left: var(--space-4, var(--ds-font-size-md));
-  border-left: 1px solid var(--primitive-neutral-200);
+  gap: var(--space-4);
+  padding-left: var(--space-4);
+  border-left: var(--border-1) solid var(--primitive-neutral-200);
 }
 
 .stat-item {
@@ -158,9 +158,9 @@
 
   .week-stats {
     padding-left: 0;
-    padding-top: var(--space-3, var(--ds-font-size-xs));
+    padding-top: var(--space-3);
     border-left: none;
-    border-top: 1px solid var(--primitive-neutral-200);
+    border-top: var(--border-1) solid var(--primitive-neutral-200);
     justify-content: center;
   }
 }

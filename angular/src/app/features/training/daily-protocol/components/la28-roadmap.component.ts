@@ -142,8 +142,7 @@ interface Milestone {
         [(visible)]="showFullDialog"
         header="🏅 Road to LA28 Olympics"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '900px' }"
-        [contentStyle]="{ 'max-height': '80vh', overflow: 'auto' }"
+        styleClass="la28-roadmap-dialog"
       >
         <div class="roadmap-full">
           <!-- Stats Header -->

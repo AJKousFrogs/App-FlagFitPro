@@ -80,7 +80,7 @@
     background-color var(--transition-fast),
     border-color var(--transition-fast),
     box-shadow var(--transition-fast);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(var(--blur-base));
 }
 
 .overlay-btn:hover {
@@ -113,7 +113,7 @@
 .feed-title i {
   font-size: var(--ds-font-size-3xl);
   color: var(--ds-primary-green);
-  filter: drop-shadow(0 2px 4px rgba(var(--ds-primary-green-rgb), 0.2));
+  filter: drop-shadow(var(--shadow-brand-icon));
 }
 
 .feed-subtitle {
@@ -152,7 +152,7 @@
 .suggest-btn:hover {
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary);
-  transform: translateY(-2px);
+  transform: var(--transform-hover-lift);
   box-shadow: var(--hover-shadow-md);
 }
 
@@ -192,7 +192,7 @@
   background: var(--ds-primary-green);
   border-color: var(--ds-primary-green);
   color: var(--color-text-on-primary);
-  transform: translateY(-2px);
+  transform: var(--transform-hover-lift);
   box-shadow: var(--hover-shadow-md);
 }
 
@@ -236,7 +236,7 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-3px);
+    transform: translateY(calc(-1 * var(--space-0-75)));
   }
 }
 
@@ -376,7 +376,7 @@
 
 .filter-chip:hover {
   border-color: var(--ds-primary-green);
-  transform: translateY(-2px);
+  transform: var(--transform-hover-lift);
   box-shadow: var(--hover-shadow-sm);
   background: var(--ds-primary-green-ultra-subtle);
 }
@@ -462,7 +462,7 @@
 // Note: translateY(-12px) was non-standard; contract specifies -2px
 
 .video-card.bookmarked {
-  border: 3px solid var(--ds-primary-green);
+  border: var(--border-3) solid var(--ds-primary-green);
   box-shadow: var(--hover-shadow-sm);
 }
 
@@ -542,7 +542,7 @@
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast);
-  filter: drop-shadow(0 4px 12px var(--surface-overlay-darkest));
+  filter: drop-shadow(var(--shadow-overlay-md));
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -625,8 +625,8 @@
   align-items: center;
   gap: var(--space-1);
   box-shadow: var(--shadow-2);
-  border: var(--border-1) solid rgba(255, 215, 0, 0.3);
-  background: rgba(255, 215, 0, 0.15);
+  border: var(--border-1) solid rgba(var(--primitive-gold-500-rgb), 0.3);
+  background: rgba(var(--primitive-gold-500-rgb), 0.15);
 }
 
 .rating-badge i {
@@ -748,8 +748,8 @@
 }
 
 .empty-icon {
-  width: 80px;
-  height: 80px;
+  width: var(--size-80);
+  height: var(--size-80);
   margin: 0 auto var(--space-6);
   background: var(--ds-primary-green-ultra-subtle);
   border-radius: var(--radius-full);
@@ -827,7 +827,7 @@
 
 .creator-card {
   flex: 0 0 auto;
-  width: 200px;
+  width: var(--size-200);
   background: var(--surface-primary);
   border-radius: var(--radius-xl);
   padding: var(--space-5);

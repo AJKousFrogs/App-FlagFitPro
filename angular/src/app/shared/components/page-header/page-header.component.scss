@@ -1,26 +1,9 @@
 // ============================================================================
 // page-header.component Styles
 // Design System Compliant - Refactored January 5, 2026
-// Removed ::ng-deep dependency - Using CSS custom properties
-// ============================================================================
 
-/*
- * COMPOSITE VIEW PATTERN
- * Parent composite views can hide child headers by setting:
- *   --page-header-display: none;
  * 
- * Example in qb-hub.component.ts:
- *   .hub-tab-content { --page-header-display: none; }
- * 
- * This eliminates the need for ::ng-deep to pierce encapsulation.
- */
 
-@use "styles/mixins" as *;
-
-:host {
-  // Inherit display from CSS custom property, default to block
-  display: var(--page-header-display, block);
-}
 
 /* Uses standardized layout-system.scss classes */
 .page-header {
@@ -70,4 +53,25 @@
     align-items: flex-start;
     gap: var(--space-4);
   }
+}
+
+// Removed encapsulation hack dependency - Using CSS custom properties
+// ============================================================================
+
+/*
+ * COMPOSITE VIEW PATTERN
+ * Parent composite views can hide child headers by setting:
+ *   --page-header-display: none;
+ * 
+ * Example in qb-hub.component.ts:
+ *   .hub-tab-content { --page-header-display: none; }
+
+ * This eliminates the need to pierce encapsulation.
+ */
+
+@use "styles/mixins" as *;
+
+:host {
+  // Inherit display from CSS custom property, default to block
+  display: var(--page-header-display, block);
 }

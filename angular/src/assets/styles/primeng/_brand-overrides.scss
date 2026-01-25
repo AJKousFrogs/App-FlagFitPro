@@ -1275,23 +1275,7 @@
 
   // ============================================
   // TODAY'S PRACTICE CARD PATTERNS
-  // Migrated from today.component.ts ::ng-deep
-  // ============================================
 
-  // Onboarding Banner Card
-  .p-card.onboarding-card {
-    background: var(--color-brand-primary);
-    border: none;
-    border-radius: var(--radius-lg);
-
-    .p-card-body {
-      padding: var(--space-5);
-    }
-
-    .p-card-content {
-      padding: 0;
-    }
-  }
 
   // Welcome Card
   .p-card.welcome-card {
@@ -1642,3 +1626,21 @@
     }
   }
 }
+
+  // Migrated from today.component.ts
+  // ============================================
+
+  // Onboarding Banner Card
+  .p-card.onboarding-card {
+    background: var(--color-brand-primary);
+    border: none;
+    border-radius: var(--radius-lg);
+
+    .p-card-body {
+      padding: var(--space-5);
+    }
+
+    .p-card-content {
+      padding: 0;
+    }
+  }

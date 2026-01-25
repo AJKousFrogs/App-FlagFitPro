@@ -79,7 +79,7 @@
   }
   50% {
     transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(16, 201, 107, 0.4);
+    box-shadow: 0 0 20px rgba(var(--primitive-primary-500-rgb), 0.4);
   }
 }
 

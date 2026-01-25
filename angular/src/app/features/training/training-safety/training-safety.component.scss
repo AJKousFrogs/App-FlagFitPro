@@ -66,7 +66,7 @@
   display: flex;
   justify-content: space-between;
   padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .detail-item {
@@ -101,6 +101,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+.movement-limit-bar {
+  height: var(--space-2);
 }
 
 .limit-item {
@@ -139,7 +143,7 @@
   gap: var(--space-3);
   padding: var(--space-4);
   border-radius: var(--radius-lg);
-  border-left: 4px solid;
+  border-left: var(--border-4) solid;
 }
 
 .rec-critical {

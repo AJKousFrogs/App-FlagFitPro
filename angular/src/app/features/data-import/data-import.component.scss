@@ -248,6 +248,11 @@
   }
 }
 
+.mapping-select {
+  width: var(--size-200);
+  max-width: 100%;
+}
+
 // Data Preview
 .data-preview {
   margin-bottom: var(--space-4);

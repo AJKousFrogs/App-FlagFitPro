@@ -1,5 +1,7 @@
 @use "styles/mixins" as *;
 
+
+
 .calendar-page {
   @include page-container(var(--content-max-width-lg));
   display: flex;
@@ -14,6 +16,11 @@
   align-items: center;
   gap: var(--space-3);
   flex-wrap: wrap;
+}
+
+.calendar-filter-select {
+  width: var(--size-150);
+  max-width: 100%;
 }
 
 // Pending Alert

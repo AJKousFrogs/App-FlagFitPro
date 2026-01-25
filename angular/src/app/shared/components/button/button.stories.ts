@@ -218,6 +218,17 @@ export const Success: Story = {
   }),
 };
 
+const storyStyles = `
+  .story-row { display: flex; gap: var(--space-4); align-items: center; flex-wrap: wrap; }
+  .story-row--tight { gap: var(--space-3); }
+  .story-stack { display: flex; flex-direction: column; gap: var(--space-6); }
+  .story-section-title { margin: 0 0 var(--space-3); color: var(--color-text-secondary); }
+  .story-section-title--primary { color: var(--color-text-primary); }
+  .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); }
+  .story-code { background: var(--surface-secondary); padding: var(--space-3); border-radius: var(--radius-lg); font-size: var(--ds-font-size-xs); overflow-x: auto; }
+  .story-width-md { width: 100%; max-width: var(--grid-card-min-md); }
+`;
+
 // ================================
 // SIZES
 // ================================
@@ -225,12 +236,13 @@ export const Success: Story = {
 export const Sizes: Story = {
   render: () => ({
     template: `
-      <div style="display: flex; gap: var(--ds-space-4); align-items: center;">
+      <div class="story-row">
         <app-button size="sm">Small</app-button>
         <app-button size="md">Medium</app-button>
         <app-button size="lg">Large</app-button>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -293,10 +305,11 @@ export const IconOnly: Story = {
 export const FullWidth: Story = {
   render: () => ({
     template: `
-      <div style="width: 300px;">
+      <div class="story-width-md">
         <app-button [fullWidth]="true">Full Width Button</app-button>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -307,11 +320,12 @@ export const FullWidth: Story = {
 export const FormSubmit: Story = {
   render: () => ({
     template: `
-      <form (ngSubmit)="alert('Form submitted!')" style="display: flex; gap: var(--ds-space-3);">
+      <form (ngSubmit)="alert('Form submitted!')" class="story-row story-row--tight">
         <app-button type="submit" variant="primary">Submit Form</app-button>
         <app-button type="reset" variant="secondary">Reset</app-button>
       </form>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -322,10 +336,10 @@ export const FormSubmit: Story = {
 export const AllVariants: Story = {
   render: () => ({
     template: `
-      <div style="display: flex; flex-direction: column; gap: var(--ds-space-6);">
+      <div class="story-stack">
         <div>
-          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Primary</h4>
-          <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
+          <h4 class="story-section-title">Primary</h4>
+          <div class="story-row story-row--tight">
             <app-button variant="primary">Default</app-button>
             <app-button variant="primary" iconLeft="pi-check">With Icon</app-button>
             <app-button variant="primary" [loading]="true">Loading</app-button>
@@ -334,8 +348,8 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Secondary</h4>
-          <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
+          <h4 class="story-section-title">Secondary</h4>
+          <div class="story-row story-row--tight">
             <app-button variant="secondary">Default</app-button>
             <app-button variant="secondary" iconLeft="pi-check">With Icon</app-button>
             <app-button variant="secondary" [loading]="true">Loading</app-button>
@@ -344,8 +358,8 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Outlined</h4>
-          <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
+          <h4 class="story-section-title">Outlined</h4>
+          <div class="story-row story-row--tight">
             <app-button variant="outlined">Default</app-button>
             <app-button variant="outlined" iconLeft="pi-check">With Icon</app-button>
             <app-button variant="outlined" [loading]="true">Loading</app-button>
@@ -354,8 +368,8 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Text</h4>
-          <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
+          <h4 class="story-section-title">Text</h4>
+          <div class="story-row story-row--tight">
             <app-button variant="text">Default</app-button>
             <app-button variant="text" iconLeft="pi-check">With Icon</app-button>
             <app-button variant="text" [loading]="true">Loading</app-button>
@@ -364,8 +378,8 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Danger</h4>
-          <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
+          <h4 class="story-section-title">Danger</h4>
+          <div class="story-row story-row--tight">
             <app-button variant="danger">Delete</app-button>
             <app-button variant="danger" iconLeft="pi-trash">With Icon</app-button>
             <app-button variant="danger" [loading]="true">Deleting</app-button>
@@ -374,8 +388,8 @@ export const AllVariants: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Success</h4>
-          <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
+          <h4 class="story-section-title">Success</h4>
+          <div class="story-row story-row--tight">
             <app-button variant="success">Complete</app-button>
             <app-button variant="success" iconLeft="pi-check-circle">With Icon</app-button>
             <app-button variant="success" [loading]="true">Processing</app-button>
@@ -384,6 +398,7 @@ export const AllVariants: Story = {
         </div>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -435,13 +450,14 @@ export const IconButtonBasic: StoryObj<IconButtonComponent> = {
   tags: ["!test"], // Skip test - uses different component meta
   render: () => ({
     template: `
-      <div style="display: flex; gap: var(--ds-space-4); align-items: center;">
+      <div class="story-row">
         <app-icon-button icon="pi-plus" ariaLabel="Add item"></app-icon-button>
         <app-icon-button icon="pi-pencil" ariaLabel="Edit" variant="secondary"></app-icon-button>
         <app-icon-button icon="pi-trash" ariaLabel="Delete" variant="danger"></app-icon-button>
         <app-icon-button icon="pi-check" ariaLabel="Approve" variant="success"></app-icon-button>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -449,12 +465,13 @@ export const IconButtonSizes: StoryObj<IconButtonComponent> = {
   tags: ["!test"], // Skip test - uses different component meta
   render: () => ({
     template: `
-      <div style="display: flex; gap: var(--ds-space-4); align-items: center;">
+      <div class="story-row">
         <app-icon-button icon="pi-cog" ariaLabel="Settings" size="sm"></app-icon-button>
         <app-icon-button icon="pi-cog" ariaLabel="Settings" size="md"></app-icon-button>
         <app-icon-button icon="pi-cog" ariaLabel="Settings" size="lg"></app-icon-button>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -462,7 +479,7 @@ export const IconButtonVariants: StoryObj<IconButtonComponent> = {
   tags: ["!test"], // Skip test - uses different component meta
   render: () => ({
     template: `
-      <div style="display: flex; gap: var(--ds-space-4); align-items: center;">
+      <div class="story-row">
         <app-icon-button icon="pi-heart" ariaLabel="Like" variant="primary"></app-icon-button>
         <app-icon-button icon="pi-heart" ariaLabel="Like" variant="secondary"></app-icon-button>
         <app-icon-button icon="pi-heart" ariaLabel="Like" variant="outlined"></app-icon-button>
@@ -471,6 +488,7 @@ export const IconButtonVariants: StoryObj<IconButtonComponent> = {
         <app-icon-button icon="pi-heart" ariaLabel="Like" variant="success"></app-icon-button>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -478,11 +496,12 @@ export const IconButtonStates: StoryObj<IconButtonComponent> = {
   tags: ["!test"], // Skip test - uses different component meta
   render: () => ({
     template: `
-      <div style="display: flex; gap: var(--ds-space-4); align-items: center;">
+      <div class="story-row">
         <app-icon-button icon="pi-refresh" ariaLabel="Refresh" [loading]="true"></app-icon-button>
         <app-icon-button icon="pi-trash" ariaLabel="Delete" [disabled]="true"></app-icon-button>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };
 
@@ -494,14 +513,14 @@ export const MigrationExamples: Story = {
   tags: ["!test"], // Skip test - contains icon-button component
   render: () => ({
     template: `
-      <div style="display: flex; flex-direction: column; gap: var(--ds-space-8);">
+      <div class="story-stack">
         <div>
-          <h3 style="margin-bottom: var(--space-4); color: var(--color-text-primary);">Migration from PrimeNG</h3>
+          <h3 class="story-section-title story-section-title--primary">Migration from PrimeNG</h3>
           
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--ds-space-6);">
+          <div class="story-grid">
             <div>
-              <h4 style="margin-bottom: var(--space-2); color: var(--color-text-secondary);">Before (PrimeNG)</h4>
-              <pre style="background: var(--surface-secondary); padding: var(--ds-space-3); border-radius: var(--radius-lg); font-size: var(--ds-font-size-xs); overflow-x: auto;">
+              <h4 class="story-section-title">Before (PrimeNG)</h4>
+              <pre class="story-code">
 &lt;p-button label="Save" (onClick)="save()"&gt;&lt;/p-button&gt;
 &lt;p-button label="Delete" severity="danger"&gt;&lt;/p-button&gt;
 &lt;p-button label="Cancel" [outlined]="true"&gt;&lt;/p-button&gt;
@@ -510,8 +529,8 @@ export const MigrationExamples: Story = {
             </div>
             
             <div>
-              <h4 style="margin-bottom: var(--space-2); color: var(--color-text-secondary);">After (App Button)</h4>
-              <pre style="background: var(--surface-secondary); padding: var(--ds-space-3); border-radius: var(--radius-lg); font-size: var(--ds-font-size-xs); overflow-x: auto;">
+              <h4 class="story-section-title">After (App Button)</h4>
+              <pre class="story-code">
 &lt;app-button (clicked)="save()"&gt;Save&lt;/app-button&gt;
 &lt;app-button variant="danger"&gt;Delete&lt;/app-button&gt;
 &lt;app-button variant="outlined"&gt;Cancel&lt;/app-button&gt;
@@ -522,8 +541,8 @@ export const MigrationExamples: Story = {
         </div>
         
         <div>
-          <h4 style="margin-bottom: var(--space-3); color: var(--color-text-secondary);">Live Examples</h4>
-          <div style="display: flex; gap: var(--ds-space-3); align-items: center; flex-wrap: wrap;">
+          <h4 class="story-section-title">Live Examples</h4>
+          <div class="story-row story-row--tight">
             <app-button (clicked)="alert('Saved!')">Save</app-button>
             <app-button variant="danger">Delete</app-button>
             <app-button variant="outlined">Cancel</app-button>
@@ -533,5 +552,6 @@ export const MigrationExamples: Story = {
         </div>
       </div>
     `,
+    styles: [storyStyles],
   }),
 };

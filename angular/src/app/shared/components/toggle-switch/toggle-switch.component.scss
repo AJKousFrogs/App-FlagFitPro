@@ -5,7 +5,7 @@
 // Design Rules:
 // - Toggle: 44px total hit area, visible track + thumb
 // - Green = ON, neutral = OFF
-// - Focus ring: 0 0 0 3px rgba(8, 153, 73, 0.15)
+// - Focus ring: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15)
 // - Disabled: opacity 0.6, not interactive
 // ============================================================================
 
@@ -83,7 +83,7 @@
 // Focus state - consistent focus ring
 .toggle-input:focus-visible + .toggle-slider {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
 }
 
 // Disabled state

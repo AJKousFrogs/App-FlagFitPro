@@ -46,7 +46,6 @@ import { MissingDataDetectionService } from "../../core/services/missing-data-de
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
 import { UnifiedTrainingService } from "../../core/services/unified-training.service";
-import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import {
   AIModeExplanationComponent,
   AIModeStatus
@@ -793,7 +792,6 @@ interface AutocompleteSuggestion {
             [modal]="true"
             [closable]="!microSessionInProgress()"
             [dismissableMask]="!microSessionInProgress()"
-            [style]="dialogStyles.standard"
             styleClass="micro-session-dialog"
             (onHide)="onMicroSessionDialogHide()"
           >
@@ -824,8 +822,6 @@ export class AiCoachChatComponent implements AfterViewChecked {
   private readonly missingDataService = inject(MissingDataDetectionService);
 
   // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
-
   // User role check - per audit: use currentUser() signal for reactivity
   isCoach = computed(() => this.authService.currentUser()?.role === "coach");
 

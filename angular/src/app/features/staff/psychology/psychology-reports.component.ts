@@ -914,8 +914,8 @@ interface ReportPrivacySettings {
           header="Generate Mental Wellness Report"
           [(visible)]="showGenerateDialog"
           [modal]="true"
-          [style]="{ width: '600px' }"
           [dismissableMask]="true"
+          styleClass="psychology-generate-dialog"
         >
           <div class="generate-form">
             <div class="form-group">
@@ -1069,8 +1069,8 @@ interface ReportPrivacySettings {
           header="Pre-Competition Assessment"
           [(visible)]="showPreCompDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
           [dismissableMask]="true"
+          styleClass="psychology-precomp-dialog"
         >
           <div class="precomp-form">
             <div class="form-group">

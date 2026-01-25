@@ -405,7 +405,6 @@ const PHASE_PRESETS = [
         [(visible)]="showCreateDialog"
         [header]="isEditing() ? 'Edit Program' : 'Create Training Program'"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '900px' }"
         [closable]="true"
         styleClass="program-dialog"
       >
@@ -527,21 +526,21 @@ const PHASE_PRESETS = [
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Session type"
-                    [style]="{ width: '180px' }"
+                    styleClass="week-session-select"
                   ></p-select>
                   <p-inputNumber
                     [(ngModel)]="formData.weekTemplate[day].duration"
                     suffix=" min"
                     [min]="0"
                     [max]="180"
-                    [style]="{ width: '100px' }"
+                    styleClass="week-duration-input"
                   ></p-inputNumber>
                   <span class="rpe-label">RPE:</span>
                   <p-inputNumber
                     [(ngModel)]="formData.weekTemplate[day].targetRpe"
                     [min]="1"
                     [max]="10"
-                    [style]="{ width: '70px' }"
+                    styleClass="week-rpe-input"
                   ></p-inputNumber>
                 </div>
               }

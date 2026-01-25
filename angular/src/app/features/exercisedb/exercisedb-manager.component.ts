@@ -39,7 +39,6 @@ import {
   ImportLog,
   ExerciseApprovalData
 } from "../../core/services/exercisedb.service";
-import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { capitalize } from "../../shared/utils/format.utils";
 
@@ -578,9 +577,9 @@ import { capitalize } from "../../shared/utils/format.utils";
           [(visible)]="showDetailDialog"
           [header]="selectedExercise()?.name || 'Exercise Details'"
           [modal]="true"
-          [style]="dialogStyles.fullWidth"
           [draggable]="false"
           [resizable]="false"
+          styleClass="exercisedb-detail-dialog"
         >
           @if (selectedExercise()) {
             <div class="detail-content">
@@ -746,9 +745,9 @@ import { capitalize } from "../../shared/utils/format.utils";
           [(visible)]="showApprovalDialog"
           header="Approve Exercise"
           [modal]="true"
-          [style]="dialogStyles.complex"
           [draggable]="false"
           [resizable]="false"
+          styleClass="exercisedb-approval-dialog"
         >
           @if (exerciseToApprove()) {
             <div class="approval-form">
@@ -859,8 +858,6 @@ export class ExerciseDBManagerComponent implements OnInit {
   private messageService = inject(MessageService);
 
   // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
-
   // State
   exercises = signal<ExerciseDBExercise[]>([]);
   filteredExercises = signal<ExerciseDBExercise[]>([]);

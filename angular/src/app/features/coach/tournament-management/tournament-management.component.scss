@@ -1,5 +1,11 @@
 @use "styles/mixins" as *;
 
+
+
+.tournament-payment-bar {
+  height: var(--space-3);
+}
+
 .tournament-management-page {
   padding: var(--space-4);
   max-width: var(--content-max-width-xl);

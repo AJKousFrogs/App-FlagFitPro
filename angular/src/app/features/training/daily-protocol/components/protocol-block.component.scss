@@ -7,7 +7,7 @@
 
 .protocol-block {
   background: var(--surface-primary);
-  border: 1px solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: var(--space-4);
@@ -52,7 +52,7 @@
 .header-left {
   display: flex;
   align-items: center;
-  gap: var(--space-4, var(--ds-font-size-md));
+  gap: var(--space-4);
 }
 
 .block-icon {
@@ -96,7 +96,7 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .progress-indicator {
@@ -149,7 +149,7 @@
 /* Content */
 .block-content {
   padding: var(--space-4) var(--space-5);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .block-ai-note {
@@ -159,7 +159,7 @@
   padding: var(--space-3);
   background: var(--color-status-info-light);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--color-status-info);
+  border-left: var(--border-3) solid var(--color-status-info);
   margin-bottom: var(--space-4);
 }
 
@@ -179,7 +179,7 @@
 .exercise-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .main-session-info {
@@ -199,7 +199,7 @@
 /* Simple List View (Wireframe Style) */
 .exercise-list-item {
   padding: var(--ds-space-2) 0;
-  border-bottom: 1px solid var(--primitive-neutral-100);
+  border-bottom: var(--border-1) solid var(--primitive-neutral-100);
 }
 
 .exercise-list-item:last-child {
@@ -209,7 +209,7 @@
 .exercise-checkbox {
   display: flex;
   align-items: center;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
   cursor: pointer;
   font-size: var(--ds-font-size-md);
   color: var(--color-text-primary);
@@ -271,7 +271,7 @@
   gap: var(--space-3);
   margin-top: var(--space-4);
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border-secondary);
+  border-top: var(--border-1) solid var(--color-border-secondary);
 }
 
 .mark-all-btn {
@@ -299,11 +299,11 @@
 /* Mobile Adjustments */
 @include respond-to(sm) {
   .block-header {
-    padding: var(--space-3, var(--ds-font-size-xs)) var(--space-4, var(--ds-font-size-md));
+    padding: var(--space-3) var(--space-4);
   }
 
   .header-left {
-    gap: var(--space-3, var(--ds-font-size-xs));
+    gap: var(--space-3);
   }
 
   .block-icon {

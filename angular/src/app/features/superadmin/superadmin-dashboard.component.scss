@@ -49,12 +49,12 @@
 }
 
 .stat-icon.pending {
-  background: rgba(245, 158, 11, 0.1);
+  background: rgba(var(--primitive-warning-500-rgb), 0.1);
   color: var(--color-status-warning);
 }
 
 .stat-icon.roles {
-  background: rgba(139, 92, 246, 0.1);
+  background: rgba(var(--primitive-purple-500-rgb), 0.1);
   color: var(--primitive-purple-500);
 }
 
@@ -64,7 +64,7 @@
 }
 
 .stat-icon.users {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(var(--primitive-info-500-rgb), 0.1);
   color: var(--color-status-info);
 }
 

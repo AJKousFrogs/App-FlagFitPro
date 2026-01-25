@@ -179,8 +179,7 @@ interface Stats {
         [(visible)]="showFullDialog"
         header="🏆 Achievements & Progress"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '800px' }"
-        [contentStyle]="{ 'max-height': '70vh', overflow: 'auto' }"
+        styleClass="achievements-panel-dialog"
       >
         <p-tabs>
           <p-tabpanel value="all">

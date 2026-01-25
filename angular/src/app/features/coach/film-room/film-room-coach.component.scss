@@ -2,6 +2,12 @@
 
 @include stat-block;
 
+
+
+.film-watch-progress {
+  height: var(--space-3);
+}
+
 .film-room-page {
   padding: var(--space-4);
   max-width: var(--content-max-width-xl);

@@ -19,7 +19,8 @@ import {
   inject,
   signal,
   computed,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  OnInit
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import {
@@ -28,7 +29,7 @@ import {
   Validators,
   ReactiveFormsModule
 } from "@angular/forms";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Slider } from "primeng/slider";
@@ -90,7 +91,11 @@ interface SessionType {
           >
         </app-page-header>
 
-        <form [formGroup]="sessionForm" (ngSubmit)="submitSession()">
+        <form
+          [formGroup]="sessionForm"
+          (ngSubmit)="submitSession()"
+          [class.read-only]="isReadOnly()"
+        >
           <!-- Session Type Selection -->
           <app-card-shell title="Session Type" headerIcon="pi-tag">
             <div class="session-types-grid">
@@ -120,6 +125,11 @@ interface SessionType {
               </small>
             }
           </app-card-shell>
+          @if (overrideMessage()) {
+            <app-card-shell title="Plan Update" headerIcon="pi-info-circle">
+              <p class="override-message">{{ overrideMessage() }}</p>
+            </app-card-shell>
+          }
 
           <!-- Session Date -->
           <app-card-shell title="Session Date" headerIcon="pi-calendar">
@@ -131,6 +141,7 @@ interface SessionType {
                 formControlName="sessionDate"
                 class="date-input"
                 [max]="today"
+                (change)="onSessionDateChange($any($event.target).value)"
               />
               <small>Select the date when this session actually occurred</small>
             </div>
@@ -210,10 +221,7 @@ interface SessionType {
                 {{ sessionForm.get("durationMinutes")?.value || 0 }} min ×
                 {{ sessionForm.get("rpe")?.value || 0 }} RPE
               </div>
-              <small
-                class="state-narration"
-                style="margin-top: var(--space-3); display: block;"
-              >
+              <small class="state-narration state-narration--spaced">
                 <strong>What changed:</strong> Training load calculated as
                 {{ calculatedLoad() }} AU. <strong>Why:</strong> System
                 automatically calculates: Duration ({{
@@ -241,77 +249,90 @@ interface SessionType {
             </div>
           </app-card-shell>
 
+          <div class="details-toggle">
+            <app-button
+              variant="text"
+              size="sm"
+              iconLeft="pi-sliders-h"
+              (clicked)="toggleDetails()"
+              [disabled]="isReadOnly()"
+              >{{ showDetails() ? "Hide optional details" : "Add optional details" }}</app-button
+            >
+          </div>
+
           <!-- Movement Volume (Position-Specific) -->
-          <app-card-shell
-            title="Movement Volume (Optional)"
-            headerIcon="pi-bolt"
-          >
-            <div class="form-grid">
-              <div class="form-field">
-                <label for="sprints">Sprint Repetitions</label>
-                <p-inputNumber
-                  id="sprints"
-                  formControlName="sprintReps"
-                  [min]="0"
-                  [max]="100"
-                  [showButtons]="true"
-                  placeholder="0"
-                ></p-inputNumber>
-                <small>Max recommended: 30/session</small>
-              </div>
+          @if (showDetails()) {
+            <app-card-shell
+              title="Movement Volume (Optional)"
+              headerIcon="pi-bolt"
+            >
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="sprints">Sprint Repetitions</label>
+                  <p-inputNumber
+                    id="sprints"
+                    formControlName="sprintReps"
+                    [min]="0"
+                    [max]="100"
+                    [showButtons]="true"
+                    placeholder="0"
+                  ></p-inputNumber>
+                  <small>Max recommended: 30/session</small>
+                </div>
 
-              <div class="form-field">
-                <label for="cuts">Cutting Movements</label>
-                <p-inputNumber
-                  id="cuts"
-                  formControlName="cuttingMovements"
-                  [min]="0"
-                  [max]="200"
-                  [showButtons]="true"
-                  placeholder="0"
-                ></p-inputNumber>
-                <small>Max recommended: 50/session</small>
-              </div>
+                <div class="form-field">
+                  <label for="cuts">Cutting Movements</label>
+                  <p-inputNumber
+                    id="cuts"
+                    formControlName="cuttingMovements"
+                    [min]="0"
+                    [max]="200"
+                    [showButtons]="true"
+                    placeholder="0"
+                  ></p-inputNumber>
+                  <small>Max recommended: 50/session</small>
+                </div>
 
-              <div class="form-field">
-                <label for="throws">Throws (QB only)</label>
-                <p-inputNumber
-                  id="throws"
-                  formControlName="throwCount"
-                  [min]="0"
-                  [max]="150"
-                  [showButtons]="true"
-                  placeholder="0"
-                ></p-inputNumber>
-                <small>Max recommended: 60/session</small>
-              </div>
+                <div class="form-field">
+                  <label for="throws">Throws (QB only)</label>
+                  <p-inputNumber
+                    id="throws"
+                    formControlName="throwCount"
+                    [min]="0"
+                    [max]="150"
+                    [showButtons]="true"
+                    placeholder="0"
+                  ></p-inputNumber>
+                  <small>Max recommended: 60/session</small>
+                </div>
 
-              <div class="form-field">
-                <label for="jumps">Jump/Plyo Count</label>
-                <p-inputNumber
-                  id="jumps"
-                  formControlName="jumpCount"
-                  [min]="0"
-                  [max]="100"
-                  [showButtons]="true"
-                  placeholder="0"
-                ></p-inputNumber>
-                <small>Max recommended: 40/session</small>
+                <div class="form-field">
+                  <label for="jumps">Jump/Plyo Count</label>
+                  <p-inputNumber
+                    id="jumps"
+                    formControlName="jumpCount"
+                    [min]="0"
+                    [max]="100"
+                    [showButtons]="true"
+                    placeholder="0"
+                  ></p-inputNumber>
+                  <small>Max recommended: 40/session</small>
+                </div>
               </div>
-            </div>
-          </app-card-shell>
+            </app-card-shell>
 
-          <!-- Notes -->
-          <app-card-shell title="Notes" headerIcon="pi-pencil">
-            <div class="form-field">
-              <textarea
-                pTextarea
-                formControlName="notes"
-                [rows]="4"
-                placeholder="Add any notes about this session (injuries, fatigue, weather, etc.)"
-              ></textarea>
-            </div>
-          </app-card-shell>
+            <!-- Notes -->
+            <app-card-shell title="Notes" headerIcon="pi-pencil">
+              <div class="form-field">
+                <textarea
+                  pTextarea
+                  formControlName="notes"
+                  [rows]="4"
+                  placeholder="Add any notes about this session (injuries, fatigue, weather, etc.)"
+                ></textarea>
+              </div>
+            </app-card-shell>
+          }
 
           <!-- Phase 2.2: Late Log Framing - Neutral tone with ACWR impact -->
           @if (hasLateLogWarning()) {
@@ -357,11 +378,8 @@ interface SessionType {
                         ACWR will update once this session is approved.
                       </p>
                     </div>
-                    <small
-                      class="state-narration"
-                      style="margin-top: var(--space-2); display: block;"
-                    >
-                      <strong>What changed:</strong> Logging
+                <small class="state-narration">
+                  <strong>What changed:</strong> Logging
                       {{ hoursDelayed() }} hours after session completion.
                       <strong>Why:</strong> You're entering this session
                       retroactively (more than 24 hours late).
@@ -424,11 +442,8 @@ interface SessionType {
                         ACWR updated automatically. No approval needed.
                       </p>
                     </div>
-                    <small
-                      class="state-narration"
-                      style="margin-top: var(--space-2); display: block;"
-                    >
-                      <strong>What changed:</strong> Logging
+                <small class="state-narration">
+                  <strong>What changed:</strong> Logging
                       {{ hoursDelayed() }} hours after session completion.
                       <strong>Why:</strong> You're entering this session late
                       (within 24 hours but after completion).
@@ -469,10 +484,7 @@ interface SessionType {
                     </div>
                   </p-message>
                 }
-                <small
-                  class="state-narration"
-                  style="margin-top: var(--space-3); display: block;"
-                >
+                <small class="state-narration state-narration--spaced">
                   <strong>What changed:</strong> Conflict detected between your
                   RPE input and expected session type intensity.
                   <strong>Why:</strong> Your RPE ({{
@@ -493,17 +505,20 @@ interface SessionType {
 
           <!-- Submit Button -->
           <div class="form-actions">
-            <app-button
-              iconLeft="pi-check"
-              [loading]="isSubmitting()"
-              [disabled]="sessionForm.invalid"
-              >Log Session</app-button
-            >
-            @if (isSubmitting()) {
-              <div
-                class="submit-narration"
-                style="width: 100%; margin-top: var(--space-2); padding: var(--space-2); background: var(--surface-secondary); border-radius: var(--radius-md);"
+            @if (!isReadOnly()) {
+              <app-button
+                iconLeft="pi-check"
+                [loading]="isSubmitting()"
+                [disabled]="sessionForm.invalid"
+                >Log Session</app-button
               >
+            } @else {
+              <app-button variant="outlined" iconLeft="pi-eye" [disabled]="true"
+                >View Only</app-button
+              >
+            }
+            @if (isSubmitting()) {
+              <div class="submit-narration">
                 <small class="state-narration">
                   <strong>What changed:</strong> Session is being saved.
                   <strong>Why:</strong> You clicked "Log Session".
@@ -526,9 +541,10 @@ interface SessionType {
   `,
   styleUrl: "./training-log.component.scss",
 })
-export class TrainingLogComponent {
+export class TrainingLogComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly authService = inject(AuthService);
   private readonly trainingDataService = inject(TrainingDataService);
   private readonly acwrService = inject(AcwrService);
@@ -537,6 +553,10 @@ export class TrainingLogComponent {
   private readonly offlineQueue = inject(OfflineQueueService);
 
   readonly isSubmitting = signal(false);
+  readonly showDetails = signal(false);
+  readonly isReadOnly = signal(false);
+  readonly overrideMessage = signal<string | null>(null);
+  private activeSessionId: string | null = null;
 
   readonly sessionTypes: SessionType[] = [
     {
@@ -577,8 +597,11 @@ export class TrainingLogComponent {
     },
   ];
 
+  readonly today = new Date().toISOString().split("T")[0];
+
   readonly sessionForm: FormGroup = this.fb.group({
     sessionType: ["practice", Validators.required],
+    sessionDate: [this.today, Validators.required],
     durationMinutes: [
       60,
       [Validators.required, Validators.min(1), Validators.max(300)],
@@ -612,7 +635,6 @@ export class TrainingLogComponent {
 
   readonly hasLateLogWarning = computed(() => this.logStatus() !== "on_time");
   readonly hasConflicts = computed(() => this.conflicts().length > 0);
-  readonly today = new Date().toISOString().split("T")[0];
 
   // Phase 2.2: ACWR before/after calculation
   readonly getAcwrBefore = computed(() => {
@@ -644,7 +666,85 @@ export class TrainingLogComponent {
     }
   }
 
+  ngOnInit(): void {
+    const query = this.route.snapshot.queryParamMap;
+    const sessionId = query.get("sessionId");
+    const type = query.get("type");
+    const duration = query.get("duration");
+    const date = query.get("date");
+    const viewMode = query.get("view") === "true";
+
+    if (type) {
+      this.sessionForm.patchValue({ sessionType: type });
+    }
+
+    if (duration && !isNaN(Number(duration))) {
+      this.sessionForm.patchValue({ durationMinutes: Number(duration) });
+    }
+
+    if (date) {
+      this.sessionForm.patchValue({ sessionDate: date });
+    }
+
+    if (sessionId) {
+      void this.loadExistingSession(sessionId);
+    }
+
+    if (viewMode) {
+      this.isReadOnly.set(true);
+      this.sessionForm.disable({ emitEvent: false });
+    }
+
+    this.sessionForm
+      .get("sessionDate")
+      ?.valueChanges.subscribe(() => this.updateOverrideMessage());
+    void this.updateOverrideMessage();
+  }
+
+  toggleDetails(): void {
+    this.showDetails.update((value) => !value);
+  }
+
+  onSessionDateChange(date: string): void {
+    this.sessionForm.patchValue({ sessionDate: date });
+    void this.updateOverrideMessage();
+  }
+
+  private async loadExistingSession(sessionId: string): Promise<void> {
+    try {
+      const session = await firstValueFrom(
+        this.trainingDataService.getTrainingSession(sessionId),
+      );
+      if (!session) return;
+
+      this.activeSessionId = session.id || null;
+      const sessionDate = session.session_date || session.date || this.today;
+      this.sessionForm.patchValue({
+        sessionType: session.session_type || session.type || "practice",
+        sessionDate,
+        durationMinutes: session.duration_minutes ?? session.duration ?? 60,
+        rpe: session.rpe ?? 5,
+        notes: session.notes || "",
+      });
+
+      const metrics = (session.session_metrics || {}) as Record<string, unknown>;
+      if (Object.keys(metrics).length > 0) {
+        this.showDetails.set(true);
+        this.sessionForm.patchValue({
+          sprintReps: metrics.sprint_reps ?? 0,
+          cuttingMovements: metrics.cutting_movements ?? 0,
+          throwCount: metrics.throw_count ?? 0,
+          jumpCount: metrics.jump_count ?? 0,
+        });
+      }
+      await this.updateOverrideMessage();
+    } catch (error) {
+      this.logger.error("Failed to load existing training session", error);
+    }
+  }
+
   selectSessionType(value: string): void {
+    if (this.isReadOnly()) return;
     this.sessionForm.patchValue({ sessionType: value });
   }
 
@@ -665,6 +765,9 @@ export class TrainingLogComponent {
   }
 
   async submitSession(): Promise<void> {
+    if (this.isReadOnly()) {
+      return;
+    }
     if (this.sessionForm.invalid) {
       this.sessionForm.markAllAsTouched();
       return;
@@ -678,6 +781,13 @@ export class TrainingLogComponent {
       const sessionDate =
         formValue.sessionDate || new Date().toISOString().split("T")[0];
 
+      const sessionMetrics = {
+        sprint_reps: formValue.sprintReps || 0,
+        cutting_movements: formValue.cuttingMovements || 0,
+        throw_count: formValue.throwCount || 0,
+        jump_count: formValue.jumpCount || 0,
+      };
+
       const sessionData = {
         user_id: user?.id,
         session_type: formValue.sessionType,
@@ -685,24 +795,43 @@ export class TrainingLogComponent {
         duration_minutes: formValue.durationMinutes,
         rpe: formValue.rpe,
         training_load: formValue.durationMinutes * formValue.rpe,
-        sprint_reps: formValue.sprintReps || 0,
-        cutting_movements: formValue.cuttingMovements || 0,
-        throw_count: formValue.throwCount || 0,
-        jump_count: formValue.jumpCount || 0,
+        session_metrics: sessionMetrics,
         notes: formValue.notes,
       };
 
-      // Save to database via service (includes late logging and conflict detection)
-      await firstValueFrom(
-        this.trainingDataService.createTrainingSession({
-          user_id: user?.id || "",
-          session_date: sessionData.session_date,
-          session_type: sessionData.session_type,
-          duration_minutes: sessionData.duration_minutes,
-          rpe: sessionData.rpe,
-          notes: sessionData.notes,
-        }),
-      );
+      const existingSessionId =
+        this.activeSessionId ||
+        (await this.findExistingSessionId(sessionDate));
+
+      if (existingSessionId) {
+        await firstValueFrom(
+          this.trainingDataService.updateTrainingSession(existingSessionId, {
+            session_date: sessionData.session_date,
+            session_type: sessionData.session_type,
+            duration_minutes: sessionData.duration_minutes,
+            rpe: sessionData.rpe,
+            notes: sessionData.notes,
+            session_metrics: sessionMetrics,
+            status: "completed",
+            completed_at: new Date().toISOString(),
+          }),
+        );
+      } else {
+        // Save to database via service (includes late logging and conflict detection)
+        await firstValueFrom(
+          this.trainingDataService.createTrainingSession({
+            user_id: user?.id || "",
+            session_date: sessionData.session_date,
+            session_type: sessionData.session_type,
+            duration_minutes: sessionData.duration_minutes,
+            rpe: sessionData.rpe,
+            notes: sessionData.notes,
+            status: "completed",
+            completed_at: new Date().toISOString(),
+            session_metrics: sessionMetrics,
+          }),
+        );
+      }
 
       // Show warning if retroactive approval required
       if (this.requiresApproval()) {
@@ -743,10 +872,25 @@ export class TrainingLogComponent {
           duration_minutes: formValue.durationMinutes,
           rpe: formValue.rpe,
           notes: formValue.notes,
+          session_metrics: {
+            sprint_reps: formValue.sprintReps || 0,
+            cutting_movements: formValue.cuttingMovements || 0,
+            throw_count: formValue.throwCount || 0,
+            jump_count: formValue.jumpCount || 0,
+          },
           status: "completed",
         };
 
-        this.offlineQueue.queueAction("training_log", sessionData, "high");
+        if (this.activeSessionId) {
+          this.offlineQueue.queueGenericRequest(
+            "/.netlify/functions/training-sessions",
+            "PUT",
+            { sessionId: this.activeSessionId, ...sessionData },
+            "high",
+          );
+        } else {
+          this.offlineQueue.queueAction("training_log", sessionData, "high");
+        }
         this.toastService.info(
           "You're offline. Session queued for sync when connection is restored.",
         );
@@ -776,6 +920,61 @@ export class TrainingLogComponent {
       skills: "technical",
     };
     return mapping[type] || "technical";
+  }
+
+  private async findExistingSessionId(
+    sessionDate: string,
+  ): Promise<string | null> {
+    try {
+      const sessions = await firstValueFrom(
+        this.trainingDataService.getTrainingSessions({
+          startDate: sessionDate,
+          endDate: sessionDate,
+          includeUpcoming: true,
+          limit: 10,
+        }),
+      );
+
+      const match = sessions.find((session) => {
+        const date = session.session_date || session.date;
+        const status = session.status || "";
+        return (
+          date === sessionDate &&
+          ["planned", "scheduled", "in_progress"].includes(status)
+        );
+      });
+
+      return match?.id || null;
+    } catch (error) {
+      this.logger.error("Failed to resolve existing session", error);
+      return null;
+    }
+  }
+
+  private async updateOverrideMessage(): Promise<void> {
+    if (this.isReadOnly()) {
+      this.overrideMessage.set(null);
+      return;
+    }
+
+    const formDate =
+      this.sessionForm.get("sessionDate")?.value || this.today;
+    const existing = this.activeSessionId
+      ? this.activeSessionId
+      : await this.findExistingSessionId(formDate);
+
+    const dateLabel =
+      formDate === this.today ? "today's" : "this";
+
+    if (existing) {
+      this.overrideMessage.set(
+        `This log will replace ${dateLabel} planned session and count toward ACWR.`,
+      );
+    } else {
+      this.overrideMessage.set(
+        "This log will create a new session and count toward ACWR.",
+      );
+    }
   }
 
   /**

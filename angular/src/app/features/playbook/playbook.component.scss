@@ -1,5 +1,14 @@
 @use "styles/mixins" as *;
 
+
+
+
+
+.playbook-filter-select {
+  width: var(--size-150);
+  max-width: 100%;
+}
+
 .playbook-page {
   @include page-container(var(--content-max-width-xl));
   display: flex;
@@ -34,18 +43,18 @@
 
   .stat-block__value {
     font-size: var(--ds-font-size-2xl);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .stat-block__label {
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
   }
 
   .stat-divider {
-    width: 1px;
+    width: var(--border-1);
     height: var(--avatar-size-md);
-    background: var(--ds-border-subtle);
+    background: var(--color-border-subtle);
   }
 
   .progress-overall {
@@ -84,12 +93,12 @@
     background-color var(--motion-base) var(--ease-standard),
     border-color var(--motion-base) var(--ease-standard),
     box-shadow var(--motion-base) var(--ease-standard);
-  border: 1px solid var(--ds-border-subtle);
+  border: var(--border-1) solid var(--color-border-subtle);
 
   &:hover {
-    transform: translateY(-2px);
+    transform: var(--transform-hover-lift);
     box-shadow: var(--shadow-2);
-    border-color: var(--ds-primary-green);
+    border-color: var(--color-brand-primary);
   }
 
   .play-header {
@@ -108,26 +117,26 @@
         margin: 0;
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--ds-text-primary);
+        color: var(--color-text-primary);
       }
     }
   }
 
   .memorized-icon {
-    color: var(--ds-primary-green);
+    color: var(--color-brand-primary);
     font-size: var(--ds-font-size-2xl);
   }
 
   .play-formation {
     margin: 0 0 var(--space-2) 0;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
   }
 
   .play-assignment {
     margin: 0;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
     line-height: var(--ds-line-height-normal);
   }
 
@@ -135,7 +144,7 @@
     display: block;
     margin-top: var(--space-3);
     font-size: var(--ds-font-size-xs);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
   }
 }
 
@@ -151,18 +160,18 @@
 
     i {
       font-size: var(--ds-font-size-3xl);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
       margin-bottom: var(--space-3);
     }
 
     h3 {
       margin: 0 0 var(--space-2) 0;
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
 
     p {
       margin: 0;
-      color: var(--ds-text-secondary);
+      color: var(--color-text-secondary);
     }
   }
 }
@@ -191,7 +200,7 @@
   &.placeholder {
     flex-direction: column;
     gap: var(--space-2);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
     padding: var(--space-6);
 
     i {
@@ -208,25 +217,25 @@
     margin: 0 0 var(--space-2) 0;
     font-size: var(--ds-font-size-md);
     font-weight: var(--ds-font-weight-semibold);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
 
     i {
-      color: var(--ds-primary-green);
+      color: var(--color-brand-primary);
     }
   }
 
   p {
     margin: 0;
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
     line-height: var(--ds-line-height-normal);
   }
 }
 
 .assignment-section {
-  background: var(--ds-primary-green-subtle);
+  background: var(--color-brand-primary-subtle);
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--ds-primary-green);
+  border-left: var(--border-3) solid var(--color-brand-primary);
 
   .assignment-details {
     display: flex;
@@ -240,12 +249,12 @@
 
     .label {
       font-weight: var(--ds-font-weight-medium);
-      color: var(--ds-text-secondary);
+      color: var(--color-text-secondary);
       min-width: var(--input-min-width-sm);
     }
 
     .value {
-      color: var(--ds-text-primary);
+      color: var(--color-text-primary);
     }
   }
 }
@@ -263,7 +272,7 @@
     display: flex;
     align-items: flex-start;
     gap: var(--space-2);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
 
     i {
       margin-top: var(--space-1);
@@ -272,21 +281,21 @@
 }
 
 .key-points-list li i {
-  color: var(--ds-primary-green);
+  color: var(--color-brand-primary);
 }
 
 .mistakes-list li i {
-  color: var(--primitive-error-500);
+  color: var(--color-status-error);
 }
 
 .warning-section {
-  background: var(--primitive-error-50);
+  background: var(--color-status-error-surface);
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  border: 1px solid var(--primitive-error-200);
+  border: var(--border-1) solid var(--color-status-error);
 
   h4 i {
-    color: var(--primitive-error-500);
+    color: var(--color-status-error);
   }
 }
 
@@ -294,7 +303,7 @@
   display: flex;
   justify-content: center;
   padding-top: var(--space-3);
-  border-top: 1px solid var(--ds-border-subtle);
+  border-top: var(--border-1) solid var(--color-border-subtle);
 }
 
 // Quiz Dialog
@@ -307,7 +316,7 @@
 .quiz-progress {
   span {
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-secondary);
+    color: var(--color-text-secondary);
     display: block;
     margin-bottom: var(--space-2);
   }
@@ -316,14 +325,14 @@
 .quiz-question {
   .play-reference {
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-tertiary);
+    color: var(--color-text-tertiary);
     margin: 0 0 var(--space-2) 0;
   }
 
   h3 {
     margin: 0 0 var(--space-4) 0;
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -340,7 +349,7 @@
   gap: var(--space-3);
   padding: var(--space-3);
   background: var(--ds-surface-base);
-  border: 2px solid var(--ds-border-default);
+  border: var(--border-2) solid var(--color-border-default);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition:
@@ -351,23 +360,23 @@
   width: 100%;
 
   &:hover:not(:disabled) {
-    border-color: var(--ds-primary-green);
-    background: var(--ds-primary-green-subtle);
+    border-color: var(--color-brand-primary);
+    background: var(--color-brand-primary-subtle);
   }
 
   &.selected {
-    border-color: var(--ds-primary-green);
-    background: var(--ds-primary-green-subtle);
+    border-color: var(--color-brand-primary);
+    background: var(--color-brand-primary-subtle);
   }
 
   &.correct {
-    border-color: var(--primitive-success-500);
-    background: var(--primitive-success-50);
+    border-color: var(--color-status-success);
+    background: var(--color-status-success-surface);
   }
 
   &.incorrect {
-    border-color: var(--primitive-error-500);
-    background: var(--primitive-error-50);
+    border-color: var(--color-status-error);
+    background: var(--color-status-error-surface);
   }
 
   &:disabled {
@@ -384,12 +393,12 @@
     justify-content: center;
     font-weight: var(--ds-font-weight-semibold);
     font-size: var(--ds-font-size-md);
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .option-text {
     flex: 1;
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 }
 
@@ -404,8 +413,8 @@
   padding: var(--space-4);
 
   .results-icon {
-    width: 80px;
-    height: 80px;
+    width: var(--size-80);
+    height: var(--size-80);
     border-radius: 50%;
     background: var(--ds-surface-base);
     display: flex;
@@ -415,21 +424,21 @@
 
     i {
       font-size: var(--ds-font-size-3xl);
-      color: var(--ds-text-tertiary);
+      color: var(--color-text-tertiary);
     }
 
     &.success {
-      background: var(--primitive-success-50);
+      background: var(--color-status-success-surface);
 
       i {
-        color: var(--primitive-success-500);
+        color: var(--color-status-success);
       }
     }
   }
 
   h2 {
     margin: 0 0 var(--space-3) 0;
-    color: var(--ds-text-primary);
+    color: var(--color-text-primary);
   }
 
   .score-display {
@@ -438,13 +447,13 @@
     .score {
       font-size: var(--ds-font-size-2xl);
       font-weight: var(--ds-font-weight-bold);
-      color: var(--ds-primary-green);
+      color: var(--color-brand-primary);
     }
 
     .score-detail {
       display: block;
       font-size: var(--ds-font-size-md);
-      color: var(--ds-text-secondary);
+      color: var(--color-text-secondary);
     }
   }
 

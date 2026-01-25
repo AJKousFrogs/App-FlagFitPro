@@ -304,7 +304,7 @@ const POSITIONS = [
                       <p-progressBar
                         [value]="getPaymentPercent(tournament)"
                         [showValue]="false"
-                        [style]="{ height: '12px' }"
+                        styleClass="tournament-payment-bar"
                       ></p-progressBar>
                     </div>
                   }
@@ -354,7 +354,6 @@ const POSITIONS = [
         [(visible)]="showDetailDialog"
         [header]="selectedTournament()?.name || 'Tournament'"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '900px' }"
         styleClass="tournament-detail-dialog"
       >
         @if (selectedTournament()) {

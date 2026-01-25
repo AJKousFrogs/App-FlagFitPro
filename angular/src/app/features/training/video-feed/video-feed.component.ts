@@ -452,7 +452,6 @@ interface FilterChip {
           [showHeader]="true"
           [header]="selectedVideo()?.title || 'Training Video'"
           styleClass="video-dialog"
-          [style]="{ width: '95vw', maxWidth: '800px' }"
         >
           @if (selectedVideo(); as video) {
             <div class="video-dialog-content">

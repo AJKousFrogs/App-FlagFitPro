@@ -388,7 +388,7 @@ const VISIBILITY_OPTIONS = [
         [(visible)]="showAddDialog"
         header="Add Resource"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '600px' }"
+        styleClass="knowledge-base-add-dialog"
       >
         <div class="add-form">
           <div class="form-field">

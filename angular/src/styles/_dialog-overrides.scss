@@ -1,0 +1,481 @@
+/* Global dialog overrides (no encapsulation hacks) */
+
+.rsvp-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.payments-instructions-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.officials-standard-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.officials-schedule-dialog {
+  width: var(--dialog-max-width-sm);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.play-detail-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.quiz-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.chat-create-channel-dialog {
+  width: var(--dialog-max-width-sm);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.chat-pinned-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.chat-members-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.roster-player-details-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.roster-invite-dialog {
+  width: var(--dialog-max-width-sm);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.roster-invitations-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.roster-player-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.wellness-dialog {
+  width: var(--dialog-width-xl);
+  max-width: var(--dialog-max-width-lg);
+}
+
+.wellness-dialog .p-dialog-content {
+  padding-bottom: var(--space-4);
+}
+
+.superadmin-table {
+  min-width: var(--container-md);
+}
+
+.superadmin-team-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.game-tracker-play-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.hydration-progress-bar {
+  height: var(--space-2);
+  width: var(--layout-width-xxs);
+}
+
+.payment-fee-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.payment-record-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.practice-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.practice-activity-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.film-tag-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.development-note-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.knowledge-base-add-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.team-invite-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.team-edit-player-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.injury-report-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.injury-checkin-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.play-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.play-stats-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.program-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.tournament-detail-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.dashboard-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+}
+
+.performance-avatar--injured {
+  background: var(--color-status-error);
+}
+
+.performance-avatar--high-risk {
+  background: var(--color-status-warning);
+}
+
+.performance-avatar--standard {
+  background: var(--ds-primary-green-subtle);
+  color: var(--ds-primary-green-dark);
+}
+
+.exercise-details-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.rtp-start-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: 95vw;
+}
+
+.psychology-generate-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.psychology-precomp-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.physio-athlete-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.physio-report-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.physio-risk-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.nutritionist-athlete-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.nutritionist-report-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.nutritionist-tournament-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.tournament-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.tournament-availability-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.tournament-team-availability-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.tournament-budget-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.equipment-add-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.equipment-return-dialog {
+  width: var(--dialog-max-width-sm);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.equipment-checkout-dialog {
+  width: var(--dialog-max-width-sm);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.development-goal-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.roster-status-dialog,
+.roster-bulk-status-dialog {
+  width: var(--dialog-max-width-sm);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.superadmin-user-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.coach-calendar-event-dialog,
+.coach-calendar-rsvp-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.film-upload-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.film-detail-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.body-comp-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.poll-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.location-dialog {
+  width: var(--dialog-max-width-sm);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.micro-session-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.privacy-contact-dialog,
+.privacy-delete-dialog {
+  width: var(--dialog-max-width-sm);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.exercisedb-detail-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.exercisedb-approval-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.attendance-create-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.attendance-take-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.la28-roadmap-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.la28-roadmap-dialog .p-dialog-content {
+  max-height: var(--dialog-max-height);
+  overflow: auto;
+}
+
+.achievements-panel-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.achievements-panel-dialog .p-dialog-content {
+  max-height: var(--dialog-max-height);
+  overflow: auto;
+}
+
+.player-settings-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.training-tournament-dialog {
+  width: var(--dialog-max-width-md);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.video-curation-preview-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.video-curation-playlist-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.video-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.video-preview-dialog {
+  width: var(--dialog-max-width-xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.qb-throwing-log-dialog {
+  width: var(--dialog-max-width-lg);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}
+
+.performance-dialog {
+  width: var(--dialog-max-width-2xl);
+  max-width: calc(100vw - var(--space-6));
+  max-height: var(--dialog-max-height);
+}

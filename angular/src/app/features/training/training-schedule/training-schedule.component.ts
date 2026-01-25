@@ -42,7 +42,7 @@ interface TrainingSession {
   type: string;
   duration: number;
   /** Maps DB status (planned/in_progress/completed/cancelled) to UI status */
-  status: "scheduled" | "completed" | "missed" | "in_progress";
+  status: "scheduled" | "completed" | "missed" | "in_progress" | "replaced";
   /** Whether this is a template (from 52-week program) or actual logged session */
   isTemplate: boolean;
   /** Whether this is a team practice session */
@@ -139,6 +139,10 @@ interface MonthlyStats {
                   <span class="legend-item">
                     <i class="pi pi-times-circle legend-missed"></i>
                     Missed
+                  </span>
+                  <span class="legend-item">
+                    <i class="pi pi-refresh legend-replaced"></i>
+                    Replaced
                   </span>
                 </div>
               </div>
@@ -465,6 +469,11 @@ interface MonthlyStats {
                     [style.border-left-color]="
                       getSessionTypeColor(session.type)
                     "
+                    [attr.title]="
+                      session.status === 'replaced'
+                        ? 'Planned session replaced by a logged workout'
+                        : null
+                    "
                     (click)="viewSession(session)"
                     (keydown.enter)="viewSession(session)"
                     (keydown.space)="viewSession(session)"
@@ -489,6 +498,18 @@ interface MonthlyStats {
                       <!-- Title visually dominant -->
                       <h4 class="session-title">
                         {{ session.type }}
+                        @if (session.status === "replaced") {
+                          <span class="status-pill status-pill--replaced">
+                            <i class="pi pi-refresh"></i>
+                            Replaced
+                          </span>
+                        }
+                        @if (!session.isTemplate && session.status === "completed") {
+                          <span class="status-pill status-pill--logged">
+                            <i class="pi pi-check"></i>
+                            Logged
+                          </span>
+                        }
                         @if (session.isTeamPractice) {
                           <span class="team-badge">
                             <i class="pi pi-users"></i> Team
@@ -513,7 +534,15 @@ interface MonthlyStats {
                       <!-- Modern status pill -->
                       <span class="status-tag status-{{ session.status }}">
                         <i [class]="getStatusIcon(session.status)"></i>
-                        {{ getStatusLabel(session.status) }}
+                        <span
+                          [attr.title]="
+                            session.status === 'replaced'
+                              ? 'Planned session replaced by a logged workout'
+                              : null
+                          "
+                        >
+                          {{ getStatusLabel(session.status) }}
+                        </span>
                       </span>
                       <!-- Weather cancel button for outdoor sessions -->
                       @if (session.isOutdoor && session.weatherSensitive && session.isTemplate && weatherAlert()?.severity === 'danger') {
@@ -540,7 +569,7 @@ interface MonthlyStats {
                         >
                       }
                       <!-- Start session button: for template sessions -->
-                      @if (session.isTemplate) {
+                      @if (session.isTemplate && session.status !== "replaced") {
                         <app-button
                           variant="text"
                           size="sm"
@@ -852,6 +881,12 @@ export class TrainingScheduleComponent implements OnInit {
           count: scheduledTemplates.length,
         });
 
+        const actualDates = new Set(
+          mappedActualSessions.map((session) =>
+            session.date.toISOString().split("T")[0],
+          ),
+        );
+
         mappedScheduledSessions = scheduledTemplates
           .filter((template) => {
             // training_weeks can be an array or single object from Supabase join
@@ -885,7 +920,11 @@ export class TrainingScheduleComponent implements OnInit {
               type:
                 template.session_name || template.session_type || "Training",
               duration: template.duration_minutes || 60,
-              status: "scheduled" as const,
+              status: actualDates.has(
+                sessionDate.toISOString().split("T")[0],
+              )
+                ? "replaced"
+                : ("scheduled" as const),
               isTemplate: true,
               isTeamPractice: (template as Record<string, unknown>).is_team_practice as boolean || false,
               isOutdoor: (template as Record<string, unknown>).is_outdoor as boolean || false,
@@ -902,35 +941,19 @@ export class TrainingScheduleComponent implements OnInit {
         this.logger.debug("No scheduled templates found for date range");
       }
 
-      // Combine both sources, but prioritize templates over test data
-      const actualDates = new Set(
-        mappedActualSessions.map(
-          (s) => `${s.date.toISOString().split("T")[0]}-${s.type}`,
-        ),
-      );
-
-      const uniqueScheduled = mappedScheduledSessions.filter(
-        (s) =>
-          !actualDates.has(`${s.date.toISOString().split("T")[0]}-${s.type}`),
-      );
-
-      // Decision point: Use templates if available, otherwise fall back to actual sessions
-      let allSessions: TrainingSession[];
-      if (mappedScheduledSessions.length > 0) {
-        // Use templates from 52-week program as the authoritative source
-        allSessions = mappedScheduledSessions.sort(
-          (a, b) => a.date.getTime() - b.date.getTime(),
-        );
-        this.logger.debug("Using scheduled templates as primary source", {
-          templateCount: mappedScheduledSessions.length,
-        });
-      } else {
-        // No templates found, fallback to actual sessions from training_sessions table
-        allSessions = [...mappedActualSessions, ...uniqueScheduled].sort(
-          (a, b) => a.date.getTime() - b.date.getTime(),
-        );
-        this.logger.debug("No templates found, using actual sessions");
-      }
+      // Combine templates and actual sessions so overrides are visible
+      const allSessions: TrainingSession[] = [
+        ...mappedScheduledSessions,
+        ...mappedActualSessions,
+      ].sort((a, b) => {
+        if (a.date.getTime() !== b.date.getTime()) {
+          return a.date.getTime() - b.date.getTime();
+        }
+        if (a.isTemplate !== b.isTemplate) {
+          return a.isTemplate ? 1 : -1;
+        }
+        return 0;
+      });
 
       this.sessions.set(allSessions);
     } catch (error) {
@@ -1136,6 +1159,8 @@ export class TrainingScheduleComponent implements OnInit {
         return "pi pi-times-circle";
       case "in_progress":
         return "pi pi-spin pi-spinner";
+      case "replaced":
+        return "pi pi-refresh";
       default:
         return "pi pi-clock";
     }
@@ -1149,6 +1174,8 @@ export class TrainingScheduleComponent implements OnInit {
         return "Missed";
       case "in_progress":
         return "In Progress";
+      case "replaced":
+        return "Replaced";
       default:
         return "Scheduled";
     }
@@ -1161,7 +1188,7 @@ export class TrainingScheduleComponent implements OnInit {
    */
   private mapDbStatusToUiStatus(
     dbStatus: string | null | undefined,
-  ): "scheduled" | "completed" | "missed" | "in_progress" {
+  ): "scheduled" | "completed" | "missed" | "in_progress" | "replaced" {
     switch (dbStatus) {
       case "completed":
         return "completed";

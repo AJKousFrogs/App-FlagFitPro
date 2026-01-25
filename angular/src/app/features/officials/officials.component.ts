@@ -34,7 +34,6 @@ import {
 } from "../../core/services/officials.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { ToastService } from "../../core/services/toast.service";
-import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { IconButtonComponent } from "../../shared/components/button/icon-button.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
@@ -335,7 +334,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           [header]="editingOfficial ? 'Edit Official' : 'Add Official'"
           [(visible)]="showOfficialDialog"
           [modal]="true"
-          [style]="dialogStyles.standard"
+          styleClass="officials-standard-dialog"
         >
           <div class="dialog-form">
             <div class="form-field">
@@ -375,7 +374,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   [options]="certificationOptions"
                   [(ngModel)]="officialForm.certification_level"
                   placeholder="Select level"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-select>
               </div>
 
@@ -417,7 +416,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
           header="Schedule Official for Game"
           [(visible)]="showScheduleDialog"
           [modal]="true"
-          [style]="dialogStyles.form"
+          styleClass="officials-schedule-dialog"
         >
           @if (selectedOfficial()) {
             <div class="dialog-form">
@@ -433,7 +432,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Select game"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-select>
               </div>
 
@@ -443,7 +442,7 @@ type AssignmentStatus = "scheduled" | "confirmed" | "declined" | "no_show";
                   [options]="roleOptions"
                   [(ngModel)]="scheduleForm.role"
                   placeholder="Select role"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-select>
               </div>
 
@@ -483,9 +482,6 @@ export class OfficialsComponent implements OnInit {
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
   private logger = inject(LoggerService);
-
-  // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
 
   // State
   officials = signal<Official[]>([]);

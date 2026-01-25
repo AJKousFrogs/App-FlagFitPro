@@ -160,6 +160,11 @@
   min-height: var(--chart-min-height-lg);
 }
 
+.profile-page .profile-loading-spinner {
+  width: var(--avatar-size-lg);
+  height: var(--avatar-size-lg);
+}
+
 .profile-page .loading-message {
   margin-top: var(--space-4);
   font-size: var(--ds-font-size-md);
@@ -686,6 +691,11 @@
   gap: var(--space-3);
   padding: var(--space-12);
   color: var(--color-text-secondary);
+}
+
+.profile-page .invitation-loading-spinner {
+  width: var(--avatar-size-sm);
+  height: var(--avatar-size-sm);
 }
 
 .profile-page .invitations-list {

@@ -38,6 +38,7 @@
 @use "./assets/styles/ui-standardization.scss" as *;
 @use "./assets/styles/color-contrast-fixes.scss" as *;
 @use "./styles/responsive-utilities" as *;
+@use "./styles/dialog-overrides" as *;
 @use "./styles/mobile-responsive" as *;
 @use "./styles/mobile-touch-components" as *;
 @use "./styles/ios-safari-fixes" as *;

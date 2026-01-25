@@ -191,13 +191,11 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                       <p-avatar
                         [label]="getPlayerInitials(alert.playerName)"
                         shape="circle"
-                        [style]="{
-                          'background-color':
-                            alert.severity === 'critical'
-                              ? 'var(--red-500)'
-                              : 'var(--yellow-500)',
-                          color: 'white',
-                        }"
+                        [styleClass]="
+                          alert.severity === 'critical'
+                            ? 'priority-avatar priority-avatar--critical'
+                            : 'priority-avatar priority-avatar--warning'
+                        "
                       >
                       </p-avatar>
                       <div class="pa-info">
@@ -269,13 +267,11 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                       <p-avatar
                         [label]="getPlayerInitials(player.playerName)"
                         shape="circle"
-                        [style]="{
-                          'background-color':
-                            player.severity === 'critical'
-                              ? 'var(--red-500)'
-                              : 'var(--yellow-500)',
-                          color: 'white',
-                        }"
+                        [styleClass]="
+                          player.severity === 'critical'
+                            ? 'priority-avatar priority-avatar--critical'
+                            : 'priority-avatar priority-avatar--warning'
+                        "
                       >
                       </p-avatar>
                       <div class="pa-info">
@@ -601,7 +597,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                 <p-avatar
                                   [label]="player.avatarInitials"
                                   shape="circle"
-                                  [style]="getAvatarStyle(player)"
+                                  [styleClass]="getAvatarClass(player)"
                                 ></p-avatar>
                                 <div class="player-info">
                                   <span class="player-name">{{
@@ -756,13 +752,19 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
                                 type="line"
                                 [data]="performanceChartData()"
                                 [options]="lineChartOptions"
-                                height="200px"
+                                height="var(--chart-min-height-sm)"
                               ></app-lazy-chart>
                             }
                           } @placeholder {
-                            <app-chart-skeleton type="line" height="200px" />
+                            <app-chart-skeleton
+                              type="line"
+                              height="var(--chart-min-height-sm)"
+                            />
                           } @loading (minimum 500ms) {
-                            <app-chart-skeleton type="line" height="200px" />
+                            <app-chart-skeleton
+                              type="line"
+                              height="var(--chart-min-height-sm)"
+                            />
                           }
                         </div>
                         <div class="hero-stats">
@@ -888,7 +890,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
           header="Create Training Session"
           [(visible)]="showCreateSessionDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
+          styleClass="dashboard-dialog"
           [closable]="true"
         >
           <div class="session-form">
@@ -972,7 +974,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
           header="Send Team Message"
           [(visible)]="showTeamMessageDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
+          styleClass="dashboard-dialog"
           [closable]="true"
         >
           <div class="message-form">
@@ -1003,7 +1005,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
           header="Request Data Access"
           [(visible)]="showRequestAccessDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
+          styleClass="dashboard-dialog"
           [closable]="true"
         >
           <div class="request-access-form">
@@ -1670,17 +1672,14 @@ export class CoachDashboardComponent {
     return name.substring(0, 2).toUpperCase();
   }
 
-  getAvatarStyle(player: PlayerPerformanceStats): Record<string, string> {
+  getAvatarClass(player: PlayerPerformanceStats): string {
     if (player.status === "injured") {
-      return { "background-color": "var(--red-500)", color: "white" };
+      return "performance-avatar performance-avatar--injured";
     }
     if (player.riskLevel === "high") {
-      return { "background-color": "var(--orange-500)", color: "white" };
+      return "performance-avatar performance-avatar--high-risk";
     }
-    return {
-      "background-color": "var(--primary-100)",
-      color: "var(--primary-700)",
-    };
+    return "performance-avatar performance-avatar--standard";
   }
 
   getPositionSeverity(

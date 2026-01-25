@@ -96,8 +96,8 @@
 }
 
 .info-notice.info {
-  background: rgba(59, 130, 246, 0.05);
-  border-color: rgba(59, 130, 246, 0.2);
+  background: rgba(var(--primitive-info-500-rgb), 0.05);
+  border-color: rgba(var(--primitive-info-500-rgb), 0.2);
 }
 
 .info-notice.info i {
@@ -105,8 +105,8 @@
 }
 
 .warning-notice {
-  background: rgba(245, 158, 11, 0.05);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(var(--primitive-warning-500-rgb), 0.05);
+  border: 1px solid rgba(var(--primitive-warning-500-rgb), 0.2);
 }
 
 .warning-notice i {
@@ -141,6 +141,12 @@
   font-weight: var(--ds-font-weight-medium);
   color: var(--color-text-primary);
 }
+
+.superadmin-actions-col {
+  width: calc(var(--space-16) + var(--space-10));
+}
+
+
 
 .founder-badge {
   display: inline-block;

@@ -1,5 +1,14 @@
 @use "styles/mixins" as *;
 
+
+
+
+
+.activity-duration-input {
+  width: var(--size-100);
+  max-width: 100%;
+}
+
 .practice-planner-page {
   padding: var(--space-4);
   max-width: var(--content-max-width-xl);

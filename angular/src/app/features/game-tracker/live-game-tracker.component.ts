@@ -220,8 +220,8 @@ interface Play {
         (visibleChange)="showPlayDetails.set($event)"
         header="Play Details"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '500px' }"
         [position]="'bottom'"
+        styleClass="game-tracker-play-dialog"
       >
         <form [formGroup]="playForm" class="play-form">
           <div class="form-row">

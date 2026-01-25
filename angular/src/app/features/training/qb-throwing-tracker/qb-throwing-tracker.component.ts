@@ -333,9 +333,9 @@ interface SessionTypeOption {
       [modal]="true"
       [visible]="showLogDialog()"
       (visibleChange)="showLogDialog.set($event)"
-      [style]="{ width: '500px' }"
       [breakpoints]="{ '640px': '95vw' }"
       [draggable]="false"
+      styleClass="qb-throwing-log-dialog"
     >
       <div class="log-form">
         <!-- Session Type -->
@@ -347,7 +347,7 @@ interface SessionTypeOption {
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
-            [style]="{ width: '100%' }"
+            styleClass="w-full"
           ></p-select>
         </div>
 
@@ -360,7 +360,7 @@ interface SessionTypeOption {
             [max]="500"
             [showButtons]="true"
             [step]="10"
-            [style]="{ width: '100%' }"
+            styleClass="w-full"
             placeholder="0"
           ></p-inputNumber>
           <small class="field-hint">
@@ -377,7 +377,7 @@ interface SessionTypeOption {
               [(ngModel)]="formData.shortThrows"
               [min]="0"
               [max]="300"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-inputNumber>
           </div>
           <div class="form-field">
@@ -386,7 +386,7 @@ interface SessionTypeOption {
               [(ngModel)]="formData.mediumThrows"
               [min]="0"
               [max]="300"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-inputNumber>
           </div>
           <div class="form-field">
@@ -395,7 +395,7 @@ interface SessionTypeOption {
               [(ngModel)]="formData.longThrows"
               [min]="0"
               [max]="200"
-              [style]="{ width: '100%' }"
+              styleClass="w-full"
             ></p-inputNumber>
           </div>
         </div>

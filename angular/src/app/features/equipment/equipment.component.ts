@@ -330,7 +330,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           [header]="editingItem ? 'Edit Equipment' : 'Add Equipment'"
           [(visible)]="showAddDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
+          styleClass="equipment-add-dialog"
         >
           <div class="dialog-form">
             <div class="form-field">
@@ -349,7 +349,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   [options]="typeOptions"
                   [(ngModel)]="newItem.item_type"
                   placeholder="Select type"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-select>
               </div>
 
@@ -358,7 +358,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <p-select
                   [options]="conditionOptions"
                   [(ngModel)]="newItem.condition"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-select>
               </div>
             </div>
@@ -420,7 +420,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           header="Checkout Equipment"
           [(visible)]="showCheckoutDialog"
           [modal]="true"
-          [style]="{ width: '400px' }"
+          styleClass="equipment-checkout-dialog"
         >
           @if (checkoutItem()) {
             <div class="dialog-form">
@@ -439,7 +439,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                   optionValue="id"
                   placeholder="Select player"
                   [filter]="true"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-select>
               </div>
 
@@ -481,7 +481,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
           header="Return Equipment"
           [(visible)]="showReturnDialog"
           [modal]="true"
-          [style]="{ width: '400px' }"
+          styleClass="equipment-return-dialog"
         >
           @if (returnAssignment()) {
             <div class="dialog-form">
@@ -496,7 +496,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
                 <p-select
                   [options]="conditionOptions"
                   [(ngModel)]="returnData.condition"
-                  [style]="{ width: '100%' }"
+                  styleClass="w-full"
                 ></p-select>
               </div>
 

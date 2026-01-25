@@ -815,22 +815,7 @@
    Premium animations for PrimeNG components
    ================================================================ */
 
-/* Enhanced PrimeNG Button - Global styles (no ::ng-deep needed) */
-/* .p-button - REMOVED (Consolidated)
-   ================================================================
-   Button hover/active styles are now defined ONLY in:
-   - primeng/_brand-overrides.scss (for PrimeNG buttons)
-   
-   This prevents conflicting hover behaviors.
-   ================================================================ */
 
-/* Enhanced PrimeNG Card - Global styles */
-.p-card {
-  transition:
-    transform var(--anim-normal) var(--ease-micro-bounce),
-    box-shadow var(--anim-normal) var(--ease-smooth);
-  will-change: transform, box-shadow;
-}
 
 @media (hover: hover) and (pointer: fine) {
   .p-card:hover {

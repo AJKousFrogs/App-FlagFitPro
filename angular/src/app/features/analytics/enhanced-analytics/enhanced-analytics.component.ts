@@ -311,8 +311,8 @@ export class EnhancedAnalyticsComponent implements OnInit {
         {
           label: "Performance Score",
           data,
-          borderColor: "#089949",
-          backgroundColor: "rgba(8, 153, 73, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "rgba(var(--ds-primary-green-rgb), 0.1)",
           fill: true,
           tension: 0.4,
         },
@@ -381,8 +381,8 @@ export class EnhancedAnalyticsComponent implements OnInit {
         {
           label: "Performance Score",
           data: [0, 0, 0, 0, 0, 0, 0],
-          borderColor: "#089949",
-          backgroundColor: "rgba(8, 153, 73, 0.1)",
+          borderColor: "var(--ds-primary-green)",
+          backgroundColor: "rgba(var(--ds-primary-green-rgb), 0.1)",
           fill: true,
           tension: 0.4,
         },

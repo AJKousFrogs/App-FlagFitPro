@@ -7,17 +7,17 @@
 
 .tournament-calendar {
   background: var(--surface-primary);
-  border: 1px solid var(--primitive-neutral-200);
+  border: var(--border-1) solid var(--primitive-neutral-200);
   border-radius: var(--radius-xl, var(--ds-font-size-xs));
-  padding: var(--space-4, var(--ds-font-size-md));
-  margin-bottom: var(--space-4, var(--ds-font-size-md));
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-4, var(--ds-font-size-md));
+  margin-bottom: var(--space-4);
 }
 
 .calendar-header h3 {
@@ -38,13 +38,13 @@
 .tournament-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .tournament-card {
-  border: 1px solid var(--primitive-neutral-200);
-  border-radius: var(--radius-lg, 8px);
-  padding: var(--space-3, var(--ds-font-size-xs));
+  border: var(--border-1) solid var(--primitive-neutral-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
   transition:
     transform var(--transition-fast),
     opacity var(--transition-fast);
@@ -67,7 +67,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .tournament-info {
@@ -81,13 +81,13 @@
   align-items: center;
   gap: var(--ds-space-2);
   flex-wrap: wrap;
-  margin-bottom: var(--space-2, 8px);
+  margin-bottom: var(--space-2);
 }
 
 .tournament-details {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .tournament-details .detail {
@@ -107,7 +107,7 @@
   text-align: center;
   padding: var(--ds-space-2) var(--ds-space-3);
   background: var(--primitive-neutral-100);
-  border-radius: var(--radius-md, 6px);
+  border-radius: var(--radius-md);
   min-width: var(--badge-min-width-md);
 }
 
@@ -136,10 +136,10 @@
   display: flex;
   align-items: flex-start;
   gap: var(--ds-space-2);
-  margin-top: var(--space-3, var(--ds-font-size-xs));
+  margin-top: var(--space-3);
   padding: var(--ds-space-2) var(--ds-space-3);
   background: var(--primitive-warning-100);
-  border-radius: var(--radius-md, 6px);
+  border-radius: var(--radius-md);
   font-size: var(--ds-font-size-sm);
   color: var(--primitive-warning-800);
 }
@@ -152,7 +152,7 @@
   display: flex;
   align-items: center;
   gap: var(--ds-space-2);
-  margin-top: var(--space-2, 8px);
+  margin-top: var(--space-2);
   font-size: var(--ds-font-size-xs);
   color: var(--color-text-muted);
 }
@@ -162,9 +162,9 @@
   display: flex;
   justify-content: flex-end;
   gap: var(--ds-space-1);
-  margin-top: var(--space-2, 8px);
-  border-top: 1px solid var(--primitive-neutral-100);
-  padding-top: var(--space-2, 8px);
+  margin-top: var(--space-2);
+  border-top: var(--border-1) solid var(--primitive-neutral-100);
+  padding-top: var(--space-2);
 }
 
 /* States */
@@ -173,8 +173,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3, var(--ds-font-size-xs));
-  padding: var(--space-6, var(--ds-font-size-2xl));
+  gap: var(--space-3);
+  padding: var(--space-6);
   text-align: center;
   color: var(--color-text-secondary);
 }
@@ -189,7 +189,7 @@
 .tournament-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .form-field {
@@ -207,7 +207,7 @@
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .checkbox-group {

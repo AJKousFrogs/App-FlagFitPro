@@ -33,10 +33,6 @@ import { firstValueFrom } from "rxjs";
 
 import { ApiService } from "../../core/services/api.service";
 import { LoggerService } from "../../core/services/logger.service";
-import {
-  DIALOG_STYLES,
-  DROPDOWN_WIDTHS
-} from "../../core/utils/design-tokens.util";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -133,7 +129,7 @@ const EVENT_TYPE_CONFIG: Record<
             optionValue="value"
             placeholder="All Events"
             [showClear]="true"
-            [style]="{ width: dropdownWidths.md }"
+            styleClass="calendar-filter-select"
           ></p-select>
 
           <app-button
@@ -275,7 +271,6 @@ const EVENT_TYPE_CONFIG: Record<
         [header]="'RSVP: ' + (selectedEvent()?.title || '')"
         [modal]="true"
         [closable]="true"
-        [style]="dialogStyles.standard"
         styleClass="rsvp-dialog"
       >
         @if (selectedEvent(); as event) {
@@ -442,10 +437,6 @@ export class TeamCalendarComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly logger = inject(LoggerService);
   private readonly messageService = inject(MessageService);
-
-  // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
-  protected readonly dropdownWidths = DROPDOWN_WIDTHS;
 
   // State
   readonly events = signal<TeamEvent[]>([]);

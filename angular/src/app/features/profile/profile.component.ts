@@ -116,7 +116,7 @@ interface PendingInvitation {
         @if (isLoading()) {
           <div class="loading-state">
             <p-progressSpinner
-              [style]="{ width: '50px', height: '50px' }"
+              styleClass="profile-loading-spinner"
               strokeWidth="4"
             ></p-progressSpinner>
             <p class="loading-message">Loading profile...</p>
@@ -420,7 +420,7 @@ interface PendingInvitation {
                     @if (loadingInvitations()) {
                       <div class="loading-invitations">
                         <p-progressSpinner
-                          [style]="{ width: '30px', height: '30px' }"
+                          styleClass="invitation-loading-spinner"
                           strokeWidth="4"
                         ></p-progressSpinner>
                         <span>Loading invitations...</span>

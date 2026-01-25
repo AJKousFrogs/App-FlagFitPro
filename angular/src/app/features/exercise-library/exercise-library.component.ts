@@ -281,7 +281,6 @@ interface Category {
         [closable]="true"
         [closeOnEscape]="true"
         [dismissableMask]="true"
-        [style]="{ width: '700px', maxWidth: '90vw' }"
         header="Exercise Details"
         styleClass="exercise-details-dialog"
       >

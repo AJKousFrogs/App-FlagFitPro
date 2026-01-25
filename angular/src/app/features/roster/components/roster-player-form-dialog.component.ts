@@ -68,7 +68,7 @@ export interface PlayerFormData {
       (visibleChange)="visibleChange.emit($event)"
       [modal]="true"
       [header]="editingPlayer() ? 'Edit Player' : 'Add New Player'"
-      [style]="{ width: '550px' }"
+      styleClass="roster-player-dialog"
       [closable]="true"
     >
       <!-- Form Error Summary (WCAG 2.1 AA) -->

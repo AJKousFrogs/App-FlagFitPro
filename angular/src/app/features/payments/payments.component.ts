@@ -303,8 +303,8 @@ const PAYMENT_METHOD_CONFIG: Record<
                   <th>Date</th>
                   <th>Description</th>
                   <th>Method</th>
-                  <th style="text-align: right">Amount</th>
-                  <th style="width: var(--space-20)"></th>
+                  <th class="amount-col">Amount</th>
+                  <th class="history-actions-col"></th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-payment>
@@ -321,7 +321,7 @@ const PAYMENT_METHOD_CONFIG: Record<
                       {{ getPaymentMethodConfig(payment.method).label }}
                     </span>
                   </td>
-                  <td style="text-align: right">
+                  <td class="amount-cell">
                     <strong>{{ payment.amount | currency }}</strong>
                   </td>
                   <td>
@@ -360,8 +360,7 @@ const PAYMENT_METHOD_CONFIG: Record<
         header="Payment Instructions"
         [modal]="true"
         [closable]="true"
-        [style]="dialogStyles.complex"
-        styleClass="instructions-dialog"
+        styleClass="payments-instructions-dialog"
       >
         <div class="instructions-content">
           @for (method of paymentInstructions().methods; track method.method) {
@@ -399,7 +398,6 @@ export class PaymentsComponent implements OnInit {
   private readonly messageService = inject(MessageService);
 
   // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
   protected readonly tableColumnWidths = TABLE_COLUMN_WIDTHS;
 
   // State

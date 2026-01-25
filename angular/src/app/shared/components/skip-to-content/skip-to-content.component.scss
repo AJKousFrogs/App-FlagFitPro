@@ -55,9 +55,9 @@
 .skip-link:focus-visible {
   transform: translateX(-50%) translateY(0);
   box-shadow:
-    0 8px 32px rgba(8, 153, 73, 0.4),
+    0 8px 32px rgba(var(--ds-primary-green-rgb), 0.4),
     var(--shadow-xl),
-    0 0 0 3px rgba(241, 196, 15, 0.5); /* Yellow focus ring */
+    0 0 0 3px rgba(var(--primitive-success-500-rgb), 0.5); /* Yellow focus ring */
 }
 
 /* Hover state (while focused) */
@@ -70,7 +70,7 @@
   box-shadow:
     0 10px 40px rgba(var(--primitive-primary-700-rgb), 0.5),
     var(--shadow-xl),
-    0 0 0 3px rgba(241, 196, 15, 0.6);
+    0 0 0 3px rgba(var(--primitive-success-500-rgb), 0.6);
 }
 
 /* Active/pressed state */
@@ -109,7 +109,7 @@
 :host-context([data-theme="dark"]) .skip-link,
 :host-context(.dark) .skip-link {
   box-shadow:
-    0 4px 20px rgba(10, 184, 90, 0.3),
+    0 4px 20px rgba(var(--primitive-primary-600-rgb), 0.3),
     var(--shadow-lg);
 }
 
@@ -117,7 +117,7 @@
 :host-context(.dark) .skip-link:focus-visible {
   box-shadow:
     var(--shadow-3),
-    0 0 0 3px rgba(241, 196, 15, 0.6);
+    0 0 0 3px rgba(var(--primitive-success-500-rgb), 0.6);
 }
 
 /* Reduced motion support */

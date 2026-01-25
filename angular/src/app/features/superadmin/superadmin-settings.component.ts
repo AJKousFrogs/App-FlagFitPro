@@ -119,14 +119,14 @@ interface SuperadminUser {
           } @else {
             <p-table
               [value]="superadmins()"
-              [tableStyle]="{ 'min-width': '50rem' }"
+              tableStyleClass="superadmin-table"
             >
               <ng-template pTemplate="header">
                 <tr>
                   <th>Email</th>
                   <th>Granted</th>
                   <th>Notes</th>
-                  <th style="width: 120px">Actions</th>
+                  <th class="superadmin-actions-col">Actions</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-admin>

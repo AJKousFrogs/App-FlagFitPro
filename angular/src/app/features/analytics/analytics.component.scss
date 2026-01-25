@@ -11,6 +11,8 @@
 
 @include stat-block;
 
+
+
 .modern-step-nav {
   display: flex;
   align-items: center;
@@ -64,7 +66,7 @@
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(.disabled) {
       background: var(--surface-secondary);
-      transform: translateY(-2px);
+      transform: var(--transform-hover-lift);
 
       .step-number {
         background: var(--ds-primary-green);
@@ -91,7 +93,7 @@
   &:focus-visible {
     outline: var(--focus-outline-width) solid var(--ds-primary-green);
     outline-offset: var(--focus-outline-offset);
-    box-shadow: 0 0 0 4px rgba(8, 153, 73, 0.25);
+    box-shadow: var(--focus-ring-shadow);
   }
 
   &:focus:not(:focus-visible) {
@@ -119,7 +121,7 @@
     &::after {
       content: "";
       position: absolute;
-      bottom: -14px;
+      bottom: calc(-1 * (var(--space-3) + var(--space-0-5)));
       left: 50%;
       transform: translateX(-50%);
       width: 0;
@@ -511,8 +513,8 @@
     background-size:
       var(--space-10) 100%,
       var(--space-10) 100%,
-      14px 100%,
-      14px 100%;
+      calc(var(--space-3) + var(--space-0-5)) 100%,
+      calc(var(--space-3) + var(--space-0-5)) 100%;
     background-attachment: local, local, scroll, scroll;
 
     .goal-card {
@@ -854,7 +856,7 @@
   // Desktop-only hover
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      transform: translateY(-2px);
+      transform: var(--transform-hover-lift);
       box-shadow: var(--shadow-md);
     }
   }
@@ -1541,7 +1543,7 @@
 
 .gap-bar-row {
   display: grid;
-  grid-template-columns: 180px 1fr var(--space-10);
+  grid-template-columns: calc(var(--space-12) * 3.75) 1fr var(--space-10);
   gap: var(--space-4);
   align-items: center;
 }
@@ -1601,11 +1603,11 @@
 
 .benchmark-marker {
   position: absolute;
-  top: -4px;
-  bottom: -4px;
+  top: calc(-1 * var(--space-1));
+  bottom: calc(-1 * var(--space-1));
   width: var(--indicator-size-xs); // 4px
   background: var(--color-status-warning);
-  border-radius: var(--radius-sm); /* 2px */
+  border-radius: var(--radius-sm);
   transform: translateX(-50%);
   cursor: help;
 }
@@ -1613,14 +1615,14 @@
 .benchmark-marker::before {
   content: "";
   position: absolute;
-  top: -6px;
+  top: calc(-1 * (var(--space-1) + var(--space-0-5)));
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid var(--color-status-warning);
+  border-left: var(--border-5) solid transparent;
+  border-right: var(--border-5) solid transparent;
+  border-top: var(--border-6) solid var(--color-status-warning);
 }
 
 .gap-bar-values {
@@ -1828,7 +1830,7 @@
 
 .badges-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-sm), 1fr));
   gap: var(--space-2);
 }
 
@@ -1839,7 +1841,7 @@
   padding: var(--space-2) var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  border-left: var(--space-1) solid transparent;
+  border-left: var(--border-4) solid transparent;
 
   .badge-rank {
     font-size: var(--ds-font-size-md);

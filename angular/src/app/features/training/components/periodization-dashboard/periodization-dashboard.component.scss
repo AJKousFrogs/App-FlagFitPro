@@ -25,7 +25,7 @@
     margin-bottom: var(--space-2);
 
     i {
-      color: var(--primary-color);
+      color: var(--color-brand-primary);
     }
   }
 
@@ -100,8 +100,8 @@
 
 .focus-chip {
   &.primary {
-    background: var(--primary-100);
-    color: var(--primary-700);
+    background: var(--ds-primary-green-subtle);
+    color: var(--ds-primary-green-dark);
   }
 
   &.secondary {
@@ -139,18 +139,18 @@
   margin-top: var(--space-4);
 
   &.acwr-optimal {
-    background: var(--green-50);
-    border: var(--border-1) solid var(--green-200);
+    background: var(--color-status-success-subtle);
+    border: var(--border-1) solid var(--ds-primary-green-subtle);
   }
 
   &.acwr-caution {
-    background: var(--yellow-50);
-    border: var(--border-1) solid var(--yellow-200);
+    background: var(--color-status-warning-subtle);
+    border: var(--border-1) solid var(--color-status-warning);
   }
 
   &.acwr-danger {
-    background: var(--red-50);
-    border: var(--border-1) solid var(--red-200);
+    background: var(--color-status-error-subtle);
+    border: var(--border-1) solid var(--color-status-error);
   }
 
   .acwr-header {
@@ -195,17 +195,17 @@
   border: var(--border-1) solid var(--surface-200);
 
   &.session-training {
-    border-left: var(--border-4) solid var(--primary-color);
+    border-left: var(--border-4) solid var(--color-brand-primary);
   }
 
   &.session-game {
-    border-left: var(--border-4) solid var(--orange-500);
-    background: var(--orange-50);
+    border-left: var(--border-4) solid var(--ds-primary-orange);
+    background: var(--ds-primary-orange-subtle);
   }
 
   &.session-recovery {
-    border-left: var(--border-4) solid var(--green-500);
-    background: var(--green-50);
+    border-left: var(--border-4) solid var(--color-status-success);
+    background: var(--color-status-success-subtle);
   }
 
   &.session-rest {
@@ -267,7 +267,7 @@
         display: block;
         font-size: var(--ds-font-size-2xl);
         font-weight: var(--ds-font-weight-bold);
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
       }
 
       .total-label {
@@ -307,8 +307,8 @@
       gap: var(--space-2);
 
       &.active {
-        background: var(--green-100);
-        color: var(--green-700);
+        background: var(--color-status-success-subtle);
+        color: var(--ds-primary-green-dark);
       }
 
       i {
@@ -330,15 +330,15 @@
     gap: var(--space-2);
 
     &.avoid .protocol-chip {
-      background: var(--red-100);
-      color: var(--red-700);
+      background: var(--color-status-error-subtle);
+      color: var(--color-status-error);
     }
   }
 }
 
 .protocol-chip {
-  background: var(--primary-100);
-  color: var(--primary-700);
+  background: var(--ds-primary-green-subtle);
+  color: var(--ds-primary-green-dark);
 }
 
 .sprint-tips {
@@ -435,7 +435,7 @@
         display: block;
         font-size: var(--ds-font-size-md);
         font-weight: var(--ds-font-weight-semibold);
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
         text-transform: var(--ds-text-transform-capitalize);
       }
     }
@@ -501,7 +501,7 @@
       line-height: var(--ds-line-height-normal);
 
       strong {
-        color: var(--primary-color);
+        color: var(--color-brand-primary);
       }
     }
   }
@@ -530,8 +530,8 @@
 .warnings-section {
   .warning-item {
     padding: var(--space-4);
-    background: var(--yellow-50);
-    border: var(--border-1) solid var(--yellow-200);
+    background: var(--color-status-warning-subtle);
+    border: var(--border-1) solid var(--color-status-warning);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-2);
     display: flex;
@@ -539,7 +539,7 @@
     gap: var(--space-3);
 
     i {
-      color: var(--yellow-600);
+      color: var(--color-status-warning);
       font-size: var(--ds-font-size-2xl);
     }
   }

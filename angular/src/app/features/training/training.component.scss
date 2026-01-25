@@ -20,8 +20,8 @@
   gap: var(--space-3);
   background: linear-gradient(
     135deg,
-    var(--green-100) 0%,
-    var(--green-50) 100%
+    var(--ds-primary-green-ultra-subtle) 0%,
+    var(--ds-primary-green-subtle) 100%
   );
   padding: var(--space-2);
   border-radius: var(--radius-md);
@@ -41,7 +41,7 @@
   margin: 0;
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--green-700);
+  color: var(--ds-primary-green);
 }
 
 .banner-content p {
@@ -57,7 +57,7 @@
 
 .streak-badge {
   padding: var(--space-2) var(--space-3); /* 8px 12px for breathing room */
-  background: var(--orange-100);
+  background: var(--ds-primary-orange-subtle);
   border-radius: var(--radius-lg);
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
@@ -96,7 +96,7 @@
 .position-label {
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--primary-600);
+  color: var(--color-brand-primary);
   text-transform: var(--ds-text-transform-uppercase);
   letter-spacing: var(--ds-letter-spacing-0-5px);
 }
@@ -123,19 +123,19 @@
 }
 
 .readiness-badge-compact.excellent {
-  background: var(--green-100);
+  background: var(--color-status-success-subtle);
 }
 
 .readiness-badge-compact.good {
-  background: var(--blue-100);
+  background: var(--color-status-info-subtle);
 }
 
 .readiness-badge-compact.caution {
-  background: var(--yellow-100);
+  background: var(--color-status-warning-subtle);
 }
 
 .readiness-badge-compact.rest {
-  background: var(--red-100);
+  background: var(--color-status-error-subtle);
 }
 
 .readiness-value {
@@ -172,13 +172,13 @@
 }
 
 .wellness-alert-banner.alert-critical {
-  background: var(--red-100);
-  border: 1px solid var(--red-300);
+  background: var(--color-status-error-subtle);
+  border: var(--border-1) solid var(--color-status-error);
 }
 
 .wellness-alert-banner.alert-warning {
-  background: var(--yellow-100);
-  border: 1px solid var(--yellow-300);
+  background: var(--color-status-warning-subtle);
+  border: var(--border-1) solid var(--color-status-warning);
 }
 
 .alert-dismiss {
@@ -255,13 +255,13 @@
 }
 
 .priority-card-content.high {
-  border-left: 3px solid var(--green-500);
+  border-left: var(--border-3) solid var(--color-status-success);
   padding-left: var(--space-2);
   margin-left: calc(-1 * var(--space-3));
 }
 
 .priority-card-content.medium {
-  border-left: 3px solid var(--yellow-500);
+  border-left: var(--border-3) solid var(--color-status-warning);
   padding-left: var(--space-2);
   margin-left: calc(-1 * var(--space-3));
 }
@@ -344,8 +344,8 @@
 }
 
 .schedule-day-compact.today {
-  background: var(--primary-100);
-  border: 1px solid var(--primary-300);
+  background: var(--ds-primary-green-ultra-subtle);
+  border: var(--border-1) solid var(--ds-primary-green-subtle);
 }
 
 .day-indicator {
@@ -366,7 +366,7 @@
   width: var(--indicator-size-sm);
   height: var(--indicator-size-sm);
   border-radius: 50%;
-  background: var(--primary-500);
+  background: var(--color-brand-primary);
 }
 
 .day-session-preview {
@@ -400,7 +400,7 @@
   gap: var(--space-3);
   padding: var(--space-2);
   border-radius: var(--radius-lg);
-  border-left: 3px solid;
+  border-left: var(--border-3) solid;
   background: var(--surface-ground);
   cursor: pointer;
   transition: background var(--motion-base) var(--ease-standard);
@@ -438,7 +438,7 @@
 }
 
 .workout-card-compact .pi-play {
-  color: var(--primary-500);
+  color: var(--color-brand-primary);
   opacity: 0;
   transition: opacity var(--motion-base) var(--ease-standard);
 }

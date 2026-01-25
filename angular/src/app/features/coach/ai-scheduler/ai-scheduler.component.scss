@@ -261,6 +261,10 @@
   overflow-x: auto;
 }
 
+.periodization-load-bar {
+  height: var(--space-4);
+}
+
 .phase-block {
   flex: 1;
   min-width: var(--input-min-width-md);

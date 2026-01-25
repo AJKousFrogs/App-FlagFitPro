@@ -1,31 +1,7 @@
 /**
  * Card Shell Component Styles
  * Design System Compliant - Card Container Baseline v1.0
- * Refactored January 4, 2026 - Removed ::ng-deep (deprecated)
- *
- * CANONICAL REFERENCE: Player Dashboard cards (progress-card)
- * - Header: inline icon + title, NO background, NO separator
- * - Icon: raw icon (no container), --font-body-size, --color-brand-primary, opacity 0.85
- * - Title: --font-size-h2 (18px), semibold, line-height-tight
- *
- * @see docs/CARD_SHELL_CONTRACT.md
- *
- * Token Usage (LOCKED — extracted from Player Dashboard):
- * - Radius: --radius-lg (8px)
- * - Shadow (rest): --shadow-sm
- * - Shadow (hover): --shadow-md (interactive only)
- * - Border: --border-1 + --color-border-subtle
- * - Header Padding: --space-3 --space-4 --space-2 (top/sides/bottom)
- * - Body Padding: --space-4 (default), --space-3 (compact)
- */
 
-// ============================================
-// HOST
-// ============================================
-
-:host {
-  display: block;
-}
 
 // ============================================
 // BASE CARD SHELL
@@ -375,15 +351,15 @@
     color: var(--color-brand-primary);
   }
   &--warning {
-    background: rgba(245, 158, 11, 0.08); // Warning RGB
+    background: rgba(var(--primitive-warning-500-rgb), 0.08); // Warning RGB
     color: var(--color-status-warning);
   }
   &--error {
-    background: rgba(239, 68, 68, 0.08); // Error RGB
+    background: rgba(var(--primitive-error-500-rgb), 0.08); // Error RGB
     color: var(--color-status-error);
   }
   &--info {
-    background: rgba(59, 130, 246, 0.08); // Info RGB
+    background: rgba(var(--primitive-info-500-rgb), 0.08); // Info RGB
     color: var(--color-status-info);
   }
 }
@@ -429,40 +405,7 @@
 // ============================================
 // TABLE-IN-CARD STANDARD
 // Tables inside cards use flush body + inherit radius
-// Using CSS classes instead of ::ng-deep
-// @see docs/CARD_SHELL_CONTRACT.md §12 Table-in-Card Standard
-// ============================================
 
-// Table inside flush card body - inherit bottom corners
-// Tokens moved to ui-standardization.scss for global consistency.
-
-// Table styling classes to apply in template
-.table-in-card {
-  border: none;
-  box-shadow: none;
-  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-  overflow: hidden;
-
-  // First row - no top border (card header provides separation)
-  .table-row-first td {
-    border-top: none;
-  }
-
-  // Last row - rounded bottom corners
-  .table-row-last td:first-child {
-    border-bottom-left-radius: var(--radius-xl);
-  }
-
-  .table-row-last td:last-child {
-    border-bottom-right-radius: var(--radius-xl);
-  }
-
-  // Table header styling
-  .table-header th {
-    background: var(--surface-secondary);
-    border-top: var(--border-1) solid var(--color-border-default);
-  }
-}
 
 // ============================================
 // TOUCH DEVICE OPTIMIZATIONS
@@ -507,5 +450,40 @@
   .card-shell__footer {
     background: var(--surface-secondary);
     border-color: var(--color-border-default);
+  }
+}
+
+// Using CSS classes instead of encapsulation hacks
+// @see docs/CARD_SHELL_CONTRACT.md §12 Table-in-Card Standard
+// ============================================
+
+// Table inside flush card body - inherit bottom corners
+// Tokens moved to ui-standardization.scss for global consistency.
+
+// Table styling classes to apply in template
+.table-in-card {
+  border: none;
+  box-shadow: none;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  overflow: hidden;
+
+  // First row - no top border (card header provides separation)
+  .table-row-first td {
+    border-top: none;
+  }
+
+  // Last row - rounded bottom corners
+  .table-row-last td:first-child {
+    border-bottom-left-radius: var(--radius-xl);
+  }
+
+  .table-row-last td:last-child {
+    border-bottom-right-radius: var(--radius-xl);
+  }
+
+  // Table header styling
+  .table-header th {
+    background: var(--surface-secondary);
+    border-top: var(--border-1) solid var(--color-border-default);
   }
 }

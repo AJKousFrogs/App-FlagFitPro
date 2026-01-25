@@ -1,14 +1,7 @@
 // ============================================================================
 // toast.component Styles
 // Design System Compliant - Refactored January 4, 2026
-// Removed ::ng-deep (deprecated) - Using CSS custom properties
-// ============================================================================
 
-@use "styles/mixins" as *;
-
-:host {
-  display: block;
-}
 
 /* ================================
    TOAST CONTAINER - Using :host for encapsulation

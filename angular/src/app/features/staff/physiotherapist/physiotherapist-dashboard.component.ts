@@ -937,8 +937,8 @@ const RTP_PHASES = [
           header="Athlete Physiotherapy Profile"
           [(visible)]="showAthleteDialog"
           [modal]="true"
-          [style]="{ width: '700px' }"
           [dismissableMask]="true"
+          styleClass="physio-athlete-dialog"
         >
           @if (selectedAthlete()) {
             <div class="athlete-profile">
@@ -1069,8 +1069,8 @@ const RTP_PHASES = [
           header="Generate Physiotherapy Report"
           [(visible)]="showReportDialog"
           [modal]="true"
-          [style]="{ width: '500px' }"
           [dismissableMask]="true"
+          styleClass="physio-report-dialog"
         >
           <div class="report-form">
             <div class="form-group">
@@ -1111,8 +1111,8 @@ const RTP_PHASES = [
           header="Position-Specific Risk Factors"
           [(visible)]="showPositionRiskDialog"
           [modal]="true"
-          [style]="{ width: '600px' }"
           [dismissableMask]="true"
+          styleClass="physio-risk-dialog"
         >
           @if (viewingPositionRisk()) {
             <div class="position-risk-content">

@@ -3,27 +3,7 @@
 // ============================================================================
 // exercisedb/exercisedb-manager.component Styles
 // Design System Compliant - Refactored January 4, 2026
-// Removed ::ng-deep (deprecated) - Using CSS custom properties and classes
-// ============================================================================
 
-@include stat-block;
-
-.exercisedb-manager {
-  padding: var(--space-6);
-  min-height: 100vh;
-  min-height: 100dvh;
-  background: linear-gradient(
-    135deg,
-    var(--surface-ground) 0%,
-    var(--surface-section) 100%
-  );
-
-  /* ================================================================
-     PRIMENG COMPONENT STYLING VIA CSS CUSTOM PROPERTIES
-     These cascade into PrimeNG components without ::ng-deep
-     ================================================================ */
-
-}
 
 /* Stats Grid */
 .stats-grid {

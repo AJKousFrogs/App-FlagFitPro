@@ -56,7 +56,6 @@ import { AppLoadingComponent } from "../../shared/components/loading/loading.com
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
-import { DIALOG_STYLES } from "../../core/utils/design-tokens.util";
 import {
   PlayerFormData,
   RosterFiltersComponent,
@@ -388,8 +387,8 @@ import {
           (visibleChange)="showDetailsDialog.set($event)"
           [modal]="true"
           header="Player Details"
-          [style]="dialogStyles.playerDetail"
           [closable]="true"
+          styleClass="roster-player-details-dialog"
         >
           @if (selectedPlayer()) {
             <div class="player-details-modal">
@@ -659,8 +658,8 @@ import {
           (visibleChange)="showStatusDialog.set($event)"
           [modal]="true"
           header="Change Player Status"
-          [style]="dialogStyles.form"
           [closable]="true"
+          styleClass="roster-status-dialog"
         >
           <div class="status-dialog-content">
             <p>
@@ -704,8 +703,8 @@ import {
           (visibleChange)="showBulkStatusDialog.set($event)"
           [modal]="true"
           header="Change Status for Selected Players"
-          [style]="dialogStyles.form"
           [closable]="true"
+          styleClass="roster-bulk-status-dialog"
         >
           <div class="status-dialog-content">
             <p>
@@ -750,8 +749,8 @@ import {
           (visibleChange)="showInviteDialog.set($event)"
           [modal]="true"
           header="Invite to Team"
-          [style]="dialogStyles.form"
           [closable]="true"
+          styleClass="roster-invite-dialog"
         >
           <div class="invite-form">
             <div class="form-field">
@@ -811,8 +810,8 @@ import {
           (visibleChange)="showInvitationsDialog.set($event)"
           [modal]="true"
           header="Pending Invitations"
-          [style]="dialogStyles.scrollable"
           [closable]="true"
+          styleClass="roster-invitations-dialog"
         >
           <div class="invitations-list">
             @if (rosterService.pendingInvitations().length === 0) {
@@ -911,9 +910,6 @@ export class RosterComponent implements OnInit {
   private readonly teamMembershipService = inject(TeamMembershipService);
   private toastService = inject(ToastService);
   private confirmationService = inject(ConfirmationService);
-
-  // Design system tokens
-  protected readonly dialogStyles = DIALOG_STYLES;
 
   // Page state
   isPageLoading = signal(true);

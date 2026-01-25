@@ -1,15 +1,7 @@
 // ============================================================================
 // feature-walkthrough.component Styles
 // Design System Compliant - Refactored January 4, 2026
-// Removed ::ng-deep (deprecated) - Using CSS classes and custom properties
-// ============================================================================
 
-@use "styles/mixins" as *;
-
-:host {
-  display: block;
-
-}
 
 /* Dialog content styling via class */
 .walkthrough-dialog {
@@ -202,7 +194,7 @@
   font-weight: var(--ds-font-weight-semibold);
 
   &:hover {
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(var(--primitive-error-500-rgb), 0.1);
   }
 }
 
@@ -291,4 +283,14 @@
     flex-direction: column;
     gap: var(--space-3);
   }
+}
+
+// Removed encapsulation piercing - Using CSS classes and custom properties
+// ============================================================================
+
+@use "styles/mixins" as *;
+
+:host {
+  display: block;
+
 }

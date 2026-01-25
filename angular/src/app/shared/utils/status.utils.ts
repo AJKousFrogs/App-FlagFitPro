@@ -39,6 +39,7 @@ export const statusVariantMap: Record<string, StatusVariant> = {
   scheduled: "info",
   in_progress: "warning",
   "in-progress": "warning",
+  replaced: "neutral",
   started: "info",
   active: "success",
   inactive: "neutral",

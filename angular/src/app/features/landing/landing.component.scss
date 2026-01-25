@@ -131,6 +131,34 @@
   transition-delay: calc(var(--delay, 0) * 0.15s);
 }
 
+.animate-delay-0 {
+  --delay: 0;
+}
+
+.animate-delay-1 {
+  --delay: 1;
+}
+
+.animate-delay-2 {
+  --delay: 2;
+}
+
+.animate-delay-3 {
+  --delay: 3;
+}
+
+.animate-delay-4 {
+  --delay: 4;
+}
+
+.animate-delay-5 {
+  --delay: 5;
+}
+
+.animate-delay-6 {
+  --delay: 6;
+}
+
 .hero-content-visible .animate-item {
   opacity: 1;
   transform: translateY(0);
@@ -341,6 +369,34 @@
   transform: translateY(20px);
   animation: stat-appear 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   animation-delay: calc(0.8s + var(--stat-delay, 0) * 0.1s);
+}
+
+.stat-delay-0 {
+  --stat-delay: 0;
+}
+
+.stat-delay-1 {
+  --stat-delay: 1;
+}
+
+.stat-delay-2 {
+  --stat-delay: 2;
+}
+
+.stat-delay-3 {
+  --stat-delay: 3;
+}
+
+.stat-delay-4 {
+  --stat-delay: 4;
+}
+
+.stat-delay-5 {
+  --stat-delay: 5;
+}
+
+.stat-delay-6 {
+  --stat-delay: 6;
 }
 
 @keyframes stat-appear {
@@ -796,23 +852,7 @@
 
 // ============================================================================
 // Component-specific overrides
-// Migrated from ::ng-deep p-card to app-card-shell
-// ============================================================================
 
-/*
- * Feature cards now use app-card-shell with state="interactive"
- * Card Shell handles: radius, shadow, hover lift, focus ring
- * This layer only handles feature-specific content styling
- * @see docs/CARD_SHELL_CONTRACT.md
- */
-.feature-card {
-  text-align: center;
-
-  // Icon hover animation (content-level, not card-level)
-  .feature-icon-wrapper {
-    transition: transform var(--motion-base) var(--ease-standard);
-  }
-}
 
 // Hover state for icon (card-shell handles card hover)
 @media (hover: hover) and (pointer: fine) {

@@ -226,7 +226,7 @@ import { calculateAge } from "../../../shared/utils/date.utils";
                     <p-progressBar
                       [value]="(limit.current / limit.max) * 100"
                       [showValue]="false"
-                      [style]="{ height: '8px' }"
+                      styleClass="movement-limit-bar"
                     ></p-progressBar>
                   </div>
                 }

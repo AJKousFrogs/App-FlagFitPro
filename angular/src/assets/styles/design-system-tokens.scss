@@ -56,6 +56,7 @@
   --primitive-primary-700-rgb: 8, 153, 73; /* #089949 */
   --primitive-primary-600-rgb: 10, 184, 90; /* #0ab85a */
   --primitive-primary-900-rgb: 3, 109, 53; /* #036d35 */
+  --primitive-primary-500-rgb: 16, 201, 107; /* #10c96b */
   --primitive-primary-rgb: var(--primitive-primary-700-rgb);
 
   /* Neutral Gray Palette */
@@ -97,6 +98,32 @@
   --primitive-warning-900: #78350f;
   --primitive-warning-500-rgb: 245, 158, 11; /* #f59e0b */
 
+  /* Amber Alias (shared with warning scale) */
+  --primitive-amber-500: var(--primitive-warning-500);
+  --primitive-amber-600: var(--primitive-warning-600);
+  --primitive-amber-500-rgb: var(--primitive-warning-500-rgb);
+
+  /* Orange Scale */
+  --primitive-orange-500: var(--ds-primary-orange);
+  --primitive-orange-600: #ea580c;
+  --primitive-orange-500-rgb: var(--ds-primary-orange-rgb);
+
+  /* Gold */
+  --primitive-gold-500: #ffd700;
+  --primitive-gold-500-rgb: 255, 215, 0;
+
+  /* Purple Scale */
+  --primitive-purple-50: #faf5ff;
+  --primitive-purple-400: #a78bfa;
+  --primitive-purple-500: #8b5cf6;
+  --primitive-purple-600: #7c3aed;
+  --primitive-purple-700: #6d28d9;
+  --primitive-purple-500-rgb: 139, 92, 246;
+
+  /* Info Blue */
+  --primitive-info-500: var(--ds-color-info);
+  --primitive-info-500-rgb: 59, 130, 246;
+
   /* Error - Red Scale */
   --primitive-error-50: #fef2f2;
   --primitive-error-100: #fee2e2;
@@ -129,6 +156,23 @@
   --color-brand-secondary-hover: #0ab85a;
   --color-brand-accent: #10c96b;
 
+  /* Accent Purple (visual highlight) */
+  --color-accent-purple: var(--primitive-purple-500);
+  --color-accent-purple-subtle: rgba(var(--primitive-purple-500-rgb), 0.1);
+
+  /* External Brand Colors */
+  --brand-google-blue: #4285f4;
+  --brand-google-green: #34a853;
+  --brand-microsoft-blue: #00a4ef;
+  --brand-microsoft-green: #7fba00;
+  --brand-authy-red: #ec1c24;
+  --brand-authy-pink: #ff6b6b;
+
+  /* Field Visuals */
+  --field-grass-dark: #1e4d2b;
+  --field-grass-light: #2d5a3a;
+  --field-qb-marker: #fbbf24;
+
   /* Surface Colors - Neutrals: Whites, blacks, and grays for backgrounds, text, and fine details */
   --surface-primary: #fff; /* White - main backgrounds */
   --surface-secondary: #f8faf9; /* Off-white - card backgrounds */
@@ -144,6 +188,7 @@
   
   /* Blur Values - for backdrop-filter */
   --blur-sm: 4px;
+  --blur-base: 8px;
   --blur-md: 10px;
   --blur-lg: 20px;
   
@@ -338,6 +383,9 @@
   --hover-shadow-md: 0 4px 16px rgba(8, 153, 73, 0.15);
   --hover-shadow-lg: 0 8px 24px rgba(8, 153, 73, 0.18);
   --hover-shadow-xl: 0 12px 32px rgba(8, 153, 73, 0.22);
+  --shadow-brand-icon: 0 2px 4px rgba(var(--ds-primary-green-rgb), 0.2);
+  --shadow-overlay-md: 0 4px 12px var(--surface-overlay-darkest);
+  --shadow-text-sm: 0 2px 4px var(--surface-overlay-light);
 
   /* Hover Transitions - Premium easing */
   --hover-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -360,6 +408,8 @@
      ================================ */
 
   --space-0: var(--ds-space-0);
+  --space-0-5: 0.125rem; /* 2px */
+  --space-0-75: 0.1875rem; /* 3px */
   --space-1: var(--ds-space-1);
   --space-2: var(--ds-space-2);
   --space-3: var(--ds-space-3);
@@ -637,6 +687,11 @@
   /* Border Tokens (Decision 13) */
   --border-1: 1px;
   --border-2: 2px;
+  --border-3: 3px;
+  --border-4: 4px;
+  --border-5: 5px;
+  --border-6: 6px;
+  --border-8: 8px;
   --color-border-default: var(--primitive-neutral-300);
   --color-border-muted: var(--primitive-neutral-200);
   --color-border-strong: var(--primitive-neutral-400);
@@ -973,6 +1028,13 @@
   --badge-min-width-sm: 3.5rem; /* 56px */
   --badge-min-width-md: 4.375rem; /* 70px */
   --badge-min-width-lg: 5rem; /* 80px */
+
+  /* Fixed Size Tokens */
+  --size-80: 5rem; /* 80px */
+  --size-100: 6.25rem; /* 100px */
+  --size-120: 7.5rem; /* 120px */
+  --size-150: 9.375rem; /* 150px */
+  --size-200: 12.5rem; /* 200px */
 
   /* Avatar/Icon Sizes */
   --avatar-size-xs: 1.25rem; /* 20px */

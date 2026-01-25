@@ -200,7 +200,7 @@ interface TeamOption {
                 <p-progressBar
                   [value]="overview()?.sessionCompletionRate || 0"
                   [showValue]="false"
-                  [style]="{ height: '6px', marginTop: 'var(--space-2)' }"
+                  styleClass="session-completion-bar"
                 ></p-progressBar>
               </div>
             </div>
@@ -358,7 +358,7 @@ interface TeamOption {
               >
                 <ng-template pTemplate="header">
                   <tr>
-                    <th style="width: 3rem">#</th>
+                    <th class="leaderboard-rank-col">#</th>
                     <th>Athlete</th>
                     <th>Done</th>
                     <th>%</th>

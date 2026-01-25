@@ -54,7 +54,7 @@
     box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
+    transform: var(--transform-hover-lift);
     box-shadow: var(--shadow-md);
   }
 
@@ -70,6 +70,14 @@
     justify-content: space-between;
     padding: var(--space-3) var(--space-4);
   }
+}
+
+.stat-card--clickable {
+  cursor: pointer;
+}
+
+.status-tag-link {
+  cursor: pointer;
 }
 
 .stat-icon {
@@ -103,7 +111,7 @@
 
 .stat-block__label {
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-secondary);
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-1);
   font-weight: var(--ds-font-weight-medium);
 
@@ -116,7 +124,7 @@
 .stat-block__value {
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
-  color: var(--ds-text-primary);
+  color: var(--color-text-primary);
   line-height: var(--ds-line-height-h1);
 
   // Mobile: Smaller value
@@ -179,7 +187,7 @@
 .welcome-greeting {
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
-  color: var(--ds-text-primary);
+  color: var(--color-text-primary);
   margin: 0 0 var(--space-2) 0;
 
   // Mobile: Smaller heading
@@ -194,7 +202,7 @@
 
 .merlin-insight {
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-secondary);
+  color: var(--color-text-secondary);
   line-height: var(--ds-line-height-relaxed);
   margin-bottom: var(--space-3);
 
@@ -271,7 +279,7 @@
   padding: var(--space-3);
   background: var(--surface-ground);
   border-radius: var(--radius-md);
-  border-left: var(--space-1) solid var(--ds-primary-green); /* 4px - closest token to 3px */
+  border-left: var(--border-4) solid var(--ds-primary-green); /* 4px - closest token to 3px */
 
   // Mobile: Compact padding
   @include respond-to(md) {
@@ -281,7 +289,7 @@
 
 .schedule-time {
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-tertiary);
+  color: var(--color-text-tertiary);
   font-weight: var(--ds-font-weight-medium);
 
   @include respond-to(md) {
@@ -291,7 +299,7 @@
 
 .schedule-title {
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-primary);
+  color: var(--color-text-primary);
   font-weight: var(--ds-font-weight-semibold);
   margin: var(--space-1) 0;
 
@@ -346,7 +354,7 @@
   &:focus-visible {
     border-color: var(--ds-primary-green);
     background: var(--ds-primary-green-subtle);
-    transform: translateY(-2px);
+    transform: var(--transform-hover-lift);
     box-shadow: var(--shadow-2);
   }
 
@@ -382,7 +390,7 @@
 .action-label {
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--ds-text-primary);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-1);
 
   @include respond-to(md) {
@@ -392,7 +400,7 @@
 
 .action-description {
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-secondary);
+  color: var(--color-text-secondary);
 
   @include respond-to(md) {
     font-size: var(--ds-font-size-xs);
@@ -434,8 +442,8 @@
   width: var(--space-20); /* 80px */
   height: var(--space-20); /* 80px */
   border-radius: var(--radius-full);
-  background: var(--primitive-error-50);
-  color: var(--primitive-error-500);
+  background: var(--color-status-error-subtle);
+  color: var(--color-status-error);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -452,7 +460,7 @@
 .no-program-title {
   font-size: var(--ds-font-size-3xl);
   font-weight: var(--ds-font-weight-bold);
-  color: var(--ds-text-primary);
+  color: var(--color-text-primary);
   margin-bottom: var(--space-2);
 
   @include respond-to(md) {
@@ -462,7 +470,7 @@
 
 .no-program-message {
   font-size: var(--ds-font-size-md);
-  color: var(--ds-text-secondary);
+  color: var(--color-text-secondary);
   max-width: var(--content-max-width-sm); /* 640px - closest token to 600px */
   margin: 0 auto var(--space-4);
   line-height: var(--ds-line-height-relaxed);
@@ -509,8 +517,8 @@
   border-radius: var(--radius-lg);
   background: linear-gradient(
     135deg,
-    var(--primitive-info-500) 0%,
-    var(--primitive-info-600) 100%
+    var(--color-status-info) 0%,
+    var(--color-status-success) 100%
   );
   color: white;
   display: flex;
@@ -537,7 +545,7 @@
 .acwr-progress-title {
   font-size: var(--ds-font-size-sm);
   font-weight: var(--ds-font-weight-semibold);
-  color: var(--ds-text-primary);
+  color: var(--color-text-primary);
 
   @include respond-to(md) {
     font-size: var(--ds-font-size-xs);
@@ -563,8 +571,8 @@
   height: 100%;
   background: linear-gradient(
     90deg,
-    var(--primitive-info-500) 0%,
-    var(--primitive-success-500) 100%
+    var(--color-status-info) 0%,
+    var(--color-status-success) 100%
   );
   border-radius: var(--radius-full);
   transition: width var(--transition-slow) var(--ease-standard);
@@ -573,7 +581,7 @@
 .acwr-progress-text {
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
-  color: var(--ds-text-secondary);
+  color: var(--color-text-secondary);
   white-space: nowrap;
 
   @include respond-to(md) {
@@ -583,7 +591,7 @@
 
 .acwr-help-text {
   font-size: var(--ds-font-size-xs);
-  color: var(--ds-text-tertiary);
+  color: var(--color-text-tertiary);
   font-style: italic;
 }
 

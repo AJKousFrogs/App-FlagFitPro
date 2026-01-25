@@ -193,14 +193,14 @@ const ROUTES = [
             [(ngModel)]="formationFilter"
             placeholder="Formation"
             [showClear]="true"
-            [style]="{ width: '150px' }"
+            styleClass="playbook-filter-select"
           ></p-select>
           <p-select
             [options]="situationOptions"
             [(ngModel)]="situationFilter"
             placeholder="Situation"
             [showClear]="true"
-            [style]="{ width: '150px' }"
+            styleClass="playbook-filter-select"
           ></p-select>
         </div>
 
@@ -275,7 +275,7 @@ const ROUTES = [
                   <p-progressBar
                     [value]="play.teamMemorized"
                     [showValue]="false"
-                    [style]="{ height: '8px' }"
+                    styleClass="memorization-progress"
                   ></p-progressBar>
                   @if (play.teamMemorized < 70) {
                     <span class="mem-warning">⚠️ Low memorization</span>
@@ -334,7 +334,6 @@ const ROUTES = [
         [(visible)]="showPlayDialog"
         [header]="isEditing() ? 'Edit Play' : 'Create New Play'"
         [modal]="true"
-        [style]="{ width: '95vw', maxWidth: '900px' }"
         styleClass="play-dialog"
       >
         <div class="play-form">
@@ -511,7 +510,7 @@ const ROUTES = [
         [(visible)]="showStatsDialog"
         header="Memorization Stats"
         [modal]="true"
-        [style]="{ width: '90vw', maxWidth: '600px' }"
+        styleClass="play-stats-dialog"
       >
         @if (selectedPlay()) {
           <div class="stats-content">

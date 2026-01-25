@@ -6,13 +6,13 @@
 .settings-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5, var(--ds-font-size-xl));
+  gap: var(--space-5);
 }
 
 .form-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
 }
 
 .form-section h4 {
@@ -20,8 +20,8 @@
   font-size: var(--ds-font-size-md);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--color-text-primary);
-  padding-bottom: var(--space-2, 8px);
-  border-bottom: 1px solid var(--primitive-neutral-200);
+  padding-bottom: var(--space-2);
+  border-bottom: var(--border-1) solid var(--primitive-neutral-200);
 }
 
 .section-description {
@@ -30,6 +30,13 @@
   color: var(--color-text-secondary);
 }
 
+.section-description--note {
+  margin-top: var(--space-2);
+}
+
+.full-width {
+  width: 100%;
+}
 .form-field {
   display: flex;
   flex-direction: column;
@@ -54,16 +61,16 @@
 /* Practice Slots */
 .practice-slot {
   background: var(--primitive-neutral-50);
-  border: 1px solid var(--primitive-neutral-200);
-  border-radius: var(--radius-md, 6px);
-  padding: var(--space-3, var(--ds-font-size-xs));
+  border: var(--border-1) solid var(--primitive-neutral-200);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
 }
 
 .slot-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-2, 8px);
+  margin-bottom: var(--space-2);
 }
 
 .day-name {
@@ -73,7 +80,7 @@
 
 .slot-times {
   display: flex;
-  gap: var(--space-3, var(--ds-font-size-xs));
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
@@ -118,7 +125,7 @@
   padding: var(--space-2) var(--space-3);
   background: var(--surface-secondary);
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border-secondary);
+  border: var(--border-1) solid var(--color-border-secondary);
 }
 
 .routine-label {
@@ -134,7 +141,7 @@
 }
 
 .routine-time-input {
-  width: 100px;
+  width: var(--size-100);
   font-size: var(--ds-font-size-md);
   padding: var(--space-1) var(--space-2);
 }

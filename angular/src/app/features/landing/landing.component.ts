@@ -39,7 +39,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
 
       <div class="hero-container">
         <div class="hero-content" [class.hero-content-visible]="isLoaded()">
-          <div class="hero-logo-wrapper animate-item" style="--delay: 0">
+          <div class="hero-logo-wrapper animate-item animate-delay-0">
             <div class="hero-logo">
               <span class="merlin-icon">🏈</span>
             </div>
@@ -47,7 +47,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
           </div>
 
           <!-- Olympic Countdown Timer -->
-          <div class="olympic-countdown animate-item" style="--delay: 1">
+          <div class="olympic-countdown animate-item animate-delay-1">
             <div class="countdown-label">
               <span class="countdown-label-text">TIME LEFT UNTIL THE</span>
               <span class="countdown-label-event">LA28 OLYMPIC GAMES</span>
@@ -83,19 +83,19 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
             </div>
           </div>
 
-          <h1 class="hero-title animate-item" style="--delay: 2">
+          <h1 class="hero-title animate-item animate-delay-2">
             Elevate Your
             <span class="hero-title-accent">Flag Football</span>
             Game
           </h1>
 
-          <p class="hero-description animate-item" style="--delay: 3">
+          <p class="hero-description animate-item animate-delay-3">
             The ultimate training and competition platform for serious players.
             Track performance, join tournaments, and connect with a community
             that shares your passion for the game.
           </p>
 
-          <div class="hero-actions animate-item" style="--delay: 4">
+          <div class="hero-actions animate-item animate-delay-4">
             <app-button
               size="lg"
               iconLeft="pi-arrow-right"
@@ -111,9 +111,9 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
             >
           </div>
 
-          <div class="hero-stats animate-item" style="--delay: 5">
+          <div class="hero-stats animate-item animate-delay-5">
             @for (stat of heroStats; track stat.label) {
-              <div class="hero-stat" [style.--stat-delay]="$index">
+              <div class="hero-stat" [ngClass]="'stat-delay-' + $index">
                 <div class="hero-stat-number">{{ stat.value }}</div>
                 <div class="hero-stat-label">{{ stat.label }}</div>
               </div>
@@ -121,7 +121,7 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
           </div>
 
           <!-- Scroll indicator -->
-          <div class="scroll-indicator animate-item" style="--delay: 6">
+          <div class="scroll-indicator animate-item animate-delay-6">
             <div class="scroll-mouse">
               <div class="scroll-wheel"></div>
             </div>

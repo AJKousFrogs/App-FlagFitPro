@@ -71,6 +71,9 @@ export interface TrainingSession {
   workload?: number;
   /** Whether session is locked by coach */
   coach_locked?: boolean;
+  /** Optional session metrics (sprints, cuts, throws, jumps) */
+  session_metrics?: Record<string, unknown>;
+  completed_at?: string;
   created_at?: string;
   updated_at?: string;
   /** Soft delete timestamp */
