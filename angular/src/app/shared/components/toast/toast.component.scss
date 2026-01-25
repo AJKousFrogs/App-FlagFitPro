@@ -1,7 +1,8 @@
 // ============================================================================
 // toast.component Styles
 // Design System Compliant - Refactored January 4, 2026
-
+// ============================================================================
+@use "styles/mixins" as *;
 
 /* ================================
    TOAST CONTAINER - Using :host for encapsulation

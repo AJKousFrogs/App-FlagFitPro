@@ -1,9 +1,8 @@
 // ============================================================================
 // page-header.component Styles
 // Design System Compliant - Refactored January 5, 2026
-
- * 
-
+// ============================================================================
+@use "styles/mixins" as *;
 
 /* Uses standardized layout-system.scss classes */
 .page-header {
@@ -68,8 +67,6 @@
 
  * This eliminates the need to pierce encapsulation.
  */
-
-@use "styles/mixins" as *;
 
 :host {
   // Inherit display from CSS custom property, default to block

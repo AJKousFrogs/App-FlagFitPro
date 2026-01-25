@@ -55,7 +55,7 @@ interface TrainingSession {
 
 interface CalendarDateMarker {
   date: Date;
-  status: "scheduled" | "completed" | "missed" | "in_progress";
+  status: "scheduled" | "completed" | "missed" | "in_progress" | "replaced";
   sessionType: string;
   tooltip: string;
 }

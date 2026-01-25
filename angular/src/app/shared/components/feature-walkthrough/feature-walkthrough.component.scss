@@ -1,7 +1,8 @@
 // ============================================================================
 // feature-walkthrough.component Styles
 // Design System Compliant - Refactored January 4, 2026
-
+// ============================================================================
+@use "styles/mixins" as *;
 
 /* Dialog content styling via class */
 .walkthrough-dialog {
@@ -288,9 +289,6 @@
 // Removed encapsulation piercing - Using CSS classes and custom properties
 // ============================================================================
 
-@use "styles/mixins" as *;
-
 :host {
   display: block;
-
 }

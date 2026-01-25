@@ -82,10 +82,11 @@
   flex-direction: column;
   gap: var(--space-6);
   @include page-container(var(--content-max-width-2xl));
+}
 
-  /* ================================================================
-     PRIMENG COMPONENT STYLING VIA CSS CUSTOM PROPERTIES
-     ================================================================ */
+/* ================================================================
+   PRIMENG COMPONENT STYLING VIA CSS CUSTOM PROPERTIES
+   ================================================================ */
 
 .header-content {
   display: flex;
@@ -1396,7 +1397,8 @@
 }
 
 /* ============================================
-
+   AUTHOR AVATAR
+   ============================================ */
 
 .author-avatar {
   width: var(--space-12);
