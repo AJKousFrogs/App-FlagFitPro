@@ -5,7 +5,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -152,7 +152,7 @@ interface ReportPrivacySettings {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -422,7 +422,9 @@ interface ReportPrivacySettings {
                     <div class="dual-cards">
                       <p-card header="Sleep Patterns">
                         <div class="sleep-stats">
-                          <div class="sleep-stat stat-block stat-block--compact">
+                          <div
+                            class="sleep-stat stat-block stat-block--compact"
+                          >
                             <div class="stat-block__content">
                               <span class="stat-block__value"
                                 >{{
@@ -434,7 +436,9 @@ interface ReportPrivacySettings {
                               <span class="stat-block__label">Avg Sleep</span>
                             </div>
                           </div>
-                          <div class="sleep-stat stat-block stat-block--compact">
+                          <div
+                            class="sleep-stat stat-block stat-block--compact"
+                          >
                             <div class="stat-block__content">
                               <span class="stat-block__value"
                                 >{{
@@ -446,10 +450,13 @@ interface ReportPrivacySettings {
                               <span class="stat-block__label">Quality</span>
                             </div>
                           </div>
-                          <div class="sleep-stat stat-block stat-block--compact">
+                          <div
+                            class="sleep-stat stat-block stat-block--compact"
+                          >
                             <div class="stat-block__content">
                               <span class="stat-block__value">{{
-                                currentWellnessData()!.sleepPatterns.sleepDebtDays
+                                currentWellnessData()!.sleepPatterns
+                                  .sleepDebtDays
                               }}</span>
                               <span class="stat-block__label">Debt Days</span>
                             </div>
@@ -1707,12 +1714,14 @@ export class PsychologyReportsComponent implements OnInit {
   getPrioritySeverity(
     priority: string,
   ): "success" | "info" | "warning" | "danger" {
-    const priorityMap: Record<string, "success" | "info" | "warning" | "danger"> =
-      {
-        low: "info",
-        medium: "warning",
-        high: "danger",
-      };
+    const priorityMap: Record<
+      string,
+      "success" | "info" | "warning" | "danger"
+    > = {
+      low: "info",
+      medium: "warning",
+      high: "danger",
+    };
     return priorityMap[priority] || "info";
   }
 

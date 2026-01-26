@@ -18,7 +18,7 @@ import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import {
   aiCoachStatusSeverityMap,
-  getMappedStatusSeverity
+  getMappedStatusSeverity,
 } from "../../utils/status.utils";
 import { Textarea } from "primeng/textarea";
 import { Tooltip } from "primeng/tooltip";
@@ -127,7 +127,9 @@ interface CoachVisibilityRecord {
             <i class="pi pi-clock"></i>
           </div>
           <div class="stat-content">
-            <span class="stat-block__value">{{ pendingRecommendations() }}</span>
+            <span class="stat-block__value">{{
+              pendingRecommendations()
+            }}</span>
             <span class="stat-block__label">Pending Actions</span>
           </div>
         </div>
@@ -165,7 +167,11 @@ interface CoachVisibilityRecord {
                     <span class="player-name">{{
                       alert.player_name || "Player"
                     }}</span>
-                    <app-status-tag value="High Risk" severity="danger" size="sm" />
+                    <app-status-tag
+                      value="High Risk"
+                      severity="danger"
+                      size="sm"
+                    />
                   </div>
                   <p class="alert-message">
                     {{

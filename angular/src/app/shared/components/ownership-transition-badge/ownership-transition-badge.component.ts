@@ -11,7 +11,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  input
+  input,
 } from "@angular/core";
 
 import { StatusTagComponent } from "../status-tag/status-tag.component";

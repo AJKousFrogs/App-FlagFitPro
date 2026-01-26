@@ -1,11 +1,11 @@
 /**
  * Utility functions for handling errors and converting unknown types to Error objects
  * @module core/utils/error-utils
- * 
+ *
  * This module provides:
  * - toError: Convert unknown error to Error instance
  * - toLogContext: Convert unknown value to LogContext
- * 
+ *
  * NOTE: getErrorMessage is re-exported from shared/utils/error.utils.ts
  * which is the canonical implementation with additional features.
  */

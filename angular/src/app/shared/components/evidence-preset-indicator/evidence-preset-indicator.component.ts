@@ -123,7 +123,10 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             <h4 class="font-semibold mb-3">ACWR Thresholds</h4>
             <div class="science-notes science-info-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-info-circle science-icon mt-1" aria-hidden="true"></i>
+                <i
+                  class="pi pi-info-circle science-icon mt-1"
+                  aria-hidden="true"
+                ></i>
                 <div>
                   <div class="font-semibold mb-1">Science (Research-Based)</div>
                   <div class="text-sm text-text-secondary">
@@ -181,7 +184,10 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             <h4 class="font-semibold mb-3">Readiness Scoring</h4>
             <div class="science-notes science-info-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-info-circle science-icon mt-1" aria-hidden="true"></i>
+                <i
+                  class="pi pi-info-circle science-icon mt-1"
+                  aria-hidden="true"
+                ></i>
                 <div>
                   <div class="font-semibold mb-2">Science (Research-Based)</div>
                   <div class="text-sm text-text-secondary mb-2">
@@ -239,7 +245,10 @@ import { EvidencePreset } from "../../../core/config/evidence-config";
             <h4 class="font-semibold mb-3">Tapering Protocols</h4>
             <div class="science-notes science-info-box rounded-lg p-4 mb-3">
               <div class="flex items-start gap-2">
-                <i class="pi pi-info-circle science-icon mt-1" aria-hidden="true"></i>
+                <i
+                  class="pi pi-info-circle science-icon mt-1"
+                  aria-hidden="true"
+                ></i>
                 <div>
                   <div class="font-semibold mb-2">Science (Research-Based)</div>
                   <div class="text-sm text-text-secondary mb-2">

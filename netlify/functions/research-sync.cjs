@@ -1337,9 +1337,7 @@ exports.handler = async (event, _context) => {
     };
   } catch (error) {
     console.error("Research sync error:", error);
-    return withHeaders(
-      createErrorResponse(error.message, 500, "server_error"),
-    );
+    return withHeaders(createErrorResponse(error.message, 500, "server_error"));
   }
 };
 

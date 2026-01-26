@@ -25,7 +25,7 @@ import { POSITION_FILTER_OPTIONS, STATUS_OPTIONS } from "../roster.models";
     Select,
     ButtonComponent,
     IconButtonComponent,
-    SearchInputComponent
+    SearchInputComponent,
   ],
   template: `
     <div class="search-filter-bar ds-toolbar ds-toolbar--card">

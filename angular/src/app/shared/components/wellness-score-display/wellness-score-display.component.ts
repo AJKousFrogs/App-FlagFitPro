@@ -25,7 +25,7 @@ import {
   signal,
   ChangeDetectionStrategy,
   OnInit,
-  DestroyRef
+  DestroyRef,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
@@ -69,7 +69,7 @@ export interface WellnessMetric {
     Tooltip,
     Skeleton,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <!-- Loading State -->
@@ -314,92 +314,95 @@ export class WellnessScoreDisplayComponent implements OnInit {
   loadWellnessData(): void {
     this.loading.set(true);
 
-    this.wellnessService.getWellnessData("7d").pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (response) => {
-        if (response.success && response.data && response.data.length > 0) {
-          const latestData = response.data[0];
-          const score = this.wellnessService.getWellnessScore(latestData);
-          const status = this.wellnessService.getWellnessStatus(score);
+    this.wellnessService
+      .getWellnessData("7d")
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data && response.data.length > 0) {
+            const latestData = response.data[0];
+            const score = this.wellnessService.getWellnessScore(latestData);
+            const status = this.wellnessService.getWellnessStatus(score);
 
-          this.overallScore.set(Math.round(score * 10));
-          this.statusLabel.set(status.status);
-          this.statusColor.set(status.color);
+            this.overallScore.set(Math.round(score * 10));
+            this.statusLabel.set(status.status);
+            this.statusColor.set(status.color);
 
-          // Build metrics array
-          const metricsData: WellnessMetric[] = [];
+            // Build metrics array
+            const metricsData: WellnessMetric[] = [];
 
-          if (latestData.sleep) {
-            metricsData.push({
-              icon: "pi-moon",
-              label: "Sleep",
-              value: `${latestData.sleep}h`,
-              color: COLORS.INFO,
-              score: latestData.sleep,
-            });
+            if (latestData.sleep) {
+              metricsData.push({
+                icon: "pi-moon",
+                label: "Sleep",
+                value: `${latestData.sleep}h`,
+                color: COLORS.INFO,
+                score: latestData.sleep,
+              });
+            }
+
+            if (latestData.energy) {
+              metricsData.push({
+                icon: "pi-bolt",
+                label: "Energy",
+                value: `${latestData.energy}/10`,
+                color: COLORS.WARNING,
+                score: latestData.energy,
+              });
+            }
+
+            if (latestData.stress !== undefined && latestData.stress !== null) {
+              const stressLabel =
+                latestData.stress <= 3
+                  ? "Low"
+                  : latestData.stress <= 6
+                    ? "Moderate"
+                    : "High";
+              metricsData.push({
+                icon: "pi-shield",
+                label: "Stress",
+                value: stressLabel,
+                color:
+                  latestData.stress <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.AMBER,
+                score: 10 - latestData.stress, // Invert for display
+              });
+            }
+
+            if (latestData.soreness !== undefined) {
+              metricsData.push({
+                icon: "pi-heart",
+                label: "Soreness",
+                value: `${latestData.soreness}/10`,
+                color:
+                  latestData.soreness <= 3
+                    ? COLORS.PRIMARY_LIGHT
+                    : COLORS.ERROR,
+                score: 10 - latestData.soreness,
+              });
+            }
+
+            if (latestData.hydration !== undefined) {
+              metricsData.push({
+                icon: "pi-cloud",
+                label: "Hydration",
+                value: `${latestData.hydration}/10`,
+                color: COLORS.INFO,
+                score: latestData.hydration,
+              });
+            }
+
+            this.metrics.set(metricsData);
+          } else {
+            this.setNoDataState();
           }
-
-          if (latestData.energy) {
-            metricsData.push({
-              icon: "pi-bolt",
-              label: "Energy",
-              value: `${latestData.energy}/10`,
-              color: COLORS.WARNING,
-              score: latestData.energy,
-            });
-          }
-
-          if (latestData.stress !== undefined && latestData.stress !== null) {
-            const stressLabel =
-              latestData.stress <= 3
-                ? "Low"
-                : latestData.stress <= 6
-                  ? "Moderate"
-                  : "High";
-            metricsData.push({
-              icon: "pi-shield",
-              label: "Stress",
-              value: stressLabel,
-              color:
-                latestData.stress <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.AMBER,
-              score: 10 - latestData.stress, // Invert for display
-            });
-          }
-
-          if (latestData.soreness !== undefined) {
-            metricsData.push({
-              icon: "pi-heart",
-              label: "Soreness",
-              value: `${latestData.soreness}/10`,
-              color:
-                latestData.soreness <= 3 ? COLORS.PRIMARY_LIGHT : COLORS.ERROR,
-              score: 10 - latestData.soreness,
-            });
-          }
-
-          if (latestData.hydration !== undefined) {
-            metricsData.push({
-              icon: "pi-cloud",
-              label: "Hydration",
-              value: `${latestData.hydration}/10`,
-              color: COLORS.INFO,
-              score: latestData.hydration,
-            });
-          }
-
-          this.metrics.set(metricsData);
-        } else {
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.logger.error("Error loading wellness data:", err);
           this.setNoDataState();
-        }
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.logger.error("Error loading wellness data:", err);
-        this.setNoDataState();
-        this.loading.set(false);
-      },
-    });
+          this.loading.set(false);
+        },
+      });
   }
 
   private setNoDataState(): void {

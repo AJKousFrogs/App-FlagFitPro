@@ -14,7 +14,7 @@
   align-items: center;
   justify-content: center;
   background: var(--surface-overlay);
-  
+
   // Start hidden but NOT with opacity transition on first render
   // Use visibility + opacity for proper animation without initial blur
   visibility: hidden;
@@ -24,12 +24,16 @@
 .aria-dialog-backdrop.visible {
   visibility: visible;
   opacity: 1;
-  transition: opacity var(--transition-base) ease, visibility 0s linear;
+  transition:
+    opacity var(--transition-base) ease,
+    visibility 0s linear;
 }
 
 // Ensure backdrop doesn't transition on close (instant hide after fade)
 .aria-dialog-backdrop:not(.visible) {
-  transition: opacity var(--transition-base) ease, visibility 0s linear var(--transition-base);
+  transition:
+    opacity var(--transition-base) ease,
+    visibility 0s linear var(--transition-base);
 }
 
 .aria-dialog {
@@ -108,7 +112,7 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  
+
   // Centralized state handling
   @include states.ds-dialog-close-states;
 }
@@ -149,7 +153,7 @@
   .aria-dialog-backdrop.visible .aria-dialog {
     animation: none;
   }
-  
+
   .aria-dialog-backdrop {
     transition: none;
   }

@@ -1008,7 +1008,9 @@ export class UnifiedTrainingService {
     const userId = this.userId();
     // Return empty array if no user - don't show fake workouts
     if (!userId) {
-      this.logger.info("[UnifiedTrainingService] No user ID - returning empty workouts");
+      this.logger.info(
+        "[UnifiedTrainingService] No user ID - returning empty workouts",
+      );
       return [];
     }
 
@@ -1037,7 +1039,9 @@ export class UnifiedTrainingService {
 
     // Return empty array if no scheduled workouts - don't show fake defaults
     if (!data || data.length === 0) {
-      this.logger.info("[UnifiedTrainingService] No scheduled workouts for today");
+      this.logger.info(
+        "[UnifiedTrainingService] No scheduled workouts for today",
+      );
       return [];
     }
     return data.map((w) => this.transformToWorkout(w));
@@ -1073,7 +1077,7 @@ export class UnifiedTrainingService {
       };
 
       const score = this.calculateReadinessScore(wellnessData);
-      
+
       // If no score could be calculated (missing required data), return with null score
       if (score === null) {
         return {
@@ -1082,7 +1086,7 @@ export class UnifiedTrainingService {
           readinessStatus: "unknown" as ReadinessStatus,
         };
       }
-      
+
       const status = this.getReadinessStatus(score);
       return {
         alert: this.generateWellnessAlert(score, status),
@@ -1104,19 +1108,21 @@ export class UnifiedTrainingService {
 
   /**
    * Calculate readiness score from wellness check-in data
-   * 
+   *
    * IMPORTANT: Returns null if required data is missing.
    * DO NOT use default values - readiness must be calculated from real user input.
-   * 
+   *
    * Required: sleep_quality AND energy_level (minimum for valid calculation)
-   * 
+   *
    * Evidence-based weights (team-sport optimized):
    * - Sleep: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
    * - Energy: 25% (correlates with perceived performance)
    * - Stress: 25% (inverted - lower stress = better readiness)
    * - Soreness: 20% (inverted - lower soreness = better readiness)
    */
-  private calculateReadinessScore(wellness: WellnessCheckinRecord): number | null {
+  private calculateReadinessScore(
+    wellness: WellnessCheckinRecord,
+  ): number | null {
     // Get values without defaults - we need real data
     const sleep = wellness.sleep_quality ?? wellness.sleep ?? null;
     const energy = wellness.energy_level ?? wellness.energy ?? null;
@@ -1126,7 +1132,7 @@ export class UnifiedTrainingService {
     // CRITICAL: Require at least sleep AND energy for valid calculation
     if (sleep === null || energy === null) {
       this.logger.warn(
-        "[UnifiedTrainingService] Cannot calculate readiness: missing required fields (sleep and/or energy)"
+        "[UnifiedTrainingService] Cannot calculate readiness: missing required fields (sleep and/or energy)",
       );
       return null;
     }
@@ -1145,24 +1151,18 @@ export class UnifiedTrainingService {
       const stressScore = ((10 - stress) / 10) * 100; // Invert
       const sorenessScore = ((10 - soreness) / 10) * 100; // Invert
       score =
-        sleepScore * 0.30 +
+        sleepScore * 0.3 +
         energyScore * 0.25 +
         stressScore * 0.25 +
-        sorenessScore * 0.20;
+        sorenessScore * 0.2;
     } else if (hasStress) {
       // Sleep, energy, stress (redistribute soreness weight)
       const stressScore = ((10 - stress) / 10) * 100;
-      score = 
-        sleepScore * 0.375 + 
-        energyScore * 0.3125 + 
-        stressScore * 0.3125;
+      score = sleepScore * 0.375 + energyScore * 0.3125 + stressScore * 0.3125;
     } else if (hasSoreness) {
       // Sleep, energy, soreness (redistribute stress weight)
       const sorenessScore = ((10 - soreness) / 10) * 100;
-      score = 
-        sleepScore * 0.40 + 
-        energyScore * 0.333 + 
-        sorenessScore * 0.267;
+      score = sleepScore * 0.4 + energyScore * 0.333 + sorenessScore * 0.267;
     } else {
       // Minimal: sleep and energy only
       score = sleepScore * 0.55 + energyScore * 0.45;
@@ -1566,7 +1566,11 @@ export class UnifiedTrainingService {
       schedule: [],
       workouts: [], // Empty - no fake workouts
       achievements: [],
-      wellnessData: { alert: null, readinessScore: null, readinessStatus: "unknown" },
+      wellnessData: {
+        alert: null,
+        readinessScore: null,
+        readinessStatus: "unknown",
+      },
       userName: "Athlete",
       lastRefresh: new Date(),
     };

@@ -63,10 +63,7 @@ const meta: Meta<ButtonComponent> = {
   tags: ["autodocs"],
   decorators: [
     moduleMetadata({
-      imports: [
-        ButtonComponent,
-        IconButtonComponent
-      ],
+      imports: [ButtonComponent, IconButtonComponent],
     }),
   ],
   argTypes: {
@@ -412,9 +409,7 @@ const iconButtonMeta: Meta<IconButtonComponent> = {
   tags: ["autodocs"],
   decorators: [
     moduleMetadata({
-      imports: [
-        IconButtonComponent
-      ],
+      imports: [IconButtonComponent],
     }),
   ],
   argTypes: {

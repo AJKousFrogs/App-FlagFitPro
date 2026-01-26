@@ -20,7 +20,7 @@ import {
   inject,
   OnDestroy,
   signal,
-  viewChild
+  viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -34,7 +34,7 @@ import { Subject } from "rxjs";
 import { debounceTime, distinctUntilChanged, tap } from "rxjs/operators";
 import {
   SearchResult,
-  SearchService
+  SearchService,
 } from "../../../core/services/search.service";
 
 /** Debounce delay for search input in milliseconds */
@@ -47,13 +47,7 @@ const SUGGESTION_DEBOUNCE_MS = 150;
   selector: "app-search-panel",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    FormsModule,
-    InputText,
-    Dialog,
-    IconButtonComponent
-  ],
+  imports: [RouterModule, FormsModule, InputText, Dialog, IconButtonComponent],
   templateUrl: "./search-panel.component.html",
   styleUrl: "./search-panel.component.scss",
 })

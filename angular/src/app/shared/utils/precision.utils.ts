@@ -21,7 +21,12 @@
  * roundToPrecision(NaN, 2)    // 0
  */
 export function roundToPrecision(value: number, decimals: number = 2): number {
-  if (value === null || value === undefined || isNaN(value) || !isFinite(value)) {
+  if (
+    value === null ||
+    value === undefined ||
+    isNaN(value) ||
+    !isFinite(value)
+  ) {
     return 0;
   }
 
@@ -229,7 +234,12 @@ export function formatNumberSafe(
   decimals: number = 2,
   fallback: string = "—",
 ): string {
-  if (value === null || value === undefined || isNaN(value) || !isFinite(value)) {
+  if (
+    value === null ||
+    value === undefined ||
+    isNaN(value) ||
+    !isFinite(value)
+  ) {
     return fallback;
   }
   return value.toFixed(decimals);

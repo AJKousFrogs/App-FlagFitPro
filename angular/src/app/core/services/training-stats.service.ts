@@ -73,7 +73,9 @@ export class TrainingStatsService {
     if (!stats) return 0;
     return Math.min(
       100,
-      Math.round((stats.sessionsThisWeek / TRAINING.MAX_SESSIONS_PER_WEEK) * 100)
+      Math.round(
+        (stats.sessionsThisWeek / TRAINING.MAX_SESSIONS_PER_WEEK) * 100,
+      ),
     );
   });
 
@@ -95,7 +97,9 @@ export class TrainingStatsService {
     // Build query
     let query = this.supabase.client
       .from("training_sessions")
-      .select("session_date, duration_minutes, workload, intensity_level, status")
+      .select(
+        "session_date, duration_minutes, workload, intensity_level, status",
+      )
       .eq("user_id", userId)
       .eq("status", "completed")
       .order("session_date", { ascending: false });
@@ -127,7 +131,7 @@ export class TrainingStatsService {
         this._error.set(err.message);
         this.logger.error("Failed to calculate training stats", err);
         return of({ data: null, error: err.message });
-      })
+      }),
     );
   }
 
@@ -150,7 +154,7 @@ export class TrainingStatsService {
         .eq("user_id", userId)
         .eq("status", "completed")
         .order("session_date", { ascending: false })
-        .limit(100)
+        .limit(100),
     ).pipe(
       map((response) => {
         if (response.error) {
@@ -160,7 +164,9 @@ export class TrainingStatsService {
           };
         }
 
-        const dates = (response.data || []).map((s) => s.session_date as string);
+        const dates = (response.data || []).map(
+          (s) => s.session_date as string,
+        );
         const streakInfo = this.calculateStreakInfo(dates);
 
         return { data: streakInfo, error: null };
@@ -171,7 +177,7 @@ export class TrainingStatsService {
           data: { current: 0, longest: 0, lastTrainingDate: null },
           error: err.message,
         });
-      })
+      }),
     );
   }
 
@@ -192,25 +198,25 @@ export class TrainingStatsService {
 
     // Filter sessions
     const weekSessions = sessions.filter(
-      (s) => new Date(s.session_date) >= startOfWeek
+      (s) => new Date(s.session_date) >= startOfWeek,
     );
     const monthSessions = sessions.filter(
-      (s) => new Date(s.session_date) >= startOfMonth
+      (s) => new Date(s.session_date) >= startOfMonth,
     );
 
     // Calculate totals
     const totalDuration = sessions.reduce(
       (sum, s) => sum + (s.duration_minutes || 0),
-      0
+      0,
     );
     const totalLoad = sessions.reduce((sum, s) => sum + (s.workload || 0), 0);
     const weeklyDuration = weekSessions.reduce(
       (sum, s) => sum + (s.duration_minutes || 0),
-      0
+      0,
     );
     const weeklyLoad = weekSessions.reduce(
       (sum, s) => sum + (s.workload || 0),
-      0
+      0,
     );
 
     // Calculate averages
@@ -252,7 +258,7 @@ export class TrainingStatsService {
 
     // Sort dates descending
     const sortedDates = [...new Set(dates)].sort(
-      (a, b) => new Date(b).getTime() - new Date(a).getTime()
+      (a, b) => new Date(b).getTime() - new Date(a).getTime(),
     );
 
     const today = new Date();
@@ -299,7 +305,7 @@ export class TrainingStatsService {
     }
 
     const sortedDates = [...new Set(dates)].sort(
-      (a, b) => new Date(b).getTime() - new Date(a).getTime()
+      (a, b) => new Date(b).getTime() - new Date(a).getTime(),
     );
 
     const currentStreak = this.calculateCurrentStreak(sortedDates);
@@ -312,7 +318,7 @@ export class TrainingStatsService {
       const current = new Date(sortedDates[i - 1]);
       const prev = new Date(sortedDates[i]);
       const diffDays = Math.floor(
-        (current.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24)
+        (current.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24),
       );
 
       if (diffDays === 1) {

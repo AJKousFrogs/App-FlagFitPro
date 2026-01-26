@@ -35,7 +35,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ConfirmationService, PrimeTemplate } from "primeng/api";
@@ -62,7 +62,7 @@ import {
   RosterOverviewComponent,
   RosterPlayerCardComponent,
   RosterPlayerFormDialogComponent,
-  RosterStaffCardComponent
+  RosterStaffCardComponent,
 } from "./components";
 import { getPositionDisplayName } from "../../core/constants";
 import {
@@ -71,11 +71,11 @@ import {
   getCountryFlag,
   getJerseyColor,
   getPlayerStats,
-  getPositionIcon
+  getPositionIcon,
 } from "./roster-utils";
 import {
   getMappedStatusSeverity,
-  rosterStatusSeverityMap
+  rosterStatusSeverityMap,
 } from "../../shared/utils/status.utils";
 import {
   Player,
@@ -84,17 +84,17 @@ import {
   PositionGroup,
   ROLE_OPTIONS,
   STATUS_OPTIONS,
-  TeamInvitation
+  TeamInvitation,
 } from "./roster.models";
 import { RosterService } from "./roster.service";
 import {
   PlayerMetricsService,
   PlayerWithMetrics,
-  RiskAssessment
+  RiskAssessment,
 } from "./services/player-metrics.service";
 import {
   TeamMembershipService,
-  TeamRole
+  TeamRole,
 } from "../../core/services/team-membership.service";
 
 @Component({
@@ -124,7 +124,7 @@ import {
     RosterFiltersComponent,
     RosterPlayerFormDialogComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -172,8 +172,8 @@ import {
                     <span class="badge badge-danger">{{
                       rosterService.pendingInvitations().length
                     }}</span>
-                  }</app-button
-                >
+                  }
+                </app-button>
 
                 <app-button
                   variant="outlined"
@@ -439,7 +439,9 @@ import {
                     <span
                       class="metric-value"
                       [class]="
-                        getReadinessClass(enrichedSelectedPlayer()!.readiness ?? 0)
+                        getReadinessClass(
+                          enrichedSelectedPlayer()!.readiness ?? 0
+                        )
                       "
                     >
                       @if (enrichedSelectedPlayer()!.readiness !== null) {
@@ -453,7 +455,9 @@ import {
                     <span class="metric-label">ACWR</span>
                     <span
                       class="metric-value"
-                      [class]="getACWRClass(enrichedSelectedPlayer()!.acwr ?? 1.0)"
+                      [class]="
+                        getACWRClass(enrichedSelectedPlayer()!.acwr ?? 1.0)
+                      "
                     >
                       @if (enrichedSelectedPlayer()!.acwr !== null) {
                         {{ enrichedSelectedPlayer()!.acwr | number: "1.2-2" }}
@@ -529,7 +533,10 @@ import {
               <!-- Position Benchmarks Section -->
               @if (enrichedSelectedPlayer()?.benchmarkComparison?.length) {
                 <div class="details-benchmarks">
-                  <h3><i class="pi pi-chart-bar" aria-hidden="true"></i> Position Benchmarks</h3>
+                  <h3>
+                    <i class="pi pi-chart-bar" aria-hidden="true"></i> Position
+                    Benchmarks
+                  </h3>
                   <div class="benchmarks-grid">
                     @for (
                       benchmark of enrichedSelectedPlayer()!
@@ -570,7 +577,10 @@ import {
               <!-- Training Priorities -->
               @if (trainingPriorities().length > 0) {
                 <div class="details-priorities">
-                  <h3><i class="pi pi-list-check" aria-hidden="true"></i> Training Priorities</h3>
+                  <h3>
+                    <i class="pi pi-list-check" aria-hidden="true"></i> Training
+                    Priorities
+                  </h3>
                   <ul class="priorities-list">
                     @for (priority of trainingPriorities(); track priority) {
                       <li>{{ priority }}</li>
@@ -589,7 +599,11 @@ import {
                   [class]="'risk-level-' + riskAssessment()!.level"
                 >
                   <h3>
-                    <i class="pi pi-exclamation-triangle" aria-hidden="true"></i> Risk Assessment
+                    <i
+                      class="pi pi-exclamation-triangle"
+                      aria-hidden="true"
+                    ></i>
+                    Risk Assessment
                   </h3>
                   <div class="risk-factors">
                     @for (factor of riskAssessment()!.factors; track factor) {
@@ -854,7 +868,11 @@ import {
                       </span>
                     </div>
                     @if (invitation.isExpired) {
-                      <app-status-tag value="Expired" severity="danger" size="sm" />
+                      <app-status-tag
+                        value="Expired"
+                        severity="danger"
+                        size="sm"
+                      />
                     } @else {
                       <span class="expires-text">
                         Expires {{ invitation.expiresAt | date: "short" }}

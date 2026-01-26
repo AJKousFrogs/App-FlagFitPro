@@ -368,7 +368,9 @@ export class ExerciseDBService {
    */
   getImportLogs(): Observable<ImportLog[]> {
     return this.http
-      .get<ExerciseDBApiResponse<ImportLog[]>>(`${this.baseUrl}/api/exercisedb/logs`)
+      .get<
+        ExerciseDBApiResponse<ImportLog[]>
+      >(`${this.baseUrl}/api/exercisedb/logs`)
       .pipe(
         map((response) => (response.logs as ImportLog[]) || []),
         catchError((error) => {

@@ -83,7 +83,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
 
   // Angular 21: Use viewChild() signal instead of @ViewChild()
-  notificationsPanel = viewChild<NotificationsPanelComponent>("notificationsPanel");
+  notificationsPanel =
+    viewChild<NotificationsPanelComponent>("notificationsPanel");
   userMenu = viewChild<import("primeng/menu").Menu>("userMenu");
 
   // Close user menu on Escape

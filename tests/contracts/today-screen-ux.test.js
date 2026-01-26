@@ -1,7 +1,7 @@
 /**
  * Contract Compliance Tests: TODAY Screen UX Authority
  * Contract: STEP_2_1_TODAY_SCREEN_UX_AUTHORITY_CONTRACT_V1.md
- * 
+ *
  * Tests verify:
  * - Information priority order
  * - Acknowledgment blocking
@@ -43,7 +43,10 @@ describe("Contract: TODAY Screen UX Authority", () => {
      */
     it("should allow training when check-in is missing", () => {
       const checkinState = "missing";
-      const trainingAllowed = checkinState === "missing" || checkinState === "stale" || checkinState === "fresh";
+      const trainingAllowed =
+        checkinState === "missing" ||
+        checkinState === "stale" ||
+        checkinState === "fresh";
 
       expect(trainingAllowed).toBe(true);
     });
@@ -86,8 +89,9 @@ describe("Contract: TODAY Screen UX Authority", () => {
         state: "VISIBLE",
       };
 
-      const canStart = session.state === "VISIBLE" && 
-                      (!session.requiresAcknowledgment || session.acknowledged);
+      const canStart =
+        session.state === "VISIBLE" &&
+        (!session.requiresAcknowledgment || session.acknowledged);
 
       expect(canStart).toBe(false);
     });
@@ -103,8 +107,9 @@ describe("Contract: TODAY Screen UX Authority", () => {
         state: "VISIBLE",
       };
 
-      const canStart = session.state === "VISIBLE" && 
-                      (!session.requiresAcknowledgment || session.acknowledged);
+      const canStart =
+        session.state === "VISIBLE" &&
+        (!session.requiresAcknowledgment || session.acknowledged);
 
       expect(canStart).toBe(true);
     });
@@ -123,7 +128,7 @@ describe("Contract: TODAY Screen UX Authority", () => {
         { id: 3, date: "2026-01-05" }, // Yesterday
       ];
 
-      const todaySessions = sessions.filter(s => s.date === today);
+      const todaySessions = sessions.filter((s) => s.date === today);
 
       expect(todaySessions.length).toBe(1);
       expect(todaySessions[0].id).toBe(1);
@@ -139,10 +144,10 @@ describe("Contract: TODAY Screen UX Authority", () => {
         { id: 2, active: false },
       ];
 
-      const activePlan = plans.find(p => p.active);
+      const activePlan = plans.find((p) => p.active);
 
       expect(activePlan).toBeTruthy();
-      expect(plans.filter(p => p.active).length).toBe(1);
+      expect(plans.filter((p) => p.active).length).toBe(1);
     });
   });
 });

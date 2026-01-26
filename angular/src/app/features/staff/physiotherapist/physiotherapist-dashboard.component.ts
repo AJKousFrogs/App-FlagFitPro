@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    inject,
-    OnInit,
-    signal
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -26,8 +26,8 @@ import { firstValueFrom } from "rxjs";
 import { ApiService } from "../../../core/services/api.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import {
-    SharedInsight,
-    SharedInsightFeedService
+  SharedInsight,
+  SharedInsightFeedService,
 } from "../../../core/services/shared-insight-feed.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { MainLayoutComponent } from "../../../shared/components/layout/main-layout.component";
@@ -68,11 +68,11 @@ interface InjuryHistory {
 interface RiskIndicators {
   athleteId: string;
   acwrRisk: "low" | "moderate" | "high" | "unknown";
-  acwrValue: number | null;  // null = no training data
+  acwrValue: number | null; // null = no training data
   trainingLoadSpike: boolean;
   sleepDeficit: boolean;
   weightFluctuation: boolean;
-  soreness: number | null;   // null = no wellness data
+  soreness: number | null; // null = no wellness data
   asymmetries: { test: string; leftRight: string; concern: boolean }[];
 }
 
@@ -212,7 +212,7 @@ const RTP_PHASES = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -307,14 +307,18 @@ const RTP_PHASES = [
                   <div class="section-header">
                     <h3>Athletes Under Care</h3>
                     <div class="filter-group">
-                      <label for="clearance-filter" class="sr-only">Filter by clearance status</label>
+                      <label for="clearance-filter" class="sr-only"
+                        >Filter by clearance status</label
+                      >
                       <p-select
                         inputId="clearance-filter"
                         [options]="clearanceFilterOptions"
                         [(ngModel)]="clearanceFilter"
                         placeholder="Filter by status"
                         [showClear]="true"
-                        [attr.aria-label]="'Filter athletes by clearance status'"
+                        [attr.aria-label]="
+                          'Filter athletes by clearance status'
+                        "
                       ></p-select>
                     </div>
                   </div>
@@ -747,19 +751,23 @@ const RTP_PHASES = [
                       [(ngModel)]="selectedHistoryAthlete"
                       placeholder="Select athlete"
                       (onValueChange)="loadInjuryHistory()"
-                      [attr.aria-label]="'Select athlete to view injury history'"
+                      [attr.aria-label]="
+                        'Select athlete to view injury history'
+                      "
                     ></p-select>
                   </div>
 
                   @if (selectedHistoryAthlete && currentInjuryHistory()) {
                     <div class="history-content">
-                    <div class="history-stats">
+                      <div class="history-stats">
                         <div class="stat stat-block stat-block--compact">
                           <div class="stat-block__content">
                             <span class="stat-block__value">{{
                               currentInjuryHistory()!.totalInjuries
                             }}</span>
-                            <span class="stat-block__label">Total Injuries</span>
+                            <span class="stat-block__label"
+                              >Total Injuries</span
+                            >
                           </div>
                         </div>
                         <div class="stat stat-block stat-block--compact">
@@ -1515,7 +1523,10 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   ): "success" | "warning" | "danger" | "secondary" {
     const risk = this.riskIndicators().find((r) => r.athleteId === id);
     if (!risk) return "secondary";
-    const severityMap: Record<string, "success" | "warning" | "danger" | "secondary"> = {
+    const severityMap: Record<
+      string,
+      "success" | "warning" | "danger" | "secondary"
+    > = {
       low: "success",
       moderate: "warning",
       high: "danger",
@@ -1561,7 +1572,9 @@ export class PhysiotherapistDashboardComponent implements OnInit {
     return severities[severity] || "secondary";
   }
 
-  getRiskSeverity(risk: string): "success" | "warning" | "danger" | "secondary" {
+  getRiskSeverity(
+    risk: string,
+  ): "success" | "warning" | "danger" | "secondary" {
     const severities: Record<
       string,
       "success" | "warning" | "danger" | "secondary"
@@ -1668,12 +1681,14 @@ export class PhysiotherapistDashboardComponent implements OnInit {
   getPrioritySeverity(
     priority: string,
   ): "success" | "info" | "warning" | "danger" {
-    const priorityMap: Record<string, "success" | "info" | "warning" | "danger"> =
-      {
-        low: "info",
-        medium: "warning",
-        high: "danger",
-      };
+    const priorityMap: Record<
+      string,
+      "success" | "info" | "warning" | "danger"
+    > = {
+      low: "info",
+      medium: "warning",
+      high: "danger",
+    };
     return priorityMap[priority] || "info";
   }
 

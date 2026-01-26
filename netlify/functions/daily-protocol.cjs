@@ -163,10 +163,10 @@ const EVIDENCE_BASED_PROTOCOLS = {
     holdSeconds: { min: 3, max: 6 },
     restSeconds: { min: 30, max: 60 },
     frequencyPerWeek: { min: 2, max: 3 },
-    asymmetryThreshold: 0.10, // <10% ideal
+    asymmetryThreshold: 0.1, // <10% ideal
     asymmetryWarning: 0.15, // >15% requires attention
   },
-  
+
   // Nordic Curl Protocol (Practitioner's Guide to Hamstrings)
   // "2-3x weekly reduces injury risk by 50-70%"
   // "Progress from 1x5 to 3x12 over 6-8 weeks"
@@ -175,10 +175,10 @@ const EVIDENCE_BASED_PROTOCOLS = {
     beginner: { sets: 1, reps: 5 },
     intermediate: { sets: 2, reps: 8 },
     advanced: { sets: 3, reps: 12 },
-    injuryRiskReduction: 0.60, // 50-70%
+    injuryRiskReduction: 0.6, // 50-70%
     eccentricHQRatioTarget: 0.8,
   },
-  
+
   // Plyometric Contacts (Multiple guides)
   // Phase-appropriate weekly contacts
   plyometrics: {
@@ -197,31 +197,51 @@ const EVIDENCE_BASED_PROTOCOLS = {
     },
     intensityLevels: {
       low: ["pogo_jumps", "ankle_hops", "box_step_ups", "low_hurdle_hops"],
-      medium: ["box_jumps", "broad_jumps", "single_leg_bounds", "lateral_bounds"],
-      high: ["depth_jumps", "reactive_bounds", "hurdle_hops", "single_leg_depth_jumps"],
-      very_high: ["depth_jumps_to_sprint", "reactive_agility_bounds", "multi_directional_bounds"],
+      medium: [
+        "box_jumps",
+        "broad_jumps",
+        "single_leg_bounds",
+        "lateral_bounds",
+      ],
+      high: [
+        "depth_jumps",
+        "reactive_bounds",
+        "hurdle_hops",
+        "single_leg_depth_jumps",
+      ],
+      very_high: [
+        "depth_jumps_to_sprint",
+        "reactive_agility_bounds",
+        "multi_directional_bounds",
+      ],
     },
   },
-  
+
   // ACWR Safe Zones (Practitioner's Guide to Preseason + Gabbett 2016)
   // "ACWR 0.8-1.3 is optimal; >1.5 increases injury risk 2-4x"
   acwr: {
     optimal: { min: 0.8, max: 1.3 },
     elevated: { min: 1.3, max: 1.5 },
     danger: { min: 1.5, max: 2.0 },
-    weeklyLoadIncreaseMax: 0.10, // 10% max per week
+    weeklyLoadIncreaseMax: 0.1, // 10% max per week
   },
-  
+
   // Hip/Groin Balance (Practitioner's Guide to Hip and Groin)
   hipGroin: {
     adductorAbductorRatioTarget: { min: 0.8, max: 1.2 },
-    asymmetryThreshold: 0.10,
+    asymmetryThreshold: 0.1,
   },
-  
+
   // Calf/Achilles Return to Sport (Practitioner's Guide to Calf & Achilles)
   calfAchilles: {
-    returnToSportStrengthThreshold: 0.90, // >90% bilateral symmetry
-    progressionPhases: ["isometric", "heavy_slow_resistance", "eccentric", "plyometric", "return_to_sport"],
+    returnToSportStrengthThreshold: 0.9, // >90% bilateral symmetry
+    progressionPhases: [
+      "isometric",
+      "heavy_slow_resistance",
+      "eccentric",
+      "plyometric",
+      "return_to_sport",
+    ],
   },
 };
 
@@ -233,112 +253,492 @@ const EVIDENCE_BASED_PROTOCOLS = {
 const FALLBACK_EXERCISES = {
   // Morning Mobility - 7 day-specific YouTube routines
   morning_mobility: [
-    { name: 'Morning Mobility - Day 1 (Monday)', video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf', duration_seconds: 600 },
-    { name: 'Morning Mobility - Day 2 (Tuesday)', video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=2', duration_seconds: 600 },
-    { name: 'Morning Mobility - Day 3 (Wednesday)', video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=3', duration_seconds: 600 },
-    { name: 'Morning Mobility - Day 4 (Thursday)', video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=4', duration_seconds: 600 },
-    { name: 'Morning Mobility - Day 5 (Friday)', video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=5', duration_seconds: 600 },
-    { name: 'Morning Mobility - Day 6 (Saturday)', video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=6', duration_seconds: 600 },
-    { name: 'Morning Mobility - Day 7 (Sunday)', video_url: 'https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=7', duration_seconds: 600 },
+    {
+      name: "Morning Mobility - Day 1 (Monday)",
+      video_url:
+        "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf",
+      duration_seconds: 600,
+    },
+    {
+      name: "Morning Mobility - Day 2 (Tuesday)",
+      video_url:
+        "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=2",
+      duration_seconds: 600,
+    },
+    {
+      name: "Morning Mobility - Day 3 (Wednesday)",
+      video_url:
+        "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=3",
+      duration_seconds: 600,
+    },
+    {
+      name: "Morning Mobility - Day 4 (Thursday)",
+      video_url:
+        "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=4",
+      duration_seconds: 600,
+    },
+    {
+      name: "Morning Mobility - Day 5 (Friday)",
+      video_url:
+        "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=5",
+      duration_seconds: 600,
+    },
+    {
+      name: "Morning Mobility - Day 6 (Saturday)",
+      video_url:
+        "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=6",
+      duration_seconds: 600,
+    },
+    {
+      name: "Morning Mobility - Day 7 (Sunday)",
+      video_url:
+        "https://www.youtube.com/watch?v=IWNnTJFwi3s&list=PLIconE7hKrWGw8lprYWFeU5k2QbuKdSuf&index=7",
+      duration_seconds: 600,
+    },
   ],
   // Foam Rolling
   foam_roll: [
-    { name: 'IT Band Roll', sets: 1, duration_seconds: 60, note: 'Foam roll outer thigh from hip to knee' },
-    { name: 'Quad Roll', sets: 1, duration_seconds: 60, note: 'Foam roll front of thigh' },
-    { name: 'Glute Roll', sets: 1, duration_seconds: 60, note: 'Foam roll glute muscles' },
-    { name: 'Hamstring Roll', sets: 1, duration_seconds: 60, note: 'Foam roll back of thigh' },
-    { name: 'Calf Roll', sets: 1, duration_seconds: 60, note: 'Foam roll calf muscles' },
-    { name: 'Thoracic Spine Roll', sets: 1, duration_seconds: 60, note: 'Foam roll upper back' },
-    { name: 'Lat Roll', sets: 1, duration_seconds: 60, note: 'Foam roll side of back' },
-    { name: 'Adductor Roll', sets: 1, duration_seconds: 60, note: 'Foam roll inner thigh' },
+    {
+      name: "IT Band Roll",
+      sets: 1,
+      duration_seconds: 60,
+      note: "Foam roll outer thigh from hip to knee",
+    },
+    {
+      name: "Quad Roll",
+      sets: 1,
+      duration_seconds: 60,
+      note: "Foam roll front of thigh",
+    },
+    {
+      name: "Glute Roll",
+      sets: 1,
+      duration_seconds: 60,
+      note: "Foam roll glute muscles",
+    },
+    {
+      name: "Hamstring Roll",
+      sets: 1,
+      duration_seconds: 60,
+      note: "Foam roll back of thigh",
+    },
+    {
+      name: "Calf Roll",
+      sets: 1,
+      duration_seconds: 60,
+      note: "Foam roll calf muscles",
+    },
+    {
+      name: "Thoracic Spine Roll",
+      sets: 1,
+      duration_seconds: 60,
+      note: "Foam roll upper back",
+    },
+    {
+      name: "Lat Roll",
+      sets: 1,
+      duration_seconds: 60,
+      note: "Foam roll side of back",
+    },
+    {
+      name: "Adductor Roll",
+      sets: 1,
+      duration_seconds: 60,
+      note: "Foam roll inner thigh",
+    },
   ],
   // Warm-up
   warm_up: [
-    { name: 'Jumping Jacks', sets: 2, reps: 20, note: 'Full range of motion' },
-    { name: 'High Knees', sets: 2, duration_seconds: 30, note: 'Drive knees up, pump arms' },
-    { name: 'Butt Kicks', sets: 2, duration_seconds: 30, note: 'Heels to glutes' },
-    { name: 'Leg Swings (Forward/Back)', sets: 2, reps: 10, note: 'Each leg, controlled swing' },
-    { name: 'Leg Swings (Side to Side)', sets: 2, reps: 10, note: 'Each leg, open hips' },
-    { name: 'Walking Lunges', sets: 2, reps: 10, note: 'Each leg, torso upright' },
-    { name: 'A-Skips', sets: 2, reps: 10, note: 'Each leg, drive knee up' },
-    { name: 'B-Skips', sets: 2, reps: 10, note: 'Each leg, extend leg forward' },
-    { name: 'Carioca', sets: 2, duration_seconds: 30, note: 'Lateral crossover movement' },
-    { name: 'Inchworm', sets: 2, reps: 6, note: 'Walk hands out to plank, walk feet to hands' },
+    { name: "Jumping Jacks", sets: 2, reps: 20, note: "Full range of motion" },
+    {
+      name: "High Knees",
+      sets: 2,
+      duration_seconds: 30,
+      note: "Drive knees up, pump arms",
+    },
+    {
+      name: "Butt Kicks",
+      sets: 2,
+      duration_seconds: 30,
+      note: "Heels to glutes",
+    },
+    {
+      name: "Leg Swings (Forward/Back)",
+      sets: 2,
+      reps: 10,
+      note: "Each leg, controlled swing",
+    },
+    {
+      name: "Leg Swings (Side to Side)",
+      sets: 2,
+      reps: 10,
+      note: "Each leg, open hips",
+    },
+    {
+      name: "Walking Lunges",
+      sets: 2,
+      reps: 10,
+      note: "Each leg, torso upright",
+    },
+    { name: "A-Skips", sets: 2, reps: 10, note: "Each leg, drive knee up" },
+    {
+      name: "B-Skips",
+      sets: 2,
+      reps: 10,
+      note: "Each leg, extend leg forward",
+    },
+    {
+      name: "Carioca",
+      sets: 2,
+      duration_seconds: 30,
+      note: "Lateral crossover movement",
+    },
+    {
+      name: "Inchworm",
+      sets: 2,
+      reps: 6,
+      note: "Walk hands out to plank, walk feet to hands",
+    },
   ],
   // Isometrics (tendon health & injury prevention)
   isometrics: [
-    { name: 'Wall Sit', sets: 3, hold_seconds: 45, note: 'Back flat against wall, thighs parallel. Builds quad tendon resilience.' },
-    { name: 'Single-Leg Wall Sit', sets: 3, hold_seconds: 30, note: 'Each leg. Addresses asymmetry.' },
-    { name: 'Isometric Lunge Hold', sets: 3, hold_seconds: 30, note: 'Each leg at 90°. Hip flexor/quad.' },
-    { name: 'Isometric Calf Raise', sets: 3, hold_seconds: 30, note: 'Hold at top of calf raise. Achilles health.' },
-    { name: 'Isometric Hip Adduction', sets: 3, hold_seconds: 20, note: 'Squeeze ball between knees. Groin injury prevention.' },
-    { name: 'Isometric Hip Abduction', sets: 3, hold_seconds: 20, note: 'Press out against band. Hip stability.' },
-    { name: 'Plank Hold', sets: 3, hold_seconds: 45, note: 'Core stability. Maintain neutral spine.' },
-    { name: 'Side Plank Hold', sets: 3, hold_seconds: 30, note: 'Each side. Lateral core strength.' },
-    { name: 'Copenhagen Adductor Hold', sets: 3, hold_seconds: 20, note: 'Each side. Groin injury prevention (65% reduction).' },
+    {
+      name: "Wall Sit",
+      sets: 3,
+      hold_seconds: 45,
+      note: "Back flat against wall, thighs parallel. Builds quad tendon resilience.",
+    },
+    {
+      name: "Single-Leg Wall Sit",
+      sets: 3,
+      hold_seconds: 30,
+      note: "Each leg. Addresses asymmetry.",
+    },
+    {
+      name: "Isometric Lunge Hold",
+      sets: 3,
+      hold_seconds: 30,
+      note: "Each leg at 90°. Hip flexor/quad.",
+    },
+    {
+      name: "Isometric Calf Raise",
+      sets: 3,
+      hold_seconds: 30,
+      note: "Hold at top of calf raise. Achilles health.",
+    },
+    {
+      name: "Isometric Hip Adduction",
+      sets: 3,
+      hold_seconds: 20,
+      note: "Squeeze ball between knees. Groin injury prevention.",
+    },
+    {
+      name: "Isometric Hip Abduction",
+      sets: 3,
+      hold_seconds: 20,
+      note: "Press out against band. Hip stability.",
+    },
+    {
+      name: "Plank Hold",
+      sets: 3,
+      hold_seconds: 45,
+      note: "Core stability. Maintain neutral spine.",
+    },
+    {
+      name: "Side Plank Hold",
+      sets: 3,
+      hold_seconds: 30,
+      note: "Each side. Lateral core strength.",
+    },
+    {
+      name: "Copenhagen Adductor Hold",
+      sets: 3,
+      hold_seconds: 20,
+      note: "Each side. Groin injury prevention (65% reduction).",
+    },
   ],
   // Plyometrics (explosive power)
   plyometrics: [
-    { name: 'Pogo Jumps', sets: 3, reps: 10, note: 'Ankle stiffness. Minimal ground contact time.' },
-    { name: 'Box Jumps', sets: 3, reps: 5, note: 'Explosive hip extension. Step down.' },
-    { name: 'Broad Jumps', sets: 3, reps: 5, note: 'Horizontal power. Stick landing.' },
-    { name: 'Single-Leg Bounds', sets: 3, reps: 5, note: 'Each leg. Power + stability.' },
-    { name: 'Lateral Bounds', sets: 3, reps: 5, note: 'Each side. Change of direction power.' },
-    { name: 'Depth Drops', sets: 3, reps: 3, note: 'Step off box, absorb landing. Landing mechanics.' },
-    { name: 'Hurdle Hops', sets: 3, reps: 6, note: 'Continuous over mini hurdles.' },
-    { name: 'Medicine Ball Slams', sets: 3, reps: 8, note: 'Overhead to ground. Full body power.' },
-    { name: 'Skater Jumps', sets: 3, reps: 8, note: 'Lateral bound with arm drive.' },
+    {
+      name: "Pogo Jumps",
+      sets: 3,
+      reps: 10,
+      note: "Ankle stiffness. Minimal ground contact time.",
+    },
+    {
+      name: "Box Jumps",
+      sets: 3,
+      reps: 5,
+      note: "Explosive hip extension. Step down.",
+    },
+    {
+      name: "Broad Jumps",
+      sets: 3,
+      reps: 5,
+      note: "Horizontal power. Stick landing.",
+    },
+    {
+      name: "Single-Leg Bounds",
+      sets: 3,
+      reps: 5,
+      note: "Each leg. Power + stability.",
+    },
+    {
+      name: "Lateral Bounds",
+      sets: 3,
+      reps: 5,
+      note: "Each side. Change of direction power.",
+    },
+    {
+      name: "Depth Drops",
+      sets: 3,
+      reps: 3,
+      note: "Step off box, absorb landing. Landing mechanics.",
+    },
+    {
+      name: "Hurdle Hops",
+      sets: 3,
+      reps: 6,
+      note: "Continuous over mini hurdles.",
+    },
+    {
+      name: "Medicine Ball Slams",
+      sets: 3,
+      reps: 8,
+      note: "Overhead to ground. Full body power.",
+    },
+    {
+      name: "Skater Jumps",
+      sets: 3,
+      reps: 8,
+      note: "Lateral bound with arm drive.",
+    },
   ],
   // Strength (injury prevention focused - max 40% BW)
   strength: [
-    { name: 'Nordic Curls', sets: 3, reps: 5, note: 'Eccentric hamstring. 51% injury reduction (Al Attar et al.). Control descent.' },
-    { name: 'Copenhagen Side Plank Lifts', sets: 3, reps: 8, note: 'Each side. Groin injury prevention (65% reduction).' },
-    { name: 'Bulgarian Split Squat', sets: 3, reps: 8, note: 'Each leg. Single-leg strength + balance.' },
-    { name: 'Single-Leg RDL', sets: 3, reps: 8, note: 'Each leg. Posterior chain + balance.' },
-    { name: 'Glute Bridge March', sets: 3, reps: 10, note: 'Alternating. Hip stability + strength.' },
-    { name: 'Single-Leg Calf Raise', sets: 3, reps: 12, note: 'Each leg. Achilles/calf resilience.' },
-    { name: 'Banded Monster Walk', sets: 3, reps: 10, note: 'Each direction. Hip abductor strength.' },
-    { name: 'Pallof Press', sets: 3, reps: 10, note: 'Each side. Anti-rotation core.' },
-    { name: 'Bird Dog', sets: 3, reps: 8, note: 'Each side. Core stability + spinal health.' },
+    {
+      name: "Nordic Curls",
+      sets: 3,
+      reps: 5,
+      note: "Eccentric hamstring. 51% injury reduction (Al Attar et al.). Control descent.",
+    },
+    {
+      name: "Copenhagen Side Plank Lifts",
+      sets: 3,
+      reps: 8,
+      note: "Each side. Groin injury prevention (65% reduction).",
+    },
+    {
+      name: "Bulgarian Split Squat",
+      sets: 3,
+      reps: 8,
+      note: "Each leg. Single-leg strength + balance.",
+    },
+    {
+      name: "Single-Leg RDL",
+      sets: 3,
+      reps: 8,
+      note: "Each leg. Posterior chain + balance.",
+    },
+    {
+      name: "Glute Bridge March",
+      sets: 3,
+      reps: 10,
+      note: "Alternating. Hip stability + strength.",
+    },
+    {
+      name: "Single-Leg Calf Raise",
+      sets: 3,
+      reps: 12,
+      note: "Each leg. Achilles/calf resilience.",
+    },
+    {
+      name: "Banded Monster Walk",
+      sets: 3,
+      reps: 10,
+      note: "Each direction. Hip abductor strength.",
+    },
+    {
+      name: "Pallof Press",
+      sets: 3,
+      reps: 10,
+      note: "Each side. Anti-rotation core.",
+    },
+    {
+      name: "Bird Dog",
+      sets: 3,
+      reps: 8,
+      note: "Each side. Core stability + spinal health.",
+    },
   ],
   // Conditioning (ACWR-adjusted)
   conditioning: [
-    { name: 'Sprint Intervals (20yd)', sets: 6, reps: 1, note: '85% effort. Walk back recovery.' },
-    { name: 'Pro Agility Drill (5-10-5)', sets: 4, reps: 1, note: 'Max effort. 90s rest between.' },
-    { name: 'Tempo Runs (100yd)', sets: 4, reps: 1, note: '75% effort. Aerobic base.' },
-    { name: 'Shuttle Runs', sets: 4, reps: 1, note: '10-20-30-20-10yd. Change of direction.' },
-    { name: 'Lateral Shuffles', sets: 4, duration_seconds: 30, note: 'Each direction. Defensive movement.' },
-    { name: 'Backpedal + Sprint', sets: 4, reps: 1, note: 'DB coverage simulation.' },
-    { name: 'Cone Drills (L-Drill)', sets: 4, reps: 1, note: 'Agility and change of direction.' },
-    { name: 'Star Drill', sets: 3, reps: 1, note: 'Multi-directional agility.' },
+    {
+      name: "Sprint Intervals (20yd)",
+      sets: 6,
+      reps: 1,
+      note: "85% effort. Walk back recovery.",
+    },
+    {
+      name: "Pro Agility Drill (5-10-5)",
+      sets: 4,
+      reps: 1,
+      note: "Max effort. 90s rest between.",
+    },
+    {
+      name: "Tempo Runs (100yd)",
+      sets: 4,
+      reps: 1,
+      note: "75% effort. Aerobic base.",
+    },
+    {
+      name: "Shuttle Runs",
+      sets: 4,
+      reps: 1,
+      note: "10-20-30-20-10yd. Change of direction.",
+    },
+    {
+      name: "Lateral Shuffles",
+      sets: 4,
+      duration_seconds: 30,
+      note: "Each direction. Defensive movement.",
+    },
+    {
+      name: "Backpedal + Sprint",
+      sets: 4,
+      reps: 1,
+      note: "DB coverage simulation.",
+    },
+    {
+      name: "Cone Drills (L-Drill)",
+      sets: 4,
+      reps: 1,
+      note: "Agility and change of direction.",
+    },
+    {
+      name: "Star Drill",
+      sets: 3,
+      reps: 1,
+      note: "Multi-directional agility.",
+    },
   ],
   // Skill drills (position-specific)
   skill: [
-    { name: 'Route Running - Quick Outs', sets: 4, reps: 3, note: 'Sharp cuts at 75% speed.' },
-    { name: 'Route Running - Slants', sets: 4, reps: 3, note: 'Burst off the line, precise angle.' },
-    { name: 'Backpedal Breaks', sets: 4, reps: 3, note: 'DB technique. React and drive.' },
-    { name: 'Flag Pull Drills', sets: 3, reps: 6, note: 'Technique practice. Track hips.' },
-    { name: 'Catching Drills - High Point', sets: 3, reps: 5, note: 'Jump and catch at highest point.' },
-    { name: 'Reaction Ball Drills', sets: 3, duration_seconds: 60, note: 'Hand-eye coordination.' },
-    { name: 'Agility Ladder', sets: 3, reps: 2, note: 'Quick feet patterns.' },
+    {
+      name: "Route Running - Quick Outs",
+      sets: 4,
+      reps: 3,
+      note: "Sharp cuts at 75% speed.",
+    },
+    {
+      name: "Route Running - Slants",
+      sets: 4,
+      reps: 3,
+      note: "Burst off the line, precise angle.",
+    },
+    {
+      name: "Backpedal Breaks",
+      sets: 4,
+      reps: 3,
+      note: "DB technique. React and drive.",
+    },
+    {
+      name: "Flag Pull Drills",
+      sets: 3,
+      reps: 6,
+      note: "Technique practice. Track hips.",
+    },
+    {
+      name: "Catching Drills - High Point",
+      sets: 3,
+      reps: 5,
+      note: "Jump and catch at highest point.",
+    },
+    {
+      name: "Reaction Ball Drills",
+      sets: 3,
+      duration_seconds: 60,
+      note: "Hand-eye coordination.",
+    },
+    { name: "Agility Ladder", sets: 3, reps: 2, note: "Quick feet patterns." },
   ],
   // Cool down
   cool_down: [
-    { name: 'Static Hamstring Stretch', sets: 1, hold_seconds: 30, note: 'Each leg. Breathe deeply.' },
-    { name: 'Static Quad Stretch', sets: 1, hold_seconds: 30, note: 'Each leg. Hold foot behind.' },
-    { name: 'Static Hip Flexor Stretch', sets: 1, hold_seconds: 30, note: 'Each leg. Kneeling lunge.' },
-    { name: '90/90 Hip Stretch', sets: 1, hold_seconds: 30, note: 'Each side. Hip external rotation.' },
-    { name: 'Pigeon Pose', sets: 1, hold_seconds: 30, note: 'Each side. Glute/hip opener.' },
-    { name: 'Child\'s Pose', sets: 1, hold_seconds: 60, note: 'Breathe and relax. Back stretch.' },
-    { name: 'Seated Spinal Twist', sets: 1, hold_seconds: 30, note: 'Each side. Spine mobility.' },
-    { name: 'Cat-Cow Stretch', sets: 1, reps: 10, note: 'Slow and controlled. Spine mobility.' },
+    {
+      name: "Static Hamstring Stretch",
+      sets: 1,
+      hold_seconds: 30,
+      note: "Each leg. Breathe deeply.",
+    },
+    {
+      name: "Static Quad Stretch",
+      sets: 1,
+      hold_seconds: 30,
+      note: "Each leg. Hold foot behind.",
+    },
+    {
+      name: "Static Hip Flexor Stretch",
+      sets: 1,
+      hold_seconds: 30,
+      note: "Each leg. Kneeling lunge.",
+    },
+    {
+      name: "90/90 Hip Stretch",
+      sets: 1,
+      hold_seconds: 30,
+      note: "Each side. Hip external rotation.",
+    },
+    {
+      name: "Pigeon Pose",
+      sets: 1,
+      hold_seconds: 30,
+      note: "Each side. Glute/hip opener.",
+    },
+    {
+      name: "Child's Pose",
+      sets: 1,
+      hold_seconds: 60,
+      note: "Breathe and relax. Back stretch.",
+    },
+    {
+      name: "Seated Spinal Twist",
+      sets: 1,
+      hold_seconds: 30,
+      note: "Each side. Spine mobility.",
+    },
+    {
+      name: "Cat-Cow Stretch",
+      sets: 1,
+      reps: 10,
+      note: "Slow and controlled. Spine mobility.",
+    },
   ],
   // Recovery
   recovery: [
-    { name: 'Diaphragmatic Breathing', sets: 1, duration_seconds: 180, note: '4s inhale, 4s hold, 6s exhale. Parasympathetic activation.' },
-    { name: 'Legs Up The Wall', sets: 1, duration_seconds: 300, note: 'Venous return. Recovery promotion.' },
-    { name: 'Self-Massage with Ball', sets: 1, duration_seconds: 180, note: 'Target tight areas. Myofascial release.' },
-    { name: 'Gentle Walking', sets: 1, duration_seconds: 300, note: 'Light movement. Blood flow promotion.' },
+    {
+      name: "Diaphragmatic Breathing",
+      sets: 1,
+      duration_seconds: 180,
+      note: "4s inhale, 4s hold, 6s exhale. Parasympathetic activation.",
+    },
+    {
+      name: "Legs Up The Wall",
+      sets: 1,
+      duration_seconds: 300,
+      note: "Venous return. Recovery promotion.",
+    },
+    {
+      name: "Self-Massage with Ball",
+      sets: 1,
+      duration_seconds: 180,
+      note: "Target tight areas. Myofascial release.",
+    },
+    {
+      name: "Gentle Walking",
+      sets: 1,
+      duration_seconds: 300,
+      note: "Light movement. Blood flow promotion.",
+    },
   ],
 };
 
@@ -354,11 +754,11 @@ async function generateFallbackProtocolExercises(
   context,
   isPracticeDay,
   isFilmRoomDay,
-  readinessForLogic
+  readinessForLogic,
 ) {
   const exercises = [];
   let sequenceOrder = 0;
-  
+
   // Deterministic shuffle using seed (dayOfYear + weekNumber)
   const seededShuffle = (arr, seed) => {
     const shuffled = [...arr];
@@ -368,9 +768,9 @@ async function generateFallbackProtocolExercises(
     }
     return shuffled;
   };
-  
+
   const seed = dayOfYear + weekNumber * 7;
-  
+
   // 1. Morning Mobility - day-specific video
   const dayOfWeek = new Date().getDay(); // 0 = Sunday
   const mobilityIdx = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Map to 0-6
@@ -379,37 +779,43 @@ async function generateFallbackProtocolExercises(
   exercises.push({
     protocol_id: protocolId,
     exercise_id: null,
-    block_type: 'morning_mobility',
+    block_type: "morning_mobility",
     sequence_order: sequenceOrder,
     prescribed_sets: 1,
     prescribed_duration_seconds: mobilityExercise.duration_seconds,
     video_url: mobilityExercise.video_url,
     ai_note: `📱 ${mobilityExercise.name} - Follow along with the YouTube video`,
   });
-  
+
   // 2. Foam Rolling (select 4-5 based on day)
-  const foamRolls = seededShuffle(FALLBACK_EXERCISES.foam_roll, seed).slice(0, 5);
+  const foamRolls = seededShuffle(FALLBACK_EXERCISES.foam_roll, seed).slice(
+    0,
+    5,
+  );
   foamRolls.forEach((ex) => {
     sequenceOrder++;
     exercises.push({
       protocol_id: protocolId,
       exercise_id: null,
-      block_type: 'foam_roll',
+      block_type: "foam_roll",
       sequence_order: sequenceOrder,
       prescribed_sets: ex.sets || 1,
       prescribed_duration_seconds: ex.duration_seconds,
       ai_note: ex.note,
     });
   });
-  
+
   // 3. Warm-up (select 5-6 based on day)
-  const warmUps = seededShuffle(FALLBACK_EXERCISES.warm_up, seed + 1).slice(0, 6);
+  const warmUps = seededShuffle(FALLBACK_EXERCISES.warm_up, seed + 1).slice(
+    0,
+    6,
+  );
   warmUps.forEach((ex) => {
     sequenceOrder++;
     exercises.push({
       protocol_id: protocolId,
       exercise_id: null,
-      block_type: 'warm_up',
+      block_type: "warm_up",
       sequence_order: sequenceOrder,
       prescribed_sets: ex.sets || 2,
       prescribed_reps: ex.reps,
@@ -417,65 +823,78 @@ async function generateFallbackProtocolExercises(
       ai_note: ex.note,
     });
   });
-  
+
   // Skip main gym blocks on practice/film/recovery days
-  const isGymTrainingDay = !isPracticeDay && !isFilmRoomDay && trainingFocus !== 'recovery';
-  
+  const isGymTrainingDay =
+    !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
+
   if (isGymTrainingDay) {
     // 4. Isometrics (select 4-5)
-    const isometrics = seededShuffle(FALLBACK_EXERCISES.isometrics, seed + 2).slice(0, 5);
+    const isometrics = seededShuffle(
+      FALLBACK_EXERCISES.isometrics,
+      seed + 2,
+    ).slice(0, 5);
     isometrics.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
         protocol_id: protocolId,
         exercise_id: null,
-        block_type: 'isometrics',
+        block_type: "isometrics",
         sequence_order: sequenceOrder,
         prescribed_sets: ex.sets || 3,
         prescribed_hold_seconds: ex.hold_seconds,
         ai_note: `📊 ${ex.note}`,
       });
     });
-    
+
     // 5. Plyometrics (select 4 based on readiness)
     const plyoCount = readinessForLogic >= 70 ? 4 : 3;
-    const plyos = seededShuffle(FALLBACK_EXERCISES.plyometrics, seed + 3).slice(0, plyoCount);
+    const plyos = seededShuffle(FALLBACK_EXERCISES.plyometrics, seed + 3).slice(
+      0,
+      plyoCount,
+    );
     plyos.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
         protocol_id: protocolId,
         exercise_id: null,
-        block_type: 'plyometrics',
+        block_type: "plyometrics",
         sequence_order: sequenceOrder,
         prescribed_sets: ex.sets || 3,
         prescribed_reps: ex.reps,
         ai_note: `⚡ ${ex.note}`,
       });
     });
-    
+
     // 6. Strength (select 4-5)
-    const strengths = seededShuffle(FALLBACK_EXERCISES.strength, seed + 4).slice(0, 5);
+    const strengths = seededShuffle(
+      FALLBACK_EXERCISES.strength,
+      seed + 4,
+    ).slice(0, 5);
     strengths.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
         protocol_id: protocolId,
         exercise_id: null,
-        block_type: 'strength',
+        block_type: "strength",
         sequence_order: sequenceOrder,
         prescribed_sets: ex.sets || 3,
         prescribed_reps: ex.reps,
         ai_note: `💪 ${ex.note}`,
       });
     });
-    
+
     // 7. Conditioning (select 3-4)
-    const conditionings = seededShuffle(FALLBACK_EXERCISES.conditioning, seed + 5).slice(0, 4);
+    const conditionings = seededShuffle(
+      FALLBACK_EXERCISES.conditioning,
+      seed + 5,
+    ).slice(0, 4);
     conditionings.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
         protocol_id: protocolId,
         exercise_id: null,
-        block_type: 'conditioning',
+        block_type: "conditioning",
         sequence_order: sequenceOrder,
         prescribed_sets: ex.sets || 4,
         prescribed_reps: ex.reps,
@@ -483,15 +902,18 @@ async function generateFallbackProtocolExercises(
         ai_note: `🏃 ${ex.note}`,
       });
     });
-    
+
     // 8. Skill drills (select 3)
-    const skills = seededShuffle(FALLBACK_EXERCISES.skill, seed + 6).slice(0, 3);
+    const skills = seededShuffle(FALLBACK_EXERCISES.skill, seed + 6).slice(
+      0,
+      3,
+    );
     skills.forEach((ex) => {
       sequenceOrder++;
       exercises.push({
         protocol_id: protocolId,
         exercise_id: null,
-        block_type: 'skill_drills',
+        block_type: "skill_drills",
         sequence_order: sequenceOrder,
         prescribed_sets: ex.sets || 3,
         prescribed_reps: ex.reps,
@@ -500,15 +922,18 @@ async function generateFallbackProtocolExercises(
       });
     });
   }
-  
+
   // 9. Cool down (select 4-5)
-  const coolDowns = seededShuffle(FALLBACK_EXERCISES.cool_down, seed + 7).slice(0, 5);
+  const coolDowns = seededShuffle(FALLBACK_EXERCISES.cool_down, seed + 7).slice(
+    0,
+    5,
+  );
   coolDowns.forEach((ex) => {
     sequenceOrder++;
     exercises.push({
       protocol_id: protocolId,
       exercise_id: null,
-      block_type: 'cool_down',
+      block_type: "cool_down",
       sequence_order: sequenceOrder,
       prescribed_sets: ex.sets || 1,
       prescribed_reps: ex.reps,
@@ -516,25 +941,30 @@ async function generateFallbackProtocolExercises(
       ai_note: `🧘 ${ex.note}`,
     });
   });
-  
+
   // 10. Evening Recovery (select 2-3)
-  const recoveryCount = trainingFocus === 'recovery' ? 4 : 2;
-  const recoveries = seededShuffle(FALLBACK_EXERCISES.recovery, seed + 8).slice(0, recoveryCount);
+  const recoveryCount = trainingFocus === "recovery" ? 4 : 2;
+  const recoveries = seededShuffle(FALLBACK_EXERCISES.recovery, seed + 8).slice(
+    0,
+    recoveryCount,
+  );
   recoveries.forEach((ex) => {
     sequenceOrder++;
     exercises.push({
       protocol_id: protocolId,
       exercise_id: null,
-      block_type: 'evening_recovery',
+      block_type: "evening_recovery",
       sequence_order: sequenceOrder,
       prescribed_sets: ex.sets || 1,
       prescribed_duration_seconds: ex.duration_seconds,
       ai_note: `😴 ${ex.note}`,
     });
   });
-  
-  console.log(`[daily-protocol] Generated ${exercises.length} fallback exercises for day ${dayOfYear} (week ${weekNumber})`);
-  
+
+  console.log(
+    `[daily-protocol] Generated ${exercises.length} fallback exercises for day ${dayOfYear} (week ${weekNumber})`,
+  );
+
   return exercises;
 }
 
@@ -544,21 +974,31 @@ async function generateFallbackProtocolExercises(
  */
 function getCurrentPeriodizationPhase(date = new Date()) {
   const month = date.getMonth() + 1; // 1-12
-  
+
   switch (month) {
-    case 11: return "off_season_rest";       // November - Active Recovery
-    case 12: return "foundation";            // December - Foundation Building
-    case 1:  return "strength_accumulation"; // January - Strength Accumulation
-    case 2:  return "power_development";     // February - Power Development
-    case 3:  return "speed_development";     // March - Speed & Explosive
-    case 4:  
-    case 5:  
-    case 6:  return "in_season_maintenance"; // Apr-Jun - Competition Season
-    case 7:  return "mid_season_reload";     // July - Mid-Season Reload
-    case 8:  return "peak";                  // August - Championship Peak
-    case 9:  
-    case 10: return "in_season_maintenance"; // Sep-Oct - Late Season
-    default: return "foundation";
+    case 11:
+      return "off_season_rest"; // November - Active Recovery
+    case 12:
+      return "foundation"; // December - Foundation Building
+    case 1:
+      return "strength_accumulation"; // January - Strength Accumulation
+    case 2:
+      return "power_development"; // February - Power Development
+    case 3:
+      return "speed_development"; // March - Speed & Explosive
+    case 4:
+    case 5:
+    case 6:
+      return "in_season_maintenance"; // Apr-Jun - Competition Season
+    case 7:
+      return "mid_season_reload"; // July - Mid-Season Reload
+    case 8:
+      return "peak"; // August - Championship Peak
+    case 9:
+    case 10:
+      return "in_season_maintenance"; // Sep-Oct - Late Season
+    default:
+      return "foundation";
   }
 }
 
@@ -567,9 +1007,13 @@ function getCurrentPeriodizationPhase(date = new Date()) {
  */
 function getPlyometricIntensity(phase, readinessScore) {
   // Safety first: Low readiness = low intensity regardless of phase
-  if (readinessScore && readinessScore < 50) return "low";
-  if (readinessScore && readinessScore < 70) return "medium";
-  
+  if (readinessScore && readinessScore < 50) {
+    return "low";
+  }
+  if (readinessScore && readinessScore < 70) {
+    return "medium";
+  }
+
   const phaseIntensityMap = {
     off_season_rest: "low",
     foundation: "low",
@@ -583,7 +1027,7 @@ function getPlyometricIntensity(phase, readinessScore) {
     taper: "low",
     active_recovery: "low",
   };
-  
+
   return phaseIntensityMap[phase] || "medium";
 }
 
@@ -594,19 +1038,28 @@ function getPlyometricIntensity(phase, readinessScore) {
 function getSafeConditioningIntensity(acwr, daysSinceLastSession, phase) {
   // Critical safety: First day back or no recent training = low intensity
   if (daysSinceLastSession === null || daysSinceLastSession > 7) {
-    return { maxIntensity: 50, note: "⚠️ Returning to training - start at 50% intensity max" };
+    return {
+      maxIntensity: 50,
+      note: "⚠️ Returning to training - start at 50% intensity max",
+    };
   }
-  
+
   // ACWR danger zone: Reduce load significantly
   if (acwr && acwr > 1.5) {
-    return { maxIntensity: 40, note: "🚨 ACWR >1.5 - reduce load to prevent injury" };
+    return {
+      maxIntensity: 40,
+      note: "🚨 ACWR >1.5 - reduce load to prevent injury",
+    };
   }
-  
+
   // ACWR elevated: Moderate reduction
   if (acwr && acwr > 1.3) {
-    return { maxIntensity: 60, note: "⚠️ ACWR elevated - moderate intensity recommended" };
+    return {
+      maxIntensity: 60,
+      note: "⚠️ ACWR elevated - moderate intensity recommended",
+    };
   }
-  
+
   // Phase-based max intensity
   const phaseIntensityMax = {
     off_season_rest: 40,
@@ -621,10 +1074,10 @@ function getSafeConditioningIntensity(acwr, daysSinceLastSession, phase) {
     taper: 60,
     active_recovery: 40,
   };
-  
-  return { 
-    maxIntensity: phaseIntensityMax[phase] || 70, 
-    note: null 
+
+  return {
+    maxIntensity: phaseIntensityMax[phase] || 70,
+    note: null,
   };
 }
 
@@ -635,11 +1088,18 @@ function getSafeConditioningIntensity(acwr, daysSinceLastSession, phase) {
 function shouldIncludeNordicCurls(dayOfWeek, trainingFocus) {
   // Nordic curls recommended on strength/power days: Mon, Wed, Fri
   const nordicDays = [1, 3, 5]; // Monday, Wednesday, Friday
-  
+
   // Also include on any strength-focused day
-  const strengthFocusDays = ["strength", "power", "strength_accumulation", "power_development"];
-  
-  return nordicDays.includes(dayOfWeek) || strengthFocusDays.includes(trainingFocus);
+  const strengthFocusDays = [
+    "strength",
+    "power",
+    "strength_accumulation",
+    "power_development",
+  ];
+
+  return (
+    nordicDays.includes(dayOfWeek) || strengthFocusDays.includes(trainingFocus)
+  );
 }
 
 // Day names for schedule matching
@@ -1115,7 +1575,9 @@ exports.handler = async (event) => {
       try {
         payload = body ? JSON.parse(body) : {};
       } catch (_parseError) {
-        return withHeaders(handleValidationError("Invalid JSON in request body"));
+        return withHeaders(
+          handleValidationError("Invalid JSON in request body"),
+        );
       }
 
       switch (endpoint) {
@@ -1198,7 +1660,10 @@ async function getProtocol(supabase, userId, params, headers) {
       .eq("id", protocol.modified_by_coach_id)
       .maybeSingle();
     if (coach) {
-      coachName = coach.full_name || `${coach.first_name || ''} ${coach.last_name || ''}`.trim() || 'Coach';
+      coachName =
+        coach.full_name ||
+        `${coach.first_name || ""} ${coach.last_name || ""}`.trim() ||
+        "Coach";
     }
   }
 
@@ -1290,13 +1755,16 @@ async function getProtocol(supabase, userId, params, headers) {
     protocolId: protocol.id,
     totalExercisesStored: protocol.total_exercises,
     // Sample first exercise to check structure
-    firstExercise: protocolExercises?.[0] ? {
-      id: protocolExercises[0].id,
-      block_type: protocolExercises[0].block_type,
-      exercise_id: protocolExercises[0].exercise_id,
-      hasExerciseData: !!protocolExercises[0].exercises,
-      exerciseName: protocolExercises[0].exercises?.name || 'NO_EXERCISE_DATA',
-    } : null,
+    firstExercise: protocolExercises?.[0]
+      ? {
+          id: protocolExercises[0].id,
+          block_type: protocolExercises[0].block_type,
+          exercise_id: protocolExercises[0].exercise_id,
+          hasExerciseData: !!protocolExercises[0].exercises,
+          exerciseName:
+            protocolExercises[0].exercises?.name || "NO_EXERCISE_DATA",
+        }
+      : null,
   });
 
   // ============================================================================
@@ -1304,50 +1772,63 @@ async function getProtocol(supabase, userId, params, headers) {
   // This fixes protocols that were created when the DB was empty
   // ============================================================================
   if (!protocolExercises || protocolExercises.length === 0) {
-    console.log("[daily-protocol] Protocol has 0 exercises - auto-regenerating with fallback");
-    
+    console.log(
+      "[daily-protocol] Protocol has 0 exercises - auto-regenerating with fallback",
+    );
+
     // Check if exercises table is empty (triggers fallback)
     const { count: exerciseCount } = await supabase
       .from("exercises")
       .select("*", { count: "exact", head: true })
       .eq("active", true);
-    
+
     if (!exerciseCount || exerciseCount < 10) {
       // Use inline fallback
-      const dayOfYear = Math.floor((new Date(date) - new Date(new Date(date).getFullYear(), 0, 0)) / (24 * 60 * 60 * 1000));
+      const dayOfYear = Math.floor(
+        (new Date(date) - new Date(new Date(date).getFullYear(), 0, 0)) /
+          (24 * 60 * 60 * 1000),
+      );
       const weekNumber = Math.ceil(dayOfYear / 7);
-      
+
       // Get basic context for fallback generation
       const trainingFocus = protocol.training_focus || "strength";
       const isPracticeDay = teamActivity?.type === "practice";
       const isFilmRoomDay = teamActivity?.type === "film_room";
       const readinessForLogic = protocol.readiness_score || 70;
-      
+
       const fallbackExercises = await generateFallbackProtocolExercises(
         protocol.id,
         dayOfYear,
         weekNumber,
         trainingFocus,
-        { position: null, isQB: false, isCenter: false, dayOfWeek: new Date(date).getDay() },
+        {
+          position: null,
+          isQB: false,
+          isCenter: false,
+          dayOfWeek: new Date(date).getDay(),
+        },
         isPracticeDay,
         isFilmRoomDay,
-        readinessForLogic
+        readinessForLogic,
       );
-      
+
       if (fallbackExercises.length > 0) {
         const { error: insertError } = await supabase
           .from("protocol_exercises")
           .insert(fallbackExercises);
-        
+
         if (insertError) {
-          console.error("[daily-protocol] Error inserting fallback exercises:", insertError);
+          console.error(
+            "[daily-protocol] Error inserting fallback exercises:",
+            insertError,
+          );
         } else {
           // Update protocol total_exercises count
           await supabase
             .from("daily_protocols")
             .update({ total_exercises: fallbackExercises.length })
             .eq("id", protocol.id);
-          
+
           // Re-fetch exercises after inserting
           const { data: newExercises } = await supabase
             .from("protocol_exercises")
@@ -1365,9 +1846,11 @@ async function getProtocol(supabase, userId, params, headers) {
             )
             .eq("protocol_id", protocol.id)
             .order("sequence_order");
-          
+
           protocolExercises = newExercises || [];
-          console.log(`[daily-protocol] Auto-fix complete: ${protocolExercises.length} exercises added`);
+          console.log(
+            `[daily-protocol] Auto-fix complete: ${protocolExercises.length} exercises added`,
+          );
         }
       }
     }
@@ -1388,7 +1871,8 @@ async function getProtocol(supabase, userId, params, headers) {
     confidence_metadata: dynamicConfidenceMetadata,
     // Also update readiness_score if we have a fresh check-in
     readiness_score: dynamicConfidenceMetadata.readiness?.hasData
-      ? (dynamicConfidenceMetadata.readiness._readinessScore ?? protocol.readiness_score)
+      ? (dynamicConfidenceMetadata.readiness._readinessScore ??
+        protocol.readiness_score)
       : protocol.readiness_score,
   };
 
@@ -1698,8 +2182,8 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // IDEMPOTENCY SUPPORT
   // ============================================================================
   // Generate or use provided idempotency key
-  let idempotencyKey = payload.idempotencyKey;
-  
+  let { idempotencyKey } = payload;
+
   if (!idempotencyKey) {
     // Derive deterministic key from userId + date + trainingFocus inputs
     // This ensures same inputs = same protocol
@@ -1711,7 +2195,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
       timestamp: date, // Use date as deterministic seed
     };
     const keyString = JSON.stringify(keyInputs);
-    idempotencyKey = crypto.createHash("sha256").update(keyString).digest("hex").substring(0, 32);
+    idempotencyKey = crypto
+      .createHash("sha256")
+      .update(keyString)
+      .digest("hex")
+      .substring(0, 32);
   }
 
   // Check if this idempotency key was already processed
@@ -1726,11 +2214,17 @@ async function generateProtocol(supabase, userId, payload, headers) {
   if (existingRequest) {
     if (existingRequest.status === "completed" && existingRequest.protocol_id) {
       // Return existing protocol
-      console.log("[daily-protocol] Idempotent request - returning existing protocol:", existingRequest.protocol_id);
+      console.log(
+        "[daily-protocol] Idempotent request - returning existing protocol:",
+        existingRequest.protocol_id,
+      );
       return await getProtocol(supabase, userId, { date }, headers);
     } else if (existingRequest.status === "failed") {
       // Previous attempt failed - allow retry but log the error
-      console.warn("[daily-protocol] Previous generation failed:", existingRequest.error);
+      console.warn(
+        "[daily-protocol] Previous generation failed:",
+        existingRequest.error,
+      );
     }
     // If status is 'pending', continue (might be concurrent request, will be handled by unique constraint)
   }
@@ -1799,7 +2293,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
           .eq("idempotency_key", idempotencyKey)
           .maybeSingle();
 
-        if (completedRequest?.status === "completed" && completedRequest.protocol_id) {
+        if (
+          completedRequest?.status === "completed" &&
+          completedRequest.protocol_id
+        ) {
           return await getProtocol(supabase, userId, { date }, headers);
         }
         // If still pending or failed, proceed (will handle conflict in RPC)
@@ -1811,7 +2308,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
     }
   } catch (err) {
     // If insert fails for other reasons, log but continue
-    console.warn("[daily-protocol] Failed to record generation request:", err.message);
+    console.warn(
+      "[daily-protocol] Failed to record generation request:",
+      err.message,
+    );
   }
 
   // ============================================================================
@@ -1945,7 +2445,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   if (context.currentPhase) {
     aiRationale += ` 📅 Phase: ${context.currentPhase.name}.`;
   }
-  
+
   // Add evidence-based periodization info
   const periodizationPhase = getCurrentPeriodizationPhase(new Date(date));
   const phaseNames = {
@@ -1961,9 +2461,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
     taper: "Taper",
     active_recovery: "Active Recovery",
   };
-  
+
   aiRationale += ` 📊 Periodization: ${phaseNames[periodizationPhase] || periodizationPhase}.`;
-  
+
   // Add ACWR safety note if elevated
   if (acwrForLogic > 1.3) {
     aiRationale += ` ⚠️ ACWR elevated (${acwrForLogic.toFixed(2)}) - load auto-adjusted for safety.`;
@@ -1993,13 +2493,18 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .from("exercises")
     .select("*", { count: "exact", head: true })
     .eq("active", true);
-  
+
   if (!exerciseCount || exerciseCount < 10) {
-    console.log("[daily-protocol] No exercises found in DB - using inline fallback");
+    console.log(
+      "[daily-protocol] No exercises found in DB - using inline fallback",
+    );
     // Use inline fallback exercises - each day gets different ones based on day of year
-    const dayOfYear = Math.floor((new Date(date) - new Date(new Date(date).getFullYear(), 0, 0)) / (24 * 60 * 60 * 1000));
+    const dayOfYear = Math.floor(
+      (new Date(date) - new Date(new Date(date).getFullYear(), 0, 0)) /
+        (24 * 60 * 60 * 1000),
+    );
     const weekNumber = Math.ceil(dayOfYear / 7);
-    
+
     // Generate fallback exercises (protocol_id will be assigned by RPC)
     const fallbackExercises = await generateFallbackProtocolExercises(
       null, // protocol_id - will be assigned by RPC
@@ -2009,9 +2514,9 @@ async function generateProtocol(supabase, userId, payload, headers) {
       context,
       isPracticeDay,
       isFilmRoomDay,
-      readinessForLogic
+      readinessForLogic,
     );
-    
+
     if (fallbackExercises.length > 0) {
       // Use RPC for transactional creation
       const exercisesJson = fallbackExercises.map((ex) => ({
@@ -2038,7 +2543,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
           p_total_load_target_au: adjustedLoadTarget,
           p_confidence_metadata: confidenceMetadata,
           p_exercises: exercisesJson,
-        }
+        },
       );
 
       if (rpcError) {
@@ -2055,14 +2560,14 @@ async function generateProtocol(supabase, userId, payload, headers) {
       if (requestRecord) {
         await supabase
           .from("protocol_generation_requests")
-          .update({ 
-            status: "completed", 
+          .update({
+            status: "completed",
             protocol_id: protocolId,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq("id", requestRecord.id);
       }
-      
+
       // Return the completed protocol
       return await getProtocol(supabase, userId, { date }, headers);
     }
@@ -2182,7 +2687,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
         });
       });
     }
-  } else if (normalizedPosition === "blitzer" || normalizedPosition === "rusher") {
+  } else if (
+    normalizedPosition === "blitzer" ||
+    normalizedPosition === "rusher"
+  ) {
     // Blitzer/Rusher gets explosive movement mobility
     const { data: rushMobility } = await supabase
       .from("exercises")
@@ -2212,7 +2720,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
 
   // Fallback: if no morning mobility at all, add general mobility exercises
-  if (protocolExercises.filter((e) => e.block_type === "morning_mobility").length === 0) {
+  if (
+    protocolExercises.filter((e) => e.block_type === "morning_mobility")
+      .length === 0
+  ) {
     const { data: generalMobility } = await supabase
       .from("exercises")
       .select("*")
@@ -2267,7 +2778,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
   // Check if it's a sprint session (Saturday or session type is speed/sprint)
   // Declare early so it can be used in both warmup and main session generation
-  const isSprintSession = 
+  const isSprintSession =
     context.dayOfWeek === 6 || // Saturday
     context.sessionResolution?.override?.type === "sprint_saturday" ||
     context.sessionTemplate?.session_type?.toLowerCase() === "speed" ||
@@ -2287,25 +2798,49 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // Sprint-specific warmup exercises - Phase 3: Sprint Drill Series from UNIVERSAL_WARMUP
     // Essential exercises: A-march, A-skip, B-skip, High knees, Butt kicks, Toy soldiers, Hamstring stretch, Pogos
     const sprintWarmupNames = [
-      "a-march", "a march", "amarch",
-      "a-skip", "a skip", "askip", "askips",
-      "b-skip", "b skip", "bskip", "bskips",
-      "c-skip", "c skip", "cskip", "cskips",
-      "high knee", "high knees",
-      "butt kick", "butt kicks",
-      "hamstring stretch", "hamstring stretches", "hamstring",
-      "toy soldier", "toy soldiers",
-      "pogo", "pogos", "pogo jump", "pogo jumps", "ankle hop", "ankle hops",
-      "jump rope", "jumping rope", "rope jump",
-      "scissors", "leg scissors"
+      "a-march",
+      "a march",
+      "amarch",
+      "a-skip",
+      "a skip",
+      "askip",
+      "askips",
+      "b-skip",
+      "b skip",
+      "bskip",
+      "bskips",
+      "c-skip",
+      "c skip",
+      "cskip",
+      "cskips",
+      "high knee",
+      "high knees",
+      "butt kick",
+      "butt kicks",
+      "hamstring stretch",
+      "hamstring stretches",
+      "hamstring",
+      "toy soldier",
+      "toy soldiers",
+      "pogo",
+      "pogos",
+      "pogo jump",
+      "pogo jumps",
+      "ankle hop",
+      "ankle hops",
+      "jump rope",
+      "jumping rope",
+      "rope jump",
+      "scissors",
+      "leg scissors",
     ];
-    
+
     const { data: sprintWarmUpExercises } = await supabase
       .from("exercises")
       .select("*")
       .eq("category", "warm_up")
       .eq("active", true)
-      .or(sprintWarmupNames.map(name => `name.ilike.%${name}%`).join(","))
+      .or(sprintWarmupNames.map((name) => `name.ilike.%${name}%`).join(","))
       .limit(15);
 
     if (sprintWarmUpExercises && sprintWarmUpExercises.length > 0) {
@@ -2315,82 +2850,108 @@ async function generateProtocol(supabase, userId, payload, headers) {
         const aName = (a.name || "").toLowerCase();
         const bName = (b.name || "").toLowerCase();
         const priority = [
-          "a-march", "a march", "amarch",
-          "a-skip", "a skip", "askip",
-          "b-skip", "b skip", "bskip",
+          "a-march",
+          "a march",
+          "amarch",
+          "a-skip",
+          "a skip",
+          "askip",
+          "b-skip",
+          "b skip",
+          "bskip",
           "high knee",
           "butt kick",
           "toy soldier",
           "hamstring",
-          "pogo", "ankle hop",
-          "jump rope", "rope jump"
+          "pogo",
+          "ankle hop",
+          "jump rope",
+          "rope jump",
         ];
-        const aIdx = priority.findIndex(p => aName.includes(p));
-        const bIdx = priority.findIndex(p => bName.includes(p));
-        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-        if (aIdx !== -1) return -1;
-        if (bIdx !== -1) return 1;
+        const aIdx = priority.findIndex((p) => aName.includes(p));
+        const bIdx = priority.findIndex((p) => bName.includes(p));
+        if (aIdx !== -1 && bIdx !== -1) {
+          return aIdx - bIdx;
+        }
+        if (aIdx !== -1) {
+          return -1;
+        }
+        if (bIdx !== -1) {
+          return 1;
+        }
         return 0;
       });
 
       // Select 6-8 key sprint warmup exercises
       const selectedWarmups = prioritized.slice(0, 8);
-      
+
       selectedWarmups.forEach((ex, idx) => {
         const exName = (ex.name || "").toLowerCase();
         let sets = ex.default_sets || 2;
         let reps = ex.default_reps;
         let duration = ex.default_duration_seconds;
-        let aiNote = "Sprint Session Warm-up - Essential for sprint mechanics and injury prevention";
-        
+        let aiNote =
+          "Sprint Session Warm-up - Essential for sprint mechanics and injury prevention";
+
         // Set appropriate parameters based on exercise type
         if (exName.includes("a-march") || exName.includes("a march")) {
           sets = 2;
           reps = null;
           duration = null;
-          aiNote = "A-March: Knee drive mechanics - activates hip flexors for sprint";
+          aiNote =
+            "A-March: Knee drive mechanics - activates hip flexors for sprint";
         } else if (exName.includes("a-skip") || exName.includes("a skip")) {
           sets = 2;
           reps = 10;
           duration = null;
-          aiNote = "A-Skip: Rhythm and coordination - high knee, dorsiflexed ankle";
+          aiNote =
+            "A-Skip: Rhythm and coordination - high knee, dorsiflexed ankle";
         } else if (exName.includes("b-skip") || exName.includes("b skip")) {
           sets = 2;
           reps = 10;
           duration = null;
-          aiNote = "B-Skip: Pawing action - extend leg, pull back to ground aggressively";
+          aiNote =
+            "B-Skip: Pawing action - extend leg, pull back to ground aggressively";
         } else if (exName.includes("high knee")) {
           sets = 2;
           reps = null;
           duration = 30;
-          aiNote = "High Knees: Knee drive frequency - fast turnover, tall posture";
+          aiNote =
+            "High Knees: Knee drive frequency - fast turnover, tall posture";
         } else if (exName.includes("butt kick")) {
           sets = 2;
           reps = null;
           duration = 30;
-          aiNote = "Butt Kicks: Hamstring recovery - heel to glute, fast turnover";
+          aiNote =
+            "Butt Kicks: Hamstring recovery - heel to glute, fast turnover";
         } else if (exName.includes("toy soldier")) {
           sets = 2;
           reps = null;
           duration = null;
-          aiNote = "Toy Soldiers: Hamstring flexibility dynamic - straight leg, touch toe, controlled";
+          aiNote =
+            "Toy Soldiers: Hamstring flexibility dynamic - straight leg, touch toe, controlled";
         } else if (exName.includes("hamstring")) {
           sets = 1;
           reps = null;
           duration = 30;
-          aiNote = "Hamstring Stretch: 30s each leg - gentle stretch, breathe, no bouncing";
+          aiNote =
+            "Hamstring Stretch: 30s each leg - gentle stretch, breathe, no bouncing";
         } else if (exName.includes("pogo") || exName.includes("ankle hop")) {
           sets = 3;
           reps = 20;
           duration = null;
-          aiNote = "Pogo Jumps: Ankle stiffness - minimal knee bend, ankle-only. Essential for sprint performance (Kubo et al., 2000)";
-        } else if (exName.includes("jump rope") || exName.includes("rope jump")) {
+          aiNote =
+            "Pogo Jumps: Ankle stiffness - minimal knee bend, ankle-only. Essential for sprint performance (Kubo et al., 2000)";
+        } else if (
+          exName.includes("jump rope") ||
+          exName.includes("rope jump")
+        ) {
           sets = 2;
           reps = null;
           duration = 30;
           aiNote = "Jump Rope: Ankle stiffness and coordination";
         }
-        
+
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.id,
@@ -2406,10 +2967,14 @@ async function generateProtocol(supabase, userId, payload, headers) {
       });
     } else {
       // Fallback: use standard warmup but log warning
-      console.warn("[daily-protocol] Sprint session detected but sprint warmup exercises not found in DB");
+      console.warn(
+        "[daily-protocol] Sprint session detected but sprint warmup exercises not found in DB",
+      );
       const { data: warmUpExercises } = await warmUpQuery.limit(12);
       if (warmUpExercises && warmUpExercises.length > 0) {
-        const shuffled = warmUpExercises.sort(() => Math.random() - 0.5).slice(0, 6);
+        const shuffled = warmUpExercises
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 6);
         shuffled.forEach((ex, idx) => {
           protocolExercises.push({
             // protocol_id will be assigned by RPC
@@ -2426,7 +2991,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
         });
       }
     }
-  } else if ((context.isQB || context.isCenter) && !isPracticeDay && !isSprintSession) {
+  } else if (
+    (context.isQB || context.isCenter) &&
+    !isPracticeDay &&
+    !isSprintSession
+  ) {
     // For QB and Center, include position-specific warm-up exercises (unless practice day or sprint session)
     // Note: On sprint sessions, skip QB/Center wall slides - sprint warmup takes priority
     const positions = context.isCenter
@@ -2486,13 +3055,20 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // EVIDENCE-BASED TRAINING BLOCKS (1.5h Gym Session Structure)
   // Based on VALD Practitioner's Guides
   // ============================================================================
-  
+
   // Get current periodization phase for evidence-based programming
   const currentPhase = getCurrentPeriodizationPhase(new Date(date));
   const plyoIntensity = getPlyometricIntensity(currentPhase, readinessForLogic);
-  const safeConditioning = getSafeConditioningIntensity(acwrForLogic, null, currentPhase);
-  const includeNordics = shouldIncludeNordicCurls(context.dayOfWeek, trainingFocus);
-  
+  const safeConditioning = getSafeConditioningIntensity(
+    acwrForLogic,
+    null,
+    currentPhase,
+  );
+  const includeNordics = shouldIncludeNordicCurls(
+    context.dayOfWeek,
+    trainingFocus,
+  );
+
   console.log("[daily-protocol] Evidence-based config:", {
     phase: currentPhase,
     plyoIntensity,
@@ -2502,15 +3078,16 @@ async function generateProtocol(supabase, userId, payload, headers) {
   });
 
   // Skip gym blocks on practice days, film room days, or recovery days
-  const isGymTrainingDay = !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
-  
+  const isGymTrainingDay =
+    !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery";
+
   if (isGymTrainingDay) {
     // ============================================================================
     // 4. ISOMETRICS BLOCK (15 min)
     // Evidence: 3-5 sets × 3-6 sec maximal contractions, 30-60s rest
     // Source: VALD Practitioner's Guide to Isometrics
     // ============================================================================
-    
+
     // Query from both exercises table (isometric category) and isometrics_exercises table
     const { data: isometricExercisesMain } = await supabase
       .from("exercises")
@@ -2518,47 +3095,56 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .eq("category", "isometric")
       .eq("active", true)
       .limit(15);
-    
+
     const { data: isometricExercisesSpecialized } = await supabase
       .from("isometrics_exercises")
       .select("*")
       .limit(15);
-    
+
     // Combine and format exercises
     let allIsometrics = [];
-    
+
     if (isometricExercisesMain && isometricExercisesMain.length > 0) {
-      allIsometrics = allIsometrics.concat(isometricExercisesMain.map(ex => ({
-        ...ex,
-        source: "exercises",
-      })));
+      allIsometrics = allIsometrics.concat(
+        isometricExercisesMain.map((ex) => ({
+          ...ex,
+          source: "exercises",
+        })),
+      );
     }
-    
-    if (isometricExercisesSpecialized && isometricExercisesSpecialized.length > 0) {
-      allIsometrics = allIsometrics.concat(isometricExercisesSpecialized.map(ex => ({
-        id: ex.id,
-        name: ex.name,
-        description: ex.description,
-        video_url: ex.video_url,
-        category: ex.category,
-        source: "isometrics_exercises",
-        default_sets: EVIDENCE_BASED_PROTOCOLS.isometrics.sets.min,
-        default_hold_seconds: EVIDENCE_BASED_PROTOCOLS.isometrics.holdSeconds.max,
-        load_contribution_au: 15, // Moderate load for isometrics
-      })));
+
+    if (
+      isometricExercisesSpecialized &&
+      isometricExercisesSpecialized.length > 0
+    ) {
+      allIsometrics = allIsometrics.concat(
+        isometricExercisesSpecialized.map((ex) => ({
+          id: ex.id,
+          name: ex.name,
+          description: ex.description,
+          video_url: ex.video_url,
+          category: ex.category,
+          source: "isometrics_exercises",
+          default_sets: EVIDENCE_BASED_PROTOCOLS.isometrics.sets.min,
+          default_hold_seconds:
+            EVIDENCE_BASED_PROTOCOLS.isometrics.holdSeconds.max,
+          load_contribution_au: 15, // Moderate load for isometrics
+        })),
+      );
     }
-    
+
     if (allIsometrics.length > 0) {
       // Select 4-5 isometric exercises for ~15 min block
       const selectedIsometrics = allIsometrics
         .sort(() => Math.random() - 0.5)
         .slice(0, 5);
-      
+
       selectedIsometrics.forEach((ex, idx) => {
-        const sets = EVIDENCE_BASED_PROTOCOLS.isometrics.sets.min + 
+        const sets =
+          EVIDENCE_BASED_PROTOCOLS.isometrics.sets.min +
           (readinessForLogic >= 70 ? 1 : 0); // Extra set if high readiness
         const holdSeconds = EVIDENCE_BASED_PROTOCOLS.isometrics.holdSeconds.max;
-        
+
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.source === "exercises" ? ex.id : null,
@@ -2571,8 +3157,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
           ai_note: `📊 Isometric Protocol: ${sets} sets × ${holdSeconds}s hold. Focus on maximal tension. Evidence: Builds strength at specific joint angles, safe for all fitness levels.`,
         });
       });
-      
-      console.log(`[daily-protocol] Added ${selectedIsometrics.length} isometric exercises`);
+
+      console.log(
+        `[daily-protocol] Added ${selectedIsometrics.length} isometric exercises`,
+      );
     }
 
     // ============================================================================
@@ -2580,12 +3168,13 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // Evidence: Phase-appropriate contacts, landing emphasis first
     // Source: VALD Practitioner's Guides (Hamstrings, Calf & Achilles)
     // ============================================================================
-    
-    const plyoContactsConfig = EVIDENCE_BASED_PROTOCOLS.plyometrics.contactsPerWeek[currentPhase] || 
-      { min: 40, max: 80 };
-    const allowedPlyoTypes = EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels[plyoIntensity] || 
+
+    const plyoContactsConfig = EVIDENCE_BASED_PROTOCOLS.plyometrics
+      .contactsPerWeek[currentPhase] || { min: 40, max: 80 };
+    const allowedPlyoTypes =
+      EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels[plyoIntensity] ||
       EVIDENCE_BASED_PROTOCOLS.plyometrics.intensityLevels.medium;
-    
+
     // Query from both exercises table and plyometrics_exercises table
     const { data: plyoExercisesMain } = await supabase
       .from("exercises")
@@ -2593,66 +3182,79 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .eq("category", "plyometric")
       .eq("active", true)
       .limit(20);
-    
+
     const { data: plyoExercisesSpecialized } = await supabase
       .from("plyometrics_exercises")
       .select("*")
       .limit(20);
-    
+
     let allPlyometrics = [];
-    
+
     if (plyoExercisesMain && plyoExercisesMain.length > 0) {
-      allPlyometrics = allPlyometrics.concat(plyoExercisesMain.map(ex => ({
-        ...ex,
-        source: "exercises",
-      })));
+      allPlyometrics = allPlyometrics.concat(
+        plyoExercisesMain.map((ex) => ({
+          ...ex,
+          source: "exercises",
+        })),
+      );
     }
-    
+
     if (plyoExercisesSpecialized && plyoExercisesSpecialized.length > 0) {
-      allPlyometrics = allPlyometrics.concat(plyoExercisesSpecialized.map(ex => ({
-        id: ex.id,
-        name: ex.exercise_name || ex.name,
-        description: ex.description,
-        video_url: ex.video_url,
-        category: ex.exercise_category,
-        intensity_level: ex.intensity_level,
-        source: "plyometrics_exercises",
-        default_sets: 3,
-        default_reps: 6,
-        load_contribution_au: 20, // Higher load for plyometrics
-      })));
+      allPlyometrics = allPlyometrics.concat(
+        plyoExercisesSpecialized.map((ex) => ({
+          id: ex.id,
+          name: ex.exercise_name || ex.name,
+          description: ex.description,
+          video_url: ex.video_url,
+          category: ex.exercise_category,
+          intensity_level: ex.intensity_level,
+          source: "plyometrics_exercises",
+          default_sets: 3,
+          default_reps: 6,
+          load_contribution_au: 20, // Higher load for plyometrics
+        })),
+      );
     }
-    
+
     if (allPlyometrics.length > 0) {
       // Calculate contacts per session (divide weekly target by ~3 sessions)
-      const contactsPerSession = Math.round((plyoContactsConfig.min + plyoContactsConfig.max) / 2 / 3);
+      const contactsPerSession = Math.round(
+        (plyoContactsConfig.min + plyoContactsConfig.max) / 2 / 3,
+      );
       const repsPerExercise = 6;
-      const exerciseCount = Math.min(5, Math.ceil(contactsPerSession / repsPerExercise));
-      
+      const exerciseCount = Math.min(
+        5,
+        Math.ceil(contactsPerSession / repsPerExercise),
+      );
+
       // Filter by intensity if possible
       let filteredPlyos = allPlyometrics;
       if (plyoIntensity === "low") {
         // Prefer lower intensity exercises
-        filteredPlyos = allPlyometrics.filter(ex => 
-          !ex.name?.toLowerCase().includes("depth") && 
-          !ex.name?.toLowerCase().includes("reactive")
+        filteredPlyos = allPlyometrics.filter(
+          (ex) =>
+            !ex.name?.toLowerCase().includes("depth") &&
+            !ex.name?.toLowerCase().includes("reactive"),
         );
       } else if (plyoIntensity === "very_high") {
         // Include higher intensity
-        filteredPlyos = allPlyometrics.filter(ex => 
-          ex.name?.toLowerCase().includes("depth") || 
-          ex.name?.toLowerCase().includes("reactive") ||
-          ex.name?.toLowerCase().includes("bound")
+        filteredPlyos = allPlyometrics.filter(
+          (ex) =>
+            ex.name?.toLowerCase().includes("depth") ||
+            ex.name?.toLowerCase().includes("reactive") ||
+            ex.name?.toLowerCase().includes("bound"),
         );
       }
-      
+
       // Fallback to all if filter too restrictive
-      if (filteredPlyos.length < 3) filteredPlyos = allPlyometrics;
-      
+      if (filteredPlyos.length < 3) {
+        filteredPlyos = allPlyometrics;
+      }
+
       const selectedPlyos = filteredPlyos
         .sort(() => Math.random() - 0.5)
         .slice(0, exerciseCount);
-      
+
       selectedPlyos.forEach((ex, idx) => {
         protocolExercises.push({
           // protocol_id will be assigned by RPC
@@ -2666,8 +3268,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
           ai_note: `⚡ Plyometric Phase: ${currentPhase}. Intensity: ${plyoIntensity.toUpperCase()}. Weekly contacts target: ${plyoContactsConfig.min}-${plyoContactsConfig.max}. Focus on LANDING MECHANICS first.`,
         });
       });
-      
-      console.log(`[daily-protocol] Added ${selectedPlyos.length} plyometric exercises (${plyoIntensity} intensity)`);
+
+      console.log(
+        `[daily-protocol] Added ${selectedPlyos.length} plyometric exercises (${plyoIntensity} intensity)`,
+      );
     }
 
     // ============================================================================
@@ -2675,30 +3279,32 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // Evidence: Nordic curls 2-3x/week reduce hamstring injury by 50-70%
     // Source: VALD Practitioner's Guide to Hamstrings
     // ============================================================================
-    
+
     const { data: strengthExercises } = await supabase
       .from("exercises")
       .select("*")
       .eq("category", "strength")
       .eq("active", true)
       .limit(30);
-    
+
     if (strengthExercises && strengthExercises.length > 0) {
-      let selectedStrength = [];
-      
+      const selectedStrength = [];
+
       // MANDATORY: Include Nordic Curls on designated days (2-3x per week)
       // Evidence: Reduces hamstring injury risk by 50-70%
       if (includeNordics) {
-        const nordicExercise = strengthExercises.find(ex => 
-          ex.name?.toLowerCase().includes("nordic") ||
-          ex.slug?.includes("nordic")
+        const nordicExercise = strengthExercises.find(
+          (ex) =>
+            ex.name?.toLowerCase().includes("nordic") ||
+            ex.slug?.includes("nordic"),
         );
-        
+
         if (nordicExercise) {
-          const nordicProtocol = readinessForLogic >= 70 
-            ? EVIDENCE_BASED_PROTOCOLS.nordicCurls.advanced 
-            : EVIDENCE_BASED_PROTOCOLS.nordicCurls.intermediate;
-          
+          const nordicProtocol =
+            readinessForLogic >= 70
+              ? EVIDENCE_BASED_PROTOCOLS.nordicCurls.advanced
+              : EVIDENCE_BASED_PROTOCOLS.nordicCurls.intermediate;
+
           protocolExercises.push({
             // protocol_id will be assigned by RPC
             exercise_id: nordicExercise.id,
@@ -2710,25 +3316,26 @@ async function generateProtocol(supabase, userId, payload, headers) {
             load_contribution_au: nordicExercise.load_contribution_au || 25,
             ai_note: `🏋️ MANDATORY: Nordic Curls - Evidence shows 50-70% reduction in hamstring injuries when performed 2-3x/week. Focus on slow, controlled eccentric lowering.`,
           });
-          
+
           console.log("[daily-protocol] Added mandatory Nordic Curls");
         }
       }
-      
+
       // Add hip adductor/abductor work for groin injury prevention
       // Evidence: Add:Abd ratio should be 0.8-1.2 (VALD Hip & Groin Guide)
-      const hipExercises = strengthExercises.filter(ex =>
-        ex.name?.toLowerCase().includes("adduct") ||
-        ex.name?.toLowerCase().includes("copenhagen") ||
-        ex.name?.toLowerCase().includes("hip thrust") ||
-        ex.name?.toLowerCase().includes("glute")
+      const hipExercises = strengthExercises.filter(
+        (ex) =>
+          ex.name?.toLowerCase().includes("adduct") ||
+          ex.name?.toLowerCase().includes("copenhagen") ||
+          ex.name?.toLowerCase().includes("hip thrust") ||
+          ex.name?.toLowerCase().includes("glute"),
       );
-      
+
       if (hipExercises.length > 0) {
         const selectedHip = hipExercises
           .sort(() => Math.random() - 0.5)
           .slice(0, 2);
-        
+
         selectedHip.forEach((ex, idx) => {
           protocolExercises.push({
             // protocol_id will be assigned by RPC
@@ -2743,19 +3350,21 @@ async function generateProtocol(supabase, userId, payload, headers) {
           });
         });
       }
-      
+
       // Add 2-3 general strength exercises
       const generalStrength = strengthExercises
-        .filter(ex => 
-          !ex.name?.toLowerCase().includes("nordic") &&
-          !ex.name?.toLowerCase().includes("adduct") &&
-          !ex.name?.toLowerCase().includes("copenhagen")
+        .filter(
+          (ex) =>
+            !ex.name?.toLowerCase().includes("nordic") &&
+            !ex.name?.toLowerCase().includes("adduct") &&
+            !ex.name?.toLowerCase().includes("copenhagen"),
         )
         .sort(() => Math.random() - 0.5)
         .slice(0, 3);
-      
+
       generalStrength.forEach((ex, idx) => {
-        const sequenceStart = (includeNordics ? 2 : 1) + (hipExercises.length > 0 ? 2 : 0);
+        const sequenceStart =
+          (includeNordics ? 2 : 1) + (hipExercises.length > 0 ? 2 : 0);
         protocolExercises.push({
           // protocol_id will be assigned by RPC
           exercise_id: ex.id,
@@ -2768,8 +3377,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
           ai_note: `💪 Strength Phase: ${currentPhase}. Focus on quality movement over load.`,
         });
       });
-      
-      console.log(`[daily-protocol] Added strength block with ${includeNordics ? "Nordic curls + " : ""}hip work + general strength`);
+
+      console.log(
+        `[daily-protocol] Added strength block with ${includeNordics ? "Nordic curls + " : ""}hip work + general strength`,
+      );
     }
 
     // ============================================================================
@@ -2778,34 +3389,37 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // SAFETY: No 80%+ sprinting on day 1 - progressive build required
     // Source: VALD Practitioner's Guide to Preseason, Gabbett 2016
     // ============================================================================
-    
+
     const { data: conditioningExercises } = await supabase
       .from("exercises")
       .select("*")
       .eq("category", "conditioning")
       .eq("active", true)
       .limit(20);
-    
+
     if (conditioningExercises && conditioningExercises.length > 0) {
       // Filter based on safe intensity
       let filteredConditioning = conditioningExercises;
-      
+
       // If max intensity is low, exclude high-intensity exercises
       if (safeConditioning.maxIntensity <= 60) {
-        filteredConditioning = conditioningExercises.filter(ex =>
-          !ex.name?.toLowerCase().includes("sprint") &&
-          !ex.name?.toLowerCase().includes("100m") &&
-          !ex.name?.toLowerCase().includes("max velocity")
+        filteredConditioning = conditioningExercises.filter(
+          (ex) =>
+            !ex.name?.toLowerCase().includes("sprint") &&
+            !ex.name?.toLowerCase().includes("100m") &&
+            !ex.name?.toLowerCase().includes("max velocity"),
         );
       }
-      
+
       // Fallback if filter too restrictive
-      if (filteredConditioning.length < 3) filteredConditioning = conditioningExercises;
-      
+      if (filteredConditioning.length < 3) {
+        filteredConditioning = conditioningExercises;
+      }
+
       const selectedConditioning = filteredConditioning
         .sort(() => Math.random() - 0.5)
         .slice(0, 4);
-      
+
       selectedConditioning.forEach((ex, idx) => {
         protocolExercises.push({
           // protocol_id will be assigned by RPC
@@ -2815,13 +3429,19 @@ async function generateProtocol(supabase, userId, payload, headers) {
           prescribed_sets: 2,
           prescribed_duration_seconds: 30,
           rest_seconds: 45,
-          load_contribution_au: Math.round((ex.load_contribution_au || 15) * (safeConditioning.maxIntensity / 100)),
-          ai_note: safeConditioning.note || 
+          load_contribution_au: Math.round(
+            (ex.load_contribution_au || 15) *
+              (safeConditioning.maxIntensity / 100),
+          ),
+          ai_note:
+            safeConditioning.note ||
             `🏃 Conditioning Phase: ${currentPhase}. Max intensity: ${safeConditioning.maxIntensity}%. ACWR-safe progression.`,
         });
       });
-      
-      console.log(`[daily-protocol] Added ${selectedConditioning.length} conditioning exercises (max ${safeConditioning.maxIntensity}% intensity)`);
+
+      console.log(
+        `[daily-protocol] Added ${selectedConditioning.length} conditioning exercises (max ${safeConditioning.maxIntensity}% intensity)`,
+      );
     }
 
     // ============================================================================
@@ -2829,7 +3449,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     // Position-specific reactive drills for neural activation
     // Source: VALD Speed Testing Guide, Flag Football Periodization
     // ============================================================================
-    
+
     // Combine skill and agility exercises
     const { data: skillExercises } = await supabase
       .from("exercises")
@@ -2837,32 +3457,38 @@ async function generateProtocol(supabase, userId, payload, headers) {
       .or("category.eq.skill,category.eq.agility")
       .eq("active", true)
       .limit(20);
-    
+
     if (skillExercises && skillExercises.length > 0) {
       // Filter for position-specific where available
       let filteredSkill = skillExercises;
-      
+
       if (context.isQB) {
-        const qbSkills = skillExercises.filter(ex =>
-          ex.position_specific?.includes("quarterback") ||
-          ex.name?.toLowerCase().includes("throwing") ||
-          ex.name?.toLowerCase().includes("footwork")
+        const qbSkills = skillExercises.filter(
+          (ex) =>
+            ex.position_specific?.includes("quarterback") ||
+            ex.name?.toLowerCase().includes("throwing") ||
+            ex.name?.toLowerCase().includes("footwork"),
         );
-        if (qbSkills.length >= 2) filteredSkill = qbSkills;
+        if (qbSkills.length >= 2) {
+          filteredSkill = qbSkills;
+        }
       } else if (normalizedPosition === "wr_db") {
-        const wrDbSkills = skillExercises.filter(ex =>
-          ex.position_specific?.includes("wr_db") ||
-          ex.name?.toLowerCase().includes("route") ||
-          ex.name?.toLowerCase().includes("cut") ||
-          ex.name?.toLowerCase().includes("backpedal")
+        const wrDbSkills = skillExercises.filter(
+          (ex) =>
+            ex.position_specific?.includes("wr_db") ||
+            ex.name?.toLowerCase().includes("route") ||
+            ex.name?.toLowerCase().includes("cut") ||
+            ex.name?.toLowerCase().includes("backpedal"),
         );
-        if (wrDbSkills.length >= 2) filteredSkill = wrDbSkills;
+        if (wrDbSkills.length >= 2) {
+          filteredSkill = wrDbSkills;
+        }
       }
-      
+
       const selectedSkills = filteredSkill
         .sort(() => Math.random() - 0.5)
         .slice(0, 4);
-      
+
       selectedSkills.forEach((ex, idx) => {
         protocolExercises.push({
           // protocol_id will be assigned by RPC
@@ -2876,24 +3502,32 @@ async function generateProtocol(supabase, userId, payload, headers) {
           ai_note: `⚡ Skill Drill: Fast-twitch activation. Focus on speed and precision. Position: ${normalizedPosition}.`,
         });
       });
-      
-      console.log(`[daily-protocol] Added ${selectedSkills.length} skill/twitching drills`);
+
+      console.log(
+        `[daily-protocol] Added ${selectedSkills.length} skill/twitching drills`,
+      );
     }
-    
+
     // ============================================================================
     // Add gym block exercises to main_session for display
     // Main Session should always have exercises (except recovery days)
     // ============================================================================
     // Collect all exercises from gym blocks and add them to main_session
-    const gymBlockTypes = ["isometrics", "plyometrics", "strength", "conditioning", "skill_drills"];
+    const gymBlockTypes = [
+      "isometrics",
+      "plyometrics",
+      "strength",
+      "conditioning",
+      "skill_drills",
+    ];
     let mainSessionSequence = 1;
-    
+
     gymBlockTypes.forEach((blockType) => {
       // Find all exercises for this block type that were just added
       const blockExercises = protocolExercises.filter(
-        (pe) => pe.block_type === blockType
+        (pe) => pe.block_type === blockType,
       );
-      
+
       // Add them to main_session as well
       blockExercises.forEach((ex) => {
         protocolExercises.push({
@@ -2911,9 +3545,11 @@ async function generateProtocol(supabase, userId, payload, headers) {
         });
       });
     });
-    
+
     if (mainSessionSequence > 1) {
-      console.log(`[daily-protocol] Added ${mainSessionSequence - 1} exercises to main_session from gym blocks`);
+      console.log(
+        `[daily-protocol] Added ${mainSessionSequence - 1} exercises to main_session from gym blocks`,
+      );
     }
   } else {
     console.log("[daily-protocol] Skipping gym blocks - practice/recovery day");
@@ -2925,7 +3561,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
 
   // 9. Main Session - From structured program templates OR generated based on training type
   // Note: isPracticeDay and isFilmRoomDay already declared above in training focus section
-  
+
   // Determine main session type based on priority:
   // 1. Sprint session (especially Saturday)
   // 2. Gym training (if has_gym_access)
@@ -3045,16 +3681,21 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
 
   // Priority 2: Generate fallback main session if no template exists
-  if (!mainSessionGenerated && !isPracticeDay && !isFilmRoomDay && trainingFocus !== "recovery") {
+  if (
+    !mainSessionGenerated &&
+    !isPracticeDay &&
+    !isFilmRoomDay &&
+    trainingFocus !== "recovery"
+  ) {
     // Determine session type based on day and preferences
     let sessionType = "strength"; // Default
     let sessionCategory = "strength";
-    
+
     if (isSprintSession) {
       // Sprint session - generate evidence-based sprint exercises based on phase and ACWR
       sessionType = "sprint";
       sessionCategory = "sprint";
-      
+
       // Map periodization phase to sprint phase guidelines
       const sprintPhaseMap = {
         foundation: "foundation",
@@ -3069,32 +3710,50 @@ async function generateProtocol(supabase, userId, payload, headers) {
         active_recovery: "foundation",
         off_season_rest: "foundation",
       };
-      
+
       const sprintPhase = sprintPhaseMap[periodizationPhase] || "foundation";
-      
+
       // Evidence-based sprint protocol selection based on phase
       // Based on sprint-training-knowledge.service.ts PHASE_GUIDELINES
       let sprintProtocols = [];
       let useHillSprints = false;
       let useStairSprints = false;
-      
+
       if (sprintPhase === "foundation") {
         sprintProtocols = ["short_acceleration", "deceleration_training"];
         useHillSprints = true;
       } else if (sprintPhase === "strength_accumulation") {
-        sprintProtocols = ["short_acceleration", "resisted_acceleration", "deceleration_training"];
+        sprintProtocols = [
+          "short_acceleration",
+          "resisted_acceleration",
+          "deceleration_training",
+        ];
         useHillSprints = true;
       } else if (sprintPhase === "power_development") {
-        sprintProtocols = ["short_acceleration", "resisted_acceleration", "flying_sprints"];
+        sprintProtocols = [
+          "short_acceleration",
+          "resisted_acceleration",
+          "flying_sprints",
+        ];
         useHillSprints = false;
       } else if (sprintPhase === "speed_development") {
-        sprintProtocols = ["short_acceleration", "flying_sprints", "in_and_out_sprints", "repeated_sprint_ability"];
+        sprintProtocols = [
+          "short_acceleration",
+          "flying_sprints",
+          "in_and_out_sprints",
+          "repeated_sprint_ability",
+        ];
         useHillSprints = false;
       } else if (sprintPhase === "competition") {
         sprintProtocols = ["short_acceleration", "deceleration_training"];
         useHillSprints = false;
       } else if (sprintPhase === "mid_season_reload") {
-        sprintProtocols = ["short_acceleration", "resisted_acceleration", "flying_sprints", "speed_endurance"];
+        sprintProtocols = [
+          "short_acceleration",
+          "resisted_acceleration",
+          "flying_sprints",
+          "speed_endurance",
+        ];
         useHillSprints = true;
         // Stair sprints ONLY if ACWR >= 0.8 and athlete is well-conditioned
         if (acwrForLogic >= 0.8) {
@@ -3105,122 +3764,171 @@ async function generateProtocol(supabase, userId, payload, headers) {
         sprintProtocols = ["short_acceleration", "flying_sprints"];
         useHillSprints = false;
       }
-      
+
       // Generate sprint exercises based on protocols
       const sprintExerciseQueries = [];
-      
+
       // Short acceleration (always included for sprint sessions)
       sprintExerciseQueries.push(
-        supabase.from("exercises").select("*")
+        supabase
+          .from("exercises")
+          .select("*")
           .or("category.eq.sprint,category.eq.speed,category.eq.acceleration")
-          .or("name.ilike.%acceleration%,name.ilike.%sprint%,name.ilike.%speed%")
+          .or(
+            "name.ilike.%acceleration%,name.ilike.%sprint%,name.ilike.%speed%",
+          )
           .eq("active", true)
-          .limit(4)
+          .limit(4),
       );
-      
+
       // Hill sprints (if phase-appropriate)
       if (useHillSprints) {
         sprintExerciseQueries.push(
-          supabase.from("exercises").select("*")
+          supabase
+            .from("exercises")
+            .select("*")
             .or("name.ilike.%hill%,name.ilike.%uphill%,name.ilike.%incline%")
             .eq("active", true)
-            .limit(2)
+            .limit(2),
         );
       }
-      
+
       // Stair sprints (if ACWR >= 0.8 and mid_season_reload)
       if (useStairSprints && acwrForLogic >= 0.8) {
         sprintExerciseQueries.push(
-          supabase.from("exercises").select("*")
+          supabase
+            .from("exercises")
+            .select("*")
             .or("name.ilike.%stair%,name.ilike.%step%")
             .eq("active", true)
-            .limit(2)
+            .limit(2),
         );
       }
-      
+
       // Flying sprints (if phase-appropriate)
       if (sprintProtocols.includes("flying_sprints")) {
         sprintExerciseQueries.push(
-          supabase.from("exercises").select("*")
-            .or("name.ilike.%flying%,name.ilike.%max velocity%,name.ilike.%top speed%")
+          supabase
+            .from("exercises")
+            .select("*")
+            .or(
+              "name.ilike.%flying%,name.ilike.%max velocity%,name.ilike.%top speed%",
+            )
             .eq("active", true)
-            .limit(2)
+            .limit(2),
         );
       }
-      
+
       // Deceleration training (if phase-appropriate)
       if (sprintProtocols.includes("deceleration_training")) {
         sprintExerciseQueries.push(
-          supabase.from("exercises").select("*")
-            .or("category.eq.deceleration,name.ilike.%deceleration%,name.ilike.%braking%,name.ilike.%stop%")
+          supabase
+            .from("exercises")
+            .select("*")
+            .or(
+              "category.eq.deceleration,name.ilike.%deceleration%,name.ilike.%braking%,name.ilike.%stop%",
+            )
             .eq("active", true)
-            .limit(2)
+            .limit(2),
         );
       }
-      
+
       // Execute all queries
       const sprintExerciseResults = await Promise.all(sprintExerciseQueries);
       const allSprintExercises = [];
-      
+
       sprintExerciseResults.forEach((result) => {
         if (result.data && result.data.length > 0) {
           allSprintExercises.push(...result.data);
         }
       });
-      
+
       // Remove duplicates and select appropriate exercises
       const uniqueSprintExercises = Array.from(
-        new Map(allSprintExercises.map(ex => [ex.id, ex])).values()
+        new Map(allSprintExercises.map((ex) => [ex.id, ex])).values(),
       );
-      
+
       if (uniqueSprintExercises.length > 0) {
         // Prioritize exercises based on phase protocols
         const prioritized = uniqueSprintExercises.sort((a, b) => {
           const aName = (a.name || "").toLowerCase();
           const bName = (b.name || "").toLowerCase();
-          
+
           // Priority order: acceleration > hill/stair > flying > deceleration
-          const priority = ["acceleration", "sprint", "hill", "stair", "flying", "deceleration"];
-          const aIdx = priority.findIndex(p => aName.includes(p));
-          const bIdx = priority.findIndex(p => bName.includes(p));
-          
-          if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-          if (aIdx !== -1) return -1;
-          if (bIdx !== -1) return 1;
+          const priority = [
+            "acceleration",
+            "sprint",
+            "hill",
+            "stair",
+            "flying",
+            "deceleration",
+          ];
+          const aIdx = priority.findIndex((p) => aName.includes(p));
+          const bIdx = priority.findIndex((p) => bName.includes(p));
+
+          if (aIdx !== -1 && bIdx !== -1) {
+            return aIdx - bIdx;
+          }
+          if (aIdx !== -1) {
+            return -1;
+          }
+          if (bIdx !== -1) {
+            return 1;
+          }
           return 0;
         });
-        
+
         // Select 4-6 exercises based on phase volume guidelines
-        const exerciseCount = sprintPhase === "speed_development" || sprintPhase === "mid_season_reload" ? 6 : 4;
+        const exerciseCount =
+          sprintPhase === "speed_development" ||
+          sprintPhase === "mid_season_reload"
+            ? 6
+            : 4;
         const selectedExercises = prioritized.slice(0, exerciseCount);
-        
+
         selectedExercises.forEach((ex, idx) => {
           // Set appropriate sets/reps based on sprint protocol
           let sets = 3;
           let reps = 4;
           let restSeconds = 90;
           let aiNote = `Sprint Session - ${sprintPhase} phase`;
-          
-          if (ex.name?.toLowerCase().includes("hill") || ex.name?.toLowerCase().includes("uphill")) {
+
+          if (
+            ex.name?.toLowerCase().includes("hill") ||
+            ex.name?.toLowerCase().includes("uphill")
+          ) {
             sets = 3;
             reps = 4;
             restSeconds = 90;
-            aiNote = "Hill Sprints - Develops horizontal force and acceleration (Foundation/Strength/Mid-Season phases)";
-          } else if (ex.name?.toLowerCase().includes("stair") || ex.name?.toLowerCase().includes("step")) {
+            aiNote =
+              "Hill Sprints - Develops horizontal force and acceleration (Foundation/Strength/Mid-Season phases)";
+          } else if (
+            ex.name?.toLowerCase().includes("stair") ||
+            ex.name?.toLowerCase().includes("step")
+          ) {
             sets = 3;
             reps = 4;
             restSeconds = 90;
-            aiNote = "Stair Sprints - ADVANCED: Explosive hip flexor power. Only for well-conditioned athletes (ACWR >= 0.8, Mid-Season Reload phase)";
-          } else if (ex.name?.toLowerCase().includes("flying") || ex.name?.toLowerCase().includes("max velocity")) {
+            aiNote =
+              "Stair Sprints - ADVANCED: Explosive hip flexor power. Only for well-conditioned athletes (ACWR >= 0.8, Mid-Season Reload phase)";
+          } else if (
+            ex.name?.toLowerCase().includes("flying") ||
+            ex.name?.toLowerCase().includes("max velocity")
+          ) {
             sets = 2;
             reps = 3;
             restSeconds = 180;
-            aiNote = "Flying Sprints - Maximum velocity development (Power/Speed/Peak phases)";
-          } else if (ex.name?.toLowerCase().includes("deceleration") || ex.name?.toLowerCase().includes("braking")) {
+            aiNote =
+              "Flying Sprints - Maximum velocity development (Power/Speed/Peak phases)";
+          } else if (
+            ex.name?.toLowerCase().includes("deceleration") ||
+            ex.name?.toLowerCase().includes("braking")
+          ) {
             sets = 3;
             reps = 4;
             restSeconds = 60;
-            aiNote = "Deceleration Training - CRITICAL for flag football. Every cut and route break requires controlled deceleration.";
+            aiNote =
+              "Deceleration Training - CRITICAL for flag football. Every cut and route break requires controlled deceleration.";
           } else {
             // Standard acceleration sprints
             sets = 3;
@@ -3228,7 +3936,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
             restSeconds = 90;
             aiNote = `Acceleration Sprints - ${sprintPhase} phase. Focus on first 10m burst (most critical for flag football)`;
           }
-          
+
           protocolExercises.push({
             // protocol_id will be assigned by RPC
             exercise_id: ex.id,
@@ -3242,25 +3950,31 @@ async function generateProtocol(supabase, userId, payload, headers) {
             ai_note: aiNote,
           });
         });
-        
+
         mainSessionGenerated = true;
-        console.log(`[daily-protocol] Generated evidence-based sprint session: phase=${sprintPhase}, protocols=${sprintProtocols.join(", ")}, hillSprints=${useHillSprints}, stairSprints=${useStairSprints}`);
+        console.log(
+          `[daily-protocol] Generated evidence-based sprint session: phase=${sprintPhase}, protocols=${sprintProtocols.join(", ")}, hillSprints=${useHillSprints}, stairSprints=${useStairSprints}`,
+        );
       }
     } else if (hasGymAccess && isGymTrainingDay) {
       // Gym training - exercises already added to main_session above
       // Check if main_session has exercises (they should have been added from gym blocks)
       const mainSessionExercises = protocolExercises.filter(
-        (pe) => pe.block_type === "main_session"
+        (pe) => pe.block_type === "main_session",
       );
-      
+
       if (mainSessionExercises.length > 0) {
         sessionType = "gym";
         sessionCategory = "strength";
         mainSessionGenerated = true;
-        console.log(`[daily-protocol] Gym training day - main session has ${mainSessionExercises.length} exercises from gym blocks`);
+        console.log(
+          `[daily-protocol] Gym training day - main session has ${mainSessionExercises.length} exercises from gym blocks`,
+        );
       } else {
         // Fallback: if somehow no exercises were added, generate them now
-        console.warn("[daily-protocol] Gym training day but no main_session exercises found - this should not happen");
+        console.warn(
+          "[daily-protocol] Gym training day but no main_session exercises found - this should not happen",
+        );
         mainSessionGenerated = false; // Will trigger fallback below
       }
     } else if (hasFieldAccess && !hasGymAccess) {
@@ -3307,7 +4021,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
           trainingFocus,
         },
       );
-      
+
       // Try to get any available exercises as fallback
       const { data: fallbackExercises } = await supabase
         .from("exercises")
@@ -3368,7 +4082,8 @@ async function generateProtocol(supabase, userId, payload, headers) {
         prescribed_hold_seconds: ex.default_hold_seconds || 30,
         prescribed_duration_seconds: ex.default_duration_seconds,
         load_contribution_au: ex.load_contribution_au || 0,
-        ai_note: "🧘 Cool-down: Promotes recovery, reduces muscle soreness, activates parasympathetic nervous system.",
+        ai_note:
+          "🧘 Cool-down: Promotes recovery, reduces muscle soreness, activates parasympathetic nervous system.",
       });
     });
   }
@@ -3412,7 +4127,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
   // Use RPC function to atomically create protocol + exercises
   // This ensures we never leave a protocol with 0 exercises
   // ============================================================================
-  
+
   if (protocolExercises.length === 0) {
     // Update request status to failed
     if (requestRecord) {
@@ -3451,7 +4166,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
         p_total_load_target_au: adjustedLoadTarget,
         p_confidence_metadata: confidenceMetadata,
         p_exercises: exercisesJson,
-      }
+      },
     );
 
     if (rpcError) {
@@ -3469,10 +4184,10 @@ async function generateProtocol(supabase, userId, payload, headers) {
     if (requestRecord) {
       await supabase
         .from("protocol_generation_requests")
-        .update({ 
-          status: "completed", 
+        .update({
+          status: "completed",
           protocol_id: protocolId,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq("id", requestRecord.id);
     }
@@ -4056,12 +4771,19 @@ async function logSession(supabase, userId, payload, headers) {
  * @param {object} protocol - Stored protocol data
  * @returns {object} Updated confidence_metadata
  */
-async function computeDynamicConfidenceMetadata(supabase, userId, date, protocol) {
+async function computeDynamicConfidenceMetadata(
+  supabase,
+  userId,
+  date,
+  protocol,
+) {
   // Check for today's wellness check-in
   // Note: daily_wellness_checkin uses calculated_readiness and overall_readiness_score columns
   const { data: todayWellness, error: wellnessError } = await supabase
     .from("daily_wellness_checkin")
-    .select("id, calculated_readiness, overall_readiness_score, created_at, checkin_date")
+    .select(
+      "id, calculated_readiness, overall_readiness_score, created_at, checkin_date",
+    )
     .eq("user_id", userId)
     .eq("checkin_date", date)
     .maybeSingle();
@@ -4072,7 +4794,10 @@ async function computeDynamicConfidenceMetadata(supabase, userId, date, protocol
 
   const hasCheckinToday = !!todayWellness;
   // Prefer calculated_readiness, fallback to overall_readiness_score, then protocol value
-  const readinessScore = todayWellness?.calculated_readiness ?? todayWellness?.overall_readiness_score ?? protocol.readiness_score;
+  const readinessScore =
+    todayWellness?.calculated_readiness ??
+    todayWellness?.overall_readiness_score ??
+    protocol.readiness_score;
 
   // Calculate days stale if no check-in today but we have stored data
   let daysStale = null;
@@ -4089,7 +4814,9 @@ async function computeDynamicConfidenceMetadata(supabase, userId, date, protocol
     if (lastCheckin?.checkin_date) {
       const lastDate = new Date(lastCheckin.checkin_date);
       const today = new Date(date);
-      daysStale = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+      daysStale = Math.floor(
+        (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
     }
   } else if (hasCheckinToday) {
     daysStale = 0;
@@ -4118,7 +4845,11 @@ async function computeDynamicConfidenceMetadata(supabase, userId, date, protocol
   return {
     readiness: {
       hasData: hasCheckinToday || readinessScore !== null,
-      source: hasCheckinToday ? "wellness_checkin" : (readinessScore !== null ? "stored" : "none"),
+      source: hasCheckinToday
+        ? "wellness_checkin"
+        : readinessScore !== null
+          ? "stored"
+          : "none",
       daysStale,
       confidence: readinessConfidence,
       // Internal field for updating protocol.readiness_score in the response
@@ -4154,12 +4885,12 @@ function transformProtocolResponse(
     morning_mobility: [],
     foam_roll: [],
     warm_up: [],
-    isometrics: [],        // NEW: Evidence-based isometric training
-    plyometrics: [],       // NEW: Phase-appropriate plyometric work
-    strength: [],          // NEW: Strength incl. mandatory Nordic curls
-    conditioning: [],      // NEW: ACWR-adjusted conditioning
-    skill_drills: [],      // NEW: Position-specific skill/twitching
-    main_session: [],      // Legacy - kept for backwards compatibility
+    isometrics: [], // NEW: Evidence-based isometric training
+    plyometrics: [], // NEW: Phase-appropriate plyometric work
+    strength: [], // NEW: Strength incl. mandatory Nordic curls
+    conditioning: [], // NEW: ACWR-adjusted conditioning
+    skill_drills: [], // NEW: Position-specific skill/twitching
+    main_session: [], // Legacy - kept for backwards compatibility
     cool_down: [],
     evening_recovery: [],
   };
@@ -4252,11 +4983,27 @@ function transformProtocolResponse(
     ),
     warmUp: createBlock("warm_up", "Warm-Up (15 min)", "pi-bolt"),
     // Evidence-based training blocks
-    isometrics: createBlock("isometrics", "Isometrics (15 min)", "pi-pause-circle"),
-    plyometrics: createBlock("plyometrics", "Plyometrics (15 min)", "pi-arrow-up"),
+    isometrics: createBlock(
+      "isometrics",
+      "Isometrics (15 min)",
+      "pi-pause-circle",
+    ),
+    plyometrics: createBlock(
+      "plyometrics",
+      "Plyometrics (15 min)",
+      "pi-arrow-up",
+    ),
     strength: createBlock("strength", "Strength (15 min)", "pi-heart"),
-    conditioning: createBlock("conditioning", "Conditioning (15 min)", "pi-directions-run"),
-    skillDrills: createBlock("skill_drills", "Skill Drills (15 min)", "pi-bolt"),
+    conditioning: createBlock(
+      "conditioning",
+      "Conditioning (15 min)",
+      "pi-directions-run",
+    ),
+    skillDrills: createBlock(
+      "skill_drills",
+      "Skill Drills (15 min)",
+      "pi-bolt",
+    ),
     mainSession: createBlock("main_session", "Main Session", "pi-play"),
     coolDown: createBlock("cool_down", "Cool-Down (15 min)", "pi-stop"),
     eveningRecovery: createBlock(
@@ -4310,23 +5057,23 @@ function transformProtocolResponse(
  */
 function transformExercise(protocolExercise) {
   const ex = protocolExercise.exercises;
-  
+
   // Handle fallback exercises (no linked exercise_id, exercise data comes from protocol_exercises directly)
   if (!ex) {
     // Extract exercise name from ai_note (format: "emoji Name - description" or just description)
-    const aiNote = protocolExercise.ai_note || '';
-    const blockType = protocolExercise.block_type || 'general';
-    
+    const aiNote = protocolExercise.ai_note || "";
+    const blockType = protocolExercise.block_type || "general";
+
     // Generate a name from the sequence and block type if not available
-    const exerciseName = `${blockType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} Exercise ${protocolExercise.sequence_order || 1}`;
-    
+    const exerciseName = `${blockType.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} Exercise ${protocolExercise.sequence_order || 1}`;
+
     return {
       id: protocolExercise.id,
       exerciseId: protocolExercise.id, // Use protocol_exercise id as fallback
       exercise: {
         id: protocolExercise.id,
         name: exerciseName,
-        slug: exerciseName.toLowerCase().replace(/\s+/g, '-'),
+        slug: exerciseName.toLowerCase().replace(/\s+/g, "-"),
         category: blockType,
         subcategory: null,
         videoUrl: protocolExercise.video_url || null,
@@ -4340,7 +5087,7 @@ function transformExercise(protocolExercise) {
         defaultReps: protocolExercise.prescribed_reps,
         defaultHoldSeconds: protocolExercise.prescribed_hold_seconds,
         defaultDurationSeconds: protocolExercise.prescribed_duration_seconds,
-        difficultyLevel: 'intermediate',
+        difficultyLevel: "intermediate",
         loadContributionAu: protocolExercise.load_contribution_au || 0,
         isHighIntensity: false,
       },
@@ -4356,7 +5103,7 @@ function transformExercise(protocolExercise) {
       yesterdayHoldSeconds: protocolExercise.yesterday_hold_seconds,
       progressionNote: protocolExercise.progression_note,
       aiNote: protocolExercise.ai_note,
-      status: protocolExercise.status || 'pending',
+      status: protocolExercise.status || "pending",
       completedAt: protocolExercise.completed_at,
       actualSets: protocolExercise.actual_sets,
       actualReps: protocolExercise.actual_reps,

@@ -10,7 +10,7 @@ import {
   Component,
   computed,
   input,
-  output
+  output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import type { DecisionLedgerEntry } from "@core/models/decision-ledger.models";
@@ -31,7 +31,7 @@ import { StatusTagComponent } from "../../../shared/components/status-tag/status
     ButtonComponent,
     StatusTagComponent,
     CardShellComponent,
-    ConfidenceIndicatorComponent
+    ConfidenceIndicatorComponent,
   ],
   template: `
     <app-card-shell

@@ -1,7 +1,7 @@
 /**
  * Contract Compliance Tests: Session Lifecycle & Immutability
  * Contract: STEP_2_6_SESSION_LIFECYCLE_IMMUTABILITY_CONTRACT_V1.md
- * 
+ *
  * Tests verify:
  * - Authority leaks (AI/athlete cannot modify coach-locked sessions)
  * - Immutability (no writes after IN_PROGRESS/COMPLETED/LOCKED)
@@ -12,13 +12,22 @@ const { describe, it, expect, beforeAll, afterAll } = require("@jest/globals");
 const { createClient } = require("@supabase/supabase-js");
 
 // Test configuration
-const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "http://localhost:54321";
+const SUPABASE_URL =
+  process.env.SUPABASE_URL ||
+  process.env.VITE_SUPABASE_URL ||
+  "http://localhost:54321";
 const SUPABASE_SERVICE_KEY =
-  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "test-service-key";
+  process.env.SUPABASE_SERVICE_KEY ||
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  "test-service-key";
 
 if (!SUPABASE_URL || SUPABASE_URL === "http://localhost:54321") {
-  console.warn("⚠️  SUPABASE_URL not set. Tests require a real Supabase instance.");
-  console.warn("   Set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.");
+  console.warn(
+    "⚠️  SUPABASE_URL not set. Tests require a real Supabase instance.",
+  );
+  console.warn(
+    "   Set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables.",
+  );
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
@@ -346,7 +355,7 @@ describe("Contract: Session Lifecycle & Immutability", () => {
           .eq("session_id", session.id)
           .order("transitioned_at", { ascending: false })
           .limit(1);
-        
+
         // History should still be logged even if transition is invalid
         expect(history).toBeTruthy();
       }

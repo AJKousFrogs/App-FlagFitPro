@@ -1,12 +1,12 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    computed,
-    ElementRef,
-    inject,
-    OnInit,
-    signal,
-    viewChild
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
 } from "@angular/core";
 
 import { CommonModule, DatePipe, TitleCasePipe } from "@angular/common";
@@ -25,8 +25,8 @@ import { AccountDeletionService } from "../../core/services/account-deletion.ser
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    LoggerService,
-    toLogContext
+  LoggerService,
+  toLogContext,
 } from "../../core/services/logger.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -40,8 +40,8 @@ import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-op
 import { getTimeAgo } from "../../shared/utils/date.utils";
 import { getInitials } from "../../shared/utils/format.utils";
 import {
-    DELETION_MESSAGES,
-    getDeletionMessage
+  DELETION_MESSAGES,
+  getDeletionMessage,
 } from "../../shared/utils/privacy-ux-copy";
 
 interface PendingInvitation {
@@ -79,7 +79,7 @@ interface PendingInvitation {
     ButtonComponent,
     IconButtonComponent,
     CardShellComponent,
-    StatsGridComponent
+    StatsGridComponent,
   ],
   template: `
     <app-main-layout>
@@ -1186,10 +1186,10 @@ export class ProfileComponent implements OnInit {
 
       // Update local state
       this.avatarUrl.set(avatarUrl);
-      
+
       // Refresh profile completion service to recalculate completion percentage
       await this.profileCompletionService.refresh();
-      
+
       this.toastService.success(TOAST.SUCCESS.AVATAR_UPDATED);
     } catch (error) {
       this.logger.error("Error uploading avatar:", error);

@@ -6,14 +6,14 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Card } from "primeng/card";
@@ -28,18 +28,18 @@ import { ToggleSwitch } from "primeng/toggleswitch";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   AIService,
-  TrainingSuggestion
+  TrainingSuggestion,
 } from "../../../core/services/ai.service";
 import { AuthService } from "../../../core/services/auth.service";
 import {
   LoggerService,
-  toLogContext
+  toLogContext,
 } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { ToastService } from "../../../core/services/toast.service";
 import {
   WeatherData,
-  WeatherService
+  WeatherService,
 } from "../../../core/services/weather.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 
@@ -71,7 +71,7 @@ interface EquipmentOption {
     StatusTagComponent,
     SelectButton,
     Toast,
-    ButtonComponent
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -338,12 +338,13 @@ export class SmartTrainingFormComponent implements OnInit {
     try {
       // Note: team_events requires team_id filter via RLS, this query may return empty
       // if the user is not part of a team. We gracefully handle this case.
-      const { data: events, error: eventsError } = await this.supabaseService.client
-        .from("team_events")
-        .select("event_date, title, event_type")
-        .gte("event_date", new Date().toISOString().split("T")[0])
-        .order("event_date", { ascending: true })
-        .limit(5);
+      const { data: events, error: eventsError } =
+        await this.supabaseService.client
+          .from("team_events")
+          .select("event_date, title, event_type")
+          .gte("event_date", new Date().toISOString().split("T")[0])
+          .order("event_date", { ascending: true })
+          .limit(5);
 
       if (!eventsError && events) {
         upcomingGames = events.map((e) => ({
@@ -354,7 +355,10 @@ export class SmartTrainingFormComponent implements OnInit {
       }
     } catch (error) {
       // Non-critical: upcoming games are optional for suggestions
-      this.logger.debug("Could not load upcoming games (optional):", toLogContext(error));
+      this.logger.debug(
+        "Could not load upcoming games (optional):",
+        toLogContext(error),
+      );
     }
 
     this.aiService
@@ -496,10 +500,11 @@ export class SmartTrainingFormComponent implements OnInit {
       // Save to Supabase
       // Note: 'equipment' is stored in notes as JSON since column doesn't exist in schema
       // Note: athlete_id is required by RLS policy, user_id is for backward compatibility
-      const equipmentList = formValue.equipment?.length > 0 
-        ? `Equipment: ${formValue.equipment.join(', ')}`
-        : '';
-      
+      const equipmentList =
+        formValue.equipment?.length > 0
+          ? `Equipment: ${formValue.equipment.join(", ")}`
+          : "";
+
       const { error } = await this.supabaseService.client
         .from("training_sessions")
         .insert({
@@ -511,7 +516,7 @@ export class SmartTrainingFormComponent implements OnInit {
           is_outdoor: formValue.outdoorSession,
           scheduled_date: new Date().toISOString(),
           status: "scheduled",
-          notes: `Created via Smart Training Form${equipmentList ? '. ' + equipmentList : ''}`,
+          notes: `Created via Smart Training Form${equipmentList ? ". " + equipmentList : ""}`,
         })
         .select()
         .single();

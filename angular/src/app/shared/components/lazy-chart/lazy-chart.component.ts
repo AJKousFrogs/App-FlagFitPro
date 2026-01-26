@@ -89,7 +89,11 @@ interface ChartInstance {
         <app-chart-skeleton [type]="type()" [height]="height()" />
       }
       @if (!loading() && !hasError()) {
-        <canvas #chartCanvas [style.width]="width()" [style.height]="height()"></canvas>
+        <canvas
+          #chartCanvas
+          [style.width]="width()"
+          [style.height]="height()"
+        ></canvas>
       }
       @if (hasError()) {
         <div class="chart-error">
@@ -204,7 +208,13 @@ export class LazyChartComponent implements OnInit, OnDestroy {
 
       // Create new chart instance
       this.chartInstance = new this.ChartJS(ctx, {
-        type: this.type() as "line" | "bar" | "pie" | "doughnut" | "radar" | "polarArea",
+        type: this.type() as
+          | "line"
+          | "bar"
+          | "pie"
+          | "doughnut"
+          | "radar"
+          | "polarArea",
         data: chartData as import("chart.js").ChartData,
         options: {
           responsive: true,

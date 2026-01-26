@@ -172,7 +172,8 @@ import { IconButtonComponent } from "../button/icon-button.component";
       .pagination-page {
         min-width: 2.5rem;
         height: 2.5rem;
-        padding: var(--space-1, 0.25rem) var(--space-2, var(--ds-font-size-0-5rem));
+        padding: var(--space-1, 0.25rem)
+          var(--space-2, var(--ds-font-size-0-5rem));
         border: 1px solid var(--p-surface-border, #dee2e6);
         background: var(--p-surface-0, #ffffff);
         color: var(--text-primary, #1a1a1a);
@@ -200,7 +201,8 @@ import { IconButtonComponent } from "../button/icon-button.component";
       }
 
       .pagination-ellipsis {
-        padding: var(--space-1, 0.25rem) var(--space-2, var(--ds-font-size-0-5rem));
+        padding: var(--space-1, 0.25rem)
+          var(--space-2, var(--ds-font-size-0-5rem));
         color: var(--text-secondary, #6b7280);
       }
 
@@ -233,7 +235,8 @@ import { IconButtonComponent } from "../button/icon-button.component";
       }
 
       .items-per-page-select {
-        padding: var(--space-1, 0.25rem) var(--space-2, var(--ds-font-size-0-5rem));
+        padding: var(--space-1, 0.25rem)
+          var(--space-2, var(--ds-font-size-0-5rem));
         border: 1px solid var(--p-surface-border, #dee2e6);
         border-radius: var(--p-border-radius, var(--ds-font-size-0-5rem));
         background: var(--p-surface-0, #ffffff);

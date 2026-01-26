@@ -170,7 +170,11 @@ import { UI_LIMITS } from "../../core/constants/app.constants";
             "
           >
             <ng-container header-actions>
-              <app-status-tag value="Position-Specific" severity="info" size="sm" />
+              <app-status-tag
+                value="Position-Specific"
+                severity="info"
+                size="sm"
+              />
             </ng-container>
             <div class="priority-grid">
               @for (workout of positionWorkouts(); track workout.title) {

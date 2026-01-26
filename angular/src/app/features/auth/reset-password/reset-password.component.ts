@@ -2,14 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
@@ -31,7 +31,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     Card,
     ButtonComponent,
     InputText,
-    Toast
+    Toast,
   ],
   template: `
     <p-toast></p-toast>

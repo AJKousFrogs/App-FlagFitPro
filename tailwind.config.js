@@ -2,7 +2,6 @@
 export default {
   content: [
     "./**/*.html",
-    "./src/**/*.{html,js}",
     "./angular/src/**/*.{html,ts}",
     "./netlify/functions/**/*.{js,cjs}",
   ],

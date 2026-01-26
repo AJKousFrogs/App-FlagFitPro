@@ -516,7 +516,8 @@ export type ApiResponseWrapper<T> = import("./common.models").ApiResponse<T>;
  * @deprecated Use PaginatedResponse from core/models/common.models instead
  * Re-exported for backward compatibility
  */
-export type PaginatedApiResponse<T> = import("./common.models").PaginatedResponse<T>;
+export type PaginatedApiResponse<T> =
+  import("./common.models").PaginatedResponse<T>;
 
 /**
  * Batch operation result

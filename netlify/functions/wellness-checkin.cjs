@@ -291,7 +291,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
         calculated_readiness: calculatedReadiness,
         // Additional wellness fields
         motivation_level: motivationLevel,
-        mood: mood,
+        mood,
         hydration_level: hydrationLevel,
         overall_readiness_score: calculatedReadiness,
       },
@@ -323,7 +323,7 @@ async function saveCheckin(supabase, userId, payload, headers) {
         stress_level: stressLevel,
         muscle_soreness: muscleSoreness,
         motivation_level: motivationLevel,
-        mood: mood,
+        mood,
         hydration_level: hydrationLevel,
         notes,
         updated_at: new Date().toISOString(),
@@ -658,18 +658,18 @@ async function saveCheckin(supabase, userId, payload, headers) {
 
 /**
  * Calculate readiness score from wellness data
- * 
+ *
  * IMPORTANT: Returns null if required data is missing.
  * DO NOT use default values - readiness must be calculated from real user input.
- * 
+ *
  * Required: sleepQuality AND energyLevel (minimum for valid calculation)
- * 
+ *
  * Evidence-based weights (team-sport optimized):
  * - Sleep Quality: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
  * - Energy Level: 25% (correlates with perceived performance)
  * - Stress Level: 25% (inverted - lower stress = better readiness)
  * - Muscle Soreness: 20% (inverted - lower soreness = better readiness)
- * 
+ *
  * Scale: Input values are on 1-5 scale (from quick check-in) or 0-10 scale (full check-in)
  */
 function calculateReadiness(data) {
@@ -677,9 +677,15 @@ function calculateReadiness(data) {
 
   // CRITICAL: Require at least sleep quality AND energy level
   // DO NOT use defaults - user must provide real data
-  if (sleepQuality === null || sleepQuality === undefined ||
-      energyLevel === null || energyLevel === undefined) {
-    console.log("[wellness-checkin] Cannot calculate readiness: missing required fields");
+  if (
+    sleepQuality === null ||
+    sleepQuality === undefined ||
+    energyLevel === null ||
+    energyLevel === undefined
+  ) {
+    console.log(
+      "[wellness-checkin] Cannot calculate readiness: missing required fields",
+    );
     return null;
   }
 
@@ -689,7 +695,7 @@ function calculateReadiness(data) {
     sleepQuality || 0,
     energyLevel || 0,
     muscleSoreness || 0,
-    stressLevel || 0
+    stressLevel || 0,
   );
   const scale = maxValue <= 5 ? 5 : 10;
 
@@ -708,24 +714,18 @@ function calculateReadiness(data) {
     const stressScore = ((scale - stressLevel) / scale) * 100;
     const sorenessScore = ((scale - muscleSoreness) / scale) * 100;
     score =
-      sleepScore * 0.30 +
+      sleepScore * 0.3 +
       energyScore * 0.25 +
       stressScore * 0.25 +
-      sorenessScore * 0.20;
+      sorenessScore * 0.2;
   } else if (hasStress) {
     // Sleep, energy, stress (redistribute soreness weight)
     const stressScore = ((scale - stressLevel) / scale) * 100;
-    score =
-      sleepScore * 0.375 +
-      energyScore * 0.3125 +
-      stressScore * 0.3125;
+    score = sleepScore * 0.375 + energyScore * 0.3125 + stressScore * 0.3125;
   } else if (hasSoreness) {
     // Sleep, energy, soreness (redistribute stress weight)
     const sorenessScore = ((scale - muscleSoreness) / scale) * 100;
-    score =
-      sleepScore * 0.40 +
-      energyScore * 0.333 +
-      sorenessScore * 0.267;
+    score = sleepScore * 0.4 + energyScore * 0.333 + sorenessScore * 0.267;
   } else {
     // Minimal: sleep and energy only
     score = sleepScore * 0.55 + energyScore * 0.45;

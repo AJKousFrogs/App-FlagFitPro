@@ -150,15 +150,15 @@ describe("TrainingDataService", () => {
       rpe: 5,
     };
 
-    const mockSupabaseService = TestBed.inject(
-      SupabaseService,
-    ) as unknown as {
+    const mockSupabaseService = TestBed.inject(SupabaseService) as unknown as {
       client: { from: (table: string) => Record<string, unknown> };
     };
 
     mockSupabaseService.client.from = vi.fn((table: string) => {
       if (table === "training_sessions") {
-        return { select: () => createThenableQuery([recentSession, oldSession]) };
+        return {
+          select: () => createThenableQuery([recentSession, oldSession]),
+        };
       }
       if (table === "load_monitoring") {
         return {
@@ -166,8 +166,7 @@ describe("TrainingDataService", () => {
             eq: () => ({
               order: () => ({
                 limit: () => ({
-                  single: () =>
-                    Promise.resolve({ data: null, error: null }),
+                  single: () => Promise.resolve({ data: null, error: null }),
                 }),
               }),
             }),
@@ -178,7 +177,8 @@ describe("TrainingDataService", () => {
     });
 
     const stats = await firstValueFrom(service.getTrainingStats());
-    const expectedWeeklyLoad = recentSession.duration_minutes * recentSession.rpe;
+    const expectedWeeklyLoad =
+      recentSession.duration_minutes * recentSession.rpe;
     expect(stats?.weekly_volume).toBe(expectedWeeklyLoad);
   });
 });

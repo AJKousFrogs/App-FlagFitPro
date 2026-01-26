@@ -288,7 +288,11 @@ import { calculateAge } from "../../../shared/utils/date.utils";
               <div class="rtp-protocol">
                 <div class="rtp-header">
                   <h3>Active Return-to-Play Protocol</h3>
-                  <app-status-tag [value]="rtpStage()" severity="info" size="sm" />
+                  <app-status-tag
+                    [value]="rtpStage()"
+                    severity="info"
+                    size="sm"
+                  />
                 </div>
                 <div class="rtp-progress">
                   <p-progressBar

@@ -635,7 +635,9 @@ export function updateChartFontSizes(chart: Chart): void {
   if (!chart || typeof chart.update !== "function") {
     if (isDevMode()) {
       // eslint-disable-next-line no-console
-      console.warn("[updateChartFontSizes] Chart instance not properly initialized");
+      console.warn(
+        "[updateChartFontSizes] Chart instance not properly initialized",
+      );
     }
     return;
   }

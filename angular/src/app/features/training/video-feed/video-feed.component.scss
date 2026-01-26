@@ -256,7 +256,6 @@
   margin-bottom: var(--space-6);
 }
 
-
 .filter-chips-container {
   display: flex;
   align-items: flex-start;
@@ -433,7 +432,10 @@
 
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-lg), 1fr)
+  );
   gap: var(--space-8);
 }
 
@@ -959,7 +961,10 @@
 /* ===== RESPONSIVE ===== */
 @include respond-to(lg) {
   .video-grid {
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--grid-card-min-md), 1fr)
+    );
     gap: var(--space-5);
   }
 }

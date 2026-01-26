@@ -14,8 +14,7 @@ import { serverLogger } from "../utils/server-logger.js";
 // Never use ANON_KEY on backend - it won't work for getUser() validation
 const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseServiceKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY ||
-  process.env.SUPABASE_SERVICE_KEY;
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
 
 let supabaseAuth = null;
 
@@ -27,24 +26,30 @@ if (supabaseUrl && supabaseServiceKey) {
         persistSession: false,
       },
     });
-    serverLogger.info("[Auth Middleware] Supabase auth client initialized with SERVICE_ROLE_KEY");
+    serverLogger.info(
+      "[Auth Middleware] Supabase auth client initialized with SERVICE_ROLE_KEY",
+    );
   } catch (error) {
     serverLogger.error("Failed to initialize Supabase auth client:", error);
   }
 } else {
   serverLogger.error(
     "[Auth Middleware] CRITICAL: SUPABASE_SERVICE_ROLE_KEY not found! " +
-    "Backend authentication will fail. Check environment variables:",
+      "Backend authentication will fail. Check environment variables:",
     {
       hasUrl: !!supabaseUrl,
       hasServiceKey: !!supabaseServiceKey,
       envVars: {
-        SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? "SET" : "MISSING",
-        SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY ? "SET" : "MISSING",
+        SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY
+          ? "SET"
+          : "MISSING",
+        SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY
+          ? "SET"
+          : "MISSING",
         SUPABASE_URL: process.env.SUPABASE_URL ? "SET" : "MISSING",
         VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ? "SET" : "MISSING",
-      }
-    }
+      },
+    },
   );
 }
 

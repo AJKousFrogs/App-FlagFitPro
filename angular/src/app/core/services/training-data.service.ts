@@ -9,24 +9,30 @@ import { SupabaseService } from "./supabase.service";
  * Training Session Status Enum
  * Contract: Must match DB enum values exactly
  */
-export type TrainingStatus = 'planned' | 'in_progress' | 'completed' | 'cancelled' | 'scheduled' | 'deleted';
+export type TrainingStatus =
+  | "planned"
+  | "in_progress"
+  | "completed"
+  | "cancelled"
+  | "scheduled"
+  | "deleted";
 
 /**
  * Session State Enum (for advanced workflow tracking)
  * Contract: Must match DB text enum values
  */
 export type SessionState =
-  | 'UNRESOLVED'
-  | 'PLANNED'
-  | 'GENERATED'
-  | 'VISIBLE'
-  | 'ACKNOWLEDGED'
-  | 'IN_PROGRESS'
-  | 'COMPLETED'
-  | 'LOCKED'
-  | 'CANCELLED'
-  | 'EXPIRED'
-  | 'ABANDONED';
+  | "UNRESOLVED"
+  | "PLANNED"
+  | "GENERATED"
+  | "VISIBLE"
+  | "ACKNOWLEDGED"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "LOCKED"
+  | "CANCELLED"
+  | "EXPIRED"
+  | "ABANDONED";
 
 /**
  * Training Session Interface
@@ -415,16 +421,16 @@ export class TrainingDataService {
         ? new Date(sessionDate).toISOString()
         : new Date().toISOString();
       const duration = session.duration_minutes || session.duration || 0;
-      
+
       // RPE is critical for ACWR calculations - do NOT use fallback values
       // If RPE is not provided, the workout log should still be created but
       // with null RPE to indicate missing data (affects ACWR data quality score)
       const rpe = session.rpe ?? session.intensity_level ?? null;
-      
+
       if (rpe === null) {
         this.logger.warn(
           "[TrainingDataService] Creating workout log without RPE - this affects ACWR calculation accuracy",
-          { sessionId: session.id }
+          { sessionId: session.id },
         );
       }
 
@@ -532,7 +538,9 @@ export class TrainingDataService {
     }
 
     if (!id) {
-      this.logger.error("Cannot delete training session: No session ID provided");
+      this.logger.error(
+        "Cannot delete training session: No session ID provided",
+      );
       return of(false);
     }
 
@@ -540,16 +548,14 @@ export class TrainingDataService {
     // Contract: BE performs authorization check (user_id match)
     const apiUrl = this.getApiBaseUrl();
     return this.http
-      .delete<{ success: boolean; message?: string }>(
-        `${apiUrl}/training-sessions/${id}`,
-      )
+      .delete<{
+        success: boolean;
+        message?: string;
+      }>(`${apiUrl}/training-sessions/${id}`)
       .pipe(
         map((response) => {
           if (response.success) {
-            this.logger.info(
-              "Training session soft-deleted successfully:",
-              id,
-            );
+            this.logger.info("Training session soft-deleted successfully:", id);
             return true;
           }
           return false;
@@ -560,9 +566,7 @@ export class TrainingDataService {
               "Training session not found or you don't have permission to delete it",
             );
           } else if (error.status === 403) {
-            this.logger.error(
-              "Cannot delete: Session may be coach_locked",
-            );
+            this.logger.error("Cannot delete: Session may be coach_locked");
           } else {
             this.logger.error("Error deleting training session:", error);
           }
@@ -605,7 +609,8 @@ export class TrainingDataService {
           // Default to last 90 days to prevent loading all historical data
           const defaultStartDate = new Date();
           defaultStartDate.setDate(
-            defaultStartDate.getDate() - TRAINING_DATA_LIMITS.STATS_DATE_RANGE_DAYS,
+            defaultStartDate.getDate() -
+              TRAINING_DATA_LIMITS.STATS_DATE_RANGE_DAYS,
           );
           query = query.gte(
             "session_date",

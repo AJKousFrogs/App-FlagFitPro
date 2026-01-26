@@ -145,7 +145,11 @@ interface AnalyticsData {
           <ng-template pTemplate="header">
             <div class="chart-header">
               <h3>Weekly Progress</h3>
-              <app-status-tag value="Last 4 weeks" severity="secondary" size="sm" />
+              <app-status-tag
+                value="Last 4 weeks"
+                severity="secondary"
+                size="sm"
+              />
             </div>
           </ng-template>
           <div class="chart-container">
@@ -326,9 +330,12 @@ export class SessionAnalyticsComponent implements OnInit {
 
     try {
       const response = await firstValueFrom(
-        this.apiService.get<AnalyticsData>(API_ENDPOINTS.microSessions.analytics, {
-          weeks: 4,
-        }),
+        this.apiService.get<AnalyticsData>(
+          API_ENDPOINTS.microSessions.analytics,
+          {
+            weeks: 4,
+          },
+        ),
       );
 
       if (response?.success && response.data) {

@@ -525,7 +525,11 @@ async function handler(event) {
       // Verify access to target user's data
       const canAccess = await verifyPsychologyAccess(userId, reportUserId);
       if (!canAccess) {
-        return createErrorResponse("Access denied to athlete data", 403, ErrorType.AUTHORIZATION);
+        return createErrorResponse(
+          "Access denied to athlete data",
+          403,
+          ErrorType.AUTHORIZATION,
+        );
       }
 
       const report = await generateMentalWellnessReport(reportUserId, body);

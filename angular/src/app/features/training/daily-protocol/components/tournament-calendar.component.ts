@@ -123,10 +123,18 @@ interface EventTypeOption {
                   <div class="tournament-name">
                     {{ tournament.name }}
                     @if (tournament.isPeakEvent) {
-                      <app-status-tag value="PEAK" severity="danger" size="sm" />
+                      <app-status-tag
+                        value="PEAK"
+                        severity="danger"
+                        size="sm"
+                      />
                     }
                     @if (tournament.isNationalTeamEvent) {
-                      <app-status-tag value="National Team" severity="info" size="sm" />
+                      <app-status-tag
+                        value="National Team"
+                        severity="info"
+                        size="sm"
+                      />
                     }
                   </div>
                   <div class="tournament-details">

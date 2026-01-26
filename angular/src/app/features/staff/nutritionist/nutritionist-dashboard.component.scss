@@ -175,7 +175,10 @@
 .body-composition-section {
   .charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-xl), 1fr));
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(var(--grid-card-min-xl), 1fr)
+    );
     gap: var(--ds-spacing-lg);
     margin-bottom: var(--ds-spacing-lg);
 
@@ -237,7 +240,10 @@
 .supplement-section {
   .compliance-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--grid-card-min-lg), 1fr)
+    );
     gap: var(--ds-spacing-lg);
   }
 
@@ -325,7 +331,10 @@
 .tournament-section {
   .tournament-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--grid-card-min-lg), 1fr)
+    );
     gap: var(--ds-spacing-lg);
   }
 
@@ -521,8 +530,3 @@
   }
 }
 // Dialog sizing
-
-
-
-
-

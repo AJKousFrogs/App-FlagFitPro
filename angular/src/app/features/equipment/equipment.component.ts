@@ -6,7 +6,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -27,7 +27,7 @@ import {
   EquipmentAssignment,
   EquipmentItem,
   EquipmentService,
-  EquipmentSummary
+  EquipmentSummary,
 } from "../../core/services/equipment.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -70,7 +70,7 @@ type Condition = "new" | "good" | "fair" | "poor" | "needs_replacement";
     PageHeaderComponent,
     DatePipe,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -694,7 +694,10 @@ export class EquipmentComponent implements OnInit {
   getConditionSeverity(
     condition: string,
   ): "success" | "warning" | "danger" | "info" {
-    const severities: Record<string, "success" | "warning" | "danger" | "info"> = {
+    const severities: Record<
+      string,
+      "success" | "warning" | "danger" | "info"
+    > = {
       new: "success",
       good: "success",
       fair: "warning",

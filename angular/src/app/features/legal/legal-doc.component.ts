@@ -45,11 +45,7 @@ const LEGAL_DOCS: Record<
   template: `
     <main class="legal-doc-page">
       <app-page-header [title]="title()" [subtitle]="subtitle()">
-        <app-button
-          iconLeft="pi-arrow-left"
-          variant="text"
-          routerLink="/"
-        >
+        <app-button iconLeft="pi-arrow-left" variant="text" routerLink="/">
           Back to Home
         </app-button>
       </app-page-header>

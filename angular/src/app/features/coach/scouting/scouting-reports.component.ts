@@ -5,7 +5,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -130,7 +130,7 @@ interface ScoutingReport {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>

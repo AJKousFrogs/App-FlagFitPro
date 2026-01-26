@@ -55,11 +55,7 @@ exports.handler = async (event) => {
     if (error) {
       console.error("Error fetching isometric exercises:", error);
       return withHeaders(
-        createErrorResponse(
-          "Failed to fetch exercises",
-          500,
-          "database_error",
-        ),
+        createErrorResponse("Failed to fetch exercises", 500, "database_error"),
       );
     }
 

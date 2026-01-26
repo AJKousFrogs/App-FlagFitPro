@@ -61,7 +61,7 @@
   cursor: help;
   transition: color var(--motion-fast, 150ms) var(--ease-standard, ease);
   margin-left: var(--space-1);
-  
+
   &:hover {
     color: var(--ds-primary-green);
   }
@@ -89,7 +89,6 @@
 .rpe-slider {
   flex: 1;
   // PrimeNG slider overrides moved to _exceptions.scss (DS-EXC-008)
-}
 }
 
 .rpe-value {

@@ -73,85 +73,90 @@ export interface AIModeStatus {
         <!-- Details Section (collapsible) -->
         @if (!isCollapsed()) {
           <div class="mode-details">
-          <!-- Why Conservative Mode -->
-          <div class="detail-section">
-            <div class="section-label">Why conservative mode:</div>
-            <p class="section-text">{{ modeStatus()!.reason }}</p>
-          </div>
+            <!-- Why Conservative Mode -->
+            <div class="detail-section">
+              <div class="section-label">Why conservative mode:</div>
+              <p class="section-text">{{ modeStatus()!.reason }}</p>
+            </div>
 
-          <!-- Confidence Level -->
-          <div class="detail-section">
-            <div class="section-label">Data Confidence:</div>
-            <div class="confidence-display">
-              <div class="confidence-bar-wrapper">
-                <div class="confidence-bar">
-                  <div
-                    class="confidence-fill"
-                    [style.width.%]="modeStatus()!.confidence * 100"
-                    [class.low]="modeStatus()!.confidence < 0.5"
-                    [class.moderate]="
-                      modeStatus()!.confidence >= 0.5 &&
-                      modeStatus()!.confidence < 0.7
-                    "
-                  ></div>
+            <!-- Confidence Level -->
+            <div class="detail-section">
+              <div class="section-label">Data Confidence:</div>
+              <div class="confidence-display">
+                <div class="confidence-bar-wrapper">
+                  <div class="confidence-bar">
+                    <div
+                      class="confidence-fill"
+                      [style.width.%]="modeStatus()!.confidence * 100"
+                      [class.low]="modeStatus()!.confidence < 0.5"
+                      [class.moderate]="
+                        modeStatus()!.confidence >= 0.5 &&
+                        modeStatus()!.confidence < 0.7
+                      "
+                    ></div>
+                  </div>
                 </div>
+                <span class="confidence-value">
+                  {{ modeStatus()!.confidence * 100 | number: "1.0-0" }}%
+                </span>
               </div>
-              <span class="confidence-value">
-                {{ modeStatus()!.confidence * 100 | number: "1.0-0" }}%
-              </span>
+              <p class="confidence-note">
+                <i class="pi pi-info-circle"></i>
+                AI recommendations are more cautious when confidence is below
+                70%
+              </p>
             </div>
-            <p class="confidence-note">
-              <i class="pi pi-info-circle"></i>
-              AI recommendations are more cautious when confidence is below 70%
-            </p>
-          </div>
 
-          <!-- Missing Data -->
-          @if (modeStatus()!.missingData.length > 0) {
+            <!-- Missing Data -->
+            @if (modeStatus()!.missingData.length > 0) {
+              <div class="detail-section">
+                <div class="section-label">Missing data:</div>
+                <ul class="data-list">
+                  @for (item of modeStatus()!.missingData; track item) {
+                    <li>{{ getDataLabel(item) }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Stale Data -->
+            @if (modeStatus()!.staleData.length > 0) {
+              <div class="detail-section">
+                <div class="section-label">Stale data:</div>
+                <ul class="data-list">
+                  @for (item of modeStatus()!.staleData; track item) {
+                    <li>{{ getDataLabel(item) }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Actions to Improve -->
             <div class="detail-section">
-              <div class="section-label">Missing data:</div>
-              <ul class="data-list">
-                @for (item of modeStatus()!.missingData; track item) {
-                  <li>{{ getDataLabel(item) }}</li>
+              <div class="section-label">Improve data quality:</div>
+              <div class="action-buttons">
+                @if (hasMissingWellness()) {
+                  <button
+                    class="action-btn"
+                    [routerLink]="['/wellness']"
+                    pRipple
+                  >
+                    <i class="pi pi-heart"></i>
+                    <span>Complete Wellness Check-in</span>
+                  </button>
                 }
-              </ul>
-            </div>
-          }
-
-          <!-- Stale Data -->
-          @if (modeStatus()!.staleData.length > 0) {
-            <div class="detail-section">
-              <div class="section-label">Stale data:</div>
-              <ul class="data-list">
-                @for (item of modeStatus()!.staleData; track item) {
-                  <li>{{ getDataLabel(item) }}</li>
+                @if (hasMissingTraining()) {
+                  <button
+                    class="action-btn"
+                    [routerLink]="['/training/log']"
+                    pRipple
+                  >
+                    <i class="pi pi-plus"></i>
+                    <span>Log Training Session</span>
+                  </button>
                 }
-              </ul>
+              </div>
             </div>
-          }
-
-          <!-- Actions to Improve -->
-          <div class="detail-section">
-            <div class="section-label">Improve data quality:</div>
-            <div class="action-buttons">
-              @if (hasMissingWellness()) {
-                <button class="action-btn" [routerLink]="['/wellness']" pRipple>
-                  <i class="pi pi-heart"></i>
-                  <span>Complete Wellness Check-in</span>
-                </button>
-              }
-              @if (hasMissingTraining()) {
-                <button
-                  class="action-btn"
-                  [routerLink]="['/training/log']"
-                  pRipple
-                >
-                  <i class="pi pi-plus"></i>
-                  <span>Log Training Session</span>
-                </button>
-              }
-            </div>
-          </div>
           </div>
         }
       </div>

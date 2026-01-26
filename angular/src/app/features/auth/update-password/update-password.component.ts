@@ -3,7 +3,7 @@ import {
   Component,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import {
   AbstractControl,
@@ -11,7 +11,7 @@ import {
   FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
-  Validators
+  Validators,
 } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
@@ -44,7 +44,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     ButtonComponent,
     Password,
     Message,
-    Toast
+    Toast,
   ],
   template: `
     <p-toast></p-toast>

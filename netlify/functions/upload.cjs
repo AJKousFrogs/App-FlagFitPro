@@ -188,14 +188,14 @@ exports.handler = async (event, context) => {
         // Normalize path to prevent traversal attacks (e.g., "../other-user/file")
         const normalizedPath = filePath.replace(/\\/g, "/"); // Normalize slashes
         const pathParts = normalizedPath.split("/");
-        
+
         // Path must start with userId as the first directory component
         // Valid: "user-uuid/timestamp_filename.jpg"
         // Invalid: "../user-uuid/file", "user-uuid/../other/file"
         if (
-          pathParts.length < 2 || 
-          pathParts[0] !== userId || 
-          pathParts.some(part => part === ".." || part === ".")
+          pathParts.length < 2 ||
+          pathParts[0] !== userId ||
+          pathParts.some((part) => part === ".." || part === ".")
         ) {
           return createErrorResponse(
             "Not authorized to delete this file",

@@ -23,59 +23,65 @@ WHERE topic LIKE 'shoulder_%';
 ## Query Examples
 
 ### Get All Shoulder Knowledge
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .ilike('topic', 'shoulder_%');
+  .from("knowledge_base_entries")
+  .select("*")
+  .ilike("topic", "shoulder_%");
 ```
 
 ### Get Injury Information
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .eq('topic', 'shoulder_injuries_pathologies');
+  .from("knowledge_base_entries")
+  .select("*")
+  .eq("topic", "shoulder_injuries_pathologies");
 ```
 
 ### Get Prehab/Training Info
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .eq('topic', 'shoulder_prehab_training');
+  .from("knowledge_base_entries")
+  .select("*")
+  .eq("topic", "shoulder_prehab_training");
 ```
 
 ### Search by Tag
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .contains('tags', ['rotator_cuff']);
+  .from("knowledge_base_entries")
+  .select("*")
+  .contains("tags", ["rotator_cuff"]);
 ```
 
 ### Get Rehabilitation Protocols
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('topic, protocols, best_practices')
-  .eq('entry_type', 'recovery_method')
-  .ilike('topic', 'shoulder_%');
+  .from("knowledge_base_entries")
+  .select("topic, protocols, best_practices")
+  .eq("entry_type", "recovery_method")
+  .ilike("topic", "shoulder_%");
 ```
 
 ## AI Chat Integration
 
 ```typescript
 // Example: QB asks about shoulder health
-async function getShoulderAdvice(athleteType: 'quarterback' | 'receiver') {
-  const topics = athleteType === 'quarterback'
-    ? ['shoulder_prehab_training', 'shoulder_injuries_pathologies']
-    : ['shoulder_assessment_protocols', 'shoulder_prehab_training'];
+async function getShoulderAdvice(athleteType: "quarterback" | "receiver") {
+  const topics =
+    athleteType === "quarterback"
+      ? ["shoulder_prehab_training", "shoulder_injuries_pathologies"]
+      : ["shoulder_assessment_protocols", "shoulder_prehab_training"];
 
   const { data } = await supabase
-    .from('knowledge_base_entries')
-    .select('question, answer, best_practices')
-    .in('topic', topics);
+    .from("knowledge_base_entries")
+    .select("question, answer, best_practices")
+    .in("topic", topics);
 
   return data;
 }
@@ -84,28 +90,31 @@ async function getShoulderAdvice(athleteType: 'quarterback' | 'receiver') {
 ## Use Cases by Position
 
 ### Quarterbacks (Throwing Athletes)
+
 - Topic: `shoulder_prehab_training`
 - Topic: `shoulder_injuries_pathologies`
 - Focus: Rotator cuff strength, throwing mechanics
 
 ### Wide Receivers (Overhead Athletes)
+
 - Topic: `shoulder_assessment_protocols`
 - Topic: `shoulder_prehab_training`
 - Focus: Overhead stability, catching mechanics
 
 ### All Positions
+
 - Topic: `shoulder_anatomy_biomechanics`
 - Topic: `shoulder_rehabilitation` (if injured)
 
 ## Knowledge Entry Topics
 
-| Topic | Type | Use For |
-|-------|------|---------|
-| `shoulder_anatomy_biomechanics` | training_method | Education, understanding basics |
-| `shoulder_assessment_protocols` | training_method | Testing, monitoring |
-| `shoulder_injuries_pathologies` | injury | Injury identification, prevention |
-| `shoulder_rehabilitation` | recovery_method | Rehab programs, return to sport |
-| `shoulder_prehab_training` | training_method | Injury prevention, training |
+| Topic                           | Type            | Use For                           |
+| ------------------------------- | --------------- | --------------------------------- |
+| `shoulder_anatomy_biomechanics` | training_method | Education, understanding basics   |
+| `shoulder_assessment_protocols` | training_method | Testing, monitoring               |
+| `shoulder_injuries_pathologies` | injury          | Injury identification, prevention |
+| `shoulder_rehabilitation`       | recovery_method | Rehab programs, return to sport   |
+| `shoulder_prehab_training`      | training_method | Injury prevention, training       |
 
 ## Quick Stats
 
@@ -133,6 +142,7 @@ scripts/
 ## Troubleshooting
 
 ### Import fails?
+
 ```bash
 # Check if tables exist
 supabase db execute --sql "SELECT * FROM information_schema.tables WHERE table_name IN ('research_articles', 'knowledge_base_entries');"
@@ -142,6 +152,7 @@ supabase db execute -f database/migrations/028_evidence_based_knowledge_base.sql
 ```
 
 ### Can't find data?
+
 ```sql
 -- Check what's in database
 SELECT * FROM knowledge_base_entries LIMIT 5;
@@ -151,6 +162,7 @@ SELECT * FROM knowledge_base_entries WHERE answer ILIKE '%shoulder%';
 ```
 
 ### Need to re-import?
+
 ```sql
 -- Delete existing entries first
 DELETE FROM knowledge_base_entries WHERE topic LIKE 'shoulder_%';

@@ -14,7 +14,10 @@
 // Import Types Grid
 .import-types-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-md), 1fr)
+  );
   gap: var(--space-4);
 }
 
@@ -467,7 +470,10 @@
 
 .devices-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-sm), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-sm), 1fr)
+  );
   gap: var(--space-3);
 }
 

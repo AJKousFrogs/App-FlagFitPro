@@ -22,7 +22,8 @@ const mockFetch = async (url, options = {}) => {
 };
 
 // Test configuration
-const API_BASE = process.env.API_URL || "http://localhost:8888/.netlify/functions";
+const API_BASE =
+  process.env.API_URL || "http://localhost:8888/.netlify/functions";
 
 // Helper to create auth header
 const authHeader = (token) => ({
@@ -87,7 +88,8 @@ describe("Authentication Tests", () => {
 
     it("Returns 401 with expired token", async () => {
       // Expired JWT (would need to be generated with past expiry)
-      const expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjoxfQ.invalid";
+      const expiredToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZXhwIjoxfQ.invalid";
 
       const response = await fetch(`${API_BASE}/dashboard`, {
         method: "GET",
@@ -144,7 +146,7 @@ describe("Authorization Tests", () => {
         {
           method: "GET",
           headers: authHeader(userAToken),
-        }
+        },
       );
 
       expect(response.status).toBe(403);
@@ -159,7 +161,7 @@ describe("Authorization Tests", () => {
         {
           method: "GET",
           headers: authHeader(userAToken),
-        }
+        },
       );
 
       expect(response.status).toBe(403);
@@ -171,7 +173,7 @@ describe("Authorization Tests", () => {
         {
           method: "DELETE",
           headers: authHeader(userAToken),
-        }
+        },
       );
 
       expect(response.status).toBe(403);
@@ -207,7 +209,7 @@ describe("Authorization Tests", () => {
         {
           method: "DELETE",
           headers: authHeader(userAToken),
-        }
+        },
       );
 
       expect(response.status).toBe(403);
@@ -219,7 +221,7 @@ describe("Authorization Tests", () => {
         {
           method: "DELETE",
           headers: authHeader(userAToken),
-        }
+        },
       );
 
       expect(response.status).toBe(403);
@@ -267,14 +269,15 @@ describe("Authorization Tests", () => {
 
     it("Coach without consent cannot view player wellness", async () => {
       // Assuming coach doesn't have consent for this player
-      const playerId = process.env.TEST_PLAYER_NO_CONSENT_ID || "player-no-consent";
+      const playerId =
+        process.env.TEST_PLAYER_NO_CONSENT_ID || "player-no-consent";
 
       const response = await fetch(
         `${API_BASE}/wellness?athleteId=${playerId}`,
         {
           method: "GET",
           headers: authHeader(coachToken),
-        }
+        },
       );
 
       // Should return 403 or limited data
@@ -343,7 +346,7 @@ describe("Validation Tests", () => {
             // Missing required 'message' field
             is_important: true,
           }),
-        }
+        },
       );
 
       expect([400, 422]).toContain(response.status);
@@ -381,7 +384,7 @@ describe("Validation Tests", () => {
           body: JSON.stringify({
             message: longMessage,
           }),
-        }
+        },
       );
 
       expect([400, 422]).toContain(response.status);
@@ -433,14 +436,17 @@ describe("Validation Tests", () => {
     });
 
     it("Returns validation error for out-of-range measurements", async () => {
-      const response = await fetch(`${API_BASE}/performance-data/measurements`, {
-        method: "POST",
-        headers: authHeader(validToken),
-        body: JSON.stringify({
-          height: 100, // below min
-          weight: 30, // below min
-        }),
-      });
+      const response = await fetch(
+        `${API_BASE}/performance-data/measurements`,
+        {
+          method: "POST",
+          headers: authHeader(validToken),
+          body: JSON.stringify({
+            height: 100, // below min
+            weight: 30, // below min
+          }),
+        },
+      );
 
       expect(response.status).toBe(422);
       const body = await response.json();
@@ -477,7 +483,7 @@ describe("Validation Tests", () => {
             message: "Test message",
             message_type: "invalid_type",
           }),
-        }
+        },
       );
 
       expect([400, 422]).toContain(response.status);
@@ -531,7 +537,7 @@ describe("Error Response Format", () => {
       {
         method: "GET",
         headers: authHeader(token),
-      }
+      },
     );
 
     if (response.status === 403) {

@@ -246,14 +246,14 @@ interface TeamOption {
                     <div class="stat-item stat-block stat-block--compact">
                       <div class="stat-block__content">
                         <span class="stat-block__value">
-                        {{
-                          classification()?.avgConfidence
-                            ? (
-                                (classification()?.avgConfidence || 0) * 100
-                              ).toFixed(0) + "%"
-                            : "N/A"
-                        }}
-                      </span>
+                          {{
+                            classification()?.avgConfidence
+                              ? (
+                                  (classification()?.avgConfidence || 0) * 100
+                                ).toFixed(0) + "%"
+                              : "N/A"
+                          }}
+                        </span>
                         <span class="stat-block__label">Avg. Confidence</span>
                       </div>
                     </div>
@@ -554,7 +554,9 @@ export class CoachAnalyticsComponent {
     };
   }
 
-  getCompletionSeverity(rate: number): "success" | "info" | "warning" | "danger" {
+  getCompletionSeverity(
+    rate: number,
+  ): "success" | "info" | "warning" | "danger" {
     if (rate >= 90) return "success";
     if (rate >= 70) return "info";
     if (rate >= 50) return "warning";

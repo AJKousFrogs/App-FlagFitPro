@@ -13,10 +13,9 @@ This directory contains comprehensive testing for the FlagFit Pro application, i
 
 **Test Files:**
 
-- `auth-manager.test.js` - Authentication logic and session management
-- `api-config.test.js` - API configuration and HTTP client
+- `cache-utils.test.js` - Cache utility behavior
 - `error-handler.test.js` - Error handling and user notifications
-- `performance-utils.test.js` - Performance utilities
+- `validation-utils.test.js` - Input validation helpers
 
 ### 🔗 Integration Tests (`tests/integration/`)
 
@@ -102,10 +101,9 @@ tests/
 ├── test-helpers.js                   # Mock factories and utilities
 ├── README.md                         # This file
 ├── unit/                             # Unit tests
-│   ├── auth-manager.test.js          # Authentication logic
-│   ├── api-config.test.js            # API configuration
 │   ├── error-handler.test.js         # Error handling
-│   └── performance-utils.test.js     # Performance utilities
+│   ├── cache-utils.test.js           # Cache utilities
+│   └── validation-utils.test.js      # Validation utilities
 ├── integration/                      # Integration tests
 │   ├── api-integration.test.js       # API workflow tests
 │   ├── database-integration.test.js  # Database operations
@@ -225,10 +223,10 @@ npm run test:privacy:ci
 
 ```bash
 # Run specific test file
-npx vitest run tests/unit/auth-manager.test.js
+npx vitest run tests/unit/error-handler.test.js
 
 # Debug mode with breakpoints
-npx vitest run --inspect-brk tests/unit/auth-manager.test.js
+npx vitest run --inspect-brk tests/unit/error-handler.test.js
 
 # Watch mode for development
 npx vitest tests/unit/

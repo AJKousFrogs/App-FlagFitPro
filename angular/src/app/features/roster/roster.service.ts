@@ -11,14 +11,14 @@ import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
 import { normalizePlayerName } from "../../shared/utils/format.utils";
 import {
-    Player,
-    PlayerStatus,
-    StaffByCategory,
-    StaffCategory,
-    StaffMember,
-    TeamInvitation,
-    TeamRole,
-    TeamStat,
+  Player,
+  PlayerStatus,
+  StaffByCategory,
+  StaffCategory,
+  StaffMember,
+  TeamInvitation,
+  TeamRole,
+  TeamStat,
 } from "./roster.models";
 
 /**
@@ -205,7 +205,7 @@ export class RosterService {
       // NOTE: team_members.user_id references auth.users (not public.users), so PostgREST
       // cannot do an implicit join. We query team_members first, then fetch user data separately.
       let members: TeamMemberRecord[] | null = null;
-      
+
       // Step 1: Get team members without user join (FK is to auth.users, not public.users)
       const { data: membersData, error: membersError } =
         await this.supabaseService.client
@@ -221,22 +221,28 @@ export class RosterService {
         members = [];
       } else {
         // Step 2: Fetch user data from public.users for these member user_ids
-        const userIds = (membersData || []).map((m) => m.user_id).filter(Boolean);
+        const userIds = (membersData || [])
+          .map((m) => m.user_id)
+          .filter(Boolean);
         const usersMap = new Map<string, TeamMemberUserData>();
-        
+
         if (userIds.length > 0) {
-          const { data: usersData, error: usersError } = await this.supabaseService.client
-            .from("users")
-            .select("id, email, full_name")
-            .in("id", userIds);
-          
+          const { data: usersData, error: usersError } =
+            await this.supabaseService.client
+              .from("users")
+              .select("id, email, full_name")
+              .in("id", userIds);
+
           if (usersError) {
-            this.logger.warn(`[RosterService] Error fetching user data:`, JSON.stringify(usersError));
+            this.logger.warn(
+              `[RosterService] Error fetching user data:`,
+              JSON.stringify(usersError),
+            );
           } else if (usersData) {
             usersData.forEach((u) => usersMap.set(u.id, u));
           }
         }
-        
+
         // Map members with user data
         members = (membersData || []).map((m) => ({
           id: m.id,
@@ -249,14 +255,12 @@ export class RosterService {
 
       // Load team members with player role and their user profile data
       // First get team members with role='player' - include position and jersey_number from team_members
-      const {
-        data: playerMemberIds,
-        error: playerMemberIdsError,
-      } = await this.supabaseService.client
-        .from("team_members")
-        .select("id, team_id, user_id, role, position, jersey_number")
-        .eq("team_id", teamMember.team_id)
-        .eq("role", "player");
+      const { data: playerMemberIds, error: playerMemberIdsError } =
+        await this.supabaseService.client
+          .from("team_members")
+          .select("id, team_id, user_id, role, position, jersey_number")
+          .eq("team_id", teamMember.team_id)
+          .eq("role", "player");
 
       if (playerMemberIdsError) {
         this.logger.warn(
@@ -272,12 +276,16 @@ export class RosterService {
 
       // Then fetch user data for those members
       let playerMembers: PlayerMemberRecord[] = [];
-      if (playerMemberIds && Array.isArray(playerMemberIds) && playerMemberIds.length > 0) {
+      if (
+        playerMemberIds &&
+        Array.isArray(playerMemberIds) &&
+        playerMemberIds.length > 0
+      ) {
         const userIds = playerMemberIds.map((m) => m.user_id).filter(Boolean);
-        
+
         let userData = null;
         let userError = null;
-        
+
         if (userIds.length > 0) {
           const userQueryResult = await this.supabaseService.client
             .from("users")
@@ -285,7 +293,7 @@ export class RosterService {
               "id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed",
             )
             .in("id", userIds);
-          
+
           userData = userQueryResult.data;
           userError = userQueryResult.error;
         }
@@ -931,75 +939,74 @@ export class RosterService {
    * Players without completed onboarding will show with "pending" status
    */
   private processPlayerMembers(members: PlayerMemberRecord[] | null): Player[] {
-    return (members || [])
-      .map((m) => {
-        // Include players even without user records (show placeholder data)
-        if (!m.users) {
-          this.logger.debug(
-            `[RosterService] Processing player without user record: team_member_id=${m.id}, user_id=${m.user_id}`,
-          );
+    return (members || []).map((m) => {
+      // Include players even without user records (show placeholder data)
+      if (!m.users) {
+        this.logger.debug(
+          `[RosterService] Processing player without user record: team_member_id=${m.id}, user_id=${m.user_id}`,
+        );
+      }
+      const user = m.users;
+
+      // Calculate age from date of birth
+      let age = 0;
+      if (user?.date_of_birth) {
+        const birthDate = new Date(user.date_of_birth);
+        const today = new Date();
+        age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
+          age--;
         }
-        const user = m.users;
+      }
 
-        // Calculate age from date of birth
-        let age = 0;
-        if (user?.date_of_birth) {
-          const birthDate = new Date(user.date_of_birth);
-          const today = new Date();
-          age = today.getFullYear() - birthDate.getFullYear();
-          const monthDiff = today.getMonth() - birthDate.getMonth();
-          if (
-            monthDiff < 0 ||
-            (monthDiff === 0 && today.getDate() < birthDate.getDate())
-          ) {
-            age--;
-          }
-        }
+      // Format height and weight
+      const height = user?.height_cm ? `${user.height_cm} cm` : "N/A";
+      const weight = user?.weight_kg ? `${user.weight_kg} kg` : "N/A";
 
-        // Format height and weight
-        const height = user?.height_cm ? `${user.height_cm} cm` : "N/A";
-        const weight = user?.weight_kg ? `${user.weight_kg} kg` : "N/A";
+      // Build name from first_name + last_name or full_name
+      // Fallback to user_id if no user record exists
+      const name = user
+        ? normalizePlayerName(
+            {
+              full_name: user.full_name,
+              first_name: user.first_name,
+              last_name: user.last_name,
+              email: user.email,
+            },
+            "Unknown",
+          )
+        : `Player ${m.user_id?.substring(0, 8) || "Unknown"}`;
 
-        // Build name from first_name + last_name or full_name
-        // Fallback to user_id if no user record exists
-        const name = user
-          ? normalizePlayerName(
-              {
-                full_name: user.full_name,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-              },
-              "Unknown",
-            )
-          : `Player ${m.user_id?.substring(0, 8) || "Unknown"}`;
+      // PRIORITY: team_members fields > users fields (team_members is the authoritative source)
+      const position = m.position || user?.position || "Unknown";
+      const jerseyNumber = m.jersey_number ?? user?.jersey_number;
 
-        // PRIORITY: team_members fields > users fields (team_members is the authoritative source)
-        const position = m.position || user?.position || "Unknown";
-        const jerseyNumber = m.jersey_number ?? user?.jersey_number;
+      // Set status based on onboarding completion
+      const status: PlayerStatus = user?.onboarding_completed
+        ? "active"
+        : "inactive";
 
-        // Set status based on onboarding completion
-        const status: PlayerStatus = user?.onboarding_completed
-          ? "active"
-          : "inactive";
-
-        return {
-          id: m.id, // Use team_member id as the player id
-          name,
-          position,
-          jersey: jerseyNumber?.toString() || "0",
-          country: user?.country || "Unknown",
-          age,
-          height,
-          weight,
-          email: user?.email || "",
-          phone: "",
-          status,
-          stats: {},
-          created_at: new Date().toISOString(),
-          user_id: m.user_id,
-        };
-      });
+      return {
+        id: m.id, // Use team_member id as the player id
+        name,
+        position,
+        jersey: jerseyNumber?.toString() || "0",
+        country: user?.country || "Unknown",
+        age,
+        height,
+        weight,
+        email: user?.email || "",
+        phone: "",
+        status,
+        stats: {},
+        created_at: new Date().toISOString(),
+        user_id: m.user_id,
+      };
+    });
   }
 
   private calculateTeamStats(players: Player[], staff: StaffMember[]): void {

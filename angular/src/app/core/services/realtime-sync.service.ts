@@ -6,7 +6,7 @@ import { LoggerService } from "./logger.service";
  * Realtime Sync Service
  * Handles real-time data synchronization with bidirectional conflict detection
  * and resolution strategies.
- * 
+ *
  * Conflict Detection:
  * - Detects when both local and remote have been modified
  * - Handles both directions: local newer AND remote newer
@@ -46,7 +46,7 @@ export interface LocalChangeTracker {
 })
 export class RealtimeSyncService {
   private readonly logger = inject(LoggerService);
-  
+
   // Track local uncommitted changes for proper conflict detection
   private localChanges = new Map<string, LocalChangeTracker>();
 
@@ -54,7 +54,11 @@ export class RealtimeSyncService {
    * Register local changes before they're sent to server
    * This enables proper bidirectional conflict detection
    */
-  trackLocalChange(id: string, originalState: Workout, changes: Partial<Workout>): void {
+  trackLocalChange(
+    id: string,
+    originalState: Workout,
+    changes: Partial<Workout>,
+  ): void {
     this.localChanges.set(id, {
       id,
       originalState,
@@ -92,7 +96,9 @@ export class RealtimeSyncService {
       : 0;
 
     // Check for pending local changes that haven't been synced yet
-    const pendingChange = localState.id ? this.localChanges.get(localState.id) : null;
+    const pendingChange = localState.id
+      ? this.localChanges.get(localState.id)
+      : null;
     const hasPendingLocalChanges = pendingChange !== null;
 
     // Determine conflict type
@@ -135,7 +141,11 @@ export class RealtimeSyncService {
         this.logger.warn(
           `[RealtimeSync] Remote update will override pending local changes for ${localState.id}`,
         );
-        const resolved = this.mergeConflictingWorkouts(localState, remoteWorkout, "remote");
+        const resolved = this.mergeConflictingWorkouts(
+          localState,
+          remoteWorkout,
+          "remote",
+        );
         return {
           resolved,
           conflict: true,
@@ -154,7 +164,11 @@ export class RealtimeSyncService {
 
     // Local is newer - merge with local preference
     if (conflictType === "local_newer") {
-      const resolved = this.mergeConflictingWorkouts(localState, remoteWorkout, "local");
+      const resolved = this.mergeConflictingWorkouts(
+        localState,
+        remoteWorkout,
+        "local",
+      );
       return {
         resolved,
         conflict: true,
@@ -217,17 +231,22 @@ export class RealtimeSyncService {
       score: local.score ?? remote.score,
       notes: this.mergeNotes(local.notes, remote.notes),
       // Use later timestamp
-      modified_at: new Date(Math.max(
-        new Date(local.modified_at || 0).getTime(),
-        new Date(remote.modified_at || 0).getTime(),
-      )).toISOString(),
+      modified_at: new Date(
+        Math.max(
+          new Date(local.modified_at || 0).getTime(),
+          new Date(remote.modified_at || 0).getTime(),
+        ),
+      ).toISOString(),
     };
   }
 
   /**
    * Merge notes fields intelligently
    */
-  private mergeNotes(localNotes?: string, remoteNotes?: string): string | undefined {
+  private mergeNotes(
+    localNotes?: string,
+    remoteNotes?: string,
+  ): string | undefined {
     if (!localNotes && !remoteNotes) return undefined;
     if (!localNotes) return remoteNotes;
     if (!remoteNotes) return localNotes;
@@ -272,8 +291,11 @@ export class RealtimeSyncService {
       if (resolved.score === undefined && local.score !== undefined) {
         resolved.score = local.score;
       }
-      if ((!resolved.notes || resolved.notes.trim() === "") && 
-          local.notes !== undefined && local.notes.trim() !== "") {
+      if (
+        (!resolved.notes || resolved.notes.trim() === "") &&
+        local.notes !== undefined &&
+        local.notes.trim() !== ""
+      ) {
         resolved.notes = local.notes;
       }
     }
@@ -334,7 +356,9 @@ export class RealtimeSyncService {
       : 0;
 
     // Check for pending local changes
-    const hasPendingChanges = local.id ? this.localChanges.has(local.id) : false;
+    const hasPendingChanges = local.id
+      ? this.localChanges.has(local.id)
+      : false;
 
     // Simultaneous updates (within 1 second) - merge
     if (Math.abs(localModified - remoteModified) < 1000 && localModified > 0) {

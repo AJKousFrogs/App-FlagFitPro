@@ -30,7 +30,7 @@ export class DataExportService {
    */
   exportToCSV<T extends Record<string, unknown>>(
     data: T[],
-    filename: string = "export"
+    filename: string = "export",
   ): void {
     if (!data || data.length === 0) {
       this.logger.warn("No data to export");
@@ -61,7 +61,7 @@ export class DataExportService {
    */
   exportMultiple(
     datasets: Record<string, unknown[]>,
-    options: ExportOptions
+    options: ExportOptions,
   ): void {
     const { format, filename = "export" } = options;
 

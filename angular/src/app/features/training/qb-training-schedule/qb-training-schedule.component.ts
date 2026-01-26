@@ -2,7 +2,7 @@ import {
   Component,
   signal,
   ChangeDetectionStrategy,
-  OnInit
+  OnInit,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -21,7 +21,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     Card,
     DatePicker,
     PageHeaderComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   template: `
     <div class="qb-training-schedule-page">

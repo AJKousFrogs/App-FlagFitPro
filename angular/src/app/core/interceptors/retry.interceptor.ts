@@ -127,33 +127,32 @@ export const retryInterceptor: HttpInterceptorFn = (
   let retryCount = 0;
 
   return next(req).pipe(
-    catchError(
-      (error: HttpErrorResponse): Observable<HttpEvent<unknown>> => {
-        // Check if we should retry this error
-        if (!isRetryableError(error, req.method)) {
-          return throwError(() => error);
-        }
+    catchError((error: HttpErrorResponse): Observable<HttpEvent<unknown>> => {
+      // Check if we should retry this error
+      if (!isRetryableError(error, req.method)) {
+        return throwError(() => error);
+      }
 
-        // Check if we have retries left
-        if (retryCount >= maxRetries) {
-          logger.warn(
-            `[RetryInterceptor] Max retries (${maxRetries}) reached for ${req.method} ${req.url}`,
-            { status: error.status, message: error.message },
-          );
-          return throwError(() => error);
-        }
-
-        // Calculate delay and retry
-        const delay = calculateBackoffDelay(retryCount, baseDelay);
-        retryCount++;
-
-        logger.debug(
-          `[RetryInterceptor] Retry ${retryCount}/${maxRetries} for ${req.method} ${req.url} in ${delay}ms`,
+      // Check if we have retries left
+      if (retryCount >= maxRetries) {
+        logger.warn(
+          `[RetryInterceptor] Max retries (${maxRetries}) reached for ${req.method} ${req.url}`,
           { status: error.status, message: error.message },
         );
+        return throwError(() => error);
+      }
 
-        // Return a new observable that waits then retries
-        return new Observable<HttpEvent<unknown>>((subscriber) => {
+      // Calculate delay and retry
+      const delay = calculateBackoffDelay(retryCount, baseDelay);
+      retryCount++;
+
+      logger.debug(
+        `[RetryInterceptor] Retry ${retryCount}/${maxRetries} for ${req.method} ${req.url} in ${delay}ms`,
+        { status: error.status, message: error.message },
+      );
+
+      // Return a new observable that waits then retries
+      return new Observable<HttpEvent<unknown>>((subscriber) => {
         const timeoutId = setTimeout(() => {
           next(req).subscribe({
             next: (value) => subscriber.next(value),
@@ -187,7 +186,6 @@ export const retryInterceptor: HttpInterceptorFn = (
         // Cleanup on unsubscribe
         return () => clearTimeout(timeoutId);
       });
-    },
-    ),
+    }),
   );
 };

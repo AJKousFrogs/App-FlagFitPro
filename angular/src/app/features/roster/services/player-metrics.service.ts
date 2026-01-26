@@ -25,8 +25,8 @@ import { TRAINING, UI_LIMITS } from "../../../core/constants/app.constants";
 import { WELLNESS } from "../../../core/constants/wellness.constants";
 
 export interface PlayerWithMetrics extends Player {
-  readiness: number | null;  // null = no wellness data
-  acwr: number | null;       // null = insufficient training data
+  readiness: number | null; // null = no wellness data
+  acwr: number | null; // null = insufficient training data
   performanceScore: number;
   riskLevel: PlayerRiskLevel;
   positionMetrics: PositionMetrics;
@@ -154,7 +154,9 @@ export class PlayerMetricsService {
         factors.push(`Elevated ACWR (${enriched.acwr.toFixed(2)})`);
         recommendations.push("Monitor closely, avoid high-intensity sessions");
       } else if (enriched.acwr < 0.8) {
-        factors.push(`Low ACWR (${enriched.acwr.toFixed(2)}) - Detraining risk`);
+        factors.push(
+          `Low ACWR (${enriched.acwr.toFixed(2)}) - Detraining risk`,
+        );
         recommendations.push("Gradually increase training load");
       }
     } else {
@@ -264,7 +266,7 @@ export class PlayerMetricsService {
 
   /**
    * Get readiness from player data
-   * 
+   *
    * IMPORTANT: Returns null if no real readiness data exists.
    * DO NOT generate fake/mock readiness values - data must come from actual wellness check-ins.
    */
@@ -273,7 +275,7 @@ export class PlayerMetricsService {
     if (player.readiness !== undefined && player.readiness !== null) {
       return player.readiness;
     }
-    
+
     // Return null to indicate no data available
     // UI should show "No data" or prompt for wellness check-in
     return null;
@@ -281,7 +283,7 @@ export class PlayerMetricsService {
 
   /**
    * Get ACWR from player data
-   * 
+   *
    * IMPORTANT: Returns null if no real ACWR data exists.
    * DO NOT generate fake/mock ACWR values - data must come from actual training sessions.
    * ACWR requires at least 7 days of training data for acute load and 28 days for chronic load.
@@ -291,7 +293,7 @@ export class PlayerMetricsService {
     if (player.acwr !== undefined && player.acwr !== null) {
       return player.acwr;
     }
-    
+
     // Return null to indicate no data available
     // UI should show "Building baseline" or similar message
     return null;
@@ -369,7 +371,7 @@ export class PlayerMetricsService {
   ): PlayerRiskLevel {
     // Critical risk based on status
     if (status === "injured") return "critical";
-    
+
     // If we have both values, use full logic
     if (acwr !== null && readiness !== null) {
       if (acwr > 1.5 && readiness < 50) return "critical";

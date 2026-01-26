@@ -28,15 +28,28 @@ import { formatFocus } from "../video-curation-utils";
           <div class="analytics-list">
             @for (stat of videosByPosition(); track stat.position) {
               <div class="analytics-item">
-                <span class="analytics-label" [id]="'position-label-' + stat.position">{{ stat.position }}</span>
+                <span
+                  class="analytics-label"
+                  [id]="'position-label-' + stat.position"
+                  >{{ stat.position }}</span
+                >
                 <p-progressBar
                   [value]="stat.percentage"
                   [showValue]="false"
                   styleClass="analytics-bar"
-                  [attr.aria-label]="stat.position + ': ' + stat.count + ' videos (' + stat.percentage + '%)'"
+                  [attr.aria-label]="
+                    stat.position +
+                    ': ' +
+                    stat.count +
+                    ' videos (' +
+                    stat.percentage +
+                    '%)'
+                  "
                   [attr.aria-labelledby]="'position-label-' + stat.position"
                 ></p-progressBar>
-                <span class="analytics-value" aria-hidden="true">{{ stat.count }}</span>
+                <span class="analytics-value" aria-hidden="true">{{
+                  stat.count
+                }}</span>
               </div>
             }
           </div>
@@ -47,17 +60,28 @@ import { formatFocus } from "../video-curation-utils";
           <div class="analytics-list">
             @for (stat of videosByFocus(); track stat.focus) {
               <div class="analytics-item">
-                <span class="analytics-label" [id]="'focus-label-' + stat.focus">{{
-                  getFormatFocus(stat.focus)
-                }}</span>
+                <span
+                  class="analytics-label"
+                  [id]="'focus-label-' + stat.focus"
+                  >{{ getFormatFocus(stat.focus) }}</span
+                >
                 <p-progressBar
                   [value]="stat.percentage"
                   [showValue]="false"
                   styleClass="analytics-bar"
-                  [attr.aria-label]="getFormatFocus(stat.focus) + ': ' + stat.count + ' videos (' + stat.percentage + '%)'"
+                  [attr.aria-label]="
+                    getFormatFocus(stat.focus) +
+                    ': ' +
+                    stat.count +
+                    ' videos (' +
+                    stat.percentage +
+                    '%)'
+                  "
                   [attr.aria-labelledby]="'focus-label-' + stat.focus"
                 ></p-progressBar>
-                <span class="analytics-value" aria-hidden="true">{{ stat.count }}</span>
+                <span class="analytics-value" aria-hidden="true">{{
+                  stat.count
+                }}</span>
               </div>
             }
           </div>
@@ -78,7 +102,10 @@ import { formatFocus } from "../video-curation-utils";
                   <span class="creator-stat-name">
                     {{ creator.displayName }}
                     @if (creator.verified) {
-                      <i class="pi pi-verified" aria-label="Verified creator"></i>
+                      <i
+                        class="pi pi-verified"
+                        aria-label="Verified creator"
+                      ></i>
                     }
                   </span>
                   <span class="creator-stat-count"

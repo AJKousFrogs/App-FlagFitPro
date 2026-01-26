@@ -59,7 +59,6 @@ const CONFIG = {
   scanPaths: [
     "netlify/functions/**/*.cjs",
     "netlify/functions/**/*.js",
-    "src/**/*.js",
     // 'angular/src/app/**/*.ts', // Excluded - RLS + backend APIs handle consent
   ],
 

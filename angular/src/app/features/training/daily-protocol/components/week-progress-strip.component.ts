@@ -73,9 +73,7 @@ export interface WeekStats {
         <div class="stat-item stat-block stat-block--compact">
           <div class="stat-block__content">
             <span class="stat-block__value"
-              >{{ stats().completedDays }}/{{
-                stats().totalTrainingDays
-              }}</span
+              >{{ stats().completedDays }}/{{ stats().totalTrainingDays }}</span
             >
             <span class="stat-block__label">Training Days</span>
           </div>

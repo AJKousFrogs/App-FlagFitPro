@@ -64,63 +64,63 @@ import { ButtonComponent } from "../button/button.component";
           }
 
           @if (showCancel()) {
-            <app-button
-              variant="text"
-              size="sm"
-              (clicked)="onCancel()"
-            >Cancel</app-button>
+            <app-button variant="text" size="sm" (clicked)="onCancel()"
+              >Cancel</app-button
+            >
           }
         </div>
       </div>
     }
   `,
-  styles: [`
-    .slow-operation-container {
-      padding: var(--ds-space-4);
-      background: var(--surface-secondary);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
-    }
+  styles: [
+    `
+      .slow-operation-container {
+        padding: var(--ds-space-4);
+        background: var(--surface-secondary);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+      }
 
-    .operation-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: var(--ds-space-3);
-    }
+      .operation-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--ds-space-3);
+      }
 
-    .operation-name {
-      font-weight: var(--ds-font-weight-medium);
-      color: var(--color-text-primary);
-    }
+      .operation-name {
+        font-weight: var(--ds-font-weight-medium);
+        color: var(--color-text-primary);
+      }
 
-    .slow-badge {
-      font-size: var(--ds-font-size-xs);
-      padding: var(--ds-space-1) var(--ds-space-2);
-      background: var(--ds-color-warning-subtle);
-      color: var(--ds-color-warning);
-      border-radius: var(--radius-full);
-    }
+      .slow-badge {
+        font-size: var(--ds-font-size-xs);
+        padding: var(--ds-space-1) var(--ds-space-2);
+        background: var(--ds-color-warning-subtle);
+        color: var(--ds-color-warning);
+        border-radius: var(--radius-full);
+      }
 
-    .operation-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: var(--ds-space-3);
-    }
+      .operation-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: var(--ds-space-3);
+      }
 
-    .reassurance-message {
-      font-size: var(--ds-font-size-sm);
-      color: var(--color-text-secondary);
-      margin: 0;
-    }
+      .reassurance-message {
+        font-size: var(--ds-font-size-sm);
+        color: var(--color-text-secondary);
+        margin: 0;
+      }
 
-    /* Progress bar styling - uses PrimeNG's styleClass prop */
-    :host {
-      --p-progressbar-height: 8px;
-      --p-progressbar-border-radius: var(--radius-full);
-    }
-  `],
+      /* Progress bar styling - uses PrimeNG's styleClass prop */
+      :host {
+        --p-progressbar-height: 8px;
+        --p-progressbar-border-radius: var(--radius-full);
+      }
+    `,
+  ],
 })
 export class SlowOperationIndicatorComponent implements OnInit, OnDestroy {
   // Inputs
@@ -130,7 +130,7 @@ export class SlowOperationIndicatorComponent implements OnInit, OnDestroy {
   slowThresholdMs = input<number>(10000); // 10 seconds default
   showCancel = input<boolean>(true);
   reassuranceMessage = input<string>(
-    "This operation is taking a bit longer. Please don't close this page."
+    "This operation is taking a bit longer. Please don't close this page.",
   );
 
   // Outputs

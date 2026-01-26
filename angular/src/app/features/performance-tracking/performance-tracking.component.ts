@@ -215,7 +215,10 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
           } @else {
             <div class="no-data-banner">
               <i class="pi pi-info-circle"></i>
-              <span>No performance data yet. Log your first test to see metrics here.</span>
+              <span
+                >No performance data yet. Log your first test to see metrics
+                here.</span
+              >
             </div>
           }
 
@@ -253,9 +256,14 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               <!-- Achievement Badges Row -->
               @if (performanceAchievements().length > 0) {
                 <div class="achievements-row">
-                  <h4 class="achievements-title">Your Top Performance Badges</h4>
+                  <h4 class="achievements-title">
+                    Your Top Performance Badges
+                  </h4>
                   <div class="achievements-grid">
-                    @for (achievement of performanceAchievements(); track achievement.id) {
+                    @for (
+                      achievement of performanceAchievements();
+                      track achievement.id
+                    ) {
                       <app-achievement-badge
                         [icon]="getAchievementIcon(achievement.metric)"
                         [title]="achievement.metricLabel"
@@ -274,30 +282,51 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               <div class="rankings-table">
                 <h4 class="rankings-subtitle">How You Compare to Teammates</h4>
                 <div class="rankings-list">
-                  @for (ranking of teamRankings()!.rankings; track ranking.metric) {
-                    <div class="ranking-item" [class.top-three]="ranking.achievementTier">
+                  @for (
+                    ranking of teamRankings()!.rankings;
+                    track ranking.metric
+                  ) {
+                    <div
+                      class="ranking-item"
+                      [class.top-three]="ranking.achievementTier"
+                    >
                       <div class="ranking-metric">
-                        <span class="rank-badge" [class]="ranking.achievementTier || 'default'">
+                        <span
+                          class="rank-badge"
+                          [class]="ranking.achievementTier || 'default'"
+                        >
                           @if (ranking.achievementTier) {
                             {{ getRankEmoji(ranking.yourRank) }}
                           }
                           {{ formatRank(ranking.yourRank) }}
                         </span>
-                        <span class="metric-name">{{ ranking.metricLabel }}</span>
+                        <span class="metric-name">{{
+                          ranking.metricLabel
+                        }}</span>
                       </div>
                       <div class="ranking-details">
                         <span class="your-value">
-                          {{ ranking.yourValue }}{{ ranking.isLowerBetter ? 's' : getMetricUnit(ranking.metric) }}
+                          {{ ranking.yourValue
+                          }}{{
+                            ranking.isLowerBetter
+                              ? "s"
+                              : getMetricUnit(ranking.metric)
+                          }}
                         </span>
                         <span class="rank-of-total">
                           of {{ ranking.totalPlayers }} players
                         </span>
                       </div>
-                      <div class="gap-from-leader" [class.is-leader]="ranking.yourRank === 1">
+                      <div
+                        class="gap-from-leader"
+                        [class.is-leader]="ranking.yourRank === 1"
+                      >
                         @if (ranking.yourRank === 1) {
                           <span class="leader-badge">🏆 Team Leader!</span>
                         } @else {
-                          <span class="gap-text">{{ ranking.gapFormatted }}</span>
+                          <span class="gap-text">{{
+                            ranking.gapFormatted
+                          }}</span>
                         }
                       </div>
                     </div>
@@ -314,12 +343,19 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                       <span class="summary-label">Your Strongest</span>
                       <span class="summary-value">
                         {{ teamRankings()!.strongestMetric!.metricLabel }}
-                        (Top {{ 100 - teamRankings()!.strongestMetric!.percentile + 1 }}%)
+                        (Top
+                        {{
+                          100 - teamRankings()!.strongestMetric!.percentile + 1
+                        }}%)
                       </span>
                     </div>
                   </div>
                 }
-                @if (teamRankings()!.weakestMetric && teamRankings()!.weakestMetric !== teamRankings()!.strongestMetric) {
+                @if (
+                  teamRankings()!.weakestMetric &&
+                  teamRankings()!.weakestMetric !==
+                    teamRankings()!.strongestMetric
+                ) {
                   <div class="summary-item weakest">
                     <i class="pi pi-arrow-down"></i>
                     <div class="summary-content">
@@ -338,7 +374,10 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               <div class="empty-state">
                 <i class="pi pi-users empty-icon"></i>
                 <h4>Team Rankings Coming Soon</h4>
-                <p>Once more teammates log their performance tests, you'll see how you compare.</p>
+                <p>
+                  Once more teammates log their performance tests, you'll see
+                  how you compare.
+                </p>
               </div>
             </p-card>
           }
@@ -360,7 +399,10 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   <div class="empty-state">
                     <i class="pi pi-chart-line empty-icon"></i>
                     <h4>No Performance Data Yet</h4>
-                    <p>Log at least 2 performance tests to see your progress over time.</p>
+                    <p>
+                      Log at least 2 performance tests to see your progress over
+                      time.
+                    </p>
                   </div>
                 }
               </p-card>
@@ -387,7 +429,10 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
                   <div class="empty-state">
                     <i class="pi pi-bolt empty-icon"></i>
                     <h4>No Speed Data Yet</h4>
-                    <p>Log your 10-yard, 20-yard, or 40-yard times to see speed metrics.</p>
+                    <p>
+                      Log your 10-yard, 20-yard, or 40-yard times to see speed
+                      metrics.
+                    </p>
                   </div>
                 }
               </p-card>
@@ -417,7 +462,10 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
             </ng-template>
             @if (positionBenchmarks().length > 0) {
               <div class="benchmarks-list">
-                @for (benchmark of positionBenchmarks(); track benchmark.metric) {
+                @for (
+                  benchmark of positionBenchmarks();
+                  track benchmark.metric
+                ) {
                   <div class="benchmark-item">
                     <div class="benchmark-metric">
                       <span class="metric-name">{{ benchmark.metric }}</span>
@@ -444,7 +492,10 @@ const TRAINING_RECOMMENDATIONS: Record<string, string[]> = {
               <div class="empty-state">
                 <i class="pi pi-bullseye empty-icon"></i>
                 <h4>No Benchmark Data Yet</h4>
-                <p>Log your performance tests to compare against elite position benchmarks.</p>
+                <p>
+                  Log your performance tests to compare against elite position
+                  benchmarks.
+                </p>
               </div>
             }
           </p-card>
@@ -837,7 +888,9 @@ export class PerformanceTrackingComponent {
 
   // Team ranking signals - compare against teammates
   readonly teamRankings = computed(() => this.teamRankingService.rankings());
-  readonly performanceAchievements = computed(() => this.teamRankingService.achievements());
+  readonly performanceAchievements = computed(() =>
+    this.teamRankingService.achievements(),
+  );
   readonly hasTeam = computed(() => this.teamMembershipService.hasTeam());
 
   // Badge counts
@@ -925,7 +978,10 @@ export class PerformanceTrackingComponent {
         .order("recorded_at", { ascending: false });
 
       if (error) {
-        this.logger.error("[PerformanceTracking] Error fetching records:", error);
+        this.logger.error(
+          "[PerformanceTracking] Error fetching records:",
+          error,
+        );
         this.setEmptyState();
         this.isPageLoading.set(false);
         return;
@@ -933,7 +989,9 @@ export class PerformanceTrackingComponent {
 
       if (!records || records.length === 0) {
         // No data yet - show empty states (not mock data)
-        this.logger.info("[PerformanceTracking] No performance records found - showing empty state");
+        this.logger.info(
+          "[PerformanceTracking] No performance records found - showing empty state",
+        );
         this.setEmptyState();
         this.isPageLoading.set(false);
         return;
@@ -1156,7 +1214,10 @@ export class PerformanceTrackingComponent {
     const chartRecords = records.slice(0, 6).reverse();
 
     const labels = chartRecords.map((r) =>
-      new Date(r.recorded_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      new Date(r.recorded_at).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
     );
 
     const scores = chartRecords.map((r) => r.overall_score || 0);
@@ -1267,7 +1328,12 @@ export class PerformanceTrackingComponent {
     const gaps: GapAnalysis[] = positionBenchmarksList
       .map((b, index) => {
         const gapPercentage = 100 - b.percentOfElite;
-        const metricKeys = ["sprint40", "proAgility", "verticalJump", "relativeSquat"];
+        const metricKeys = [
+          "sprint40",
+          "proAgility",
+          "verticalJump",
+          "relativeSquat",
+        ];
         const metricKey = metricKeys[index] || "";
         return {
           metric: b.metric,

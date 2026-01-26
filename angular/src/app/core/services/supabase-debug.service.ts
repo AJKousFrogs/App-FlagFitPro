@@ -348,7 +348,9 @@ export class SupabaseDebugService {
     const missing = expectedColumns.filter(
       (col) => !actualColumns.includes(col),
     );
-    const extra = actualColumns.filter((col: string) => !expectedColumns.includes(col));
+    const extra = actualColumns.filter(
+      (col: string) => !expectedColumns.includes(col),
+    );
 
     console.log("Expected columns:", expectedColumns);
     console.log("Actual columns:", actualColumns);

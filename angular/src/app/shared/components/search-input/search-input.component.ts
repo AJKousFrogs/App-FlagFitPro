@@ -83,7 +83,8 @@ export class SearchInputComponent implements ControlValueAccessor {
   cleared = output<void>();
 
   // Angular 21: viewChild signal for DOM element reference
-  private readonly inputField = viewChild<ElementRef<HTMLInputElement>>('inputField');
+  private readonly inputField =
+    viewChild<ElementRef<HTMLInputElement>>("inputField");
 
   value = signal<string>("");
   private onChangeFn = (_value: string) => {};

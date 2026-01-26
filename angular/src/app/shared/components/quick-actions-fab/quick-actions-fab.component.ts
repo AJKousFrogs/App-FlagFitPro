@@ -6,7 +6,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 
 import { NavigationEnd, Router } from "@angular/router";

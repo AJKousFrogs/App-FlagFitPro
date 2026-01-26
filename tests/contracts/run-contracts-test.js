@@ -2,7 +2,7 @@
 /**
  * Simple test runner for contract tests
  * Runs tests without requiring Jest installation
- * 
+ *
  * Usage:
  *   SUPABASE_URL=... SUPABASE_SERVICE_KEY=... node run-contracts-test.js
  */
@@ -11,7 +11,8 @@ import { createClient } from "@supabase/supabase-js";
 
 // Get environment variables
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_SERVICE_KEY =
+  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   console.error("❌ Error: SUPABASE_URL and SUPABASE_SERVICE_KEY must be set");
@@ -78,7 +79,7 @@ async function runTests() {
         .from("state_transition_history")
         .select("id")
         .limit(1);
-      
+
       if (error && error.code === "42P01") {
         throw new Error("Table does not exist");
       }
@@ -90,7 +91,7 @@ async function runTests() {
         .from("training_sessions")
         .select("session_state")
         .limit(1);
-      
+
       if (error) {
         throw new Error(`Column check failed: ${error.message}`);
       }
@@ -102,7 +103,7 @@ async function runTests() {
         .from("training_sessions")
         .select("coach_locked")
         .limit(1);
-      
+
       if (error) {
         throw new Error(`Column check failed: ${error.message}`);
       }
@@ -117,7 +118,7 @@ async function runTests() {
         .from("v_readiness_scores_consent")
         .select("*")
         .limit(1);
-      
+
       if (error && error.code === "42P01") {
         throw new Error("View does not exist");
       }
@@ -129,7 +130,7 @@ async function runTests() {
         .from("v_wellness_entries_consent")
         .select("*")
         .limit(1);
-      
+
       if (error && error.code === "42P01") {
         throw new Error("View does not exist");
       }
@@ -141,7 +142,7 @@ async function runTests() {
         .from("v_injury_tracking_consent")
         .select("*")
         .limit(1);
-      
+
       if (error && error.code === "42P01") {
         throw new Error("View does not exist");
       }
@@ -154,7 +155,7 @@ async function runTests() {
     await test("state_transition_history blocks UPDATE", async () => {
       // First, try to get a record (or create a test one)
       const testId = "00000000-0000-0000-0000-000000000001";
-      
+
       // Try to insert a test record
       const { data: insertData, error: insertError } = await supabase
         .from("state_transition_history")
@@ -169,18 +170,21 @@ async function runTests() {
         .select()
         .single();
 
-      if (insertError && !insertError.message.includes("violates foreign key")) {
+      if (
+        insertError &&
+        !insertError.message.includes("violates foreign key")
+      ) {
         // If insert fails for other reasons, that's okay - we'll try to update existing
         // Check if we can query the table at least
         const { error: queryError } = await supabase
           .from("state_transition_history")
           .select("id")
           .limit(1);
-        
+
         if (queryError) {
           throw new Error(`Cannot access table: ${queryError.message}`);
         }
-        
+
         // If we can't insert, that's fine - just verify the table exists
         return true;
       }
@@ -192,11 +196,15 @@ async function runTests() {
         .eq("id", testId);
 
       if (!updateError) {
-        throw new Error("UPDATE was allowed (should be blocked by immutability trigger)");
+        throw new Error(
+          "UPDATE was allowed (should be blocked by immutability trigger)",
+        );
       }
 
       if (!updateError.message.includes("append-only")) {
-        throw new Error(`UPDATE error doesn't match expected pattern: ${updateError.message}`);
+        throw new Error(
+          `UPDATE error doesn't match expected pattern: ${updateError.message}`,
+        );
       }
 
       // Cleanup: Try to delete (should also fail)
@@ -214,7 +222,7 @@ async function runTests() {
   });
 
   // Summary
-  console.log("\n" + "=".repeat(50));
+  console.log(`\n${"=".repeat(50)}`);
   console.log("📊 Test Results");
   console.log("=".repeat(50));
   console.log(`Total: ${testsRun}`);

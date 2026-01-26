@@ -526,10 +526,12 @@ describe("WellnessService", () => {
       (mockSupabaseService as any).userId.mockReturnValue("user-123");
 
       let capturedPayload: unknown = null;
-      mockApiService.post.mockImplementation((url: string, payload: unknown) => {
-        capturedPayload = payload;
-        return of({ success: true, data: { id: 1, date: today } });
-      });
+      mockApiService.post.mockImplementation(
+        (url: string, payload: unknown) => {
+          capturedPayload = payload;
+          return of({ success: true, data: { id: 1, date: today } });
+        },
+      );
 
       await firstValueFrom(service.logWellness({ sleep: 8 }));
 

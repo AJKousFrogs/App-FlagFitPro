@@ -19,13 +19,13 @@ import {
   input,
   ChangeDetectionStrategy,
   DestroyRef,
-  HostBinding
+  HostBinding,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
   TeamNotificationService,
   CoachActivityItem,
-  ActivityType
+  ActivityType,
 } from "../../core/services/team-notification.service";
 
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -53,7 +53,7 @@ import { getInitials } from "../../shared/utils/format.utils";
     Skeleton,
     ScrollPanel,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <div class="activity-feed" [class.compact]="compact()">
@@ -134,9 +134,7 @@ import { getInitials } from "../../shared/utils/format.utils";
                         shape="circle"
                         styleClass="activity-avatar-icon"
                       ></p-avatar>
-                      <div
-                        class="activity-icon-badge"
-                      >
+                      <div class="activity-icon-badge">
                         <i
                           [class]="getActivityIcon(activity.activity_type)"
                         ></i>

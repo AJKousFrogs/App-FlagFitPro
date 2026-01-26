@@ -194,7 +194,9 @@ export class DataConfidenceService {
   /**
    * Get confidence severity for UI
    */
-  getConfidenceSeverity(score: number): "success" | "info" | "warning" | "danger" {
+  getConfidenceSeverity(
+    score: number,
+  ): "success" | "info" | "warning" | "danger" {
     if (score >= 0.9) return "success";
     if (score >= 0.7) return "info";
     if (score >= 0.5) return "warning";

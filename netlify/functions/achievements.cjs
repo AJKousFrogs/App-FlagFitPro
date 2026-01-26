@@ -57,7 +57,9 @@ exports.handler = async (event) => {
       try {
         payload = JSON.parse(event.body || "{}");
       } catch (_parseError) {
-        return withHeaders(handleValidationError("Invalid JSON in request body"));
+        return withHeaders(
+          handleValidationError("Invalid JSON in request body"),
+        );
       }
       return await updateStreak(supabase, user.id, payload, headers);
     }
@@ -65,9 +67,7 @@ exports.handler = async (event) => {
     return withHeaders(createErrorResponse("Not found", 404, "not_found"));
   } catch (error) {
     console.error("Achievements error:", error);
-    return withHeaders(
-      createErrorResponse(error.message, 500, "server_error"),
-    );
+    return withHeaders(createErrorResponse(error.message, 500, "server_error"));
   }
 };
 
@@ -80,7 +80,10 @@ async function getAchievements(supabase, userId, headers) {
     .order("display_order");
 
   if (defError) {
-    return { ...createErrorResponse(defError.message, 500, "database_error"), headers };
+    return {
+      ...createErrorResponse(defError.message, 500, "database_error"),
+      headers,
+    };
   }
 
   // Get user's earned achievements
@@ -203,7 +206,10 @@ async function getUserStats(supabase, userId, headers) {
     .single();
 
   if (error && error.code !== "PGRST116") {
-    return { ...createErrorResponse(error.message, 500, "database_error"), headers };
+    return {
+      ...createErrorResponse(error.message, 500, "database_error"),
+      headers,
+    };
   }
 
   // Get recent activity
@@ -255,7 +261,10 @@ async function getUserStreaks(supabase, userId, headers) {
     .eq("user_id", userId);
 
   if (error) {
-    return { ...createErrorResponse(error.message, 500, "database_error"), headers };
+    return {
+      ...createErrorResponse(error.message, 500, "database_error"),
+      headers,
+    };
   }
 
   // Format streaks with additional info
@@ -295,7 +304,10 @@ async function updateStreak(supabase, userId, payload, headers) {
   });
 
   if (error) {
-    return { ...createErrorResponse(error.message, 500, "database_error"), headers };
+    return {
+      ...createErrorResponse(error.message, 500, "database_error"),
+      headers,
+    };
   }
 
   // Award any unlocked achievements

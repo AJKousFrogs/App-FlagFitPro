@@ -72,14 +72,18 @@ import { ButtonComponent } from "../button/button.component";
           <div class="flex flex-col gap-2">
             <div data-testid="access-token-status">
               <strong>Access Token:</strong>
-              <span [class]="hasAccessToken() ? 'text-green-600' : 'text-red-600'">
-                {{ hasAccessToken() ? '✅ Present' : '❌ Missing' }}
+              <span
+                [class]="hasAccessToken() ? 'text-green-600' : 'text-red-600'"
+              >
+                {{ hasAccessToken() ? "✅ Present" : "❌ Missing" }}
               </span>
             </div>
             <div data-testid="refresh-token-status">
               <strong>Refresh Token:</strong>
-              <span [class]="hasRefreshToken() ? 'text-green-600' : 'text-red-600'">
-                {{ hasRefreshToken() ? '✅ Present' : '❌ Missing' }}
+              <span
+                [class]="hasRefreshToken() ? 'text-green-600' : 'text-red-600'"
+              >
+                {{ hasRefreshToken() ? "✅ Present" : "❌ Missing" }}
               </span>
             </div>
             <div data-testid="last-auth-event">
@@ -99,28 +103,34 @@ import { ButtonComponent } from "../button/button.component";
               (clicked)="checkAuthStatus()"
               [loading]="checking()"
               [fullWidth]="true"
-            >Check Auth Status</app-button>
+              >Check Auth Status</app-button
+            >
             <app-button
               iconLeft="pi-refresh"
               variant="success"
               (clicked)="refreshSession()"
               [loading]="refreshing()"
               [fullWidth]="true"
-            >Refresh Session</app-button>
+              >Refresh Session</app-button
+            >
             <app-button
               iconLeft="pi-sign-in"
               variant="outlined"
               (clicked)="forceReauth()"
               [loading]="reauthing()"
               [fullWidth]="true"
-            >Force Re-authenticate</app-button>
+              >Force Re-authenticate</app-button
+            >
           </div>
         </div>
 
         <!-- Last Check Result -->
         @if (lastCheckMessage()) {
           <div class="col-12">
-            <p-message [severity]="lastCheckSeverity()" styleClass="status-message">
+            <p-message
+              [severity]="lastCheckSeverity()"
+              styleClass="status-message"
+            >
               {{ lastCheckMessage() }}
             </p-message>
           </div>

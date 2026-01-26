@@ -14,10 +14,10 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -31,7 +31,7 @@ import { TableModule } from "primeng/table";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import {
   getMappedStatusSeverity,
-  programStatusSeverityMap
+  programStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
@@ -168,7 +168,7 @@ const PHASE_PRESETS = [
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `

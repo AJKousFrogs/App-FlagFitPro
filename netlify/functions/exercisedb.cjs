@@ -11,7 +11,10 @@
 
 const { supabaseAdmin } = require("./supabase-client.cjs");
 const { authenticateRequest } = require("./utils/auth-helper.cjs");
-const { createErrorResponse, handleValidationError } = require("./utils/error-handler.cjs");
+const {
+  createErrorResponse,
+  handleValidationError,
+} = require("./utils/error-handler.cjs");
 
 const supabase = supabaseAdmin;
 

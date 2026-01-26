@@ -21,7 +21,6 @@ export default [
       "supabase-types.ts",
       "Wireframes clean/**",
       "consent-violations.json",
-      "scripts/archive/**",
     ],
   },
   {
@@ -157,21 +156,6 @@ export default [
   },
 
   // ============================================
-  // STRICTER RULES FOR SOURCE FILES
-  // ============================================
-  {
-    files: ["src/**/*.js"],
-    ignores: ["src/logger.js"], // Logger is allowed to use console
-    rules: {
-      "no-console": "error", // No console methods allowed - use logger instead
-      "prefer-const": "error",
-      "no-var": "error",
-      // Prevent empty catch blocks that swallow errors
-      "no-empty": ["error", { allowEmptyCatch: false }],
-    },
-  },
-
-  // ============================================
   // RELAXED RULES FOR SCRIPTS (BUILD/UTILITY)
   // ============================================
   {
@@ -219,8 +203,6 @@ export default [
       "server-supabase.js",
       "simple-server.js",
       "routes/**/*.js",
-      "src/analytics-data-service.js",
-      "src/api-config.js",
     ],
     rules: {
       "no-console": "off",
@@ -242,16 +224,6 @@ export default [
       "require-await": "off",
       "no-script-url": "off",
       "no-await-in-loop": "off",
-    },
-  },
-
-  // ============================================
-  // RELAXED RULES FOR PERFORMANCE CHARTS
-  // ============================================
-  {
-    files: ["src/performance-charts.js"],
-    rules: {
-      "no-promise-executor-return": "off",
     },
   },
 ];

@@ -281,7 +281,10 @@ interface DevelopmentGoal {
                     <i class="pi pi-trophy"></i>
                     <h3>Your Team Performance Badges</h3>
                   </div>
-                  <a routerLink="/performance-tracking" class="view-details-link">
+                  <a
+                    routerLink="/performance-tracking"
+                    class="view-details-link"
+                  >
                     View Details <i class="pi pi-arrow-right"></i>
                   </a>
                 </div>
@@ -291,31 +294,46 @@ interface DevelopmentGoal {
                   @if (teamRankingBadgeCounts().gold > 0) {
                     <div class="badge-stat gold">
                       <span class="badge-emoji">🥇</span>
-                      <span class="badge-count">{{ teamRankingBadgeCounts().gold }}</span>
+                      <span class="badge-count">{{
+                        teamRankingBadgeCounts().gold
+                      }}</span>
                       <span class="badge-label">Team Leader</span>
                     </div>
                   }
                   @if (teamRankingBadgeCounts().silver > 0) {
                     <div class="badge-stat silver">
                       <span class="badge-emoji">🥈</span>
-                      <span class="badge-count">{{ teamRankingBadgeCounts().silver }}</span>
+                      <span class="badge-count">{{
+                        teamRankingBadgeCounts().silver
+                      }}</span>
                       <span class="badge-label">2nd Place</span>
                     </div>
                   }
                   @if (teamRankingBadgeCounts().bronze > 0) {
                     <div class="badge-stat bronze">
                       <span class="badge-emoji">🥉</span>
-                      <span class="badge-count">{{ teamRankingBadgeCounts().bronze }}</span>
+                      <span class="badge-count">{{
+                        teamRankingBadgeCounts().bronze
+                      }}</span>
                       <span class="badge-label">3rd Place</span>
                     </div>
                   }
                 </div>
                 <div class="badges-list">
-                  @for (achievement of teamPerformanceAchievements().slice(0, 4); track achievement.id) {
+                  @for (
+                    achievement of teamPerformanceAchievements().slice(0, 4);
+                    track achievement.id
+                  ) {
                     <div class="badge-item" [class]="achievement.tier">
-                      <span class="badge-rank">{{ getRankEmoji(achievement.rank) }}</span>
-                      <span class="badge-metric">{{ achievement.metricLabel }}</span>
-                      <span class="badge-value">{{ achievement.valueFormatted }}</span>
+                      <span class="badge-rank">{{
+                        getRankEmoji(achievement.rank)
+                      }}</span>
+                      <span class="badge-metric">{{
+                        achievement.metricLabel
+                      }}</span>
+                      <span class="badge-value">{{
+                        achievement.valueFormatted
+                      }}</span>
                     </div>
                   }
                 </div>
@@ -668,15 +686,21 @@ interface DevelopmentGoal {
               <div class="chart-insights">
                 @if (speedInsights()) {
                   <div class="insight-item">
-                    <div class="insight-value">{{ speedInsights()!.best40 || 'N/A' }}</div>
+                    <div class="insight-value">
+                      {{ speedInsights()!.best40 || "N/A" }}
+                    </div>
                     <div class="insight-label">Best 40-Yard</div>
                   </div>
                   <div class="insight-item">
-                    <div class="insight-value">{{ speedInsights()!.best10 || 'N/A' }}</div>
+                    <div class="insight-value">
+                      {{ speedInsights()!.best10 || "N/A" }}
+                    </div>
                     <div class="insight-label">Best 10-Yard</div>
                   </div>
                   <div class="insight-item">
-                    <div class="insight-value">{{ speedInsights()!.improvement || 'N/A' }}</div>
+                    <div class="insight-value">
+                      {{ speedInsights()!.improvement || "N/A" }}
+                    </div>
                     <div class="insight-label">Total Improvement</div>
                   </div>
                   <div class="insight-item">
@@ -694,7 +718,10 @@ interface DevelopmentGoal {
               <div class="empty-chart-state">
                 <i class="pi pi-bolt empty-icon"></i>
                 <h4>No Speed Data Yet</h4>
-                <p>Log your sprint times in Performance Tracking to see speed development progress.</p>
+                <p>
+                  Log your sprint times in Performance Tracking to see speed
+                  development progress.
+                </p>
                 <a routerLink="/performance-tracking" class="empty-state-link">
                   <i class="pi pi-arrow-right"></i> Go to Performance Tracking
                 </a>
@@ -718,13 +745,13 @@ interface DevelopmentGoal {
                   </div>
                   <div class="stat-summary-item">
                     <div class="stat-block__label">Games Missed</div>
-                    <div class="stat-block__value error">{{ gamesMissed() }}</div>
+                    <div class="stat-block__value error">
+                      {{ gamesMissed() }}
+                    </div>
                   </div>
                   <div class="stat-summary-item">
                     <div class="stat-block__label">Attendance Rate</div>
-                    <div class="stat-block__value">
-                      {{ attendanceRate() }}%
-                    </div>
+                    <div class="stat-block__value">{{ attendanceRate() }}%</div>
                   </div>
                 </div>
                 <p-table
@@ -2023,9 +2050,7 @@ export class AnalyticsComponent implements AfterViewInit {
             this.isSharing.set(false);
             this.showShareDialog.set(false);
             this.shareMessage.set("");
-            this.toastService.success(
-              "Analytics report sent to your coach!",
-            );
+            this.toastService.success("Analytics report sent to your coach!");
           },
           error: (error) => {
             this.isSharing.set(false);
@@ -2165,7 +2190,9 @@ export class AnalyticsComponent implements AfterViewInit {
         .limit(20);
 
       if (error || !records || records.length === 0) {
-        this.logger.info("[Analytics] No performance records found for speed insights");
+        this.logger.info(
+          "[Analytics] No performance records found for speed insights",
+        );
         this.speedInsights.set(null);
         this.speedChartData.set(null);
         return;
@@ -2180,7 +2207,8 @@ export class AnalyticsComponent implements AfterViewInit {
         .filter((t): t is number => t !== null && t > 0);
 
       const best40 = dash40Times.length > 0 ? Math.min(...dash40Times) : null;
-      const best10 = sprint10Times.length > 0 ? Math.min(...sprint10Times) : null;
+      const best10 =
+        sprint10Times.length > 0 ? Math.min(...sprint10Times) : null;
 
       // Calculate improvement (first vs best for 40-yard)
       let improvement: string | null = null;
@@ -2191,7 +2219,10 @@ export class AnalyticsComponent implements AfterViewInit {
           .slice(-1)[0]?.dash_40;
         if (oldest40 && best40) {
           const diff = oldest40 - best40;
-          improvement = diff > 0 ? `-${diff.toFixed(2)}s` : `+${Math.abs(diff).toFixed(2)}s`;
+          improvement =
+            diff > 0
+              ? `-${diff.toFixed(2)}s`
+              : `+${Math.abs(diff).toFixed(2)}s`;
         }
       }
 
@@ -2205,7 +2236,10 @@ export class AnalyticsComponent implements AfterViewInit {
       if (records.length >= 2) {
         const chartRecords = records.slice(0, 7).reverse();
         const labels = chartRecords.map((r) =>
-          new Date(r.recorded_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          new Date(r.recorded_at).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
         );
 
         const datasets = [];

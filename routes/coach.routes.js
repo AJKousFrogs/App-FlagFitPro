@@ -31,90 +31,80 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /dashboard
  * Get coach dashboard data with team members and stats
  */
-router.get(
-  "/dashboard",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendSuccess(res, { teamMembers: [], stats: {} });
-    }
+router.get("/dashboard", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendSuccess(res, { teamMembers: [], stats: {} });
+  }
 
-    try {
-      // Get team members
-      const { data: members, error: membersError } = await supabase
-        .from("team_members")
-        .select(
-          `
+  try {
+    // Get team members
+    const { data: members, error: membersError } = await supabase
+      .from("team_members")
+      .select(
+        `
           id, role, jersey_number, position, status,
           users:user_id (id, email, full_name)
         `,
-        )
-        .eq("status", "active")
-        .limit(50);
+      )
+      .eq("status", "active")
+      .limit(50);
 
-      if (membersError) {
-        throw membersError;
-      }
-
-      // Get recent training sessions
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-      const { count: sessionCount, error: sessionsError } = await supabase
-        .from("training_sessions")
-        .select("*", { count: "exact", head: true })
-        .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
-        .eq("status", "completed");
-
-      if (sessionsError) {
-        throw sessionsError;
-      }
-
-      return sendSuccess(res, {
-        teamMembers: members || [],
-        stats: {
-          totalPlayers: members?.length || 0,
-          sessionsThisWeek: sessionCount || 0,
-        },
-      });
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Dashboard error:`, error);
-      return sendSuccess(res, { teamMembers: [], stats: {} });
+    if (membersError) {
+      throw membersError;
     }
-  },
-);
+
+    // Get recent training sessions
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const { count: sessionCount, error: sessionsError } = await supabase
+      .from("training_sessions")
+      .select("*", { count: "exact", head: true })
+      .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
+      .eq("status", "completed");
+
+    if (sessionsError) {
+      throw sessionsError;
+    }
+
+    return sendSuccess(res, {
+      teamMembers: members || [],
+      stats: {
+        totalPlayers: members?.length || 0,
+        sessionsThisWeek: sessionCount || 0,
+      },
+    });
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Dashboard error:`, error);
+    return sendSuccess(res, { teamMembers: [], stats: {} });
+  }
+});
 
 /**
  * GET /games
  * Get coach's games list
  */
-router.get(
-  "/games",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendSuccess(res, []);
+router.get("/games", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendSuccess(res, []);
+  }
+
+  try {
+    const { data: games, error } = await supabase
+      .from("games")
+      .select("*")
+      .order("game_date", { ascending: false })
+      .limit(20);
+
+    if (error) {
+      throw error;
     }
 
-    try {
-      const { data: games, error } = await supabase
-        .from("games")
-        .select("*")
-        .order("game_date", { ascending: false })
-        .limit(20);
-
-      if (error) {
-        throw error;
-      }
-
-      return sendSuccess(res, games || []);
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Games error:`, error);
-      return sendSuccess(res, []);
-    }
-  },
-);
+    return sendSuccess(res, games || []);
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Games error:`, error);
+    return sendSuccess(res, []);
+  }
+});
 
 export default router;

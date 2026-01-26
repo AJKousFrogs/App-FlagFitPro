@@ -52,9 +52,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 if (sentryEnabled === "true" && !sentryDsn) {
-  console.warn(
-    "⚠️  Warning: Sentry is enabled but VITE_SENTRY_DSN is not set",
-  );
+  console.warn("⚠️  Warning: Sentry is enabled but VITE_SENTRY_DSN is not set");
   console.warn("   Error tracking will not work in production.");
   console.warn(
     "   Set VITE_SENTRY_DSN in Netlify environment variables or disable Sentry.",

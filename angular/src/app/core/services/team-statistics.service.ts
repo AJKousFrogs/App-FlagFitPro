@@ -69,9 +69,9 @@ export interface PlayerPerformanceStats {
 
   // Workload & Risk
   workload: number;
-  acwr: number | null;      // null = insufficient training data for ACWR calculation
+  acwr: number | null; // null = insufficient training data for ACWR calculation
   readiness: number | null; // null = no wellness check-in data available
-  riskLevel: "low" | "medium" | "high" | "unknown";  // unknown = insufficient data
+  riskLevel: "low" | "medium" | "high" | "unknown"; // unknown = insufficient data
 
   // Position-specific stats (varies by position)
   positionStats: PositionStats;
@@ -431,22 +431,32 @@ export class TeamStatisticsService {
     return players.map((p: unknown) => {
       const player = p as Record<string, unknown>;
       const name = String(player["name"] || player["full_name"] || "Unknown");
-      
+
       // CRITICAL: Do NOT use defaults for metrics - null means no data
       const acwrRaw = player["acwr"];
       const readinessRaw = player["readiness"];
-      const acwr = acwrRaw !== undefined && acwrRaw !== null ? Number(acwrRaw) : null;
-      const readiness = readinessRaw !== undefined && readinessRaw !== null ? Number(readinessRaw) : null;
+      const acwr =
+        acwrRaw !== undefined && acwrRaw !== null ? Number(acwrRaw) : null;
+      const readiness =
+        readinessRaw !== undefined && readinessRaw !== null
+          ? Number(readinessRaw)
+          : null;
 
       let riskLevel: "low" | "medium" | "high" | "unknown" = "unknown";
-      
+
       // Risk calculation only if we have data
       if (acwr !== null || readiness !== null) {
         riskLevel = "low"; // Start with low if we have any data
         // Enhanced risk calculation: wellness < 40% is high risk (per user flow design)
-        if ((acwr !== null && acwr > 1.5) || (readiness !== null && readiness < 40)) {
+        if (
+          (acwr !== null && acwr > 1.5) ||
+          (readiness !== null && readiness < 40)
+        ) {
           riskLevel = "high";
-        } else if ((acwr !== null && acwr > 1.3) || (readiness !== null && readiness < 55)) {
+        } else if (
+          (acwr !== null && acwr > 1.3) ||
+          (readiness !== null && readiness < 55)
+        ) {
           riskLevel = "high";
         } else if (readiness !== null && readiness < 70) {
           riskLevel = "medium";
@@ -456,7 +466,8 @@ export class TeamStatisticsService {
       let status: "active" | "injured" | "inactive" | "at_risk" = "active";
       if (player["status"] === "injured") status = "injured";
       else if (player["status"] === "inactive") status = "inactive";
-      else if (riskLevel === "high" || (readiness !== null && readiness < 40)) status = "at_risk";
+      else if (riskLevel === "high" || (readiness !== null && readiness < 40))
+        status = "at_risk";
 
       return {
         playerId: String(player["id"] || player["user_id"] || ""),

@@ -11,7 +11,7 @@ import {
   computed,
   inject,
   signal,
-  viewChild
+  viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -156,7 +156,7 @@ interface ApiPollVoteResponse {
     MainLayoutComponent,
     AnnouncementsBannerComponent,
     ButtonComponent,
-    CardShellComponent
+    CardShellComponent,
   ],
   animations: [fadeInOut],
   template: `
@@ -823,7 +823,8 @@ export class CommunityComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   // Template references using Angular viewChild signals
-  readonly createPostCard = viewChild<ElementRef<HTMLElement>>("createPostCard");
+  readonly createPostCard =
+    viewChild<ElementRef<HTMLElement>>("createPostCard");
   readonly postsFeed = viewChild<ElementRef<HTMLElement>>("postsFeed");
 
   newPostContent = "";
@@ -1103,7 +1104,10 @@ export class CommunityComponent implements OnInit {
   scrollToCreatePost(): void {
     const cardRef = this.createPostCard();
     if (cardRef) {
-      cardRef.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      cardRef.nativeElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
       // Focus the textarea
       setTimeout(() => {
         const textarea = cardRef.nativeElement.querySelector("textarea");
@@ -1792,7 +1796,10 @@ export class CommunityComponent implements OnInit {
       // Scroll to posts feed
       setTimeout(() => {
         const feedRef = this.postsFeed();
-        feedRef?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        feedRef?.nativeElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
       }, 100);
     }
   }

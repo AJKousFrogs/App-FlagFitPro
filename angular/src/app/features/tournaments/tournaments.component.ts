@@ -5,11 +5,15 @@ import {
   ElementRef,
   OnInit,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
-import { ConfirmationService, MessageService , PrimeTemplate } from "primeng/api";
+import {
+  ConfirmationService,
+  MessageService,
+  PrimeTemplate,
+} from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { ConfirmDialog } from "primeng/confirmdialog";
@@ -29,7 +33,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import { AuthService } from "../../core/services/auth.service";
 import {
   LoggerService,
-  toLogContext
+  toLogContext,
 } from "../../core/services/logger.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -37,7 +41,7 @@ import {
   CreateTournamentDto,
   Tournament,
   TournamentService,
-  TournamentVisibilityScope
+  TournamentVisibilityScope,
 } from "../../core/services/tournament.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
@@ -86,7 +90,7 @@ interface TournamentBudget {
     DecimalPipe,
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -1252,11 +1256,23 @@ interface TournamentBudget {
                   }
                   <div class="player-payment">
                     @if (player.paymentStatus === "paid") {
-                      <app-status-tag value="Paid" severity="success" size="sm" />
+                      <app-status-tag
+                        value="Paid"
+                        severity="success"
+                        size="sm"
+                      />
                     } @else if (player.paymentStatus === "partial") {
-                      <app-status-tag value="Partial" severity="warning" size="sm" />
+                      <app-status-tag
+                        value="Partial"
+                        severity="warning"
+                        size="sm"
+                      />
                     } @else if (player.status === "confirmed") {
-                      <app-status-tag value="Unpaid" severity="danger" size="sm" />
+                      <app-status-tag
+                        value="Unpaid"
+                        severity="danger"
+                        size="sm"
+                      />
                     }
                   </div>
                 </div>
@@ -1839,7 +1855,9 @@ export class TournamentsComponent implements OnInit {
 
   scrollToTournament(id: string): void {
     // Use scoped query within component's element
-    const element = this.elementRef.nativeElement.querySelector(`[data-id="${id}"]`);
+    const element = this.elementRef.nativeElement.querySelector(
+      `[data-id="${id}"]`,
+    );
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
     }

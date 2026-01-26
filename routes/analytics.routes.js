@@ -8,8 +8,8 @@
 
 import express from "express";
 import {
-    optionalAuth,
-    authorizeUserAccess,
+  optionalAuth,
+  authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
@@ -18,15 +18,15 @@ import { safeParseInt } from "./utils/query-helper.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
-    safeAverage,
-    safeParseFloat,
-    getErrorMessage,
-    resolveUserId,
-    sendError,
-    sendErrorResponse,
-    sendSuccess,
-    validatePeriod,
-    validateWeeks
+  safeAverage,
+  safeParseFloat,
+  getErrorMessage,
+  resolveUserId,
+  sendError,
+  sendErrorResponse,
+  sendSuccess,
+  validatePeriod,
+  validateWeeks,
 } from "./utils/validation.js";
 
 const router = express.Router();
@@ -64,7 +64,7 @@ router.get(
           400,
         );
       }
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       const weeksValidation = validateWeeks(req.query.weeks, 1, 52);
       if (!weeksValidation.isValid) {
@@ -193,7 +193,7 @@ router.get(
           400,
         );
       }
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       let chemistryData = null;
 
@@ -329,7 +329,7 @@ router.get(
           400,
         );
       }
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       const periodValidation = validatePeriod(req.query.period);
       if (!periodValidation.isValid) {
@@ -443,7 +443,7 @@ router.get(
           400,
         );
       }
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       const summary = {
         weekly_sessions: 0,

@@ -1,7 +1,7 @@
 /**
  * Contract Compliance Tests: Data Consent & Visibility
  * Contract: STEP_2_5_DATA_CONSENT_VISIBILITY_CONTRACT_V1.md
- * 
+ *
  * Tests verify:
  * - Consent filtering on coach reads
  * - Safety override triggers

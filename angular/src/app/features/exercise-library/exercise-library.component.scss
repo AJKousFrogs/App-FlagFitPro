@@ -193,7 +193,10 @@
 /* ===== EXERCISES GRID ===== */
 .exercises-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-lg), 1fr)
+  );
   gap: var(--space-5);
   margin-bottom: var(--space-6);
 }
@@ -674,7 +677,10 @@
 /* ===== RESPONSIVE ===== */
 @include respond-to(lg) {
   .exercises-grid {
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--grid-card-min-md), 1fr)
+    );
   }
 }
 
@@ -741,4 +747,3 @@
   }
 }
 // Dialog sizing
-

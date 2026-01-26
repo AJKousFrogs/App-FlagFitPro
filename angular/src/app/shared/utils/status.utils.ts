@@ -20,7 +20,12 @@
  * Status to PrimeNG severity mapping
  * Maps common status values to PrimeNG severity types
  */
-export type StatusVariant = "success" | "warning" | "danger" | "info" | "neutral";
+export type StatusVariant =
+  | "success"
+  | "warning"
+  | "danger"
+  | "info"
+  | "neutral";
 export type StatusSeverity =
   | "success"
   | "warning"

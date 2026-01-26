@@ -23,7 +23,10 @@ exports.handler = async (event, _context) => {
   }
 
   if (event.httpMethod !== "POST") {
-    return { ...createErrorResponse("Method not allowed", 405, "method_not_allowed"), headers };
+    return {
+      ...createErrorResponse("Method not allowed", 405, "method_not_allowed"),
+      headers,
+    };
   }
 
   try {
@@ -32,7 +35,10 @@ exports.handler = async (event, _context) => {
     try {
       bodyData = JSON.parse(event.body);
     } catch (_parseError) {
-      return { ...handleValidationError("Invalid JSON in request body"), headers };
+      return {
+        ...handleValidationError("Invalid JSON in request body"),
+        headers,
+      };
     }
 
     const { email, provider: _provider = "smtp" } = bodyData;

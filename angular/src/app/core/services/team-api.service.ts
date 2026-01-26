@@ -1,16 +1,16 @@
 /**
  * Team API Service
- * 
+ *
  * Centralized service for common Supabase team-related queries.
  * Extracts repeated patterns for querying team_members, teams, and related data.
- * 
+ *
  * @example
  * // Get team members with user data
  * const members = await this.teamApiService.getTeamMembers(teamId);
- * 
+ *
  * // Get team players
  * const players = await this.teamApiService.getTeamPlayers(teamId);
- * 
+ *
  * // Get team coaches
  * const coaches = await this.teamApiService.getTeamCoaches(teamId);
  */
@@ -70,7 +70,7 @@ export class TeamApiService {
    * Get team members with user data
    * NOTE: team_members.user_id references auth.users (not public.users), so PostgREST
    * cannot do implicit joins. We query team_members first, then fetch user data separately.
-   * 
+   *
    * @param teamId - Team ID
    * @param options - Query options
    * @returns Array of team members with user data
@@ -84,8 +84,11 @@ export class TeamApiService {
     } = {},
   ): Promise<TeamMemberWithUser[]> {
     // Validate teamId to prevent unnecessary API calls
-    if (!teamId || teamId === 'undefined' || teamId === 'null') {
-      this.logger.warn("[TeamApi] getTeamMembers called with invalid teamId:", teamId);
+    if (!teamId || teamId === "undefined" || teamId === "null") {
+      this.logger.warn(
+        "[TeamApi] getTeamMembers called with invalid teamId:",
+        teamId,
+      );
       return [];
     }
 
@@ -95,7 +98,9 @@ export class TeamApiService {
       // Step 1: Query team_members (no user join - FK is to auth.users)
       let query = this.supabaseService.client
         .from("team_members")
-        .select("id, team_id, user_id, role, position, jersey_number, status, joined_at")
+        .select(
+          "id, team_id, user_id, role, position, jersey_number, status, joined_at",
+        )
         .eq("team_id", teamId);
 
       if (role) {
@@ -114,8 +119,14 @@ export class TeamApiService {
 
       if (error) {
         // Handle RLS policy denial gracefully (400 error means user not in team)
-        if (error.code === 'PGRST301' || error.message?.includes('permission denied')) {
-          this.logger.warn("[TeamApi] User not authorized to view team members for team:", teamId);
+        if (
+          error.code === "PGRST301" ||
+          error.message?.includes("permission denied")
+        ) {
+          this.logger.warn(
+            "[TeamApi] User not authorized to view team members for team:",
+            teamId,
+          );
           return [];
         }
         this.logger.error("[TeamApi] Error fetching team members:", error);
@@ -124,31 +135,36 @@ export class TeamApiService {
 
       // Type guard: ensure data is an array, not a parser error
       if (!membersData || !Array.isArray(membersData)) {
-        this.logger.warn("[TeamApi] No team members found or invalid data format");
+        this.logger.warn(
+          "[TeamApi] No team members found or invalid data format",
+        );
         return [];
       }
 
       // Step 2: Fetch user data from public.users if requested
       if (includeUserData && membersData.length > 0) {
         const userIds = membersData.map((m) => m.user_id).filter(Boolean);
-        
+
         if (userIds.length > 0) {
-          const { data: usersData, error: usersError } = await this.supabaseService.client
-            .from("users")
-            .select("id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed, profile_photo_url")
-            .in("id", userIds);
-          
+          const { data: usersData, error: usersError } =
+            await this.supabaseService.client
+              .from("users")
+              .select(
+                "id, email, first_name, last_name, full_name, position, jersey_number, country, height_cm, weight_kg, date_of_birth, onboarding_completed, profile_photo_url",
+              )
+              .in("id", userIds);
+
           if (usersError) {
             this.logger.warn("[TeamApi] Error fetching user data:", usersError);
           }
-          
+
           // Create lookup map for users
           type UserData = NonNullable<typeof usersData>[number];
           const usersMap = new Map<string, UserData>();
           if (usersData) {
             usersData.forEach((u) => usersMap.set(u.id, u));
           }
-          
+
           // Combine members with user data
           return membersData.map((m) => ({
             ...m,
@@ -164,9 +180,16 @@ export class TeamApiService {
       })) as unknown as TeamMemberWithUser[];
     } catch (error) {
       // Don't throw for common RLS/permission errors, just return empty
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      if (errorMessage.includes('permission') || errorMessage.includes('policy')) {
-        this.logger.warn("[TeamApi] Permission error in getTeamMembers:", errorMessage);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      if (
+        errorMessage.includes("permission") ||
+        errorMessage.includes("policy")
+      ) {
+        this.logger.warn(
+          "[TeamApi] Permission error in getTeamMembers:",
+          errorMessage,
+        );
         return [];
       }
       this.logger.error("[TeamApi] Error in getTeamMembers:", error);
@@ -176,7 +199,7 @@ export class TeamApiService {
 
   /**
    * Get team players (members with role='player')
-   * 
+   *
    * @param teamId - Team ID
    * @param options - Query options
    * @returns Array of team players with user data
@@ -196,13 +219,11 @@ export class TeamApiService {
 
   /**
    * Get team coaches (members with coach roles)
-   * 
+   *
    * @param teamId - Team ID
    * @returns Array of team coaches with user data
    */
-  async getTeamCoaches(
-    teamId: string,
-  ): Promise<TeamMemberWithUser[]> {
+  async getTeamCoaches(teamId: string): Promise<TeamMemberWithUser[]> {
     return this.getTeamMembers(teamId, {
       role: [
         "head_coach",
@@ -218,7 +239,7 @@ export class TeamApiService {
   /**
    * Get team members as basic objects with normalized names
    * Useful for dropdowns, lists, etc.
-   * 
+   *
    * @param teamId - Team ID
    * @param options - Query options
    * @returns Array of team members with normalized names
@@ -241,7 +262,8 @@ export class TeamApiService {
       user_id: member.user_id,
       role: member.role,
       position: member.position || member.users?.position || null,
-      jersey_number: member.jersey_number ?? member.users?.jersey_number ?? null,
+      jersey_number:
+        member.jersey_number ?? member.users?.jersey_number ?? null,
       status: member.status || "active",
       joined_at: member.joined_at,
       name: normalizePlayerName(
@@ -259,7 +281,7 @@ export class TeamApiService {
 
   /**
    * Get team data with members
-   * 
+   *
    * @param teamId - Team ID
    * @returns Team data with members
    */
@@ -271,12 +293,11 @@ export class TeamApiService {
     members: TeamMemberWithUser[];
   } | null> {
     try {
-      const { data: team, error: teamError } =
-        await this.supabaseService.client
-          .from("teams")
-          .select("*")
-          .eq("id", teamId)
-          .single();
+      const { data: team, error: teamError } = await this.supabaseService.client
+        .from("teams")
+        .select("*")
+        .eq("id", teamId)
+        .single();
 
       if (teamError || !team) {
         this.logger.warn("[TeamApi] Team not found:", teamId);

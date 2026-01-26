@@ -127,7 +127,9 @@ interface DebugLog {
               <div class="stat-block__label">Successful</div>
             </div>
             <div class="stat-card">
-              <div class="stat-block__value error">{{ stats?.failed || 0 }}</div>
+              <div class="stat-block__value error">
+                {{ stats?.failed || 0 }}
+              </div>
               <div class="stat-block__label">Failed</div>
             </div>
             <div class="stat-card">
@@ -161,7 +163,9 @@ interface DebugLog {
         padding: var(--ds-space-5);
         background: #1e1e1e;
         color: #d4d4d4;
-        font-family: var(--ds-font-family-mono); /* ds-exception: monospace console */
+        font-family: var(
+          --ds-font-family-mono
+        ); /* ds-exception: monospace console */
         min-height: 100vh;
       }
 

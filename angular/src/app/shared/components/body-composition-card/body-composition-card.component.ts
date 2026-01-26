@@ -12,13 +12,13 @@
 
 import { CommonModule, DecimalPipe } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    OnInit,
-    computed,
-    inject,
-    signal
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -61,7 +61,7 @@ interface BodyCompositionData {
     Dialog,
     PrimeTemplate,
     PrimeTemplate,
-    InputNumber
+    InputNumber,
   ],
   template: `
     <app-card
@@ -429,8 +429,8 @@ export class BodyCompositionCardComponent implements OnInit {
         this.showLogDialog = false;
         // Data is refreshed internally by logBodyComp
       } else {
-        const errorMsg = result?.error 
-          ? `Failed to save: ${typeof result.error === 'string' ? result.error : (result.error as { message?: string })?.message || 'Unknown error'}`
+        const errorMsg = result?.error
+          ? `Failed to save: ${typeof result.error === "string" ? result.error : (result.error as { message?: string })?.message || "Unknown error"}`
           : "Failed to save measurement. Are you logged in?";
         this.logger.error("[BodyComposition] Save failed:", result?.error);
         this.toastService.error(errorMsg);

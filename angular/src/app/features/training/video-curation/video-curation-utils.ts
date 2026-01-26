@@ -7,7 +7,7 @@
 import { TrainingFocus } from "./video-curation.models";
 import {
   getMappedStatusSeverity,
-  reviewStatusSeverityMap
+  reviewStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 
 /**

@@ -6,12 +6,12 @@ import {
   computed,
   inject,
   signal,
-  viewChild
+  viewChild,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 
 import { Dialog } from "primeng/dialog";
 import { Paginator } from "primeng/paginator";
@@ -71,7 +71,7 @@ interface Category {
     Toast,
     MainLayoutComponent,
     ButtonComponent,
-    SearchInputComponent
+    SearchInputComponent,
   ],
   providers: [MessageService],
   template: `
@@ -484,7 +484,8 @@ export class ExerciseLibraryComponent implements OnInit {
   private logger = inject(LoggerService);
 
   // ViewChild references for scroll operations
-  private readonly exercisesGrid = viewChild<ElementRef<HTMLElement>>('exercisesGrid');
+  private readonly exercisesGrid =
+    viewChild<ElementRef<HTMLElement>>("exercisesGrid");
 
   searchQuery = "";
   selectedCategory = signal<string>("all");
@@ -641,7 +642,10 @@ export class ExerciseLibraryComponent implements OnInit {
     // Scroll to the exercises grid, not the top of the page
     const gridEl = this.exercisesGrid();
     if (gridEl) {
-      gridEl.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      gridEl.nativeElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   }
 

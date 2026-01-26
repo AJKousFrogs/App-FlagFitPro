@@ -2,7 +2,7 @@
 
 /**
  * Contract Compliance Checker
- * 
+ *
  * Runs automated checks against codebase to verify contract compliance.
  * Checks:
  * 1. Database schema compliance
@@ -256,14 +256,16 @@ function generateReport(dbChecks, apiChecks, patternChecks, testChecks) {
   log("\n=== Compliance Report ===", "blue");
 
   const totalChecks =
-    dbChecks.length + apiChecks.length + patternChecks.length + testChecks.length;
-  const passedChecks =
-    [
-      ...dbChecks,
-      ...apiChecks,
-      ...patternChecks,
-      ...testChecks,
-    ].filter((c) => c.status === "pass").length;
+    dbChecks.length +
+    apiChecks.length +
+    patternChecks.length +
+    testChecks.length;
+  const passedChecks = [
+    ...dbChecks,
+    ...apiChecks,
+    ...patternChecks,
+    ...testChecks,
+  ].filter((c) => c.status === "pass").length;
 
   const passRate = ((passedChecks / totalChecks) * 100).toFixed(1);
 

@@ -464,7 +464,10 @@
 
   .research-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(var(--grid-card-min-lg), 1fr));
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(var(--grid-card-min-lg), 1fr)
+    );
     gap: var(--space-6);
   }
 

@@ -47,7 +47,7 @@ export class ScreenReaderAnnouncerService {
   announce(
     message: string,
     politeness: AnnouncePoliteness = "polite",
-    duration: number = 1000
+    duration: number = 1000,
   ): void {
     if (!isPlatformBrowser(this.platformId)) {
       return;
@@ -135,7 +135,7 @@ export class ScreenReaderAnnouncerService {
     // Check if already created
     const existingPolite = this.document.getElementById("sr-announcer-polite");
     const existingAssertive = this.document.getElementById(
-      "sr-announcer-assertive"
+      "sr-announcer-assertive",
     );
 
     if (existingPolite && existingAssertive) {

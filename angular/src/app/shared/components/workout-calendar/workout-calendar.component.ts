@@ -34,13 +34,7 @@ export interface WorkoutEntry {
   selector: "app-workout-calendar",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    Tooltip,
-    Badge,
-    ButtonComponent,
-    IconButtonComponent,
-  ],
+  imports: [CommonModule, Tooltip, Badge, ButtonComponent, IconButtonComponent],
   template: `
     <div class="workout-calendar">
       <!-- Calendar Header -->
@@ -148,7 +142,10 @@ export interface WorkoutEntry {
                       >
                     }
                     @if (workout.completed) {
-                      <i class="pi pi-check-circle completed-icon" aria-hidden="true"></i>
+                      <i
+                        class="pi pi-check-circle completed-icon"
+                        aria-hidden="true"
+                      ></i>
                     }
                   </div>
                 }
@@ -189,7 +186,9 @@ export interface WorkoutEntry {
       <!-- Stats Summary -->
       <div class="month-stats">
         <div class="stat">
-          <span class="stat-block__value">{{ monthStats().totalWorkouts }}</span>
+          <span class="stat-block__value">{{
+            monthStats().totalWorkouts
+          }}</span>
           <span class="stat-block__label">Workouts</span>
         </div>
         <div class="stat">

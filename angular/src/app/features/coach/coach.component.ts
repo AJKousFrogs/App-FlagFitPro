@@ -13,7 +13,7 @@ import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   getMappedStatusSeverity,
-  teamMemberStatusSeverityMap
+  teamMemberStatusSeverityMap,
 } from "../../shared/utils/status.utils";
 import { Dialog } from "primeng/dialog";
 import { PrimeTemplate } from "primeng/api";
@@ -194,7 +194,11 @@ interface TeamMember {
                 </td>
                 <td>
                   @if (member.isConsentBlocked) {
-                    <app-status-tag value="Private" severity="secondary" size="sm" />
+                    <app-status-tag
+                      value="Private"
+                      severity="secondary"
+                      size="sm"
+                    />
                   } @else {
                     <app-status-tag
                       [value]="member.status"
@@ -312,8 +316,8 @@ interface TeamMember {
           </div>
         </div>
         <ng-template pTemplate="footer">
-          <app-button 
-            variant="text" 
+          <app-button
+            variant="text"
             (clicked)="showCreateSessionDialog = false"
             ariaLabel="Cancel and close dialog"
             >Cancel</app-button

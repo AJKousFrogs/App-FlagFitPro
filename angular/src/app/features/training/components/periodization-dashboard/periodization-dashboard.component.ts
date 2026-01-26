@@ -20,7 +20,7 @@ import {
   Component,
   OnInit,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -29,7 +29,12 @@ import { Card } from "primeng/card";
 
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import { ProgressBar } from "primeng/progressbar";
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import {
+  Accordion,
+  AccordionPanel,
+  AccordionHeader,
+  AccordionContent,
+} from "primeng/accordion";
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "primeng/tabs";
 
 import { Divider } from "primeng/divider";
@@ -42,16 +47,16 @@ import {
   PhaseConfig,
   SeasonalRecommendation,
   WeeklyTrainingTemplate,
-  EvidenceReference
+  EvidenceReference,
 } from "../../../../core/services/flag-football-periodization.service";
 import {
   SprintTrainingKnowledgeService,
-  SprintPhaseGuidelines
+  SprintPhaseGuidelines,
 } from "../../../../core/services/sprint-training-knowledge.service";
 import {
   PhaseLoadCalculatorService,
   LoadRecommendation,
-  ACWRCalculation
+  ACWRCalculation,
 } from "../../../../core/services/phase-load-calculator.service";
 import { FlagFootballAthleteProfileService } from "../../../../core/services/flag-football-athlete-profile.service";
 import { AcwrService } from "../../../../core/services/acwr.service";
@@ -90,7 +95,7 @@ interface TimelineEvent {
     Chip,
     Timeline,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   template: `
     <app-main-layout>
@@ -308,9 +313,7 @@ interface TimelineEvent {
                       <p>
                         Weekly Sprint Volume:
                         {{ sprintGuidelines()?.weeklySprintVolume?.[0] }} -
-                        {{
-                          sprintGuidelines()?.weeklySprintVolume?.[1]
-                        }}
+                        {{ sprintGuidelines()?.weeklySprintVolume?.[1] }}
                         sprints
                       </p>
                     </div>

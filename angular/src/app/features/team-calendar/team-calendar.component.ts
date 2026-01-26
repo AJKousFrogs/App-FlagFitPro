@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -106,7 +106,7 @@ const EVENT_TYPE_CONFIG: Record<
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `

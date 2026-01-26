@@ -468,7 +468,9 @@ const getSpeedDevelopment = async (userId, weeks = 7) => {
       if (!weeklyData[test.test_type][weekKey]) {
         weeklyData[test.test_type][weekKey] = [];
       }
-      weeklyData[test.test_type][weekKey].push(parseFloat(test.result_value) || 0);
+      weeklyData[test.test_type][weekKey].push(
+        parseFloat(test.result_value) || 0,
+      );
     });
 
     // Calculate averages per week

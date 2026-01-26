@@ -100,7 +100,9 @@ interface SessionDetails {
                 </div>
                 <div class="overview-item">
                   <span class="overview-label">Duration</span>
-                  <span class="overview-value">{{ session.duration }} minutes</span>
+                  <span class="overview-value"
+                    >{{ session.duration }} minutes</span
+                  >
                 </div>
                 <div class="overview-item">
                   <span class="overview-label">Status</span>
@@ -173,7 +175,10 @@ interface SessionDetails {
                 >Create Custom Session Instead</app-button
               >
             } @else if (!session.isTemplate) {
-              @if (session.status === "scheduled" || session.status === "in_progress") {
+              @if (
+                session.status === "scheduled" ||
+                session.status === "in_progress"
+              ) {
                 <app-button
                   variant="primary"
                   iconLeft="pi-play"
@@ -298,16 +303,12 @@ export class TrainingSessionDetailComponent implements OnInit {
           .single();
 
       if (templateError || !template) {
-        throw new Error(
-          templateError?.message || "Session not found",
-        );
+        throw new Error(templateError?.message || "Session not found");
       }
 
       // Calculate the actual date for this template
       const weeks = template.training_weeks;
-      const weekData = Array.isArray(weeks)
-        ? weeks[0]
-        : weeks;
+      const weekData = Array.isArray(weeks) ? weeks[0] : weeks;
       const dateStr = weekData.start_date.split("T")[0];
       const [year, month, day] = dateStr.split("-").map(Number);
       const weekStart = new Date(year, month - 1, day, 0, 0, 0, 0);
@@ -331,13 +332,18 @@ export class TrainingSessionDetailComponent implements OnInit {
       this.sessionDetails.set({
         id: template.id,
         sessionType: template.session_type || "Training",
-        title: template.session_name || template.session_type || "Training Session",
+        title:
+          template.session_name || template.session_type || "Training Session",
         date: sessionDate,
         duration: template.duration_minutes || 60,
         status: "scheduled" as const,
         isTemplate: true,
-        isTeamPractice: (template as Record<string, unknown>).is_team_practice as boolean || false,
-        isOutdoor: (template as Record<string, unknown>).is_outdoor as boolean || false,
+        isTeamPractice:
+          ((template as Record<string, unknown>).is_team_practice as boolean) ||
+          false,
+        isOutdoor:
+          ((template as Record<string, unknown>).is_outdoor as boolean) ||
+          false,
         description: template.description || undefined,
         equipment: equipment.length > 0 ? equipment : undefined,
         intensity: template.intensity_level || undefined,
@@ -476,7 +482,9 @@ export class TrainingSessionDetailComponent implements OnInit {
     }
   }
 
-  getStatusSeverity(status: string): "success" | "info" | "warning" | "secondary" | "contrast" | "danger" {
+  getStatusSeverity(
+    status: string,
+  ): "success" | "info" | "warning" | "secondary" | "contrast" | "danger" {
     switch (status) {
       case "completed":
         return "success";

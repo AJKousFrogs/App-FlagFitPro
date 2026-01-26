@@ -47,7 +47,10 @@
   padding: var(--ds-search-padding-y, var(--space-3))
     var(--ds-search-padding-x, var(--space-5));
   background: var(--ds-search-background, var(--surface-primary));
-  border: var(--ds-search-border, var(--border-1) solid var(--color-border-secondary));
+  border: var(
+    --ds-search-border,
+    var(--border-1) solid var(--color-border-secondary)
+  );
   border-radius: var(--ds-search-radius, var(--radius-lg));
   width: 100%;
 }
@@ -74,7 +77,8 @@
 /* Modifier: Card style with elevated surface */
 .ds-search-bar--card {
   --ds-search-background: var(--surface-card, var(--surface-primary));
-  --ds-search-border: var(--border-1) solid var(--ds-border-subtle, var(--color-border-secondary));
+  --ds-search-border: var(--border-1) solid
+    var(--ds-border-subtle, var(--color-border-secondary));
   --ds-search-radius: var(--radius-lg);
 }
 
@@ -115,7 +119,10 @@
   padding-left: var(--ds-search-input-padding-left, var(--space-10));
   padding-right: var(--ds-search-input-padding-right, var(--space-4));
   border-radius: var(--ds-search-input-radius, var(--radius-lg));
-  border: var(--ds-search-input-border, var(--border-1) solid var(--color-border-secondary));
+  border: var(
+    --ds-search-input-border,
+    var(--border-1) solid var(--color-border-secondary)
+  );
   background: var(--ds-search-input-background, var(--surface-primary));
   font-size: var(--ds-search-input-font-size, var(--ds-font-size-md));
   color: var(--ds-search-input-color, var(--color-text-primary));
@@ -139,7 +146,10 @@
 
 .ds-search-input-field::placeholder {
   color: var(--ds-search-input-placeholder, var(--color-text-muted));
-  font-weight: var(--ds-search-input-placeholder-weight, var(--ds-font-weight-regular));
+  font-weight: var(
+    --ds-search-input-placeholder-weight,
+    var(--ds-font-weight-regular)
+  );
 }
 
 /* Clear button */
@@ -180,7 +190,10 @@
    ================================================================ */
 .ds-card-surface {
   background: var(--ds-card-background, var(--surface-primary));
-  border: var(--ds-card-border, var(--border-1) solid var(--color-border-secondary));
+  border: var(
+    --ds-card-border,
+    var(--border-1) solid var(--color-border-secondary)
+  );
   border-radius: var(--ds-card-radius, var(--radius-xl));
   box-shadow: var(--ds-card-shadow, var(--shadow-1));
   padding: var(--ds-card-padding, var(--space-5));

@@ -40,7 +40,7 @@ FlagFit Pro uses **Supabase Authentication** for user authentication and session
 
 ### Technology Stack
 
-- **Frontend**: Angular (newer implementation) and Vanilla JavaScript (legacy)
+- **Frontend**: Angular 21
 - **Backend**: Supabase Auth API
 - **Session Storage**: Secure storage with encrypted token management
 - **Token Management**: JWT tokens managed by Supabase
@@ -61,10 +61,10 @@ Dashboard Access
 
 ### Components Involved
 
-1. **AuthManager** (`src/auth-manager.js`): Handles authentication state and operations
-2. **AuthService** (`angular/src/app/core/services/auth.service.ts`): Angular service for auth operations
-3. **SupabaseService**: Wrapper around Supabase Auth client
-4. **OnboardingManager** (`src/onboarding-manager.js`): Manages onboarding flow
+1. **AuthService** (`angular/src/app/core/services/auth.service.ts`): Angular service for auth operations
+2. **SupabaseService** (`angular/src/app/core/services/supabase.service.ts`): Supabase Auth wrapper
+3. **ProfileCompletionService** (`angular/src/app/core/services/profile-completion.service.ts`): Tracks onboarding completion status
+4. **OnboardingComponent** (`angular/src/app/features/onboarding/onboarding.component.ts`): Guided onboarding flow UI
 5. **SecureStorage**: Encrypted storage for tokens and user data
 
 ---
@@ -443,14 +443,14 @@ The onboarding process is a **multi-step guided tour** that helps new users unde
 
 ### Onboarding Implementation
 
-**Onboarding Manager** (`src/onboarding-manager.js`):
+**Onboarding Component** (`angular/src/app/features/onboarding/onboarding.component.ts`):
 
 - Manages onboarding state
 - Handles step progression
 - Stores progress locally
 - Role-specific step configuration
 
-**Onboarding Page** (`onboarding.html`):
+**Onboarding Route** (`/onboarding`):
 
 - Multi-step form interface
 - Progress indicator
@@ -461,7 +461,7 @@ The onboarding process is a **multi-step guided tour** that helps new users unde
 
 When onboarding is completed:
 
-```javascript
+```ts
 // Update user metadata
 await supabase.auth.updateUser({
   data: {
@@ -471,14 +471,14 @@ await supabase.auth.updateUser({
 });
 
 // Store completion flag
-storageService.set("onboardingCompleted", "true");
-storageService.set("onboardingCompletedDate", new Date().toISOString());
+localStorage.setItem("onboardingCompleted", "true");
+localStorage.setItem("onboardingCompletedDate", new Date().toISOString());
 
 // Clear progress data
-storageService.remove("onboardingProgress");
+localStorage.removeItem("onboardingProgress");
 
 // Redirect to dashboard
-window.location.href = "/dashboard.html";
+window.location.href = "/dashboard";
 ```
 
 ### Onboarding Features

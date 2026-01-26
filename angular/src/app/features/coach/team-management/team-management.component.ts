@@ -15,10 +15,10 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { Avatar } from "primeng/avatar";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -142,7 +142,7 @@ const STATUS_CONFIG: Record<
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `
@@ -647,9 +647,9 @@ const STATUS_CONFIG: Record<
             />
             @if (emailField.invalid && emailField.touched) {
               <small class="p-error">
-                @if (emailField.errors?.['required']) {
+                @if (emailField.errors?.["required"]) {
                   Email address is required
-                } @else if (emailField.errors?.['email']) {
+                } @else if (emailField.errors?.["email"]) {
                   Please enter a valid email address
                 }
               </small>

@@ -22,7 +22,7 @@ import {
   inject,
   input,
   output,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
@@ -69,7 +69,7 @@ interface RecoveryRecommendation {
     InputNumber,
     Checkbox,
     StatusTagComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   template: `
     <p-dialog

@@ -303,10 +303,7 @@ exports.handler = async (event, context) => {
       console.log("[calc-readiness] Wellness log found:", !!wellness);
 
       if (!wellness) {
-        console.log(
-          "[calc-readiness] No wellness log found for date:",
-          dayStr,
-        );
+        console.log("[calc-readiness] No wellness log found for date:", dayStr);
         // Return a graceful response with null score instead of error
         // This allows the frontend to handle missing wellness data gracefully
         return createSuccessResponse({
@@ -319,7 +316,8 @@ exports.handler = async (event, context) => {
           dataMode: "unavailable",
           wellnessIndex: null,
           componentScores: null,
-          message: "No wellness log for today. Please log your wellness data to calculate readiness.",
+          message:
+            "No wellness log for today. Please log your wellness data to calculate readiness.",
           missingData: ["wellness_log"],
         });
       }

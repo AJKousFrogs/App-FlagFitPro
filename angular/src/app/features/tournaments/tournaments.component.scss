@@ -26,13 +26,6 @@
   gap: var(--space-4);
 }
 
-
-
-
-
-
-
-
 // .empty-state REMOVED - use .card-empty-state from card-shell
 // @see docs/CARD_SHELL_CONTRACT.md §8
 
@@ -45,7 +38,10 @@
 
 .tournaments-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-lg), 1fr)
+  );
   gap: var(--space-6);
   margin-top: var(--space-6);
 }

@@ -27,13 +27,18 @@ async function analyzeTrainingHistory(userId) {
 
   // Validate userId
   if (!userId) {
-    console.warn("[training-suggestions] analyzeTrainingHistory called without userId");
+    console.warn(
+      "[training-suggestions] analyzeTrainingHistory called without userId",
+    );
     return { ...defaultAnalysis, error: "No user ID provided" };
   }
 
   try {
     // #region agent log
-    console.log("[training-suggestions] analyzeTrainingHistory called with userId:", userId);
+    console.log(
+      "[training-suggestions] analyzeTrainingHistory called with userId:",
+      userId,
+    );
     // #endregion
 
     // Get recent training sessions (last 30 days)
@@ -61,14 +66,22 @@ async function analyzeTrainingHistory(userId) {
 
     if (error) {
       // #region agent log
-      console.error("[training-suggestions] Database error:", error.message, error.code, error.details);
+      console.error(
+        "[training-suggestions] Database error:",
+        error.message,
+        error.code,
+        error.details,
+      );
       // #endregion
       // Return default structure with error info instead of throwing
       return { ...defaultAnalysis, error: error.message };
     }
 
     // #region agent log
-    console.log("[training-suggestions] Found sessions:", sessions?.length || 0);
+    console.log(
+      "[training-suggestions] Found sessions:",
+      sessions?.length || 0,
+    );
     // #endregion
 
     // Analyze session types
@@ -98,10 +111,13 @@ async function analyzeTrainingHistory(userId) {
       // Categorize by type
       const category = categorizeSessionType(type);
       if (category && session.duration_minutes) {
-        totalDuration[category] = (totalDuration[category] || 0) + session.duration_minutes;
+        totalDuration[category] =
+          (totalDuration[category] || 0) + session.duration_minutes;
       }
       if (category && session.score) {
-        if (!avgScores[category]) avgScores[category] = [];
+        if (!avgScores[category]) {
+          avgScores[category] = [];
+        }
         avgScores[category].push(session.score);
       }
     });
@@ -124,7 +140,11 @@ async function analyzeTrainingHistory(userId) {
       error: null,
     };
   } catch (error) {
-    console.error("[training-suggestions] Error analyzing training history:", error.message, error.stack);
+    console.error(
+      "[training-suggestions] Error analyzing training history:",
+      error.message,
+      error.stack,
+    );
     return { ...defaultAnalysis, error: error.message };
   }
 }
@@ -177,7 +197,7 @@ function categorizeSessionType(sessionType) {
  */
 function generateSuggestions(analysis, params = {}) {
   const suggestions = [];
-  
+
   // Safely extract values with defaults
   const totalDuration = analysis?.totalDuration || {
     speed: 0,
@@ -251,7 +271,10 @@ function generateSuggestions(analysis, params = {}) {
   }
 
   // Suggestion 4: Skill work if low
-  if ((totalDuration.skill || 0) < (totalDuration.speed || 0) && totalSessions > 2) {
+  if (
+    (totalDuration.skill || 0) < (totalDuration.speed || 0) &&
+    totalSessions > 2
+  ) {
     suggestions.push({
       id: `skill-${Date.now()}`,
       title: "Skill Development",
@@ -335,7 +358,12 @@ function generateSuggestions(analysis, params = {}) {
  */
 async function handleRequest(event, context, { userId }) {
   // #region agent log
-  console.log("[training-suggestions] handleRequest called, userId:", userId, "method:", event.httpMethod);
+  console.log(
+    "[training-suggestions] handleRequest called, userId:",
+    userId,
+    "method:",
+    event.httpMethod,
+  );
   // #endregion
 
   try {
@@ -346,11 +374,17 @@ async function handleRequest(event, context, { userId }) {
       try {
         params = JSON.parse(event.body);
         // #region agent log
-        console.log("[training-suggestions] Parsed params:", JSON.stringify(params));
+        console.log(
+          "[training-suggestions] Parsed params:",
+          JSON.stringify(params),
+        );
         // #endregion
       } catch (e) {
         // #region agent log
-        console.error("[training-suggestions] Error parsing request body:", e.message);
+        console.error(
+          "[training-suggestions] Error parsing request body:",
+          e.message,
+        );
         // #endregion
       }
     }
@@ -367,14 +401,20 @@ async function handleRequest(event, context, { userId }) {
     const analysis = await analyzeTrainingHistory(userId);
 
     // #region agent log
-    console.log("[training-suggestions] Analysis complete, totalSessions:", analysis.totalSessions);
+    console.log(
+      "[training-suggestions] Analysis complete, totalSessions:",
+      analysis.totalSessions,
+    );
     // #endregion
 
     // Generate suggestions
     const suggestions = generateSuggestions(analysis, params);
 
     // #region agent log
-    console.log("[training-suggestions] Generated suggestions:", suggestions.length);
+    console.log(
+      "[training-suggestions] Generated suggestions:",
+      suggestions.length,
+    );
     // #endregion
 
     return createSuccessResponse({
@@ -387,7 +427,11 @@ async function handleRequest(event, context, { userId }) {
     });
   } catch (error) {
     // #region agent log
-    console.error("[training-suggestions] CRITICAL ERROR:", error.message, error.stack);
+    console.error(
+      "[training-suggestions] CRITICAL ERROR:",
+      error.message,
+      error.stack,
+    );
     // #endregion
     throw error;
   }

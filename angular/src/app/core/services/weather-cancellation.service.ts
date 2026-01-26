@@ -149,10 +149,7 @@ export class WeatherCancellationService {
         alert: this._weatherAlert(),
       })),
       catchError((error) => {
-        this.logger.warn(
-          "Failed to fetch weather data:",
-          toLogContext(error),
-        );
+        this.logger.warn("Failed to fetch weather data:", toLogContext(error));
         return of({ weather: null, alert: null });
       }),
     );
@@ -364,10 +361,7 @@ export class WeatherCancellationService {
       }),
       tap(() => this._isGeneratingSubstitute.set(false)),
       catchError((error) => {
-        this.logger.error(
-          "Error in cancel session flow:",
-          toLogContext(error),
-        );
+        this.logger.error("Error in cancel session flow:", toLogContext(error));
         this._isGeneratingSubstitute.set(false);
         return of(null);
       }),
@@ -442,7 +436,10 @@ export class WeatherCancellationService {
     const isTeamPractice = originalSession.isTeamPractice;
 
     // Determine training goals based on original session
-    const trainingGoals = this.mapSessionTypeToGoals(sessionType, isTeamPractice);
+    const trainingGoals = this.mapSessionTypeToGoals(
+      sessionType,
+      isTeamPractice,
+    );
     const targetMuscleGroups = this.mapSessionTypeToMuscleGroups(sessionType);
 
     // Generate appropriate exercises
@@ -731,7 +728,8 @@ export class WeatherCancellationService {
     // Ensure we have enough exercises for target duration
     const estimatedTime = exercises.reduce((total, ex) => {
       const exerciseTime = ex.sets
-        ? ex.sets * (ex.durationSeconds || 30) + (ex.restSeconds || 30) * (ex.sets - 1)
+        ? ex.sets * (ex.durationSeconds || 30) +
+          (ex.restSeconds || 30) * (ex.sets - 1)
         : ex.durationSeconds || 60;
       return total + exerciseTime / 60;
     }, 0);

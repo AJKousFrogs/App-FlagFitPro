@@ -25,6 +25,7 @@ After a second comprehensive audit, additional issues were identified and fixed:
 **Issue:** `ApiResponseWrapper` and `PaginatedApiResponse` were duplicates of `ApiResponse` and `PaginatedResponse` from `common.models.ts`.
 
 **Fix:**
+
 - Changed `ApiResponseWrapper` to a type alias pointing to `ApiResponse` from `common.models.ts`
 - Changed `PaginatedApiResponse` to a type alias pointing to `PaginatedResponse` from `common.models.ts`
 - Added `@deprecated` JSDoc comments for backward compatibility
@@ -41,6 +42,7 @@ After a second comprehensive audit, additional issues were identified and fixed:
 **Issue:** Several services were importing `ApiResponse` from `api.service.ts` instead of the canonical `common.models.ts`.
 
 **Files Fixed:**
+
 1. `angular/src/app/core/services/officials.service.ts`
 2. `angular/src/app/core/services/attendance.service.ts`
 3. `angular/src/app/core/services/equipment.service.ts`
@@ -48,11 +50,13 @@ After a second comprehensive audit, additional issues were identified and fixed:
 5. `angular/src/app/core/services/api.service.spec.ts`
 
 **Before:**
+
 ```typescript
 import { ApiService, ApiResponse } from "./api.service";
 ```
 
 **After:**
+
 ```typescript
 import { ApiService } from "./api.service";
 import { ApiResponse } from "../models/common.models";
@@ -71,6 +75,7 @@ import { ApiResponse } from "../models/common.models";
 **Issue:** `getInitials` function didn't handle empty/null strings gracefully, potentially causing errors.
 
 **Fix:**
+
 - Added null/empty check at the start
 - Added `.trim()` to handle whitespace-only strings
 - Added `.filter()` to remove empty words from split
@@ -78,6 +83,7 @@ import { ApiResponse } from "../models/common.models";
 - Updated JSDoc with examples
 
 **Before:**
+
 ```typescript
 export function getInitials(name: string, maxLength: number = 2): string {
   return name
@@ -89,6 +95,7 @@ export function getInitials(name: string, maxLength: number = 2): string {
 ```
 
 **After:**
+
 ```typescript
 export function getInitials(name: string, maxLength: number = 2): string {
   if (!name || !name.trim()) {
@@ -115,6 +122,7 @@ export function getInitials(name: string, maxLength: number = 2): string {
 **Status:** No circular dependencies found in the codebase.
 
 **Evidence:**
+
 - Documentation in `docs/SERVICES_DEPENDENCIES.md` confirms no circular dependencies
 - Analysis was performed using `madge --circular` tool
 - Models don't import from each other (supplement.models, common.models, api.models are independent)
@@ -139,7 +147,7 @@ export function getInitials(name: string, maxLength: number = 2): string {
    - Action: None needed - console usage is intentional for debugging
 
 3. **getInitials in Vanilla JS vs Angular**
-   - Location: `src/js/utils/shared.js` vs `angular/src/app/shared/utils/format.utils.ts`
+   - Location: legacy `src/js/utils/shared.js` (removed) vs `angular/src/app/shared/utils/format.utils.ts`
    - Status: Acceptable - different codebases (vanilla JS vs Angular)
    - Action: None needed - these serve different contexts
 
@@ -171,6 +179,7 @@ export function getInitials(name: string, maxLength: number = 2): string {
 ## Summary of All Fixes (Both Rounds)
 
 ### Round 1 (Previous)
+
 - Consolidated Supplement interfaces → `supplement.models.ts`
 - Consolidated ApiResponse interfaces → `common.models.ts`
 - Resolved formatNumber duplication → `formatNumberSafe`
@@ -178,6 +187,7 @@ export function getInitials(name: string, maxLength: number = 2): string {
 - Cleaned up commented code
 
 ### Round 2 (This Round)
+
 - Deprecated ApiResponseWrapper/PaginatedApiResponse duplicates
 - Fixed 5 incorrect ApiResponse imports
 - Improved getInitials null handling

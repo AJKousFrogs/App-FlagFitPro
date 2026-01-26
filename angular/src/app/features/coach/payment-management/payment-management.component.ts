@@ -14,10 +14,10 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -33,7 +33,7 @@ import { TableModule } from "primeng/table";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import {
   getMappedStatusSeverity,
-  paymentStatusSeverityMap
+  paymentStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 import { Textarea } from "primeng/textarea";
 import { Toast } from "primeng/toast";
@@ -140,7 +140,7 @@ const BALANCE_FILTERS = [
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `
@@ -249,7 +249,11 @@ const BALANCE_FILTERS = [
                       <span class="fee-icon">{{ getFeeIcon(fee.type) }}</span>
                       <h4>{{ fee.name }}</h4>
                       @if (fee.isOverdue) {
-                        <app-status-tag value="OVERDUE" severity="danger" size="sm" />
+                        <app-status-tag
+                          value="OVERDUE"
+                          severity="danger"
+                          size="sm"
+                        />
                       }
                     </div>
                     <div class="fee-progress">
@@ -1077,7 +1081,11 @@ export class PaymentManagementComponent implements OnInit {
   getStatusSeverity(
     status: string,
   ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
-    return getMappedStatusSeverity(status, paymentStatusSeverityMap, "secondary");
+    return getMappedStatusSeverity(
+      status,
+      paymentStatusSeverityMap,
+      "secondary",
+    );
   }
 
   getPlayerBalance(playerId: string): number {

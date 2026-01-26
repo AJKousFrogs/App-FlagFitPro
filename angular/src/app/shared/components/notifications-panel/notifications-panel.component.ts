@@ -18,7 +18,7 @@ import {
   computed,
   inject,
   signal,
-  HostListener
+  HostListener,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 
@@ -26,7 +26,7 @@ import { Tooltip } from "primeng/tooltip";
 import {
   Notification,
   NotificationCategory,
-  NotificationStateService
+  NotificationStateService,
 } from "../../../core/services/notification-state.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";

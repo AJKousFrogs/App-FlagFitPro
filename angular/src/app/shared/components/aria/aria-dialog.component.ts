@@ -152,7 +152,9 @@ export class AriaDialogComponent {
 
         // Priority 1: Custom selector
         if (this.initialFocusSelector()) {
-          const customFocus = dialog.querySelector(this.initialFocusSelector()!);
+          const customFocus = dialog.querySelector(
+            this.initialFocusSelector()!,
+          );
           if (customFocus instanceof HTMLElement) {
             customFocus.focus();
             return;
@@ -162,7 +164,7 @@ export class AriaDialogComponent {
         // Priority 2: First focusable element (recommended for forms)
         if (this.focusFirstElement()) {
           const focusableElements = dialog.querySelectorAll(
-            'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])'
+            'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])',
           );
           if (focusableElements.length > 0) {
             (focusableElements[0] as HTMLElement).focus();

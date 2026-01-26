@@ -41,7 +41,10 @@ import { Observable, firstValueFrom, Subscription } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ToastService } from "../../core/services/toast.service";
 import { LoggerService } from "../../core/services/logger.service";
-import { OfflineQueueService, QueuedAction } from "../../core/services/offline-queue.service";
+import {
+  OfflineQueueService,
+  QueuedAction,
+} from "../../core/services/offline-queue.service";
 import { getErrorMessage } from "./error.utils";
 
 /**

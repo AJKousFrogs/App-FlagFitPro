@@ -378,8 +378,8 @@ Profile signal updated: { ... }
 | 14. Signal Effect Tracking | ⬜     |       |
 | 15. Network Tab            | ⬜     |       |
 
-**Total Passed:** **_ / 15
-**Total Failed:** _** / 15
+**Total Passed:** **\_ / 15
+**Total Failed:** \_** / 15
 
 ---
 
@@ -430,10 +430,10 @@ _Space for additional observations, issues, or notes during testing:_
 
 ---
 
-**Tested By:** ******\_******
-**Date:** ******\_******
+**Tested By:** **\*\***\_**\*\***
+**Date:** **\*\***\_**\*\***
 **Environment:**
 
-- Browser: ******\_******
+- Browser: **\*\***\_**\*\***
 - Angular Version: 21.x
 - Node Version: 22.x

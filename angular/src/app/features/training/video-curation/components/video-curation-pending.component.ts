@@ -8,7 +8,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output
+  output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 

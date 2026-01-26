@@ -39,7 +39,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-4, var(--ds-font-size-md)) var(--space-5, var(--ds-font-size-xl));
+    padding: var(--space-4, var(--ds-font-size-md))
+      var(--space-5, var(--ds-font-size-xl));
     border-bottom: 1px solid var(--primitive-neutral-100);
   }
 
@@ -55,7 +56,7 @@
 
     h3 {
       margin: 0;
-    font-size: var(--ds-font-size-md);
+      font-size: var(--ds-font-size-md);
       font-weight: var(--ds-font-weight-semibold);
       color: var(--color-text-primary);
     }
@@ -68,7 +69,7 @@
   }
 
   .progress-badge {
-  font-size: var(--ds-font-size-sm);
+    font-size: var(--ds-font-size-sm);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     background: var(--surface-secondary);
@@ -82,7 +83,8 @@
   // =============================================
 
   .supplement-progress {
-    padding: var(--space-3, var(--ds-font-size-xs)) var(--space-5, var(--ds-font-size-xl));
+    padding: var(--space-3, var(--ds-font-size-xs))
+      var(--space-5, var(--ds-font-size-xl));
     background: var(--surface-secondary);
   }
 
@@ -106,7 +108,7 @@
   }
 
   .progress-text {
-  font-size: var(--ds-font-size-xs);
+    font-size: var(--ds-font-size-xs);
     color: var(--color-text-secondary);
   }
 
@@ -115,7 +117,8 @@
   // =============================================
 
   .supplement-loading {
-    padding: var(--space-4, var(--ds-font-size-md)) var(--space-5, var(--ds-font-size-xl));
+    padding: var(--space-4, var(--ds-font-size-md))
+      var(--space-5, var(--ds-font-size-xl));
     display: flex;
     flex-direction: column;
     gap: var(--space-3, var(--ds-font-size-xs));
@@ -152,7 +155,7 @@
     align-items: center;
     gap: var(--ds-space-2);
     padding: var(--ds-space-2) var(--ds-space-5);
-  font-size: var(--ds-font-size-xs);
+    font-size: var(--ds-font-size-xs);
     font-weight: var(--ds-font-weight-semibold);
     color: var(--color-text-secondary);
     text-transform: var(--ds-text-transform-uppercase);
@@ -207,14 +210,14 @@
   }
 
   .item-name {
-  font-size: var(--ds-font-size-sm);
+    font-size: var(--ds-font-size-sm);
     font-weight: var(--ds-font-weight-medium);
     color: var(--color-text-primary);
     transition: color var(--transition-fast) var(--ease-standard);
   }
 
   .item-dosage {
-  font-size: var(--ds-font-size-xs);
+    font-size: var(--ds-font-size-xs);
     color: var(--color-text-secondary);
   }
 
@@ -223,7 +226,8 @@
   // =============================================
 
   .supplement-empty {
-    padding: var(--space-8, var(--ds-font-size-3xl)) var(--space-5, var(--ds-font-size-xl));
+    padding: var(--space-8, var(--ds-font-size-3xl))
+      var(--space-5, var(--ds-font-size-xl));
     text-align: center;
     flex: 1;
     display: flex;
@@ -241,7 +245,7 @@
     p {
       margin: 0 0 var(--space-4, var(--ds-font-size-md)) 0;
       color: var(--color-text-secondary);
-    font-size: var(--ds-font-size-sm);
+      font-size: var(--ds-font-size-sm);
     }
   }
 
@@ -261,7 +265,7 @@
     gap: var(--ds-space-2);
 
     label {
-    font-size: var(--ds-font-size-sm);
+      font-size: var(--ds-font-size-sm);
       font-weight: var(--ds-font-weight-medium);
       color: var(--color-text-primary);
     }
@@ -295,7 +299,7 @@
  * Status: Permanent - Component requirement
  */
   .category-tag {
-  font-size: var(--ds-font-size-xs);
+    font-size: var(--ds-font-size-xs);
     padding: var(--ds-space-1) var(--ds-space-2);
   }
 
@@ -323,11 +327,13 @@
     }
 
     .supplement-item {
-      padding: var(--space-3, var(--ds-font-size-xs)) var(--space-4, var(--ds-font-size-md));
+      padding: var(--space-3, var(--ds-font-size-xs))
+        var(--space-4, var(--ds-font-size-md));
     }
 
     .supplement-progress {
-      padding: var(--space-3, var(--ds-font-size-xs)) var(--space-4, var(--ds-font-size-md));
+      padding: var(--space-3, var(--ds-font-size-xs))
+        var(--space-4, var(--ds-font-size-md));
     }
   }
 

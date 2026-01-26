@@ -21,7 +21,7 @@ import {
   OnInit,
   signal,
   input,
-  output
+  output,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
@@ -86,7 +86,7 @@ type SessionStatus =
     Slider,
     Textarea,
     ButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   template: `
     <!-- Session Card / Modal -->
@@ -316,7 +316,9 @@ type SessionStatus =
 
             <div class="completion-stats">
               <div class="stat">
-                <span class="stat-block__value">{{ session().steps.length }}</span>
+                <span class="stat-block__value">{{
+                  session().steps.length
+                }}</span>
                 <span class="stat-block__label">Steps</span>
               </div>
               <div class="stat">

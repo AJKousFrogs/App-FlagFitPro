@@ -141,17 +141,26 @@
   border: var(--border-1) solid var(--color-border-secondary);
 
   &.alert-danger {
-    background: var(--color-status-danger-bg, rgba(var(--primitive-error-500-rgb), 0.1));
+    background: var(
+      --color-status-danger-bg,
+      rgba(var(--primitive-error-500-rgb), 0.1)
+    );
     border-color: var(--color-status-danger);
   }
 
   &.alert-warn {
-    background: var(--color-status-warning-bg, rgba(var(--primitive-warning-500-rgb), 0.1));
+    background: var(
+      --color-status-warning-bg,
+      rgba(var(--primitive-warning-500-rgb), 0.1)
+    );
     border-color: var(--color-status-warning);
   }
 
   &.alert-info {
-    background: var(--color-status-info-bg, rgba(var(--primitive-info-500-rgb), 0.1));
+    background: var(
+      --color-status-info-bg,
+      rgba(var(--primitive-info-500-rgb), 0.1)
+    );
     border-color: var(--color-status-info);
   }
 }

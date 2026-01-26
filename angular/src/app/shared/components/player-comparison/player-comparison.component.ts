@@ -92,7 +92,11 @@ interface StatComparison {
                   size="normal"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
-                <app-status-tag [value]="player.position" severity="secondary" size="sm" />
+                <app-status-tag
+                  [value]="player.position"
+                  severity="secondary"
+                  size="sm"
+                />
               </div>
             </ng-template>
           </p-select>
@@ -140,7 +144,11 @@ interface StatComparison {
                   size="normal"
                 ></p-avatar>
                 <span>{{ player.name }}</span>
-                <app-status-tag [value]="player.position" severity="secondary" size="sm" />
+                <app-status-tag
+                  [value]="player.position"
+                  severity="secondary"
+                  size="sm"
+                />
               </div>
             </ng-template>
           </p-select>
@@ -159,7 +167,11 @@ interface StatComparison {
             ></p-avatar>
             <div class="player-info">
               <h3>{{ player1()!.name }}</h3>
-              <app-status-tag [value]="player1()!.position" severity="info" size="sm" />
+              <app-status-tag
+                [value]="player1()!.position"
+                severity="info"
+                size="sm"
+              />
               @if (player1()!.jerseyNumber) {
                 <span class="jersey-number"
                   >#{{ player1()!.jerseyNumber }}</span
@@ -179,7 +191,11 @@ interface StatComparison {
             </div>
             <div class="player-info">
               <h3>{{ player2()!.name }}</h3>
-              <app-status-tag [value]="player2()!.position" severity="info" size="sm" />
+              <app-status-tag
+                [value]="player2()!.position"
+                severity="info"
+                size="sm"
+              />
               @if (player2()!.jerseyNumber) {
                 <span class="jersey-number"
                   >#{{ player2()!.jerseyNumber }}</span

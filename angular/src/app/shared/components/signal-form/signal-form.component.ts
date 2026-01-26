@@ -188,7 +188,8 @@ export class SignalFormComponent {
   // ViewChild references for focusing (Angular 21 signal-based)
   private nameInput = viewChild<ElementRef<HTMLInputElement>>("nameInput");
   private emailInput = viewChild<ElementRef<HTMLInputElement>>("emailInput");
-  private passwordInput = viewChild<ElementRef<HTMLInputElement>>("passwordInput");
+  private passwordInput =
+    viewChild<ElementRef<HTMLInputElement>>("passwordInput");
 
   // Form submission event
   formSubmit = output<{ name: string; email: string; password: string }>();

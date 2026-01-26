@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Test script for daily-protocol idempotency and concurrency safety
- * 
+ *
  * Usage:
  *   node scripts/test-daily-protocol-idempotency.js
- * 
+ *
  * Requires:
  *   - SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY in .env
  *   - Valid test user JWT token (set TEST_USER_TOKEN env var)
@@ -20,7 +20,9 @@ const testUserToken = process.env.TEST_USER_TOKEN;
 
 if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey) {
   console.error("❌ Missing required environment variables");
-  console.error("Required: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY");
+  console.error(
+    "Required: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY",
+  );
   process.exit(1);
 }
 
@@ -54,7 +56,7 @@ async function getUserId() {
 
 async function testIdempotency() {
   console.log("\n🧪 Test 1: Idempotency Key");
-  console.log("=" .repeat(50));
+  console.log("=".repeat(50));
 
   const userId = await getUserId();
   const date = new Date().toISOString().split("T")[0];
@@ -74,7 +76,7 @@ async function testIdempotency() {
         date,
         idempotencyKey,
       }),
-    }
+    },
   );
 
   const result1 = await response1.json();
@@ -100,7 +102,7 @@ async function testIdempotency() {
         date,
         idempotencyKey, // Same key
       }),
-    }
+    },
   );
 
   const result2 = await response2.json();
@@ -112,11 +114,13 @@ async function testIdempotency() {
   }
 
   if (protocolId1 === protocolId2) {
-    console.log(`✅ Idempotency test PASSED: Same protocol_id returned (${protocolId1})`);
+    console.log(
+      `✅ Idempotency test PASSED: Same protocol_id returned (${protocolId1})`,
+    );
     return true;
   } else {
     console.error(
-      `❌ Idempotency test FAILED: Different protocol_ids (${protocolId1} vs ${protocolId2})`
+      `❌ Idempotency test FAILED: Different protocol_ids (${protocolId1} vs ${protocolId2})`,
     );
     return false;
   }
@@ -124,7 +128,7 @@ async function testIdempotency() {
 
 async function testConcurrency() {
   console.log("\n🧪 Test 2: Concurrency Safety");
-  console.log("=" .repeat(50));
+  console.log("=".repeat(50));
 
   const userId = await getUserId();
   const date = new Date(Date.now() + 86400000).toISOString().split("T")[0]; // Tomorrow
@@ -160,8 +164,8 @@ async function testConcurrency() {
           date,
           // No idempotency key - should derive same deterministic key
         }),
-      }
-    ).then((r) => r.json())
+      },
+    ).then((r) => r.json()),
   );
 
   const results = await Promise.all(requests);
@@ -177,15 +181,22 @@ async function testConcurrency() {
     .eq("user_id", userId)
     .eq("protocol_date", date);
 
-  const uniqueProtocolIds = protocols?.map((p) => p.id).filter((id, idx, arr) => arr.indexOf(id) === idx) || [];
+  const uniqueProtocolIds =
+    protocols
+      ?.map((p) => p.id)
+      .filter((id, idx, arr) => arr.indexOf(id) === idx) || [];
 
   if (uniqueProtocolIds.length === 1) {
-    console.log(`✅ Concurrency test PASSED: Only 1 protocol created (${uniqueProtocolIds[0]})`);
-    console.log(`   Responses returned ${protocolIds.length} unique protocol_ids`);
+    console.log(
+      `✅ Concurrency test PASSED: Only 1 protocol created (${uniqueProtocolIds[0]})`,
+    );
+    console.log(
+      `   Responses returned ${protocolIds.length} unique protocol_ids`,
+    );
     return true;
   } else {
     console.error(
-      `❌ Concurrency test FAILED: ${uniqueProtocolIds.length} protocols created`
+      `❌ Concurrency test FAILED: ${uniqueProtocolIds.length} protocols created`,
     );
     console.error(`   Protocol IDs: ${uniqueProtocolIds.join(", ")}`);
     return false;
@@ -194,7 +205,7 @@ async function testConcurrency() {
 
 async function testProtocolHasExercises() {
   console.log("\n🧪 Test 3: Protocol Always Has Exercises");
-  console.log("=" .repeat(50));
+  console.log("=".repeat(50));
 
   const userId = await getUserId();
   const date = new Date(Date.now() + 172800000).toISOString().split("T")[0]; // Day after tomorrow
@@ -210,7 +221,7 @@ async function testProtocolHasExercises() {
         Authorization: `Bearer ${testUserToken}`,
       },
       body: JSON.stringify({ date }),
-    }
+    },
   );
 
   const result = await response.json();
@@ -239,12 +250,16 @@ async function testProtocolHasExercises() {
     .single();
 
   if (exercises && exercises.length > 0) {
-    console.log(`✅ Protocol has ${exercises.length} exercises (total_exercises=${protocol?.total_exercises})`);
+    console.log(
+      `✅ Protocol has ${exercises.length} exercises (total_exercises=${protocol?.total_exercises})`,
+    );
     if (exercises.length === protocol?.total_exercises) {
       console.log("✅ Exercise count matches total_exercises field");
       return true;
     } else {
-      console.warn(`⚠️  Exercise count mismatch: ${exercises.length} exercises vs total_exercises=${protocol?.total_exercises}`);
+      console.warn(
+        `⚠️  Exercise count mismatch: ${exercises.length} exercises vs total_exercises=${protocol?.total_exercises}`,
+      );
       return true; // Still passes - exercises exist
     }
   } else {
@@ -255,7 +270,7 @@ async function testProtocolHasExercises() {
 
 async function main() {
   console.log("🚀 Starting Daily Protocol Tests");
-  console.log("=" .repeat(50));
+  console.log("=".repeat(50));
 
   try {
     const results = {
@@ -265,10 +280,16 @@ async function main() {
     };
 
     console.log("\n📊 Test Results");
-    console.log("=" .repeat(50));
-    console.log(`Idempotency:     ${results.idempotency ? "✅ PASS" : "❌ FAIL"}`);
-    console.log(`Concurrency:     ${results.concurrency ? "✅ PASS" : "❌ FAIL"}`);
-    console.log(`Has Exercises:   ${results.exercises ? "✅ PASS" : "❌ FAIL"}`);
+    console.log("=".repeat(50));
+    console.log(
+      `Idempotency:     ${results.idempotency ? "✅ PASS" : "❌ FAIL"}`,
+    );
+    console.log(
+      `Concurrency:     ${results.concurrency ? "✅ PASS" : "❌ FAIL"}`,
+    );
+    console.log(
+      `Has Exercises:   ${results.exercises ? "✅ PASS" : "❌ FAIL"}`,
+    );
 
     const allPassed = Object.values(results).every((r) => r);
     if (allPassed) {

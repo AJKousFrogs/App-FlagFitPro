@@ -31,13 +31,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
   selector: "app-verify-email",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    Card,
-    ButtonComponent,
-    Message,
-    Toast,
-  ],
+  imports: [RouterModule, Card, ButtonComponent, Message, Toast],
 
   template: `
     <p-toast></p-toast>

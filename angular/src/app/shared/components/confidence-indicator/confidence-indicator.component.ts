@@ -8,7 +8,7 @@ import {
   Component,
   input,
   computed,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
@@ -20,12 +20,7 @@ import { ButtonComponent } from "../button/button.component";
   selector: "app-confidence-indicator",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterModule,
-    StatusTagComponent,
-    ButtonComponent
-  ],
+  imports: [CommonModule, RouterModule, StatusTagComponent, ButtonComponent],
   template: `
     <div
       class="confidence-indicator"

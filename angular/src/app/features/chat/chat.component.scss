@@ -7,12 +7,6 @@
 
 @use "app/shared/styles/animations" as *;
 
-
-
-
-
-
-
 .chat-page {
   display: flex;
   flex-direction: column;
@@ -215,8 +209,7 @@
   );
   color: var(--ds-primary-green);
   font-weight: var(--ds-font-weight-semibold);
-  box-shadow: inset 0 0 0 var(--border-2)
-    rgba(var(--ds-primary-green-rgb), 0.2);
+  box-shadow: inset 0 0 0 var(--border-2) rgba(var(--ds-primary-green-rgb), 0.2);
 }
 
 .channel-item.active::before {

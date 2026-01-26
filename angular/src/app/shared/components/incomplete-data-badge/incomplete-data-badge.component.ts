@@ -36,12 +36,7 @@ export type IncompleteDataPlacement =
   selector: "app-incomplete-data-badge",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterModule,
-    Tooltip,
-    StatusTagComponent,
-  ],
+  imports: [CommonModule, RouterModule, Tooltip, StatusTagComponent],
   template: `
     <div
       class="incomplete-data-badge"

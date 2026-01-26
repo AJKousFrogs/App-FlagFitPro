@@ -25,7 +25,7 @@ import {
   afterNextRender,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -50,7 +50,7 @@ import { HapticFeedbackService } from "../../../core/services/haptic-feedback.se
 import {
   InstagramCreator,
   InstagramVideo,
-  InstagramVideoService
+  InstagramVideoService,
 } from "../../../core/services/instagram-video.service";
 import { LoggerService } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
@@ -58,7 +58,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   FlagPosition,
-  TrainingFocus
+  TrainingFocus,
 } from "../../../core/services/training-video-database.service";
 
 // Layout
@@ -87,7 +87,7 @@ interface FilterChip {
     MainLayoutComponent,
     ButtonComponent,
     StatusTagComponent,
-    SearchInputComponent
+    SearchInputComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -258,9 +258,7 @@ interface FilterChip {
               </div>
               <h3>No videos found</h3>
               <p>Try adjusting your filters or search query</p>
-              <app-button
-                iconLeft="pi-refresh"
-                (clicked)="clearAllFilters()"
+              <app-button iconLeft="pi-refresh" (clicked)="clearAllFilters()"
                 >Clear Filters</app-button
               >
             </div>

@@ -224,8 +224,7 @@ describe("Accessibility Audit", () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-      ],
+      imports: [],
     });
 
     fixture = TestBed.createComponent(TestHostComponent);

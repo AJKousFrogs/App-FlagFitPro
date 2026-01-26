@@ -16,9 +16,7 @@
   z-index: var(--z-index-notification);
   background: var(--surface-primary);
   border-top: 1px solid var(--color-border-subtle);
-  box-shadow:
-    var(--shadow-lg),
-    var(--shadow-sm);
+  box-shadow: var(--shadow-lg), var(--shadow-sm);
   animation: slide-up var(--motion-slow) var(--ease-decelerate);
   backdrop-filter: blur(12px);
 }
@@ -217,7 +215,9 @@
  ================================ */
 .cookie-footer {
   font-size: var(--ds-font-size-xs);
-  color: var(--color-text-secondary); /* Changed from tertiary to secondary for better contrast */
+  color: var(
+    --color-text-secondary
+  ); /* Changed from tertiary to secondary for better contrast */
   margin: 0;
   padding-top: var(--space-3);
   border-top: var(--border-1) solid var(--color-border-muted);

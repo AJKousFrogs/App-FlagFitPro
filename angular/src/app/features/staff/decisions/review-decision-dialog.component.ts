@@ -11,7 +11,7 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-  inject
+  inject,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -45,7 +45,7 @@ import type {
     Checkbox,
     DatePicker,
     StatusTagComponent,
-    ModalComponent
+    ModalComponent,
   ],
   template: `
     <app-modal
@@ -188,9 +188,7 @@ import type {
 
       <!-- Footer -->
       <ng-container footer>
-        <app-button
-          variant="outlined"
-          (clicked)="onCancel()"
+        <app-button variant="outlined" (clicked)="onCancel()"
           >Cancel</app-button
         >
         <app-button

@@ -314,9 +314,7 @@ interface Stats {
                     <span class="stat-block__value">{{
                       stats()?.total_exercises || 0
                     }}</span>
-                    <span class="stat-block__label"
-                      >Exercises Completed</span
-                    >
+                    <span class="stat-block__label">Exercises Completed</span>
                   </div>
                 </div>
                 <div class="stat-card">
@@ -446,7 +444,9 @@ export class AchievementsPanelComponent {
             totalPoints: response.data.summary.points,
           });
         }
-      } else if ((response as unknown as { achievements?: Achievement[] })?.achievements) {
+      } else if (
+        (response as unknown as { achievements?: Achievement[] })?.achievements
+      ) {
         // Direct response without wrapper (legacy format)
         const legacyResponse = response as unknown as {
           achievements?: Achievement[];
@@ -477,9 +477,7 @@ export class AchievementsPanelComponent {
       );
       if (response?.success && response.data) {
         this.streaks.set(response.data.streaks || []);
-      } else if (
-        (response as unknown as { streaks?: Streak[] })?.streaks
-      ) {
+      } else if ((response as unknown as { streaks?: Streak[] })?.streaks) {
         // Direct response without wrapper (legacy format)
         const legacyResponse = response as unknown as { streaks?: Streak[] };
         this.streaks.set(legacyResponse.streaks || []);

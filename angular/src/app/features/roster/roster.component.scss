@@ -5,12 +5,6 @@
    Design System Compliant - January 2, 2026
    ================================================================ */
 
-
-
-
-
-
-
 .roster-page {
   padding: var(--space-6);
 }
@@ -88,7 +82,10 @@
 
 .roster-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-lg), 1fr)
+  );
   gap: var(--space-6);
 }
 

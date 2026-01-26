@@ -17,7 +17,7 @@ import {
   output,
   signal,
   computed,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
@@ -29,7 +29,7 @@ import {
   ProtocolBlock,
   PrescribedExercise,
   getBlockConfig,
-  formatPrescription
+  formatPrescription,
 } from "../daily-protocol.models";
 import { ExerciseCardComponent } from "./exercise-card.component";
 
@@ -41,7 +41,7 @@ import { ExerciseCardComponent } from "./exercise-card.component";
     CommonModule,
     StatusTagComponent,
     ExerciseCardComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   template: `
     <div
@@ -113,10 +113,16 @@ import { ExerciseCardComponent } from "./exercise-card.component";
           <button
             class="expand-toggle"
             [attr.aria-expanded]="isExpanded()"
-            [attr.aria-label]="isExpanded() ? 'Collapse ' + block().title : 'Expand ' + block().title"
+            [attr.aria-label]="
+              isExpanded()
+                ? 'Collapse ' + block().title
+                : 'Expand ' + block().title
+            "
             (click)="toggleExpand(); $event.stopPropagation()"
           >
-            <span class="expand-text" aria-hidden="true">{{ isExpanded() ? '▲ Collapse' : '▼ Expand' }}</span>
+            <span class="expand-text" aria-hidden="true">{{
+              isExpanded() ? "▲ Collapse" : "▼ Expand"
+            }}</span>
           </button>
         </div>
       </div>
@@ -161,7 +167,9 @@ import { ExerciseCardComponent } from "./exercise-card.component";
                       [attr.data-testid]="'exercise-checkbox-' + exercise.id"
                       [checked]="exercise.status === 'complete'"
                       (change)="onExerciseToggle(exercise)"
-                      [attr.aria-label]="'Mark ' + exercise.exercise.name + ' as complete'"
+                      [attr.aria-label]="
+                        'Mark ' + exercise.exercise.name + ' as complete'
+                      "
                     />
                     <span class="exercise-name">{{
                       exercise.exercise.name

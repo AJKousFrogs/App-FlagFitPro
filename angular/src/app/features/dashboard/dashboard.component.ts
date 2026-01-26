@@ -1,10 +1,10 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    inject,
-    OnInit,
-    signal,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
 } from "@angular/core";
 import { Router } from "@angular/router";
 import { AuthService } from "../../core/services/auth.service";

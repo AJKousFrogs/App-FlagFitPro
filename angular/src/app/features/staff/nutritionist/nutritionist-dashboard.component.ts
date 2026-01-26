@@ -5,7 +5,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -141,7 +141,7 @@ interface TournamentNutritionBrief {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -183,9 +183,7 @@ interface TournamentNutritionBrief {
                 <span class="stat-block__value"
                   >{{ avgSupplementCompliance() }}%</span
                 >
-                <span class="stat-block__label"
-                  >Avg Supplement Compliance</span
-                >
+                <span class="stat-block__label">Avg Supplement Compliance</span>
               </div>
             </div>
             <div class="stat-card">
@@ -202,9 +200,7 @@ interface TournamentNutritionBrief {
                 <i class="pi pi-bolt"></i>
               </div>
               <div class="stat-content stat-block__content">
-                <span class="stat-block__value">{{
-                  avgHydrationScore()
-                }}</span>
+                <span class="stat-block__value">{{ avgHydrationScore() }}</span>
                 <span class="stat-block__label">Avg Hydration Status</span>
               </div>
             </div>
@@ -499,7 +495,9 @@ interface TournamentNutritionBrief {
                             <div class="tournament-header">
                               <h4>{{ tournament.tournament.name }}</h4>
                               <app-status-tag
-                                [value]="tournament.tournament.expectedGames + ' games'"
+                                [value]="
+                                  tournament.tournament.expectedGames + ' games'
+                                "
                                 severity="info"
                                 size="sm"
                               />

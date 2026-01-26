@@ -268,13 +268,13 @@
     }
   }
 
-    &:active:not(:disabled) {
-      background-color: var(--color-brand-primary-light);
+  &:active:not(:disabled) {
+    background-color: var(--color-brand-primary-light);
 
-      &::after {
-        width: 100%;
-      }
+    &::after {
+      width: 100%;
     }
+  }
 
   &:focus-visible {
     box-shadow: var(--shadow-focus);
@@ -2295,7 +2295,8 @@ select {
   .main-content,
   .dashboard-content {
     padding-bottom: calc(
-      var(--bottom-nav-height, var(--layout-height-md)) + var(--safe-area-bottom, 0)
+      var(--bottom-nav-height, var(--layout-height-md)) +
+        var(--safe-area-bottom, 0)
     );
   }
 }

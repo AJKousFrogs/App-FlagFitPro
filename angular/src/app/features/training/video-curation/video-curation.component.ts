@@ -99,9 +99,7 @@ import { MainLayoutComponent } from "../../../shared/components/layout/main-layo
               <p>Manage and curate training videos for your team</p>
             </div>
             <div class="header-actions">
-              <app-button
-                iconLeft="pi-plus"
-                (clicked)="openPlaylistDialog()"
+              <app-button iconLeft="pi-plus" (clicked)="openPlaylistDialog()"
                 >Create Playlist</app-button
               >
             </div>

@@ -131,7 +131,10 @@ export class SwipeableCardsComponent<T> implements OnDestroy {
   private elementRef = inject(ElementRef);
 
   // Angular 21: Use contentChild() signal instead of @ContentChild()
-  cardTemplate = contentChild.required<TemplateRef<{ $implicit: T; index: number }>>(TemplateRef);
+  cardTemplate =
+    contentChild.required<TemplateRef<{ $implicit: T; index: number }>>(
+      TemplateRef,
+    );
 
   // Inputs
   cards = input<T[]>([]);

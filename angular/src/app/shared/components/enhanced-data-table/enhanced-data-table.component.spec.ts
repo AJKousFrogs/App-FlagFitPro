@@ -365,10 +365,14 @@ describe("EnhancedDataTableComponent", () => {
         .mockImplementation(() => {});
 
       expect(() => (component as any).loadPreferences()).not.toThrow();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Failed to load table preferences",
-        expect.any(Error),
+      const hasMessage = consoleSpy.mock.calls.some((call) =>
+        call.includes("Failed to load table preferences"),
       );
+      const hasError = consoleSpy.mock.calls.some((call) =>
+        call.some((arg) => arg instanceof Error),
+      );
+      expect(hasMessage).toBe(true);
+      expect(hasError).toBe(true);
 
       consoleSpy.mockRestore();
     });

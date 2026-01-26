@@ -6,8 +6,6 @@
 // Design System Compliant - All tokens from design-system-tokens.scss
 // ============================================================================
 
-
-
 .tournament-nutrition-page {
   @include page-container(var(--content-max-width-xl));
 }
@@ -491,7 +489,8 @@
     );
     box-shadow:
       0 0 0 var(--border-4) rgba(var(--primitive-error-500-rgb), 0.2),
-      0 var(--space-0-5) var(--space-2) rgba(var(--primitive-error-500-rgb), 0.3);
+      0 var(--space-0-5) var(--space-2)
+        rgba(var(--primitive-error-500-rgb), 0.3);
   }
 
   &.current .timeline-content {
@@ -525,7 +524,8 @@
     box-shadow:
       0 0 0 var(--border-4) rgba(var(--ds-primary-green-rgb), 0.3),
       0 0 0 var(--space-4) rgba(var(--ds-primary-green-rgb), 0),
-      0 0 calc(var(--space-6) + var(--space-2)) rgba(var(--ds-primary-green-rgb), 0);
+      0 0 calc(var(--space-6) + var(--space-2))
+        rgba(var(--ds-primary-green-rgb), 0);
   }
 }
 
@@ -571,9 +571,7 @@
   border: var(--border-1) solid var(--color-border-secondary);
   border-radius: var(--radius-2xl);
   padding: var(--space-6);
-  box-shadow:
-    var(--shadow-md),
-    var(--shadow-sm);
+  box-shadow: var(--shadow-md), var(--shadow-sm);
   position: relative;
   overflow: hidden;
   transition:
@@ -735,9 +733,7 @@
 
   &:hover {
     transform: translateX(var(--space-1));
-    box-shadow:
-      var(--shadow-lg),
-      var(--shadow-sm);
+    box-shadow: var(--shadow-lg), var(--shadow-sm);
 
     &::before {
       width: var(--indicator-size-sm);
@@ -1033,9 +1029,7 @@
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
     transform var(--transition-fast);
-  box-shadow:
-    var(--shadow-md),
-    var(--shadow-sm);
+  box-shadow: var(--shadow-md), var(--shadow-sm);
   animation: fadeInUp 400ms ease-out backwards;
   position: relative;
   overflow: hidden;
@@ -1079,7 +1073,8 @@
     box-shadow:
       var(--shadow-xl),
       0 var(--space-1) var(--space-3) rgba(var(--ds-primary-green-rgb), 0.2);
-    transform: translateY(calc(-1 * (var(--space-1) + var(--space-0-5)))) scale(1.02);
+    transform: translateY(calc(-1 * (var(--space-1) + var(--space-0-5))))
+      scale(1.02);
 
     &::before {
       transform: scaleX(1);
@@ -1226,7 +1221,9 @@
   gap: var(--space-1);
   margin-bottom: var(--space-2);
   flex-shrink: 0;
-  min-height: var(--input-height); /* Ensure consistent height for details section */
+  min-height: var(
+    --input-height
+  ); /* Ensure consistent height for details section */
 }
 
 .supp-row {
@@ -1265,7 +1262,9 @@
   margin-top: auto;
   padding-top: var(--space-2);
   border-top: var(--border-1) dashed var(--color-border-secondary);
-  min-height: var(--input-height); /* Ensure consistent height for notes section */
+  min-height: var(
+    --input-height
+  ); /* Ensure consistent height for notes section */
 
   i {
     font-size: var(--ds-font-size-xs);
@@ -1289,9 +1288,7 @@
   background: var(--surface-primary);
   border-radius: var(--radius-2xl);
   border: var(--border-1) solid var(--color-border-secondary);
-  box-shadow:
-    var(--shadow-md),
-    var(--shadow-sm);
+  box-shadow: var(--shadow-md), var(--shadow-sm);
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
@@ -1332,7 +1329,8 @@
       transform: scale(1.15) rotate(-8deg);
       box-shadow:
         var(--shadow-lg),
-        0 var(--space-0-5) var(--space-2) rgba(var(--ds-primary-green-rgb), 0.15);
+        0 var(--space-0-5) var(--space-2)
+          rgba(var(--ds-primary-green-rgb), 0.15);
     }
   }
 }
@@ -1441,9 +1439,7 @@
     rgba(var(--ds-primary-green-rgb), 0.03) 0%,
     var(--surface-primary) 100%
   );
-  box-shadow:
-    var(--shadow-lg),
-    var(--shadow-sm);
+  box-shadow: var(--shadow-lg), var(--shadow-sm);
 }
 
 .packing-list {
@@ -1659,7 +1655,6 @@
 
 // ============================================================================
 // @layer overrides - PrimeNG Component Overrides
-
 
 // Card header/border overrides REMOVED
 // Use app-card-shell component instead

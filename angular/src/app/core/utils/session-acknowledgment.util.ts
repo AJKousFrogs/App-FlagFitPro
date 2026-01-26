@@ -1,6 +1,6 @@
 /**
  * Session Acknowledgment Utility
- * 
+ *
  * Contract: STEP_2_1 §3, STEP_2_6 §4.2
  * Determines if acknowledgment is required before starting a session
  */
@@ -28,9 +28,9 @@ export interface SessionForAcknowledgment {
 
 /**
  * Check if session requires acknowledgment before starting
- * 
+ *
  * Contract: STEP_2_1 §3, STEP_2_6 §4.2
- * 
+ *
  * Acknowledgment required for:
  * - Intensity increase >10%
  * - ACWR override
@@ -39,7 +39,7 @@ export interface SessionForAcknowledgment {
  * - Taper activation
  * - Safety-related adjustments
  * - Coach modifications that require acknowledgment
- * 
+ *
  * @param session - Session data
  * @returns Check result with reason
  */
@@ -55,7 +55,7 @@ export function requiresAcknowledgment(
   }
 
   // If already acknowledged, no need to check again
-  if (session.session_state === 'ACKNOWLEDGED') {
+  if (session.session_state === "ACKNOWLEDGED") {
     return {
       requiresAcknowledgment: false,
       reason: null,
@@ -65,9 +65,9 @@ export function requiresAcknowledgment(
 
   // If already IN_PROGRESS or later, acknowledgment not applicable
   if (
-    session.session_state === 'IN_PROGRESS' ||
-    session.session_state === 'COMPLETED' ||
-    session.session_state === 'LOCKED'
+    session.session_state === "IN_PROGRESS" ||
+    session.session_state === "COMPLETED" ||
+    session.session_state === "LOCKED"
   ) {
     return {
       requiresAcknowledgment: false,
@@ -92,31 +92,31 @@ export function requiresAcknowledgment(
 
   // ACWR override (blocking)
   if (session.acwr_override) {
-    reasons.push('Training load adjustment (ACWR override)');
+    reasons.push("Training load adjustment (ACWR override)");
     blocking = true;
   }
 
   // Weather override (blocking)
   if (session.weather_override) {
-    reasons.push('Weather conditions override');
+    reasons.push("Weather conditions override");
     blocking = true;
   }
 
   // Practice override (blocking)
   if (session.practice_override) {
-    reasons.push('Mandatory practice scheduled');
+    reasons.push("Mandatory practice scheduled");
     blocking = true;
   }
 
   // Taper activation (blocking)
   if (session.taper_active) {
-    reasons.push('Taper period activated');
+    reasons.push("Taper period activated");
     blocking = true;
   }
 
   // Safety alert (blocking)
   if (session.safety_alert) {
-    reasons.push('Safety-related adjustment');
+    reasons.push("Safety-related adjustment");
     blocking = true;
   }
 
@@ -132,22 +132,22 @@ export function requiresAcknowledgment(
 
   // Explicit acknowledgment flag
   if (session.requires_acknowledgment && !reasons.length) {
-    reasons.push('Coach requires acknowledgment');
+    reasons.push("Coach requires acknowledgment");
     blocking = true;
   }
 
   return {
     requiresAcknowledgment: reasons.length > 0,
-    reason: reasons.length > 0 ? reasons.join('; ') : null,
+    reason: reasons.length > 0 ? reasons.join("; ") : null,
     blocking,
   };
 }
 
 /**
  * Check if session can be started
- * 
+ *
  * Contract: STEP_2_1 §3
- * 
+ *
  * @param session - Session data
  * @param acknowledged - Whether session has been acknowledged
  * @returns True if session can be started
@@ -161,8 +161,11 @@ export function canStartSession(
   }
 
   // Must be in a startable state
-  const startableStates = ['VISIBLE', 'ACKNOWLEDGED'];
-  if (!session.session_state || !startableStates.includes(session.session_state)) {
+  const startableStates = ["VISIBLE", "ACKNOWLEDGED"];
+  if (
+    !session.session_state ||
+    !startableStates.includes(session.session_state)
+  ) {
     return false;
   }
 
@@ -171,7 +174,7 @@ export function canStartSession(
 
   if (ackCheck.requiresAcknowledgment && ackCheck.blocking) {
     // Must be acknowledged if blocking acknowledgment required
-    return acknowledged || session.session_state === 'ACKNOWLEDGED';
+    return acknowledged || session.session_state === "ACKNOWLEDGED";
   }
 
   return true;

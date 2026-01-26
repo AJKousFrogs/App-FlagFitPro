@@ -10,18 +10,23 @@ import {
   inject,
   signal,
   computed,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 
 import { ButtonComponent } from "@shared/components/button/button.component";
 
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import {
+  Accordion,
+  AccordionPanel,
+  AccordionHeader,
+  AccordionContent,
+} from "primeng/accordion";
 import { StatusTagComponent } from "@shared/components/status-tag/status-tag.component";
 import {
   decisionStatusSeverityMap,
-  getMappedStatusSeverity
+  getMappedStatusSeverity,
 } from "@shared/utils/status.utils";
 import { PageHeaderComponent } from "@shared/components/page-header/page-header.component";
 import { CardShellComponent } from "@shared/components/card-shell/card-shell.component";
@@ -50,7 +55,7 @@ import type {
     PageHeaderComponent,
     CardShellComponent,
     ConfidenceIndicatorComponent,
-    ReviewDecisionDialogComponent
+    ReviewDecisionDialogComponent,
   ],
   template: `
     <div class="decision-detail">
@@ -82,9 +87,7 @@ import type {
             >Back to Decisions</app-button
           >
           @if (canReview()) {
-            <app-button
-              iconLeft="pi-check"
-              (clicked)="openReviewDialog()"
+            <app-button iconLeft="pi-check" (clicked)="openReviewDialog()"
               >Review Decision</app-button
             >
           }
@@ -168,7 +171,11 @@ import type {
                 <p>
                   {{ formatDate(decision()!.reviewDate) }}
                   @if (isOverdue()) {
-                    <app-status-tag severity="danger" value="Overdue" size="sm" />
+                    <app-status-tag
+                      severity="danger"
+                      value="Overdue"
+                      size="sm"
+                    />
                   }
                 </p>
               </div>
@@ -283,7 +290,9 @@ import type {
                       decision()!.outcomeData!.goalAchieved ? 'Yes' : 'No'
                     "
                     [severity]="
-                      decision()!.outcomeData!.goalAchieved ? 'success' : 'warning'
+                      decision()!.outcomeData!.goalAchieved
+                        ? 'success'
+                        : 'warning'
                     "
                     size="sm"
                   />
@@ -326,7 +335,11 @@ import type {
                     <a [routerLink]="['/staff/decisions', related.id]">
                       {{ related.decisionSummary }}
                     </a>
-                    <app-status-tag [value]="related.relation" severity="info" size="sm" />
+                    <app-status-tag
+                      [value]="related.relation"
+                      severity="info"
+                      size="sm"
+                    />
                   </div>
                 }
               </div>

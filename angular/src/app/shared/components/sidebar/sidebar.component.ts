@@ -110,7 +110,10 @@ interface _CollapsibleGroup {
           <div class="nav-group">
             <div class="nav-group-title">More</div>
             <div class="nav-group-items">
-              @for (item of additionalItems(); track trackByRoute($index, item)) {
+              @for (
+                item of additionalItems();
+                track trackByRoute($index, item)
+              ) {
                 <app-nav-item
                   [route]="item.route"
                   [label]="item.label"

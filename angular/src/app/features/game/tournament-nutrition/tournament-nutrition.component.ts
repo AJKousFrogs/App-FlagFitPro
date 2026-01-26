@@ -25,7 +25,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
@@ -109,7 +109,7 @@ interface HydrationLog {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   styleUrl: "./tournament-nutrition.component.scss",
   template: `
@@ -337,7 +337,11 @@ interface HydrationLog {
                         >{{ window.startTime }} - {{ window.endTime }}</span
                       >
                       @if (window.priority === "critical") {
-                        <app-status-tag value="Critical" severity="danger" size="sm" />
+                        <app-status-tag
+                          value="Critical"
+                          severity="danger"
+                          size="sm"
+                        />
                       }
                       @if (window.completed) {
                         <span class="completed-badge-inline">

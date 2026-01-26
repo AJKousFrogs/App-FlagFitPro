@@ -38,7 +38,10 @@ async function createWellnessCheckin(userId, checkinData) {
       const metrics = [];
       if (sleep !== undefined && sleep !== null) {
         // Convert sleep hours (0-24) to 1-10 scale: 8hrs = 10, <4hrs = 1
-        const sleepScore = Math.max(1, Math.min(10, Math.round((sleep / 8) * 10)));
+        const sleepScore = Math.max(
+          1,
+          Math.min(10, Math.round((sleep / 8) * 10)),
+        );
         metrics.push({ value: sleepScore, weight: 0.3 });
       }
       if (energy !== undefined && energy !== null) {
@@ -56,7 +59,10 @@ async function createWellnessCheckin(userId, checkinData) {
       if (metrics.length > 0) {
         // Weighted average, normalized by total weight
         const totalWeight = metrics.reduce((sum, m) => sum + m.weight, 0);
-        const weightedSum = metrics.reduce((sum, m) => sum + m.value * m.weight, 0);
+        const weightedSum = metrics.reduce(
+          (sum, m) => sum + m.value * m.weight,
+          0,
+        );
         readiness = Math.round(weightedSum / totalWeight);
       } else {
         // Default readiness if no metrics provided

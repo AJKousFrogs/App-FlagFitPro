@@ -519,7 +519,10 @@ export class PerformanceDataService {
       this.logger.error(
         "[Performance] Cannot log measurement: No user logged in",
       );
-      return of({ success: false, error: "Not authenticated. Please log in again." });
+      return of({
+        success: false,
+        error: "Not authenticated. Please log in again.",
+      });
     }
 
     return from(
@@ -695,9 +698,7 @@ export class PerformanceDataService {
       supplement.timeOfDay &&
       !validTimeOfDay.includes(supplement.timeOfDay)
     ) {
-      errors.push(
-        `Time of day must be one of: ${validTimeOfDay.join(", ")}`,
-      );
+      errors.push(`Time of day must be one of: ${validTimeOfDay.join(", ")}`);
     }
 
     // Date validation

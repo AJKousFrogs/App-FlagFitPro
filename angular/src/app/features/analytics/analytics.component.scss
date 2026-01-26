@@ -11,8 +11,6 @@
 
 @include stat-block;
 
-
-
 .modern-step-nav {
   display: flex;
   align-items: center;
@@ -501,7 +499,11 @@
     background:
       linear-gradient(to right, var(--surface-card) 30%, transparent),
       linear-gradient(to right, transparent, var(--surface-card) 70%) 0 100%,
-      radial-gradient(farthest-side at 0% 50%, var(--color-border-subtle), transparent),
+      radial-gradient(
+        farthest-side at 0% 50%,
+        var(--color-border-subtle),
+        transparent
+      ),
       radial-gradient(
           farthest-side at 100% 50%,
           var(--color-border-subtle),
@@ -1001,7 +1003,9 @@
   // Doughnut chart needs more height when legend is at bottom (mobile)
   &.doughnut {
     @include respond-to(md) {
-      height: var(--chart-min-height-lg); // 400px - Extra height for bottom legend
+      height: var(
+        --chart-min-height-lg
+      ); // 400px - Extra height for bottom legend
     }
   }
 }
@@ -1860,17 +1864,29 @@
 
   &.gold {
     border-left-color: var(--color-medal-gold);
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(var(--color-medal-gold-rgb), 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--surface-secondary) 0%,
+      rgba(var(--color-medal-gold-rgb), 0.05) 100%
+    );
   }
 
   &.silver {
     border-left-color: var(--color-medal-silver);
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(var(--color-medal-silver-rgb), 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--surface-secondary) 0%,
+      rgba(var(--color-medal-silver-rgb), 0.05) 100%
+    );
   }
 
   &.bronze {
     border-left-color: var(--color-medal-bronze);
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(var(--color-medal-bronze-rgb), 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--surface-secondary) 0%,
+      rgba(var(--color-medal-bronze-rgb), 0.05) 100%
+    );
   }
 }
 

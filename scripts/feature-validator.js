@@ -75,7 +75,7 @@ class FeatureValidator {
 
     try {
       // Test 1: Auth Manager exists and loads
-      const authManagerPath = "./src/auth-manager.js";
+      const authManagerPath = "./angular/src/app/core/services/auth.service.ts";
       try {
         await fs.access(authManagerPath);
         authResults.tests.authManagerExists = true;
@@ -427,7 +427,7 @@ class FeatureValidator {
       const authFiles = [
         "./netlify/functions/auth-login.cjs",
         "./netlify/functions/auth-me.cjs",
-        "./src/auth-manager.js",
+        "./angular/src/app/core/services/auth.service.ts",
       ];
 
       let hasDemoRestriction = false;
@@ -461,10 +461,7 @@ class FeatureValidator {
   async testRoleBasedAccess() {
     try {
       // Check for RBAC implementation
-      const files = [
-        "./netlify/functions/utils/error-handler.cjs",
-        "./src/js/utils/unified-error-handler.js",
-      ];
+      const files = ["./netlify/functions/utils/error-handler.cjs"];
 
       let hasRBAC = false;
       for (const file of files) {
@@ -491,7 +488,7 @@ class FeatureValidator {
 
   async testSessionManagement() {
     // Check for session management
-    const authManagerPath = "./src/auth-manager.js";
+    const authManagerPath = "./angular/src/app/core/services/auth.service.ts";
     try {
       const content = await fs.readFile(authManagerPath, "utf8");
       return (
@@ -765,8 +762,8 @@ class FeatureValidator {
     try {
       // Check for memory-efficient patterns in code
       const jsFiles = [
-        "./src/js/utils/unified-error-handler.js",
-        "./src/js/main.js",
+        "./angular/src/app/core/services/error-tracking.service.ts",
+        "./angular/src/app/core/services/auth.service.ts",
       ];
 
       let hasMemoryOptimizations = 0;

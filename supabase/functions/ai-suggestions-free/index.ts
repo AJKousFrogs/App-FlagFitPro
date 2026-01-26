@@ -63,7 +63,8 @@ Deno.serve(async (req) => {
           success: true,
           data: [],
           source: "none",
-          message: "AI suggestions unavailable. Configure GROQ_API_KEY for personalized recommendations.",
+          message:
+            "AI suggestions unavailable. Configure GROQ_API_KEY for personalized recommendations.",
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
@@ -135,11 +136,12 @@ Deno.serve(async (req) => {
         success: false,
         data: [],
         source: "error",
-        error: "AI suggestions temporarily unavailable. Please try again later.",
+        error:
+          "AI suggestions temporarily unavailable. Please try again later.",
       }),
-      { 
+      {
         status: 503,
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       },
     );
   }

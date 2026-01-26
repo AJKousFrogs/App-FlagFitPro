@@ -84,7 +84,7 @@
   justify-content: space-between;
   padding: var(--space-4);
   border-bottom: 1px solid var(--ds-border-default);
-  
+
   h3 {
     margin: 0;
     font-size: var(--ds-font-size-xl);
@@ -111,7 +111,10 @@
   border: 1px solid var(--ds-border-default);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: background-color var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard), box-shadow var(--motion-base) var(--ease-standard);
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
 
   &:hover {
     background: var(--ds-primary-green-subtle);
@@ -287,4 +290,3 @@
   }
 }
 // Dialog sizing
-

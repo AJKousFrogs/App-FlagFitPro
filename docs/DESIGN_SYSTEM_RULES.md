@@ -1715,7 +1715,7 @@ All 84 instances of `::ng-deep` have been removed from the codebase.
 }
 
 // ✅ NEW APPROACH 1: ViewEncapsulation.None with scoped selector
-@Component({
+@component ({
   encapsulation: ViewEncapsulation.None,
   styles: [`
     app-my-component .p-datatable {

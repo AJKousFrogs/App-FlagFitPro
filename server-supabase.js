@@ -318,7 +318,7 @@ export async function getTeamData(teamId) {
       return null;
     }
 
-    // NOTE: team_members.user_id references auth.users (not public.users), 
+    // NOTE: team_members.user_id references auth.users (not public.users),
     // so PostgREST cannot do implicit joins. Query separately.
     const { data: membersData } = await supabase
       .from("team_members")
@@ -328,19 +328,21 @@ export async function getTeamData(teamId) {
 
     // Fetch user data from public.users separately
     const userIds = (membersData || []).map((m) => m.user_id).filter(Boolean);
-    let usersMap = {};
-    
+    const usersMap = {};
+
     if (userIds.length > 0) {
       const { data: usersData } = await supabase
         .from("users")
         .select("id, email, full_name")
         .in("id", userIds);
-      
+
       if (usersData) {
-        usersData.forEach((u) => { usersMap[u.id] = u; });
+        usersData.forEach((u) => {
+          usersMap[u.id] = u;
+        });
       }
     }
-    
+
     // Combine members with user data
     const members = (membersData || []).map((m) => ({
       ...m,

@@ -513,13 +513,7 @@ export function sendError(
  * @param {string} code - Error code
  * @param {number} statusCode - HTTP status code
  */
-export function sendErrorResponse(
-  res,
-  error,
-  message,
-  code,
-  statusCode = 500,
-) {
+export function sendErrorResponse(res, error, message, code, statusCode = 500) {
   const details = getErrorMessage(error, message);
   return sendError(res, message, code, statusCode, details);
 }

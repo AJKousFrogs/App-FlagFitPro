@@ -52,7 +52,7 @@
   color: var(--color-text-secondary);
   -webkit-tap-highlight-color: transparent;
   z-index: var(--z-dropdown);
-  
+
   // Centralized transition
   transition:
     background-color var(--ds-state-transition),
@@ -374,7 +374,10 @@
 @include respond-to(md) {
   .sidebar {
     transform: translateX(-100%);
-    width: min(85vw, var(--dialog-max-width-xs)); /* Responsive width, max 320px */
+    width: min(
+      85vw,
+      var(--dialog-max-width-xs)
+    ); /* Responsive width, max 320px */
     max-width: var(--dialog-max-width-xs); /* 320px */
     box-shadow: var(--shadow-xl); /* Enhanced shadow for mobile */
     will-change: transform; /* Optimize animation performance */

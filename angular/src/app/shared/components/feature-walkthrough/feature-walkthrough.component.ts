@@ -18,7 +18,7 @@ import {
   computed,
   inject,
   output,
-  signal
+  signal,
 } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { COLORS } from "../../../core/constants/app.constants";
@@ -57,7 +57,7 @@ interface WalkthroughStep {
     RouterModule,
     Dialog,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <p-dialog

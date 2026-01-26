@@ -5,7 +5,7 @@ import {
   DestroyRef,
   effect,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -15,7 +15,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
@@ -31,7 +31,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   getFormControlError,
   isFormControlInvalid,
-  markFormGroupTouched
+  markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
 
 @Component({
@@ -45,7 +45,7 @@ import {
     Card,
     ButtonComponent,
     InputText,
-    Toast
+    Toast,
   ],
   template: `
     <p-toast></p-toast>
@@ -130,9 +130,9 @@ import {
 
           <div class="login-form-options">
             <label class="checkbox-wrapper" for="remember">
-              <input 
-                type="checkbox" 
-                formControlName="remember" 
+              <input
+                type="checkbox"
+                formControlName="remember"
                 id="remember"
                 [attr.aria-label]="'Remember me on this device'"
               />

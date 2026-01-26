@@ -31,78 +31,68 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /
  * Get all active teams
  */
-router.get(
-  "/",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
+router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { data: teams, error } = await supabase
+      .from("teams")
+      .select("*")
+      .eq("is_active", true)
+      .order("name");
+
+    if (error) {
+      throw error;
     }
 
-    try {
-      const { data: teams, error } = await supabase
-        .from("teams")
-        .select("*")
-        .eq("is_active", true)
-        .order("name");
-
-      if (error) {
-        throw error;
-      }
-
-      return sendSuccess(res, teams || []);
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Teams error:`, error);
-      return sendError(res, "Failed to load teams", "FETCH_ERROR", 500);
-    }
-  },
-);
+    return sendSuccess(res, teams || []);
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Teams error:`, error);
+    return sendError(res, "Failed to load teams", "FETCH_ERROR", 500);
+  }
+});
 
 /**
  * GET /:id
  * Get team details with members
  */
-router.get(
-  "/:id",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendSuccess(res, null);
+router.get("/:id", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendSuccess(res, null);
+  }
+
+  try {
+    const { id } = req.params;
+
+    if (!isValidUUID(id)) {
+      return sendError(res, "Invalid team ID", "VALIDATION_ERROR", 400);
     }
 
-    try {
-      const { id } = req.params;
-
-      if (!isValidUUID(id)) {
-        return sendError(res, "Invalid team ID", "VALIDATION_ERROR", 400);
-      }
-
-      const { data: team, error } = await supabase
-        .from("teams")
-        .select(
-          `
+    const { data: team, error } = await supabase
+      .from("teams")
+      .select(
+        `
           *,
           members:team_members (
             id, role, jersey_number, position,
             users:user_id (id, email, full_name)
           )
         `,
-        )
-        .eq("id", id)
-        .single();
+      )
+      .eq("id", id)
+      .single();
 
-      if (error) {
-        throw error;
-      }
-
-      return sendSuccess(res, team);
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Team details error:`, error);
-      return sendError(res, "Failed to load team", "FETCH_ERROR", 500);
+    if (error) {
+      throw error;
     }
-  },
-);
+
+    return sendSuccess(res, team);
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Team details error:`, error);
+    return sendError(res, "Failed to load team", "FETCH_ERROR", 500);
+  }
+});
 
 export default router;

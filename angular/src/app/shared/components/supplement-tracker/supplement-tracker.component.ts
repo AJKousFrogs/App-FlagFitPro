@@ -19,7 +19,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -184,7 +184,7 @@ const DEFAULT_SUPPLEMENTS: Supplement[] = [
     Select,
     ButtonComponent,
     IconButtonComponent,
-    EmptyStateComponent
+    EmptyStateComponent,
   ],
   templateUrl: "./supplement-tracker.component.html",
   styleUrls: ["./supplement-tracker.component.scss"],

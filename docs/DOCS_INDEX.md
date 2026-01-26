@@ -100,7 +100,7 @@
 ## File Structure
 
 ```
-/docs/ (30 files)
+/docs/ (27 files)
 ├── DOCS_INDEX.md                 ← YOU ARE HERE
 ├── FEATURE_DOCUMENTATION.md      ← 49 features + Appendix E (6500+ lines)
 ├── ARCHITECTURE.md

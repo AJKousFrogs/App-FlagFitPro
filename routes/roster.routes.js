@@ -31,94 +31,87 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /
  * Get team roster
  */
-router.get(
-  "/",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
+router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
 
-    try {
-      const { data: roster, error } = await supabase
-        .from("team_members")
-        .select(
-          `
+  try {
+    const { data: roster, error } = await supabase
+      .from("team_members")
+      .select(
+        `
           id, role, jersey_number, position, status, joined_at,
           users:user_id (id, email, full_name, avatar_url)
         `,
-        )
-        .order("jersey_number");
+      )
+      .order("jersey_number");
 
-      if (error) {
-        throw error;
-      }
-
-      return sendSuccess(res, roster || []);
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Roster error:`, error);
-      return sendError(res, "Failed to load roster", "FETCH_ERROR", 500);
+    if (error) {
+      throw error;
     }
-  },
-);
+
+    return sendSuccess(res, roster || []);
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Roster error:`, error);
+    return sendError(res, "Failed to load roster", "FETCH_ERROR", 500);
+  }
+});
 
 /**
  * GET /players
  * Get roster players with formatted data
  */
-router.get(
-  "/players",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
-    }
+router.get("/players", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
 
-    try {
-      const { data: players, error } = await supabase
-        .from("team_members")
-        .select(
-          `
+  try {
+    const { data: players, error } = await supabase
+      .from("team_members")
+      .select(
+        `
           id, role, jersey_number, position, status, joined_at,
           user:user_id (id, email, full_name, first_name, last_name)
         `,
-        )
-        .eq("status", "active")
-        .order("jersey_number");
+      )
+      .eq("status", "active")
+      .order("jersey_number");
 
-      if (error) {
-        throw error;
-      }
-
-      // Transform to expected format
-      const formattedPlayers = (players || []).map((p) => {
-        // Normalize player name
-        const name =
-          p.user?.full_name ||
-          [p.user?.first_name, p.user?.last_name].filter(Boolean).join(" ").trim() ||
-          "Unknown";
-
-        return {
-          id: p.id,
-          userId: p.user?.id,
-          name,
-          email: p.user?.email,
-          position: p.position,
-          jerseyNumber: p.jersey_number,
-          role: p.role,
-          status: p.status,
-          joinedAt: p.joined_at,
-        };
-      });
-
-      return sendSuccess(res, formattedPlayers);
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Players error:`, error);
-      return sendSuccess(res, [], "No data available");
+    if (error) {
+      throw error;
     }
-  },
-);
+
+    // Transform to expected format
+    const formattedPlayers = (players || []).map((p) => {
+      // Normalize player name
+      const name =
+        p.user?.full_name ||
+        [p.user?.first_name, p.user?.last_name]
+          .filter(Boolean)
+          .join(" ")
+          .trim() ||
+        "Unknown";
+
+      return {
+        id: p.id,
+        userId: p.user?.id,
+        name,
+        email: p.user?.email,
+        position: p.position,
+        jerseyNumber: p.jersey_number,
+        role: p.role,
+        status: p.status,
+        joinedAt: p.joined_at,
+      };
+    });
+
+    return sendSuccess(res, formattedPlayers);
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Players error:`, error);
+    return sendSuccess(res, [], "No data available");
+  }
+});
 
 export default router;

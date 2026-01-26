@@ -1077,10 +1077,7 @@ async function updateUserPreferences(userId, interaction) {
     // Update focus_areas (favorite topics) - maps to DB column
     if (topic && !wasDismissed) {
       const currentFocusAreas = prefs.focus_areas || [];
-      if (
-        !currentFocusAreas.includes(topic) &&
-        currentFocusAreas.length < 10
-      ) {
+      if (!currentFocusAreas.includes(topic) && currentFocusAreas.length < 10) {
         updates.focus_areas = [...currentFocusAreas, topic];
       }
     }

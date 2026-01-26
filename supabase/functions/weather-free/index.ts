@@ -94,7 +94,8 @@ Deno.serve(async (req) => {
       JSON.stringify({
         success: false,
         data: null,
-        error: "Weather data temporarily unavailable. Check local weather before outdoor training.",
+        error:
+          "Weather data temporarily unavailable. Check local weather before outdoor training.",
         // Include a safety flag so UI can show appropriate warnings
         safetyWarning: true,
       }),

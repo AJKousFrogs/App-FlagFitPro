@@ -10,7 +10,9 @@ const processes = [
 let shuttingDown = false;
 
 const terminate = () => {
-  if (shuttingDown) return;
+  if (shuttingDown) {
+    return;
+  }
   shuttingDown = true;
 
   for (const child of processes) {

@@ -194,10 +194,10 @@
   height: var(--profile-header-bg-height, 140px);
   background: var(--gradient-primary);
   overflow: hidden;
-  
+
   /* Ensure all text on green background is white - CRITICAL for accessibility */
   color: var(--color-text-on-primary);
-  
+
   /* Force white text for any content that appears on green background */
   &,
   & *,
@@ -561,7 +561,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ds-primary-green-ultra-subtle); // Dashboard: sessions-icon background
+  background: var(
+    --ds-primary-green-ultra-subtle
+  ); // Dashboard: sessions-icon background
   border-radius: var(--radius-md); // Dashboard: var(--radius-md)
   color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
   font-size: var(--ds-font-size-md); // Dashboard: var(--ds-font-size-md)
@@ -590,7 +592,10 @@
 /* ========== Achievements Grid ========== */
 .profile-page .achievements-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-md), 1fr)
+  );
   gap: var(--space-4);
 }
 
@@ -606,7 +611,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ds-primary-green-ultra-subtle); // Dashboard: sessions-icon background
+  background: var(
+    --ds-primary-green-ultra-subtle
+  ); // Dashboard: sessions-icon background
   border-radius: var(--radius-md); // Dashboard: var(--radius-md)
   font-size: var(--ds-font-size-xl); // Use design token
   color: var(--color-brand-primary); // Dashboard: var(--color-brand-primary)
@@ -662,7 +669,9 @@
 
 .profile-page .stat-block__value {
   font-size: var(--ds-font-size-2xl); // 24px - matches Dashboard
-  font-weight: var(--ds-font-weight-semibold); // Reduced from bold to not compete with card title
+  font-weight: var(
+    --ds-font-weight-semibold
+  ); // Reduced from bold to not compete with card title
   color: var(--color-text-primary);
   line-height: var(--ds-line-height-tight);
 }
@@ -833,7 +842,7 @@
     --profile-header-bg-height: 120px;
     --profile-avatar-size: 120px;
     --profile-avatar-border-width: var(--indicator-size-xs, 4px);
-    
+
     padding-block: var(--space-4);
     padding-inline: var(--space-4);
     gap: var(--space-5);
@@ -933,7 +942,7 @@
     --profile-header-bg-height: 120px;
     --profile-avatar-size: 120px;
     --profile-avatar-border-width: var(--indicator-size-xs, 4px);
-    
+
     padding: var(--space-4);
     gap: var(--space-5);
   }
@@ -970,13 +979,13 @@
     width: var(--avatar-size-md);
     height: var(--avatar-size-md);
   }
-  
+
   /* Profile Completion Card - Tablet */
   .profile-page .profile-completion-card {
     margin: 0 var(--space-4) var(--space-4);
     padding: var(--space-3);
   }
-  
+
   .profile-page .profile-complete-badge {
     margin: 0 var(--space-4) var(--space-4);
   }
@@ -1034,7 +1043,7 @@
     --profile-avatar-size: 100px;
     --profile-avatar-border-width: var(--indicator-size-xs, 3px);
   }
-  
+
   .profile-page .tab-label {
     display: none;
   }
@@ -1063,28 +1072,28 @@
     min-width: var(--icon-min-width-md);
     font-size: var(--ds-font-size-md);
   }
-  
+
   /* Profile Completion Card - Mobile */
   .profile-page .profile-completion-card {
     margin: 0 var(--space-3) var(--space-3);
     padding: var(--space-3);
   }
-  
+
   .profile-page .completion-header {
     flex-wrap: wrap;
     gap: var(--space-2);
   }
-  
+
   .profile-page .completion-hint {
     font-size: var(--ds-font-size-xs);
   }
-  
+
   .profile-page .profile-complete-badge {
     margin: 0 var(--space-3) var(--space-3);
     padding: var(--space-2) var(--space-3);
     font-size: var(--ds-font-size-xs);
   }
-  
+
   /* Ensure text doesn't overflow on mobile */
   .profile-page .profile-display-name {
     font-size: var(--ds-font-size-xl);
@@ -1092,43 +1101,43 @@
     hyphens: auto;
     padding: 0 var(--space-2);
   }
-  
+
   .profile-page .profile-email-text {
     font-size: var(--ds-font-size-sm);
     word-break: break-all;
     padding: 0 var(--space-2);
   }
-  
+
   .profile-page .profile-info-section {
     padding: var(--space-4) var(--space-3) var(--space-3);
   }
-  
+
   .profile-page .profile-header-actions {
     padding: 0 var(--space-3) var(--space-4);
     flex-wrap: wrap;
   }
-  
+
   /* Avatar adjustments for mobile */
   .profile-page .profile-avatar-container {
     padding-top: var(--header-height-profile-mobile, 50px);
   }
-  
+
   .profile-page .profile-header-bg {
     height: var(--profile-header-bg-height, 100px);
   }
-  
+
   .profile-page .avatar-wrapper {
     width: var(--profile-avatar-size, 100px);
     height: var(--profile-avatar-size, 100px);
   }
-  
+
   .profile-page .profile-avatar-img,
   .profile-page .profile-avatar-fallback {
     width: var(--profile-avatar-size, 100px);
     height: var(--profile-avatar-size, 100px);
     border-width: var(--profile-avatar-border-width, 3px);
   }
-  
+
   .profile-page .profile-avatar-fallback span {
     font-size: var(--ds-font-size-2xl);
   }
@@ -1140,7 +1149,7 @@
     --profile-header-bg-height: 90px;
     --profile-avatar-size: 90px;
     --profile-avatar-border-width: 3px;
-    
+
     padding: var(--space-3) var(--space-2);
     gap: var(--space-4);
   }
@@ -1174,35 +1183,35 @@
     overflow-wrap: anywhere;
     word-break: break-all;
   }
-  
+
   .profile-page .profile-info-section {
     padding: var(--space-3) var(--space-2) var(--space-3);
   }
-  
+
   .profile-page .profile-avatar-container {
     padding-top: var(--header-height-profile-xs, 45px);
   }
-  
+
   .profile-page .profile-header-bg {
     height: var(--profile-header-bg-height, 90px);
   }
-  
+
   .profile-page .avatar-wrapper {
     width: var(--profile-avatar-size, 90px);
     height: var(--profile-avatar-size, 90px);
   }
-  
+
   .profile-page .profile-avatar-img,
   .profile-page .profile-avatar-fallback {
     width: var(--profile-avatar-size, 90px);
     height: var(--profile-avatar-size, 90px);
     border-width: var(--profile-avatar-border-width, 3px);
   }
-  
+
   .profile-page .profile-avatar-fallback span {
     font-size: var(--ds-font-size-xl);
   }
-  
+
   .profile-page .avatar-upload-btn {
     width: var(--space-9, 36px);
     height: var(--space-9, 36px);
@@ -1210,53 +1219,53 @@
     right: var(--space-1);
     border-width: 2px;
   }
-  
+
   .profile-page .jersey-badge {
     margin-top: var(--space-2);
     padding: var(--space-1) var(--space-3);
   }
-  
+
   .profile-page .jersey-badge span {
     font-size: var(--ds-font-size-md);
   }
-  
+
   /* Profile Completion Card - Extra Small */
   .profile-page .profile-completion-card {
     margin: 0 var(--space-2) var(--space-3);
     padding: var(--space-2);
   }
-  
+
   .profile-page .completion-label,
   .profile-page .completion-percentage {
     font-size: var(--ds-font-size-xs);
   }
-  
+
   .profile-page .completion-hint {
     font-size: var(--ds-font-size-compact-lg);
     gap: var(--space-1);
   }
-  
+
   .profile-page .profile-complete-badge {
     margin: 0 var(--space-2) var(--space-3);
     padding: var(--space-2);
     font-size: var(--ds-font-size-compact-lg);
     gap: var(--space-1);
   }
-  
+
   .profile-page .profile-complete-badge i {
     font-size: var(--ds-font-size-sm);
   }
-  
+
   /* Tabs container - Extra Small */
   .profile-page .profile-tabs-container {
     padding: var(--space-3);
   }
-  
+
   /* Member since - Extra Small */
   .profile-page .member-since {
     font-size: var(--ds-font-size-compact-lg);
   }
-  
+
   /* Position and Team tags - Extra Small */
   .profile-page .position-tag,
   .profile-page .team-tag {

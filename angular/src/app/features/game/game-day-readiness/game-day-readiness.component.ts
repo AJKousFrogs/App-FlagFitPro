@@ -16,7 +16,7 @@ import {
   DestroyRef,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -37,7 +37,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
 import { AuthService } from "../../../core/services/auth.service";
 import {
   LoggerService,
-  toLogContext
+  toLogContext,
 } from "../../../core/services/logger.service";
 import { SupabaseService } from "../../../core/services/supabase.service";
 import { TeamMembershipService } from "../../../core/services/team-membership.service";
@@ -65,7 +65,7 @@ interface ReadinessMetric {
     Slider,
     Textarea,
     ButtonComponent,
-    ConfidenceIndicatorComponent
+    ConfidenceIndicatorComponent,
   ],
   styleUrl: "./game-day-readiness.component.scss",
   template: `

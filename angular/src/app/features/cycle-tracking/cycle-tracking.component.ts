@@ -16,10 +16,10 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -305,7 +305,7 @@ const RETENTION_OPTIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -325,8 +325,7 @@ const RETENTION_OPTIONS = [
             <i class="pi pi-lock"></i>
             <div>
               <strong>Privacy First:</strong> This data is private by default.
-              Coaches only see "recovery day recommended" - never cycle
-              details.
+              Coaches only see "recovery day recommended" - never cycle details.
               <a routerLink="/settings/privacy" class="privacy-link"
                 >Manage settings</a
               >
@@ -534,7 +533,10 @@ const RETENTION_OPTIONS = [
               </div>
             </div>
 
-            <p-message severity="info" styleClass="nutrition-tip status-message">
+            <p-message
+              severity="info"
+              styleClass="nutrition-tip status-message"
+            >
               <span>💡 {{ getNutritionTip() }}</span>
             </p-message>
           </p-card>

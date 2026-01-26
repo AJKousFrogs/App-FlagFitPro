@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -134,7 +134,7 @@ const POSITIONS = [
     Toast,
     MainLayoutComponent,
     PageHeaderComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `

@@ -496,7 +496,10 @@
 
 .sessions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-lg), 1fr)
+  );
   gap: var(--space-4);
 
   // Mobile: Single column
@@ -658,7 +661,10 @@
 
 .loading-skeletons {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-lg), 1fr)
+  );
   gap: var(--space-4);
 
   @include respond-to(md) {

@@ -29,39 +29,31 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * Get performance metrics (mock data - should be replaced with real data)
  * TODO: Replace with real database queries
  */
-router.get(
-  "/metrics",
-  rateLimit("READ"),
-  async (req, res) => {
-    // TODO: Replace with real database queries
-    return sendSuccess(res, {
-      speed: 85,
-      agility: 78,
-      power: 92,
-      endurance: 80,
-      readiness: 88,
-    });
-  },
-);
+router.get("/metrics", rateLimit("READ"), async (req, res) => {
+  // TODO: Replace with real database queries
+  return sendSuccess(res, {
+    speed: 85,
+    agility: 78,
+    power: 92,
+    endurance: 80,
+    readiness: 88,
+  });
+});
 
 /**
  * GET /heatmap
  * Get performance heatmap data (mock data - should be replaced with real data)
  * TODO: Replace with real database queries
  */
-router.get(
-  "/heatmap",
-  rateLimit("READ"),
-  async (req, res) => {
-    // TODO: Replace with real database queries
-    return sendSuccess(res, {
-      zones: [
-        { name: "Field Left", value: 65 },
-        { name: "Field Center", value: 88 },
-        { name: "Field Right", value: 45 },
-      ],
-    });
-  },
-);
+router.get("/heatmap", rateLimit("READ"), async (req, res) => {
+  // TODO: Replace with real database queries
+  return sendSuccess(res, {
+    zones: [
+      { name: "Field Left", value: 65 },
+      { name: "Field Center", value: 88 },
+      { name: "Field Right", value: 45 },
+    ],
+  });
+});
 
 export default router;

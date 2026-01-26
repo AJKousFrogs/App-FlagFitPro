@@ -26,11 +26,16 @@ const ACWR_PRECISION = 2;
  * roundToPrecision(NaN, 2)    // 0
  */
 function roundToPrecision(value, decimals = 2) {
-  if (value === null || value === undefined || isNaN(value) || !isFinite(value)) {
+  if (
+    value === null ||
+    value === undefined ||
+    isNaN(value) ||
+    !isFinite(value)
+  ) {
     return 0;
   }
 
-  const factor = Math.pow(10, decimals);
+  const factor = 10 ** decimals;
   return Math.round(value * factor) / factor;
 }
 
@@ -84,7 +89,9 @@ function safeDivide(numerator, denominator, decimals = 2) {
  * calculatePercentage(1, 3, 2)    // 33.33
  */
 function calculatePercentage(part, whole, decimals = 1) {
-  if (whole === 0) return 0;
+  if (whole === 0) {
+    return 0;
+  }
   return roundToPrecision((part / whole) * 100, decimals);
 }
 
@@ -101,7 +108,9 @@ function calculatePercentage(part, whole, decimals = 1) {
  * percentageChange(100, 75, 1)  // -25.0 (decrease)
  */
 function percentageChange(oldValue, newValue, decimals = 1) {
-  if (oldValue === 0) return 0;
+  if (oldValue === 0) {
+    return 0;
+  }
   return roundToPrecision(((newValue - oldValue) / oldValue) * 100, decimals);
 }
 
@@ -119,7 +128,9 @@ function percentageChange(oldValue, newValue, decimals = 1) {
  * clamp(15, 0, 10)  // 10
  */
 function clamp(value, min, max) {
-  if (isNaN(value)) return min;
+  if (isNaN(value)) {
+    return min;
+  }
   return Math.min(Math.max(value, min), max);
 }
 
@@ -134,10 +145,14 @@ function clamp(value, min, max) {
  * average([1, 2, 3, 4, 5], 2) // 3.00
  */
 function average(values, decimals = 2) {
-  if (!values || values.length === 0) return 0;
+  if (!values || values.length === 0) {
+    return 0;
+  }
 
   const validValues = values.filter((v) => !isNaN(v) && isFinite(v));
-  if (validValues.length === 0) return 0;
+  if (validValues.length === 0) {
+    return 0;
+  }
 
   const sum = validValues.reduce((acc, val) => acc + val, 0);
   return roundToPrecision(sum / validValues.length, decimals);
@@ -154,13 +169,17 @@ function average(values, decimals = 2) {
  * standardDeviation([1, 2, 3, 4, 5], 2) // 1.41
  */
 function standardDeviation(values, decimals = 2) {
-  if (!values || values.length < 2) return 0;
+  if (!values || values.length < 2) {
+    return 0;
+  }
 
   const validValues = values.filter((v) => !isNaN(v) && isFinite(v));
-  if (validValues.length < 2) return 0;
+  if (validValues.length < 2) {
+    return 0;
+  }
 
   const avg = average(validValues, 10); // Use high precision for intermediate calculation
-  const squaredDiffs = validValues.map((v) => Math.pow(v - avg, 2));
+  const squaredDiffs = validValues.map((v) => (v - avg) ** 2);
   const avgSquaredDiff = average(squaredDiffs, 10);
 
   return roundToPrecision(Math.sqrt(avgSquaredDiff), decimals);
@@ -194,7 +213,12 @@ function calculateACWRRatio(acuteLoad, chronicLoad) {
  * formatNumber(NaN, 2, '-')  // "-"
  */
 function formatNumber(value, decimals = 2, fallback = "—") {
-  if (value === null || value === undefined || isNaN(value) || !isFinite(value)) {
+  if (
+    value === null ||
+    value === undefined ||
+    isNaN(value) ||
+    !isFinite(value)
+  ) {
     return fallback;
   }
   return value.toFixed(decimals);

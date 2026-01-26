@@ -114,11 +114,7 @@ import { POSITION_OPTIONS, FOCUS_OPTIONS } from "../video-curation-utils";
       </div>
 
       <ng-template pTemplate="footer">
-        <app-button
-          variant="text"
-          (clicked)="onCancel()"
-          >Cancel</app-button
-        >
+        <app-button variant="text" (clicked)="onCancel()">Cancel</app-button>
         <app-button
           iconLeft="pi-check"
           (clicked)="onSubmit()"

@@ -119,7 +119,9 @@ export type SkeletonVariant =
       }
       @case ("chart") {
         <div class="skeleton-chart" [style.animation-delay]="animationDelay()">
-          <div class="skeleton skeleton-title skeleton-w-40 skeleton-mb-4"></div>
+          <div
+            class="skeleton skeleton-title skeleton-w-40 skeleton-mb-4"
+          ></div>
           <div class="chart-bars">
             @for (bar of chartBars; track $index) {
               <div
@@ -137,9 +139,7 @@ export type SkeletonVariant =
           [style.animation-delay]="animationDelay()"
         >
           <div class="stat-card-header">
-            <div
-              class="skeleton skeleton-avatar skeleton-avatar--md"
-            ></div>
+            <div class="skeleton skeleton-avatar skeleton-avatar--md"></div>
             <div class="skeleton skeleton-text skeleton-w-60"></div>
           </div>
           <div class="skeleton skeleton-stat-value"></div>
@@ -152,9 +152,7 @@ export type SkeletonVariant =
           [style.animation-delay]="animationDelay()"
         >
           <div class="workout-header">
-            <div
-              class="skeleton skeleton-avatar skeleton-avatar--lg"
-            ></div>
+            <div class="skeleton skeleton-avatar skeleton-avatar--lg"></div>
             <div class="workout-info">
               <div class="skeleton skeleton-title skeleton-w-70"></div>
               <div class="skeleton skeleton-text skeleton-w-50"></div>
@@ -173,9 +171,7 @@ export type SkeletonVariant =
           class="skeleton-player-card"
           [style.animation-delay]="animationDelay()"
         >
-          <div
-            class="skeleton skeleton-avatar skeleton-avatar--space-20"
-          ></div>
+          <div class="skeleton skeleton-avatar skeleton-avatar--space-20"></div>
           <div
             class="skeleton skeleton-title skeleton-w-60 skeleton-mt-3 skeleton-center"
           ></div>
@@ -197,9 +193,7 @@ export type SkeletonVariant =
           class="skeleton-list-item"
           [style.animation-delay]="animationDelay()"
         >
-          <div
-            class="skeleton skeleton-avatar skeleton-avatar--md"
-          ></div>
+          <div class="skeleton skeleton-avatar skeleton-avatar--md"></div>
           <div class="list-item-content">
             <div class="skeleton skeleton-text skeleton-w-60"></div>
             <div class="skeleton skeleton-text skeleton-w-40"></div>
@@ -226,9 +220,7 @@ export type SkeletonVariant =
           class="skeleton-profile-header"
           [style.animation-delay]="animationDelay()"
         >
-          <div
-            class="skeleton skeleton-avatar skeleton-avatar--space-24"
-          ></div>
+          <div class="skeleton skeleton-avatar skeleton-avatar--space-24"></div>
           <div class="profile-info">
             <div class="skeleton skeleton-title skeleton-w-50"></div>
             <div class="skeleton skeleton-text skeleton-w-30"></div>
@@ -255,9 +247,7 @@ export type SkeletonVariant =
                 class="skeleton-list-item"
                 [style.animation-delay.ms]="$index * 75"
               >
-                <div
-                  class="skeleton skeleton-avatar skeleton-avatar--sm"
-                ></div>
+                <div class="skeleton skeleton-avatar skeleton-avatar--sm"></div>
                 <div class="list-item-content">
                   <div class="skeleton skeleton-text skeleton-w-70"></div>
                   <div class="skeleton skeleton-text skeleton-w-45"></div>
@@ -306,10 +296,7 @@ export class SkeletonLoaderComponent {
   selector: "app-skeleton-repeat",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    SkeletonLoaderComponent
-  ],
+  imports: [CommonModule, SkeletonLoaderComponent],
   template: `
     <div class="skeleton-repeat" [class]="containerClass()">
       @for (item of items(); track $index) {

@@ -294,7 +294,7 @@ class HealthChecker {
       }
 
       // Check for demo/debug code in production files
-      const productionFiles = ["./src/auth-manager.js", "./index.html"];
+      const productionFiles = ["./angular/src/main.ts", "./index.html"];
       let debugCodeFound = 0;
 
       for (const file of productionFiles) {
@@ -354,7 +354,8 @@ class HealthChecker {
     try {
       // Check for main application files
       const coreFiles = [
-        "./src/auth-manager.js",
+        "./angular/angular.json",
+        "./angular/src/main.ts",
         "./package.json",
         "./index.html",
         "./netlify.toml",
@@ -879,10 +880,7 @@ class HealthChecker {
 
       // Check for API documentation
       try {
-        const apiDocs = await fs.readFile(
-          "./docs/API_DOCUMENTATION.md",
-          "utf8",
-        );
+        const apiDocs = await fs.readFile("./docs/API.md", "utf8");
         if (apiDocs.length > 1000) {
           api.score += 15; // 15 points for API docs
         }

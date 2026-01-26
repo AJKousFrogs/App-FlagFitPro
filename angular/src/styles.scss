@@ -102,7 +102,8 @@ body > * {
 /* Note: Safe area handled by specific components, not body padding */
 
 /* Overlay backdrop blur - KEPT for accessibility (indicates modal state) */
-@supports (-webkit-backdrop-filter: blur(var(--blur-md))) or (backdrop-filter: blur(var(--blur-md))) {
+@supports (-webkit-backdrop-filter: blur(var(--blur-md))) or
+  (backdrop-filter: blur(var(--blur-md))) {
   .modal-backdrop,
   .sidebar-overlay {
     -webkit-backdrop-filter: blur(var(--blur-sm));
@@ -710,7 +711,8 @@ body {
     box-shadow: var(--shadow-lg);
     margin-top: var(--space-1);
     overflow: hidden;
-    animation: dropdownSlideIn var(--transition-base) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: dropdownSlideIn var(--transition-base)
+      cubic-bezier(0.16, 1, 0.3, 1) forwards;
     transform-origin: top center;
     z-index: 10000;
   }
@@ -925,7 +927,8 @@ body {
     border: none;
     backdrop-filter: blur(var(--blur-md));
     -webkit-backdrop-filter: blur(var(--blur-md));
-    animation: toastSlideIn var(--transition-slow) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: toastSlideIn var(--transition-slow) cubic-bezier(0.16, 1, 0.3, 1)
+      forwards;
   }
 }
 
@@ -988,7 +991,7 @@ body {
 
   /* Close button */
   .p-toast-icon-close,
-  .p-toast   .p-toast-icon-close {
+  .p-toast .p-toast-icon-close {
     width: var(--space-8);
     height: var(--space-8);
     border-radius: var(--radius-lg);

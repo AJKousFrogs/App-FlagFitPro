@@ -318,14 +318,19 @@ export interface WellnessAlert {
  * Readiness status for training
  * "unknown" added for cases where we have no wellness data
  */
-export type ReadinessStatus = "excellent" | "good" | "caution" | "rest" | "unknown";
+export type ReadinessStatus =
+  | "excellent"
+  | "good"
+  | "caution"
+  | "rest"
+  | "unknown";
 
 /**
  * Wellness data integrated with training
  */
 export interface WellnessTrainingData {
   alert: WellnessAlert | null;
-  readinessScore: number | null;  // null = no wellness check-in data
+  readinessScore: number | null; // null = no wellness check-in data
   readinessStatus: ReadinessStatus;
   lastCheckin?: Date;
   metrics?: {

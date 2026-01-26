@@ -414,7 +414,11 @@ exports.handler = async (event, context) => {
           .eq("user_id", userId)
           .maybeSingle();
 
-        const isCoach = teamMember?.role && ["coach", "head_coach", "assistant_coach", "admin"].includes(teamMember.role);
+        const isCoach =
+          teamMember?.role &&
+          ["coach", "head_coach", "assistant_coach", "admin"].includes(
+            teamMember.role,
+          );
 
         if (!isCoach) {
           return createErrorResponse(

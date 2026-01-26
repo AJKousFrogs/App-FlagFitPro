@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    input,
-    output
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 

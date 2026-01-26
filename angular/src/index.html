@@ -24,7 +24,11 @@
     <meta name="apple-mobile-web-app-title" content="FlagFit Pro" />
 
     <!-- Preconnect to critical origins for faster loading -->
-    <link rel="preconnect" href="https://pvziciccwxgftcielknm.supabase.co" crossorigin />
+    <link
+      rel="preconnect"
+      href="https://pvziciccwxgftcielknm.supabase.co"
+      crossorigin
+    />
     <link rel="dns-prefetch" href="https://pvziciccwxgftcielknm.supabase.co" />
     <!-- Local font assets: Preload only the critical Regular weight font -->
     <!-- Other weights will load on-demand via CSS @font-face -->
@@ -37,8 +41,16 @@
     />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/assets/icons/icon-192x192.svg" />
-    <link rel="apple-touch-icon" sizes="192x192" href="/assets/icons/icon-192x192.svg" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/assets/icons/icon-192x192.svg"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="192x192"
+      href="/assets/icons/icon-192x192.svg"
+    />
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json" />
@@ -130,15 +142,15 @@
     <script>
       (function () {
         var root = document.documentElement;
-        
+
         // Prevent transition blur on initial render
         root.classList.add("ds-initial-render");
-        
+
         var markReady = function () {
           root.classList.add("fonts-ready");
           // Remove initial render class after first paint to enable transitions
-          requestAnimationFrame(function() {
-            requestAnimationFrame(function() {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
               root.classList.remove("ds-initial-render");
             });
           });
@@ -146,7 +158,10 @@
 
         if (document.fonts && document.fonts.load) {
           // Load the Regular weight font (400) which is preloaded and most commonly used
-          document.fonts.load("400 1em Poppins").then(markReady).catch(markReady);
+          document.fonts
+            .load("400 1em Poppins")
+            .then(markReady)
+            .catch(markReady);
           setTimeout(markReady, 3000);
         } else {
           markReady();

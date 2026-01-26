@@ -4,7 +4,7 @@ import {
   DestroyRef,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -26,13 +26,13 @@ import { HeaderService } from "../../core/services/header.service";
 import { LoggerService } from "../../core/services/logger.service";
 import {
   MissingDataDetectionService,
-  PlayerMissingData
+  PlayerMissingData,
 } from "../../core/services/missing-data-detection.service";
 import { ContinuityIndicatorsService } from "../../core/services/continuity-indicators.service";
 import { OverrideLoggingService } from "../../core/services/override-logging.service";
 import {
   OwnershipTransitionService,
-  OwnershipTransition
+  OwnershipTransition,
 } from "../../core/services/ownership-transition.service";
 import { AccountabilityTrackingService } from "../../core/services/accountability-tracking.service";
 import {
@@ -42,7 +42,7 @@ import {
   TeamOverviewStats,
   TeamStatisticsService,
   TrainingSession,
-  UpcomingGame
+  UpcomingGame,
 } from "../../core/services/team-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
@@ -51,7 +51,7 @@ import { StatusTagComponent } from "../../shared/components/status-tag/status-ta
 import {
   AppLoadingComponent,
   ButtonComponent,
-  CardComponent
+  CardComponent,
 } from "../../shared/components/ui-components";
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-chart.component";
@@ -60,7 +60,7 @@ import { formatDate, getTimeAgo } from "../../shared/utils/date.utils";
 import {
   getMappedStatusSeverity,
   getStatusSeverity as getStatusSeverityValue,
-  playerStatusSeverityMap
+  playerStatusSeverityMap,
 } from "../../shared/utils/status.utils";
 import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
 import { ChartSkeletonComponent } from "../../shared/components/chart-skeleton/chart-skeleton.component";
@@ -126,7 +126,7 @@ type PlayerFilterType = "all" | "starters" | "injured" | "at_risk";
     PageErrorStateComponent,
     DatePipe,
     DecimalPipe,
-    SemanticMeaningRendererComponent
+    SemanticMeaningRendererComponent,
   ],
   template: `
     <app-main-layout>
@@ -1255,7 +1255,9 @@ export class CoachDashboardComponent {
           (p) =>
             p.riskLevel === "high" ||
             p.status === "at_risk" ||
-            (p.readiness !== null && p.readiness !== undefined && p.readiness < 40) || // Wellness < 40%
+            (p.readiness !== null &&
+              p.readiness !== undefined &&
+              p.readiness < 40) || // Wellness < 40%
             (p.acwr !== null && p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
         );
       default:
@@ -1269,7 +1271,9 @@ export class CoachDashboardComponent {
         (p) =>
           p.riskLevel === "high" ||
           p.status === "at_risk" ||
-          (p.readiness !== null && p.readiness !== undefined && p.readiness < 40) || // Wellness < 40%
+          (p.readiness !== null &&
+            p.readiness !== undefined &&
+            p.readiness < 40) || // Wellness < 40%
           (p.acwr !== null && p.acwr !== undefined && p.acwr > 1.3), // ACWR > 1.3
       ).length,
   );

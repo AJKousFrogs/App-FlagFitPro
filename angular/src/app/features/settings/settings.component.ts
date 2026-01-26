@@ -1,20 +1,20 @@
 import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    ElementRef,
-    inject,
-    OnInit,
-    signal,
-    viewChild
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
 } from "@angular/core";
 
 import {
-    FormBuilder,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-    Validators
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { Card } from "primeng/card";
@@ -31,8 +31,8 @@ import { ToggleSwitch } from "primeng/toggleswitch";
 import { TIMEOUTS, TOAST, UI_LIMITS } from "../../core/constants";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    LoggerService,
-    toLogContext
+  LoggerService,
+  toLogContext,
 } from "../../core/services/logger.service";
 import { PlatformService } from "../../core/services/platform.service";
 import { ProfileCompletionService } from "../../core/services/profile-completion.service";
@@ -44,11 +44,11 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-    ButtonComponent,
-    CardComponent,
-    ControlRowComponent,
-    DialogFooterComponent,
-    DialogHeaderComponent
+  ButtonComponent,
+  CardComponent,
+  ControlRowComponent,
+  DialogFooterComponent,
+  DialogHeaderComponent,
 } from "../../shared/components/ui-components";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { calculateAge } from "../../shared/utils/date.utils";
@@ -80,7 +80,7 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
     Divider,
     Toast,
     ToggleSwitch,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
@@ -389,7 +389,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     { label: "🇷🇼 Rwanda", value: "Rwanda" },
     { label: "🇰🇳 Saint Kitts and Nevis", value: "Saint Kitts and Nevis" },
     { label: "🇱🇨 Saint Lucia", value: "Saint Lucia" },
-    { label: "🇻🇨 Saint Vincent and the Grenadines", value: "Saint Vincent and the Grenadines" },
+    {
+      label: "🇻🇨 Saint Vincent and the Grenadines",
+      value: "Saint Vincent and the Grenadines",
+    },
     { label: "🇼🇸 Samoa", value: "Samoa" },
     { label: "🇸🇲 San Marino", value: "San Marino" },
     { label: "🇸🇹 São Tomé and Príncipe", value: "São Tomé and Príncipe" },
@@ -546,9 +549,7 @@ export class SettingsComponent implements OnInit, AfterViewInit {
     );
     const inputElement = datepickerWrapper
       ? (datepickerWrapper.querySelector("input") as HTMLInputElement)
-      : (ref.nativeElement.querySelector(
-          "input",
-        ) as HTMLInputElement);
+      : (ref.nativeElement.querySelector("input") as HTMLInputElement);
 
     if (!inputElement) {
       // Retry after a short delay if input not found
@@ -830,12 +831,15 @@ export class SettingsComponent implements OnInit, AfterViewInit {
   }
 
   async saveSettings(): Promise<void> {
-    this.logger.debug("[saveSettings] Form states:", toLogContext({
-      profileValid: this.profileForm.valid,
-      notificationValid: this.notificationForm.valid,
-      privacyValid: this.privacyForm.valid,
-      preferencesValid: this.preferencesForm.valid,
-    }));
+    this.logger.debug(
+      "[saveSettings] Form states:",
+      toLogContext({
+        profileValid: this.profileForm.valid,
+        notificationValid: this.notificationForm.valid,
+        privacyValid: this.privacyForm.valid,
+        preferencesValid: this.preferencesForm.valid,
+      }),
+    );
 
     if (this.profileForm.invalid) {
       this.logger.warn("[saveSettings] Profile form invalid, aborting");
@@ -868,7 +872,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         ...settings,
         updatedAt: new Date().toISOString(),
       };
-      this.platform.setLocalStorage("user_settings", JSON.stringify(localSettings));
+      this.platform.setLocalStorage(
+        "user_settings",
+        JSON.stringify(localSettings),
+      );
       this.logger.info("Settings saved to localStorage");
 
       // Apply theme immediately
@@ -1235,15 +1242,22 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         );
       }
     } catch (error) {
-      this.logger.error("Save settings error", error, { context: "saveSettings" });
-      this.toastService.error(getErrorMessage(error, TOAST.ERROR.SETTINGS_SAVE_FAILED));
+      this.logger.error("Save settings error", error, {
+        context: "saveSettings",
+      });
+      this.toastService.error(
+        getErrorMessage(error, TOAST.ERROR.SETTINGS_SAVE_FAILED),
+      );
     } finally {
       this.isSavingSettings.set(false);
     }
   }
 
   async changePassword(): Promise<void> {
-    this.logger.debug("[changePassword] Form valid:", toLogContext(this.passwordForm.valid));
+    this.logger.debug(
+      "[changePassword] Form valid:",
+      toLogContext(this.passwordForm.valid),
+    );
 
     if (this.passwordForm.invalid) {
       this.logger.warn("[changePassword] Form invalid, aborting");
@@ -1270,7 +1284,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("[changePassword] Password changed successfully");
     } catch (error) {
       this.logger.error("[changePassword] Failed to change password:", error);
-      this.toastService.error(getErrorMessage(error, TOAST.ERROR.PASSWORD_CHANGE_FAILED));
+      this.toastService.error(
+        getErrorMessage(error, TOAST.ERROR.PASSWORD_CHANGE_FAILED),
+      );
     } finally {
       this.isChangingPassword.set(false);
     }
@@ -1321,10 +1337,14 @@ export class SettingsComponent implements OnInit, AfterViewInit {
         "Your account deletion request has been submitted. You will receive a confirmation email.",
       );
       this.showDeleteAccountDialog = false;
-      this.logger.info("[deleteAccount] Deletion request submitted successfully");
+      this.logger.info(
+        "[deleteAccount] Deletion request submitted successfully",
+      );
     } catch (error) {
       this.logger.error("[deleteAccount] Failed to delete account:", error);
-      this.toastService.error(getErrorMessage(error, TOAST.ERROR.ACCOUNT_DELETE_FAILED));
+      this.toastService.error(
+        getErrorMessage(error, TOAST.ERROR.ACCOUNT_DELETE_FAILED),
+      );
     } finally {
       this.isDeletingAccount.set(false);
     }
@@ -1429,7 +1449,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("[verify2FA] 2FA enabled successfully");
     } catch (error) {
       this.logger.error("[verify2FA] Verification failed:", error);
-      this.twoFAError.set(getErrorMessage(error, TOAST.ERROR.TWO_FA_VERIFICATION_FAILED));
+      this.twoFAError.set(
+        getErrorMessage(error, TOAST.ERROR.TWO_FA_VERIFICATION_FAILED),
+      );
     } finally {
       this.isEnabling2FA.set(false);
     }
@@ -1505,7 +1527,9 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.logger.info("[disable2FA] 2FA disabled successfully");
     } catch (error) {
       this.logger.error("[disable2FA] Failed to disable 2FA:", error);
-      this.toastService.error(getErrorMessage(error, TOAST.ERROR.TWO_FA_DISABLE_FAILED));
+      this.toastService.error(
+        getErrorMessage(error, TOAST.ERROR.TWO_FA_DISABLE_FAILED),
+      );
     } finally {
       this.isDisabling2FA.set(false);
     }
@@ -1593,10 +1617,13 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    * Export user data in selected format
    */
   async exportUserData(): Promise<void> {
-    this.logger.debug("[exportUserData] Starting export", toLogContext({
-      format: this.exportFormat,
-      options: this.exportOptions,
-    }));
+    this.logger.debug(
+      "[exportUserData] Starting export",
+      toLogContext({
+        format: this.exportFormat,
+        options: this.exportOptions,
+      }),
+    );
 
     this.isExportingData.set(true);
     this.exportProgress.set(0);
@@ -1867,7 +1894,10 @@ export class SettingsComponent implements OnInit, AfterViewInit {
    * Submit request for a new team
    */
   async submitNewTeamRequest(): Promise<void> {
-    this.logger.debug("[submitNewTeamRequest] Attempting to create team:", toLogContext(this.newTeamName));
+    this.logger.debug(
+      "[submitNewTeamRequest] Attempting to create team:",
+      toLogContext(this.newTeamName),
+    );
 
     if (!this.newTeamName.trim()) {
       this.logger.warn("[submitNewTeamRequest] Team name empty, aborting");
@@ -1926,10 +1956,17 @@ export class SettingsComponent implements OnInit, AfterViewInit {
       this.showNewTeamDialog = false;
       this.newTeamName = "";
       this.newTeamNotes = "";
-      this.logger.info("[submitNewTeamRequest] Team request submitted successfully");
+      this.logger.info(
+        "[submitNewTeamRequest] Team request submitted successfully",
+      );
     } catch (error) {
-      this.logger.error("[submitNewTeamRequest] Failed to submit team request:", error);
-      this.toastService.error(getErrorMessage(error, TOAST.ERROR.TEAM_REQUEST_FAILED));
+      this.logger.error(
+        "[submitNewTeamRequest] Failed to submit team request:",
+        error,
+      );
+      this.toastService.error(
+        getErrorMessage(error, TOAST.ERROR.TEAM_REQUEST_FAILED),
+      );
     } finally {
       this.isSubmittingTeamRequest.set(false);
     }

@@ -43,7 +43,7 @@ function assertCloseTo(actual, expected, tolerance, message) {
   const diff = Math.abs(actual - expected);
   if (diff > tolerance) {
     throw new Error(
-      `${message}: Expected ~${expected} (±${tolerance}), got ${actual} (diff: ${diff})`
+      `${message}: Expected ~${expected} (±${tolerance}), got ${actual} (diff: ${diff})`,
     );
   }
 }
@@ -107,7 +107,9 @@ function calculateSessionLoad(rpe, durationMinutes) {
  * @returns EWMA value
  */
 function calculateEWMA(dailyLoads, lambda) {
-  if (dailyLoads.length === 0) return 0;
+  if (dailyLoads.length === 0) {
+    return 0;
+  }
 
   let ewma = dailyLoads[0].load;
 
@@ -123,10 +125,18 @@ function calculateEWMA(dailyLoads, lambda) {
  * Contract: See risk zone thresholds in ACWR_CONFIG
  */
 function classifyRiskZone(acwr) {
-  if (acwr === null || acwr === undefined) return "no-data";
-  if (acwr < ACWR_CONFIG.thresholds.sweetSpotLow) return "under-training";
-  if (acwr <= ACWR_CONFIG.thresholds.sweetSpotHigh) return "sweet-spot";
-  if (acwr <= ACWR_CONFIG.thresholds.dangerHigh) return "elevated-risk";
+  if (acwr === null || acwr === undefined) {
+    return "no-data";
+  }
+  if (acwr < ACWR_CONFIG.thresholds.sweetSpotLow) {
+    return "under-training";
+  }
+  if (acwr <= ACWR_CONFIG.thresholds.sweetSpotHigh) {
+    return "sweet-spot";
+  }
+  if (acwr <= ACWR_CONFIG.thresholds.dangerHigh) {
+    return "elevated-risk";
+  }
   return "danger-zone";
 }
 
@@ -145,7 +155,7 @@ function calculateACWR(sessions) {
 
   // Sort sessions by date
   const sorted = [...sessions].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   // Aggregate daily loads
@@ -163,7 +173,10 @@ function calculateACWR(sessions) {
 
   // Calculate EWMA
   const acuteLoad = calculateEWMA(dailyLoadArray, ACWR_CONFIG.acuteLambda);
-  const rawChronicLoad = calculateEWMA(dailyLoadArray, ACWR_CONFIG.chronicLambda);
+  const rawChronicLoad = calculateEWMA(
+    dailyLoadArray,
+    ACWR_CONFIG.chronicLambda,
+  );
   const chronicLoad = Math.max(rawChronicLoad, ACWR_CONFIG.minChronicLoad);
 
   // Calculate ACWR
@@ -192,7 +205,7 @@ async function testLoadCalculation() {
         const result = calculateSessionLoad(rpe, duration);
         assert(
           result === expected,
-          `Load(RPE=${rpe}, Duration=${duration}) should be ${expected}, got ${result}`
+          `Load(RPE=${rpe}, Duration=${duration}) should be ${expected}, got ${result}`,
         );
       }
     });
@@ -201,19 +214,19 @@ async function testLoadCalculation() {
       // Zero duration
       assert(
         calculateSessionLoad(5, 0) === 0,
-        "Load with 0 duration should be 0"
+        "Load with 0 duration should be 0",
       );
 
       // Minimum RPE
       assert(
         calculateSessionLoad(1, 60) === 60,
-        "Load with RPE=1 should equal duration"
+        "Load with RPE=1 should equal duration",
       );
 
       // Maximum RPE
       assert(
         calculateSessionLoad(10, 60) === 600,
-        "Load with RPE=10 should be 10× duration"
+        "Load with RPE=10 should be 10× duration",
       );
     });
   });
@@ -230,19 +243,22 @@ async function testEWMACalculation() {
         ACWR_CONFIG.acuteLambda,
         0.25,
         0.001,
-        "Acute lambda should be 2/(7+1)"
+        "Acute lambda should be 2/(7+1)",
       );
       assertCloseTo(
         ACWR_CONFIG.chronicLambda,
         0.069,
         0.001,
-        "Chronic lambda should be 2/(28+1)"
+        "Chronic lambda should be 2/(28+1)",
       );
     });
 
     await test("EWMA with single value equals that value", async () => {
       const result = calculateEWMA([{ date: "2026-01-01", load: 300 }], 0.25);
-      assert(result === 300, `Single value EWMA should equal the value, got ${result}`);
+      assert(
+        result === 300,
+        `Single value EWMA should equal the value, got ${result}`,
+      );
     });
 
     await test("EWMA with constant values converges to that value", async () => {
@@ -252,7 +268,12 @@ async function testEWMACalculation() {
       }));
 
       const result = calculateEWMA(constantLoads, 0.25);
-      assertCloseTo(result, 300, 1, "EWMA of constant values should converge to that value");
+      assertCloseTo(
+        result,
+        300,
+        1,
+        "EWMA of constant values should converge to that value",
+      );
     });
 
     await test("EWMA responds to recent values more than old values", async () => {
@@ -283,7 +304,7 @@ async function testEWMACalculation() {
 
       assert(
         ewmaOldLow > ewmaOldHigh,
-        `Recent high values should result in higher EWMA (${ewmaOldLow}) than recent low (${ewmaOldHigh})`
+        `Recent high values should result in higher EWMA (${ewmaOldLow}) than recent low (${ewmaOldHigh})`,
       );
     });
   });
@@ -301,7 +322,7 @@ async function testRiskZoneClassification() {
         const zone = classifyRiskZone(acwr);
         assert(
           zone === "under-training",
-          `ACWR ${acwr} should be under-training, got ${zone}`
+          `ACWR ${acwr} should be under-training, got ${zone}`,
         );
       }
     });
@@ -312,7 +333,7 @@ async function testRiskZoneClassification() {
         const zone = classifyRiskZone(acwr);
         assert(
           zone === "sweet-spot",
-          `ACWR ${acwr} should be sweet-spot, got ${zone}`
+          `ACWR ${acwr} should be sweet-spot, got ${zone}`,
         );
       }
     });
@@ -323,7 +344,7 @@ async function testRiskZoneClassification() {
         const zone = classifyRiskZone(acwr);
         assert(
           zone === "elevated-risk",
-          `ACWR ${acwr} should be elevated-risk, got ${zone}`
+          `ACWR ${acwr} should be elevated-risk, got ${zone}`,
         );
       }
     });
@@ -334,14 +355,20 @@ async function testRiskZoneClassification() {
         const zone = classifyRiskZone(acwr);
         assert(
           zone === "danger-zone",
-          `ACWR ${acwr} should be danger-zone, got ${zone}`
+          `ACWR ${acwr} should be danger-zone, got ${zone}`,
         );
       }
     });
 
     await test("no-data: null or undefined ACWR", async () => {
-      assert(classifyRiskZone(null) === "no-data", "null ACWR should be no-data");
-      assert(classifyRiskZone(undefined) === "no-data", "undefined ACWR should be no-data");
+      assert(
+        classifyRiskZone(null) === "no-data",
+        "null ACWR should be no-data",
+      );
+      assert(
+        classifyRiskZone(undefined) === "no-data",
+        "undefined ACWR should be no-data",
+      );
     });
   });
 }
@@ -357,10 +384,13 @@ async function testFullACWRCalculation() {
       assert(result.acuteLoad === 0, "Empty sessions should have 0 acute load");
       assert(
         result.chronicLoad === ACWR_CONFIG.minChronicLoad,
-        `Empty sessions should have min chronic load (${ACWR_CONFIG.minChronicLoad})`
+        `Empty sessions should have min chronic load (${ACWR_CONFIG.minChronicLoad})`,
       );
       assert(result.acwr === 0, "Empty sessions should have 0 ACWR");
-      assert(result.riskZone === "no-data", "Empty sessions should be no-data zone");
+      assert(
+        result.riskZone === "no-data",
+        "Empty sessions should be no-data zone",
+      );
     });
 
     await test("Chronic load floor is enforced", async () => {
@@ -371,7 +401,7 @@ async function testFullACWRCalculation() {
 
       assert(
         result.chronicLoad >= ACWR_CONFIG.minChronicLoad,
-        `Chronic load should be at least ${ACWR_CONFIG.minChronicLoad}, got ${result.chronicLoad}`
+        `Chronic load should be at least ${ACWR_CONFIG.minChronicLoad}, got ${result.chronicLoad}`,
       );
     });
 
@@ -387,10 +417,15 @@ async function testFullACWRCalculation() {
 
       // With consistent training, acute and chronic should be similar
       // ACWR should be close to 1.0
-      assertCloseTo(result.acwr, 1.0, 0.3, "Consistent training should produce ~1.0 ACWR");
+      assertCloseTo(
+        result.acwr,
+        1.0,
+        0.3,
+        "Consistent training should produce ~1.0 ACWR",
+      );
       assert(
         result.riskZone === "sweet-spot",
-        `Consistent training should be sweet-spot, got ${result.riskZone}`
+        `Consistent training should be sweet-spot, got ${result.riskZone}`,
       );
     });
 
@@ -415,11 +450,11 @@ async function testFullACWRCalculation() {
 
       assert(
         result.acuteLoad > result.chronicLoad,
-        "Sudden increase should have acute > chronic"
+        "Sudden increase should have acute > chronic",
       );
       assert(
         result.acwr > 1.0,
-        `Sudden increase should have ACWR > 1.0, got ${result.acwr}`
+        `Sudden increase should have ACWR > 1.0, got ${result.acwr}`,
       );
     });
 
@@ -444,11 +479,11 @@ async function testFullACWRCalculation() {
 
       assert(
         result.acuteLoad < result.chronicLoad,
-        "Deload should have acute < chronic"
+        "Deload should have acute < chronic",
       );
       assert(
         result.acwr < 1.0,
-        `Deload should have ACWR < 1.0, got ${result.acwr}`
+        `Deload should have ACWR < 1.0, got ${result.acwr}`,
       );
     });
 
@@ -464,7 +499,7 @@ async function testFullACWRCalculation() {
       // Total load for the day should be 480
       assert(
         result.acuteLoad === 480,
-        `Two sessions on same day should aggregate to 480, got ${result.acuteLoad}`
+        `Two sessions on same day should aggregate to 480, got ${result.acuteLoad}`,
       );
     });
   });
@@ -479,50 +514,50 @@ async function testConfigurationConstants() {
     await test("Acute window is 7 days", async () => {
       assert(
         ACWR_CONFIG.acuteWindowDays === 7,
-        `Acute window should be 7 days, got ${ACWR_CONFIG.acuteWindowDays}`
+        `Acute window should be 7 days, got ${ACWR_CONFIG.acuteWindowDays}`,
       );
     });
 
     await test("Chronic window is 28 days", async () => {
       assert(
         ACWR_CONFIG.chronicWindowDays === 28,
-        `Chronic window should be 28 days, got ${ACWR_CONFIG.chronicWindowDays}`
+        `Chronic window should be 28 days, got ${ACWR_CONFIG.chronicWindowDays}`,
       );
     });
 
     await test("Minimum chronic load is 100", async () => {
       assert(
         ACWR_CONFIG.minChronicLoad === 100,
-        `Min chronic load should be 100, got ${ACWR_CONFIG.minChronicLoad}`
+        `Min chronic load should be 100, got ${ACWR_CONFIG.minChronicLoad}`,
       );
     });
 
     await test("Sweet spot range is 0.8 - 1.3", async () => {
       assert(
         ACWR_CONFIG.thresholds.sweetSpotLow === 0.8,
-        `Sweet spot low should be 0.8, got ${ACWR_CONFIG.thresholds.sweetSpotLow}`
+        `Sweet spot low should be 0.8, got ${ACWR_CONFIG.thresholds.sweetSpotLow}`,
       );
       assert(
         ACWR_CONFIG.thresholds.sweetSpotHigh === 1.3,
-        `Sweet spot high should be 1.3, got ${ACWR_CONFIG.thresholds.sweetSpotHigh}`
+        `Sweet spot high should be 1.3, got ${ACWR_CONFIG.thresholds.sweetSpotHigh}`,
       );
     });
 
     await test("Danger threshold is 1.5", async () => {
       assert(
         ACWR_CONFIG.thresholds.dangerHigh === 1.5,
-        `Danger threshold should be 1.5, got ${ACWR_CONFIG.thresholds.dangerHigh}`
+        `Danger threshold should be 1.5, got ${ACWR_CONFIG.thresholds.dangerHigh}`,
       );
     });
 
     await test("Minimum data requirements", async () => {
       assert(
         ACWR_CONFIG.minDaysForChronic === 21,
-        `Min days for chronic should be 21, got ${ACWR_CONFIG.minDaysForChronic}`
+        `Min days for chronic should be 21, got ${ACWR_CONFIG.minDaysForChronic}`,
       );
       assert(
         ACWR_CONFIG.minSessionsForChronic === 12,
-        `Min sessions for chronic should be 12, got ${ACWR_CONFIG.minSessionsForChronic}`
+        `Min sessions for chronic should be 12, got ${ACWR_CONFIG.minSessionsForChronic}`,
       );
     });
   });
@@ -545,7 +580,7 @@ async function runTests() {
   await testConfigurationConstants();
 
   // Summary
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("📊 Test Results");
   console.log("=".repeat(60));
   console.log(`Total: ${testsRun}`);

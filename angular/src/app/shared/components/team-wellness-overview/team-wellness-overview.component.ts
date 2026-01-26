@@ -17,7 +17,7 @@ import {
   inject,
   signal,
   computed,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router, RouterModule } from "@angular/router";
@@ -80,7 +80,7 @@ interface TeamWellnessSummary {
     Tooltip,
     Badge,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <div class="team-wellness-overview">

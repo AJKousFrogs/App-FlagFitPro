@@ -92,17 +92,23 @@
 .countdown-timer {
   display: flex;
   align-items: center;
-  gap: calc(var(--ds-space-1) / 4); /* Intentionally tight for countdown display */
+  gap: calc(
+    var(--ds-space-1) / 4
+  ); /* Intentionally tight for countdown display */
 }
 
 .countdown-segment {
   display: flex;
   align-items: baseline;
-  gap: calc(var(--ds-space-1) / 4); /* Intentionally tight for countdown display */
+  gap: calc(
+    var(--ds-space-1) / 4
+  ); /* Intentionally tight for countdown display */
 }
 
 .countdown-value {
-  font-family: var(--ds-font-family-mono); /* ds-exception: monospace numerals */
+  font-family: var(
+    --ds-font-family-mono
+  ); /* ds-exception: monospace numerals */
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--text-color);
@@ -120,7 +126,9 @@
 }
 
 .countdown-sep {
-  font-family: var(--ds-font-family-mono); /* ds-exception: monospace numerals */
+  font-family: var(
+    --ds-font-family-mono
+  ); /* ds-exception: monospace numerals */
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-medium);
   color: var(--text-color-secondary);
@@ -165,7 +173,9 @@
 }
 
 .weather-temp {
-  font-family: var(--ds-font-family-mono); /* ds-exception: monospace numerals */
+  font-family: var(
+    --ds-font-family-mono
+  ); /* ds-exception: monospace numerals */
   font-size: var(--ds-font-size-xs);
   font-weight: var(--ds-font-weight-semibold);
   color: var(--text-color);

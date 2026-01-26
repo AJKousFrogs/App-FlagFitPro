@@ -5,7 +5,7 @@ import {
   inject,
   OnInit,
   signal,
-  DestroyRef
+  DestroyRef,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
@@ -81,7 +81,7 @@ interface MonthlyStats {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardShellComponent
+    CardShellComponent,
   ],
   template: `
     <app-main-layout>
@@ -156,7 +156,10 @@ interface MonthlyStats {
                   variant="filled"
                   inputId="showWeekNumbers"
                 ></p-checkbox>
-                <label for="showWeekNumbers" [attr.aria-label]="'Toggle week numbers display on calendar'">
+                <label
+                  for="showWeekNumbers"
+                  [attr.aria-label]="'Toggle week numbers display on calendar'"
+                >
                   Show Week Numbers
                 </label>
               </div>
@@ -181,35 +184,49 @@ interface MonthlyStats {
 
           <!-- Weather Alert Card -->
           @if (weatherAlert()) {
-            <div 
+            <div
               class="weather-alert"
-              [class.weather-alert--danger]="weatherAlert()?.severity === 'danger'"
-              [class.weather-alert--warning]="weatherAlert()?.severity === 'warning'"
+              [class.weather-alert--danger]="
+                weatherAlert()?.severity === 'danger'
+              "
+              [class.weather-alert--warning]="
+                weatherAlert()?.severity === 'warning'
+              "
             >
               <div class="weather-alert__icon">
-                <i 
-                  class="pi" 
-                  [class.pi-exclamation-triangle]="weatherAlert()?.severity === 'danger'"
-                  [class.pi-info-circle]="weatherAlert()?.severity === 'warning'"
+                <i
+                  class="pi"
+                  [class.pi-exclamation-triangle]="
+                    weatherAlert()?.severity === 'danger'
+                  "
+                  [class.pi-info-circle]="
+                    weatherAlert()?.severity === 'warning'
+                  "
                 ></i>
               </div>
               <div class="weather-alert__content">
                 <h4 class="weather-alert__title">
-                  @if (weatherAlert()?.severity === 'danger') {
+                  @if (weatherAlert()?.severity === "danger") {
                     Weather Advisory
                   } @else {
                     Weather Notice
                   }
                 </h4>
-                <p class="weather-alert__reason">{{ weatherAlert()?.reason }}</p>
-                <p class="weather-alert__recommendation">{{ weatherAlert()?.recommendation }}</p>
+                <p class="weather-alert__reason">
+                  {{ weatherAlert()?.reason }}
+                </p>
+                <p class="weather-alert__recommendation">
+                  {{ weatherAlert()?.recommendation }}
+                </p>
                 @if (currentWeather()) {
                   <p class="weather-alert__conditions">
                     <i class="pi pi-cloud"></i>
-                    Current: {{ currentWeather()?.temp }}°F, {{ currentWeather()?.condition }}
+                    Current: {{ currentWeather()?.temp }}°F,
+                    {{ currentWeather()?.condition }}
                     @if (currentWeather()?.windSpeed) {
                       <span class="weather-wind">
-                        <i class="pi pi-arrows-h"></i> {{ currentWeather()?.windSpeed }} mph wind
+                        <i class="pi pi-arrows-h"></i>
+                        {{ currentWeather()?.windSpeed }} mph wind
                       </span>
                     }
                   </p>
@@ -240,25 +257,30 @@ interface MonthlyStats {
 
           <!-- Substitute Workout Card -->
           @if (suggestedSubstitute()) {
-            <app-card-shell 
-              title="Substitute Workout Available" 
+            <app-card-shell
+              title="Substitute Workout Available"
               headerIcon="pi-bolt"
               class="substitute-workout-card"
             >
               <div class="substitute-workout">
                 <div class="substitute-workout__header">
-                  <h3 class="substitute-workout__name">{{ suggestedSubstitute()?.workoutName }}</h3>
+                  <h3 class="substitute-workout__name">
+                    {{ suggestedSubstitute()?.workoutName }}
+                  </h3>
                   <div class="substitute-workout__badges">
                     <span class="badge badge--info">
                       <i class="pi pi-map-marker"></i>
-                      {{ getLocationLabel(suggestedSubstitute()?.locationType) }}
+                      {{
+                        getLocationLabel(suggestedSubstitute()?.locationType)
+                      }}
                     </span>
                     <span class="badge badge--secondary">
                       <i class="pi pi-clock"></i>
                       {{ suggestedSubstitute()?.durationMinutes }} min
                     </span>
                     <span class="badge badge--secondary">
-                      {{ suggestedSubstitute()?.intensityLevel | titlecase }} intensity
+                      {{ suggestedSubstitute()?.intensityLevel | titlecase }}
+                      intensity
                     </span>
                   </div>
                 </div>
@@ -272,7 +294,10 @@ interface MonthlyStats {
                   <div class="substitute-workout__equipment">
                     <h4><i class="pi pi-box"></i> Equipment Needed</h4>
                     <div class="equipment-list">
-                      @for (item of suggestedSubstitute()?.equipmentNeeded; track item) {
+                      @for (
+                        item of suggestedSubstitute()?.equipmentNeeded;
+                        track item
+                      ) {
                         <span class="equipment-item">{{ item }}</span>
                       }
                     </div>
@@ -285,11 +310,22 @@ interface MonthlyStats {
                     <h4><i class="pi pi-play"></i> Warm-Up</h4>
                     <p>{{ getWarmUpPreview(suggestedSubstitute()?.warmUp) }}</p>
                   </div>
-                  
+
                   <div class="workout-phase">
-                    <h4><i class="pi pi-bolt"></i> Main Workout ({{ suggestedSubstitute()?.mainWorkout?.length }} exercises)</h4>
+                    <h4>
+                      <i class="pi pi-bolt"></i> Main Workout ({{
+                        suggestedSubstitute()?.mainWorkout?.length
+                      }}
+                      exercises)
+                    </h4>
                     <ul class="exercise-preview-list">
-                      @for (exercise of suggestedSubstitute()?.mainWorkout?.slice(0, 3); track exercise.name) {
+                      @for (
+                        exercise of suggestedSubstitute()?.mainWorkout?.slice(
+                          0,
+                          3
+                        );
+                        track exercise.name
+                      ) {
                         <li>
                           <strong>{{ exercise.name }}</strong>
                           @if (exercise.sets && exercise.reps) {
@@ -299,9 +335,16 @@ interface MonthlyStats {
                           }
                         </li>
                       }
-                      @if ((suggestedSubstitute()?.mainWorkout?.length || 0) > 3) {
+                      @if (
+                        (suggestedSubstitute()?.mainWorkout?.length || 0) > 3
+                      ) {
                         <li class="more-exercises">
-                          + {{ (suggestedSubstitute()?.mainWorkout?.length || 0) - 3 }} more exercises...
+                          +
+                          {{
+                            (suggestedSubstitute()?.mainWorkout?.length || 0) -
+                              3
+                          }}
+                          more exercises...
                         </li>
                       }
                     </ul>
@@ -309,7 +352,9 @@ interface MonthlyStats {
 
                   <div class="workout-phase">
                     <h4><i class="pi pi-stop"></i> Cool-Down</h4>
-                    <p>{{ getCoolDownPreview(suggestedSubstitute()?.coolDown) }}</p>
+                    <p>
+                      {{ getCoolDownPreview(suggestedSubstitute()?.coolDown) }}
+                    </p>
                   </div>
                 </div>
 
@@ -318,7 +363,10 @@ interface MonthlyStats {
                   <div class="substitute-workout__goals">
                     <h4><i class="pi pi-flag"></i> Training Goals</h4>
                     <div class="goals-list">
-                      @for (goal of suggestedSubstitute()?.trainingGoals; track goal) {
+                      @for (
+                        goal of suggestedSubstitute()?.trainingGoals;
+                        track goal
+                      ) {
                         <span class="goal-tag">{{ goal }}</span>
                       }
                     </div>
@@ -504,7 +552,9 @@ interface MonthlyStats {
                             Replaced
                           </span>
                         }
-                        @if (!session.isTemplate && session.status === "completed") {
+                        @if (
+                          !session.isTemplate && session.status === "completed"
+                        ) {
                           <span class="status-pill status-pill--logged">
                             <i class="pi pi-check"></i>
                             Logged
@@ -516,7 +566,10 @@ interface MonthlyStats {
                           </span>
                         }
                         @if (session.isOutdoor && session.weatherSensitive) {
-                          <span class="outdoor-badge" [title]="'Weather-sensitive outdoor session'">
+                          <span
+                            class="outdoor-badge"
+                            [title]="'Weather-sensitive outdoor session'"
+                          >
                             <i class="pi pi-sun"></i>
                           </span>
                         }
@@ -545,7 +598,12 @@ interface MonthlyStats {
                         </span>
                       </span>
                       <!-- Weather cancel button for outdoor sessions -->
-                      @if (session.isOutdoor && session.weatherSensitive && session.isTemplate && weatherAlert()?.severity === 'danger') {
+                      @if (
+                        session.isOutdoor &&
+                        session.weatherSensitive &&
+                        session.isTemplate &&
+                        weatherAlert()?.severity === "danger"
+                      ) {
                         <app-button
                           variant="outlined"
                           size="sm"
@@ -569,7 +627,9 @@ interface MonthlyStats {
                         >
                       }
                       <!-- Start session button: for template sessions -->
-                      @if (session.isTemplate && session.status !== "replaced") {
+                      @if (
+                        session.isTemplate && session.status !== "replaced"
+                      ) {
                         <app-button
                           variant="text"
                           size="sm"
@@ -609,8 +669,10 @@ export class TrainingScheduleComponent implements OnInit {
   // Weather-related signals (delegate to service)
   readonly weatherAlert = this.weatherCancellationService.weatherAlert;
   readonly currentWeather = this.weatherCancellationService.currentWeather;
-  readonly suggestedSubstitute = this.weatherCancellationService.suggestedSubstitute;
-  readonly isGeneratingSubstitute = this.weatherCancellationService.isGeneratingSubstitute;
+  readonly suggestedSubstitute =
+    this.weatherCancellationService.suggestedSubstitute;
+  readonly isGeneratingSubstitute =
+    this.weatherCancellationService.isGeneratingSubstitute;
 
   // Calendar date markers for visual indicators
   dateMarkers = signal<CalendarDateMarker[]>([]);
@@ -727,7 +789,7 @@ export class TrainingScheduleComponent implements OnInit {
     const selected = this.selectedDate();
     const now = new Date();
     const hoursDiff = (selected.getTime() - now.getTime()) / (1000 * 60 * 60);
-    
+
     if (hoursDiff > 24 || hoursDiff < -24) {
       return; // Don't check weather for dates far in the past/future
     }
@@ -740,7 +802,7 @@ export class TrainingScheduleComponent implements OnInit {
         next: (weatherSessions) => {
           if (weatherSessions.length > 0) {
             // Check weather for the first outdoor session found
-            const outdoorSession = weatherSessions.find(s => s.isOutdoor);
+            const outdoorSession = weatherSessions.find((s) => s.isOutdoor);
             if (outdoorSession) {
               this.weatherCancellationService
                 .checkWeatherForTraining(outdoorSession)
@@ -755,14 +817,20 @@ export class TrainingScheduleComponent implements OnInit {
                     }
                   },
                   error: (error) => {
-                    this.logger.warn("Failed to check weather:", toLogContext(error));
+                    this.logger.warn(
+                      "Failed to check weather:",
+                      toLogContext(error),
+                    );
                   },
                 });
             }
           }
         },
         error: (error) => {
-          this.logger.warn("Failed to load weather-sensitive sessions:", toLogContext(error));
+          this.logger.warn(
+            "Failed to load weather-sensitive sessions:",
+            toLogContext(error),
+          );
         },
       });
   }
@@ -787,9 +855,8 @@ export class TrainingScheduleComponent implements OnInit {
       today.setHours(0, 0, 0, 0);
 
       // Use selected date or default to tomorrow
-      const startDate = selected && selected >= today 
-        ? new Date(selected)
-        : new Date(today);
+      const startDate =
+        selected && selected >= today ? new Date(selected) : new Date(today);
       startDate.setHours(0, 0, 0, 0);
 
       // If selected date is in the past, include it and load sessions around it
@@ -882,8 +949,8 @@ export class TrainingScheduleComponent implements OnInit {
         });
 
         const actualDates = new Set(
-          mappedActualSessions.map((session) =>
-            session.date.toISOString().split("T")[0],
+          mappedActualSessions.map(
+            (session) => session.date.toISOString().split("T")[0],
           ),
         );
 
@@ -920,15 +987,19 @@ export class TrainingScheduleComponent implements OnInit {
               type:
                 template.session_name || template.session_type || "Training",
               duration: template.duration_minutes || 60,
-              status: actualDates.has(
-                sessionDate.toISOString().split("T")[0],
-              )
+              status: actualDates.has(sessionDate.toISOString().split("T")[0])
                 ? "replaced"
                 : ("scheduled" as const),
               isTemplate: true,
-              isTeamPractice: (template as Record<string, unknown>).is_team_practice as boolean || false,
-              isOutdoor: (template as Record<string, unknown>).is_outdoor as boolean || false,
-              weatherSensitive: (template as Record<string, unknown>).weather_sensitive as boolean || false,
+              isTeamPractice:
+                ((template as Record<string, unknown>)
+                  .is_team_practice as boolean) || false,
+              isOutdoor:
+                ((template as Record<string, unknown>).is_outdoor as boolean) ||
+                false,
+              weatherSensitive:
+                ((template as Record<string, unknown>)
+                  .weather_sensitive as boolean) || false,
             };
           });
 
@@ -990,9 +1061,9 @@ export class TrainingScheduleComponent implements OnInit {
     if (!date) return;
 
     const previousDate = this.selectedDate();
-    this.logger.debug("Date selected", { 
+    this.logger.debug("Date selected", {
       date: date.toISOString().split("T")[0],
-      previousDate: previousDate?.toISOString().split("T")[0]
+      previousDate: previousDate?.toISOString().split("T")[0],
     });
 
     // Update the selected date
@@ -1000,7 +1071,7 @@ export class TrainingScheduleComponent implements OnInit {
 
     // Check if date changed significantly (more than 7 days difference)
     const dateDiff = Math.abs(
-      (date.getTime() - (previousDate?.getTime() || 0)) / (1000 * 60 * 60 * 24)
+      (date.getTime() - (previousDate?.getTime() || 0)) / (1000 * 60 * 60 * 24),
     );
 
     // Always reload sessions when date changes significantly or when in month view
@@ -1295,10 +1366,7 @@ export class TrainingScheduleComponent implements OnInit {
       const missed =
         sessions?.filter((s) => s.status === "cancelled").length || 0;
       const totalDuration =
-        sessions?.reduce(
-          (sum, s) => sum + (s.duration_minutes || 0),
-          0,
-        ) || 0;
+        sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
 
       this.monthlyStats.set({
         totalSessions: total,
@@ -1349,7 +1417,9 @@ export class TrainingScheduleComponent implements OnInit {
     );
 
     if (!outdoorSession) {
-      this.toastService.warn("No outdoor sessions found to generate substitute for");
+      this.toastService.warn(
+        "No outdoor sessions found to generate substitute for",
+      );
       return;
     }
 
@@ -1411,7 +1481,9 @@ export class TrainingScheduleComponent implements OnInit {
       .subscribe({
         next: (substitute) => {
           if (substitute) {
-            this.toastService.success("Session cancelled. Alternative workout ready!");
+            this.toastService.success(
+              "Session cancelled. Alternative workout ready!",
+            );
             // Update the session in local state to show as cancelled
             this.sessions.update((sessions) =>
               sessions.map((s) =>
@@ -1518,7 +1590,9 @@ export class TrainingScheduleComponent implements OnInit {
   getWarmUpPreview(warmUp: string | undefined): string {
     if (!warmUp) return "Dynamic warm-up routine";
     const firstLine = warmUp.split("\n")[0];
-    return firstLine.length > 100 ? firstLine.substring(0, 100) + "..." : firstLine;
+    return firstLine.length > 100
+      ? firstLine.substring(0, 100) + "..."
+      : firstLine;
   }
 
   /**
@@ -1527,6 +1601,8 @@ export class TrainingScheduleComponent implements OnInit {
   getCoolDownPreview(coolDown: string | undefined): string {
     if (!coolDown) return "Static stretching and recovery";
     const firstLine = coolDown.split("\n")[0];
-    return firstLine.length > 100 ? firstLine.substring(0, 100) + "..." : firstLine;
+    return firstLine.length > 100
+      ? firstLine.substring(0, 100) + "..."
+      : firstLine;
   }
 }

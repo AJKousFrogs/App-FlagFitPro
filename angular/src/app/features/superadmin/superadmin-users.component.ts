@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  OnInit
+  OnInit,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
@@ -14,7 +14,7 @@ import { IconButtonComponent } from "../../shared/components/button/icon-button.
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   accountStatusSeverityMap,
-  getMappedStatusSeverity
+  getMappedStatusSeverity,
 } from "../../shared/utils/status.utils";
 import { TableModule } from "primeng/table";
 import { InputText } from "primeng/inputtext";
@@ -49,7 +49,7 @@ interface User {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>

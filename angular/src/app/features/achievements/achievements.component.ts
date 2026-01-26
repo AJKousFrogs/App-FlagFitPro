@@ -14,10 +14,10 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { Select } from "primeng/select";
@@ -267,7 +267,7 @@ const CATEGORY_LABELS: Record<
     StatusTagComponent,
     Toast,
     MainLayoutComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
   ],
   providers: [MessageService],
   template: `
@@ -323,9 +323,7 @@ const CATEGORY_LABELS: Record<
               </div>
               <div class="stat-details stat-block__content">
                 <span class="stat-block__label">Progress</span>
-                <span class="stat-block__value">{{
-                  progressPercent()
-                }}%</span>
+                <span class="stat-block__value">{{ progressPercent() }}%</span>
                 <p-progressBar
                   [value]="progressPercent()"
                   [showValue]="false"

@@ -23,43 +23,48 @@ WHERE topic LIKE 'calf_achilles_%';
 ## Query Examples
 
 ### Get All Calf/Achilles Knowledge
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .ilike('topic', 'calf_achilles_%');
+  .from("knowledge_base_entries")
+  .select("*")
+  .ilike("topic", "calf_achilles_%");
 ```
 
 ### Get Injury Information
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .eq('topic', 'calf_achilles_injuries_pathologies');
+  .from("knowledge_base_entries")
+  .select("*")
+  .eq("topic", "calf_achilles_injuries_pathologies");
 ```
 
 ### Get Rehabilitation Protocols
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('topic, protocols, best_practices')
-  .eq('topic', 'calf_achilles_rehabilitation');
+  .from("knowledge_base_entries")
+  .select("topic, protocols, best_practices")
+  .eq("topic", "calf_achilles_rehabilitation");
 ```
 
 ### Search for Tendinopathy Info
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .contains('tags', ['achilles_tendinopathy']);
+  .from("knowledge_base_entries")
+  .select("*")
+  .contains("tags", ["achilles_tendinopathy"]);
 ```
 
 ### Get Prevention Strategies
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .eq('topic', 'calf_achilles_injury_prevention');
+  .from("knowledge_base_entries")
+  .select("*")
+  .eq("topic", "calf_achilles_injury_prevention");
 ```
 
 ## AI Chat Integration
@@ -69,11 +74,11 @@ const { data } = await supabase
 async function handleAchillesPain(athleteId: string) {
   // Get injury and rehab information
   const { data } = await supabase
-    .from('knowledge_base_entries')
-    .select('question, answer, best_practices, contraindications')
-    .in('topic', [
-      'calf_achilles_injuries_pathologies',
-      'calf_achilles_rehabilitation'
+    .from("knowledge_base_entries")
+    .select("question, answer, best_practices, contraindications")
+    .in("topic", [
+      "calf_achilles_injuries_pathologies",
+      "calf_achilles_rehabilitation",
     ]);
 
   return data;
@@ -82,9 +87,9 @@ async function handleAchillesPain(athleteId: string) {
 // Example: Injury prevention for runners
 async function getRunningPreventionTips() {
   const { data } = await supabase
-    .from('knowledge_base_entries')
-    .select('best_practices, protocols')
-    .eq('topic', 'calf_achilles_injury_prevention')
+    .from("knowledge_base_entries")
+    .select("best_practices, protocols")
+    .eq("topic", "calf_achilles_injury_prevention")
     .single();
 
   return data?.best_practices;
@@ -94,29 +99,32 @@ async function getRunningPreventionTips() {
 ## Use Cases by Position
 
 ### Running Backs (High Risk)
+
 - Topic: `calf_achilles_injury_prevention`
 - Topic: `calf_achilles_assessment_protocols`
 - Focus: Acceleration mechanics, load management
 
 ### Wide Receivers & Defensive Backs
+
 - Topic: `calf_achilles_injury_prevention`
 - Topic: `calf_achilles_injuries_pathologies`
 - Focus: Explosive movements, change of direction
 
 ### All Positions
+
 - Topic: `calf_achilles_anatomy_biomechanics`
 - Topic: `calf_achilles_assessment_protocols`
 - Topic: `calf_achilles_rehabilitation` (if injured)
 
 ## Knowledge Entry Topics
 
-| Topic | Type | Use For |
-|-------|------|---------|
-| `calf_achilles_anatomy_biomechanics` | training_method | Education, understanding basics |
-| `calf_achilles_assessment_protocols` | training_method | Testing, monitoring strength |
-| `calf_achilles_injuries_pathologies` | injury | Injury identification, risk factors |
-| `calf_achilles_rehabilitation` | recovery_method | Rehab programs, return to play |
-| `calf_achilles_injury_prevention` | training_method | Prevention programs, screening |
+| Topic                                | Type            | Use For                             |
+| ------------------------------------ | --------------- | ----------------------------------- |
+| `calf_achilles_anatomy_biomechanics` | training_method | Education, understanding basics     |
+| `calf_achilles_assessment_protocols` | training_method | Testing, monitoring strength        |
+| `calf_achilles_injuries_pathologies` | injury          | Injury identification, risk factors |
+| `calf_achilles_rehabilitation`       | recovery_method | Rehab programs, return to play      |
+| `calf_achilles_injury_prevention`    | training_method | Prevention programs, screening      |
 
 ## Common Injuries Covered
 
@@ -142,23 +150,18 @@ async function getRunningPreventionTips() {
 ## Key Protocols
 
 ### Assessment Protocol
+
 ```json
 {
   "equipment": ["ForceFrame", "ForceDecks"],
-  "test_positions": [
-    "knee_straight_gastrocnemius",
-    "knee_bent_soleus"
-  ],
-  "metrics": [
-    "peak_force",
-    "rate_of_force_development",
-    "bilateral_asymmetry"
-  ],
+  "test_positions": ["knee_straight_gastrocnemius", "knee_bent_soleus"],
+  "metrics": ["peak_force", "rate_of_force_development", "bilateral_asymmetry"],
   "frequency": "weekly_during_rehab_monthly_for_monitoring"
 }
 ```
 
 ### Rehabilitation Phases
+
 ```json
 {
   "phases": [
@@ -198,6 +201,7 @@ scripts/
 ## Critical Best Practices
 
 ### For Prevention
+
 1. Regular calf strengthening (both gastrocnemius and soleus)
 2. Eccentric training programs
 3. Monitor training loads - avoid spikes
@@ -205,6 +209,7 @@ scripts/
 5. Progressive load increases (<10% per week)
 
 ### For Rehabilitation
+
 1. Progressive loading (not rest) for tendinopathy
 2. Isometric exercises for pain management
 3. Heavy slow resistance builds tendon capacity
@@ -212,6 +217,7 @@ scripts/
 5. Achieve >90% strength before return to sport
 
 ### For Assessment
+
 1. Test both knee-straight and knee-bent positions
 2. Use objective force measurement
 3. Monitor asymmetries (<10% ideal)
@@ -221,6 +227,7 @@ scripts/
 ## Troubleshooting
 
 ### Import fails?
+
 ```bash
 # Check if tables exist
 supabase db execute --sql "
@@ -233,6 +240,7 @@ supabase db execute -f database/migrations/028_evidence_based_knowledge_base.sql
 ```
 
 ### Need to re-import?
+
 ```sql
 -- Delete existing entries first
 DELETE FROM knowledge_base_entries WHERE topic LIKE 'calf_achilles_%';
@@ -245,16 +253,19 @@ WHERE title = 'Practitioner''s Guide to the Calf and Achilles Complex';
 ## Integration with Training Programs
 
 ### Pre-Season
+
 - Screen all athletes for calf strength
 - Identify bilateral asymmetries
 - Implement prevention programs for at-risk athletes
 
 ### In-Season
+
 - Monitor calf strength during heavy periods
 - Early intervention for pain/tightness
 - Load management for high-volume weeks
 
 ### Injury Occurred
+
 - Use evidence-based rehab protocols
 - Objective return-to-play criteria
 - Progressive return to sprinting/cutting

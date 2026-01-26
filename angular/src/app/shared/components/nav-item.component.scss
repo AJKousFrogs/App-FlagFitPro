@@ -15,16 +15,16 @@
   border: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  
+
   // Centralized transition
   transition:
     background-color var(--ds-state-transition),
     color var(--ds-state-transition),
     transform var(--ds-state-transition);
-  
+
   // Centralized focus ring
   @include states.ds-focus-ring(var(--ds-primary-green));
-  
+
   // Centralized disabled state
   @include states.ds-disabled-state;
 }

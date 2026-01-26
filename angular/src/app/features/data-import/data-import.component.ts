@@ -15,7 +15,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -197,7 +197,7 @@ const WEARABLE_DEVICES: WearableDevice[] = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -307,8 +307,12 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                   </div>
                 </div>
 
-                <p-message severity="info" styleClass="tip-message status-message">
-                  💡 Tip: Ask your coach for an export file in the supported format
+                <p-message
+                  severity="info"
+                  styleClass="tip-message status-message"
+                >
+                  💡 Tip: Ask your coach for an export file in the supported
+                  format
                 </p-message>
               </p-card>
             }
@@ -384,7 +388,9 @@ const WEARABLE_DEVICES: WearableDevice[] = [
                         <td>
                           <app-status-tag
                             [value]="getMappingStatusLabel(mapping.status)"
-                            [severity]="getMappingStatusSeverity(mapping.status)"
+                            [severity]="
+                              getMappingStatusSeverity(mapping.status)
+                            "
                             size="sm"
                           />
                         </td>

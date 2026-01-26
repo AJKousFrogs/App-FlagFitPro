@@ -160,7 +160,8 @@ export class YoutubePlayerComponent implements OnDestroy {
   error = output<string>();
 
   // Angular 21: Use viewChild() signal instead of @ViewChild()
-  youtubeContainer = viewChild.required<ElementRef<HTMLDivElement>>("youtubeContainer");
+  youtubeContainer =
+    viewChild.required<ElementRef<HTMLDivElement>>("youtubeContainer");
 
   private youtubeApiLoaded = signal<boolean>(false);
   playerReady = signal<boolean>(false);

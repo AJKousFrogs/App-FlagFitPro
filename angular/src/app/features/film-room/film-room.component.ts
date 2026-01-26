@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -89,7 +89,7 @@ interface DiscussionMessage {
     MainLayoutComponent,
     PageHeaderComponent,
     MobileOptimizedImageDirective,
-    ButtonComponent
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `

@@ -131,7 +131,11 @@ exports.handler = async (event, _context) => {
     );
 
     if (!isAllowed) {
-      return createErrorResponse("Domain not allowed", 403, "authorization_error");
+      return createErrorResponse(
+        "Domain not allowed",
+        403,
+        "authorization_error",
+      );
     }
 
     // Check cache
@@ -175,8 +179,13 @@ exports.handler = async (event, _context) => {
     };
   } catch (error) {
     console.error("Error proxying sponsor logo:", error);
-    return createErrorResponse("Failed to proxy sponsor logo", 500, "server_error", {
-      details: error.message,
-    });
+    return createErrorResponse(
+      "Failed to proxy sponsor logo",
+      500,
+      "server_error",
+      {
+        details: error.message,
+      },
+    );
   }
 };

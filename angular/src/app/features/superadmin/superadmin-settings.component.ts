@@ -117,10 +117,7 @@ interface SuperadminUser {
               <p>No additional superadmins configured.</p>
             </div>
           } @else {
-            <p-table
-              [value]="superadmins()"
-              tableStyleClass="superadmin-table"
-            >
+            <p-table [value]="superadmins()" tableStyleClass="superadmin-table">
               <ng-template pTemplate="header">
                 <tr>
                   <th>Email</th>

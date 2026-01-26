@@ -3,7 +3,7 @@ import {
   Component,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
@@ -18,7 +18,7 @@ import { MainLayoutComponent } from "../../shared/components/layout/main-layout.
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
   SuperadminService,
-  ApprovalRequest
+  ApprovalRequest,
 } from "../../core/services/superadmin.service";
 
 @Component({
@@ -36,7 +36,7 @@ import {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -52,9 +52,7 @@ import {
               routerLink="/superadmin/settings"
               >Settings</app-button
             >
-            <app-button
-              variant="text"
-              routerLink="/dashboard"
+            <app-button variant="text" routerLink="/dashboard"
               >Exit Admin</app-button
             >
           </div>
@@ -110,9 +108,7 @@ import {
                 <i class="pi pi-user"></i>
               </div>
               <div class="stat-info stat-block__content">
-                <span class="stat-block__value">{{
-                  stats().totalUsers
-                }}</span>
+                <span class="stat-block__value">{{ stats().totalUsers }}</span>
                 <span class="stat-block__label">Total Athletes</span>
               </div>
             </div>

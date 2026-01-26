@@ -89,6 +89,7 @@ describe("AnalyticsComponent", () => {
     // Mock SupabaseService to prevent real initialization
     const mockSupabaseService = {
       currentUser: vi.fn(() => null),
+      getCurrentUser: vi.fn(() => null),
       session: vi.fn(() => null),
       userId: vi.fn(() => null),
       client: {

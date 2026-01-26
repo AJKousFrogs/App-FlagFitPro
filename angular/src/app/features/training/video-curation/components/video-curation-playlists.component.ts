@@ -8,7 +8,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output
+  output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -27,14 +27,18 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
   selector: "app-video-curation-playlists",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StatusTagComponent, Chip, ButtonComponent, IconButtonComponent],
+  imports: [
+    CommonModule,
+    StatusTagComponent,
+    Chip,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="tab-content">
       <div class="playlists-header">
         <h3>Your Playlists</h3>
-        <app-button
-          iconLeft="pi-plus"
-          (clicked)="create.emit()"
+        <app-button iconLeft="pi-plus" (clicked)="create.emit()"
           >Create Playlist</app-button
         >
       </div>
@@ -44,9 +48,7 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
           <i class="pi pi-list"></i>
           <h3>No playlists yet</h3>
           <p>Create your first playlist to organize training videos</p>
-          <app-button
-            iconLeft="pi-plus"
-            (clicked)="create.emit()"
+          <app-button iconLeft="pi-plus" (clicked)="create.emit()"
             >Create Playlist</app-button
           >
         </div>
@@ -57,7 +59,11 @@ import { formatFocus, formatDuration } from "../video-curation-utils";
               <div class="playlist-header">
                 <h4>{{ playlist.name }}</h4>
                 @if (playlist.position) {
-                  <app-status-tag [value]="playlist.position" severity="info" size="sm" />
+                  <app-status-tag
+                    [value]="playlist.position"
+                    severity="info"
+                    size="sm"
+                  />
                 }
               </div>
               <p class="playlist-description">{{ playlist.description }}</p>

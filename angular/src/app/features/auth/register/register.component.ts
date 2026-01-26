@@ -3,7 +3,7 @@ import {
   Component,
   DestroyRef,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -11,7 +11,7 @@ import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from "@angular/forms";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Card } from "primeng/card";
@@ -28,7 +28,7 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import {
   getFormControlError,
   isFormControlInvalid,
-  markFormGroupTouched
+  markFormGroupTouched,
 } from "../../../shared/utils/form.utils";
 
 @Component({
@@ -42,7 +42,7 @@ import {
     ButtonComponent,
     InputText,
     Toast,
-    Checkbox
+    Checkbox,
   ],
   template: `
     <p-toast></p-toast>

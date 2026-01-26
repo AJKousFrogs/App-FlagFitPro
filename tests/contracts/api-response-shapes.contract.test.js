@@ -24,7 +24,8 @@ import { createClient } from "@supabase/supabase-js";
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY =
   process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8888/.netlify/functions";
+const API_BASE_URL =
+  process.env.API_BASE_URL || "http://localhost:8888/.netlify/functions";
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   console.error("❌ Error: SUPABASE_URL and SUPABASE_SERVICE_KEY must be set");
@@ -52,7 +53,7 @@ function assertType(value, expectedType, fieldName) {
   const actualType = value === null ? "null" : typeof value;
   if (actualType !== expectedType && value !== null) {
     throw new Error(
-      `${fieldName}: Expected type '${expectedType}', got '${actualType}' (value: ${JSON.stringify(value)})`
+      `${fieldName}: Expected type '${expectedType}', got '${actualType}' (value: ${JSON.stringify(value)})`,
     );
   }
 }
@@ -60,13 +61,15 @@ function assertType(value, expectedType, fieldName) {
 function assertOneOf(value, allowedValues, fieldName) {
   if (value !== null && !allowedValues.includes(value)) {
     throw new Error(
-      `${fieldName}: Value '${value}' not in allowed values: [${allowedValues.join(", ")}]`
+      `${fieldName}: Value '${value}' not in allowed values: [${allowedValues.join(", ")}]`,
     );
   }
 }
 
 function assertDateFormat(value, fieldName) {
-  if (value === null || value === undefined) return;
+  if (value === null || value === undefined) {
+    return;
+  }
   // ISO 8601 date format: YYYY-MM-DD
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   // ISO 8601 datetime format: YYYY-MM-DDTHH:mm:ss.sssZ
@@ -74,16 +77,18 @@ function assertDateFormat(value, fieldName) {
 
   if (!dateRegex.test(value) && !datetimeRegex.test(value)) {
     throw new Error(
-      `${fieldName}: Invalid date format '${value}'. Expected ISO 8601 (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)`
+      `${fieldName}: Invalid date format '${value}'. Expected ISO 8601 (YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss)`,
     );
   }
 }
 
 function assertRange(value, min, max, fieldName) {
-  if (value === null || value === undefined) return;
+  if (value === null || value === undefined) {
+    return;
+  }
   if (value < min || value > max) {
     throw new Error(
-      `${fieldName}: Value ${value} out of range [${min}, ${max}]`
+      `${fieldName}: Value ${value} out of range [${min}, ${max}]`,
     );
   }
 }
@@ -164,7 +169,7 @@ async function testTrainingSessionsResponseShape() {
       const { data, error } = await supabase
         .from("training_sessions")
         .select(
-          "id, user_id, session_date, duration_minutes, rpe, status, notes, session_type, intensity_level, session_state, coach_locked, created_at"
+          "id, user_id, session_date, duration_minutes, rpe, status, notes, session_type, intensity_level, session_state, coach_locked, created_at",
         )
         .limit(1);
 
@@ -269,7 +274,7 @@ async function testTrainingSessionsResponseShape() {
         assertType(row.duration_minutes, "number", "duration_minutes");
         assert(
           row.duration_minutes >= 0,
-          `duration_minutes must be non-negative, got ${row.duration_minutes}`
+          `duration_minutes must be non-negative, got ${row.duration_minutes}`,
         );
       }
     });
@@ -286,7 +291,7 @@ async function testWellnessCheckinResponseShape() {
       const { data, error } = await supabase
         .from("daily_wellness_checkin")
         .select(
-          "id, user_id, checkin_date, sleep_quality, sleep_hours, energy_level, stress_level, muscle_soreness, motivation, soreness_areas, notes, calculated_readiness, created_at"
+          "id, user_id, checkin_date, sleep_quality, sleep_hours, energy_level, stress_level, muscle_soreness, motivation, soreness_areas, notes, calculated_readiness, created_at",
         )
         .limit(1);
 
@@ -299,7 +304,7 @@ async function testWellnessCheckinResponseShape() {
       const { data, error } = await supabase
         .from("daily_wellness_checkin")
         .select(
-          "sleep_quality, energy_level, stress_level, muscle_soreness, motivation"
+          "sleep_quality, energy_level, stress_level, muscle_soreness, motivation",
         )
         .limit(100);
 
@@ -354,7 +359,7 @@ async function testWellnessCheckinResponseShape() {
       for (const row of data || []) {
         assert(
           row.sleep_hours >= 0 && row.sleep_hours <= 24,
-          `sleep_hours must be 0-24, got ${row.sleep_hours}`
+          `sleep_hours must be 0-24, got ${row.sleep_hours}`,
         );
       }
     });
@@ -371,7 +376,7 @@ async function testLoadMonitoringResponseShape() {
       const { data, error } = await supabase
         .from("load_monitoring")
         .select(
-          "id, player_id, daily_load, acute_load, chronic_load, acwr, injury_risk_level, calculated_at"
+          "id, player_id, daily_load, acute_load, chronic_load, acwr, injury_risk_level, calculated_at",
         )
         .limit(1);
 
@@ -447,7 +452,9 @@ async function testWorkoutLogsResponseShape() {
     await test("workout_logs table has required columns", async () => {
       const { data, error } = await supabase
         .from("workout_logs")
-        .select("id, player_id, session_id, completed_at, rpe, duration_minutes, notes")
+        .select(
+          "id, player_id, session_id, completed_at, rpe, duration_minutes, notes",
+        )
         .limit(1);
 
       if (error) {
@@ -499,7 +506,7 @@ async function testTrainingSessionTemplatesResponseShape() {
       const { data, error } = await supabase
         .from("training_session_templates")
         .select(
-          "id, week_id, session_name, session_type, day_of_week, duration_minutes, intensity_level, description"
+          "id, week_id, session_name, session_type, day_of_week, duration_minutes, intensity_level, description",
         )
         .limit(1);
 
@@ -536,7 +543,7 @@ async function testExerciseLibraryResponseShape() {
       const { data, error } = await supabase
         .from("exercisedb_exercises")
         .select(
-          "id, name, body_part, equipment, target_muscle, is_curated, flag_football_relevance, difficulty_level, is_active, is_approved"
+          "id, name, body_part, equipment, target_muscle, is_curated, flag_football_relevance, difficulty_level, is_active, is_approved",
         )
         .limit(1);
 
@@ -557,7 +564,12 @@ async function testExerciseLibraryResponseShape() {
       }
 
       for (const row of data || []) {
-        assertRange(row.flag_football_relevance, 1, 10, "flag_football_relevance");
+        assertRange(
+          row.flag_football_relevance,
+          1,
+          10,
+          "flag_football_relevance",
+        );
       }
     });
 
@@ -675,7 +687,7 @@ async function runTests() {
   await testUserIdFieldConsistency();
 
   // Summary
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("📊 Test Results");
   console.log("=".repeat(60));
   console.log(`Total: ${testsRun}`);

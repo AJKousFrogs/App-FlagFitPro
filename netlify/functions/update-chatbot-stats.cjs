@@ -88,7 +88,10 @@ exports.handler = async (event, _context) => {
     try {
       bodyData = JSON.parse(event.body || "{}");
     } catch (_parseError) {
-      return { ...handleValidationError("Invalid JSON in request body"), headers: responseHeaders };
+      return {
+        ...handleValidationError("Invalid JSON in request body"),
+        headers: responseHeaders,
+      };
     }
 
     const { topic } = bodyData;

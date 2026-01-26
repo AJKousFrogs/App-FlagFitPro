@@ -80,7 +80,6 @@ Run these via npm commands from the project root:
 - `test-automation.js` - Automated testing suite
 - `test-all-api-endpoints.js` - API endpoint tests
 - `test-dashboard.js` - Dashboard tests
-- `test-charts.js` - Chart rendering tests
 - `test-login.js` - Login flow tests
 - `test-responsive-pages.js` - Responsive design tests
 - `test-hydration-system.js` - Hydration system tests
@@ -88,8 +87,6 @@ Run these via npm commands from the project root:
 
 ### Build Tools
 
-- `build.js` - Main build script
-- `build-js.js` - JavaScript bundling
 - `build-css.js` - CSS processing
 - `build-angular.sh` - Angular build script
 - `inject-env-into-html.js` - Environment injection
@@ -100,27 +97,17 @@ Run these via npm commands from the project root:
 - `fix-jws-vulnerability.js` - JWS security fix (runs on postinstall)
 - `clear-service-worker.js` - Clear service worker cache
 - `setup-local-env.js` - Local environment setup
-- `migrate-to-unified-storage.js` - Storage migration utility
 
 ### Code Quality
 
-- `fix-console-logs.js` - Clean up console logs
 - `fix-duplicate-imports.js` - Fix duplicate imports
-- `fix-innerhtml.js` - Fix innerHTML security issues
-- `fix-module-scripts.js` - Fix module script issues
 - `add-security-headers.js` - Add security headers
 
 ### Wireframe Processing
 
-- `process-wireframes.js` - Process wireframe files
-- `process-wireframes-simple.js` - Simplified wireframe processing
 - `process-knowledge-base.js` - Knowledge base processing
 
 ### Component Updates
-
-- `update-footer-component.js` - Footer component updates
-- `update-sidebar-component.js` - Sidebar component updates
-- `update-topbar-component.js` - Topbar component updates
 
 ## Archive Directory
 

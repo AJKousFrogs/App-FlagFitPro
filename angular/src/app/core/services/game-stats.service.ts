@@ -31,7 +31,6 @@ export interface GamePlay {
   missReason?: string;
 }
 
-
 @Injectable({
   providedIn: "root",
 })

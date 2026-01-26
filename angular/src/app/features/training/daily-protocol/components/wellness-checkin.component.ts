@@ -97,9 +97,7 @@ export interface ReadinessResult {
           size="sm"
           ariaLabel="Edit check-in"
         />
-        <small
-          class="state-narration-inline"
-        >
+        <small class="state-narration-inline">
           <strong>What changed:</strong> Check-in completed. Readiness score:
           {{ readinessScore() }}. <strong>Why:</strong> You saved your wellness
           check-in. <strong>What it means:</strong>
@@ -270,9 +268,7 @@ export interface ReadinessResult {
               <span class="label-icon">📍</span>
               <span>Where are you sore?</span>
             </label>
-            <small
-              class="state-narration state-narration--compact"
-            >
+            <small class="state-narration state-narration--compact">
               <strong>What changed:</strong> Soreness areas section appeared.
               <strong>Why:</strong> Your muscle soreness is
               {{ getSorenessLabel(formData().muscleSoreness) }} (moderate or
@@ -407,9 +403,7 @@ export interface ReadinessResult {
           >Save Check-in</app-button
         >
         @if (isSaving()) {
-          <div
-            class="save-narration"
-          >
+          <div class="save-narration">
             <small class="state-narration">
               <strong>What changed:</strong> Check-in is being saved.
               <strong>Why:</strong> You clicked "Save Check-in".

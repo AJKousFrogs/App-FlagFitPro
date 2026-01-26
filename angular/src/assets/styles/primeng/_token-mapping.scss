@@ -317,8 +317,7 @@
     --p-radio-border-color: var(--color-border-default);
     --p-radio-checked-background: var(--ds-primary-green);
     --p-radio-checked-border-color: var(--ds-primary-green);
-    --p-radio-focus-ring: 0 0 0 var(--focus-ring-width)
-      var(--color-focus-ring);
+    --p-radio-focus-ring: 0 0 0 var(--focus-ring-width) var(--color-focus-ring);
 
     // ============================================
     // TOGGLESWITCH (Decision 9B)
@@ -331,9 +330,7 @@
     --p-toggleswitch-border-radius: var(--radius-full);
     --p-toggleswitch-background: var(--color-border-default);
     --p-toggleswitch-checked-background: var(--ds-primary-green);
-    --p-toggleswitch-handle-size: calc(
-      var(--space-4) + var(--space-1) / 2
-    );
+    --p-toggleswitch-handle-size: calc(var(--space-4) + var(--space-1) / 2);
     --p-toggleswitch-handle-offset: calc(var(--space-1) * 0.75);
     --p-toggleswitch-handle-background: var(--color-surface-primary);
     --p-toggleswitch-handle-shadow: var(--shadow-sm);

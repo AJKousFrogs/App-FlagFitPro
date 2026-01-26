@@ -32,13 +32,7 @@ import { isHeatRisk } from "../../../core/constants/wellness.constants";
   selector: "app-weather-widget",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    Card,
-    Tooltip,
-    CardComponent,
-    StatusTagComponent,
-  ],
+  imports: [CommonModule, Card, Tooltip, CardComponent, StatusTagComponent],
   template: `
     @if (weatherData()) {
       <app-card

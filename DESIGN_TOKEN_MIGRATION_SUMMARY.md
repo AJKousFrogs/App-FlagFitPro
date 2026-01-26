@@ -12,6 +12,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 ### ✅ 1. Typography Fixes in High-Traffic Files
 
 **Files Updated:**
+
 - `angular/src/styles.scss` - Fixed 8 font-weight and 7 line-height instances
 - `angular/src/app/features/settings/settings.component.scss` - Fixed 4 font-weight and 5 line-height instances
 - `angular/src/app/features/profile/profile.component.scss` - Fixed 5 line-height instances
@@ -20,6 +21,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 - `angular/src/assets/styles/typography-system.scss` - Fixed 5 font-weight instances
 
 **Changes Made:**
+
 - `font-weight: 400` → `var(--font-weight-normal)`
 - `font-weight: 600` → `var(--font-weight-semibold)`
 - `font-weight: 700` → `var(--font-weight-bold)`
@@ -38,24 +40,27 @@ Completed comprehensive design token audit and migration across the entire codeb
 **Added to `angular/src/assets/styles/design-system-tokens.scss`:**
 
 #### Opacity Tokens
+
 ```scss
---opacity-dimmed: 0.5;        /* For disabled/dimmed states */
---opacity-subtle: 0.7;        /* For subtle overlays */
---opacity-strong: 0.9;        /* For strong overlays */
---opacity-minimal: 0.4;       /* For very subtle states */
---opacity-disabled: 0.38;     /* Alias for disabled state */
+--opacity-dimmed: 0.5; /* For disabled/dimmed states */
+--opacity-subtle: 0.7; /* For subtle overlays */
+--opacity-strong: 0.9; /* For strong overlays */
+--opacity-minimal: 0.4; /* For very subtle states */
+--opacity-disabled: 0.38; /* Alias for disabled state */
 ```
 
 #### Z-Index Tokens
+
 ```scss
---z-index-overlay: 1;         /* For simple overlays above content */
---z-index-above-content: 2;   /* For elements above regular content */
+--z-index-overlay: 1; /* For simple overlays above content */
+--z-index-above-content: 2; /* For elements above regular content */
 ```
 
 #### Transition Tokens
+
 ```scss
---transition-quick: 180ms;    /* For tooltips and quick animations */
---transition-medium: 250ms;  /* Between base and slow */
+--transition-quick: 180ms; /* For tooltips and quick animations */
+--transition-medium: 250ms; /* Between base and slow */
 ```
 
 **Impact:** Provides semantic tokens for common use cases that were previously hardcoded
@@ -103,6 +108,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 ## Statistics
 
 ### Files Modified
+
 - **Typography fixes:** 20+ files
 - **State value fixes:** 8 files (from previous audit)
 - **Opacity fixes:** 10+ files
@@ -115,6 +121,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 - **Documentation:** 4 files created
 
 ### Values Fixed
+
 - **Typography:** ~50+ instances (font-weight, line-height, font-size)
 - **State values:** ~15 instances (from previous audit)
 - **Opacity:** ~15+ instances
@@ -125,6 +132,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 - **Total:** ~110+ hardcoded values replaced with tokens
 
 ### Tokens Created
+
 - **Opacity:** 5 new tokens
 - **Z-index:** 2 new tokens
 - **Transitions:** 2 new tokens
@@ -133,16 +141,19 @@ Completed comprehensive design token audit and migration across the entire codeb
 ## Remaining Work
 
 ### High Priority
+
 1. **Font Family Migration:** 168 instances of hardcoded "Poppins" need migration
 2. **Font Size Migration:** ~15 instances of hardcoded rem/px values
 3. **Spacing Migration:** ~50+ instances of hardcoded padding/margin values
 
 ### Medium Priority
+
 4. **Sizing Migration:** ~100+ instances of hardcoded width/height values
 5. **Opacity Migration:** ~30+ instances can use new opacity tokens
 6. **Transition Migration:** ~30+ instances can use transition tokens
 
 ### Low Priority
+
 7. **Z-index Migration:** ~30+ instances can use new z-index tokens
 8. **Border Radius Migration:** ~10+ instances
 
@@ -163,10 +174,12 @@ Completed comprehensive design token audit and migration across the entire codeb
 ## Files Updated (Partial List)
 
 ### Core Files
+
 1. `angular/src/assets/styles/design-system-tokens.scss` - Added new tokens
 2. `.stylelintrc.cjs` - Enhanced linting rules
 
 ### High-Traffic Components
+
 3. `angular/src/styles.scss` - Typography, transitions, shadows
 4. `angular/src/app/features/settings/settings.component.scss` - Typography fixes
 5. `angular/src/app/features/profile/profile.component.scss` - Typography, opacity, transitions
@@ -177,6 +190,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 10. `angular/src/assets/styles/primeng-theme.scss` - Font-size, transitions
 
 ### Feature Components
+
 11. `angular/src/app/features/onboarding/onboarding.component.scss` - Typography, opacity, z-index
 12. `angular/src/app/features/exercise-library/exercise-library.component.scss` - Line-height
 13. `angular/src/app/features/legal/legal-doc.component.scss` - Line-height, border-radius
@@ -192,6 +206,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 23. `angular/src/app/shared/components/quick-actions-fab/quick-actions-fab.component.scss` - Font-size
 
 ### Coach Components
+
 24. `angular/src/app/features/coach/playbook-manager/playbook-manager.component.scss` - Transitions
 25. `angular/src/app/features/coach/injury-management/injury-management.component.scss` - Transitions
 26. `angular/src/app/features/coach/scouting/scouting-reports.component.scss` - Transitions, opacity
@@ -203,6 +218,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 32. `angular/src/app/features/coach/calendar/calendar-coach.component.scss` - Opacity
 
 ### Training Components
+
 33. `angular/src/app/features/training/advanced-training/advanced-training.component.scss` - Font-size, line-height
 34. `angular/src/app/features/training/training-log/training-log.component.scss` - Line-height
 35. `angular/src/app/features/training/video-feed/video-feed.component.scss` - Line-height
@@ -216,12 +232,14 @@ Completed comprehensive design token audit and migration across the entire codeb
 43. `angular/src/app/features/training/video-curation/components/video-curation-analytics.component.scss` - Transitions
 
 ### Auth & Admin
+
 44. `angular/src/app/features/auth/login/login.component.scss` - Transitions
 45. `angular/src/app/features/superadmin/superadmin-settings.component.scss` - Transitions
 46. `angular/src/app/features/superadmin/superadmin-dashboard.component.scss` - Transitions
 47. `angular/src/app/features/not-found/not-found.component.scss` - Transitions
 
 ### Overrides & Exceptions
+
 48. `angular/src/assets/styles/overrides/_exceptions.scss` - Font-size, padding
 49. `angular/src/app/features/legal/legal-doc.component.scss` - Border-radius
 

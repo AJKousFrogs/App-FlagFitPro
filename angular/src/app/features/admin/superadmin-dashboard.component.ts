@@ -10,7 +10,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import { Card } from "primeng/card";
 import { Dialog } from "primeng/dialog";
@@ -180,9 +180,7 @@ interface AdminTeam {
           <div class="stat-card">
             <span class="stat-icon">⚡</span>
             <div class="stat-content stat-block__content">
-              <span class="stat-block__value"
-                >{{ stats().avgResponse }}ms</span
-              >
+              <span class="stat-block__value">{{ stats().avgResponse }}ms</span>
               <span class="stat-block__label">Avg Response</span>
               <span class="stat-sub healthy">🟢 Healthy</span>
             </div>
@@ -190,9 +188,7 @@ interface AdminTeam {
           <div class="stat-card">
             <span class="stat-icon">🔴</span>
             <div class="stat-content stat-block__content">
-              <span class="stat-block__value">{{
-                stats().errorsLast24h
-              }}</span>
+              <span class="stat-block__value">{{ stats().errorsLast24h }}</span>
               <span class="stat-block__label">Errors (24h)</span>
               <span class="stat-sub">{{ stats().errorRate }}% rate</span>
             </div>
@@ -360,9 +356,9 @@ interface AdminTeam {
           ></p-select>
         </div>
 
-        <p-table 
-          [value]="filteredUsers()" 
-          [paginator]="true" 
+        <p-table
+          [value]="filteredUsers()"
+          [paginator]="true"
           [rows]="10"
           [rowsPerPageOptions]="[10, 25, 50]"
           [virtualScroll]="filteredUsers().length > 50"
@@ -409,9 +405,9 @@ interface AdminTeam {
         [modal]="true"
         styleClass="superadmin-team-dialog"
       >
-        <p-table 
-          [value]="teams()" 
-          [paginator]="true" 
+        <p-table
+          [value]="teams()"
+          [paginator]="true"
           [rows]="10"
           [rowsPerPageOptions]="[10, 25, 50]"
           [virtualScroll]="teams().length > 50"

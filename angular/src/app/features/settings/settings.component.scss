@@ -229,7 +229,9 @@
 }
 
 .notification-desc {
-  font-size: var(--ds-font-size-compact-lg); /* 13px - smaller for description */
+  font-size: var(
+    --ds-font-size-compact-lg
+  ); /* 13px - smaller for description */
   font-weight: var(--ds-font-weight-regular); /* Regular weight */
   color: var(--color-text-muted);
   /* ALIGNMENT FIX: Consistent line-height */
@@ -514,7 +516,9 @@
 
 .security-info p {
   margin: 0;
-  font-size: var(--ds-font-size-compact-lg); /* 13px - smaller for description */
+  font-size: var(
+    --ds-font-size-compact-lg
+  ); /* 13px - smaller for description */
   font-weight: var(--ds-font-weight-regular); /* Regular weight */
   color: var(--color-text-muted);
   /* ALIGNMENT FIX: Consistent line-height */
@@ -1219,7 +1223,9 @@
 }
 
 .theme-option i {
-  font-size: var(--ds-font-size-2xl); /* 18px - appropriate for inline with text */
+  font-size: var(
+    --ds-font-size-2xl
+  ); /* 18px - appropriate for inline with text */
   color: var(--color-text-secondary);
 }
 
@@ -1317,7 +1323,9 @@
 
 .privacy-controls-link .link-info p {
   margin: 0;
-  font-size: var(--ds-font-size-compact-lg); /* 13px - consistent with descriptions */
+  font-size: var(
+    --ds-font-size-compact-lg
+  ); /* 13px - consistent with descriptions */
   color: var(--color-text-muted);
   line-height: var(--ds-line-height-body-sm);
 }

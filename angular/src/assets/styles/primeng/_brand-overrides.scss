@@ -787,16 +787,18 @@
           // Right edge will be at 23px + 18px = 41px, leaving 3px padding on right ✓
           transform: none; // Remove transform to use left positioning
           left: calc(
-            100% - var(--p-toggleswitch-handle-size) -
-              var(--p-toggleswitch-handle-offset)
+            100% - var(--p-toggleswitch-handle-size) - var(
+                --p-toggleswitch-handle-offset
+              )
           );
         }
 
         .p-toggleswitch-handle {
           transform: none; // Remove transform to use left positioning
           left: calc(
-            100% - var(--p-toggleswitch-handle-size) -
-              var(--p-toggleswitch-handle-offset)
+            100% - var(--p-toggleswitch-handle-size) - var(
+                --p-toggleswitch-handle-offset
+              )
           );
         }
       }
@@ -1276,7 +1278,6 @@
   // ============================================
   // TODAY'S PRACTICE CARD PATTERNS
 
-
   // Welcome Card
   .p-card.welcome-card {
     border-radius: var(--radius-lg);
@@ -1627,20 +1628,20 @@
   }
 }
 
-  // Migrated from today.component.ts
-  // ============================================
+// Migrated from today.component.ts
+// ============================================
 
-  // Onboarding Banner Card
-  .p-card.onboarding-card {
-    background: var(--color-brand-primary);
-    border: none;
-    border-radius: var(--radius-lg);
+// Onboarding Banner Card
+.p-card.onboarding-card {
+  background: var(--color-brand-primary);
+  border: none;
+  border-radius: var(--radius-lg);
 
-    .p-card-body {
-      padding: var(--space-5);
-    }
-
-    .p-card-content {
-      padding: 0;
-    }
+  .p-card-body {
+    padding: var(--space-5);
   }
+
+  .p-card-content {
+    padding: 0;
+  }
+}

@@ -132,11 +132,11 @@ Based on 87 peer-reviewed studies with 12,453 athletes.
 
 ### Wellness
 
-| Method | Endpoint                  | Auth | Description              |
-| ------ | ------------------------- | ---- | ------------------------ |
-| GET    | `/api/wellness/latest`    | Yes  | Latest wellness check-in |
-| GET    | `/api/wellness/checkins`  | Yes  | Wellness history         |
-| POST   | `/api/wellness-checkin`   | Yes  | Submit wellness check-in |
+| Method | Endpoint                 | Auth | Description              |
+| ------ | ------------------------ | ---- | ------------------------ |
+| GET    | `/api/wellness/latest`   | Yes  | Latest wellness check-in |
+| GET    | `/api/wellness/checkins` | Yes  | Wellness history         |
+| POST   | `/api/wellness-checkin`  | Yes  | Submit wellness check-in |
 
 > **Note**: The wellness check-in POST endpoint uses a hyphen (`/api/wellness-checkin`) not a slash (`/api/wellness/checkin`).
 
@@ -420,19 +420,19 @@ All endpoints return consistent error responses:
 
 ### Error Types
 
-| errorType              | HTTP Status | Description                      |
-| ---------------------- | ----------- | -------------------------------- |
-| `validation_error`     | 400         | Invalid request parameters       |
-| `authentication_error` | 401         | Missing or invalid auth token    |
-| `authorization_error`  | 403         | Insufficient permissions         |
-| `not_found`            | 404         | Resource not found               |
-| `method_not_allowed`   | 405         | HTTP method not supported        |
-| `conflict`             | 409         | Resource already exists          |
-| `rate_limit_exceeded`  | 429         | Too many requests                |
-| `server_error`         | 500         | Internal server error            |
-| `database_error`       | 500         | Database operation failed        |
-| `timeout_error`        | varies      | Operation timed out              |
-| `unknown_error`        | varies      | Unclassified error               |
+| errorType              | HTTP Status | Description                   |
+| ---------------------- | ----------- | ----------------------------- |
+| `validation_error`     | 400         | Invalid request parameters    |
+| `authentication_error` | 401         | Missing or invalid auth token |
+| `authorization_error`  | 403         | Insufficient permissions      |
+| `not_found`            | 404         | Resource not found            |
+| `method_not_allowed`   | 405         | HTTP method not supported     |
+| `conflict`             | 409         | Resource already exists       |
+| `rate_limit_exceeded`  | 429         | Too many requests             |
+| `server_error`         | 500         | Internal server error         |
+| `database_error`       | 500         | Database operation failed     |
+| `timeout_error`        | varies      | Operation timed out           |
+| `unknown_error`        | varies      | Unclassified error            |
 
 ### Validation Errors
 
@@ -530,13 +530,14 @@ All API endpoints are implemented as Netlify Functions in `/netlify/functions/`:
 
 ### Exercise Library (Unified)
 
-| Method | Endpoint                       | Auth | Description                        |
-| ------ | ------------------------------ | ---- | ---------------------------------- |
-| GET    | `/api/exercises`               | Yes  | All exercises (unified library)    |
-| GET    | `/api/exercises?category={cat}`| Yes  | Filter by category                 |
-| GET    | `/api/exercises?search={term}` | Yes  | Search exercises                   |
+| Method | Endpoint                        | Auth | Description                     |
+| ------ | ------------------------------- | ---- | ------------------------------- |
+| GET    | `/api/exercises`                | Yes  | All exercises (unified library) |
+| GET    | `/api/exercises?category={cat}` | Yes  | Filter by category              |
+| GET    | `/api/exercises?search={term}`  | Yes  | Search exercises                |
 
 The unified exercise endpoint combines data from:
+
 - `exercises` table (main exercise library)
 - `plyometrics_exercises` table (90 plyometric exercises)
 - `isometrics_exercises` table (23 isometric exercises)
@@ -546,10 +547,12 @@ The unified exercise endpoint combines data from:
 ## Recent Changes (v2.2 - January 2026)
 
 ### API Endpoint Updates
+
 - **Wellness check-in**: Changed from `/api/wellness/checkin` to `/api/wellness-checkin`
 - **Coach games**: Now uses `/api/games` instead of `/api/coach/games`
 
 ### New Tables Added
+
 - `coach_inbox_items` - Coach alerts and notifications
 - `ai_followups` - AI scheduled follow-ups
 - `user_ai_preferences` - AI interaction preferences
@@ -559,6 +562,7 @@ The unified exercise endpoint combines data from:
 - `team_templates` - Reusable training templates
 
 ### Schema Updates
+
 - Added `target_muscles`, `equipment_required` to `exercises`
 - Added `is_outdoor`, `scheduled_date`, `intensity` to `training_sessions`
 - Added `message` column to `team_invitations`

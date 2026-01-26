@@ -165,7 +165,8 @@ function normalizeTrainingLogPayload(sessionData = {}) {
     sessionData.duration_minutes ||
     sessionData.durationMinutes ||
     sessionData.duration;
-  const rpeRaw = sessionData.rpe ?? sessionData.sessionRpe ?? sessionData.actualRpe;
+  const rpeRaw =
+    sessionData.rpe ?? sessionData.sessionRpe ?? sessionData.actualRpe;
   const notes = sessionData.notes ?? sessionData.sessionNotes ?? null;
   const status = sessionData.status || "completed";
 
@@ -176,8 +177,7 @@ function normalizeTrainingLogPayload(sessionData = {}) {
     durationRaw !== undefined && durationRaw !== null
       ? Number(durationRaw)
       : null;
-  const rpe =
-    rpeRaw !== undefined && rpeRaw !== null ? Number(rpeRaw) : null;
+  const rpe = rpeRaw !== undefined && rpeRaw !== null ? Number(rpeRaw) : null;
 
   return {
     sessionDate,
@@ -201,7 +201,12 @@ function isTrainingLogPayload(sessionData = {}) {
 function validateTrainingLogPayload(payload) {
   const schema = {
     sessionDate: { type: "date", required: true },
-    sessionType: { type: "string", required: true, minLength: 1, maxLength: 120 },
+    sessionType: {
+      type: "string",
+      required: true,
+      minLength: 1,
+      maxLength: 120,
+    },
     durationMinutes: {
       type: "number",
       required: true,
@@ -240,7 +245,10 @@ function validateTrainingBuilderPayload(sessionData = {}) {
     errors.push(...baseValidation.errors);
   }
 
-  if (!Array.isArray(sessionData.exercises) || sessionData.exercises.length === 0) {
+  if (
+    !Array.isArray(sessionData.exercises) ||
+    sessionData.exercises.length === 0
+  ) {
     errors.push("exercises must be a non-empty array");
   } else if (sessionData.exercises.length > 50) {
     errors.push("exercises must have at most 50 items");
@@ -255,9 +263,13 @@ function validateTrainingBuilderPayload(sessionData = {}) {
         return;
       }
       const durationValue =
-        exercise.duration ?? exercise.duration_minutes ?? exercise.durationMinutes;
+        exercise.duration ??
+        exercise.duration_minutes ??
+        exercise.durationMinutes;
       const durationNumber =
-        typeof durationValue === "string" ? Number(durationValue) : durationValue;
+        typeof durationValue === "string"
+          ? Number(durationValue)
+          : durationValue;
       if (
         durationValue !== undefined &&
         (typeof durationNumber !== "number" ||
@@ -269,7 +281,11 @@ function validateTrainingBuilderPayload(sessionData = {}) {
       }
       const nameValue =
         exercise.name ?? exercise.title ?? exercise.exercise_name ?? null;
-      if (nameValue && typeof nameValue === "string" && nameValue.length > 200) {
+      if (
+        nameValue &&
+        typeof nameValue === "string" &&
+        nameValue.length > 200
+      ) {
         errors.push(`exercises[${index}].name must be at most 200 characters`);
       }
     });
@@ -332,7 +348,7 @@ async function createTrainingLogSession(
     if (!validation.valid) {
       throw buildValidationError(validation.errors);
     }
-    const cleaned = validation.cleaned;
+    const { cleaned } = validation;
 
     const sessionRecord = {
       user_id: userId,
@@ -372,16 +388,14 @@ async function createTrainingLogSession(
       const completedAt = payload.sessionDate
         ? new Date(payload.sessionDate).toISOString()
         : new Date().toISOString();
-      const { error: logError } = await supabase
-        .from("workout_logs")
-        .insert({
-          player_id: userId,
-          session_id: session.id,
-          completed_at: completedAt,
-          rpe: payload.rpe ?? null,
-          duration_minutes: payload.durationMinutes,
-          notes: payload.notes ?? null,
-        });
+      const { error: logError } = await supabase.from("workout_logs").insert({
+        player_id: userId,
+        session_id: session.id,
+        completed_at: completedAt,
+        rpe: payload.rpe ?? null,
+        duration_minutes: payload.durationMinutes,
+        notes: payload.notes ?? null,
+      });
       if (!logError) {
         workoutLogSynced = true;
       }
@@ -406,7 +420,9 @@ async function createTrainingLogSession(
 
 function extractSessionIdFromPath(path = "") {
   const parts = path.split("/").filter(Boolean);
-  if (parts.length === 0) return null;
+  if (parts.length === 0) {
+    return null;
+  }
   const last = parts[parts.length - 1];
   return last && last !== "training-sessions" ? last : null;
 }
@@ -513,9 +529,11 @@ async function updateTrainingSession(
   }
 
   // Prepare state transition metadata if state is being changed
-  const { prepareStateTransition } = require("./utils/session-state-helper.cjs");
+  const {
+    prepareStateTransition,
+  } = require("./utils/session-state-helper.cjs");
   const { getUserRole } = require("./utils/authorization-guard.cjs");
-  
+
   let updatePayload = {
     ...updates,
     updated_at: new Date().toISOString(),
@@ -524,8 +542,9 @@ async function updateTrainingSession(
   // If session_state is being updated, add transition metadata
   if (updates.session_state) {
     const role = await getUserRole(userId);
-    const actorRole = role === "coach" ? "coach" : role === "admin" ? "admin" : "athlete";
-    
+    const actorRole =
+      role === "coach" ? "coach" : role === "admin" ? "admin" : "athlete";
+
     const stateTransition = prepareStateTransition({
       newState: updates.session_state,
       actorRole,
@@ -533,7 +552,7 @@ async function updateTrainingSession(
       reason: updates.transition_reason || "Session state updated",
       metadata: updates.metadata || {},
     });
-    
+
     updatePayload = {
       ...updatePayload,
       session_state: stateTransition.session_state,

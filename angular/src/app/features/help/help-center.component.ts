@@ -2,7 +2,12 @@ import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { Card } from "primeng/card";
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import {
+  Accordion,
+  AccordionPanel,
+  AccordionHeader,
+  AccordionContent,
+} from "primeng/accordion";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { ButtonComponent } from "../../shared/components/button/button.component";
@@ -22,7 +27,10 @@ interface HelpTopic {
     CommonModule,
     RouterLink,
     Card,
-    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Accordion,
+    AccordionPanel,
+    AccordionHeader,
+    AccordionContent,
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,

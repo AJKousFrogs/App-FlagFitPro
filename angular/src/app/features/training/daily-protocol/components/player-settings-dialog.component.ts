@@ -177,9 +177,7 @@ interface DayOption {
             This does not schedule team practice. Coaches schedule team
             activities.
           </p>
-          <p
-            class="section-description section-description--note"
-          >
+          <p class="section-description section-description--note">
             Add your typical training times for reference. This information
             helps coaches understand your availability but does not create team
             practices.

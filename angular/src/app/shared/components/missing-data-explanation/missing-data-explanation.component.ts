@@ -91,9 +91,7 @@ import { LoggerService } from "../../../core/services/logger.service";
 
           <!-- Action buttons -->
           <div class="action-section">
-            <app-button
-              iconLeft="pi-heart"
-              [routerLink]="['/wellness']"
+            <app-button iconLeft="pi-heart" [routerLink]="['/wellness']"
               >Complete Wellness Check-in</app-button
             >
             @if (showCoachLink()) {

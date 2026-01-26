@@ -331,7 +331,7 @@ export function wordCount(str: string): number {
 /**
  * Normalize player/user name from various formats
  * Handles full_name, first_name + last_name, email fallback
- * 
+ *
  * @example
  * normalizePlayerName({ full_name: 'John Doe' }) // 'John Doe'
  * normalizePlayerName({ first_name: 'John', last_name: 'Doe' }) // 'John Doe'
@@ -362,7 +362,7 @@ export function normalizePlayerName(
   const firstName = data.first_name || data.firstName || "";
   const lastName = data.last_name || data.lastName || "";
   const combined = [firstName, lastName].filter(Boolean).join(" ").trim();
-  
+
   if (combined) {
     return combined;
   }

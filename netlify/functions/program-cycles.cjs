@@ -38,7 +38,10 @@ exports.handler = async (event) => {
       try {
         payload = JSON.parse(event.body || "{}");
       } catch (_parseError) {
-        return { ...handleValidationError("Invalid JSON in request body"), headers };
+        return {
+          ...handleValidationError("Invalid JSON in request body"),
+          headers,
+        };
       }
       return await updateCycleStatus(supabase, user.id, payload, headers);
     }

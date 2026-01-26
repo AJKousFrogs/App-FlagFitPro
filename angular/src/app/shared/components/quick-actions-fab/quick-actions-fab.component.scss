@@ -100,9 +100,7 @@
   color: var(--text-color);
   white-space: nowrap;
   text-align: center;
-  box-shadow:
-    var(--shadow-sm),
-    var(--shadow-md);
+  box-shadow: var(--shadow-sm), var(--shadow-md);
   transition:
     background-color var(--motion-fast) var(--ease-standard),
     box-shadow var(--motion-fast) var(--ease-standard),
@@ -264,9 +262,7 @@
 .dark-theme .action-label {
   background: var(--surface-800);
   color: var(--text-color);
-  box-shadow:
-    var(--shadow-md),
-    var(--shadow-lg);
+  box-shadow: var(--shadow-md), var(--shadow-lg);
 }
 
 [data-theme="dark"] .action-item:hover .action-label,

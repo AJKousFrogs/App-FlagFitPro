@@ -1,24 +1,34 @@
 /**
  * Reusable RxJS Operators
- * 
+ *
  * Common RxJS pipe patterns extracted for reuse across the application.
  * Reduces duplication of map/catchError/finalize patterns.
- * 
+ *
  * IMPORTANT: All operators that handle errors should:
  * 1. Reset error state before the operation starts
  * 2. Clear error state on success
  * 3. Set error state on failure
- * 
+ *
  * @see BaseViewModel for consistent patterns
  */
 
 import { Observable, throwError, timer } from "rxjs";
-import { catchError, finalize, map, tap, retry, retryWhen, delayWhen, take, scan } from "rxjs/operators";
+import {
+  catchError,
+  finalize,
+  map,
+  tap,
+  retry,
+  retryWhen,
+  delayWhen,
+  take,
+  scan,
+} from "rxjs/operators";
 import { getErrorMessage } from "./error.utils";
 
 /**
  * Handle errors with logging and optional fallback value
- * 
+ *
  * @example
  * source$.pipe(
  *   withErrorHandling('Operation failed', logger, fallbackValue)
@@ -45,7 +55,7 @@ export function withErrorHandling<T>(
 
 /**
  * Handle loading state with signals
- * 
+ *
  * @example
  * source$.pipe(
  *   withLoadingState(isLoading, setError)
@@ -89,7 +99,7 @@ export function withLoadingState<T>(
 /**
  * Map response data with success check
  * Common pattern: response.success ? response.data : throw error
- * 
+ *
  * @example
  * source$.pipe(
  *   mapResponseData<MyData>('Failed to load data')
@@ -98,10 +108,7 @@ export function withLoadingState<T>(
 export function mapResponseData<T>(
   errorMessage: string = "Failed to load data",
 ) {
-  return map<
-    { success: boolean; data?: T; error?: string },
-    T
-  >((response) => {
+  return map<{ success: boolean; data?: T; error?: string }, T>((response) => {
     if (response.success && response.data !== undefined) {
       return response.data;
     }
@@ -111,25 +118,24 @@ export function mapResponseData<T>(
 
 /**
  * Extract data from API response (handles both array and object responses)
- * 
+ *
  * @example
  * source$.pipe(
  *   extractApiData<MyData[]>()
  * )
  */
 export function extractApiData<T>() {
-  return map<
-    { success: boolean; data?: T | T[]; error?: string },
-    T | T[]
-  >((response) => {
-    if (!response.success) {
-      throw new Error(response.error || "API request failed");
-    }
-    if (response.data === undefined) {
-      throw new Error("No data in response");
-    }
-    return response.data;
-  });
+  return map<{ success: boolean; data?: T | T[]; error?: string }, T | T[]>(
+    (response) => {
+      if (!response.success) {
+        throw new Error(response.error || "API request failed");
+      }
+      if (response.data === undefined) {
+        throw new Error("No data in response");
+      }
+      return response.data;
+    },
+  );
 }
 
 /**
@@ -156,13 +162,13 @@ export function logValues<T>(
 /**
  * Complete pipe with error handling and loading state
  * Combines common patterns: map, catchError, finalize
- * 
+ *
  * CRITICAL: This operator:
  * - Resets error state before operation starts
  * - Clears error state on success
  * - Sets error state on failure
  * - Always resets loading state when complete
- * 
+ *
  * @example
  * source$.pipe(
  *   completePipe({
@@ -222,7 +228,9 @@ export function completePipe<T, R>(options: {
               logger.error(errorMessage, error);
             }
             if (setError) {
-              setError.set(getErrorMessage(error, errorMessage || "An error occurred"));
+              setError.set(
+                getErrorMessage(error, errorMessage || "An error occurred"),
+              );
             }
             if (fallbackValue !== undefined) {
               subscriber.next(fallbackValue);
@@ -258,7 +266,7 @@ export function completePipe<T, R>(options: {
 /**
  * Retry operator with exponential backoff for Observable streams
  * Use this for service-level retry logic (HTTP interceptor handles most cases)
- * 
+ *
  * @example
  * source$.pipe(
  *   withRetry({
@@ -269,13 +277,15 @@ export function completePipe<T, R>(options: {
  *   })
  * )
  */
-export function withRetry<T>(options: {
-  maxRetries?: number;
-  delayMs?: number;
-  backoffMultiplier?: number;
-  shouldRetry?: (error: unknown) => boolean;
-  onRetry?: (error: unknown, attempt: number) => void;
-} = {}) {
+export function withRetry<T>(
+  options: {
+    maxRetries?: number;
+    delayMs?: number;
+    backoffMultiplier?: number;
+    shouldRetry?: (error: unknown) => boolean;
+    onRetry?: (error: unknown, attempt: number) => void;
+  } = {},
+) {
   const {
     maxRetries = 3,
     delayMs = 1000,
@@ -310,7 +320,7 @@ export function withRetry<T>(options: {
 /**
  * Simple retry operator for service methods
  * Retries up to maxRetries times with fixed delay
- * 
+ *
  * @example
  * this.http.get('/api/data').pipe(
  *   simpleRetry(3, 1000)

@@ -72,7 +72,8 @@
       stroke: var(--color-brand-primary);
       stroke-width: 8;
       stroke-linecap: round;
-      transition: stroke-dashoffset var(--transition-slower) var(--ease-standard);
+      transition: stroke-dashoffset var(--transition-slower)
+        var(--ease-standard);
     }
 
     .ring-content {
@@ -208,7 +209,10 @@
 
   .cycles-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-md), 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--grid-card-min-md), 1fr)
+    );
     gap: var(--space-4);
   }
 

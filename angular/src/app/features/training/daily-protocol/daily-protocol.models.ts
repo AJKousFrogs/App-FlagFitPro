@@ -160,12 +160,12 @@ export interface DailyProtocol {
   morningMobility: ProtocolBlock;
   foamRoll: ProtocolBlock;
   warmUp?: ProtocolBlock;
-  isometrics?: ProtocolBlock;      // NEW: 15 min isometric training
-  plyometrics?: ProtocolBlock;     // NEW: 15 min plyometric training
-  strength?: ProtocolBlock;        // NEW: 15 min strength (incl. Nordic curls)
-  conditioning?: ProtocolBlock;    // NEW: 15 min ACWR-adjusted conditioning
-  skillDrills?: ProtocolBlock;     // NEW: 15 min skill/twitching drills
-  mainSession: ProtocolBlock;      // Legacy - kept for backwards compatibility
+  isometrics?: ProtocolBlock; // NEW: 15 min isometric training
+  plyometrics?: ProtocolBlock; // NEW: 15 min plyometric training
+  strength?: ProtocolBlock; // NEW: 15 min strength (incl. Nordic curls)
+  conditioning?: ProtocolBlock; // NEW: 15 min ACWR-adjusted conditioning
+  skillDrills?: ProtocolBlock; // NEW: 15 min skill/twitching drills
+  mainSession: ProtocolBlock; // Legacy - kept for backwards compatibility
   coolDown?: ProtocolBlock;
   eveningRecovery: ProtocolBlock;
 

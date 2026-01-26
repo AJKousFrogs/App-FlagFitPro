@@ -58,7 +58,7 @@ export class SupplementTrackingService {
    * Get supplements with optional timeframe filter
    */
   getSupplements(
-    timeframe: string = "30d"
+    timeframe: string = "30d",
   ): Observable<{ data: Supplement[]; error: string | null }> {
     this._isLoading.set(true);
     this._error.set(null);
@@ -78,7 +78,7 @@ export class SupplementTrackingService {
         .select("*")
         .eq("user_id", userId)
         .gte("date", startDate.toISOString().split("T")[0])
-        .order("date", { ascending: false })
+        .order("date", { ascending: false }),
     ).pipe(
       map((response) => {
         this._isLoading.set(false);
@@ -87,7 +87,7 @@ export class SupplementTrackingService {
           return { data: [], error: response.error.message };
         }
         const supplements = (response.data || []).map((s) =>
-          this.transformSupplement(s)
+          this.transformSupplement(s),
         );
         this._supplements.set(supplements);
         return { data: supplements, error: null };
@@ -97,7 +97,7 @@ export class SupplementTrackingService {
         this._error.set(err.message);
         this.logger.error("Failed to fetch supplements", err);
         return of({ data: [], error: err.message });
-      })
+      }),
     );
   }
 
@@ -105,7 +105,7 @@ export class SupplementTrackingService {
    * Log a supplement intake
    */
   logSupplement(
-    supplement: Partial<Supplement>
+    supplement: Partial<Supplement>,
   ): Observable<{ success: boolean; error?: string }> {
     const validation = this.validateSupplementData(supplement);
     if (!validation.valid) {
@@ -129,7 +129,7 @@ export class SupplementTrackingService {
     };
 
     return from(
-      this.supabase.client.from("supplements").insert(record).select()
+      this.supabase.client.from("supplements").insert(record).select(),
     ).pipe(
       map((response) => {
         if (response.error) {
@@ -145,7 +145,7 @@ export class SupplementTrackingService {
       catchError((err) => {
         this.logger.error("Failed to log supplement", err);
         return of({ success: false, error: err.message });
-      })
+      }),
     );
   }
 
@@ -154,14 +154,14 @@ export class SupplementTrackingService {
    */
   toggleSupplement(
     supplementId: number,
-    taken: boolean
+    taken: boolean,
   ): Observable<{ success: boolean; error?: string }> {
     return from(
       this.supabase.client
         .from("supplements")
         .update({ taken })
         .eq("id", supplementId)
-        .select()
+        .select(),
     ).pipe(
       map((response) => {
         if (response.error) {
@@ -169,14 +169,14 @@ export class SupplementTrackingService {
         }
         // Update local state
         this._supplements.update((prev) =>
-          prev.map((s) => (s.id === supplementId ? { ...s, taken } : s))
+          prev.map((s) => (s.id === supplementId ? { ...s, taken } : s)),
         );
         return { success: true };
       }),
       catchError((err) => {
         this.logger.error("Failed to toggle supplement", err);
         return of({ success: false, error: err.message });
-      })
+      }),
     );
   }
 
@@ -222,7 +222,10 @@ export class SupplementTrackingService {
       return { valid: false, error: "Supplement name is required" };
     }
     if (supplement.name.length > 100) {
-      return { valid: false, error: "Supplement name too long (max 100 chars)" };
+      return {
+        valid: false,
+        error: "Supplement name too long (max 100 chars)",
+      };
     }
     return { valid: true };
   }

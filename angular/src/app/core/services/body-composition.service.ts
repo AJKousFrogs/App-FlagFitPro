@@ -110,7 +110,7 @@ export class BodyCompositionService {
         .select("*")
         .eq("user_id", userId)
         .order("timestamp", { ascending: false })
-        .limit(limit)
+        .limit(limit),
     ).pipe(
       map((response) => {
         this._isLoading.set(false);
@@ -119,7 +119,7 @@ export class BodyCompositionService {
           return { data: [], error: response.error.message };
         }
         const measurements = (response.data || []).map((m) =>
-          this.transformMeasurement(m)
+          this.transformMeasurement(m),
         );
         this._measurements.set(measurements);
         return { data: measurements, error: null };
@@ -129,7 +129,7 @@ export class BodyCompositionService {
         this._error.set(err.message);
         this.logger.error("Failed to fetch measurements", err);
         return of({ data: [], error: err.message });
-      })
+      }),
     );
   }
 
@@ -137,7 +137,7 @@ export class BodyCompositionService {
    * Log a new measurement
    */
   logMeasurement(
-    measurement: Partial<PhysicalMeasurement>
+    measurement: Partial<PhysicalMeasurement>,
   ): Observable<{ success: boolean; error?: string }> {
     const userId = this.auth.currentUser()?.id;
     if (!userId) {
@@ -168,7 +168,10 @@ export class BodyCompositionService {
     };
 
     return from(
-      this.supabase.client.from("physical_measurements").insert(record).select()
+      this.supabase.client
+        .from("physical_measurements")
+        .insert(record)
+        .select(),
     ).pipe(
       map((response) => {
         if (response.error) {
@@ -184,7 +187,7 @@ export class BodyCompositionService {
       catchError((err) => {
         this.logger.error("Failed to log measurement", err);
         return of({ success: false, error: err.message });
-      })
+      }),
     );
   }
 
@@ -239,7 +242,9 @@ export class BodyCompositionService {
   /**
    * Transform database record to interface
    */
-  private transformMeasurement(data: Record<string, unknown>): PhysicalMeasurement {
+  private transformMeasurement(
+    data: Record<string, unknown>,
+  ): PhysicalMeasurement {
     return {
       id: data["id"] as string,
       userId: data["user_id"] as string,
@@ -255,7 +260,9 @@ export class BodyCompositionService {
       musclePercentage: data["muscle_percentage"] as number | undefined,
       bodyWaterPercentage: data["body_water_percentage"] as number | undefined,
       proteinPercentage: data["protein_percentage"] as number | undefined,
-      boneMineralPercentage: data["bone_mineral_percentage"] as number | undefined,
+      boneMineralPercentage: data["bone_mineral_percentage"] as
+        | number
+        | undefined,
       visceralFatRating: data["visceral_fat_rating"] as number | undefined,
       basalMetabolicRate: data["basal_metabolic_rate"] as number | undefined,
       waistToHipRatio: data["waist_to_hip_ratio"] as number | undefined,

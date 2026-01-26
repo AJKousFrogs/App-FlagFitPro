@@ -11,8 +11,17 @@
  * - Reconnection logic
  */
 
-import { Injectable, inject, signal, OnDestroy, DestroyRef } from "@angular/core";
-import { RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import {
+  Injectable,
+  inject,
+  signal,
+  OnDestroy,
+  DestroyRef,
+} from "@angular/core";
+import {
+  RealtimeChannel,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 import { AuthService } from "./auth.service";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
@@ -62,7 +71,10 @@ export class NotificationRealtimeService implements OnDestroy {
 
   // Event callbacks
   private onInsertCallback?: (payload: RealtimeNotificationPayload) => void;
-  private onUpdateCallback?: (payload: RealtimeNotificationPayload, old?: RealtimeNotificationPayload) => void;
+  private onUpdateCallback?: (
+    payload: RealtimeNotificationPayload,
+    old?: RealtimeNotificationPayload,
+  ) => void;
   private onDeleteCallback?: (payload: RealtimeNotificationPayload) => void;
 
   constructor() {
@@ -80,7 +92,10 @@ export class NotificationRealtimeService implements OnDestroy {
    */
   subscribe(options: {
     onInsert?: (payload: RealtimeNotificationPayload) => void;
-    onUpdate?: (payload: RealtimeNotificationPayload, old?: RealtimeNotificationPayload) => void;
+    onUpdate?: (
+      payload: RealtimeNotificationPayload,
+      old?: RealtimeNotificationPayload,
+    ) => void;
     onDelete?: (payload: RealtimeNotificationPayload) => void;
   }): void {
     const userId = this.auth.currentUser()?.id;
@@ -108,9 +123,11 @@ export class NotificationRealtimeService implements OnDestroy {
           table: "notifications",
           filter: `user_id=eq.${userId}`,
         },
-        (payload: RealtimePostgresChangesPayload<RealtimeNotificationPayload>) => {
+        (
+          payload: RealtimePostgresChangesPayload<RealtimeNotificationPayload>,
+        ) => {
           this.handleRealtimeEvent(payload);
-        }
+        },
       )
       .subscribe((status) => {
         if (status === "SUBSCRIBED") {
@@ -157,7 +174,11 @@ export class NotificationRealtimeService implements OnDestroy {
     // Small delay before reconnecting
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (this.onInsertCallback || this.onUpdateCallback || this.onDeleteCallback) {
+    if (
+      this.onInsertCallback ||
+      this.onUpdateCallback ||
+      this.onDeleteCallback
+    ) {
       this.subscribe({
         onInsert: this.onInsertCallback,
         onUpdate: this.onUpdateCallback,
@@ -170,7 +191,7 @@ export class NotificationRealtimeService implements OnDestroy {
    * Handle real-time events
    */
   private handleRealtimeEvent(
-    payload: RealtimePostgresChangesPayload<RealtimeNotificationPayload>
+    payload: RealtimePostgresChangesPayload<RealtimeNotificationPayload>,
   ): void {
     const eventType = payload.eventType as NotificationChangeType;
 
@@ -185,7 +206,7 @@ export class NotificationRealtimeService implements OnDestroy {
         if (payload.new && this.onUpdateCallback) {
           this.onUpdateCallback(
             payload.new as RealtimeNotificationPayload,
-            payload.old as RealtimeNotificationPayload | undefined
+            payload.old as RealtimeNotificationPayload | undefined,
           );
         }
         break;
@@ -211,7 +232,9 @@ export class NotificationRealtimeService implements OnDestroy {
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
     this.reconnectAttempts++;
 
-    this.logger.info(`Scheduling notification reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
+    this.logger.info(
+      `Scheduling notification reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`,
+    );
 
     this.reconnectTimeout = setTimeout(() => {
       this.reconnect();

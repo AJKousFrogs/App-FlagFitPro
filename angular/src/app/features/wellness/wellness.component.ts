@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    ElementRef,
-    inject,
-    signal,
-    viewChild
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -29,14 +29,14 @@ import { LazyChartComponent } from "../../shared/components/lazy-chart/lazy-char
 import { PageErrorStateComponent } from "../../shared/components/page-error-state/page-error-state.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import {
-    StatItem,
-    StatsGridComponent
+  StatItem,
+  StatsGridComponent,
 } from "../../shared/components/stats-grid/stats-grid.component";
 import { SupplementTrackerComponent } from "../../shared/components/supplement-tracker/supplement-tracker.component";
 import {
-    AppLoadingComponent,
-    ButtonComponent,
-    CardComponent
+  AppLoadingComponent,
+  ButtonComponent,
+  CardComponent,
 } from "../../shared/components/ui-components";
 import { DEFAULT_CHART_OPTIONS } from "../../shared/config/chart.config";
 import { DATA_STATE_MESSAGES } from "../../shared/utils/privacy-ux-copy";
@@ -78,7 +78,7 @@ interface WellnessMetric {
     BodyCompositionCardComponent,
     SupplementTrackerComponent,
     HydrationTrackerComponent,
-    ConfidenceIndicatorComponent
+    ConfidenceIndicatorComponent,
   ],
   template: `
     <app-main-layout>
@@ -374,7 +374,9 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="1=None, 10=Severe"
-                      [attr.aria-label]="'Muscle soreness from 1 to 10, where 1 is no soreness and 10 is very sore'"
+                      [attr.aria-label]="
+                        'Muscle soreness from 1 to 10, where 1 is no soreness and 10 is very sore'
+                      "
                     ></p-inputNumber>
                     <small class="help-text"
                       >1 = No soreness, 10 = Very sore</small
@@ -406,7 +408,9 @@ interface WellnessMetric {
                       [max]="120"
                       [showButtons]="true"
                       placeholder="Optional"
-                      [attr.aria-label]="'Resting heart rate in beats per minute'"
+                      [attr.aria-label]="
+                        'Resting heart rate in beats per minute'
+                      "
                     ></p-inputNumber>
                     <small class="help-text"
                       >Elevated HR may indicate fatigue</small
@@ -442,7 +446,9 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="1=Relaxed, 10=Very stressed"
-                      [attr.aria-label]="'Stress level from 1 to 10, where 1 is very relaxed and 10 is very stressed'"
+                      [attr.aria-label]="
+                        'Stress level from 1 to 10, where 1 is very relaxed and 10 is very stressed'
+                      "
                     ></p-inputNumber>
                     <small class="help-text"
                       >1 = Very relaxed, 10 = Very stressed</small
@@ -459,7 +465,9 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Motivation"
-                      [attr.aria-label]="'Training motivation level from 1 to 10'"
+                      [attr.aria-label]="
+                        'Training motivation level from 1 to 10'
+                      "
                     ></p-inputNumber>
                   </div>
                   <div class="checkin-item">
@@ -471,7 +479,9 @@ interface WellnessMetric {
                       [max]="10"
                       [showButtons]="true"
                       placeholder="Readiness"
-                      [attr.aria-label]="'Readiness to train level from 1 to 10'"
+                      [attr.aria-label]="
+                        'Readiness to train level from 1 to 10'
+                      "
                     ></p-inputNumber>
                   </div>
                 </div>
@@ -797,22 +807,28 @@ export class WellnessComponent {
   openCheckIn(): void {
     // Scroll to check-in form using Angular viewChild reference
     const cardRef = this.checkinCard();
-    cardRef?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    cardRef?.nativeElement.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }
 
   submitCheckIn(): void {
     // Validate required inputs - ensure athlete has entered their actual data
-    if (this.checkInData.sleepHours === null || this.checkInData.sleepHours <= 0) {
+    if (
+      this.checkInData.sleepHours === null ||
+      this.checkInData.sleepHours <= 0
+    ) {
       this.toastService.warn(TOAST.WARN.ENTER_SLEEP_HOURS);
       return;
     }
-    
+
     // Validate that at least sleep quality and energy are provided for meaningful data
     if (this.checkInData.sleepQuality === null) {
       this.toastService.warn("Please enter your sleep quality rating");
       return;
     }
-    
+
     if (this.checkInData.energyLevel === null) {
       this.toastService.warn("Please enter your energy level");
       return;
@@ -833,9 +849,10 @@ export class WellnessComponent {
       motivation: this.checkInData.motivation, // 1-10 rating
       date: new Date().toISOString().split("T")[0],
       // Note: restingHR and readiness are stored via notes field (not yet in database schema)
-      notes: this.checkInData.restingHR || this.checkInData.readiness
-        ? `${this.checkInData.restingHR ? `RHR: ${this.checkInData.restingHR}bpm` : ""}${this.checkInData.restingHR && this.checkInData.readiness ? ", " : ""}${this.checkInData.readiness ? `Readiness: ${this.checkInData.readiness}/10` : ""}`
-        : undefined,
+      notes:
+        this.checkInData.restingHR || this.checkInData.readiness
+          ? `${this.checkInData.restingHR ? `RHR: ${this.checkInData.restingHR}bpm` : ""}${this.checkInData.restingHR && this.checkInData.readiness ? ", " : ""}${this.checkInData.readiness ? `Readiness: ${this.checkInData.readiness}/10` : ""}`
+          : undefined,
     };
 
     this.trainingService

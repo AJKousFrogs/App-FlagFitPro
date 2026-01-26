@@ -3,11 +3,14 @@
 **Date**: 2025-01-30  
 **Status**: ✅ All Phases Complete (Phase 1, 2 & 3)
 
+**Note (2026-01-16)**: Legacy JS error handler files referenced below were removed during Angular cleanup. References to `src/js/utils/*` are historical.
+
 ## Changes Made
 
 ### 1. Removed Duplicate Global Error Listeners
 
 #### `src/error-handler.js`
+
 - ✅ Removed global error listener registration from `init()` method
 - ✅ Marked class as deprecated with migration notes
 - ✅ Kept utility methods (showSuccess, showError, etc.) for backward compatibility
@@ -16,6 +19,7 @@
 **Impact**: Prevents duplicate error notifications and Sentry reports
 
 #### `src/js/utils/error-handling.js`
+
 - ✅ Removed global listener registration from `setupGlobalErrorHandlers()`
 - ✅ Marked function as deprecated
 - ✅ Kept utility functions (handleError, safeAsync, etc.) for use by other code
@@ -23,6 +27,7 @@
 **Impact**: Prevents duplicate error handling
 
 #### `src/js/main.js`
+
 - ✅ Removed duplicate global error listeners from `setupErrorHandling()`
 - ✅ Updated to delegate to UnifiedErrorHandler
 - ✅ Kept `handleError()` method for internal use (analytics tracking)
@@ -92,6 +97,7 @@
 ### 1. Unified Error Constants (`src/js/constants/error-constants.js`)
 
 Created a centralized error constants module with:
+
 - Standardized `ErrorType` enum (matches backend format with `_error` suffix)
 - `ErrorSeverity` levels
 - `StatusCodeToErrorType` mapping
@@ -110,16 +116,13 @@ Created a centralized error constants module with:
 
 ### 3. Console.log Migration Script
 
-Created `scripts/migrate-console-to-logger.js`:
-- Scans files for console.log usage
-- Maps to appropriate logger methods
-- Adds logger imports automatically
-- Supports dry-run mode
-- Excludes scripts/tests appropriately
+Legacy migration tooling was removed alongside the legacy frontend cleanup. Use
+`eslint.config.js` rules and Angular linting for current console enforcement.
 
 ### 4. Error Correlation IDs
 
 All errors now include:
+
 - Unique `errorId` in format `ERR-{timestamp}-{random}`
 - Correlation ID in logs for tracking
 - In-memory error log accessible via `errorHandler.getRecentErrors()`
@@ -127,17 +130,20 @@ All errors now include:
 ## Phase 3 Changes (Completed)
 
 ### 1. Verified Console.log Migration
+
 - Ran migration script on `src/` directory
 - All source files are clean - no console.log violations
 - Only `logger.js` uses console (intentionally - it's the abstraction layer)
 - ESLint rules properly enforce no-console in source files
 
 ### 2. Backend/Frontend Error Type Consistency
+
 - Verified backend and frontend use matching error type values
 - Both use `_error` suffix format (e.g., `validation_error`)
 - Frontend has additional `CLIENT` type for generic 4xx errors
 
 ### 3. Fixed Linter Errors
+
 - Resolved duplicate `isRetryableError` export in error-handling.js
 - Fixed unused import warnings
 - All modified files pass ESLint with 0 errors
@@ -158,12 +164,14 @@ All error handling infrastructure has been consolidated and standardized:
 ### If you were using ErrorHandler.init()
 
 **Before:**
+
 ```javascript
 import { ErrorHandler } from "./error-handler.js";
 ErrorHandler.init(); // No longer needed
 ```
 
 **After:**
+
 ```javascript
 // UnifiedErrorHandler auto-initializes on import
 // No manual initialization needed
@@ -172,12 +180,14 @@ ErrorHandler.init(); // No longer needed
 ### If you were using setupGlobalErrorHandlers()
 
 **Before:**
+
 ```javascript
 import { setupGlobalErrorHandlers } from "./utils/error-handling.js";
 setupGlobalErrorHandlers(); // No longer needed
 ```
 
 **After:**
+
 ```javascript
 // UnifiedErrorHandler auto-initializes on import
 // No manual setup needed
@@ -186,6 +196,7 @@ setupGlobalErrorHandlers(); // No longer needed
 ### If you're using ErrorHandler utility methods
 
 **No changes needed** - these still work:
+
 ```javascript
 import { ErrorHandler } from "./error-handler.js";
 ErrorHandler.showSuccess("Success!");

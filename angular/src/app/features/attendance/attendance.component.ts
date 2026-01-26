@@ -6,7 +6,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -28,7 +28,7 @@ import {
   AttendanceRecord,
   AttendanceService,
   PlayerAttendanceStats,
-  TeamEvent
+  TeamEvent,
 } from "../../core/services/attendance.service";
 import { AuthService } from "../../core/services/auth.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -72,7 +72,7 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
     PageHeaderComponent,
     DatePipe,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>
@@ -109,9 +109,9 @@ type AttendanceStatus = "present" | "absent" | "late" | "excused";
               <div class="stat-content">
                 <i class="pi pi-check-circle stat-icon success"></i>
                 <div class="stat-info stat-block__content">
-                  <span class="stat-block__value">{{
-                    teamAttendanceRate()
-                  }}%</span>
+                  <span class="stat-block__value"
+                    >{{ teamAttendanceRate() }}%</span
+                  >
                   <span class="stat-block__label">Team Attendance Rate</span>
                 </div>
               </div>

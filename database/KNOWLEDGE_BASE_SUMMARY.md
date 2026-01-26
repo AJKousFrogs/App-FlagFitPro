@@ -9,6 +9,7 @@ Two comprehensive sports medicine guides have been converted to structured knowl
 ## 📚 Source Documents Processed
 
 ### 1. Practitioner's Guide to Shoulders
+
 - **Authors**: Jo Clubb, Ben Ashworth
 - **Publisher**: VALD Performance
 - **Pages**: 66
@@ -16,6 +17,7 @@ Two comprehensive sports medicine guides have been converted to structured knowl
 - **Focus**: Shoulder health, overhead athletes
 
 ### 2. Practitioner's Guide to the Calf and Achilles Complex
+
 - **Authors**: Sue Mayes, VALD Contributors
 - **Publisher**: VALD Performance
 - **Pages**: 37
@@ -27,12 +29,14 @@ Two comprehensive sports medicine guides have been converted to structured knowl
 ## 📊 Total Knowledge Base Content
 
 ### Research Articles: 2
+
 1. Practitioner's Guide to Shoulders
 2. Practitioner's Guide to the Calf and Achilles Complex
 
 ### Knowledge Base Entries: 10
 
 #### Shoulder Topics (5 entries)
+
 1. `shoulder_anatomy_biomechanics` - Understanding the shoulder complex
 2. `shoulder_assessment_protocols` - Testing and monitoring
 3. `shoulder_injuries_pathologies` - Common injuries and identification
@@ -40,6 +44,7 @@ Two comprehensive sports medicine guides have been converted to structured knowl
 5. `shoulder_prehab_training` - Injury prevention strategies
 
 #### Calf & Achilles Topics (5 entries)
+
 1. `calf_achilles_anatomy_biomechanics` - Understanding the calf complex
 2. `calf_achilles_assessment_protocols` - Isometric testing
 3. `calf_achilles_injuries_pathologies` - Tendinopathy, strains, ruptures
@@ -51,11 +56,13 @@ Two comprehensive sports medicine guides have been converted to structured knowl
 ## 🎯 Relevance to Flag Football
 
 ### Shoulder Knowledge → Quarterbacks & Receivers
+
 - **QBs**: Throwing mechanics, shoulder health, rotator cuff strength
 - **WRs**: Overhead catching, shoulder stability
 - **All positions**: Tackling, contact situations
 
 ### Calf/Achilles Knowledge → All Positions
+
 - **RBs**: Acceleration, explosive movements
 - **WRs & DBs**: Sprinting, change of direction
 - **All positions**: Running mechanics, injury prevention
@@ -65,6 +72,7 @@ Two comprehensive sports medicine guides have been converted to structured knowl
 ## 🚀 Import Both Knowledge Bases
 
 ### Option 1: Import Both at Once
+
 ```bash
 cd "/Users/aljosaursakous/Desktop/Flag football HTML - APP"
 
@@ -76,6 +84,7 @@ cd "/Users/aljosaursakous/Desktop/Flag football HTML - APP"
 ```
 
 ### Option 2: SQL Direct Import
+
 ```bash
 # Import both via SQL
 supabase db execute -f database/seed-shoulder-knowledge.sql
@@ -117,6 +126,7 @@ WHERE title LIKE '%Practitioner%Guide%';
 ## 📁 All Generated Files
 
 ### Shoulder Knowledge Files
+
 ```
 database/
 ├── practitioners_guide_shoulders_knowledge.json (33 KB)
@@ -129,6 +139,7 @@ scripts/
 ```
 
 ### Calf & Achilles Knowledge Files
+
 ```
 database/
 ├── practitioners_guide_calf_achilles_knowledge.json (36 KB)
@@ -145,46 +156,47 @@ scripts/
 ## 🔍 Query Examples
 
 ### Get All Knowledge
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .or('topic.like.shoulder_%,topic.like.calf_achilles_%');
+  .from("knowledge_base_entries")
+  .select("*")
+  .or("topic.like.shoulder_%,topic.like.calf_achilles_%");
 ```
 
 ### Get Injury Information
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .eq('entry_type', 'injury')
-  .or('topic.like.shoulder_%,topic.like.calf_achilles_%');
+  .from("knowledge_base_entries")
+  .select("*")
+  .eq("entry_type", "injury")
+  .or("topic.like.shoulder_%,topic.like.calf_achilles_%");
 ```
 
 ### Get Prevention Strategies
+
 ```typescript
 const { data } = await supabase
-  .from('knowledge_base_entries')
-  .select('best_practices')
-  .in('topic', [
-    'shoulder_prehab_training',
-    'calf_achilles_injury_prevention'
-  ]);
+  .from("knowledge_base_entries")
+  .select("best_practices")
+  .in("topic", ["shoulder_prehab_training", "calf_achilles_injury_prevention"]);
 ```
 
 ### Search by Position
+
 ```typescript
 // For QBs (shoulder focus)
 const { data: qbKnowledge } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .ilike('topic', 'shoulder_%');
+  .from("knowledge_base_entries")
+  .select("*")
+  .ilike("topic", "shoulder_%");
 
 // For RBs (calf/achilles focus)
 const { data: rbKnowledge } = await supabase
-  .from('knowledge_base_entries')
-  .select('*')
-  .ilike('topic', 'calf_achilles_%');
+  .from("knowledge_base_entries")
+  .select("*")
+  .ilike("topic", "calf_achilles_%");
 ```
 
 ---
@@ -192,37 +204,39 @@ const { data: rbKnowledge } = await supabase
 ## 🎨 AI Chat Integration
 
 ### Example: Comprehensive Injury Prevention
+
 ```typescript
 async function getInjuryPreventionKnowledge(position: string) {
   const topics = [];
-  
-  if (position === 'QB' || position === 'WR') {
-    topics.push('shoulder_prehab_training');
+
+  if (position === "QB" || position === "WR") {
+    topics.push("shoulder_prehab_training");
   }
-  
-  if (position === 'RB' || position === 'WR' || position === 'DB') {
-    topics.push('calf_achilles_injury_prevention');
+
+  if (position === "RB" || position === "WR" || position === "DB") {
+    topics.push("calf_achilles_injury_prevention");
   }
 
   const { data } = await supabase
-    .from('knowledge_base_entries')
-    .select('topic, best_practices, protocols')
-    .in('topic', topics);
+    .from("knowledge_base_entries")
+    .select("topic, best_practices, protocols")
+    .in("topic", topics);
 
   return data;
 }
 ```
 
 ### Example: Injury Response
+
 ```typescript
-async function getInjuryGuidance(bodyPart: 'shoulder' | 'calf' | 'achilles') {
-  const prefix = bodyPart === 'shoulder' ? 'shoulder_' : 'calf_achilles_';
-  
+async function getInjuryGuidance(bodyPart: "shoulder" | "calf" | "achilles") {
+  const prefix = bodyPart === "shoulder" ? "shoulder_" : "calf_achilles_";
+
   const { data } = await supabase
-    .from('knowledge_base_entries')
-    .select('*')
-    .ilike('topic', `${prefix}%`)
-    .in('entry_type', ['injury', 'recovery_method']);
+    .from("knowledge_base_entries")
+    .select("*")
+    .ilike("topic", `${prefix}%`)
+    .in("entry_type", ["injury", "recovery_method"]);
 
   return data;
 }
@@ -233,6 +247,7 @@ async function getInjuryGuidance(bodyPart: 'shoulder' | 'calf' | 'achilles') {
 ## 📈 Impact Metrics
 
 ### Coverage
+
 - **Body Regions**: 2 (Upper limb + Lower limb)
 - **Knowledge Entries**: 10
 - **Research Articles**: 2
@@ -240,12 +255,14 @@ async function getInjuryGuidance(bodyPart: 'shoulder' | 'calf' | 'achilles') {
 - **Tags**: 50+ unique searchable tags
 
 ### Quality
+
 - **Evidence Level**: B (Strong) for both guides
 - **Quality Scores**: 9/10 for both
 - **Source Credibility**: Elite sports science experts
 - **Practical Application**: High (position-specific protocols)
 
 ### Applicability
+
 - **Positions Covered**: All (with position-specific emphasis)
 - **Injury Types**: 8 common injuries covered
 - **Training Methods**: Assessment, prevention, rehabilitation
@@ -271,15 +288,18 @@ async function getInjuryGuidance(bodyPart: 'shoulder' | 'calf' | 'achilles') {
 ## 📚 Documentation References
 
 ### Detailed Documentation
+
 - `SHOULDER_KNOWLEDGE_README.md` - Complete shoulder guide
 - `CALF_ACHILLES_KNOWLEDGE_README.md` - Complete calf/achilles guide
 
 ### Quick References
+
 - `IMPORT_SUMMARY.txt` - Shoulder import summary
 - `CALF_ACHILLES_QUICK_REFERENCE.md` - Calf/achilles quick reference
 - `QUICK_REFERENCE.md` - Shoulder quick reference
 
 ### Technical
+
 - Database schema: `migrations/028_evidence_based_knowledge_base.sql`
 - JSON files for programmatic access
 - SQL files for direct import

@@ -20,7 +20,7 @@ import {
   signal,
   computed,
   input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
@@ -71,7 +71,7 @@ export interface Insight {
     Tooltip,
     Skeleton,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <div class="actionable-insights">

@@ -22,7 +22,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  viewChild
+  viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Avatar } from "primeng/avatar";
@@ -44,7 +44,7 @@ import {
   ChannelMembersResponse,
   ChannelService,
   ChannelType,
-  ChatMessage
+  ChatMessage,
 } from "../../core/services/channel.service";
 import { PresenceService } from "../../core/services/presence.service";
 import { TeamNotificationService } from "../../core/services/team-notification.service";
@@ -75,7 +75,7 @@ import { getInitials } from "../../shared/utils/format.utils";
     MainLayoutComponent,
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   template: `
     <app-main-layout>
@@ -1326,7 +1326,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     setTimeout(() => {
       const messagesRef = this.messagesList();
       if (messagesRef) {
-        messagesRef.nativeElement.scrollTop = messagesRef.nativeElement.scrollHeight;
+        messagesRef.nativeElement.scrollTop =
+          messagesRef.nativeElement.scrollHeight;
       }
     }, 100);
   }

@@ -8,9 +8,9 @@
 
 import express from "express";
 import {
-    authenticateToken,
-    optionalAuth,
-    authorizeUserAccess,
+  authenticateToken,
+  optionalAuth,
+  authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { invalidateCacheOn, withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
@@ -18,17 +18,17 @@ import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
-    isValidUUID,
-    sanitizeText,
-    getErrorMessage,
-    resolveUserId,
-    sendError,
-    sendErrorResponse,
-    sendSuccess,
-    validateDate,
-    validateDuration,
-    validatePagination,
-    validateRPE
+  isValidUUID,
+  sanitizeText,
+  getErrorMessage,
+  resolveUserId,
+  sendError,
+  sendErrorResponse,
+  sendSuccess,
+  validateDate,
+  validateDuration,
+  validatePagination,
+  validateRPE,
 } from "./utils/validation.js";
 
 const router = express.Router();
@@ -70,7 +70,7 @@ router.get(
           400,
         );
       }
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
       const ninetyDaysAgo = new Date();
       ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
@@ -93,10 +93,12 @@ router.get(
 
       const totalMinutes =
         sessions?.reduce((sum, s) => sum + (s.duration_minutes || 0), 0) || 0;
-      const sessionsWithRpe = sessions?.filter((s) => s.rpe !== null && s.rpe !== undefined) || [];
+      const sessionsWithRpe =
+        sessions?.filter((s) => s.rpe !== null && s.rpe !== undefined) || [];
       const avgRpe =
         sessionsWithRpe.length > 0
-          ? sessionsWithRpe.reduce((sum, s) => sum + s.rpe, 0) / sessionsWithRpe.length
+          ? sessionsWithRpe.reduce((sum, s) => sum + s.rpe, 0) /
+            sessionsWithRpe.length
           : 0;
 
       // Calculate this week's sessions
@@ -116,7 +118,10 @@ router.get(
         recentSessions: sessions?.slice(0, 5) || [],
       });
     } catch (error) {
-      const errorMessage = getErrorMessage(error, "Failed to load training stats");
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to load training stats",
+      );
       serverLogger.error(`[${ROUTE_NAME}] Stats error: ${errorMessage}`, error);
       return sendErrorResponse(
         res,
@@ -155,7 +160,7 @@ router.get(
           400,
         );
       }
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
       const ninetyDaysAgo = new Date();
       ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
@@ -256,31 +261,31 @@ router.get(
   optionalAuth,
   authorizeUserAccess,
   async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const userIdValidation = resolveUserId(req);
-    if (!userIdValidation.isValid) {
-      return sendError(
-        res,
-        userIdValidation.error,
-        userIdValidation.code,
-        400,
-      );
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
-    const userId = userIdValidation.userId;
-    const pagination = validatePagination(1, req.query.limit, 100);
-    if (!pagination.isValid) {
-      return sendError(res, pagination.error, "INVALID_PAGINATION", 400);
-    }
-    const limit = pagination.limit;
 
-    let query = supabase
-      .from("training_sessions")
-      .select(
-        `
+    try {
+      const userIdValidation = resolveUserId(req);
+      if (!userIdValidation.isValid) {
+        return sendError(
+          res,
+          userIdValidation.error,
+          userIdValidation.code,
+          400,
+        );
+      }
+      const { userId } = userIdValidation;
+      const pagination = validatePagination(1, req.query.limit, 100);
+      if (!pagination.isValid) {
+        return sendError(res, pagination.error, "INVALID_PAGINATION", 400);
+      }
+      const { limit } = pagination;
+
+      let query = supabase
+        .from("training_sessions")
+        .select(
+          `
         id,
         user_id,
         session_date,
@@ -291,24 +296,25 @@ router.get(
         notes,
         created_at
       `,
-      )
-      .order("session_date", { ascending: false })
-      .limit(limit);
+        )
+        .order("session_date", { ascending: false })
+        .limit(limit);
 
-    query = query.eq("user_id", userId);
+      query = query.eq("user_id", userId);
 
-    const { data: sessions, error } = await query;
+      const { data: sessions, error } = await query;
 
-    if (error) {
-      throw error;
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, { sessions: sessions || [] });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Sessions error:`, error);
+      return sendError(res, "Failed to load sessions", "FETCH_ERROR", 500);
     }
-
-    return sendSuccess(res, { sessions: sessions || [] });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Sessions error:`, error);
-    return sendError(res, "Failed to load sessions", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 /**
  * POST /session
@@ -628,93 +634,101 @@ router.get(
   optionalAuth,
   authorizeUserAccess,
   async (req, res) => {
-  if (!supabase) {
-    return sendSuccess(res, {
-      suggestions: [
-        {
-          type: "recovery",
-          message: "Based on your recent training load, consider a recovery day",
-          priority: "medium",
-        },
-      ],
-    });
-  }
-
-  try {
-    const userId = req.userId || req.query.userId;
-    const suggestions = [];
-
-    if (userId && isValidUUID(userId)) {
-      // Get recent training data to generate smart suggestions
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-      const { data: recentSessions } = await supabase
-        .from("training_sessions")
-        .select("session_date, rpe, duration_minutes, session_type")
-        .eq("user_id", userId)
-        .eq("status", "completed")
-        .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
-        .order("session_date", { ascending: false });
-
-      const sessionCount = recentSessions?.length || 0;
-      const avgRpe = sessionCount > 0
-        ? recentSessions.reduce((sum, s) => sum + (s.rpe || 5), 0) / sessionCount
-        : 0;
-
-      // Generate suggestions based on data
-      if (sessionCount === 0) {
-        suggestions.push({
-          type: "motivation",
-          message: "You haven't trained in a while. Start with a light session to get back on track!",
-          priority: "high",
-        });
-      } else if (avgRpe > 7) {
-        suggestions.push({
-          type: "recovery",
-          message: "Your average RPE is high. Consider a recovery or deload session.",
-          priority: "high",
-        });
-      } else if (avgRpe < 5 && sessionCount >= 3) {
-        suggestions.push({
-          type: "intensity",
-          message: "Your RPE has been low - you may be ready to increase intensity.",
-          priority: "medium",
-        });
-      }
-
-      if (sessionCount >= 5) {
-        suggestions.push({
-          type: "consistency",
-          message: "Great consistency this week! Keep up the momentum.",
-          priority: "low",
-        });
-      }
-    }
-
-    // Add default suggestion if none generated
-    if (suggestions.length === 0) {
-      suggestions.push({
-        type: "general",
-        message: "Log your training sessions to receive personalized suggestions.",
-        priority: "low",
+    if (!supabase) {
+      return sendSuccess(res, {
+        suggestions: [
+          {
+            type: "recovery",
+            message:
+              "Based on your recent training load, consider a recovery day",
+            priority: "medium",
+          },
+        ],
       });
     }
 
-    return sendSuccess(res, { suggestions });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Suggestions error:`, error);
-    return sendSuccess(res, {
-      suggestions: [
-        {
+    try {
+      const userId = req.userId || req.query.userId;
+      const suggestions = [];
+
+      if (userId && isValidUUID(userId)) {
+        // Get recent training data to generate smart suggestions
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const { data: recentSessions } = await supabase
+          .from("training_sessions")
+          .select("session_date, rpe, duration_minutes, session_type")
+          .eq("user_id", userId)
+          .eq("status", "completed")
+          .gte("session_date", sevenDaysAgo.toISOString().split("T")[0])
+          .order("session_date", { ascending: false });
+
+        const sessionCount = recentSessions?.length || 0;
+        const avgRpe =
+          sessionCount > 0
+            ? recentSessions.reduce((sum, s) => sum + (s.rpe || 5), 0) /
+              sessionCount
+            : 0;
+
+        // Generate suggestions based on data
+        if (sessionCount === 0) {
+          suggestions.push({
+            type: "motivation",
+            message:
+              "You haven't trained in a while. Start with a light session to get back on track!",
+            priority: "high",
+          });
+        } else if (avgRpe > 7) {
+          suggestions.push({
+            type: "recovery",
+            message:
+              "Your average RPE is high. Consider a recovery or deload session.",
+            priority: "high",
+          });
+        } else if (avgRpe < 5 && sessionCount >= 3) {
+          suggestions.push({
+            type: "intensity",
+            message:
+              "Your RPE has been low - you may be ready to increase intensity.",
+            priority: "medium",
+          });
+        }
+
+        if (sessionCount >= 5) {
+          suggestions.push({
+            type: "consistency",
+            message: "Great consistency this week! Keep up the momentum.",
+            priority: "low",
+          });
+        }
+      }
+
+      // Add default suggestion if none generated
+      if (suggestions.length === 0) {
+        suggestions.push({
           type: "general",
-          message: "Keep training consistently for best results.",
+          message:
+            "Log your training sessions to receive personalized suggestions.",
           priority: "low",
-        },
-      ],
-    });
-  }
-});
+        });
+      }
+
+      return sendSuccess(res, { suggestions });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Suggestions error:`, error);
+      return sendSuccess(res, {
+        suggestions: [
+          {
+            type: "general",
+            message: "Keep training consistently for best results.",
+            priority: "low",
+          },
+        ],
+      });
+    }
+  },
+);
 
 /**
  * POST /suggestions
@@ -748,16 +762,17 @@ router.get(
   optionalAuth,
   authorizeUserAccess,
   async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
+    }
 
-  try {
-    const { position_id, active_only } = req.query;
+    try {
+      const { position_id, active_only } = req.query;
 
-    let query = supabase
-      .from("training_programs")
-      .select(`
+      let query = supabase
+        .from("training_programs")
+        .select(
+          `
         id,
         name,
         description,
@@ -767,29 +782,31 @@ router.get(
         position_id,
         positions(name, display_name),
         created_at
-      `)
-      .order("start_date", { ascending: false });
+      `,
+        )
+        .order("start_date", { ascending: false });
 
-    if (position_id && isValidUUID(position_id)) {
-      query = query.eq("position_id", position_id);
+      if (position_id && isValidUUID(position_id)) {
+        query = query.eq("position_id", position_id);
+      }
+
+      if (active_only === "true") {
+        query = query.eq("is_active", true);
+      }
+
+      const { data: programs, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, { programs: programs || [] });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Get programs error:`, error);
+      return sendError(res, "Failed to load programs", "FETCH_ERROR", 500);
     }
-
-    if (active_only === "true") {
-      query = query.eq("is_active", true);
-    }
-
-    const { data: programs, error } = await query;
-
-    if (error) {
-      throw error;
-    }
-
-    return sendSuccess(res, { programs: programs || [] });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get programs error:`, error);
-    return sendError(res, "Failed to load programs", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 /**
  * GET /programs/:id
@@ -809,13 +826,15 @@ router.get("/programs/:id", rateLimit("READ"), async (req, res) => {
 
     const { data: program, error } = await supabase
       .from("training_programs")
-      .select(`
+      .select(
+        `
         *,
         positions(name, display_name),
         training_phases(
           id, name, description, start_date, end_date, phase_order, focus_areas
         )
-      `)
+      `,
+      )
       .eq("id", id)
       .single();
 
@@ -895,7 +914,7 @@ router.get("/programs/:id/weeks", rateLimit("READ"), async (req, res) => {
     }
 
     const { data: phases } = await phasesQuery;
-    const phaseIds = phases?.map(p => p.id) || [];
+    const phaseIds = phases?.map((p) => p.id) || [];
 
     if (phaseIds.length === 0) {
       return sendSuccess(res, { weeks: [] });
@@ -903,10 +922,12 @@ router.get("/programs/:id/weeks", rateLimit("READ"), async (req, res) => {
 
     const { data: weeks, error } = await supabase
       .from("training_weeks")
-      .select(`
+      .select(
+        `
         *,
         training_phases(name, phase_order)
-      `)
+      `,
+      )
       .in("phase_id", phaseIds)
       .order("start_date", { ascending: true });
 
@@ -931,206 +952,221 @@ router.get(
   optionalAuth,
   authorizeUserAccess,
   async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const userId = req.userId || req.query.userId;
-    const today = new Date().toISOString().split("T")[0];
-
-    // Find active program assignment for user
-    let programId = null;
-
-    if (userId && isValidUUID(userId)) {
-      const { data: assignment } = await supabase
-        .from("player_programs")
-        .select("program_id")
-        .eq("player_id", userId)
-        .eq("is_active", true)
-        .single();
-
-      programId = assignment?.program_id;
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    // Fallback to any active program
-    if (!programId) {
-      const { data: activeProgram } = await supabase
-        .from("training_programs")
+    try {
+      const userId = req.userId || req.query.userId;
+      const today = new Date().toISOString().split("T")[0];
+
+      // Find active program assignment for user
+      let programId = null;
+
+      if (userId && isValidUUID(userId)) {
+        const { data: assignment } = await supabase
+          .from("player_programs")
+          .select("program_id")
+          .eq("player_id", userId)
+          .eq("is_active", true)
+          .single();
+
+        programId = assignment?.program_id;
+      }
+
+      // Fallback to any active program
+      if (!programId) {
+        const { data: activeProgram } = await supabase
+          .from("training_programs")
+          .select("id")
+          .eq("is_active", true)
+          .single();
+
+        programId = activeProgram?.id;
+      }
+
+      if (!programId) {
+        return sendSuccess(res, {
+          currentWeek: null,
+          message: "No active training program found",
+        });
+      }
+
+      // Get phases for program
+      const { data: phases } = await supabase
+        .from("training_phases")
         .select("id")
-        .eq("is_active", true)
-        .single();
+        .eq("program_id", programId);
 
-      programId = activeProgram?.id;
-    }
+      const phaseIds = phases?.map((p) => p.id) || [];
 
-    if (!programId) {
-      return sendSuccess(res, {
-        currentWeek: null,
-        message: "No active training program found",
-      });
-    }
+      if (phaseIds.length === 0) {
+        return sendSuccess(res, {
+          currentWeek: null,
+          message: "No phases defined for program",
+        });
+      }
 
-    // Get phases for program
-    const { data: phases } = await supabase
-      .from("training_phases")
-      .select("id")
-      .eq("program_id", programId);
-
-    const phaseIds = phases?.map(p => p.id) || [];
-
-    if (phaseIds.length === 0) {
-      return sendSuccess(res, {
-        currentWeek: null,
-        message: "No phases defined for program",
-      });
-    }
-
-    // Find current week
-    const { data: currentWeek, error } = await supabase
-      .from("training_weeks")
-      .select(`
+      // Find current week
+      const { data: currentWeek, error } = await supabase
+        .from("training_weeks")
+        .select(
+          `
         *,
         training_phases(name, phase_order, focus_areas)
-      `)
-      .in("phase_id", phaseIds)
-      .lte("start_date", today)
-      .gte("end_date", today)
-      .single();
+      `,
+        )
+        .in("phase_id", phaseIds)
+        .lte("start_date", today)
+        .gte("end_date", today)
+        .single();
 
-    if (error && error.code !== "PGRST116") {
-      throw error;
+      if (error && error.code !== "PGRST116") {
+        throw error;
+      }
+
+      return sendSuccess(res, {
+        currentWeek: currentWeek || null,
+        message: currentWeek ? null : "No training week scheduled for today",
+      });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Get current week error:`, error);
+      return sendError(res, "Failed to load current week", "FETCH_ERROR", 500);
     }
-
-    return sendSuccess(res, {
-      currentWeek: currentWeek || null,
-      message: currentWeek ? null : "No training week scheduled for today",
-    });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get current week error:`, error);
-    return sendError(res, "Failed to load current week", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 /**
  * GET /programs/:programId/sessions
  * Get training sessions for a program (templates)
  */
-router.get("/programs/:programId/sessions", rateLimit("READ"), async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const { programId } = req.params;
-    const { week_id } = req.query;
-
-    if (!isValidUUID(programId)) {
-      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+router.get(
+  "/programs/:programId/sessions",
+  rateLimit("READ"),
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    // Get phases for program
-    const { data: phases } = await supabase
-      .from("training_phases")
-      .select("id")
-      .eq("program_id", programId);
+    try {
+      const { programId } = req.params;
+      const { week_id } = req.query;
 
-    const phaseIds = phases?.map(p => p.id) || [];
+      if (!isValidUUID(programId)) {
+        return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+      }
 
-    if (phaseIds.length === 0) {
-      return sendSuccess(res, { sessions: [] });
-    }
+      // Get phases for program
+      const { data: phases } = await supabase
+        .from("training_phases")
+        .select("id")
+        .eq("program_id", programId);
 
-    // Get weeks for phases
-    let weeksQuery = supabase
-      .from("training_weeks")
-      .select("id")
-      .in("phase_id", phaseIds);
+      const phaseIds = phases?.map((p) => p.id) || [];
 
-    if (week_id && isValidUUID(week_id)) {
-      weeksQuery = weeksQuery.eq("id", week_id);
-    }
+      if (phaseIds.length === 0) {
+        return sendSuccess(res, { sessions: [] });
+      }
 
-    const { data: weeks } = await weeksQuery;
-    const weekIds = weeks?.map(w => w.id) || [];
+      // Get weeks for phases
+      let weeksQuery = supabase
+        .from("training_weeks")
+        .select("id")
+        .in("phase_id", phaseIds);
 
-    if (weekIds.length === 0) {
-      return sendSuccess(res, { sessions: [] });
-    }
+      if (week_id && isValidUUID(week_id)) {
+        weeksQuery = weeksQuery.eq("id", week_id);
+      }
 
-    const { data: sessions, error } = await supabase
-      .from("training_sessions")
-      .select(`
+      const { data: weeks } = await weeksQuery;
+      const weekIds = weeks?.map((w) => w.id) || [];
+
+      if (weekIds.length === 0) {
+        return sendSuccess(res, { sessions: [] });
+      }
+
+      const { data: sessions, error } = await supabase
+        .from("training_sessions")
+        .select(
+          `
         *,
         training_weeks(week_number, focus)
-      `)
-      .in("week_id", weekIds)
-      .order("day_of_week", { ascending: true })
-      .order("session_order", { ascending: true });
+      `,
+        )
+        .in("week_id", weekIds)
+        .order("day_of_week", { ascending: true })
+        .order("session_order", { ascending: true });
 
-    if (error) {
-      throw error;
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, { sessions: sessions || [] });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Get program sessions error:`, error);
+      return sendError(res, "Failed to load sessions", "FETCH_ERROR", 500);
     }
-
-    return sendSuccess(res, { sessions: sessions || [] });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get program sessions error:`, error);
-    return sendError(res, "Failed to load sessions", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 /**
  * GET /programs/:programId/exercises
  * Get exercises for a program's sessions
  */
-router.get("/programs/:programId/exercises", rateLimit("READ"), async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const { programId } = req.params;
-    const { session_id } = req.query;
-
-    if (!isValidUUID(programId)) {
-      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+router.get(
+  "/programs/:programId/exercises",
+  rateLimit("READ"),
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    // If session_id provided, get exercises for that session
-    if (session_id && isValidUUID(session_id)) {
-      const { data: exercises, error } = await supabase
-        .from("session_exercises")
-        .select(`
+    try {
+      const { programId } = req.params;
+      const { session_id } = req.query;
+
+      if (!isValidUUID(programId)) {
+        return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+      }
+
+      // If session_id provided, get exercises for that session
+      if (session_id && isValidUUID(session_id)) {
+        const { data: exercises, error } = await supabase
+          .from("session_exercises")
+          .select(
+            `
           *,
           exercises(name, category, movement_pattern, description, video_url)
-        `)
-        .eq("session_id", session_id)
-        .order("exercise_order", { ascending: true });
+        `,
+          )
+          .eq("session_id", session_id)
+          .order("exercise_order", { ascending: true });
+
+        if (error) {
+          throw error;
+        }
+
+        return sendSuccess(res, { exercises: exercises || [] });
+      }
+
+      // Otherwise get all exercises in the exercises library
+      const { data: exercises, error } = await supabase
+        .from("exercises")
+        .select("*")
+        .order("category", { ascending: true })
+        .order("name", { ascending: true });
 
       if (error) {
         throw error;
       }
 
       return sendSuccess(res, { exercises: exercises || [] });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Get program exercises error:`, error);
+      return sendError(res, "Failed to load exercises", "FETCH_ERROR", 500);
     }
-
-    // Otherwise get all exercises in the exercises library
-    const { data: exercises, error } = await supabase
-      .from("exercises")
-      .select("*")
-      .order("category", { ascending: true })
-      .order("name", { ascending: true });
-
-    if (error) {
-      throw error;
-    }
-
-    return sendSuccess(res, { exercises: exercises || [] });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get program exercises error:`, error);
-    return sendError(res, "Failed to load exercises", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 // =============================================================================
 // EXERCISE LIBRARY
@@ -1140,42 +1176,37 @@ router.get("/programs/:programId/exercises", rateLimit("READ"), async (req, res)
  * GET /exercises
  * Get exercise library with optional filtering
  */
-router.get(
-  "/exercises",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
+router.get("/exercises", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { category, position, search } = req.query;
+
+    let query = supabase.from("exercises").select("*").eq("active", true);
+
+    if (category && category !== "all") {
+      query = query.eq("category", category);
+    }
+    if (position) {
+      query = query.contains("position_specific", [position]);
+    }
+    if (search) {
+      query = query.ilike("name", `%${search}%`);
     }
 
-    try {
-      const { category, position, search } = req.query;
-
-      let query = supabase.from("exercises").select("*").eq("active", true);
-
-      if (category && category !== "all") {
-        query = query.eq("category", category);
-      }
-      if (position) {
-        query = query.contains("position_specific", [position]);
-      }
-      if (search) {
-        query = query.ilike("name", `%${search}%`);
-      }
-
-      const { data: exercises, error } = await query.order("name").limit(200);
-      if (error) {
-        throw error;
-      }
-
-      return sendSuccess(res, exercises || []);
-    } catch (error) {
-      serverLogger.error(`[${ROUTE_NAME}] Exercises error:`, error);
-      return sendError(res, "Failed to load exercises", "FETCH_ERROR", 500);
+    const { data: exercises, error } = await query.order("name").limit(200);
+    if (error) {
+      throw error;
     }
-  },
-);
+
+    return sendSuccess(res, exercises || []);
+  } catch (error) {
+    serverLogger.error(`[${ROUTE_NAME}] Exercises error:`, error);
+    return sendError(res, "Failed to load exercises", "FETCH_ERROR", 500);
+  }
+});
 
 // =============================================================================
 // ERROR HANDLING

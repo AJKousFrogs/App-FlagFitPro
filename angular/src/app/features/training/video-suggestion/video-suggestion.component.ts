@@ -28,7 +28,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { UI_LIMITS } from "../../../core/constants/app.constants";
 import {
@@ -36,7 +36,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from "@angular/forms";
 
 // PrimeNG Components
@@ -67,7 +67,7 @@ import { ToastService } from "../../../core/services/toast.service";
 import { TOAST } from "../../../core/constants/toast-messages.constants";
 import {
   FlagPosition,
-  TrainingFocus
+  TrainingFocus,
 } from "../../../core/services/training-video-database.service";
 
 // Layout
@@ -111,7 +111,7 @@ interface VideoSuggestion {
     ButtonComponent,
     IconButtonComponent,
     CardShellComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   template: `
     <p-toast></p-toast>

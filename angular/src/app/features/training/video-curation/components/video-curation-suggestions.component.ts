@@ -8,7 +8,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output
+  output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -22,14 +22,19 @@ import { PlayerSuggestion } from "../video-curation.models";
 import {
   formatFocus,
   formatSuggestionDate,
-  getStatusSeverity
+  getStatusSeverity,
 } from "../video-curation-utils";
 
 @Component({
   selector: "app-video-curation-suggestions",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, StatusTagComponent, ButtonComponent, IconButtonComponent],
+  imports: [
+    CommonModule,
+    StatusTagComponent,
+    ButtonComponent,
+    IconButtonComponent,
+  ],
   template: `
     <div class="tab-content">
       <div class="suggestions-header">

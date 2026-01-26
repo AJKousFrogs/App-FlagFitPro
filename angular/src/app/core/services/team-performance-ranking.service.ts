@@ -82,7 +82,11 @@ const METRIC_CONFIG: Record<
   dash_40: { label: "40-Yard Dash", unit: "s", isLowerBetter: true },
   sprint_10m: { label: "10-Yard Sprint", unit: "s", isLowerBetter: true },
   sprint_20m: { label: "20-Yard Sprint", unit: "s", isLowerBetter: true },
-  pro_agility: { label: "Pro Agility (5-10-5)", unit: "s", isLowerBetter: true },
+  pro_agility: {
+    label: "Pro Agility (5-10-5)",
+    unit: "s",
+    isLowerBetter: true,
+  },
   vertical_jump: { label: "Vertical Jump", unit: '"', isLowerBetter: false },
   broad_jump: { label: "Broad Jump", unit: '"', isLowerBetter: false },
   bench_press: { label: "Bench Press", unit: " lbs", isLowerBetter: false },
@@ -113,14 +117,14 @@ export class TeamPerformanceRankingService {
 
   // Computed helpers
   readonly hasRankings = computed(() => !!this._rankings()?.rankings.length);
-  readonly goldBadges = computed(
-    () => this._achievements().filter((a) => a.tier === "gold"),
+  readonly goldBadges = computed(() =>
+    this._achievements().filter((a) => a.tier === "gold"),
   );
-  readonly silverBadges = computed(
-    () => this._achievements().filter((a) => a.tier === "silver"),
+  readonly silverBadges = computed(() =>
+    this._achievements().filter((a) => a.tier === "silver"),
   );
-  readonly bronzeBadges = computed(
-    () => this._achievements().filter((a) => a.tier === "bronze"),
+  readonly bronzeBadges = computed(() =>
+    this._achievements().filter((a) => a.tier === "bronze"),
   );
   readonly totalBadges = computed(() => this._achievements().length);
 
@@ -168,14 +172,17 @@ export class TeamPerformanceRankingService {
           .order("recorded_at", { ascending: false });
 
       if (recordsError) {
-        this.logger.error("[TeamRanking] Error fetching records:", recordsError);
+        this.logger.error(
+          "[TeamRanking] Error fetching records:",
+          recordsError,
+        );
         this._error.set("Failed to load team rankings");
         this._isLoading.set(false);
         return null;
       }
 
       // Get only the latest record per user
-      const latestByUser = new Map<string, typeof allRecords[0]>();
+      const latestByUser = new Map<string, (typeof allRecords)[0]>();
       for (const record of allRecords || []) {
         if (!latestByUser.has(record.user_id)) {
           latestByUser.set(record.user_id, record);
@@ -194,7 +201,9 @@ export class TeamPerformanceRankingService {
       // Get current user's record
       const myRecord = teamRecords.find((r) => r.user_id === user.id);
       if (!myRecord) {
-        this.logger.info("[TeamRanking] Current user has no performance record");
+        this.logger.info(
+          "[TeamRanking] Current user has no performance record",
+        );
         this._rankings.set(null);
         this._isLoading.set(false);
         return null;
@@ -285,16 +294,23 @@ export class TeamPerformanceRankingService {
       }
 
       // Calculate summary
-      const goldCount = rankings.filter((r) => r.achievementTier === "gold").length;
-      const silverCount = rankings.filter((r) => r.achievementTier === "silver").length;
-      const bronzeCount = rankings.filter((r) => r.achievementTier === "bronze").length;
+      const goldCount = rankings.filter(
+        (r) => r.achievementTier === "gold",
+      ).length;
+      const silverCount = rankings.filter(
+        (r) => r.achievementTier === "silver",
+      ).length;
+      const bronzeCount = rankings.filter(
+        (r) => r.achievementTier === "bronze",
+      ).length;
 
       // Find strongest/weakest metrics by percentile
       const sortedByPercentile = [...rankings].sort(
         (a, b) => b.percentile - a.percentile,
       );
       const strongestMetric = sortedByPercentile[0] || null;
-      const weakestMetric = sortedByPercentile[sortedByPercentile.length - 1] || null;
+      const weakestMetric =
+        sortedByPercentile[sortedByPercentile.length - 1] || null;
 
       const overview: TeamRankingOverview = {
         rankings,
@@ -341,7 +357,10 @@ export class TeamPerformanceRankingService {
         // This will handle deduplication - won't unlock if already unlocked
         this.achievementsService.unlockAchievement(achievementId).subscribe();
       } catch (error) {
-        this.logger.warn("[TeamRanking] Failed to unlock achievement:", achievementId);
+        this.logger.warn(
+          "[TeamRanking] Failed to unlock achievement:",
+          achievementId,
+        );
       }
     }
   }

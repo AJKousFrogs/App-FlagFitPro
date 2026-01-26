@@ -248,9 +248,9 @@ export class AcwrService {
       const sessionLoad =
         Number.isFinite(session.load) && session.load > 0
           ? session.load
-          : session.metrics?.calculatedLoad ??
+          : (session.metrics?.calculatedLoad ??
             session.metrics?.internal?.workload ??
-            0;
+            0);
       dailyLoads.set(dateKey, currentLoad + sessionLoad);
     });
 
@@ -560,7 +560,9 @@ export class AcwrService {
     return {
       currentWeek,
       previousWeek,
-      changePercent: cappedAtMax ? maxIncrease : roundToPrecision(changePercent, 1),
+      changePercent: cappedAtMax
+        ? maxIncrease
+        : roundToPrecision(changePercent, 1),
       isSafe,
       cappedAtMax,
       warning: !isSafe

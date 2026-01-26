@@ -58,7 +58,7 @@ export class OfflineQueueService {
   private readonly _queue = signal<QueuedAction[]>([]);
   private readonly _isOnline = signal(navigator.onLine);
   private readonly _isSyncing = signal(false);
-  
+
   // Sync lock to prevent race conditions
   private _syncLock = false;
 
@@ -134,7 +134,8 @@ export class OfflineQueueService {
     payload: Record<string, unknown>,
     priority: QueuedAction["priority"] = "medium",
   ): string {
-    const type: QueuedActionType = `generic_${method.toLowerCase()}` as QueuedActionType;
+    const type: QueuedActionType =
+      `generic_${method.toLowerCase()}` as QueuedActionType;
     return this.queueAction(type, payload, priority, { endpoint, method });
   }
 
@@ -183,19 +184,19 @@ export class OfflineQueueService {
       this.logger.debug("[OfflineQueue] Sync already in progress, skipping");
       return;
     }
-    
+
     // Acquire lock immediately (synchronous)
     this._syncLock = true;
-    
+
     try {
       if (!this._isOnline() || this._queue().length === 0) {
         return;
       }
 
       this._isSyncing.set(true);
-      
+
       // Deep copy queue to avoid mutation during sync
-      const queue = this._queue().map(action => ({
+      const queue = this._queue().map((action) => ({
         ...action,
         timestamp: new Date(action.timestamp.getTime()),
       }));
@@ -221,7 +222,7 @@ export class OfflineQueueService {
           } else {
             // Update retry count in actual queue (not copy)
             this.incrementRetryCount(action.id);
-            const currentAction = this._queue().find(a => a.id === action.id);
+            const currentAction = this._queue().find((a) => a.id === action.id);
             if (currentAction && currentAction.retryCount >= 3) {
               this.logger.error(
                 `[OfflineQueue] Max retries reached for action ${action.id}, removing from queue`,
@@ -236,7 +237,7 @@ export class OfflineQueueService {
             error,
           );
           this.incrementRetryCount(action.id);
-          const currentAction = this._queue().find(a => a.id === action.id);
+          const currentAction = this._queue().find((a) => a.id === action.id);
           if (currentAction && currentAction.retryCount >= 3) {
             this.removeAction(action.id);
             failureCount++;
@@ -264,7 +265,7 @@ export class OfflineQueueService {
       this._syncLock = false;
     }
   }
-  
+
   /**
    * Increment retry count for an action (immutable update)
    */
@@ -273,7 +274,7 @@ export class OfflineQueueService {
       queue.map((action) =>
         action.id === actionId
           ? { ...action, retryCount: action.retryCount + 1 }
-          : action
+          : action,
       ),
     );
     this.saveQueueToStorage();

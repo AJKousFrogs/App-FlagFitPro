@@ -1,7 +1,5 @@
 @use "styles/mixins" as *;
 
-
-
 .calendar-page {
   @include page-container(var(--content-max-width-lg));
   display: flex;

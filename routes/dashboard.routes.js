@@ -8,15 +8,20 @@
 
 import express from "express";
 import {
-    optionalAuth,
-    authorizeUserAccess,
+  optionalAuth,
+  authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { withCache } from "./utils/cache.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import { DEMO_USER_ID, resolveUserId, sendError, sendSuccess } from "./utils/validation.js";
+import {
+  DEMO_USER_ID,
+  resolveUserId,
+  sendError,
+  sendSuccess,
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "dashboard";
@@ -49,7 +54,7 @@ router.get(
 
     try {
       const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       // Get training sessions count (last 30 days)
       const thirtyDaysAgo = new Date();
@@ -163,7 +168,7 @@ router.get(
 
     try {
       const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       const { data: sessions } = await supabase
         .from("training_sessions")
@@ -202,7 +207,7 @@ router.get(
 
     try {
       const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       const { data: qual } = await supabase
         .from("olympic_qualification")
@@ -250,7 +255,7 @@ router.get(
 
     try {
       const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       const { data: rewards } = await supabase
         .from("sponsor_rewards")
@@ -295,7 +300,7 @@ router.get(
 
     try {
       const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const userId = userIdValidation.userId;
+      const { userId } = userIdValidation;
 
       const { data: chem } = await supabase
         .from("team_chemistry")

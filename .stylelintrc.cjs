@@ -108,7 +108,16 @@ module.exports = {
         "/.*/": ["/\\d+px/"],
 
         // Decision 19: No transition: all
-        transition: ["all", "/^all\\s/", "/\\s+all\\s/", "/\\s+all$/"],
+        // Decision 24: No hardcoded transition durations
+        transition: [
+          "all",
+          "/^all\\s/",
+          "/\\s+all\\s/",
+          "/\\s+all$/",
+          "/\\d+ms/",
+          "/\\d+\\.\\d+s/",
+          "/\\d+s/",
+        ],
 
         // Decision 20: Disallow raw z-index values (except 0, 1, -1, auto)
         // NOTE: This catches numeric z-index; var() usage is allowed
@@ -147,7 +156,6 @@ module.exports = {
         "box-shadow": ["/^0\\s+\\d+px/"],
 
         // Warn on hardcoded transition durations (should use --transition-* tokens)
-        transition: ["/\\d+ms/", "/\\d+\\.\\d+s/", "/\\d+s/"],
         "transition-duration": ["/\\d+ms/", "/\\d+\\.\\d+s/", "/\\d+s/"],
       },
       {

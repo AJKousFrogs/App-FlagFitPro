@@ -64,7 +64,7 @@ async function getCommunityFeed(req, res) {
     if (!pagination.isValid) {
       return sendError(res, pagination.error, "INVALID_PAGINATION", 400);
     }
-    const limit = pagination.limit;
+    const { limit } = pagination;
     const offset = Math.max(0, parseInt(req.query.offset, 10) || 0);
 
     if (!supabase) {
@@ -790,10 +790,14 @@ router.post("/posts/:postId/comments", authenticateToken, async (req, res) => {
 });
 
 // POST /api/community/comments/:commentId/like - Toggle like on a comment
-router.post("/comments/:commentId/like", authenticateToken, async (req, res) => {
-  req.query.commentId = req.params.commentId;
-  return toggleCommentLike(req, res);
-});
+router.post(
+  "/comments/:commentId/like",
+  authenticateToken,
+  async (req, res) => {
+    req.query.commentId = req.params.commentId;
+    return toggleCommentLike(req, res);
+  },
+);
 
 // POST /api/community/polls/:optionId/vote - Vote on a poll option
 router.post("/polls/:optionId/vote", authenticateToken, async (req, res) => {
@@ -815,7 +819,9 @@ router.get("/trending", authenticateToken, getTrendingTopics);
 // GET /api/community (with query params) - DEPRECATED
 router.get("/", authenticateToken, async (req, res) => {
   // Log deprecation warning
-  serverLogger.warn(`[${ROUTE_NAME}] DEPRECATED: Use RESTful routes instead of query params. Path: ${req.originalUrl}`);
+  serverLogger.warn(
+    `[${ROUTE_NAME}] DEPRECATED: Use RESTful routes instead of query params. Path: ${req.originalUrl}`,
+  );
 
   if (req.query.feed === "true") {
     return getCommunityFeed(req, res);
@@ -835,7 +841,8 @@ router.get("/", authenticateToken, async (req, res) => {
     success: true,
     status: "Community API is running",
     version: "2.0.0",
-    migration_notice: "Query parameter routes are deprecated. Use RESTful routes: /posts, /posts/:id/like, /leaderboard, etc.",
+    migration_notice:
+      "Query parameter routes are deprecated. Use RESTful routes: /posts, /posts/:id/like, /leaderboard, etc.",
     timestamp: new Date().toISOString(),
   });
 });
@@ -843,7 +850,9 @@ router.get("/", authenticateToken, async (req, res) => {
 // POST /api/community (with query params) - DEPRECATED
 router.post("/", authenticateToken, async (req, res) => {
   // Log deprecation warning
-  serverLogger.warn(`[${ROUTE_NAME}] DEPRECATED: Use RESTful routes instead of query params. Path: ${req.originalUrl}`);
+  serverLogger.warn(
+    `[${ROUTE_NAME}] DEPRECATED: Use RESTful routes instead of query params. Path: ${req.originalUrl}`,
+  );
 
   if (req.query.postId && req.query.like === "true") {
     return togglePostLike(req, res);

@@ -37,12 +37,20 @@ import { InstagramVideo } from "../video-curation.models";
             <p>{{ v.description }}</p>
             <div class="preview-meta">
               <span
-                ><i class="pi pi-user" aria-hidden="true"></i> <span class="visually-hidden">Creator:</span> {{ v.creator.displayName }}</span
+                ><i class="pi pi-user" aria-hidden="true"></i>
+                <span class="visually-hidden">Creator:</span>
+                {{ v.creator.displayName }}</span
               >
               <span
-                ><i class="pi pi-star-fill" aria-hidden="true"></i> <span class="visually-hidden">Rating:</span> {{ v.rating.toFixed(1) }}</span
+                ><i class="pi pi-star-fill" aria-hidden="true"></i>
+                <span class="visually-hidden">Rating:</span>
+                {{ v.rating.toFixed(1) }}</span
               >
-              <span><i class="pi pi-calendar" aria-hidden="true"></i> <span class="visually-hidden">Added:</span> {{ v.addedDate }}</span>
+              <span
+                ><i class="pi pi-calendar" aria-hidden="true"></i>
+                <span class="visually-hidden">Added:</span>
+                {{ v.addedDate }}</span
+              >
             </div>
           </div>
         </div>

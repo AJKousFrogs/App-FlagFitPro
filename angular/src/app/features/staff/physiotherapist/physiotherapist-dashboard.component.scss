@@ -148,7 +148,10 @@
 .rtp-section {
   .rtp-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xl), 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--grid-card-min-xl), 1fr)
+    );
     gap: var(--ds-spacing-lg);
   }
 
@@ -318,7 +321,10 @@
 .risk-section {
   .risk-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-lg), 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(var(--grid-card-min-lg), 1fr)
+    );
     gap: var(--ds-spacing-lg);
   }
 
@@ -748,8 +754,3 @@
   }
 }
 // Dialog sizing
-
-
-
-
-

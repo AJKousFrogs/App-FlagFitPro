@@ -239,8 +239,10 @@ export interface PlayerFormData {
           [loading]="isSaving()"
           [disabled]="!playerForm.valid || isSaving()"
           (clicked)="onSave()"
-          [attr.aria-label]="editingPlayer() ? 'Save player changes' : 'Add new player'"
-          >{{ editingPlayer() ? 'Save Changes' : 'Add Player' }}</app-button
+          [attr.aria-label]="
+            editingPlayer() ? 'Save player changes' : 'Add new player'
+          "
+          >{{ editingPlayer() ? "Save Changes" : "Add Player" }}</app-button
         >
       </ng-template>
     </p-dialog>

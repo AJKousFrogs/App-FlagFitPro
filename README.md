@@ -245,11 +245,11 @@ flagfit-pro/
 
 ## 📚 Documentation
 
-**📖 [Complete Documentation Index](docs/DOCUMENTATION.md)** - Start here for all documentation
+**📖 [Complete Documentation Index](docs/DOCS_INDEX.md)** - Start here for all documentation
 
 | Document                                                      | Description                           |
 | ------------------------------------------------------------- | ------------------------------------- |
-| [DOCUMENTATION.md](docs/DOCUMENTATION.md)                     | **Master documentation index**        |
+| [DOCS_INDEX.md](docs/DOCS_INDEX.md)                           | **Master documentation index**        |
 | [LOCAL_DEVELOPMENT_SETUP.md](docs/LOCAL_DEVELOPMENT_SETUP.md) | **Start here** - Development setup    |
 | [FEATURE_DOCUMENTATION.md](docs/FEATURE_DOCUMENTATION.md)     | Complete feature reference            |
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md)                       | System design and dependencies        |

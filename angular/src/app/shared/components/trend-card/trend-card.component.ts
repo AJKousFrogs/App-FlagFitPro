@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  input
+  input,
 } from "@angular/core";
 
 import { CardComponent } from "../card/card.component";

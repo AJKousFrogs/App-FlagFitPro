@@ -195,10 +195,8 @@ export class SemanticMeaningRendererComponent implements OnInit, OnDestroy {
       }
 
       // Create component instance
-       
-      this.componentRef = target.createComponent(
-        componentClass as any,
-      );
+
+      this.componentRef = target.createComponent(componentClass as any);
 
       // Set component inputs using setInput() for signal input compatibility
       Object.keys(decision.props).forEach((key) => {

@@ -1,6 +1,6 @@
 /**
  * Player-related type definitions
- * 
+ *
  * Centralized types for player data structures across the application
  */
 
@@ -53,4 +53,3 @@ export interface PlayerWithStats {
   verticalJump?: number;
   agility?: number;
 }
-

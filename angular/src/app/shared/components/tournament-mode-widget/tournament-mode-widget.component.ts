@@ -15,7 +15,7 @@ import {
   Component,
   inject,
   computed,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
@@ -43,7 +43,7 @@ import { TOAST } from "../../../core/constants/toast-messages.constants";
     ProgressBar,
     Tooltip,
     ButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   template: `
     @if (isInTournament()) {

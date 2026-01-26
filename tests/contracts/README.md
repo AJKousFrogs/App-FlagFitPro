@@ -61,11 +61,11 @@ describe("Contract: [Contract Name]", () => {
   describe("Authority Tests", () => {
     // Tests for authority enforcement
   });
-  
+
   describe("Immutability Tests", () => {
     // Tests for immutability rules
   });
-  
+
   // ... other test groups
 });
 ```
@@ -96,6 +96,7 @@ it("should prevent [forbidden action]", async () => {
 ## Test Data
 
 Tests use mock/test data:
+
 - Test user IDs: `test-coach-id`, `test-athlete-id`
 - Test sessions created in `beforeAll`
 - Cleanup in `afterAll`
@@ -113,9 +114,11 @@ These tests should run in CI/CD:
 ## Compliance Matrix
 
 Test results feed into the compliance matrix:
+
 - `docs/contracts/CONTRACT_COMPLIANCE_AUDIT_MATRIX_v1.md`
 
 Update the matrix when:
+
 - Tests pass/fail
 - New tests added
 - Contract violations fixed
@@ -131,6 +134,7 @@ Update the matrix when:
 
 **Issue:** Tables don't exist in test database  
 **Fix:** Run migrations on test database:
+
 ```bash
 supabase db reset --db-url $TEST_DATABASE_URL
 ```

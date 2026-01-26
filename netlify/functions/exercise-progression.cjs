@@ -135,12 +135,16 @@ exports.handler = async (event) => {
     }
 
     const targetDate = date || new Date().toISOString().split("T")[0];
-    
+
     // CRITICAL: Do NOT use defaults for ACWR and readiness
     // These must come from actual user data. Use null to indicate no data.
     // Progression logic should handle missing data gracefully (conservative defaults)
-    const acwr = acwrValue !== undefined && acwrValue !== null ? acwrValue : null;
-    const readiness = readinessScore !== undefined && readinessScore !== null ? readinessScore : null;
+    const acwr =
+      acwrValue !== undefined && acwrValue !== null ? acwrValue : null;
+    const readiness =
+      readinessScore !== undefined && readinessScore !== null
+        ? readinessScore
+        : null;
 
     // Get yesterday's date
     const yesterday = new Date(targetDate);
@@ -319,7 +323,7 @@ function calculateProgression(exercise, yesterdayPerf, acwr, readiness) {
 
 /**
  * Get the combined adjustment factor based on ACWR and readiness
- * 
+ *
  * IMPORTANT: When data is missing (null), use conservative factor of 1.0 (no change)
  * This prevents artificially inflating or deflating progression when we don't have real data
  */
@@ -356,7 +360,7 @@ function getAdjustmentFactor(acwr, readiness) {
   // If we have neither, return 1.0 (no adjustment)
   const hasAcwr = acwr !== null && acwr !== undefined;
   const hasReadiness = readiness !== null && readiness !== undefined;
-  
+
   if (hasAcwr && hasReadiness) {
     return (acwrFactor + readinessFactor) / 2;
   } else if (hasAcwr) {

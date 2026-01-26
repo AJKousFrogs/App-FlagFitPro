@@ -22,14 +22,19 @@ import {
   Component,
   OnInit,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { UI_LIMITS } from "@core/constants";
 
 // PrimeNG Components
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import {
+  Accordion,
+  AccordionPanel,
+  AccordionHeader,
+  AccordionContent,
+} from "primeng/accordion";
 import { Badge } from "primeng/badge";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
@@ -55,7 +60,7 @@ import {
   MassageGunProtocol,
   RecoveryProtocol,
   TravelChecklist,
-  TravelRecoveryService
+  TravelRecoveryService,
 } from "../../../core/services/travel-recovery.service";
 
 // Layout & Components
@@ -92,7 +97,7 @@ interface TimezoneOption {
     ButtonComponent,
     MainLayoutComponent,
     PageHeaderComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   template: `
     <app-main-layout>
@@ -286,7 +291,9 @@ interface TimezoneOption {
                 </div>
 
                 <div class="form-field">
-                  <label for="competition-date">Competition Date (Optional)</label>
+                  <label for="competition-date"
+                    >Competition Date (Optional)</label
+                  >
                   <p-datepicker
                     inputId="competition-date"
                     [(ngModel)]="tripForm.competitionDate"
@@ -803,7 +810,9 @@ interface TimezoneOption {
                   </div>
 
                   <div class="form-field">
-                    <label for="car-duration">Estimated Drive Duration (hours)</label>
+                    <label for="car-duration"
+                      >Estimated Drive Duration (hours)</label
+                    >
                     <p-inputNumber
                       inputId="car-duration"
                       [(ngModel)]="carTripForm.duration"
@@ -811,7 +820,9 @@ interface TimezoneOption {
                       [max]="18"
                       [showButtons]="true"
                       suffix=" hrs"
-                      [attr.aria-label]="'Estimated car travel duration in hours'"
+                      [attr.aria-label]="
+                        'Estimated car travel duration in hours'
+                      "
                     ></p-inputNumber>
                   </div>
 
@@ -830,7 +841,9 @@ interface TimezoneOption {
                   </div>
 
                   <div class="form-field">
-                    <label for="car-competition-date">Competition Date (Optional)</label>
+                    <label for="car-competition-date"
+                      >Competition Date (Optional)</label
+                    >
                     <p-datepicker
                       inputId="car-competition-date"
                       [(ngModel)]="carTripForm.competitionDate"
@@ -838,7 +851,9 @@ interface TimezoneOption {
                       [minDate]="minDate"
                       dateFormat="dd/mm/yy"
                       styleClass="w-full"
-                      [attr.aria-label]="'Select competition date for car trip (optional)'"
+                      [attr.aria-label]="
+                        'Select competition date for car trip (optional)'
+                      "
                     ></p-datepicker>
                   </div>
                 </div>

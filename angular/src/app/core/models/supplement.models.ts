@@ -1,9 +1,9 @@
 /**
  * Supplement Models
- * 
+ *
  * Canonical type definitions for supplement-related data structures.
  * All supplement interfaces should import from this file.
- * 
+ *
  * @module core/models/supplement
  */
 
@@ -18,7 +18,12 @@ export interface Supplement {
   dosage?: string;
   taken: boolean;
   date: string;
-  timeOfDay?: "morning" | "afternoon" | "evening" | "pre-workout" | "post-workout";
+  timeOfDay?:
+    | "morning"
+    | "afternoon"
+    | "evening"
+    | "pre-workout"
+    | "post-workout";
   notes?: string;
   timestamp?: string;
 }
@@ -32,7 +37,13 @@ export interface SupplementDisplay {
   name: string;
   dosage?: string;
   timing: "morning" | "pre-workout" | "post-workout" | "evening" | "anytime";
-  category: "vitamin" | "mineral" | "amino" | "performance" | "recovery" | "other";
+  category:
+    | "vitamin"
+    | "mineral"
+    | "amino"
+    | "performance"
+    | "recovery"
+    | "other";
   taken: boolean;
   takenAt?: Date;
   notes?: string;
@@ -45,7 +56,12 @@ export interface SupplementDisplay {
 export interface SupplementEntry {
   name: string;
   taken: boolean;
-  timeOfDay: "morning" | "afternoon" | "evening" | "pre-workout" | "post-workout";
+  timeOfDay:
+    | "morning"
+    | "afternoon"
+    | "evening"
+    | "pre-workout"
+    | "post-workout";
   dosage?: string;
 }
 
@@ -71,12 +87,14 @@ export function supplementToDisplay(supplement: Supplement): SupplementDisplay {
     "pre-workout": "pre-workout",
     "post-workout": "post-workout",
   };
-  
+
   return {
     id: supplement.id?.toString() || "",
     name: supplement.name,
     dosage: supplement.dosage,
-    timing: supplement.timeOfDay ? (timingMap[supplement.timeOfDay] || "anytime") : "anytime",
+    timing: supplement.timeOfDay
+      ? timingMap[supplement.timeOfDay] || "anytime"
+      : "anytime",
     category: "other", // Default category, can be enhanced with mapping logic
     taken: supplement.taken,
     takenAt: supplement.timestamp ? new Date(supplement.timestamp) : undefined,
@@ -87,7 +105,10 @@ export function supplementToDisplay(supplement: Supplement): SupplementDisplay {
 /**
  * Helper function to convert SupplementDisplay to Supplement
  */
-export function displayToSupplement(display: SupplementDisplay, userId?: string): Partial<Supplement> {
+export function displayToSupplement(
+  display: SupplementDisplay,
+  userId?: string,
+): Partial<Supplement> {
   return {
     name: display.name,
     dosage: display.dosage,

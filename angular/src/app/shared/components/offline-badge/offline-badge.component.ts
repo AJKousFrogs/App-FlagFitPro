@@ -17,7 +17,7 @@ import {
   inject,
   signal,
   input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 

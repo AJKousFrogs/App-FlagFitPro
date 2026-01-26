@@ -4,7 +4,7 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-  OnInit
+  OnInit,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 
@@ -77,7 +77,7 @@ interface AthleteMetrics {
     MainLayoutComponent,
     PageHeaderComponent,
     AiConsentRequiredComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -244,7 +244,11 @@ interface AthleteMetrics {
                           size="sm"
                         />
                         @if (suggestion.priority === "high") {
-                          <app-status-tag value="Priority" severity="danger" size="sm" />
+                          <app-status-tag
+                            value="Priority"
+                            severity="danger"
+                            size="sm"
+                          />
                         }
                       </div>
                       <p class="suggestion-message">{{ suggestion.message }}</p>
@@ -737,13 +741,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
 
   getSuggestionSeverity(
     type: string,
-  ):
-    | "success"
-    | "info"
-    | "warning"
-    | "secondary"
-    | "contrast"
-    | "danger" {
+  ): "success" | "info" | "warning" | "secondary" | "contrast" | "danger" {
     switch (type) {
       case "swap":
         return "info";

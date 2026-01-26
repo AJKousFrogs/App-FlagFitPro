@@ -141,29 +141,33 @@ async function getCoachDashboard(userId) {
 
           if (wellnessData && wellnessData.length > 0) {
             const w = wellnessData[0];
-            
+
             // CRITICAL: Only calculate if we have real data (at least sleep and energy)
-            const hasSleep = w.sleep_quality !== null && w.sleep_quality !== undefined;
-            const hasEnergy = w.energy_level !== null && w.energy_level !== undefined;
-            
+            const hasSleep =
+              w.sleep_quality !== null && w.sleep_quality !== undefined;
+            const hasEnergy =
+              w.energy_level !== null && w.energy_level !== undefined;
+
             if (hasSleep && hasEnergy) {
               // Calculate wellness score from real data only
               const sleepScore = (w.sleep_quality / 10) * 100;
               const energyScore = (w.energy_level / 10) * 100;
-              
+
               // Include stress and soreness only if available
-              const hasStress = w.stress_level !== null && w.stress_level !== undefined;
-              const hasSoreness = w.muscle_soreness !== null && w.muscle_soreness !== undefined;
-              
+              const hasStress =
+                w.stress_level !== null && w.stress_level !== undefined;
+              const hasSoreness =
+                w.muscle_soreness !== null && w.muscle_soreness !== undefined;
+
               let wellnessAvg;
               if (hasStress && hasSoreness) {
                 const stressScore = ((10 - w.stress_level) / 10) * 100;
                 const sorenessScore = ((10 - w.muscle_soreness) / 10) * 100;
-                wellnessAvg = 
-                  sleepScore * 0.30 + 
-                  energyScore * 0.25 + 
-                  stressScore * 0.25 + 
-                  sorenessScore * 0.20;
+                wellnessAvg =
+                  sleepScore * 0.3 +
+                  energyScore * 0.25 +
+                  stressScore * 0.25 +
+                  sorenessScore * 0.2;
               } else {
                 wellnessAvg = sleepScore * 0.55 + energyScore * 0.45;
               }
@@ -171,7 +175,10 @@ async function getCoachDashboard(userId) {
               // Apply ACWR penalty only if we have ACWR data
               if (acwr !== null) {
                 const acwrPenalty = Math.abs(acwr - 1.0) * 15;
-                readiness = Math.max(30, Math.min(100, wellnessAvg - acwrPenalty));
+                readiness = Math.max(
+                  30,
+                  Math.min(100, wellnessAvg - acwrPenalty),
+                );
               } else {
                 readiness = Math.round(wellnessAvg);
               }

@@ -5,8 +5,6 @@
 
 @use "styles/mixins" as *;
 
-
-
 .performance-page {
   @include page-container(var(--content-max-width-2xl));
 }
@@ -355,7 +353,11 @@
   align-items: center;
 
   &.top-three {
-    background: linear-gradient(135deg, var(--surface-secondary) 0%, rgba(var(--primitive-primary-500-rgb), 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--surface-secondary) 0%,
+      rgba(var(--primitive-primary-500-rgb), 0.05) 100%
+    );
     border-left: var(--space-1) solid var(--ds-primary-green);
   }
 }

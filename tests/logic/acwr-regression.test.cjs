@@ -29,6 +29,20 @@ const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SUPABASE_SERVICE_KEY =
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
+function getSupabaseEnvStatus() {
+  const missing = [];
+  if (!SUPABASE_URL) {
+    missing.push("SUPABASE_URL (or VITE_SUPABASE_URL)");
+  }
+  if (!SUPABASE_SERVICE_KEY) {
+    missing.push("SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_ANON_KEY)");
+  }
+  return {
+    ok: missing.length === 0,
+    missing,
+  };
+}
+
 // Test player UUID - use a deterministic UUID for reproducibility
 const TEST_PLAYER_ID = "00000000-0000-0000-0000-000000000001";
 const TEST_PLAYER_EMAIL = "acwr-test@flagfit.test";
@@ -693,6 +707,16 @@ async function runTests() {
   console.log(`  - Acute Load: ±${TOLERANCE.ACUTE_LOAD} AU`);
   console.log(`  - Chronic Load: ±${TOLERANCE.CHRONIC_LOAD} AU`);
   console.log(`  - ACWR: ±${TOLERANCE.ACWR}`);
+
+  const envStatus = getSupabaseEnvStatus();
+  if (!envStatus.ok) {
+    console.log(
+      "\n⏭️ Skipping ACWR regression test: missing Supabase credentials.",
+    );
+    console.log(`Missing: ${envStatus.missing.join(", ")}`);
+    console.log("Set the required environment variables to run this test.");
+    return;
+  }
 
   let supabase;
   const results = {

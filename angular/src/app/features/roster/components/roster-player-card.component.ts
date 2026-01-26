@@ -13,7 +13,7 @@ import {
   output,
   computed,
   inject,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { TitleCasePipe, DecimalPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -29,14 +29,14 @@ import { getRiskSeverityFromLevel } from "../../../shared/utils/risk.utils";
 import { Player } from "../roster.models";
 import {
   PlayerMetricsService,
-  PlayerWithMetrics
+  PlayerWithMetrics,
 } from "../services/player-metrics.service";
 import {
   getJerseyColor,
   getPlayerStats,
   formatHeight,
   formatWeight,
-  getCountryFlag
+  getCountryFlag,
 } from "../roster-utils";
 import { TRAINING } from "../../../core/constants/app.constants";
 
@@ -53,7 +53,7 @@ import { TRAINING } from "../../../core/constants/app.constants";
     TitleCasePipe,
     DecimalPipe,
     SemanticMeaningRendererComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <p-card
@@ -136,7 +136,8 @@ import { TRAINING } from "../../../core/constants/app.constants";
             [value]="enrichedPlayer().readiness ?? 0"
             [showValue]="false"
             [styleClass]="
-              'readiness-bar ' + getReadinessClass(enrichedPlayer().readiness ?? 0)
+              'readiness-bar ' +
+              getReadinessClass(enrichedPlayer().readiness ?? 0)
             "
           ></p-progressBar>
         </div>

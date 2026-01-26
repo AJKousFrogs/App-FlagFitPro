@@ -6,7 +6,7 @@ import {
   OnInit,
   inject,
   signal,
-  viewChild
+  viewChild,
 } from "@angular/core";
 
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -15,7 +15,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from "@angular/forms";
 
 import { CardComponent } from "../../shared/components/card/card.component";
@@ -41,12 +41,16 @@ import { EmptyStateComponent } from "../../shared/components/ui-components";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
-import { formatDate, formatDateISO, safeParseDate } from "../../shared/utils/date.utils";
+import {
+  formatDate,
+  formatDateISO,
+  safeParseDate,
+} from "../../shared/utils/date.utils";
 import {
   validateForm,
   sanitizeFormData,
   GameValidators,
-  FormValidationResult
+  FormValidationResult,
 } from "../../shared/utils/form-validation.utils";
 import { GameResponseSchema } from "../../core/schemas/api-response.schema";
 
@@ -133,7 +137,7 @@ interface Play {
     ButtonComponent,
     IconButtonComponent,
     EmptyStateComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   templateUrl: "./game-tracker.component.html",
   styleUrl: "./game-tracker.component.scss",
@@ -150,8 +154,10 @@ export class GameTrackerComponent implements OnInit {
   private logger = inject(LoggerService);
 
   // ViewChild references for scroll operations
-  private readonly gamesListCard = viewChild<ElementRef<HTMLElement>>('gamesListCard');
-  private readonly playTrackerCard = viewChild<ElementRef<HTMLElement>>('playTrackerCard');
+  private readonly gamesListCard =
+    viewChild<ElementRef<HTMLElement>>("gamesListCard");
+  private readonly playTrackerCard =
+    viewChild<ElementRef<HTMLElement>>("playTrackerCard");
 
   showGameForm = signal(false);
   games = signal<Game[]>([]);
@@ -1016,7 +1022,10 @@ export class GameTrackerComponent implements OnInit {
   viewGames(): void {
     // Scroll to games list
     const element = this.gamesListCard();
-    element?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    element?.nativeElement.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }
 
   viewGameDetails(game: Game): void {
@@ -1044,7 +1053,10 @@ export class GameTrackerComponent implements OnInit {
     // Scroll to play tracker
     setTimeout(() => {
       const element = this.playTrackerCard();
-      element?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      element?.nativeElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }, 100);
   }
 

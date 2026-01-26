@@ -19,7 +19,7 @@ import {
   signal,
   computed,
   input,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
@@ -61,7 +61,7 @@ interface UpcomingGame {
     ProgressBar,
     Tooltip,
     ButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   template: `
     @if (game()) {

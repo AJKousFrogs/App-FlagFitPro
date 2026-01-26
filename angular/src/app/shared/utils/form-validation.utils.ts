@@ -7,7 +7,12 @@
  * @version 1.0.0
  */
 
-import { AbstractControl, FormGroup, ValidatorFn, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormGroup,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
 import { safeParseDate, validateDateRange } from "./date.utils";
 import { roundToPrecision } from "./precision.utils";
 
@@ -75,7 +80,11 @@ export function numericRange(
   decimals: number = 2,
 ): ValidatorFn {
   return (control: AbstractControl): { [key: string]: unknown } | null => {
-    if (control.value === null || control.value === undefined || control.value === "") {
+    if (
+      control.value === null ||
+      control.value === undefined ||
+      control.value === ""
+    ) {
       return null;
     }
 
@@ -129,7 +138,11 @@ export function percentageValidator(): ValidatorFn {
  */
 export function positiveInteger(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: unknown } | null => {
-    if (control.value === null || control.value === undefined || control.value === "") {
+    if (
+      control.value === null ||
+      control.value === undefined ||
+      control.value === ""
+    ) {
       return null;
     }
 
@@ -148,7 +161,10 @@ export function nonEmptyString(): ValidatorFn {
   return (control: AbstractControl): { [key: string]: unknown } | null => {
     if (!control.value) return null;
 
-    if (typeof control.value !== "string" || control.value.trim().length === 0) {
+    if (
+      typeof control.value !== "string" ||
+      control.value.trim().length === 0
+    ) {
       return { emptyString: true };
     }
     return null;
@@ -164,7 +180,9 @@ export function maxTrimmedLength(maxLength: number): ValidatorFn {
 
     const trimmed = String(control.value).trim();
     if (trimmed.length > maxLength) {
-      return { maxlength: { requiredLength: maxLength, actualLength: trimmed.length } };
+      return {
+        maxlength: { requiredLength: maxLength, actualLength: trimmed.length },
+      };
     }
     return null;
   };
@@ -235,7 +253,10 @@ export function getErrorMessages(
   }
 
   if (errors["minlength"]) {
-    const err = errors["minlength"] as { requiredLength: number; actualLength: number };
+    const err = errors["minlength"] as {
+      requiredLength: number;
+      actualLength: number;
+    };
     messages.push({
       field: fieldName,
       message: `${formatFieldName(fieldName)} must be at least ${err.requiredLength} characters`,
@@ -244,7 +265,10 @@ export function getErrorMessages(
   }
 
   if (errors["maxlength"]) {
-    const err = errors["maxlength"] as { requiredLength: number; actualLength: number };
+    const err = errors["maxlength"] as {
+      requiredLength: number;
+      actualLength: number;
+    };
     messages.push({
       field: fieldName,
       message: `${formatFieldName(fieldName)} cannot exceed ${err.requiredLength} characters`,
@@ -319,10 +343,19 @@ export function getErrorMessages(
 
   // Generic error for unknown types
   const knownErrors = [
-    "required", "minlength", "maxlength", "min", "max", "email",
-    "invalidDate", "dateRange", "invalidNumber", "positiveInteger", "emptyString"
+    "required",
+    "minlength",
+    "maxlength",
+    "min",
+    "max",
+    "email",
+    "invalidDate",
+    "dateRange",
+    "invalidNumber",
+    "positiveInteger",
+    "emptyString",
   ];
-  
+
   Object.keys(errors).forEach((key) => {
     if (!knownErrors.includes(key)) {
       messages.push({
@@ -355,7 +388,11 @@ export function formatFieldName(fieldName: string): string {
  * Common validators for training session forms.
  */
 export const TrainingSessionValidators = {
-  sessionDate: [Validators.required, validDate(), dateRange({ maxPastDays: 365, maxFutureDays: 30 })],
+  sessionDate: [
+    Validators.required,
+    validDate(),
+    dateRange({ maxPastDays: 365, maxFutureDays: 30 }),
+  ],
   durationMinutes: [Validators.required, durationValidator(480)],
   rpe: [rpeValidator()],
   intensityLevel: [intensityValidator()],
@@ -366,7 +403,11 @@ export const TrainingSessionValidators = {
  * Common validators for wellness check-in forms.
  */
 export const WellnessValidators = {
-  date: [Validators.required, validDate(), dateRange({ maxPastDays: 7, allowFuture: false })],
+  date: [
+    Validators.required,
+    validDate(),
+    dateRange({ maxPastDays: 7, allowFuture: false }),
+  ],
   sleepHours: [numericRange(0, 24, 1)],
   sleepQuality: [numericRange(1, 10, 0)],
   stressLevel: [numericRange(1, 10, 0)],
@@ -428,12 +469,17 @@ export function sanitizeFormData<T extends Record<string, unknown>>(
 
     // Round numbers
     if (roundNumbers !== undefined && typeof value === "number") {
-      (result as Record<string, unknown>)[key] = roundToPrecision(value, roundNumbers);
+      (result as Record<string, unknown>)[key] = roundToPrecision(
+        value,
+        roundNumbers,
+      );
     }
 
     // Format dates to ISO strings
     if (formatDates && value instanceof Date) {
-      (result as Record<string, unknown>)[key] = value.toISOString().split("T")[0];
+      (result as Record<string, unknown>)[key] = value
+        .toISOString()
+        .split("T")[0];
     }
   });
 

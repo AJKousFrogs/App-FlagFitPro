@@ -27,7 +27,7 @@ echo ""
 
 # Step 2: Create app icons (+PWA requirement)
 echo "🎨 Step 2/3: Setting up app icons..."
-mkdir -p src/assets/icons
+mkdir -p angular/src/assets/icons
 echo "⚠️  Manual step required: Add app icons to angular/src/assets/icons/"
 echo "   Required sizes: 72x72, 96x96, 128x128, 144x144, 152x152, 192x192, 384x384, 512x512"
 echo "   You can use: https://favicon.io/favicon-converter/ or similar tool"
@@ -123,4 +123,3 @@ echo "- Image optimization (see MOBILE_SCORE_100_ROADMAP.md)"
 echo "- Performance tuning (see MOBILE_SCORE_100_ROADMAP.md)"
 echo ""
 echo "✨ You're almost there!"
-

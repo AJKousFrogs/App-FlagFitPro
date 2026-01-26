@@ -2,7 +2,7 @@ import {
   Component,
   input,
   output,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -11,7 +11,7 @@ import { IconButtonComponent } from "../button/icon-button.component";
 import { RouterLink } from "@angular/router";
 import {
   AI_PROCESSING_MESSAGES,
-  PrivacyMessage
+  PrivacyMessage,
 } from "../../utils/privacy-ux-copy";
 
 /**
@@ -35,12 +35,7 @@ import {
   selector: "app-ai-consent-required",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterLink,
-    ButtonComponent,
-    IconButtonComponent
-  ],
+  imports: [CommonModule, RouterLink, ButtonComponent, IconButtonComponent],
   template: `
     <div class="ai-consent-required" [class]="variant()">
       <div class="consent-icon">

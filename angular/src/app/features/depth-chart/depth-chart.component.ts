@@ -1,7 +1,7 @@
 import {
   CdkDragDrop,
   DragDropModule,
-  moveItemInArray
+  moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import {
@@ -11,7 +11,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -30,7 +30,7 @@ import {
   DepthChartEntry,
   DepthChartService,
   DepthChartTemplate,
-  DepthChartWithEntries
+  DepthChartWithEntries,
 } from "../../core/services/depth-chart.service";
 import { LoggerService } from "../../core/services/logger.service";
 import { TeamMembershipService } from "../../core/services/team-membership.service";
@@ -69,7 +69,7 @@ interface PositionGroup {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <app-main-layout>

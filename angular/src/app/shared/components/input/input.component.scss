@@ -30,7 +30,8 @@ label {
 
 .form-control {
   width: 100%;
-  padding: var(--space-3, var(--ds-font-size-xs)) var(--space-4, var(--ds-font-size-md));
+  padding: var(--space-3, var(--ds-font-size-xs))
+    var(--space-4, var(--ds-font-size-md));
   border: 1px solid var(--color-border-primary, var(--color-border-primary));
   border-radius: var(--radius-lg, var(--radius-md));
   font-size: var(--ds-font-size-md);
@@ -51,7 +52,8 @@ label {
 }
 
 .form-control:focus-visible {
-  outline: var(--focus-outline-width) solid var(--ds-primary-green, var(--ds-primary-green));
+  outline: var(--focus-outline-width) solid
+    var(--ds-primary-green, var(--ds-primary-green));
   outline-offset: var(--focus-outline-offset);
   border-color: var(--ds-primary-green, var(--ds-primary-green));
   box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.2);

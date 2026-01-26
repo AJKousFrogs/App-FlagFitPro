@@ -14,7 +14,7 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { MessageService } from "primeng/api";
@@ -96,7 +96,7 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
     PageHeaderComponent,
     MobileOptimizedImageDirective,
     ButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -402,13 +402,16 @@ const PLAY_CATEGORIES: { label: string; value: PlayCategory }[] = [
 
                 @if (answerSubmitted()) {
                   <p-message
-                    [severity]="selectedAnswer() === q.correctIndex ? 'success' : 'error'"
+                    [severity]="
+                      selectedAnswer() === q.correctIndex ? 'success' : 'error'
+                    "
                     styleClass="status-message"
                   >
                     {{
                       selectedAnswer() === q.correctIndex
-                        ? 'Correct!'
-                        : 'Incorrect. The correct answer is: ' + q.options[q.correctIndex]
+                        ? "Correct!"
+                        : "Incorrect. The correct answer is: " +
+                          q.options[q.correctIndex]
                     }}
                   </p-message>
                 }

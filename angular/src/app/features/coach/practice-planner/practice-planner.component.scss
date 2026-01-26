@@ -1,9 +1,5 @@
 @use "styles/mixins" as *;
 
-
-
-
-
 .activity-duration-input {
   width: var(--size-100);
   max-width: 100%;
@@ -342,7 +338,10 @@
 // Equipment Grid
 .equipment-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-sm), 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(var(--grid-card-min-sm), 1fr)
+  );
   gap: var(--space-2);
 
   .equipment-item {

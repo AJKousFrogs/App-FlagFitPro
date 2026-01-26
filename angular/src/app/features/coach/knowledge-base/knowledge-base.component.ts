@@ -14,10 +14,10 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { SearchInputComponent } from "../../../shared/components/search-input/search-input.component";
 
@@ -102,7 +102,7 @@ const VISIBILITY_OPTIONS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    SearchInputComponent
+    SearchInputComponent,
   ],
   providers: [MessageService],
   template: `

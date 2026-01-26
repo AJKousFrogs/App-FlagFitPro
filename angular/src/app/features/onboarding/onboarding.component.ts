@@ -1,11 +1,11 @@
 import {
-    ChangeDetectionStrategy,
-    Component,
-    OnDestroy,
-    OnInit,
-    computed,
-    inject,
-    signal
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal,
 } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
@@ -28,14 +28,14 @@ import { TOAST } from "../../core/constants/toast-messages.constants";
 import { ApiService } from "../../core/services/api.service";
 import { AuthService } from "../../core/services/auth.service";
 import {
-    LoggerService,
-    toLogContext
+  LoggerService,
+  toLogContext,
 } from "../../core/services/logger.service";
 import { PlatformService } from "../../core/services/platform.service";
 import {
-    PlayerProgramService,
-    getProgramIdForPosition,
-    normalizePositionForModifiers
+  PlayerProgramService,
+  getProgramIdForPosition,
+  normalizePositionForModifiers,
 } from "../../core/services/player-program.service";
 import { SupabaseService } from "../../core/services/supabase.service";
 import { ToastService } from "../../core/services/toast.service";
@@ -79,7 +79,7 @@ interface InjuryEntry {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -985,7 +985,9 @@ interface InjuryEntry {
                       [(ngModel)]="onboardingData.practicesPerWeek"
                       placeholder="How many team practices?"
                       class="w-full"
-                      [attr.aria-label]="'Select number of team practices per week'"
+                      [attr.aria-label]="
+                        'Select number of team practices per week'
+                      "
                     ></p-select>
                   </div>
 
@@ -1371,9 +1373,7 @@ interface InjuryEntry {
                             @if (onboardingData.currentInjuries.length === 0) {
                               None 👍
                             } @else {
-                              {{
-                                onboardingData.currentInjuries.length
-                              }}
+                              {{ onboardingData.currentInjuries.length }}
                               area(s)
                             }
                           </span>
@@ -2961,7 +2961,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    */
   goToStep(event: number | Event | undefined): void {
     // Handle both direct number value and Event wrapper for template type safety
-    const targetIndex = typeof event === 'number' ? event : undefined;
+    const targetIndex = typeof event === "number" ? event : undefined;
     if (targetIndex === undefined) return;
     const currentIndex = this.currentStep();
 
@@ -3023,7 +3023,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
    */
   searchTeams(event: { query: string } | Event): void {
     // Handle AutoCompleteCompleteEvent which has query property
-    const query = ('query' in event ? event.query : '').toLowerCase();
+    const query = ("query" in event ? event.query : "").toLowerCase();
     const allTeams = this.teams();
 
     if (!query) {
@@ -3403,7 +3403,10 @@ export class OnboardingComponent implements OnInit, OnDestroy {
         currentInjuries: this.onboardingData.currentInjuries,
         injuryHistory: this.onboardingData.injuryHistory,
       };
-      this.platform.setLocalStorage("flagfit_preferences", JSON.stringify(preferences));
+      this.platform.setLocalStorage(
+        "flagfit_preferences",
+        JSON.stringify(preferences),
+      );
     }
   }
 

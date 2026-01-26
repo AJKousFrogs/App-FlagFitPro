@@ -4,7 +4,10 @@ import { Observable, throwError } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { environment } from "../../../environments/environment";
 import { LoggerService } from "./logger.service";
-import { type MinimalSchema, validateApiResponse } from "../schemas/api-response.schema";
+import {
+  type MinimalSchema,
+  validateApiResponse,
+} from "../schemas/api-response.schema";
 import { ApiResponse } from "../models/common.models";
 
 /**
@@ -345,7 +348,8 @@ export const API_ENDPOINTS = {
     addComment: (postId: string) => `/api/community/posts/${postId}/comments`,
     likePost: (postId: string) => `/api/community/posts/${postId}/like`,
     bookmarkPost: (postId: string) => `/api/community/posts/${postId}/bookmark`,
-    likeComment: (commentId: string) => `/api/community/comments/${commentId}/like`,
+    likeComment: (commentId: string) =>
+      `/api/community/comments/${commentId}/like`,
     votePoll: (optionId: string) => `/api/community/polls/${optionId}/vote`,
     leaderboard: "/api/community/leaderboard",
     trending: "/api/community/trending",

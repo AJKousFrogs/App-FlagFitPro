@@ -20,14 +20,14 @@ import {
   signal,
   computed,
   ChangeDetectionStrategy,
-  OnInit
+  OnInit,
 } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import {
   FormBuilder,
   FormGroup,
   Validators,
-  ReactiveFormsModule
+  ReactiveFormsModule,
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { CommonModule } from "@angular/common";
@@ -72,7 +72,7 @@ interface SessionType {
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    CardShellComponent
+    CardShellComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -256,7 +256,9 @@ interface SessionType {
               iconLeft="pi-sliders-h"
               (clicked)="toggleDetails()"
               [disabled]="isReadOnly()"
-              >{{ showDetails() ? "Hide optional details" : "Add optional details" }}</app-button
+              >{{
+                showDetails() ? "Hide optional details" : "Add optional details"
+              }}</app-button
             >
           </div>
 
@@ -378,8 +380,8 @@ interface SessionType {
                         ACWR will update once this session is approved.
                       </p>
                     </div>
-                <small class="state-narration">
-                  <strong>What changed:</strong> Logging
+                    <small class="state-narration">
+                      <strong>What changed:</strong> Logging
                       {{ hoursDelayed() }} hours after session completion.
                       <strong>Why:</strong> You're entering this session
                       retroactively (more than 24 hours late).
@@ -442,8 +444,8 @@ interface SessionType {
                         ACWR updated automatically. No approval needed.
                       </p>
                     </div>
-                <small class="state-narration">
-                  <strong>What changed:</strong> Logging
+                    <small class="state-narration">
+                      <strong>What changed:</strong> Logging
                       {{ hoursDelayed() }} hours after session completion.
                       <strong>Why:</strong> You're entering this session late
                       (within 24 hours but after completion).
@@ -727,7 +729,10 @@ export class TrainingLogComponent implements OnInit {
         notes: session.notes || "",
       });
 
-      const metrics = (session.session_metrics || {}) as Record<string, unknown>;
+      const metrics = (session.session_metrics || {}) as Record<
+        string,
+        unknown
+      >;
       if (Object.keys(metrics).length > 0) {
         this.showDetails.set(true);
         this.sessionForm.patchValue({
@@ -800,8 +805,7 @@ export class TrainingLogComponent implements OnInit {
       };
 
       const existingSessionId =
-        this.activeSessionId ||
-        (await this.findExistingSessionId(sessionDate));
+        this.activeSessionId || (await this.findExistingSessionId(sessionDate));
 
       if (existingSessionId) {
         await firstValueFrom(
@@ -957,14 +961,12 @@ export class TrainingLogComponent implements OnInit {
       return;
     }
 
-    const formDate =
-      this.sessionForm.get("sessionDate")?.value || this.today;
+    const formDate = this.sessionForm.get("sessionDate")?.value || this.today;
     const existing = this.activeSessionId
       ? this.activeSessionId
       : await this.findExistingSessionId(formDate);
 
-    const dateLabel =
-      formDate === this.today ? "today's" : "this";
+    const dateLabel = formDate === this.today ? "today's" : "this";
 
     if (existing) {
       this.overrideMessage.set(

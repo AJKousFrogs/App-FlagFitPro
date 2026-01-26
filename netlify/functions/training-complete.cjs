@@ -88,7 +88,14 @@ async function createCompletionNotification(userId, sessionType, points) {
 /**
  * Ensure workout_logs entry exists for ACWR calculations
  */
-async function syncWorkoutLog(userId, sessionId, completedAt, rpe, durationMinutes, notes) {
+async function syncWorkoutLog(
+  userId,
+  sessionId,
+  completedAt,
+  rpe,
+  durationMinutes,
+  notes,
+) {
   try {
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from("workout_logs")
@@ -98,7 +105,10 @@ async function syncWorkoutLog(userId, sessionId, completedAt, rpe, durationMinut
       .maybeSingle();
 
     if (fetchError) {
-      console.warn("[Training Complete] Failed to check workout log:", fetchError.message);
+      console.warn(
+        "[Training Complete] Failed to check workout log:",
+        fetchError.message,
+      );
       return false;
     }
 
@@ -118,7 +128,10 @@ async function syncWorkoutLog(userId, sessionId, completedAt, rpe, durationMinut
       });
 
     if (insertError) {
-      console.warn("[Training Complete] Failed to sync workout log:", insertError.message);
+      console.warn(
+        "[Training Complete] Failed to sync workout log:",
+        insertError.message,
+      );
       return false;
     }
 
@@ -184,9 +197,10 @@ async function completeTrainingSession(userId, sessionId, completionData) {
       ...(completionData.notes && {
         notes: `${session.notes || ""}\n\nCompleted: ${completionData.notes}`,
       }),
-      ...(rpe !== undefined && rpe !== null && {
-        rpe,
-      }),
+      ...(rpe !== undefined &&
+        rpe !== null && {
+          rpe,
+        }),
       // Store performance metrics if provided
       ...(completionData.metrics && { metrics: completionData.metrics }),
     };
@@ -205,7 +219,14 @@ async function completeTrainingSession(userId, sessionId, completionData) {
     }
 
     // Ensure workout_logs entry exists for ACWR calculations
-    await syncWorkoutLog(userId, sessionId, completedAt, rpe, duration, completionData.notes);
+    await syncWorkoutLog(
+      userId,
+      sessionId,
+      completedAt,
+      rpe,
+      duration,
+      completionData.notes,
+    );
 
     // Award points for completing the session
     const pointsResult = await awardTrainingPoints(userId, duration, intensity);

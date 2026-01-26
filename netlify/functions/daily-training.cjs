@@ -219,7 +219,9 @@ function calculateACWR(sessions) {
   const withLoads = sessions
     .map((session) => {
       const dateKey = session.completed_at || session.session_date;
-      if (!dateKey) return null;
+      if (!dateKey) {
+        return null;
+      }
       const hasRpeLoad =
         session.rpe !== null &&
         session.rpe !== undefined &&
@@ -244,8 +246,7 @@ function calculateACWR(sessions) {
   ].sort((a, b) => new Date(a) - new Date(b));
 
   const daysSpan =
-    (new Date(uniqueDates[uniqueDates.length - 1]) -
-      new Date(uniqueDates[0])) /
+    (new Date(uniqueDates[uniqueDates.length - 1]) - new Date(uniqueDates[0])) /
     (1000 * 60 * 60 * 24);
 
   if (
@@ -279,10 +280,15 @@ function calculateACWR(sessions) {
   const acwr = acuteLoad / chronicLoad;
 
   let status = "no-data";
-  if (acwr < ACWR_CONFIG.thresholds.sweetSpotLow) status = "under-training";
-  else if (acwr <= ACWR_CONFIG.thresholds.sweetSpotHigh) status = "sweet-spot";
-  else if (acwr <= ACWR_CONFIG.thresholds.dangerHigh) status = "elevated-risk";
-  else status = "danger-zone";
+  if (acwr < ACWR_CONFIG.thresholds.sweetSpotLow) {
+    status = "under-training";
+  } else if (acwr <= ACWR_CONFIG.thresholds.sweetSpotHigh) {
+    status = "sweet-spot";
+  } else if (acwr <= ACWR_CONFIG.thresholds.dangerHigh) {
+    status = "elevated-risk";
+  } else {
+    status = "danger-zone";
+  }
 
   return { value: Math.round(acwr * 100) / 100, status };
 }

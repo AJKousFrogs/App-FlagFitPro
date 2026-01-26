@@ -413,7 +413,11 @@ interface ChartOptions {
                     muscle of selectedProtocolDetails()?.targetMuscles;
                     track muscle
                   ) {
-                    <app-status-tag [value]="muscle" severity="secondary" size="sm" />
+                    <app-status-tag
+                      [value]="muscle"
+                      severity="secondary"
+                      size="sm"
+                    />
                   }
                 </div>
               </div>
@@ -564,7 +568,11 @@ interface ChartOptions {
                 <div class="research-item">
                   <div class="research-header">
                     <h4>{{ insight.title }}</h4>
-                    <app-status-tag [value]="insight.journal" severity="info" size="sm" />
+                    <app-status-tag
+                      [value]="insight.journal"
+                      severity="info"
+                      size="sm"
+                    />
                   </div>
                   <p>{{ insight.summary }}</p>
                   <div class="research-meta">

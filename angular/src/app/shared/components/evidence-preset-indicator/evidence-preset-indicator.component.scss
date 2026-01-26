@@ -27,8 +27,12 @@
 
 /* Science Info Box - Uses brand primary subtle background */
 .science-info-box {
-  background: var(--ds-primary-green-subtle, rgba(var(--ds-primary-green-rgb), 0.1));
-  border: 1px solid var(--ds-primary-green-ultra-subtle, rgba(var(--ds-primary-green-rgb), 0.2));
+  background: var(
+    --ds-primary-green-subtle,
+    rgba(var(--ds-primary-green-rgb), 0.1)
+  );
+  border: 1px solid
+    var(--ds-primary-green-ultra-subtle, rgba(var(--ds-primary-green-rgb), 0.2));
 }
 .science-icon {
   color: var(--color-brand-primary, var(--ds-primary-green));

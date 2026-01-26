@@ -30,9 +30,7 @@ describe("validation utils", () => {
 
     it("stringifies objects without a message field", () => {
       const error = { code: "ERR_CODE", status: 500 };
-      expect(getErrorMessage(error, "Fallback")).toBe(
-        JSON.stringify(error),
-      );
+      expect(getErrorMessage(error, "Fallback")).toBe(JSON.stringify(error));
     });
   });
 

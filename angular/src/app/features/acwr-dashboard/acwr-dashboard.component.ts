@@ -65,7 +65,7 @@ import { RiskMeaning } from "../../core/semantics/semantic-meaning.types";
 import { formatDate } from "../../shared/utils/date.utils";
 import {
   getRiskSeverityFromAlert,
-  getRiskSeverityFromZone
+  getRiskSeverityFromZone,
 } from "../../shared/utils/risk.utils";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 
@@ -574,7 +574,8 @@ export class AcwrDashboardComponent implements OnInit {
   private logger = inject(LoggerService);
 
   // Angular 21: viewChild signal for PDF export dashboard reference
-  private readonly dashboardElement = viewChild<ElementRef>('dashboardContainer');
+  private readonly dashboardElement =
+    viewChild<ElementRef>("dashboardContainer");
 
   // Runtime guard signals - prevent white screen crashes
   isPageLoading = signal<boolean>(false);

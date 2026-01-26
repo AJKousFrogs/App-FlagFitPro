@@ -17,7 +17,7 @@ import {
   Component,
   OnInit,
   inject,
-  computed
+  computed,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
@@ -27,7 +27,7 @@ import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { RouterModule } from "@angular/router";
 import {
   TrainingSafetyService,
-  WarningSeverity
+  WarningSeverity,
 } from "../../../core/services/training-safety.service";
 import { AuthService } from "../../../core/services/auth.service";
 
@@ -51,11 +51,7 @@ import { AuthService } from "../../../core/services/auth.service";
             </div>
           </div>
           @if (hasCriticalWarnings()) {
-            <app-status-tag
-              value="CRITICAL"
-              severity="danger"
-              size="sm"
-            />
+            <app-status-tag value="CRITICAL" severity="danger" size="sm" />
           }
         </div>
 

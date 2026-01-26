@@ -329,7 +329,11 @@ async function handleMeasurements(method, userId, body, query) {
     }
 
     default:
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
   }
 }
 
@@ -367,7 +371,7 @@ async function handlePerformanceTests(method, userId, body, query) {
         }
 
         // Map to consistent API format
-        const mappedTests = (tests || []).map(t => ({
+        const mappedTests = (tests || []).map((t) => ({
           id: t.id,
           userId: t.user_id,
           testType: t.test_type,
@@ -492,7 +496,11 @@ async function handlePerformanceTests(method, userId, body, query) {
     }
 
     default:
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
   }
 }
 
@@ -629,7 +637,11 @@ async function handleWellness(method, userId, requestedAthleteId, body, query) {
     }
 
     default:
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
   }
 }
 
@@ -750,7 +762,11 @@ async function handleSupplements(method, userId, body, query) {
     }
 
     default:
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
   }
 }
 
@@ -993,7 +1009,11 @@ async function handleInjuries(method, userId, body, query) {
     }
 
     default:
-      return createErrorResponse("Method not allowed", 405, "method_not_allowed");
+      return createErrorResponse(
+        "Method not allowed",
+        405,
+        "method_not_allowed",
+      );
   }
 }
 
@@ -1238,9 +1258,15 @@ function validateSupplementData(data) {
   }
 
   // Time of day validation (enum)
-  const validTimeOfDay = ['morning', 'afternoon', 'evening', 'pre-workout', 'post-workout'];
+  const validTimeOfDay = [
+    "morning",
+    "afternoon",
+    "evening",
+    "pre-workout",
+    "post-workout",
+  ];
   if (data.timeOfDay && !validTimeOfDay.includes(data.timeOfDay)) {
-    errors.push(`Time of day must be one of: ${validTimeOfDay.join(', ')}`);
+    errors.push(`Time of day must be one of: ${validTimeOfDay.join(", ")}`);
   }
 
   // Date validation
@@ -1281,15 +1307,24 @@ function validateMeasurementData(data) {
   }
 
   // Enhanced body composition validation
-  if (data.visceralFatRating && (data.visceralFatRating < 1 || data.visceralFatRating > 59)) {
+  if (
+    data.visceralFatRating &&
+    (data.visceralFatRating < 1 || data.visceralFatRating > 59)
+  ) {
     errors.push("Visceral fat rating must be between 1-59");
   }
 
-  if (data.basalMetabolicRate && (data.basalMetabolicRate < 800 || data.basalMetabolicRate > 5000)) {
+  if (
+    data.basalMetabolicRate &&
+    (data.basalMetabolicRate < 800 || data.basalMetabolicRate > 5000)
+  ) {
     errors.push("Basal metabolic rate must be between 800-5000 kcal");
   }
 
-  if (data.waistToHipRatio && (data.waistToHipRatio < 0.5 || data.waistToHipRatio > 1.5)) {
+  if (
+    data.waistToHipRatio &&
+    (data.waistToHipRatio < 0.5 || data.waistToHipRatio > 1.5)
+  ) {
     errors.push("Waist to hip ratio must be between 0.5-1.5");
   }
 
@@ -1298,8 +1333,13 @@ function validateMeasurementData(data) {
   }
 
   // Percentage fields validation (0-100)
-  const percentageFields = ['musclePercentage', 'bodyWaterPercentage', 'proteinPercentage', 'boneMineralPercentage'];
-  percentageFields.forEach(field => {
+  const percentageFields = [
+    "musclePercentage",
+    "bodyWaterPercentage",
+    "proteinPercentage",
+    "boneMineralPercentage",
+  ];
+  percentageFields.forEach((field) => {
     if (data[field] && (data[field] < 0 || data[field] > 100)) {
       errors.push(`${field} must be between 0-100%`);
     }

@@ -11,7 +11,7 @@ import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../../../shared/components/status-tag/status-tag.component";
 import {
   getMappedStatusSeverity,
-  roadmapStatusSeverityMap
+  roadmapStatusSeverityMap,
 } from "../../../../shared/utils/status.utils";
 import { Tooltip } from "primeng/tooltip";
 import { ProgressBar } from "primeng/progressbar";
@@ -426,7 +426,11 @@ export class La28RoadmapComponent {
   getStatusSeverity(
     status: string,
   ): "success" | "info" | "warning" | "danger" | "secondary" | "contrast" {
-    return getMappedStatusSeverity(status, roadmapStatusSeverityMap, "secondary");
+    return getMappedStatusSeverity(
+      status,
+      roadmapStatusSeverityMap,
+      "secondary",
+    );
   }
 
   getMilestoneTypeSeverity(

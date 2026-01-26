@@ -168,9 +168,11 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
       await dismissCookieBanner(page);
 
       // Find a primary button
-      const primaryButton = page.locator(
-        '.p-button:not(.p-button-text):not(.p-button-outlined):not(.p-button-icon-only)',
-      ).first();
+      const primaryButton = page
+        .locator(
+          ".p-button:not(.p-button-text):not(.p-button-outlined):not(.p-button-icon-only)",
+        )
+        .first();
 
       if (await primaryButton.isVisible({ timeout: 2000 }).catch(() => false)) {
         const box = await primaryButton.boundingBox();
@@ -198,7 +200,9 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
         }
       }
 
-      console.log(`Button border-radius values: ${[...borderRadii].join(", ")}`);
+      console.log(
+        `Button border-radius values: ${[...borderRadii].join(", ")}`,
+      );
       // Allow rounded buttons (9999px) and standard buttons
       const validRadii = [...borderRadii].filter(
         (r) => parseFloat(r) <= 16 || parseFloat(r) >= 9999,
@@ -530,9 +534,13 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
       await dismissCookieBanner(page);
 
       // Find an element with tooltip
-      const tooltipTrigger = page.locator("[pTooltip], [tooltipPosition]").first();
+      const tooltipTrigger = page
+        .locator("[pTooltip], [tooltipPosition]")
+        .first();
 
-      if (await tooltipTrigger.isVisible({ timeout: 2000 }).catch(() => false)) {
+      if (
+        await tooltipTrigger.isVisible({ timeout: 2000 }).catch(() => false)
+      ) {
         await tooltipTrigger.hover();
         await page.waitForTimeout(500);
 
@@ -597,7 +605,9 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
         const computed = window.getComputedStyle(root);
         return {
           borderRadius: computed.getPropertyValue("--p-message-border-radius"),
-          contentPadding: computed.getPropertyValue("--p-message-content-padding"),
+          contentPadding: computed.getPropertyValue(
+            "--p-message-content-padding",
+          ),
         };
       });
 
@@ -623,7 +633,9 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
           window.getComputedStyle(el).getPropertyValue("padding"),
         );
 
-        console.log(`✓ Message styling: border-radius=${borderRadius}, padding=${padding}`);
+        console.log(
+          `✓ Message styling: border-radius=${borderRadius}, padding=${padding}`,
+        );
 
         // Verify border-radius is reasonable (8-16px)
         const px = parseFloat(borderRadius);
@@ -705,8 +717,12 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
         const computed = window.getComputedStyle(root);
         return {
           background: computed.getPropertyValue("--p-progressbar-background"),
-          valueBackground: computed.getPropertyValue("--p-progressbar-value-background"),
-          borderRadius: computed.getPropertyValue("--p-progressbar-border-radius"),
+          valueBackground: computed.getPropertyValue(
+            "--p-progressbar-value-background",
+          ),
+          borderRadius: computed.getPropertyValue(
+            "--p-progressbar-border-radius",
+          ),
           height: computed.getPropertyValue("--p-progressbar-height"),
         };
       });
@@ -734,7 +750,9 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
           window.getComputedStyle(el).getPropertyValue("border-radius"),
         );
 
-        console.log(`✓ Progressbar: height=${height}, border-radius=${borderRadius}`);
+        console.log(
+          `✓ Progressbar: height=${height}, border-radius=${borderRadius}`,
+        );
 
         // Height should be reasonable (4-12px typically)
         const px = parseFloat(height);
@@ -794,7 +812,9 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
       const mdWidth = parseFloat(avatarTokens.mdWidth);
       expect(mdWidth).toBeGreaterThanOrEqual(32);
       expect(mdWidth).toBeLessThanOrEqual(48);
-      console.log(`✓ Avatar md size: ${avatarTokens.mdWidth}x${avatarTokens.mdHeight}`);
+      console.log(
+        `✓ Avatar md size: ${avatarTokens.mdWidth}x${avatarTokens.mdHeight}`,
+      );
     });
   });
 
@@ -839,7 +859,9 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
   });
 
   test.describe("Performance Tracking Page Spacing", () => {
-    test("performance tracking uses consistent spacing tokens", async ({ page }) => {
+    test("performance tracking uses consistent spacing tokens", async ({
+      page,
+    }) => {
       await page.goto(`${BASE_URL}/performance-tracking`);
       await page.waitForLoadState("networkidle");
       await dismissCookieBanner(page);
@@ -881,7 +903,9 @@ test.describe("PrimeNG Styling Smoke Tests", () => {
       }
     });
 
-    test("performance tracking cards use consistent padding", async ({ page }) => {
+    test("performance tracking cards use consistent padding", async ({
+      page,
+    }) => {
       await page.goto(`${BASE_URL}/performance-tracking`);
       await page.waitForLoadState("networkidle");
       await dismissCookieBanner(page);

@@ -20,7 +20,7 @@ import {
   ChangeDetectionStrategy,
   input,
   output,
-  DestroyRef
+  DestroyRef,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { CommonModule } from "@angular/common";
@@ -44,7 +44,7 @@ import {
   WELLNESS,
   computeDailyReadiness,
   getReadinessLevel,
-  getRiskFlags
+  getRiskFlags,
 } from "../../../core/constants/wellness.constants";
 
 interface DailyState {
@@ -68,7 +68,7 @@ interface DailyState {
     PrimeTemplate,
     PrimeTemplate,
     InputNumber,
-    ButtonComponent
+    ButtonComponent,
   ],
   template: `
     @if (mode() === "modal") {
@@ -386,19 +386,20 @@ export class DailyReadinessComponent implements OnInit {
     try {
       const today = new Date().toISOString().split("T")[0];
       // Check daily_wellness_checkin via API (single source of truth)
-      this.api.get(`/api/wellness-checkin?date=${today}`).pipe(
-        takeUntilDestroyed(this.destroyRef)
-      ).subscribe({
-        next: (response) => {
-          if (response?.data === null || !response?.data) {
+      this.api
+        .get(`/api/wellness-checkin?date=${today}`)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response) => {
+            if (response?.data === null || !response?.data) {
+              this.dialogVisible = true;
+            }
+          },
+          error: () => {
+            // No entry for today, show prompt
             this.dialogVisible = true;
-          }
-        },
-        error: () => {
-          // No entry for today, show prompt
-          this.dialogVisible = true;
-        },
-      });
+          },
+        });
     } catch {
       // No entry for today, show prompt
       this.dialogVisible = true;
@@ -453,58 +454,61 @@ export class DailyReadinessComponent implements OnInit {
     };
 
     // POST to /api/wellness-checkin (UPSERT on user_id, checkin_date)
-    this.api.post("/api/wellness-checkin", wellnessPayload).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: async () => {
-        // Save weight if provided (updates both body_measurements for history + users for profile)
-        if (state.weight_kg && state.weight_kg > 0) {
-          await this.profileCompletionService.updateWeight(state.weight_kg);
-          this.logger.info(
-            `[DailyReadiness] Weight updated: ${state.weight_kg} kg`,
-          );
-        }
+    this.api
+      .post("/api/wellness-checkin", wellnessPayload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: async () => {
+          // Save weight if provided (updates both body_measurements for history + users for profile)
+          if (state.weight_kg && state.weight_kg > 0) {
+            await this.profileCompletionService.updateWeight(state.weight_kg);
+            this.logger.info(
+              `[DailyReadiness] Weight updated: ${state.weight_kg} kg`,
+            );
+          }
 
-        this.toastService.success(TOAST.SUCCESS.DAILY_CHECKIN_SAVED);
-        this.dialogVisible = false;
-        this.completed.emit(this.state());
-        this.saving.set(false);
-      },
-      error: (error: unknown) => {
-        this.logger.error("Error saving wellness entry:", error);
+          this.toastService.success(TOAST.SUCCESS.DAILY_CHECKIN_SAVED);
+          this.dialogVisible = false;
+          this.completed.emit(this.state());
+          this.saving.set(false);
+        },
+        error: (error: unknown) => {
+          this.logger.error("Error saving wellness entry:", error);
 
-        // Provide user-friendly error messages based on error type
-        let errorMessage = "Failed to save check-in.";
+          // Provide user-friendly error messages based on error type
+          let errorMessage = "Failed to save check-in.";
 
-        const err = error as { code?: string; message?: string };
+          const err = error as { code?: string; message?: string };
 
-        if (err?.code === "PGRST116" || err?.message?.includes("401")) {
-          // Authentication error
-          errorMessage = "Permission denied. Please log out and log back in.";
-        } else if (
-          err?.code === "23505" ||
-          err?.message?.includes("already exists")
-        ) {
-          // Unique constraint violation - entry already exists
-          errorMessage =
-            "You've already submitted a check-in today. Refresh to see it.";
-        } else if (
-          err?.message?.includes("network") ||
-          err?.message?.includes("fetch")
-        ) {
-          errorMessage = "Network error. Check your connection and try again.";
-        } else if (err?.code === "42P01") {
-          // Table doesn't exist
-          errorMessage = "System configuration error. Please contact support.";
-        } else {
-          errorMessage =
-            "Failed to save check-in. Please try again in a moment.";
-        }
+          if (err?.code === "PGRST116" || err?.message?.includes("401")) {
+            // Authentication error
+            errorMessage = "Permission denied. Please log out and log back in.";
+          } else if (
+            err?.code === "23505" ||
+            err?.message?.includes("already exists")
+          ) {
+            // Unique constraint violation - entry already exists
+            errorMessage =
+              "You've already submitted a check-in today. Refresh to see it.";
+          } else if (
+            err?.message?.includes("network") ||
+            err?.message?.includes("fetch")
+          ) {
+            errorMessage =
+              "Network error. Check your connection and try again.";
+          } else if (err?.code === "42P01") {
+            // Table doesn't exist
+            errorMessage =
+              "System configuration error. Please contact support.";
+          } else {
+            errorMessage =
+              "Failed to save check-in. Please try again in a moment.";
+          }
 
-        this.toastService.error(errorMessage);
-        this.saving.set(false);
-      },
-    });
+          this.toastService.error(errorMessage);
+          this.saving.set(false);
+        },
+      });
   }
 
   /**

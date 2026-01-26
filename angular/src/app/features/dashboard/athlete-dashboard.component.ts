@@ -369,7 +369,10 @@ interface TrainingSession {
 
       .trends-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(var(--layout-width-md), 1fr));
+        grid-template-columns: repeat(
+          auto-fit,
+          minmax(var(--layout-width-md), 1fr)
+        );
         gap: var(--space-4);
       }
 
@@ -457,7 +460,9 @@ export class AthleteDashboardComponent
 
   // CRITICAL: Return null when no data, not a fake default
   // UI should handle null by showing "No data" or prompting for check-in
-  readinessScore = computed(() => this.readinessService.current()?.score ?? null);
+  readinessScore = computed(
+    () => this.readinessService.current()?.score ?? null,
+  );
   readinessLevel = computed(
     () => this.readinessService.current()?.level ?? null,
   );

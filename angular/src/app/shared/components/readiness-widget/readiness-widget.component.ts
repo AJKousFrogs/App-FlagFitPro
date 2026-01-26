@@ -272,7 +272,8 @@ export class ReadinessWidgetComponent {
     const id = this.athleteId();
     if (id) {
       // Use takeUntilDestroyed for proper subscription cleanup
-      this.readinessService.calculateToday(id)
+      this.readinessService
+        .calculateToday(id)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe();
     }

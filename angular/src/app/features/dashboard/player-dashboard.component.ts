@@ -681,9 +681,7 @@ Keep logging sessions to unlock this injury prevention metric!'
             </p-card>
 
             <!-- Weekly Sessions Card -->
-            <p-card
-              styleClass="stat-card stat-sessions cursor-pointer"
-            >
+            <p-card styleClass="stat-card stat-sessions cursor-pointer">
               <div class="stat-card-content">
                 <div class="stat-icon sessions-icon">
                   <i class="pi pi-calendar-plus"></i>

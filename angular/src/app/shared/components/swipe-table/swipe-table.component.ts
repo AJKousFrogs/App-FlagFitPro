@@ -13,11 +13,7 @@ import { Table, TableModule } from "primeng/table";
   selector: "app-swipe-table",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    Table,
-    TableModule
-  ],
+  imports: [CommonModule, Table, TableModule],
   template: `
     <div
       class="swipe-table-container"

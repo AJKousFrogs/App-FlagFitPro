@@ -37,48 +37,43 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /
  * Get games list with optional date filtering
  */
-router.get(
-  "/",
-  rateLimit("READ"),
-  optionalAuth,
-  async (req, res) => {
-    if (!supabase) {
-      return sendError(res, "Database not configured", "DB_ERROR", 503);
+router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
+  if (!supabase) {
+    return sendError(res, "Database not configured", "DB_ERROR", 503);
+  }
+
+  try {
+    const { startDate, endDate, limit } = req.query;
+    let query = supabase.from("games").select("*");
+
+    if (startDate) {
+      query = query.gte("game_date", startDate);
+    }
+    if (endDate) {
+      query = query.lte("game_date", endDate);
     }
 
-    try {
-      const { startDate, endDate, limit } = req.query;
-      let query = supabase.from("games").select("*");
+    const { data: games, error } = await query
+      .order("game_date", { ascending: true })
+      .limit(parseInt(limit) || 50);
 
-      if (startDate) {
-        query = query.gte("game_date", startDate);
-      }
-      if (endDate) {
-        query = query.lte("game_date", endDate);
-      }
-
-      const { data: games, error } = await query
-        .order("game_date", { ascending: true })
-        .limit(parseInt(limit) || 50);
-
-      if (error) {
-        throw error;
-      }
-
-      return sendSuccess(res, games || []);
-    } catch (error) {
-      const errorMessage = getErrorMessage(error, "Failed to fetch games");
-      serverLogger.error(`[Games] Error: ${errorMessage}`, error);
-      return sendErrorResponse(
-        res,
-        error,
-        "Failed to fetch games",
-        "FETCH_ERROR",
-        500,
-      );
+    if (error) {
+      throw error;
     }
-  },
-);
+
+    return sendSuccess(res, games || []);
+  } catch (error) {
+    const errorMessage = getErrorMessage(error, "Failed to fetch games");
+    serverLogger.error(`[Games] Error: ${errorMessage}`, error);
+    return sendErrorResponse(
+      res,
+      error,
+      "Failed to fetch games",
+      "FETCH_ERROR",
+      500,
+    );
+  }
+});
 
 // =============================================================================
 // TOURNAMENTS ENDPOINTS

@@ -19,7 +19,11 @@ import {
   withFetch,
   withInterceptors,
 } from "@angular/common/http";
-import { ConfirmationService, MessageService, FilterMatchMode } from "primeng/api";
+import {
+  ConfirmationService,
+  MessageService,
+  FilterMatchMode,
+} from "primeng/api";
 import { providePrimeNG } from "primeng/config";
 import Aura from "@primeuix/themes/aura";
 import { routes } from "./app.routes";
@@ -83,10 +87,10 @@ export const appConfig: ApplicationConfig = {
       // Z-Index: Manage overlay component layering
       // Custom values ensure modals appear above fixed headers/navigation
       zIndex: {
-        modal: 1100,    // dialog, sidebar
-        overlay: 1000,   // dropdown, overlaypanel
-        menu: 1000,     // overlay menus
-        tooltip: 1100,  // tooltip
+        modal: 1100, // dialog, sidebar
+        overlay: 1000, // dropdown, overlaypanel
+        menu: 1000, // overlay menus
+        tooltip: 1100, // tooltip
       },
 
       // Input Variant: Default style for input fields
@@ -134,7 +138,7 @@ export const appConfig: ApplicationConfig = {
       // },
 
       // Theme: PrimeNG 21 Styled Mode Configuration
-      // 
+      //
       // ARCHITECTURE:
       // PrimeNG uses a design-agnostic theming system with three token tiers:
       // 1. Primitive Tokens: Raw color palette (e.g., blue-500, green-400)
@@ -156,24 +160,24 @@ export const appConfig: ApplicationConfig = {
         // Base preset: Aura (PrimeTek's modern vision)
         // Alternative presets: Material, Lara, Nora
         preset: Aura,
-        
+
         options: {
           // CSS variable prefix (e.g., --p-primary-color)
           // All PrimeNG tokens use this prefix
           prefix: "p",
-          
+
           // Dark mode selector: Use class-based toggle
           // Toggle the .dark-theme class on document root to switch themes
-          // 
+          //
           // Options:
           // - ".dark-theme" = class-based toggle (current)
           // - "system" = prefers-color-scheme media query
           // - false or "none" = disable dark mode completely
           darkModeSelector: ".dark-theme",
-          
+
           // CSS Layer configuration for proper cascade order
           // This ensures PrimeNG styles can be overridden cleanly without !important
-          // 
+          //
           // Layer order (lowest to highest specificity):
           // 1. reset = Browser normalization
           // 2. tokens = Design tokens (CSS custom properties)

@@ -19,7 +19,7 @@ button {
   border-radius: var(--radius-md);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  
+
   // Use centralized transition
   transition:
     background-color var(--ds-state-transition),
@@ -59,7 +59,7 @@ button {
 .variant-primary {
   background: var(--ds-primary-green);
   color: var(--color-text-on-primary, white);
-  
+
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]) {
       background: var(--color-text-on-primary, white);
@@ -68,7 +68,7 @@ button {
       transform: translateY(-1px);
     }
   }
-  
+
   &:active:not(:disabled):not([aria-disabled="true"]) {
     transform: scale(0.98);
   }
@@ -78,7 +78,7 @@ button {
   background: var(--surface-tertiary);
   color: var(--color-text-primary);
   border: var(--border-1) solid var(--color-border-secondary);
-  
+
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]) {
       background: var(--surface-secondary);
@@ -86,7 +86,7 @@ button {
       color: var(--ds-primary-green);
     }
   }
-  
+
   &:active:not(:disabled):not([aria-disabled="true"]) {
     transform: scale(0.98);
   }
@@ -95,7 +95,7 @@ button {
 .variant-danger {
   background: var(--color-status-error);
   color: var(--color-text-on-primary, white);
-  
+
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]) {
       background: var(--color-text-on-primary, white);
@@ -103,11 +103,11 @@ button {
       border: 1px solid var(--color-status-error);
     }
   }
-  
+
   &:active:not(:disabled):not([aria-disabled="true"]) {
     transform: scale(0.98);
   }
-  
+
   &:focus-visible {
     outline-color: var(--color-status-error);
     box-shadow: 0 0 0 4px rgba(var(--primitive-error-500-rgb), 0.25);
@@ -117,14 +117,14 @@ button {
 .variant-ghost {
   background: transparent;
   color: var(--color-text-primary);
-  
+
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]) {
       background: var(--surface-tertiary);
       color: var(--ds-primary-green);
     }
   }
-  
+
   &:active:not(:disabled):not([aria-disabled="true"]) {
     transform: scale(0.98);
   }
@@ -154,7 +154,7 @@ button {
 @media (prefers-reduced-motion: reduce) {
   button {
     transition: none;
-    
+
     &:hover,
     &:active {
       transform: none;

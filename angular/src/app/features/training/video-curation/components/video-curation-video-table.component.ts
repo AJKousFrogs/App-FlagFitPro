@@ -10,7 +10,7 @@ import {
   Component,
   input,
   output,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 
@@ -27,12 +27,12 @@ import {
   formatFocus,
   getStatusSeverity,
   POSITION_OPTIONS,
-  STATUS_OPTIONS
+  STATUS_OPTIONS,
 } from "../video-curation-utils";
 import {
   FlagPosition,
   InstagramVideo,
-  VideoStatus
+  VideoStatus,
 } from "../video-curation.models";
 
 @Component({
@@ -48,7 +48,7 @@ import {
     InputText,
     Select,
     Avatar,
-    IconButtonComponent
+    IconButtonComponent,
   ],
   template: `
     <div class="tab-content">
@@ -138,7 +138,10 @@ import {
                   video.creator.displayName
                 }}</span>
                 @if (video.creator.verified) {
-                  <i class="pi pi-verified verified-icon" aria-label="Verified creator"></i>
+                  <i
+                    class="pi pi-verified verified-icon"
+                    aria-label="Verified creator"
+                  ></i>
                 }
               </div>
             </td>

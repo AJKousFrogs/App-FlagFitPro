@@ -194,8 +194,7 @@ describe("PageHeaderComponent - Composite View Pattern", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-      ],
+      imports: [],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TestCompositeViewComponent);
@@ -283,10 +282,7 @@ describe("PageHeaderComponent - QB Hub Pattern Simulation", () => {
   @Component({
     selector: "app-mock-qb-hub",
     standalone: true,
-    imports: [
-      PageHeaderComponent,
-      MockChildComponent
-    ],
+    imports: [PageHeaderComponent, MockChildComponent],
     template: `
       <div class="qb-hub-page">
         <!-- Hub's own header -->
@@ -323,9 +319,7 @@ describe("PageHeaderComponent - QB Hub Pattern Simulation", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        MockQbHubComponent
-      ],
+      imports: [MockQbHubComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MockQbHubComponent);

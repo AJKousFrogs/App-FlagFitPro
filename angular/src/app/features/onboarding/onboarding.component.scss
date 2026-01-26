@@ -701,7 +701,10 @@
   /* Staff Visibility Grid - Enhanced Design Tokens */
   .staff-visibility {
     &.checkbox-grid {
-      grid-template-columns: repeat(auto-fill, minmax(var(--grid-card-min-xs), 1fr));
+      grid-template-columns: repeat(
+        auto-fill,
+        minmax(var(--grid-card-min-xs), 1fr)
+      );
       gap: var(--space-4);
       margin-top: var(--space-4);
     }
@@ -1950,7 +1953,6 @@
 
 // ============================================================================
 // @layer overrides - PrimeNG Component Overrides
-
 
 // PrimeNG steps navigation override moved to _exceptions.scss (DS-EXC-015)
 

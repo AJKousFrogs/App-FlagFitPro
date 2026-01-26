@@ -442,15 +442,14 @@ export class SearchService implements OnDestroy {
       }
 
       return (data || []).map((player) => {
-        const name =
-          normalizePlayerName(
-            {
-              full_name: player.full_name,
-              first_name: player.first_name,
-              last_name: player.last_name,
-            },
-            "Unknown",
-          );
+        const name = normalizePlayerName(
+          {
+            full_name: player.full_name,
+            first_name: player.first_name,
+            last_name: player.last_name,
+          },
+          "Unknown",
+        );
         return {
           id: player.id,
           type: "player" as const,

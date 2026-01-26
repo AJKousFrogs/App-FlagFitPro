@@ -108,7 +108,9 @@ async function createChannel(userId, channelData) {
   // SECURITY: Validate channel data
   const validation = validate(channelData, "createChannel");
   if (!validation.valid) {
-    const error = new Error(`Validation failed: ${validation.errors.join(", ")}`);
+    const error = new Error(
+      `Validation failed: ${validation.errors.join(", ")}`,
+    );
     error.isValidation = true;
     error.errors = validation.errors;
     throw error;
@@ -238,7 +240,9 @@ async function sendMessage(userId, channelId, messageData) {
   // SECURITY: Validate message data
   const validation = validate(messageData, "chatMessage");
   if (!validation.valid) {
-    const error = new Error(`Validation failed: ${validation.errors.join(", ")}`);
+    const error = new Error(
+      `Validation failed: ${validation.errors.join(", ")}`,
+    );
     error.isValidation = true;
     error.errors = validation.errors;
     throw error;

@@ -4,7 +4,7 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
-  DestroyRef
+  DestroyRef,
 } from "@angular/core";
 
 import { FormsModule } from "@angular/forms";
@@ -56,7 +56,7 @@ interface Workout {
     MainLayoutComponent,
     PageHeaderComponent,
     EmptyStateComponent,
-    ButtonComponent
+    ButtonComponent,
   ],
   template: `
     <app-main-layout>

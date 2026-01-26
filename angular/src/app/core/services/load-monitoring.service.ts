@@ -15,13 +15,13 @@
 
 import { computed, inject, Injectable, signal } from "@angular/core";
 import {
-    ExternalLoad,
-    InternalLoad,
-    LoadCalculationOptions,
-    LoadMetrics,
-    SessionType,
-    TrainingSession,
-    WellnessMetrics,
+  ExternalLoad,
+  InternalLoad,
+  LoadCalculationOptions,
+  LoadMetrics,
+  SessionType,
+  TrainingSession,
+  WellnessMetrics,
 } from "../models/acwr.models";
 import { LoggerService } from "./logger.service";
 import { SupabaseService } from "./supabase.service";
@@ -244,29 +244,33 @@ export class LoadMonitoringService {
       }
 
       // Prepare external load data for storage
-      const externalLoadData = external ? {
-        totalDistance: external.totalDistance,
-        sprintDistance: external.sprintDistance,
-        playerLoad: external.playerLoad,
-        accelerations: external.accelerations,
-        decelerations: external.decelerations,
-        maxSpeed: external.maxSpeed,
-        highIntensityDistance: external.highSpeedRunning,
-      } : null;
+      const externalLoadData = external
+        ? {
+            totalDistance: external.totalDistance,
+            sprintDistance: external.sprintDistance,
+            playerLoad: external.playerLoad,
+            accelerations: external.accelerations,
+            decelerations: external.decelerations,
+            maxSpeed: external.maxSpeed,
+            highIntensityDistance: external.highSpeedRunning,
+          }
+        : null;
 
       // Prepare wellness snapshot for storage
-      const wellnessSnapshot = wellness ? {
-        sleepQuality: wellness.sleepQuality,
-        sleepDuration: wellness.sleepDuration,
-        muscleSoreness: wellness.muscleSoreness,
-        stressLevel: wellness.stressLevel,
-        energyLevel: wellness.energyLevel,
-        mood: wellness.mood,
-      } : null;
+      const wellnessSnapshot = wellness
+        ? {
+            sleepQuality: wellness.sleepQuality,
+            sleepDuration: wellness.sleepDuration,
+            muscleSoreness: wellness.muscleSoreness,
+            stressLevel: wellness.stressLevel,
+            energyLevel: wellness.energyLevel,
+            mood: wellness.mood,
+          }
+        : null;
 
       // Calculate wellness adjustment factor
-      const wellnessAdjustmentFactor = wellness 
-        ? this.calculateWellnessFactor(wellness) 
+      const wellnessAdjustmentFactor = wellness
+        ? this.calculateWellnessFactor(wellness)
         : null;
 
       const { data, error } = await this.supabaseService.client
@@ -295,7 +299,11 @@ export class LoadMonitoringService {
         throw error;
       }
 
-      this.logger.success("[LoadMonitoring] Workout log saved with load:", data.id, metrics.calculatedLoad);
+      this.logger.success(
+        "[LoadMonitoring] Workout log saved with load:",
+        data.id,
+        metrics.calculatedLoad,
+      );
 
       // Note: Database trigger will automatically calculate ACWR in load_monitoring table
 
@@ -556,10 +564,10 @@ export class LoadMonitoringService {
   /**
    * Calculate readiness score from wellness metrics
    * Returns 0-100 score indicating player readiness, or null if required data is missing
-   * 
+   *
    * IMPORTANT: Do NOT use default values. Returns null if required data is missing.
    * Required: sleepQuality AND energyLevel (minimum for valid calculation)
-   * 
+   *
    * Evidence-based weights (team-sport optimized):
    * - Sleep Quality: 30% (strong evidence - Halson 2014, Fullagar et al. 2015)
    * - Energy Level: 25% (correlates with perceived performance)

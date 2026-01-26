@@ -6,7 +6,7 @@ import {
   input,
   output,
   booleanAttribute,
-  HostBinding
+  HostBinding,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 
@@ -65,12 +65,7 @@ export type ButtonSize = "sm" | "md" | "lg";
   selector: "app-button",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    RouterModule,
-    Ripple,
-    Tooltip
-  ],
+  imports: [CommonModule, RouterModule, Ripple, Tooltip],
   template: `
     <!-- Link version (when routerLink is provided) -->
     @if (routerLink()) {

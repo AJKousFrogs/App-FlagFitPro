@@ -13,10 +13,10 @@ import {
   Component,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -35,7 +35,7 @@ import { firstValueFrom } from "rxjs";
 import { ButtonComponent } from "../../shared/components/button/button.component";
 import {
   RTPPhaseCelebrationComponent,
-  RTPPhaseInfo
+  RTPPhaseInfo,
 } from "../../shared/components/rtp-phase-celebration/rtp-phase-celebration.component";
 
 import { UI_LIMITS } from "../../core/constants/app.constants";
@@ -44,7 +44,7 @@ import { LoggerService } from "../../core/services/logger.service";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
   LazyChartComponent,
-  LazyChartData
+  LazyChartData,
 } from "../../shared/components/lazy-chart/lazy-chart.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 
@@ -297,7 +297,7 @@ const SEVERITY_LEVELS = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    RTPPhaseCelebrationComponent
+    RTPPhaseCelebrationComponent,
   ],
   providers: [MessageService],
   template: `

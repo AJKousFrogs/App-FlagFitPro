@@ -50,7 +50,9 @@ exports.handler = async (event) => {
       try {
         payload = body ? JSON.parse(body) : {};
       } catch (_parseError) {
-        return withHeaders(handleValidationError("Invalid JSON in request body"));
+        return withHeaders(
+          handleValidationError("Invalid JSON in request body"),
+        );
       }
       return await saveSettings(supabase, user.id, payload, corsHeaders);
     }

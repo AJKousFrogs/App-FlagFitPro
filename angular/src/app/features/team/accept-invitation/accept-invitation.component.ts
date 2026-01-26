@@ -45,15 +45,7 @@ interface InvitationData {
   selector: "app-accept-invitation",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    RouterModule,
-    Card,
-    Message,
-    Toast,
-    TitleCasePipe,
-
-    ButtonComponent,
-  ],
+  imports: [RouterModule, Card, Message, Toast, TitleCasePipe, ButtonComponent],
   template: `
     <p-toast></p-toast>
     <div class="accept-invitation-page">

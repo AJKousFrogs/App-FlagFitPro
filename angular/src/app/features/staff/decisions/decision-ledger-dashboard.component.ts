@@ -11,7 +11,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -48,7 +48,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
     CardShellComponent,
     DecisionCardComponent,
     CreateDecisionDialogComponent,
-    ReviewDecisionDialogComponent
+    ReviewDecisionDialogComponent,
   ],
   template: `
     <div class="decision-ledger-dashboard">
@@ -56,10 +56,9 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
         title="Decision Ledger"
         subtitle="Track decisions, reviews, and outcomes"
       >
-        <app-button
-          iconLeft="pi-plus"
-          (clicked)="openCreateDialog()"
-        >New Decision</app-button>
+        <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
+          >New Decision</app-button
+        >
       </app-page-header>
 
       <!-- Stats Cards -->
@@ -220,9 +219,7 @@ import { ReviewDecisionDialogComponent } from "./review-decision-dialog.componen
           @if (decisions().length === 0) {
             <div class="empty-state">
               <p>No decisions found</p>
-              <app-button
-                iconLeft="pi-plus"
-                (clicked)="openCreateDialog()"
+              <app-button iconLeft="pi-plus" (clicked)="openCreateDialog()"
                 >Create First Decision</app-button
               >
             </div>

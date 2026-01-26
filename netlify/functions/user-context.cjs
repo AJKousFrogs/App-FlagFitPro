@@ -16,7 +16,9 @@ async function getUserContext(userId) {
     // Get user basic info (note: role is in team_members, not users)
     const { data: userData, error: userError } = await supabaseAdmin
       .from("users")
-      .select("id, email, full_name, position, height_cm, weight_kg, updated_at")
+      .select(
+        "id, email, full_name, position, height_cm, weight_kg, updated_at",
+      )
       .eq("id", userId)
       .single();
 

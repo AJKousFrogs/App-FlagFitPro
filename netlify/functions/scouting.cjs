@@ -374,7 +374,11 @@ async function handler(event) {
     // Verify coach access
     const access = await verifyCoachAccess(userId);
     if (!access) {
-      return createErrorResponse("Access denied. Coach role required.", 403, ErrorType.AUTHORIZATION);
+      return createErrorResponse(
+        "Access denied. Coach role required.",
+        403,
+        ErrorType.AUTHORIZATION,
+      );
     }
 
     const teamId = access.team_id;
@@ -402,7 +406,11 @@ async function handler(event) {
     if (method === "POST" && path === "/reports") {
       const body = JSON.parse(event.body || "{}");
       if (!body.opponentName) {
-        return createErrorResponse("Missing required field: opponentName", 400, ErrorType.VALIDATION);
+        return createErrorResponse(
+          "Missing required field: opponentName",
+          400,
+          ErrorType.VALIDATION,
+        );
       }
       const report = await createScoutingReport(teamId, userId, body);
       return createSuccessResponse({ report });
@@ -433,7 +441,11 @@ async function handler(event) {
     if (method === "POST" && path === "/opponents") {
       const body = JSON.parse(event.body || "{}");
       if (!body.name) {
-        return createErrorResponse("Missing required field: name", 400, ErrorType.VALIDATION);
+        return createErrorResponse(
+          "Missing required field: name",
+          400,
+          ErrorType.VALIDATION,
+        );
       }
       const opponent = await addOpponent(teamId, body);
       return createSuccessResponse({ opponent });

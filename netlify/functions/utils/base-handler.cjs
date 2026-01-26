@@ -183,7 +183,8 @@ async function baseHandler(event, context, options = {}) {
             parsed?.error ||
             parsed?.message ||
             "Request failed";
-          const fallbackType = parsed?.errorType || parsed?.code || "unknown_error";
+          const fallbackType =
+            parsed?.errorType || parsed?.code || "unknown_error";
           response = createErrorResponse(
             fallbackMessage,
             response.statusCode,

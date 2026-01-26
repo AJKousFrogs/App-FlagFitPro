@@ -355,7 +355,7 @@ async function calculateACWR(requesterId, targetUserId, date, options = {}) {
       acwr: hasAcuteData ? null : 0, // Use null instead of Infinity for JSON compatibility
       riskZone: hasAcuteData ? "danger" : "insufficient_data",
       injuryRiskMultiplier: hasAcuteData ? 2.0 : 1.0,
-      acuteAverage: acuteAverage,
+      acuteAverage,
       chronicAverage: 0,
       acuteLoads: acuteLoads.filter((l) => l > 0).length,
       chronicLoads: 0,

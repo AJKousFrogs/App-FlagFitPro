@@ -22,7 +22,7 @@ import {
   computed,
   inject,
   output,
-  signal
+  signal,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
@@ -77,7 +77,7 @@ interface TodaysPlan {
     Slider,
     InputNumber,
     Checkbox,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   template: `
     <div class="morning-briefing" [class.expanded]="isExpanded()">
@@ -96,9 +96,17 @@ interface TodaysPlan {
             </div>
             <div class="quick-status">
               @if (hasCheckedInToday()) {
-                <app-status-tag value="✓ Checked In" severity="success" size="sm" />
+                <app-status-tag
+                  value="✓ Checked In"
+                  severity="success"
+                  size="sm"
+                />
               } @else {
-                <app-status-tag value="Check-in Needed" severity="warning" size="sm" />
+                <app-status-tag
+                  value="Check-in Needed"
+                  severity="warning"
+                  size="sm"
+                />
               }
             </div>
           </div>

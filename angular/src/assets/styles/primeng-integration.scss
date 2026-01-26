@@ -116,7 +116,10 @@
     &:hover,
     &:focus-visible {
       background: var(--color-brand-primary-dark, var(--primitive-primary-800));
-      border-color: var(--color-brand-primary-dark, var(--primitive-primary-800));
+      border-color: var(
+        --color-brand-primary-dark,
+        var(--primitive-primary-800)
+      );
       color: var(--color-text-on-primary);
     }
   }
@@ -915,7 +918,9 @@
     1.25rem
   ); /* 20px - H3 for card titles */
 
-  --p-card-title-font-weight: var(--font-weight-semibold); /* semibold for card headers */
+  --p-card-title-font-weight: var(
+    --font-weight-semibold
+  ); /* semibold for card headers */
   --p-card-subtitle-font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
   --p-card-subtitle-font-weight: var(--font-body-sm-weight, 400);
   --p-card-subtitle-color: var(
@@ -1192,7 +1197,9 @@
     0.875rem
   ); /* 14px - body-sm */
 
-  --p-tabview-tab-font-weight: var(--font-weight-semibold); /* semibold for tab labels */
+  --p-tabview-tab-font-weight: var(
+    --font-weight-semibold
+  ); /* semibold for tab labels */
   --p-tabview-tab-line-height: var(--font-body-sm-line-height, 1.45);
   --p-tabview-tab-active-border-color: var(--ds-primary-green);
   --p-tabview-tab-active-color: var(--ds-primary-green);

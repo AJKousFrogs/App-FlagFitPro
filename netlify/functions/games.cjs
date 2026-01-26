@@ -3,7 +3,11 @@
 // Supports team games (coach/admin) and personal games (player domestic leagues)
 
 const { checkEnvVars, supabaseAdmin } = require("./supabase-client.cjs");
-const { validate, validateRequestBody, VALIDATION_RULES } = require("./validation.cjs");
+const {
+  validate,
+  validateRequestBody,
+  VALIDATION_RULES,
+} = require("./validation.cjs");
 const { sanitizeObject } = require("./utils/input-validator.cjs");
 const {
   createSuccessResponse,
@@ -66,7 +70,9 @@ const createGame = async (userId, gameData) => {
     // SECURITY: Validate input against schema
     const validation = validate(gameData, "createGame");
     if (!validation.valid) {
-      const error = new Error(`Validation failed: ${validation.errors.join(", ")}`);
+      const error = new Error(
+        `Validation failed: ${validation.errors.join(", ")}`,
+      );
       error.isValidation = true;
       error.errors = validation.errors;
       throw error;
@@ -381,7 +387,9 @@ const updateGame = async (userId, gameId, updates) => {
     // SECURITY: Validate input against schema
     const validation = validate(updates, "updateGame");
     if (!validation.valid) {
-      const error = new Error(`Validation failed: ${validation.errors.join(", ")}`);
+      const error = new Error(
+        `Validation failed: ${validation.errors.join(", ")}`,
+      );
       error.isValidation = true;
       error.errors = validation.errors;
       throw error;

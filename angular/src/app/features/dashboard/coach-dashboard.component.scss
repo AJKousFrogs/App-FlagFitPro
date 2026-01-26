@@ -8,16 +8,6 @@
 @use "styles/variables" as *;
 @use "styles/mixins" as *;
 
-
-
-
-
-
-
-
-
-
-
 .dashboard-content {
   padding: var(--space-6);
   background: var(--surface-ground);
@@ -927,8 +917,6 @@
   /* ============================================
    ROSTER TABLE CUSTOMIZATIONS
    ============================================ */
-
-
 
   .player-cell {
     display: flex;

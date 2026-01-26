@@ -12,7 +12,7 @@ import {
   inject,
   input,
   output,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { TIME } from "@core/constants";
@@ -52,7 +52,7 @@ import { Textarea } from "primeng/textarea";
     StatusTagComponent,
     ModalComponent,
     StepperComponent,
-    ConfidenceIndicatorComponent
+    ConfidenceIndicatorComponent,
   ],
   template: `
     <app-modal
@@ -105,7 +105,9 @@ import { Textarea } from "primeng/textarea";
           <div class="step-panel">
             <h3>Select Decision Type</h3>
             <div class="field">
-              <label for="decision-type-select" class="block mb-2">Decision Type</label>
+              <label for="decision-type-select" class="block mb-2"
+                >Decision Type</label
+              >
               <p-select
                 inputId="decision-type-select"
                 [options]="decisionTypeOptions"
@@ -173,7 +175,11 @@ import { Textarea } from "primeng/textarea";
                   <label [for]="point.id">
                     {{ point.label }}
                     @if (point.required) {
-                      <app-status-tag value="Required" severity="danger" size="sm" />
+                      <app-status-tag
+                        value="Required"
+                        severity="danger"
+                        size="sm"
+                      />
                     }
                   </label>
                 </div>
@@ -296,22 +302,16 @@ import { Textarea } from "primeng/textarea";
 
       <!-- Footer -->
       <ng-container footer>
-        <app-button
-          variant="outlined"
-          (clicked)="onCancel()"
+        <app-button variant="outlined" (clicked)="onCancel()"
           >Cancel</app-button
         >
         @if (currentStep() > 0) {
-          <app-button
-            variant="outlined"
-            (clicked)="previousStep()"
+          <app-button variant="outlined" (clicked)="previousStep()"
             >Back</app-button
           >
         }
         @if (currentStep() < 6) {
-          <app-button
-            (clicked)="nextStep()"
-            [disabled]="!canProceed()"
+          <app-button (clicked)="nextStep()" [disabled]="!canProceed()"
             >Next</app-button
           >
         } @else {

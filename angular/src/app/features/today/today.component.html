@@ -25,7 +25,7 @@
         <p class="celebration-message">
           Amazing work! You've completed all your training for today.
         </p>
-          <div class="celebration-stats">
+        <div class="celebration-stats">
           <div class="stat">
             <span class="stat-number">{{
               protocol()?.completedExercises || 0
@@ -234,7 +234,11 @@
                   }
 
                   <!-- Protocol Blocks (ordered by ViewModel) -->
-                  <div class="protocol-blocks" data-testid="protocol-blocks" #protocolBlocks>
+                  <div
+                    class="protocol-blocks"
+                    data-testid="protocol-blocks"
+                    #protocolBlocks
+                  >
                     @for (blockType of vm.blocksDisplayed; track blockType) {
                       @if (getBlockByType(p, blockType); as block) {
                         <app-protocol-block
@@ -251,13 +255,17 @@
                   <!-- Empty blocks message - when protocol exists but no exercises loaded -->
                   @if (p.totalExercises === 0) {
                     <div class="no-exercises-message">
-                      <p>Your training plan is being prepared. Try refreshing in a moment.</p>
+                      <p>
+                        Your training plan is being prepared. Try refreshing in
+                        a moment.
+                      </p>
                       <app-button
                         iconLeft="pi-refresh"
                         variant="outlined"
                         size="sm"
                         (clicked)="refreshProtocol()"
-                      >Refresh</app-button>
+                        >Refresh</app-button
+                      >
                     </div>
                   }
 
@@ -328,7 +336,11 @@
       <!-- Step 1: Overall Feeling -->
       <div class="quick-section">
         <span class="quick-label" id="mood-label">Overall Feeling</span>
-        <div class="mood-selector" role="radiogroup" aria-labelledby="mood-label">
+        <div
+          class="mood-selector"
+          role="radiogroup"
+          aria-labelledby="mood-label"
+        >
           @for (mood of quickMoods; track mood.value) {
             <button
               type="button"
@@ -337,9 +349,13 @@
               (click)="setQuickField('overallFeeling', mood.value)"
               [attr.aria-label]="'Overall feeling: ' + mood.label"
               role="radio"
-              [attr.aria-checked]="quickFormData().overallFeeling === mood.value"
+              [attr.aria-checked]="
+                quickFormData().overallFeeling === mood.value
+              "
             >
-              <span class="mood-emoji" aria-hidden="true">{{ mood.emoji }}</span>
+              <span class="mood-emoji" aria-hidden="true">{{
+                mood.emoji
+              }}</span>
               <span class="mood-text">{{ mood.label }}</span>
             </button>
           }
@@ -349,7 +365,11 @@
       <!-- Step 2: Energy Level -->
       <div class="quick-section">
         <span class="quick-label" id="energy-level-label">Energy Level</span>
-        <div class="energy-selector" role="radiogroup" aria-labelledby="energy-level-label">
+        <div
+          class="energy-selector"
+          role="radiogroup"
+          aria-labelledby="energy-level-label"
+        >
           @for (level of quickEnergyLevels; track level.value) {
             <button
               type="button"
@@ -375,7 +395,11 @@
       <!-- Step 3: Any Soreness -->
       <div class="quick-section">
         <span class="quick-label" id="soreness-label">Any Soreness?</span>
-        <div class="soreness-selector" role="radiogroup" aria-labelledby="soreness-label">
+        <div
+          class="soreness-selector"
+          role="radiogroup"
+          aria-labelledby="soreness-label"
+        >
           <button
             type="button"
             class="soreness-btn"
@@ -405,9 +429,11 @@
 
       <!-- Preview Score -->
       <div class="quick-preview" aria-live="polite" aria-atomic="true">
-        <span class="preview-label" id="readiness-preview-label">Estimated Readiness</span>
-        <span 
-          class="preview-score" 
+        <span class="preview-label" id="readiness-preview-label"
+          >Estimated Readiness</span
+        >
+        <span
+          class="preview-score"
           [class]="getQuickReadinessClass()"
           aria-labelledby="readiness-preview-label"
           role="status"

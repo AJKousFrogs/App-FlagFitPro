@@ -5,7 +5,7 @@ import {
   signal,
   computed,
   effect,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -25,7 +25,7 @@ import { Chip } from "primeng/chip";
 import { Skeleton } from "primeng/skeleton";
 import { Badge } from "primeng/badge";
 
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import { PageHeaderComponent } from "../../shared/components/page-header/page-header.component";
 import { SearchInputComponent } from "../../shared/components/search-input/search-input.component";
@@ -37,7 +37,7 @@ import {
   ExerciseDBFilters,
   ImportStats,
   ImportLog,
-  ExerciseApprovalData
+  ExerciseApprovalData,
 } from "../../core/services/exercisedb.service";
 import { MobileOptimizedImageDirective } from "../../shared/directives/mobile-optimized-image.directive";
 import { capitalize } from "../../shared/utils/format.utils";
@@ -72,7 +72,7 @@ import { capitalize } from "../../shared/utils/format.utils";
     MobileOptimizedImageDirective,
     ButtonComponent,
     StatusTagComponent,
-    SearchInputComponent
+    SearchInputComponent,
   ],
   template: `
     <app-main-layout>
@@ -87,7 +87,7 @@ import { capitalize } from "../../shared/utils/format.utils";
         <!-- Stats Overview -->
         <div class="stats-grid">
           <p-card styleClass="stat-card">
-              <div class="stat-content">
+            <div class="stat-content">
               <i class="pi pi-database stat-icon"></i>
               <div class="stat-details stat-block__content">
                 <span class="stat-block__value">{{ totalExercises() }}</span>
@@ -370,7 +370,9 @@ import { capitalize } from "../../shared/utils/format.utils";
                       ></p-multiSelect>
                     </div>
                     <div class="option-group">
-                      <label for="import-equipment-filter">Equipment Filter</label>
+                      <label for="import-equipment-filter"
+                        >Equipment Filter</label
+                      >
                       <p-select
                         inputId="import-equipment-filter"
                         [options]="importEquipmentOptions"

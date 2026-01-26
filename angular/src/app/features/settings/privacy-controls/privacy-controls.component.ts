@@ -4,7 +4,7 @@ import {
   Component,
   OnInit,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Accordion, AccordionPanel } from "primeng/accordion";
@@ -27,7 +27,7 @@ import {
   EmergencyContact,
   EmergencySharingLevel,
   METRIC_CATEGORIES,
-  PrivacySettingsService
+  PrivacySettingsService,
 } from "../../../core/services/privacy-settings.service";
 import { ToastService } from "../../../core/services/toast.service";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
@@ -73,7 +73,7 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
     DatePipe,
     ButtonComponent,
     IconButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   template: `
     <p-toast></p-toast>
@@ -482,7 +482,10 @@ import { PageHeaderComponent } from "../../../shared/components/page-header/page
                   @if (hasPendingDeletion()) {
                     <div class="pending-deletion-warning">
                       <p class="warning-text">
-                        <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                        <i
+                          class="pi pi-exclamation-triangle"
+                          aria-hidden="true"
+                        ></i>
                         Deletion scheduled in
                         {{ deletionStatus()?.daysUntilDeletion }} days
                       </p>
@@ -857,7 +860,10 @@ export class PrivacyControlsComponent implements OnInit {
       this.exportProgress.set(90);
       this.exportStep.set("Generating file...");
 
-      this.dataExportService.exportToJSON([exportData], `user-data-export-${Date.now()}`);
+      this.dataExportService.exportToJSON(
+        [exportData],
+        `user-data-export-${Date.now()}`,
+      );
 
       this.exportProgress.set(100);
       this.exportStep.set("Export complete!");

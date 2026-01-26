@@ -11,7 +11,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { firstValueFrom } from "rxjs";
@@ -98,7 +98,7 @@ interface SessionTypeOption {
     StatusTagComponent,
     Toast,
     Tooltip,
-    ButtonComponent
+    ButtonComponent,
   ],
   providers: [MessageService],
   template: `
@@ -113,11 +113,7 @@ interface SessionTypeOption {
               {{ progressionStatus()!.progressionPhase }}
             </div>
             @if (progressionStatus()!.daysSinceLastSession <= 3) {
-              <app-status-tag
-                value="Active"
-                severity="success"
-                size="sm"
-              />
+              <app-status-tag value="Active" severity="success" size="sm" />
             } @else {
               <app-status-tag
                 [value]="

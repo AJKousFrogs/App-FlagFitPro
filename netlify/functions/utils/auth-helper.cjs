@@ -5,7 +5,10 @@
  * SECURITY: Uses Supabase auth instead of JWT_SECRET
  */
 
-const { supabaseAdmin, setAuthContextToken } = require("../supabase-client.cjs");
+const {
+  supabaseAdmin,
+  setAuthContextToken,
+} = require("../supabase-client.cjs");
 const { handleAuthenticationError } = require("./error-handler.cjs");
 
 /**

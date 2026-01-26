@@ -14,7 +14,10 @@
  */
 
 import { Injectable, computed, inject, signal } from "@angular/core";
-import { getInitials, normalizePlayerName } from "../../shared/utils/format.utils";
+import {
+  getInitials,
+  normalizePlayerName,
+} from "../../shared/utils/format.utils";
 import { getErrorMessage } from "../../shared/utils/error.utils";
 import { AuthService } from "./auth.service";
 import { LoggerService, toLogContext } from "./logger.service";
@@ -454,7 +457,12 @@ export class ChannelService {
       ];
       let usersMap = new Map<
         string,
-        { id: string; email: string; full_name: string; profile_photo_url: string }
+        {
+          id: string;
+          email: string;
+          full_name: string;
+          profile_photo_url: string;
+        }
       >();
 
       if (senderIds.length > 0) {
@@ -777,27 +785,31 @@ export class ChannelService {
           full_name: string | null;
         } | null;
       }
-      
+
       // Validate team_id before querying
       let members: TeamMemberWithUser[] = [];
       if (channel.team_id) {
-        const { data: membersData, error: membersError } = (await this.supabase.client
-          .from("team_members")
-          .select(
-            `
+        const { data: membersData, error: membersError } =
+          (await this.supabase.client
+            .from("team_members")
+            .select(
+              `
             user_id,
             users:user_id(id, email, full_name)
           `,
-          )
-          .eq("team_id", channel.team_id)
-          .eq("status", "active")) as {
-          data: TeamMemberWithUser[] | null;
-          error: { code?: string; message?: string } | null;
-        };
-        
+            )
+            .eq("team_id", channel.team_id)
+            .eq("status", "active")) as {
+            data: TeamMemberWithUser[] | null;
+            error: { code?: string; message?: string } | null;
+          };
+
         if (membersError) {
           // Log but don't throw - gracefully handle RLS errors
-          this.logger.warn("Could not fetch team members for announcement status:", toLogContext(membersError));
+          this.logger.warn(
+            "Could not fetch team members for announcement status:",
+            toLogContext(membersError),
+          );
         } else {
           members = membersData || [];
         }
@@ -816,9 +828,7 @@ export class ChannelService {
         return {
           user_id: r.user_id,
           full_name:
-            member?.users?.full_name ||
-            member?.users?.email ||
-            "Unknown",
+            member?.users?.full_name || member?.users?.email || "Unknown",
           read_at: r.read_at,
           acknowledged: r.acknowledged,
         };
@@ -828,10 +838,7 @@ export class ChannelService {
         .filter((m) => !readUserIds.has(m.user_id))
         .map((m) => ({
           user_id: m.user_id,
-          full_name:
-            m.users?.full_name ||
-            m.users?.email ||
-            "Unknown",
+          full_name: m.users?.full_name || m.users?.email || "Unknown",
         }));
 
       return {
@@ -1205,7 +1212,7 @@ export class ChannelService {
     query: string,
   ): Promise<ChannelMemberDetails[]> {
     // Validate teamId
-    if (!teamId || teamId === 'undefined' || teamId === 'null') {
+    if (!teamId || teamId === "undefined" || teamId === "null") {
       this.logger.warn("searchTeamMembers called with invalid teamId:", teamId);
       return [];
     }
@@ -1221,8 +1228,14 @@ export class ChannelService {
 
       if (teamError) {
         // Handle RLS policy denial gracefully
-        if (teamError.code === 'PGRST301' || teamError.message?.includes('permission')) {
-          this.logger.warn("User not authorized to search team members for team:", teamId);
+        if (
+          teamError.code === "PGRST301" ||
+          teamError.message?.includes("permission")
+        ) {
+          this.logger.warn(
+            "User not authorized to search team members for team:",
+            teamId,
+          );
           return [];
         }
         throw teamError;
@@ -1253,13 +1266,13 @@ export class ChannelService {
       const members = teamMembersData
         .map((m) => {
           const user = usersMap.get(m.user_id);
-            const fullName = normalizePlayerName(
-              {
-                full_name: user?.full_name,
-                email: user?.email,
-              },
-              "Unknown",
-            );
+          const fullName = normalizePlayerName(
+            {
+              full_name: user?.full_name,
+              email: user?.email,
+            },
+            "Unknown",
+          );
           return {
             user_id: m.user_id,
             email: user?.email || "",

@@ -476,11 +476,17 @@ export function validateDateRange(
   }
 
   if (daysDiff < -maxPastDays) {
-    return { valid: false, error: `Date cannot be more than ${maxPastDays} days in the past` };
+    return {
+      valid: false,
+      error: `Date cannot be more than ${maxPastDays} days in the past`,
+    };
   }
 
   if (daysDiff > maxFutureDays) {
-    return { valid: false, error: `Date cannot be more than ${maxFutureDays} days in the future` };
+    return {
+      valid: false,
+      error: `Date cannot be more than ${maxFutureDays} days in the future`,
+    };
   }
 
   return { valid: true };

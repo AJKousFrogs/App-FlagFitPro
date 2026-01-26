@@ -16,22 +16,22 @@
  */
 
 import {
-    animate,
-    keyframes,
-    style,
-    transition,
-    trigger
+  animate,
+  keyframes,
+  style,
+  transition,
+  trigger,
 } from "@angular/animations";
 import {
-    ChangeDetectionStrategy,
-    Component,
-    DestroyRef,
-    ElementRef,
-    computed,
-    effect,
-    inject,
-    signal,
-    viewChild
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Router, RouterModule } from "@angular/router";
@@ -53,18 +53,18 @@ import { AcwrBaselineComponent } from "../../shared/components/acwr-baseline/acw
 import { AppBannerComponent } from "../../shared/components/app-banner/app-banner.component";
 import { MainLayoutComponent } from "../../shared/components/layout/main-layout.component";
 import {
-    ProtocolJson,
-    TodayViewModel,
-    resolveTodayState
+  ProtocolJson,
+  TodayViewModel,
+  resolveTodayState,
 } from "../../today/resolution/today-state.resolver";
 import { ProtocolBlockComponent } from "../training/daily-protocol/components/protocol-block.component";
 import { WeekDay } from "../training/daily-protocol/components/week-progress-strip.component";
 import {
-    BlockType,
-    DailyProtocol,
-    ExerciseCategory,
-    PrescribedExercise,
-    ProtocolBlock
+  BlockType,
+  DailyProtocol,
+  ExerciseCategory,
+  PrescribedExercise,
+  ProtocolBlock,
 } from "../training/daily-protocol/daily-protocol.models";
 
 // Services
@@ -86,8 +86,8 @@ import { mapDailyProtocolResponse } from "../../core/utils/api-response-mapper";
 // Constants
 import { TIMEOUTS, TRAINING } from "../../core/constants/app.constants";
 import {
-    WELLNESS,
-    computeQuickReadiness
+  WELLNESS,
+  computeQuickReadiness,
 } from "../../core/constants/wellness.constants";
 
 // Types
@@ -140,7 +140,7 @@ interface QuickFormData {
     ButtonComponent,
     EmptyStateComponent,
     AppBannerComponent,
-    AcwrBaselineComponent
+    AcwrBaselineComponent,
   ],
   providers: [MessageService],
   animations: [
@@ -905,8 +905,7 @@ interface QuickFormData {
       @keyframes confetti-fall {
         0% {
           opacity: 1;
-          transform: translateX(var(--x))
-            translateY(calc(-1 * var(--space-5)))
+          transform: translateX(var(--x)) translateY(calc(-1 * var(--space-5)))
             rotate(0deg);
         }
         100% {
@@ -1218,15 +1217,15 @@ export class TodayComponent {
   private readonly screenReaderAnnouncer = inject(ScreenReaderAnnouncerService);
 
   // Angular 21: viewChild signals for DOM element references
-  private readonly wellnessSection = viewChild<ElementRef>('wellnessSection');
-  private readonly protocolBlocks = viewChild<ElementRef>('protocolBlocks');
+  private readonly wellnessSection = viewChild<ElementRef>("wellnessSection");
+  private readonly protocolBlocks = viewChild<ElementRef>("protocolBlocks");
 
   // Environment flag for API routing
   private readonly useDirectSupabase = environment.useDirectSupabase;
 
   // Guard to prevent duplicate initial loads
   private _initialLoadDone = false;
-  
+
   // Guard to prevent multiple protocol generation attempts (race condition fix)
   private readonly _generationAttempted = signal(false);
 
@@ -1419,7 +1418,7 @@ export class TodayComponent {
   readonly readinessStatusLabel = computed(() => {
     const level = this.readinessLevel();
     if (level === null) return "Unknown";
-    
+
     const labelMap: Record<string, string> = {
       high: "Great",
       moderate: "Good",
@@ -1431,7 +1430,7 @@ export class TodayComponent {
   readonly readinessSeverity = computed<TagSeverity>(() => {
     const level = this.readinessLevel();
     if (level === null) return "secondary";
-    
+
     const severityMap: Record<string, TagSeverity> = {
       high: "success",
       moderate: "warning",
@@ -1514,7 +1513,10 @@ export class TodayComponent {
       if (this._initialLoadDone) return; // Already loaded
       this._initialLoadDone = true;
 
-      this.logger.info("[TodayComponent] Auth ready, loading data for user:", id);
+      this.logger.info(
+        "[TodayComponent] Auth ready, loading data for user:",
+        id,
+      );
       this.loadTodayData();
       this.loadTomorrowProtocol();
     });
@@ -1845,14 +1847,14 @@ export class TodayComponent {
     // The API returns blocks as named properties (morningMobility, foamRoll, etc.)
     // Each contains { type, title, icon, status, exercises[], completedCount, totalCount, ... }
     const getBlock = (
-      blockKey: string,  // camelCase key in API response
+      blockKey: string, // camelCase key in API response
       blockType: string, // snake_case block type
       title: string,
       icon: string,
     ): ProtocolBlock => {
       // Get the block directly from the API response by its property name
       const apiBlock = data[blockKey];
-      
+
       if (!apiBlock || !apiBlock.exercises || apiBlock.exercises.length === 0) {
         return createEmptyBlock(blockType, title, icon);
       }
@@ -1867,7 +1869,10 @@ export class TodayComponent {
           exercise: ex.exercise || {
             id: ex.id || `${blockType}-${index}`,
             name: ex.name || "Exercise",
-            slug: ex.slug || ex.name?.toLowerCase().replace(/\s+/g, "-") || "exercise",
+            slug:
+              ex.slug ||
+              ex.name?.toLowerCase().replace(/\s+/g, "-") ||
+              "exercise",
             category: (ex.category || blockType) as ExerciseCategory,
             videoUrl: ex.videoUrl,
             videoId: ex.videoId,
@@ -1918,23 +1923,63 @@ export class TodayComponent {
 
     // Map blocks using camelCase API keys to snake_case block types
     const morningMobility = getBlock(
-      "morningMobility",  // API key (camelCase)
+      "morningMobility", // API key (camelCase)
       "morning_mobility", // block type (snake_case)
       "Morning Mobility",
       "pi-sun",
     );
-    const foamRoll = getBlock("foamRoll", "foam_roll", "Foam Rolling", "pi-circle");
+    const foamRoll = getBlock(
+      "foamRoll",
+      "foam_roll",
+      "Foam Rolling",
+      "pi-circle",
+    );
     const warmUp = getBlock("warmUp", "warm_up", "Warm-Up (15 min)", "pi-bolt");
-    
+
     // Evidence-based training blocks (1.5h gym structure)
-    const isometrics = getBlock("isometrics", "isometrics", "Isometrics (15 min)", "pi-pause-circle");
-    const plyometrics = getBlock("plyometrics", "plyometrics", "Plyometrics (15 min)", "pi-arrow-up");
-    const strength = getBlock("strength", "strength", "Strength (15 min)", "pi-heart");
-    const conditioning = getBlock("conditioning", "conditioning", "Conditioning (15 min)", "pi-directions-run");
-    const skillDrills = getBlock("skillDrills", "skill_drills", "Skill Drills (15 min)", "pi-bolt");
-    
-    const mainSession = getBlock("mainSession", "main_session", "Main Session", "pi-play");
-    const coolDown = getBlock("coolDown", "cool_down", "Cool-Down (15 min)", "pi-stop");
+    const isometrics = getBlock(
+      "isometrics",
+      "isometrics",
+      "Isometrics (15 min)",
+      "pi-pause-circle",
+    );
+    const plyometrics = getBlock(
+      "plyometrics",
+      "plyometrics",
+      "Plyometrics (15 min)",
+      "pi-arrow-up",
+    );
+    const strength = getBlock(
+      "strength",
+      "strength",
+      "Strength (15 min)",
+      "pi-heart",
+    );
+    const conditioning = getBlock(
+      "conditioning",
+      "conditioning",
+      "Conditioning (15 min)",
+      "pi-directions-run",
+    );
+    const skillDrills = getBlock(
+      "skillDrills",
+      "skill_drills",
+      "Skill Drills (15 min)",
+      "pi-bolt",
+    );
+
+    const mainSession = getBlock(
+      "mainSession",
+      "main_session",
+      "Main Session",
+      "pi-play",
+    );
+    const coolDown = getBlock(
+      "coolDown",
+      "cool_down",
+      "Cool-Down (15 min)",
+      "pi-stop",
+    );
     const eveningRecovery = getBlock(
       "eveningRecovery",
       "evening_recovery",
@@ -1943,17 +1988,17 @@ export class TodayComponent {
     );
 
     const allBlocks = [
-      morningMobility, 
-      foamRoll, 
-      warmUp, 
-      isometrics, 
-      plyometrics, 
-      strength, 
-      conditioning, 
+      morningMobility,
+      foamRoll,
+      warmUp,
+      isometrics,
+      plyometrics,
+      strength,
+      conditioning,
       skillDrills,
-      mainSession, 
-      coolDown, 
-      eveningRecovery
+      mainSession,
+      coolDown,
+      eveningRecovery,
     ];
     const totalExercises = allBlocks.reduce((sum, b) => sum + b.totalCount, 0);
     const completedExercises = allBlocks.reduce(
@@ -2083,9 +2128,12 @@ export class TodayComponent {
       sleepQuality: data.overallFeeling ?? null, // No default - require explicit input
       sleepHours: data.sleepHours ?? null, // No hardcoded default - affects calculations
       energyLevel: data.energyLevel ?? null, // No default - require explicit input
-      muscleSoreness: data.hasSoreness !== undefined 
-        ? (data.hasSoreness ? data.sorenessLevel ?? null : null) 
-        : null,
+      muscleSoreness:
+        data.hasSoreness !== undefined
+          ? data.hasSoreness
+            ? (data.sorenessLevel ?? null)
+            : null
+          : null,
       stressLevel: data.stressLevel ?? null, // No default - require explicit input
       sorenessAreas: data.sorenessAreas ?? [],
       readinessScore: readiness, // Calculated from actual inputs, not defaults
@@ -2097,48 +2145,46 @@ export class TodayComponent {
       ? this.directApi.submitWellnessCheckin(wellnessData)
       : from(this.trainingService.submitWellness(wellnessData));
 
-    submission$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response: unknown) => {
-          this.logger.info("Quick checkin response:", response);
-          const typedResponse = response as { success?: boolean };
+    submission$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (response: unknown) => {
+        this.logger.info("Quick checkin response:", response);
+        const typedResponse = response as { success?: boolean };
 
-          if (typedResponse?.success) {
-            this.showQuickCheckin.set(false);
-            this.messageService.add({
-              severity: "success",
-              summary: "Quick Check-in Complete",
-              detail: `Readiness: ${readiness}%. Ready to train!`,
-            });
-            // Announce to screen readers
-            this.screenReaderAnnouncer.announceSuccess(
-              `Quick check-in saved. Your readiness is ${readiness} percent.`
-            );
-            this.refreshProtocol();
-          } else {
-            this.messageService.add({
-              severity: "error",
-              summary: "Error",
-              detail: "Failed to save check-in. Please try again.",
-            });
-            // Announce error to screen readers
-            this.screenReaderAnnouncer.announceAssertive(
-              "Error: Failed to save check-in. Please try again."
-            );
-          }
-          this.isSavingQuickCheckin.set(false);
-        },
-        error: (err: unknown) => {
-          this.logger.error("Failed to save quick checkin", err);
+        if (typedResponse?.success) {
+          this.showQuickCheckin.set(false);
+          this.messageService.add({
+            severity: "success",
+            summary: "Quick Check-in Complete",
+            detail: `Readiness: ${readiness}%. Ready to train!`,
+          });
+          // Announce to screen readers
+          this.screenReaderAnnouncer.announceSuccess(
+            `Quick check-in saved. Your readiness is ${readiness} percent.`,
+          );
+          this.refreshProtocol();
+        } else {
           this.messageService.add({
             severity: "error",
             summary: "Error",
             detail: "Failed to save check-in. Please try again.",
           });
-          this.isSavingQuickCheckin.set(false);
-        },
-      });
+          // Announce error to screen readers
+          this.screenReaderAnnouncer.announceAssertive(
+            "Error: Failed to save check-in. Please try again.",
+          );
+        }
+        this.isSavingQuickCheckin.set(false);
+      },
+      error: (err: unknown) => {
+        this.logger.error("Failed to save quick checkin", err);
+        this.messageService.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to save check-in. Please try again.",
+        });
+        this.isSavingQuickCheckin.set(false);
+      },
+    });
   }
 
   // ============================================================================
@@ -2221,7 +2267,7 @@ export class TodayComponent {
           });
           // Announce error to screen readers
           this.screenReaderAnnouncer.announceAssertive(
-            "Error: Request failed. Please try again."
+            "Error: Request failed. Please try again.",
           );
         }
         loadingSignal.set(false);
@@ -2365,7 +2411,8 @@ export class TodayComponent {
     const blocksContainer = this.protocolBlocks();
     if (blocksContainer?.nativeElement) {
       // Query within the component's scoped element for the first block
-      const firstBlock = blocksContainer.nativeElement.querySelector("[data-block-type]");
+      const firstBlock =
+        blocksContainer.nativeElement.querySelector("[data-block-type]");
       if (firstBlock) {
         firstBlock.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -2541,7 +2588,7 @@ export class TodayComponent {
     if (!prop) return null;
 
     const block = protocol[prop] as ProtocolBlock | undefined;
-    
+
     // Return null if block doesn't exist or has no exercises
     // Main Session should always have exercises (except recovery days)
     // This prevents rendering empty block cards

@@ -18,7 +18,7 @@ import {
   signal,
   computed,
   inject,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
@@ -29,18 +29,14 @@ import { formatDate } from "../../../../shared/utils/date.utils";
 
 import {
   PrescribedExercise,
-  formatPrescription
+  formatPrescription,
 } from "../daily-protocol.models";
 
 @Component({
   selector: "app-exercise-card",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    ButtonComponent,
-    CountdownTimerComponent
-  ],
+  imports: [CommonModule, ButtonComponent, CountdownTimerComponent],
   template: `
     <div
       class="exercise-card"

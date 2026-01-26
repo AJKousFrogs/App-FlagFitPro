@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal
+  signal,
 } from "@angular/core";
 
 import { Toast } from "primeng/toast";
@@ -17,10 +17,7 @@ import { getErrorMessage } from "../../shared/utils/error.utils";
   selector: "app-import-dataset",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    Toast
-  ],
+  imports: [CommonModule, Toast],
 
   template: `
     <p-toast></p-toast>

@@ -7,12 +7,20 @@
  */
 
 import express from "express";
-import { optionalAuth, authorizeUserAccess } from "./middleware/auth.middleware.js";
+import {
+  optionalAuth,
+  authorizeUserAccess,
+} from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import { DEMO_USER_ID, isValidUUID, sendError, sendSuccess } from "./utils/validation.js";
+import {
+  DEMO_USER_ID,
+  isValidUUID,
+  sendError,
+  sendSuccess,
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "load-management";
@@ -78,7 +86,9 @@ router.get(
       // Fetch latest ACWR data from load_monitoring table
       const { data: loadData, error: loadError } = await supabase
         .from("load_monitoring")
-        .select("acwr, acute_load, chronic_load, injury_risk_level, calculated_at")
+        .select(
+          "acwr, acute_load, chronic_load, injury_risk_level, calculated_at",
+        )
         .eq("player_id", userId)
         .order("calculated_at", { ascending: false })
         .limit(1)
@@ -91,16 +101,18 @@ router.get(
 
       // Map injury_risk_level to standardized risk_level
       const mapRiskLevel = (level) => {
-        if (!level) return null;
+        if (!level) {
+          return null;
+        }
         const normalized = level.toLowerCase().replace(/[_-]/g, "-");
         const mapping = {
-          "low": "low",
-          "moderate": "moderate",
-          "high": "high",
+          low: "low",
+          moderate: "moderate",
+          high: "high",
           "very-high": "very-high",
-          "danger": "very-high",
+          danger: "very-high",
           "danger-zone": "very-high",
-          "elevated": "moderate",
+          elevated: "moderate",
           "elevated-risk": "moderate",
           "sweet-spot": "low",
           "under-training": "low",
@@ -111,8 +123,12 @@ router.get(
       if (loadData) {
         return sendSuccess(res, {
           acwr: loadData.acwr ? parseFloat(loadData.acwr) : null,
-          acute_load: loadData.acute_load ? parseFloat(loadData.acute_load) : null,
-          chronic_load: loadData.chronic_load ? parseFloat(loadData.chronic_load) : null,
+          acute_load: loadData.acute_load
+            ? parseFloat(loadData.acute_load)
+            : null,
+          chronic_load: loadData.chronic_load
+            ? parseFloat(loadData.chronic_load)
+            : null,
           risk_level: mapRiskLevel(loadData.injury_risk_level),
           calculated_at: loadData.calculated_at,
           data_source: "database",
@@ -127,7 +143,8 @@ router.get(
         risk_level: null,
         calculated_at: null,
         data_source: "none",
-        message: "No ACWR data available. ACWR is calculated client-side via AcwrService and persisted after each session.",
+        message:
+          "No ACWR data available. ACWR is calculated client-side via AcwrService and persisted after each session.",
       });
     } catch (error) {
       serverLogger.error(`[${ROUTE_NAME}] ACWR error:`, error);

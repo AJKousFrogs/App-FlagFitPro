@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject
+  inject,
 } from "@angular/core";
 
 import { Router, RouterModule } from "@angular/router";

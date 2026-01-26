@@ -39,17 +39,26 @@ function mapPlyometricExercise(ex) {
     how_text: ex.description,
     description: ex.description,
     // Handle both string and array formats for backward compatibility
-    feel_text: Array.isArray(ex.coaching_cues) ? ex.coaching_cues.join(" ") : (ex.coaching_cues || null),
-    compensation_text: Array.isArray(ex.common_mistakes) ? ex.common_mistakes.join(" ") : (ex.common_mistakes || null),
+    feel_text: Array.isArray(ex.coaching_cues)
+      ? ex.coaching_cues.join(" ")
+      : ex.coaching_cues || null,
+    compensation_text: Array.isArray(ex.common_mistakes)
+      ? ex.common_mistakes.join(" ")
+      : ex.common_mistakes || null,
     target_muscles: ex.target_muscles || [],
     equipment_required: ex.equipment_needed || [],
     video_url: ex.video_url,
     video_id: extractYoutubeId(ex.video_url),
     default_sets: 3,
     default_reps: 8,
-    is_high_intensity: ex.intensity_level === "High" || ex.intensity_level === "Very High",
-    load_contribution_au: ex.effectiveness_rating ? ex.effectiveness_rating * 2 : 10,
-    position_specific: ex.position_applications ? Object.keys(ex.position_applications) : null,
+    is_high_intensity:
+      ex.intensity_level === "High" || ex.intensity_level === "Very High",
+    load_contribution_au: ex.effectiveness_rating
+      ? ex.effectiveness_rating * 2
+      : 10,
+    position_specific: ex.position_applications
+      ? Object.keys(ex.position_applications)
+      : null,
   };
 }
 
@@ -67,8 +76,12 @@ function mapIsometricExercise(ex) {
     how_text: ex.description,
     description: ex.description,
     // Handle both string and array formats for backward compatibility
-    feel_text: Array.isArray(ex.instructions) ? ex.instructions.join(" ") : (ex.instructions || null),
-    compensation_text: Array.isArray(ex.safety_notes) ? ex.safety_notes.join(" ") : (ex.safety_notes || null),
+    feel_text: Array.isArray(ex.instructions)
+      ? ex.instructions.join(" ")
+      : ex.instructions || null,
+    compensation_text: Array.isArray(ex.safety_notes)
+      ? ex.safety_notes.join(" ")
+      : ex.safety_notes || null,
     target_muscles: ex.target_muscles || [],
     equipment_required: [],
     video_url: ex.video_url,
@@ -77,7 +90,9 @@ function mapIsometricExercise(ex) {
     default_reps: ex.reps || 1,
     default_hold_seconds: ex.hold_duration_seconds || 30,
     is_high_intensity: false,
-    load_contribution_au: ex.effectiveness_rating ? ex.effectiveness_rating * 2 : 8,
+    load_contribution_au: ex.effectiveness_rating
+      ? ex.effectiveness_rating * 2
+      : 8,
     position_specific: null,
   };
 }
@@ -115,9 +130,11 @@ function mapMainExercise(ex) {
  * Extract YouTube video ID from URL
  */
 function extractYoutubeId(url) {
-  if (!url) return null;
+  if (!url) {
+    return null;
+  }
   const match = url.match(
-    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+    /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/,
   );
   return match ? match[1] : null;
 }
@@ -143,7 +160,7 @@ async function getExercises(params) {
 
   if (search && search.trim()) {
     mainQuery = mainQuery.or(
-      `name.ilike.%${search}%,how_text.ilike.%${search}%,subcategory.ilike.%${search}%`
+      `name.ilike.%${search}%,how_text.ilike.%${search}%,subcategory.ilike.%${search}%`,
     );
   }
 
@@ -164,7 +181,7 @@ async function getExercises(params) {
 
     if (search && search.trim()) {
       plyoQuery = plyoQuery.or(
-        `exercise_name.ilike.%${search}%,description.ilike.%${search}%,exercise_category.ilike.%${search}%`
+        `exercise_name.ilike.%${search}%,description.ilike.%${search}%,exercise_category.ilike.%${search}%`,
       );
     }
 
@@ -186,7 +203,7 @@ async function getExercises(params) {
 
     if (search && search.trim()) {
       isoQuery = isoQuery.or(
-        `name.ilike.%${search}%,description.ilike.%${search}%,category.ilike.%${search}%`
+        `name.ilike.%${search}%,description.ilike.%${search}%,category.ilike.%${search}%`,
       );
     }
 
@@ -205,7 +222,7 @@ async function getExercises(params) {
   // Apply pagination
   const paginatedExercises = allExercises.slice(
     parseInt(offset),
-    parseInt(offset) + parseInt(limit)
+    parseInt(offset) + parseInt(limit),
   );
 
   return { exercises: paginatedExercises, count: allExercises.length };

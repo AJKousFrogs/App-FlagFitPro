@@ -51,7 +51,7 @@ export class ProfileNotificationService {
       const user = this.authService.getUser();
       if (!user?.id) {
         this.logger.debug(
-          "[ProfileNotification] No authenticated user, skipping check"
+          "[ProfileNotification] No authenticated user, skipping check",
         );
         return;
       }
@@ -63,12 +63,15 @@ export class ProfileNotificationService {
       const percentage = status.percentage;
 
       this.logger.info(
-        `[ProfileNotification] Profile completion: ${percentage}%, missing: ${status.missingFields.join(", ")}`
+        `[ProfileNotification] Profile completion: ${percentage}%, missing: ${status.missingFields.join(", ")}`,
       );
 
       // Show notification if profile is incomplete (less than 100%)
       if (!status.isComplete) {
-        this.showIncompleteProfileNotification(status.missingFields, percentage);
+        this.showIncompleteProfileNotification(
+          status.missingFields,
+          percentage,
+        );
       }
     } catch (error) {
       this.logger.error("[ProfileNotification] Error checking profile:", error);
@@ -82,7 +85,7 @@ export class ProfileNotificationService {
    */
   private showIncompleteProfileNotification(
     missingFields: string[],
-    percentage: number
+    percentage: number,
   ): void {
     // Always show notification for incomplete profiles
     // This ensures users see it on every login until they complete their profile
@@ -97,7 +100,7 @@ export class ProfileNotificationService {
       {
         life: 10000, // 10 seconds
         sticky: false,
-      }
+      },
     );
 
     // Also save a persistent notification to the database
@@ -112,7 +115,7 @@ export class ProfileNotificationService {
    */
   private async saveProfileNotificationToDatabase(
     missingFields: string[],
-    percentage: number
+    percentage: number,
   ): Promise<void> {
     const user = this.authService.getUser();
     if (!user?.id) return;
@@ -144,7 +147,7 @@ export class ProfileNotificationService {
           .eq("id", existing.id);
 
         this.logger.debug(
-          "[ProfileNotification] Updated existing notification"
+          "[ProfileNotification] Updated existing notification",
         );
       } else {
         // Create new notification
@@ -167,7 +170,7 @@ export class ProfileNotificationService {
     } catch (error) {
       this.logger.warn(
         "[ProfileNotification] Failed to save notification to database:",
-        error
+        error,
       );
     }
   }
@@ -198,7 +201,7 @@ export class ProfileNotificationService {
     } catch (error) {
       this.logger.warn(
         "[ProfileNotification] Failed to dismiss notification:",
-        error
+        error,
       );
     }
   }

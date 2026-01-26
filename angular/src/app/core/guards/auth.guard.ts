@@ -53,7 +53,9 @@ export const authGuard: CanActivateFn = async (route, state) => {
         } = await supabaseService.client.auth.getUser();
 
         if (!userError && user) {
-          logger.debug("[AuthGuard] Found user via getUser(), session may be expired but user exists");
+          logger.debug(
+            "[AuthGuard] Found user via getUser(), session may be expired but user exists",
+          );
           // User exists but session might be expired - allow access for now
           // The app will handle token refresh automatically
           hasSession = true;

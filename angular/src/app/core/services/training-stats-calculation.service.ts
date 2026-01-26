@@ -149,7 +149,8 @@ export class TrainingStatsCalculationService {
       } else {
         const defaultStartDate = new Date();
         defaultStartDate.setDate(
-          defaultStartDate.getDate() - STATS_MEMORY_LIMITS.DEFAULT_DATE_RANGE_DAYS,
+          defaultStartDate.getDate() -
+            STATS_MEMORY_LIMITS.DEFAULT_DATE_RANGE_DAYS,
         );
         query = query.gte(
           "session_date",

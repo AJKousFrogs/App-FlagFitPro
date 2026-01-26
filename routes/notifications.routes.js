@@ -7,9 +7,7 @@
  */
 
 import express from "express";
-import {
-    authenticateToken,
-} from "./middleware/auth.middleware.js";
+import { authenticateToken } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -119,10 +117,7 @@ router.get("/count", rateLimit("READ"), authenticateToken, async (req, res) => {
       error,
       "Failed to fetch notification counts",
     );
-    serverLogger.error(
-      `[${ROUTE_NAME}] Count error: ${errorMessage}`,
-      error,
-    );
+    serverLogger.error(`[${ROUTE_NAME}] Count error: ${errorMessage}`, error);
     return sendErrorResponse(
       res,
       error,

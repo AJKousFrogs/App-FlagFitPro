@@ -224,7 +224,8 @@ export class LandingComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   // ViewChild reference for scroll operation
-  private readonly featuresSection = viewChild<ElementRef<HTMLElement>>('featuresSection');
+  private readonly featuresSection =
+    viewChild<ElementRef<HTMLElement>>("featuresSection");
 
   // Signals for reactive state
   isLoaded = signal(false);

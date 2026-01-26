@@ -38,14 +38,12 @@ import wellnessRoutes from "./routes/wellness.routes.js";
 
 // Import monitoring middleware
 import {
-    getMetrics,
-    requestLogger,
+  getMetrics,
+  requestLogger,
 } from "./routes/middleware/request-logger.middleware.js";
 
 // Import auth middleware (centralized - avoids duplication)
-import {
-    authenticateToken
-} from "./routes/middleware/auth.middleware.js";
+import { authenticateToken } from "./routes/middleware/auth.middleware.js";
 
 // Import validation utilities (centralized - avoids duplication)
 import { DEMO_USER_ID, isValidUUID } from "./routes/utils/validation.js";
@@ -94,13 +92,7 @@ wss.on("connection", (ws) => {
 
 // File watcher for hot reload
 const watcher = chokidar.watch(
-  [
-    "angular/dist/flagfit-pro/browser/**/*",
-    "src/**/*",
-    "index.html",
-    "*.css",
-    "*.js",
-  ],
+  ["angular/dist/flagfit-pro/browser/**/*", "index.html", "*.css", "*.js"],
   { ignored: /(^|[/\\])\../, persistent: true },
 );
 
@@ -156,7 +148,7 @@ const writeLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// NOTE: Auth middleware (authenticateToken, authorizeUserAccess, optionalAuth) 
+// NOTE: Auth middleware (authenticateToken, authorizeUserAccess, optionalAuth)
 // is now imported from ./routes/middleware/auth.middleware.js to avoid duplication.
 // See imports at top of file.
 

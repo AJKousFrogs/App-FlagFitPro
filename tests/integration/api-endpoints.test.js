@@ -175,9 +175,7 @@ describe("API Integration Tests", () => {
 
     it("GET /api/training/stats - should reject userId without auth", async () => {
       await request(app)
-        .get(
-          "/api/training/stats?userId=00000000-0000-0000-0000-000000000000",
-        )
+        .get("/api/training/stats?userId=00000000-0000-0000-0000-000000000000")
         .expect(403);
     });
 

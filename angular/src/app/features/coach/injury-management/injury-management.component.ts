@@ -14,10 +14,10 @@ import {
   computed,
   inject,
   OnInit,
-  signal
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { MessageService , PrimeTemplate } from "primeng/api";
+import { MessageService, PrimeTemplate } from "primeng/api";
 import { Avatar } from "primeng/avatar";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { Card } from "primeng/card";
@@ -35,7 +35,7 @@ import { firstValueFrom } from "rxjs";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import {
   getMappedStatusSeverity,
-  injuryStatusSeverityMap
+  injuryStatusSeverityMap,
 } from "../../../shared/utils/status.utils";
 
 import { ApiService } from "../../../core/services/api.service";
@@ -209,7 +209,7 @@ const RTP_STAGES: RtpStage[] = [
     MainLayoutComponent,
     PageHeaderComponent,
     ButtonComponent,
-    StatusTagComponent
+    StatusTagComponent,
   ],
   providers: [MessageService],
   template: `
@@ -491,7 +491,11 @@ const RTP_STAGES: RtpStage[] = [
                     </p>
                     <p>Recovery time: {{ injury.daysInProtocol }} days</p>
                   </div>
-                  <app-status-tag value="Cleared" severity="success" size="sm" />
+                  <app-status-tag
+                    value="Cleared"
+                    severity="success"
+                    size="sm"
+                  />
                 </div>
               </p-card>
             }
@@ -501,14 +505,14 @@ const RTP_STAGES: RtpStage[] = [
         <!-- History Table -->
         @if (activeTab() === "history") {
           <p-card styleClass="history-card">
-            <p-table 
-            [value]="injuries()" 
-            [paginator]="true" 
-            [rows]="10"
-            [rowsPerPageOptions]="[10, 25, 50]"
-            [virtualScroll]="injuries().length > 50"
-            [virtualScrollItemSize]="46"
-          >
+            <p-table
+              [value]="injuries()"
+              [paginator]="true"
+              [rows]="10"
+              [rowsPerPageOptions]="[10, 25, 50]"
+              [virtualScroll]="injuries().length > 50"
+              [virtualScrollItemSize]="46"
+            >
               <ng-template pTemplate="header">
                 <tr>
                   <th>Player</th>

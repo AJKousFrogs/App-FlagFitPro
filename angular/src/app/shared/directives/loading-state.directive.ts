@@ -50,7 +50,10 @@ export class LoadingStateDirective {
 
     if (isLoading && !this.skeletonRef) {
       // Show skeleton
-      if (this.viewContainer && typeof this.viewContainer.clear === "function") {
+      if (
+        this.viewContainer &&
+        typeof this.viewContainer.clear === "function"
+      ) {
         this.viewContainer.clear();
       }
       this.hasView = false;

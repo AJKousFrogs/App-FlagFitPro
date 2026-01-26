@@ -12,7 +12,12 @@ import { Card } from "primeng/card";
 import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../../shared/components/status-tag/status-tag.component";
 import { ProgressBar } from "primeng/progressbar";
-import { Accordion, AccordionPanel, AccordionHeader, AccordionContent } from "primeng/accordion";
+import {
+  Accordion,
+  AccordionPanel,
+  AccordionHeader,
+  AccordionContent,
+} from "primeng/accordion";
 import { Divider } from "primeng/divider";
 import { Checkbox } from "primeng/checkbox";
 import { FormsModule } from "@angular/forms";
@@ -97,7 +102,10 @@ interface ScheduleBlock {
     Tag,
     StatusTagComponent,
     ProgressBar,
-    Accordion, AccordionPanel, AccordionHeader, AccordionContent,
+    Accordion,
+    AccordionPanel,
+    AccordionHeader,
+    AccordionContent,
     Divider,
     Checkbox,
     FormsModule,
@@ -255,7 +263,10 @@ interface ScheduleBlock {
                     "
                   ></p-checkbox>
                   @if (block.completed) {
-                    <i class="pi pi-check-circle completed-icon" aria-hidden="true"></i>
+                    <i
+                      class="pi pi-check-circle completed-icon"
+                      aria-hidden="true"
+                    ></i>
                   }
                 </div>
               </div>
@@ -391,7 +402,10 @@ interface ScheduleBlock {
                           @if (exercise.safety_notes.length) {
                             <div class="safety-notes">
                               <h4>
-                                <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                                <i
+                                  class="pi pi-exclamation-triangle"
+                                  aria-hidden="true"
+                                ></i>
                                 Safety Notes
                               </h4>
                               <ul>
