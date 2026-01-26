@@ -133,7 +133,7 @@
     "concurrently": "^9.2.1",
     "eslint": "^9.39.2",
     "glob": "^13.0.0",
-    "globals": "^16.5.0",
+    "globals": "^17.1.0",
     "jws": "^4.0.1",
     "madge": "^8.0.0",
     "netlify-cli": "^23.13.0",
