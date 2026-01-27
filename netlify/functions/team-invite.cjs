@@ -276,7 +276,7 @@ exports.handler = async (event, context) => {
         );
       }
 
-      const invitationUrl = `${getAppUrl()}/accept-invitation.html?token=${invToken}`;
+      const invitationUrl = `${getAppUrl()}/accept-invitation?token=${invToken}`;
 
       // Get user info for inviter name
       const { data: userData } = await supabase

@@ -101,7 +101,7 @@ Dashboard Access
    - User metadata stored
    ↓
 6. Verification email sent automatically:
-   - Redirect URL: /verify-email.html
+   - Redirect URL: /verify-email
    - Contains verification token
    - Expires after 24 hours
    ↓
@@ -216,7 +216,7 @@ async register(userData: RegisterData): Observable<any> {
    ↓
 9. Onboarding check:
    - Check if user has completed onboarding
-   - If not completed: redirect to /onboarding.html
+   - If not completed: redirect to /onboarding
    - If completed: redirect to dashboard
    ↓
 10. User redirected to appropriate page
@@ -298,7 +298,7 @@ After successful login, the session contains:
 2. Supabase sends verification email:
    - Subject: "Confirm your email"
    - Contains verification link
-   - Link format: /verify-email.html?token=xxx&type=signup
+   - Link format: /verify-email?token=xxx&type=signup
    ↓
 3. User clicks verification link
    ↓
@@ -366,7 +366,7 @@ The onboarding process is a **multi-step guided tour** that helps new users unde
    - Checks localStorage for onboardingCompleted flag
    ↓
 3. If onboarding not completed:
-   - Redirect to /onboarding.html
+   - Redirect to /onboarding
    - Onboarding flow starts
    ↓
 4. If onboarding completed:

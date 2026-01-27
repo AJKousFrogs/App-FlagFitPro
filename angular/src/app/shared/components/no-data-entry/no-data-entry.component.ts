@@ -81,7 +81,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
       "Log your performance tests (40-yard dash, vertical jump, etc.) to track improvements and set goals.",
     actionLabel: "Log Performance Test",
     actionIcon: "pi pi-plus",
-    route: "/performance/tests",
+    route: "/performance-tracking",
     benefits: [
       "Track speed, power, and agility metrics",
       "Compare against position benchmarks",
@@ -96,7 +96,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
       "Track your nutrition to optimize performance, recovery, and body composition.",
     actionLabel: "Log Nutrition",
     actionIcon: "pi pi-plus",
-    route: "/nutrition",
+    route: "/game/nutrition",
     benefits: [
       "Track macros and calories",
       "Monitor hydration levels",
@@ -111,7 +111,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
       "Log your recovery activities (stretching, massage, ice baths) to optimize your training response.",
     actionLabel: "Log Recovery",
     actionIcon: "pi pi-plus",
-    route: "/recovery",
+    route: "/wellness",
     benefits: [
       "Track recovery modalities used",
       "Monitor soreness and fatigue",
@@ -126,7 +126,7 @@ const CONTEXT_CONFIGS: Record<NoDataContext, ContextConfig> = {
       "Track your weight, body composition, and physical measurements to monitor changes over time.",
     actionLabel: "Log Measurements",
     actionIcon: "pi pi-plus",
-    route: "/profile/measurements",
+    route: "/profile",
     benefits: [
       "Track weight and body composition",
       "Monitor muscle mass changes",

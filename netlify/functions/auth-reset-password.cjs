@@ -47,7 +47,7 @@ exports.handler = async (event, context) => {
 
       if (action === "request") {
         // Send password reset email
-        const resetUrl = `${process.env.URL || "http://localhost:4000"}/reset-password.html`;
+        const resetUrl = `${process.env.URL || "http://localhost:4000"}/reset-password`;
 
         try {
           const result = await emailService.sendPasswordReset(email, resetUrl);

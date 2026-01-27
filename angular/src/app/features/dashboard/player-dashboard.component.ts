@@ -2737,7 +2737,7 @@ export class PlayerDashboardComponent {
    * UX Audit Fix #5
    */
   navigateToACWR(): void {
-    this.router.navigate(["/analytics/workload"]);
+    this.router.navigate(["/acwr"]);
   }
 
   /**

@@ -155,6 +155,29 @@ interface DevelopmentGoal {
             </div>
           </app-page-header>
 
+          <p-card class="analytics-hub-card">
+            <ng-template pTemplate="header">
+              <h3>Analytics Hub</h3>
+            </ng-template>
+            <div class="analytics-hub-grid">
+              <a routerLink="/analytics" class="analytics-hub-link">
+                <span class="analytics-hub-icon">📈</span>
+                <span class="analytics-hub-title">Overview</span>
+                <span class="analytics-hub-subtitle">Team performance</span>
+              </a>
+              <a routerLink="/analytics/enhanced" class="analytics-hub-link">
+                <span class="analytics-hub-icon">🧪</span>
+                <span class="analytics-hub-title">Enhanced</span>
+                <span class="analytics-hub-subtitle">Deep analytics</span>
+              </a>
+              <a routerLink="/performance-tracking" class="analytics-hub-link">
+                <span class="analytics-hub-icon">🎯</span>
+                <span class="analytics-hub-title">Performance</span>
+                <span class="analytics-hub-subtitle">Player trends</span>
+              </a>
+            </div>
+          </p-card>
+
           <!-- My Development Goals (Coach Assigned) -->
           <p-card class="development-goals-card">
             <ng-template pTemplate="header">

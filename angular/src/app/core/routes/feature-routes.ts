@@ -33,7 +33,7 @@ export const publicRoutes: Routes = [
       import("../../features/landing/landing.component").then(
         (m) => m.LandingComponent,
       ),
-    data: { preload: true, priority: "high" }, // Landing page loads immediately
+    data: { preload: true, priority: "high", entry: "internal" }, // Landing page loads immediately
   },
   {
     path: "login",
@@ -41,7 +41,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/login/login.component").then(
         (m) => m.LoginComponent,
       ),
-    data: { preload: true, priority: "medium" }, // Auth pages preload after delay
+    data: { preload: true, priority: "medium", entry: "internal" }, // Auth pages preload after delay
   },
   {
     path: "register",
@@ -49,7 +49,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/register/register.component").then(
         (m) => m.RegisterComponent,
       ),
-    data: { preload: true, priority: "medium" },
+    data: { preload: true, priority: "medium", entry: "internal" },
   },
   {
     path: "reset-password",
@@ -57,7 +57,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/reset-password/reset-password.component").then(
         (m) => m.ResetPasswordComponent,
       ),
-    data: { preload: false }, // On-demand - rarely accessed
+    data: { preload: false, entry: "deeplink" }, // On-demand - rarely accessed
   },
   {
     path: "update-password",
@@ -65,7 +65,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/update-password/update-password.component").then(
         (m) => m.UpdatePasswordComponent,
       ),
-    data: { preload: false }, // On-demand - rarely accessed
+    data: { preload: false, entry: "deeplink" }, // On-demand - rarely accessed
   },
   {
     path: "verify-email",
@@ -73,7 +73,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/verify-email/verify-email.component").then(
         (m) => m.VerifyEmailComponent,
       ),
-    data: { preload: false }, // On-demand - one-time use
+    data: { preload: false, entry: "deeplink" }, // On-demand - one-time use
   },
   {
     path: "auth/callback",
@@ -81,7 +81,7 @@ export const publicRoutes: Routes = [
       import("../../features/auth/auth-callback/auth-callback.component").then(
         (m) => m.AuthCallbackComponent,
       ),
-    data: { preload: false }, // On-demand - OAuth callback
+    data: { preload: false, entry: "deeplink" }, // On-demand - OAuth callback
   },
   {
     path: "onboarding",
@@ -89,7 +89,7 @@ export const publicRoutes: Routes = [
       import("../../features/onboarding/onboarding.component").then(
         (m) => m.OnboardingComponent,
       ),
-    data: { preload: false }, // On-demand - one-time use
+    data: { preload: false, entry: "internal" }, // On-demand - one-time use
   },
   {
     path: "accept-invitation",
@@ -97,7 +97,7 @@ export const publicRoutes: Routes = [
       import("../../features/team/accept-invitation/accept-invitation.component").then(
         (m) => m.AcceptInvitationComponent,
       ),
-    data: { preload: false }, // On-demand - rarely accessed
+    data: { preload: false, entry: "deeplink" }, // On-demand - rarely accessed
   },
   {
     path: "terms",
@@ -105,7 +105,7 @@ export const publicRoutes: Routes = [
       import("../../features/legal/legal-doc.component").then(
         (m) => m.LegalDocComponent,
       ),
-    data: { preload: false, legalDoc: "terms" },
+    data: { preload: false, legalDoc: "terms", entry: "internal" },
     title: "Terms of Use - FlagFit Pro",
   },
   {
@@ -114,7 +114,7 @@ export const publicRoutes: Routes = [
       import("../../features/legal/legal-doc.component").then(
         (m) => m.LegalDocComponent,
       ),
-    data: { preload: false, legalDoc: "privacy" },
+    data: { preload: false, legalDoc: "privacy", entry: "internal" },
     title: "Privacy Policy - FlagFit Pro",
   },
   {
@@ -123,7 +123,7 @@ export const publicRoutes: Routes = [
       import("../../features/legal/legal-doc.component").then(
         (m) => m.LegalDocComponent,
       ),
-    data: { preload: false, legalDoc: "privacy-policy" },
+    data: { preload: false, legalDoc: "privacy-policy", entry: "internal" },
     title: "Privacy Policy - FlagFit Pro",
   },
 ];
@@ -139,7 +139,7 @@ export const dashboardRoutes: Routes = [
         (m) => m.TodayComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high" },
+    data: { preload: true, priority: "high", entry: "internal" },
   },
   {
     path: "dashboard",
@@ -148,7 +148,7 @@ export const dashboardRoutes: Routes = [
         (m) => m.DashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" }, // Core dashboard
+    data: { preload: true, priority: "high", entry: "internal" }, // Core dashboard
   },
   {
     path: "player-dashboard",
@@ -157,12 +157,13 @@ export const dashboardRoutes: Routes = [
         (m) => m.PlayerDashboardComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high" },
+    data: { preload: true, priority: "high", entry: "internal" },
   },
   {
     path: "athlete-dashboard",
     redirectTo: "player-dashboard",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
 ];
 
@@ -178,23 +179,35 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingScheduleComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: true, priority: "high" },
+    data: { preload: true, priority: "high", entry: "hub" },
+  },
+  {
+    path: "training/builder",
+    loadComponent: () =>
+      import("../../features/training/training.component").then(
+        (m) => m.TrainingComponent,
+      ),
+    canActivate: [authGuard, headerConfigGuard],
+    data: { preload: false, entry: "internal" },
   },
   // Today's practice redirects to /todays-practice
   {
     path: "training/daily",
     redirectTo: "/todays-practice",
     pathMatch: "full",
+    data: { entry: "deeplink" },
   },
   {
     path: "training/protocol",
     redirectTo: "/todays-practice",
     pathMatch: "full",
+    data: { entry: "deeplink" },
   },
   {
     path: "training/protocol/:date",
     redirectTo: "/todays-practice",
     pathMatch: "full",
+    data: { entry: "deeplink" },
   },
   // Keep advanced training routes under a consolidated workspace
   {
@@ -204,7 +217,7 @@ export const trainingRoutes: Routes = [
         (m) => m.AdvancedTrainingComponent,
       ),
     canActivate: [authGuard, headerConfigGuard],
-    data: { preload: false },
+    data: { preload: false, entry: "internal" },
   },
   // Sub-tools accessible via direct route but visually orphaned without hub
   {
@@ -214,7 +227,7 @@ export const trainingRoutes: Routes = [
         (m) => m.WorkoutComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Frequently accessed
+    data: { preload: true, priority: "medium", entry: "internal" }, // Frequently accessed
   },
   {
     path: "exercise-library",
@@ -223,7 +236,7 @@ export const trainingRoutes: Routes = [
         (m) => m.ExerciseLibraryComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "low" }, // Secondary feature
+    data: { preload: true, priority: "low", entry: "internal" }, // Secondary feature
   },
   {
     path: "exercisedb",
@@ -232,13 +245,14 @@ export const trainingRoutes: Routes = [
         (m) => m.ExerciseDBManagerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Coach-only feature, load on demand
+    data: { preload: false, entry: "internal" }, // Coach-only feature, load on demand
   },
   // Redirect duplicate route to canonical /training
   {
     path: "training/schedule",
     redirectTo: "/training",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "training/qb",
@@ -247,22 +261,25 @@ export const trainingRoutes: Routes = [
         (m) => m.QbHubComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Position-specific
+    data: { preload: false, entry: "internal" }, // Position-specific
   },
   {
     path: "training/qb/schedule",
     redirectTo: "training/qb",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "training/qb/throwing",
     redirectTo: "training/qb",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "training/qb/assessment",
     redirectTo: "training/qb",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "training/ai-scheduler",
@@ -271,7 +288,7 @@ export const trainingRoutes: Routes = [
         (m) => m.AiTrainingSchedulerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Advanced feature
+    data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
     path: "training/log",
@@ -280,7 +297,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingLogComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Frequently accessed
+    data: { preload: true, priority: "medium", entry: "internal" }, // Frequently accessed
   },
   {
     path: "training/safety",
@@ -289,7 +306,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingSafetyComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Safety feature - on demand
+    data: { preload: false, entry: "internal" }, // Safety feature - on demand
   },
   {
     path: "training/smart-form",
@@ -298,7 +315,7 @@ export const trainingRoutes: Routes = [
         (m) => m.SmartTrainingFormComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Form feature - on demand
+    data: { preload: false, entry: "internal" }, // Form feature - on demand
   },
   // Session detail route - shows session details
   {
@@ -308,7 +325,7 @@ export const trainingRoutes: Routes = [
         (m) => m.TrainingSessionDetailComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false },
+    data: { preload: false, entry: "deeplink" },
   },
   {
     path: "training/videos",
@@ -317,7 +334,7 @@ export const trainingRoutes: Routes = [
         (m) => m.VideoFeedComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Heavy component - load on demand
+    data: { preload: false, entry: "internal" }, // Heavy component - load on demand
   },
   {
     path: "training/videos/curation",
@@ -326,7 +343,7 @@ export const trainingRoutes: Routes = [
         (m) => m.VideoCurationComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Coach feature
+    data: { preload: false, entry: "internal" }, // Coach feature
   },
   {
     path: "training/videos/suggest",
@@ -335,13 +352,14 @@ export const trainingRoutes: Routes = [
         (m) => m.VideoSuggestionComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   // Advanced tool redirects - consolidate orphaned routes
   {
     path: "training/ai-companion",
     redirectTo: "training/advanced",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "training/load-analysis",
@@ -350,7 +368,7 @@ export const trainingRoutes: Routes = [
         (m) => m.FlagLoadComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Advanced feature
+    data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
     path: "training/goal-planner",
@@ -359,12 +377,13 @@ export const trainingRoutes: Routes = [
         (m) => m.GoalBasedPlannerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Advanced feature
+    data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
     path: "goals",
     redirectTo: "training/goal-planner",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "training/microcycle",
@@ -373,7 +392,7 @@ export const trainingRoutes: Routes = [
         (m) => m.MicrocyclePlannerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Advanced feature
+    data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
     path: "training/import",
@@ -382,7 +401,7 @@ export const trainingRoutes: Routes = [
         (m) => m.ImportDatasetComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Utility feature
+    data: { preload: false, entry: "internal" }, // Utility feature
   },
   {
     path: "training/periodization",
@@ -391,7 +410,7 @@ export const trainingRoutes: Routes = [
         (m) => m.PeriodizationDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Advanced feature - load on demand
+    data: { preload: false, entry: "internal" }, // Advanced feature - load on demand
   },
 ];
 
@@ -407,7 +426,7 @@ export const analyticsRoutes: Routes = [
       ),
     canActivate: [authGuard, headerConfigGuard],
     resolve: { prefetch: analyticsPrefetchResolver },
-    data: { preload: true, priority: "high" },
+    data: { preload: true, priority: "high", entry: "hub" },
   },
   {
     path: "analytics/enhanced",
@@ -416,7 +435,7 @@ export const analyticsRoutes: Routes = [
         (m) => m.EnhancedAnalyticsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Advanced analytics
+    data: { preload: false, entry: "internal" }, // Advanced analytics
   },
   {
     path: "performance-tracking",
@@ -425,13 +444,14 @@ export const analyticsRoutes: Routes = [
         (m) => m.PerformanceTrackingComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Commonly accessed
+    data: { preload: true, priority: "medium", entry: "internal" }, // Commonly accessed
   },
   // Redirect /performance/body-composition to performance-tracking with body composition tab
   {
     path: "performance/body-composition",
     redirectTo: "performance-tracking",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
 ];
 
@@ -446,7 +466,7 @@ export const teamRoutes: Routes = [
         (m) => m.RosterComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" },
+    data: { preload: true, priority: "high", entry: "internal" },
   },
   {
     path: "team/workspace",
@@ -455,12 +475,16 @@ export const teamRoutes: Routes = [
         (m) => m.TeamWorkspaceComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Team hub
+    data: { preload: true, priority: "medium", entry: "internal" }, // Team hub
   },
   {
     path: "coach",
-    redirectTo: "team/workspace",
-    pathMatch: "full",
+    loadComponent: () =>
+      import("../../features/coach/coach.component").then(
+        (m) => m.CoachComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: true, priority: "high", entry: "hub" },
   },
   {
     path: "coach/dashboard",
@@ -469,7 +493,7 @@ export const teamRoutes: Routes = [
         (m) => m.CoachDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" }, // Coach main dashboard
+    data: { preload: true, priority: "high", entry: "internal" }, // Coach main dashboard
   },
   // === NEW ROUTE: Coach Activity Feed ===
   {
@@ -479,7 +503,7 @@ export const teamRoutes: Routes = [
         (m) => m.CoachActivityFeedComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
     path: "coach/analytics",
@@ -488,7 +512,7 @@ export const teamRoutes: Routes = [
         (m) => m.CoachAnalyticsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Coach analytics
+    data: { preload: true, priority: "medium", entry: "internal" }, // Coach analytics
   },
   {
     path: "coach/inbox",
@@ -497,7 +521,7 @@ export const teamRoutes: Routes = [
         (m) => m.CoachInboxComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Coach messaging
+    data: { preload: true, priority: "medium", entry: "internal" }, // Coach messaging
   },
   {
     path: "coach/team",
@@ -506,7 +530,7 @@ export const teamRoutes: Routes = [
         (m) => m.TeamManagementComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Team management
+    data: { preload: true, priority: "medium", entry: "internal" }, // Team management
   },
   {
     path: "coach/programs",
@@ -515,7 +539,7 @@ export const teamRoutes: Routes = [
         (m) => m.ProgramBuilderComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Advanced feature
+    data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
     path: "coach/practice",
@@ -524,7 +548,7 @@ export const teamRoutes: Routes = [
         (m) => m.PracticePlannerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "low" }, // Planning feature
+    data: { preload: true, priority: "low", entry: "internal" }, // Planning feature
   },
   {
     path: "coach/injuries",
@@ -533,7 +557,7 @@ export const teamRoutes: Routes = [
         (m) => m.InjuryManagementComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // On-demand
+    data: { preload: false, entry: "internal" }, // On-demand
   },
   {
     path: "coach/playbook",
@@ -542,7 +566,7 @@ export const teamRoutes: Routes = [
         (m) => m.PlaybookManagerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // On-demand
+    data: { preload: false, entry: "internal" }, // On-demand
   },
   {
     path: "coach/development",
@@ -551,7 +575,7 @@ export const teamRoutes: Routes = [
         (m) => m.PlayerDevelopmentComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // On-demand
+    data: { preload: false, entry: "internal" }, // On-demand
   },
   {
     path: "coach/tournaments",
@@ -560,7 +584,7 @@ export const teamRoutes: Routes = [
         (m) => m.TournamentManagementComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Seasonal feature
+    data: { preload: false, entry: "internal" }, // Seasonal feature
   },
   {
     path: "coach/payments",
@@ -569,7 +593,7 @@ export const teamRoutes: Routes = [
         (m) => m.PaymentManagementComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Admin feature
+    data: { preload: false, entry: "internal" }, // Admin feature
   },
   {
     path: "coach/ai-scheduler",
@@ -578,7 +602,7 @@ export const teamRoutes: Routes = [
         (m) => m.AiSchedulerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Advanced feature
+    data: { preload: false, entry: "internal" }, // Advanced feature
   },
   {
     path: "coach/knowledge",
@@ -587,7 +611,7 @@ export const teamRoutes: Routes = [
         (m) => m.KnowledgeBaseComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Reference feature
+    data: { preload: false, entry: "internal" }, // Reference feature
   },
   {
     path: "coach/film",
@@ -596,7 +620,7 @@ export const teamRoutes: Routes = [
         (m) => m.FilmRoomCoachComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Heavy component
+    data: { preload: false, entry: "internal" }, // Heavy component
   },
   {
     path: "coach/calendar",
@@ -605,7 +629,7 @@ export const teamRoutes: Routes = [
         (m) => m.CalendarCoachComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "low" }, // Planning feature
+    data: { preload: true, priority: "low", entry: "internal" }, // Planning feature
   },
   {
     path: "coach/scouting",
@@ -614,12 +638,13 @@ export const teamRoutes: Routes = [
         (m) => m.ScoutingReportsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // On-demand
+    data: { preload: false, entry: "internal" }, // On-demand
   },
   {
     path: "admin",
     redirectTo: "superadmin",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "team/create",
@@ -628,7 +653,7 @@ export const teamRoutes: Routes = [
         (m) => m.TeamCreateComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // One-time use
+    data: { preload: false, entry: "internal" }, // One-time use
   },
   {
     path: "attendance",
@@ -637,7 +662,7 @@ export const teamRoutes: Routes = [
         (m) => m.AttendanceComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "low" }, // Team feature
+    data: { preload: true, priority: "low", entry: "internal" }, // Team feature
   },
   {
     path: "depth-chart",
@@ -646,7 +671,7 @@ export const teamRoutes: Routes = [
         (m) => m.DepthChartComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Coach feature
+    data: { preload: false, entry: "internal" }, // Coach feature
   },
   {
     path: "equipment",
@@ -655,7 +680,7 @@ export const teamRoutes: Routes = [
         (m) => m.EquipmentComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Admin feature
+    data: { preload: false, entry: "internal" }, // Admin feature
   },
   {
     path: "officials",
@@ -664,7 +689,7 @@ export const teamRoutes: Routes = [
         (m) => m.OfficialsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Game day feature
+    data: { preload: false, entry: "internal" }, // Game day feature
   },
 ];
 
@@ -679,7 +704,7 @@ export const gameRoutes: Routes = [
         (m) => m.GameDayReadinessComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Only needed on game days - load on demand
+    data: { preload: false, entry: "internal" }, // Only needed on game days - load on demand
   },
   {
     path: "game/nutrition",
@@ -688,7 +713,7 @@ export const gameRoutes: Routes = [
         (m) => m.TournamentNutritionComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Only needed on tournament days - load on demand
+    data: { preload: false, entry: "internal" }, // Only needed on tournament days - load on demand
   },
   {
     path: "travel/recovery",
@@ -697,7 +722,7 @@ export const gameRoutes: Routes = [
         (m) => m.TravelRecoveryComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Only needed when traveling - load on demand
+    data: { preload: false, entry: "internal" }, // Only needed when traveling - load on demand
   },
   {
     path: "game-tracker",
@@ -707,7 +732,7 @@ export const gameRoutes: Routes = [
       ),
     canActivate: [authGuard],
     resolve: { prefetch: gameTrackerPrefetchResolver },
-    data: { preload: false }, // Heavy component, don't preload
+    data: { preload: false, entry: "internal" }, // Heavy component, don't preload
   },
   {
     path: "tournaments",
@@ -716,7 +741,7 @@ export const gameRoutes: Routes = [
         (m) => m.TournamentsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Seasonal feature
+    data: { preload: false, entry: "internal" }, // Seasonal feature
   },
   // === NEW ROUTE: Live Game Tracker ===
   {
@@ -726,7 +751,7 @@ export const gameRoutes: Routes = [
         (m) => m.LiveGameTrackerComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Heavy real-time component
+    data: { preload: false, entry: "internal" }, // Heavy real-time component
   },
 ];
 
@@ -741,7 +766,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.WellnessComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" }, // Daily feature
+    data: { preload: true, priority: "high", entry: "internal" }, // Daily feature
   },
   {
     path: "acwr",
@@ -750,7 +775,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.AcwrDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Load monitoring
+    data: { preload: true, priority: "medium", entry: "internal" }, // Load monitoring
   },
   {
     path: "return-to-play",
@@ -759,7 +784,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.ReturnToPlayComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand - not frequently accessed
+    data: { preload: false, entry: "internal" }, // Load on demand - not frequently accessed
   },
   {
     path: "cycle-tracking",
@@ -768,7 +793,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.CycleTrackingComponent,
       ),
     canActivate: [authGuard, femaleAthleteGuard],
-    data: { preload: false }, // Load on demand - female athletes only
+    data: { preload: false, entry: "internal" }, // Load on demand - female athletes only
   },
   {
     path: "sleep-debt",
@@ -777,7 +802,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.SleepDebtComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
     path: "achievements",
@@ -786,7 +811,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.AchievementsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
     path: "playbook",
@@ -795,7 +820,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.PlaybookComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
     path: "film",
@@ -804,7 +829,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.FilmRoomComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
     path: "calendar",
@@ -813,7 +838,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.TeamCalendarComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
     path: "payments",
@@ -822,7 +847,7 @@ export const wellnessRoutes: Routes = [
         (m) => m.PaymentsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
     path: "import",
@@ -831,17 +856,19 @@ export const wellnessRoutes: Routes = [
         (m) => m.DataImportComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Load on demand
+    data: { preload: false, entry: "internal" }, // Load on demand
   },
   {
     path: "load-monitoring",
     redirectTo: "acwr",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   {
     path: "injury-prevention",
     redirectTo: "acwr",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
 ];
 
@@ -856,7 +883,7 @@ export const socialRoutes: Routes = [
         (m) => m.CommunityComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "low" }, // Social feature
+    data: { preload: true, priority: "low", entry: "internal" }, // Social feature
   },
   // AI Coach Merlin - Main chat interface
   {
@@ -866,13 +893,14 @@ export const socialRoutes: Routes = [
         (m) => m.AiCoachChatComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "high" }, // AI Coach is frequently used
+    data: { preload: true, priority: "high", entry: "internal" }, // AI Coach is frequently used
   },
   // Redirect old ai-coach path to new /chat
   {
     path: "ai-coach",
     redirectTo: "chat",
     pathMatch: "full",
+    data: { entry: "internal" },
   },
   // Team Channels - moved to /team-chat
   {
@@ -880,7 +908,7 @@ export const socialRoutes: Routes = [
     loadComponent: () =>
       import("../../features/chat/chat.component").then((m) => m.ChatComponent),
     canActivate: [authGuard],
-    data: { preload: true, priority: "medium" }, // Team communication
+    data: { preload: true, priority: "medium", entry: "internal" }, // Team communication
   },
 ];
 
@@ -889,13 +917,22 @@ export const socialRoutes: Routes = [
  */
 export const staffRoutes: Routes = [
   {
+    path: "staff",
+    loadComponent: () =>
+      import("../../features/staff/staff-hub.component").then(
+        (m) => m.StaffHubComponent,
+      ),
+    canActivate: [authGuard],
+    data: { preload: false, entry: "hub" },
+  },
+  {
     path: "staff/nutritionist",
     loadComponent: () =>
       import("../../features/staff/nutritionist/nutritionist-dashboard.component").then(
         (m) => m.NutritionistDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false },
+    data: { preload: false, entry: "internal" },
   },
   {
     path: "staff/physiotherapist",
@@ -904,7 +941,7 @@ export const staffRoutes: Routes = [
         (m) => m.PhysiotherapistDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false },
+    data: { preload: false, entry: "internal" },
   },
   {
     path: "staff/psychology",
@@ -913,7 +950,7 @@ export const staffRoutes: Routes = [
         (m) => m.PsychologyReportsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false },
+    data: { preload: false, entry: "internal" },
   },
   {
     path: "staff/decisions",
@@ -922,7 +959,7 @@ export const staffRoutes: Routes = [
         (m) => m.DecisionLedgerDashboardComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false },
+    data: { preload: false, entry: "internal" },
   },
   {
     path: "staff/decisions/:id",
@@ -931,7 +968,7 @@ export const staffRoutes: Routes = [
         (m) => m.DecisionDetailComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false },
+    data: { preload: false, entry: "deeplink" },
   },
 ];
 
@@ -946,7 +983,7 @@ export const profileRoutes: Routes = [
         (m) => m.ProfileComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: true, priority: "low" }, // User profile
+    data: { preload: true, priority: "low", entry: "internal" }, // User profile
   },
   {
     path: "settings",
@@ -955,7 +992,7 @@ export const profileRoutes: Routes = [
         (m) => m.SettingsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Settings - on demand
+    data: { preload: false, entry: "internal" }, // Settings - on demand
   },
   {
     path: "settings/profile",
@@ -964,7 +1001,7 @@ export const profileRoutes: Routes = [
         (m) => m.SettingsComponent,
       ),
     canActivate: [authGuard],
-    data: { preload: false }, // Settings - on demand
+    data: { preload: false, entry: "internal" }, // Settings - on demand
   },
   {
     path: "settings/privacy",
@@ -974,6 +1011,7 @@ export const profileRoutes: Routes = [
       ),
     canActivate: [authGuard],
     title: "Privacy Controls - FlagFit Pro",
+    data: { entry: "internal" },
   },
 ];
 
@@ -989,7 +1027,7 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminDashboardComponent,
       ),
     canActivate: [superadminGuard],
-    data: { preload: false }, // Don't preload admin routes
+    data: { preload: false, entry: "hub" }, // Don't preload admin routes
   },
   {
     path: "superadmin/settings",
@@ -998,7 +1036,7 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminSettingsComponent,
       ),
     canActivate: [superadminGuard],
-    data: { preload: false }, // Admin only
+    data: { preload: false, entry: "internal" }, // Admin only
   },
   {
     path: "superadmin/teams",
@@ -1007,7 +1045,7 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminTeamsComponent,
       ),
     canActivate: [superadminGuard],
-    data: { preload: false }, // Admin only
+    data: { preload: false, entry: "internal" }, // Admin only
   },
   {
     path: "superadmin/users",
@@ -1016,7 +1054,7 @@ export const superadminRoutes: Routes = [
         (m) => m.SuperadminUsersComponent,
       ),
     canActivate: [superadminGuard],
-    data: { preload: false }, // Admin only
+    data: { preload: false, entry: "internal" }, // Admin only
   },
 ];
 
@@ -1030,7 +1068,7 @@ export const helpRoutes: Routes = [
       import("../../features/help/help-center.component").then(
         (m) => m.HelpCenterComponent,
       ),
-    data: { preload: false }, // On-demand
+    data: { preload: false, entry: "internal" }, // On-demand
   },
   // Topic-specific routes all go to help center (component handles routing)
   {
@@ -1039,7 +1077,7 @@ export const helpRoutes: Routes = [
       import("../../features/help/help-center.component").then(
         (m) => m.HelpCenterComponent,
       ),
-    data: { preload: false },
+    data: { preload: false, entry: "deeplink" },
   },
 ];
 

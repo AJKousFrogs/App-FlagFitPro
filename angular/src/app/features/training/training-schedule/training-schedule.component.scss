@@ -33,6 +33,46 @@
   gap: var(--space-6);
 }
 
+.training-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-3);
+}
+
+.training-hub-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-border);
+  background: var(--surface-card);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    transform var(--duration-2) ease,
+    box-shadow var(--duration-2) ease;
+}
+
+.training-hub-link:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.training-hub-icon {
+  font-size: var(--ds-font-size-lg);
+}
+
+.training-hub-title {
+  font-weight: var(--ds-font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.training-hub-subtitle {
+  font-size: var(--ds-font-size-sm);
+  color: var(--color-text-secondary);
+}
+
 /* Empty State */
 .card-empty-state {
   display: flex;

@@ -70,18 +70,15 @@ Run these via npm commands from the project root:
 - `verify-db-objects.cjs` - Verify database objects
 - `check-consent-violations.cjs` - Check GDPR consent violations
 - `performance-validation.cjs` - Performance benchmarks
-- `validate-design-system.cjs` - Design system validation
 - `database-audit.js` - Database audit utility
 - `comprehensiveDatabaseAudit.cjs` - Comprehensive DB audit
 - `check-acwr-consistency.js` - ACWR (Acute:Chronic Workload Ratio) consistency
+- `audit-routes.js` - Route entry classification audit
 
 ### Testing
 
 - `test-automation.js` - Automated testing suite
 - `test-all-api-endpoints.js` - API endpoint tests
-- `test-dashboard.js` - Dashboard tests
-- `test-login.js` - Login flow tests
-- `test-responsive-pages.js` - Responsive design tests
 - `test-hydration-system.js` - Hydration system tests
 - `test-supabase-connection.js` - Supabase connection test
 

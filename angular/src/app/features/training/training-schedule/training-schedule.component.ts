@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Checkbox } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { Skeleton } from "primeng/skeleton";
@@ -82,6 +82,7 @@ interface MonthlyStats {
     PageHeaderComponent,
     ButtonComponent,
     CardShellComponent,
+    RouterModule,
   ],
   template: `
     <app-main-layout>
@@ -96,6 +97,41 @@ interface MonthlyStats {
             >New Session</app-button
           >
         </app-page-header>
+
+        <app-card-shell title="Training Hub" headerIcon="pi-compass">
+          <div class="training-hub-grid">
+            <a routerLink="/training/log" class="training-hub-link">
+              <span class="training-hub-icon">📓</span>
+              <span class="training-hub-title">Training Log</span>
+              <span class="training-hub-subtitle">History and notes</span>
+            </a>
+            <a routerLink="/training/builder" class="training-hub-link">
+              <span class="training-hub-icon">🛠️</span>
+              <span class="training-hub-title">Session Builder</span>
+              <span class="training-hub-subtitle">Custom workouts</span>
+            </a>
+            <a routerLink="/training/advanced" class="training-hub-link">
+              <span class="training-hub-icon">🧠</span>
+              <span class="training-hub-title">Advanced Tools</span>
+              <span class="training-hub-subtitle">Periodization & AI</span>
+            </a>
+            <a routerLink="/training/smart-form" class="training-hub-link">
+              <span class="training-hub-icon">⚡</span>
+              <span class="training-hub-title">Smart Form</span>
+              <span class="training-hub-subtitle">Quick logging</span>
+            </a>
+            <a routerLink="/workout" class="training-hub-link">
+              <span class="training-hub-icon">🏋️</span>
+              <span class="training-hub-title">Workouts</span>
+              <span class="training-hub-subtitle">Ready-made plans</span>
+            </a>
+            <a routerLink="/training/videos" class="training-hub-link">
+              <span class="training-hub-icon">🎥</span>
+              <span class="training-hub-title">Video Feed</span>
+              <span class="training-hub-subtitle">Technique library</span>
+            </a>
+          </div>
+        </app-card-shell>
 
         <div class="schedule-content">
           <!-- STEP 2: Calendar Card with inline DatePicker and showWeek -->

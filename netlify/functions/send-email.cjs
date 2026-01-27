@@ -413,7 +413,7 @@ exports.handler = async (event, context) => {
 
           const url =
             verificationUrl ||
-            `${getAppUrl()}/verify-email.html?token=${token}`;
+            `${getAppUrl()}/verify-email?token=${token}`;
           const userRole = role || "player"; // Default to player if not provided
           mailOptions = {
             from: {

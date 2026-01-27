@@ -50,6 +50,7 @@
     "diagnostics": "node scripts/diagnostic-system.js",
     "diagnostics:health": "node scripts/comprehensive-health-check.js",
     "diagnostics:features": "node scripts/feature-validator.js",
+    "audit:routes": "node scripts/audit-routes.js",
     "benchmark": "node scripts/performance-benchmark.js",
     "audit:security": "npm audit && node scripts/security-audit.js",
     "security:check": "npm audit --audit-level high",

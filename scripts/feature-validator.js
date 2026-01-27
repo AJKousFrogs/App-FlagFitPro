@@ -679,7 +679,7 @@ class FeatureValidator {
   async measurePageLoadTime() {
     try {
       // Check HTML files for performance optimizations
-      const htmlFiles = ["./index.html", "./dashboard.html"];
+      const htmlFiles = ["./index.html", "./angular/src/index.html"];
       let hasOptimizations = 0;
       let _totalFiles = 0;
 

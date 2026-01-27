@@ -93,6 +93,44 @@ interface TeamMember {
           >
         </app-page-header>
 
+        <p-card class="coach-hub-card">
+          <ng-template pTemplate="header">
+            <h3>Coach Hub</h3>
+          </ng-template>
+          <div class="coach-hub-grid">
+            <a routerLink="/coach/dashboard" class="coach-hub-link">
+              <span class="coach-hub-icon">🏠</span>
+              <span class="coach-hub-title">Dashboard</span>
+              <span class="coach-hub-subtitle">Overview & alerts</span>
+            </a>
+            <a routerLink="/coach/team" class="coach-hub-link">
+              <span class="coach-hub-icon">👥</span>
+              <span class="coach-hub-title">Team</span>
+              <span class="coach-hub-subtitle">Roster & management</span>
+            </a>
+            <a routerLink="/coach/practice" class="coach-hub-link">
+              <span class="coach-hub-icon">🗓️</span>
+              <span class="coach-hub-title">Practice</span>
+              <span class="coach-hub-subtitle">Plan sessions</span>
+            </a>
+            <a routerLink="/coach/analytics" class="coach-hub-link">
+              <span class="coach-hub-icon">📊</span>
+              <span class="coach-hub-title">Analytics</span>
+              <span class="coach-hub-subtitle">Insights & trends</span>
+            </a>
+            <a routerLink="/coach/inbox" class="coach-hub-link">
+              <span class="coach-hub-icon">✉️</span>
+              <span class="coach-hub-title">Inbox</span>
+              <span class="coach-hub-subtitle">Messages</span>
+            </a>
+            <a routerLink="/coach/calendar" class="coach-hub-link">
+              <span class="coach-hub-icon">🗓️</span>
+              <span class="coach-hub-title">Calendar</span>
+              <span class="coach-hub-subtitle">Team schedule</span>
+            </a>
+          </div>
+        </p-card>
+
         <!-- Coach Stats -->
         <app-stats-grid [stats]="stats()"></app-stats-grid>
 

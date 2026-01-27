@@ -3,11 +3,11 @@ import { test, expect } from "@playwright/test";
 test.describe("Notifications Center", () => {
   test.beforeEach(async ({ page }) => {
     // Login before each test
-    await page.goto("/login.html");
+    await page.goto("/login");
     await page.fill("#email", "athlete@example.com");
     await page.fill("#password", "TestPassword123!");
     await page.click("#login-btn");
-    await page.waitForURL("/dashboard.html");
+    await page.waitForURL("/dashboard");
 
     // Wait for page to fully load
     await page.waitForLoadState("networkidle");

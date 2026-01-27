@@ -1097,13 +1097,13 @@ export class TrainingComponent {
           {
             icon: "📊",
             label: "Periodization",
-            route: "/periodization",
+            route: "/training/periodization",
             tooltip: "View your training plan",
           },
           {
             icon: "💚",
             label: "Recovery",
-            route: "/recovery",
+            route: "/travel/recovery",
             tooltip: "Recovery protocols",
           },
           {
@@ -1177,7 +1177,7 @@ export class TrainingComponent {
   }
 
   goToDailyProtocol(): void {
-    this.router.navigate(["/training"]);
+    this.router.navigate(["/todays-practice"]);
   }
 
   toggleScheduleView(): void {
@@ -1193,11 +1193,11 @@ export class TrainingComponent {
   }
 
   goToPeriodization(): void {
-    this.router.navigate(["/periodization"]);
+    this.router.navigate(["/training/periodization"]);
   }
 
   goToRecovery(): void {
-    this.router.navigate(["/recovery"]);
+    this.router.navigate(["/travel/recovery"]);
   }
 
   goToAchievements(): void {
