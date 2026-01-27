@@ -9,7 +9,6 @@ import { Router, RouterModule } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { Card } from "primeng/card";
 import { TableModule } from "primeng/table";
-import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../../shared/components/status-tag/status-tag.component";
 import {
   getMappedStatusSeverity,
@@ -18,7 +17,6 @@ import {
 import { Dialog } from "primeng/dialog";
 import { PrimeTemplate } from "primeng/api";
 import { InputText } from "primeng/inputtext";
-import { Tooltip } from "primeng/tooltip";
 import { Textarea } from "primeng/textarea";
 import { DatePicker } from "primeng/datepicker";
 import { Select } from "primeng/select";
@@ -66,13 +64,10 @@ interface TeamMember {
 
     LazyChartComponent,
     TableModule,
-    TableModule,
-    Tag,
     StatusTagComponent,
     Dialog,
     PrimeTemplate,
     InputText,
-    Tooltip,
     Textarea,
     DatePicker,
     Select,

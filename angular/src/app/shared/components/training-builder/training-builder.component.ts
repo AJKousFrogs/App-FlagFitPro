@@ -18,17 +18,10 @@ import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ButtonComponent } from "../button/button.component";
 import { Card } from "primeng/card";
-import { Dialog } from "primeng/dialog";
 import { InputText } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { Slider } from "primeng/slider";
-import {
-  Stepper,
-  StepList,
-  Step,
-  StepPanels,
-  StepPanel,
-} from "primeng/stepper";
+import { Stepper, StepList, Step } from "primeng/stepper";
 import { Timeline } from "primeng/timeline";
 import { COLORS } from "../../../core/constants/app.constants";
 import { AIService } from "../../../core/services/ai.service";
@@ -75,13 +68,10 @@ interface Goal {
     Stepper,
     StepList,
     Step,
-    StepPanels,
-    StepPanel,
     Select,
     Slider,
     InputText,
     Timeline,
-    Dialog,
     ButtonComponent,
     StatusTagComponent,
   ],
@@ -193,7 +183,7 @@ interface Goal {
                     {{ weatherData()?.temperature }}°F</span
                   >
                   <app-status-tag
-                    [value]="weatherData()?.recommendation"
+                    [value]="weatherData()?.recommendation ?? 'No recommendation'"
                     [severity]="getWeatherSeverity()"
                     size="sm"
                   />
