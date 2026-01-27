@@ -108,6 +108,7 @@ async function getSettings(supabase, userId, headers) {
           maxSessionsPerWeek: 5,
           hasGymAccess: true,
           hasFieldAccess: true,
+          warmupFocus: null,
         },
       }),
     };
@@ -135,6 +136,7 @@ async function getSettings(supabase, userId, headers) {
         maxSessionsPerWeek: config.max_sessions_per_week || 5,
         hasGymAccess: config.has_gym_access !== false,
         hasFieldAccess: config.has_field_access !== false,
+        warmupFocus: config.warmup_focus || null,
         availableEquipment: config.available_equipment || [
           "bodyweight",
           "resistance_bands",
@@ -158,6 +160,7 @@ async function saveSettings(supabase, userId, payload, headers) {
     maxSessionsPerWeek,
     hasGymAccess,
     hasFieldAccess,
+    warmupFocus,
   } = payload;
 
   // Map availabilitySchedule back to DB field (for backward compatibility)
@@ -198,6 +201,7 @@ async function saveSettings(supabase, userId, payload, headers) {
         max_sessions_per_week: maxSessionsPerWeek || 5,
         has_gym_access: hasGymAccess !== false,
         has_field_access: hasFieldAccess !== false,
+        warmup_focus: warmupFocus || null,
         age_recovery_modifier: ageRecoveryModifier,
         acwr_target_min: acwrTargetMin,
         acwr_target_max: acwrTargetMax,
@@ -242,6 +246,7 @@ async function saveSettings(supabase, userId, payload, headers) {
         maxSessionsPerWeek: config.max_sessions_per_week,
         hasGymAccess: config.has_gym_access,
         hasFieldAccess: config.has_field_access,
+        warmupFocus: config.warmup_focus || null,
         ageRecoveryModifier: config.age_recovery_modifier,
         acwrTargetRange: {
           min: config.acwr_target_min,

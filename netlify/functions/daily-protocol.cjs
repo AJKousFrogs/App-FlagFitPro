@@ -136,7 +136,7 @@ function computeOverride({
 const BLOCK_TYPES = {
   morning_mobility: { category: "mobility", estimatedMinutes: 10 },
   foam_roll: { category: "foam_roll", estimatedMinutes: 8 },
-  warm_up: { category: "warm_up", estimatedMinutes: 15 },
+  warm_up: { category: "warm_up", estimatedMinutes: 25 },
   isometrics: { category: "isometric", estimatedMinutes: 15 },
   plyometrics: { category: "plyometric", estimatedMinutes: 15 },
   strength: { category: "strength", estimatedMinutes: 15 },
@@ -742,6 +742,360 @@ const FALLBACK_EXERCISES = {
   ],
 };
 
+const WARMUP_TARGET_SECONDS = 25 * 60;
+
+function applyQuarterbackWarmupOverrides(plan) {
+  const removeNames = new Set([
+    "Ankle Rocker + Hip Circles",
+    "5-10-5 Shuttle",
+  ]);
+  const qbItems = [
+    {
+      name: "Band External Rotations",
+      keywords: ["external rotation", "band external", "rotator cuff"],
+      durationSeconds: 60,
+      note: "Shoulder activation for throwing prep.",
+    },
+    {
+      name: "Scap Push-ups",
+      keywords: ["scap push", "scapular push", "scap push-up"],
+      durationSeconds: 60,
+      note: "Scapular control and shoulder stability.",
+    },
+    {
+      name: "Wrist & Forearm Prep",
+      keywords: ["wrist", "forearm", "grip"],
+      durationSeconds: 90,
+      note: "Wrist mobility and forearm activation.",
+    },
+  ];
+
+  const filtered = plan.filter((item) => !removeNames.has(item.name));
+  const insertIndex = Math.max(
+    0,
+    filtered.findIndex((item) => item.name === "Walking Lunge with Rotation") +
+      1,
+  );
+  const updated = [...filtered];
+  updated.splice(insertIndex, 0, ...qbItems);
+  return updated;
+}
+
+function applyReceiverWarmupOverrides(plan) {
+  const removeNames = new Set([
+    "Ankle Rocker + Hip Circles",
+    "Progressive Sprints 20m",
+  ]);
+  const wrItems = [
+    {
+      name: "Deceleration Drops",
+      keywords: ["deceleration", "drop", "brake"],
+      durationSeconds: 120,
+      note: "Controlled stop mechanics to reduce injury risk.",
+    },
+    {
+      name: "Lateral Shuffle + Stick",
+      keywords: ["shuffle", "stick", "lateral"],
+      durationSeconds: 60,
+      note: "Plant-and-hold to prep for breaks and cuts.",
+    },
+  ];
+
+  const filtered = plan.filter((item) => !removeNames.has(item.name));
+  const insertIndex = Math.max(
+    0,
+    filtered.findIndex((item) => item.name === "B-Skips") + 1,
+  );
+  const updated = [...filtered];
+  updated.splice(insertIndex, 0, ...wrItems);
+  return updated;
+}
+
+function applyBlitzerWarmupOverrides(plan) {
+  const removeNames = new Set([
+    "Ankle Rocker + Hip Circles",
+    "Progressive Sprints 20m",
+  ]);
+  const blitzerItems = [
+    {
+      name: "Pursuit Angle Sprints",
+      keywords: ["pursuit", "angle sprint"],
+      durationSeconds: 120,
+      note: "Attack angles for blitz/pursuit mechanics.",
+    },
+    {
+      name: "Shuffle-to-Sprint",
+      keywords: ["shuffle", "sprint"],
+      durationSeconds: 60,
+      note: "Reactive change from lateral to forward sprint.",
+    },
+  ];
+
+  const filtered = plan.filter((item) => !removeNames.has(item.name));
+  const insertIndex = Math.max(
+    0,
+    filtered.findIndex((item) => item.name === "B-Skips") + 1,
+  );
+  const updated = [...filtered];
+  updated.splice(insertIndex, 0, ...blitzerItems);
+  return updated;
+}
+
+function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
+  if (variant === "fitness") {
+    return [
+      {
+        name: "Jump Rope",
+        keywords: ["jump rope", "rope jump"],
+        durationSeconds: 180,
+        note: "Raise: steady rhythm, light on feet.",
+      },
+      {
+        name: "Bike / Air Bike",
+        keywords: ["bike", "air bike", "assault bike", "bicycle"],
+        durationSeconds: 120,
+        note: "Raise: easy pace, nasal breathing.",
+      },
+      {
+        name: "Glute Bridge",
+        keywords: ["glute bridge"],
+        sets: 2,
+        reps: 8,
+        durationSeconds: 60,
+        note: "Activate glutes before loading.",
+      },
+      {
+        name: "Dead Bug",
+        keywords: ["dead bug"],
+        sets: 2,
+        reps: 6,
+        durationSeconds: 90,
+        note: "Core activation with controlled breathing.",
+      },
+      {
+        name: "Plank Series",
+        keywords: ["plank", "side plank"],
+        durationSeconds: 180,
+        note: "Planks total 3 minutes (front + side).",
+      },
+      {
+        name: "Nordic Hamstring Curl",
+        keywords: ["nordic", "hamstring curl"],
+        sets: 2,
+        reps: 5,
+        durationSeconds: 120,
+        note: "Slow eccentric. Injury prevention emphasis.",
+      },
+      {
+        name: "Toy Soldiers",
+        keywords: ["toy soldier", "straight leg"],
+        sets: 2,
+        reps: 10,
+        durationSeconds: 90,
+        note: "Dynamic hamstring mobility.",
+      },
+      {
+        name: "Lunge with Reach",
+        keywords: ["lunge", "reach", "world's greatest"],
+        sets: 2,
+        reps: 8,
+        durationSeconds: 120,
+        note: "Hip mobility and thoracic rotation.",
+      },
+      {
+        name: "Thoracic Rotations",
+        keywords: ["thoracic", "rotation", "t-spine"],
+        sets: 2,
+        reps: 6,
+        durationSeconds: 90,
+        note: "Upper back mobility before lifting.",
+      },
+      {
+        name: "Sled Push",
+        keywords: ["sled", "sledge"],
+        sets: 2,
+        reps: 2,
+        durationSeconds: 120,
+        note: "Potentiate lower body for strength work.",
+      },
+      {
+        name: "Med Ball Slams",
+        keywords: ["slam", "med ball", "medicine ball"],
+        sets: 2,
+        reps: 6,
+        durationSeconds: 60,
+        note: "Power primer. Full hip drive.",
+      },
+      {
+        name: "Squat to Stand",
+        keywords: ["squat", "squat to stand"],
+        sets: 2,
+        reps: 6,
+        durationSeconds: 90,
+        note: "Ankles/hips/hamstrings mobility.",
+      },
+      {
+        name: "Pogo Jumps",
+        keywords: ["pogo", "ankle hop"],
+        sets: 2,
+        reps: 20,
+        durationSeconds: 60,
+        note: "Ankle stiffness and elastic rebound.",
+      },
+      {
+        name: "Bicycle Spin",
+        keywords: ["bicycle", "cycle", "bike"],
+        durationSeconds: 120,
+        note: "Finish raise phase: easy spin, smooth cadence.",
+      },
+    ];
+  }
+
+  let plan = [
+    {
+      name: "Easy Jog",
+      keywords: ["jog", "easy run"],
+      durationSeconds: 120,
+      note: "Raise: light jog, relaxed shoulders.",
+    },
+    {
+      name: "Lateral Shuffle + Backpedal",
+      keywords: ["shuffle", "backpedal"],
+      durationSeconds: 120,
+      note: "Raise: prep for multi-direction movement.",
+    },
+    {
+      name: "Glute Bridge",
+      keywords: ["glute bridge"],
+      sets: 2,
+      reps: 8,
+      durationSeconds: 60,
+      note: "Activate glutes before sprint mechanics.",
+    },
+    {
+      name: "Mini-band Lateral Walks",
+      keywords: ["band walk", "lateral walk", "monster walk"],
+      sets: 2,
+      reps: 8,
+      durationSeconds: 90,
+      note: "Activate glute medius for cutting.",
+    },
+    {
+      name: "Calf Raises",
+      keywords: ["calf raise"],
+      sets: 2,
+      reps: 10,
+      durationSeconds: 60,
+      note: "Prep Achilles and ankle stiffness.",
+    },
+    {
+      name: "Nordic Hamstring Curl",
+      keywords: ["nordic", "hamstring curl"],
+      sets: 2,
+      reps: 5,
+      durationSeconds: 120,
+      note: "Slow eccentric. Injury prevention emphasis.",
+    },
+    {
+      name: "Toy Soldiers",
+      keywords: ["toy soldier", "straight leg"],
+      sets: 2,
+      reps: 10,
+      durationSeconds: 90,
+      note: "Dynamic hamstring mobility.",
+    },
+    {
+      name: "Leg Swings (Front/Side)",
+      keywords: ["leg swing"],
+      sets: 2,
+      reps: 10,
+      durationSeconds: 90,
+      note: "Open hips and hamstrings.",
+    },
+    {
+      name: "Walking Lunge with Rotation",
+      keywords: ["lunge", "rotation"],
+      sets: 2,
+      reps: 8,
+      durationSeconds: 120,
+      note: "Hip mobility + trunk control.",
+    },
+    {
+      name: "Ankle Rocker + Hip Circles",
+      keywords: ["ankle rocker", "hip circle"],
+      durationSeconds: 60,
+      note: "Restore ankle/hip range for sprinting.",
+    },
+    {
+      name: "A-Skips",
+      keywords: ["a-skip", "a skip"],
+      sets: 2,
+      reps: 20,
+      durationSeconds: 90,
+      note: "Sprint mechanics: knee drive + dorsiflex.",
+    },
+    {
+      name: "B-Skips",
+      keywords: ["b-skip", "b skip"],
+      sets: 2,
+      reps: 20,
+      durationSeconds: 90,
+      note: "Sprint mechanics: pawing action.",
+    },
+    {
+      name: "Acceleration Builds 10m",
+      keywords: ["acceleration", "build", "10m"],
+      sets: 3,
+      reps: 1,
+      durationSeconds: 120,
+      note: "3 x 10m progressive accelerations.",
+    },
+    {
+      name: "Progressive Sprints 20m",
+      keywords: ["sprint", "20m"],
+      sets: 2,
+      reps: 1,
+      durationSeconds: 120,
+      note: "2 x 20m at 70-85%. Full recovery.",
+    },
+    {
+      name: "5-10-5 Shuttle",
+      keywords: ["5-10-5", "pro agility", "shuttle"],
+      sets: 2,
+      reps: 1,
+      durationSeconds: 150,
+      note: "Change of direction primer. Full recovery.",
+    },
+  ];
+
+  if (warmupFocus === "quarterback" || warmupFocus === "center") {
+    plan = applyQuarterbackWarmupOverrides(plan);
+  } else if (warmupFocus === "blitzer") {
+    plan = applyBlitzerWarmupOverrides(plan);
+  } else if (warmupFocus === "wr_db") {
+    plan = applyReceiverWarmupOverrides(plan);
+  } else if (isQB || isCenter) {
+    plan = applyQuarterbackWarmupOverrides(plan);
+  }
+
+  return plan;
+}
+
+function selectWarmupVariant({ isFitnessDay, isSprintSession, isPracticeDay, trainingFocus }) {
+  if (isFitnessDay) return "fitness";
+  const focus = (trainingFocus || "").toLowerCase();
+  if (
+    isSprintSession ||
+    isPracticeDay ||
+    focus.includes("speed") ||
+    focus.includes("sprint") ||
+    focus.includes("agility")
+  ) {
+    return "field";
+  }
+  return "field";
+}
+
 /**
  * Generate fallback protocol exercises when database is empty
  * Uses deterministic selection based on dayOfYear for variety
@@ -805,22 +1159,50 @@ async function generateFallbackProtocolExercises(
     });
   });
 
-  // 3. Warm-up (select 5-6 based on day)
-  const warmUps = seededShuffle(FALLBACK_EXERCISES.warm_up, seed + 1).slice(
+  // 3. Warm-up (25 min, variant by session type)
+  const isSprintSession =
+    context?.dayOfWeek === 6 ||
+    trainingFocus?.toLowerCase().includes("speed") ||
+    trainingFocus?.toLowerCase().includes("sprint");
+  const isFitnessDay =
+    !isPracticeDay &&
+    !isFilmRoomDay &&
+    ["strength", "power", "conditioning", "gym", "fitness", "weights"].includes(
+      trainingFocus?.toLowerCase() || "",
+    );
+  const warmupVariant = selectWarmupVariant({
+    isFitnessDay,
+    isSprintSession,
+    isPracticeDay,
+    trainingFocus,
+  });
+  const warmupPlan = buildWarmupTemplate({
+    variant: warmupVariant,
+    isQB: context.isQB,
+    isCenter: context.isCenter,
+    warmupFocus: context.warmupFocus,
+  });
+  const warmupTotalSeconds = warmupPlan.reduce(
+    (sum, item) => sum + (item.durationSeconds || 0),
     0,
-    6,
   );
-  warmUps.forEach((ex) => {
+  if (warmupTotalSeconds !== WARMUP_TARGET_SECONDS) {
+    console.warn(
+      `[daily-protocol] Warm-up plan totals ${warmupTotalSeconds}s (target ${WARMUP_TARGET_SECONDS}s)`,
+    );
+  }
+
+  warmupPlan.forEach((item) => {
     sequenceOrder++;
     exercises.push({
       protocol_id: protocolId,
       exercise_id: null,
       block_type: "warm_up",
       sequence_order: sequenceOrder,
-      prescribed_sets: ex.sets || 2,
-      prescribed_reps: ex.reps,
-      prescribed_duration_seconds: ex.duration_seconds,
-      ai_note: ex.note,
+      prescribed_sets: item.sets || 1,
+      prescribed_reps: item.reps || null,
+      prescribed_duration_seconds: item.durationSeconds || null,
+      ai_note: item.note,
     });
   });
 
@@ -1477,6 +1859,7 @@ async function getUserTrainingContext(supabase, userId, date) {
   return {
     config: config || { primary_position: "wr_db" },
     position,
+    warmupFocus: config?.warmup_focus || null,
     age,
     ageModifier,
     birthDate,
@@ -2784,7 +3167,7 @@ async function generateProtocol(supabase, userId, payload, headers) {
     context.sessionTemplate?.session_type?.toLowerCase() === "speed" ||
     context.sessionTemplate?.session_type?.toLowerCase() === "sprint";
 
-  // 3. Warm-up - Position-aware and Sprint-Session aware
+  // 3. Warm-up - 25 minutes, variant by session type
   const warmUpQuery = supabase
     .from("exercises")
     .select("*")
@@ -2792,264 +3175,65 @@ async function generateProtocol(supabase, userId, payload, headers) {
     .eq("active", true)
     .not("subcategory", "eq", "morning_routine");
 
-  // For sprint sessions, use sprint-specific warmup (Askips, Bskips, hamstring stretches, toy soldiers, pogos, jump rope)
-  // Evidence: Sprint warmup activates sprint mechanics and neural patterns (shared-protocols.js, sprint-training-knowledge.service.ts)
-  if (isSprintSession && !isPracticeDay) {
-    // Sprint-specific warmup exercises - Phase 3: Sprint Drill Series from UNIVERSAL_WARMUP
-    // Essential exercises: A-march, A-skip, B-skip, High knees, Butt kicks, Toy soldiers, Hamstring stretch, Pogos
-    const sprintWarmupNames = [
-      "a-march",
-      "a march",
-      "amarch",
-      "a-skip",
-      "a skip",
-      "askip",
-      "askips",
-      "b-skip",
-      "b skip",
-      "bskip",
-      "bskips",
-      "c-skip",
-      "c skip",
-      "cskip",
-      "cskips",
-      "high knee",
-      "high knees",
-      "butt kick",
-      "butt kicks",
-      "hamstring stretch",
-      "hamstring stretches",
-      "hamstring",
-      "toy soldier",
-      "toy soldiers",
-      "pogo",
-      "pogos",
-      "pogo jump",
-      "pogo jumps",
-      "ankle hop",
-      "ankle hops",
-      "jump rope",
-      "jumping rope",
-      "rope jump",
-      "scissors",
-      "leg scissors",
-    ];
-
-    const { data: sprintWarmUpExercises } = await supabase
-      .from("exercises")
-      .select("*")
-      .eq("category", "warm_up")
-      .eq("active", true)
-      .or(sprintWarmupNames.map((name) => `name.ilike.%${name}%`).join(","))
-      .limit(15);
-
-    if (sprintWarmUpExercises && sprintWarmUpExercises.length > 0) {
-      // Prioritize the key sprint warmup exercises in order of importance
-      // Order: A-march → A-skip → B-skip → High knees → Butt kicks → Toy soldiers → Hamstring stretch → Pogos → Jump rope
-      const prioritized = sprintWarmUpExercises.sort((a, b) => {
-        const aName = (a.name || "").toLowerCase();
-        const bName = (b.name || "").toLowerCase();
-        const priority = [
-          "a-march",
-          "a march",
-          "amarch",
-          "a-skip",
-          "a skip",
-          "askip",
-          "b-skip",
-          "b skip",
-          "bskip",
-          "high knee",
-          "butt kick",
-          "toy soldier",
-          "hamstring",
-          "pogo",
-          "ankle hop",
-          "jump rope",
-          "rope jump",
-        ];
-        const aIdx = priority.findIndex((p) => aName.includes(p));
-        const bIdx = priority.findIndex((p) => bName.includes(p));
-        if (aIdx !== -1 && bIdx !== -1) {
-          return aIdx - bIdx;
-        }
-        if (aIdx !== -1) {
-          return -1;
-        }
-        if (bIdx !== -1) {
-          return 1;
-        }
-        return 0;
-      });
-
-      // Select 6-8 key sprint warmup exercises
-      const selectedWarmups = prioritized.slice(0, 8);
-
-      selectedWarmups.forEach((ex, idx) => {
-        const exName = (ex.name || "").toLowerCase();
-        let sets = ex.default_sets || 2;
-        let reps = ex.default_reps;
-        let duration = ex.default_duration_seconds;
-        let aiNote =
-          "Sprint Session Warm-up - Essential for sprint mechanics and injury prevention";
-
-        // Set appropriate parameters based on exercise type
-        if (exName.includes("a-march") || exName.includes("a march")) {
-          sets = 2;
-          reps = null;
-          duration = null;
-          aiNote =
-            "A-March: Knee drive mechanics - activates hip flexors for sprint";
-        } else if (exName.includes("a-skip") || exName.includes("a skip")) {
-          sets = 2;
-          reps = 10;
-          duration = null;
-          aiNote =
-            "A-Skip: Rhythm and coordination - high knee, dorsiflexed ankle";
-        } else if (exName.includes("b-skip") || exName.includes("b skip")) {
-          sets = 2;
-          reps = 10;
-          duration = null;
-          aiNote =
-            "B-Skip: Pawing action - extend leg, pull back to ground aggressively";
-        } else if (exName.includes("high knee")) {
-          sets = 2;
-          reps = null;
-          duration = 30;
-          aiNote =
-            "High Knees: Knee drive frequency - fast turnover, tall posture";
-        } else if (exName.includes("butt kick")) {
-          sets = 2;
-          reps = null;
-          duration = 30;
-          aiNote =
-            "Butt Kicks: Hamstring recovery - heel to glute, fast turnover";
-        } else if (exName.includes("toy soldier")) {
-          sets = 2;
-          reps = null;
-          duration = null;
-          aiNote =
-            "Toy Soldiers: Hamstring flexibility dynamic - straight leg, touch toe, controlled";
-        } else if (exName.includes("hamstring")) {
-          sets = 1;
-          reps = null;
-          duration = 30;
-          aiNote =
-            "Hamstring Stretch: 30s each leg - gentle stretch, breathe, no bouncing";
-        } else if (exName.includes("pogo") || exName.includes("ankle hop")) {
-          sets = 3;
-          reps = 20;
-          duration = null;
-          aiNote =
-            "Pogo Jumps: Ankle stiffness - minimal knee bend, ankle-only. Essential for sprint performance (Kubo et al., 2000)";
-        } else if (
-          exName.includes("jump rope") ||
-          exName.includes("rope jump")
-        ) {
-          sets = 2;
-          reps = null;
-          duration = 30;
-          aiNote = "Jump Rope: Ankle stiffness and coordination";
-        }
-
-        protocolExercises.push({
-          // protocol_id will be assigned by RPC
-          exercise_id: ex.id,
-          block_type: "warm_up",
-          sequence_order: idx + 1,
-          prescribed_sets: sets,
-          prescribed_reps: reps,
-          prescribed_hold_seconds: ex.default_hold_seconds,
-          prescribed_duration_seconds: duration || ex.default_duration_seconds,
-          load_contribution_au: ex.load_contribution_au || 0,
-          ai_note: aiNote,
-        });
-      });
-    } else {
-      // Fallback: use standard warmup but log warning
-      console.warn(
-        "[daily-protocol] Sprint session detected but sprint warmup exercises not found in DB",
-      );
-      const { data: warmUpExercises } = await warmUpQuery.limit(12);
-      if (warmUpExercises && warmUpExercises.length > 0) {
-        const shuffled = warmUpExercises
-          .sort(() => Math.random() - 0.5)
-          .slice(0, 6);
-        shuffled.forEach((ex, idx) => {
-          protocolExercises.push({
-            // protocol_id will be assigned by RPC
-            exercise_id: ex.id,
-            block_type: "warm_up",
-            sequence_order: idx + 1,
-            prescribed_sets: ex.default_sets || 1,
-            prescribed_reps: ex.default_reps,
-            prescribed_hold_seconds: ex.default_hold_seconds,
-            prescribed_duration_seconds: ex.default_duration_seconds,
-            load_contribution_au: ex.load_contribution_au || 0,
-            ai_note: "Sprint Session Warm-up (fallback)",
-          });
-        });
-      }
-    }
-  } else if (
-    (context.isQB || context.isCenter) &&
+  const { data: warmUpExercises } = await warmUpQuery.limit(60);
+  const isFitnessDay =
     !isPracticeDay &&
-    !isSprintSession
-  ) {
-    // For QB and Center, include position-specific warm-up exercises (unless practice day or sprint session)
-    // Note: On sprint sessions, skip QB/Center wall slides - sprint warmup takes priority
-    const positions = context.isCenter
-      ? ["center", "quarterback"]
-      : ["quarterback"];
-    const { data: throwingWarmUp } = await supabase
-      .from("exercises")
-      .select("*")
-      .or(positions.map((p) => `position_specific.cs.{${p}}`).join(","))
-      .eq("category", "warm_up")
-      .eq("active", true)
-      .not("name", "ilike", "%wall slide%") // Skip wall slides on sprint days
-      .limit(8);
+    !isFilmRoomDay &&
+    ["strength", "power", "conditioning", "gym", "fitness", "weights"].includes(
+      trainingFocus?.toLowerCase() || "",
+    );
+  const warmupVariant = selectWarmupVariant({
+    isFitnessDay,
+    isSprintSession,
+    isPracticeDay,
+    trainingFocus,
+  });
+  const warmupPlan = buildWarmupTemplate({
+    variant: warmupVariant,
+    isQB: context?.isQB,
+    isCenter: context?.isCenter,
+    warmupFocus: context?.warmupFocus,
+  });
+  const warmupTotalSeconds = warmupPlan.reduce(
+    (sum, item) => sum + (item.durationSeconds || 0),
+    0,
+  );
 
-    if (throwingWarmUp && throwingWarmUp.length > 0) {
-      throwingWarmUp.forEach((ex, idx) => {
-        protocolExercises.push({
-          // protocol_id will be assigned by RPC
-          exercise_id: ex.id,
-          block_type: "warm_up",
-          sequence_order: idx + 1,
-          prescribed_sets: ex.default_sets || 2,
-          prescribed_reps: ex.default_reps,
-          prescribed_hold_seconds: ex.default_hold_seconds,
-          ai_note: context.isCenter
-            ? "Center Pre-Throwing Warm-up - Shoulder/wrist prep for snapping + throwing"
-            : "QB Pre-Throwing Warm-up - 30 min mandatory before throwing",
-          load_contribution_au: ex.load_contribution_au || 0,
-        });
-      });
-    }
-  } else {
-    // Standard warm-up for other positions or practice days
-    const { data: warmUpExercises } = await warmUpQuery.limit(12);
-
-    if (warmUpExercises && warmUpExercises.length > 0) {
-      const shuffled = warmUpExercises
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 6);
-      shuffled.forEach((ex, idx) => {
-        protocolExercises.push({
-          // protocol_id will be assigned by RPC
-          exercise_id: ex.id,
-          block_type: "warm_up",
-          sequence_order: idx + 1,
-          prescribed_sets: ex.default_sets || 1,
-          prescribed_reps: ex.default_reps,
-          prescribed_hold_seconds: ex.default_hold_seconds,
-          prescribed_duration_seconds: ex.default_duration_seconds,
-          load_contribution_au: ex.load_contribution_au || 0,
-        });
-      });
-    }
+  if (warmupTotalSeconds !== WARMUP_TARGET_SECONDS) {
+    console.warn(
+      `[daily-protocol] Warm-up plan totals ${warmupTotalSeconds}s (target ${WARMUP_TARGET_SECONDS}s)`,
+    );
   }
+
+  const findWarmupMatch = (keywords = []) => {
+    if (!warmUpExercises || warmUpExercises.length === 0) return null;
+    return warmUpExercises.find((ex) => {
+      const name = (ex.name || "").toLowerCase();
+      const slug = (ex.slug || "").toLowerCase();
+      return keywords.some(
+        (keyword) =>
+          name.includes(keyword) || (slug && slug.includes(keyword)),
+      );
+    });
+  };
+
+  warmupPlan.forEach((item, idx) => {
+    const match = findWarmupMatch(item.keywords || []);
+    protocolExercises.push({
+      // protocol_id will be assigned by RPC
+      exercise_id: match?.id || null,
+      block_type: "warm_up",
+      sequence_order: idx + 1,
+      prescribed_sets: item.sets || match?.default_sets || 1,
+      prescribed_reps: item.reps ?? match?.default_reps ?? null,
+      prescribed_hold_seconds:
+        item.holdSeconds ?? match?.default_hold_seconds ?? null,
+      prescribed_duration_seconds:
+        item.durationSeconds ?? match?.default_duration_seconds ?? null,
+      load_contribution_au: match?.load_contribution_au || 0,
+      ai_note: item.note || "Warm-up block (25 min total).",
+    });
+  });
 
   // ============================================================================
   // EVIDENCE-BASED TRAINING BLOCKS (1.5h Gym Session Structure)
@@ -4934,7 +5118,7 @@ function transformProtocolResponse(
     blocksArray.push({ type: "foam_roll", title: "Pre-Training: Foam Roll" });
   }
   if (blocks.warm_up.length > 0) {
-    blocksArray.push({ type: "warm_up", title: "Warm-Up (15 min)" });
+    blocksArray.push({ type: "warm_up", title: "Warm-Up (25 min)" });
   }
   // Evidence-based training blocks
   if (blocks.isometrics.length > 0) {
@@ -4981,7 +5165,7 @@ function transformProtocolResponse(
       "Pre-Training: Foam Roll",
       "pi-circle-fill",
     ),
-    warmUp: createBlock("warm_up", "Warm-Up (15 min)", "pi-bolt"),
+    warmUp: createBlock("warm_up", "Warm-Up (25 min)", "pi-bolt"),
     // Evidence-based training blocks
     isometrics: createBlock(
       "isometrics",

@@ -185,6 +185,11 @@ export function resolveTodayState(
     };
   }
 
+  const resolveBlocks = (fallback: string[]): string[] =>
+    protocolJson.blocks?.length
+      ? protocolJson.blocks.map((b) => b.type)
+      : fallback;
+
   const cm = protocolJson.confidence_metadata || {};
   const sr = protocolJson.session_resolution || {};
   const readiness = cm.readiness || {};
@@ -545,13 +550,14 @@ export function resolveTodayState(
     return {
       trainingAllowed: true,
       banners,
-      blocksDisplayed: [
+      blocksDisplayed: resolveBlocks([
         "morning_mobility",
         "foam_roll",
-        "pre_practice_activation",
-        "flag_practice",
-        "post_practice_recovery",
-      ],
+        "warm_up",
+        "main_session",
+        "cool_down",
+        "evening_recovery",
+      ]),
       primaryCta:
         readiness.daysStale !== null &&
         readiness.daysStale !== undefined &&
@@ -614,12 +620,14 @@ export function resolveTodayState(
           ],
         },
       ],
-      blocksDisplayed: [
+      blocksDisplayed: resolveBlocks([
         "morning_mobility",
         "foam_roll",
-        "film_room",
-        "recovery",
-      ],
+        "warm_up",
+        "main_session",
+        "cool_down",
+        "evening_recovery",
+      ]),
       primaryCta: {
         label: "View Film Room Details",
         action: "view_film_room",
@@ -653,12 +661,14 @@ export function resolveTodayState(
     return {
       trainingAllowed: true,
       banners,
-      blocksDisplayed: [
+      blocksDisplayed: resolveBlocks([
         "morning_mobility",
         "foam_roll",
-        "taper_session",
-        "recovery",
-      ],
+        "warm_up",
+        "main_session",
+        "cool_down",
+        "evening_recovery",
+      ]),
       primaryCta: {
         label: "View Taper Plan",
         action: "view_taper",

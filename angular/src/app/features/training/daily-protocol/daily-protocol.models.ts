@@ -211,7 +211,7 @@ export const BLOCK_CONFIG: Record<
     color: BLOCK_COLORS.foam_roll, // --primitive-error-500 (red)
   },
   warm_up: {
-    title: "Warm-Up (15 min)",
+    title: "Warm-Up (25 min)",
     icon: "pi-bolt",
     color: BLOCK_COLORS.warm_up, // --color-workout-cardio (orange)
   },

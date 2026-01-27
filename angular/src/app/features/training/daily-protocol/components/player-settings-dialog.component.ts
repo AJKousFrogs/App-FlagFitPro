@@ -64,6 +64,7 @@ export interface PlayerSettings {
   maxSessionsPerWeek: number;
   hasGymAccess: boolean;
   hasFieldAccess: boolean;
+  warmupFocus?: string | null;
 }
 
 interface PositionOption {
@@ -313,6 +314,22 @@ interface DayOption {
             ></p-checkbox>
             <label for="fieldAccess">I have field access</label>
           </div>
+
+          <div class="form-field">
+            <label for="warmupFocus">Warm-up Focus</label>
+            <p-select
+              id="warmupFocus"
+              [options]="warmupFocusOptions"
+              [(ngModel)]="settings.warmupFocus"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Auto (use position)"
+              styleClass="w-full"
+            ></p-select>
+            <small class="field-hint">
+              Overrides the warm-up flow without changing your primary position.
+            </small>
+          </div>
         </div>
       </div>
 
@@ -379,6 +396,7 @@ export class PlayerSettingsDialogComponent {
     maxSessionsPerWeek: 5,
     hasGymAccess: true,
     hasFieldAccess: true,
+    warmupFocus: null,
   };
 
   readonly isSaving = signal(false);
@@ -419,6 +437,14 @@ export class PlayerSettingsDialogComponent {
     { label: "Friday", value: 5 },
     { label: "Saturday", value: 6 },
     { label: "Sunday", value: 0 },
+  ];
+
+  warmupFocusOptions: PositionOption[] = [
+    { label: "Auto (use position)", value: null },
+    { label: "Quarterback", value: "quarterback", description: "" },
+    { label: "Wide Receiver / Defensive Back", value: "wr_db", description: "" },
+    { label: "Blitzer / Rusher", value: "blitzer", description: "" },
+    { label: "Center", value: "center", description: "" },
   ];
 
   // Computed

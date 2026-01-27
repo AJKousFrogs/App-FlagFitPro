@@ -1089,14 +1089,13 @@
   --p-dialog-footer-gap: var(--space-3, 0.75rem);
 
   /* Toast */
-  --p-toast-blur: 10px;
-  --p-toast-border-radius: var(--radius-xl, 0.75rem);
-  --p-toast-shadow:
-    0 10px 40px -10px rgba(0, 0, 0, 0.2), 0 4px 15px -5px rgba(0, 0, 0, 0.1);
-  --p-toast-content-padding: 0;
-  --p-toast-content-gap: 0;
-  --p-toast-close-button-width: 2rem;
-  --p-toast-close-button-height: 2rem;
+  --p-toast-blur: var(--blur-md);
+  --p-toast-border-radius: var(--radius-xl);
+  --p-toast-shadow: var(--shadow-toast);
+  --p-toast-content-padding: var(--space-3) var(--space-4);
+  --p-toast-content-gap: var(--space-2);
+  --p-toast-close-button-width: var(--touch-target-sm);
+  --p-toast-close-button-height: var(--touch-target-sm);
   --p-toast-close-button-border-radius: var(--radius-md);
   --p-message-border-radius: var(--radius-lg, 0.5rem);
   --p-message-content-padding: var(--space-3, 0.75rem) var(--space-4, 1rem);

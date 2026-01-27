@@ -507,7 +507,10 @@ interface QuickFormData {
         margin-top: var(--space-4);
         padding-top: var(--space-3);
         border-top: var(--border-1) solid var(--color-border-secondary);
-        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        justify-content: center;
       }
 
       /* --------------------------------------------------------------------------
@@ -1934,7 +1937,7 @@ export class TodayComponent {
       "Foam Rolling",
       "pi-circle",
     );
-    const warmUp = getBlock("warmUp", "warm_up", "Warm-Up (15 min)", "pi-bolt");
+    const warmUp = getBlock("warmUp", "warm_up", "Warm-Up (25 min)", "pi-bolt");
 
     // Evidence-based training blocks (1.5h gym structure)
     const isometrics = getBlock(

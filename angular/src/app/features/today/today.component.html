@@ -277,6 +277,12 @@
                       routerLink="/training/advanced"
                       >Advanced Training Workspace</app-button
                     >
+                    <app-button
+                      iconLeft="pi-refresh"
+                      variant="text"
+                      (clicked)="generateProtocol()"
+                      >Regenerate Today</app-button
+                    >
                   </div>
                 } @else {
                   <!-- Empty State -->
