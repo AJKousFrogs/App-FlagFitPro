@@ -297,7 +297,7 @@ export class OfflineQueueService {
         // Specific action type mappings
         switch (action.type) {
           case "wellness_checkin":
-            endpoint = "/.netlify/functions/wellness-checkin";
+            endpoint = "/api/wellness/checkin";
             method = "POST";
             break;
           case "training_log":
@@ -309,7 +309,7 @@ export class OfflineQueueService {
             method = "PUT";
             break;
           case "wellness_update":
-            endpoint = "/.netlify/functions/wellness-checkin";
+            endpoint = "/api/wellness/checkin";
             method = "PUT";
             break;
           case "profile_update":

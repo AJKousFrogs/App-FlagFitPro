@@ -791,7 +791,7 @@ export class UnifiedTrainingService {
    * Get wellness for a specific day
    */
   getWellnessForDay(date: string) {
-    return this.api.get(`/api/wellness-checkin?date=${date}`);
+    return this.api.get(`/api/wellness/checkin?date=${date}`);
   }
 
   // ============================================================================
@@ -1057,7 +1057,7 @@ export class UnifiedTrainingService {
           stressLevel?: number;
           muscleSoreness?: number;
           readinessScore?: number;
-        }>(`/api/wellness-checkin?date=${today}`),
+        }>(`/api/wellness/checkin?date=${today}`),
       );
 
       if (!response.success || !response.data) {

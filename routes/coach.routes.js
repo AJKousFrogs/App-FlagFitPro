@@ -7,7 +7,7 @@
  */
 
 import express from "express";
-import { optionalAuth } from "./middleware/auth.middleware.js";
+import { authenticateToken, requireRole } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -31,7 +31,12 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /dashboard
  * Get coach dashboard data with team members and stats
  */
-router.get("/dashboard", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/dashboard",
+  rateLimit("READ"),
+  authenticateToken,
+  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  async (req, res) => {
   if (!supabase) {
     return sendSuccess(res, { teamMembers: [], stats: {} });
   }
@@ -84,7 +89,12 @@ router.get("/dashboard", rateLimit("READ"), optionalAuth, async (req, res) => {
  * GET /games
  * Get coach's games list
  */
-router.get("/games", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get(
+  "/games",
+  rateLimit("READ"),
+  authenticateToken,
+  requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
+  async (req, res) => {
   if (!supabase) {
     return sendSuccess(res, []);
   }

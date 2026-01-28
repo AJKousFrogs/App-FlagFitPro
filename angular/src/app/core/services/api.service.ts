@@ -263,7 +263,7 @@ export class ApiService {
 // Only auth-me endpoint uses backend API for token verification
 export const API_ENDPOINTS = {
   auth: {
-    me: "/auth-me", // ✅ Exists - used for token verification
+    me: "/api/auth/me", // ✅ Exists - used for token verification
     // logout: Use SupabaseService.signOut() directly
     // refresh/csrf: Not implemented - using Supabase session management
   },
@@ -366,12 +366,12 @@ export const API_ENDPOINTS = {
     health: "/api/tournaments/health",
   },
   knowledge: {
-    search: "/api/knowledge-search",
-    entry: (topic: string) => `/api/knowledge-search?topic=${topic}`,
-    articles: "/api/knowledge-search",
+    search: "/api/knowledge/search",
+    entry: (topic: string) => `/api/knowledge/search?topic=${topic}`,
+    articles: "/api/knowledge/search",
   },
   wellness: {
-    checkin: "/api/wellness-checkin",
+    checkin: "/api/wellness/checkin",
     latest: "/api/wellness/latest",
     checkins: "/api/wellness/checkins",
     get: "/api/performance-data/wellness",

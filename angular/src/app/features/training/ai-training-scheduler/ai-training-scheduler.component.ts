@@ -438,7 +438,7 @@ export class AiTrainingSchedulerComponent implements OnInit {
             sleepQuality?: number;
             muscleSoreness?: number;
             energyLevel?: number;
-          }>(`/api/wellness-checkin?date=${today}`),
+          }>(`/api/wellness/checkin?date=${today}`),
         );
         wellness = response.success ? (response.data ?? null) : null;
       } catch {

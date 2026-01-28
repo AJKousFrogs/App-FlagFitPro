@@ -317,7 +317,7 @@ export class DirectSupabaseApiService {
     try {
       const today = new Date().toISOString().split("T")[0];
       const wellnessResponse = await firstValueFrom(
-        this.api.get<{ notes?: string }>(`/api/wellness-checkin?date=${today}`),
+        this.api.get<{ notes?: string }>(`/api/wellness/checkin?date=${today}`),
       );
 
       if (wellnessResponse.success && wellnessResponse.data?.notes) {

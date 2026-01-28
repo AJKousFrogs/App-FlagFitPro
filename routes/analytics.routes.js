@@ -8,7 +8,7 @@
 
 import express from "express";
 import {
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { withCache } from "./utils/cache.js";
@@ -50,7 +50,7 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.2.0"));
 router.get(
   "/performance-trends",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   withCache("ANALYTICS"),
   async (req, res) => {
@@ -179,7 +179,7 @@ router.get(
 router.get(
   "/team-chemistry",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   withCache("ANALYTICS"),
   async (req, res) => {
@@ -315,7 +315,7 @@ router.get(
 router.get(
   "/training-distribution",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   withCache("ANALYTICS"),
   async (req, res) => {
@@ -429,7 +429,7 @@ router.get(
 router.get(
   "/summary",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   withCache("ANALYTICS"),
   async (req, res) => {

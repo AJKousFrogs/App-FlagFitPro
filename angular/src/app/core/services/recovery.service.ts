@@ -348,7 +348,7 @@ export class RecoveryService {
             energyLevel?: number;
             stressLevel?: number;
             muscleSoreness?: number;
-          }>(`/api/wellness-checkin?date=${today}`),
+          }>(`/api/wellness/checkin?date=${today}`),
         );
 
         if (!response.success || !response.data) {

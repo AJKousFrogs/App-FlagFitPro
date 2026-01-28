@@ -759,7 +759,7 @@ router.post(
 router.get(
   "/programs",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -812,7 +812,11 @@ router.get(
  * GET /programs/:id
  * Get a specific training program with full details
  */
-router.get("/programs/:id", rateLimit("READ"), async (req, res) => {
+router.get(
+  "/programs/:id",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
@@ -857,7 +861,11 @@ router.get("/programs/:id", rateLimit("READ"), async (req, res) => {
  * GET /programs/:id/phases
  * Get phases for a training program
  */
-router.get("/programs/:id/phases", rateLimit("READ"), async (req, res) => {
+router.get(
+  "/programs/:id/phases",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
@@ -890,7 +898,11 @@ router.get("/programs/:id/phases", rateLimit("READ"), async (req, res) => {
  * GET /programs/:id/weeks
  * Get all weeks for a training program (across all phases)
  */
-router.get("/programs/:id/weeks", rateLimit("READ"), async (req, res) => {
+router.get(
+  "/programs/:id/weeks",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
@@ -949,7 +961,7 @@ router.get("/programs/:id/weeks", rateLimit("READ"), async (req, res) => {
 router.get(
   "/programs/current-week",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -1043,6 +1055,7 @@ router.get(
 router.get(
   "/programs/:programId/sessions",
   rateLimit("READ"),
+  authenticateToken,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
@@ -1116,6 +1129,7 @@ router.get(
 router.get(
   "/programs/:programId/exercises",
   rateLimit("READ"),
+  authenticateToken,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
@@ -1176,7 +1190,7 @@ router.get(
  * GET /exercises
  * Get exercise library with optional filtering
  */
-router.get("/exercises", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/exercises", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }

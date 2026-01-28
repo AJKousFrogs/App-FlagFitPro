@@ -351,7 +351,7 @@ export class WellnessService {
 
   /**
    * Log wellness entry for today or specific date.
-   * Routes to /api/wellness-checkin endpoint which writes to daily_wellness_checkin table.
+   * Routes to /api/wellness/checkin endpoint which writes to daily_wellness_checkin table.
    *
    * @param data Wellness data to log
    * @returns Observable with success status and data
@@ -389,7 +389,7 @@ export class WellnessService {
       .post<{
         success: boolean;
         data?: unknown;
-      }>("/api/wellness-checkin", payload)
+      }>("/api/wellness/checkin", payload)
       .pipe(
         map((response) => {
           if (response.success) {

@@ -3514,7 +3514,7 @@ export class OnboardingComponent implements OnInit, OnDestroy {
       };
 
       const response = await firstValueFrom(
-        this.api.post("/api/wellness-checkin", payload),
+        this.api.post("/api/wellness/checkin", payload),
       );
 
       if (!response.success) {

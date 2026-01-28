@@ -351,10 +351,10 @@ describe("ApiService", () => {
     it("should handle non-prefixed endpoints", () => {
       const mockResponse: ApiResponse = { success: true };
 
-      service.get("/auth-me").subscribe();
+      service.get("/api/auth/me").subscribe();
 
       const req = httpMock.expectOne((request) =>
-        request.url.includes("/auth-me"),
+        request.url.includes("/api/auth/me"),
       );
       req.flush(mockResponse);
     });
@@ -366,7 +366,7 @@ describe("ApiService", () => {
 
   describe("API_ENDPOINTS Configuration", () => {
     it("should have auth endpoints", () => {
-      expect(API_ENDPOINTS.auth.me).toBe("/auth-me");
+      expect(API_ENDPOINTS.auth.me).toBe("/api/auth/me");
     });
 
     it("should have dashboard endpoints", () => {
@@ -413,7 +413,7 @@ describe("ApiService", () => {
     });
 
     it("should have wellness endpoints", () => {
-      expect(API_ENDPOINTS.wellness.checkin).toBe("/api/wellness-checkin");
+      expect(API_ENDPOINTS.wellness.checkin).toBe("/api/wellness/checkin");
       expect(API_ENDPOINTS.wellness.latest).toBe("/api/wellness/latest");
     });
 

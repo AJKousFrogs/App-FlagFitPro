@@ -7,7 +7,7 @@
  */
 
 import express from "express";
-import { optionalAuth } from "./middleware/auth.middleware.js";
+import { authenticateToken } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -31,7 +31,7 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /search
  * Search knowledge base entries
  */
-router.get("/search", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/search", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }

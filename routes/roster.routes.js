@@ -7,7 +7,7 @@
  */
 
 import express from "express";
-import { optionalAuth } from "./middleware/auth.middleware.js";
+import { authenticateToken } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -31,13 +31,25 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /
  * Get team roster
  */
-router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
 
   try {
-    const { data: roster, error } = await supabase
+    const staffRoles = new Set([
+      "coach",
+      "head_coach",
+      "assistant_coach",
+      "offense_coordinator",
+      "defense_coordinator",
+      "admin",
+      "owner",
+    ]);
+
+    const isStaff = staffRoles.has(req.user?.role || "");
+
+    let query = supabase
       .from("team_members")
       .select(
         `
@@ -46,6 +58,12 @@ router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
         `,
       )
       .order("jersey_number");
+
+    if (!isStaff) {
+      query = query.eq("user_id", req.userId);
+    }
+
+    const { data: roster, error } = await query;
 
     if (error) {
       throw error;
@@ -62,13 +80,24 @@ router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
  * GET /players
  * Get roster players with formatted data
  */
-router.get("/players", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/players", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
 
   try {
-    const { data: players, error } = await supabase
+    const staffRoles = new Set([
+      "coach",
+      "head_coach",
+      "assistant_coach",
+      "offense_coordinator",
+      "defense_coordinator",
+      "admin",
+      "owner",
+    ]);
+    const isStaff = staffRoles.has(req.user?.role || "");
+
+    let query = supabase
       .from("team_members")
       .select(
         `
@@ -78,6 +107,12 @@ router.get("/players", rateLimit("READ"), optionalAuth, async (req, res) => {
       )
       .eq("status", "active")
       .order("jersey_number");
+
+    if (!isStaff) {
+      query = query.eq("user_id", req.userId);
+    }
+
+    const { data: players, error } = await query;
 
     if (error) {
       throw error;

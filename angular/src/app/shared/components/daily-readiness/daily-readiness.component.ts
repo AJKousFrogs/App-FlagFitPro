@@ -6,7 +6,7 @@
  * Features:
  * - 4 sliders: Pain, Fatigue, Sleep Quality, Motivation (0-10)
  * - Auto-computed readiness score
- * - Saves via /api/wellness-checkin (single source of truth)
+ * - Saves via /api/wellness/checkin (single source of truth)
  * - Can be shown as modal or inline card
  * - "Skip for now" option with gentle reminder
  */
@@ -387,7 +387,7 @@ export class DailyReadinessComponent implements OnInit {
       const today = new Date().toISOString().split("T")[0];
       // Check daily_wellness_checkin via API (single source of truth)
       this.api
-        .get(`/api/wellness-checkin?date=${today}`)
+        .get(`/api/wellness/checkin?date=${today}`)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (response) => {
@@ -422,7 +422,7 @@ export class DailyReadinessComponent implements OnInit {
   }
 
   /**
-   * Save the daily state via /api/wellness-checkin (single source of truth)
+   * Save the daily state via /api/wellness/checkin (single source of truth)
    * Maps: pain_level → muscleSoreness, fatigue_level → energyLevel (inverted)
    * Also saves weight to body_measurements and users table
    */
@@ -453,9 +453,9 @@ export class DailyReadinessComponent implements OnInit {
       // readinessScore will be calculated server-side
     };
 
-    // POST to /api/wellness-checkin (UPSERT on user_id, checkin_date)
+    // POST to /api/wellness/checkin (UPSERT on user_id, checkin_date)
     this.api
-      .post("/api/wellness-checkin", wellnessPayload)
+      .post("/api/wellness/checkin", wellnessPayload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async () => {

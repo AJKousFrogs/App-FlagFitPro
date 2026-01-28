@@ -8,7 +8,7 @@
 
 import express from "express";
 import {
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
@@ -16,7 +16,6 @@ import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
-  DEMO_USER_ID,
   isValidUUID,
   sendError,
   sendSuccess,
@@ -55,7 +54,13 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
 router.get(
   "/acwr",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
+  (req, _res, next) => {
+    if (req.query.user_id && !req.query.userId) {
+      req.query.userId = req.query.user_id;
+    }
+    next();
+  },
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -63,16 +68,7 @@ router.get(
     }
 
     try {
-      const authHeader = req.headers.authorization;
-      let userId = req.query.user_id;
-
-      if (authHeader && !userId) {
-        const token = authHeader.replace("Bearer ", "");
-        const {
-          data: { user },
-        } = await supabase.auth.getUser(token);
-        userId = user?.id;
-      }
+      let userId = req.query.user_id || req.userId;
 
       if (!userId) {
         return sendError(res, "User ID required", "VALIDATION_ERROR", 400);
@@ -80,7 +76,7 @@ router.get(
 
       // Handle invalid UUIDs
       if (!isValidUUID(userId)) {
-        userId = DEMO_USER_ID;
+        return sendError(res, "Invalid user ID", "INVALID_USER_ID", 400);
       }
 
       // Fetch latest ACWR data from load_monitoring table

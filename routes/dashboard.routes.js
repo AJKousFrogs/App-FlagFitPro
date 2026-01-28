@@ -8,7 +8,7 @@
 
 import express from "express";
 import {
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { withCache } from "./utils/cache.js";
@@ -17,7 +17,6 @@ import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
 import {
-  DEMO_USER_ID,
   resolveUserId,
   sendError,
   sendSuccess,
@@ -25,6 +24,20 @@ import {
 
 const router = express.Router();
 const ROUTE_NAME = "dashboard";
+
+const getUserIdOrError = (req, res) => {
+  const userIdValidation = resolveUserId(req);
+  if (!userIdValidation.isValid) {
+    sendError(
+      res,
+      userIdValidation.error,
+      userIdValidation.code || "INVALID_USER_ID",
+      400,
+    );
+    return null;
+  }
+  return userIdValidation.userId;
+};
 
 // =============================================================================
 // HEALTH CHECK
@@ -44,7 +57,7 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.3.0"));
 router.get(
   "/overview",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   withCache("DASHBOARD"),
   async (req, res) => {
@@ -53,8 +66,10 @@ router.get(
     }
 
     try {
-      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const { userId } = userIdValidation;
+      const userId = getUserIdOrError(req, res);
+      if (!userId) {
+        return;
+      }
 
       // Get training sessions count (last 30 days)
       const thirtyDaysAgo = new Date();
@@ -159,7 +174,7 @@ router.get(
 router.get(
   "/training-calendar",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -167,8 +182,10 @@ router.get(
     }
 
     try {
-      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const { userId } = userIdValidation;
+      const userId = getUserIdOrError(req, res);
+      if (!userId) {
+        return;
+      }
 
       const { data: sessions } = await supabase
         .from("training_sessions")
@@ -198,7 +215,7 @@ router.get(
 router.get(
   "/olympic-qualification",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -206,8 +223,10 @@ router.get(
     }
 
     try {
-      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const { userId } = userIdValidation;
+      const userId = getUserIdOrError(req, res);
+      if (!userId) {
+        return;
+      }
 
       const { data: qual } = await supabase
         .from("olympic_qualification")
@@ -246,7 +265,7 @@ router.get(
 router.get(
   "/sponsor-rewards",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -254,8 +273,10 @@ router.get(
     }
 
     try {
-      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const { userId } = userIdValidation;
+      const userId = getUserIdOrError(req, res);
+      if (!userId) {
+        return;
+      }
 
       const { data: rewards } = await supabase
         .from("sponsor_rewards")
@@ -291,7 +312,7 @@ router.get(
 router.get(
   "/team-chemistry",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -299,8 +320,10 @@ router.get(
     }
 
     try {
-      const userIdValidation = resolveUserId(req, { allowDemoUser: true });
-      const { userId } = userIdValidation;
+      const userId = getUserIdOrError(req, res);
+      if (!userId) {
+        return;
+      }
 
       const { data: chem } = await supabase
         .from("team_chemistry")
@@ -327,7 +350,7 @@ router.get(
  * GET /daily-quote
  * Get daily motivational quote
  */
-router.get("/daily-quote", rateLimit("READ"), async (req, res) => {
+router.get("/daily-quote", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }

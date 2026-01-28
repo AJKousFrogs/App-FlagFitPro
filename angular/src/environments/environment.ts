@@ -61,15 +61,6 @@ const DEFAULTS = {
   API_URL: "", // Will be auto-detected
 };
 
-// Detect if running via Netlify Dev (port 8888) vs Angular CLI (port 4200)
-const isNetlifyDev = (): boolean => {
-  if (typeof window !== "undefined") {
-    // Netlify Dev typically runs on port 8888
-    return window.location.port === "8888";
-  }
-  return false;
-};
-
 export const environment = {
   production: false,
   // API URL: Check window._env first, then auto-detect for local dev
@@ -102,5 +93,6 @@ export const environment = {
    *
    * Auto-detects based on port: 4200 = direct, 8888 = via API
    */
-  useDirectSupabase: !isNetlifyDev(),
+  // Enforce backend API usage even in development for consistent auth behavior
+  useDirectSupabase: false,
 };

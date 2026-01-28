@@ -568,6 +568,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routerSub?.unsubscribe();
+    if (isPlatformBrowser(this.platformId)) {
+      this.renderer.removeClass(document.body, "sidebar-open");
+    }
   }
 
   toggleSidebar(): void {

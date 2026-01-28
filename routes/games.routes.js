@@ -7,7 +7,7 @@
  */
 
 import express from "express";
-import { optionalAuth } from "./middleware/auth.middleware.js";
+import { authenticateToken } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -37,7 +37,7 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /
  * Get games list with optional date filtering
  */
-router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
@@ -86,7 +86,7 @@ router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
 router.get(
   "/tournaments",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   async (req, res) => {
     if (!supabase) {
       return sendError(res, "Database not configured", "DB_ERROR", 503);
@@ -127,7 +127,7 @@ router.get(
 router.get(
   "/tournaments/:id",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   async (req, res) => {
     if (!supabase) {
       return sendSuccess(res, null);
@@ -180,7 +180,7 @@ router.get(
 router.post(
   "/tournaments/createGame",
   rateLimit("WRITE"),
-  optionalAuth,
+  authenticateToken,
   async (req, res) => {
     if (!supabase) {
       return sendSuccess(res, {

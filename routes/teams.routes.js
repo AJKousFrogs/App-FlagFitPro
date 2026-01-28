@@ -7,7 +7,7 @@
  */
 
 import express from "express";
-import { optionalAuth } from "./middleware/auth.middleware.js";
+import { authenticateToken } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -31,16 +31,32 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /
  * Get all active teams
  */
-router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendError(res, "Database not configured", "DB_ERROR", 503);
   }
 
   try {
+    const { data: memberships, error: membershipError } = await supabase
+      .from("team_members")
+      .select("team_id")
+      .eq("user_id", req.userId)
+      .eq("status", "active");
+
+    if (membershipError) {
+      throw membershipError;
+    }
+
+    const teamIds = memberships?.map((m) => m.team_id) || [];
+    if (teamIds.length === 0) {
+      return sendSuccess(res, []);
+    }
+
     const { data: teams, error } = await supabase
       .from("teams")
       .select("*")
       .eq("is_active", true)
+      .in("id", teamIds)
       .order("name");
 
     if (error) {
@@ -58,7 +74,7 @@ router.get("/", rateLimit("READ"), optionalAuth, async (req, res) => {
  * GET /:id
  * Get team details with members
  */
-router.get("/:id", rateLimit("READ"), optionalAuth, async (req, res) => {
+router.get("/:id", rateLimit("READ"), authenticateToken, async (req, res) => {
   if (!supabase) {
     return sendSuccess(res, null);
   }
@@ -68,6 +84,21 @@ router.get("/:id", rateLimit("READ"), optionalAuth, async (req, res) => {
 
     if (!isValidUUID(id)) {
       return sendError(res, "Invalid team ID", "VALIDATION_ERROR", 400);
+    }
+
+    const { data: membership, error: membershipError } = await supabase
+      .from("team_members")
+      .select("team_id")
+      .eq("team_id", id)
+      .eq("user_id", req.userId)
+      .maybeSingle();
+
+    if (membershipError) {
+      throw membershipError;
+    }
+
+    if (!membership) {
+      return sendError(res, "Access denied", "UNAUTHORIZED_ACCESS", 403);
     }
 
     const { data: team, error } = await supabase

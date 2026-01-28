@@ -12,6 +12,8 @@ import { Tag } from "primeng/tag";
 import { StatusTagComponent } from "../status-tag/status-tag.component";
 import { ProgressBar } from "primeng/progressbar";
 import { ApiService } from "../../../core/services/api.service";
+import { LoggerService } from "../../../core/services/logger.service";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 export interface LiveMetric {
   id: string;
@@ -20,7 +22,7 @@ export interface LiveMetric {
   unit: string;
   progress: number;
   trend: {
-    direction: "up" | "down";
+    direction: "up" | "down" | "stable";
     text: string;
   };
 }
@@ -36,7 +38,7 @@ export interface LiveMetric {
         @for (metric of liveMetrics(); track trackByMetricId($index, metric)) {
           <div class="metric-card">
           <div class="metric-icon">
-            <i [class]="'pi ' + metric.icon"></i>
+            <i [class]="metric.icon"></i>
           </div>
           <div class="metric-value">
             <span class="current-value">{{
@@ -47,14 +49,8 @@ export interface LiveMetric {
           <div class="metric-trend">
             <app-status-tag
               [value]="metric.trend.text"
-              [severity]="
-                metric.trend.direction === "up" ? "success" : "danger"
-              "
-              [icon]="
-                metric.trend.direction === "up"
-                  ? "pi pi-arrow-up"
-                  : "pi pi-arrow-down"
-              "
+              [severity]="getTrendSeverity(metric.trend.direction)"
+              [icon]="getTrendIcon(metric.trend.direction)"
               size="sm"
             />
           </div>
@@ -74,19 +70,89 @@ export interface LiveMetric {
 export class LivePerformanceChartComponent implements OnInit {
   private apiService = inject(ApiService);
   private destroyRef = inject(DestroyRef);
+  private logger = inject(LoggerService);
 
   liveMetrics = signal<LiveMetric[]>([]);
 
   ngOnInit(): void {
-    // Real data would be loaded from this.apiService.get("/api/performance/live")
+    this.loadLiveMetrics();
   }
 
-  private startLiveUpdates(): void {
-    // Disabled simulation
+  private loadLiveMetrics(): void {
+    this.apiService
+      .get("/api/performance/metrics")
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          const metrics = response.data?.metrics;
+          if (!Array.isArray(metrics)) {
+            this.liveMetrics.set([]);
+            return;
+          }
+
+          this.liveMetrics.set(
+            metrics.map((metric) => {
+              const value = Number(
+                metric.value ?? metric.currentValue ?? 0,
+              );
+              const target = Number(metric.target ?? metric.goal ?? 0);
+              const progress =
+                target > 0
+                  ? Math.min(100, Math.round((value / target) * 100))
+                  : 0;
+              const trendDirection = metric.trend ?? "stable";
+
+              return {
+                id: metric.id || metric.metricId || metric.label || "",
+                icon: metric.icon || "pi pi-chart-line",
+                currentValue: value,
+                unit: metric.unit || "",
+                progress,
+                trend: {
+                  direction: trendDirection,
+                  text: this.formatTrend(trendDirection, metric.trendValue ?? 0),
+                },
+              };
+            }),
+          );
+        },
+        error: () => {
+          this.logger.debug("Live performance metrics unavailable");
+          this.liveMetrics.set([]);
+        },
+      });
   }
 
-  private updateMetrics(): void {
-    // Disabled simulation
+  private formatTrend(trend: "up" | "down" | "stable", value: number): string {
+    if (trend === "stable") {
+      return "Stable";
+    }
+    const sign = trend === "up" ? "+" : "-";
+    return `${sign}${value.toFixed(1)}%`;
+  }
+
+  getTrendSeverity(
+    trend: "up" | "down" | "stable",
+  ): "success" | "secondary" | "info" | "warning" | "danger" | "contrast" {
+    switch (trend) {
+      case "up":
+        return "success";
+      case "down":
+        return "danger";
+      default:
+        return "info";
+    }
+  }
+
+  getTrendIcon(trend: "up" | "down" | "stable"): string {
+    switch (trend) {
+      case "up":
+        return "pi pi-arrow-up";
+      case "down":
+        return "pi pi-arrow-down";
+      default:
+        return "pi pi-minus";
+    }
   }
 
   trackByMetricId(index: number, metric: LiveMetric): string {

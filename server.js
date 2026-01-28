@@ -21,6 +21,7 @@ import { WebSocketServer } from "ws";
 // Import modular routes
 import analyticsRoutes from "./routes/analytics.routes.js";
 import authRoutes from "./routes/auth.routes.js";
+import attendanceRoutes from "./routes/attendance.routes.js";
 import coachRoutes from "./routes/coach.routes.js";
 import communityRoutes from "./routes/community.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
@@ -35,6 +36,7 @@ import teamsRoutes from "./routes/teams.routes.js";
 import trainingRoutes from "./routes/training.routes.js";
 import weatherRoutes from "./routes/weather.routes.js";
 import wellnessRoutes from "./routes/wellness.routes.js";
+import stubsRoutes from "./routes/stubs.routes.js";
 
 // Import monitoring middleware
 import {
@@ -46,7 +48,7 @@ import {
 import { authenticateToken } from "./routes/middleware/auth.middleware.js";
 
 // Import validation utilities (centralized - avoids duplication)
-import { DEMO_USER_ID, isValidUUID } from "./routes/utils/validation.js";
+import { isValidUUID } from "./routes/utils/validation.js";
 
 // Initialize Supabase client for real data
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -234,6 +236,14 @@ app.use(
 app.use(requestLogger());
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+// Require authentication for all API routes except login/register
+app.use("/api", (req, res, next) => {
+  if (req.path === "/auth/login" || req.path === "/auth/register") {
+    return next();
+  }
+  return authenticateToken(req, res, next);
+});
+
 // Apply rate limiter to auth routes
 app.use("/api/auth/", authLimiter);
 
@@ -261,6 +271,7 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/community", communityRoutes);
+app.use("/api/attendance", attendanceRoutes);
 app.use("/api/player-programs", playerProgramsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/performance", performanceRoutes);
@@ -279,6 +290,7 @@ app.use("/api/v2/analytics", analyticsRoutes);
 app.use("/api/v2/notifications", notificationsRoutes);
 app.use("/api/v2/dashboard", dashboardRoutes);
 app.use("/api/v2/community", communityRoutes);
+app.use("/api/v2/attendance", attendanceRoutes);
 app.use("/api/v2/player-programs", playerProgramsRoutes);
 app.use("/api/v2/auth", authRoutes);
 app.use("/api/v2/performance", performanceRoutes);
@@ -289,6 +301,9 @@ app.use("/api/v2/coach", coachRoutes);
 app.use("/api/v2/roster", rosterRoutes);
 app.use("/api/v2/teams", teamsRoutes);
 app.use("/api/v2/weather", weatherRoutes);
+
+// Explicit 501s for FE endpoints not yet implemented in backend
+app.use("/api", stubsRoutes);
 
 // =============================================================================
 // STATIC FILES & LEGACY ROUTES
@@ -649,16 +664,25 @@ app.get("/api/community/health", async (req, res) => {
 
 // Dashboard Notifications
 app.get("/api/dashboard/notifications", async (req, res) => {
-  let userId = req.query.userId || "1";
+  const requestedUserId = req.query.userId;
+  const userId = requestedUserId || req.userId;
   if (!supabase) {
     return res
       .status(503)
       .json({ success: false, error: "Database not configured", data: [] });
   }
 
-  // Handle invalid UUIDs for Supabase queries
-  if (!isValidUUID(userId)) {
-    userId = DEMO_USER_ID;
+  if (!userId || !isValidUUID(userId)) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid user ID",
+    });
+  }
+  if (requestedUserId && requestedUserId !== req.userId) {
+    return res.status(403).json({
+      success: false,
+      error: "Unauthorized access",
+    });
   }
 
   try {
@@ -682,7 +706,8 @@ app.get("/api/dashboard/notifications", async (req, res) => {
 });
 
 app.get("/api/dashboard/notifications/count", async (req, res) => {
-  let userId = req.query.userId || "1";
+  const requestedUserId = req.query.userId;
+  const userId = requestedUserId || req.userId;
   if (!supabase) {
     return res.status(503).json({
       success: false,
@@ -691,8 +716,17 @@ app.get("/api/dashboard/notifications/count", async (req, res) => {
     });
   }
 
-  if (!isValidUUID(userId)) {
-    userId = DEMO_USER_ID;
+  if (!userId || !isValidUUID(userId)) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid user ID",
+    });
+  }
+  if (requestedUserId && requestedUserId !== req.userId) {
+    return res.status(403).json({
+      success: false,
+      error: "Unauthorized access",
+    });
   }
 
   try {
@@ -745,21 +779,23 @@ app.get("/api/load-management/acwr", async (req, res) => {
   }
 
   try {
-    const authHeader = req.headers.authorization;
-    let userId = req.query.user_id;
-
-    if (authHeader && !userId) {
-      const token = authHeader.replace("Bearer ", "");
-      const {
-        data: { user },
-      } = await supabase.auth.getUser(token);
-      userId = user?.id;
-    }
+    const requestedUserId = req.query.user_id;
+    const userId = requestedUserId || req.userId;
 
     if (!userId) {
       return res
         .status(400)
         .json({ success: false, error: "User ID required" });
+    }
+    if (!isValidUUID(userId)) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid user ID" });
+    }
+    if (requestedUserId && requestedUserId !== req.userId) {
+      return res
+        .status(403)
+        .json({ success: false, error: "Unauthorized access" });
     }
 
     const today = new Date();
@@ -771,7 +807,7 @@ app.get("/api/load-management/acwr", async (req, res) => {
     const { data: sessions, error } = await supabase
       .from("training_sessions")
       .select("session_date, duration_minutes, rpe, intensity_level")
-      .eq("user_id", isValidUUID(userId) ? userId : DEMO_USER_ID)
+      .eq("user_id", userId)
       .gte("session_date", chronicStartDate.toISOString().split("T")[0])
       .lte("session_date", today.toISOString().split("T")[0])
       .in("status", ["completed", "in_progress"]);

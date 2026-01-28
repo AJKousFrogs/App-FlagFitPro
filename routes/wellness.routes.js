@@ -9,7 +9,6 @@
 import express from "express";
 import {
   authenticateToken,
-  optionalAuth,
   authorizeUserAccess,
 } from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
@@ -46,7 +45,7 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "2.2.0"));
 router.get(
   "/checkin",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -176,7 +175,7 @@ router.post(
 router.get(
   "/checkins",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -235,7 +234,7 @@ router.get(
 router.get(
   "/latest",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -290,7 +289,7 @@ router.get(
 router.get(
   "/supplements",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -411,7 +410,7 @@ router.post(
 router.get(
   "/supplements/logs",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {
@@ -471,7 +470,7 @@ router.get(
 router.get(
   "/hydration",
   rateLimit("READ"),
-  optionalAuth,
+  authenticateToken,
   authorizeUserAccess,
   async (req, res) => {
     if (!supabase) {

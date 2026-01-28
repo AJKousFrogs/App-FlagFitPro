@@ -43,8 +43,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     "supabase.co/auth",
     "googleapis.com",
     "/assets/",
-    "/health",
-    "/api/weather/current",
   ];
 
   const shouldSkipAuth = skipAuthUrls.some((url) => req.url.includes(url));

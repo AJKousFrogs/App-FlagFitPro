@@ -225,10 +225,8 @@ export class PerformanceDashboardComponent implements OnInit, OnDestroy {
           }
         },
         error: () => {
-          // Use default mock metrics if API fails
-          this.logger.debug(
-            "Performance API not available, using default metrics",
-          );
+          this.logger.debug("Performance API not available");
+          this.metrics.set([]);
         },
       });
   }
