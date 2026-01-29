@@ -33,19 +33,10 @@ stub("post", "/training/generate-substitute", "training.generateSubstitute");
 
 
 // Analytics (missing sub-features)
-stub("get", "/analytics/position-performance", "analytics.positionPerformance");
 stub("get", "/analytics/injury-risk", "analytics.injuryRisk");
-stub("get", "/analytics/speed-development", "analytics.speedDevelopment");
 stub("get", "/analytics/user-engagement", "analytics.userEngagement");
 
 // Coach
-stub("get", "/coach/team", "coach.team");
-stub("get", "/coach/training-analytics", "coach.trainingAnalytics");
-stub("post", "/coach/training-session", "coach.trainingSession.create");
-stub("get", "/coach/calendar", "coach.calendar");
-stub("post", "/coach/calendar", "coach.calendar.create");
-stub("put", "/coach/calendar", "coach.calendar.update");
-stub("delete", "/coach/calendar", "coach.calendar.delete");
 
 // Community
 stub("get", "/community/challenges", "community.challenges");
@@ -57,24 +48,12 @@ stub("get", "/tournaments/:id", "tournaments.details");
 stub("post", "/tournaments/:id/register", "tournaments.register");
 stub("get", "/tournaments/:id/bracket", "tournaments.bracket");
 
-// Performance data (FE-only)
-stub("get", "/performance-data/wellness", "performanceData.wellness.get");
-stub("post", "/performance-data/wellness", "performanceData.wellness.post");
-stub("get", "/performance-data/supplements", "performanceData.supplements.get");
-stub("post", "/performance-data/supplements", "performanceData.supplements.post");
-stub("get", "/performance-data/measurements", "performanceData.measurements");
-stub("get", "/performance-data/performance-tests", "performanceData.performanceTests");
-stub("get", "/performance-data/injuries", "performanceData.injuries");
-stub("get", "/performance-data/trends", "performanceData.trends");
-stub("get", "/performance-data/export", "performanceData.export");
-
 // Nutrition
 stub("get", "/nutrition/search-foods", "nutrition.searchFoods");
 stub("post", "/nutrition/add-food", "nutrition.addFood");
 stub("get", "/nutrition/goals", "nutrition.goals");
 stub("get", "/nutrition/meals", "nutrition.meals");
 stub("get", "/nutrition/ai-suggestions", "nutrition.aiSuggestions");
-stub("get", "/nutrition/performance-insights", "nutrition.performanceInsights");
 
 // Recovery
 stub("get", "/recovery/metrics", "recovery.metrics");

@@ -31,6 +31,56 @@ import {
 
 const router = express.Router();
 const ROUTE_NAME = "analytics";
+const columnCache = new Map();
+const tableCache = new Map();
+
+const SPEED_TEST_TYPES = [
+  "40YardDash",
+  "40-yard",
+  "40yd",
+  "20m",
+  "10m",
+  "sprint",
+];
+
+async function tableHasColumn(table, column) {
+  if (!supabase) {
+    return false;
+  }
+
+  const key = `${table}.${column}`;
+  if (columnCache.has(key)) {
+    return columnCache.get(key);
+  }
+
+  const { error } = await supabase.from(table).select(column).limit(1);
+  if (error) {
+    columnCache.set(key, false);
+    return false;
+  }
+
+  columnCache.set(key, true);
+  return true;
+}
+
+async function tableExists(table) {
+  if (!supabase) {
+    return false;
+  }
+
+  if (tableCache.has(table)) {
+    return tableCache.get(table);
+  }
+
+  const { error } = await supabase.from(table).select("id").limit(1);
+  if (error && error.code === "42P01") {
+    tableCache.set(table, false);
+    return false;
+  }
+
+  tableCache.set(table, true);
+  return true;
+}
 
 // =============================================================================
 // HEALTH CHECK
@@ -135,6 +185,9 @@ router.get(
       });
 
       return sendSuccess(res, {
+        labels: weeksData,
+        values: overallScores,
+        scores: overallScores,
         weeks: weeksData,
         overallScores,
         trainingScores,
@@ -234,13 +287,9 @@ router.get(
         }
       }
 
-      chemistryData ||= {
-        avg_communication: 0,
-        avg_coordination: 0,
-        avg_trust: 0,
-        avg_cohesion: 0,
-        avg_overall: 0,
-      };
+      if (!chemistryData) {
+        return sendSuccess(res, { labels: [], values: [] });
+      }
 
       const leadershipScore = Math.min(
         10,
@@ -275,18 +324,19 @@ router.get(
         return Math.min(10, target);
       });
 
+      const labels = [
+        "Communication",
+        "Coordination",
+        "Trust",
+        "Cohesion",
+        "Leadership",
+        "Adaptability",
+      ];
+      const values = currentScores.map((score) => Math.round(score * 10) / 10);
+
       return sendSuccess(res, {
-        metrics: [
-          "Communication",
-          "Coordination",
-          "Trust",
-          "Cohesion",
-          "Leadership",
-          "Adaptability",
-        ],
-        currentScores: currentScores.map(
-          (score) => Math.round(score * 10) / 10,
-        ),
+        labels,
+        values,
         targetScores: targetScores.map((score) => Math.round(score * 10) / 10),
         overallScore: Math.round((chemistryData.avg_overall || 0) * 10) / 10,
         lastUpdated: new Date().toISOString(),
@@ -357,14 +407,14 @@ router.get(
               grouped[type] = { count: 0, durations: [], performances: [] };
             }
             grouped[type].count++;
-            grouped[type].durations.push(row.duration_minutes || 45);
+            grouped[type].durations.push(row.duration_minutes || 0);
             grouped[type].performances.push(row.performance_score || 0);
           });
 
           trainingData = Object.entries(grouped).map(([type, data]) => ({
             training_type: type,
             session_count: data.count,
-            avg_duration: safeAverage(data.durations, 45),
+            avg_duration: safeAverage(data.durations, 0),
             avg_performance: safeAverage(data.performances, 0),
           }));
         }
@@ -398,8 +448,8 @@ router.get(
       });
 
       return sendSuccess(res, {
-        trainingTypes: trainingTypes.slice(0, 5),
-        sessionCounts: sessionCounts.slice(0, 5),
+        labels: trainingTypes.slice(0, 5),
+        values: sessionCounts.slice(0, 5),
         avgDurations: avgDurations.slice(0, 5),
         avgPerformances: avgPerformances.slice(0, 5),
         totalSessions: sessionCounts.reduce((sum, count) => sum + count, 0),
@@ -410,6 +460,224 @@ router.get(
       return sendError(
         res,
         "Failed to fetch training distribution",
+        "FETCH_ERROR",
+        500,
+      );
+    }
+  },
+);
+
+// =============================================================================
+// POSITION PERFORMANCE
+// =============================================================================
+
+/**
+ * GET /position-performance
+ * Return position-based performance for the current user (self only)
+ */
+router.get(
+  "/position-performance",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (!supabase) {
+        return sendError(res, "Database not configured", "DB_ERROR", 503);
+      }
+
+      const hasTeamMembers = await tableExists("team_members");
+      if (!hasTeamMembers) {
+        return sendSuccess(res, { labels: [], values: [] });
+      }
+
+      const { data: memberships, error: membershipError } = await supabase
+        .from("team_members")
+        .select("position, status")
+        .eq("user_id", req.userId)
+        .eq("status", "active");
+
+      if (membershipError) {
+        throw membershipError;
+      }
+
+      const positions = [
+        ...new Set(
+          (memberships || [])
+            .map((m) => m.position)
+            .filter((position) => typeof position === "string" && position),
+        ),
+      ];
+
+      if (positions.length === 0) {
+        return sendSuccess(res, { labels: [], values: [] });
+      }
+
+      const hasSessions = await tableExists("training_sessions");
+      if (!hasSessions) {
+        return sendSuccess(res, { labels: positions, values: [] });
+      }
+
+      const hasUserId = await tableHasColumn("training_sessions", "user_id");
+      const hasAthleteId = await tableHasColumn(
+        "training_sessions",
+        "athlete_id",
+      );
+      const hasPerformanceScore = await tableHasColumn(
+        "training_sessions",
+        "performance_score",
+      );
+
+      if (!hasPerformanceScore || (!hasUserId && !hasAthleteId)) {
+        return sendSuccess(res, { labels: positions, values: [] });
+      }
+
+      let query = supabase
+        .from("training_sessions")
+        .select("performance_score");
+
+      if (hasUserId && hasAthleteId) {
+        query = query.or(`user_id.eq.${req.userId},athlete_id.eq.${req.userId}`);
+      } else if (hasUserId) {
+        query = query.eq("user_id", req.userId);
+      } else {
+        query = query.eq("athlete_id", req.userId);
+      }
+
+      const { data: sessions, error: sessionsError } = await query;
+      if (sessionsError) {
+        throw sessionsError;
+      }
+
+      const scores = (sessions || [])
+        .map((s) => Number(s.performance_score))
+        .filter((score) => !Number.isNaN(score));
+
+      if (scores.length === 0) {
+        return sendSuccess(res, { labels: positions, values: [] });
+      }
+
+      const average =
+        scores.reduce((sum, value) => sum + value, 0) / scores.length;
+      const rounded = Math.round(average * 10) / 10;
+      const values = positions.map(() => rounded);
+
+      return sendSuccess(res, { labels: positions, values });
+    } catch (error) {
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to fetch position performance",
+      );
+      serverLogger.error(
+        `[${ROUTE_NAME}] Position performance error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch position performance",
+        "FETCH_ERROR",
+        500,
+      );
+    }
+  },
+);
+
+// =============================================================================
+// SPEED DEVELOPMENT
+// =============================================================================
+
+/**
+ * GET /speed-development
+ * Returns sprint test trends for the current user
+ */
+router.get(
+  "/speed-development",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    try {
+      if (!supabase) {
+        return sendError(res, "Database not configured", "DB_ERROR", 503);
+      }
+
+      const hasTests = await tableExists("performance_tests");
+      if (!hasTests) {
+        return sendSuccess(res, { labels: [], datasets: [] });
+      }
+
+      const weeks = Math.max(1, safeParseInt(req.query.weeks, 7));
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - weeks * 7);
+
+      const { data, error } = await supabase
+        .from("performance_tests")
+        .select("test_type, result_value, test_date")
+        .eq("user_id", req.userId)
+        .in("test_type", SPEED_TEST_TYPES)
+        .gte("test_date", startDate.toISOString())
+        .order("test_date", { ascending: true });
+
+      if (error) {
+        if (error.code === "42P01") {
+          return sendSuccess(res, { labels: [], datasets: [] });
+        }
+        throw error;
+      }
+
+      const tests = data || [];
+      if (tests.length === 0) {
+        return sendSuccess(res, { labels: [], datasets: [] });
+      }
+
+      const dates = [
+        ...new Set(
+          tests
+            .map((t) => t.test_date?.split("T")[0])
+            .filter((date) => date),
+        ),
+      ].sort();
+
+      const grouped = {};
+      tests.forEach((test) => {
+        const dateKey = test.test_date?.split("T")[0];
+        if (!dateKey) {
+          return;
+        }
+        const type = test.test_type || "Sprint";
+        if (!grouped[type]) {
+          grouped[type] = {};
+        }
+        const existing = grouped[type][dateKey];
+        const value = Number(test.result_value);
+        if (Number.isNaN(value)) {
+          return;
+        }
+        grouped[type][dateKey] =
+          existing === undefined ? value : Math.min(existing, value);
+      });
+
+      const datasets = Object.keys(grouped).map((type) => ({
+        label: type,
+        data: dates.map((date) =>
+          grouped[type][date] !== undefined ? grouped[type][date] : null,
+        ),
+        tension: 0.4,
+      }));
+
+      return sendSuccess(res, { labels: dates, datasets });
+    } catch (error) {
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to fetch speed development",
+      );
+      serverLogger.error(
+        `[${ROUTE_NAME}] Speed development error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch speed development",
         "FETCH_ERROR",
         500,
       );
