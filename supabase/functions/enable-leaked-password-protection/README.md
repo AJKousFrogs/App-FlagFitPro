@@ -16,7 +16,7 @@ This Supabase Edge Function provides leaked password protection by checking pass
 
 ```javascript
 const response = await fetch(
-  "https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection",
+  "https://grfjmnjpzvknmsxrwesx.supabase.co/functions/v1/enable-leaked-password-protection",
   {
     method: "POST",
     headers: {
@@ -38,7 +38,7 @@ const result = await response.json();
 
 ```javascript
 const response = await fetch(
-  "https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection",
+  "https://grfjmnjpzvknmsxrwesx.supabase.co/functions/v1/enable-leaked-password-protection",
   {
     method: "POST",
     headers: {
@@ -60,7 +60,7 @@ You can integrate this into your authentication flow:
 // In your sign-up or password change handler
 async function validatePassword(password) {
   const response = await fetch(
-    "https://pvziciccwxgftcielknm.supabase.co/functions/v1/enable-leaked-password-protection",
+    "https://grfjmnjpzvknmsxrwesx.supabase.co/functions/v1/enable-leaked-password-protection",
     {
       method: "POST",
       headers: {

@@ -10,7 +10,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const supabaseUrl =
-  process.env.SUPABASE_URL || "https://pvziciccwxgftcielknm.supabase.co";
+  process.env.SUPABASE_URL || "https://grfjmnjpzvknmsxrwesx.supabase.co";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 const supabaseAnonKey =
   process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;

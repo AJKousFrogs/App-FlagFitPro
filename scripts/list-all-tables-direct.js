@@ -16,7 +16,7 @@ const databaseUrl =
   process.env.DATABASE_URL ||
   process.env.SUPABASE_DB_URL ||
   (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY
-    ? `postgresql://postgres.pvziciccwxgftcielknm:${process.env.SUPABASE_SERVICE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres`
+    ? `postgresql://postgres.grfjmnjpzvknmsxrwesx:${process.env.SUPABASE_SERVICE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres`
     : null);
 
 if (!databaseUrl) {

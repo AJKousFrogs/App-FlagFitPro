@@ -1,0 +1,1000 @@
+        END;
+        $func$;
+        ';
+        
+        RAISE NOTICE 'Fixed cleanup_expired_notifications function';
+    END IF;
+END $$;
+
+-- Fix send_notification function if it exists
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_proc p
+        JOIN pg_namespace n ON p.pronamespace = n.oid
+        WHERE n.nspname = 'public' AND p.proname = 'send_notification'
+    ) THEN
+        -- Drop and recreate with SET search_path
+        EXECUTE '
+        CREATE OR REPLACE FUNCTION public.send_notification(
+            p_user_id UUID,
+            p_type VARCHAR(50),
+            p_title VARCHAR(255),
+            p_message TEXT,
+            p_priority VARCHAR(20) DEFAULT ''medium'',
+            p_data JSONB DEFAULT ''{}''::jsonb
+        )
+        RETURNS UUID
+        LANGUAGE plpgsql
+        SECURITY DEFINER
+        SET search_path = public
+        AS $func$
+        DECLARE
+            v_notification_id UUID;
+        BEGIN
+            INSERT INTO public.notifications (
+                user_id, type, title, message, priority, data, created_at
+            )
+            VALUES (
+                p_user_id::text, p_type, p_title, p_message, p_priority, p_data, NOW()
+            )
+            RETURNING id INTO v_notification_id;
+            
+            RETURN v_notification_id;
+        END;
+        $func$;
+        ';
+        
+        RAISE NOTICE 'Fixed send_notification function';
+    END IF;
+END $$;
+
+-- ============================================================================
+-- 2. FIX PLAYER_ACTIVITY_TRACKING RLS POLICY
+-- Replace permissive WITH CHECK (true) with proper auth check
+-- ============================================================================
+
+-- Drop the overly permissive policy
+DROP POLICY IF EXISTS "System can insert activity" ON public.player_activity_tracking;
+
+-- Create a more secure policy that only allows authenticated users or service role
+-- This is typically used by triggers, so authenticated context is appropriate
+CREATE POLICY "Authenticated can insert activity tracking"
+ON public.player_activity_tracking
+FOR INSERT
+WITH CHECK (
+    -- Allow service role (used by background jobs/triggers)
+    auth.role() = 'service_role'
+    -- Allow authenticated users inserting their own records
+    OR (auth.role() = 'authenticated' AND user_id = auth.uid())
+);
+
+-- Ensure players can view their own activity tracking
+DROP POLICY IF EXISTS "Players can view own activity" ON public.player_activity_tracking;
+CREATE POLICY "Players can view own activity"
+ON public.player_activity_tracking
+FOR SELECT
+USING (user_id = auth.uid());
+
+-- Ensure coaches can view their team's activity (may already exist)
+DROP POLICY IF EXISTS "Coaches can view team activity" ON public.player_activity_tracking;
+CREATE POLICY "Coaches can view team activity"
+ON public.player_activity_tracking
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM public.team_members tm
+        WHERE tm.team_id = player_activity_tracking.team_id
+        AND tm.user_id = auth.uid()
+        AND tm.role IN ('coach', 'head_coach', 'assistant_coach')
+        AND tm.status = 'active'
+    )
+);
+
+-- ============================================================================
+-- GRANT EXECUTE PERMISSIONS
+-- ============================================================================
+
+-- Grant execute on fixed functions to authenticated users if they exist
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_proc p
+        JOIN pg_namespace n ON p.pronamespace = n.oid
+        WHERE n.nspname = 'public' AND p.proname = 'cleanup_expired_notifications'
+    ) THEN
+        GRANT EXECUTE ON FUNCTION public.cleanup_expired_notifications() TO service_role;
+    END IF;
+    
+    IF EXISTS (
+        SELECT 1 FROM pg_proc p
+        JOIN pg_namespace n ON p.pronamespace = n.oid
+        WHERE n.nspname = 'public' AND p.proname = 'send_notification'
+    ) THEN
+        GRANT EXECUTE ON FUNCTION public.send_notification(UUID, VARCHAR, VARCHAR, TEXT, VARCHAR, JSONB) TO authenticated;
+        GRANT EXECUTE ON FUNCTION public.send_notification(UUID, VARCHAR, VARCHAR, TEXT, VARCHAR, JSONB) TO service_role;
+    END IF;
+END $$;
+
+-- ============================================================================
+-- VERIFICATION COMMENTS
+-- ============================================================================
+
+COMMENT ON POLICY "Authenticated can insert activity tracking" ON public.player_activity_tracking IS 
+'Secure policy: Only service role or authenticated users can insert activity tracking records';
+
+-- ============================================================================
+-- AUTH LEAKED PASSWORD PROTECTION NOTE
+-- ============================================================================
+-- WARNING 4: auth_leaked_password_protection
+-- 
+-- Leaked password protection is currently disabled in Supabase Auth settings.
+-- This cannot be fixed via SQL migration - it must be enabled in the Supabase Dashboard:
+--
+-- Steps to enable:
+-- 1. Go to Supabase Dashboard > Authentication > Providers
+-- 2. Under "Email" provider, find "Password Settings"
+-- 3. Enable "Leaked Password Protection"
+-- 
+-- This feature checks passwords against HaveIBeenPwned.org to prevent use of compromised passwords.
+-- Reference: https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
+-- ============================================================================
+
+
+
+-- ============================================================================
+-- Migration: 20260109_fix_send_notification_search_path.sql
+-- Type: supabase
+-- ============================================================================
+
+-- ============================================================================
+-- Migration: Fix send_notification Function Search Path
+-- Date: 2026-01-09
+-- Purpose: Fix the second overload of send_notification that was missing search_path
+-- ============================================================================
+
+-- There are two overloads of send_notification in the database.
+-- The first overload (6 params) already has SET search_path = public
+-- The second overload (11 params) was missing it, causing the security warning
+
+CREATE OR REPLACE FUNCTION public.send_notification(
+    p_user_id uuid,
+    p_notification_type character varying,
+    p_title character varying,
+    p_message text,
+    p_category character varying DEFAULT 'general'::character varying,
+    p_severity character varying DEFAULT 'info'::character varying,
+    p_action_url text DEFAULT NULL::text,
+    p_data jsonb DEFAULT '{}'::jsonb,
+    p_sender_id uuid DEFAULT NULL::uuid,
+    p_related_entity_type character varying DEFAULT NULL::character varying,
+    p_related_entity_id uuid DEFAULT NULL::uuid
+)
+RETURNS uuid
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $function$
+DECLARE
+  v_notification_id UUID;
+BEGIN
+  INSERT INTO public.notifications (
+    user_id,
+    user_id_uuid,
+    notification_type,
+    title,
+    message,
+    category,
+    severity,
+    action_url,
+    data,
+    sender_id,
+    related_entity_type,
+    related_entity_id,
+    is_read,
+    dismissed,
+    expires_at,
+    created_at,
+    updated_at
+  ) VALUES (
+    p_user_id,
+    p_user_id,
+    p_notification_type,
+    p_title,
+    p_message,
+    p_category,
+    p_severity,
+    p_action_url,
+    p_data,
+    p_sender_id,
+    p_related_entity_type,
+    p_related_entity_id,
+    FALSE,
+    FALSE,
+    NOW() + INTERVAL '30 days',
+    NOW(),
+    NOW()
+  )
+  RETURNING id INTO v_notification_id;
+  
+  RETURN v_notification_id;
+END;
+$function$;
+
+-- Grant appropriate permissions
+GRANT EXECUTE ON FUNCTION public.send_notification(
+    uuid, character varying, character varying, text,
+    character varying, character varying, text, jsonb,
+    uuid, character varying, uuid
+) TO authenticated, service_role;
+
+-- Add comment
+COMMENT ON FUNCTION public.send_notification(
+    uuid, character varying, character varying, text,
+    character varying, character varying, text, jsonb,
+    uuid, character varying, uuid
+) IS 'Sends a notification to a user. SECURITY DEFINER with search_path = public for security.';
+
+
+
+-- ============================================================================
+-- Migration: 20260109_rls_block_logging.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: RLS Block Logging System
+-- Date: 2026-01-09
+-- Purpose: Log RLS policy blocks for observability
+-- Note: This provides visibility into silent RLS failures
+
+-- ============================================================================
+-- FUNCTION: Log RLS Policy Blocks
+-- ============================================================================
+
+CREATE OR REPLACE FUNCTION log_rls_policy_block()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id UUID;
+  v_operation TEXT;
+BEGIN
+  -- Get current user (may be null for anonymous attempts)
+  v_user_id := auth.uid();
+  
+  -- Map trigger operation to action
+  CASE TG_OP
+    WHEN 'INSERT' THEN v_operation := 'INSERT';
+    WHEN 'UPDATE' THEN v_operation := 'UPDATE';
+    WHEN 'DELETE' THEN v_operation := 'DELETE';
+    WHEN 'SELECT' THEN v_operation := 'SELECT';
+    ELSE v_operation := 'UNKNOWN';
+  END CASE;
+  
+  -- Log the block attempt (fire-and-forget, don't fail the operation)
+  BEGIN
+    INSERT INTO authorization_violations (
+      user_id,
+      resource_id,
+      resource_type,
+      action,
+      error_code,
+      error_message,
+      timestamp
+    ) VALUES (
+      v_user_id,
+      CASE 
+        WHEN TG_OP IN ('UPDATE', 'DELETE') THEN COALESCE(OLD.id::TEXT, 'unknown')
+        WHEN TG_OP = 'INSERT' THEN COALESCE(NEW.id::TEXT, 'unknown')
+        ELSE 'unknown'
+      END::UUID,
+      TG_TABLE_NAME,
+      v_operation,
+      'RLS_POLICY_BLOCKED',
+      format('RLS policy blocked %s operation on table %s', v_operation, TG_TABLE_NAME),
+      NOW()
+    );
+  EXCEPTION WHEN OTHERS THEN
+    -- Silently fail logging to avoid breaking the RLS check
+    -- RLS block will still occur, we just won't log it
+    NULL;
+  END;
+  
+  -- Return NULL to indicate row should be blocked
+  RETURN NULL;
+END;
+$$;
+
+COMMENT ON FUNCTION log_rls_policy_block IS 'Logs RLS policy blocks to authorization_violations table for observability';
+
+-- ============================================================================
+-- EXAMPLE: Add logging trigger to a table
+-- ============================================================================
+-- 
+-- To enable RLS block logging on a table, create a trigger like this:
+--
+-- CREATE TRIGGER log_training_sessions_rls_block
+--   BEFORE INSERT OR UPDATE OR DELETE ON training_sessions
+--   FOR EACH ROW
+--   WHEN (NOT is_granted())  -- Only fire when RLS would block
+--   EXECUTE FUNCTION log_rls_policy_block();
+--
+-- Note: This requires a helper function to check if RLS would grant access
+-- For now, we'll implement this manually on high-value tables
+
+-- ============================================================================
+-- HIGH-VALUE TABLES: Add RLS block logging
+-- ============================================================================
+
+-- Training Sessions (high value, coach_locked logic)
+-- Note: We can't directly detect RLS blocks, but we can log failed attempts
+-- For now, this is a placeholder for future implementation
+
+-- Future Enhancement:
+-- Consider using PostgreSQL's pg_stat_statements extension to track query failures
+-- Or implement application-level logging in the API layer
+
+-- ============================================================================
+-- ALTERNATIVE: Application-Level RLS Block Detection
+-- ============================================================================
+
+-- Instead of database triggers (which are complex for RLS detection),
+-- recommend implementing RLS block detection in the API layer:
+--
+-- 1. Count rows before operation: SELECT COUNT(*) WHERE <condition>
+-- 2. Attempt operation
+-- 3. Check affected rows
+-- 4. If affected_rows < expected_rows, log to authorization_violations
+--
+-- This is implemented in netlify/functions/utils/authorization-guard.cjs
+
+COMMENT ON TABLE authorization_violations IS 'Logs authorization failures including RLS blocks. Application-level logging recommended over database triggers.';
+
+-- ============================================================================
+-- VERIFICATION
+-- ============================================================================
+
+-- Check authorization_violations table exists and has correct structure
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.tables 
+    WHERE table_schema = 'public' 
+    AND table_name = 'authorization_violations'
+  ) THEN
+    RAISE EXCEPTION 'authorization_violations table does not exist. Run 20260106_append_only_audit_tables.sql first.';
+  END IF;
+END $$;
+
+-- Verify RLS is enabled
+SELECT 
+  schemaname,
+  tablename,
+  rowsecurity AS rls_enabled
+FROM pg_tables
+WHERE schemaname = 'public'
+  AND tablename = 'authorization_violations';
+
+
+
+
+-- ============================================================================
+-- Migration: 20260110_allow_players_update_own_profile.sql
+-- Type: supabase
+-- ============================================================================
+
+-- ============================================================================
+-- Migration: Allow players to update their own position and jersey number
+-- Date: 2026-01-10
+-- Description:
+--   Players were unable to update their own position and jersey_number in
+--   team_members table because RLS policy only allowed coaches/head_coaches.
+--   This adds a new policy allowing players to update ONLY their own records
+--   and ONLY specific fields (position, jersey_number).
+-- ============================================================================
+
+-- Drop and recreate the team_members update policy with player self-update support
+DROP POLICY IF EXISTS "team_members_update_no_recursion" ON team_members;
+
+-- Policy 1: Coaches and head coaches can update any member on their team
+CREATE POLICY "team_members_coaches_can_update"
+ON team_members FOR UPDATE
+USING (
+    EXISTS (
+        SELECT 1 FROM team_members tm
+        WHERE tm.team_id = team_members.team_id
+        AND tm.user_id = (SELECT auth.uid())
+        AND tm.role IN ('coach', 'head_coach')
+        AND tm.status = 'active'
+    )
+);
+
+-- Policy 2: Players can update their own position and jersey_number
+CREATE POLICY "team_members_players_self_update"
+ON team_members FOR UPDATE
+USING (
+    user_id = (SELECT auth.uid())
+)
+WITH CHECK (
+    -- Ensure they can only update their own record
+    user_id = (SELECT auth.uid())
+    -- Note: PostgreSQL will only allow updating the columns they have access to
+    -- Additional application-level validation ensures only position/jersey_number are changed
+);
+
+-- Add a comment to document the policy
+COMMENT ON POLICY "team_members_players_self_update" ON team_members IS
+'Allows players to update their own position and jersey_number in team_members table. Application code ensures only these fields are modified.';
+
+
+
+-- ============================================================================
+-- Migration: 20260110_fix_team_members_insert_policy.sql
+-- Type: supabase
+-- ============================================================================
+
+-- ============================================================================
+-- FIX: Missing INSERT policy for team_members table
+-- ============================================================================
+-- PROBLEM: The RLS migration 20260109_fix_rls_performance_warnings.sql removed
+--   the INSERT policy for team_members, preventing new players from joining
+--   teams during onboarding or via invitation acceptance.
+--
+-- SOLUTION: Add INSERT policies that allow:
+--   1. Users to insert themselves when onboarding (for new team membership)
+--   2. Coaches/admins to add members to their teams
+--   3. System-level operations (invitation acceptance via service role)
+-- ============================================================================
+
+-- First, check if any INSERT policies exist and drop them
+DROP POLICY IF EXISTS "team_members_insert_self" ON team_members;
+DROP POLICY IF EXISTS "team_members_insert_by_coach" ON team_members;
+DROP POLICY IF EXISTS "team_members_insert_onboarding" ON team_members;
+
+-- Policy 1: Allow users to insert themselves into a team
+-- This enables onboarding and invitation acceptance flows
+CREATE POLICY "team_members_insert_self"
+ON team_members FOR INSERT
+TO authenticated
+WITH CHECK (
+    -- Users can insert themselves
+    user_id = (SELECT auth.uid())
+);
+
+-- Policy 2: Allow coaches and admins to add members to their teams
+CREATE POLICY "team_members_insert_by_coach"
+ON team_members FOR INSERT
+TO authenticated
+WITH CHECK (
+    -- Coaches/admins can add members to their teams
+    EXISTS (
+        SELECT 1 FROM team_members tm
+        WHERE tm.team_id = team_members.team_id
+        AND tm.user_id = (SELECT auth.uid())
+        AND tm.role IN ('coach', 'head_coach', 'admin', 'owner')
+        AND tm.status = 'active'
+    )
+);
+
+-- ============================================================================
+-- VERIFICATION
+-- ============================================================================
+
+-- Verify policies were created
+SELECT
+    schemaname,
+    tablename,
+    policyname,
+    permissive,
+    roles,
+    cmd,
+    qual,
+    with_check
+FROM pg_policies
+WHERE tablename = 'team_members'
+AND cmd = 'INSERT'
+ORDER BY policyname;
+
+-- ============================================================================
+-- COMMENTS
+-- ============================================================================
+
+COMMENT ON POLICY "team_members_insert_self" ON team_members IS 
+'Allows users to insert themselves into team_members during onboarding or invitation acceptance';
+
+COMMENT ON POLICY "team_members_insert_by_coach" ON team_members IS 
+'Allows coaches and admins to add members to their teams';
+
+
+
+-- ============================================================================
+-- Migration: 20260111_create_nutrition_tables.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Ensure Nutrition Tables Exist
+-- Purpose: Create nutrition_logs and nutrition_goals tables if they don't exist
+-- Date: 2026-01-11
+-- Issue: Tables may be missing from Supabase database
+
+-- ============================================================================
+-- NUTRITION LOGS TABLE
+-- ============================================================================
+-- Tracks individual food intake entries
+
+CREATE TABLE IF NOT EXISTS nutrition_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    
+    -- Food identification
+    food_name VARCHAR(255) NOT NULL,
+    food_id INTEGER, -- USDA FoodData Central ID if from database search
+    
+    -- Macronutrients (grams unless otherwise specified)
+    calories DECIMAL(8,2) DEFAULT 0 CHECK (calories >= 0 AND calories <= 10000),
+    protein DECIMAL(6,2) DEFAULT 0 CHECK (protein >= 0 AND protein <= 1000),
+    carbohydrates DECIMAL(6,2) DEFAULT 0 CHECK (carbohydrates >= 0 AND carbohydrates <= 1000),
+    fat DECIMAL(6,2) DEFAULT 0 CHECK (fat >= 0 AND fat <= 1000),
+    fiber DECIMAL(6,2) DEFAULT 0 CHECK (fiber >= 0 AND fiber <= 100),
+    
+    -- Meal context
+    meal_type VARCHAR(50) CHECK (meal_type IN ('breakfast', 'lunch', 'dinner', 'snack', 'pre-workout', 'post-workout')),
+    logged_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    notes TEXT,
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create index for fast user + date queries
+CREATE INDEX IF NOT EXISTS idx_nutrition_logs_user_date 
+ON nutrition_logs(user_id, logged_at DESC);
+
+-- Create index for food database lookups
+CREATE INDEX IF NOT EXISTS idx_nutrition_logs_food_id 
+ON nutrition_logs(food_id) WHERE food_id IS NOT NULL;
+
+-- Enable RLS (policies added in separate migration)
+ALTER TABLE nutrition_logs ENABLE ROW LEVEL SECURITY;
+
+COMMENT ON TABLE nutrition_logs IS 'Tracks individual food intake entries for nutrition monitoring and goal tracking';
+COMMENT ON COLUMN nutrition_logs.user_id IS 'Reference to auth.users - the athlete logging food';
+COMMENT ON COLUMN nutrition_logs.food_id IS 'USDA FoodData Central database ID (optional, for database-searched foods)';
+COMMENT ON COLUMN nutrition_logs.calories IS 'Total calories (kcal) for this food entry';
+COMMENT ON COLUMN nutrition_logs.meal_type IS 'Type of meal: breakfast, lunch, dinner, snack, pre-workout, post-workout';
+COMMENT ON COLUMN nutrition_logs.logged_at IS 'When the food was consumed (can be backdated)';
+
+-- ============================================================================
+-- NUTRITION GOALS TABLE
+-- ============================================================================
+-- Stores personalized nutrition targets for each user
+
+CREATE TABLE IF NOT EXISTS nutrition_goals (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    
+    -- Daily targets (integers for simplicity in UI)
+    calories_target INTEGER DEFAULT 2500 CHECK (calories_target >= 1000 AND calories_target <= 10000),
+    protein_target INTEGER DEFAULT 150 CHECK (protein_target >= 30 AND protein_target <= 500),
+    carbs_target INTEGER DEFAULT 300 CHECK (carbs_target >= 50 AND carbs_target <= 1000),
+    fat_target INTEGER DEFAULT 80 CHECK (fat_target >= 20 AND fat_target <= 300),
+    fiber_target INTEGER DEFAULT 30 CHECK (fiber_target >= 10 AND fiber_target <= 100),
+    
+    -- Goal context
+    goal_type VARCHAR(50) DEFAULT 'maintenance' CHECK (goal_type IN ('weight_loss', 'weight_gain', 'maintenance', 'performance', 'recovery')),
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    
+    -- Ensure one goal per user
+    UNIQUE(user_id)
+);
+
+-- Create index for user lookups
+CREATE INDEX IF NOT EXISTS idx_nutrition_goals_user 
+ON nutrition_goals(user_id);
+
+-- Enable RLS (policies added in separate migration)
+ALTER TABLE nutrition_goals ENABLE ROW LEVEL SECURITY;
+
+COMMENT ON TABLE nutrition_goals IS 'Stores personalized daily nutrition targets for each athlete';
+COMMENT ON COLUMN nutrition_goals.user_id IS 'Reference to auth.users - athlete these goals belong to';
+COMMENT ON COLUMN nutrition_goals.calories_target IS 'Daily calorie target in kcal (1000-10000)';
+COMMENT ON COLUMN nutrition_goals.protein_target IS 'Daily protein target in grams (30-500g)';
+COMMENT ON COLUMN nutrition_goals.goal_type IS 'Goal context: weight_loss, weight_gain, maintenance, performance, recovery';
+
+-- ============================================================================
+-- NUTRITION SUMMARY VIEWS
+-- ============================================================================
+
+-- Daily nutrition totals view
+CREATE OR REPLACE VIEW nutrition_daily_totals AS
+SELECT 
+    user_id,
+    DATE(logged_at) as log_date,
+    COUNT(*) as total_entries,
+    SUM(calories) as total_calories,
+    SUM(protein) as total_protein,
+    SUM(carbohydrates) as total_carbs,
+    SUM(fat) as total_fat,
+    SUM(fiber) as total_fiber
+FROM nutrition_logs
+GROUP BY user_id, DATE(logged_at);
+
+COMMENT ON VIEW nutrition_daily_totals IS 'Aggregates nutrition logs by user and date for daily tracking';
+
+-- Nutrition progress view (compares actuals to goals)
+CREATE OR REPLACE VIEW nutrition_progress_today AS
+SELECT 
+    ng.user_id,
+    ng.calories_target,
+    ng.protein_target,
+    ng.carbs_target,
+    ng.fat_target,
+    COALESCE(SUM(nl.calories), 0) as calories_actual,
+    COALESCE(SUM(nl.protein), 0) as protein_actual,
+    COALESCE(SUM(nl.carbohydrates), 0) as carbs_actual,
+    COALESCE(SUM(nl.fat), 0) as fat_actual,
+    -- Calculate percentage of goal achieved
+    ROUND((COALESCE(SUM(nl.calories), 0) / NULLIF(ng.calories_target, 0)) * 100, 1) as calories_percent,
+    ROUND((COALESCE(SUM(nl.protein), 0) / NULLIF(ng.protein_target, 0)) * 100, 1) as protein_percent,
+    ROUND((COALESCE(SUM(nl.carbohydrates), 0) / NULLIF(ng.carbs_target, 0)) * 100, 1) as carbs_percent,
+    ROUND((COALESCE(SUM(nl.fat), 0) / NULLIF(ng.fat_target, 0)) * 100, 1) as fat_percent
+FROM nutrition_goals ng
+LEFT JOIN nutrition_logs nl ON ng.user_id = nl.user_id 
+    AND DATE(nl.logged_at) = CURRENT_DATE
+GROUP BY ng.user_id, ng.calories_target, ng.protein_target, ng.carbs_target, ng.fat_target;
+
+COMMENT ON VIEW nutrition_progress_today IS 'Shows today''s nutrition progress vs goals for each user';
+
+-- Grant SELECT on views to authenticated users (respects RLS on base tables)
+GRANT SELECT ON nutrition_daily_totals TO authenticated;
+GRANT SELECT ON nutrition_progress_today TO authenticated;
+
+-- ============================================================================
+-- TRIGGER: Update nutrition_goals.updated_at timestamp
+-- ============================================================================
+
+CREATE OR REPLACE FUNCTION update_nutrition_goals_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trigger_update_nutrition_goals_timestamp ON nutrition_goals;
+CREATE TRIGGER trigger_update_nutrition_goals_timestamp
+    BEFORE UPDATE ON nutrition_goals
+    FOR EACH ROW
+    EXECUTE FUNCTION update_nutrition_goals_updated_at();
+
+COMMENT ON FUNCTION update_nutrition_goals_updated_at() IS 'Auto-updates updated_at timestamp when nutrition goals are modified';
+
+
+
+-- ============================================================================
+-- Migration: 20260111_fix_nutrition_logs_policies.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Add RLS Policies to Nutrition Tables
+-- Purpose: Allow users to insert/view their own nutrition logs
+-- Date: 2026-01-11
+-- Issue: Users cannot save nutrition logs because RLS is enabled but no INSERT policy exists
+
+-- ============================================================================
+-- NUTRITION LOGS POLICIES
+-- ============================================================================
+
+-- Policy: Users can insert their own nutrition logs
+CREATE POLICY "Users can insert their own nutrition logs"
+ON nutrition_logs
+FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid() = user_id);
+
+-- Policy: Users can view their own nutrition logs
+CREATE POLICY "Users can view their own nutrition logs"
+ON nutrition_logs
+FOR SELECT
+TO authenticated
+USING (auth.uid() = user_id);
+
+-- Policy: Users can update their own nutrition logs (for corrections)
+CREATE POLICY "Users can update their own nutrition logs"
+ON nutrition_logs
+FOR UPDATE
+TO authenticated
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- Policy: Users can delete their own nutrition logs
+CREATE POLICY "Users can delete their own nutrition logs"
+ON nutrition_logs
+FOR DELETE
+TO authenticated
+USING (auth.uid() = user_id);
+
+-- Policy: Coaches and nutritionists can view team member nutrition logs
+CREATE POLICY "Coaches can view team nutrition logs"
+ON nutrition_logs
+FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 
+    FROM team_members coach_tm
+    JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+    WHERE coach_tm.user_id = auth.uid()
+      AND coach_tm.role IN ('coach', 'head_coach', 'nutritionist', 'admin')
+      AND player_tm.user_id = nutrition_logs.user_id
+  )
+);
+
+-- ============================================================================
+-- NUTRITION GOALS POLICIES
+-- ============================================================================
+
+-- Check if nutrition_goals table exists before adding policies
+DO $$ 
+BEGIN
+    IF EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'nutrition_goals'
+    ) THEN
+        -- Enable RLS if not already enabled
+        ALTER TABLE nutrition_goals ENABLE ROW LEVEL SECURITY;
+        
+        -- Policy: Users can manage all operations on their own nutrition goals
+        CREATE POLICY "Users can manage their own nutrition goals"
+        ON nutrition_goals
+        FOR ALL
+        TO authenticated
+        USING (auth.uid() = user_id)
+        WITH CHECK (auth.uid() = user_id);
+        
+        -- Policy: Nutritionists can view team member goals
+        CREATE POLICY "Nutritionists can view team nutrition goals"
+        ON nutrition_goals
+        FOR SELECT
+        TO authenticated
+        USING (
+          EXISTS (
+            SELECT 1 
+            FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = auth.uid()
+              AND coach_tm.role IN ('nutritionist', 'coach', 'head_coach', 'admin')
+              AND player_tm.user_id = nutrition_goals.user_id
+          )
+        );
+        
+        -- Policy: Nutritionists can update team member goals (with explicit consent)
+        CREATE POLICY "Nutritionists can update team nutrition goals"
+        ON nutrition_goals
+        FOR UPDATE
+        TO authenticated
+        USING (
+          EXISTS (
+            SELECT 1 
+            FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = auth.uid()
+              AND coach_tm.role IN ('nutritionist', 'admin')
+              AND player_tm.user_id = nutrition_goals.user_id
+          )
+        )
+        WITH CHECK (
+          EXISTS (
+            SELECT 1 
+            FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = auth.uid()
+              AND coach_tm.role IN ('nutritionist', 'admin')
+              AND player_tm.user_id = nutrition_goals.user_id
+          )
+        );
+    END IF;
+END $$;
+
+-- Add helpful comments
+COMMENT ON POLICY "Users can insert their own nutrition logs" ON nutrition_logs IS 
+'Allows authenticated users to log their own food intake';
+
+COMMENT ON POLICY "Users can view their own nutrition logs" ON nutrition_logs IS 
+'Allows users to view their nutrition history for tracking progress';
+
+COMMENT ON POLICY "Coaches can view team nutrition logs" ON nutrition_logs IS 
+'Allows coaches and nutritionists to monitor team member nutrition for performance optimization';
+
+
+
+-- ============================================================================
+-- Migration: 20260111_fix_physical_measurements.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Fix Physical Measurements Table
+-- Purpose: Create properly structured physical_measurements table with all required columns
+-- Date: 2026-01-11
+-- Issue: Users cannot log body composition measurements due to missing/incorrect table structure
+
+-- Drop old table if exists (WARNING: This will delete existing data!)
+-- If you have existing data, export it first with pg_dump
+DROP TABLE IF EXISTS physical_measurements CASCADE;
+
+-- Create proper physical_measurements table with UUID user_id and all body composition fields
+CREATE TABLE physical_measurements (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    
+    -- Basic measurements
+    weight DECIMAL(5,2) CHECK (weight >= 30 AND weight <= 300),
+    height DECIMAL(5,2) CHECK (height >= 140 AND height <= 250),
+    body_fat DECIMAL(4,2) CHECK (body_fat >= 3 AND body_fat <= 50),
+    muscle_mass DECIMAL(5,2),
+    
+    -- Enhanced body composition fields (from smart scales)
+    body_water_mass DECIMAL(5,2),
+    fat_mass DECIMAL(5,2),
+    protein_mass DECIMAL(5,2),
+    bone_mineral_content DECIMAL(5,2),
+    skeletal_muscle_mass DECIMAL(5,2),
+    muscle_percentage DECIMAL(4,2),
+    body_water_percentage DECIMAL(4,2),
+    protein_percentage DECIMAL(4,2),
+    bone_mineral_percentage DECIMAL(4,2),
+    visceral_fat_rating INTEGER CHECK (visceral_fat_rating >= 1 AND visceral_fat_rating <= 59),
+    basal_metabolic_rate INTEGER CHECK (basal_metabolic_rate >= 800 AND basal_metabolic_rate <= 5000),
+    waist_to_hip_ratio DECIMAL(4,2) CHECK (waist_to_hip_ratio >= 0.5 AND waist_to_hip_ratio <= 1.5),
+    body_age INTEGER CHECK (body_age >= 10 AND body_age <= 120),
+    
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create index for fast user lookups sorted by date
+CREATE INDEX idx_physical_measurements_user_date 
+ON physical_measurements(user_id, created_at DESC);
+
+-- Enable Row Level Security
+ALTER TABLE physical_measurements ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policy: Users can insert their own measurements
+CREATE POLICY "Users can insert their own measurements"
+ON physical_measurements
+FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid() = user_id);
+
+-- RLS Policy: Users can view their own measurements
+CREATE POLICY "Users can view their own measurements"
+ON physical_measurements
+FOR SELECT
+TO authenticated
+USING (auth.uid() = user_id);
+
+-- RLS Policy: Users can update their own measurements
+CREATE POLICY "Users can update their own measurements"
+ON physical_measurements
+FOR UPDATE
+TO authenticated
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+-- RLS Policy: Users can delete their own measurements (for corrections)
+CREATE POLICY "Users can delete their own measurements"
+ON physical_measurements
+FOR DELETE
+TO authenticated
+USING (auth.uid() = user_id);
+
+-- RLS Policy: Coaches can view measurements of players on their teams
+CREATE POLICY "Coaches can view team measurements"
+ON physical_measurements
+FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 
+    FROM team_members coach_tm
+    JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+    WHERE coach_tm.user_id = auth.uid()
+      AND coach_tm.role IN ('coach', 'head_coach', 'admin')
+      AND player_tm.user_id = physical_measurements.user_id
+  )
+);
+
+-- Add table and column comments for documentation
+COMMENT ON TABLE physical_measurements IS 'Stores athlete body composition and physical measurement data from smart scales and manual entry';
+COMMENT ON COLUMN physical_measurements.user_id IS 'Reference to auth.users - the athlete who owns this measurement';
+COMMENT ON COLUMN physical_measurements.weight IS 'Body weight in kilograms (30-300 kg)';
+COMMENT ON COLUMN physical_measurements.height IS 'Height in centimeters (140-250 cm)';
+COMMENT ON COLUMN physical_measurements.body_fat IS 'Body fat percentage (3-50%)';
+COMMENT ON COLUMN physical_measurements.muscle_mass IS 'Total muscle mass in kilograms';
+COMMENT ON COLUMN physical_measurements.visceral_fat_rating IS 'Visceral fat rating (1-59, lower is better)';
+COMMENT ON COLUMN physical_measurements.basal_metabolic_rate IS 'BMR in kcal/day (800-5000)';
+COMMENT ON COLUMN physical_measurements.waist_to_hip_ratio IS 'WHR ratio for health risk assessment (0.5-1.5)';
+COMMENT ON COLUMN physical_measurements.body_age IS 'Metabolic age estimate in years';
+
+-- Create view for latest measurements per user
+CREATE OR REPLACE VIEW physical_measurements_latest AS
+SELECT DISTINCT ON (user_id)
+    id,
+    user_id,
+    weight,
+    height,
+    body_fat,
+    muscle_mass,
+    body_water_percentage,
+    visceral_fat_rating,
+    basal_metabolic_rate,
+    body_age,
+    created_at,
+    -- Calculate trend indicators (compare to previous measurement)
+    LAG(weight) OVER (PARTITION BY user_id ORDER BY created_at) as previous_weight,
+    LAG(body_fat) OVER (PARTITION BY user_id ORDER BY created_at) as previous_body_fat
+FROM physical_measurements
+ORDER BY user_id, created_at DESC;
+
+COMMENT ON VIEW physical_measurements_latest IS 'Latest physical measurement for each user with previous values for trend analysis';
+
+-- Grant SELECT on view to authenticated users (respects RLS on base table)
+GRANT SELECT ON physical_measurements_latest TO authenticated;
+
+
+
+-- ============================================================================
+-- Migration: 20260111_make_password_hash_nullable.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Make password_hash nullable in users table
+-- Issue: Settings cannot save for users who don't have a password_hash
+-- Reason: Supabase Auth manages passwords in auth.users, not in public.users
+-- Created: 2026-01-11
+--
+-- This migration makes password_hash nullable because:
+-- 1. Supabase Auth stores passwords in auth.users table (encrypted)
+-- 2. The public.users table is for profile/app data only
+-- 3. Having password_hash as NOT NULL prevents profile updates for auth-only users
+
+-- =============================================================================
+-- STEP 1: Make password_hash nullable
+-- =============================================================================
+
+-- Check if password_hash column exists and alter it
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 
+    FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'users' 
+    AND column_name = 'password_hash'
+  ) THEN
+    -- Make the column nullable
+    ALTER TABLE public.users 
+      ALTER COLUMN password_hash DROP NOT NULL;
+    
+    RAISE NOTICE 'Column password_hash is now nullable';
+  ELSE
+    RAISE NOTICE 'Column password_hash does not exist in public.users';
+  END IF;
+END $$;
+
+-- =============================================================================
+-- STEP 2: Add comment explaining why it's nullable
+-- =============================================================================
+
+COMMENT ON COLUMN public.users.password_hash IS 
+  'DEPRECATED: Password hashes are managed by Supabase Auth in auth.users table. 
+   This column is kept for backwards compatibility but should be NULL for all users. 
+   Do not use this column for authentication.';
+
+-- =============================================================================
+-- VERIFICATION QUERY

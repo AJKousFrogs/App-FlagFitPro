@@ -27,6 +27,11 @@
     "primeng": {
       "command": "npx",
       "args": ["-y", "@primeng/mcp"]
+    },
+    "supabase": {
+      "url": "https://mcp.supabase.com/mcp?project_ref=grfjmnjpzvknmsxrwesx",
+      "description": "Supabase MCP Server - Provides direct access to Supabase project grfjmnjpzvknmsxrwesx for database operations, schema management, and data queries",
+      "alwaysAllow": []
     }
   }
 }

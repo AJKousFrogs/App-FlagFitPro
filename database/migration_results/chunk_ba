@@ -1,0 +1,1000 @@
+    'Develop explosive first steps with this comprehensive acceleration guide. Includes wall drills, falling starts, and resisted sprints.',
+    'https://www.youtube.com/watch?v=acceleration-001',
+    'https://img.youtube.com/vi/acceleration-001/maxresdefault.jpg',
+    660,
+    'Technique',
+    NULL,
+    ARRAY['Acceleration', 'First Step', 'Speed', 'All Positions'],
+    0
+),
+(
+    'vvvvvvv5-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Sprint Mechanics - A-Skip & B-Skip Drills',
+    'Master sprint mechanics with A-skip and B-skip progressions. Foundation drills for all speed development.',
+    'https://www.youtube.com/watch?v=sprint-drills-001',
+    'https://img.youtube.com/vi/sprint-drills-001/maxresdefault.jpg',
+    480,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Sprint', 'A-Skip', 'B-Skip', 'Mechanics'],
+    0
+),
+(
+    'vvvvvvv6-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Hill Sprints for Speed Development',
+    'How to use hill sprints to develop acceleration power. Proper technique, grade selection, and programming.',
+    'https://www.youtube.com/watch?v=hill-sprints-001',
+    'https://img.youtube.com/vi/hill-sprints-001/maxresdefault.jpg',
+    420,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Hill Sprints', 'Acceleration', 'Power', 'Speed'],
+    0
+),
+(
+    'vvvvvvv7-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Resisted Sled Sprint Technique',
+    'Proper sled sprint technique for horizontal force development. Load selection and common mistakes.',
+    'https://www.youtube.com/watch?v=sled-sprint-001',
+    'https://img.youtube.com/vi/sled-sprint-001/maxresdefault.jpg',
+    540,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Sled Sprint', 'Resisted', 'Acceleration', 'Horizontal Force'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- 3. PLYOMETRICS & POWER VIDEOS
+-- =============================================================================
+
+INSERT INTO training_videos (id, title, description, video_url, thumbnail_url, duration_seconds, category, position_id, tags, view_count) VALUES
+(
+    'vvvvvvv8-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Depth Jump Progression - Reactive Strength',
+    'Complete depth jump progression from beginner to advanced. Develops reactive strength and power.',
+    'https://www.youtube.com/watch?v=depth-jump-001',
+    'https://img.youtube.com/vi/depth-jump-001/maxresdefault.jpg',
+    600,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Depth Jump', 'Plyometrics', 'Reactive Strength', 'Power'],
+    0
+),
+(
+    'vvvvvvv9-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Single-Leg Plyometrics for Athletes',
+    'Essential single-leg plyometric progressions. Addresses bilateral deficit and develops unilateral power.',
+    'https://www.youtube.com/watch?v=single-leg-plyo-001',
+    'https://img.youtube.com/vi/single-leg-plyo-001/maxresdefault.jpg',
+    720,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Single-Leg', 'Plyometrics', 'Unilateral', 'Power'],
+    0
+),
+(
+    'vvvvvv10-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Bounding Technique for Horizontal Power',
+    'Master bounding mechanics for horizontal power development. Key drill for acceleration.',
+    'https://www.youtube.com/watch?v=bounding-001',
+    'https://img.youtube.com/vi/bounding-001/maxresdefault.jpg',
+    480,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Bounding', 'Horizontal Power', 'Acceleration', 'Plyometrics'],
+    0
+),
+(
+    'vvvvvv11-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Lateral Plyometrics - Skater Bounds & Lateral Hops',
+    'Develop frontal plane power with lateral plyometrics. Essential for change of direction.',
+    'https://www.youtube.com/watch?v=lateral-plyo-001',
+    'https://img.youtube.com/vi/lateral-plyo-001/maxresdefault.jpg',
+    540,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Lateral', 'Skater Bounds', 'Plyometrics', 'COD'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- 4. INJURY PREVENTION VIDEOS (Gold Standard)
+-- =============================================================================
+
+INSERT INTO training_videos (id, title, description, video_url, thumbnail_url, duration_seconds, category, position_id, tags, view_count) VALUES
+(
+    'vvvvvv12-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Nordic Hamstring Curl - Complete Guide',
+    'Evidence-based Nordic curl technique. 51% hamstring injury reduction. Proper form and progressions.',
+    'https://www.youtube.com/watch?v=nordic-curl-001',
+    'https://img.youtube.com/vi/nordic-curl-001/maxresdefault.jpg',
+    600,
+    'Injury Prevention',
+    NULL,
+    ARRAY['Nordic Curl', 'Hamstring', 'Injury Prevention', 'Eccentric'],
+    0
+),
+(
+    'vvvvvv13-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Copenhagen Adductor Exercise - Groin Injury Prevention',
+    '41% groin injury reduction with Copenhagen exercise. Progressions from beginner to advanced.',
+    'https://www.youtube.com/watch?v=copenhagen-001',
+    'https://img.youtube.com/vi/copenhagen-001/maxresdefault.jpg',
+    480,
+    'Injury Prevention',
+    NULL,
+    ARRAY['Copenhagen', 'Adductor', 'Groin', 'Injury Prevention'],
+    0
+),
+(
+    'vvvvvv14-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Alfredson Protocol - Eccentric Heel Drops',
+    'Gold-standard Achilles tendinopathy protocol. 89% success rate. Proper execution and dosing.',
+    'https://www.youtube.com/watch?v=alfredson-001',
+    'https://img.youtube.com/vi/alfredson-001/maxresdefault.jpg',
+    420,
+    'Injury Prevention',
+    NULL,
+    ARRAY['Alfredson', 'Achilles', 'Eccentric', 'Rehabilitation'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- 5. QB-SPECIFIC VIDEOS
+-- =============================================================================
+
+INSERT INTO training_videos (id, title, description, video_url, thumbnail_url, duration_seconds, category, position_id, tags, view_count) VALUES
+(
+    'vvvvvv15-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'QB Morning Routine - Arm Care & Mobility',
+    'Complete QB morning routine for arm health. Shoulder mobility, scapular activation, and rotator cuff work.',
+    'https://www.youtube.com/watch?v=qb-morning-001',
+    'https://img.youtube.com/vi/qb-morning-001/maxresdefault.jpg',
+    900,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'QB'),
+    ARRAY['QB', 'Arm Care', 'Mobility', 'Morning Routine'],
+    0
+),
+(
+    'vvvvvv16-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'QB Throwing Mechanics - Kinetic Chain',
+    'Understanding the kinetic chain in throwing. Hip-to-hand power transfer and mechanical efficiency.',
+    'https://www.youtube.com/watch?v=qb-mechanics-001',
+    'https://img.youtube.com/vi/qb-mechanics-001/maxresdefault.jpg',
+    720,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'QB'),
+    ARRAY['QB', 'Throwing', 'Mechanics', 'Kinetic Chain'],
+    0
+),
+(
+    'vvvvvv17-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'QB Pocket Mobility - 3-Step Acceleration',
+    'Develop pocket mobility with 3-step acceleration drills. Scramble efficiency and escape routes.',
+    'https://www.youtube.com/watch?v=qb-pocket-001',
+    'https://img.youtube.com/vi/qb-pocket-001/maxresdefault.jpg',
+    540,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'QB'),
+    ARRAY['QB', 'Pocket Mobility', 'Acceleration', 'Scramble'],
+    0
+),
+(
+    'vvvvvv18-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Rotational Power for QBs - Med Ball Throws',
+    'Develop rotational power for throwing with medicine ball exercises. Hip rotation and core integration.',
+    'https://www.youtube.com/watch?v=qb-rotation-001',
+    'https://img.youtube.com/vi/qb-rotation-001/maxresdefault.jpg',
+    600,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'QB'),
+    ARRAY['QB', 'Rotational Power', 'Med Ball', 'Throwing'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- 6. WR-SPECIFIC VIDEOS
+-- =============================================================================
+
+INSERT INTO training_videos (id, title, description, video_url, thumbnail_url, duration_seconds, category, position_id, tags, view_count) VALUES
+(
+    'vvvvvv19-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'WR Route Running Fundamentals',
+    'Master route running fundamentals. Stem, break, and acceleration out of breaks. All route tree patterns.',
+    'https://www.youtube.com/watch?v=wr-routes-001',
+    'https://img.youtube.com/vi/wr-routes-001/maxresdefault.jpg',
+    900,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'WR'),
+    ARRAY['WR', 'Route Running', 'Technique', 'Route Tree'],
+    0
+),
+(
+    'vvvvvv20-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'WR Release Techniques - Beat Press Coverage',
+    'Release techniques to beat press coverage. Swim, rip, chop, and speed release drills.',
+    'https://www.youtube.com/watch?v=wr-release-001',
+    'https://img.youtube.com/vi/wr-release-001/maxresdefault.jpg',
+    660,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'WR'),
+    ARRAY['WR', 'Release', 'Press Coverage', 'Technique'],
+    0
+),
+(
+    'vvvvvv21-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'WR Contested Catch Drills',
+    'Develop contested catch skills. High-point catches, body positioning, and hand strength.',
+    'https://www.youtube.com/watch?v=wr-catch-001',
+    'https://img.youtube.com/vi/wr-catch-001/maxresdefault.jpg',
+    540,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'WR'),
+    ARRAY['WR', 'Catching', 'Contested', 'Ball Skills'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- 7. DB-SPECIFIC VIDEOS
+-- =============================================================================
+
+INSERT INTO training_videos (id, title, description, video_url, thumbnail_url, duration_seconds, category, position_id, tags, view_count) VALUES
+(
+    'vvvvvv22-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'DB Backpedal Technique - Coverage Fundamentals',
+    'Master backpedal technique for coverage. Hip position, arm action, and eye discipline.',
+    'https://www.youtube.com/watch?v=db-backpedal-001',
+    'https://img.youtube.com/vi/db-backpedal-001/maxresdefault.jpg',
+    600,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'DB'),
+    ARRAY['DB', 'Backpedal', 'Coverage', 'Technique'],
+    0
+),
+(
+    'vvvvvv23-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'DB Hip Flip Drill - Open & Close Technique',
+    'Hip flip technique for transitioning from backpedal to sprint. Open hip and close hip mechanics.',
+    'https://www.youtube.com/watch?v=db-hipflip-001',
+    'https://img.youtube.com/vi/db-hipflip-001/maxresdefault.jpg',
+    540,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'DB'),
+    ARRAY['DB', 'Hip Flip', 'Coverage', 'Transition'],
+    0
+),
+(
+    'vvvvvv24-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'DB Press Coverage Technique',
+    'Press coverage fundamentals. Jam technique, hand placement, and mirroring through release.',
+    'https://www.youtube.com/watch?v=db-press-001',
+    'https://img.youtube.com/vi/db-press-001/maxresdefault.jpg',
+    660,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'DB'),
+    ARRAY['DB', 'Press Coverage', 'Jam', 'Technique'],
+    0
+),
+(
+    'vvvvvv25-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'DB Break on Ball - Reading QB Eyes',
+    'Read the quarterback and break on the ball. Reaction drills and angle work.',
+    'https://www.youtube.com/watch?v=db-break-001',
+    'https://img.youtube.com/vi/db-break-001/maxresdefault.jpg',
+    600,
+    'Position-Specific',
+    (SELECT id FROM positions WHERE name = 'DB'),
+    ARRAY['DB', 'Break on Ball', 'Reaction', 'Interception'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- 8. STRENGTH TRAINING VIDEOS
+-- =============================================================================
+
+INSERT INTO training_videos (id, title, description, video_url, thumbnail_url, duration_seconds, category, position_id, tags, view_count) VALUES
+(
+    'vvvvvv26-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Trap Bar Deadlift - Proper Form',
+    'Master trap bar deadlift technique. Hip hinge mechanics, bar path, and common mistakes.',
+    'https://www.youtube.com/watch?v=trapbar-001',
+    'https://img.youtube.com/vi/trapbar-001/maxresdefault.jpg',
+    480,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Trap Bar', 'Deadlift', 'Strength', 'Hip Hinge'],
+    0
+),
+(
+    'vvvvvv27-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Single-Leg RDL - Balance & Strength',
+    'Single-leg Romanian deadlift for unilateral posterior chain development. Balance progressions.',
+    'https://www.youtube.com/watch?v=slrdl-001',
+    'https://img.youtube.com/vi/slrdl-001/maxresdefault.jpg',
+    420,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Single-Leg', 'RDL', 'Unilateral', 'Hamstring'],
+    0
+),
+(
+    'vvvvvv28-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Bulgarian Split Squat - Complete Guide',
+    'Bulgarian split squat technique and progressions. Front leg emphasis and rear foot positioning.',
+    'https://www.youtube.com/watch?v=bss-001',
+    'https://img.youtube.com/vi/bss-001/maxresdefault.jpg',
+    540,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Bulgarian Split Squat', 'Unilateral', 'Quad', 'Strength'],
+    0
+),
+(
+    'vvvvvv29-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Landmine Press for Athletes',
+    'Landmine press technique for shoulder-friendly pressing. Mimics throwing angle.',
+    'https://www.youtube.com/watch?v=landmine-001',
+    'https://img.youtube.com/vi/landmine-001/maxresdefault.jpg',
+    360,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Landmine Press', 'Shoulder', 'Pressing', 'Rotational'],
+    0
+),
+(
+    'vvvvvv30-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Pallof Press - Anti-Rotation Core',
+    'Pallof press for anti-rotation core strength. Essential for throwing and rotational power.',
+    'https://www.youtube.com/watch?v=pallof-001',
+    'https://img.youtube.com/vi/pallof-001/maxresdefault.jpg',
+    360,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Pallof Press', 'Core', 'Anti-Rotation', 'Stability'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- 9. MOBILITY & WARM-UP VIDEOS
+-- =============================================================================
+
+INSERT INTO training_videos (id, title, description, video_url, thumbnail_url, duration_seconds, category, position_id, tags, view_count) VALUES
+(
+    'vvvvvv31-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Hip Mobility Routine - 90/90 Stretch',
+    'Complete hip mobility routine with 90/90 stretches. Essential for route running and coverage.',
+    'https://www.youtube.com/watch?v=hip-mobility-001',
+    'https://img.youtube.com/vi/hip-mobility-001/maxresdefault.jpg',
+    600,
+    'Warm-up',
+    NULL,
+    ARRAY['Hip Mobility', '90/90', 'Stretching', 'Warm-up'],
+    0
+),
+(
+    'vvvvvv32-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Dynamic Warm-up for Athletes',
+    'Complete dynamic warm-up sequence. Leg swings, lunges, skips, and activation drills.',
+    'https://www.youtube.com/watch?v=dynamic-warmup-001',
+    'https://img.youtube.com/vi/dynamic-warmup-001/maxresdefault.jpg',
+    720,
+    'Warm-up',
+    NULL,
+    ARRAY['Dynamic Warm-up', 'Activation', 'Movement Prep', 'All Positions'],
+    0
+),
+(
+    'vvvvvv33-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Ankle Mobility for Athletes',
+    'Ankle dorsiflexion mobility routine. Critical for squat depth and sprint mechanics.',
+    'https://www.youtube.com/watch?v=ankle-mobility-001',
+    'https://img.youtube.com/vi/ankle-mobility-001/maxresdefault.jpg',
+    420,
+    'Warm-up',
+    NULL,
+    ARRAY['Ankle Mobility', 'Dorsiflexion', 'Mobility', 'Warm-up'],
+    0
+),
+(
+    'vvvvvv34-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Thoracic Spine Mobility for Throwers',
+    'Thoracic spine rotation exercises for throwing athletes. Essential for QB arm health.',
+    'https://www.youtube.com/watch?v=thoracic-001',
+    'https://img.youtube.com/vi/thoracic-001/maxresdefault.jpg',
+    480,
+    'Warm-up',
+    (SELECT id FROM positions WHERE name = 'QB'),
+    ARRAY['Thoracic', 'Mobility', 'Throwing', 'QB'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- 10. AGILITY DRILL VIDEOS
+-- =============================================================================
+
+INSERT INTO training_videos (id, title, description, video_url, thumbnail_url, duration_seconds, category, position_id, tags, view_count) VALUES
+(
+    'vvvvvv35-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'L-Drill (3-Cone) - Technique & Tips',
+    'Master the L-drill for combine preparation and agility development. Proper technique and common mistakes.',
+    'https://www.youtube.com/watch?v=l-drill-001',
+    'https://img.youtube.com/vi/l-drill-001/maxresdefault.jpg',
+    540,
+    'Exercise Demo',
+    NULL,
+    ARRAY['L-Drill', '3-Cone', 'Agility', 'Combine'],
+    0
+),
+(
+    'vvvvvv36-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Pro Agility (5-10-5) - Complete Guide',
+    'Pro agility drill technique and programming. Lateral start, plant mechanics, and acceleration.',
+    'https://www.youtube.com/watch?v=pro-agility-001',
+    'https://img.youtube.com/vi/pro-agility-001/maxresdefault.jpg',
+    480,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Pro Agility', '5-10-5', 'Lateral', 'Agility'],
+    0
+),
+(
+    'vvvvvv37-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'T-Drill for Multi-Directional Agility',
+    'T-drill technique for multi-directional agility. Forward, lateral, and backward movement integration.',
+    'https://www.youtube.com/watch?v=t-drill-001',
+    'https://img.youtube.com/vi/t-drill-001/maxresdefault.jpg',
+    420,
+    'Exercise Demo',
+    NULL,
+    ARRAY['T-Drill', 'Multi-Directional', 'Agility', 'COD'],
+    0
+),
+(
+    'vvvvvv38-vvvv-vvvv-vvvv-vvvvvvvvvvvv'::UUID,
+    'Reactive Agility Drills - Mirror Drill',
+    'Reactive agility training with partner mirror drills. Develops game-realistic reaction.',
+    'https://www.youtube.com/watch?v=reactive-001',
+    'https://img.youtube.com/vi/reactive-001/maxresdefault.jpg',
+    540,
+    'Exercise Demo',
+    NULL,
+    ARRAY['Reactive', 'Mirror Drill', 'Agility', 'Partner'],
+    0
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
+-- LINK VIDEOS TO EXERCISES (where applicable)
+-- =============================================================================
+
+-- Update exercises with video URLs
+UPDATE exercises SET video_url = 'https://www.youtube.com/watch?v=nordic-curl-001' 
+WHERE name LIKE '%Nordic%' AND video_url IS NULL;
+
+UPDATE exercises SET video_url = 'https://www.youtube.com/watch?v=trapbar-001' 
+WHERE name LIKE '%Trap Bar%' AND video_url IS NULL;
+
+UPDATE exercises SET video_url = 'https://www.youtube.com/watch?v=slrdl-001' 
+WHERE name LIKE '%Single-Leg RDL%' AND video_url IS NULL;
+
+UPDATE exercises SET video_url = 'https://www.youtube.com/watch?v=bss-001' 
+WHERE name LIKE '%Bulgarian%' AND video_url IS NULL;
+
+UPDATE exercises SET video_url = 'https://www.youtube.com/watch?v=landmine-001' 
+WHERE name LIKE '%Landmine%' AND video_url IS NULL;
+
+UPDATE exercises SET video_url = 'https://www.youtube.com/watch?v=pallof-001' 
+WHERE name LIKE '%Pallof%' AND video_url IS NULL;
+
+-- =============================================================================
+-- VERIFICATION
+-- =============================================================================
+-- SELECT category, COUNT(*) as count FROM training_videos GROUP BY category ORDER BY count DESC;
+-- SELECT * FROM training_videos WHERE position_id IS NOT NULL;
+-- SELECT COUNT(*) FROM training_videos; -- Should be 38 videos
+
+
+
+-- ============================================================================
+-- Migration: 069_prerequisites_check_and_setup.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- PREREQUISITES CHECK AND SETUP - Migration 069
+-- =============================================================================
+-- This migration ensures all base tables exist before the comprehensive refactor
+-- Run this BEFORE migration 070
+-- =============================================================================
+
+-- =============================================================================
+-- PART 1: CREATE MISSING BASE TABLES (if they don't exist)
+-- =============================================================================
+
+-- PLAYER PROGRAMS TABLE (from migration 066)
+CREATE TABLE IF NOT EXISTS player_programs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    player_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    program_id UUID REFERENCES training_programs(id) ON DELETE CASCADE,
+    assigned_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    is_active BOOLEAN DEFAULT TRUE,
+    compliance_rate DECIMAL(5,2) DEFAULT 0.00,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(player_id, program_id, start_date)
+);
+
+-- POSITION SPECIFIC METRICS TABLE (from migration 066)
+CREATE TABLE IF NOT EXISTS position_specific_metrics (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    player_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    workout_log_id UUID REFERENCES workout_logs(id) ON DELETE CASCADE,
+    position_id UUID REFERENCES positions(id) ON DELETE CASCADE,
+    metric_name VARCHAR(100) NOT NULL,
+    metric_value DECIMAL(10,2) NOT NULL,
+    metric_unit VARCHAR(50),
+    date DATE NOT NULL,
+    weekly_total DECIMAL(10,2),
+    monthly_total DECIMAL(10,2),
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- EXERCISE LOGS TABLE (from migration 066)
+CREATE TABLE IF NOT EXISTS exercise_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workout_log_id UUID REFERENCES workout_logs(id) ON DELETE CASCADE,
+    session_exercise_id UUID REFERENCES session_exercises(id) ON DELETE SET NULL,
+    exercise_id UUID REFERENCES exercises(id) ON DELETE CASCADE,
+    sets_completed INTEGER,
+    reps_completed INTEGER,
+    weight_used DECIMAL(10,2),
+    distance_completed INTEGER,
+    time_completed INTEGER,
+    performance_metrics JSONB,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =============================================================================
+-- PART 2: ENSURE ACWR FUNCTIONS EXIST
+-- =============================================================================
+
+-- Function to calculate daily training load (RPE × Duration)
+CREATE OR REPLACE FUNCTION calculate_daily_load(player_uuid UUID, log_date DATE)
+RETURNS INTEGER AS $$
+DECLARE
+  total_load INTEGER;
+BEGIN
+  SELECT COALESCE(SUM(rpe * duration_minutes), 0)
+  INTO total_load
+  FROM workout_logs
+  WHERE player_id = player_uuid
+    AND DATE(completed_at) = log_date;
+
+  RETURN total_load;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to calculate acute load (7-day rolling average)
+CREATE OR REPLACE FUNCTION calculate_acute_load(player_uuid UUID, reference_date DATE)
+RETURNS DECIMAL AS $$
+DECLARE
+  acute_load DECIMAL(10,2);
+BEGIN
+  SELECT COALESCE(AVG(daily_load), 0)
+  INTO acute_load
+  FROM load_monitoring
+  WHERE player_id = player_uuid
+    AND date >= reference_date - INTERVAL '6 days'
+    AND date <= reference_date;
+
+  RETURN acute_load;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to calculate chronic load (28-day rolling average)
+CREATE OR REPLACE FUNCTION calculate_chronic_load(player_uuid UUID, reference_date DATE)
+RETURNS DECIMAL AS $$
+DECLARE
+  chronic_load DECIMAL(10,2);
+BEGIN
+  SELECT COALESCE(AVG(daily_load), 0)
+  INTO chronic_load
+  FROM load_monitoring
+  WHERE player_id = player_uuid
+    AND date >= reference_date - INTERVAL '27 days'
+    AND date <= reference_date;
+
+  RETURN chronic_load;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to determine injury risk level based on ACWR
+CREATE OR REPLACE FUNCTION get_injury_risk_level(acwr_value DECIMAL)
+RETURNS VARCHAR AS $$
+BEGIN
+  IF acwr_value IS NULL OR acwr_value = 0 THEN
+    RETURN 'Unknown';
+  ELSIF acwr_value < 0.8 THEN
+    RETURN 'Low'; -- Detraining risk
+  ELSIF acwr_value >= 0.8 AND acwr_value <= 1.3 THEN
+    RETURN 'Optimal'; -- Sweet spot
+  ELSIF acwr_value > 1.3 AND acwr_value <= 1.5 THEN
+    RETURN 'Moderate';
+  ELSE
+    RETURN 'High'; -- Increased injury risk
+  END IF;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- Safe ACWR calculation with baseline awareness (from migration 046)
+CREATE OR REPLACE FUNCTION calculate_acwr_safe(player_uuid UUID, reference_date DATE)
+RETURNS TABLE (
+    acwr DECIMAL(5,2),
+    risk_level VARCHAR(20),
+    baseline_days INTEGER
+) AS $$
+DECLARE
+    days_of_data INTEGER;
+    acute_load_val DECIMAL(10,2);
+    chronic_load_val DECIMAL(10,2);
+    acwr_val DECIMAL(5,2);
+    risk VARCHAR(20);
+BEGIN
+    -- Count how many days of training data exist (up to 28)
+    SELECT COUNT(DISTINCT date) INTO days_of_data
+    FROM load_monitoring
+    WHERE player_id = player_uuid
+        AND date <= reference_date
+        AND date >= reference_date - INTERVAL '27 days';
+
+    -- Calculate loads
+    acute_load_val := calculate_acute_load(player_uuid, reference_date);
+    chronic_load_val := calculate_chronic_load(player_uuid, reference_date);
+
+    -- Determine risk based on baseline status
+    IF days_of_data < 7 THEN
+        risk := 'baseline_building';
+        acwr_val := NULL;
+    ELSIF days_of_data < 28 THEN
+        risk := 'baseline_low';
+        IF chronic_load_val > 0 THEN
+            acwr_val := acute_load_val / chronic_load_val;
+        ELSE
+            acwr_val := NULL;
+        END IF;
+    ELSE
+        -- Full ACWR calculation
+        IF chronic_load_val > 0 THEN
+            acwr_val := acute_load_val / chronic_load_val;
+            risk := get_injury_risk_level(acwr_val);
+        ELSE
+            acwr_val := NULL;
+            risk := 'Unknown';
+        END IF;
+    END IF;
+
+    RETURN QUERY SELECT acwr_val, risk, days_of_data;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
+-- PART 3: ENSURE ACWR TRIGGER EXISTS
+-- =============================================================================
+
+-- Trigger function to update load monitoring when workout is logged
+CREATE OR REPLACE FUNCTION update_load_monitoring()
+RETURNS TRIGGER AS $$
+DECLARE
+  log_date DATE;
+  daily_load_value INTEGER;
+  acute_load_value DECIMAL(10,2);
+  chronic_load_value DECIMAL(10,2);
+  acwr_value DECIMAL(5,2);
+  risk_level VARCHAR(20);
+  baseline_days_val INTEGER;
+BEGIN
+  log_date := DATE(NEW.completed_at);
+
+  -- Calculate daily load
+  daily_load_value := calculate_daily_load(NEW.player_id, log_date);
+
+  -- Calculate acute and chronic loads
+  acute_load_value := calculate_acute_load(NEW.player_id, log_date);
+  chronic_load_value := calculate_chronic_load(NEW.player_id, log_date);
+
+  -- Calculate ACWR with baseline checks
+  SELECT acwr, risk_level, baseline_days INTO acwr_value, risk_level, baseline_days_val
+  FROM calculate_acwr_safe(NEW.player_id, log_date);
+
+  -- Insert or update load monitoring record
+  INSERT INTO load_monitoring (player_id, date, daily_load, acute_load, chronic_load, acwr, injury_risk_level, baseline_days)
+  VALUES (NEW.player_id, log_date, daily_load_value, acute_load_value, chronic_load_value, acwr_value, risk_level, baseline_days_val)
+  ON CONFLICT (player_id, date)
+  DO UPDATE SET
+    daily_load = EXCLUDED.daily_load,
+    acute_load = EXCLUDED.acute_load,
+    chronic_load = EXCLUDED.chronic_load,
+    acwr = EXCLUDED.acwr,
+    injury_risk_level = EXCLUDED.injury_risk_level,
+    baseline_days = COALESCE(EXCLUDED.baseline_days, load_monitoring.baseline_days),
+    updated_at = NOW();
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Drop and recreate trigger to ensure it's active
+DROP TRIGGER IF EXISTS trigger_update_load_monitoring ON workout_logs;
+CREATE TRIGGER trigger_update_load_monitoring
+AFTER INSERT OR UPDATE ON workout_logs
+FOR EACH ROW
+EXECUTE FUNCTION update_load_monitoring();
+
+-- =============================================================================
+-- PART 4: CREATE INDEXES FOR BASE TABLES
+-- =============================================================================
+
+-- Player programs indexes
+CREATE INDEX IF NOT EXISTS idx_player_programs_player ON player_programs(player_id);
+CREATE INDEX IF NOT EXISTS idx_player_programs_program ON player_programs(program_id);
+CREATE INDEX IF NOT EXISTS idx_player_programs_active ON player_programs(is_active);
+
+-- Position metrics indexes
+CREATE INDEX IF NOT EXISTS idx_position_metrics_player ON position_specific_metrics(player_id);
+CREATE INDEX IF NOT EXISTS idx_position_metrics_date ON position_specific_metrics(date);
+CREATE INDEX IF NOT EXISTS idx_position_metrics_position ON position_specific_metrics(position_id);
+
+-- Exercise logs indexes
+CREATE INDEX IF NOT EXISTS idx_exercise_logs_workout ON exercise_logs(workout_log_id);
+CREATE INDEX IF NOT EXISTS idx_exercise_logs_exercise ON exercise_logs(exercise_id);
+
+-- =============================================================================
+-- PART 5: ENABLE RLS ON MISSING TABLES
+-- =============================================================================
+
+ALTER TABLE player_programs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE position_specific_metrics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE exercise_logs ENABLE ROW LEVEL SECURITY;
+
+-- Player Programs Policies
+DROP POLICY IF EXISTS "Players can view their own programs" ON player_programs;
+CREATE POLICY "Players can view their own programs"
+ON player_programs FOR SELECT
+USING ((SELECT auth.uid()) = player_id);
+
+DROP POLICY IF EXISTS "Coaches can view all programs" ON player_programs;
+CREATE POLICY "Coaches can view all programs"
+ON player_programs FOR SELECT
+USING ((SELECT (auth.jwt() ->> 'user_metadata')::jsonb ->> 'role') IN ('coach', 'admin'));
+
+DROP POLICY IF EXISTS "Coaches can manage programs" ON player_programs;
+CREATE POLICY "Coaches can manage programs"
+ON player_programs FOR ALL
+USING ((SELECT (auth.jwt() ->> 'user_metadata')::jsonb ->> 'role') IN ('coach', 'admin'));
+
+-- Position Specific Metrics Policies
+DROP POLICY IF EXISTS "Players can view own metrics" ON position_specific_metrics;
+CREATE POLICY "Players can view own metrics"
+ON position_specific_metrics FOR SELECT
+USING ((SELECT auth.uid()) = player_id);
+
+DROP POLICY IF EXISTS "Coaches can view all metrics" ON position_specific_metrics;
+CREATE POLICY "Coaches can view all metrics"
+ON position_specific_metrics FOR SELECT
+USING ((SELECT (auth.jwt() ->> 'user_metadata')::jsonb ->> 'role') IN ('coach', 'admin'));
+
+DROP POLICY IF EXISTS "Players can insert own metrics" ON position_specific_metrics;
+CREATE POLICY "Players can insert own metrics"
+ON position_specific_metrics FOR INSERT
+WITH CHECK ((SELECT auth.uid()) = player_id);
+
+-- Exercise Logs Policies
+DROP POLICY IF EXISTS "Players can view own exercise logs" ON exercise_logs;
+CREATE POLICY "Players can view own exercise logs"
+ON exercise_logs FOR SELECT
+USING (
+    workout_log_id IN (
+        SELECT id FROM workout_logs WHERE player_id = (SELECT auth.uid())
+    )
+);
+
+DROP POLICY IF EXISTS "Coaches can view all exercise logs" ON exercise_logs;
+CREATE POLICY "Coaches can view all exercise logs"
+ON exercise_logs FOR SELECT
+USING ((SELECT (auth.jwt() ->> 'user_metadata')::jsonb ->> 'role') IN ('coach', 'admin'));
+
+DROP POLICY IF EXISTS "Players can insert own exercise logs" ON exercise_logs;
+CREATE POLICY "Players can insert own exercise logs"
+ON exercise_logs FOR INSERT
+WITH CHECK (
+    workout_log_id IN (
+        SELECT id FROM workout_logs WHERE player_id = (SELECT auth.uid())
+    )
+);
+
+-- =============================================================================
+-- PART 6: VERIFICATION QUERY
+-- =============================================================================
+
+-- Verify all prerequisites are in place
+DO $$
+DECLARE
+    table_count INTEGER;
+    function_count INTEGER;
+    trigger_count INTEGER;
+BEGIN
+    -- Check tables
+    SELECT COUNT(*) INTO table_count
+    FROM information_schema.tables
+    WHERE table_name IN ('player_programs', 'position_specific_metrics', 'exercise_logs')
+    AND table_schema = 'public';
+
+    -- Check functions
+    SELECT COUNT(*) INTO function_count
+    FROM pg_proc
+    WHERE proname IN ('calculate_daily_load', 'calculate_acute_load', 'calculate_chronic_load', 'calculate_acwr_safe', 'get_injury_risk_level');
+
+    -- Check trigger
+    SELECT COUNT(*) INTO trigger_count
+    FROM pg_trigger
+    WHERE tgname = 'trigger_update_load_monitoring';
+
+    RAISE NOTICE '=============================================================================';
+    RAISE NOTICE 'PREREQUISITES CHECK - Migration 069';
+    RAISE NOTICE '=============================================================================';
+    RAISE NOTICE 'Tables created: % of 3 (player_programs, position_specific_metrics, exercise_logs)', table_count;
+    RAISE NOTICE 'ACWR functions: % of 5', function_count;
+    RAISE NOTICE 'ACWR trigger: % (should be 1)', trigger_count;
+    RAISE NOTICE '=============================================================================';
+    
+    IF table_count = 3 AND function_count = 5 AND trigger_count = 1 THEN
+        RAISE NOTICE '✅ All prerequisites are in place. Safe to run migration 070.';
+    ELSE
+        RAISE WARNING '⚠️  Some prerequisites are missing. Check the output above.';
+    END IF;
+    
+    RAISE NOTICE '=============================================================================';
+END $$;
+
+-- =============================================================================
+-- NOTES
+-- =============================================================================
+/*
+This migration ensures all base infrastructure is in place before the comprehensive refactor.
+
+WHAT IT CREATES:
+1. player_programs table (if missing)
+2. position_specific_metrics table (if missing)
+3. exercise_logs table (if missing)
+4. All ACWR functions (5 functions)
+5. ACWR trigger on workout_logs
+6. Indexes for performance
+7. RLS policies for security
+
+WHY THIS IS NEEDED:
+Migration 070 assumes these tables exist because it:
+- Adds columns to player_programs
+- Migrates data from position_specific_metrics
+- References exercise_logs in documentation
+- Enhances ACWR functions with versioning
+
+RUN ORDER:
+1. Migration 069 (this file) - Creates base tables + ACWR system
+2. Migration 070 - Comprehensive refactor
+3. Migration 071 - Populate exercise registry
+4. Migration 072 - Backfill metrics
+
+SAFETY:
+- All operations use IF NOT EXISTS or CREATE OR REPLACE
+- Safe to run multiple times
+- Won't overwrite existing data
+*/
+
+
+
+
+-- ============================================================================
+-- Migration: 069_qb_program_weeks_2_4_sessions.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- QB PROGRAM WEEKS 2-4 SESSIONS
+-- Migration 069: Complete the Foundation Phase with all sessions
+-- =============================================================================
+-- This migration adds training sessions and exercise links for:
+-- - Week 2: Volume increase (150 throws, 20% BW)
+-- - Week 3: Load progression (200 throws, 30% BW)
+-- - Week 4: Peak week (320 throws, 40% BW)
+-- =============================================================================
+
+-- =============================================================================
+-- WEEK 2 SESSIONS (Volume Increase - 150 throws, 20% BW)
+-- =============================================================================
+
+-- Monday Week 2 - Morning Routine
+INSERT INTO training_sessions (id, week_id, session_name, session_type, day_of_week, session_order, duration_minutes, warm_up_protocol, notes) VALUES
+    ('66666621-6666-6666-6666-666666666621'::UUID,
+    '33333332-3333-3333-3333-333333333332'::UUID,
+    'Monday Morning - QB Routine',
+    'Position-Specific',
+    0, 1, 30,
+    'QB Morning Routine protocol',
+    'Daily routine - Week 2 volume increase begins'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Monday Week 2 - Lower Body Strength
+INSERT INTO training_sessions (id, week_id, session_name, session_type, day_of_week, session_order, duration_minutes, warm_up_protocol, notes) VALUES
+    ('66666622-6666-6666-6666-666666666622'::UUID,
+    '33333332-3333-3333-3333-333333333332'::UUID,
+    'Monday PM - Lower Body Strength',
+    'Strength',
+    0, 2, 60,
+    'Dynamic warm-up + activation',
+    'Week 2 - Maintain 20% BW loading. Increase volume slightly.'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Tuesday Week 2 - Morning Routine
+INSERT INTO training_sessions (id, week_id, session_name, session_type, day_of_week, session_order, duration_minutes, warm_up_protocol, notes) VALUES
+    ('66666623-6666-6666-6666-666666666623'::UUID,
+    '33333332-3333-3333-3333-333333333332'::UUID,
+    'Tuesday Morning - QB Routine',
+    'Position-Specific',
+    1, 1, 30,
+    'QB Morning Routine protocol',
+    'Daily routine'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Tuesday Week 2 - Speed & Throwing (150 throws)
+INSERT INTO training_sessions (id, week_id, session_name, session_type, day_of_week, session_order, duration_minutes, warm_up_protocol, notes) VALUES
+    ('66666624-6666-6666-6666-666666666624'::UUID,
+    '33333332-3333-3333-3333-333333333332'::UUID,
+    'Tuesday PM - Speed & Throwing',
+    'Skill',
+    1, 2, 90,
+    'QB warm-up protocol + progressive throwing',
+    '150 throws target for week 2. Include 3-step acceleration drills.'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Wednesday Week 2 - Morning Routine
+INSERT INTO training_sessions (id, week_id, session_name, session_type, day_of_week, session_order, duration_minutes, warm_up_protocol, notes) VALUES
+    ('66666625-6666-6666-6666-666666666625'::UUID,
+    '33333332-3333-3333-3333-333333333332'::UUID,
+    'Wednesday Morning - QB Routine',
+    'Position-Specific',
+    2, 1, 30,
+    'QB Morning Routine protocol',
+    'Daily routine'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Wednesday Week 2 - Upper Body Strength
+INSERT INTO training_sessions (id, week_id, session_name, session_type, day_of_week, session_order, duration_minutes, warm_up_protocol, notes) VALUES
+    ('66666626-6666-6666-6666-666666666626'::UUID,
+    '33333332-3333-3333-3333-333333333332'::UUID,
+    'Wednesday PM - Upper Body Strength',
+    'Strength',
+    2, 2, 60,
+    'Dynamic warm-up + scapular activation',
+    'Landmine press, Pallof press, arm care. Slight volume increase.'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Thursday Week 2 - Active Recovery
+INSERT INTO training_sessions (id, week_id, session_name, session_type, day_of_week, session_order, duration_minutes, warm_up_protocol, notes) VALUES
+    ('66666627-6666-6666-6666-666666666627'::UUID,
+    '33333332-3333-3333-3333-333333333332'::UUID,

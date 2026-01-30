@@ -1,0 +1,1000 @@
+-- WHERE schemaname = 'public' AND tablename = 'wearables_data';
+--
+-- -- Check policies
+-- SELECT 
+--     policyname,
+--     cmd as action,
+--     roles,
+--     permissive
+-- FROM pg_policies
+-- WHERE tablename = 'wearables_data'
+-- ORDER BY cmd, policyname;
+--
+-- Expected result: 
+-- - rowsecurity = true
+-- - Four policies: SELECT, INSERT, UPDATE, DELETE for 'authenticated' role
+
+-- ============================================================================
+-- NOTES
+-- ============================================================================
+-- Security model:
+-- - Users can only access their own wearables data (based on user_id matching auth.uid())
+-- - Admins have full access to all data
+-- - Auth functions wrapped in subqueries to prevent per-row re-evaluation (performance optimization)
+--
+-- The user_id column is VARCHAR(255), so we cast auth.uid() (UUID) to text for comparison.
+-- This matches the pattern used in other migrations (e.g., analytics_events).
+
+
+
+
+-- ============================================================================
+-- Migration: 035_enable_rls_remaining_tables.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Enable Row Level Security on remaining public tables
+-- Created: 2024-12-19
+--
+-- Issue: Multiple tables are public but RLS has not been enabled:
+--   - public.supplement_protocols
+--   - public.training_analytics
+--   - public.user_behavior
+--
+-- Solution: Enable RLS and create policies to ensure users can only access their own data.
+
+-- ============================================================================
+-- STEP 1: Enable Row Level Security
+-- ============================================================================
+
+ALTER TABLE public.supplement_protocols ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.training_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_behavior ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================================
+-- STEP 2: Create RLS Policies for supplement_protocols
+-- ============================================================================
+-- Note: supplement_protocols.user_id is UUID, so we can use auth.uid() directly
+
+-- Policy for SELECT: Users can view their own supplement protocols
+CREATE POLICY supplement_protocols_select_policy
+ON public.supplement_protocols
+FOR SELECT
+TO authenticated
+USING (
+  -- Regular users can view their own protocols
+  user_id = (SELECT auth.uid())
+  OR
+  -- Admins can view all protocols
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for INSERT: Users can insert their own supplement protocols
+CREATE POLICY supplement_protocols_insert_policy
+ON public.supplement_protocols
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  -- Regular users can insert their own protocols
+  user_id = (SELECT auth.uid())
+  OR
+  -- Admins can insert any protocols
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for UPDATE: Users can update their own supplement protocols
+CREATE POLICY supplement_protocols_update_policy
+ON public.supplement_protocols
+FOR UPDATE
+TO authenticated
+USING (
+  -- Regular users can update their own protocols
+  user_id = (SELECT auth.uid())
+  OR
+  -- Admins can update any protocols
+  (SELECT auth.role()) = 'admin'
+)
+WITH CHECK (
+  -- Same check for the new values
+  user_id = (SELECT auth.uid())
+  OR
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for DELETE: Users can delete their own supplement protocols
+CREATE POLICY supplement_protocols_delete_policy
+ON public.supplement_protocols
+FOR DELETE
+TO authenticated
+USING (
+  -- Regular users can delete their own protocols
+  user_id = (SELECT auth.uid())
+  OR
+  -- Admins can delete any protocols
+  (SELECT auth.role()) = 'admin'
+);
+
+-- ============================================================================
+-- STEP 3: Create RLS Policies for training_analytics
+-- ============================================================================
+-- Note: training_analytics.user_id is VARCHAR(255), so we cast auth.uid() to text
+
+-- Policy for SELECT: Users can view their own training analytics
+CREATE POLICY training_analytics_select_policy
+ON public.training_analytics
+FOR SELECT
+TO authenticated
+USING (
+  -- Regular users can view their own analytics
+  user_id = (SELECT auth.uid())::text
+  OR
+  -- Admins can view all analytics
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for INSERT: Users can insert their own training analytics
+CREATE POLICY training_analytics_insert_policy
+ON public.training_analytics
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  -- Regular users can insert their own analytics
+  user_id = (SELECT auth.uid())::text
+  OR
+  -- Admins can insert any analytics
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for UPDATE: Users can update their own training analytics
+CREATE POLICY training_analytics_update_policy
+ON public.training_analytics
+FOR UPDATE
+TO authenticated
+USING (
+  -- Regular users can update their own analytics
+  user_id = (SELECT auth.uid())::text
+  OR
+  -- Admins can update any analytics
+  (SELECT auth.role()) = 'admin'
+)
+WITH CHECK (
+  -- Same check for the new values
+  user_id = (SELECT auth.uid())::text
+  OR
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for DELETE: Users can delete their own training analytics
+CREATE POLICY training_analytics_delete_policy
+ON public.training_analytics
+FOR DELETE
+TO authenticated
+USING (
+  -- Regular users can delete their own analytics
+  user_id = (SELECT auth.uid())::text
+  OR
+  -- Admins can delete any analytics
+  (SELECT auth.role()) = 'admin'
+);
+
+-- ============================================================================
+-- STEP 4: Create RLS Policies for user_behavior
+-- ============================================================================
+-- Note: user_behavior.user_id is VARCHAR(255), so we cast auth.uid() to text
+
+-- Policy for SELECT: Users can view their own behavior data
+CREATE POLICY user_behavior_select_policy
+ON public.user_behavior
+FOR SELECT
+TO authenticated
+USING (
+  -- Regular users can view their own behavior data
+  user_id = (SELECT auth.uid())::text
+  OR
+  -- Admins can view all behavior data
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for INSERT: Users can insert their own behavior data
+CREATE POLICY user_behavior_insert_policy
+ON public.user_behavior
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  -- Regular users can insert their own behavior data
+  user_id = (SELECT auth.uid())::text
+  OR
+  -- Admins can insert any behavior data
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for UPDATE: Users can update their own behavior data
+CREATE POLICY user_behavior_update_policy
+ON public.user_behavior
+FOR UPDATE
+TO authenticated
+USING (
+  -- Regular users can update their own behavior data
+  user_id = (SELECT auth.uid())::text
+  OR
+  -- Admins can update any behavior data
+  (SELECT auth.role()) = 'admin'
+)
+WITH CHECK (
+  -- Same check for the new values
+  user_id = (SELECT auth.uid())::text
+  OR
+  (SELECT auth.role()) = 'admin'
+);
+
+-- Policy for DELETE: Users can delete their own behavior data
+CREATE POLICY user_behavior_delete_policy
+ON public.user_behavior
+FOR DELETE
+TO authenticated
+USING (
+  -- Regular users can delete their own behavior data
+  user_id = (SELECT auth.uid())::text
+  OR
+  -- Admins can delete any behavior data
+  (SELECT auth.role()) = 'admin'
+);
+
+-- ============================================================================
+-- VERIFICATION
+-- ============================================================================
+-- After running this migration, verify RLS is enabled and policies are created:
+-- 
+-- -- Check RLS is enabled
+-- SELECT tablename, rowsecurity
+-- FROM pg_tables
+-- WHERE schemaname = 'public' 
+--   AND tablename IN ('supplement_protocols', 'training_analytics', 'user_behavior')
+-- ORDER BY tablename;
+--
+-- -- Check policies
+-- SELECT 
+--     tablename,
+--     policyname,
+--     cmd as action,
+--     roles,
+--     permissive
+-- FROM pg_policies
+-- WHERE tablename IN ('supplement_protocols', 'training_analytics', 'user_behavior')
+-- ORDER BY tablename, cmd, policyname;
+--
+-- Expected result: 
+-- - rowsecurity = true for all three tables
+-- - Four policies per table: SELECT, INSERT, UPDATE, DELETE for 'authenticated' role
+
+-- ============================================================================
+-- NOTES
+-- ============================================================================
+-- Security model:
+-- - Users can only access their own data (based on user_id matching auth.uid())
+-- - Admins have full access to all data
+-- - Auth functions wrapped in subqueries to prevent per-row re-evaluation (performance optimization)
+--
+-- Data type handling:
+-- - supplement_protocols.user_id is UUID, so we use auth.uid() directly
+-- - training_analytics.user_id and user_behavior.user_id are VARCHAR(255), 
+--   so we cast auth.uid() to text for comparison
+
+
+
+
+-- ============================================================================
+-- Migration: 036_add_rls_policies_users_implementation_steps.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Add RLS Policies for users and implementation_steps tables
+-- Created: 2024-12-19
+--
+-- Issue: Tables `public.users` and `public.implementation_steps` have RLS enabled,
+-- but no policies exist. This causes the Supabase linter to flag them as security issues.
+--
+-- Solution: Create appropriate RLS policies to ensure users can only access their own data.
+
+-- ============================================================================
+-- STEP 1: Drop existing policies if they exist (to avoid conflicts)
+-- ============================================================================
+
+-- Drop any existing policies on users table
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can view public profiles" ON public.users;
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can delete own profile" ON public.users;
+
+-- Drop any existing policies on implementation_steps table
+DROP POLICY IF EXISTS "Users can view own implementation steps" ON public.implementation_steps;
+DROP POLICY IF EXISTS "Users can insert own implementation steps" ON public.implementation_steps;
+DROP POLICY IF EXISTS "Users can update own implementation steps" ON public.implementation_steps;
+DROP POLICY IF EXISTS "Users can delete own implementation steps" ON public.implementation_steps;
+
+-- ============================================================================
+-- STEP 2: Create RLS Policies for users table
+-- ============================================================================
+-- Note: users.id is UUID, so we can use auth.uid() directly
+
+-- Policy for SELECT: Users can view their own profile
+CREATE POLICY "Users can view own profile"
+ON public.users
+FOR SELECT
+TO authenticated
+USING (
+  -- Users can view their own profile
+  id = auth.uid()
+);
+
+-- Policy for SELECT: Users can view public profile information of other users
+-- This allows team features and public profiles to work
+CREATE POLICY "Users can view public profiles"
+ON public.users
+FOR SELECT
+TO authenticated
+USING (
+  -- Allow viewing basic public information (name, avatar, etc.)
+  -- This is useful for team rosters and public profiles
+  true
+);
+
+-- Policy for INSERT: Users can create their own profile
+-- Note: This is typically handled during registration, but included for completeness
+CREATE POLICY "Users can insert own profile"
+ON public.users
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  -- Users can only create profiles with their own ID
+  id = auth.uid()
+);
+
+-- Policy for UPDATE: Users can update their own profile
+CREATE POLICY "Users can update own profile"
+ON public.users
+FOR UPDATE
+TO authenticated
+USING (
+  -- Users can only update their own profile
+  id = auth.uid()
+)
+WITH CHECK (
+  -- Ensure they can only update their own profile
+  id = auth.uid()
+);
+
+-- Policy for DELETE: Users can delete their own profile
+CREATE POLICY "Users can delete own profile"
+ON public.users
+FOR DELETE
+TO authenticated
+USING (
+  -- Users can only delete their own profile
+  id = auth.uid()
+);
+
+-- ============================================================================
+-- STEP 3: Create RLS Policies for implementation_steps table
+-- ============================================================================
+-- Note: implementation_steps.user_id is UUID, so we can use auth.uid() directly
+
+-- Policy for SELECT: Users can view their own implementation steps
+CREATE POLICY "Users can view own implementation steps"
+ON public.implementation_steps
+FOR SELECT
+TO authenticated
+USING (
+  -- Users can only view their own implementation steps
+  user_id = auth.uid()
+);
+
+-- Policy for INSERT: Users can create their own implementation steps
+CREATE POLICY "Users can insert own implementation steps"
+ON public.implementation_steps
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  -- Users can only create implementation steps for themselves
+  user_id = auth.uid()
+);
+
+-- Policy for UPDATE: Users can update their own implementation steps
+CREATE POLICY "Users can update own implementation steps"
+ON public.implementation_steps
+FOR UPDATE
+TO authenticated
+USING (
+  -- Users can only update their own implementation steps
+  user_id = auth.uid()
+)
+WITH CHECK (
+  -- Ensure they can only update their own implementation steps
+  user_id = auth.uid()
+);
+
+-- Policy for DELETE: Users can delete their own implementation steps
+CREATE POLICY "Users can delete own implementation steps"
+ON public.implementation_steps
+FOR DELETE
+TO authenticated
+USING (
+  -- Users can only delete their own implementation steps
+  user_id = auth.uid()
+);
+
+-- ============================================================================
+-- VERIFICATION
+-- ============================================================================
+-- Run these queries to verify policies were created:
+
+-- Check policies on users table
+-- SELECT schemaname, tablename, policyname, permissive, roles, cmd
+-- FROM pg_policies
+-- WHERE schemaname = 'public' AND tablename = 'users'
+-- ORDER BY policyname;
+
+-- Check policies on implementation_steps table
+-- SELECT schemaname, tablename, policyname, permissive, roles, cmd
+-- FROM pg_policies
+-- WHERE schemaname = 'public' AND tablename = 'implementation_steps'
+-- ORDER BY policyname;
+
+-- ============================================================================
+-- NOTES
+-- ============================================================================
+/*
+1. RLS policies are now in place for both tables
+2. Users can only access their own data by default
+3. The users table allows public profile viewing for team/community features
+4. All policies use auth.uid() which requires authenticated users
+5. The service role (used by backend) bypasses RLS for admin operations
+
+To test:
+1. Create test users in Supabase Auth
+2. Try accessing data from different users
+3. Verify users can only see/modify their own data
+4. Verify users can view public profiles of other users
+*/
+
+
+
+-- ============================================================================
+-- Migration: 037_fix_users_insert_policy_registration.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Fix users table INSERT policy to allow registration
+-- Created: 2024-12-19
+--
+-- Issue: The RLS policy "Users can insert own profile" requires TO authenticated
+--        and WITH CHECK (id = auth.uid()). This blocks registration because:
+--        1. Users aren't authenticated during registration
+--        2. The service role should bypass RLS, but we need explicit policy
+--
+-- Solution: Add a policy that allows service role to insert users during registration
+--           This allows the Netlify function (using service key) to create users
+
+-- ============================================================================
+-- STEP 1: Drop existing policies if they exist (to avoid conflicts)
+-- ============================================================================
+
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.users;
+DROP POLICY IF EXISTS "Service role can insert users" ON public.users;
+
+-- ============================================================================
+-- STEP 2: Create new INSERT policies
+-- ============================================================================
+
+-- Policy 1: Allow service role to insert users (for registration via Netlify Functions)
+-- This allows the backend service using SUPABASE_SERVICE_KEY to create users
+CREATE POLICY "Service role can insert users"
+ON public.users
+FOR INSERT
+TO service_role
+WITH CHECK (true);
+
+-- Policy 2: Allow authenticated users to insert their own profile
+-- This is for completeness, though registration typically happens via service role
+CREATE POLICY "Users can insert own profile"
+ON public.users
+FOR INSERT
+TO authenticated
+WITH CHECK (id = auth.uid());
+
+-- ============================================================================
+-- VERIFICATION
+-- ============================================================================
+-- After running this migration, verify policies were created:
+-- 
+-- SELECT 
+--     schemaname, 
+--     tablename, 
+--     policyname, 
+--     cmd,
+--     roles
+-- FROM pg_policies
+-- WHERE schemaname = 'public' 
+--   AND tablename = 'users'
+--   AND cmd = 'INSERT'
+-- ORDER BY policyname;
+--
+-- Expected result: 
+-- - Two INSERT policies: one for service_role, one for authenticated
+
+-- ============================================================================
+-- NOTES
+-- ============================================================================
+-- Security model:
+-- - Service role (used by Netlify Functions) can insert any user during registration
+-- - Authenticated users can only insert their own profile (id = auth.uid())
+-- - This allows registration to work while maintaining security for authenticated users
+
+
+
+
+-- ============================================================================
+-- Migration: 037a_notifications_unification.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Notifications Unification
+-- Adds notification categories, preferences, and last_opened_at tracking
+
+-- 1. Create notification_type enum
+DO $$ BEGIN
+    CREATE TYPE notification_type_enum AS ENUM (
+        'training',
+        'achievement',
+        'team',
+        'wellness',
+        'general',
+        'game',
+        'tournament',
+        'injury_risk',
+        'weather'
+    );
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+-- 2. Add last_opened_at to users table (if not exists)
+DO $$ BEGIN
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS notification_last_opened_at TIMESTAMPTZ;
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;
+
+-- 3. Create user_notification_preferences table
+CREATE TABLE IF NOT EXISTS user_notification_preferences (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    notification_type notification_type_enum NOT NULL,
+    muted BOOLEAN DEFAULT false,
+    push_enabled BOOLEAN DEFAULT true,
+    in_app_enabled BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id, notification_type)
+);
+
+-- 4. Add updated_at to notifications table if not exists
+DO $$ BEGIN
+    ALTER TABLE notifications ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;
+
+-- 5. Update notification_type column to use enum (if possible, otherwise keep VARCHAR)
+-- Note: We'll keep VARCHAR for now to avoid breaking existing data
+-- The enum is available for validation in application code
+
+-- 6. Add index for user_notification_preferences
+CREATE INDEX IF NOT EXISTS idx_user_notification_preferences_user_id 
+    ON user_notification_preferences(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_user_notification_preferences_type 
+    ON user_notification_preferences(notification_type);
+
+-- 7. Add index for notifications on notification_type
+CREATE INDEX IF NOT EXISTS idx_notifications_type 
+    ON notifications(notification_type);
+
+-- 8. Add index for notifications on created_at (for last_opened_at filtering)
+CREATE INDEX IF NOT EXISTS idx_notifications_user_created 
+    ON notifications(user_id, created_at DESC);
+
+-- 9. Create function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_notification_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 10. Create trigger for updated_at
+DROP TRIGGER IF EXISTS trigger_notification_updated_at ON notifications;
+CREATE TRIGGER trigger_notification_updated_at
+    BEFORE UPDATE ON notifications
+    FOR EACH ROW
+    EXECUTE FUNCTION update_notification_updated_at();
+
+-- 11. Create function to update user_notification_preferences updated_at
+CREATE OR REPLACE FUNCTION update_preferences_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 12. Create trigger for preferences updated_at
+DROP TRIGGER IF EXISTS trigger_preferences_updated_at ON user_notification_preferences;
+CREATE TRIGGER trigger_preferences_updated_at
+    BEFORE UPDATE ON user_notification_preferences
+    FOR EACH ROW
+    EXECUTE FUNCTION update_preferences_updated_at();
+
+-- 13. Insert default preferences for existing users (all types enabled)
+INSERT INTO user_notification_preferences (user_id, notification_type, muted, push_enabled, in_app_enabled)
+SELECT DISTINCT 
+    u.id::text,
+    unnest(ARRAY[
+        'training'::notification_type_enum,
+        'achievement'::notification_type_enum,
+        'team'::notification_type_enum,
+        'wellness'::notification_type_enum,
+        'general'::notification_type_enum,
+        'game'::notification_type_enum,
+        'tournament'::notification_type_enum,
+        'injury_risk'::notification_type_enum,
+        'weather'::notification_type_enum
+    ]),
+    false,
+    true,
+    true
+FROM users u
+ON CONFLICT (user_id, notification_type) DO NOTHING;
+
+-- 14. Add RLS policies for user_notification_preferences
+ALTER TABLE user_notification_preferences ENABLE ROW LEVEL SECURITY;
+
+-- Users can read their own preferences
+CREATE POLICY "Users can read their own notification preferences"
+    ON user_notification_preferences
+    FOR SELECT
+    USING (user_id = (SELECT auth.uid())::text);
+
+-- Users can update their own preferences
+CREATE POLICY "Users can update their own notification preferences"
+    ON user_notification_preferences
+    FOR UPDATE
+    USING (user_id = (SELECT auth.uid())::text)
+    WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+-- Users can insert their own preferences
+CREATE POLICY "Users can insert their own notification preferences"
+    ON user_notification_preferences
+    FOR INSERT
+    WITH CHECK (user_id = (SELECT auth.uid())::text);
+
+
+
+
+-- ============================================================================
+-- Migration: 038_add_username_and_verification_fields.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Add username field and email verification fields
+-- Description: Adds unique username and email verification tokens
+-- Created: 2024-12-06
+
+-- Add username column if it doesn't exist (unique)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'username'
+    ) THEN
+        ALTER TABLE users ADD COLUMN username VARCHAR(50) UNIQUE;
+        CREATE INDEX idx_users_username ON users(username);
+
+        -- Optionally, populate username from email for existing users
+        UPDATE users SET username = SPLIT_PART(email, '@', 1) WHERE username IS NULL;
+    END IF;
+END $$;
+
+-- Add email verification columns if they don't exist
+DO $$
+BEGIN
+    -- Add verification_token column
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'verification_token'
+    ) THEN
+        ALTER TABLE users ADD COLUMN verification_token VARCHAR(255);
+        CREATE INDEX idx_users_verification_token ON users(verification_token);
+    END IF;
+
+    -- Add verification_token_expires_at column
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'verification_token_expires_at'
+    ) THEN
+        ALTER TABLE users ADD COLUMN verification_token_expires_at TIMESTAMP;
+    END IF;
+
+    -- Ensure email_verified exists (should already exist from base migration)
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'email_verified'
+    ) THEN
+        ALTER TABLE users ADD COLUMN email_verified BOOLEAN DEFAULT false;
+    END IF;
+END $$;
+
+-- Add role column if it doesn't exist (for player, coach, admin roles)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'role'
+    ) THEN
+        ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'player' CHECK (role IN ('player', 'coach', 'admin'));
+        CREATE INDEX idx_users_role ON users(role);
+    END IF;
+END $$;
+
+-- Add comment explaining the schema
+COMMENT ON COLUMN users.username IS 'Unique username for the user (optional, can be NULL)';
+COMMENT ON COLUMN users.email IS 'Unique email address for login and verification';
+COMMENT ON COLUMN users.verification_token IS 'Token for email verification';
+COMMENT ON COLUMN users.verification_token_expires_at IS 'Expiration time for verification token';
+COMMENT ON COLUMN users.email_verified IS 'Whether the user has verified their email';
+COMMENT ON COLUMN users.role IS 'User role: player, coach, or admin';
+
+
+
+-- ============================================================================
+-- Migration: 039_chatbot_role_aware_system.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- CHATBOT ROLE-AWARE SYSTEM
+-- Migration: 039_chatbot_role_aware_system.sql
+-- Purpose: Enable role-aware chatbot responses and team type differentiation
+-- Created: 2025-01-XX
+-- =============================================================================
+
+-- =============================================================================
+-- TEAM TYPE FIELDS
+-- Add fields to distinguish domestic vs international teams
+-- =============================================================================
+
+-- Add team type and region fields to teams table
+DO $$
+BEGIN
+    -- Add team_type column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'teams' AND column_name = 'team_type'
+    ) THEN
+        ALTER TABLE teams ADD COLUMN team_type VARCHAR(20) DEFAULT 'domestic' 
+            CHECK (team_type IN ('domestic', 'international'));
+        COMMENT ON COLUMN teams.team_type IS 'Team type: domestic (local/regional) or international (competes internationally)';
+    END IF;
+
+    -- Add region column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'teams' AND column_name = 'region'
+    ) THEN
+        ALTER TABLE teams ADD COLUMN region VARCHAR(100);
+        COMMENT ON COLUMN teams.region IS 'Geographic region or country for the team';
+    END IF;
+
+    -- Add country_code column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'teams' AND column_name = 'country_code'
+    ) THEN
+        ALTER TABLE teams ADD COLUMN country_code VARCHAR(3);
+        COMMENT ON COLUMN teams.country_code IS 'ISO 3166-1 alpha-3 country code (e.g., USA, CAN, GBR)';
+    END IF;
+END $$;
+
+-- Create indexes for team type queries
+CREATE INDEX IF NOT EXISTS idx_teams_type ON teams(team_type);
+CREATE INDEX IF NOT EXISTS idx_teams_region ON teams(region);
+CREATE INDEX IF NOT EXISTS idx_teams_country ON teams(country_code);
+
+-- =============================================================================
+-- CHATBOT USER CONTEXT TABLE
+-- Store user context for chatbot personalization
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS chatbot_user_context (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    
+    -- Role and team context
+    user_role VARCHAR(20) NOT NULL CHECK (user_role IN ('player', 'coach', 'admin')),
+    primary_team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
+    team_type VARCHAR(20), -- 'domestic', 'international' (denormalized from teams)
+    
+    -- Personalization preferences
+    preferred_topics TEXT[], -- Topics user frequently asks about
+    expertise_level VARCHAR(20) DEFAULT 'intermediate' CHECK (expertise_level IN ('beginner', 'intermediate', 'advanced')),
+    
+    -- Usage statistics
+    total_queries INTEGER DEFAULT 0,
+    last_query_at TIMESTAMP,
+    
+    -- Metadata
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    
+    UNIQUE(user_id)
+);
+
+-- Create indexes for performance
+CREATE INDEX IF NOT EXISTS idx_chatbot_context_user ON chatbot_user_context(user_id);
+CREATE INDEX IF NOT EXISTS idx_chatbot_context_role ON chatbot_user_context(user_role);
+CREATE INDEX IF NOT EXISTS idx_chatbot_context_team ON chatbot_user_context(primary_team_id);
+CREATE INDEX IF NOT EXISTS idx_chatbot_context_team_type ON chatbot_user_context(team_type);
+
+-- Add update timestamp trigger
+CREATE TRIGGER update_chatbot_context_updated_at
+BEFORE UPDATE ON chatbot_user_context
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+-- Comments
+COMMENT ON TABLE chatbot_user_context IS 'Stores user context for chatbot personalization including role, team type, and preferences';
+COMMENT ON COLUMN chatbot_user_context.user_role IS 'User role: player (athlete), coach, or admin';
+COMMENT ON COLUMN chatbot_user_context.team_type IS 'Team type: domestic (local/regional) or international (competes internationally)';
+COMMENT ON COLUMN chatbot_user_context.preferred_topics IS 'Array of topics the user frequently asks about (e.g., nutrition, recovery, training)';
+COMMENT ON COLUMN chatbot_user_context.expertise_level IS 'User expertise level for tailoring response complexity';
+
+-- =============================================================================
+-- FUNCTION: Get or create chatbot context
+-- Automatically creates context if it doesn't exist
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION get_or_create_chatbot_context(p_user_id UUID)
+RETURNS chatbot_user_context AS $$
+DECLARE
+    v_context chatbot_user_context;
+    v_user_role VARCHAR(20);
+    v_primary_team_id UUID;
+    v_team_type VARCHAR(20);
+BEGIN
+    -- Get user role
+    SELECT role INTO v_user_role
+    FROM users
+    WHERE id = p_user_id;
+    
+    IF v_user_role IS NULL THEN
+        v_user_role := 'player'; -- Default role
+    END IF;
+    
+    -- Get primary team (most recent active team membership)
+    SELECT tm.team_id, t.team_type INTO v_primary_team_id, v_team_type
+    FROM team_members tm
+    JOIN teams t ON tm.team_id = t.id
+    WHERE tm.user_id = p_user_id
+      AND tm.status = 'active'
+    ORDER BY tm.joined_at DESC
+    LIMIT 1;
+    
+    -- Get or create context
+    SELECT * INTO v_context
+    FROM chatbot_user_context
+    WHERE user_id = p_user_id;
+    
+    IF v_context IS NULL THEN
+        -- Create new context
+        INSERT INTO chatbot_user_context (
+            user_id,
+            user_role,
+            primary_team_id,
+            team_type
+        ) VALUES (
+            p_user_id,
+            v_user_role,
+            v_primary_team_id,
+            COALESCE(v_team_type, 'domestic')
+        )
+        RETURNING * INTO v_context;
+    ELSE
+        -- Update existing context if role or team changed
+        IF v_context.user_role != v_user_role OR 
+           v_context.primary_team_id IS DISTINCT FROM v_primary_team_id OR
+           v_context.team_type IS DISTINCT FROM v_team_type THEN
+            UPDATE chatbot_user_context
+            SET user_role = v_user_role,
+                primary_team_id = v_primary_team_id,
+                team_type = COALESCE(v_team_type, 'domestic'),
+                updated_at = NOW()
+            WHERE user_id = p_user_id
+            RETURNING * INTO v_context;
+        END IF;
+    END IF;
+    
+    RETURN v_context;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION get_or_create_chatbot_context IS 'Gets or creates chatbot context for a user, automatically syncing role and team info';
+
+-- =============================================================================
+-- FUNCTION: Update chatbot query statistics
+-- Tracks chatbot usage for analytics
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION update_chatbot_query_stats(p_user_id UUID, p_topic VARCHAR(100) DEFAULT NULL)
+RETURNS void AS $$
+BEGIN
+    UPDATE chatbot_user_context
+    SET total_queries = total_queries + 1,
+        last_query_at = NOW(),
+        preferred_topics = CASE
+            WHEN p_topic IS NOT NULL AND NOT (p_topic = ANY(preferred_topics))
+            THEN array_append(COALESCE(preferred_topics, ARRAY[]::TEXT[]), p_topic)
+            ELSE preferred_topics
+        END,
+        updated_at = NOW()
+    WHERE user_id = p_user_id;
+    
+    -- Create context if it doesn't exist
+    IF NOT FOUND THEN
+        PERFORM get_or_create_chatbot_context(p_user_id);
+        UPDATE chatbot_user_context
+        SET total_queries = 1,
+            last_query_at = NOW(),
+            preferred_topics = CASE
+                WHEN p_topic IS NOT NULL THEN ARRAY[p_topic]
+                ELSE ARRAY[]::TEXT[]
+            END,
+            updated_at = NOW()
+        WHERE user_id = p_user_id;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION update_chatbot_query_stats IS 'Updates chatbot usage statistics and tracks preferred topics';
+
+
+
+
+-- ============================================================================
+-- Migration: 040_knowledge_base_governance.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- KNOWLEDGE BASE GOVERNANCE SYSTEM
+-- Migration: 040_knowledge_base_governance.sql
+-- Purpose: Add governance fields for evidence-based knowledge base approval and quality control
+-- Created: 2025-01-XX
+-- =============================================================================
+
+-- =============================================================================
+-- ADD GOVERNANCE FIELDS TO KNOWLEDGE_BASE_ENTRIES
+-- =============================================================================
+
+DO $$
+BEGIN
+    -- Add approval_status column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'knowledge_base_entries' AND column_name = 'approval_status'
+    ) THEN
+        ALTER TABLE knowledge_base_entries ADD COLUMN approval_status VARCHAR(20) DEFAULT 'pending' 
+            CHECK (approval_status IN ('pending', 'approved', 'rejected', 'experimental'));
+        COMMENT ON COLUMN knowledge_base_entries.approval_status IS 'Approval status: pending (awaiting review), approved (league-approved), rejected (not suitable), experimental (emerging research)';
+    END IF;

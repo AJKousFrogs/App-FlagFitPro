@@ -1,0 +1,1000 @@
+
+    -- Add approval_level column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'knowledge_base_entries' AND column_name = 'approval_level'
+    ) THEN
+        ALTER TABLE knowledge_base_entries ADD COLUMN approval_level VARCHAR(20) DEFAULT 'research' 
+            CHECK (approval_level IN ('league', 'coach', 'research', 'experimental'));
+        COMMENT ON COLUMN knowledge_base_entries.approval_level IS 'Approval level: league (official guidelines), coach (coach-reviewed), research (research-based), experimental (experimental protocol)';
+    END IF;
+
+    -- Add approved_by column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'knowledge_base_entries' AND column_name = 'approved_by'
+    ) THEN
+        ALTER TABLE knowledge_base_entries ADD COLUMN approved_by UUID REFERENCES users(id);
+        COMMENT ON COLUMN knowledge_base_entries.approved_by IS 'User ID of the admin/coach who approved this entry';
+    END IF;
+
+    -- Add approved_at column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'knowledge_base_entries' AND column_name = 'approved_at'
+    ) THEN
+        ALTER TABLE knowledge_base_entries ADD COLUMN approved_at TIMESTAMP;
+        COMMENT ON COLUMN knowledge_base_entries.approved_at IS 'Timestamp when this entry was approved';
+    END IF;
+
+    -- Add approval_notes column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'knowledge_base_entries' AND column_name = 'approval_notes'
+    ) THEN
+        ALTER TABLE knowledge_base_entries ADD COLUMN approval_notes TEXT;
+        COMMENT ON COLUMN knowledge_base_entries.approval_notes IS 'Notes from the approver about why this entry was approved/rejected';
+    END IF;
+
+    -- Add research_source_ids column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'knowledge_base_entries' AND column_name = 'research_source_ids'
+    ) THEN
+        ALTER TABLE knowledge_base_entries ADD COLUMN research_source_ids UUID[];
+        COMMENT ON COLUMN knowledge_base_entries.research_source_ids IS 'Array of research_articles IDs that support this entry (in addition to supporting_articles)';
+    END IF;
+
+    -- Add source_quality_score column if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'knowledge_base_entries' AND column_name = 'source_quality_score'
+    ) THEN
+        ALTER TABLE knowledge_base_entries ADD COLUMN source_quality_score DECIMAL(3,2) CHECK (source_quality_score >= 0 AND source_quality_score <= 1);
+        COMMENT ON COLUMN knowledge_base_entries.source_quality_score IS 'Quality score of sources (0.0 to 1.0) based on journal impact, study quality, etc.';
+    END IF;
+END $$;
+
+-- Create indexes for governance queries
+CREATE INDEX IF NOT EXISTS idx_kb_approval_status ON knowledge_base_entries(approval_status);
+CREATE INDEX IF NOT EXISTS idx_kb_approval_level ON knowledge_base_entries(approval_level);
+CREATE INDEX IF NOT EXISTS idx_kb_approved_by ON knowledge_base_entries(approved_by);
+CREATE INDEX IF NOT EXISTS idx_kb_source_quality ON knowledge_base_entries(source_quality_score);
+CREATE INDEX IF NOT EXISTS idx_kb_approval_status_level ON knowledge_base_entries(approval_status, approval_level);
+
+-- =============================================================================
+-- KNOWLEDGE BASE GOVERNANCE LOG TABLE
+-- Track all approval/rejection actions for audit trail
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS knowledge_base_governance_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    entry_id UUID NOT NULL REFERENCES knowledge_base_entries(id) ON DELETE CASCADE,
+    
+    -- Action details
+    action VARCHAR(50) NOT NULL CHECK (action IN ('approved', 'rejected', 'flagged', 'updated', 'created', 'experimental')),
+    performed_by UUID REFERENCES users(id),
+    notes TEXT,
+    
+    -- Status changes
+    previous_status VARCHAR(20),
+    new_status VARCHAR(20),
+    previous_level VARCHAR(20),
+    new_level VARCHAR(20),
+    
+    -- Metadata
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Create indexes for governance log queries
+CREATE INDEX IF NOT EXISTS idx_gov_log_entry ON knowledge_base_governance_log(entry_id);
+CREATE INDEX IF NOT EXISTS idx_gov_log_action ON knowledge_base_governance_log(action);
+CREATE INDEX IF NOT EXISTS idx_gov_log_performed_by ON knowledge_base_governance_log(performed_by);
+CREATE INDEX IF NOT EXISTS idx_gov_log_created_at ON knowledge_base_governance_log(created_at DESC);
+
+-- Comments
+COMMENT ON TABLE knowledge_base_governance_log IS 'Audit trail for all knowledge base governance actions (approvals, rejections, updates)';
+COMMENT ON COLUMN knowledge_base_governance_log.action IS 'Action performed: approved, rejected, flagged, updated, created, experimental';
+COMMENT ON COLUMN knowledge_base_governance_log.previous_status IS 'Previous approval_status before the action';
+COMMENT ON COLUMN knowledge_base_governance_log.new_status IS 'New approval_status after the action';
+
+-- =============================================================================
+-- FUNCTION: Calculate source quality score
+-- Automatically calculates quality score based on supporting articles
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION calculate_source_quality_score(p_entry_id UUID)
+RETURNS DECIMAL(3,2) AS $$
+DECLARE
+    v_score DECIMAL(3,2) := 0.0;
+    v_article_count INTEGER := 0;
+    v_total_score DECIMAL(5,2) := 0.0;
+    v_article_record RECORD;
+BEGIN
+    -- Get supporting articles
+    SELECT supporting_articles INTO v_article_count
+    FROM knowledge_base_entries
+    WHERE id = p_entry_id;
+    
+    -- If no articles, return 0
+    IF v_article_count IS NULL OR array_length(v_article_count, 1) IS NULL THEN
+        RETURN 0.0;
+    END IF;
+    
+    -- Calculate average quality from articles
+    FOR v_article_record IN
+        SELECT 
+            evidence_level,
+            impact_factor,
+            quality_score,
+            study_type,
+            sample_size
+        FROM research_articles
+        WHERE id = ANY((SELECT supporting_articles FROM knowledge_base_entries WHERE id = p_entry_id))
+    LOOP
+        -- Score based on evidence level (A=1.0, B=0.75, C=0.5, D=0.25)
+        CASE v_article_record.evidence_level
+            WHEN 'A' THEN v_total_score := v_total_score + 1.0;
+            WHEN 'B' THEN v_total_score := v_total_score + 0.75;
+            WHEN 'C' THEN v_total_score := v_total_score + 0.5;
+            WHEN 'D' THEN v_total_score := v_total_score + 0.25;
+            ELSE v_total_score := v_total_score + 0.5;
+        END CASE;
+        
+        -- Bonus for high impact factor
+        IF v_article_record.impact_factor IS NOT NULL AND v_article_record.impact_factor > 5 THEN
+            v_total_score := v_total_score + 0.1;
+        END IF;
+        
+        -- Bonus for large sample size
+        IF v_article_record.sample_size IS NOT NULL AND v_article_record.sample_size > 100 THEN
+            v_total_score := v_total_score + 0.1;
+        END IF;
+        
+        -- Bonus for meta-analysis or systematic review
+        IF v_article_record.study_type IN ('meta_analysis', 'systematic_review') THEN
+            v_total_score := v_total_score + 0.15;
+        END IF;
+    END LOOP;
+    
+    -- Calculate average and cap at 1.0
+    v_score := LEAST(v_total_score / array_length((SELECT supporting_articles FROM knowledge_base_entries WHERE id = p_entry_id), 1), 1.0);
+    
+    RETURN ROUND(v_score, 2);
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION calculate_source_quality_score IS 'Calculates quality score (0.0-1.0) based on supporting articles evidence levels, impact factors, and study types';
+
+-- =============================================================================
+-- FUNCTION: Log governance action
+-- Automatically logs approval/rejection actions
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION log_governance_action(
+    p_entry_id UUID,
+    p_action VARCHAR(50),
+    p_performed_by UUID,
+    p_notes TEXT DEFAULT NULL,
+    p_new_status VARCHAR(20) DEFAULT NULL,
+    p_new_level VARCHAR(20) DEFAULT NULL
+)
+RETURNS UUID AS $$
+DECLARE
+    v_log_id UUID;
+    v_previous_status VARCHAR(20);
+    v_previous_level VARCHAR(20);
+BEGIN
+    -- Get previous status and level
+    SELECT approval_status, approval_level
+    INTO v_previous_status, v_previous_level
+    FROM knowledge_base_entries
+    WHERE id = p_entry_id;
+    
+    -- Insert log entry
+    INSERT INTO knowledge_base_governance_log (
+        entry_id,
+        action,
+        performed_by,
+        notes,
+        previous_status,
+        new_status,
+        previous_level,
+        new_level
+    ) VALUES (
+        p_entry_id,
+        p_action,
+        p_performed_by,
+        p_notes,
+        v_previous_status,
+        COALESCE(p_new_status, v_previous_status),
+        v_previous_level,
+        COALESCE(p_new_level, v_previous_level)
+    )
+    RETURNING id INTO v_log_id;
+    
+    RETURN v_log_id;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION log_governance_action IS 'Logs a governance action (approval, rejection, etc.) for audit trail';
+
+-- =============================================================================
+-- TRIGGER: Auto-update quality score when supporting articles change
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION update_quality_score_on_articles_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Recalculate quality score if supporting articles changed
+    IF TG_OP = 'UPDATE' AND (
+        OLD.supporting_articles IS DISTINCT FROM NEW.supporting_articles OR
+        OLD.source_quality_score IS NULL
+    ) THEN
+        NEW.source_quality_score := calculate_source_quality_score(NEW.id);
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_quality_score
+BEFORE UPDATE ON knowledge_base_entries
+FOR EACH ROW
+WHEN (OLD.supporting_articles IS DISTINCT FROM NEW.supporting_articles)
+EXECUTE FUNCTION update_quality_score_on_articles_change();
+
+-- =============================================================================
+-- INITIAL DATA: Set default approval status for existing entries
+-- =============================================================================
+
+-- Set existing entries to 'approved' if they have strong evidence, otherwise 'pending'
+UPDATE knowledge_base_entries
+SET approval_status = CASE
+    WHEN evidence_strength = 'strong' AND consensus_level = 'high' THEN 'approved'
+    WHEN evidence_strength IN ('strong', 'moderate') THEN 'pending'
+    ELSE 'experimental'
+END,
+approval_level = CASE
+    WHEN evidence_strength = 'strong' AND consensus_level = 'high' THEN 'research'
+    ELSE 'research'
+END
+WHERE approval_status IS NULL;
+
+-- Calculate quality scores for existing entries
+UPDATE knowledge_base_entries
+SET source_quality_score = calculate_source_quality_score(id)
+WHERE source_quality_score IS NULL AND supporting_articles IS NOT NULL;
+
+
+
+
+-- ============================================================================
+-- Migration: 041_player_stats_aggregation_view.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Player Statistics Aggregation View
+-- Creates a centralized view and function for aggregating player statistics
+-- Always filters data up to and including today's date
+
+-- =============================================================================
+-- VIEW: Player Statistics Aggregated (Up to Today)
+-- Provides consistent, date-filtered player statistics across all games
+-- =============================================================================
+
+CREATE OR REPLACE VIEW player_stats_aggregated AS
+WITH games_up_to_today AS (
+    SELECT game_id, game_date, team_id, season
+    FROM games
+    WHERE game_date <= CURRENT_DATE + INTERVAL '1 day' - INTERVAL '1 second'
+),
+player_plays AS (
+    -- Get all plays where player is primary
+    SELECT 
+        ge.id,
+        ge.game_id,
+        ge.primary_player_id as player_id,
+        ge.play_type,
+        ge.play_result,
+        ge.yards_gained,
+        ge.yards_after_catch,
+        ge.is_successful,
+        ge.is_turnover,
+        g.game_date,
+        g.season
+    FROM game_events ge
+    INNER JOIN games_up_to_today g ON ge.game_id = g.game_id
+    WHERE ge.primary_player_id IS NOT NULL
+    
+    UNION
+    
+    -- Get all plays where player is in secondary players
+    SELECT 
+        ge.id,
+        ge.game_id,
+        unnest(ge.secondary_player_ids) as player_id,
+        ge.play_type,
+        ge.play_result,
+        ge.yards_gained,
+        ge.yards_after_catch,
+        ge.is_successful,
+        ge.is_turnover,
+        g.game_date,
+        g.season
+    FROM game_events ge
+    INNER JOIN games_up_to_today g ON ge.game_id = g.game_id
+    WHERE ge.secondary_player_ids IS NOT NULL AND array_length(ge.secondary_player_ids, 1) > 0
+)
+SELECT 
+    pp.player_id,
+    COUNT(DISTINCT pp.game_id) as games_played,
+    COUNT(DISTINCT g.game_id) FILTER (WHERE g.game_date <= CURRENT_DATE) as total_games_available,
+    
+    -- Passing stats
+    COUNT(*) FILTER (WHERE pp.play_type IN ('pass', 'throw')) as pass_attempts,
+    COUNT(*) FILTER (WHERE pp.play_type IN ('pass', 'throw') AND pp.play_result = 'completion') as completions,
+    COALESCE(SUM(pp.yards_gained) FILTER (WHERE pp.play_type IN ('pass', 'throw')), 0) as passing_yards,
+    COUNT(*) FILTER (WHERE pp.play_type IN ('pass', 'throw') AND pp.play_result = 'touchdown') as passing_touchdowns,
+    COUNT(*) FILTER (WHERE pp.play_type IN ('pass', 'throw') AND pp.play_result = 'interception') as interceptions,
+    
+    -- Receiving stats
+    COUNT(*) FILTER (WHERE pp.play_type IN ('reception', 'catch') OR pp.play_result = 'completion') as targets,
+    COUNT(*) FILTER (WHERE pp.play_result = 'completion') as receptions,
+    COALESCE(SUM(pp.yards_gained) FILTER (WHERE pp.play_type IN ('reception', 'catch')), 0) as receiving_yards,
+    COUNT(*) FILTER (WHERE pp.play_result = 'drop') as drops,
+    COALESCE(SUM(pp.yards_after_catch), 0) as yards_after_catch,
+    COUNT(*) FILTER (WHERE pp.play_type IN ('reception', 'catch') AND pp.play_result = 'touchdown') as receiving_touchdowns,
+    
+    -- Rushing stats
+    COUNT(*) FILTER (WHERE pp.play_type IN ('run', 'rush')) as rushing_attempts,
+    COALESCE(SUM(pp.yards_gained) FILTER (WHERE pp.play_type IN ('run', 'rush')), 0) as rushing_yards,
+    COUNT(*) FILTER (WHERE pp.play_type IN ('run', 'rush') AND pp.play_result = 'touchdown') as rushing_touchdowns,
+    
+    -- Defensive stats
+    COUNT(*) FILTER (WHERE pp.play_type IN ('flag_pull', 'tackle')) as flag_pull_attempts,
+    COUNT(*) FILTER (WHERE pp.play_type IN ('flag_pull', 'tackle') AND (pp.play_result = 'flag_pull' OR pp.is_successful = true)) as flag_pulls,
+    COUNT(*) FILTER (WHERE pp.play_type IN ('flag_pull', 'tackle') AND pp.is_successful = false) as missed_flag_pulls,
+    COUNT(*) FILTER (WHERE pp.play_result = 'defended_pass') as defended_passes,
+    COUNT(*) FILTER (WHERE pp.play_type = 'defense' AND pp.play_result = 'interception') as interceptions_def,
+    
+    -- Totals
+    COUNT(*) as total_plays,
+    COALESCE(SUM(pp.yards_gained), 0) as total_yards
+    
+FROM player_plays pp
+LEFT JOIN games_up_to_today g ON pp.game_id = g.game_id
+GROUP BY pp.player_id;
+
+-- =============================================================================
+-- FUNCTION: Get Player Aggregated Stats
+-- Returns aggregated statistics for a player up to and including today
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION get_player_aggregated_stats(
+    p_player_id VARCHAR(255),
+    p_season VARCHAR(20) DEFAULT NULL,
+    p_team_id VARCHAR(255) DEFAULT NULL
+)
+RETURNS TABLE (
+    player_id VARCHAR(255),
+    games_played BIGINT,
+    total_games_available BIGINT,
+    pass_attempts BIGINT,
+    completions BIGINT,
+    passing_yards BIGINT,
+    passing_touchdowns BIGINT,
+    interceptions BIGINT,
+    completion_percentage DECIMAL(5,2),
+    avg_yards_per_attempt DECIMAL(4,2),
+    targets BIGINT,
+    receptions BIGINT,
+    receiving_yards BIGINT,
+    drops BIGINT,
+    drop_rate DECIMAL(5,2),
+    yards_after_catch BIGINT,
+    receiving_touchdowns BIGINT,
+    avg_yards_per_reception DECIMAL(4,2),
+    rushing_attempts BIGINT,
+    rushing_yards BIGINT,
+    rushing_touchdowns BIGINT,
+    yards_per_carry DECIMAL(4,2),
+    flag_pull_attempts BIGINT,
+    flag_pulls BIGINT,
+    missed_flag_pulls BIGINT,
+    flag_pull_success_rate DECIMAL(5,2),
+    defended_passes BIGINT,
+    interceptions_def BIGINT,
+    total_plays BIGINT,
+    total_yards BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        psa.player_id,
+        psa.games_played,
+        psa.total_games_available,
+        psa.pass_attempts,
+        psa.completions,
+        psa.passing_yards,
+        psa.passing_touchdowns,
+        psa.interceptions,
+        CASE 
+            WHEN psa.pass_attempts > 0 
+            THEN ROUND((psa.completions::DECIMAL / psa.pass_attempts::DECIMAL) * 100, 1)
+            ELSE 0
+        END as completion_percentage,
+        CASE 
+            WHEN psa.pass_attempts > 0 
+            THEN ROUND(psa.passing_yards::DECIMAL / psa.pass_attempts::DECIMAL, 2)
+            ELSE 0
+        END as avg_yards_per_attempt,
+        psa.targets,
+        psa.receptions,
+        psa.receiving_yards,
+        psa.drops,
+        CASE 
+            WHEN psa.targets > 0 
+            THEN ROUND((psa.drops::DECIMAL / psa.targets::DECIMAL) * 100, 1)
+            ELSE 0
+        END as drop_rate,
+        psa.yards_after_catch,
+        psa.receiving_touchdowns,
+        CASE 
+            WHEN psa.receptions > 0 
+            THEN ROUND(psa.receiving_yards::DECIMAL / psa.receptions::DECIMAL, 2)
+            ELSE 0
+        END as avg_yards_per_reception,
+        psa.rushing_attempts,
+        psa.rushing_yards,
+        psa.rushing_touchdowns,
+        CASE 
+            WHEN psa.rushing_attempts > 0 
+            THEN ROUND(psa.rushing_yards::DECIMAL / psa.rushing_attempts::DECIMAL, 2)
+            ELSE 0
+        END as yards_per_carry,
+        psa.flag_pull_attempts,
+        psa.flag_pulls,
+        psa.missed_flag_pulls,
+        CASE 
+            WHEN psa.flag_pull_attempts > 0 
+            THEN ROUND((psa.flag_pulls::DECIMAL / psa.flag_pull_attempts::DECIMAL) * 100, 1)
+            ELSE 0
+        END as flag_pull_success_rate,
+        psa.defended_passes,
+        psa.interceptions_def,
+        psa.total_plays,
+        psa.total_yards
+    FROM player_stats_aggregated psa
+    WHERE psa.player_id = p_player_id
+        AND (p_season IS NULL OR EXISTS (
+            SELECT 1 FROM games g 
+            WHERE g.game_id IN (
+                SELECT DISTINCT game_id FROM game_events 
+                WHERE primary_player_id = p_player_id 
+                   OR p_player_id = ANY(secondary_player_ids)
+            )
+            AND g.season = p_season
+            AND g.game_date <= CURRENT_DATE + INTERVAL '1 day' - INTERVAL '1 second'
+        ))
+        AND (p_team_id IS NULL OR EXISTS (
+            SELECT 1 FROM games g 
+            WHERE g.team_id = p_team_id
+            AND g.game_id IN (
+                SELECT DISTINCT game_id FROM game_events 
+                WHERE primary_player_id = p_player_id 
+                   OR p_player_id = ANY(secondary_player_ids)
+            )
+            AND g.game_date <= CURRENT_DATE + INTERVAL '1 day' - INTERVAL '1 second'
+        ));
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- =============================================================================
+-- INDEXES for performance
+-- =============================================================================
+
+CREATE INDEX IF NOT EXISTS idx_game_events_primary_player_date 
+ON game_events(primary_player_id, game_id) 
+WHERE primary_player_id IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_games_date_team 
+ON games(game_date, team_id);
+
+CREATE INDEX IF NOT EXISTS idx_games_date_season 
+ON games(game_date, season);
+
+-- =============================================================================
+-- GRANT PERMISSIONS
+-- =============================================================================
+
+GRANT SELECT ON player_stats_aggregated TO authenticated;
+GRANT EXECUTE ON FUNCTION get_player_aggregated_stats TO authenticated;
+
+
+
+-- ============================================================================
+-- Migration: 042_training_data_consistency.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- TRAINING DATA CONSISTENCY IMPROVEMENTS
+-- Migration: 042_training_data_consistency.sql
+-- Adds completed column and index for better date filtering and performance
+-- =============================================================================
+
+-- =============================================================================
+-- 1. ADD COMPLETED COLUMN (OPTIONAL)
+-- =============================================================================
+
+DO $$
+BEGIN
+  -- Add completed boolean column if it doesn't exist
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'training_sessions' AND column_name = 'completed'
+  ) THEN
+    ALTER TABLE training_sessions ADD COLUMN completed BOOLEAN DEFAULT true;
+    COMMENT ON COLUMN training_sessions.completed IS 'Whether the training session has been completed. Defaults to true for backward compatibility.';
+    
+    -- Set default based on status if status column exists
+    IF EXISTS (
+      SELECT 1 FROM information_schema.columns 
+      WHERE table_name = 'training_sessions' AND column_name = 'status'
+    ) THEN
+      UPDATE training_sessions 
+      SET completed = CASE 
+        WHEN status IN ('completed', 'done') THEN true
+        WHEN status IN ('planned', 'scheduled', 'in_progress') THEN false
+        ELSE true -- Default to completed for unknown statuses
+      END
+      WHERE completed IS NULL;
+    END IF;
+  END IF;
+END $$;
+
+-- =============================================================================
+-- 2. ADD INDEX ON (user_id, session_date) FOR PERFORMANCE
+-- =============================================================================
+
+-- Index for filtering by user and date (most common query pattern)
+CREATE INDEX IF NOT EXISTS idx_training_sessions_user_date 
+ON training_sessions(user_id, session_date DESC);
+
+-- Index for date-only queries (when filtering to today)
+CREATE INDEX IF NOT EXISTS idx_training_sessions_date 
+ON training_sessions(session_date DESC);
+
+-- Index for completed status filtering
+CREATE INDEX IF NOT EXISTS idx_training_sessions_completed 
+ON training_sessions(completed) 
+WHERE completed = true;
+
+-- Composite index for user + date + completed
+CREATE INDEX IF NOT EXISTS idx_training_sessions_user_date_completed 
+ON training_sessions(user_id, session_date DESC, completed) 
+WHERE completed = true;
+
+-- =============================================================================
+-- 3. CREATE DATABASE VIEW FOR COMPLETED SESSIONS
+-- =============================================================================
+
+CREATE OR REPLACE VIEW completed_training_sessions AS
+SELECT 
+  id,
+  user_id,
+  session_date,
+  session_type,
+  duration_minutes,
+  rpe,
+  intensity_level,
+  status,
+  completed,
+  notes,
+  created_at,
+  updated_at
+FROM training_sessions
+WHERE (completed = true OR (completed IS NULL AND session_date <= CURRENT_DATE))
+  AND session_date <= CURRENT_DATE;
+
+COMMENT ON VIEW completed_training_sessions IS 'View of training sessions that are completed and up to and including today. Used for consistent statistics calculations.';
+
+-- =============================================================================
+-- 4. CREATE FUNCTION TO GET TODAY'S DATE (FOR CONSISTENCY)
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION get_today_date()
+RETURNS DATE
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT CURRENT_DATE;
+$$;
+
+COMMENT ON FUNCTION get_today_date() IS 'Returns today''s date for consistent date filtering across queries';
+
+-- =============================================================================
+-- 5. ADD COMMENTS FOR DOCUMENTATION
+-- =============================================================================
+
+COMMENT ON TABLE training_sessions IS 'Stores all training sessions. Use completed_training_sessions view for statistics that should only include completed sessions up to today.';
+COMMENT ON COLUMN training_sessions.session_date IS 'Date of the training session. Sessions with date > CURRENT_DATE are considered future/planned sessions.';
+COMMENT ON COLUMN training_sessions.completed IS 'Whether the session has been completed. Defaults to true. Future sessions should have completed = false.';
+
+
+
+-- ============================================================================
+-- Migration: 043_database_upgrade_consistency.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- DATABASE UPGRADE: CONSISTENCY AND FIXES
+-- Migration: 043_database_upgrade_consistency.sql
+-- Purpose: Fix inconsistencies, ensure functions exist, standardize patterns
+-- Created: 2025-01-XX
+-- =============================================================================
+
+-- =============================================================================
+-- 1. ENSURE CORE FUNCTIONS EXIST (MUST BE FIRST)
+-- =============================================================================
+
+-- Ensure update_updated_at_column() function exists (required by migration 001)
+-- This function is used by many triggers across the database
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION update_updated_at_column() IS 'Standard function to update updated_at timestamp on row updates. Used by triggers across the database.';
+
+-- =============================================================================
+-- 2. FIX MISSING FOREIGN KEY CONSTRAINTS
+-- =============================================================================
+
+-- Ensure training_sessions has proper foreign key to users
+-- Check for both user_id and athlete_id columns
+DO $$
+DECLARE
+    has_user_id BOOLEAN;
+    has_athlete_id BOOLEAN;
+    user_id_is_uuid BOOLEAN;
+    athlete_id_is_uuid BOOLEAN;
+BEGIN
+    -- Check if user_id exists and is UUID
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'user_id'
+        AND data_type = 'uuid'
+    ) INTO has_user_id;
+    
+    -- Check if athlete_id exists and is UUID or text
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'athlete_id'
+    ) INTO has_athlete_id;
+    
+    -- Add foreign key for user_id if it exists and doesn't have constraint
+    IF has_user_id THEN
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints 
+            WHERE constraint_name = 'training_sessions_user_id_fkey'
+            AND table_name = 'training_sessions'
+        ) THEN
+            ALTER TABLE training_sessions 
+            ADD CONSTRAINT training_sessions_user_id_fkey 
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+        END IF;
+    END IF;
+    
+    -- Add foreign key for athlete_id if it exists and doesn't have constraint
+    IF has_athlete_id THEN
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints 
+            WHERE constraint_name = 'training_sessions_athlete_id_fkey'
+            AND table_name = 'training_sessions'
+        ) THEN
+            -- Check if athlete_id is UUID or text
+            SELECT data_type = 'uuid' INTO user_id_is_uuid
+            FROM information_schema.columns 
+            WHERE table_name = 'training_sessions' 
+            AND column_name = 'athlete_id';
+            
+            IF user_id_is_uuid THEN
+                ALTER TABLE training_sessions 
+                ADD CONSTRAINT training_sessions_athlete_id_fkey 
+                FOREIGN KEY (athlete_id) REFERENCES users(id) ON DELETE CASCADE;
+            END IF;
+        END IF;
+    END IF;
+END $$;
+
+-- =============================================================================
+-- 3. ENSURE CRITICAL INDEXES EXIST
+-- =============================================================================
+
+-- Indexes for users table
+CREATE INDEX IF NOT EXISTS idx_users_email_lower ON users(LOWER(email));
+CREATE INDEX IF NOT EXISTS idx_users_active ON users(is_active) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_users_email_verified ON users(email_verified) WHERE email_verified = true;
+
+-- Indexes for training_sessions (performance critical)
+-- Check which columns exist and create appropriate indexes
+DO $$
+DECLARE
+    has_user_id BOOLEAN;
+    has_athlete_id BOOLEAN;
+    has_status BOOLEAN;
+    has_session_date BOOLEAN;
+BEGIN
+    -- Check which columns exist
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'user_id'
+    ) INTO has_user_id;
+    
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'athlete_id'
+    ) INTO has_athlete_id;
+    
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'status'
+    ) INTO has_status;
+    
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'session_date'
+    ) INTO has_session_date;
+    
+    -- Create user + status index if both exist
+    IF has_status THEN
+        IF has_user_id THEN
+            CREATE INDEX IF NOT EXISTS idx_training_sessions_user_status 
+                ON training_sessions(user_id, status) 
+                WHERE status IN ('completed', 'in_progress');
+        ELSIF has_athlete_id THEN
+            CREATE INDEX IF NOT EXISTS idx_training_sessions_athlete_status 
+                ON training_sessions(athlete_id, status) 
+                WHERE status IN ('completed', 'in_progress');
+        END IF;
+    END IF;
+    
+    -- Create date index if session_date exists
+    IF has_session_date THEN
+        CREATE INDEX IF NOT EXISTS idx_training_sessions_date_range 
+            ON training_sessions(session_date) 
+            WHERE session_date IS NOT NULL;
+    END IF;
+END $$;
+
+-- Indexes for team_members
+-- Only create status index if table and status column exist
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename = 'team_members'
+    ) AND EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'team_members' 
+        AND column_name = 'status'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS idx_team_members_user_status 
+            ON team_members(user_id, status) 
+            WHERE status = 'active';
+    END IF;
+END $$;
+
+-- =============================================================================
+-- 4. FIX DATA TYPE CONSISTENCIES WHERE POSSIBLE
+-- =============================================================================
+
+-- Note: We cannot change VARCHAR(255) to UUID for existing tables with data
+-- without data migration. Instead, we'll document the pattern and ensure
+-- new tables follow the UUID pattern.
+
+-- Add helper function to convert VARCHAR user_id to UUID safely
+CREATE OR REPLACE FUNCTION user_id_to_uuid(p_user_id VARCHAR(255))
+RETURNS UUID AS $$
+BEGIN
+    -- Try to cast directly if it's already a UUID string
+    BEGIN
+        RETURN p_user_id::UUID;
+    EXCEPTION WHEN OTHERS THEN
+        -- If conversion fails, try to find UUID from users table
+        RETURN (SELECT id FROM users WHERE id::text = p_user_id LIMIT 1);
+    END;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+COMMENT ON FUNCTION user_id_to_uuid IS 'Helper function to convert VARCHAR user_id to UUID. Returns NULL if conversion fails.';
+
+-- =============================================================================
+-- 5. ENSURE RLS IS ENABLED ON CRITICAL TABLES
+-- =============================================================================
+
+-- Enable RLS on training_sessions if not already enabled
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename = 'training_sessions'
+        AND rowsecurity = false
+    ) THEN
+        ALTER TABLE training_sessions ENABLE ROW LEVEL SECURITY;
+    END IF;
+END $$;
+
+-- Enable RLS on team_members if not already enabled
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename = 'team_members'
+    ) THEN
+        IF EXISTS (
+            SELECT 1 FROM pg_tables 
+            WHERE schemaname = 'public' 
+            AND tablename = 'team_members'
+            AND rowsecurity = false
+        ) THEN
+            ALTER TABLE team_members ENABLE ROW LEVEL SECURITY;
+        END IF;
+    END IF;
+END $$;
+
+-- Enable RLS on positions table (reference/lookup data)
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename = 'positions'
+        AND rowsecurity = false
+    ) THEN
+        ALTER TABLE positions ENABLE ROW LEVEL SECURITY;
+    END IF;
+END $$;
+
+-- =============================================================================
+-- 6. CREATE MISSING RLS POLICIES FOR TRAINING_SESSIONS
+-- =============================================================================
+-- Note: training_sessions may use user_id, athlete_id, or neither
+-- Only create policies if a user identifier column exists
+
+-- Drop existing policies if they exist (to avoid conflicts)
+DROP POLICY IF EXISTS training_sessions_select_policy ON training_sessions;
+DROP POLICY IF EXISTS training_sessions_insert_policy ON training_sessions;
+DROP POLICY IF EXISTS training_sessions_update_policy ON training_sessions;
+DROP POLICY IF EXISTS training_sessions_delete_policy ON training_sessions;
+
+-- Policy for SELECT: Users can view their own training sessions
+-- Check which user column exists and create appropriate policy
+DO $$
+DECLARE
+    has_user_id BOOLEAN;
+    has_athlete_id BOOLEAN;
+    athlete_id_type TEXT;
+BEGIN
+    -- Check which columns exist
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'user_id'
+    ) INTO has_user_id;
+    
+    SELECT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'athlete_id'
+    ) INTO has_athlete_id;
+    
+    -- Get athlete_id data type if it exists
+    IF has_athlete_id THEN
+        SELECT data_type INTO athlete_id_type
+        FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'athlete_id';
+    END IF;
+    
+    -- Only create policies if a user identifier column exists
+    IF has_user_id THEN
+        CREATE POLICY training_sessions_select_policy
+        ON training_sessions
+        FOR SELECT
+        TO authenticated
+        USING (
+            user_id = (SELECT auth.uid())
+            OR
+            (SELECT auth.role()) = 'admin'
+        );
+        
+        CREATE POLICY training_sessions_insert_policy
+        ON training_sessions
+        FOR INSERT
+        TO authenticated
+        WITH CHECK (
+            user_id = (SELECT auth.uid())
+            OR
+            (SELECT auth.role()) = 'admin'
+        );
+        
+        CREATE POLICY training_sessions_update_policy
+        ON training_sessions
+        FOR UPDATE
+        TO authenticated
+        USING (
+            user_id = (SELECT auth.uid())
+            OR
+            (SELECT auth.role()) = 'admin'
+        )
+        WITH CHECK (
+            user_id = (SELECT auth.uid())
+            OR
+            (SELECT auth.role()) = 'admin'
+        );
+        
+        CREATE POLICY training_sessions_delete_policy
+        ON training_sessions
+        FOR DELETE
+        TO authenticated
+        USING (
+            user_id = (SELECT auth.uid())
+            OR
+            (SELECT auth.role()) = 'admin'
+        );
+    ELSIF has_athlete_id THEN
+        -- Check if athlete_id is UUID or text
+        IF athlete_id_type = 'uuid' THEN
+            -- athlete_id is UUID, compare directly
+            CREATE POLICY training_sessions_select_policy
+            ON training_sessions
+            FOR SELECT
+            TO authenticated
+            USING (
+                athlete_id = (SELECT auth.uid())
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+            
+            CREATE POLICY training_sessions_insert_policy
+            ON training_sessions
+            FOR INSERT
+            TO authenticated
+            WITH CHECK (
+                athlete_id = (SELECT auth.uid())
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+            
+            CREATE POLICY training_sessions_update_policy
+            ON training_sessions
+            FOR UPDATE
+            TO authenticated
+            USING (
+                athlete_id = (SELECT auth.uid())
+                OR
+                (SELECT auth.role()) = 'admin'
+            )
+            WITH CHECK (
+                athlete_id = (SELECT auth.uid())
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+            
+            CREATE POLICY training_sessions_delete_policy

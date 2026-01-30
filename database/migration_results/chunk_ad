@@ -1,0 +1,1000 @@
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_new_version INTEGER;
+    v_structure_snapshot JSONB;
+BEGIN
+    -- Only create version if structural fields changed
+    IF (
+        (OLD.session_structure IS DISTINCT FROM NEW.session_structure)
+        OR (OLD.prescribed_duration IS DISTINCT FROM NEW.prescribed_duration)
+        OR (OLD.prescribed_intensity IS DISTINCT FROM NEW.prescribed_intensity)
+    ) THEN
+        -- Get next version number
+        SELECT COALESCE(MAX(version_number), 0) + 1 INTO v_new_version
+        FROM session_version_history
+        WHERE session_id = NEW.id;
+        
+        -- Create structure snapshot
+        v_structure_snapshot := jsonb_build_object(
+            'exercises', COALESCE(NEW.session_structure, '{}'::jsonb),
+            'prescribed_duration', NEW.prescribed_duration,
+            'prescribed_intensity', NEW.prescribed_intensity,
+            'coach_locked', NEW.coach_locked,
+            'modified_by_coach_id', NEW.modified_by_coach_id
+        );
+        
+        -- Insert version history
+        INSERT INTO session_version_history (
+            session_id,
+            version_number,
+            session_structure,
+            modified_by_coach_id,
+            modified_at,
+            modification_reason
+        ) VALUES (
+            NEW.id,
+            v_new_version,
+            v_structure_snapshot,
+            NEW.modified_by_coach_id,
+            COALESCE(NEW.modified_at, NOW()),
+            NULL -- Can be set by coach
+        );
+        
+        -- Update current version
+        NEW.current_version := v_new_version;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$;
+
+-- Trigger: Create version on modification
+DROP TRIGGER IF EXISTS create_session_version_trigger ON training_sessions;
+CREATE TRIGGER create_session_version_trigger
+BEFORE UPDATE ON training_sessions
+FOR EACH ROW
+EXECUTE FUNCTION create_session_version();
+
+-- ============================================================================
+-- EXECUTION LOGS TABLE (Append-Only)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS execution_logs (
+    log_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id UUID NOT NULL REFERENCES training_sessions(id) ON DELETE CASCADE,
+    session_version INTEGER NOT NULL, -- Which version was executed
+    athlete_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    exercise_id UUID,
+    exercise_name TEXT,
+    sets_completed INTEGER,
+    reps_completed INTEGER,
+    load_kg NUMERIC(6,2),
+    rpe INTEGER CHECK (rpe BETWEEN 1 AND 10),
+    duration_minutes INTEGER,
+    notes TEXT,
+    logged_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    -- Prevent backdating
+    CONSTRAINT no_future_timestamps CHECK (logged_at <= NOW() + INTERVAL '1 minute'),
+    CONSTRAINT no_old_backdating CHECK (
+        logged_at >= (
+            SELECT created_at FROM training_sessions 
+            WHERE id = session_id
+        ) - INTERVAL '1 day'
+    )
+);
+
+CREATE INDEX idx_execution_logs_session ON execution_logs(session_id, logged_at DESC);
+CREATE INDEX idx_execution_logs_athlete ON execution_logs(athlete_id, logged_at DESC);
+CREATE INDEX idx_execution_logs_version ON execution_logs(session_id, session_version);
+
+COMMENT ON TABLE execution_logs IS 'Append-only execution logs. Never UPDATE or DELETE.';
+
+-- ============================================================================
+-- RLS: Execution logs append-only
+-- ============================================================================
+ALTER TABLE execution_logs ENABLE ROW LEVEL SECURITY;
+
+-- Athletes: Can insert own logs
+DROP POLICY IF EXISTS "Athletes can log execution" ON execution_logs;
+CREATE POLICY "Athletes can log execution"
+ON execution_logs
+FOR INSERT
+WITH CHECK (athlete_id = auth.uid());
+
+-- Athletes: Can read own logs
+DROP POLICY IF EXISTS "Athletes can read own logs" ON execution_logs;
+CREATE POLICY "Athletes can read own logs"
+ON execution_logs
+FOR SELECT
+USING (athlete_id = auth.uid());
+
+-- Coaches: Can read assigned athlete logs (compliance)
+DROP POLICY IF EXISTS "Coaches can read athlete logs" ON execution_logs;
+CREATE POLICY "Coaches can read athlete logs"
+ON execution_logs
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM coach_athlete_assignments
+        WHERE coach_id = auth.uid()
+        AND athlete_id = execution_logs.athlete_id
+    )
+);
+
+-- Prevent UPDATE and DELETE
+DROP POLICY IF EXISTS "No updates on execution logs" ON execution_logs;
+CREATE POLICY "No updates on execution logs"
+ON execution_logs
+FOR UPDATE
+USING (false);
+
+DROP POLICY IF EXISTS "No deletes on execution logs" ON execution_logs;
+CREATE POLICY "No deletes on execution logs"
+ON execution_logs
+FOR DELETE
+USING (false);
+
+-- ============================================================================
+-- FUNCTION: Get Session Version Executed by Athlete
+-- ============================================================================
+CREATE OR REPLACE FUNCTION get_executed_version(
+    p_session_id UUID,
+    p_athlete_id UUID
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_version INTEGER;
+BEGIN
+    SELECT session_version INTO v_version
+    FROM execution_logs
+    WHERE session_id = p_session_id
+    AND athlete_id = p_athlete_id
+    ORDER BY logged_at ASC
+    LIMIT 1;
+    
+    RETURN COALESCE(v_version, 1); -- Default to v1 if no logs
+END;
+$$;
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_update_rls_policies.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Update RLS policies for coach_locked and state enforcement
+-- Date: 2026-01-06
+-- Purpose: Implement Section 3.1 (API Guard Rules) via RLS
+
+-- Drop existing UPDATE policy
+DROP POLICY IF EXISTS "Users can update own training sessions" ON training_sessions;
+
+-- Create new UPDATE policy with coach_locked and state checks
+CREATE POLICY "Users can update own training sessions"
+ON training_sessions FOR UPDATE
+USING (
+  user_id = auth.uid()
+  AND coach_locked = false
+  AND session_state IN ('PLANNED', 'GENERATED', 'VISIBLE', 'ACKNOWLEDGED')
+)
+WITH CHECK (
+  user_id = auth.uid()
+  AND coach_locked = false
+  AND session_state IN ('PLANNED', 'GENERATED', 'VISIBLE', 'ACKNOWLEDGED')
+);
+
+-- Create separate policy for coaches modifying sessions
+DROP POLICY IF EXISTS "Coaches can modify team training sessions" ON training_sessions;
+CREATE POLICY "Coaches can modify team training sessions"
+ON training_sessions FOR UPDATE
+USING (
+  EXISTS (
+    SELECT 1 FROM auth.users
+    WHERE auth.uid() = users.id
+    AND users.raw_user_meta_data->>'role' = 'coach'
+  )
+  AND (
+    -- Coach can modify if they locked it
+    (coach_locked = true AND modified_by_coach_id = auth.uid())
+    OR
+    -- Coach can modify if not locked and state allows
+    (coach_locked = false AND session_state IN ('PLANNED', 'GENERATED', 'VISIBLE', 'ACKNOWLEDGED'))
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM auth.users
+    WHERE auth.uid() = users.id
+    AND users.raw_user_meta_data->>'role' = 'coach'
+  )
+  AND (
+    (coach_locked = true AND modified_by_coach_id = auth.uid())
+    OR
+    (coach_locked = false AND session_state IN ('PLANNED', 'GENERATED', 'VISIBLE', 'ACKNOWLEDGED'))
+  )
+);
+
+-- Policy for athletes to log execution data (append-only, no structure changes)
+DROP POLICY IF EXISTS "Athletes can log execution data" ON training_sessions;
+CREATE POLICY "Athletes can log execution data"
+ON training_sessions FOR UPDATE
+USING (
+  user_id = auth.uid()
+  AND session_state IN ('IN_PROGRESS', 'COMPLETED')
+)
+WITH CHECK (
+  user_id = auth.uid()
+  AND session_state IN ('IN_PROGRESS', 'COMPLETED')
+  -- Prevent structure modifications via RLS
+  AND (
+    session_structure IS NOT DISTINCT FROM (SELECT session_structure FROM training_sessions WHERE id = training_sessions.id)
+  )
+);
+
+COMMENT ON POLICY "Users can update own training sessions" ON training_sessions IS 'Allows users to update their own sessions only when not coach_locked and state allows';
+COMMENT ON POLICY "Coaches can modify team training sessions" ON training_sessions IS 'Allows coaches to modify sessions they locked or sessions in mutable states';
+COMMENT ON POLICY "Athletes can log execution data" ON training_sessions IS 'Allows athletes to log execution data (RPE, duration) but not modify structure';
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_wellness_privacy_rls.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Wellness Data Privacy RLS
+-- Date: 2026-01-06
+-- Purpose: Enforce consent-based visibility for wellness data
+
+-- ============================================================================
+-- COACH-ATHLETE ASSIGNMENT TABLE (if not exists)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS coach_athlete_assignments (
+    assignment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    coach_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    athlete_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    assigned_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    UNIQUE(coach_id, athlete_id)
+);
+
+CREATE INDEX idx_coach_athlete_assignments_coach ON coach_athlete_assignments(coach_id);
+CREATE INDEX idx_coach_athlete_assignments_athlete ON coach_athlete_assignments(athlete_id);
+
+COMMENT ON TABLE coach_athlete_assignments IS 'Coach-athlete assignment relationships for authorization';
+
+-- ============================================================================
+-- RLS: wellness_logs
+-- ============================================================================
+ALTER TABLE wellness_logs ENABLE ROW LEVEL SECURITY;
+
+-- Athletes: Full access to own data
+DROP POLICY IF EXISTS "Athletes full access wellness logs" ON wellness_logs;
+CREATE POLICY "Athletes full access wellness logs"
+ON wellness_logs
+FOR ALL
+USING (athlete_id = auth.uid())
+WITH CHECK (athlete_id = auth.uid());
+
+-- Coaches: Compliance only (check-in exists yes/no)
+-- Content hidden unless consent or safety override
+DROP POLICY IF EXISTS "Coaches compliance only wellness" ON wellness_logs;
+CREATE POLICY "Coaches compliance only wellness"
+ON wellness_logs
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM coach_athlete_assignments
+        WHERE coach_id = auth.uid()
+        AND athlete_id = wellness_logs.athlete_id
+    )
+    -- Policy allows SELECT, but API filters columns based on consent
+);
+
+-- Medical: Full access
+DROP POLICY IF EXISTS "Medical full access wellness" ON wellness_logs;
+CREATE POLICY "Medical full access wellness"
+ON wellness_logs
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = auth.uid()
+        AND raw_user_meta_data->>'role' IN ('physio', 'medical_staff', 'admin')
+    )
+);
+
+-- Teammates: NO access (no policy = no access)
+
+-- ============================================================================
+-- RLS: readiness_scores
+-- ============================================================================
+ALTER TABLE readiness_scores ENABLE ROW LEVEL SECURITY;
+
+-- Athletes: Full access to own scores
+DROP POLICY IF EXISTS "Athletes can view own readiness scores" ON readiness_scores;
+CREATE POLICY "Athletes can view own readiness scores"
+ON readiness_scores
+FOR SELECT
+USING (athlete_id = auth.uid());
+
+-- Coaches: ReadinessScore hidden unless consent or safety override
+DROP POLICY IF EXISTS "Coaches can view readiness with consent" ON readiness_scores;
+CREATE POLICY "Coaches can view readiness with consent"
+ON readiness_scores
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM coach_athlete_assignments
+        WHERE coach_id = auth.uid()
+        AND athlete_id = readiness_scores.athlete_id
+    )
+    AND (
+        -- Consent check: get_athlete_consent() returns true
+        get_athlete_consent(readiness_scores.athlete_id, 'readiness') = true
+        OR
+        -- Safety override: ACWR danger zone
+        readiness_scores.acwr > 1.5
+        OR readiness_scores.acwr < 0.8
+    )
+);
+
+-- Medical Staff: Full access
+DROP POLICY IF EXISTS "Medical staff can view readiness scores" ON readiness_scores;
+CREATE POLICY "Medical staff can view readiness scores"
+ON readiness_scores
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = auth.uid()
+        AND raw_user_meta_data->>'role' IN ('physio', 'medical_staff', 'admin')
+    )
+);
+
+-- ============================================================================
+-- RLS: wellness_entries (if table exists)
+-- ============================================================================
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'wellness_entries'
+    ) THEN
+        ALTER TABLE wellness_entries ENABLE ROW LEVEL SECURITY;
+        
+        -- Athletes: Full access
+        DROP POLICY IF EXISTS "Athletes can view own wellness entries" ON wellness_entries;
+        EXECUTE 'CREATE POLICY "Athletes can view own wellness entries"
+        ON wellness_entries
+        FOR SELECT
+        USING (athlete_id = auth.uid())';
+        
+        -- Coaches: Hidden unless consent or safety override
+        DROP POLICY IF EXISTS "Coaches can view wellness with consent" ON wellness_entries;
+        EXECUTE 'CREATE POLICY "Coaches can view wellness with consent"
+        ON wellness_entries
+        FOR SELECT
+        USING (
+            EXISTS (
+                SELECT 1 FROM coach_athlete_assignments
+                WHERE coach_id = auth.uid()
+                AND athlete_id = wellness_entries.athlete_id
+            )
+            AND (
+                get_athlete_consent(wellness_entries.athlete_id, ''wellness'') = true
+                OR
+                has_active_safety_override(wellness_entries.athlete_id, ''pain'') = true
+            )
+        )';
+    END IF;
+END $$;
+
+-- ============================================================================
+-- RLS: training_sessions (execution notes)
+-- ============================================================================
+-- Add policy for training notes visibility
+DROP POLICY IF EXISTS "Coaches can view training notes with consent" ON training_sessions;
+CREATE POLICY "Coaches can view training notes with consent"
+ON training_sessions
+FOR SELECT
+USING (
+    -- Coach assigned to athlete
+    EXISTS (
+        SELECT 1 FROM coach_athlete_assignments
+        WHERE coach_id = auth.uid()
+        AND athlete_id = training_sessions.user_id
+    )
+    -- Notes column filtered at API layer based on consent
+    -- Compliance data (sets/reps/RPE) always visible
+);
+
+
+
+
+-- ============================================================================
+-- Migration: 20260107_fix_function_search_paths.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Fix Function Search Paths
+-- Date: 2026-01-07
+-- Purpose: Fix mutable search_path security issue in trigger functions
+
+-- ============================================================================
+-- FIX FUNCTION SEARCH PATHS
+-- ============================================================================
+
+-- Fix update_team_activity_updated_at function
+CREATE OR REPLACE FUNCTION public.update_team_activity_updated_at()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$;
+
+-- Fix audit_team_activity_changes function
+CREATE OR REPLACE FUNCTION public.audit_team_activity_changes()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO public.team_activity_audit (
+            activity_id,
+            action,
+            performed_by_coach_id,
+            new_values
+        ) VALUES (
+            NEW.id,
+            'created',
+            NEW.created_by_coach_id,
+            row_to_json(NEW)
+        );
+        RETURN NEW;
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO public.team_activity_audit (
+            activity_id,
+            action,
+            performed_by_coach_id,
+            old_values,
+            new_values
+        ) VALUES (
+            NEW.id,
+            'updated',
+            NEW.created_by_coach_id,
+            row_to_json(OLD),
+            row_to_json(NEW)
+        );
+        RETURN NEW;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO public.team_activity_audit (
+            activity_id,
+            action,
+            performed_by_coach_id,
+            old_values
+        ) VALUES (
+            OLD.id,
+            'deleted',
+            OLD.created_by_coach_id,
+            row_to_json(OLD)
+        );
+        RETURN OLD;
+    END IF;
+    RETURN NULL;
+END;
+$$;
+
+COMMENT ON FUNCTION public.update_team_activity_updated_at() IS 'Trigger function to update updated_at timestamp. Search path fixed for security.';
+COMMENT ON FUNCTION public.audit_team_activity_changes() IS 'Trigger function to audit team activity changes. Search path fixed for security.';
+
+
+
+
+-- ============================================================================
+-- Migration: 20260107_optimize_rls_auth_initplan.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Optimize RLS Policies with Auth Initialization Plan
+-- Date: 2026-01-07
+-- Purpose: Wrap auth.uid() and auth.role() calls with (select ...) to prevent
+--          re-evaluation for each row, significantly improving query performance
+
+-- ============================================================================
+-- SAFETY OVERRIDE LOG
+-- ============================================================================
+
+-- Service role can read safety overrides
+DROP POLICY IF EXISTS "Service role can read safety overrides" ON public.safety_override_log;
+CREATE POLICY "Service role can read safety overrides"
+ON public.safety_override_log
+FOR SELECT
+USING ((select auth.role()) = 'service_role');
+
+-- Service role can log safety overrides
+DROP POLICY IF EXISTS "Service role can log safety overrides" ON public.safety_override_log;
+CREATE POLICY "Service role can log safety overrides"
+ON public.safety_override_log
+FOR INSERT
+WITH CHECK (
+    (select auth.role()) = 'service_role'
+    OR (select auth.role()) = 'authenticated'
+);
+
+-- Athletes can view own safety overrides
+DROP POLICY IF EXISTS "Athletes can view own safety overrides" ON public.safety_override_log;
+CREATE POLICY "Athletes can view own safety overrides"
+ON public.safety_override_log
+FOR SELECT
+USING (athlete_id = (select auth.uid()));
+
+-- Coaches can view athlete safety overrides
+DROP POLICY IF EXISTS "Coaches can view athlete safety overrides" ON public.safety_override_log;
+CREATE POLICY "Coaches can view athlete safety overrides"
+ON public.safety_override_log
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM public.coach_athlete_assignments
+        WHERE coach_id = (select auth.uid())
+        AND athlete_id = safety_override_log.athlete_id
+    )
+    OR EXISTS (
+        SELECT 1 FROM public.team_members tm1
+        JOIN public.team_members tm2 ON tm1.team_id = tm2.team_id
+        WHERE tm1.user_id = (select auth.uid())
+        AND tm1.role IN ('coach', 'head_coach', 'assistant_coach')
+        AND tm2.user_id = safety_override_log.athlete_id
+        AND tm1.status = 'active'
+        AND tm2.status = 'active'
+    )
+);
+
+-- ============================================================================
+-- EXECUTION LOGS
+-- ============================================================================
+
+-- Athletes can log execution
+DROP POLICY IF EXISTS "Athletes can log execution" ON public.execution_logs;
+CREATE POLICY "Athletes can log execution"
+ON public.execution_logs
+FOR INSERT
+WITH CHECK (athlete_id = (select auth.uid()));
+
+-- Athletes can read own logs
+DROP POLICY IF EXISTS "Athletes can read own logs" ON public.execution_logs;
+CREATE POLICY "Athletes can read own logs"
+ON public.execution_logs
+FOR SELECT
+USING (athlete_id = (select auth.uid()));
+
+-- Coaches can read athlete logs
+DROP POLICY IF EXISTS "Coaches can read athlete logs" ON public.execution_logs;
+CREATE POLICY "Coaches can read athlete logs"
+ON public.execution_logs
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM public.coach_athlete_assignments
+        WHERE coach_id = (select auth.uid())
+        AND athlete_id = execution_logs.athlete_id
+    )
+);
+
+-- ============================================================================
+-- WELLNESS LOGS
+-- ============================================================================
+
+-- Athletes full access wellness logs
+DROP POLICY IF EXISTS "Athletes full access wellness logs" ON public.wellness_logs;
+CREATE POLICY "Athletes full access wellness logs"
+ON public.wellness_logs
+FOR ALL
+USING (athlete_id = (select auth.uid()))
+WITH CHECK (athlete_id = (select auth.uid()));
+
+-- Coaches compliance only wellness
+DROP POLICY IF EXISTS "Coaches compliance only wellness" ON public.wellness_logs;
+CREATE POLICY "Coaches compliance only wellness"
+ON public.wellness_logs
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM public.coach_athlete_assignments
+        WHERE coach_id = (select auth.uid())
+        AND athlete_id = wellness_logs.athlete_id
+    )
+);
+
+-- Medical full access wellness
+DROP POLICY IF EXISTS "Medical full access wellness" ON public.wellness_logs;
+CREATE POLICY "Medical full access wellness"
+ON public.wellness_logs
+FOR SELECT
+USING (
+    EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = ANY (ARRAY['physio', 'medical_staff', 'admin'])
+    )
+);
+
+-- ============================================================================
+-- COACH ATHLETE ASSIGNMENTS
+-- ============================================================================
+
+-- Coaches can view own assignments
+DROP POLICY IF EXISTS "Coaches can view own assignments" ON public.coach_athlete_assignments;
+CREATE POLICY "Coaches can view own assignments"
+ON public.coach_athlete_assignments
+FOR SELECT
+USING (coach_id = (select auth.uid()));
+
+-- Athletes can view own assignments
+DROP POLICY IF EXISTS "Athletes can view own assignments" ON public.coach_athlete_assignments;
+CREATE POLICY "Athletes can view own assignments"
+ON public.coach_athlete_assignments
+FOR SELECT
+USING (athlete_id = (select auth.uid()));
+
+-- Coaches can create assignments
+DROP POLICY IF EXISTS "Coaches can create assignments" ON public.coach_athlete_assignments;
+CREATE POLICY "Coaches can create assignments"
+ON public.coach_athlete_assignments
+FOR INSERT
+WITH CHECK (
+    coach_id = (select auth.uid())
+    AND EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = ANY (ARRAY['coach', 'admin'])
+    )
+);
+
+-- Coaches can update own assignments
+DROP POLICY IF EXISTS "Coaches can update own assignments" ON public.coach_athlete_assignments;
+CREATE POLICY "Coaches can update own assignments"
+ON public.coach_athlete_assignments
+FOR UPDATE
+USING (coach_id = (select auth.uid()))
+WITH CHECK (coach_id = (select auth.uid()));
+
+-- Coaches can delete own assignments
+DROP POLICY IF EXISTS "Coaches can delete own assignments" ON public.coach_athlete_assignments;
+CREATE POLICY "Coaches can delete own assignments"
+ON public.coach_athlete_assignments
+FOR DELETE
+USING (coach_id = (select auth.uid()));
+
+-- Admins full access coach assignments
+DROP POLICY IF EXISTS "Admins full access coach assignments" ON public.coach_athlete_assignments;
+CREATE POLICY "Admins full access coach assignments"
+ON public.coach_athlete_assignments
+FOR ALL
+USING (
+    EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+)
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- ============================================================================
+-- TOURNAMENT PARTICIPATION
+-- ============================================================================
+
+-- Users can view tournament participation
+DROP POLICY IF EXISTS "Users can view tournament participation" ON public.tournament_participation;
+CREATE POLICY "Users can view tournament participation"
+ON public.tournament_participation
+FOR SELECT
+USING (
+    team_id IN (
+        SELECT team_members.team_id
+        FROM team_members
+        WHERE team_members.user_id = (select auth.uid())
+    )
+    OR EXISTS (
+        SELECT 1 FROM tournaments
+        WHERE tournaments.id = tournament_participation.tournament_id
+        AND (tournaments.created_by = (select auth.uid()) OR tournaments.created_by IS NULL)
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- Team admins can create participation
+DROP POLICY IF EXISTS "Team admins can create participation" ON public.tournament_participation;
+CREATE POLICY "Team admins can create participation"
+ON public.tournament_participation
+FOR INSERT
+WITH CHECK (
+    team_id IN (
+        SELECT team_members.team_id
+        FROM team_members
+        WHERE team_members.user_id = (select auth.uid())
+        AND team_members.role = ANY (ARRAY['admin', 'coach'])
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- Team admins can update participation
+DROP POLICY IF EXISTS "Team admins can update participation" ON public.tournament_participation;
+CREATE POLICY "Team admins can update participation"
+ON public.tournament_participation
+FOR UPDATE
+USING (
+    team_id IN (
+        SELECT team_members.team_id
+        FROM team_members
+        WHERE team_members.user_id = (select auth.uid())
+        AND team_members.role = ANY (ARRAY['admin', 'coach'])
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+)
+WITH CHECK (
+    team_id IN (
+        SELECT team_members.team_id
+        FROM team_members
+        WHERE team_members.user_id = (select auth.uid())
+        AND team_members.role = ANY (ARRAY['admin', 'coach'])
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- Admins can delete participation
+DROP POLICY IF EXISTS "Admins can delete participation" ON public.tournament_participation;
+CREATE POLICY "Admins can delete participation"
+ON public.tournament_participation
+FOR DELETE
+USING (
+    EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- ============================================================================
+-- MOVEMENT PATTERNS
+-- ============================================================================
+
+-- Users can insert movement patterns
+DROP POLICY IF EXISTS "Users can insert movement patterns" ON public.movement_patterns;
+CREATE POLICY "Users can insert movement patterns"
+ON public.movement_patterns
+FOR INSERT
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM training_programs tp
+        WHERE tp.id = movement_patterns.program_id
+        AND (
+            tp.created_by = (select auth.uid())
+            OR tp.team_id IN (
+                SELECT team_members.team_id
+                FROM team_members
+                WHERE team_members.user_id = (select auth.uid())
+                AND team_members.role = ANY (ARRAY['admin', 'coach'])
+            )
+        )
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- Users can update movement patterns
+DROP POLICY IF EXISTS "Users can update movement patterns" ON public.movement_patterns;
+CREATE POLICY "Users can update movement patterns"
+ON public.movement_patterns
+FOR UPDATE
+USING (
+    EXISTS (
+        SELECT 1 FROM training_programs tp
+        WHERE tp.id = movement_patterns.program_id
+        AND (
+            tp.created_by = (select auth.uid())
+            OR tp.team_id IN (
+                SELECT team_members.team_id
+                FROM team_members
+                WHERE team_members.user_id = (select auth.uid())
+                AND team_members.role = ANY (ARRAY['admin', 'coach'])
+            )
+        )
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+)
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM training_programs tp
+        WHERE tp.id = movement_patterns.program_id
+        AND (
+            tp.created_by = (select auth.uid())
+            OR tp.team_id IN (
+                SELECT team_members.team_id
+                FROM team_members
+                WHERE team_members.user_id = (select auth.uid())
+                AND team_members.role = ANY (ARRAY['admin', 'coach'])
+            )
+        )
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- ============================================================================
+-- WARMUP PROTOCOLS
+-- ============================================================================
+
+-- Users can insert warmup protocols
+DROP POLICY IF EXISTS "Users can insert warmup protocols" ON public.warmup_protocols;
+CREATE POLICY "Users can insert warmup protocols"
+ON public.warmup_protocols
+FOR INSERT
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM training_programs tp
+        WHERE tp.id = warmup_protocols.program_id
+        AND (
+            tp.created_by = (select auth.uid())
+            OR tp.team_id IN (
+                SELECT team_members.team_id
+                FROM team_members
+                WHERE team_members.user_id = (select auth.uid())
+                AND team_members.role = ANY (ARRAY['admin', 'coach'])
+            )
+        )
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- Users can update warmup protocols
+DROP POLICY IF EXISTS "Users can update warmup protocols" ON public.warmup_protocols;
+CREATE POLICY "Users can update warmup protocols"
+ON public.warmup_protocols
+FOR UPDATE
+USING (
+    EXISTS (
+        SELECT 1 FROM training_programs tp
+        WHERE tp.id = warmup_protocols.program_id
+        AND (
+            tp.created_by = (select auth.uid())
+            OR tp.team_id IN (
+                SELECT team_members.team_id
+                FROM team_members
+                WHERE team_members.user_id = (select auth.uid())
+                AND team_members.role = ANY (ARRAY['admin', 'coach'])
+            )
+        )
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+)
+WITH CHECK (
+    EXISTS (
+        SELECT 1 FROM training_programs tp
+        WHERE tp.id = warmup_protocols.program_id
+        AND (
+            tp.created_by = (select auth.uid())
+            OR tp.team_id IN (
+                SELECT team_members.team_id
+                FROM team_members
+                WHERE team_members.user_id = (select auth.uid())
+                AND team_members.role = ANY (ARRAY['admin', 'coach'])
+            )
+        )
+    )
+    OR EXISTS (
+        SELECT 1 FROM auth.users
+        WHERE id = (select auth.uid())
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+);
+
+-- ============================================================================
+-- AI COACH VISIBILITY
+-- ============================================================================
+
+-- Authenticated users can create coach visibility records
+DROP POLICY IF EXISTS "Authenticated users can create coach visibility records" ON public.ai_coach_visibility;
+CREATE POLICY "Authenticated users can create coach visibility records"
+ON public.ai_coach_visibility
+FOR INSERT
+WITH CHECK ((select auth.role()) = 'authenticated');
+
+-- Coaches can view coach visibility records
+DROP POLICY IF EXISTS "Coaches can view coach visibility records" ON public.ai_coach_visibility;
+CREATE POLICY "Coaches can view coach visibility records"
+ON public.ai_coach_visibility
+FOR SELECT
+USING (coach_id = (select auth.uid()));
+
+-- Athletes can view own visibility records
+DROP POLICY IF EXISTS "Athletes can view own visibility records" ON public.ai_coach_visibility;
+CREATE POLICY "Athletes can view own visibility records"
+ON public.ai_coach_visibility
+FOR SELECT
+USING (player_id = (select auth.uid()));
+
+-- ============================================================================
+-- COACH ACTIVITY LOG
+-- ============================================================================
+
+-- Authenticated users can insert activity logs
+DROP POLICY IF EXISTS "Authenticated users can insert activity logs" ON public.coach_activity_log;
+CREATE POLICY "Authenticated users can insert activity logs"
+ON public.coach_activity_log
+FOR INSERT
+WITH CHECK ((select auth.role()) = 'authenticated');
+
+-- Coaches can view activity logs
+DROP POLICY IF EXISTS "Coaches can view activity logs" ON public.coach_activity_log;
+CREATE POLICY "Coaches can view activity logs"
+ON public.coach_activity_log
+FOR SELECT
+USING (coach_id = (select auth.uid()));
+
+-- ============================================================================
+-- CONSENT CHANGE LOG
+-- ============================================================================
+
+-- Authenticated users can log consent changes
+DROP POLICY IF EXISTS "Authenticated users can log consent changes" ON public.consent_change_log;
+CREATE POLICY "Authenticated users can log consent changes"
+ON public.consent_change_log
+FOR INSERT
+WITH CHECK ((select auth.role()) = 'authenticated');
+
+-- Users can view own consent change logs

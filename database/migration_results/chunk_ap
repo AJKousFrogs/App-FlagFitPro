@@ -1,0 +1,1000 @@
+            ON training_sessions
+            FOR DELETE
+            TO authenticated
+            USING (
+                athlete_id = (SELECT auth.uid())
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+        ELSE
+            -- athlete_id is text/varchar, cast auth.uid() to text
+            CREATE POLICY training_sessions_select_policy
+            ON training_sessions
+            FOR SELECT
+            TO authenticated
+            USING (
+                athlete_id = (SELECT auth.uid())::text
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+            
+            CREATE POLICY training_sessions_insert_policy
+            ON training_sessions
+            FOR INSERT
+            TO authenticated
+            WITH CHECK (
+                athlete_id = (SELECT auth.uid())::text
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+            
+            CREATE POLICY training_sessions_update_policy
+            ON training_sessions
+            FOR UPDATE
+            TO authenticated
+            USING (
+                athlete_id = (SELECT auth.uid())::text
+                OR
+                (SELECT auth.role()) = 'admin'
+            )
+            WITH CHECK (
+                athlete_id = (SELECT auth.uid())::text
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+            
+            CREATE POLICY training_sessions_delete_policy
+            ON training_sessions
+            FOR DELETE
+            TO authenticated
+            USING (
+                athlete_id = (SELECT auth.uid())::text
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+        END IF;
+    END IF;
+    -- If neither column exists, skip RLS policies (table may not need user-level access control)
+END $$;
+
+-- =============================================================================
+-- 7. CREATE MISSING RLS POLICIES FOR TEAM_MEMBERS
+-- =============================================================================
+-- Only create policies if team_members table exists
+
+DO $$
+DECLARE
+    table_exists BOOLEAN;
+BEGIN
+    -- Check if table exists
+    SELECT EXISTS (
+        SELECT 1 FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename = 'team_members'
+    ) INTO table_exists;
+    
+    IF table_exists THEN
+        -- Drop existing policies if they exist
+        DROP POLICY IF EXISTS team_members_select_policy ON team_members;
+        DROP POLICY IF EXISTS team_members_insert_policy ON team_members;
+        DROP POLICY IF EXISTS team_members_update_policy ON team_members;
+        DROP POLICY IF EXISTS team_members_delete_policy ON team_members;
+        
+        -- Policy for SELECT: Users can view their own memberships and team members
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_policies 
+            WHERE tablename = 'team_members' 
+            AND policyname = 'team_members_select_policy'
+        ) THEN
+            CREATE POLICY team_members_select_policy
+            ON team_members
+            FOR SELECT
+            TO authenticated
+            USING (
+                -- Users can view their own memberships
+                user_id = (SELECT auth.uid())
+                OR
+                -- Users can view other members of teams they belong to
+                team_id IN (
+                    SELECT team_id FROM team_members 
+                    WHERE user_id = (SELECT auth.uid()) 
+                    AND (status = 'active' OR status IS NULL)
+                )
+                OR
+                -- Admins can view all memberships
+                (SELECT auth.role()) = 'admin'
+            );
+        END IF;
+        
+        -- Policy for INSERT: Users can join teams (with approval if required)
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_policies 
+            WHERE tablename = 'team_members' 
+            AND policyname = 'team_members_insert_policy'
+        ) THEN
+            CREATE POLICY team_members_insert_policy
+            ON team_members
+            FOR INSERT
+            TO authenticated
+            WITH CHECK (
+                -- Users can create their own membership requests
+                user_id = (SELECT auth.uid())
+                OR
+                -- Admins can add any members
+                (SELECT auth.role()) = 'admin'
+            );
+        END IF;
+        
+        -- Policy for UPDATE: Team admins and users can update memberships
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_policies 
+            WHERE tablename = 'team_members' 
+            AND policyname = 'team_members_update_policy'
+        ) THEN
+            CREATE POLICY team_members_update_policy
+            ON team_members
+            FOR UPDATE
+            TO authenticated
+            USING (
+                -- Users can update their own membership
+                user_id = (SELECT auth.uid())
+                OR
+                -- Team admins can update memberships
+                team_id IN (
+                    SELECT team_id FROM team_members 
+                    WHERE user_id = (SELECT auth.uid()) 
+                    AND role IN ('admin', 'coach')
+                )
+                OR
+                -- Admins can update any membership
+                (SELECT auth.role()) = 'admin'
+            )
+            WITH CHECK (
+                -- Same check for new values
+                user_id = (SELECT auth.uid())
+                OR
+                team_id IN (
+                    SELECT team_id FROM team_members 
+                    WHERE user_id = (SELECT auth.uid()) 
+                    AND role IN ('admin', 'coach')
+                )
+                OR
+                (SELECT auth.role()) = 'admin'
+            );
+        END IF;
+        
+        -- Policy for DELETE: Users can leave teams, admins can remove members
+        IF NOT EXISTS (
+            SELECT 1 FROM pg_policies 
+            WHERE tablename = 'team_members' 
+            AND policyname = 'team_members_delete_policy'
+        ) THEN
+            CREATE POLICY team_members_delete_policy
+            ON team_members
+            FOR DELETE
+            TO authenticated
+            USING (
+                -- Users can delete their own membership
+                user_id = (SELECT auth.uid())
+                OR
+                -- Team admins can remove members
+                team_id IN (
+                    SELECT team_id FROM team_members 
+                    WHERE user_id = (SELECT auth.uid()) 
+                    AND role IN ('admin', 'coach')
+                )
+                OR
+                -- Admins can delete any membership
+                (SELECT auth.role()) = 'admin'
+            );
+        END IF;
+    END IF;
+END $$;
+
+-- =============================================================================
+-- 7B. CREATE RLS POLICIES FOR POSITIONS TABLE
+-- =============================================================================
+-- Positions is a reference/lookup table (QB, WR, DB, etc.)
+-- Public read access, admin-only write access
+
+DO $$
+DECLARE
+    table_exists BOOLEAN;
+BEGIN
+    -- Check if table exists
+    SELECT EXISTS (
+        SELECT 1 FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename = 'positions'
+    ) INTO table_exists;
+    
+    IF table_exists THEN
+        -- Drop existing policies if they exist
+        DROP POLICY IF EXISTS positions_select_public ON positions;
+        DROP POLICY IF EXISTS positions_write_admin ON positions;
+        
+        -- Policy for SELECT: Public read access (anyone can read positions)
+        CREATE POLICY positions_select_public
+        ON positions
+        FOR SELECT
+        TO public
+        USING (true);
+        
+        -- Policy for INSERT/UPDATE/DELETE: Admin-only write access
+        CREATE POLICY positions_write_admin
+        ON positions
+        FOR ALL
+        TO authenticated
+        USING ((SELECT auth.role()) = 'admin')
+        WITH CHECK ((SELECT auth.role()) = 'admin');
+    END IF;
+END $$;
+
+-- =============================================================================
+-- 8. ENSURE TRIGGERS ARE PROPERLY SET UP
+-- =============================================================================
+
+-- Recreate triggers for updated_at columns (using IF NOT EXISTS pattern)
+DO $$
+BEGIN
+    -- Users table trigger
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger 
+        WHERE tgname = 'update_users_updated_at'
+    ) THEN
+        CREATE TRIGGER update_users_updated_at
+        BEFORE UPDATE ON users
+        FOR EACH ROW
+        EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+
+    -- Teams table trigger
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger 
+        WHERE tgname = 'update_teams_updated_at'
+    ) THEN
+        CREATE TRIGGER update_teams_updated_at
+        BEFORE UPDATE ON teams
+        FOR EACH ROW
+        EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+
+    -- Training sessions trigger
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_trigger 
+        WHERE tgname = 'update_training_sessions_updated_at'
+    ) THEN
+        CREATE TRIGGER update_training_sessions_updated_at
+        BEFORE UPDATE ON training_sessions
+        FOR EACH ROW
+        EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END $$;
+
+-- =============================================================================
+-- 9. ADD MISSING COLUMNS FOR CONSISTENCY
+-- =============================================================================
+
+-- Ensure teams table has all standard columns
+DO $$
+BEGIN
+    -- Add created_by if it doesn't exist (useful for tracking team creators)
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'teams' AND column_name = 'created_by'
+    ) THEN
+        ALTER TABLE teams ADD COLUMN created_by UUID REFERENCES users(id) ON DELETE SET NULL;
+        CREATE INDEX IF NOT EXISTS idx_teams_created_by ON teams(created_by);
+    END IF;
+END $$;
+
+-- =============================================================================
+-- 10. CREATE VIEWS FOR COMMON QUERIES
+-- =============================================================================
+
+-- View for active team memberships
+-- Only create if team_members table exists
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename = 'team_members'
+    ) THEN
+        EXECUTE '
+        CREATE OR REPLACE VIEW active_team_memberships AS
+        SELECT 
+            tm.id,
+            tm.user_id,
+            tm.team_id,
+            tm.role,
+            tm.position,
+            tm.jersey_number,
+            tm.joined_at,
+            t.name as team_name,
+            t.is_public,
+            u.email as user_email,
+            u.first_name,
+            u.last_name
+        FROM team_members tm
+        INNER JOIN teams t ON tm.team_id = t.id
+        INNER JOIN users u ON tm.user_id = u.id
+        WHERE (tm.status = ''active'' OR tm.status IS NULL)
+        AND t.is_active = true';
+        
+        EXECUTE 'COMMENT ON VIEW active_team_memberships IS ''View of all active team memberships with team and user details''';
+    END IF;
+END $$;
+
+-- View for user training summary
+-- Handle both user_id and athlete_id columns, only create if table exists
+DO $$
+DECLARE
+    has_user_id BOOLEAN;
+    has_athlete_id BOOLEAN;
+    has_status BOOLEAN;
+    has_session_date BOOLEAN;
+BEGIN
+    -- Check if training_sessions table exists
+    IF EXISTS (
+        SELECT 1 FROM pg_tables 
+        WHERE schemaname = 'public' 
+        AND tablename = 'training_sessions'
+    ) THEN
+        -- Check which columns exist
+        SELECT EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name = 'training_sessions' 
+            AND column_name = 'user_id'
+        ) INTO has_user_id;
+        
+        SELECT EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name = 'training_sessions' 
+            AND column_name = 'athlete_id'
+        ) INTO has_athlete_id;
+        
+        SELECT EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name = 'training_sessions' 
+            AND column_name = 'status'
+        ) INTO has_status;
+        
+        SELECT EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name = 'training_sessions' 
+            AND column_name = 'session_date'
+        ) INTO has_session_date;
+        
+        -- Only create view if we have a user identifier column
+        IF has_user_id OR has_athlete_id THEN
+            IF has_user_id AND has_athlete_id THEN
+                -- Both exist, use COALESCE
+                EXECUTE '
+                CREATE OR REPLACE VIEW user_training_summary AS
+                SELECT 
+                    COALESCE(user_id::text, athlete_id::text) as user_id,
+                    COUNT(*) as total_sessions,
+                    COUNT(*) FILTER (WHERE status = ''completed'') as completed_sessions,
+                    COUNT(*) FILTER (WHERE status = ''planned'') as planned_sessions,
+                    AVG(duration_minutes) FILTER (WHERE status = ''completed'') as avg_duration_minutes,
+                    AVG(intensity_level) FILTER (WHERE status = ''completed'') as avg_intensity,
+                    AVG(rpe) FILTER (WHERE status = ''completed'') as avg_rpe,
+                    MIN(session_date) as first_session_date,
+                    MAX(session_date) as last_session_date
+                FROM training_sessions
+                WHERE user_id IS NOT NULL OR athlete_id IS NOT NULL
+                GROUP BY COALESCE(user_id::text, athlete_id::text)';
+            ELSIF has_user_id THEN
+                -- Only user_id exists
+                EXECUTE '
+                CREATE OR REPLACE VIEW user_training_summary AS
+                SELECT 
+                    user_id::text as user_id,
+                    COUNT(*) as total_sessions,
+                    COUNT(*) FILTER (WHERE status = ''completed'') as completed_sessions,
+                    COUNT(*) FILTER (WHERE status = ''planned'') as planned_sessions,
+                    AVG(duration_minutes) FILTER (WHERE status = ''completed'') as avg_duration_minutes,
+                    AVG(intensity_level) FILTER (WHERE status = ''completed'') as avg_intensity,
+                    AVG(rpe) FILTER (WHERE status = ''completed'') as avg_rpe,
+                    MIN(session_date) as first_session_date,
+                    MAX(session_date) as last_session_date
+                FROM training_sessions
+                WHERE user_id IS NOT NULL
+                GROUP BY user_id::text';
+            ELSIF has_athlete_id THEN
+                -- Only athlete_id exists
+                EXECUTE '
+                CREATE OR REPLACE VIEW user_training_summary AS
+                SELECT 
+                    athlete_id::text as user_id,
+                    COUNT(*) as total_sessions,
+                    COUNT(*) FILTER (WHERE status = ''completed'') as completed_sessions,
+                    COUNT(*) FILTER (WHERE status = ''planned'') as planned_sessions,
+                    AVG(duration_minutes) FILTER (WHERE status = ''completed'') as avg_duration_minutes,
+                    AVG(intensity_level) FILTER (WHERE status = ''completed'') as avg_intensity,
+                    AVG(rpe) FILTER (WHERE status = ''completed'') as avg_rpe,
+                    MIN(session_date) as first_session_date,
+                    MAX(session_date) as last_session_date
+                FROM training_sessions
+                WHERE athlete_id IS NOT NULL
+                GROUP BY athlete_id::text';
+            END IF;
+            
+            EXECUTE 'COMMENT ON VIEW user_training_summary IS ''Summary statistics for each user''''s training sessions''';
+        END IF;
+    END IF;
+END $$;
+
+-- =============================================================================
+-- 11. VALIDATION QUERIES (FOR VERIFICATION)
+-- =============================================================================
+
+-- Create function to check database consistency
+CREATE OR REPLACE FUNCTION check_database_consistency()
+RETURNS TABLE (
+    check_name TEXT,
+    status TEXT,
+    details TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        'update_updated_at_column function exists'::TEXT,
+        CASE WHEN EXISTS (
+            SELECT 1 FROM pg_proc 
+            WHERE proname = 'update_updated_at_column'
+        ) THEN 'PASS' ELSE 'FAIL' END,
+        'Function required by many triggers'::TEXT
+    
+    UNION ALL
+    
+    SELECT 
+        'RLS enabled on training_sessions'::TEXT,
+        CASE WHEN EXISTS (
+            SELECT 1 FROM pg_tables 
+            WHERE tablename = 'training_sessions' 
+            AND rowsecurity = true
+        ) THEN 'PASS' ELSE 'FAIL' END,
+        'Row Level Security should be enabled'::TEXT
+    
+    UNION ALL
+    
+    SELECT 
+        'RLS enabled on team_members'::TEXT,
+        CASE 
+            WHEN NOT EXISTS (
+                SELECT 1 FROM pg_tables 
+                WHERE tablename = 'team_members'
+            ) THEN 'SKIP'
+            WHEN EXISTS (
+                SELECT 1 FROM pg_tables 
+                WHERE tablename = 'team_members' 
+                AND rowsecurity = true
+            ) THEN 'PASS' 
+            ELSE 'FAIL' 
+        END,
+        'Row Level Security should be enabled (or table does not exist)'::TEXT
+    
+    UNION ALL
+    
+    SELECT 
+        'RLS enabled on positions'::TEXT,
+        CASE 
+            WHEN NOT EXISTS (
+                SELECT 1 FROM pg_tables 
+                WHERE tablename = 'positions'
+            ) THEN 'SKIP'
+            WHEN EXISTS (
+                SELECT 1 FROM pg_tables 
+                WHERE tablename = 'positions' 
+                AND rowsecurity = true
+            ) THEN 'PASS' 
+            ELSE 'FAIL' 
+        END,
+        'Row Level Security should be enabled (or table does not exist)'::TEXT
+    
+    UNION ALL
+    
+    SELECT 
+        'Foreign key: training_sessions.user_id -> users.id'::TEXT,
+        CASE WHEN EXISTS (
+            SELECT 1 FROM information_schema.table_constraints 
+            WHERE constraint_name = 'training_sessions_user_id_fkey'
+        ) THEN 'PASS' ELSE 'FAIL' END,
+        'Foreign key constraint should exist'::TEXT;
+END;
+$$ LANGUAGE plpgsql;
+
+COMMENT ON FUNCTION check_database_consistency IS 'Validates database consistency and returns status of critical checks';
+
+-- =============================================================================
+-- 12. GRANT PERMISSIONS
+-- =============================================================================
+
+-- Grant execute on helper functions
+GRANT EXECUTE ON FUNCTION user_id_to_uuid TO authenticated;
+GRANT EXECUTE ON FUNCTION check_database_consistency TO authenticated;
+
+-- Grant select on views (only if they exist)
+DO $$
+BEGIN
+    -- Grant on active_team_memberships if it exists
+    IF EXISTS (
+        SELECT 1 FROM pg_views 
+        WHERE schemaname = 'public' 
+        AND viewname = 'active_team_memberships'
+    ) THEN
+        GRANT SELECT ON active_team_memberships TO authenticated;
+    END IF;
+    
+    -- Grant on user_training_summary if it exists
+    IF EXISTS (
+        SELECT 1 FROM pg_views 
+        WHERE schemaname = 'public' 
+        AND viewname = 'user_training_summary'
+    ) THEN
+        GRANT SELECT ON user_training_summary TO authenticated;
+    END IF;
+END $$;
+
+-- =============================================================================
+-- MIGRATION COMPLETE
+-- =============================================================================
+
+-- Run consistency check
+SELECT * FROM check_database_consistency();
+
+
+
+
+-- ============================================================================
+-- Migration: 044_fix_rls_performance_and_consolidate_policies.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- MIGRATION: Fix RLS Performance and Consolidate Policies
+-- Migration: 044_fix_rls_performance_and_consolidate_policies.sql
+-- Purpose: Fix Supabase linter warnings for RLS performance and duplicate policies
+-- Created: 2025-01-XX
+-- =============================================================================
+--
+-- This migration fixes:
+-- 1. auth_rls_initplan warnings: Wrap auth.uid() and auth.user_id() calls in (SELECT ...)
+-- 2. multiple_permissive_policies warnings: Consolidate duplicate policies
+-- 3. duplicate_index warnings: Remove duplicate indexes
+--
+-- =============================================================================
+
+-- =============================================================================
+-- PART 1: Fix auth_rls_initplan warnings - Wrap auth functions in (SELECT ...)
+-- =============================================================================
+
+-- USERS TABLE POLICIES
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.users;
+DROP POLICY IF EXISTS "Users can delete own profile" ON public.users;
+
+CREATE POLICY "Users can view own profile"
+ON public.users FOR SELECT
+USING (id = (SELECT auth.uid()));
+
+CREATE POLICY "Users can update own profile"
+ON public.users FOR UPDATE
+USING (id = (SELECT auth.uid()))
+WITH CHECK (id = (SELECT auth.uid()));
+
+CREATE POLICY "Users can insert own profile"
+ON public.users FOR INSERT
+WITH CHECK (id = (SELECT auth.uid()));
+
+CREATE POLICY "Users can delete own profile"
+ON public.users FOR DELETE
+USING (id = (SELECT auth.uid()));
+
+-- IMPLEMENTATION STEPS POLICIES
+DROP POLICY IF EXISTS "Users can view own implementation steps" ON public.implementation_steps;
+DROP POLICY IF EXISTS "Users can insert own implementation steps" ON public.implementation_steps;
+DROP POLICY IF EXISTS "Users can update own implementation steps" ON public.implementation_steps;
+DROP POLICY IF EXISTS "Users can delete own implementation steps" ON public.implementation_steps;
+
+CREATE POLICY "Users can view own implementation steps"
+ON public.implementation_steps FOR SELECT
+USING (user_id = (SELECT auth.uid()));
+
+CREATE POLICY "Users can insert own implementation steps"
+ON public.implementation_steps FOR INSERT
+WITH CHECK (user_id = (SELECT auth.uid()));
+
+CREATE POLICY "Users can update own implementation steps"
+ON public.implementation_steps FOR UPDATE
+USING (user_id = (SELECT auth.uid()))
+WITH CHECK (user_id = (SELECT auth.uid()));
+
+CREATE POLICY "Users can delete own implementation steps"
+ON public.implementation_steps FOR DELETE
+USING (user_id = (SELECT auth.uid()));
+
+-- WELLNESS LOGS POLICIES
+DROP POLICY IF EXISTS wellness_logs_select_coach ON public.wellness_logs;
+DROP POLICY IF EXISTS wellness_logs_update_admin ON public.wellness_logs;
+
+CREATE POLICY wellness_logs_select_coach
+ON public.wellness_logs FOR SELECT
+USING (
+  user_id IN (
+    SELECT tm.user_id::text FROM team_members tm
+    INNER JOIN team_members coach ON coach.team_id = tm.team_id
+    WHERE coach.user_id = (SELECT auth.uid()) AND coach.role IN ('coach', 'admin')
+  )
+  OR user_id = (SELECT auth.uid())::text
+);
+
+CREATE POLICY wellness_logs_update_admin
+ON public.wellness_logs FOR UPDATE
+USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+-- FIXTURES POLICIES
+DROP POLICY IF EXISTS fixtures_select_team_member ON public.fixtures;
+DROP POLICY IF EXISTS fixtures_insert_team_member ON public.fixtures;
+DROP POLICY IF EXISTS fixtures_update_team_member ON public.fixtures;
+DROP POLICY IF EXISTS fixtures_delete_team_member ON public.fixtures;
+
+CREATE POLICY fixtures_select_team_member
+ON public.fixtures FOR SELECT
+USING (
+  team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid())
+  )
+);
+
+CREATE POLICY fixtures_insert_team_member
+ON public.fixtures FOR INSERT
+WITH CHECK (
+  team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid())
+  )
+);
+
+CREATE POLICY fixtures_update_team_member
+ON public.fixtures FOR UPDATE
+USING (
+  team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid())
+  )
+)
+WITH CHECK (
+  team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid())
+  )
+);
+
+CREATE POLICY fixtures_delete_team_member
+ON public.fixtures FOR DELETE
+USING (
+  team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid())
+  )
+);
+
+-- READINESS SCORES POLICIES
+DROP POLICY IF EXISTS readiness_scores_select_athlete ON public.readiness_scores;
+DROP POLICY IF EXISTS readiness_scores_insert_athlete ON public.readiness_scores;
+DROP POLICY IF EXISTS readiness_scores_update_athlete ON public.readiness_scores;
+DROP POLICY IF EXISTS readiness_scores_delete_admin ON public.readiness_scores;
+
+CREATE POLICY readiness_scores_select_athlete
+ON public.readiness_scores FOR SELECT
+USING (athlete_id = (SELECT auth.uid()));
+
+CREATE POLICY readiness_scores_insert_athlete
+ON public.readiness_scores FOR INSERT
+WITH CHECK (athlete_id = (SELECT auth.uid()));
+
+CREATE POLICY readiness_scores_update_athlete
+ON public.readiness_scores FOR UPDATE
+USING (athlete_id = (SELECT auth.uid()))
+WITH CHECK (athlete_id = (SELECT auth.uid()));
+
+CREATE POLICY readiness_scores_delete_admin
+ON public.readiness_scores FOR DELETE
+USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+-- TEAMS POLICIES
+DROP POLICY IF EXISTS teams_coach_admin_all ON public.teams;
+
+CREATE POLICY teams_coach_admin_all
+ON public.teams FOR ALL
+USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+  OR id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+  OR id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+);
+
+-- TRAINING SESSIONS POLICIES
+DROP POLICY IF EXISTS training_sessions_coach_admin_team_all ON public.training_sessions;
+
+CREATE POLICY training_sessions_coach_admin_team_all
+ON public.training_sessions FOR ALL
+USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+  OR team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+  OR team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+);
+
+-- USER NOTIFICATION PREFERENCES POLICIES
+DROP POLICY IF EXISTS "Users can read their own notification preferences" ON public.user_notification_preferences;
+DROP POLICY IF EXISTS "Users can update their own notification preferences" ON public.user_notification_preferences;
+DROP POLICY IF EXISTS "Users can insert their own notification preferences" ON public.user_notification_preferences;
+
+CREATE POLICY "Users can read their own notification preferences"
+ON public.user_notification_preferences FOR SELECT
+USING (user_id = (SELECT auth.uid()));
+
+CREATE POLICY "Users can update their own notification preferences"
+ON public.user_notification_preferences FOR UPDATE
+USING (user_id = (SELECT auth.uid()))
+WITH CHECK (user_id = (SELECT auth.uid()));
+
+CREATE POLICY "Users can insert their own notification preferences"
+ON public.user_notification_preferences FOR INSERT
+WITH CHECK (user_id = (SELECT auth.uid()));
+
+-- USER TEAMS POLICIES
+DROP POLICY IF EXISTS user_teams_coach_admin_all ON public.user_teams;
+DROP POLICY IF EXISTS user_teams_manage_by_coach_insert ON public.user_teams;
+DROP POLICY IF EXISTS user_teams_manage_by_coach_update ON public.user_teams;
+
+CREATE POLICY user_teams_coach_admin_all
+ON public.user_teams FOR ALL
+USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+);
+
+CREATE POLICY user_teams_manage_by_coach_insert
+ON public.user_teams FOR INSERT
+WITH CHECK (
+  team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+);
+
+CREATE POLICY user_teams_manage_by_coach_update
+ON public.user_teams FOR UPDATE
+USING (
+  team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+)
+WITH CHECK (
+  team_id IN (
+    SELECT team_id FROM user_teams
+    WHERE user_id = (SELECT auth.uid()) AND role IN ('admin', 'coach')
+  )
+);
+
+-- CHATBOT USER CONTEXT POLICIES
+DROP POLICY IF EXISTS chatbot_user_context_select_own_or_admin ON public.chatbot_user_context;
+DROP POLICY IF EXISTS chatbot_user_context_update_own_or_admin ON public.chatbot_user_context;
+DROP POLICY IF EXISTS chatbot_user_context_delete_own_or_admin ON public.chatbot_user_context;
+
+CREATE POLICY chatbot_user_context_select_own_or_admin
+ON public.chatbot_user_context FOR SELECT
+USING (
+  user_id = (SELECT auth.uid())
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+CREATE POLICY chatbot_user_context_update_own_or_admin
+ON public.chatbot_user_context FOR UPDATE
+USING (
+  user_id = (SELECT auth.uid())
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+)
+WITH CHECK (
+  user_id = (SELECT auth.uid())
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+CREATE POLICY chatbot_user_context_delete_own_or_admin
+ON public.chatbot_user_context FOR DELETE
+USING (
+  user_id = (SELECT auth.uid())
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+-- =============================================================================
+-- PART 2: Consolidate Multiple Permissive Policies
+-- =============================================================================
+
+-- ANALYTICS EVENTS: Consolidate multiple policies
+-- Drop all existing policies first
+DROP POLICY IF EXISTS analytics_events_admin_all ON public.analytics_events;
+DROP POLICY IF EXISTS analytics_events_insert_authenticated ON public.analytics_events;
+DROP POLICY IF EXISTS analytics_events_insert_own ON public.analytics_events;
+DROP POLICY IF EXISTS analytics_events_policy ON public.analytics_events;
+DROP POLICY IF EXISTS analytics_events_select_authenticated ON public.analytics_events;
+DROP POLICY IF EXISTS analytics_events_select_own ON public.analytics_events;
+DROP POLICY IF EXISTS analytics_events_update_own ON public.analytics_events;
+DROP POLICY IF EXISTS analytics_events_delete_own ON public.analytics_events;
+
+-- Single consolidated INSERT policy (replaces analytics_events_admin_all, analytics_events_insert_authenticated, analytics_events_insert_own, analytics_events_policy)
+CREATE POLICY analytics_events_insert_consolidated
+ON public.analytics_events FOR INSERT
+WITH CHECK (
+  user_id = (SELECT auth.uid())::text
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+-- Single consolidated SELECT policy (replaces analytics_events_admin_all, analytics_events_select_authenticated, analytics_events_select_own, analytics_events_policy)
+CREATE POLICY analytics_events_select_consolidated
+ON public.analytics_events FOR SELECT
+USING (
+  user_id = (SELECT auth.uid())::text
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+-- Single consolidated UPDATE policy (replaces analytics_events_admin_all, analytics_events_update_own, analytics_events_policy)
+CREATE POLICY analytics_events_update_consolidated
+ON public.analytics_events FOR UPDATE
+USING (
+  user_id = (SELECT auth.uid())::text
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+)
+WITH CHECK (
+  user_id = (SELECT auth.uid())::text
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+-- Single consolidated DELETE policy (replaces analytics_events_admin_all, analytics_events_delete_own, analytics_events_policy)
+CREATE POLICY analytics_events_delete_consolidated
+ON public.analytics_events FOR DELETE
+USING (
+  user_id = (SELECT auth.uid())::text
+  OR EXISTS (
+    SELECT 1 FROM users
+    WHERE id = (SELECT auth.uid()) AND role = 'admin'
+  )
+);
+
+-- CHATBOT USER CONTEXT: Consolidate duplicate policies
+DROP POLICY IF EXISTS chatbot_context_select_own ON public.chatbot_user_context;
+DROP POLICY IF EXISTS chatbot_context_insert_own ON public.chatbot_user_context;
+DROP POLICY IF EXISTS chatbot_context_update_own ON public.chatbot_user_context;
+DROP POLICY IF EXISTS chatbot_context_delete_own ON public.chatbot_user_context;
+DROP POLICY IF EXISTS chatbot_user_context_insert_own ON public.chatbot_user_context;
+
+-- IMPLEMENTATION STEPS: Consolidate duplicate policies
+DROP POLICY IF EXISTS implementation_steps_select_own ON public.implementation_steps;
+DROP POLICY IF EXISTS implementation_steps_insert_own ON public.implementation_steps;
+DROP POLICY IF EXISTS implementation_steps_update_own ON public.implementation_steps;
+DROP POLICY IF EXISTS implementation_steps_delete_own ON public.implementation_steps;
+
+-- NOTIFICATIONS: Consolidate duplicate policies
+DROP POLICY IF EXISTS notifications_select_own ON public.notifications;
+DROP POLICY IF EXISTS notifications_insert_own ON public.notifications;
+DROP POLICY IF EXISTS notifications_update_own ON public.notifications;
+DROP POLICY IF EXISTS notifications_delete_own ON public.notifications;
+
+-- PERFORMANCE METRICS: Consolidate duplicate policies
+DROP POLICY IF EXISTS performance_metrics_select_own ON public.performance_metrics;
+DROP POLICY IF EXISTS performance_metrics_insert_own ON public.performance_metrics;
+DROP POLICY IF EXISTS performance_metrics_update_own ON public.performance_metrics;
+DROP POLICY IF EXISTS performance_metrics_delete_own ON public.performance_metrics;
+
+-- PERFORMANCE BENCHMARKS: Consolidate duplicate policies
+DROP POLICY IF EXISTS performance_benchmarks_select_own ON public.performance_benchmarks;
+
+-- READINESS SCORES: Consolidate duplicate policies
+DROP POLICY IF EXISTS readiness_scores_select_own ON public.readiness_scores;
+DROP POLICY IF EXISTS readiness_scores_insert_own ON public.readiness_scores;
+DROP POLICY IF EXISTS readiness_scores_update_own ON public.readiness_scores;
+DROP POLICY IF EXISTS readiness_scores_delete_own ON public.readiness_scores;
+
+-- SPONSOR REWARDS: Consolidate duplicate policies
+DROP POLICY IF EXISTS sponsor_rewards_select_own ON public.sponsor_rewards;
+
+-- SUPPLEMENT PROTOCOLS: Consolidate duplicate policies
+DROP POLICY IF EXISTS supplement_protocols_select_own ON public.supplement_protocols;
+DROP POLICY IF EXISTS supplement_protocols_insert_own ON public.supplement_protocols;
+DROP POLICY IF EXISTS supplement_protocols_update_own ON public.supplement_protocols;
+DROP POLICY IF EXISTS supplement_protocols_delete_own ON public.supplement_protocols;
+
+-- TEAM CHEMISTRY: Consolidate duplicate policies
+DROP POLICY IF EXISTS team_chemistry_select_own ON public.team_chemistry;
+
+-- TEAMS: Consolidate duplicate policies
+DROP POLICY IF EXISTS teams_manage_by_owner ON public.teams;
+DROP POLICY IF EXISTS teams_member_select ON public.teams;
+DROP POLICY IF EXISTS teams_select_for_members ON public.teams;
+
+-- TRAINING ANALYTICS: Consolidate duplicate policies
+DROP POLICY IF EXISTS training_analytics_select_own ON public.training_analytics;

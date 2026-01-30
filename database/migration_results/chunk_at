@@ -1,0 +1,1000 @@
+ON supplement_logs FOR SELECT 
+USING ((select auth.uid()) = user_id);
+
+CREATE POLICY "Users can insert their own supplement logs" 
+ON supplement_logs FOR INSERT 
+WITH CHECK ((select auth.uid()) = user_id);
+
+CREATE POLICY "Users can update their own supplement logs" 
+ON supplement_logs FOR UPDATE 
+USING ((select auth.uid()) = user_id);
+
+CREATE POLICY "Users can delete their own supplement logs" 
+ON supplement_logs FOR DELETE 
+USING ((select auth.uid()) = user_id);
+
+-- ============================================================================
+-- PERFORMANCE_TESTS - Fix RLS Policies (uses user_id)
+-- ============================================================================
+DROP POLICY IF EXISTS "Users can view their own performance tests" ON performance_tests;
+DROP POLICY IF EXISTS "Users can insert their own performance tests" ON performance_tests;
+DROP POLICY IF EXISTS "Users can update their own performance tests" ON performance_tests;
+DROP POLICY IF EXISTS "Users can delete their own performance tests" ON performance_tests;
+
+CREATE POLICY "Users can view their own performance tests" 
+ON performance_tests FOR SELECT 
+USING ((select auth.uid()) = user_id);
+
+CREATE POLICY "Users can insert their own performance tests" 
+ON performance_tests FOR INSERT 
+WITH CHECK ((select auth.uid()) = user_id);
+
+CREATE POLICY "Users can update their own performance tests" 
+ON performance_tests FOR UPDATE 
+USING ((select auth.uid()) = user_id);
+
+CREATE POLICY "Users can delete their own performance tests" 
+ON performance_tests FOR DELETE 
+USING ((select auth.uid()) = user_id);
+
+
+
+
+-- ============================================================================
+-- Migration: 053_ai_safety_tier_system.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: AI Safety Tier System
+-- Based on: AI_COACHING_SYSTEM_REVAMP.md
+-- Creates tables for AI chat sessions, messages, recommendations, feedback, and coach visibility
+
+-- =====================================================
+-- AI CHAT SESSIONS TABLE
+-- =====================================================
+CREATE TABLE IF NOT EXISTS ai_chat_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
+  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  ended_at TIMESTAMPTZ,
+  context_snapshot JSONB DEFAULT '{}',
+  goal VARCHAR(500),
+  time_horizon VARCHAR(50) CHECK (time_horizon IN ('immediate', 'weekly', 'monthly', 'seasonal')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_chat_sessions_user ON ai_chat_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_chat_sessions_team ON ai_chat_sessions(team_id);
+CREATE INDEX IF NOT EXISTS idx_ai_chat_sessions_started ON ai_chat_sessions(started_at DESC);
+
+-- =====================================================
+-- AI MESSAGES TABLE
+-- =====================================================
+CREATE TABLE IF NOT EXISTS ai_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id UUID NOT NULL REFERENCES ai_chat_sessions(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  role VARCHAR(20) NOT NULL CHECK (role IN ('user', 'assistant', 'system')),
+  content TEXT NOT NULL,
+  risk_level VARCHAR(20) CHECK (risk_level IN ('low', 'medium', 'high')),
+  intent VARCHAR(50),
+  citations JSONB DEFAULT '[]',
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_messages_session ON ai_messages(session_id);
+CREATE INDEX IF NOT EXISTS idx_ai_messages_user ON ai_messages(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_messages_risk ON ai_messages(risk_level);
+CREATE INDEX IF NOT EXISTS idx_ai_messages_created ON ai_messages(created_at DESC);
+
+-- =====================================================
+-- AI RECOMMENDATIONS TABLE
+-- Tracks actionable recommendations from AI
+-- =====================================================
+CREATE TABLE IF NOT EXISTS ai_recommendations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  chat_session_id UUID REFERENCES ai_chat_sessions(id) ON DELETE SET NULL,
+  message_id UUID REFERENCES ai_messages(id) ON DELETE SET NULL,
+  recommendation_type VARCHAR(50) NOT NULL CHECK (
+    recommendation_type IN (
+      'create_session', 
+      'modify_plan', 
+      'add_exercise', 
+      'read_article', 
+      'ask_coach',
+      'schedule_recovery',
+      'reduce_load',
+      'increase_load'
+    )
+  ),
+  reason TEXT NOT NULL,
+  recommendation_data JSONB DEFAULT '{}',
+  status VARCHAR(50) NOT NULL DEFAULT 'pending' CHECK (
+    status IN ('pending', 'accepted', 'rejected', 'completed', 'expired')
+  ),
+  accepted_at TIMESTAMPTZ,
+  rejected_at TIMESTAMPTZ,
+  completed_at TIMESTAMPTZ,
+  outcome TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_recommendations_user ON ai_recommendations(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_recommendations_session ON ai_recommendations(chat_session_id);
+CREATE INDEX IF NOT EXISTS idx_ai_recommendations_status ON ai_recommendations(status);
+CREATE INDEX IF NOT EXISTS idx_ai_recommendations_type ON ai_recommendations(recommendation_type);
+CREATE INDEX IF NOT EXISTS idx_ai_recommendations_created ON ai_recommendations(created_at DESC);
+
+-- =====================================================
+-- AI FEEDBACK TABLE
+-- User feedback on AI responses
+-- =====================================================
+CREATE TABLE IF NOT EXISTS ai_feedback (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  chat_session_id UUID REFERENCES ai_chat_sessions(id) ON DELETE SET NULL,
+  message_id UUID REFERENCES ai_messages(id) ON DELETE SET NULL,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  feedback_type VARCHAR(50) NOT NULL CHECK (
+    feedback_type IN (
+      'thumbs_up', 
+      'thumbs_down', 
+      'helpful', 
+      'not_helpful', 
+      'incorrect', 
+      'unsafe',
+      'too_generic',
+      'too_specific'
+    )
+  ),
+  feedback_reason TEXT,
+  outcome TEXT,
+  flagged_for_review BOOLEAN DEFAULT FALSE,
+  reviewed_at TIMESTAMPTZ,
+  reviewed_by UUID REFERENCES auth.users(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_feedback_user ON ai_feedback(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_feedback_message ON ai_feedback(message_id);
+CREATE INDEX IF NOT EXISTS idx_ai_feedback_type ON ai_feedback(feedback_type);
+CREATE INDEX IF NOT EXISTS idx_ai_feedback_flagged ON ai_feedback(flagged_for_review) WHERE flagged_for_review = TRUE;
+
+-- =====================================================
+-- AI COACH VISIBILITY TABLE
+-- Coach visibility into player AI interactions
+-- =====================================================
+CREATE TABLE IF NOT EXISTS ai_coach_visibility (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recommendation_id UUID REFERENCES ai_recommendations(id) ON DELETE CASCADE,
+  message_id UUID REFERENCES ai_messages(id) ON DELETE CASCADE,
+  coach_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  player_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
+  visibility_type VARCHAR(50) NOT NULL CHECK (
+    visibility_type IN ('risk_warning', 'recommendation', 'override', 'note')
+  ),
+  coach_notes TEXT,
+  override_reason TEXT,
+  viewed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_coach_visibility_coach ON ai_coach_visibility(coach_id);
+CREATE INDEX IF NOT EXISTS idx_ai_coach_visibility_player ON ai_coach_visibility(player_id);
+CREATE INDEX IF NOT EXISTS idx_ai_coach_visibility_team ON ai_coach_visibility(team_id);
+CREATE INDEX IF NOT EXISTS idx_ai_coach_visibility_type ON ai_coach_visibility(visibility_type);
+
+-- =====================================================
+-- KNOWLEDGE BASE TABLE (Create if not exists)
+-- This table stores curated knowledge for AI responses
+-- =====================================================
+CREATE TABLE IF NOT EXISTS knowledge_base_entries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title VARCHAR(500) NOT NULL,
+  content TEXT NOT NULL,
+  category VARCHAR(100) NOT NULL,
+  subcategory VARCHAR(100),
+  source_type VARCHAR(50) CHECK (source_type IN ('curated', 'trusted', 'web', 'internal')),
+  source_url TEXT,
+  source_title VARCHAR(500),
+  publication_date DATE,
+  evidence_grade VARCHAR(10) CHECK (evidence_grade IN ('A', 'B', 'C', 'D')),
+  risk_level VARCHAR(20) CHECK (risk_level IN ('low', 'medium', 'high')) DEFAULT 'low',
+  requires_professional BOOLEAN DEFAULT FALSE,
+  requires_labs BOOLEAN DEFAULT FALSE,
+  source_quality_score DECIMAL(3,2) CHECK (source_quality_score >= 0 AND source_quality_score <= 1) DEFAULT 0.5,
+  query_count INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_base_category ON knowledge_base_entries(category);
+CREATE INDEX IF NOT EXISTS idx_knowledge_base_risk_level ON knowledge_base_entries(risk_level);
+CREATE INDEX IF NOT EXISTS idx_knowledge_base_evidence ON knowledge_base_entries(evidence_grade);
+CREATE INDEX IF NOT EXISTS idx_knowledge_base_active ON knowledge_base_entries(is_active) WHERE is_active = TRUE;
+
+-- Enable RLS on knowledge_base_entries
+ALTER TABLE knowledge_base_entries ENABLE ROW LEVEL SECURITY;
+
+-- Everyone can read knowledge base entries
+CREATE POLICY "Anyone can read knowledge base"
+  ON knowledge_base_entries FOR SELECT
+  USING (is_active = TRUE);
+
+-- =====================================================
+-- ROW LEVEL SECURITY POLICIES
+-- =====================================================
+
+-- Enable RLS on all new tables
+ALTER TABLE ai_chat_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_recommendations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_feedback ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_coach_visibility ENABLE ROW LEVEL SECURITY;
+
+-- AI Chat Sessions: Users can see their own sessions
+CREATE POLICY "Users can view own chat sessions"
+  ON ai_chat_sessions FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create own chat sessions"
+  ON ai_chat_sessions FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own chat sessions"
+  ON ai_chat_sessions FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- AI Messages: Users can see their own messages
+CREATE POLICY "Users can view own messages"
+  ON ai_messages FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create own messages"
+  ON ai_messages FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- AI Recommendations: Users can see and update their own recommendations
+CREATE POLICY "Users can view own recommendations"
+  ON ai_recommendations FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create own recommendations"
+  ON ai_recommendations FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own recommendations"
+  ON ai_recommendations FOR UPDATE
+  USING (auth.uid() = user_id);
+
+-- AI Feedback: Users can manage their own feedback
+CREATE POLICY "Users can view own feedback"
+  ON ai_feedback FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create own feedback"
+  ON ai_feedback FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- AI Coach Visibility: Coaches can see their players' data
+CREATE POLICY "Coaches can view their players AI data"
+  ON ai_coach_visibility FOR SELECT
+  USING (auth.uid() = coach_id);
+
+CREATE POLICY "System can create coach visibility records"
+  ON ai_coach_visibility FOR INSERT
+  WITH CHECK (TRUE); -- Handled by backend
+
+-- =====================================================
+-- TRIGGERS FOR UPDATED_AT
+-- =====================================================
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Only create trigger if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_trigger WHERE tgname = 'ai_chat_sessions_updated_at'
+  ) THEN
+    CREATE TRIGGER ai_chat_sessions_updated_at
+      BEFORE UPDATE ON ai_chat_sessions
+      FOR EACH ROW
+      EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
+
+-- =====================================================
+-- COMMENTS FOR DOCUMENTATION
+-- =====================================================
+
+COMMENT ON TABLE ai_chat_sessions IS 'Stores AI chat sessions with context snapshots';
+COMMENT ON TABLE ai_messages IS 'Stores individual messages in AI chat sessions with risk classification';
+COMMENT ON TABLE ai_recommendations IS 'Tracks actionable AI recommendations with acceptance/rejection status';
+COMMENT ON TABLE ai_feedback IS 'User feedback on AI responses for continuous improvement';
+COMMENT ON TABLE ai_coach_visibility IS 'Coach visibility into player AI interactions for team contexts';
+
+COMMENT ON COLUMN ai_messages.risk_level IS 'Safety tier: low (general training), medium (injury/recovery), high (supplements/medical)';
+COMMENT ON COLUMN ai_recommendations.recommendation_type IS 'Type of action recommended by AI';
+COMMENT ON COLUMN ai_feedback.flagged_for_review IS 'TRUE if feedback indicates unsafe or incorrect response';
+
+
+
+
+-- ============================================================================
+-- Migration: 054_training_video_visibility_system.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Training Video Visibility System
+-- Purpose: Create training_videos table with visibility rules for drills:
+--   1. Players can add videos for themselves (private - only they can see)
+--   2. Coaches/Admins can add videos visible to everyone (public)
+--   3. Coaches/Admins/Physiotherapists can assign videos to specific athletes (assigned - only that athlete + staff can see)
+--   4. Assigned drills trigger periodization recalculation for the target athlete
+--
+-- VISIBILITY RULES SUMMARY:
+-- ┌─────────────────┬──────────────────────────────────────────────────────────────┐
+-- │ visibility_type │ Who can see                                                  │
+-- ├─────────────────┼──────────────────────────────────────────────────────────────┤
+-- │ private         │ Only the player who created it (created_by = current_user)  │
+-- │ public          │ Everyone (all authenticated users)                          │
+-- │ assigned        │ Target player (target_player_id) + all staff members        │
+-- └─────────────────┴──────────────────────────────────────────────────────────────┘
+--
+-- INSERTION RULES:
+-- - Players can ONLY insert 'private' videos for themselves
+-- - Staff (coach/admin/physiotherapist) can insert any type
+
+-- =====================================================
+-- STEP 1: CREATE TRAINING_VIDEOS TABLE WITH VISIBILITY
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS training_videos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  video_url VARCHAR(500) NOT NULL,
+  thumbnail_url VARCHAR(500),
+  duration_seconds INTEGER,
+  category VARCHAR(100), -- 'Exercise Demo', 'Technique', 'Position-Specific', 'Warm-up', 'Drill'
+  position_id UUID REFERENCES positions(id) ON DELETE SET NULL,
+  exercise_id UUID REFERENCES exercises(id) ON DELETE SET NULL,
+  tags TEXT[], -- ['QB', 'Throwing Mechanics', 'Arm Care']
+  view_count INTEGER DEFAULT 0,
+  created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  
+  -- Visibility system
+  visibility_type VARCHAR(20) DEFAULT 'public' CHECK (visibility_type IN ('private', 'public', 'assigned')),
+  target_player_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  assigned_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  assignment_notes TEXT,
+  assignment_date TIMESTAMPTZ,
+  
+  -- Periodization impact
+  affects_periodization BOOLEAN DEFAULT FALSE,
+  estimated_load INTEGER DEFAULT 0,
+  
+  -- Scheduling
+  due_date DATE,
+  completion_status VARCHAR(20) DEFAULT 'pending' CHECK (completion_status IN ('pending', 'in_progress', 'completed', 'skipped')),
+  completed_at TIMESTAMPTZ,
+  
+  -- Timestamps
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =====================================================
+-- STEP 2: CREATE INDEXES FOR PERFORMANCE
+-- =====================================================
+
+CREATE INDEX IF NOT EXISTS idx_training_videos_position ON training_videos(position_id);
+CREATE INDEX IF NOT EXISTS idx_training_videos_exercise ON training_videos(exercise_id);
+CREATE INDEX IF NOT EXISTS idx_training_videos_category ON training_videos(category);
+CREATE INDEX IF NOT EXISTS idx_training_videos_visibility ON training_videos(visibility_type);
+CREATE INDEX IF NOT EXISTS idx_training_videos_target_player ON training_videos(target_player_id);
+CREATE INDEX IF NOT EXISTS idx_training_videos_assigned_by ON training_videos(assigned_by);
+CREATE INDEX IF NOT EXISTS idx_training_videos_created_by ON training_videos(created_by);
+CREATE INDEX IF NOT EXISTS idx_training_videos_due_date ON training_videos(due_date);
+CREATE INDEX IF NOT EXISTS idx_training_videos_completion ON training_videos(completion_status);
+
+-- Composite index for common query pattern (player's visible videos)
+CREATE INDEX IF NOT EXISTS idx_training_videos_player_visibility 
+ON training_videos(target_player_id, visibility_type, created_by);
+
+-- =====================================================
+-- STEP 3: ENABLE RLS AND CREATE POLICIES
+-- =====================================================
+
+ALTER TABLE training_videos ENABLE ROW LEVEL SECURITY;
+
+-- Helper function to check if user is staff (coach, admin, physiotherapist)
+CREATE OR REPLACE FUNCTION is_staff_role()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN COALESCE(
+    (SELECT auth.jwt()) ->> 'user_metadata' ->> 'role' IN ('coach', 'admin', 'physiotherapist'),
+    FALSE
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public, auth;
+
+COMMENT ON FUNCTION is_staff_role() IS 'Returns true if the current user has a staff role (coach, admin, or physiotherapist)';
+
+-- SELECT Policy: Complex visibility rules
+-- Users can see:
+--   1. PUBLIC videos (visibility_type = 'public')
+--   2. Their OWN private videos (visibility_type = 'private' AND created_by = current_user)
+--   3. Videos ASSIGNED to them (visibility_type = 'assigned' AND target_player_id = current_user)
+--   4. Staff can see ALL videos
+CREATE POLICY "training_videos_select_policy"
+ON training_videos FOR SELECT
+USING (
+  -- Public videos are visible to everyone
+  visibility_type = 'public'
+  OR
+  -- Private videos are only visible to the creator
+  (visibility_type = 'private' AND created_by = (SELECT auth.uid()))
+  OR
+  -- Assigned videos are visible to the target player
+  (visibility_type = 'assigned' AND target_player_id = (SELECT auth.uid()))
+  OR
+  -- Staff (coaches, admins, physiotherapists) can see all videos
+  is_staff_role()
+);
+
+-- INSERT Policy: 
+-- Players can only create private videos for themselves
+-- Staff can create any type of video
+CREATE POLICY "training_videos_insert_policy"
+ON training_videos FOR INSERT
+WITH CHECK (
+  -- Staff can insert any video
+  is_staff_role()
+  OR
+  -- Players can only insert private videos for themselves
+  (
+    visibility_type = 'private' 
+    AND created_by = (SELECT auth.uid())
+    AND target_player_id IS NULL
+  )
+);
+
+-- UPDATE Policy:
+-- Players can only update their own private videos
+-- Staff can update any video
+CREATE POLICY "training_videos_update_policy"
+ON training_videos FOR UPDATE
+USING (
+  is_staff_role()
+  OR
+  (visibility_type = 'private' AND created_by = (SELECT auth.uid()))
+)
+WITH CHECK (
+  is_staff_role()
+  OR
+  (visibility_type = 'private' AND created_by = (SELECT auth.uid()))
+);
+
+-- DELETE Policy:
+-- Players can only delete their own private videos
+-- Staff can delete any video
+CREATE POLICY "training_videos_delete_policy"
+ON training_videos FOR DELETE
+USING (
+  is_staff_role()
+  OR
+  (visibility_type = 'private' AND created_by = (SELECT auth.uid()))
+);
+
+-- =====================================================
+-- STEP 4: CREATE ATHLETE DRILL ASSIGNMENTS TABLE
+-- =====================================================
+-- This table tracks drill/video assignments with more detail
+-- and links to periodization recalculation
+
+CREATE TABLE IF NOT EXISTS athlete_drill_assignments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  
+  -- Assignment details
+  athlete_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  assigned_by UUID NOT NULL REFERENCES auth.users(id) ON DELETE SET NULL,
+  video_id UUID REFERENCES training_videos(id) ON DELETE SET NULL,
+  
+  -- Drill details (can be independent of video)
+  drill_name VARCHAR(255) NOT NULL,
+  drill_description TEXT,
+  drill_category VARCHAR(100), -- 'Speed', 'Agility', 'Strength', 'Skills', 'Recovery'
+  
+  -- Load and periodization impact
+  estimated_duration_minutes INTEGER DEFAULT 15,
+  estimated_rpe INTEGER DEFAULT 5 CHECK (estimated_rpe >= 1 AND estimated_rpe <= 10),
+  estimated_load INTEGER GENERATED ALWAYS AS (estimated_duration_minutes * estimated_rpe) STORED,
+  affects_periodization BOOLEAN DEFAULT TRUE,
+  
+  -- Scheduling
+  assigned_date DATE DEFAULT CURRENT_DATE,
+  due_date DATE,
+  target_session_date DATE,
+  
+  -- Completion tracking
+  status VARCHAR(20) DEFAULT 'assigned' CHECK (status IN ('assigned', 'viewed', 'in_progress', 'completed', 'skipped')),
+  completed_at TIMESTAMPTZ,
+  actual_duration_minutes INTEGER,
+  actual_rpe INTEGER CHECK (actual_rpe >= 1 AND actual_rpe <= 10),
+  actual_load INTEGER,
+  
+  -- Feedback
+  athlete_notes TEXT,
+  coach_feedback TEXT,
+  
+  -- Timestamps
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for performance
+CREATE INDEX IF NOT EXISTS idx_athlete_drill_assignments_athlete ON athlete_drill_assignments(athlete_id);
+CREATE INDEX IF NOT EXISTS idx_athlete_drill_assignments_assigned_by ON athlete_drill_assignments(assigned_by);
+CREATE INDEX IF NOT EXISTS idx_athlete_drill_assignments_video ON athlete_drill_assignments(video_id);
+CREATE INDEX IF NOT EXISTS idx_athlete_drill_assignments_status ON athlete_drill_assignments(status);
+CREATE INDEX IF NOT EXISTS idx_athlete_drill_assignments_due_date ON athlete_drill_assignments(due_date);
+CREATE INDEX IF NOT EXISTS idx_athlete_drill_assignments_date ON athlete_drill_assignments(target_session_date);
+
+-- Enable RLS
+ALTER TABLE athlete_drill_assignments ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for athlete_drill_assignments
+-- Athletes can see their own assignments
+CREATE POLICY "Athletes can view own drill assignments"
+ON athlete_drill_assignments FOR SELECT
+USING (
+  athlete_id = (SELECT auth.uid())
+  OR
+  is_staff_role()
+);
+
+-- Only staff can create assignments
+CREATE POLICY "Staff can create drill assignments"
+ON athlete_drill_assignments FOR INSERT
+WITH CHECK (is_staff_role());
+
+-- Athletes can update their own (status, completion, notes)
+-- Staff can update any
+CREATE POLICY "Athletes and staff can update assignments"
+ON athlete_drill_assignments FOR UPDATE
+USING (
+  athlete_id = (SELECT auth.uid())
+  OR
+  is_staff_role()
+)
+WITH CHECK (
+  athlete_id = (SELECT auth.uid())
+  OR
+  is_staff_role()
+);
+
+-- Only staff can delete
+CREATE POLICY "Staff can delete drill assignments"
+ON athlete_drill_assignments FOR DELETE
+USING (is_staff_role());
+
+-- =====================================================
+-- STEP 5: TRIGGERS FOR PERIODIZATION RECALCULATION
+-- =====================================================
+
+-- Function to notify periodization recalculation when drill is assigned
+CREATE OR REPLACE FUNCTION notify_periodization_recalculation()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Only trigger if affects_periodization is true
+  IF NEW.affects_periodization = TRUE THEN
+    -- Insert a notification for the athlete
+    INSERT INTO public.notifications (
+      user_id, 
+      notification_type, 
+      message, 
+      priority,
+      created_at
+    ) VALUES (
+      NEW.athlete_id,
+      'training',
+      'New drill assigned: ' || NEW.drill_name || '. Your training load has been updated.',
+      'medium',
+      NOW()
+    );
+  END IF;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public;
+
+-- Trigger on insert
+DROP TRIGGER IF EXISTS trigger_periodization_on_drill_assignment ON athlete_drill_assignments;
+CREATE TRIGGER trigger_periodization_on_drill_assignment
+AFTER INSERT ON athlete_drill_assignments
+FOR EACH ROW
+EXECUTE FUNCTION notify_periodization_recalculation();
+
+-- Function to update load when drill is completed
+CREATE OR REPLACE FUNCTION update_load_on_drill_completion()
+RETURNS TRIGGER AS $$
+DECLARE
+  load_value INTEGER;
+BEGIN
+  -- Only process when status changes to 'completed'
+  IF NEW.status = 'completed' AND (OLD.status IS NULL OR OLD.status != 'completed') THEN
+    -- Calculate actual load
+    IF NEW.actual_duration_minutes IS NOT NULL AND NEW.actual_rpe IS NOT NULL THEN
+      load_value := NEW.actual_duration_minutes * NEW.actual_rpe;
+    ELSE
+      load_value := NEW.estimated_load;
+    END IF;
+    
+    -- Update the actual_load field
+    NEW.actual_load := load_value;
+    NEW.completed_at := COALESCE(NEW.completed_at, NOW());
+    
+    -- If affects_periodization, update load_daily
+    IF NEW.affects_periodization = TRUE THEN
+      INSERT INTO public.load_daily (player_id, date, daily_load)
+      VALUES (
+        NEW.athlete_id, 
+        COALESCE(NEW.target_session_date, CURRENT_DATE), 
+        load_value
+      )
+      ON CONFLICT (player_id, date) 
+      DO UPDATE SET 
+        daily_load = public.load_daily.daily_load + EXCLUDED.daily_load,
+        updated_at = NOW();
+    END IF;
+  END IF;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public;
+
+-- Trigger on update
+DROP TRIGGER IF EXISTS trigger_load_on_drill_completion ON athlete_drill_assignments;
+CREATE TRIGGER trigger_load_on_drill_completion
+BEFORE UPDATE ON athlete_drill_assignments
+FOR EACH ROW
+EXECUTE FUNCTION update_load_on_drill_completion();
+
+-- =====================================================
+-- STEP 6: COMMENTS FOR DOCUMENTATION
+-- =====================================================
+
+COMMENT ON TABLE training_videos IS 'Library of training videos with visibility controls (private/public/assigned)';
+
+COMMENT ON COLUMN training_videos.visibility_type IS 
+  'Video visibility: private (only creator), public (everyone), assigned (specific athlete + staff)';
+
+COMMENT ON COLUMN training_videos.target_player_id IS 
+  'For assigned videos, the specific athlete who should see this video';
+
+COMMENT ON COLUMN training_videos.assigned_by IS 
+  'Staff member who assigned this video to an athlete';
+
+COMMENT ON COLUMN training_videos.affects_periodization IS 
+  'Whether completing this drill should update the athlete''s training load';
+
+COMMENT ON COLUMN training_videos.estimated_load IS 
+  'Estimated training load contribution (RPE * duration)';
+
+COMMENT ON TABLE athlete_drill_assignments IS 
+  'Tracks drill/video assignments from staff to specific athletes with load tracking';
+
+-- =====================================================
+-- MIGRATION COMPLETE
+-- =====================================================
+-- Summary of changes:
+-- 1. Created training_videos table with visibility_type column (private/public/assigned)
+-- 2. Added target_player_id for assigned videos
+-- 3. Created is_staff_role() helper function
+-- 4. Created RLS policies enforcing visibility rules:
+--    - Players see: public + their private + assigned to them
+--    - Staff see: everything
+--    - Players can only insert private videos
+--    - Staff can insert any type
+-- 5. Created athlete_drill_assignments table for detailed assignment tracking
+-- 6. Created triggers to:
+--    - Notify athlete when drill is assigned
+--    - Update periodization (load_daily) when drill is completed
+
+
+
+-- ============================================================================
+-- Migration: 055_superadmin_approval_system.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Superadmin Approval System
+-- Purpose: Restrict app access to approved teams and admins only
+-- 
+-- BUSINESS LOGIC:
+-- 1. New teams require SUPERADMIN approval before becoming active
+-- 2. Team admins/coaches require SUPERADMIN approval before gaining privileges
+-- 3. Only approved teams and their approved admins can fully use the app
+-- 4. This keeps the platform exclusive for serious Olympic-track athletes (LA28, Brisbane 2032)
+--
+-- APPROVAL WORKFLOW:
+-- ┌─────────────────────────────────────────────────────────────────────────┐
+-- │ 1. User creates a team → Team status = 'pending_approval'              │
+-- │ 2. Superadmin reviews → Approves/Rejects team                          │
+-- │ 3. If approved → Team status = 'approved', creator becomes admin       │
+-- │ 4. Admin invites members → Members join with 'player' role             │
+-- │ 5. Admin promotes user to coach/admin → Requires superadmin approval   │
+-- └─────────────────────────────────────────────────────────────────────────┘
+
+-- =====================================================
+-- STEP 1: ADD APPROVAL COLUMNS TO TEAMS TABLE
+-- =====================================================
+
+-- Add approval status to teams
+ALTER TABLE teams 
+ADD COLUMN IF NOT EXISTS approval_status VARCHAR(30) DEFAULT 'pending_approval' 
+  CHECK (approval_status IN ('pending_approval', 'approved', 'rejected', 'suspended'));
+
+-- Add approval metadata
+ALTER TABLE teams ADD COLUMN IF NOT EXISTS approved_by UUID REFERENCES auth.users(id) ON DELETE SET NULL;
+ALTER TABLE teams ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ;
+ALTER TABLE teams ADD COLUMN IF NOT EXISTS rejection_reason TEXT;
+ALTER TABLE teams ADD COLUMN IF NOT EXISTS application_notes TEXT; -- Notes from team creator
+
+-- Add Olympic track indicator
+ALTER TABLE teams ADD COLUMN IF NOT EXISTS olympic_track VARCHAR(30) 
+  CHECK (olympic_track IN ('la_2028', 'brisbane_2032', 'both', 'domestic_only'));
+
+-- =====================================================
+-- STEP 2: ADD APPROVAL STATUS TO TEAM_MEMBERS FOR ADMIN ROLES
+-- =====================================================
+
+-- Add approval status for elevated roles (admin, coach)
+ALTER TABLE team_members 
+ADD COLUMN IF NOT EXISTS role_approval_status VARCHAR(30) DEFAULT 'approved'
+  CHECK (role_approval_status IN ('pending_approval', 'approved', 'rejected'));
+
+-- Add approval metadata
+ALTER TABLE team_members ADD COLUMN IF NOT EXISTS role_approved_by UUID REFERENCES auth.users(id) ON DELETE SET NULL;
+ALTER TABLE team_members ADD COLUMN IF NOT EXISTS role_approved_at TIMESTAMPTZ;
+ALTER TABLE team_members ADD COLUMN IF NOT EXISTS role_rejection_reason TEXT;
+
+-- Note: Players don't need approval, only admin/coach roles do
+
+-- =====================================================
+-- STEP 3: CREATE SUPERADMIN TRACKING TABLE
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS superadmins (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  granted_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  granted_at TIMESTAMPTZ DEFAULT NOW(),
+  is_active BOOLEAN DEFAULT TRUE,
+  notes TEXT,
+  
+  UNIQUE(user_id)
+);
+
+-- Enable RLS on superadmins table
+ALTER TABLE superadmins ENABLE ROW LEVEL SECURITY;
+
+-- Only superadmins can view the superadmins table
+CREATE POLICY "Superadmins can view superadmin list"
+ON superadmins FOR SELECT
+USING (is_superadmin());
+
+-- Only existing superadmins can add new superadmins
+CREATE POLICY "Superadmins can manage superadmin list"
+ON superadmins FOR ALL
+USING (is_superadmin())
+WITH CHECK (is_superadmin());
+
+-- =====================================================
+-- STEP 4: CREATE APPROVAL REQUESTS TABLE
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS approval_requests (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  
+  -- Request type
+  request_type VARCHAR(30) NOT NULL CHECK (request_type IN ('team_creation', 'role_elevation', 'team_reinstatement')),
+  
+  -- What's being requested
+  team_id UUID REFERENCES teams(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- User requesting or being elevated
+  requested_role VARCHAR(30), -- For role_elevation requests
+  
+  -- Request details
+  request_reason TEXT,
+  olympic_goals TEXT, -- Why they want to use the platform (Olympic preparation)
+  experience_level TEXT,
+  federation_affiliation TEXT, -- National federation they're affiliated with
+  
+  -- Status
+  status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'more_info_needed')),
+  
+  -- Review
+  reviewed_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  reviewed_at TIMESTAMPTZ,
+  review_notes TEXT,
+  
+  -- Timestamps
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for performance
+CREATE INDEX IF NOT EXISTS idx_approval_requests_status ON approval_requests(status);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_type ON approval_requests(request_type);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_team ON approval_requests(team_id);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_user ON approval_requests(user_id);
+
+-- Enable RLS
+ALTER TABLE approval_requests ENABLE ROW LEVEL SECURITY;
+
+-- Users can see their own requests
+CREATE POLICY "Users can view own approval requests"
+ON approval_requests FOR SELECT
+USING (user_id = (SELECT auth.uid()) OR is_superadmin());
+
+-- Users can create requests
+CREATE POLICY "Users can create approval requests"
+ON approval_requests FOR INSERT
+WITH CHECK (user_id = (SELECT auth.uid()));
+
+-- Only superadmins can update (approve/reject)
+CREATE POLICY "Superadmins can update approval requests"
+ON approval_requests FOR UPDATE
+USING (is_superadmin())
+WITH CHECK (is_superadmin());
+
+-- =====================================================
+-- STEP 5: CREATE HELPER FUNCTIONS
+-- =====================================================
+
+-- Function to check if current user is a superadmin
+CREATE OR REPLACE FUNCTION is_superadmin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.superadmins 
+    WHERE user_id = (SELECT auth.uid()) 
+    AND is_active = TRUE
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public, auth;
+
+COMMENT ON FUNCTION is_superadmin() IS 'Returns true if the current user is an active superadmin';
+
+-- Function to check if a team is approved
+CREATE OR REPLACE FUNCTION is_team_approved(p_team_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.teams 
+    WHERE id = p_team_id 
+    AND approval_status = 'approved'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+COMMENT ON FUNCTION is_team_approved(UUID) IS 'Returns true if the specified team is approved';
+
+-- Function to check if user has approved admin role in team
+CREATE OR REPLACE FUNCTION has_approved_admin_role(p_team_id UUID, p_user_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.team_members 
+    WHERE team_id = p_team_id 
+    AND user_id = p_user_id
+    AND role IN ('admin', 'coach')
+    AND role_approval_status = 'approved'
+    AND status = 'active'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+COMMENT ON FUNCTION has_approved_admin_role(UUID, UUID) IS 'Returns true if user has an approved admin/coach role in the team';
+
+-- =====================================================
+-- STEP 6: FUNCTION TO APPROVE A TEAM
+-- =====================================================
+
+CREATE OR REPLACE FUNCTION approve_team(
+  p_team_id UUID,
+  p_notes TEXT DEFAULT NULL
+)
+RETURNS BOOLEAN AS $$
+DECLARE
+  v_creator_id UUID;
+BEGIN
+  -- Only superadmins can approve
+  IF NOT is_superadmin() THEN
+    RAISE EXCEPTION 'Only superadmins can approve teams';
+  END IF;
+  
+  -- Update team status
+  UPDATE public.teams
+  SET 
+    approval_status = 'approved',
+    approved_by = (SELECT auth.uid()),
+    approved_at = NOW()
+  WHERE id = p_team_id AND approval_status = 'pending_approval';
+  
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Team not found or not in pending status';
+  END IF;
+  
+  -- Get the team creator (coach_id)
+  SELECT coach_id INTO v_creator_id FROM public.teams WHERE id = p_team_id;
+  
+  -- Auto-approve the creator's admin role
+  IF v_creator_id IS NOT NULL THEN
+    UPDATE public.team_members
+    SET 
+      role_approval_status = 'approved',
+      role_approved_by = (SELECT auth.uid()),
+      role_approved_at = NOW()
+    WHERE team_id = p_team_id AND user_id = v_creator_id AND role IN ('admin', 'coach');
+  END IF;
+  
+  -- Update the approval request
+  UPDATE public.approval_requests
+  SET 
+    status = 'approved',
+    reviewed_by = (SELECT auth.uid()),
+    reviewed_at = NOW(),
+    review_notes = p_notes,
+    updated_at = NOW()
+  WHERE team_id = p_team_id AND request_type = 'team_creation' AND status = 'pending';
+  
+  RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = public, auth;
+
+-- =====================================================
+-- STEP 7: FUNCTION TO REJECT A TEAM
+-- =====================================================
+
+CREATE OR REPLACE FUNCTION reject_team(
+  p_team_id UUID,
+  p_reason TEXT
+)
+RETURNS BOOLEAN AS $$
+BEGIN
+  -- Only superadmins can reject
+  IF NOT is_superadmin() THEN
+    RAISE EXCEPTION 'Only superadmins can reject teams';
+  END IF;
+  
+  -- Update team status
+  UPDATE public.teams
+  SET 
+    approval_status = 'rejected',
+    approved_by = (SELECT auth.uid()),
+    approved_at = NOW(),
+    rejection_reason = p_reason
+  WHERE id = p_team_id AND approval_status = 'pending_approval';
+  

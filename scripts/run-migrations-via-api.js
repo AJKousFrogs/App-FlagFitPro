@@ -16,7 +16,7 @@ const __dirname = dirname(__filename);
 const PROJECT_DIR = join(__dirname, "..");
 
 const supabaseUrl =
-  process.env.SUPABASE_URL || "https://pvziciccwxgftcielknm.supabase.co";
+  process.env.SUPABASE_URL || "https://grfjmnjpzvknmsxrwesx.supabase.co";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 
 if (!supabaseServiceKey) {

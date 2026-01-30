@@ -54,7 +54,7 @@ async function applyMigration() {
   );
   console.log("please apply this migration manually:\n");
   console.log(
-    "1. Go to: https://supabase.com/dashboard/project/pvziciccwxgftcielknm/sql",
+    "1. Go to: https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx/sql",
   );
   console.log("2. Copy the SQL below");
   console.log('3. Paste into the SQL Editor and click "Run"\n');

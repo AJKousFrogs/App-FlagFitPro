@@ -49,7 +49,7 @@ case $choice in
         echo -e "\n${BLUE}Method 1: Supabase Dashboard SQL Editor${NC}"
         echo -e "${YELLOW}─────────────────────────────────────────────────────────${NC}"
         echo ""
-        echo "1. Go to: https://supabase.com/dashboard/project/pvziciccwxgftcielknm"
+        echo "1. Go to: https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx"
         echo "2. Click 'SQL Editor' in the left sidebar"
         echo "3. Click 'New query'"
         echo "4. Copy and paste the SQL below:"
@@ -75,7 +75,7 @@ case $choice in
         if ! supabase status &> /dev/null; then
             echo -e "${YELLOW}⚠${NC} Not linked to Supabase project"
             echo "Linking to project..."
-            supabase link --project-ref pvziciccwxgftcielknm || {
+            supabase link --project-ref grfjmnjpzvknmsxrwesx || {
                 echo -e "${RED}✗${NC} Failed to link project"
                 exit 1
             }
@@ -121,12 +121,12 @@ case $choice in
             echo -e "${RED}✗${NC} SUPABASE_SERVICE_KEY not found in .env"
             echo ""
             echo "Add to .env file:"
-            echo "SUPABASE_SERVICE_KEY=your_service_key_here"
+            echo "SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw"
             exit 1
         fi
         
         # Build connection string
-        DB_URL="postgresql://postgres.pvziciccwxgftcielknm:${SUPABASE_SERVICE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
+        DB_URL="postgresql://postgres.grfjmnjpzvknmsxrwesx:${SUPABASE_SERVICE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
         
         echo -e "${GREEN}✓${NC} Connection string ready"
         echo "Running migration..."

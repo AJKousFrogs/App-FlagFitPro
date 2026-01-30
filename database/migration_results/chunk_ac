@@ -1,0 +1,1000 @@
+$$ LANGUAGE plpgsql;
+
+-- Trigger to auto-add coach as team member
+DROP TRIGGER IF EXISTS auto_add_coach_to_team ON public.teams;
+CREATE TRIGGER auto_add_coach_to_team
+    AFTER INSERT ON public.teams
+    FOR EACH ROW
+    EXECUTE FUNCTION public.add_coach_as_team_member();
+
+-- =====================================================
+-- COMMENTS
+-- =====================================================
+
+COMMENT ON TABLE public.teams IS 'Stores team information created by coaches';
+COMMENT ON TABLE public.team_members IS 'Tracks team membership and player assignments';
+COMMENT ON TABLE public.team_invitations IS 'Manages email invitations for players to join teams';
+
+COMMENT ON COLUMN public.teams.coach_id IS 'The coach/owner who created and manages the team';
+COMMENT ON COLUMN public.team_members.positions IS 'Array of positions a player can play (e.g., {QB, WR})';
+COMMENT ON COLUMN public.team_invitations.token IS 'Unique token for invitation link verification';
+COMMENT ON COLUMN public.team_invitations.expires_at IS 'Invitation expiry date (default 7 days from creation)';
+
+
+
+-- ============================================================================
+-- Migration: 20251220_drop_unused_functions.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Drop unused/orphaned database functions that reference non-existent tables or columns
+-- These functions are not used in the current application codebase
+
+-- Drop chatbot context function (references schema that may not match current state)
+DROP FUNCTION IF EXISTS public.get_or_create_chatbot_context(uuid);
+DROP FUNCTION IF EXISTS public.get_or_create_chatbot_context;
+
+-- Drop organization member function (references non-existent user_organizations table)
+DROP FUNCTION IF EXISTS public.user_is_org_member_with_min_role(uuid, text);
+DROP FUNCTION IF EXISTS public.user_is_org_member_with_min_role;
+
+-- Note: The index_advisor extension warning is a built-in Postgres extension issue
+-- and doesn't affect application functionality. It can be addressed by updating
+-- the extension or adjusting the function implementation if needed.
+
+
+
+-- ============================================================================
+-- Migration: 20260106_add_coach_locked_enforcement.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Add coach_locked enforcement
+-- Date: 2026-01-06
+-- Purpose: Implement Section 1.6 (Lock) and Section 5 (Coach-Locked Session Enforcement)
+
+-- Add coach_locked column to training_sessions
+ALTER TABLE training_sessions
+ADD COLUMN IF NOT EXISTS coach_locked BOOLEAN DEFAULT false NOT NULL;
+
+-- Add coach attribution fields
+ALTER TABLE training_sessions
+ADD COLUMN IF NOT EXISTS modified_by_coach_id UUID REFERENCES auth.users(id),
+ADD COLUMN IF NOT EXISTS modified_at TIMESTAMPTZ;
+
+-- Add session_state column if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'training_sessions' 
+    AND column_name = 'session_state'
+  ) THEN
+    ALTER TABLE training_sessions
+    ADD COLUMN session_state TEXT DEFAULT 'PLANNED';
+    
+    -- Add constraint
+    ALTER TABLE training_sessions
+    ADD CONSTRAINT check_session_state CHECK (
+      session_state IN ('PLANNED', 'GENERATED', 'VISIBLE', 'ACKNOWLEDGED', 'IN_PROGRESS', 'COMPLETED', 'LOCKED', 'CANCELLED', 'EXPIRED', 'ABANDONED')
+    );
+  END IF;
+END $$;
+
+-- Add indexes for performance
+CREATE INDEX IF NOT EXISTS idx_training_sessions_coach_locked ON training_sessions(coach_locked) WHERE coach_locked = true;
+CREATE INDEX IF NOT EXISTS idx_training_sessions_session_state ON training_sessions(session_state);
+CREATE INDEX IF NOT EXISTS idx_training_sessions_modified_by_coach ON training_sessions(modified_by_coach_id) WHERE modified_by_coach_id IS NOT NULL;
+
+COMMENT ON COLUMN training_sessions.coach_locked IS 'When true, prevents AI/system modifications. Only the coach who locked it can modify.';
+COMMENT ON COLUMN training_sessions.modified_by_coach_id IS 'Coach who last modified this session. Set automatically when coach modifies structure.';
+COMMENT ON COLUMN training_sessions.session_state IS 'Current lifecycle state of the session. Determines what modifications are allowed.';
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_add_immutability_triggers.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Add immutability triggers
+-- Date: 2026-01-06
+-- Purpose: Implement Section 4.3 (Trigger-Based Rejection) and Section 3.1 (Session Mutation APIs)
+
+-- Trigger 1: Prevent modifications to IN_PROGRESS or later sessions
+CREATE OR REPLACE FUNCTION prevent_in_progress_modification()
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Check if structural modification attempted
+  -- Note: Adjust column names based on actual schema
+  IF (
+    (OLD.session_structure IS DISTINCT FROM NEW.session_structure)
+    OR (OLD.prescribed_duration IS DISTINCT FROM NEW.prescribed_duration)
+    OR (OLD.prescribed_intensity IS DISTINCT FROM NEW.prescribed_intensity)
+    OR (OLD.duration_minutes IS DISTINCT FROM NEW.duration_minutes AND OLD.session_state >= 'IN_PROGRESS')
+    OR (OLD.intensity_level IS DISTINCT FROM NEW.intensity_level AND OLD.session_state >= 'IN_PROGRESS')
+  ) THEN
+    
+    -- Reject if session is IN_PROGRESS or later
+    IF OLD.session_state IN ('IN_PROGRESS', 'COMPLETED', 'LOCKED', 'CANCELLED', 'EXPIRED', 'ABANDONED') THEN
+      RAISE EXCEPTION 'Cannot modify session structure: session is %', OLD.session_state;
+    END IF;
+  END IF;
+  
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS prevent_in_progress_modification_trigger ON training_sessions;
+CREATE TRIGGER prevent_in_progress_modification_trigger
+  BEFORE UPDATE ON training_sessions
+  FOR EACH ROW
+  EXECUTE FUNCTION prevent_in_progress_modification();
+
+-- Trigger 2: Prevent modifications to coach_locked sessions
+CREATE OR REPLACE FUNCTION prevent_coach_locked_modification()
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- If session is coach_locked, only the coach who locked it can modify
+  IF OLD.coach_locked = true THEN
+    -- Only allow if modifying coach is the one who locked it
+    IF NEW.modified_by_coach_id IS NULL 
+       OR NEW.modified_by_coach_id != OLD.modified_by_coach_id THEN
+      RAISE EXCEPTION 'Cannot modify coach_locked session: locked by coach %', OLD.modified_by_coach_id;
+    END IF;
+  END IF;
+  
+  -- Auto-set coach_locked when coach modifies structure
+  -- Check if structural fields changed
+  IF (
+    (OLD.session_structure IS DISTINCT FROM NEW.session_structure)
+    OR (OLD.prescribed_duration IS DISTINCT FROM NEW.prescribed_duration)
+    OR (OLD.prescribed_intensity IS DISTINCT FROM NEW.prescribed_intensity)
+  ) AND NEW.modified_by_coach_id IS NOT NULL THEN
+    NEW.coach_locked = true;
+    NEW.modified_at = NOW();
+  END IF;
+  
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS prevent_coach_locked_modification_trigger ON training_sessions;
+CREATE TRIGGER prevent_coach_locked_modification_trigger
+  BEFORE UPDATE ON training_sessions
+  FOR EACH ROW
+  EXECUTE FUNCTION prevent_coach_locked_modification();
+
+-- Trigger 3: Prevent updates to immutable timestamp columns
+CREATE OR REPLACE FUNCTION prevent_timestamp_modification()
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Prevent updates to started_at once set
+  IF OLD.started_at IS NOT NULL AND OLD.started_at IS DISTINCT FROM NEW.started_at THEN
+    RAISE EXCEPTION 'Cannot modify started_at: field is immutable once set';
+  END IF;
+  
+  -- Prevent updates to completed_at once set
+  IF OLD.completed_at IS NOT NULL AND OLD.completed_at IS DISTINCT FROM NEW.completed_at THEN
+    RAISE EXCEPTION 'Cannot modify completed_at: field is immutable once set';
+  END IF;
+  
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS prevent_timestamp_modification_trigger ON training_sessions;
+CREATE TRIGGER prevent_timestamp_modification_trigger
+  BEFORE UPDATE ON training_sessions
+  FOR EACH ROW
+  EXECUTE FUNCTION prevent_timestamp_modification();
+
+COMMENT ON FUNCTION prevent_in_progress_modification() IS 'Prevents structural modifications to sessions in IN_PROGRESS or later states';
+COMMENT ON FUNCTION prevent_coach_locked_modification() IS 'Prevents modifications to coach_locked sessions except by the locking coach';
+COMMENT ON FUNCTION prevent_timestamp_modification() IS 'Prevents retroactive modification of immutable timestamp fields';
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_append_only_audit_tables.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Create append-only audit tables
+-- Date: 2026-01-06
+-- Purpose: Implement Section 4.2 (Append-Only Tables) and Section 8 (Violation Handling)
+
+-- Create authorization_violations table
+CREATE TABLE IF NOT EXISTS authorization_violations (
+  violation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id),
+  resource_id UUID,
+  resource_type TEXT NOT NULL,
+  action TEXT NOT NULL,
+  error_code TEXT NOT NULL,
+  error_message TEXT NOT NULL,
+  timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  ip_address INET,
+  user_agent TEXT,
+  request_path TEXT,
+  request_method TEXT,
+  request_body JSONB
+);
+
+-- Append-only policy for authorization_violations
+ALTER TABLE authorization_violations ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Append-only authorization violations" ON authorization_violations;
+CREATE POLICY "Append-only authorization violations"
+ON authorization_violations FOR ALL
+USING (false)  -- No reads except via service role
+WITH CHECK (
+  -- Only allow inserts
+  true
+);
+
+-- Grant insert to authenticated (for API logging)
+GRANT INSERT ON authorization_violations TO authenticated;
+
+-- Grant select to service role (for admin viewing)
+GRANT SELECT ON authorization_violations TO service_role;
+
+-- Create indexes for querying
+CREATE INDEX IF NOT EXISTS idx_auth_violations_user ON authorization_violations(user_id);
+CREATE INDEX IF NOT EXISTS idx_auth_violations_timestamp ON authorization_violations(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_auth_violations_resource ON authorization_violations(resource_type, resource_id);
+CREATE INDEX IF NOT EXISTS idx_auth_violations_error_code ON authorization_violations(error_code);
+
+-- Create append-only policies for audit logs (if tables exist)
+DO $$
+BEGIN
+  -- execution_logs
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'execution_logs') THEN
+    ALTER TABLE execution_logs ENABLE ROW LEVEL SECURITY;
+    DROP POLICY IF EXISTS "Append-only execution logs" ON execution_logs;
+    CREATE POLICY "Append-only execution logs"
+    ON execution_logs FOR ALL
+    USING (false)
+    WITH CHECK (true);  -- Allow inserts only
+    GRANT INSERT ON execution_logs TO authenticated;
+  END IF;
+  
+  -- readiness_logs
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'readiness_logs') THEN
+    ALTER TABLE readiness_logs ENABLE ROW LEVEL SECURITY;
+    DROP POLICY IF EXISTS "Append-only readiness logs" ON readiness_logs;
+    CREATE POLICY "Append-only readiness logs"
+    ON readiness_logs FOR ALL
+    USING (false)
+    WITH CHECK (true);
+    GRANT INSERT ON readiness_logs TO authenticated;
+  END IF;
+  
+  -- pain_reports
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'pain_reports') THEN
+    ALTER TABLE pain_reports ENABLE ROW LEVEL SECURITY;
+    DROP POLICY IF EXISTS "Append-only pain reports" ON pain_reports;
+    CREATE POLICY "Append-only pain reports"
+    ON pain_reports FOR ALL
+    USING (false)
+    WITH CHECK (true);
+    GRANT INSERT ON pain_reports TO authenticated;
+  END IF;
+END $$;
+
+COMMENT ON TABLE authorization_violations IS 'Append-only log of all authorization violation attempts. Used for security monitoring and audit.';
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_append_only_execution_logs.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Append-Only Execution Logs Enforcement
+-- Date: 2026-01-06
+-- Purpose: Prevent UPDATE/DELETE on execution logs
+
+-- ============================================================================
+-- TRIGGER: Prevent UPDATE on Execution Logs
+-- ============================================================================
+CREATE OR REPLACE FUNCTION prevent_execution_log_update()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    RAISE EXCEPTION 'Execution logs are append-only. Cannot UPDATE historical logs. Use INSERT for corrections.';
+END;
+$$;
+
+DROP TRIGGER IF EXISTS prevent_execution_log_update_trigger ON execution_logs;
+CREATE TRIGGER prevent_execution_log_update_trigger
+BEFORE UPDATE ON execution_logs
+FOR EACH ROW
+EXECUTE FUNCTION prevent_execution_log_update();
+
+-- ============================================================================
+-- TRIGGER: Prevent DELETE on Execution Logs
+-- ============================================================================
+CREATE OR REPLACE FUNCTION prevent_execution_log_delete()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    RAISE EXCEPTION 'Execution logs are append-only. Cannot DELETE historical logs.';
+END;
+$$;
+
+DROP TRIGGER IF EXISTS prevent_execution_log_delete_trigger ON execution_logs;
+CREATE TRIGGER prevent_execution_log_delete_trigger
+BEFORE DELETE ON execution_logs
+FOR EACH ROW
+EXECUTE FUNCTION prevent_execution_log_delete();
+
+-- ============================================================================
+-- FUNCTION: Insert Late-Arriving Data (Append Only)
+-- ============================================================================
+CREATE OR REPLACE FUNCTION insert_late_execution_data(
+    p_session_id UUID,
+    p_athlete_id UUID,
+    p_exercise_name TEXT,
+    p_sets_completed INTEGER,
+    p_reps_completed INTEGER,
+    p_rpe INTEGER,
+    p_logged_at TIMESTAMPTZ DEFAULT NOW()
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_log_id UUID;
+    v_session_version INTEGER;
+BEGIN
+    -- Get version that was executed
+    v_session_version := get_executed_version(p_session_id, p_athlete_id);
+    
+    -- Insert new log entry (append only)
+    INSERT INTO execution_logs (
+        session_id,
+        session_version,
+        athlete_id,
+        exercise_name,
+        sets_completed,
+        reps_completed,
+        rpe,
+        logged_at
+    ) VALUES (
+        p_session_id,
+        v_session_version,
+        p_athlete_id,
+        p_exercise_name,
+        p_sets_completed,
+        p_reps_completed,
+        p_rpe,
+        p_logged_at
+    ) RETURNING log_id INTO v_log_id;
+    
+    RETURN v_log_id;
+END;
+$$;
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_complete_privacy_rls.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Complete Privacy RLS Policies
+-- Date: 2026-01-06
+-- Purpose: Enforce privacy-by-design for all sensitive data
+
+-- This migration ensures coach_athlete_assignments table exists
+-- (Created in wellness_privacy_rls.sql, but included here for completeness)
+
+-- ============================================================================
+-- RLS: pain_reports (if table exists)
+-- ============================================================================
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'pain_reports'
+    ) THEN
+        ALTER TABLE pain_reports ENABLE ROW LEVEL SECURITY;
+        
+        -- Athletes: Full access
+        DROP POLICY IF EXISTS "Athletes full access pain" ON pain_reports;
+        EXECUTE 'CREATE POLICY "Athletes full access pain"
+        ON pain_reports
+        FOR ALL
+        USING (athlete_id = auth.uid())
+        WITH CHECK (athlete_id = auth.uid())';
+        
+        -- Coaches: Flag only (pain exists yes/no) unless safety override
+        DROP POLICY IF EXISTS "Coaches flag only pain" ON pain_reports;
+        EXECUTE 'CREATE POLICY "Coaches flag only pain"
+        ON pain_reports
+        FOR SELECT
+        USING (
+            EXISTS (
+                SELECT 1 FROM coach_athlete_assignments
+                WHERE coach_id = auth.uid()
+                AND athlete_id = pain_reports.athlete_id
+            )
+            AND (
+                -- Safety override: pain >3/10 always visible
+                EXISTS (
+                    SELECT 1 FROM safety_override_log
+                    WHERE athlete_id = pain_reports.athlete_id
+                    AND trigger_type IN (''pain_above_3'', ''new_pain_area'', ''worsening_pain'')
+                    AND override_timestamp >= NOW() - INTERVAL ''7 days''
+                )
+                OR
+                -- Consent granted
+                get_athlete_consent(pain_reports.athlete_id, ''wellness'') = true
+            )
+        )';
+        
+        -- Medical: Full access always
+        DROP POLICY IF EXISTS "Medical full access pain" ON pain_reports;
+        EXECUTE 'CREATE POLICY "Medical full access pain"
+        ON pain_reports
+        FOR SELECT
+        USING (
+            EXISTS (
+                SELECT 1 FROM auth.users
+                WHERE id = auth.uid()
+                AND raw_user_meta_data->>''role'' IN (''physio'', ''medical_staff'', ''admin'')
+            )
+        )';
+    END IF;
+END $$;
+
+-- ============================================================================
+-- RLS: wellness_data (if table exists, legacy table)
+-- ============================================================================
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'public'
+        AND table_name = 'wellness_data'
+    ) THEN
+        ALTER TABLE wellness_data ENABLE ROW LEVEL SECURITY;
+        
+        -- Athletes: Full access
+        DROP POLICY IF EXISTS "Athletes full access wellness_data" ON wellness_data;
+        EXECUTE 'CREATE POLICY "Athletes full access wellness_data"
+        ON wellness_data
+        FOR ALL
+        USING (user_id::text = auth.uid()::text)
+        WITH CHECK (user_id::text = auth.uid()::text)';
+        
+        -- Coaches: Hidden unless consent or safety override
+        DROP POLICY IF EXISTS "Coaches view wellness_data with consent" ON wellness_data;
+        EXECUTE 'CREATE POLICY "Coaches view wellness_data with consent"
+        ON wellness_data
+        FOR SELECT
+        USING (
+            EXISTS (
+                SELECT 1 FROM coach_athlete_assignments
+                WHERE coach_id = auth.uid()
+                AND athlete_id::text = wellness_data.user_id::text
+            )
+            AND (
+                get_athlete_consent(wellness_data.user_id::uuid, ''wellness'') = true
+                OR
+                has_active_safety_override(wellness_data.user_id::uuid, ''pain'') = true
+            )
+        )';
+    END IF;
+END $$;
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_consent_enforcement.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Consent Enforcement Model
+-- Date: 2026-01-06
+-- Purpose: Implement Data Consent & Visibility Contract v1
+
+-- ============================================================================
+-- CONSENT SETTINGS TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS athlete_consent_settings (
+    athlete_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    
+    -- Content sharing settings (default: false = hidden)
+    share_readiness_with_coach BOOLEAN DEFAULT false NOT NULL,
+    share_wellness_answers_with_coach BOOLEAN DEFAULT false NOT NULL,
+    share_training_notes_with_coach BOOLEAN DEFAULT false NOT NULL,
+    share_merlin_conversations_with_coach BOOLEAN DEFAULT false NOT NULL,
+    share_readiness_with_all_coaches BOOLEAN DEFAULT false NOT NULL,
+    
+    -- Timestamps
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX idx_athlete_consent_settings_athlete ON athlete_consent_settings(athlete_id);
+
+COMMENT ON TABLE athlete_consent_settings IS 'Athlete consent preferences for data sharing with coaches';
+COMMENT ON COLUMN athlete_consent_settings.share_readiness_with_coach IS 'If true, coach can see readinessScore. Default: false (hidden).';
+COMMENT ON COLUMN athlete_consent_settings.share_wellness_answers_with_coach IS 'If true, coach can see individual wellness answers. Default: false (hidden).';
+
+-- ============================================================================
+-- CONSENT CHANGE AUDIT LOG
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS consent_change_log (
+    change_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    athlete_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    setting_name TEXT NOT NULL,
+    previous_value BOOLEAN NOT NULL,
+    new_value BOOLEAN NOT NULL,
+    changed_by UUID NOT NULL REFERENCES auth.users(id),
+    changed_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    reason TEXT
+);
+
+CREATE INDEX idx_consent_change_log_athlete ON consent_change_log(athlete_id, changed_at DESC);
+
+COMMENT ON TABLE consent_change_log IS 'Append-only audit log of all consent setting changes';
+
+-- ============================================================================
+-- FUNCTION: Get Consent Setting
+-- ============================================================================
+CREATE OR REPLACE FUNCTION get_athlete_consent(
+    p_athlete_id UUID,
+    p_setting_name TEXT
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_consent BOOLEAN;
+BEGIN
+    SELECT CASE p_setting_name
+        WHEN 'readiness' THEN share_readiness_with_coach
+        WHEN 'wellness' THEN share_wellness_answers_with_coach
+        WHEN 'training_notes' THEN share_training_notes_with_coach
+        WHEN 'merlin' THEN share_merlin_conversations_with_coach
+        WHEN 'readiness_all_coaches' THEN share_readiness_with_all_coaches
+        ELSE false
+    END INTO v_consent
+    FROM athlete_consent_settings
+    WHERE athlete_id = p_athlete_id;
+    
+    -- Default to false if no consent record exists
+    RETURN COALESCE(v_consent, false);
+END;
+$$;
+
+-- ============================================================================
+-- RLS POLICY: Athletes can manage own consent
+-- ============================================================================
+ALTER TABLE athlete_consent_settings ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Athletes can manage own consent" ON athlete_consent_settings;
+CREATE POLICY "Athletes can manage own consent"
+ON athlete_consent_settings
+FOR ALL
+USING (athlete_id = auth.uid())
+WITH CHECK (athlete_id = auth.uid());
+
+-- ============================================================================
+-- RLS POLICY: Consent change log is append-only
+-- ============================================================================
+ALTER TABLE consent_change_log ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Append-only consent change log" ON consent_change_log;
+CREATE POLICY "Append-only consent change log"
+ON consent_change_log
+FOR INSERT
+WITH CHECK (true);
+
+DROP POLICY IF EXISTS "No reads on consent change log" ON consent_change_log;
+CREATE POLICY "No reads on consent change log"
+ON consent_change_log
+FOR SELECT
+USING (false); -- Only service_role can read via bypass
+
+COMMENT ON POLICY "Append-only consent change log" ON consent_change_log IS 'Consent changes are append-only. No UPDATE or DELETE allowed.';
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_merlin_readonly_role.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Merlin Read-Only Role
+-- Date: 2026-01-06
+-- Purpose: Create read-only database role for Merlin AI
+
+-- ============================================================================
+-- CREATE READ-ONLY ROLE FOR MERLIN
+-- ============================================================================
+DO $$
+BEGIN
+    -- Create role if it doesn't exist
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'merlin_readonly') THEN
+        CREATE ROLE merlin_readonly;
+    END IF;
+    
+    -- Grant connect privilege
+    GRANT CONNECT ON DATABASE postgres TO merlin_readonly;
+    
+    -- Grant usage on schema
+    GRANT USAGE ON SCHEMA public TO merlin_readonly;
+    
+    -- Grant SELECT on read-only tables
+    GRANT SELECT ON ALL TABLES IN SCHEMA public TO merlin_readonly;
+    GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO merlin_readonly;
+    
+    -- Set default privileges for future tables
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public
+    GRANT SELECT ON TABLES TO merlin_readonly;
+    
+    -- REVOKE all write privileges explicitly
+    REVOKE INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public FROM merlin_readonly;
+    REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA public FROM merlin_readonly;
+    
+    -- Grant execute on read-only functions only
+    GRANT EXECUTE ON FUNCTION get_athlete_consent(UUID, TEXT) TO merlin_readonly;
+    GRANT EXECUTE ON FUNCTION has_active_safety_override(UUID, TEXT) TO merlin_readonly;
+    GRANT EXECUTE ON FUNCTION get_executed_version(UUID, UUID) TO merlin_readonly;
+    
+    COMMENT ON ROLE merlin_readonly IS 'Read-only role for Merlin AI. Cannot modify any data.';
+END $$;
+
+-- ============================================================================
+-- MERLIN VIOLATION LOG TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS merlin_violation_log (
+    violation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    violation_type TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    request_body TEXT,
+    user_agent TEXT,
+    timestamp TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE INDEX idx_merlin_violation_log_timestamp ON merlin_violation_log(timestamp DESC);
+
+COMMENT ON TABLE merlin_violation_log IS 'Append-only log of Merlin AI violation attempts';
+
+-- ============================================================================
+-- RLS: Merlin violation log append-only
+-- ============================================================================
+ALTER TABLE merlin_violation_log ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Append-only merlin violations" ON merlin_violation_log;
+CREATE POLICY "Append-only merlin violations"
+ON merlin_violation_log
+FOR INSERT
+WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Service role reads merlin violations" ON merlin_violation_log;
+CREATE POLICY "Service role reads merlin violations"
+ON merlin_violation_log
+FOR SELECT
+USING (auth.role() = 'service_role');
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_safety_override_system.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Safety Override System
+-- Date: 2026-01-06
+-- Purpose: Implement safety triggers that override consent
+
+-- ============================================================================
+-- SAFETY OVERRIDE LOG TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS safety_override_log (
+    override_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    athlete_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    trigger_type TEXT NOT NULL CHECK (trigger_type IN (
+        'pain_above_3',
+        'new_pain_area',
+        'worsening_pain',
+        'acwr_danger_zone',
+        'high_rpe_streak',
+        'rehab_violation',
+        'high_stress_streak'
+    )),
+    trigger_value JSONB NOT NULL, -- Stores trigger-specific data
+    data_disclosed JSONB NOT NULL, -- What data was disclosed
+    disclosed_to_roles TEXT[] NOT NULL, -- ['coach', 'physio']
+    disclosed_to_user_ids UUID[] NOT NULL, -- Specific user IDs notified
+    override_timestamp TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    athlete_notified BOOLEAN DEFAULT false,
+    athlete_notified_at TIMESTAMPTZ
+);
+
+CREATE INDEX idx_safety_override_log_athlete ON safety_override_log(athlete_id, override_timestamp DESC);
+CREATE INDEX idx_safety_override_log_trigger ON safety_override_log(trigger_type, override_timestamp DESC);
+
+COMMENT ON TABLE safety_override_log IS 'Append-only log of all safety overrides that bypass consent';
+
+-- ============================================================================
+-- FUNCTION: Detect Pain >3/10 Trigger
+-- ============================================================================
+CREATE OR REPLACE FUNCTION detect_pain_trigger(
+    p_athlete_id UUID,
+    p_pain_score INTEGER,
+    p_pain_location TEXT,
+    p_pain_trend TEXT DEFAULT NULL
+)
+RETURNS UUID -- Returns override_id if trigger fired
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_override_id UUID;
+    v_previous_pain INTEGER;
+    v_previous_location TEXT;
+    v_trigger_type TEXT;
+BEGIN
+    -- Check if pain >3/10
+    IF p_pain_score > 3 THEN
+        -- Get previous pain report (if wellness_entries has pain_score column)
+        BEGIN
+            SELECT pain_score, pain_location INTO v_previous_pain, v_previous_location
+            FROM wellness_entries
+            WHERE athlete_id = p_athlete_id
+            AND pain_score IS NOT NULL
+            ORDER BY date DESC
+            LIMIT 1;
+        EXCEPTION WHEN OTHERS THEN
+            -- Column may not exist, use NULL
+            v_previous_pain := NULL;
+        END;
+        
+        -- Determine trigger type
+        IF v_previous_pain IS NULL THEN
+            v_trigger_type := 'new_pain_area';
+        ELSIF p_pain_trend = 'worse' OR (p_pain_score > v_previous_pain) THEN
+            v_trigger_type := 'worsening_pain';
+        ELSE
+            v_trigger_type := 'pain_above_3';
+        END IF;
+        
+        -- Log override
+        INSERT INTO safety_override_log (
+            athlete_id,
+            trigger_type,
+            trigger_value,
+            data_disclosed,
+            disclosed_to_roles,
+            disclosed_to_user_ids
+        ) VALUES (
+            p_athlete_id,
+            v_trigger_type,
+            jsonb_build_object(
+                'pain_score', p_pain_score,
+                'pain_location', p_pain_location,
+                'pain_trend', p_pain_trend
+            ),
+            jsonb_build_object(
+                'pain_score', p_pain_score,
+                'pain_location', p_pain_location
+            ),
+            ARRAY['coach', 'physio'],
+            -- Get assigned coach and physio IDs
+            COALESCE(
+                ARRAY(
+                    SELECT coach_id FROM coach_athlete_assignments
+                    WHERE athlete_id = p_athlete_id
+                    UNION
+                    SELECT id FROM auth.users
+                    WHERE raw_user_meta_data->>'role' IN ('physio', 'medical_staff')
+                    AND EXISTS (
+                        SELECT 1 FROM coach_athlete_assignments
+                        WHERE athlete_id = p_athlete_id
+                    )
+                ),
+                ARRAY[]::UUID[]
+            )
+        ) RETURNING override_id INTO v_override_id;
+        
+        RETURN v_override_id;
+    END IF;
+    
+    RETURN NULL;
+END;
+$$;
+
+-- ============================================================================
+-- FUNCTION: Detect ACWR Danger Zone
+-- ============================================================================
+CREATE OR REPLACE FUNCTION detect_acwr_trigger(
+    p_athlete_id UUID
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_override_id UUID;
+    v_acwr NUMERIC;
+BEGIN
+    -- Get latest ACWR
+    SELECT acwr INTO v_acwr
+    FROM readiness_scores
+    WHERE athlete_id = p_athlete_id
+    ORDER BY day DESC
+    LIMIT 1;
+    
+    -- Check if ACWR in danger zone
+    IF v_acwr IS NOT NULL AND (v_acwr > 1.5 OR v_acwr < 0.8) THEN
+        INSERT INTO safety_override_log (
+            athlete_id,
+            trigger_type,
+            trigger_value,
+            data_disclosed,
+            disclosed_to_roles,
+            disclosed_to_user_ids
+        ) VALUES (
+            p_athlete_id,
+            'acwr_danger_zone',
+            jsonb_build_object('acwr', v_acwr),
+            jsonb_build_object('acwr', v_acwr, 'message', 'ACWR outside safe range'),
+            ARRAY['coach', 's&c_staff'],
+            COALESCE(
+                ARRAY(
+                    SELECT coach_id FROM coach_athlete_assignments
+                    WHERE athlete_id = p_athlete_id
+                ),
+                ARRAY[]::UUID[]
+            )
+        ) RETURNING override_id INTO v_override_id;
+        
+        RETURN v_override_id;
+    END IF;
+    
+    RETURN NULL;
+END;
+$$;
+
+-- ============================================================================
+-- FUNCTION: Check Safety Override Active
+-- ============================================================================
+CREATE OR REPLACE FUNCTION has_active_safety_override(
+    p_athlete_id UUID,
+    p_data_type TEXT DEFAULT NULL
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    -- Check if any safety override is active (within last 7 days)
+    RETURN EXISTS(
+        SELECT 1 FROM safety_override_log
+        WHERE athlete_id = p_athlete_id
+        AND override_timestamp >= NOW() - INTERVAL '7 days'
+        AND (
+            p_data_type IS NULL
+            OR (
+                p_data_type = 'pain' AND trigger_type IN ('pain_above_3', 'new_pain_area', 'worsening_pain')
+                OR p_data_type = 'acwr' AND trigger_type = 'acwr_danger_zone'
+            )
+        )
+    );
+END;
+$$;
+
+-- ============================================================================
+-- RLS: Safety override log is append-only
+-- ============================================================================
+ALTER TABLE safety_override_log ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Append-only safety override log" ON safety_override_log;
+CREATE POLICY "Append-only safety override log"
+ON safety_override_log
+FOR INSERT
+WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Service role can read safety overrides" ON safety_override_log;
+CREATE POLICY "Service role can read safety overrides"
+ON safety_override_log
+FOR SELECT
+USING (auth.role() = 'service_role');
+
+
+
+
+-- ============================================================================
+-- Migration: 20260106_session_versioning.sql
+-- Type: supabase
+-- ============================================================================
+
+-- Migration: Session Versioning System
+-- Date: 2026-01-06
+-- Purpose: Track session versions and enforce append-only execution logs
+
+-- ============================================================================
+-- SESSION VERSION HISTORY TABLE
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS session_version_history (
+    version_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_id UUID NOT NULL REFERENCES training_sessions(id) ON DELETE CASCADE,
+    version_number INTEGER NOT NULL,
+    session_structure JSONB NOT NULL, -- Complete snapshot of session structure
+    modified_by_coach_id UUID REFERENCES auth.users(id),
+    modified_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    modification_reason TEXT,
+    visible_to_athlete BOOLEAN DEFAULT false, -- Which version athlete saw
+    athlete_viewed_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    UNIQUE(session_id, version_number)
+);
+
+CREATE INDEX idx_session_version_history_session ON session_version_history(session_id, version_number DESC);
+CREATE INDEX idx_session_version_history_coach ON session_version_history(modified_by_coach_id);
+
+COMMENT ON TABLE session_version_history IS 'Immutable version history of all session modifications';
+COMMENT ON COLUMN session_version_history.session_structure IS 'Complete JSON snapshot of exercises, sets, reps, intensity';
+
+-- ============================================================================
+-- ADD VERSION COLUMN TO TRAINING_SESSIONS
+-- ============================================================================
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public'
+        AND table_name = 'training_sessions'
+        AND column_name = 'current_version'
+    ) THEN
+        ALTER TABLE training_sessions
+        ADD COLUMN current_version INTEGER DEFAULT 1 NOT NULL;
+    END IF;
+END $$;
+
+-- ============================================================================
+-- FUNCTION: Create New Version on Modification
+-- ============================================================================
+CREATE OR REPLACE FUNCTION create_session_version()
+RETURNS TRIGGER
+LANGUAGE plpgsql

@@ -30,7 +30,7 @@ This directory contains automated tests that verify codebase compliance against 
 2. Environment variables configured:
    ```bash
    SUPABASE_URL=http://localhost:54321
-   SUPABASE_SERVICE_KEY=your-test-service-key
+   SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw
    ```
 
 ### Run All Contract Tests

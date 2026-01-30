@@ -2,7 +2,7 @@
 -- DIAGNOSTIC SCRIPT: Check Team Roster Issues
 -- ============================================================================
 -- Run this in Supabase SQL Editor to diagnose roster problems
--- https://supabase.com/dashboard/project/pvziciccwxgftcielknm/sql
+-- https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx/sql
 -- ============================================================================
 
 -- ==========================================================================

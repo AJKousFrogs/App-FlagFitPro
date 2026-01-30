@@ -1,0 +1,1000 @@
+        AND table_schema = 'public'
+    LOOP
+        EXECUTE format('
+            DROP TRIGGER IF EXISTS update_%I_updated_at ON %I;
+            CREATE TRIGGER update_%I_updated_at
+                BEFORE UPDATE ON %I
+                FOR EACH ROW
+                EXECUTE FUNCTION update_updated_at_column();
+        ', t, t, t, t);
+    END LOOP;
+END $$;
+
+-- =============================================================================
+-- VERIFICATION
+-- =============================================================================
+
+-- Run verification check
+SELECT * FROM verify_database_bootstrap();
+
+-- =============================================================================
+-- NOTES
+-- =============================================================================
+/*
+This migration addresses all 12 issues identified:
+
+1. ✅ Unified exercise catalog via exercise_registry table
+2. ✅ Domain constraints via ENUMs and CHECK constraints
+3. ✅ Unique constraints on critical tables
+4. ✅ ACWR versioning with calculation_version and data_sources
+5. ✅ Compliance rate replaced with v_player_program_compliance view
+6. ✅ Position metrics via metric_definitions and metric_entries
+7. ✅ Planned vs performed separation in workout_logs and exercise_logs
+8. ✅ Performance indexes for all common query patterns
+9. ✅ Player program assignment with status, position, timezone
+10. ✅ Video library with source_type, ownership, rights, status
+11. ✅ Comprehensive RLS policies for new tables
+12. ✅ Bootstrap verification via verify_database_bootstrap() function
+
+NEXT STEPS:
+1. Run this migration on your Supabase instance
+2. Execute: SELECT * FROM verify_database_bootstrap();
+3. Address any FAIL or WARN results
+4. Populate exercise_registry from existing exercise tables
+5. Create metric entries for existing workout data
+*/
+
+
+
+
+-- ============================================================================
+-- Migration: 071_consent_layer_views_and_functions.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- CONSENT LAYER - Migration 071
+-- =============================================================================
+-- This migration adds consent-aware access enforcement:
+-- 1. Helper functions for consent validation
+-- 2. Consent-aware views for load monitoring and workout logs
+-- 3. AI processing fail-fast function
+-- 4. Enhanced RLS policies for coach access with consent checks
+-- 5. Consent audit logging table
+-- =============================================================================
+
+-- =============================================================================
+-- PART 1: CONSENT VALIDATION HELPER FUNCTIONS
+-- =============================================================================
+
+-- Function to check if a player has enabled performance sharing for a specific team
+CREATE OR REPLACE FUNCTION check_performance_sharing(
+    p_player_id UUID,
+    p_team_id UUID
+) RETURNS BOOLEAN AS $$
+DECLARE
+    v_sharing_enabled BOOLEAN;
+    v_default_sharing BOOLEAN;
+BEGIN
+    -- First check team-specific settings
+    SELECT performance_sharing_enabled INTO v_sharing_enabled
+    FROM team_sharing_settings
+    WHERE user_id = p_player_id AND team_id = p_team_id;
+    
+    -- If team-specific setting exists, use it
+    IF FOUND THEN
+        RETURN COALESCE(v_sharing_enabled, FALSE);
+    END IF;
+    
+    -- Fall back to user's default setting
+    SELECT performance_sharing_default INTO v_default_sharing
+    FROM privacy_settings
+    WHERE user_id = p_player_id;
+    
+    -- If no settings exist, default to FALSE (privacy-first)
+    RETURN COALESCE(v_default_sharing, FALSE);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+-- Function to check if a player has enabled health sharing for a specific team
+CREATE OR REPLACE FUNCTION check_health_sharing(
+    p_player_id UUID,
+    p_team_id UUID
+) RETURNS BOOLEAN AS $$
+DECLARE
+    v_sharing_enabled BOOLEAN;
+    v_default_sharing BOOLEAN;
+BEGIN
+    -- First check team-specific settings
+    SELECT health_sharing_enabled INTO v_sharing_enabled
+    FROM team_sharing_settings
+    WHERE user_id = p_player_id AND team_id = p_team_id;
+    
+    -- If team-specific setting exists, use it
+    IF FOUND THEN
+        RETURN COALESCE(v_sharing_enabled, FALSE);
+    END IF;
+    
+    -- Fall back to user's default setting
+    SELECT health_sharing_default INTO v_default_sharing
+    FROM privacy_settings
+    WHERE user_id = p_player_id;
+    
+    -- If no settings exist, default to FALSE (privacy-first)
+    RETURN COALESCE(v_default_sharing, FALSE);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+-- Function to check if AI processing is enabled for a user
+CREATE OR REPLACE FUNCTION check_ai_processing_enabled(
+    p_user_id UUID
+) RETURNS BOOLEAN AS $$
+DECLARE
+    v_ai_enabled BOOLEAN;
+BEGIN
+    SELECT ai_processing_enabled INTO v_ai_enabled
+    FROM privacy_settings
+    WHERE user_id = p_user_id;
+    
+    -- Default to FALSE if no settings exist (privacy-first)
+    RETURN COALESCE(v_ai_enabled, FALSE);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+-- Function to check allowed metric categories for a team
+CREATE OR REPLACE FUNCTION check_metric_category_allowed(
+    p_player_id UUID,
+    p_team_id UUID,
+    p_category TEXT
+) RETURNS BOOLEAN AS $$
+DECLARE
+    v_allowed_categories TEXT[];
+BEGIN
+    SELECT allowed_metric_categories INTO v_allowed_categories
+    FROM team_sharing_settings
+    WHERE user_id = p_player_id AND team_id = p_team_id;
+    
+    -- If no settings or empty array, nothing is allowed
+    IF v_allowed_categories IS NULL OR array_length(v_allowed_categories, 1) IS NULL THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Check if category is in allowed list
+    RETURN p_category = ANY(v_allowed_categories);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+-- Function to get teams where current user is coach/admin
+CREATE OR REPLACE FUNCTION get_coached_teams()
+RETURNS SETOF UUID AS $$
+BEGIN
+    RETURN QUERY
+    SELECT team_id 
+    FROM team_members 
+    WHERE user_id = (SELECT auth.uid())
+    AND role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+    AND status = 'active';
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+-- =============================================================================
+-- PART 2: AI PROCESSING FAIL-FAST FUNCTION
+-- =============================================================================
+
+-- Function that fails fast if AI processing is disabled
+-- Use this in any AI-related queries to ensure consent
+CREATE OR REPLACE FUNCTION require_ai_consent(
+    p_user_id UUID
+) RETURNS BOOLEAN AS $$
+BEGIN
+    IF NOT check_ai_processing_enabled(p_user_id) THEN
+        RAISE EXCEPTION 'AI_CONSENT_REQUIRED: User % has not enabled AI processing. Enable AI processing in Privacy Settings to use this feature.', p_user_id
+            USING ERRCODE = 'P0001';
+    END IF;
+    RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+-- Function to get AI processing status with explanation
+CREATE OR REPLACE FUNCTION get_ai_consent_status(
+    p_user_id UUID
+) RETURNS TABLE(
+    ai_enabled BOOLEAN,
+    consent_date TIMESTAMPTZ,
+    can_process BOOLEAN,
+    reason TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        COALESCE(ps.ai_processing_enabled, FALSE) AS ai_enabled,
+        ps.ai_processing_consent_date AS consent_date,
+        COALESCE(ps.ai_processing_enabled, FALSE) AS can_process,
+        CASE 
+            WHEN ps.ai_processing_enabled = TRUE THEN 'AI processing enabled by user consent'
+            WHEN ps.ai_processing_enabled = FALSE THEN 'AI processing disabled by user preference'
+            WHEN ps.user_id IS NULL THEN 'No privacy settings configured - AI processing disabled by default'
+            ELSE 'AI processing status unknown'
+        END AS reason
+    FROM (SELECT p_user_id AS uid) t
+    LEFT JOIN privacy_settings ps ON ps.user_id = t.uid;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE
+SET search_path = public;
+
+-- =============================================================================
+-- PART 3: CONSENT-AWARE VIEWS
+-- =============================================================================
+
+-- View for load monitoring with consent checks (SECURITY INVOKER)
+-- Returns NULL metrics if consent is missing, includes consent_blocked flag
+CREATE OR REPLACE VIEW v_load_monitoring_consent 
+WITH (security_invoker = true)
+AS
+SELECT 
+    lm.id,
+    lm.workout_log_id,
+    lm.player_id,
+    -- Only show metrics if viewer is the player OR has consent
+    CASE 
+        WHEN lm.player_id = (SELECT auth.uid()) THEN lm.daily_load
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = lm.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(lm.player_id, coach_tm.team_id)
+        ) THEN lm.daily_load
+        ELSE NULL
+    END AS daily_load,
+    CASE 
+        WHEN lm.player_id = (SELECT auth.uid()) THEN lm.acute_load
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = lm.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(lm.player_id, coach_tm.team_id)
+        ) THEN lm.acute_load
+        ELSE NULL
+    END AS acute_load,
+    CASE 
+        WHEN lm.player_id = (SELECT auth.uid()) THEN lm.chronic_load
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = lm.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(lm.player_id, coach_tm.team_id)
+        ) THEN lm.chronic_load
+        ELSE NULL
+    END AS chronic_load,
+    CASE 
+        WHEN lm.player_id = (SELECT auth.uid()) THEN lm.acwr
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = lm.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(lm.player_id, coach_tm.team_id)
+        ) THEN lm.acwr
+        ELSE NULL
+    END AS acwr,
+    -- Health-related fields require health consent
+    CASE 
+        WHEN lm.player_id = (SELECT auth.uid()) THEN lm.injury_risk_level
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = lm.player_id
+            AND player_tm.status = 'active'
+            AND check_health_sharing(lm.player_id, coach_tm.team_id)
+        ) THEN lm.injury_risk_level
+        ELSE NULL
+    END AS injury_risk_level,
+    lm.calculated_at,
+    lm.created_at,
+    -- Consent status flags
+    CASE 
+        WHEN lm.player_id = (SELECT auth.uid()) THEN FALSE
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = lm.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(lm.player_id, coach_tm.team_id)
+        ) THEN FALSE
+        ELSE TRUE
+    END AS consent_blocked,
+    CASE 
+        WHEN lm.player_id = (SELECT auth.uid()) THEN 'own_data'
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = lm.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(lm.player_id, coach_tm.team_id)
+        ) THEN 'team_consent'
+        ELSE 'no_consent'
+    END AS access_reason
+FROM load_monitoring lm;
+
+-- Grant access to the view
+GRANT SELECT ON v_load_monitoring_consent TO authenticated;
+
+-- View for workout logs with consent checks (SECURITY INVOKER)
+CREATE OR REPLACE VIEW v_workout_logs_consent 
+WITH (security_invoker = true)
+AS
+SELECT 
+    wl.id,
+    wl.player_id,
+    wl.session_id,
+    -- Only show details if viewer is the player OR has consent
+    CASE 
+        WHEN wl.player_id = (SELECT auth.uid()) THEN wl.completed_at
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = wl.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(wl.player_id, coach_tm.team_id)
+        ) THEN wl.completed_at
+        ELSE NULL
+    END AS completed_at,
+    CASE 
+        WHEN wl.player_id = (SELECT auth.uid()) THEN wl.rpe
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = wl.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(wl.player_id, coach_tm.team_id)
+        ) THEN wl.rpe
+        ELSE NULL
+    END AS rpe,
+    CASE 
+        WHEN wl.player_id = (SELECT auth.uid()) THEN wl.duration_minutes
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = wl.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(wl.player_id, coach_tm.team_id)
+        ) THEN wl.duration_minutes
+        ELSE NULL
+    END AS duration_minutes,
+    CASE 
+        WHEN wl.player_id = (SELECT auth.uid()) THEN wl.notes
+        WHEN EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = wl.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(wl.player_id, coach_tm.team_id)
+        ) THEN wl.notes
+        ELSE NULL
+    END AS notes,
+    wl.created_at,
+    wl.updated_at,
+    -- Consent status flags
+    CASE 
+        WHEN wl.player_id = (SELECT auth.uid()) THEN FALSE
+        ELSE NOT EXISTS (
+            SELECT 1 FROM team_members coach_tm
+            JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+            WHERE coach_tm.user_id = (SELECT auth.uid())
+            AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+            AND coach_tm.status = 'active'
+            AND player_tm.user_id = wl.player_id
+            AND player_tm.status = 'active'
+            AND check_performance_sharing(wl.player_id, coach_tm.team_id)
+        )
+    END AS consent_blocked
+FROM workout_logs wl;
+
+-- Grant access to the view
+GRANT SELECT ON v_workout_logs_consent TO authenticated;
+
+-- =============================================================================
+-- PART 4: ENHANCED RLS POLICIES FOR COACH ACCESS WITH CONSENT
+-- =============================================================================
+
+-- Drop existing coach policies on load_monitoring if they exist
+DROP POLICY IF EXISTS "Coaches can view team load monitoring with consent" ON load_monitoring;
+
+-- Create consent-aware coach policy for load_monitoring
+CREATE POLICY "Coaches can view team load monitoring with consent" 
+ON load_monitoring FOR SELECT 
+USING (
+    -- Player can always see their own data
+    player_id = (SELECT auth.uid())
+    OR
+    -- Coaches can see data only if player has enabled sharing for their team
+    EXISTS (
+        SELECT 1 
+        FROM team_members coach_tm
+        JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+        WHERE coach_tm.user_id = (SELECT auth.uid())
+        AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+        AND coach_tm.status = 'active'
+        AND player_tm.user_id = load_monitoring.player_id
+        AND player_tm.status = 'active'
+        AND check_performance_sharing(load_monitoring.player_id, coach_tm.team_id)
+    )
+);
+
+-- Drop existing coach policies on workout_logs if they exist
+DROP POLICY IF EXISTS "Coaches can view team workout logs with consent" ON workout_logs;
+
+-- Create consent-aware coach policy for workout_logs
+CREATE POLICY "Coaches can view team workout logs with consent" 
+ON workout_logs FOR SELECT 
+USING (
+    -- Player can always see their own data
+    player_id = (SELECT auth.uid())
+    OR
+    -- Coaches can see data only if player has enabled sharing for their team
+    EXISTS (
+        SELECT 1 
+        FROM team_members coach_tm
+        JOIN team_members player_tm ON coach_tm.team_id = player_tm.team_id
+        WHERE coach_tm.user_id = (SELECT auth.uid())
+        AND coach_tm.role IN ('coach', 'assistant_coach', 'head_coach', 'admin')
+        AND coach_tm.status = 'active'
+        AND player_tm.user_id = workout_logs.player_id
+        AND player_tm.status = 'active'
+        AND check_performance_sharing(workout_logs.player_id, coach_tm.team_id)
+    )
+);
+
+-- =============================================================================
+-- PART 5: CONSENT AUDIT LOGGING
+-- =============================================================================
+
+-- Table to log consent-related access attempts (for GDPR Article 30 compliance)
+CREATE TABLE IF NOT EXISTS consent_access_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    accessor_user_id UUID NOT NULL,
+    target_user_id UUID NOT NULL,
+    resource_type TEXT NOT NULL, -- 'load_monitoring', 'workout_logs', etc.
+    access_granted BOOLEAN NOT NULL,
+    consent_type TEXT, -- 'performance', 'health', 'ai_processing'
+    team_id UUID,
+    access_reason TEXT,
+    accessed_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS on consent_access_log
+ALTER TABLE consent_access_log ENABLE ROW LEVEL SECURITY;
+
+-- Only system/service role can write to this table
+DROP POLICY IF EXISTS "Service role can manage consent logs" ON consent_access_log;
+CREATE POLICY "Service role can manage consent logs" 
+ON consent_access_log FOR ALL 
+USING (FALSE)
+WITH CHECK (FALSE);
+
+-- Users can read their own access logs (both as accessor and target)
+DROP POLICY IF EXISTS "Users can view their own consent access logs" ON consent_access_log;
+CREATE POLICY "Users can view their own consent access logs" 
+ON consent_access_log FOR SELECT 
+USING (
+    accessor_user_id = (SELECT auth.uid())
+    OR target_user_id = (SELECT auth.uid())
+);
+
+-- Index for efficient querying
+CREATE INDEX IF NOT EXISTS idx_consent_access_log_accessor ON consent_access_log(accessor_user_id, accessed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_consent_access_log_target ON consent_access_log(target_user_id, accessed_at DESC);
+
+-- =============================================================================
+-- PART 6: GRANT PERMISSIONS
+-- =============================================================================
+
+-- Grant execute on helper functions to authenticated users
+GRANT EXECUTE ON FUNCTION check_performance_sharing(UUID, UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION check_health_sharing(UUID, UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION check_ai_processing_enabled(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION check_metric_category_allowed(UUID, UUID, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_coached_teams() TO authenticated;
+GRANT EXECUTE ON FUNCTION require_ai_consent(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_ai_consent_status(UUID) TO authenticated;
+
+-- =============================================================================
+-- NOTES
+-- =============================================================================
+/*
+This migration implements consent-aware access enforcement:
+
+1. Helper Functions:
+   - check_performance_sharing(player_id, team_id) - Checks if player allows performance data sharing
+   - check_health_sharing(player_id, team_id) - Checks if player allows health data sharing
+   - check_ai_processing_enabled(user_id) - Checks if user has enabled AI processing
+   - check_metric_category_allowed(player_id, team_id, category) - Checks specific metric category access
+   - get_coached_teams() - Returns teams where current user is coach
+
+2. AI Fail-Fast:
+   - require_ai_consent(user_id) - Raises exception if AI processing is disabled
+   - get_ai_consent_status(user_id) - Returns detailed AI consent status
+
+3. Consent-Aware Views:
+   - v_load_monitoring_consent - Load monitoring with NULL values if no consent
+   - v_workout_logs_consent - Workout logs with NULL values if no consent
+   Both views include consent_blocked flag for UI handling
+
+4. Enhanced RLS Policies:
+   - Coaches can only view player data if player has enabled sharing for their team
+   - Players always have full access to their own data
+
+5. Audit Logging:
+   - consent_access_log table for GDPR Article 30 compliance
+   - Tracks who accessed what data and whether consent was present
+
+USAGE:
+- Use v_load_monitoring_consent instead of load_monitoring for coach dashboards
+- Use v_workout_logs_consent instead of workout_logs for coach dashboards
+- Call require_ai_consent(user_id) before any AI processing
+- Check consent_blocked flag in UI to show appropriate messages
+*/
+
+
+
+
+-- ============================================================================
+-- Migration: 071_populate_exercise_registry.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- POPULATE EXERCISE REGISTRY FROM EXISTING TABLES
+-- =============================================================================
+-- This script populates the exercise_registry table from existing exercise data
+-- Run after migration 070 has been applied
+-- =============================================================================
+
+-- =============================================================================
+-- STEP 1: Populate from Plyometrics Exercises
+-- =============================================================================
+
+INSERT INTO exercise_registry (
+    name,
+    exercise_type,
+    category,
+    difficulty_level,
+    description,
+    instructions,
+    plyometric_details_id,
+    video_url,
+    thumbnail_url,
+    equipment_needed,
+    position_specific,
+    applicable_positions,
+    research_based,
+    research_source,
+    effectiveness_rating,
+    injury_risk_rating,
+    is_active,
+    is_public,
+    created_at,
+    updated_at
+)
+SELECT 
+    exercise_name,
+    'plyometric'::TEXT,
+    exercise_category::TEXT::exercise_category_enum,
+    difficulty_level::TEXT::difficulty_level_enum,
+    description,
+    instructions,
+    id, -- Reference to plyometrics_exercises
+    video_url,
+    thumbnail_url,
+    equipment_needed,
+    position_specific,
+    CASE 
+        WHEN position_applications IS NOT NULL 
+        THEN ARRAY(SELECT jsonb_object_keys(position_applications))::UUID[]
+        ELSE ARRAY[]::UUID[]
+    END,
+    research_based,
+    research_source,
+    effectiveness_rating,
+    CASE injury_risk_rating
+        WHEN 'Low' THEN 'Low'::risk_level_enum
+        WHEN 'Moderate' THEN 'Moderate'::risk_level_enum
+        WHEN 'High' THEN 'High'::risk_level_enum
+        ELSE 'Low'::risk_level_enum
+    END,
+    TRUE, -- is_active
+    TRUE, -- is_public
+    created_at,
+    updated_at
+FROM plyometrics_exercises
+ON CONFLICT DO NOTHING;
+
+-- =============================================================================
+-- STEP 2: Populate from Isometrics Exercises
+-- =============================================================================
+
+INSERT INTO exercise_registry (
+    name,
+    exercise_type,
+    category,
+    difficulty_level,
+    description,
+    instructions,
+    isometric_details_id,
+    video_url,
+    equipment_needed,
+    position_specific,
+    research_based,
+    research_source,
+    effectiveness_rating,
+    injury_risk_rating,
+    is_active,
+    is_public,
+    created_at,
+    updated_at
+)
+SELECT 
+    name,
+    'isometric'::TEXT,
+    CASE 
+        WHEN category = 'Injury Prevention' THEN 'Injury Prevention'::exercise_category_enum
+        WHEN category = 'Rehabilitation' THEN 'Rehabilitation'::exercise_category_enum
+        ELSE 'Strength'::exercise_category_enum
+    END,
+    difficulty_level::TEXT::difficulty_level_enum,
+    description,
+    instructions,
+    id, -- Reference to isometrics_exercises
+    video_url,
+    ARRAY[]::TEXT[], -- No equipment_needed in isometrics_exercises
+    FALSE, -- Not position-specific by default
+    research_based,
+    research_source,
+    effectiveness_rating,
+    'Low'::risk_level_enum, -- Isometrics are generally low risk
+    TRUE, -- is_active
+    TRUE, -- is_public
+    created_at,
+    updated_at
+FROM isometrics_exercises
+ON CONFLICT DO NOTHING;
+
+-- =============================================================================
+-- STEP 3: Populate from General Exercises
+-- =============================================================================
+
+INSERT INTO exercise_registry (
+    name,
+    exercise_type,
+    category,
+    difficulty_level,
+    description,
+    general_exercise_id,
+    video_url,
+    equipment_needed,
+    position_specific,
+    applicable_positions,
+    research_based,
+    is_active,
+    is_public,
+    created_at,
+    updated_at
+)
+SELECT 
+    name,
+    CASE 
+        WHEN category IN ('Strength', 'Flexibility') THEN 'strength'
+        WHEN category IN ('Speed', 'Agility') THEN 'skill'
+        ELSE 'skill'
+    END::TEXT,
+    CASE 
+        WHEN category IN ('Strength', 'Speed', 'Agility', 'Flexibility', 'Position-Specific') 
+        THEN category::TEXT::exercise_category_enum
+        ELSE 'Strength'::exercise_category_enum
+    END,
+    'Intermediate'::difficulty_level_enum, -- Default since general exercises don't have difficulty
+    COALESCE(description, 'No description available'),
+    id, -- Reference to exercises
+    video_url,
+    equipment_needed,
+    position_specific,
+    applicable_positions,
+    FALSE, -- research_based not in general exercises
+    TRUE, -- is_active
+    TRUE, -- is_public
+    created_at,
+    updated_at
+FROM exercises
+ON CONFLICT DO NOTHING;
+
+-- =============================================================================
+-- STEP 4: Verification Queries
+-- =============================================================================
+
+-- Count exercises by type
+SELECT 
+    exercise_type,
+    COUNT(*) AS count
+FROM exercise_registry
+GROUP BY exercise_type
+ORDER BY count DESC;
+
+-- Count exercises by category
+SELECT 
+    category,
+    COUNT(*) AS count
+FROM exercise_registry
+GROUP BY category
+ORDER BY count DESC;
+
+-- Count exercises by difficulty
+SELECT 
+    difficulty_level,
+    COUNT(*) AS count
+FROM exercise_registry
+GROUP BY difficulty_level
+ORDER BY 
+    CASE difficulty_level
+        WHEN 'Beginner' THEN 1
+        WHEN 'Intermediate' THEN 2
+        WHEN 'Advanced' THEN 3
+        WHEN 'Elite' THEN 4
+    END;
+
+-- Verify all references are valid
+SELECT 
+    er.id,
+    er.name,
+    er.exercise_type,
+    CASE 
+        WHEN er.plyometric_details_id IS NOT NULL THEN 'Has plyometric details'
+        WHEN er.isometric_details_id IS NOT NULL THEN 'Has isometric details'
+        WHEN er.general_exercise_id IS NOT NULL THEN 'Has general exercise details'
+        ELSE 'ERROR: No details linked'
+    END AS details_status
+FROM exercise_registry er
+WHERE 
+    (er.plyometric_details_id IS NULL AND er.exercise_type = 'plyometric')
+    OR (er.isometric_details_id IS NULL AND er.exercise_type = 'isometric')
+    OR (er.general_exercise_id IS NULL AND er.exercise_type IN ('strength', 'skill'));
+
+-- Sample query to verify joins work
+SELECT 
+    er.name,
+    er.exercise_type,
+    er.difficulty_level,
+    pe.coaching_cues,
+    ie.injury_prevention_benefits,
+    e.movement_pattern
+FROM exercise_registry er
+LEFT JOIN plyometrics_exercises pe ON er.plyometric_details_id = pe.id
+LEFT JOIN isometrics_exercises ie ON er.isometric_details_id = ie.id
+LEFT JOIN exercises e ON er.general_exercise_id = e.id
+LIMIT 10;
+
+-- =============================================================================
+-- SUMMARY REPORT
+-- =============================================================================
+
+SELECT 
+    'Total exercises in registry' AS metric,
+    COUNT(*)::TEXT AS value
+FROM exercise_registry
+UNION ALL
+SELECT 
+    'Plyometric exercises' AS metric,
+    COUNT(*)::TEXT AS value
+FROM exercise_registry
+WHERE exercise_type = 'plyometric'
+UNION ALL
+SELECT 
+    'Isometric exercises' AS metric,
+    COUNT(*)::TEXT AS value
+FROM exercise_registry
+WHERE exercise_type = 'isometric'
+UNION ALL
+SELECT 
+    'General exercises' AS metric,
+    COUNT(*)::TEXT AS value
+FROM exercise_registry
+WHERE exercise_type IN ('strength', 'skill')
+UNION ALL
+SELECT 
+    'Position-specific exercises' AS metric,
+    COUNT(*)::TEXT AS value
+FROM exercise_registry
+WHERE position_specific = TRUE
+UNION ALL
+SELECT 
+    'Research-based exercises' AS metric,
+    COUNT(*)::TEXT AS value
+FROM exercise_registry
+WHERE research_based = TRUE;
+
+-- =============================================================================
+-- NOTES
+-- =============================================================================
+/*
+This script:
+1. Populates exercise_registry from plyometrics_exercises (70+ exercises)
+2. Populates exercise_registry from isometrics_exercises (3+ exercises)
+3. Populates exercise_registry from exercises (general library)
+4. Verifies all data was populated correctly
+5. Provides summary statistics
+
+After running this script, you should:
+1. Verify the counts match your expectations
+2. Check that no exercises are missing details (see verification queries)
+3. Update your application code to use exercise_registry instead of individual tables
+4. Consider creating a view that combines the most commonly used fields
+
+Example view:
+CREATE VIEW v_exercises_full AS
+SELECT 
+    er.*,
+    pe.coaching_cues,
+    pe.common_mistakes,
+    ie.injury_prevention_benefits,
+    e.movement_pattern
+FROM exercise_registry er
+LEFT JOIN plyometrics_exercises pe ON er.plyometric_details_id = pe.id
+LEFT JOIN isometrics_exercises ie ON er.isometric_details_id = ie.id
+LEFT JOIN exercises e ON er.general_exercise_id = e.id;
+*/
+
+
+
+
+-- ============================================================================
+-- Migration: 072_backfill_metric_entries.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- BACKFILL METRIC ENTRIES FROM POSITION_SPECIFIC_METRICS
+-- =============================================================================
+-- This script migrates data from the old position_specific_metrics table
+-- to the new metric_definitions/metric_entries system
+-- Run after migration 070 and 071
+-- =============================================================================
+
+-- =============================================================================
+-- STEP 1: Create Metric Definitions from Existing Data
+-- =============================================================================
+
+-- This finds all unique metric_name values from position_specific_metrics
+-- and creates metric_definitions for them
+
+INSERT INTO metric_definitions (
+    code,
+    display_name,
+    value_type,
+    unit,
+    aggregation_method,
+    position_id,
+    is_position_specific,
+    category,
+    description,
+    is_active
+)
+SELECT DISTINCT
+    -- Generate code from metric_name (lowercase, replace spaces with underscores)
+    LOWER(REGEXP_REPLACE(metric_name, '[^a-zA-Z0-9]+', '_', 'g')) AS code,
+    
+    -- Use original metric_name as display_name
+    metric_name AS display_name,
+    
+    -- Infer value_type from metric_unit
+    CASE 
+        WHEN metric_unit IN ('%', 'percent', 'percentage') THEN 'percent'
+        WHEN metric_unit IN ('s', 'sec', 'seconds', 'ms', 'milliseconds') THEN 'time'
+        WHEN metric_value::TEXT ~ '^[0-9]+$' THEN 'integer'
+        ELSE 'decimal'
+    END AS value_type,
+    
+    -- Use metric_unit as unit
+    metric_unit AS unit,
+    
+    -- Default aggregation method based on metric name
+    CASE 
+        WHEN metric_name ILIKE '%volume%' OR metric_name ILIKE '%total%' THEN 'sum'
+        WHEN metric_name ILIKE '%rate%' OR metric_name ILIKE '%percentage%' THEN 'avg'
+        WHEN metric_name ILIKE '%max%' OR metric_name ILIKE '%peak%' THEN 'max'
+        WHEN metric_name ILIKE '%min%' THEN 'min'
+        ELSE 'avg'
+    END AS aggregation_method,
+    
+    -- Link to position if position_id exists
+    position_id,
+    
+    -- Mark as position-specific if position_id is not null
+    (position_id IS NOT NULL) AS is_position_specific,
+    
+    -- Infer category from metric name
+    CASE 
+        WHEN metric_name ILIKE '%volume%' OR metric_name ILIKE '%reps%' THEN 'Volume'
+        WHEN metric_name ILIKE '%technique%' OR metric_name ILIKE '%form%' THEN 'Technique'
+        WHEN metric_name ILIKE '%time%' OR metric_name ILIKE '%speed%' THEN 'Performance'
+        ELSE 'Performance'
+    END AS category,
+    
+    -- Description from aggregated context
+    'Migrated from position_specific_metrics: ' || metric_name AS description,
+    
+    -- Active by default
+    TRUE AS is_active
+    
+FROM position_specific_metrics
+WHERE metric_name IS NOT NULL
+ON CONFLICT (code) DO NOTHING;
+
+-- =============================================================================
+-- STEP 2: Migrate Metric Entries
+-- =============================================================================
+
+-- This migrates all historical metric data to the new metric_entries table
+INSERT INTO metric_entries (
+    player_id,
+    workout_log_id,
+    metric_definition_id,
+    date,
+    value,
+    notes,
+    created_at,
+    updated_at
+)
+SELECT 
+    psm.player_id,
+    psm.workout_log_id,
+    md.id AS metric_definition_id,
+    psm.date,
+    psm.metric_value,
+    NULL AS notes, -- old table didn't have notes
+    psm.created_at,
+    psm.updated_at
+FROM position_specific_metrics psm
+JOIN metric_definitions md ON (
+    md.code = LOWER(REGEXP_REPLACE(psm.metric_name, '[^a-zA-Z0-9]+', '_', 'g'))
+)

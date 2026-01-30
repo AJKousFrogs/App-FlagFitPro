@@ -1,0 +1,848 @@
+{
+  "projectId": "grfjmnjpzvknmsxrwesx",
+  "projectUrl": "https://grfjmnjpzvknmsxrwesx.supabase.co",
+  "timestamp": "2026-01-30T11:06:51.966Z",
+  "totalMigrations": 140,
+  "migrations": [
+    {
+      "name": "base_tables",
+      "filename": "001_base_tables.sql",
+      "type": "database",
+      "size": 4941
+    },
+    {
+      "name": "role_enforcement",
+      "filename": "001_role_enforcement.sql",
+      "type": "supabase",
+      "size": 14635
+    },
+    {
+      "name": "complete_flag_football_player_system",
+      "filename": "025_complete_flag_football_player_system.sql",
+      "type": "database",
+      "size": 29214
+    },
+    {
+      "name": "enhanced_strength_conditioning_system",
+      "filename": "026_enhanced_strength_conditioning_system.sql",
+      "type": "database",
+      "size": 27035
+    },
+    {
+      "name": "load_management_system",
+      "filename": "027_load_management_system.sql",
+      "type": "database",
+      "size": 21228
+    },
+    {
+      "name": "evidence_based_knowledge_base",
+      "filename": "028_evidence_based_knowledge_base.sql",
+      "type": "database",
+      "size": 10351
+    },
+    {
+      "name": "game_events_system",
+      "filename": "029_game_events_system.sql",
+      "type": "database",
+      "size": 21300
+    },
+    {
+      "name": "sponsors_table",
+      "filename": "029_sponsors_table.sql",
+      "type": "database",
+      "size": 1371
+    },
+    {
+      "name": "advanced_ux_components_support",
+      "filename": "030_advanced_ux_components_support.sql",
+      "type": "database",
+      "size": 4058
+    },
+    {
+      "name": "open_data_sessions_system",
+      "filename": "031_open_data_sessions_system.sql",
+      "type": "database",
+      "size": 2064
+    },
+    {
+      "name": "wellness_and_measurements_tables",
+      "filename": "031_wellness_and_measurements_tables.sql",
+      "type": "database",
+      "size": 6482
+    },
+    {
+      "name": "acwr_compute_function",
+      "filename": "032_acwr_compute_function.sql",
+      "type": "database",
+      "size": 4269
+    },
+    {
+      "name": "fix_analytics_events_rls_performance",
+      "filename": "032_fix_analytics_events_rls_performance.sql",
+      "type": "database",
+      "size": 3864
+    },
+    {
+      "name": "consolidate_analytics_events_policies",
+      "filename": "033_consolidate_analytics_events_policies.sql",
+      "type": "database",
+      "size": 5160
+    },
+    {
+      "name": "033a_readiness_score_system",
+      "filename": "033a_readiness_score_system.sql",
+      "type": "database",
+      "size": 7161
+    },
+    {
+      "name": "033b_readiness_score_system_create_tables",
+      "filename": "033b_readiness_score_system_create_tables.sql",
+      "type": "database",
+      "size": 6663
+    },
+    {
+      "name": "check_acwr_rpe_consistency",
+      "filename": "034_check_acwr_rpe_consistency.sql",
+      "type": "database",
+      "size": 12068
+    },
+    {
+      "name": "034a_enable_rls_wearables_data",
+      "filename": "034a_enable_rls_wearables_data.sql",
+      "type": "database",
+      "size": 3674
+    },
+    {
+      "name": "enable_rls_remaining_tables",
+      "filename": "035_enable_rls_remaining_tables.sql",
+      "type": "database",
+      "size": 7679
+    },
+    {
+      "name": "add_rls_policies_users_implementation_steps",
+      "filename": "036_add_rls_policies_users_implementation_steps.sql",
+      "type": "database",
+      "size": 6023
+    },
+    {
+      "name": "fix_users_insert_policy_registration",
+      "filename": "037_fix_users_insert_policy_registration.sql",
+      "type": "database",
+      "size": 2683
+    },
+    {
+      "name": "037a_notifications_unification",
+      "filename": "037a_notifications_unification.sql",
+      "type": "database",
+      "size": 4756
+    },
+    {
+      "name": "add_username_and_verification_fields",
+      "filename": "038_add_username_and_verification_fields.sql",
+      "type": "database",
+      "size": 2677
+    },
+    {
+      "name": "chatbot_role_aware_system",
+      "filename": "039_chatbot_role_aware_system.sql",
+      "type": "database",
+      "size": 8142
+    },
+    {
+      "name": "knowledge_base_governance",
+      "filename": "040_knowledge_base_governance.sql",
+      "type": "database",
+      "size": 12569
+    },
+    {
+      "name": "player_stats_aggregation_view",
+      "filename": "041_player_stats_aggregation_view.sql",
+      "type": "database",
+      "size": 9109
+    },
+    {
+      "name": "training_data_consistency",
+      "filename": "042_training_data_consistency.sql",
+      "type": "database",
+      "size": 4304
+    },
+    {
+      "name": "database_upgrade_consistency",
+      "filename": "043_database_upgrade_consistency.sql",
+      "type": "database",
+      "size": 32455
+    },
+    {
+      "name": "fix_rls_performance_and_consolidate_policies",
+      "filename": "044_fix_rls_performance_and_consolidate_policies.sql",
+      "type": "database",
+      "size": 20600
+    },
+    {
+      "name": "add_missing_constraints",
+      "filename": "045_add_missing_constraints.sql",
+      "type": "database",
+      "size": 18254
+    },
+    {
+      "name": "fix_acwr_baseline_checks",
+      "filename": "046_fix_acwr_baseline_checks.sql",
+      "type": "database",
+      "size": 17787
+    },
+    {
+      "name": "046a_fix_acwr_baseline_checks_supabase",
+      "filename": "046a_fix_acwr_baseline_checks_supabase.sql",
+      "type": "database",
+      "size": 16176
+    },
+    {
+      "name": "ensure_postgrest_exposure",
+      "filename": "047_ensure_postgrest_exposure.sql",
+      "type": "database",
+      "size": 7547
+    },
+    {
+      "name": "improve_function_security",
+      "filename": "047_improve_function_security.sql",
+      "type": "database",
+      "size": 4297
+    },
+    {
+      "name": "fix_security_definer_views",
+      "filename": "048_fix_security_definer_views.sql",
+      "type": "database",
+      "size": 5794
+    },
+    {
+      "name": "drop_unused_indexes",
+      "filename": "049_drop_unused_indexes.sql",
+      "type": "database",
+      "size": 1740
+    },
+    {
+      "name": "add_missing_foreign_key_indexes",
+      "filename": "050_add_missing_foreign_key_indexes.sql",
+      "type": "database",
+      "size": 3325
+    },
+    {
+      "name": "create_video_tables",
+      "filename": "050_create_video_tables.sql",
+      "type": "database",
+      "size": 10540
+    },
+    {
+      "name": "add_service_migration_tables",
+      "filename": "051_add_service_migration_tables.sql",
+      "type": "database",
+      "size": 12672
+    },
+    {
+      "name": "fix_rls_performance_new_tables",
+      "filename": "052_fix_rls_performance_new_tables.sql",
+      "type": "database",
+      "size": 6917
+    },
+    {
+      "name": "ai_safety_tier_system",
+      "filename": "053_ai_safety_tier_system.sql",
+      "type": "database",
+      "size": 11808
+    },
+    {
+      "name": "training_video_visibility_system",
+      "filename": "054_training_video_visibility_system.sql",
+      "type": "database",
+      "size": 14464
+    },
+    {
+      "name": "superadmin_approval_system",
+      "filename": "055_superadmin_approval_system.sql",
+      "type": "database",
+      "size": 22612
+    },
+    {
+      "name": "create_all_teams",
+      "filename": "056_create_all_teams.sql",
+      "type": "database",
+      "size": 2083
+    },
+    {
+      "name": "enhanced_chat_system",
+      "filename": "060_enhanced_chat_system.sql",
+      "type": "database",
+      "size": 34622
+    },
+    {
+      "name": "roster_management_tables",
+      "filename": "061_roster_management_tables.sql",
+      "type": "database",
+      "size": 14509
+    },
+    {
+      "name": "channel_member_count",
+      "filename": "062_channel_member_count.sql",
+      "type": "database",
+      "size": 13909
+    },
+    {
+      "name": "extended_staff_roles",
+      "filename": "062_extended_staff_roles.sql",
+      "type": "database",
+      "size": 8427
+    },
+    {
+      "name": "add_psychologist_role",
+      "filename": "063_add_psychologist_role.sql",
+      "type": "database",
+      "size": 5569
+    },
+    {
+      "name": "player_tournament_availability_and_finances",
+      "filename": "063_player_tournament_availability_and_finances.sql",
+      "type": "database",
+      "size": 17698
+    },
+    {
+      "name": "decision_ledger",
+      "filename": "064_decision_ledger.sql",
+      "type": "database",
+      "size": 15296
+    },
+    {
+      "name": "plyometrics_isometrics_exercises",
+      "filename": "065_plyometrics_isometrics_exercises.sql",
+      "type": "database",
+      "size": 64371
+    },
+    {
+      "name": "deploy_missing_tables_and_functions",
+      "filename": "066_deploy_missing_tables_and_functions.sql",
+      "type": "database",
+      "size": 11419
+    },
+    {
+      "name": "wrdb_training_program",
+      "filename": "067_wrdb_training_program.sql",
+      "type": "database",
+      "size": 25126
+    },
+    {
+      "name": "training_video_library",
+      "filename": "068_training_video_library.sql",
+      "type": "database",
+      "size": 22674
+    },
+    {
+      "name": "prerequisites_check_and_setup",
+      "filename": "069_prerequisites_check_and_setup.sql",
+      "type": "database",
+      "size": 14917
+    },
+    {
+      "name": "qb_program_weeks_2_4_sessions",
+      "filename": "069_qb_program_weeks_2_4_sessions.sql",
+      "type": "database",
+      "size": 26018
+    },
+    {
+      "name": "comprehensive_database_refactor",
+      "filename": "070_comprehensive_database_refactor.sql",
+      "type": "database",
+      "size": 29164
+    },
+    {
+      "name": "consent_layer_views_and_functions",
+      "filename": "071_consent_layer_views_and_functions.sql",
+      "type": "database",
+      "size": 21508
+    },
+    {
+      "name": "populate_exercise_registry",
+      "filename": "071_populate_exercise_registry.sql",
+      "type": "database",
+      "size": 8778
+    },
+    {
+      "name": "backfill_metric_entries",
+      "filename": "072_backfill_metric_entries.sql",
+      "type": "database",
+      "size": 11052
+    },
+    {
+      "name": "exercisedb_integration",
+      "filename": "072_exercisedb_integration.sql",
+      "type": "database",
+      "size": 15758
+    },
+    {
+      "name": "deletion_retention_enforcement",
+      "filename": "073_deletion_retention_enforcement.sql",
+      "type": "database",
+      "size": 13355
+    },
+    {
+      "name": "unify_acwr_ewma",
+      "filename": "073_unify_acwr_ewma.sql",
+      "type": "database",
+      "size": 3344
+    },
+    {
+      "name": "consent_performance_indexes",
+      "filename": "074_consent_performance_indexes.sql",
+      "type": "database",
+      "size": 9236
+    },
+    {
+      "name": "standardize_user_id",
+      "filename": "074_standardize_user_id.sql",
+      "type": "database",
+      "size": 3929
+    },
+    {
+      "name": "create_ml_training_data",
+      "filename": "075_create_ml_training_data.sql",
+      "type": "database",
+      "size": 1367
+    },
+    {
+      "name": "fix_acwr_rolling_average_calculation",
+      "filename": "075_fix_acwr_rolling_average_calculation.sql",
+      "type": "database",
+      "size": 14247
+    },
+    {
+      "name": "standardize_user_id_batch_2",
+      "filename": "076_standardize_user_id_batch_2.sql",
+      "type": "database",
+      "size": 5894
+    },
+    {
+      "name": "ai_coach_phase1",
+      "filename": "077_ai_coach_phase1.sql",
+      "type": "database",
+      "size": 15339
+    },
+    {
+      "name": "ai_coach_phase2",
+      "filename": "078_ai_coach_phase2.sql",
+      "type": "database",
+      "size": 14122
+    },
+    {
+      "name": "flow_to_feature_fixes",
+      "filename": "078_flow_to_feature_fixes.sql",
+      "type": "database",
+      "size": 10252
+    },
+    {
+      "name": "ai_coach_phase3",
+      "filename": "079_ai_coach_phase3.sql",
+      "type": "database",
+      "size": 22234
+    },
+    {
+      "name": "ai_coach_phase4",
+      "filename": "080_ai_coach_phase4.sql",
+      "type": "database",
+      "size": 31544
+    },
+    {
+      "name": "smart_ai_features",
+      "filename": "081_smart_ai_features.sql",
+      "type": "database",
+      "size": 27657
+    },
+    {
+      "name": "add_confidence_metadata",
+      "filename": "097_add_confidence_metadata.sql",
+      "type": "database",
+      "size": 1558
+    },
+    {
+      "name": "final_missing_tables",
+      "filename": "099_final_missing_tables.sql",
+      "type": "database",
+      "size": 1468
+    },
+    {
+      "name": "community_system",
+      "filename": "100_community_system.sql",
+      "type": "database",
+      "size": 4927
+    },
+    {
+      "name": "community_enhancements",
+      "filename": "101_community_enhancements.sql",
+      "type": "database",
+      "size": 8415
+    },
+    {
+      "name": "enhanced_body_composition",
+      "filename": "101_enhanced_body_composition.sql",
+      "type": "database",
+      "size": 3902
+    },
+    {
+      "name": "add_team_to_community_posts",
+      "filename": "102_add_team_to_community_posts.sql",
+      "type": "database",
+      "size": 1244
+    },
+    {
+      "name": "exercise_library",
+      "filename": "102_exercise_library.sql",
+      "type": "database",
+      "size": 7714
+    },
+    {
+      "name": "daily_protocols",
+      "filename": "103_daily_protocols.sql",
+      "type": "database",
+      "size": 15001
+    },
+    {
+      "name": "add_coach_alert_fields",
+      "filename": "104_add_coach_alert_fields.sql",
+      "type": "database",
+      "size": 7128
+    },
+    {
+      "name": "seed_protocol_exercises",
+      "filename": "104_seed_protocol_exercises.sql",
+      "type": "database",
+      "size": 20181
+    },
+    {
+      "name": "add_warmup_focus",
+      "filename": "105_add_warmup_focus.sql",
+      "type": "database",
+      "size": 237
+    },
+    {
+      "name": "offboarding_flows",
+      "filename": "105_offboarding_flows.sql",
+      "type": "database",
+      "size": 18915
+    },
+    {
+      "name": "add_composite_indexes",
+      "filename": "110_add_composite_indexes.sql",
+      "type": "database",
+      "size": 9520
+    },
+    {
+      "name": "comprehensive_index_optimization",
+      "filename": "111_comprehensive_index_optimization.sql",
+      "type": "database",
+      "size": 13637
+    },
+    {
+      "name": "fix_users_table_profile_fields",
+      "filename": "112_fix_users_table_profile_fields.sql",
+      "type": "database",
+      "size": 4649
+    },
+    {
+      "name": "extend_protocol_block_types",
+      "filename": "113_extend_protocol_block_types.sql",
+      "type": "database",
+      "size": 9609
+    },
+    {
+      "name": "add_rest_seconds_to_protocol_exercises",
+      "filename": "114_add_rest_seconds_to_protocol_exercises.sql",
+      "type": "database",
+      "size": 1287
+    },
+    {
+      "name": "add_wellness_fields",
+      "filename": "115_add_wellness_fields.sql",
+      "type": "database",
+      "size": 2957
+    },
+    {
+      "name": "add_workout_logs_load_fields",
+      "filename": "116_add_workout_logs_load_fields.sql",
+      "type": "database",
+      "size": 4762
+    },
+    {
+      "name": "wellness_checkin_transaction",
+      "filename": "117_wellness_checkin_transaction.sql",
+      "type": "database",
+      "size": 8526
+    },
+    {
+      "name": "add_session_metrics_jsonb",
+      "filename": "118_add_session_metrics_jsonb.sql",
+      "type": "database",
+      "size": 299
+    },
+    {
+      "name": "add_push_subscriptions",
+      "filename": "20241227_add_push_subscriptions.sql",
+      "type": "database",
+      "size": 2020
+    },
+    {
+      "name": "add_user_security",
+      "filename": "20241227_add_user_security.sql",
+      "type": "database",
+      "size": 2606
+    },
+    {
+      "name": "add_user_settings",
+      "filename": "20241227_add_user_settings.sql",
+      "type": "database",
+      "size": 3154
+    },
+    {
+      "name": "chatbot_role_aware_system",
+      "filename": "20250108000000_chatbot_role_aware_system.sql",
+      "type": "supabase",
+      "size": 8359
+    },
+    {
+      "name": "knowledge_base_governance",
+      "filename": "20250108000001_knowledge_base_governance.sql",
+      "type": "supabase",
+      "size": 7882
+    },
+    {
+      "name": "team_activities_sot",
+      "filename": "20250130000000_team_activities_sot.sql",
+      "type": "supabase",
+      "size": 13162
+    },
+    {
+      "name": "remote_schema",
+      "filename": "20251208154517_remote_schema.sql",
+      "type": "supabase",
+      "size": 0
+    },
+    {
+      "name": "latest_schema_updates",
+      "filename": "20251208164957_latest_schema_updates.sql",
+      "type": "supabase",
+      "size": 17619
+    },
+    {
+      "name": "team_system",
+      "filename": "20251213000000_team_system.sql",
+      "type": "supabase",
+      "size": 10655
+    },
+    {
+      "name": "drop_unused_functions",
+      "filename": "20251220_drop_unused_functions.sql",
+      "type": "supabase",
+      "size": 840
+    },
+    {
+      "name": "add_coach_locked_enforcement",
+      "filename": "20260106_add_coach_locked_enforcement.sql",
+      "type": "supabase",
+      "size": 1950
+    },
+    {
+      "name": "add_immutability_triggers",
+      "filename": "20260106_add_immutability_triggers.sql",
+      "type": "supabase",
+      "size": 4146
+    },
+    {
+      "name": "append_only_audit_tables",
+      "filename": "20260106_append_only_audit_tables.sql",
+      "type": "supabase",
+      "size": 3258
+    },
+    {
+      "name": "append_only_execution_logs",
+      "filename": "20260106_append_only_execution_logs.sql",
+      "type": "supabase",
+      "size": 2734
+    },
+    {
+      "name": "complete_privacy_rls",
+      "filename": "20260106_complete_privacy_rls.sql",
+      "type": "supabase",
+      "size": 4050
+    },
+    {
+      "name": "consent_enforcement",
+      "filename": "20260106_consent_enforcement.sql",
+      "type": "supabase",
+      "size": 4561
+    },
+    {
+      "name": "merlin_readonly_role",
+      "filename": "20260106_merlin_readonly_role.sql",
+      "type": "supabase",
+      "size": 2933
+    },
+    {
+      "name": "safety_override_system",
+      "filename": "20260106_safety_override_system.sql",
+      "type": "supabase",
+      "size": 7430
+    },
+    {
+      "name": "session_versioning",
+      "filename": "20260106_session_versioning.sql",
+      "type": "supabase",
+      "size": 7676
+    },
+    {
+      "name": "update_rls_policies",
+      "filename": "20260106_update_rls_policies.sql",
+      "type": "supabase",
+      "size": 2773
+    },
+    {
+      "name": "wellness_privacy_rls",
+      "filename": "20260106_wellness_privacy_rls.sql",
+      "type": "supabase",
+      "size": 6137
+    },
+    {
+      "name": "fix_function_search_paths",
+      "filename": "20260107_fix_function_search_paths.sql",
+      "type": "supabase",
+      "size": 2145
+    },
+    {
+      "name": "optimize_rls_auth_initplan",
+      "filename": "20260107_optimize_rls_auth_initplan.sql",
+      "type": "supabase",
+      "size": 43086
+    },
+    {
+      "name": "secure_system_table_policies",
+      "filename": "20260107_secure_system_table_policies.sql",
+      "type": "supabase",
+      "size": 9077
+    },
+    {
+      "name": "comprehensive_index_optimization",
+      "filename": "20260109_comprehensive_index_optimization.sql",
+      "type": "supabase",
+      "size": 13637
+    },
+    {
+      "name": "fix_rls_performance_warnings",
+      "filename": "20260109_fix_rls_performance_warnings.sql",
+      "type": "supabase",
+      "size": 21190
+    },
+    {
+      "name": "fix_security_linter_warnings",
+      "filename": "20260109_fix_security_linter_warnings.sql",
+      "type": "supabase",
+      "size": 6861
+    },
+    {
+      "name": "fix_send_notification_search_path",
+      "filename": "20260109_fix_send_notification_search_path.sql",
+      "type": "supabase",
+      "size": 2485
+    },
+    {
+      "name": "rls_block_logging",
+      "filename": "20260109_rls_block_logging.sql",
+      "type": "supabase",
+      "size": 4696
+    },
+    {
+      "name": "allow_players_update_own_profile",
+      "filename": "20260110_allow_players_update_own_profile.sql",
+      "type": "supabase",
+      "size": 1835
+    },
+    {
+      "name": "fix_team_members_insert_policy",
+      "filename": "20260110_fix_team_members_insert_policy.sql",
+      "type": "supabase",
+      "size": 2672
+    },
+    {
+      "name": "create_nutrition_tables",
+      "filename": "20260111_create_nutrition_tables.sql",
+      "type": "supabase",
+      "size": 7380
+    },
+    {
+      "name": "fix_nutrition_logs_policies",
+      "filename": "20260111_fix_nutrition_logs_policies.sql",
+      "type": "supabase",
+      "size": 4642
+    },
+    {
+      "name": "fix_physical_measurements",
+      "filename": "20260111_fix_physical_measurements.sql",
+      "type": "supabase",
+      "size": 5357
+    },
+    {
+      "name": "make_password_hash_nullable",
+      "filename": "20260111_make_password_hash_nullable.sql",
+      "type": "supabase",
+      "size": 2621
+    },
+    {
+      "name": "add_missing_tables_for_frontend",
+      "filename": "20260112_add_missing_tables_for_frontend.sql",
+      "type": "supabase",
+      "size": 21069
+    },
+    {
+      "name": "fix_missing_schema_elements",
+      "filename": "20260112_fix_missing_schema_elements.sql",
+      "type": "supabase",
+      "size": 6092
+    },
+    {
+      "name": "add_consent_views",
+      "filename": "20260113_add_consent_views.sql",
+      "type": "supabase",
+      "size": 5864
+    },
+    {
+      "name": "add_state_transition_history",
+      "filename": "20260113_add_state_transition_history.sql",
+      "type": "supabase",
+      "size": 8016
+    },
+    {
+      "name": "remove_wellness_defaults",
+      "filename": "20260117_remove_wellness_defaults.sql",
+      "type": "supabase",
+      "size": 3662
+    },
+    {
+      "name": "fix_decision_ledger_function_search_paths",
+      "filename": "20260130_fix_decision_ledger_function_search_paths.sql",
+      "type": "supabase",
+      "size": 5946
+    },
+    {
+      "name": "fix_rls_performance_and_duplicate_indexes",
+      "filename": "20260130_fix_rls_performance_and_duplicate_indexes.sql",
+      "type": "supabase",
+      "size": 4750
+    },
+    {
+      "name": "create_injuries_table",
+      "filename": "create-injuries-table.sql",
+      "type": "database",
+      "size": 1787
+    },
+    {
+      "name": "fix_wellness_sync_trigger",
+      "filename": "fix_wellness_sync_trigger.sql",
+      "type": "database",
+      "size": 3836
+    }
+  ]
+}

@@ -24,7 +24,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
     "Please set SUPABASE_URL and SUPABASE_ANON_KEY environment variables",
   );
   console.error(
-    "Example: SUPABASE_URL=https://your-project.supabase.co SUPABASE_ANON_KEY=your_key node add-supabase-config.js",
+    "Example: SUPABASE_URL=https://grfjmnjpzvknmsxrwesx.supabase.co SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0 node add-supabase-config.js",
   );
   process.exit(1);
 }

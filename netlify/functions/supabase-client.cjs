@@ -1195,8 +1195,8 @@ function checkEnvVars() {
       SUPABASE_URL: supabaseUrl
         ? `${supabaseUrl.substring(0, 20)}...`
         : "MISSING",
-      SUPABASE_SERVICE_KEY: supabaseServiceKey ? "SET" : "MISSING",
-      SUPABASE_ANON_KEY: supabaseAnonKey ? "SET" : "MISSING",
+      SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw ? "SET" : "MISSING",
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0 ? "SET" : "MISSING",
     });
     throw new Error(
       `Missing required Supabase environment variables: ${missing.join(", ")}. Please set them in Netlify.`,

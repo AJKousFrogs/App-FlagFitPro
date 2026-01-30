@@ -1,0 +1,1000 @@
+    -- Additional metadata
+    play_notes TEXT,
+    video_timestamp INTEGER, -- Timestamp in game video (seconds)
+    video_clip_url TEXT,
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =============================================================================
+-- PASSING STATISTICS (Granular QB/WR tracking)
+-- Track every pass attempt with detailed analytics
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS passing_stats (
+    id SERIAL PRIMARY KEY,
+    game_event_id INTEGER REFERENCES game_events(id) ON DELETE CASCADE,
+    game_id VARCHAR(255) NOT NULL,
+
+    -- Players
+    quarterback_id VARCHAR(255) NOT NULL,
+    receiver_id VARCHAR(255), -- NULL if incompletion
+    defender_id VARCHAR(255), -- Primary defender in coverage
+
+    -- Throw details
+    throw_type VARCHAR(50), -- 'quick_slant', 'deep_post', 'screen', 'out_route', 'comeback', 'fade', 'go'
+    route_depth INTEGER, -- Yards downfield
+    target_location VARCHAR(50), -- 'left_sideline', 'middle', 'right_sideline', 'deep_middle'
+
+    -- Accuracy assessment
+    throw_accuracy VARCHAR(50), -- 'perfect', 'good', 'catchable', 'bad', 'terrible'
+    intended_spot_accuracy DECIMAL(4,2), -- Distance from intended spot (yards)
+
+    -- Outcome classification
+    outcome VARCHAR(50), -- 'completion', 'drop', 'incompletion_overthrow', 'incompletion_underthrow',
+                         -- 'incompletion_wide_left', 'incompletion_wide_right', 'interception',
+                         -- 'defended_pass', 'throwaway'
+
+    -- Drop analysis (if applicable)
+    is_drop BOOLEAN DEFAULT FALSE,
+    drop_severity VARCHAR(20), -- 'unforgivable', 'should_catch', 'difficult', 'contested'
+    drop_reason VARCHAR(100), -- 'hands', 'body_catch_attempt', 'distraction', 'defender_contact', 'sun', 'wind'
+
+    -- Pressure and coverage
+    qb_under_pressure BOOLEAN DEFAULT FALSE,
+    time_to_throw DECIMAL(3,2), -- Seconds from snap to release
+    coverage_type VARCHAR(50), -- 'man', 'zone', 'press', 'off'
+    separation_at_catch DECIMAL(4,2), -- Yards between WR and nearest defender
+
+    -- Physics and performance (if measured)
+    throw_velocity INTEGER, -- MPH
+    hang_time DECIMAL(3,2), -- Seconds ball in air
+
+    -- Video evidence
+    video_clip_url TEXT,
+    video_start_time DECIMAL(6,2),
+    video_end_time DECIMAL(6,2),
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =============================================================================
+-- FLAG PULL STATISTICS
+-- Track every flag pull attempt and outcome
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS flag_pull_stats (
+    id SERIAL PRIMARY KEY,
+    game_event_id INTEGER REFERENCES game_events(id) ON DELETE CASCADE,
+    game_id VARCHAR(255) NOT NULL,
+
+    -- Players
+    ball_carrier_id VARCHAR(255) NOT NULL,
+    defender_id VARCHAR(255) NOT NULL,
+
+    -- Attempt details
+    attempt_type VARCHAR(50), -- 'direct_pursuit', 'angle_pursuit', 'dive_attempt', 'reach_attempt', 'zone_coverage'
+    attempt_location VARCHAR(50), -- 'sideline', 'middle_field', 'goal_line', 'open_field'
+
+    -- Outcome
+    is_successful BOOLEAN NOT NULL,
+    yards_before_pull INTEGER,
+    yards_after_miss INTEGER, -- If unsuccessful, how many yards did carrier gain after
+
+    -- Failure analysis (if unsuccessful)
+    miss_reason VARCHAR(100), -- 'missed_grab', 'faked_out', 'out_of_position', 'fell_down', 'too_slow', 'wrong_angle'
+    evasion_technique VARCHAR(100), -- What ball carrier did if successful evasion: 'spin', 'juke', 'stiff_arm', 'speed'
+
+    -- Performance metrics
+    closing_speed DECIMAL(4,2), -- Yards per second (if measured)
+    pursuit_angle_degrees INTEGER, -- Angle of pursuit (0-180)
+    reaction_time DECIMAL(3,2), -- Seconds from carrier's move to defender's response
+
+    -- Additional context
+    num_broken_tackles INTEGER DEFAULT 0,
+    yards_after_contact INTEGER,
+
+    -- Video
+    video_clip_url TEXT,
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =============================================================================
+-- RECEIVING STATISTICS (WR/TE/RB)
+-- Track every target and catch opportunity
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS receiving_stats (
+    id SERIAL PRIMARY KEY,
+    game_event_id INTEGER REFERENCES game_events(id) ON DELETE CASCADE,
+    game_id VARCHAR(255) NOT NULL,
+
+    -- Player
+    receiver_id VARCHAR(255) NOT NULL,
+    defender_id VARCHAR(255),
+
+    -- Route details
+    route_type VARCHAR(50), -- 'slant', 'post', 'corner', 'out', 'in', 'go', 'comeback', 'screen', 'flat'
+    route_depth INTEGER, -- Yards downfield
+    route_precision VARCHAR(20), -- 'perfect', 'good', 'sloppy', 'wrong'
+
+    -- Catch opportunity
+    is_target BOOLEAN DEFAULT TRUE,
+    catch_difficulty VARCHAR(50), -- 'easy', 'routine', 'difficult', 'spectacular', 'impossible'
+
+    -- Catch outcome
+    is_catch BOOLEAN,
+    is_drop BOOLEAN,
+
+    -- Drop details (if applicable)
+    ball_placement VARCHAR(50), -- 'perfect', 'high', 'low', 'behind', 'ahead', 'outside', 'inside'
+    catch_type_attempted VARCHAR(50), -- 'hands_catch', 'body_catch', 'diving_catch', 'contested_catch', 'one_handed'
+
+    -- Performance after catch
+    yards_after_catch INTEGER,
+    broken_tackles INTEGER DEFAULT 0,
+    evasion_moves INTEGER DEFAULT 0,
+
+    -- Separation metrics
+    separation_at_break DECIMAL(4,2), -- Yards of separation when cutting
+    separation_at_catch DECIMAL(4,2), -- Yards of separation when ball arrives
+
+    -- Video
+    video_clip_url TEXT,
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =============================================================================
+-- PLAYER GAME PERFORMANCE SUMMARY
+-- Aggregated statistics for each player per game
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS player_game_summary (
+    id SERIAL PRIMARY KEY,
+    game_id VARCHAR(255) NOT NULL REFERENCES games(game_id) ON DELETE CASCADE,
+    player_id VARCHAR(255) NOT NULL,
+    position VARCHAR(50) NOT NULL,
+
+    -- QB stats
+    pass_attempts INTEGER DEFAULT 0,
+    completions INTEGER DEFAULT 0,
+    completion_percentage DECIMAL(5,2),
+    passing_yards INTEGER DEFAULT 0,
+    touchdowns INTEGER DEFAULT 0,
+    interceptions INTEGER DEFAULT 0,
+    qb_rating DECIMAL(5,2),
+    avg_yards_per_attempt DECIMAL(4,2),
+    bad_throws INTEGER DEFAULT 0,
+    throw_aways INTEGER DEFAULT 0,
+    time_in_pocket_avg DECIMAL(3,2),
+    sacks INTEGER DEFAULT 0,
+
+    -- Receiving stats
+    targets INTEGER DEFAULT 0,
+    receptions INTEGER DEFAULT 0,
+    receiving_yards INTEGER DEFAULT 0,
+    receiving_touchdowns INTEGER DEFAULT 0,
+    drops INTEGER DEFAULT 0,
+    drop_rate DECIMAL(5,2),
+    yards_after_catch INTEGER DEFAULT 0,
+    avg_yards_per_reception DECIMAL(4,2),
+    contested_catches INTEGER DEFAULT 0,
+    longest_reception INTEGER DEFAULT 0,
+
+    -- Rushing stats
+    rushing_attempts INTEGER DEFAULT 0,
+    rushing_yards INTEGER DEFAULT 0,
+    rushing_touchdowns INTEGER DEFAULT 0,
+    yards_per_carry DECIMAL(4,2),
+    broken_tackles INTEGER DEFAULT 0,
+    evasions_successful INTEGER DEFAULT 0,
+    evasions_attempted INTEGER DEFAULT 0,
+    longest_run INTEGER DEFAULT 0,
+
+    -- Defensive stats
+    flag_pulls INTEGER DEFAULT 0,
+    flag_pull_attempts INTEGER DEFAULT 0,
+    flag_pull_success_rate DECIMAL(5,2),
+    missed_flag_pulls INTEGER DEFAULT 0,
+    defended_passes INTEGER DEFAULT 0,
+    interceptions_def INTEGER DEFAULT 0,
+    tackles_for_loss INTEGER DEFAULT 0,
+
+    -- Performance under pressure
+    plays_in_clutch_situations INTEGER DEFAULT 0,
+    clutch_success_rate DECIMAL(5,2),
+    third_down_conversions INTEGER DEFAULT 0,
+    third_down_attempts INTEGER DEFAULT 0,
+    red_zone_scores INTEGER DEFAULT 0,
+    red_zone_attempts INTEGER DEFAULT 0,
+
+    -- Efficiency metrics
+    offensive_epa DECIMAL(6,3), -- Expected Points Added
+    defensive_epa DECIMAL(6,3),
+    win_probability_added DECIMAL(6,3),
+
+    -- Fatigue indicators
+    performance_decline_2nd_half BOOLEAN DEFAULT FALSE,
+    stamina_score DECIMAL(4,2), -- 1-10 scale
+    plays_participated INTEGER DEFAULT 0,
+
+    -- Notes
+    performance_notes TEXT,
+
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+
+    UNIQUE(game_id, player_id)
+);
+
+-- =============================================================================
+-- SITUATIONAL STATISTICS
+-- Track performance in specific game situations
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS situational_stats (
+    id SERIAL PRIMARY KEY,
+    player_id VARCHAR(255) NOT NULL,
+
+    -- Situational categories
+    situation_type VARCHAR(50), -- 'third_down', 'red_zone', 'clutch', 'first_half', 'second_half'
+
+    -- Performance metrics
+    attempts INTEGER DEFAULT 0,
+    successes INTEGER DEFAULT 0,
+    success_rate DECIMAL(5,2),
+
+    -- Specific to situation
+    avg_yards DECIMAL(4,2),
+    touchdowns INTEGER DEFAULT 0,
+    turnovers INTEGER DEFAULT 0,
+
+    -- Time period
+    season VARCHAR(20),
+    date_start DATE,
+    date_end DATE,
+
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =============================================================================
+-- OPPONENT ANALYSIS
+-- Track opponent player/team tendencies
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS opponent_analysis (
+    id SERIAL PRIMARY KEY,
+    opponent_team_name VARCHAR(255) NOT NULL,
+    opponent_player_name VARCHAR(255),
+
+    -- Tendencies
+    formation_tendencies JSONB, -- {formation: frequency}
+    play_tendencies JSONB, -- {play_type: frequency}
+    situational_tendencies JSONB, -- {situation: preferred_play}
+
+    -- Strengths/weaknesses
+    strengths TEXT[],
+    weaknesses TEXT[],
+    exploitable_matchups TEXT[],
+
+    -- Performance data
+    avg_points_per_game DECIMAL(5,2),
+    avg_yards_per_play DECIMAL(4,2),
+    turnover_rate DECIMAL(5,2),
+
+    -- Notes
+    scouting_notes TEXT,
+    game_plan_recommendations TEXT,
+
+    -- Time period
+    season VARCHAR(20),
+    last_updated TIMESTAMP DEFAULT NOW(),
+
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =============================================================================
+-- INDEXES FOR PERFORMANCE OPTIMIZATION
+-- =============================================================================
+
+-- Games indexes
+CREATE INDEX IF NOT EXISTS idx_games_game_id ON games(game_id);
+CREATE INDEX IF NOT EXISTS idx_games_team_id ON games(team_id);
+CREATE INDEX IF NOT EXISTS idx_games_date ON games(game_date);
+
+-- Game Events Indexes
+CREATE INDEX IF NOT EXISTS idx_game_events_game_id ON game_events(game_id);
+CREATE INDEX IF NOT EXISTS idx_game_events_player ON game_events(primary_player_id);
+CREATE INDEX IF NOT EXISTS idx_game_events_play_type ON game_events(play_type);
+CREATE INDEX IF NOT EXISTS idx_game_events_timestamp ON game_events(timestamp);
+CREATE INDEX IF NOT EXISTS idx_game_events_quarter ON game_events(quarter);
+CREATE INDEX IF NOT EXISTS idx_game_events_result ON game_events(play_result);
+
+-- Passing Stats Indexes
+CREATE INDEX IF NOT EXISTS idx_passing_stats_game ON passing_stats(game_id);
+CREATE INDEX IF NOT EXISTS idx_passing_stats_qb ON passing_stats(quarterback_id);
+CREATE INDEX IF NOT EXISTS idx_passing_stats_receiver ON passing_stats(receiver_id);
+CREATE INDEX IF NOT EXISTS idx_passing_stats_outcome ON passing_stats(outcome);
+CREATE INDEX IF NOT EXISTS idx_passing_stats_drops ON passing_stats(is_drop) WHERE is_drop = TRUE;
+CREATE INDEX IF NOT EXISTS idx_passing_stats_throw_type ON passing_stats(throw_type);
+
+-- Flag Pull Stats Indexes
+CREATE INDEX IF NOT EXISTS idx_flag_pull_stats_game ON flag_pull_stats(game_id);
+CREATE INDEX IF NOT EXISTS idx_flag_pull_stats_defender ON flag_pull_stats(defender_id);
+CREATE INDEX IF NOT EXISTS idx_flag_pull_stats_carrier ON flag_pull_stats(ball_carrier_id);
+CREATE INDEX IF NOT EXISTS idx_flag_pull_stats_success ON flag_pull_stats(is_successful);
+
+-- Receiving Stats Indexes
+CREATE INDEX IF NOT EXISTS idx_receiving_stats_game ON receiving_stats(game_id);
+CREATE INDEX IF NOT EXISTS idx_receiving_stats_receiver ON receiving_stats(receiver_id);
+CREATE INDEX IF NOT EXISTS idx_receiving_stats_drops ON receiving_stats(is_drop) WHERE is_drop = TRUE;
+CREATE INDEX IF NOT EXISTS idx_receiving_stats_route_type ON receiving_stats(route_type);
+
+-- Player Game Summary Indexes
+CREATE INDEX IF NOT EXISTS idx_player_game_summary_player ON player_game_summary(player_id);
+CREATE INDEX IF NOT EXISTS idx_player_game_summary_game ON player_game_summary(game_id);
+CREATE INDEX IF NOT EXISTS idx_player_game_summary_position ON player_game_summary(position);
+
+-- Situational Stats Indexes
+CREATE INDEX IF NOT EXISTS idx_situational_stats_player ON situational_stats(player_id);
+CREATE INDEX IF NOT EXISTS idx_situational_stats_type ON situational_stats(situation_type);
+
+-- Opponent Analysis Indexes
+CREATE INDEX IF NOT EXISTS idx_opponent_analysis_team ON opponent_analysis(opponent_team_name);
+CREATE INDEX IF NOT EXISTS idx_opponent_analysis_player ON opponent_analysis(opponent_player_name);
+
+-- =============================================================================
+-- VIEWS FOR COMMON ANALYTICS QUERIES
+-- =============================================================================
+
+-- Player drop rate analysis
+CREATE OR REPLACE VIEW player_drop_analysis AS
+SELECT
+    rs.receiver_id,
+    COUNT(*) as targets,
+    SUM(CASE WHEN rs.is_catch THEN 1 ELSE 0 END) as catches,
+    SUM(CASE WHEN rs.is_drop THEN 1 ELSE 0 END) as drops,
+    ROUND(
+        (SUM(CASE WHEN rs.is_drop THEN 1 ELSE 0 END)::DECIMAL / NULLIF(COUNT(*), 0)) * 100,
+        2
+    ) as drop_rate,
+    ROUND(AVG(rs.yards_after_catch), 2) as avg_yac
+FROM receiving_stats rs
+GROUP BY rs.receiver_id
+ORDER BY drop_rate DESC;
+
+-- Flag pull efficiency by defender
+CREATE OR REPLACE VIEW defender_flag_pull_efficiency AS
+SELECT
+    fps.defender_id,
+    COUNT(*) as attempts,
+    SUM(CASE WHEN fps.is_successful THEN 1 ELSE 0 END) as successful_pulls,
+    ROUND(
+        (SUM(CASE WHEN fps.is_successful THEN 1 ELSE 0 END)::DECIMAL / NULLIF(COUNT(*), 0)) * 100,
+        2
+    ) as success_rate,
+    ROUND(AVG(fps.yards_before_pull), 2) as avg_yards_before_pull
+FROM flag_pull_stats fps
+GROUP BY fps.defender_id
+ORDER BY success_rate DESC;
+
+-- QB accuracy by throw type
+CREATE OR REPLACE VIEW qb_accuracy_by_route AS
+SELECT
+    ps.quarterback_id,
+    ps.throw_type,
+    COUNT(*) as attempts,
+    SUM(CASE WHEN ps.outcome = 'completion' THEN 1 ELSE 0 END) as completions,
+    ROUND(
+        (SUM(CASE WHEN ps.outcome = 'completion' THEN 1 ELSE 0 END)::DECIMAL / NULLIF(COUNT(*), 0)) * 100,
+        2
+    ) as completion_percentage,
+    SUM(CASE WHEN ps.is_drop THEN 1 ELSE 0 END) as drops,
+    SUM(CASE WHEN ps.throw_accuracy IN ('bad', 'terrible') THEN 1 ELSE 0 END) as bad_throws
+FROM passing_stats ps
+GROUP BY ps.quarterback_id, ps.throw_type
+ORDER BY ps.quarterback_id, completion_percentage DESC;
+
+-- Game performance summary
+CREATE OR REPLACE VIEW game_performance_overview AS
+SELECT
+    g.game_id,
+    g.game_date,
+    g.opponent_team_name,
+    g.team_score,
+    g.opponent_score,
+    g.game_result,
+    COUNT(DISTINCT ge.id) as total_plays,
+    SUM(CASE WHEN ge.is_turnover THEN 1 ELSE 0 END) as turnovers,
+    SUM(ge.yards_gained) as total_yards,
+    ROUND(AVG(ge.yards_gained), 2) as avg_yards_per_play
+FROM games g
+LEFT JOIN game_events ge ON g.game_id = ge.game_id
+GROUP BY g.game_id, g.game_date, g.opponent_team_name, g.team_score, g.opponent_score, g.game_result
+ORDER BY g.game_date DESC;
+
+-- Situational performance (3rd down, red zone, etc.)
+CREATE OR REPLACE VIEW situational_performance AS
+SELECT
+    ge.primary_player_id as player_id,
+    CASE
+        WHEN ge.down = 3 THEN 'Third Down'
+        WHEN ge.field_zone = 'red_zone' THEN 'Red Zone'
+        WHEN ge.time_remaining < 120 THEN 'Clutch (Last 2 min)'
+        ELSE 'Other'
+    END as situation,
+    COUNT(*) as attempts,
+    SUM(CASE WHEN ge.is_successful THEN 1 ELSE 0 END) as successes,
+    ROUND(
+        (SUM(CASE WHEN ge.is_successful THEN 1 ELSE 0 END)::DECIMAL / NULLIF(COUNT(*), 0)) * 100,
+        2
+    ) as success_rate
+FROM game_events ge
+WHERE ge.primary_player_id IS NOT NULL
+GROUP BY ge.primary_player_id, situation
+ORDER BY player_id, success_rate DESC;
+
+-- =============================================================================
+-- SAMPLE DATA (FOR TESTING)
+-- =============================================================================
+
+-- Sample game
+INSERT INTO games (game_id, team_id, opponent_team_name, game_date, is_home_game, team_score, opponent_score, game_result, weather_conditions, field_conditions)
+VALUES
+('GAME_2025_11_10_001', 'TEAM_001', 'Blue Devils', '2025-11-10', TRUE, 35, 28, 'win', 'Clear, 68F', 'dry');
+
+-- Sample game event (pass play)
+INSERT INTO game_events (game_id, team_id, play_number, quarter, down, distance, yard_line, field_zone, play_type, primary_player_id, play_result, yards_gained, is_successful)
+VALUES
+('GAME_2025_11_10_001', 'TEAM_001', 1, 1, 1, 10, 75, 'midfield', 'pass', 'QB_001', 'completion', 12, TRUE);
+
+-- Sample passing stat
+INSERT INTO passing_stats (game_id, quarterback_id, receiver_id, throw_type, route_depth, throw_accuracy, outcome)
+VALUES
+('GAME_2025_11_10_001', 'QB_001', 'WR_001', 'quick_slant', 8, 'perfect', 'completion');
+
+-- =============================================================================
+-- MIGRATION COMPLETE
+-- =============================================================================
+
+-- Verify tables created
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+AND table_name IN ('games', 'game_events', 'passing_stats', 'flag_pull_stats', 'receiving_stats', 'player_game_summary', 'situational_stats', 'opponent_analysis')
+ORDER BY table_name;
+
+
+
+-- ============================================================================
+-- Migration: 029_sponsors_table.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- SPONSORS TABLE
+-- Stores sponsor information and logos for display on login and other pages
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS sponsors (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(200) NOT NULL,
+    logo_url TEXT NOT NULL,
+    website_url TEXT,
+    display_order INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create index for active sponsors ordered by display_order
+CREATE INDEX IF NOT EXISTS idx_sponsors_active_order ON sponsors(is_active, display_order) WHERE is_active = true;
+
+-- Insert sponsor data
+INSERT INTO sponsors (name, logo_url, website_url, display_order, is_active) VALUES
+('LA PRIMAFIT', 'https://www.laprimafit.com/image/cache/catalog/logo/La_primafit_logo_black_linear_white_600w-1062x185.png', 'https://www.laprimafit.com', 1, true),
+('Chemius', 'https://www.chemius.net/wp-content/uploads/2021/09/logo-chemius-header.png', 'https://www.chemius.net', 2, true),
+('GEAR XPRO', 'https://gearxpro-sports.com/cdn/shop/files/Secondary_logo_Positive.png?v=1737387514&width=290', 'https://gearxpro-sports.com', 3, true)
+ON CONFLICT DO NOTHING;
+
+COMMIT;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- ============================================================================
+-- Migration: 030_advanced_ux_components_support.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Advanced UX Components Support
+-- Adds support for Performance Dashboard, Training Builder, and Heatmap components
+-- Created: 2024-01-XX
+
+-- Ensure training_sessions table has all required fields for Training Builder
+DO $$
+BEGIN
+    -- Add equipment field if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'equipment'
+    ) THEN
+        ALTER TABLE training_sessions 
+        ADD COLUMN equipment TEXT[];
+    END IF;
+
+    -- Add goals field if it doesn't exist
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'goals'
+    ) THEN
+        ALTER TABLE training_sessions 
+        ADD COLUMN goals TEXT[];
+    END IF;
+
+    -- Add exercises JSONB field for storing exercise details
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'exercises'
+    ) THEN
+        ALTER TABLE training_sessions 
+        ADD COLUMN exercises JSONB;
+    END IF;
+
+    -- Ensure completed_at exists (for status tracking)
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'training_sessions' 
+        AND column_name = 'completed_at'
+    ) THEN
+        ALTER TABLE training_sessions 
+        ADD COLUMN completed_at TIMESTAMP WITH TIME ZONE;
+    END IF;
+
+    -- Update status to include 'planned' status
+    -- Note: This is a comment - actual constraint update would require recreating the constraint
+    -- ALTER TABLE training_sessions DROP CONSTRAINT IF EXISTS training_sessions_status_check;
+    -- ALTER TABLE training_sessions ADD CONSTRAINT training_sessions_status_check 
+    --   CHECK (status IN ('planned', 'in_progress', 'completed', 'cancelled'));
+END $$;
+
+-- Create index for performance metrics queries
+CREATE INDEX IF NOT EXISTS idx_training_sessions_user_completed 
+ON training_sessions(user_id, completed_at DESC) 
+WHERE completed_at IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_training_sessions_date_range 
+ON training_sessions(user_id, session_date) 
+WHERE session_date IS NOT NULL;
+
+-- Create index for session type filtering
+CREATE INDEX IF NOT EXISTS idx_training_sessions_type_status 
+ON training_sessions(session_type, status) 
+WHERE status IN ('planned', 'completed');
+
+-- Performance metrics view for easier querying
+CREATE OR REPLACE VIEW performance_metrics_summary AS
+SELECT 
+    user_id,
+    session_type,
+    COUNT(*) as total_sessions,
+    AVG(duration_minutes) as avg_duration,
+    AVG(intensity_level) as avg_intensity,
+    AVG(performance_score) as avg_performance,
+    MAX(session_date) as last_session_date,
+    MIN(session_date) as first_session_date
+FROM training_sessions
+WHERE status = 'completed'
+GROUP BY user_id, session_type;
+
+-- Training load aggregation view for heatmap
+CREATE OR REPLACE VIEW training_load_daily AS
+SELECT 
+    user_id,
+    session_date,
+    COUNT(*) as session_count,
+    SUM(duration_minutes) as total_duration,
+    AVG(intensity_level) as avg_intensity,
+    MAX(intensity_level) as max_intensity,
+    array_agg(DISTINCT session_type) as session_types
+FROM training_sessions
+WHERE status = 'completed' AND session_date IS NOT NULL
+GROUP BY user_id, session_date;
+
+-- Add comments for documentation
+COMMENT ON COLUMN training_sessions.equipment IS 'Array of equipment used in the session (e.g., ["cones", "weights"])';
+COMMENT ON COLUMN training_sessions.goals IS 'Array of training goals (e.g., ["speed", "agility"])';
+COMMENT ON COLUMN training_sessions.exercises IS 'JSONB array of exercise details from Training Builder';
+COMMENT ON COLUMN training_sessions.completed_at IS 'Timestamp when session was completed (null for planned sessions)';
+COMMENT ON VIEW performance_metrics_summary IS 'Aggregated performance metrics by user and session type';
+COMMENT ON VIEW training_load_daily IS 'Daily training load aggregation for heatmap visualization';
+
+
+
+
+-- ============================================================================
+-- Migration: 031_open_data_sessions_system.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- OPEN DATA SESSIONS SYSTEM
+-- Migration: 031_open_data_sessions_system.sql
+-- Supports importing open-source sport-science datasets and computing flag-football metrics
+-- =============================================================================
+
+-- Sessions table for imported open-source data
+CREATE TABLE IF NOT EXISTS sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    athlete_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    
+    -- Session date
+    date DATE NOT NULL,
+    
+    -- RPE (Rate of Perceived Exertion) - filled post-session
+    rpe INTEGER CHECK (rpe >= 0 AND rpe <= 10),
+    
+    -- Computed metrics from imported data
+    total_volume DECIMAL(10,2), -- Total distance in meters
+    high_speed_distance DECIMAL(10,2), -- Distance at high speed (>5.5 m/s) in meters
+    sprint_count INTEGER, -- Number of sprint efforts (>7.0 m/s)
+    duration_minutes INTEGER, -- Session duration in minutes
+    
+    -- Metadata
+    data_source VARCHAR(100), -- Source of the data (e.g., 'gps_tracker', 'open_dataset')
+    raw_data JSONB, -- Store original dataset for reference
+    
+    -- Timestamps
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Indexes for performance
+CREATE INDEX IF NOT EXISTS idx_sessions_athlete_date ON sessions(athlete_id, date DESC);
+CREATE INDEX IF NOT EXISTS idx_sessions_date ON sessions(date DESC);
+CREATE INDEX IF NOT EXISTS idx_sessions_athlete ON sessions(athlete_id);
+
+-- Comments
+COMMENT ON TABLE sessions IS 'Stores training sessions imported from open-source datasets with computed flag-football metrics';
+COMMENT ON COLUMN sessions.total_volume IS 'Total distance covered in meters';
+COMMENT ON COLUMN sessions.high_speed_distance IS 'Distance covered at high speed (>5.5 m/s) in meters';
+COMMENT ON COLUMN sessions.sprint_count IS 'Number of sprint efforts (>7.0 m/s)';
+COMMENT ON COLUMN sessions.rpe IS 'Rate of Perceived Exertion (0-10 scale), filled post-session';
+
+
+
+
+-- ============================================================================
+-- Migration: 031_wellness_and_measurements_tables.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Wellness and Physical Measurements Tables
+-- Creates missing tables for wellness tracking, physical measurements, and supplements
+-- Created: 2024-11-22
+
+-- Physical Measurements Table
+-- Stores athlete body composition and physical measurement data
+CREATE TABLE IF NOT EXISTS physical_measurements (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    weight DECIMAL(5,2) CHECK (weight >= 40 AND weight <= 200),
+    height DECIMAL(5,2) CHECK (height >= 140 AND height <= 220),
+    body_fat DECIMAL(4,2) CHECK (body_fat >= 3 AND body_fat <= 50),
+    muscle_mass DECIMAL(5,2),
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Wellness Data Table
+-- Tracks daily wellness metrics for athlete monitoring
+CREATE TABLE IF NOT EXISTS wellness_data (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    sleep INTEGER CHECK (sleep >= 0 AND sleep <= 10),
+    energy INTEGER CHECK (energy >= 0 AND energy <= 10),
+    stress INTEGER CHECK (stress >= 0 AND stress <= 10),
+    soreness INTEGER CHECK (soreness >= 0 AND soreness <= 10),
+    motivation INTEGER CHECK (motivation >= 0 AND motivation <= 10),
+    mood INTEGER CHECK (mood >= 0 AND mood <= 10),
+    hydration INTEGER CHECK (hydration >= 0 AND hydration <= 10),
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(user_id, date)
+);
+
+-- Supplements Data Table
+-- Tracks supplement intake and compliance
+CREATE TABLE IF NOT EXISTS supplements_data (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    name VARCHAR(200) NOT NULL,
+    dosage VARCHAR(100),
+    taken BOOLEAN DEFAULT false,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    time_of_day VARCHAR(50),
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for better query performance
+CREATE INDEX IF NOT EXISTS idx_physical_measurements_user_date
+ON physical_measurements(user_id, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_wellness_data_user_date
+ON wellness_data(user_id, date DESC);
+
+CREATE INDEX IF NOT EXISTS idx_supplements_data_user_date
+ON supplements_data(user_id, date DESC);
+
+CREATE INDEX IF NOT EXISTS idx_supplements_data_name
+ON supplements_data(name)
+WHERE taken = true;
+
+-- Add comments for documentation
+COMMENT ON TABLE physical_measurements IS 'Stores athlete body composition and physical measurement data';
+COMMENT ON TABLE wellness_data IS 'Tracks daily wellness metrics for athlete monitoring and recovery assessment';
+COMMENT ON TABLE supplements_data IS 'Tracks supplement intake and compliance for nutrition monitoring';
+
+COMMENT ON COLUMN physical_measurements.weight IS 'Weight in kilograms (40-200 kg)';
+COMMENT ON COLUMN physical_measurements.height IS 'Height in centimeters (140-220 cm)';
+COMMENT ON COLUMN physical_measurements.body_fat IS 'Body fat percentage (3-50%)';
+COMMENT ON COLUMN physical_measurements.muscle_mass IS 'Muscle mass in kilograms';
+
+COMMENT ON COLUMN wellness_data.sleep IS 'Sleep quality rating (0-10 scale)';
+COMMENT ON COLUMN wellness_data.energy IS 'Energy level rating (0-10 scale)';
+COMMENT ON COLUMN wellness_data.stress IS 'Stress level rating (0-10 scale, higher = more stressed)';
+COMMENT ON COLUMN wellness_data.soreness IS 'Muscle soreness rating (0-10 scale)';
+COMMENT ON COLUMN wellness_data.motivation IS 'Motivation level rating (0-10 scale)';
+COMMENT ON COLUMN wellness_data.mood IS 'Overall mood rating (0-10 scale)';
+COMMENT ON COLUMN wellness_data.hydration IS 'Hydration level rating (0-10 scale)';
+
+COMMENT ON COLUMN supplements_data.taken IS 'Whether the supplement was taken on this date';
+COMMENT ON COLUMN supplements_data.time_of_day IS 'When supplement was taken (morning, afternoon, evening, pre-workout, post-workout)';
+
+-- Create views for easier data access
+
+-- Physical measurements summary view
+CREATE OR REPLACE VIEW physical_measurements_latest AS
+SELECT DISTINCT ON (user_id)
+    user_id,
+    weight,
+    height,
+    body_fat,
+    muscle_mass,
+    created_at,
+    LAG(weight) OVER (PARTITION BY user_id ORDER BY created_at) as previous_weight,
+    LAG(body_fat) OVER (PARTITION BY user_id ORDER BY created_at) as previous_body_fat
+FROM physical_measurements
+ORDER BY user_id, created_at DESC;
+
+-- Wellness summary view (last 30 days)
+CREATE OR REPLACE VIEW wellness_summary_30d AS
+SELECT
+    user_id,
+    COUNT(*) as total_entries,
+    AVG(sleep)::DECIMAL(3,1) as avg_sleep,
+    AVG(energy)::DECIMAL(3,1) as avg_energy,
+    AVG(stress)::DECIMAL(3,1) as avg_stress,
+    AVG(soreness)::DECIMAL(3,1) as avg_soreness,
+    AVG(motivation)::DECIMAL(3,1) as avg_motivation,
+    MAX(date) as last_entry_date
+FROM wellness_data
+WHERE date >= CURRENT_DATE - INTERVAL '30 days'
+GROUP BY user_id;
+
+-- Supplement compliance view
+CREATE OR REPLACE VIEW supplement_compliance AS
+SELECT
+    user_id,
+    name,
+    COUNT(*) as total_scheduled,
+    SUM(CASE WHEN taken THEN 1 ELSE 0 END) as times_taken,
+    ROUND((SUM(CASE WHEN taken THEN 1 ELSE 0 END)::DECIMAL / COUNT(*)) * 100, 1) as compliance_percentage,
+    MAX(date) FILTER (WHERE taken) as last_taken_date
+FROM supplements_data
+WHERE date >= CURRENT_DATE - INTERVAL '30 days'
+GROUP BY user_id, name;
+
+COMMENT ON VIEW physical_measurements_latest IS 'Latest physical measurements for each user with previous values for trend analysis';
+COMMENT ON VIEW wellness_summary_30d IS 'Wellness averages for the last 30 days by user';
+COMMENT ON VIEW supplement_compliance IS 'Supplement compliance statistics for the last 30 days';
+
+-- Insert sample data for testing (optional)
+-- Uncomment to add sample data
+
+-- INSERT INTO physical_measurements (user_id, weight, height, body_fat, muscle_mass) VALUES
+-- ('1', 75.5, 178.0, 12.5, 62.0),
+-- ('1', 76.0, 178.0, 12.3, 62.5);
+
+-- INSERT INTO wellness_data (user_id, date, sleep, energy, stress, soreness, motivation, mood, hydration) VALUES
+-- ('1', CURRENT_DATE, 8, 7, 3, 4, 8, 7, 8),
+-- ('1', CURRENT_DATE - INTERVAL '1 day', 7, 6, 4, 5, 7, 6, 7);
+
+-- INSERT INTO supplements_data (user_id, name, dosage, taken, date, time_of_day) VALUES
+-- ('1', 'Protein Powder', '30g', true, CURRENT_DATE, 'post-workout'),
+-- ('1', 'Creatine', '5g', true, CURRENT_DATE, 'morning'),
+-- ('1', 'Vitamin D', '2000 IU', true, CURRENT_DATE, 'morning');
+
+
+
+-- ============================================================================
+-- Migration: 032_acwr_compute_function.sql
+-- Type: database
+-- ============================================================================
+
+-- =============================================================================
+-- ACWR COMPUTATION FUNCTION
+-- Migration: 032_acwr_compute_function.sql
+-- Computes ACWR (Acute:Chronic Workload Ratio) for any athlete using rolling averages
+-- =============================================================================
+
+-- Function to compute ACWR for an athlete
+-- Updated to use unified view that includes all training session tables
+CREATE OR REPLACE FUNCTION compute_acwr(athlete uuid)
+RETURNS TABLE (
+  session_date date,
+  load numeric,
+  acute_load numeric,
+  chronic_load numeric,
+  acwr numeric
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Use unified view if it exists, otherwise fall back to sessions table
+  IF EXISTS (
+    SELECT 1 FROM information_schema.views 
+    WHERE table_name = 'training_sessions_with_load'
+  ) THEN
+    RETURN QUERY
+    SELECT
+      tsl.session_date,
+      COALESCE(tsl.training_load, 0)::numeric as load,
+      (
+        SELECT AVG(COALESCE(training_load, 0))
+        FROM training_sessions_with_load
+        WHERE athlete_id = athlete
+          AND session_date BETWEEN tsl.session_date - INTERVAL '6 days' AND tsl.session_date
+      )::numeric as acute_load,
+      (
+        SELECT AVG(COALESCE(training_load, 0))
+        FROM training_sessions_with_load
+        WHERE athlete_id = athlete
+          AND session_date BETWEEN tsl.session_date - INTERVAL '27 days' AND tsl.session_date
+      )::numeric as chronic_load,
+      CASE
+        WHEN (
+          SELECT AVG(COALESCE(training_load, 0))
+          FROM training_sessions_with_load
+          WHERE athlete_id = athlete
+            AND session_date BETWEEN tsl.session_date - INTERVAL '27 days' AND tsl.session_date
+        ) = 0 THEN NULL
+        ELSE (
+          (
+            SELECT AVG(COALESCE(training_load, 0))
+            FROM training_sessions_with_load
+            WHERE athlete_id = athlete
+              AND session_date BETWEEN tsl.session_date - INTERVAL '6 days' AND tsl.session_date
+          )::numeric
+          /
+          (
+            SELECT AVG(COALESCE(training_load, 0))
+            FROM training_sessions_with_load
+            WHERE athlete_id = athlete
+              AND session_date BETWEEN tsl.session_date - INTERVAL '27 days' AND tsl.session_date
+          )::numeric
+        )
+      END as acwr
+    FROM training_sessions_with_load tsl
+    WHERE tsl.athlete_id = athlete
+      AND tsl.training_load IS NOT NULL
+    ORDER BY tsl.session_date DESC;
+  ELSE
+    -- Fallback to original sessions table implementation
+    RETURN QUERY
+    SELECT
+      s.date as session_date,
+      (COALESCE(s.rpe, 0) * COALESCE(s.duration_minutes, 0))::numeric as load,
+      (
+        SELECT AVG(COALESCE(rpe, 0) * COALESCE(duration_minutes, 0))
+        FROM sessions
+        WHERE athlete_id = athlete
+          AND date BETWEEN s.date - INTERVAL '6 days' AND s.date
+      )::numeric as acute_load,
+      (
+        SELECT AVG(COALESCE(rpe, 0) * COALESCE(duration_minutes, 0))
+        FROM sessions
+        WHERE athlete_id = athlete
+          AND date BETWEEN s.date - INTERVAL '27 days' AND s.date
+      )::numeric as chronic_load,
+      CASE
+        WHEN (
+          SELECT AVG(COALESCE(rpe, 0) * COALESCE(duration_minutes, 0))
+          FROM sessions
+          WHERE athlete_id = athlete
+            AND date BETWEEN s.date - INTERVAL '27 days' AND s.date
+        ) = 0 THEN NULL
+        ELSE (
+          (
+            SELECT AVG(COALESCE(rpe, 0) * COALESCE(duration_minutes, 0))
+            FROM sessions
+            WHERE athlete_id = athlete
+              AND date BETWEEN s.date - INTERVAL '6 days' AND s.date
+          )::numeric
+          /
+          (
+            SELECT AVG(COALESCE(rpe, 0) * COALESCE(duration_minutes, 0))
+            FROM sessions
+            WHERE athlete_id = athlete
+              AND date BETWEEN s.date - INTERVAL '27 days' AND s.date
+          )::numeric
+        )
+      END as acwr
+    FROM sessions s
+    WHERE athlete_id = athlete
+    ORDER BY s.date DESC;
+  END IF;
+END;
+$$;
+
+-- Comment
+COMMENT ON FUNCTION compute_acwr IS 'Computes ACWR (Acute:Chronic Workload Ratio) for an athlete using rolling 7-day and 28-day averages. Uses unified training_sessions_with_load view if available, otherwise falls back to sessions table.';
+
+
+
+
+-- ============================================================================
+-- Migration: 032_fix_analytics_events_rls_performance.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Fix analytics_events_admin_all RLS Policy Performance
+-- Fixes suboptimal query performance by wrapping auth functions in subqueries
+-- This prevents re-evaluation of auth functions for each row
+-- Created: 2024-12-19
+--
+-- Issue: The analytics_events_admin_all policy re-evaluates auth functions
+-- for each row, causing performance issues at scale.
+-- Solution: Wrap auth function calls in (select auth.<function>()) to
+-- ensure they're evaluated once per query instead of once per row.
+
+-- ============================================================================
+-- STEP 1: Drop the existing policy
+-- ============================================================================
+
+DROP POLICY IF EXISTS analytics_events_admin_all ON public.analytics_events;
+
+-- ============================================================================
+-- STEP 2: Recreate the policy with optimized auth function calls
+-- ============================================================================
+-- IMPORTANT: Before running this migration, inspect your existing policy

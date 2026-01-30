@@ -9,7 +9,7 @@
  * Contract Reference: docs/contracts/CONTRACT_MAP.md
  *
  * Usage:
- *   SUPABASE_URL=... SUPABASE_SERVICE_KEY=... node api-response-shapes.contract.test.js
+ *   SUPABASE_URL=... SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw node api-response-shapes.contract.test.js
  *
  * Or via npm:
  *   npm run test:contracts:api

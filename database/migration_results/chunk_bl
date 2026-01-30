@@ -1,0 +1,1000 @@
+-- Run verification queries above to confirm indexes are working.
+
+
+
+-- ============================================================================
+-- Migration: 111_comprehensive_index_optimization.sql
+-- Type: database
+-- ============================================================================
+
+-- ============================================================================
+-- Migration 111: Comprehensive Index Optimization
+-- ============================================================================
+-- Purpose: Add missing indexes and optimize existing ones for better performance
+-- Date: January 9, 2026
+-- Version: 1.1.0
+-- Impact: Improves query performance across all major tables
+-- ============================================================================
+
+-- ============================================================================
+-- PART 1: WELLNESS DATA INDEXES
+-- ============================================================================
+
+-- Daily wellness checkin - user + date range queries
+CREATE INDEX IF NOT EXISTS idx_wellness_checkin_user_date_desc 
+ON daily_wellness_checkin(user_id, checkin_date DESC)
+WHERE checkin_date IS NOT NULL;
+
+COMMENT ON INDEX idx_wellness_checkin_user_date_desc IS 
+'Optimizes wellness history queries with descending date order. Partial index excludes NULL dates.';
+
+-- Wellness checkin - readiness score queries
+CREATE INDEX IF NOT EXISTS idx_wellness_checkin_readiness 
+ON daily_wellness_checkin(user_id, overall_readiness_score DESC)
+WHERE overall_readiness_score IS NOT NULL;
+
+COMMENT ON INDEX idx_wellness_checkin_readiness IS 
+'Enables efficient queries filtering by readiness score for risk assessment.';
+
+-- ============================================================================
+-- PART 2: TEAM MANAGEMENT INDEXES
+-- ============================================================================
+
+-- Team members - efficient role-based queries
+CREATE INDEX IF NOT EXISTS idx_team_members_team_role 
+ON team_members(team_id, role, user_id)
+WHERE deleted_at IS NULL;
+
+COMMENT ON INDEX idx_team_members_team_role IS 
+'Optimizes queries filtering team members by role. Excludes soft-deleted members.';
+
+-- Team members - user lookup across teams
+CREATE INDEX IF NOT EXISTS idx_team_members_user_teams 
+ON team_members(user_id, team_id)
+WHERE deleted_at IS NULL;
+
+COMMENT ON INDEX idx_team_members_user_teams IS 
+'Enables efficient lookup of all teams a user belongs to. Excludes soft-deleted memberships.';
+
+-- ============================================================================
+-- PART 3: GAME/FIXTURE INDEXES
+-- ============================================================================
+
+-- Fixtures - team + date range queries
+CREATE INDEX IF NOT EXISTS idx_fixtures_team_date 
+ON fixtures(team_id, fixture_date DESC)
+WHERE fixture_date IS NOT NULL;
+
+COMMENT ON INDEX idx_fixtures_team_date IS 
+'Optimizes fixture schedule queries with date ordering.';
+
+-- Fixtures - upcoming games (most common query)
+CREATE INDEX IF NOT EXISTS idx_fixtures_upcoming 
+ON fixtures(team_id, fixture_date ASC)
+WHERE fixture_date >= CURRENT_DATE AND status != 'cancelled';
+
+COMMENT ON INDEX idx_fixtures_upcoming IS 
+'Partial index for upcoming fixtures only. Dramatically improves schedule page performance.';
+
+-- Game plays - efficient game replay and analysis
+CREATE INDEX IF NOT EXISTS idx_game_plays_game_sequence 
+ON game_plays(game_id, play_sequence)
+WHERE play_sequence IS NOT NULL;
+
+COMMENT ON INDEX idx_game_plays_game_sequence IS 
+'Optimizes game replay and play-by-play analysis with ordered sequence.';
+
+-- ============================================================================
+-- PART 4: NOTIFICATION INDEXES
+-- ============================================================================
+
+-- Notifications - unread messages per user
+CREATE INDEX IF NOT EXISTS idx_notifications_user_unread 
+ON notifications(user_id, created_at DESC)
+WHERE read_at IS NULL;
+
+COMMENT ON INDEX idx_notifications_user_unread IS 
+'Partial index for unread notifications only. Critical for notification badge performance.';
+
+-- Notifications - cleanup of old read notifications
+CREATE INDEX IF NOT EXISTS idx_notifications_cleanup 
+ON notifications(read_at, created_at)
+WHERE read_at IS NOT NULL;
+
+COMMENT ON INDEX idx_notifications_cleanup IS 
+'Enables efficient cleanup of old read notifications for data retention policies.';
+
+-- ============================================================================
+-- PART 5: INJURY TRACKING INDEXES
+-- ============================================================================
+
+-- Injuries - active injuries per player
+CREATE INDEX IF NOT EXISTS idx_injuries_player_active 
+ON injuries(player_id, injury_date DESC)
+WHERE status IN ('active', 'recovering');
+
+COMMENT ON INDEX idx_injuries_player_active IS 
+'Partial index for active and recovering injuries. Critical for injury dashboard.';
+
+-- Return to play - protocol tracking
+CREATE INDEX IF NOT EXISTS idx_rtp_player_status 
+ON return_to_play_protocols(player_id, status, start_date DESC)
+WHERE status != 'completed';
+
+COMMENT ON INDEX idx_rtp_player_status IS 
+'Optimizes return-to-play protocol tracking. Excludes completed protocols.';
+
+-- ============================================================================
+-- PART 6: COMMUNICATION INDEXES
+-- ============================================================================
+
+-- Chat messages - conversation history
+CREATE INDEX IF NOT EXISTS idx_chat_messages_conversation 
+ON chat_messages(conversation_id, created_at ASC)
+WHERE deleted_at IS NULL;
+
+COMMENT ON INDEX idx_chat_messages_conversation IS 
+'Optimizes chat message loading in chronological order. Excludes deleted messages.';
+
+-- Chat messages - unread count per user
+CREATE INDEX IF NOT EXISTS idx_chat_messages_unread 
+ON chat_messages(receiver_id, created_at DESC)
+WHERE read_at IS NULL AND deleted_at IS NULL;
+
+COMMENT ON INDEX idx_chat_messages_unread IS 
+'Partial index for unread messages only. Critical for chat badge counts.';
+
+-- ============================================================================
+-- PART 7: CONSENT & PRIVACY INDEXES
+-- ============================================================================
+
+-- User consent - current active consents
+CREATE INDEX IF NOT EXISTS idx_user_consent_active 
+ON user_consent(user_id, consent_type, consented_at DESC)
+WHERE revoked_at IS NULL;
+
+COMMENT ON INDEX idx_user_consent_active IS 
+'Partial index for active consents only. Critical for GDPR compliance checks.';
+
+-- Data deletion requests - pending requests
+CREATE INDEX IF NOT EXISTS idx_deletion_requests_pending 
+ON data_deletion_requests(requested_at ASC)
+WHERE status = 'pending';
+
+COMMENT ON INDEX idx_deletion_requests_pending IS 
+'Partial index for pending deletion requests. Enables efficient processing queue.';
+
+-- ============================================================================
+-- PART 8: AUDIT LOG INDEXES
+-- ============================================================================
+
+-- Audit logs - user activity tracking
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_action 
+ON audit_logs(user_id, action_type, created_at DESC)
+WHERE created_at >= CURRENT_DATE - INTERVAL '90 days';
+
+COMMENT ON INDEX idx_audit_logs_user_action IS 
+'Partial index for recent audit logs (90 days). Enables efficient user activity reports.';
+
+-- Audit logs - resource tracking
+CREATE INDEX IF NOT EXISTS idx_audit_logs_resource 
+ON audit_logs(resource_type, resource_id, created_at DESC)
+WHERE created_at >= CURRENT_DATE - INTERVAL '90 days';
+
+COMMENT ON INDEX idx_audit_logs_resource IS 
+'Partial index for recent resource changes. Supports change history views.';
+
+-- ============================================================================
+-- PART 9: PERFORMANCE OPTIMIZATION - COVERING INDEXES
+-- ============================================================================
+
+-- Training sessions - common query covering index
+CREATE INDEX IF NOT EXISTS idx_training_sessions_covering 
+ON training_sessions(user_id, status, session_date DESC)
+INCLUDE (id, duration_minutes, rpe, training_load)
+WHERE status = 'completed';
+
+COMMENT ON INDEX idx_training_sessions_covering IS 
+'Covering index includes commonly accessed columns. Reduces table lookups.';
+
+-- Workout logs - covering index for dashboard
+CREATE INDEX IF NOT EXISTS idx_workout_logs_covering 
+ON workout_logs(player_id, completed_at DESC)
+INCLUDE (id, workout_type, duration_minutes, intensity_level)
+WHERE completed_at IS NOT NULL;
+
+COMMENT ON INDEX idx_workout_logs_covering IS 
+'Covering index for workout history. Includes display columns to avoid table access.';
+
+-- ============================================================================
+-- PART 10: FULL-TEXT SEARCH INDEXES (GIN)
+-- ============================================================================
+
+-- Players - search by name
+CREATE INDEX IF NOT EXISTS idx_players_name_search 
+ON players USING gin(to_tsvector('english', COALESCE(first_name, '') || ' ' || COALESCE(last_name, '')));
+
+COMMENT ON INDEX idx_players_name_search IS 
+'Full-text search index for player names. Enables fast typeahead search.';
+
+-- Teams - search by name
+CREATE INDEX IF NOT EXISTS idx_teams_name_search 
+ON teams USING gin(to_tsvector('english', name));
+
+COMMENT ON INDEX idx_teams_name_search IS 
+'Full-text search index for team names. Enables fast team lookup.';
+
+-- ============================================================================
+-- PART 11: JSONB INDEXES (for metadata columns)
+-- ============================================================================
+
+-- Training sessions - JSONB metadata queries
+CREATE INDEX IF NOT EXISTS idx_training_sessions_metadata 
+ON training_sessions USING gin(metadata)
+WHERE metadata IS NOT NULL;
+
+COMMENT ON INDEX idx_training_sessions_metadata IS 
+'GIN index for JSONB metadata column. Enables efficient metadata queries.';
+
+-- Game plays - JSONB data queries
+CREATE INDEX IF NOT EXISTS idx_game_plays_data 
+ON game_plays USING gin(play_data)
+WHERE play_data IS NOT NULL;
+
+COMMENT ON INDEX idx_game_plays_data IS 
+'GIN index for JSONB play data. Enables complex play analysis queries.';
+
+-- ============================================================================
+-- PART 12: UNIQUE CONSTRAINT INDEXES
+-- ============================================================================
+
+-- Prevent duplicate wellness checkins per user per day
+CREATE UNIQUE INDEX IF NOT EXISTS idx_wellness_checkin_unique_user_date 
+ON daily_wellness_checkin(user_id, checkin_date)
+WHERE deleted_at IS NULL;
+
+COMMENT ON INDEX idx_wellness_checkin_unique_user_date IS 
+'Ensures one wellness checkin per user per day. Excludes soft-deleted records.';
+
+-- Prevent duplicate team memberships
+CREATE UNIQUE INDEX IF NOT EXISTS idx_team_members_unique_user_team 
+ON team_members(user_id, team_id)
+WHERE deleted_at IS NULL;
+
+COMMENT ON INDEX idx_team_members_unique_user_team IS 
+'Prevents duplicate team memberships. Excludes soft-deleted memberships.';
+
+-- ============================================================================
+-- ANALYZE TABLES
+-- ============================================================================
+-- Update query planner statistics after index creation
+
+ANALYZE daily_wellness_checkin;
+ANALYZE team_members;
+ANALYZE fixtures;
+ANALYZE game_plays;
+ANALYZE notifications;
+ANALYZE injuries;
+ANALYZE return_to_play_protocols;
+ANALYZE chat_messages;
+ANALYZE user_consent;
+ANALYZE data_deletion_requests;
+ANALYZE audit_logs;
+ANALYZE players;
+ANALYZE teams;
+
+-- ============================================================================
+-- VERIFICATION QUERY
+-- ============================================================================
+
+-- List all new indexes created by this migration
+SELECT 
+  schemaname,
+  tablename,
+  indexname,
+  indexdef,
+  pg_size_pretty(pg_relation_size(indexrelid)) as index_size
+FROM pg_indexes
+LEFT JOIN pg_stat_user_indexes USING (schemaname, tablename, indexname)
+WHERE schemaname = 'public'
+  AND indexname LIKE 'idx_%'
+  AND indexname IN (
+    'idx_wellness_checkin_user_date_desc',
+    'idx_wellness_checkin_readiness',
+    'idx_team_members_team_role',
+    'idx_team_members_user_teams',
+    'idx_fixtures_team_date',
+    'idx_fixtures_upcoming',
+    'idx_game_plays_game_sequence',
+    'idx_notifications_user_unread',
+    'idx_notifications_cleanup',
+    'idx_injuries_player_active',
+    'idx_rtp_player_status',
+    'idx_chat_messages_conversation',
+    'idx_chat_messages_unread',
+    'idx_user_consent_active',
+    'idx_deletion_requests_pending',
+    'idx_audit_logs_user_action',
+    'idx_audit_logs_resource',
+    'idx_training_sessions_covering',
+    'idx_workout_logs_covering',
+    'idx_players_name_search',
+    'idx_teams_name_search',
+    'idx_training_sessions_metadata',
+    'idx_game_plays_data',
+    'idx_wellness_checkin_unique_user_date',
+    'idx_team_members_unique_user_team'
+  )
+ORDER BY tablename, indexname;
+
+-- ============================================================================
+-- EXPECTED IMPROVEMENTS
+-- ============================================================================
+-- Query Type                        | Expected Improvement
+-- ----------------------------------|---------------------
+-- Wellness history queries          | 85-90% faster
+-- Team member role queries          | 80-85% faster
+-- Upcoming fixtures                 | 90-95% faster (partial index)
+-- Unread notifications              | 95%+ faster (partial index)
+-- Active injury tracking            | 85-90% faster
+-- Chat message loading              | 80-85% faster
+-- Consent compliance checks         | 90%+ faster
+-- Player/team search                | 70-80% faster (full-text)
+-- Training dashboard                | 85-90% faster (covering index)
+-- ============================================================================
+
+-- Migration complete!
+
+
+
+-- ============================================================================
+-- Migration: 112_fix_users_table_profile_fields.sql
+-- Type: database
+-- ============================================================================
+
+-- Migration: Fix users table to support profile save functionality
+-- Issue: Profile settings cannot save because required columns are missing
+-- Created: 2025-01-09
+--
+-- This migration adds the missing columns that the settings component expects
+-- and renames birth_date to date_of_birth for consistency
+
+-- =============================================================================
+-- STEP 1: Add missing columns
+-- =============================================================================
+
+-- Add full_name column (calculated from first_name + last_name)
+ALTER TABLE public.users 
+  ADD COLUMN IF NOT EXISTS full_name VARCHAR(200);
+
+-- Add jersey_number column (player's jersey number)
+ALTER TABLE public.users 
+  ADD COLUMN IF NOT EXISTS jersey_number INTEGER;
+
+-- Add phone column (contact phone number)
+ALTER TABLE public.users 
+  ADD COLUMN IF NOT EXISTS phone VARCHAR(20);
+
+-- Add team column (team name/ID - note: this is separate from team_members relationship)
+ALTER TABLE public.users 
+  ADD COLUMN IF NOT EXISTS team VARCHAR(100);
+
+-- =============================================================================
+-- STEP 2: Rename birth_date to date_of_birth for consistency
+-- =============================================================================
+
+-- Check if birth_date exists before renaming
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 
+    FROM information_schema.columns 
+    WHERE table_schema = 'public' 
+    AND table_name = 'users' 
+    AND column_name = 'birth_date'
+  ) THEN
+    ALTER TABLE public.users 
+      RENAME COLUMN birth_date TO date_of_birth;
+    
+    RAISE NOTICE 'Column birth_date renamed to date_of_birth';
+  ELSE
+    RAISE NOTICE 'Column birth_date does not exist, skipping rename';
+  END IF;
+END $$;
+
+-- =============================================================================
+-- STEP 3: Backfill full_name from existing data
+-- =============================================================================
+
+-- Update existing records to populate full_name
+UPDATE public.users 
+SET full_name = TRIM(CONCAT(first_name, ' ', last_name))
+WHERE full_name IS NULL 
+  AND (first_name IS NOT NULL OR last_name IS NOT NULL);
+
+-- =============================================================================
+-- STEP 4: Create index for performance
+-- =============================================================================
+
+-- Add index on full_name for search performance
+CREATE INDEX IF NOT EXISTS idx_users_full_name ON public.users(full_name);
+
+-- Add index on jersey_number for team roster queries
+CREATE INDEX IF NOT EXISTS idx_users_jersey_number ON public.users(jersey_number) 
+  WHERE jersey_number IS NOT NULL;
+
+-- =============================================================================
+-- STEP 5: Add comments for documentation
+-- =============================================================================
+
+COMMENT ON COLUMN public.users.full_name IS 'Full display name (calculated from first_name + last_name or user-provided)';
+COMMENT ON COLUMN public.users.jersey_number IS 'Player jersey number (can also be stored in team_members for team-specific jerseys)';
+COMMENT ON COLUMN public.users.phone IS 'Contact phone number';
+COMMENT ON COLUMN public.users.team IS 'Primary team affiliation (name or reference)';
+COMMENT ON COLUMN public.users.date_of_birth IS 'Date of birth (renamed from birth_date for API consistency)';
+
+-- =============================================================================
+-- VERIFICATION QUERIES
+-- =============================================================================
+
+-- Verify columns were added:
+-- SELECT column_name, data_type, character_maximum_length 
+-- FROM information_schema.columns 
+-- WHERE table_schema = 'public' 
+--   AND table_name = 'users' 
+--   AND column_name IN ('full_name', 'jersey_number', 'phone', 'team', 'date_of_birth')
+-- ORDER BY column_name;
+
+-- Verify full_name was populated:
+-- SELECT id, first_name, last_name, full_name 
+-- FROM public.users 
+-- LIMIT 5;
+
+-- =============================================================================
+-- NOTES
+-- =============================================================================
+/*
+1. This migration makes the users table compatible with the settings component
+2. full_name is now the authoritative display name
+3. jersey_number in users table is for personal jersey preference
+   (team_members.jersey_number is for team-specific jersey assignments)
+4. date_of_birth is now consistent with the API naming convention
+5. All changes are backwards-compatible (columns are nullable)
+6. Existing data is preserved and backfilled where possible
+*/
+
+
+
+-- ============================================================================
+-- Migration: 113_extend_protocol_block_types.sql
+-- Type: database
+-- ============================================================================
+
+-- ============================================================================
+-- Migration 113: Extend Protocol Block Types
+-- ============================================================================
+-- This migration extends the block_type CHECK constraint in protocol_exercises
+-- to support the new evidence-based training blocks introduced for the 1.5h
+-- structured gym training program.
+--
+-- New block types added:
+-- - isometrics: Tendon loading, injury prevention (15 min)
+-- - plyometrics: Power development, reactive strength (15 min)
+-- - strength: Primary strength work incl. Nordic curls (15 min)
+-- - conditioning: ACWR-adjusted metabolic conditioning (15 min)
+-- - skill_drills: Position-specific skill/twitching work (15 min)
+-- - rehab_exercises: For return-to-play protocol
+-- - rehab_progression: Progressive rehab loading
+--
+-- This change is backwards compatible - existing data is preserved.
+-- ============================================================================
+
+-- Drop the existing constraint
+ALTER TABLE protocol_exercises 
+DROP CONSTRAINT IF EXISTS protocol_exercises_block_type_check;
+
+-- Add the new expanded constraint with all block types
+ALTER TABLE protocol_exercises 
+ADD CONSTRAINT protocol_exercises_block_type_check 
+CHECK (block_type IN (
+    -- Original blocks
+    'morning_mobility', 
+    'foam_roll', 
+    'warm_up', 
+    'main_session', 
+    'cool_down', 
+    'evening_recovery',
+    -- New evidence-based blocks (1.5h gym structure)
+    'isometrics',
+    'plyometrics',
+    'strength',
+    'conditioning',
+    'skill_drills',
+    -- Return-to-play blocks
+    'rehab_exercises',
+    'rehab_progression',
+    -- Evening mobility (alternative name)
+    'evening_mobility'
+));
+
+-- Add status columns for new blocks to daily_protocols if they don't exist
+DO $$
+BEGIN
+    -- Isometrics
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'isometrics_status') THEN
+        ALTER TABLE daily_protocols ADD COLUMN isometrics_status TEXT DEFAULT 'pending' 
+        CHECK (isometrics_status IN ('pending', 'in_progress', 'complete', 'skipped'));
+    END IF;
+    
+    -- Plyometrics
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'plyometrics_status') THEN
+        ALTER TABLE daily_protocols ADD COLUMN plyometrics_status TEXT DEFAULT 'pending'
+        CHECK (plyometrics_status IN ('pending', 'in_progress', 'complete', 'skipped'));
+    END IF;
+    
+    -- Strength
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'strength_status') THEN
+        ALTER TABLE daily_protocols ADD COLUMN strength_status TEXT DEFAULT 'pending'
+        CHECK (strength_status IN ('pending', 'in_progress', 'complete', 'skipped'));
+    END IF;
+    
+    -- Conditioning
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'conditioning_status') THEN
+        ALTER TABLE daily_protocols ADD COLUMN conditioning_status TEXT DEFAULT 'pending'
+        CHECK (conditioning_status IN ('pending', 'in_progress', 'complete', 'skipped'));
+    END IF;
+    
+    -- Skill Drills
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'skill_drills_status') THEN
+        ALTER TABLE daily_protocols ADD COLUMN skill_drills_status TEXT DEFAULT 'pending'
+        CHECK (skill_drills_status IN ('pending', 'in_progress', 'complete', 'skipped'));
+    END IF;
+    
+    -- Warm Up
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'warm_up_status') THEN
+        ALTER TABLE daily_protocols ADD COLUMN warm_up_status TEXT DEFAULT 'pending'
+        CHECK (warm_up_status IN ('pending', 'in_progress', 'complete', 'skipped'));
+    END IF;
+    
+    -- Cool Down
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'cool_down_status') THEN
+        ALTER TABLE daily_protocols ADD COLUMN cool_down_status TEXT DEFAULT 'pending'
+        CHECK (cool_down_status IN ('pending', 'in_progress', 'complete', 'skipped'));
+    END IF;
+END $$;
+
+-- Add timestamp columns for new blocks if they don't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'isometrics_completed_at') THEN
+        ALTER TABLE daily_protocols ADD COLUMN isometrics_completed_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'plyometrics_completed_at') THEN
+        ALTER TABLE daily_protocols ADD COLUMN plyometrics_completed_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'strength_completed_at') THEN
+        ALTER TABLE daily_protocols ADD COLUMN strength_completed_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'conditioning_completed_at') THEN
+        ALTER TABLE daily_protocols ADD COLUMN conditioning_completed_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'skill_drills_completed_at') THEN
+        ALTER TABLE daily_protocols ADD COLUMN skill_drills_completed_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'warm_up_completed_at') THEN
+        ALTER TABLE daily_protocols ADD COLUMN warm_up_completed_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'cool_down_completed_at') THEN
+        ALTER TABLE daily_protocols ADD COLUMN cool_down_completed_at TIMESTAMPTZ;
+    END IF;
+END $$;
+
+-- Add coach modification fields if they don't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'coach_alert_active') THEN
+        ALTER TABLE daily_protocols ADD COLUMN coach_alert_active BOOLEAN DEFAULT FALSE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'coach_alert_message') THEN
+        ALTER TABLE daily_protocols ADD COLUMN coach_alert_message TEXT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'coach_alert_requires_acknowledgment') THEN
+        ALTER TABLE daily_protocols ADD COLUMN coach_alert_requires_acknowledgment BOOLEAN DEFAULT FALSE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'coach_acknowledged') THEN
+        ALTER TABLE daily_protocols ADD COLUMN coach_acknowledged BOOLEAN DEFAULT FALSE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'modified_by_coach_id') THEN
+        ALTER TABLE daily_protocols ADD COLUMN modified_by_coach_id UUID REFERENCES auth.users(id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'modified_by_coach_name') THEN
+        ALTER TABLE daily_protocols ADD COLUMN modified_by_coach_name TEXT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'modified_at') THEN
+        ALTER TABLE daily_protocols ADD COLUMN modified_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'coach_note') THEN
+        ALTER TABLE daily_protocols ADD COLUMN coach_note TEXT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'coach_note_priority') THEN
+        ALTER TABLE daily_protocols ADD COLUMN coach_note_priority TEXT DEFAULT 'info';
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_name = 'daily_protocols' AND column_name = 'confidence_metadata') THEN
+        ALTER TABLE daily_protocols ADD COLUMN confidence_metadata JSONB;
+    END IF;
+END $$;
+
+-- Update the protocol_completions table to support new block types if needed
+ALTER TABLE protocol_completions 
+DROP CONSTRAINT IF EXISTS protocol_completions_block_type_check;
+
+-- Allow any block type in completions (no constraint - more flexible)
+-- The application code controls which block types are valid
+
+COMMENT ON TABLE protocol_exercises IS 'Individual exercises prescribed within a daily protocol. Supports evidence-based 1.5h gym structure with isometrics, plyometrics, strength, conditioning, and skill drills blocks.';
+
+
+
+-- ============================================================================
+-- Migration: 114_add_rest_seconds_to_protocol_exercises.sql
+-- Type: database
+-- ============================================================================
+
+-- ============================================================================
+-- Migration: Add rest_seconds column to protocol_exercises
+-- ============================================================================
+-- Fixes: PGRST204 error "Could not find the 'rest_seconds' column of 
+--        'protocol_exercises' in the schema cache"
+--
+-- The daily-protocol.cjs function generates exercises with rest periods,
+-- but the column was missing from the original table definition.
+-- ============================================================================
+
+-- Add the rest_seconds column
+ALTER TABLE protocol_exercises 
+ADD COLUMN IF NOT EXISTS rest_seconds INTEGER;
+
+-- Add documentation
+COMMENT ON COLUMN protocol_exercises.rest_seconds IS 'Rest period between sets in seconds. Varies by block type: isometrics ~30s, plyometrics ~60-90s, strength ~90s, conditioning ~30-45s';
+
+-- Verify the column was added
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'protocol_exercises' 
+        AND column_name = 'rest_seconds'
+    ) THEN
+        RAISE NOTICE 'SUCCESS: rest_seconds column added to protocol_exercises';
+    ELSE
+        RAISE EXCEPTION 'FAILED: rest_seconds column was not added';
+    END IF;
+END $$;
+
+
+
+-- ============================================================================
+-- Migration: 115_add_wellness_fields.sql
+-- Type: database
+-- ============================================================================
+
+-- ============================================================================
+-- Migration 115: Add Missing Wellness Fields to daily_wellness_checkin
+-- ============================================================================
+-- Purpose: Add motivation, mood, and hydration fields that exist in legacy wellness_entries
+--          but are missing from daily_wellness_checkin table
+-- Date: January 2026
+-- Impact: Enables full wellness tracking without data loss
+-- ============================================================================
+
+-- Add motivation_level column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'daily_wellness_checkin' AND column_name = 'motivation_level'
+    ) THEN
+        ALTER TABLE daily_wellness_checkin 
+        ADD COLUMN motivation_level INTEGER CHECK (motivation_level >= 0 AND motivation_level <= 10);
+        COMMENT ON COLUMN daily_wellness_checkin.motivation_level IS 'Motivation level (0-10 scale)';
+    END IF;
+END $$;
+
+-- Add mood column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'daily_wellness_checkin' AND column_name = 'mood'
+    ) THEN
+        ALTER TABLE daily_wellness_checkin 
+        ADD COLUMN mood INTEGER CHECK (mood >= 0 AND mood <= 10);
+        COMMENT ON COLUMN daily_wellness_checkin.mood IS 'Overall mood (0-10 scale)';
+    END IF;
+END $$;
+
+-- Add hydration_level column if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'daily_wellness_checkin' AND column_name = 'hydration_level'
+    ) THEN
+        ALTER TABLE daily_wellness_checkin 
+        ADD COLUMN hydration_level INTEGER CHECK (hydration_level >= 0 AND hydration_level <= 10);
+        COMMENT ON COLUMN daily_wellness_checkin.hydration_level IS 'Hydration level (0-10 scale)';
+    END IF;
+END $$;
+
+-- Add overall_readiness_score if it doesn't exist (replacing calculated_readiness for consistency)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'daily_wellness_checkin' AND column_name = 'overall_readiness_score'
+    ) THEN
+        ALTER TABLE daily_wellness_checkin 
+        ADD COLUMN overall_readiness_score INTEGER CHECK (overall_readiness_score >= 0 AND overall_readiness_score <= 100);
+        COMMENT ON COLUMN daily_wellness_checkin.overall_readiness_score IS 'Calculated overall readiness score (0-100)';
+    END IF;
+END $$;
+
+-- Add index for wellness queries
+CREATE INDEX IF NOT EXISTS idx_daily_wellness_checkin_user_date_v2
+ON daily_wellness_checkin(user_id, checkin_date DESC);
+
+-- Update comment on table
+COMMENT ON TABLE daily_wellness_checkin IS 'Primary table for daily wellness check-ins. Contains all wellness metrics including sleep, energy, stress, soreness, motivation, mood, and hydration.';
+
+
+
+-- ============================================================================
+-- Migration: 116_add_workout_logs_load_fields.sql
+-- Type: database
+-- ============================================================================
+
+-- ============================================================================
+-- Migration 116: Add Load and External Metrics to workout_logs
+-- ============================================================================
+-- Purpose: Add calculated load (load_au) and external load metrics to workout_logs
+--          so that LoadMonitoringService can persist complete training session data
+-- Date: January 2026
+-- Impact: Enables complete training load tracking without data loss
+-- ============================================================================
+
+-- Add load_au (calculated session load in Arbitrary Units)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'workout_logs' AND column_name = 'load_au'
+    ) THEN
+        ALTER TABLE workout_logs 
+        ADD COLUMN load_au INTEGER;
+        COMMENT ON COLUMN workout_logs.load_au IS 'Calculated session load in Arbitrary Units (RPE × duration)';
+    END IF;
+END $$;
+
+-- Add session_type for categorization
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'workout_logs' AND column_name = 'session_type'
+    ) THEN
+        ALTER TABLE workout_logs 
+        ADD COLUMN session_type VARCHAR(50);
+        COMMENT ON COLUMN workout_logs.session_type IS 'Type of training session: game, sprint, technical, conditioning, strength, recovery';
+    END IF;
+END $$;
+
+-- Add external_load_data for GPS/wearable metrics
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'workout_logs' AND column_name = 'external_load_data'
+    ) THEN
+        ALTER TABLE workout_logs 
+        ADD COLUMN external_load_data JSONB;
+        COMMENT ON COLUMN workout_logs.external_load_data IS 'External load metrics from GPS/wearables: totalDistance, sprintDistance, playerLoad, etc.';
+    END IF;
+END $$;
+
+-- Add wellness_data snapshot
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'workout_logs' AND column_name = 'wellness_snapshot'
+    ) THEN
+        ALTER TABLE workout_logs 
+        ADD COLUMN wellness_snapshot JSONB;
+        COMMENT ON COLUMN workout_logs.wellness_snapshot IS 'Wellness metrics at time of session: sleepQuality, energyLevel, etc.';
+    END IF;
+END $$;
+
+-- Add wellness_adjustment_factor
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'workout_logs' AND column_name = 'wellness_adjustment_factor'
+    ) THEN
+        ALTER TABLE workout_logs 
+        ADD COLUMN wellness_adjustment_factor DECIMAL(3,2);
+        COMMENT ON COLUMN workout_logs.wellness_adjustment_factor IS 'Wellness-based load adjustment factor (0.8-1.3)';
+    END IF;
+END $$;
+
+-- Add internal load metrics (for more detailed tracking)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'workout_logs' AND column_name = 'avg_heart_rate'
+    ) THEN
+        ALTER TABLE workout_logs 
+        ADD COLUMN avg_heart_rate INTEGER;
+        COMMENT ON COLUMN workout_logs.avg_heart_rate IS 'Average heart rate during session (bpm)';
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'workout_logs' AND column_name = 'max_heart_rate'
+    ) THEN
+        ALTER TABLE workout_logs 
+        ADD COLUMN max_heart_rate INTEGER;
+        COMMENT ON COLUMN workout_logs.max_heart_rate IS 'Maximum heart rate during session (bpm)';
+    END IF;
+END $$;
+
+-- Create index for load queries
+CREATE INDEX IF NOT EXISTS idx_workout_logs_player_date_load
+ON workout_logs(player_id, completed_at DESC, load_au)
+WHERE load_au IS NOT NULL;
+
+-- Create index for session type filtering
+CREATE INDEX IF NOT EXISTS idx_workout_logs_session_type
+ON workout_logs(player_id, session_type, completed_at DESC);
+
+-- Update trigger for load calculation if missing
+CREATE OR REPLACE FUNCTION calculate_workout_load_au()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Calculate load_au from RPE and duration if not provided
+    IF NEW.load_au IS NULL AND NEW.rpe IS NOT NULL AND NEW.duration_minutes IS NOT NULL THEN
+        NEW.load_au := ROUND(NEW.rpe * NEW.duration_minutes);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Drop trigger if exists, then recreate
+DROP TRIGGER IF EXISTS trigger_calculate_workout_load_au ON workout_logs;
+CREATE TRIGGER trigger_calculate_workout_load_au
+    BEFORE INSERT OR UPDATE ON workout_logs
+    FOR EACH ROW
+    EXECUTE FUNCTION calculate_workout_load_au();
+
+COMMENT ON TABLE workout_logs IS 'Completed workout sessions with load metrics, external GPS/wearable data, and wellness adjustments';
+
+
+
+-- ============================================================================
+-- Migration: 117_wellness_checkin_transaction.sql
+-- Type: database
+-- ============================================================================
+
+-- ============================================================================
+-- Migration 117: Add Transactional Wellness Check-in Function
+-- ============================================================================
+-- Purpose: Create a database function for atomic wellness check-in that writes 
+--          to both daily_wellness_checkin and wellness_entries tables
+-- Date: January 2026
+-- Impact: Ensures data consistency between wellness tables
+-- ============================================================================
+
+-- Create or replace the transactional wellness check-in function
+CREATE OR REPLACE FUNCTION upsert_wellness_checkin(
+    p_user_id UUID,
+    p_checkin_date DATE,
+    p_sleep_quality INTEGER DEFAULT NULL,
+    p_sleep_hours NUMERIC(3,1) DEFAULT NULL,
+    p_energy_level INTEGER DEFAULT NULL,
+    p_muscle_soreness INTEGER DEFAULT NULL,
+    p_stress_level INTEGER DEFAULT NULL,
+    p_soreness_areas TEXT[] DEFAULT NULL,
+    p_notes TEXT DEFAULT NULL,
+    p_calculated_readiness INTEGER DEFAULT NULL,
+    p_motivation_level INTEGER DEFAULT NULL,
+    p_mood INTEGER DEFAULT NULL,
+    p_hydration_level INTEGER DEFAULT NULL
+)
+RETURNS TABLE (
+    id BIGINT,
+    checkin_date DATE,
+    success BOOLEAN,
+    message TEXT
+) AS $$
+DECLARE
+    v_checkin_id BIGINT;
+BEGIN
+    -- Begin atomic transaction
+    
+    -- 1. Upsert to daily_wellness_checkin (primary table)
+    INSERT INTO daily_wellness_checkin (
+        user_id,
+        checkin_date,
+        sleep_quality,
+        sleep_hours,
+        energy_level,
+        muscle_soreness,
+        stress_level,
+        soreness_areas,
+        notes,
+        calculated_readiness,
+        motivation_level,
+        mood,
+        hydration_level,
+        overall_readiness_score,
+        updated_at
+    ) VALUES (
+        p_user_id,
+        p_checkin_date,
+        p_sleep_quality,
+        p_sleep_hours,
+        p_energy_level,
+        p_muscle_soreness,
+        p_stress_level,
+        COALESCE(p_soreness_areas, ARRAY[]::TEXT[]),
+        p_notes,
+        p_calculated_readiness,
+        p_motivation_level,
+        p_mood,
+        p_hydration_level,
+        p_calculated_readiness,
+        NOW()

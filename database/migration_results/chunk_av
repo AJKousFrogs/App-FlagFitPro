@@ -1,0 +1,1000 @@
+    user_id = auth.uid()
+    OR (channel_id IN (
+        SELECT c.id FROM public.channels c
+        WHERE c.team_id IN (
+            SELECT tm.team_id FROM public.team_members tm
+            WHERE tm.user_id = auth.uid() AND tm.role IN ('coach', 'assistant_coach')
+        )
+    ))
+);
+
+-- ============================================================================
+-- MESSAGE READ RECEIPTS POLICIES
+-- ============================================================================
+
+-- Users can view read receipts for messages in their channels
+CREATE POLICY "Users can view read receipts"
+ON public.message_read_receipts FOR SELECT
+USING (
+    message_id IN (
+        SELECT cm.id FROM public.chat_messages cm
+        WHERE cm.channel_id IN (
+            SELECT c.id FROM public.channels c
+            JOIN public.team_members tm ON c.team_id = tm.team_id
+            WHERE tm.user_id = auth.uid()
+        )
+    )
+);
+
+-- Users can create their own read receipts
+CREATE POLICY "Users can create read receipts"
+ON public.message_read_receipts FOR INSERT
+WITH CHECK (user_id = auth.uid());
+
+-- ============================================================================
+-- ANNOUNCEMENT READS POLICIES
+-- ============================================================================
+
+-- Users can view their own announcement reads
+CREATE POLICY "Users can view own announcement reads"
+ON public.announcement_reads FOR SELECT
+USING (user_id = auth.uid());
+
+-- Coaches can view all announcement reads for their team
+CREATE POLICY "Coaches can view team announcement reads"
+ON public.announcement_reads FOR SELECT
+USING (
+    message_id IN (
+        SELECT cm.id FROM public.chat_messages cm
+        WHERE cm.channel_id IN (
+            SELECT c.id FROM public.channels c
+            WHERE c.team_id IN (
+                SELECT tm.team_id FROM public.team_members tm
+                WHERE tm.user_id = auth.uid() AND tm.role IN ('coach', 'assistant_coach')
+            )
+        )
+    )
+);
+
+-- Users can create their own announcement reads
+CREATE POLICY "Users can create announcement reads"
+ON public.announcement_reads FOR INSERT
+WITH CHECK (user_id = auth.uid());
+
+-- Users can update their own announcement reads
+CREATE POLICY "Users can update own announcement reads"
+ON public.announcement_reads FOR UPDATE
+USING (user_id = auth.uid())
+WITH CHECK (user_id = auth.uid());
+
+-- ============================================================================
+-- COACH ACTIVITY LOG POLICIES
+-- ============================================================================
+
+-- Coaches can view activity for their teams
+CREATE POLICY "Coaches can view team activity"
+ON public.coach_activity_log FOR SELECT
+USING (
+    team_id IN (
+        SELECT tm.team_id FROM public.team_members tm
+        WHERE tm.user_id = auth.uid() AND tm.role IN ('coach', 'assistant_coach')
+    )
+    AND (coach_id IS NULL OR coach_id = auth.uid())
+);
+
+-- System can insert activity (via service role)
+CREATE POLICY "System can insert activity"
+ON public.coach_activity_log FOR INSERT
+WITH CHECK (true);
+
+-- Coaches can mark activity as read
+CREATE POLICY "Coaches can update activity read status"
+ON public.coach_activity_log FOR UPDATE
+USING (
+    team_id IN (
+        SELECT tm.team_id FROM public.team_members tm
+        WHERE tm.user_id = auth.uid() AND tm.role IN ('coach', 'assistant_coach')
+    )
+)
+WITH CHECK (
+    team_id IN (
+        SELECT tm.team_id FROM public.team_members tm
+        WHERE tm.user_id = auth.uid() AND tm.role IN ('coach', 'assistant_coach')
+    )
+);
+
+-- ============================================================================
+-- FUNCTIONS FOR NOTIFICATION TRIGGERS
+-- ============================================================================
+
+-- Function to notify team members of announcements
+CREATE OR REPLACE FUNCTION notify_announcement()
+RETURNS TRIGGER AS $$
+DECLARE
+    channel_record RECORD;
+    team_member RECORD;
+BEGIN
+    -- Only trigger for announcement channels or important messages
+    IF NEW.is_important = true OR EXISTS (
+        SELECT 1 FROM public.channels c 
+        WHERE c.id = NEW.channel_id AND c.channel_type = 'announcements'
+    ) THEN
+        -- Get channel info
+        SELECT * INTO channel_record FROM public.channels WHERE id = NEW.channel_id;
+        
+        -- Notify all team members
+        IF channel_record.team_id IS NOT NULL THEN
+            FOR team_member IN 
+                SELECT tm.user_id FROM public.team_members tm
+                WHERE tm.team_id = channel_record.team_id
+                AND tm.user_id != NEW.user_id
+                AND tm.status = 'active'
+            LOOP
+                INSERT INTO public.notifications (
+                    user_id, type, title, message, priority, data, source_type, source_id
+                ) VALUES (
+                    team_member.user_id::text,
+                    'team',
+                    CASE WHEN NEW.is_important THEN '🔴 Important Message' ELSE '📢 Team Announcement' END,
+                    LEFT(NEW.message, 100),
+                    CASE WHEN NEW.is_important THEN 'high' ELSE 'medium' END,
+                    jsonb_build_object(
+                        'channel_id', NEW.channel_id,
+                        'message_id', NEW.id,
+                        'sender_id', NEW.user_id
+                    ),
+                    'chat',
+                    NEW.id
+                );
+            END LOOP;
+        END IF;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to notify mentioned users
+CREATE OR REPLACE FUNCTION notify_mentions()
+RETURNS TRIGGER AS $$
+DECLARE
+    mentioned_user UUID;
+BEGIN
+    -- Check if there are mentions
+    IF NEW.mentions IS NOT NULL AND array_length(NEW.mentions, 1) > 0 THEN
+        FOREACH mentioned_user IN ARRAY NEW.mentions
+        LOOP
+            -- Don't notify the sender
+            IF mentioned_user != NEW.user_id THEN
+                INSERT INTO public.notifications (
+                    user_id, type, title, message, priority, data, source_type, source_id
+                ) VALUES (
+                    mentioned_user::text,
+                    'team',
+                    '💬 You were mentioned',
+                    LEFT(NEW.message, 100),
+                    'high',
+                    jsonb_build_object(
+                        'channel_id', NEW.channel_id,
+                        'message_id', NEW.id,
+                        'sender_id', NEW.user_id
+                    ),
+                    'chat',
+                    NEW.id
+                );
+            END IF;
+        END LOOP;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to log coach activity on stats upload
+CREATE OR REPLACE FUNCTION log_stats_upload_activity()
+RETURNS TRIGGER AS $$
+DECLARE
+    player_record RECORD;
+    team_record RECORD;
+    coach_record RECORD;
+BEGIN
+    -- Get player info
+    SELECT u.id, u.raw_user_meta_data->>'full_name' as full_name, u.email
+    INTO player_record
+    FROM auth.users u
+    WHERE u.id = NEW.primary_player_id OR u.id = NEW.user_id;
+    
+    -- Get team info for the player
+    FOR team_record IN
+        SELECT tm.team_id, t.name as team_name
+        FROM public.team_members tm
+        JOIN public.teams t ON t.id = tm.team_id
+        WHERE tm.user_id = COALESCE(NEW.primary_player_id, NEW.user_id)
+        AND tm.status = 'active'
+    LOOP
+        -- Log activity for all coaches of this team
+        FOR coach_record IN
+            SELECT tm.user_id
+            FROM public.team_members tm
+            WHERE tm.team_id = team_record.team_id
+            AND tm.role IN ('coach', 'assistant_coach')
+        LOOP
+            INSERT INTO public.coach_activity_log (
+                team_id, player_id, coach_id, activity_type, title, description, data
+            ) VALUES (
+                team_record.team_id,
+                COALESCE(NEW.primary_player_id, NEW.user_id),
+                coach_record.user_id,
+                'stats_uploaded',
+                COALESCE(player_record.full_name, split_part(player_record.email, '@', 1)) || ' uploaded game stats',
+                'New play recorded: ' || COALESCE(NEW.play_type::text, 'play'),
+                jsonb_build_object(
+                    'game_id', NEW.game_id,
+                    'play_type', NEW.play_type,
+                    'yards_gained', NEW.yards_gained,
+                    'play_result', NEW.play_result
+                )
+            );
+            
+            -- Also create a notification
+            INSERT INTO public.notifications (
+                user_id, type, title, message, priority, data, source_type, source_id
+            ) VALUES (
+                coach_record.user_id::text,
+                'game',
+                '📊 Stats Uploaded',
+                COALESCE(player_record.full_name, split_part(player_record.email, '@', 1)) || ' logged game stats',
+                'medium',
+                jsonb_build_object(
+                    'player_id', COALESCE(NEW.primary_player_id, NEW.user_id),
+                    'game_id', NEW.game_id,
+                    'event_id', NEW.id
+                ),
+                'game_event',
+                NEW.id
+            );
+        END LOOP;
+    END LOOP;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to log training completion
+CREATE OR REPLACE FUNCTION log_training_completion_activity()
+RETURNS TRIGGER AS $$
+DECLARE
+    player_record RECORD;
+    team_record RECORD;
+    coach_record RECORD;
+BEGIN
+    -- Only trigger on completion
+    IF NEW.status = 'completed' AND (OLD IS NULL OR OLD.status != 'completed') THEN
+        -- Get player info
+        SELECT u.id, u.raw_user_meta_data->>'full_name' as full_name, u.email
+        INTO player_record
+        FROM auth.users u
+        WHERE u.id = NEW.user_id;
+        
+        -- Get team info
+        FOR team_record IN
+            SELECT tm.team_id, t.name as team_name
+            FROM public.team_members tm
+            JOIN public.teams t ON t.id = tm.team_id
+            WHERE tm.user_id = NEW.user_id
+            AND tm.status = 'active'
+        LOOP
+            -- Log activity for coaches
+            FOR coach_record IN
+                SELECT tm.user_id
+                FROM public.team_members tm
+                WHERE tm.team_id = team_record.team_id
+                AND tm.role IN ('coach', 'assistant_coach')
+            LOOP
+                INSERT INTO public.coach_activity_log (
+                    team_id, player_id, coach_id, activity_type, title, description, data
+                ) VALUES (
+                    team_record.team_id,
+                    NEW.user_id,
+                    coach_record.user_id,
+                    'training_completed',
+                    COALESCE(player_record.full_name, split_part(player_record.email, '@', 1)) || ' completed training',
+                    COALESCE(NEW.session_type, 'Training') || ' - ' || COALESCE(NEW.duration_minutes, 0) || ' min',
+                    jsonb_build_object(
+                        'session_id', NEW.id,
+                        'session_type', NEW.session_type,
+                        'duration', NEW.duration_minutes,
+                        'rpe', NEW.rpe
+                    )
+                );
+            END LOOP;
+        END LOOP;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ============================================================================
+-- CREATE TRIGGERS
+-- ============================================================================
+
+-- Trigger for announcements
+DROP TRIGGER IF EXISTS trigger_notify_announcement ON public.chat_messages;
+CREATE TRIGGER trigger_notify_announcement
+    AFTER INSERT ON public.chat_messages
+    FOR EACH ROW
+    EXECUTE FUNCTION notify_announcement();
+
+-- Trigger for mentions
+DROP TRIGGER IF EXISTS trigger_notify_mentions ON public.chat_messages;
+CREATE TRIGGER trigger_notify_mentions
+    AFTER INSERT ON public.chat_messages
+    FOR EACH ROW
+    EXECUTE FUNCTION notify_mentions();
+
+-- Trigger for stats upload (on game_events table)
+DROP TRIGGER IF EXISTS trigger_log_stats_upload ON public.game_events;
+CREATE TRIGGER trigger_log_stats_upload
+    AFTER INSERT ON public.game_events
+    FOR EACH ROW
+    EXECUTE FUNCTION log_stats_upload_activity();
+
+-- Trigger for training completion
+DROP TRIGGER IF EXISTS trigger_log_training_completion ON public.training_sessions;
+CREATE TRIGGER trigger_log_training_completion
+    AFTER INSERT OR UPDATE ON public.training_sessions
+    FOR EACH ROW
+    EXECUTE FUNCTION log_training_completion_activity();
+
+-- ============================================================================
+-- DEFAULT CHANNEL CREATION FUNCTION
+-- Auto-create default channels when a team is created
+-- ============================================================================
+CREATE OR REPLACE FUNCTION create_default_team_channels()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Create announcements channel
+    INSERT INTO public.channels (team_id, name, description, channel_type, is_default, created_by)
+    VALUES (
+        NEW.id,
+        'announcements',
+        'Important team announcements from coaches',
+        'announcements',
+        true,
+        NEW.coach_id
+    );
+    
+    -- Create general channel
+    INSERT INTO public.channels (team_id, name, description, channel_type, is_default, created_by)
+    VALUES (
+        NEW.id,
+        'general',
+        'General team discussion',
+        'team_general',
+        true,
+        NEW.coach_id
+    );
+    
+    -- Create coaches-only channel
+    INSERT INTO public.channels (team_id, name, description, channel_type, is_default, created_by)
+    VALUES (
+        NEW.id,
+        'coaches',
+        'Private channel for coaching staff',
+        'coaches_only',
+        true,
+        NEW.coach_id
+    );
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to create default channels
+DROP TRIGGER IF EXISTS trigger_create_default_channels ON public.teams;
+CREATE TRIGGER trigger_create_default_channels
+    AFTER INSERT ON public.teams
+    FOR EACH ROW
+    EXECUTE FUNCTION create_default_team_channels();
+
+-- ============================================================================
+-- ENABLE REALTIME FOR NEW TABLES
+-- ============================================================================
+ALTER PUBLICATION supabase_realtime ADD TABLE public.channels;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.channel_members;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.coach_activity_log;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.message_read_receipts;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.announcement_reads;
+
+-- ============================================================================
+-- MIGRATION COMPLETE
+-- ============================================================================
+COMMENT ON TABLE public.channels IS 'Team communication channels with type-based permissions';
+COMMENT ON TABLE public.channel_members IS 'Explicit channel membership for DMs and permissions';
+COMMENT ON TABLE public.message_read_receipts IS 'Track who has read which messages';
+COMMENT ON TABLE public.announcement_reads IS 'Track acknowledgment of important announcements';
+COMMENT ON TABLE public.coach_activity_log IS 'Activity feed for coaches showing player actions';
+
+
+
+-- ============================================================================
+-- Migration: 061_roster_management_tables.sql
+-- Type: database
+-- ============================================================================
+
+-- ============================================================================
+-- Migration: Roster Management Tables
+-- Description: Creates team_players and team_invitations tables with RLS policies
+-- Created: 2024-12-27
+-- ============================================================================
+
+-- =============================================================================
+-- TEAM PLAYERS TABLE
+-- Stores individual players on a team roster (separate from team_members which
+-- tracks user accounts and their roles)
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS team_players (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    
+    -- Player Information
+    name VARCHAR(255) NOT NULL,
+    position VARCHAR(50) NOT NULL,
+    jersey_number VARCHAR(10),
+    
+    -- Demographics
+    country VARCHAR(100),
+    age INTEGER CHECK (age >= 0 AND age <= 100),
+    height VARCHAR(20),
+    weight VARCHAR(20),
+    
+    -- Contact (visible to coaches only)
+    email VARCHAR(255),
+    phone VARCHAR(50),
+    
+    -- Status
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'injured', 'inactive')),
+    
+    -- Optional link to user account (if player has account)
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    
+    -- Performance stats (JSONB for flexibility)
+    stats JSONB DEFAULT '{}',
+    
+    -- Metadata
+    created_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- =============================================================================
+-- TEAM INVITATIONS TABLE
+-- Tracks pending invitations to join a team
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS team_invitations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    
+    -- Invitation details
+    email VARCHAR(255) NOT NULL,
+    role VARCHAR(50) DEFAULT 'player' CHECK (role IN ('player', 'assistant_coach', 'coach')),
+    message TEXT,
+    
+    -- Status
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined', 'expired')),
+    
+    -- Tracking
+    invited_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    accepted_by UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    
+    -- Expiration
+    expires_at TIMESTAMPTZ NOT NULL,
+    
+    -- Timestamps
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    
+    -- Prevent duplicate pending invitations
+    UNIQUE(team_id, email, status)
+);
+
+-- =============================================================================
+-- INDEXES
+-- =============================================================================
+
+-- Team Players indexes
+CREATE INDEX IF NOT EXISTS idx_team_players_team ON team_players(team_id);
+CREATE INDEX IF NOT EXISTS idx_team_players_position ON team_players(position);
+CREATE INDEX IF NOT EXISTS idx_team_players_status ON team_players(status);
+CREATE INDEX IF NOT EXISTS idx_team_players_user ON team_players(user_id) WHERE user_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_team_players_created_by ON team_players(created_by);
+
+-- Team Invitations indexes
+CREATE INDEX IF NOT EXISTS idx_team_invitations_team ON team_invitations(team_id);
+CREATE INDEX IF NOT EXISTS idx_team_invitations_email ON team_invitations(email);
+CREATE INDEX IF NOT EXISTS idx_team_invitations_status ON team_invitations(status);
+CREATE INDEX IF NOT EXISTS idx_team_invitations_expires ON team_invitations(expires_at);
+
+-- =============================================================================
+-- TRIGGERS
+-- =============================================================================
+
+-- Update timestamp trigger for team_players
+CREATE TRIGGER update_team_players_updated_at
+    BEFORE UPDATE ON team_players
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Update timestamp trigger for team_invitations
+CREATE TRIGGER update_team_invitations_updated_at
+    BEFORE UPDATE ON team_invitations
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- =============================================================================
+-- ROW LEVEL SECURITY
+-- =============================================================================
+
+-- Enable RLS
+ALTER TABLE team_players ENABLE ROW LEVEL SECURITY;
+ALTER TABLE team_invitations ENABLE ROW LEVEL SECURITY;
+
+-- =============================================================================
+-- HELPER FUNCTION: Check user's role in a team
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION get_user_team_role(p_user_id UUID, p_team_id UUID)
+RETURNS VARCHAR AS $$
+DECLARE
+    v_role VARCHAR;
+BEGIN
+    SELECT role INTO v_role
+    FROM team_members
+    WHERE user_id = p_user_id AND team_id = p_team_id
+    LIMIT 1;
+    
+    RETURN v_role;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
+-- HELPER FUNCTION: Check if user is coach or higher
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION is_team_coach_or_higher(p_user_id UUID, p_team_id UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+    v_role VARCHAR;
+BEGIN
+    v_role := get_user_team_role(p_user_id, p_team_id);
+    RETURN v_role IN ('coach', 'assistant_coach', 'owner', 'admin');
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
+-- HELPER FUNCTION: Check if user is owner or admin
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION is_team_owner_or_admin(p_user_id UUID, p_team_id UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+    v_role VARCHAR;
+BEGIN
+    v_role := get_user_team_role(p_user_id, p_team_id);
+    RETURN v_role IN ('owner', 'admin');
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
+-- TEAM PLAYERS RLS POLICIES
+-- =============================================================================
+
+-- DROP existing policies if they exist
+DROP POLICY IF EXISTS "Team members can view team players" ON team_players;
+DROP POLICY IF EXISTS "Coaches can insert team players" ON team_players;
+DROP POLICY IF EXISTS "Coaches can update team players" ON team_players;
+DROP POLICY IF EXISTS "Owners can delete team players" ON team_players;
+
+-- SELECT: All team members can view players on their team
+CREATE POLICY "Team members can view team players"
+ON team_players FOR SELECT
+TO authenticated
+USING (
+    team_id IN (
+        SELECT tm.team_id FROM team_members tm
+        WHERE tm.user_id = (SELECT auth.uid())
+    )
+);
+
+-- INSERT: Coaches, assistant coaches, owners, and admins can add players
+CREATE POLICY "Coaches can insert team players"
+ON team_players FOR INSERT
+TO authenticated
+WITH CHECK (
+    is_team_coach_or_higher((SELECT auth.uid()), team_id)
+);
+
+-- UPDATE: Coaches, assistant coaches, owners, and admins can update players
+CREATE POLICY "Coaches can update team players"
+ON team_players FOR UPDATE
+TO authenticated
+USING (
+    is_team_coach_or_higher((SELECT auth.uid()), team_id)
+)
+WITH CHECK (
+    is_team_coach_or_higher((SELECT auth.uid()), team_id)
+);
+
+-- DELETE: Only owners and admins can delete players
+CREATE POLICY "Owners can delete team players"
+ON team_players FOR DELETE
+TO authenticated
+USING (
+    is_team_owner_or_admin((SELECT auth.uid()), team_id)
+);
+
+-- =============================================================================
+-- TEAM INVITATIONS RLS POLICIES
+-- =============================================================================
+
+-- DROP existing policies if they exist
+DROP POLICY IF EXISTS "Coaches can view team invitations" ON team_invitations;
+DROP POLICY IF EXISTS "Invitees can view their invitations" ON team_invitations;
+DROP POLICY IF EXISTS "Coaches can create invitations" ON team_invitations;
+DROP POLICY IF EXISTS "Coaches can update invitations" ON team_invitations;
+DROP POLICY IF EXISTS "Invitees can accept invitations" ON team_invitations;
+DROP POLICY IF EXISTS "Owners can delete invitations" ON team_invitations;
+
+-- SELECT: Coaches can view all team invitations
+CREATE POLICY "Coaches can view team invitations"
+ON team_invitations FOR SELECT
+TO authenticated
+USING (
+    is_team_coach_or_higher((SELECT auth.uid()), team_id)
+);
+
+-- SELECT: Users can view invitations sent to their email
+CREATE POLICY "Invitees can view their invitations"
+ON team_invitations FOR SELECT
+TO authenticated
+USING (
+    email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
+);
+
+-- INSERT: Coaches can create invitations
+CREATE POLICY "Coaches can create invitations"
+ON team_invitations FOR INSERT
+TO authenticated
+WITH CHECK (
+    is_team_coach_or_higher((SELECT auth.uid()), team_id)
+);
+
+-- UPDATE: Coaches can update invitations (cancel, resend, etc.)
+CREATE POLICY "Coaches can update invitations"
+ON team_invitations FOR UPDATE
+TO authenticated
+USING (
+    is_team_coach_or_higher((SELECT auth.uid()), team_id)
+)
+WITH CHECK (
+    is_team_coach_or_higher((SELECT auth.uid()), team_id)
+);
+
+-- UPDATE: Invitees can accept/decline their invitations
+CREATE POLICY "Invitees can accept invitations"
+ON team_invitations FOR UPDATE
+TO authenticated
+USING (
+    email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
+    AND status = 'pending'
+)
+WITH CHECK (
+    email = (SELECT email FROM auth.users WHERE id = (SELECT auth.uid()))
+    AND status IN ('accepted', 'declined')
+);
+
+-- DELETE: Only owners and admins can delete invitations
+CREATE POLICY "Owners can delete invitations"
+ON team_invitations FOR DELETE
+TO authenticated
+USING (
+    is_team_owner_or_admin((SELECT auth.uid()), team_id)
+);
+
+-- =============================================================================
+-- FUNCTION: Accept team invitation
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION accept_team_invitation(p_invitation_id UUID)
+RETURNS JSONB AS $$
+DECLARE
+    v_invitation team_invitations%ROWTYPE;
+    v_user_id UUID;
+    v_user_email TEXT;
+BEGIN
+    v_user_id := auth.uid();
+    
+    -- Get user email
+    SELECT email INTO v_user_email FROM auth.users WHERE id = v_user_id;
+    
+    -- Get invitation
+    SELECT * INTO v_invitation
+    FROM team_invitations
+    WHERE id = p_invitation_id
+      AND email = v_user_email
+      AND status = 'pending'
+      AND expires_at > NOW();
+    
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object('success', false, 'error', 'Invalid or expired invitation');
+    END IF;
+    
+    -- Update invitation status
+    UPDATE team_invitations
+    SET status = 'accepted',
+        accepted_by = v_user_id,
+        updated_at = NOW()
+    WHERE id = p_invitation_id;
+    
+    -- Add user to team
+    INSERT INTO team_members (team_id, user_id, role, status, joined_at)
+    VALUES (v_invitation.team_id, v_user_id, v_invitation.role, 'active', NOW())
+    ON CONFLICT (user_id, team_id) DO UPDATE
+    SET role = v_invitation.role,
+        status = 'active',
+        updated_at = NOW();
+    
+    RETURN jsonb_build_object(
+        'success', true,
+        'team_id', v_invitation.team_id,
+        'role', v_invitation.role
+    );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
+-- FUNCTION: Decline team invitation
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION decline_team_invitation(p_invitation_id UUID)
+RETURNS JSONB AS $$
+DECLARE
+    v_user_id UUID;
+    v_user_email TEXT;
+BEGIN
+    v_user_id := auth.uid();
+    
+    -- Get user email
+    SELECT email INTO v_user_email FROM auth.users WHERE id = v_user_id;
+    
+    -- Update invitation status
+    UPDATE team_invitations
+    SET status = 'declined',
+        updated_at = NOW()
+    WHERE id = p_invitation_id
+      AND email = v_user_email
+      AND status = 'pending';
+    
+    IF NOT FOUND THEN
+        RETURN jsonb_build_object('success', false, 'error', 'Invalid invitation');
+    END IF;
+    
+    RETURN jsonb_build_object('success', true);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
+-- FUNCTION: Expire old invitations (run periodically)
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION expire_old_invitations()
+RETURNS INTEGER AS $$
+DECLARE
+    v_count INTEGER;
+BEGIN
+    UPDATE team_invitations
+    SET status = 'expired',
+        updated_at = NOW()
+    WHERE status = 'pending'
+      AND expires_at < NOW();
+    
+    GET DIAGNOSTICS v_count = ROW_COUNT;
+    RETURN v_count;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
+-- GRANT PERMISSIONS
+-- =============================================================================
+
+GRANT EXECUTE ON FUNCTION get_user_team_role TO authenticated;
+GRANT EXECUTE ON FUNCTION is_team_coach_or_higher TO authenticated;
+GRANT EXECUTE ON FUNCTION is_team_owner_or_admin TO authenticated;
+GRANT EXECUTE ON FUNCTION accept_team_invitation TO authenticated;
+GRANT EXECUTE ON FUNCTION decline_team_invitation TO authenticated;
+
+-- =============================================================================
+-- COMMENTS
+-- =============================================================================
+
+COMMENT ON TABLE team_players IS 'Stores individual players on team rosters, separate from user accounts';
+COMMENT ON TABLE team_invitations IS 'Tracks pending invitations to join teams';
+COMMENT ON FUNCTION get_user_team_role IS 'Returns the role of a user in a specific team';
+COMMENT ON FUNCTION is_team_coach_or_higher IS 'Checks if user has coach-level permissions or higher';
+COMMENT ON FUNCTION is_team_owner_or_admin IS 'Checks if user has owner or admin permissions';
+COMMENT ON FUNCTION accept_team_invitation IS 'Allows a user to accept a team invitation';
+COMMENT ON FUNCTION decline_team_invitation IS 'Allows a user to decline a team invitation';
+COMMENT ON FUNCTION expire_old_invitations IS 'Marks expired invitations as expired';
+
+
+
+-- ============================================================================
+-- Migration: 062_channel_member_count.sql
+-- Type: database
+-- ============================================================================
+
+-- ============================================================================
+-- CHANNEL MEMBER COUNT MIGRATION
+-- Migration: 062_channel_member_count.sql
+-- Purpose: Add member_count to channels table with auto-update trigger
+--          Provides fast member counts without aggregate queries
+-- Created: 2026-01-01
+-- ============================================================================
+
+-- ============================================================================
+-- ADD MEMBER COUNT COLUMNS TO CHANNELS
+-- ============================================================================
+DO $$ BEGIN
+    ALTER TABLE public.channels ADD COLUMN IF NOT EXISTS member_count INTEGER DEFAULT 0;
+EXCEPTION WHEN duplicate_column THEN null;
+END $$;
+
+DO $$ BEGIN
+    ALTER TABLE public.channels ADD COLUMN IF NOT EXISTS online_count INTEGER DEFAULT 0;
+EXCEPTION WHEN duplicate_column THEN null;
+END $$;
+
+-- Index for quick sorting by member count
+CREATE INDEX IF NOT EXISTS idx_channels_member_count ON public.channels(member_count DESC);
+
+-- ============================================================================
+-- FUNCTION: Calculate implicit members for a channel
+-- Returns count based on channel_type visibility rules
+-- ============================================================================
+CREATE OR REPLACE FUNCTION get_channel_implicit_member_count(channel_record public.channels)
+RETURNS INTEGER AS $$
+DECLARE
+    member_count INTEGER := 0;
+BEGIN
+    CASE channel_record.channel_type
+        -- Announcements & Team General: All active team members
+        WHEN 'announcements', 'team_general' THEN
+            SELECT COUNT(*)::INTEGER INTO member_count
+            FROM public.team_members tm
+            WHERE tm.team_id = channel_record.team_id
+            AND tm.status = 'active';
+            
+        -- Coaches Only: Only coaches and assistant coaches
+        WHEN 'coaches_only' THEN
+            SELECT COUNT(*)::INTEGER INTO member_count
+            FROM public.team_members tm
+            WHERE tm.team_id = channel_record.team_id
+            AND tm.status = 'active'
+            AND tm.role IN ('coach', 'assistant_coach');
+            
+        -- Position Group: Coaches + athletes with matching position
+        WHEN 'position_group' THEN
+            SELECT COUNT(*)::INTEGER INTO member_count
+            FROM public.team_members tm
+            WHERE tm.team_id = channel_record.team_id
+            AND tm.status = 'active'
+            AND (tm.role IN ('coach', 'assistant_coach') OR tm.position = channel_record.position_filter);
+            
+        -- Game Day: All active team members (same as team_general)
+        WHEN 'game_day' THEN
+            SELECT COUNT(*)::INTEGER INTO member_count
+            FROM public.team_members tm
+            WHERE tm.team_id = channel_record.team_id
+            AND tm.status = 'active';
+            
+        -- Direct Message: Use explicit channel_members count
+        WHEN 'direct_message' THEN
+            SELECT COUNT(*)::INTEGER INTO member_count
+            FROM public.channel_members cm
+            WHERE cm.channel_id = channel_record.id;
+            
+        ELSE
+            member_count := 0;
+    END CASE;
+    
+    RETURN member_count;
+END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- ============================================================================
+-- FUNCTION: Update channel member count
+-- Called by triggers when team_members or channel_members change
+-- ============================================================================
+CREATE OR REPLACE FUNCTION update_channel_member_count()
+RETURNS TRIGGER AS $$
+DECLARE
+    channel_record public.channels%ROWTYPE;
+    new_count INTEGER;
+BEGIN
+    -- For channel_members changes (DMs)
+    IF TG_TABLE_NAME = 'channel_members' THEN
+        -- Get the channel
+        SELECT * INTO channel_record FROM public.channels WHERE id = COALESCE(NEW.channel_id, OLD.channel_id);
+        
+        IF channel_record.id IS NOT NULL THEN
+            new_count := get_channel_implicit_member_count(channel_record);
+            UPDATE public.channels SET member_count = new_count WHERE id = channel_record.id;
+        END IF;
+        
+    -- For team_members changes (team channels)
+    ELSIF TG_TABLE_NAME = 'team_members' THEN
+        -- Update all channels for this team
+        FOR channel_record IN 
+            SELECT * FROM public.channels 
+            WHERE team_id = COALESCE(NEW.team_id, OLD.team_id)
+            AND channel_type != 'direct_message'
+        LOOP
+            new_count := get_channel_implicit_member_count(channel_record);
+            UPDATE public.channels SET member_count = new_count WHERE id = channel_record.id;
+        END LOOP;
+    END IF;
+    
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+-- ============================================================================
+-- TRIGGERS: Auto-update member counts
+-- ============================================================================
+
+-- Trigger on channel_members (for DMs)
+DROP TRIGGER IF EXISTS trigger_update_channel_member_count_on_members ON public.channel_members;
+CREATE TRIGGER trigger_update_channel_member_count_on_members
+    AFTER INSERT OR UPDATE OR DELETE ON public.channel_members
+    FOR EACH ROW
+    EXECUTE FUNCTION update_channel_member_count();
+
+-- Trigger on team_members (for team channels)
+DROP TRIGGER IF EXISTS trigger_update_channel_member_count_on_team ON public.team_members;
+CREATE TRIGGER trigger_update_channel_member_count_on_team
+    AFTER INSERT OR UPDATE OR DELETE ON public.team_members
+    FOR EACH ROW
+    EXECUTE FUNCTION update_channel_member_count();
+
+-- ============================================================================
+-- FUNCTION: Get channel members with details
+-- Returns all members who can see a channel with their info
+-- ============================================================================
+CREATE OR REPLACE FUNCTION get_channel_members(p_channel_id UUID)
+RETURNS TABLE (
+    user_id UUID,
+    email VARCHAR,
+    full_name VARCHAR,
+    avatar_url VARCHAR,
+    role VARCHAR,
+    position VARCHAR,
+    jersey_number INTEGER,
+    is_explicit_member BOOLEAN,
+    can_post BOOLEAN,
+    joined_at TIMESTAMPTZ
+) AS $$
+DECLARE
+    channel_record public.channels%ROWTYPE;
+BEGIN
+    -- Get the channel
+    SELECT * INTO channel_record FROM public.channels WHERE id = p_channel_id;
+    
+    IF channel_record.id IS NULL THEN
+        RETURN;
+    END IF;
+    
+    RETURN QUERY
+    CASE channel_record.channel_type

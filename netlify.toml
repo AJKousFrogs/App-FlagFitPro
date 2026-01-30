@@ -27,8 +27,8 @@
   #   - SUPABASE_SERVICE_ROLE_KEY (backend only, NEVER expose to frontend)
   # 
   # For production, set these in Netlify UI to avoid committing secrets
-  # VITE_SUPABASE_URL = "https://pvziciccwxgftcielknm.supabase.co"
-  # VITE_SUPABASE_ANON_KEY = "your-anon-key-here"
+  # VITE_SUPABASE_URL = "https://grfjmnjpzvknmsxrwesx.supabase.co"
+  # VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1MDI4OTksImV4cCI6MjA4NTA3ODg5OX0.63Do5rUEHBT7-pZEXzFFHB5LqFRaXWAt-YrH2v45vo0"
   VITE_ENABLE_ANALYTICS = "false"
   # Sentry Error Monitoring - Set VITE_SENTRY_DSN in Netlify UI for production
   # To enable: Set VITE_SENTRY_DSN to your Sentry DSN in Netlify Environment Variables
@@ -173,7 +173,7 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
     # Preload critical resources for faster LCP
-    Link = "</assets/icons/icon-192x192.svg>; rel=preload; as=image, <https://pvziciccwxgftcielknm.supabase.co>; rel=preconnect; crossorigin"
+    Link = "</assets/icons/icon-192x192.svg>; rel=preload; as=image, <https://grfjmnjpzvknmsxrwesx.supabase.co>; rel=preconnect; crossorigin"
 
 # All HTML files - short cache with revalidation
 [[headers]]

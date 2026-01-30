@@ -13,7 +13,7 @@
 # Prerequisites:
 #   - Supabase CLI installed (https://supabase.com/docs/guides/cli)
 #   - Logged into Supabase CLI (supabase login)
-#   - Project linked (supabase link --project-ref pvziciccwxgftcielknm)
+#   - Project linked (supabase link --project-ref grfjmnjpzvknmsxrwesx)
 #   OR
 #   - Supabase URL and Service Key in .env file
 # =====================================================
@@ -52,7 +52,7 @@ install_via_cli() {
     # Check if linked to project
     if ! supabase status &> /dev/null; then
         echo -e "${RED}✗${NC} Not linked to a Supabase project."
-        echo -e "${YELLOW}Run:${NC} supabase link --project-ref pvziciccwxgftcielknm"
+        echo -e "${YELLOW}Run:${NC} supabase link --project-ref grfjmnjpzvknmsxrwesx"
         exit 1
     fi
 
@@ -90,7 +90,7 @@ install_via_psql() {
     fi
 
     # Extract database connection string
-    DB_URL="postgresql://postgres.pvziciccwxgftcielknm:${SUPABASE_SERVICE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
+    DB_URL="postgresql://postgres.grfjmnjpzvknmsxrwesx:${SUPABASE_SERVICE_KEY}@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
 
     echo -e "\n${BLUE}Step 1/2:${NC} Creating training database schema..."
     psql "$DB_URL" -f "$SCRIPT_DIR/create-training-schema.sql" || {
