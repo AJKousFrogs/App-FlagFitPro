@@ -7,7 +7,10 @@
  */
 
 import express from "express";
-import { authenticateToken, requireRole } from "./middleware/auth.middleware.js";
+import {
+  authenticateToken,
+  requireRole,
+} from "./middleware/auth.middleware.js";
 import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
@@ -187,8 +190,7 @@ router.get(
         );
       }
 
-      const { count: sessionCount, error: sessionsError } =
-        await sessionsQuery;
+      const { count: sessionCount, error: sessionsError } = await sessionsQuery;
 
       if (sessionsError) {
         throw sessionsError;
@@ -257,7 +259,13 @@ router.get(
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to load team");
       serverLogger.error(`[${ROUTE_NAME}] Team error: ${errorMessage}`, error);
-      return sendErrorResponse(res, error, "Failed to load team", "FETCH_ERROR", 500);
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to load team",
+        "FETCH_ERROR",
+        500,
+      );
     }
   },
 );
@@ -273,7 +281,11 @@ router.get(
   requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
   async (req, res) => {
     if (!supabase) {
-      return sendSuccess(res, { sessions: 0, averagePerformance: 0, averageDuration: 0 });
+      return sendSuccess(res, {
+        sessions: 0,
+        averagePerformance: 0,
+        averageDuration: 0,
+      });
     }
 
     try {
@@ -327,8 +339,7 @@ router.get(
       return sendSuccess(res, {
         sessions: data?.length || 0,
         averageDuration: Math.round(safeAverage(durations, 0)),
-        averagePerformance:
-          Math.round(safeAverage(performances, 0) * 10) / 10,
+        averagePerformance: Math.round(safeAverage(performances, 0) * 10) / 10,
       });
     } catch (error) {
       const errorMessage = getErrorMessage(
@@ -429,15 +440,24 @@ router.post(
         insertData.completed_at = new Date().toISOString();
       }
 
-      if (payload.session_type) insertData.session_type = payload.session_type;
-      if (payload.drill_type) insertData.drill_type = payload.drill_type;
-      if (payload.duration_minutes !== undefined)
+      if (payload.session_type) {
+        insertData.session_type = payload.session_type;
+      }
+      if (payload.drill_type) {
+        insertData.drill_type = payload.drill_type;
+      }
+      if (payload.duration_minutes !== undefined) {
         insertData.duration_minutes = payload.duration_minutes;
-      if (payload.intensity_level !== undefined)
+      }
+      if (payload.intensity_level !== undefined) {
         insertData.intensity_level = payload.intensity_level;
-      if (payload.performance_score !== undefined)
+      }
+      if (payload.performance_score !== undefined) {
         insertData.performance_score = payload.performance_score;
-      if (payload.notes) insertData.notes = payload.notes;
+      }
+      if (payload.notes) {
+        insertData.notes = payload.notes;
+      }
 
       const { data, error } = await supabase
         .from("training_sessions")
@@ -505,7 +525,10 @@ router.get(
       return sendSuccess(res, data || []);
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to load calendar");
-      serverLogger.error(`[${ROUTE_NAME}] Calendar error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Calendar error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -568,12 +591,13 @@ router.post(
         throw error;
       }
 
-      return res
-        .status(201)
-        .json(createSuccessResponse(data, "Event created"));
+      return res.status(201).json(createSuccessResponse(data, "Event created"));
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to create event");
-      serverLogger.error(`[${ROUTE_NAME}] Create event error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Create event error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -635,7 +659,10 @@ router.put(
       return sendSuccess(res, data, "Event updated");
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to update event");
-      serverLogger.error(`[${ROUTE_NAME}] Update event error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Update event error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -685,7 +712,10 @@ router.delete(
       return sendSuccess(res, { success: true }, "Event deleted");
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to delete event");
-      serverLogger.error(`[${ROUTE_NAME}] Delete event error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Delete event error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -733,7 +763,10 @@ router.get(
       return sendSuccess(res, data || []);
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to load events");
-      serverLogger.error(`[${ROUTE_NAME}] Upcoming events error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Upcoming events error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -755,26 +788,27 @@ router.get(
   authenticateToken,
   requireRole("coach", "head_coach", "assistant_coach", "admin", "owner"),
   async (req, res) => {
-  if (!supabase) {
-    return sendSuccess(res, []);
-  }
-
-  try {
-    const { data: games, error } = await supabase
-      .from("games")
-      .select("*")
-      .order("game_date", { ascending: false })
-      .limit(20);
-
-    if (error) {
-      throw error;
+    if (!supabase) {
+      return sendSuccess(res, []);
     }
 
-    return sendSuccess(res, games || []);
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Games error:`, error);
-    return sendSuccess(res, []);
-  }
-});
+    try {
+      const { data: games, error } = await supabase
+        .from("games")
+        .select("*")
+        .order("game_date", { ascending: false })
+        .limit(20);
+
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, games || []);
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Games error:`, error);
+      return sendSuccess(res, []);
+    }
+  },
+);
 
 export default router;

@@ -39,11 +39,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Skip auth header for external APIs and public endpoints
   // Note: supabase.co/auth endpoints should skip (handled by Supabase SDK)
   // but supabase.co/rest endpoints need auth (handled above)
-  const skipAuthUrls = [
-    "supabase.co/auth",
-    "googleapis.com",
-    "/assets/",
-  ];
+  const skipAuthUrls = ["supabase.co/auth", "googleapis.com", "/assets/"];
 
   const shouldSkipAuth = skipAuthUrls.some((url) => req.url.includes(url));
 

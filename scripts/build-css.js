@@ -17,14 +17,10 @@ class CSSBuilder {
   constructor() {
     this.cssFiles = [];
     this.bundleMap = {
-      "main-bundle.css": ["main.css", "tokens.css", "breakpoints.css"],
-      "components-bundle.css": ["components/**/*.css"],
-      "pages-bundle.css": ["pages/**/*.css"],
-      "utilities-bundle.css": [
-        "animations.css",
-        "loading-states.css",
-        "hooks.css",
-      ],
+      "main-bundle.css": ["main.css", "tokens.css"],
+      "components-bundle.css": ["components/index.css"],
+      "pages-bundle.css": ["pages/index.css"],
+      "utilities-bundle.css": ["utilities/index.css"],
     };
     this.outputDir = path.join(projectRoot, "dist", "css");
   }

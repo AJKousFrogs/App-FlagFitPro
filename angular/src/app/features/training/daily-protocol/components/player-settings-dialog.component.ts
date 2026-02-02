@@ -69,7 +69,7 @@ export interface PlayerSettings {
 
 interface PositionOption {
   label: string;
-  value: string;
+  value: string | null;
   description: string;
 }
 
@@ -440,9 +440,13 @@ export class PlayerSettingsDialogComponent {
   ];
 
   warmupFocusOptions: PositionOption[] = [
-    { label: "Auto (use position)", value: null },
+    { label: "Auto (use position)", value: null, description: "" },
     { label: "Quarterback", value: "quarterback", description: "" },
-    { label: "Wide Receiver / Defensive Back", value: "wr_db", description: "" },
+    {
+      label: "Wide Receiver / Defensive Back",
+      value: "wr_db",
+      description: "",
+    },
     { label: "Blitzer / Rusher", value: "blitzer", description: "" },
     { label: "Center", value: "center", description: "" },
   ];

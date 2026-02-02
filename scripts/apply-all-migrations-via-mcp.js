@@ -17,44 +17,46 @@ const DATABASE_MIGRATIONS_DIR = path.join(PROJECT_DIR, "database/migrations");
 
 function getAllMigrationFiles() {
   const files = [];
-  
+
   if (fs.existsSync(SUPABASE_MIGRATIONS_DIR)) {
-    const supabaseFiles = fs.readdirSync(SUPABASE_MIGRATIONS_DIR)
-      .filter(f => f.endsWith(".sql"))
-      .map(f => ({
+    const supabaseFiles = fs
+      .readdirSync(SUPABASE_MIGRATIONS_DIR)
+      .filter((f) => f.endsWith(".sql"))
+      .map((f) => ({
         path: path.join(SUPABASE_MIGRATIONS_DIR, f),
         name: f,
-        type: "supabase"
+        type: "supabase",
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
     files.push(...supabaseFiles);
   }
-  
+
   if (fs.existsSync(DATABASE_MIGRATIONS_DIR)) {
-    const dbFiles = fs.readdirSync(DATABASE_MIGRATIONS_DIR)
-      .filter(f => f.endsWith(".sql"))
-      .map(f => ({
+    const dbFiles = fs
+      .readdirSync(DATABASE_MIGRATIONS_DIR)
+      .filter((f) => f.endsWith(".sql"))
+      .map((f) => ({
         path: path.join(DATABASE_MIGRATIONS_DIR, f),
         name: f,
-        type: "database"
+        type: "database",
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
     files.push(...dbFiles);
   }
-  
+
   return files;
 }
 
 async function main() {
   console.log("🚀 Auto-Applying All Migrations via MCP\n");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log("📡 Target: grfjmnjpzvknmsxrwesx");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log();
-  
+
   const files = getAllMigrationFiles();
   console.log(`📋 Found ${files.length} migration files\n`);
-  
+
   // Prepare migration list for MCP execution
   const migrations = [];
   for (const file of files) {
@@ -64,40 +66,44 @@ async function main() {
         name: file.name,
         path: file.path,
         sql: content,
-        size: content.length
+        size: content.length,
       });
     } catch (error) {
       console.error(`❌ Error reading ${file.name}:`, error.message);
     }
   }
-  
+
   console.log(`✅ Prepared ${migrations.length} migrations\n`);
   console.log("📝 Migration files ready for MCP execute_sql:\n");
-  
+
   migrations.forEach((m, index) => {
-    console.log(`${String(index + 1).padStart(3)}. ${m.name} (${(m.size / 1024).toFixed(1)} KB)`);
+    console.log(
+      `${String(index + 1).padStart(3)}. ${m.name} (${(m.size / 1024).toFixed(1)} KB)`,
+    );
   });
-  
+
   console.log();
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log("💡 To apply via MCP:");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log();
-  console.log("I can apply these migrations automatically using MCP execute_sql tool.");
+  console.log(
+    "I can apply these migrations automatically using MCP execute_sql tool.",
+  );
   console.log("Each migration will be applied in order.");
   console.log();
   console.log("⚠️  Note: This will take some time (140 migrations).");
   console.log("   I'll apply them one by one via MCP execute_sql.");
   console.log();
   console.log("Ready to start applying migrations automatically!");
-  
+
   return {
     totalMigrations: migrations.length,
-    migrations: migrations.map(m => ({
+    migrations: migrations.map((m) => ({
       name: m.name,
       size: m.size,
-      sql: m.sql.substring(0, 100) + "..." // Preview
-    }))
+      sql: `${m.sql.substring(0, 100)}...`, // Preview
+    })),
   };
 }
 

@@ -46,6 +46,7 @@ export interface ToastOptions {
 export interface ToastMethodOptions {
   life?: number;
   sticky?: boolean;
+  summary?: string;
 }
 
 /**

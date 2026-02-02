@@ -27,7 +27,7 @@ exports.handler = async (event, context) => {
       // GET - Retrieve privacy settings
       if (event.httpMethod === "GET") {
         // Get or create privacy settings
-        let { data: settings, error } = await supabase // eslint-disable-line prefer-const
+        let { data: settings, error } = await supabase
           .from("privacy_settings")
           .select("*")
           .eq("user_id", userId)

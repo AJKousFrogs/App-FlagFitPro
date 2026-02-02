@@ -1,0 +1,521 @@
+/**
+ * FlagFit Pro - Responsive Utilities
+ *
+ * Comprehensive responsive utilities for tablet optimizations
+ * and touch target compliance (WCAG 2.5.5).
+ *
+ * @author FlagFit Pro Team
+ * @version 1.0.0
+ */
+
+@use "sass:math";
+@use "./variables" as *;
+@use "./mixins" as *;
+
+// ================================
+// TABLET-SPECIFIC OPTIMIZATIONS
+// ================================
+
+/**
+ * Tablet Layout Mixin
+ * Apply tablet-specific adjustments
+ */
+@mixin tablet-layout {
+  @media (min-width: get-breakpoint(md)) and (max-width: get-breakpoint(lg)) {
+    @content;
+  }
+}
+
+/**
+ * Tablet Portrait Mode
+ */
+@mixin tablet-portrait {
+  @media (min-width: get-breakpoint(md)) and (max-width: get-breakpoint(lg)) and (orientation: portrait) {
+    @content;
+  }
+}
+
+/**
+ * Tablet Landscape Mode
+ */
+@mixin tablet-landscape {
+  @media (min-width: get-breakpoint(md)) and (max-width: get-breakpoint(lg)) and (orientation: landscape) {
+    @content;
+  }
+}
+
+// ================================
+// TOUCH TARGET COMPLIANCE
+// ================================
+
+/**
+ * Minimum Touch Target Size
+ * WCAG 2.5.5 Target Size (Enhanced) - 44x44px minimum
+ */
+$touch-target-min: 44px;
+$touch-target-comfortable: 48px;
+$touch-target-large: 56px;
+
+/**
+ * Touch-friendly button mixin
+ * Ensures minimum 44x44px tap target
+ */
+@mixin touch-target($size: $touch-target-min) {
+  min-height: $size;
+  min-width: $size;
+
+  // Add padding to ensure hit area
+  @include touch-device {
+    padding: max(#{math.div($size, 4)}, space(3));
+  }
+}
+
+/**
+ * Touch-friendly link mixin
+ * Adds padding for better tap targets on links
+ */
+@mixin touch-link {
+  display: inline-block;
+  padding: space(2) space(3);
+  margin: calc(-1 * space(2)) calc(-1 * space(3));
+
+  @include touch-device {
+    min-height: $touch-target-min;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/**
+ * Touch-friendly list item
+ */
+@mixin touch-list-item {
+  min-height: $touch-target-comfortable;
+  padding: space(3) space(4);
+
+  @include touch-device {
+    padding: space(4);
+  }
+}
+
+/**
+ * Touch-friendly icon button
+ */
+@mixin touch-icon-button($size: $touch-target-min) {
+  @include flex-center;
+  @include touch-target($size);
+  border-radius: get-radius(lg);
+  cursor: pointer;
+  transition: background-color get-transition(fast) get-easing(smooth);
+
+  @include hover-support {
+    &:hover {
+      background-color: var(--surface-secondary);
+    }
+  }
+
+  &:active {
+    background-color: var(--surface-tertiary);
+  }
+}
+
+// ================================
+// RESPONSIVE GRID UTILITIES
+// ================================
+
+/**
+ * Responsive grid that adapts to tablet
+ */
+@mixin responsive-grid($min-width: 280px, $gap: space(4)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $gap;
+
+  @include tablet-layout {
+    grid-template-columns: repeat(2, 1fr);
+    gap: space(3);
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+    gap: space(3);
+  }
+}
+
+/**
+ * Dashboard grid optimized for tablet
+ */
+@mixin dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: space(4);
+
+  @include tablet-layout {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/**
+ * Stats grid for metrics display
+ */
+@mixin stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: space(4);
+
+  @include tablet-layout {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// ================================
+// RESPONSIVE TYPOGRAPHY
+// ================================
+
+/**
+ * Responsive heading that scales down on tablet/mobile
+ */
+@mixin responsive-heading($desktop-size, $tablet-size, $mobile-size) {
+  font-size: get-font-size($desktop-size);
+
+  @include tablet-layout {
+    font-size: get-font-size($tablet-size);
+  }
+
+  @include respond-to(sm) {
+    font-size: get-font-size($mobile-size);
+  }
+}
+
+/**
+ * Fluid typography using clamp
+ */
+@mixin fluid-text($min, $preferred, $max) {
+  font-size: clamp(#{$min}, #{$preferred}, #{$max});
+}
+
+// ================================
+// RESPONSIVE SPACING
+// ================================
+
+/**
+ * Responsive padding that reduces on smaller screens
+ */
+@mixin responsive-padding(
+  $desktop: space(6),
+  $tablet: space(4),
+  $mobile: space(3)
+) {
+  padding: $desktop;
+
+  @include tablet-layout {
+    padding: $tablet;
+  }
+
+  @include respond-to(sm) {
+    padding: $mobile;
+  }
+}
+
+/**
+ * Responsive section margin
+ */
+@mixin responsive-section-margin {
+  margin-bottom: space(8);
+
+  @include tablet-layout {
+    margin-bottom: space(6);
+  }
+
+  @include respond-to(sm) {
+    margin-bottom: space(4);
+  }
+}
+
+// ================================
+// RESPONSIVE COMPONENTS
+// ================================
+
+/**
+ * Responsive card layout
+ */
+@mixin responsive-card {
+  @include card;
+
+  @include tablet-layout {
+    padding: space(4);
+  }
+
+  @include respond-to(sm) {
+    padding: space(3);
+    border-radius: get-radius(lg);
+  }
+}
+
+/**
+ * Responsive modal sizing
+ */
+@mixin responsive-modal($max-width: 600px) {
+  width: $max-width;
+  max-width: 95vw;
+
+  @include tablet-layout {
+    width: 90vw;
+    max-height: 85vh;
+  }
+
+  @include respond-to(sm) {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+    margin: 0;
+  }
+}
+
+/**
+ * Responsive sidebar
+ */
+@mixin responsive-sidebar($width: 280px) {
+  width: $width;
+
+  @include tablet-layout {
+    width: 240px;
+  }
+
+  @include respond-to(lg) {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: get-z-index(fixed);
+    transform: translateX(-100%);
+    transition: transform get-transition(normal) get-easing(smooth);
+
+    &.is-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+// ================================
+// RESPONSIVE TABLE
+// ================================
+
+/**
+ * Responsive table that converts to cards on mobile
+ */
+@mixin responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  // Desktop/Tablet: Regular table
+  @include respond-above(md) {
+    th,
+    td {
+      padding: space(3) space(4);
+      text-align: left;
+      border-bottom: 1px solid var(--color-border-secondary);
+    }
+
+    th {
+      font-weight: get-font-weight(semibold);
+      color: var(--color-text-secondary);
+      background: var(--surface-secondary);
+    }
+  }
+
+  // Mobile: Card layout
+  @include respond-to(md) {
+    display: block;
+
+    thead {
+      display: none;
+    }
+
+    tbody {
+      display: flex;
+      flex-direction: column;
+      gap: space(3);
+    }
+
+    tr {
+      display: block;
+      background: var(--surface-card);
+      border-radius: get-radius(lg);
+      padding: space(4);
+      box-shadow: get-shadow(sm);
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: space(2) 0;
+      border-bottom: 1px solid var(--color-border-secondary);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &::before {
+        content: attr(data-label);
+        font-weight: get-font-weight(semibold);
+        color: var(--color-text-secondary);
+        margin-right: space(3);
+      }
+    }
+  }
+}
+
+// ================================
+// RESPONSIVE FORM
+// ================================
+
+/**
+ * Responsive form layout
+ */
+@mixin responsive-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: space(4);
+
+  @include respond-to(md) {
+    grid-template-columns: 1fr;
+  }
+
+  .form-field-full {
+    grid-column: 1 / -1;
+  }
+}
+
+/**
+ * Touch-friendly form input
+ */
+@mixin touch-input {
+  @include input-base;
+
+  @include touch-device {
+    min-height: $touch-target-comfortable;
+    font-size: var(--ds-font-size-md); // Prevent zoom on iOS
+  }
+}
+
+// ================================
+// RESPONSIVE NAVIGATION
+// ================================
+
+/**
+ * Responsive bottom navigation
+ */
+@mixin bottom-nav {
+  display: none;
+
+  @include respond-to(lg) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: var(--surface-primary);
+    border-top: 1px solid var(--color-border-secondary);
+    z-index: get-z-index(fixed);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/**
+ * Bottom nav item
+ */
+@mixin bottom-nav-item {
+  flex: 1;
+
+  @include flex-center;
+  flex-direction: column;
+  gap: space(1);
+
+  @include touch-target;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color get-transition(fast) get-easing(smooth);
+
+  &.active,
+  &:active {
+    color: var(--ds-primary-green);
+  }
+
+  .nav-icon {
+    font-size: var(--ds-font-size-xl);
+  }
+
+  .nav-label {
+    font-size: get-font-size(xs);
+    font-weight: get-font-weight(medium);
+  }
+}
+
+// ================================
+// SAFE AREA UTILITIES
+// ================================
+
+/**
+ * Safe area padding for notched devices
+ */
+@mixin safe-area-padding {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+@mixin safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@mixin safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+// ================================
+// UTILITY CLASSES
+// ================================
+
+// Touch target classes
+.touch-target {
+  @include touch-target;
+}
+
+.touch-target-lg {
+  @include touch-target($touch-target-large);
+}
+
+// Responsive hide/show helpers moved to the overrides layer (DS-EXC-RESP-001)
+
+// Responsive text alignment
+.text-center-mobile {
+  @include respond-to(sm) {
+    text-align: center;
+  }
+}
+
+// Responsive flex direction
+.flex-col-mobile {
+  @include respond-to(sm) {
+    flex-direction: column;
+  }
+}
+
+.flex-col-tablet {
+  @include tablet-layout {
+    flex-direction: column;
+  }
+}

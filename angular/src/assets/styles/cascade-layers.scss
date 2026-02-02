@@ -49,98 +49,51 @@
    Higher priority - overrides base layer
    ================================================================ */
 
-@layer design-system {
-  /* Design system tokens take precedence */
-  :root {
-    /* Primary brand color - single source of truth */
-    --ds-primary-green: #089949;
-    --ds-primary-green-rgb: 8, 153, 73;
+  @layer design-system {
+    /* Design system tokens take precedence */
+    .p-button {
+      border-radius: var(--radius-lg);
+      min-height: 44px; /* Touch target */
+    }
 
-    /* Text on primary (green) - ALWAYS white */
-    --color-text-on-primary: #ffffff;
+    /* Primary buttons - GREEN background, WHITE text */
+    .p-button:not(.p-button-outlined):not(.p-button-text):not(
+        .p-button-secondary
+      ) {
+      background: var(--ds-primary-green);
+      color: var(--color-text-on-primary);
+      border: none;
+    }
 
-    /* Spacing tokens - 8px grid */
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
-    --space-6: 24px;
-    --space-8: 32px;
+    .p-button:not(.p-button-outlined):not(.p-button-text):not(
+        .p-button-secondary
+      ):hover {
+      background: var(--ds-primary-green-hover);
+    }
 
-    /* Border radius */
-    --radius-lg: 12px;
-  }
+    /* Outlined buttons - GREEN border & text */
+    .p-button.p-button-outlined {
+      background: transparent;
+      border: 2px solid var(--ds-primary-green);
+      color: var(--ds-primary-green);
+    }
 
-  /* PrimeNG button overrides - design system compliant */
-  .p-button {
-    border-radius: var(--radius-lg);
-    min-height: 44px; /* Touch target */
-  }
-
-  /* Primary buttons - GREEN background, WHITE text */
-  .p-button:not(.p-button-outlined):not(.p-button-text):not(
-      .p-button-secondary
-    ) {
-    background: var(--ds-primary-green);
-    color: var(--color-text-on-primary);
-    border: none;
-  }
-
-  .p-button:not(.p-button-outlined):not(.p-button-text):not(
-      .p-button-secondary
-    ):hover {
-    background: var(--ds-primary-green-hover, #036d35);
-  }
-
-  /* Outlined buttons - GREEN border & text */
-  .p-button.p-button-outlined {
-    background: transparent;
-    border: 2px solid var(--ds-primary-green);
-    color: var(--ds-primary-green);
-  }
-
-  /* Text buttons - GREEN text */
-  .p-button.p-button-text {
-    background: transparent;
-    border: none;
-    color: var(--ds-primary-green);
-  }
-}
-
-/* ================================================================
-   OVERRIDES LAYER - Critical Fixes
-   Highest priority - use sparingly for critical fixes only
-   ================================================================ */
-
-@layer overrides {
-  /* Critical: Force white text on green buttons */
-  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary)
-    * {
-    color: var(--color-text-on-primary) !important;
-  }
-
-  /* Critical: Prevent black text on green */
-  [style*="background-color: #089949"],
-  [style*="background-color: rgb(8, 153, 73)"],
-  .bg-primary-green,
-  .p-button-primary {
-    color: var(--color-text-on-primary) !important;
-
-    * {
-      color: var(--color-text-on-primary) !important;
+    /* Text buttons - GREEN text */
+    .p-button.p-button-text {
+      background: transparent;
+      border: none;
+      color: var(--ds-primary-green);
     }
   }
-}
-
 /* ================================================================
    IMPORT INSTRUCTIONS
    ================================================================
    
    Import this file BEFORE other stylesheets in styles.scss:
    
-   @use "./assets/styles/cascade-layers.scss" as *;
-   @use "./assets/styles/design-system-tokens.scss" as *;
-   @use "./assets/styles/primeng-integration.scss" as *;
+    @use "./assets/styles/cascade-layers.scss" as *;
+    @use "../scss/tokens/design-system-tokens" as *;
+    @use "../scss/components/primeng-integration" as *;
    
    Then wrap legacy CSS in @layer base:
    

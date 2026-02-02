@@ -10,10 +10,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(
-    var(--bottom-nav-height, var(--ds-font-size-4rem)) +
-      var(--safe-area-bottom, 0px)
-  );
+  height: calc(var(--bottom-nav-height, var(--ds-font-size-4rem)) + var(--safe-area-bottom, 0px));
   background: var(--surface-primary);
   border-top: 1px solid var(--color-border-secondary);
   display: none;
@@ -21,7 +18,7 @@
   align-items: center;
   padding: 0 var(--space-2);
   z-index: var(--z-modal);
-  padding-bottom: var(--safe-area-bottom, 0px);
+  padding-bottom: var(--safe-area-bottom, 0);
   box-sizing: border-box;
 }
 

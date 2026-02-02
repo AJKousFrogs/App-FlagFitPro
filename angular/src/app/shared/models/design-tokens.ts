@@ -2,7 +2,7 @@
  * FlagFit Pro Design Tokens
  * Type-safe design system tokens for Angular components
  *
- * ALIGNED TO: angular/src/assets/styles/design-system-tokens.scss (SOURCE OF TRUTH)
+ * ALIGNED TO: angular/src/scss/tokens/design-system-tokens.scss (SOURCE OF TRUTH)
  * VERSION: 2.0.0
  * LAST UPDATED: 2026-01-05
  *

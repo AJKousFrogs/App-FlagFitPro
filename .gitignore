@@ -12,6 +12,7 @@ node_modules.old/
 
 # Build outputs
 dist/
+src/css/
 .nuxt
 .next
 .cache/

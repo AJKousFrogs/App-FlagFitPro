@@ -22,8 +22,8 @@ if (fs.existsSync(envPath)) {
 
 // Target project configuration
 const TARGET_PROJECT_URL = "https://grfjmnjpzvknmsxrwesx.supabase.co";
-const TARGET_SERVICE_KEY = 
-  process.env.SUPABASE_SERVICE_KEY || 
+const TARGET_SERVICE_KEY =
+  process.env.SUPABASE_SERVICE_KEY ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw";
 
 // Migration directories
@@ -35,33 +35,35 @@ const DATABASE_MIGRATIONS_DIR = path.join(PROJECT_DIR, "database/migrations");
  */
 function getAllMigrationFiles() {
   const files = [];
-  
+
   // Get supabase migrations (timestamped, already sorted)
   if (fs.existsSync(SUPABASE_MIGRATIONS_DIR)) {
-    const supabaseFiles = fs.readdirSync(SUPABASE_MIGRATIONS_DIR)
-      .filter(f => f.endsWith(".sql"))
-      .map(f => ({
+    const supabaseFiles = fs
+      .readdirSync(SUPABASE_MIGRATIONS_DIR)
+      .filter((f) => f.endsWith(".sql"))
+      .map((f) => ({
         path: path.join(SUPABASE_MIGRATIONS_DIR, f),
         name: f,
-        type: "supabase"
+        type: "supabase",
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
     files.push(...supabaseFiles);
   }
-  
+
   // Get database migrations (numbered, already sorted)
   if (fs.existsSync(DATABASE_MIGRATIONS_DIR)) {
-    const dbFiles = fs.readdirSync(DATABASE_MIGRATIONS_DIR)
-      .filter(f => f.endsWith(".sql"))
-      .map(f => ({
+    const dbFiles = fs
+      .readdirSync(DATABASE_MIGRATIONS_DIR)
+      .filter((f) => f.endsWith(".sql"))
+      .map((f) => ({
         path: path.join(DATABASE_MIGRATIONS_DIR, f),
         name: f,
-        type: "database"
+        type: "database",
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
     files.push(...dbFiles);
   }
-  
+
   return files;
 }
 
@@ -71,19 +73,21 @@ function getAllMigrationFiles() {
 async function applyMigration(supabase, migrationName, sql) {
   try {
     console.log(`  📝 Applying: ${migrationName}...`);
-    
+
     // Use RPC to execute SQL (if available) or use execute_sql
     // For now, we'll use the REST API to execute SQL
-    const { data, error } = await supabase.rpc('exec_sql', { sql_query: sql });
-    
+    const { data, error } = await supabase.rpc("exec_sql", { sql_query: sql });
+
     if (error) {
       // Try direct SQL execution via REST API
       // Note: Supabase REST API doesn't support arbitrary SQL
       // We need to use the Management API or SQL Editor
-      console.log(`    ⚠️  Cannot apply via REST API. Use Supabase Dashboard SQL Editor.`);
+      console.log(
+        `    ⚠️  Cannot apply via REST API. Use Supabase Dashboard SQL Editor.`,
+      );
       return { success: false, error: "Use SQL Editor" };
     }
-    
+
     console.log(`    ✅ Applied successfully`);
     return { success: true };
   } catch (error) {
@@ -97,12 +101,12 @@ async function applyMigration(supabase, migrationName, sql) {
  */
 async function main() {
   console.log("🚀 Applying Migrations to Target Project\n");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log(`📡 Target Project: grfjmnjpzvknmsxrwesx`);
   console.log(`📡 Project URL: ${TARGET_PROJECT_URL}`);
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log();
-  
+
   // Create Supabase client
   const supabase = createClient(TARGET_PROJECT_URL, TARGET_SERVICE_KEY, {
     auth: {
@@ -110,51 +114,59 @@ async function main() {
       persistSession: false,
     },
   });
-  
+
   // Test connection
   console.log("🔍 Testing connection...");
   try {
-    const { data, error } = await supabase.from("_migrations").select("version").limit(1);
+    const { data, error } = await supabase
+      .from("_migrations")
+      .select("version")
+      .limit(1);
     console.log("✅ Connected to target project");
   } catch (error) {
     // Table might not exist yet, which is fine
     console.log("✅ Connected (migrations table may not exist yet)");
   }
   console.log();
-  
+
   // Get all migration files
   console.log("📋 Scanning migration files...");
   const migrationFiles = getAllMigrationFiles();
   console.log(`✅ Found ${migrationFiles.length} migration files\n`);
-  
+
   // Prepare migrations
   const migrations = [];
   for (const file of migrationFiles) {
     try {
       const content = fs.readFileSync(file.path, "utf-8");
-      const migrationName = file.name.replace(/\.sql$/, "").replace(/^\d+_/, "");
-      
+      const migrationName = file.name
+        .replace(/\.sql$/, "")
+        .replace(/^\d+_/, "");
+
       migrations.push({
         name: migrationName,
         filename: file.name,
         path: file.path,
         type: file.type,
-        sql: content
+        sql: content,
       });
     } catch (error) {
       console.error(`❌ Error reading ${file.name}:`, error.message);
     }
   }
-  
+
   console.log(`📦 Prepared ${migrations.length} migrations\n`);
-  
+
   // Save migration instructions
   const outputDir = path.join(PROJECT_DIR, "database/migration_results");
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
-  
-  const instructionsFile = path.join(outputDir, "apply_migrations_instructions.md");
+
+  const instructionsFile = path.join(
+    outputDir,
+    "apply_migrations_instructions.md",
+  );
   let instructions = `# Apply Migrations to grfjmnjpzvknmsxrwesx\n\n`;
   instructions += `## Instructions\n\n`;
   instructions += `Since Supabase REST API doesn't support arbitrary SQL execution, you need to apply migrations via:\n\n`;
@@ -169,23 +181,25 @@ async function main() {
   instructions += `supabase db push\n`;
   instructions += `\`\`\`\n\n`;
   instructions += `### Migration Files (${migrations.length} total)\n\n`;
-  
+
   migrations.forEach((m, index) => {
     instructions += `${index + 1}. **${m.filename}** (${m.type})\n`;
     instructions += `   - Path: \`${m.path}\`\n`;
     instructions += `   - Size: ${m.sql.length} bytes\n\n`;
   });
-  
+
   fs.writeFileSync(instructionsFile, instructions);
-  
-  console.log("=" .repeat(60));
+
+  console.log("=".repeat(60));
   console.log("📝 MIGRATION INSTRUCTIONS");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log();
   console.log("⚠️  Supabase REST API doesn't support arbitrary SQL execution.");
   console.log("   You need to apply migrations via one of these methods:\n");
   console.log("Option 1: Supabase Dashboard SQL Editor (Easiest)");
-  console.log(`   1. Go to: https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx/sql`);
+  console.log(
+    `   1. Go to: https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx/sql`,
+  );
   console.log("   2. Click 'New query'");
   console.log("   3. Copy/paste each migration file and run\n");
   console.log("Option 2: Use Supabase CLI");
@@ -195,11 +209,11 @@ async function main() {
   console.log();
   console.log(`Total migrations to apply: ${migrations.length}`);
   console.log();
-  
+
   return {
     success: true,
     totalMigrations: migrations.length,
-    instructionsFile
+    instructionsFile,
   };
 }
 

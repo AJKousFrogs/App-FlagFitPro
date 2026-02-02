@@ -55,17 +55,24 @@ async function verifyConnection() {
   try {
     // Test basic connection
     const { data, error } = await supabase.from("users").select("id").limit(1);
-    
+
     if (error) {
       // Table might not exist yet (migrations not run)
-      if (error.code === "PGRST116" || error.message.includes("does not exist")) {
-        console.log("   ⚠️  Connection works, but 'users' table doesn't exist yet");
-        console.log("   📋 This is expected if migrations haven't been run yet\n");
+      if (
+        error.code === "PGRST116" ||
+        error.message.includes("does not exist")
+      ) {
+        console.log(
+          "   ⚠️  Connection works, but 'users' table doesn't exist yet",
+        );
+        console.log(
+          "   📋 This is expected if migrations haven't been run yet\n",
+        );
         return { connected: true, tablesExist: false };
       }
       throw error;
     }
-    
+
     console.log("   ✅ Connected successfully");
     console.log(`   ✅ 'users' table exists\n`);
     return { connected: true, tablesExist: true };
@@ -77,7 +84,7 @@ async function verifyConnection() {
 
 async function checkTables() {
   console.log("2️⃣ Checking Core Tables...");
-  
+
   const coreTables = [
     "users",
     "teams",
@@ -86,9 +93,9 @@ async function checkTables() {
     "games",
     "positions",
   ];
-  
+
   const results = {};
-  
+
   for (const table of coreTables) {
     try {
       const { error } = await supabase.from(table).select("id").limit(1);
@@ -105,7 +112,7 @@ async function checkTables() {
       results[table] = `error: ${err.message}`;
     }
   }
-  
+
   let existsCount = 0;
   for (const [table, status] of Object.entries(results)) {
     if (status === "exists") {
@@ -117,34 +124,38 @@ async function checkTables() {
       console.log(`   ❌ ${table} (${status})`);
     }
   }
-  
-  console.log(`\n   Summary: ${existsCount}/${coreTables.length} core tables exist\n`);
+
+  console.log(
+    `\n   Summary: ${existsCount}/${coreTables.length} core tables exist\n`,
+  );
   return existsCount;
 }
 
 async function checkMigrations() {
   console.log("3️⃣ Checking Migration Status...");
-  
+
   try {
     // Check if schema_migrations table exists (common migration tracking)
     const { error: schemaError } = await supabase
       .from("schema_migrations")
       .select("version")
       .limit(1);
-    
+
     if (schemaError && schemaError.code === "PGRST116") {
       console.log("   ⚠️  No migration tracking table found");
-      console.log("   📋 This is normal - migrations may use a different system\n");
+      console.log(
+        "   📋 This is normal - migrations may use a different system\n",
+      );
       return false;
     }
-    
-    const { data } = await supabase
-      .from("schema_migrations")
-      .select("version");
-    
+
+    const { data } = await supabase.from("schema_migrations").select("version");
+
     if (data && data.length > 0) {
       console.log(`   ✅ Found ${data.length} migration records`);
-      console.log(`   Latest: ${data[data.length - 1]?.version || "unknown"}\n`);
+      console.log(
+        `   Latest: ${data[data.length - 1]?.version || "unknown"}\n`,
+      );
       return true;
     } else {
       console.log("   ⚠️  Migration table exists but is empty\n");
@@ -158,7 +169,7 @@ async function checkMigrations() {
 
 async function main() {
   const connection = await verifyConnection();
-  
+
   if (!connection.connected) {
     console.error("\n❌ Cannot proceed - connection failed");
     console.error("\n📋 Troubleshooting:");
@@ -168,26 +179,34 @@ async function main() {
     console.error("4. Verify project is active in Supabase dashboard");
     process.exit(1);
   }
-  
+
   const tableCount = await checkTables();
   const hasMigrations = await checkMigrations();
-  
+
   console.log("=".repeat(50));
   console.log("📊 Verification Summary");
   console.log("=".repeat(50));
-  console.log(`Connection: ${connection.connected ? "✅ Working" : "❌ Failed"}`);
+  console.log(
+    `Connection: ${connection.connected ? "✅ Working" : "❌ Failed"}`,
+  );
   console.log(`Core Tables: ${tableCount}/6 exist`);
-  console.log(`Migrations: ${hasMigrations ? "✅ Tracked" : "⚠️  Not tracked"}`);
+  console.log(
+    `Migrations: ${hasMigrations ? "✅ Tracked" : "⚠️  Not tracked"}`,
+  );
   console.log("=".repeat(50));
-  
+
   if (tableCount === 0) {
     console.log("\n📋 Next Steps:");
     console.log("1. Run database migrations:");
     console.log("   ./scripts/run-all-migrations-supabase.sh");
     console.log("\n2. Or run migrations via Supabase Dashboard:");
-    console.log("   https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx/sql");
+    console.log(
+      "   https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx/sql",
+    );
   } else if (tableCount < 6) {
-    console.log("\n⚠️  Some tables are missing. You may need to run migrations.");
+    console.log(
+      "\n⚠️  Some tables are missing. You may need to run migrations.",
+    );
   } else {
     console.log("\n✅ Project appears ready for data migration!");
     console.log("\n📋 Next Steps:");

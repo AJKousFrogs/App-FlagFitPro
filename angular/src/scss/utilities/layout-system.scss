@@ -6,12 +6,12 @@
    ================================================================
    
    USAGE:
-   @import './assets/styles/layout-system.scss';
+   Load via `angular/src/scss/utilities/index.scss`.
    
    This file provides consistent layout patterns across all pages.
    ================================================================ */
 
-@use "./design-system-tokens.scss" as *;
+@use "../tokens/design-system-tokens" as *;
 
 /* ================================================================
    PAGE HEADER

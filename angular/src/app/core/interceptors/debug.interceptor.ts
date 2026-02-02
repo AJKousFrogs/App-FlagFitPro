@@ -28,11 +28,7 @@ export const debugInterceptor: HttpInterceptorFn = (
   const startTime = performance.now();
 
   // Log the outgoing request
-  console.group(
-    `%c🌐 HTTP ${req.method} ${req.url}`,
-    "color: #2196f3; font-weight: var(--ds-font-weight-bold);",
-  );
-  console.log("Request:", {
+  const requestContext = {
     url: req.url,
     method: req.method,
     headers: req.headers
@@ -42,7 +38,8 @@ export const debugInterceptor: HttpInterceptorFn = (
     params: req.params
       .keys()
       .map((key) => ({ key, value: req.params.get(key) })),
-  });
+  };
+  logger.debug(`🌐 HTTP ${req.method} ${req.url} request`, requestContext);
 
   return next(req).pipe(
     tap((event) => {
@@ -50,27 +47,24 @@ export const debugInterceptor: HttpInterceptorFn = (
         const duration = performance.now() - startTime;
 
         // Log successful response
-        console.log("Response:", {
+        logger.debug(`HTTP ${req.method} ${req.url} response`, {
           status: event.status,
           statusText: event.statusText,
+          duration: `${duration.toFixed(2)}ms`,
           headers: event.headers
             .keys()
             .map((key) => ({ key, value: event.headers.get(key) })),
           body: event.body,
-          duration: `${duration.toFixed(2)}ms`,
         });
-        console.groupEnd();
 
         // Track in debug service
         debugService.logApiCall(req.url, req.method, event.status, duration);
 
         // Warn if slow request
         if (duration > 2000) {
-          console.warn(
-            `%c⚠️ Slow API call detected: ${req.url}`,
-            "color: #ff9800; font-weight: var(--ds-font-weight-bold);",
-            `${duration.toFixed(2)}ms`,
-          );
+          logger.warn(`⚠️ Slow API call detected: ${req.url}`, {
+            duration: `${duration.toFixed(2)}ms`,
+          });
         }
       }
     }),
@@ -78,14 +72,13 @@ export const debugInterceptor: HttpInterceptorFn = (
       const duration = performance.now() - startTime;
 
       // Log error response
-      console.error("Error Response:", {
+      logger.error("Error Response", {
         status: error.status,
         statusText: error.statusText,
         message: error.message,
         error: error.error,
         duration: `${duration.toFixed(2)}ms`,
       });
-      console.groupEnd();
 
       // Track in debug service
       debugService.logApiCall(
@@ -107,51 +100,51 @@ export const debugInterceptor: HttpInterceptorFn = (
 
       // Show specific error guidance
       if (error.status === 0) {
-        console.error(
-          "%c❌ Network Error: Request failed to reach server",
-          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
-        );
-        console.log("Possible causes:");
-        console.log("  - CORS issue");
-        console.log("  - Backend server not running");
-        console.log("  - Network connectivity problem");
-        console.log("  - Request cancelled/aborted");
+        logger.error("❌ Network Error: Request failed to reach server");
+        logger.info("Possible causes", {
+          reasons: [
+            "CORS issue",
+            "Backend server not running",
+            "Network connectivity problem",
+            "Request cancelled/aborted",
+          ],
+        });
       } else if (error.status === 401) {
-        console.error(
-          "%c🔒 Authentication Error: Unauthorized",
-          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
-        );
-        console.log("Check:");
-        console.log("  - Auth token validity");
-        console.log("  - Session expiration");
-        console.log("  - Authorization headers");
+        logger.error("🔒 Authentication Error: Unauthorized");
+        logger.info("Check auth", {
+          checks: [
+            "Auth token validity",
+            "Session expiration",
+            "Authorization headers",
+          ],
+        });
       } else if (error.status === 403) {
-        console.error(
-          "%c🚫 Authorization Error: Forbidden",
-          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
-        );
-        console.log("Check:");
-        console.log("  - User permissions");
-        console.log("  - RLS policies (if using Supabase)");
-        console.log("  - Role-based access control");
+        logger.error("🚫 Authorization Error: Forbidden");
+        logger.info("Check permissions", {
+          checks: [
+            "User permissions",
+            "RLS policies (if using Supabase)",
+            "Role-based access control",
+          ],
+        });
       } else if (error.status === 404) {
-        console.error(
-          "%c🔍 Not Found Error: Resource not found",
-          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
-        );
-        console.log("Check:");
-        console.log("  - API endpoint URL");
-        console.log("  - Resource ID validity");
-        console.log("  - Route configuration");
+        logger.error("🔍 Not Found Error: Resource not found");
+        logger.info("Check resource", {
+          checks: [
+            "API endpoint URL",
+            "Resource ID validity",
+            "Route configuration",
+          ],
+        });
       } else if (error.status >= 500) {
-        console.error(
-          "%c💥 Server Error: Internal server error",
-          "color: #f44336; font-weight: var(--ds-font-weight-bold);",
-        );
-        console.log("Check:");
-        console.log("  - Backend server logs");
-        console.log("  - Database connectivity");
-        console.log("  - Server-side error handling");
+        logger.error("💥 Server Error: Internal server error");
+        logger.info("Check infrastructure", {
+          checks: [
+            "Backend server logs",
+            "Database connectivity",
+            "Server-side error handling",
+          ],
+        });
       }
 
       return throwError(() => error);

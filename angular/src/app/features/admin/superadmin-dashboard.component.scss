@@ -1,5 +1,4 @@
 @use "styles/mixins" as *;
-
 @include stat-block;
 
 .admin-page {
@@ -289,4 +288,5 @@
     flex-direction: column;
   }
 }
+
 // Dialog sizing

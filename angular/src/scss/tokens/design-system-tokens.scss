@@ -10,7 +10,7 @@
    - NO black on green: Never use --color-text-primary on green backgrounds
    
    USAGE:
-   @import './assets/styles/design-system-tokens.scss';
+   @use "./scss/tokens/design-system-tokens" as *;
    
    This file replaces all other token files and should be the ONLY
    source for design tokens across the entire application.
@@ -149,8 +149,6 @@
   --color-brand-primary-active: var(--ds-primary-green-hover);
   --color-brand-primary-light: var(--ds-primary-green-light);
   --color-brand-primary-subtle: var(--ds-primary-green-subtle);
-  --color-brand-primary-ultra-subtle: var(--ds-primary-green-ultra-subtle);
-
   /* Secondary/Accent: Provides accents for important elements, applied sparingly */
   --color-brand-secondary: #10c96b;
   --color-brand-secondary-hover: #0ab85a;
@@ -159,6 +157,33 @@
   /* Accent Purple (visual highlight) */
   --color-accent-purple: var(--primitive-purple-500);
   --color-accent-purple-subtle: rgba(var(--primitive-purple-500-rgb), 0.1);
+
+  /* Accessible color tokens */
+  --color-text-secondary-accessible: #475569;
+  --color-text-muted-accessible: #64748b;
+  --color-placeholder-accessible: #6b7280;
+  --color-border-accessible: #94a3b8;
+  --color-warning-text-accessible: #92400e;
+  --color-info-text-accessible: #1e40af;
+  --color-success-text-accessible: #065f46;
+  --color-error-text-accessible: #991b1b;
+  --color-text-secondary-accessible-dark: #a1a1aa;
+  --color-text-muted-accessible-dark: #71717a;
+  --color-placeholder-accessible-dark: #71717a;
+  --color-border-accessible-dark: #475569;
+  --color-warning-text-accessible-dark: #fbbf24;
+  --color-info-text-accessible-dark: #60a5fa;
+  --color-success-text-accessible-dark: #34d399;
+  --color-error-text-accessible-dark: #f87171;
+
+  /* High contrast overrides */
+  --color-text-secondary-accessible-hc: #1e293b;
+  --color-text-muted-accessible-hc: #334155;
+  --color-border-accessible-hc: #475569;
+
+  /* DS Primary color aliases (for charts + integration) */
+  --ds-primary-blue: var(--color-status-info);
+  --ds-primary-purple: var(--primitive-purple-500);
 
   /* External Brand Colors */
   --brand-google-blue: #4285f4;
@@ -327,6 +352,9 @@
   --opacity-strong: 0.9; /* For strong overlays and emphasized content */
   --opacity-minimal: 0.4; /* For very subtle states */
   --opacity-disabled: 0.38; /* Alias for disabled state */
+  --opacity-quarter: 0.25;
+  --opacity-half: 0.5;
+  --opacity-three-quarters: 0.75;
 
   /* State Layer Colors (for overlays) */
   --state-layer-primary: rgba(
@@ -417,6 +445,7 @@
   --space-5: var(--ds-space-5);
   --space-6: var(--ds-space-6);
   --space-8: var(--ds-space-8);
+  --space-9: var(--ds-space-9);
   --space-10: var(--ds-space-10);
   --space-12: var(--ds-space-12);
   --space-16: var(--ds-space-16);
@@ -602,6 +631,7 @@
   --font-compact-lg: var(
     --ds-font-size-compact-lg
   ); /* 13px - compact headings */
+
   --font-compact-md: var(
     --ds-font-size-compact-md
   ); /* 11px - compact body text */
@@ -616,6 +646,7 @@
   --letter-spacing-caption: var(
     --ds-letter-spacing-caption
   ); /* For caption labels like READINESS, ACWR */
+
   --letter-spacing-wide: var(--ds-letter-spacing-wide);
 
   /* ================================
@@ -681,69 +712,6 @@
   --shadow-dark-tooltip:
     0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(16, 201, 107, 0.15);
 
-  /* ================================
-     DESIGN SYSTEM SEMANTIC ALIASES
-     Used by component SCSS files
-     ================================ */
-
-  /* Numbered Shadow Scale (Decision 14) */
-  --shadow-0: none;
-  --shadow-1: var(--ds-shadow-1);
-  --shadow-2: var(--ds-shadow-2);
-  --shadow-3: var(--ds-shadow-3);
-
-  /* Border Tokens (Decision 13) */
-  --border-1: 1px;
-  --border-2: 2px;
-  --border-3: 3px;
-  --border-4: 4px;
-  --border-5: 5px;
-  --border-6: 6px;
-  --border-8: 8px;
-  --color-border-default: var(--primitive-neutral-300);
-  --color-border-muted: var(--primitive-neutral-200);
-  --color-border-strong: var(--primitive-neutral-400);
-  --color-border-focus: var(--ds-primary-green);
-  --color-border-danger: var(--color-status-error);
-  --color-border-warning: var(--color-status-warning);
-
-  /* Surface Semantic Aliases */
-  --color-surface-primary: var(--surface-primary);
-  --color-surface-secondary: var(--surface-secondary);
-  --color-surface-tertiary: var(--surface-tertiary);
-  --color-surface-hover: rgba(0, 0, 0, 0.04);
-  --color-surface-active: rgba(0, 0, 0, 0.08);
-  --color-surface-selected: rgba(8, 153, 73, 0.08);
-  --color-surface-inverse: var(--primitive-neutral-900);
-
-  /* Text Semantic Aliases - Use fallback values for base :root */
-  --text-primary: #1a1a1a; /* Default for light mode */
-  --text-secondary: #4a4a4a; /* Default for light mode */
-  --text-muted: #525252; /* Default for light mode */
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-  --color-text-on-primary: #fff;
-  --color-text-on-inverse: #fff;
-
-  /* Status Color Aliases */
-  --color-status-success: var(--ds-primary-green);
-  --color-status-warning: var(--primitive-warning-500);
-  --color-status-danger: var(--primitive-error-500);
-  --color-status-info: #0ea5e9;
-
-  /* Status Background Colors */
-  --color-success-bg: rgba(8, 153, 73, 0.1);
-  --color-warning-bg: rgba(245, 158, 11, 0.1);
-  --color-danger-bg: rgba(239, 68, 68, 0.1);
-  --color-info-bg: rgba(14, 165, 233, 0.1);
-
-  /* Status Text Colors */
-  --color-success-text: #036d35;
-  --color-warning-text: var(--primitive-warning-800);
-  --color-danger-text: #b91c1c;
-  --color-info-text: #0284c7;
-
   /* Motion Tokens (Decision 19) - See TRANSITIONS & MOTION section below */
 
   /* Container Widths (Decision 8.1) */
@@ -762,6 +730,7 @@
   --page-padding-desktop: var(--space-6); /* 24px */
   --page-padding-tablet: var(--space-4); /* 16px */
   --page-padding-mobile: var(--space-3); /* 12px */
+  --keyboard-focus-scroll-margin: 120px;
   --sidebar-width: 250px;
   --sidebar-collapsed-width: 64px;
   --header-height: 64px;
@@ -820,6 +789,8 @@
 
   /* Legacy compatibility aliases */
   --motion-duration-normal: var(--transition-base);
+  --motion-duration-shimmer: 1.5s;
+  --motion-duration-pulse: 2s;
   --motion-easing-productive: var(--ease-standard);
   --motion-easing-expressive: var(--ease-standard);
 
@@ -827,6 +798,17 @@
   --motion-fast: var(--transition-fast);
   --motion-base: var(--transition-base);
   --motion-slow: var(--transition-slow);
+  --motion-offset-slide: 30px;
+  --motion-offset-dropdown: 10px;
+  --motion-offset-dropdown-sm: 4px;
+  --motion-offset-tooltip: 2px;
+  --motion-offset-toast: 100px;
+  --motion-scale-base: 1;
+  --motion-scale-press: 0.95;
+  --motion-scale-hidden: 0.8;
+  --motion-scale-expand: 1.05;
+  --motion-scale-hover: 1.1;
+  --motion-scale-hover-strong: 1.15;
 
   /* ================================
      Z-INDEX SYSTEM
@@ -1592,7 +1574,6 @@ body.light-theme {
     #ffb347 100%
   );
   --color-medal-gold-text: #5c4a00; /* Dark text for gold background */
-
   --color-medal-silver: #c0c0c0;
   --color-medal-silver-rgb: 192, 192, 192;
   --color-medal-silver-gradient: linear-gradient(
@@ -1601,7 +1582,6 @@ body.light-theme {
     #e8e8e8 100%
   );
   --color-medal-silver-text: #4a4a4a; /* Dark text for silver background */
-
   --color-medal-bronze: #cd7f32;
   --color-medal-bronze-rgb: 205, 127, 50;
   --color-medal-bronze-gradient: linear-gradient(

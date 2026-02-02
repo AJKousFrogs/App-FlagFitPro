@@ -70,6 +70,7 @@ node scripts/migrate-supabase-data.js
 ```
 
 This script will:
+
 - ✅ Connect to both old and new projects
 - ✅ Export all data from old project
 - ✅ Import data to new project in correct order
@@ -81,9 +82,11 @@ This script will:
 After both schema and data migrations:
 
 1. **Check Tables**:
+
    ```bash
    node scripts/list-supabase-tables.js
    ```
+
    Should show ~353 tables
 
 2. **Check Data**:
@@ -91,9 +94,11 @@ After both schema and data migrations:
    - Verify key tables have data (users, teams, etc.)
 
 3. **Test Application**:
+
    ```bash
    npm run dev
    ```
+
    - Test authentication
    - Verify data loads correctly
    - Test key features
@@ -127,6 +132,7 @@ After both schema and data migrations:
 ## Quick Reference
 
 **Apply Schema**:
+
 ```bash
 # Via Dashboard (easiest)
 # Go to: https://supabase.com/dashboard/project/grfjmnjpzvknmsxrwesx/sql
@@ -134,6 +140,7 @@ After both schema and data migrations:
 ```
 
 **Migrate Data**:
+
 ```bash
 export OLD_SUPABASE_SERVICE_KEY="your_key"
 node scripts/migrate-supabase-data.js
@@ -142,6 +149,7 @@ node scripts/migrate-supabase-data.js
 ## Support
 
 If you encounter issues:
+
 1. Check migration logs in `database/migration_results/`
 2. Review Supabase Dashboard logs
 3. Verify environment variables are set correctly

@@ -305,12 +305,12 @@ interface WellnessMetric {
           }
 
           <!-- Daily Check-in - Comprehensive for Olympic Athletes -->
-          <app-card
-            title="Daily Wellness Check-in"
-            class="checkin-card"
-            #checkinCard
-            [flush]="true"
-          >
+          <div #checkinCard class="checkin-card-anchor">
+            <app-card
+              title="Daily Wellness Check-in"
+              class="checkin-card"
+              [flush]="true"
+            >
             <div class="checkin-form">
               <!-- Sleep Section -->
               <div class="checkin-section">
@@ -805,9 +805,20 @@ export class WellnessComponent {
   }
 
   openCheckIn(): void {
-    // Scroll to check-in form using Angular viewChild reference
-    const cardRef = this.checkinCard();
-    cardRef?.nativeElement.scrollIntoView({
+    // Scroll to the daily check-in card. Guard in case the view child isn't
+    // available yet in the current render.
+    const cardElement =
+      this.checkinCard()?.nativeElement ??
+      document.querySelector<HTMLElement>(".checkin-card-anchor");
+
+    if (!cardElement) {
+      this.logger.warn(
+        "Unable to scroll to check-in card; anchor element not rendered yet.",
+      );
+      return;
+    }
+
+    cardElement.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });

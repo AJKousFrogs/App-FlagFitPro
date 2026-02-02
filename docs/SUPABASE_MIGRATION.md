@@ -45,6 +45,7 @@ node scripts/migrate-supabase-data.js
 ```
 
 The script will:
+
 - Connect to both Supabase projects
 - Export all data from the old project
 - Import data to the new project in the correct order (respecting foreign key dependencies)
@@ -145,6 +146,7 @@ If migration fails and you need to rollback:
 ## Support
 
 For issues or questions:
+
 - Check Supabase Dashboard logs
 - Review migration script output
 - Verify environment variables are set correctly

@@ -1,5 +1,4 @@
 @use "styles/mixins" as *;
-
 @include stat-block;
 
 .physio-dashboard {
@@ -753,4 +752,5 @@
     grid-template-columns: 1fr;
   }
 }
+
 // Dialog sizing

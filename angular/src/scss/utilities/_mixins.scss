@@ -1,0 +1,681 @@
+/**
+ * FlagFit Pro - SCSS Mixins
+ *
+ * Reusable mixins for common styling patterns
+ */
+
+@use "./variables" as *;
+
+// ================================
+// RESPONSIVE BREAKPOINTS
+// ================================
+
+@mixin respond-to($breakpoint) {
+  @media (max-width: get-breakpoint($breakpoint)) {
+    @content;
+  }
+}
+
+@mixin respond-above($breakpoint) {
+  @media (min-width: get-breakpoint($breakpoint) + 1px) {
+    @content;
+  }
+}
+
+@mixin respond-between($min, $max) {
+  @media (min-width: get-breakpoint($min)) and (max-width: get-breakpoint($max)) {
+    @content;
+  }
+}
+
+// Touch device detection
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+// Hover support detection
+@mixin hover-support {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
+// Landscape orientation
+@mixin landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+// ================================
+// LAYOUT MIXINS
+// ================================
+
+// Flexbox centering
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Flex column
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Flex between (space-between)
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// Flex start (align items at start)
+@mixin flex-start {
+  display: flex;
+  align-items: flex-start;
+}
+
+// Grid responsive
+@mixin grid-responsive($min-width: 250px, $gap: var(--space-4)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $gap;
+}
+
+// Search bar container (shared layout rhythm)
+@mixin search-bar(
+  $padding-y: var(--space-3),
+  $padding-x: var(--space-5),
+  $gap: var(--space-3),
+  $background: var(--surface-primary),
+  $border: var(--border-1) solid var(--color-border-secondary),
+  $radius: var(--radius-lg)
+) {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+  padding: $padding-y $padding-x;
+  background: $background;
+  border: $border;
+  border-radius: $radius;
+}
+
+// Standard page container with tokenized padding and responsive scale.
+@mixin page-container($max-width: 1400px) {
+  padding: var(--space-6);
+  max-width: $max-width;
+  margin: 0 auto;
+  width: 100%;
+
+  @include respond-to(md) {
+    padding: var(--space-4);
+  }
+
+  @include respond-to(sm) {
+    padding: var(--space-3);
+  }
+}
+
+// Canonical stat block pattern (value + label).
+@mixin stat-block {
+  .stat-block {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .stat-block__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: var(--space-1);
+  }
+
+  .stat-block__value {
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--ds-line-height-tight);
+  }
+
+  .stat-block__label {
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-regular);
+    color: var(--color-text-muted);
+    line-height: var(--ds-line-height-normal);
+    letter-spacing: var(--ds-letter-spacing-caption);
+    text-transform: var(--ds-text-transform-uppercase);
+  }
+
+  .stat-block--large .stat-block__value {
+    font-size: var(--ds-font-size-3xl);
+  }
+
+  .stat-block--compact .stat-block__value {
+    font-size: var(--ds-font-size-2xl);
+  }
+}
+
+// Container with max-width
+@mixin container($size: xl) {
+  width: 100%;
+  max-width: map-get($container-max-widths, $size);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: space(4);
+  padding-right: space(4);
+
+  @include respond-to(md) {
+    padding-left: space(3);
+    padding-right: space(3);
+  }
+}
+
+// ================================
+// TYPOGRAPHY MIXINS
+// ================================
+
+@mixin text-style($size, $weight: normal, $line-height: normal) {
+  font-size: get-font-size($size);
+  font-weight: get-font-weight($weight);
+  line-height: get-line-height($line-height);
+}
+
+@mixin heading-1 {
+  @include text-style(4xl, bold, tight);
+}
+
+@mixin heading-2 {
+  @include text-style(3xl, bold, tight);
+}
+
+@mixin heading-3 {
+  @include text-style(2xl, semibold, tight);
+}
+
+@mixin heading-4 {
+  @include text-style(xl, semibold, snug);
+}
+
+@mixin body-text {
+  @include text-style(base, normal, normal);
+}
+
+@mixin small-text {
+  @include text-style(sm, normal, normal);
+}
+
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin line-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  overflow: hidden;
+}
+
+// ================================
+// COMPONENT MIXINS
+// ================================
+
+// Card styling
+@mixin card($padding: var(--space-6), $radius: var(--radius-lg)) {
+  background: var(--surface-primary);
+  border: var(--border-1) solid var(--color-border-secondary);
+  border-radius: $radius;
+  padding: $padding;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base) var(--ease-standard);
+
+  @include hover-support {
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+  }
+}
+
+// Button base styles
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  font-weight: get-font-weight(semibold);
+  border-radius: get-radius(lg);
+  transition:
+    opacity var(--transition-fast) var(--ease-standard),
+    transform var(--transition-fast) var(--ease-standard),
+    background-color var(--transition-fast) var(--ease-standard);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: var(--ds-state-disabled-opacity, 0.6);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+    box-shadow: var(--shadow-focus);
+  }
+
+  @include hover-support {
+    &:hover:not(:disabled) {
+      transform: var(--transform-hover-lift-subtle);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: var(--transform-active-press);
+  }
+}
+
+// Input base styles
+@mixin input-base {
+  width: 100%;
+  height: var(--input-height-md);
+  padding: var(--space-3);
+  border: var(--border-1) solid var(--color-border-primary);
+  border-radius: get-radius(md);
+  font-size: get-font-size(base);
+  transition: border-color var(--transition-fast) var(--ease-standard);
+
+  &:focus-visible {
+    outline: var(--focus-outline-width) solid var(--ds-primary-green);
+    outline-offset: var(--focus-outline-offset);
+    border-color: var(--ds-primary-green);
+  }
+
+  &:disabled {
+    background-color: var(--surface-100);
+    cursor: not-allowed;
+    opacity: var(--ds-state-disabled-opacity, 0.6);
+  }
+
+  &.error {
+    border-color: var(--color-status-error);
+  }
+}
+
+// Modal backdrop
+@mixin modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-black-50);
+  backdrop-filter: blur(var(--blur-sm));
+  -webkit-backdrop-filter: blur(var(--blur-sm));
+  z-index: get-z-index(modal-backdrop);
+  animation: backdrop-fade-in get-transition(normal) get-easing(ease-out);
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// ================================
+// UTILITY MIXINS
+// ================================
+
+// Visually hidden (accessible to screen readers)
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// Reset button styles
+@mixin reset-button {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+// Reset list styles
+@mixin reset-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+// Smooth scroll
+@mixin smooth-scroll {
+  scroll-behavior: smooth;
+
+  @media (prefers-reduced-motion: reduce) {
+    /* stylelint-disable-next-line no-invalid-position-declaration */
+    scroll-behavior: auto;
+  }
+}
+
+// Custom scrollbar
+@mixin scrollbar(
+  $width: var(--scrollbar-width-default),
+  $track-color: var(--surface-secondary),
+  $thumb-color: var(--color-border-primary)
+) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+    border-radius: calc(#{$width} / 2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: calc(#{$width} / 2);
+
+    &:hover {
+      background: var(--color-text-muted);
+    }
+  }
+}
+
+// ================================
+// ANIMATION MIXINS
+// ================================
+
+// Fade in animation
+@mixin fade-in(
+  $duration: var(--motion-duration-normal),
+  $easing: var(--ease-standard)
+) {
+  animation: fade-in $duration $easing;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Slide up animation
+@mixin slide-up(
+  $duration: var(--motion-duration-normal),
+  $distance: var(--motion-offset-slide),
+  $easing: var(--ease-standard)
+) {
+  animation: slide-up $duration $easing;
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY($distance);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// Scale in animation
+@mixin scale-in(
+  $duration: var(--motion-duration-normal),
+  $easing: var(--ease-micro-bounce)
+) {
+  animation: scale-in $duration $easing;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--motion-scale-press));
+  }
+  to {
+    opacity: 1;
+    transform: scale(var(--motion-scale-base));
+  }
+}
+
+// Shimmer loading effect
+@mixin shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface-secondary) 0%,
+    var(--surface-tertiary) 50%,
+    var(--surface-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer var(--motion-duration-shimmer) var(--ease-standard)
+    infinite;
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+}
+
+// Pulse animation
+@mixin pulse($duration: var(--motion-duration-pulse)) {
+  animation: pulse $duration var(--ease-standard) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// ================================
+// INTERACTION STATE MIXINS
+// Angular 21 Best Practices
+// ================================
+
+// Complete interactive element with all states
+// Usage: @include interactive-states($hover-bg, $active-bg);
+@mixin interactive-states(
+  $hover-bg: var(--surface-secondary),
+  $active-bg: var(--surface-tertiary)
+) {
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+  will-change: transform, box-shadow, background-color;
+
+  // Hover - Desktop only
+  @include hover-support {
+    &:hover:not(:disabled) {
+      background-color: $hover-bg;
+      transform: var(--transform-hover-lift-subtle);
+    }
+  }
+
+  // Active/Pressed - All devices
+  &:active:not(:disabled) {
+    background-color: $active-bg;
+    transform: var(--transform-active-press);
+  }
+
+  // Touch-specific active state
+  @include touch-device {
+    &:active:not(:disabled) {
+      transform: var(--transform-active-press-touch);
+    }
+  }
+
+  // Focus - Keyboard navigation
+  @include focus-visible;
+
+  // Disabled
+  &:disabled {
+    opacity: var(--state-disabled-opacity, 0.38);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// Hover lift effect with shadow
+// Usage: @include hover-lift($shadow: var(--shadow-md));
+@mixin hover-lift(
+  $lift: var(--transform-hover-lift),
+  $shadow: var(--shadow-md)
+) {
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+  will-change: transform, box-shadow;
+
+  @include hover-support {
+    &:hover:not(:disabled) {
+      transform: $lift;
+      box-shadow: $shadow;
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @include touch-device {
+    &:active:not(:disabled) {
+      transform: var(--motion-scale-press);
+    }
+  }
+}
+
+// State layer overlay (Material Design 3 style)
+// Usage: @include state-layer(var(--ds-primary-green-rgb));
+@mixin state-layer($color-rgb) {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: transparent;
+    transition: background-color var(--transition-fast);
+    pointer-events: none;
+  }
+
+  @include hover-support {
+    &:hover::before {
+      background-color: rgba($color-rgb, var(--state-hover-opacity, 0.08));
+    }
+  }
+
+  &:active::before {
+    background-color: rgba($color-rgb, var(--state-active-opacity, 0.16));
+  }
+
+  &:focus-visible::before {
+    background-color: rgba($color-rgb, var(--state-focus-opacity, 0.12));
+  }
+}
+
+// ================================
+// ACCESSIBILITY MIXINS
+// ================================
+
+// Focus visible (keyboard navigation)
+@mixin focus-visible {
+  &:focus-visible {
+    outline: var(--focus-outline-width, 2px) solid
+      var(--focus-ring-color, var(--ds-primary-green));
+    outline-offset: var(--focus-outline-offset, 2px);
+    box-shadow: var(
+      --focus-ring-shadow,
+      0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.3)
+    );
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+// Reduced motion support
+@mixin respect-motion-preference {
+  @content;
+
+  @media (prefers-reduced-motion: reduce) {
+    /* stylelint-disable-next-line no-invalid-position-declaration */
+    animation: none;
+    /* stylelint-disable-next-line no-invalid-position-declaration */
+    transition: none;
+  }
+}
+
+// Touch-friendly tap target
+@mixin tap-target($min-size: 44px) {
+  min-height: $min-size;
+  min-width: $min-size;
+
+  @include touch-device {
+    padding: space(3);
+  }
+}
+
+// High contrast mode support
+@mixin high-contrast {
+  @media (prefers-contrast: high) {
+    @content;
+  }
+}
+
+// ================================
+// PRINT STYLES
+// ================================
+
+@mixin print-hidden {
+  @media print {
+    /* stylelint-disable-next-line no-invalid-position-declaration */
+    display: none;
+  }
+}
+
+@mixin print-only {
+  display: none;
+
+  @media print {
+    /* stylelint-disable-next-line no-invalid-position-declaration */
+    display: block;
+  }
+}

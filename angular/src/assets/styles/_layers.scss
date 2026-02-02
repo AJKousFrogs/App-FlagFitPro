@@ -111,18 +111,6 @@
     outline: none;
   }
 
-  // Reduced motion
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
-  }
-
   // Firefox scrollbar
   * {
     scrollbar-width: thin;
@@ -162,7 +150,7 @@
 // Tokens file defines all CSS custom properties
 
 @layer tokens {
-  // Tokens are imported from design-system-tokens.scss
+  // Tokens are imported from ../scss/tokens/design-system-tokens.scss
   // This layer ensures proper cascade order
 }
 

@@ -5,7 +5,6 @@
   --ds-font-family-mono:
     "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
-
   --ds-font-size-xs: 0.75rem; /* 12px */
   --ds-font-size-sm: 0.875rem; /* 14px */
   --ds-font-size-md: 1rem; /* 16px */
@@ -28,14 +27,12 @@
   --ds-font-size-3rem: 3rem; /* 48px */
   --ds-font-size-4rem: 4rem; /* 64px */
   --ds-font-size-4-5rem: 4.5rem; /* 72px */
-
   --ds-font-weight-regular: 400;
   --ds-font-weight-medium: 500;
   --ds-font-weight-semibold: 600;
   --ds-font-weight-bold: 700;
   --ds-font-weight-light: 300;
   --ds-font-weight-extrabold: 800;
-
   --ds-line-height-h1: 1.2;
   --ds-line-height-h2: 1.25;
   --ds-line-height-h3: 1.3;
@@ -57,7 +54,6 @@
   --ds-line-height-snug: 1.25;
   --ds-line-height-normal: 1.5;
   --ds-line-height-relaxed: 1.65;
-
   --ds-letter-spacing-tight: -0.02em;
   --ds-letter-spacing-0-01em: -0.01em;
   --ds-letter-spacing-normal: 0;
@@ -75,7 +71,6 @@
   --ds-letter-spacing-1px: 1px;
   --ds-letter-spacing-1-5px: 1.5px;
   --ds-letter-spacing-2px: 2px;
-
   --ds-text-transform-none: none;
   --ds-text-transform-uppercase: uppercase;
   --ds-text-transform-lowercase: lowercase;
@@ -90,6 +85,7 @@
   --ds-space-5: 1.25rem; /* 20px */
   --ds-space-6: 1.5rem; /* 24px */
   --ds-space-8: 2rem; /* 32px */
+  --ds-space-9: 3.5rem; /* 56px */
   --ds-space-10: 2.5rem; /* 40px */
   --ds-space-12: 3rem; /* 48px */
   --ds-space-16: 4rem; /* 64px */
@@ -114,50 +110,41 @@
   --ds-shadow-4: 0 12px 48px rgba(0, 0, 0, 0.15);
 
   /* Semantic colors */
-  --ds-color-brand: #089949;
-  --ds-color-brand-contrast: #ffffff;
-
-  --ds-color-success: #63ad0e;
-  --ds-color-success-bg: rgba(99, 173, 14, 0.12);
-  --ds-color-success-text: #1a1a1a;
-
-  --ds-color-warning: #ffc000;
-  --ds-color-warning-bg: rgba(255, 192, 0, 0.12);
-  --ds-color-warning-text: #1a1a1a;
-
-  --ds-color-danger: #ff003c;
-  --ds-color-danger-bg: rgba(255, 0, 60, 0.12);
-  --ds-color-danger-text: #ffffff;
-
-  --ds-color-info: #3b82f6;
-  --ds-color-info-bg: rgba(59, 130, 246, 0.12);
-  --ds-color-info-text: #ffffff;
-
-  --ds-color-neutral: #4a4a4a;
-  --ds-color-neutral-bg: var(--surface-secondary, #f8faf9);
-  --ds-color-neutral-text: #1a1a1a;
+  --ds-color-brand: var(--color-brand-primary);
+  --ds-color-brand-contrast: var(--color-text-on-primary);
+  --ds-color-success: var(--color-status-success);
+  --ds-color-success-bg: var(--color-status-success-surface);
+  --ds-color-success-text: var(--color-text-on-primary);
+  --ds-color-warning: var(--color-status-warning);
+  --ds-color-warning-bg: var(--color-status-warning-surface);
+  --ds-color-warning-text: var(--color-text-primary);
+  --ds-color-danger: var(--color-status-error);
+  --ds-color-danger-bg: var(--color-status-error-surface);
+  --ds-color-danger-text: var(--color-text-on-primary);
+  --ds-color-info: var(--color-status-info);
+  --ds-color-info-bg: var(--color-status-info-surface);
+  --ds-color-info-text: var(--color-text-on-primary);
+  --ds-color-neutral: var(--color-text-secondary);
+  --ds-color-neutral-bg: var(--surface-secondary);
+  --ds-color-neutral-text: var(--color-text-primary);
 
   /* Status color aliases (semantic, shared across UI) */
   --ds-status-success-solid: var(--ds-color-success);
   --ds-status-success-bg: var(--ds-color-success-bg);
   --ds-status-success-text: var(--ds-color-success-text);
   --ds-status-success-border: var(--ds-color-success);
-
   --ds-status-warning-solid: var(--ds-color-warning);
   --ds-status-warning-bg: var(--ds-color-warning-bg);
   --ds-status-warning-text: var(--ds-color-warning-text);
   --ds-status-warning-border: var(--ds-color-warning);
-
   --ds-status-danger-solid: var(--ds-color-danger);
   --ds-status-danger-bg: var(--ds-color-danger-bg);
   --ds-status-danger-text: var(--ds-color-danger-text);
   --ds-status-danger-border: var(--ds-color-danger);
-
   --ds-status-info-solid: var(--ds-color-info);
   --ds-status-info-bg: var(--ds-color-info-bg);
   --ds-status-info-text: var(--ds-color-info-text);
   --ds-status-info-border: var(--ds-color-info);
-
   --ds-status-neutral-solid: var(--ds-color-neutral);
   --ds-status-neutral-bg: var(--ds-color-neutral-bg);
   --ds-status-neutral-text: var(--ds-color-neutral-text);
@@ -174,7 +161,6 @@
   --ds-input-height-sm: 2.25rem; /* 36px */
   --ds-input-height-md: 2.75rem; /* 44px */
   --ds-input-height-lg: 3.25rem; /* 52px */
-
   --ds-button-height-sm: 2.25rem; /* 36px */
   --ds-button-height-md: 2.75rem; /* 44px */
   --ds-button-height-lg: 3.25rem; /* 52px */
@@ -188,7 +174,6 @@
   --ds-icon-size-xl: 1.5rem; /* 24px */
   --ds-icon-size-2xl: 2rem; /* 32px */
   --ds-icon-size-3xl: 3rem; /* 48px */
-
   --ds-icon-size-inline: var(--ds-icon-size-sm);
   --ds-icon-size-button: var(--ds-icon-size-lg);
   --ds-icon-size-button-sm: var(--ds-icon-size-sm);

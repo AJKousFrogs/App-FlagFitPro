@@ -1,4 +1,4 @@
-@use "styles/mixins" as *;
+@use "../../styles/mixins" as *;
 
 /* ================================================================
    FLAGFIT PRO - STANDARDIZED COMPONENT STYLES
@@ -6,13 +6,13 @@
    ================================================================
    
    USAGE:
-   @import './assets/styles/standardized-components.scss';
+   @use './standardized-components.scss' via `scss/components/index.scss`, which is imported by `styles.scss`.
    
    This file ensures all components (buttons, cards, tags, forms)
    behave identically across Angular + PrimeNG.
    ================================================================ */
 
-@use "./design-system-tokens.scss" as *;
+@use "../tokens/design-system-tokens" as *;
 
 /* ================================================================
    BUTTONS - Angular 21 Modern Best Practices
@@ -2294,10 +2294,7 @@ select {
   main,
   .main-content,
   .dashboard-content {
-    padding-bottom: calc(
-      var(--bottom-nav-height, var(--layout-height-md)) +
-        var(--safe-area-bottom, 0)
-    );
+    padding-bottom: calc(var(--bottom-nav-height, var(--layout-height-md)) + var(--safe-area-bottom, 0));
   }
 }
 

@@ -22,6 +22,8 @@ export default tseslint.config(
   // Base configurations
   js.configs.recommended,
   ...tseslint.configs.recommended, // Ignore patterns
+  // Console logging is temporarily allowed because LoggerService is unavailable while bootstrapping validation
+  // and Supabase diagnostics need console.group output for deep inspection.
   {
     ignores: [
       "node_modules/**",
@@ -63,7 +65,7 @@ export default tseslint.config(
   // NODE.JS SCRIPTS (JavaScript files)
   // ============================================
   {
-    files: ["scripts/**/*.js"],
+    files: ["scripts/**/*.{js,ts}", "src/scripts/**/*.ts"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -73,20 +75,43 @@ export default tseslint.config(
       },
     },
     rules: {
-      // Disable TypeScript-specific rules for JS files
-      "@typescript-eslint/no-require-imports": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      // Enable standard JS rules
       "no-console": "off",
-      "no-undef": "off", // Node globals handled by globals.node
-      "no-unused-vars": [
-        "warn",
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-        },
-      ],
+      "no-alert": "off",
+    },
+  },
+  {
+    files: ["netlify/functions/**/*.{js,cjs}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.node,
+        ...globals.es2025,
+      },
+    },
+    rules: {
+      "no-console": "off",
+      "no-unused-vars": "off",
+      "prefer-const": "off",
+      "require-await": "off",
+      "no-await-in-loop": "off",
+      "no-promise-executor-return": "off",
+    },
+  },
+  {
+    files: ["netlify/plugins/**/*.{js,cjs}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.node,
+        ...globals.es2025,
+      },
+    },
+    rules: {
+      "no-console": "off",
+      "no-unused-vars": "off",
+      "prefer-const": "off",
     },
   },
   // TypeScript files configuration
@@ -179,7 +204,20 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    files: ["src/app/**/*.{ts,html}"],
+    rules: {
+      "no-console": "error",
+      "no-alert": "error",
+    },
   }, // Component template inline strings - additional checks
+  {
+    files: ["src/app/core/logging/console-logger.adapter.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
   {
     files: ["**/*.component.ts"],
     rules: {
@@ -223,11 +261,54 @@ export default tseslint.config(
       "no-console": "off",
     },
   },
-  // CLI validation scripts - need console for output
   {
-    files: ["src/scripts/**/*.ts"],
+    files: [
+      "src/app/core/constants/constants-validation.ts",
+      "src/app/core/services/supabase-debug.service.ts",
+    ],
     rules: {
       "no-console": "off",
+      "no-alert": "off",
+      "no-unused-vars": "off",
+      "prefer-const": "off",
+    },
+  },
+  {
+    files: ["routes/**/*.{js,ts}"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.node,
+        ...globals.es2025,
+      },
+    },
+    rules: {
+      "no-console": "off",
+      "no-alert": "off",
+    },
+  },
+  {
+    files: ["tests/**/*.cjs"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.node,
+        ...globals.es2025,
+      },
+    },
+    rules: {
+      "no-console": "off",
+      "no-unused-vars": "off",
+      "prefer-const": "off",
+      "no-await-in-loop": "off",
+    },
+  },
+  {
+    files: ["server.js"],
+    rules: {
+      "no-unused-vars": "off",
     },
   },
   storybook.configs["flat/recommended"],

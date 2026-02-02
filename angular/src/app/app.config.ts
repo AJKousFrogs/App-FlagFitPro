@@ -42,6 +42,8 @@ import { LoadMonitoringService } from "./core/services/load-monitoring.service";
 import { ResourceService } from "./core/services/resource.service";
 import { PlatformDetectionService } from "./core/services/platform-detection.service";
 import { AuthAwarePreloadStrategy } from "./core/strategies/auth-aware-preload.strategy";
+import { LOGGER } from "./core/logging/logger.token";
+import { ConsoleLoggerAdapter } from "./core/logging/console-logger.adapter";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -147,7 +149,7 @@ export const appConfig: ApplicationConfig = {
       //
       // CURRENT APPROACH:
       // We use the Aura preset as the base and customize via CSS variables in:
-      // - primeng-theme.scss (component-specific overrides)
+      // - angular/src/scss/components/primeng-theme.scss (component-specific overrides)
       // - primeng-integration.scss (design token mapping)
       //
       // FUTURE ENHANCEMENT:
@@ -225,5 +227,6 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: "registerWhenStable:30000", // Register after app is stable or 30s
     }),
+    { provide: LOGGER, useClass: ConsoleLoggerAdapter },
   ],
 };

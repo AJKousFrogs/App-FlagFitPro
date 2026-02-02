@@ -16,6 +16,7 @@ import { PageHeaderComponent } from "../../shared/components/page-header/page-he
 import { SuperadminService } from "../../core/services/superadmin.service";
 import { AuthService } from "../../core/services/auth.service";
 import { LoggerService } from "../../core/services/logger.service";
+import { NotificationService } from "../../core/services/notification.service";
 
 interface SuperadminUser {
   user_id: string;
@@ -320,6 +321,7 @@ export class SuperadminSettingsComponent implements OnInit {
   private superadminService = inject(SuperadminService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
+  private notificationService = inject(NotificationService);
 
   // State
   superadmins = signal<SuperadminUser[]>([]);
@@ -366,8 +368,9 @@ export class SuperadminSettingsComponent implements OnInit {
     if (!this.newAdminEmail.trim()) return;
 
     // Note: In a real implementation, you'd look up the user by email first
-    alert(
+    this.notificationService.info(
       "To add a superadmin, you need to find their user ID first. This feature requires looking up the user by email in the database.",
+      "Superadmin Access",
     );
     this.showAddModal = false;
     this.newAdminEmail = "";

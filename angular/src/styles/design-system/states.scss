@@ -29,7 +29,7 @@
 
   /* Focus ring - consistent green ring for accessibility */
   --ds-state-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.3);
-  --ds-state-focus-outline: 2px solid var(--ds-primary-green, #089949);
+  --ds-state-focus-outline: 2px solid var(--ds-primary-green);
   --ds-state-focus-outline-offset: 2px;
 
   /* Disabled */
@@ -82,7 +82,7 @@ html.ds-initial-render * {
    Consistent keyboard accessibility across all components
    ========================================================================== */
 
-@mixin ds-focus-ring($color: var(--ds-primary-green, #089949)) {
+@mixin ds-focus-ring($color: var(--ds-primary-green)) {
   &:focus-visible {
     outline: 2px solid $color;
     outline-offset: var(--ds-state-focus-outline-offset);
@@ -152,9 +152,9 @@ html.ds-initial-render * {
    ========================================================================== */
 
 @mixin ds-button-states(
-  $hover-bg: var(--color-text-on-primary, #fff),
-  $hover-color: var(--ds-primary-green, #089949),
-  $hover-border: var(--ds-primary-green, #089949)
+  $hover-bg: var(--color-text-on-primary),
+  $hover-color: var(--ds-primary-green),
+  $hover-border: var(--ds-primary-green)
 ) {
   @include ds-interactive-base;
 
@@ -209,15 +209,15 @@ html.ds-initial-render * {
     &:hover:not(:disabled):not(:focus-visible):not(.is-invalid):not(
         .ng-invalid.ng-touched
       ) {
-      border-color: var(--color-text-secondary, #525252);
+      border-color: var(--color-text-secondary);
     }
   }
 
   /* FOCUS */
   &:focus-visible {
-    outline: 2px solid var(--ds-primary-green, #089949);
+    outline: 2px solid var(--ds-primary-green);
     outline-offset: 2px;
-    border-color: var(--ds-primary-green, #089949);
+    border-color: var(--ds-primary-green);
     box-shadow: 0 0 0 3px rgba(8, 153, 73, 0.2);
   }
 
@@ -227,13 +227,13 @@ html.ds-initial-render * {
 
   /* DISABLED */
   &:disabled {
-    background-color: var(--surface-secondary, #f8faf9);
+    background-color: var(--surface-secondary);
     cursor: not-allowed;
     opacity: var(--ds-state-disabled-opacity);
 
     /* Ensure clearly non-interactive appearance */
     &::placeholder {
-      color: var(--color-text-tertiary, #a3a3a3);
+      color: var(--color-text-tertiary);
     }
   }
 
@@ -241,10 +241,10 @@ html.ds-initial-render * {
   &.is-invalid,
   &.ng-invalid.ng-touched,
   &:invalid {
-    border-color: var(--color-status-error, #ef4444);
+    border-color: var(--color-status-error);
 
     &:focus-visible {
-      border-color: var(--color-status-error, #ef4444);
+      border-color: var(--color-status-error);
       box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
     }
   }
@@ -252,10 +252,10 @@ html.ds-initial-render * {
   /* SUCCESS/VALID */
   &.is-valid,
   &.ng-valid.ng-touched:not(:invalid) {
-    border-color: var(--color-status-success, #63ad0e);
+    border-color: var(--color-status-success);
 
     &:focus-visible {
-      border-color: var(--color-status-success, #63ad0e);
+      border-color: var(--color-status-success);
       box-shadow: 0 0 0 3px rgba(99, 173, 14, 0.2);
     }
   }
@@ -317,8 +317,8 @@ html.ds-initial-render * {
     &:hover:not(:disabled):not([aria-disabled="true"]):not(.active):not(
         [aria-selected="true"]
       ) {
-      background-color: var(--surface-secondary, #f8faf9);
-      color: var(--ds-primary-green, #089949);
+      background-color: var(--surface-secondary);
+      color: var(--ds-primary-green);
     }
   }
 
@@ -326,7 +326,7 @@ html.ds-initial-render * {
   &.active,
   &[aria-selected="true"] {
     background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
-    color: var(--ds-primary-green, #089949);
+    color: var(--ds-primary-green);
     font-weight: var(--ds-font-weight-semibold, 600);
   }
 
@@ -348,7 +348,7 @@ html.ds-initial-render * {
   /* HOVER */
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]) {
-      background-color: var(--surface-secondary, #f8faf9);
+      background-color: var(--surface-secondary);
     }
   }
 
@@ -357,7 +357,7 @@ html.ds-initial-render * {
   &.p-highlight,
   &:focus-visible {
     background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
-    color: var(--ds-primary-green, #089949);
+    color: var(--ds-primary-green);
     outline: none;
   }
 
@@ -365,7 +365,7 @@ html.ds-initial-render * {
   &.p-highlight,
   &[aria-selected="true"] {
     background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
-    color: var(--ds-primary-green, #089949);
+    color: var(--ds-primary-green);
   }
 
   /* DISABLED */
@@ -383,8 +383,8 @@ html.ds-initial-render * {
   /* HOVER */
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]):not(.active) {
-      background-color: var(--surface-secondary, #f8faf9);
-      color: var(--ds-primary-green, #089949);
+      background-color: var(--surface-secondary);
+      color: var(--ds-primary-green);
     }
   }
 
@@ -393,7 +393,7 @@ html.ds-initial-render * {
   &[aria-current="page"],
   &.router-link-active {
     background-color: var(--ds-primary-green-subtle, rgba(8, 153, 73, 0.1));
-    color: var(--ds-primary-green, #089949);
+    color: var(--ds-primary-green);
     font-weight: var(--ds-font-weight-semibold, 600);
   }
 
@@ -426,8 +426,8 @@ html.ds-initial-render * {
   &:checked,
   &[aria-checked="true"],
   &.checked {
-    background-color: var(--ds-primary-green, #089949);
-    border-color: var(--ds-primary-green, #089949);
+    background-color: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
   }
 
   /* DISABLED */
@@ -445,8 +445,8 @@ html.ds-initial-render * {
   /* HOVER */
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(:disabled):not([aria-disabled="true"]) {
-      background-color: var(--surface-tertiary, #f0f0f0);
-      color: var(--ds-primary-green, #089949);
+      background-color: var(--surface-tertiary);
+      color: var(--ds-primary-green);
     }
   }
 
@@ -473,8 +473,8 @@ html.ds-initial-render * {
   /* HOVER */
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background-color: var(--surface-tertiary, #f0f0f0);
-      color: var(--color-text-primary, #1a1a1a);
+      background-color: var(--surface-tertiary);
+      color: var(--color-text-primary);
     }
   }
 

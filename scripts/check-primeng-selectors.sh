@@ -101,7 +101,7 @@ for file in "${FILES_ARRAY[@]}"; do
     done
     echo ""
     echo "   Fix: Move PrimeNG overrides to:"
-    echo "   - angular/src/assets/styles/primeng/_brand-overrides.scss"
+    echo "   - angular/src/scss/components/primeng/_brand-overrides.scss"
     echo "   - OR use @layer overrides with exception ticket"
     FAILED=1
   else
@@ -118,7 +118,7 @@ if [ $FAILED -eq 1 ]; then
   echo "Violations found in changed SCSS files."
   echo "Fix these violations before merging:"
   echo ""
-  echo "1. Move .p-* selectors to primeng/_brand-overrides.scss"
+  echo "1. Move .p-* selectors to scss/components/primeng/_brand-overrides.scss"
   echo "2. OR use @layer overrides with exception ticket"
   echo ""
   echo "See docs/DESIGN_SYSTEM_ENFORCEMENT.md for details."
@@ -127,4 +127,3 @@ else
   echo -e "${GREEN}✅ All changed SCSS files pass PrimeNG selector checks${NC}"
 fi
 echo "============================================"
-

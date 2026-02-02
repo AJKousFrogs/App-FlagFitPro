@@ -15,11 +15,7 @@ import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import {
-  isValidUUID,
-  sendError,
-  sendSuccess,
-} from "./utils/validation.js";
+import { isValidUUID, sendError, sendSuccess } from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "load-management";
@@ -68,7 +64,7 @@ router.get(
     }
 
     try {
-      let userId = req.query.user_id || req.userId;
+      const userId = req.query.user_id || req.userId;
 
       if (!userId) {
         return sendError(res, "User ID required", "VALIDATION_ERROR", 400);

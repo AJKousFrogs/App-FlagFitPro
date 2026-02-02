@@ -42,13 +42,11 @@ async function updateEnvFile() {
   if (fs.existsSync(envPath)) {
     console.log("📄 Found existing .env file");
     envContent = fs.readFileSync(envPath, "utf8");
-    
+
     // Check if already updated
     if (envContent.includes("grfjmnjpzvknmsxrwesx")) {
       console.log("✅ .env file already contains new Supabase project ID");
-      const answer = await question(
-        "Do you want to update it anyway? (y/N): "
-      );
+      const answer = await question("Do you want to update it anyway? (y/N): ");
       if (answer.toLowerCase() !== "y") {
         console.log("Skipping update.");
         rl.close();
@@ -102,7 +100,7 @@ async function updateEnvFile() {
 
   // Write updated content
   const updatedContent = updatedLines.join("\n");
-  
+
   // Create backup if file exists
   if (fs.existsSync(envPath)) {
     const backupPath = `${envPath}.backup.${Date.now()}`;
@@ -114,8 +112,12 @@ async function updateEnvFile() {
   console.log("\n✅ .env file updated successfully!");
   console.log("\nUpdated values:");
   console.log(`  SUPABASE_URL=${NEW_SUPABASE_URL}`);
-  console.log(`  SUPABASE_ANON_KEY=${NEW_SUPABASE_ANON_KEY.substring(0, 50)}...`);
-  console.log(`  SUPABASE_SERVICE_KEY=${NEW_SUPABASE_SERVICE_KEY.substring(0, 50)}...`);
+  console.log(
+    `  SUPABASE_ANON_KEY=${NEW_SUPABASE_ANON_KEY.substring(0, 50)}...`,
+  );
+  console.log(
+    `  SUPABASE_SERVICE_KEY=${NEW_SUPABASE_SERVICE_KEY.substring(0, 50)}...`,
+  );
 
   rl.close();
 }

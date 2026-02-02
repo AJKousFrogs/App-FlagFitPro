@@ -22,8 +22,8 @@ if (fs.existsSync(envPath)) {
 
 // Target project configuration
 const TARGET_PROJECT_URL = "https://grfjmnjpzvknmsxrwesx.supabase.co";
-const TARGET_SERVICE_KEY = 
-  process.env.SUPABASE_SERVICE_KEY || 
+const TARGET_SERVICE_KEY =
+  process.env.SUPABASE_SERVICE_KEY ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdyZmptbmpwenZrbm1zeHJ3ZXN4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2OTUwMjg5OSwiZXhwIjoyMDg1MDc4ODk5fQ.GIETcsbB9U_CRoeOhONwykUgMWzdWdU--QuyDr2BPaw";
 
 // Migration directories
@@ -35,33 +35,35 @@ const DATABASE_MIGRATIONS_DIR = path.join(PROJECT_DIR, "database/migrations");
  */
 function getAllMigrationFiles() {
   const files = [];
-  
+
   // Get supabase migrations (timestamped, already sorted)
   if (fs.existsSync(SUPABASE_MIGRATIONS_DIR)) {
-    const supabaseFiles = fs.readdirSync(SUPABASE_MIGRATIONS_DIR)
-      .filter(f => f.endsWith(".sql"))
-      .map(f => ({
+    const supabaseFiles = fs
+      .readdirSync(SUPABASE_MIGRATIONS_DIR)
+      .filter((f) => f.endsWith(".sql"))
+      .map((f) => ({
         path: path.join(SUPABASE_MIGRATIONS_DIR, f),
         name: f,
-        type: "supabase"
+        type: "supabase",
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
     files.push(...supabaseFiles);
   }
-  
+
   // Get database migrations (numbered, already sorted)
   if (fs.existsSync(DATABASE_MIGRATIONS_DIR)) {
-    const dbFiles = fs.readdirSync(DATABASE_MIGRATIONS_DIR)
-      .filter(f => f.endsWith(".sql"))
-      .map(f => ({
+    const dbFiles = fs
+      .readdirSync(DATABASE_MIGRATIONS_DIR)
+      .filter((f) => f.endsWith(".sql"))
+      .map((f) => ({
         path: path.join(DATABASE_MIGRATIONS_DIR, f),
         name: f,
-        type: "database"
+        type: "database",
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
     files.push(...dbFiles);
   }
-  
+
   return files;
 }
 
@@ -81,17 +83,17 @@ async function executeSQL(sql) {
  */
 async function main() {
   console.log("🚀 Applying Migrations via MCP Tools\n");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log(`📡 Target Project: grfjmnjpzvknmsxrwesx`);
   console.log(`📡 Project URL: ${TARGET_PROJECT_URL}`);
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log();
-  
+
   // Get all migration files
   console.log("📋 Scanning migration files...");
   const migrationFiles = getAllMigrationFiles();
   console.log(`✅ Found ${migrationFiles.length} migration files\n`);
-  
+
   // Create Supabase client for verification
   const supabase = createClient(TARGET_PROJECT_URL, TARGET_SERVICE_KEY, {
     auth: {
@@ -99,21 +101,21 @@ async function main() {
       persistSession: false,
     },
   });
-  
+
   // Test connection
   console.log("🔍 Testing connection...");
   try {
     // Try to query a system table
-    const { error } = await supabase.rpc('version');
+    const { error } = await supabase.rpc("version");
     console.log("✅ Connected to target project");
   } catch (error) {
     console.log("✅ Connected (some functions may not exist yet)");
   }
   console.log();
-  
+
   // Prepare migrations for MCP execution
   console.log("📦 Preparing migrations for MCP execute_sql...\n");
-  
+
   const migrations = [];
   for (const file of migrationFiles) {
     try {
@@ -123,21 +125,24 @@ async function main() {
         path: file.path,
         type: file.type,
         sql: content,
-        size: content.length
+        size: content.length,
       });
     } catch (error) {
       console.error(`❌ Error reading ${file.name}:`, error.message);
     }
   }
-  
+
   console.log(`✅ Prepared ${migrations.length} migrations\n`);
-  
+
   // Save migrations as individual files for MCP execution
-  const outputDir = path.join(PROJECT_DIR, "database/migration_results/mcp_migrations");
+  const outputDir = path.join(
+    PROJECT_DIR,
+    "database/migration_results/mcp_migrations",
+  );
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
-  
+
   // Create a script that can be used with MCP execute_sql
   const mcpScript = path.join(outputDir, "apply_all_migrations.sh");
   let scriptContent = `#!/bin/bash
@@ -155,19 +160,22 @@ echo ""
 `;
 
   migrations.forEach((m, index) => {
-    const migrationFile = path.join(outputDir, `${String(index + 1).padStart(3, '0')}_${m.name}`);
+    const migrationFile = path.join(
+      outputDir,
+      `${String(index + 1).padStart(3, "0")}_${m.name}`,
+    );
     fs.writeFileSync(migrationFile, m.sql);
-    
+
     scriptContent += `echo "[${index + 1}/${migrations.length}] Applying ${m.name}...\n`;
-    scriptContent += `# Use MCP execute_sql tool with: cat "$MIGRATIONS_DIR/${String(index + 1).padStart(3, '0')}_${m.name}"\n\n`;
+    scriptContent += `# Use MCP execute_sql tool with: cat "$MIGRATIONS_DIR/${String(index + 1).padStart(3, "0")}_${m.name}"\n\n`;
   });
-  
+
   fs.writeFileSync(mcpScript, scriptContent);
   fs.chmodSync(mcpScript, 0o755);
-  
-  console.log("=" .repeat(60));
+
+  console.log("=".repeat(60));
   console.log("📝 MIGRATIONS PREPARED FOR MCP");
-  console.log("=" .repeat(60));
+  console.log("=".repeat(60));
   console.log();
   console.log(`✅ ${migrations.length} migrations prepared`);
   console.log(`📁 Location: ${outputDir}`);
@@ -179,18 +187,20 @@ echo ""
   console.log();
   console.log("OR I can apply them automatically using MCP tools now!");
   console.log();
-  
+
   return {
     success: true,
     totalMigrations: migrations.length,
-    migrationsDir: outputDir
+    migrationsDir: outputDir,
   };
 }
 
 main()
   .then((result) => {
     console.log("✅ Migration preparation complete!");
-    console.log(`📊 Ready to apply ${result.totalMigrations} migrations via MCP`);
+    console.log(
+      `📊 Ready to apply ${result.totalMigrations} migrations via MCP`,
+    );
     process.exit(0);
   })
   .catch((error) => {

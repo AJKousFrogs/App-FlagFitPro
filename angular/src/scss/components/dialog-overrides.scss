@@ -1,4 +1,7 @@
-/* Global dialog overrides (no encapsulation hacks) */
+/**
+ * Dialog overrides for FlagFit Pro components.
+ * Migrated from styles/_dialog-overrides.scss so the components layer owns the same cascade.
+ */
 
 .rsvp-dialog {
   width: var(--dialog-max-width-md);

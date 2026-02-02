@@ -24,16 +24,16 @@ const rootDir = path.join(__dirname, "..");
 
 // Token files to audit
 const TOKEN_FILES = [
-  "angular/src/assets/styles/design-system-tokens.scss",
-  "angular/src/styles/_variables.scss",
-  "angular/src/assets/styles/primeng/_token-mapping.scss",
-  "angular/src/assets/styles/typography-system.scss",
-  "angular/src/assets/styles/spacing-system.scss",
-  "angular/src/assets/styles/layout-system.scss",
-  "angular/src/assets/styles/hover-system.scss",
-  "angular/src/assets/styles/premium-interactions.scss",
-  "angular/src/assets/styles/standardized-components.scss",
-  "angular/src/styles/_mixins.scss",
+  "angular/src/scss/tokens/design-system-tokens.scss",
+  "angular/src/scss/utilities/_variables.scss",
+  "angular/src/scss/components/primeng/_token-mapping.scss",
+  "angular/src/scss/utilities/typography-system.scss",
+  "angular/src/scss/utilities/spacing-system.scss",
+  "angular/src/scss/utilities/layout-system.scss",
+  "angular/src/scss/pages/hover-system.scss",
+  "angular/src/scss/pages/premium-interactions.scss",
+  "angular/src/scss/components/standardized-components.scss",
+  "angular/src/scss/utilities/_mixins.scss",
   "angular/src/styles.scss",
 ];
 

@@ -745,10 +745,7 @@ const FALLBACK_EXERCISES = {
 const WARMUP_TARGET_SECONDS = 25 * 60;
 
 function applyQuarterbackWarmupOverrides(plan) {
-  const removeNames = new Set([
-    "Ankle Rocker + Hip Circles",
-    "5-10-5 Shuttle",
-  ]);
+  const removeNames = new Set(["Ankle Rocker + Hip Circles", "5-10-5 Shuttle"]);
   const qbItems = [
     {
       name: "Band External Rotations",
@@ -1081,8 +1078,15 @@ function buildWarmupTemplate({ variant, isQB, isCenter, warmupFocus }) {
   return plan;
 }
 
-function selectWarmupVariant({ isFitnessDay, isSprintSession, isPracticeDay, trainingFocus }) {
-  if (isFitnessDay) return "fitness";
+function selectWarmupVariant({
+  isFitnessDay,
+  isSprintSession,
+  isPracticeDay,
+  trainingFocus,
+}) {
+  if (isFitnessDay) {
+    return "fitness";
+  }
   const focus = (trainingFocus || "").toLowerCase();
   if (
     isSprintSession ||
@@ -3206,13 +3210,14 @@ async function generateProtocol(supabase, userId, payload, headers) {
   }
 
   const findWarmupMatch = (keywords = []) => {
-    if (!warmUpExercises || warmUpExercises.length === 0) return null;
+    if (!warmUpExercises || warmUpExercises.length === 0) {
+      return null;
+    }
     return warmUpExercises.find((ex) => {
       const name = (ex.name || "").toLowerCase();
       const slug = (ex.slug || "").toLowerCase();
       return keywords.some(
-        (keyword) =>
-          name.includes(keyword) || (slug && slug.includes(keyword)),
+        (keyword) => name.includes(keyword) || (slug && slug.includes(keyword)),
       );
     });
   };

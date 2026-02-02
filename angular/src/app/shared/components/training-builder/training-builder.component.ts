@@ -183,7 +183,9 @@ interface Goal {
                     {{ weatherData()?.temperature }}°F</span
                   >
                   <app-status-tag
-                    [value]="weatherData()?.recommendation ?? 'No recommendation'"
+                    [value]="
+                      weatherData()?.recommendation ?? 'No recommendation'
+                    "
                     [severity]="getWeatherSeverity()"
                     size="sm"
                   />

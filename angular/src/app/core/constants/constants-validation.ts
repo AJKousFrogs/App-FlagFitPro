@@ -126,8 +126,8 @@ if (isDevMode()) {
   try {
     validateAllConstants();
   } catch (error) {
-    // Use console.error here since LoggerService may not be initialized yet
-    // This is a bootstrap-time validation, so console is acceptable
+    // LoggerService is not ready during this bootstrap validation phase, so
+    // console.error is temporarily allowed while we validate constants.
     console.error("❌ Constants validation failed:", error);
     throw error;
   }

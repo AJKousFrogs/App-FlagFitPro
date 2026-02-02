@@ -15,6 +15,7 @@ import {
   ErrorType,
   ERROR_TYPE_MAP,
 } from "../../core/constants/error.constants";
+import { LoggerService } from "../../core/services/logger.service";
 
 /**
  * API error response structure from backend
@@ -27,6 +28,8 @@ export interface ApiErrorResponse {
   requestId?: string;
   errors?: string[];
 }
+
+const fallbackLogger = new LoggerService();
 
 /**
  * Extract a user-friendly error message from any error type
@@ -261,6 +264,6 @@ export function logError(
   if (logger) {
     logger.error(logMessage, error);
   } else if (isDevMode()) {
-    console.error(logMessage, error);
+    fallbackLogger.error(logMessage, error);
   }
 }

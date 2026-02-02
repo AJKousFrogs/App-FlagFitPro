@@ -27,6 +27,24 @@ export interface LiveMetric {
   };
 }
 
+interface LivePerformanceApiMetric {
+  id?: string;
+  metricId?: string;
+  label?: string;
+  icon?: string;
+  value?: number;
+  currentValue?: number;
+  target?: number;
+  goal?: number;
+  unit?: string;
+  trend?: "up" | "down" | "stable";
+  trendValue?: number;
+}
+
+interface LivePerformanceApiResponse {
+  metrics?: LivePerformanceApiMetric[];
+}
+
 @Component({
   selector: "app-live-performance-chart",
   standalone: true,
@@ -37,29 +55,29 @@ export interface LiveMetric {
       <div class="performance-metrics-grid">
         @for (metric of liveMetrics(); track trackByMetricId($index, metric)) {
           <div class="metric-card">
-          <div class="metric-icon">
-            <i [class]="metric.icon"></i>
-          </div>
-          <div class="metric-value">
-            <span class="current-value">{{
-              metric.currentValue | number: "1.1-2"
-            }}</span>
-            <span class="unit">{{ metric.unit }}</span>
-          </div>
-          <div class="metric-trend">
-            <app-status-tag
-              [value]="metric.trend.text"
-              [severity]="getTrendSeverity(metric.trend.direction)"
-              [icon]="getTrendIcon(metric.trend.direction)"
-              size="sm"
-            />
-          </div>
-          <p-progressBar
-            [value]="metric.progress"
-            [showValue]="false"
-            class="metric-progress"
-          >
-          </p-progressBar>
+            <div class="metric-icon">
+              <i [class]="metric.icon"></i>
+            </div>
+            <div class="metric-value">
+              <span class="current-value">{{
+                metric.currentValue | number: "1.1-2"
+              }}</span>
+              <span class="unit">{{ metric.unit }}</span>
+            </div>
+            <div class="metric-trend">
+              <app-status-tag
+                [value]="metric.trend.text"
+                [severity]="getTrendSeverity(metric.trend.direction)"
+                [icon]="getTrendIcon(metric.trend.direction)"
+                size="sm"
+              />
+            </div>
+            <p-progressBar
+              [value]="metric.progress"
+              [showValue]="false"
+              class="metric-progress"
+            >
+            </p-progressBar>
           </div>
         }
       </div>
@@ -80,7 +98,7 @@ export class LivePerformanceChartComponent implements OnInit {
 
   private loadLiveMetrics(): void {
     this.apiService
-      .get("/api/performance/metrics")
+      .get<LivePerformanceApiResponse>("/api/performance/metrics")
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -92,9 +110,7 @@ export class LivePerformanceChartComponent implements OnInit {
 
           this.liveMetrics.set(
             metrics.map((metric) => {
-              const value = Number(
-                metric.value ?? metric.currentValue ?? 0,
-              );
+              const value = Number(metric.value ?? metric.currentValue ?? 0);
               const target = Number(metric.target ?? metric.goal ?? 0);
               const progress =
                 target > 0
@@ -110,7 +126,10 @@ export class LivePerformanceChartComponent implements OnInit {
                 progress,
                 trend: {
                   direction: trendDirection,
-                  text: this.formatTrend(trendDirection, metric.trendValue ?? 0),
+                  text: this.formatTrend(
+                    trendDirection,
+                    metric.trendValue ?? 0,
+                  ),
                 },
               };
             }),

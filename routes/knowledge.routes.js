@@ -31,44 +31,49 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
  * GET /search
  * Search knowledge base entries
  */
-router.get("/search", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const { query, topic, category, limit = 10 } = req.query;
-
-    let dbQuery = supabase
-      .from("knowledge_base_entries")
-      .select(
-        "id, title, content, category, subcategory, source_type, evidence_grade",
-      )
-      .eq("is_active", true);
-
-    if (query) {
-      dbQuery = dbQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`);
-    }
-    if (topic) {
-      dbQuery = dbQuery.ilike("title", `%${topic}%`);
-    }
-    if (category) {
-      dbQuery = dbQuery.eq("category", category);
+router.get(
+  "/search",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const { data: entries, error } = await dbQuery
-      .order("source_quality_score", { ascending: false, nullsFirst: false })
-      .limit(parseInt(limit));
+    try {
+      const { query, topic, category, limit = 10 } = req.query;
 
-    if (error) {
-      throw error;
+      let dbQuery = supabase
+        .from("knowledge_base_entries")
+        .select(
+          "id, title, content, category, subcategory, source_type, evidence_grade",
+        )
+        .eq("is_active", true);
+
+      if (query) {
+        dbQuery = dbQuery.or(`title.ilike.%${query}%,content.ilike.%${query}%`);
+      }
+      if (topic) {
+        dbQuery = dbQuery.ilike("title", `%${topic}%`);
+      }
+      if (category) {
+        dbQuery = dbQuery.eq("category", category);
+      }
+
+      const { data: entries, error } = await dbQuery
+        .order("source_quality_score", { ascending: false, nullsFirst: false })
+        .limit(parseInt(limit));
+
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, entries || []);
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Search error:`, error);
+      return sendSuccess(res, [], "No data available");
     }
-
-    return sendSuccess(res, entries || []);
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Search error:`, error);
-    return sendSuccess(res, [], "No data available");
-  }
-});
+  },
+);
 
 export default router;

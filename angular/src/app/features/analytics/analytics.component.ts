@@ -38,6 +38,7 @@ import {
   PlayerStatisticsService,
 } from "../../core/services/player-statistics.service";
 import { ToastService } from "../../core/services/toast.service";
+import { NotificationService } from "../../core/services/notification.service";
 import { TOAST } from "../../core/constants/toast-messages.constants";
 import { TrainingDataService } from "../../core/services/training-data.service";
 import { SupabaseService } from "../../core/services/supabase.service";
@@ -1205,6 +1206,7 @@ export class AnalyticsComponent implements AfterViewInit {
   private readonly logger = inject(LoggerService);
   private readonly acwrService = inject(AcwrService);
   private readonly toastService = inject(ToastService);
+  private readonly notificationService = inject(NotificationService);
   private readonly supabaseService = inject(SupabaseService);
   private readonly teamRankingService = inject(TeamPerformanceRankingService);
 
@@ -1882,7 +1884,7 @@ export class AnalyticsComponent implements AfterViewInit {
 
 💡 Tip: Hover over data points to see trend information!`;
 
-    alert(instructions);
+    this.notificationService.info(instructions, "Chart Interactions");
   }
 
   viewChartDetails(chartType: string): void {
@@ -1900,30 +1902,34 @@ export class AnalyticsComponent implements AfterViewInit {
       speed:
         "Incorporate interval training, plyometrics, and proper warm-up routines.",
     };
-    alert(
+    this.notificationService.info(
       tips[area] || "Continue consistent training and track your progress.",
+      "Improvement Tips",
     );
   }
 
   filterTrainingData(): void {
     this.logger.info("Opening training data filter");
     // For now, show available filter options
-    alert(
+    this.notificationService.info(
       "Filter options: Last 7 days, Last 30 days, Last 90 days, Season. Use the dropdown selectors to filter data.",
+      "Training Data Filters",
     );
   }
 
   showBenchmarks(): void {
     this.logger.info("Showing position benchmarks");
-    alert(
+    this.notificationService.info(
       "Position Benchmarks:\n\nQB: 4.5s 40-yard, 85% completion rate\nWR: 4.4s 40-yard, 90% catch rate\nRB: 4.6s 40-yard, 5+ YPC\nDB: 4.5s 40-yard, 3+ flag pulls/game",
+      "Position Benchmarks",
     );
   }
 
   showOptimizationTips(): void {
     this.logger.info("Showing optimization tips");
-    alert(
+    this.notificationService.info(
       "Optimization Tips:\n\n1. Focus on your weakest metrics\n2. Increase training frequency gradually\n3. Track rest and recovery\n4. Review game film weekly\n5. Work with position-specific drills",
+      "Optimization Tips",
     );
   }
 

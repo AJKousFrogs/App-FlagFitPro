@@ -12,7 +12,12 @@ import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import { getErrorMessage, sendError, sendErrorResponse, sendSuccess } from "./utils/validation.js";
+import {
+  getErrorMessage,
+  sendError,
+  sendErrorResponse,
+  sendSuccess,
+} from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "nutrition";
@@ -37,7 +42,10 @@ router.get(
     }
 
     try {
-      const exists = await supabase.from("nutrition_logs").select("id").limit(1);
+      const exists = await supabase
+        .from("nutrition_logs")
+        .select("id")
+        .limit(1);
       if (exists?.error && exists.error.code === "42P01") {
         return sendSuccess(res, []);
       }
@@ -95,14 +103,18 @@ router.get(
           type: "positive",
           icon: "pi pi-check-circle",
           title: "Good Nutrition Balance",
-          description: "Your nutrition is well-balanced. Keep up the great work!",
+          description:
+            "Your nutrition is well-balanced. Keep up the great work!",
         });
       }
 
       return sendSuccess(res, insights);
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to load insights");
-      serverLogger.error(`[${ROUTE_NAME}] Insights error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Insights error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,

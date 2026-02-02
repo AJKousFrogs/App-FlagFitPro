@@ -37,6 +37,7 @@ Before dropping any unused indexes:
 - `idx_session_version_history_coach` on `session_version_history`
 
 **Potential Use Cases:**
+
 - Security auditing queries
 - Violation pattern analysis
 - Session history tracking
@@ -50,6 +51,7 @@ Before dropping any unused indexes:
 - `idx_consent_access_log_created` on `consent_access_log`
 
 **Potential Use Cases:**
+
 - Compliance reporting
 - Privacy audit trails
 - Consent history queries
@@ -63,6 +65,7 @@ Before dropping any unused indexes:
 - `idx_safety_override_log_trigger` on `safety_override_log`
 
 **Potential Use Cases:**
+
 - Security audits
 - Compliance reporting
 - Historical analysis
@@ -81,6 +84,7 @@ Before dropping any unused indexes:
 - `idx_team_members_user_teams` on `team_members`
 
 **Potential Use Cases:**
+
 - User search functionality
 - Team membership queries
 - Bulk operations
@@ -99,6 +103,7 @@ Before dropping any unused indexes:
 - `idx_training_sessions_athlete_id` on `training_sessions`
 
 **Potential Use Cases:**
+
 - Training analytics
 - Session filtering
 - Performance reporting
@@ -136,6 +141,7 @@ Before dropping any unused indexes:
 - `idx_opponent_analysis_player` on `opponent_analysis`
 
 **Potential Use Cases:**
+
 - Game statistics queries
 - Player performance analysis
 - Team analytics
@@ -150,6 +156,7 @@ Before dropping any unused indexes:
 - `idx_knowledge_search_vector` on `knowledge_search_index`
 
 **Potential Use Cases:**
+
 - Search functionality
 - Content filtering
 - Evidence-based queries
@@ -178,6 +185,7 @@ Before dropping any unused indexes:
 - `idx_ai_feedback_flagged` on `ai_feedback`
 
 **Potential Use Cases:**
+
 - AI feature queries
 - Chat history
 - Recommendation filtering
@@ -209,6 +217,7 @@ Before dropping any unused indexes:
 - `idx_exercises_position_specific` on `exercises`
 
 **Potential Use Cases:**
+
 - Video library queries
 - Training program management
 - Exercise filtering
@@ -226,6 +235,7 @@ Before dropping any unused indexes:
 - `idx_daily_wellness_checkin_user_date` on `daily_wellness_checkin`
 
 **Potential Use Cases:**
+
 - Health tracking
 - Wellness reporting
 - Historical analysis
@@ -246,6 +256,7 @@ Before dropping any unused indexes:
 - `idx_digest_history_type` on `digest_history`
 
 **Potential Use Cases:**
+
 - Notification queries
 - Preference filtering
 - Digest generation
@@ -355,7 +366,7 @@ Before dropping any unused indexes:
 
 ```sql
 -- Check index usage statistics
-SELECT 
+SELECT
     schemaname,
     tablename,
     indexname,

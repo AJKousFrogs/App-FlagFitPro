@@ -190,7 +190,7 @@ interface QuickFormData {
     `
       /* ==========================================================================
        TODAY'S PRACTICE - Design System Compliant Styles
-       Uses tokens from: assets/styles/design-system-tokens.scss
+       Uses tokens from: scss/tokens/design-system-tokens.scss
        ========================================================================== */
 
       /* --------------------------------------------------------------------------

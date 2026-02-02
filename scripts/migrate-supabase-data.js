@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Migrate data from old Supabase project to new Supabase project
- * 
+ *
  * This script:
  * 1. Connects to both old and new Supabase projects
  * 2. Exports all data from the old project
  * 3. Imports data to the new project
  * 4. Handles foreign key relationships
- * 
+ *
  * Usage:
  *   OLD_SUPABASE_URL=https://pvzicicwxgftcielnm.supabase.co \
  *   OLD_SUPABASE_SERVICE_KEY=old_service_key \
@@ -34,27 +34,22 @@ if (fs.existsSync(envPath)) {
 // Get environment variables
 const OLD_SUPABASE_URL =
   process.env.OLD_SUPABASE_URL || "https://pvzicicwxgftcielnm.supabase.co";
-const {OLD_SUPABASE_SERVICE_KEY} = process.env;
+const { OLD_SUPABASE_SERVICE_KEY } = process.env;
 const NEW_SUPABASE_URL =
   process.env.NEW_SUPABASE_URL || "https://grfjmnjpzvknmsxrwesx.supabase.co";
 const NEW_SUPABASE_SERVICE_KEY =
-  process.env.NEW_SUPABASE_SERVICE_KEY ||
-  process.env.SUPABASE_SERVICE_KEY;
+  process.env.NEW_SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_KEY;
 
 // Validate environment variables
 if (!OLD_SUPABASE_SERVICE_KEY) {
   console.error("❌ Error: OLD_SUPABASE_SERVICE_KEY is required");
-  console.error(
-    "Set it as an environment variable or in your .env file",
-  );
+  console.error("Set it as an environment variable or in your .env file");
   process.exit(1);
 }
 
 if (!NEW_SUPABASE_SERVICE_KEY) {
   console.error("❌ Error: NEW_SUPABASE_SERVICE_KEY is required");
-  console.error(
-    "Set it as an environment variable or in your .env file",
-  );
+  console.error("Set it as an environment variable or in your .env file");
   process.exit(1);
 }
 
@@ -82,7 +77,7 @@ const MIGRATION_ORDER = [
   "equipment_types",
   "injury_types",
   "notification_types",
-  
+
   // User and authentication
   "users",
   "user_preferences",
@@ -93,13 +88,13 @@ const MIGRATION_ORDER = [
   "user_age_groups",
   "youth_athlete_settings",
   "parent_guardian_links",
-  
+
   // Teams and rosters
   "teams",
   "team_members",
   "team_coaches",
   "team_settings",
-  
+
   // Training system
   "training_programs",
   "training_phases",
@@ -110,7 +105,7 @@ const MIGRATION_ORDER = [
   "workout_logs",
   "exercise_logs",
   "session_summaries",
-  
+
   // Load monitoring
   "load_monitoring",
   "load_daily",
@@ -119,14 +114,14 @@ const MIGRATION_ORDER = [
   "wellness_entries",
   "readiness_scores",
   "acwr_history",
-  
+
   // Wellness and health
   "wellness_measurements",
   "hydration_logs",
   "injury_tracking",
   "injury_details",
   "athlete_injuries",
-  
+
   // Nutrition
   "nutrition_logs",
   "nutrition_goals",
@@ -135,7 +130,7 @@ const MIGRATION_ORDER = [
   "athlete_nutrition_profiles",
   "nutrition_plans",
   "meal_templates",
-  
+
   // Games and tournaments
   "tournaments",
   "tournament_participation",
@@ -146,27 +141,27 @@ const MIGRATION_ORDER = [
   "officials",
   "official_availability",
   "game_official_assignments",
-  
+
   // Analytics
   "analytics_events",
   "user_analytics",
-  
+
   // Notifications
   "notifications",
   "push_notification_tokens",
   "parent_notifications",
   "coach_alert_acknowledgments",
-  
+
   // Community
   "posts",
   "comments",
   "chat_messages",
   "chatbot_user_context",
-  
+
   // Knowledge base
   "knowledge_base",
   "knowledge_base_categories",
-  
+
   // Training analytics
   "digest_history",
   "micro_sessions",
@@ -185,17 +180,20 @@ async function getAllTables(supabase) {
         .from("information_schema.tables")
         .select("table_name")
         .eq("table_schema", "public");
-      
+
       if (schemaError) {
         console.warn("⚠️  Could not query tables:", schemaError.message);
         return MIGRATION_ORDER; // Use predefined order
       }
-      
+
       return tables.map((t) => t.table_name);
     }
     return data || MIGRATION_ORDER;
   } catch (err) {
-    console.warn("⚠️  Error getting tables, using predefined order:", err.message);
+    console.warn(
+      "⚠️  Error getting tables, using predefined order:",
+      err.message,
+    );
     return MIGRATION_ORDER;
   }
 }
@@ -206,28 +204,30 @@ async function getAllTables(supabase) {
 async function exportTable(supabase, tableName) {
   try {
     console.log(`  📤 Exporting ${tableName}...`);
-    
+
     // Get all rows (with pagination for large tables)
     let allData = [];
     let page = 0;
     const pageSize = 1000;
     let hasMore = true;
-    
+
     while (hasMore) {
       const { data, error } = await supabase
         .from(tableName)
         .select("*")
         .range(page * pageSize, (page + 1) * pageSize - 1);
-      
+
       if (error) {
         // Table might not exist or might have RLS blocking
         if (error.code === "PGRST116" || error.message.includes("permission")) {
-          console.log(`    ⚠️  Skipping ${tableName} (permission denied or doesn't exist)`);
+          console.log(
+            `    ⚠️  Skipping ${tableName} (permission denied or doesn't exist)`,
+          );
           return null;
         }
         throw error;
       }
-      
+
       if (data && data.length > 0) {
         allData = allData.concat(data);
         page++;
@@ -236,7 +236,7 @@ async function exportTable(supabase, tableName) {
         hasMore = false;
       }
     }
-    
+
     console.log(`    ✅ Exported ${allData.length} rows`);
     return allData;
   } catch (error) {
@@ -253,20 +253,20 @@ async function importTable(supabase, tableName, data) {
     console.log(`  ⏭️  Skipping ${tableName} (no data)`);
     return { success: true, imported: 0 };
   }
-  
+
   try {
     console.log(`  📥 Importing ${tableName}...`);
-    
+
     // Insert in batches to avoid timeouts
     const batchSize = 100;
     let imported = 0;
     let errors = 0;
-    
+
     for (let i = 0; i < data.length; i += batchSize) {
       const batch = data.slice(i, i + batchSize);
-      
+
       const { error } = await supabase.from(tableName).insert(batch);
-      
+
       if (error) {
         // Check if it's a duplicate key error (data might already exist)
         if (error.code === "23505") {
@@ -276,8 +276,11 @@ async function importTable(supabase, tableName, data) {
             const { error: singleError } = await supabase
               .from(tableName)
               .upsert(row, { onConflict: "id" });
-            if (!singleError) {imported++;}
-            else {errors++;}
+            if (!singleError) {
+              imported++;
+            } else {
+              errors++;
+            }
           }
         } else {
           console.error(`    ❌ Error importing batch:`, error.message);
@@ -287,8 +290,10 @@ async function importTable(supabase, tableName, data) {
         imported += batch.length;
       }
     }
-    
-    console.log(`    ✅ Imported ${imported} rows${errors > 0 ? ` (${errors} errors)` : ""}`);
+
+    console.log(
+      `    ✅ Imported ${imported} rows${errors > 0 ? ` (${errors} errors)` : ""}`,
+    );
     return { success: errors === 0, imported, errors };
   } catch (error) {
     console.error(`    ❌ Error importing ${tableName}:`, error.message);
@@ -303,29 +308,35 @@ async function migrateData() {
   console.log("🚀 Starting Supabase Data Migration\n");
   console.log(`📡 Old Project: ${OLD_SUPABASE_URL}`);
   console.log(`📡 New Project: ${NEW_SUPABASE_URL}\n`);
-  
+
   // Test connections
   console.log("🔍 Testing connections...");
   try {
-    const { data: oldUsers } = await oldSupabase.from("users").select("id").limit(1);
+    const { data: oldUsers } = await oldSupabase
+      .from("users")
+      .select("id")
+      .limit(1);
     console.log("✅ Connected to old project");
   } catch (error) {
     console.error("❌ Failed to connect to old project:", error.message);
     process.exit(1);
   }
-  
+
   try {
-    const { data: newUsers } = await newSupabase.from("users").select("id").limit(1);
+    const { data: newUsers } = await newSupabase
+      .from("users")
+      .select("id")
+      .limit(1);
     console.log("✅ Connected to new project");
   } catch (error) {
     console.error("❌ Failed to connect to new project:", error.message);
     process.exit(1);
   }
-  
+
   console.log("\n📋 Getting table list...");
   const tables = await getAllTables(oldSupabase);
   console.log(`✅ Found ${tables.length} tables to migrate\n`);
-  
+
   // Migration statistics
   const stats = {
     total: tables.length,
@@ -334,24 +345,24 @@ async function migrateData() {
     skipped: 0,
     errors: 0,
   };
-  
+
   // Migrate each table
   for (const tableName of tables) {
     console.log(`\n📦 Processing: ${tableName}`);
-    
+
     // Export from old
     const data = await exportTable(oldSupabase, tableName);
-    
+
     if (data === null) {
       stats.skipped++;
       continue;
     }
-    
+
     stats.exported++;
-    
+
     // Import to new
     const result = await importTable(newSupabase, tableName, data);
-    
+
     if (result.success) {
       stats.imported++;
       stats.imported += result.imported;
@@ -359,9 +370,9 @@ async function migrateData() {
       stats.errors++;
     }
   }
-  
+
   // Print summary
-  console.log(`\n${  "=".repeat(50)}`);
+  console.log(`\n${"=".repeat(50)}`);
   console.log("📊 Migration Summary");
   console.log("=".repeat(50));
   console.log(`Total tables: ${stats.total}`);
@@ -370,7 +381,7 @@ async function migrateData() {
   console.log(`Skipped: ${stats.skipped}`);
   console.log(`Errors: ${stats.errors}`);
   console.log("=".repeat(50));
-  
+
   if (stats.errors === 0) {
     console.log("\n✅ Migration completed successfully!");
   } else {

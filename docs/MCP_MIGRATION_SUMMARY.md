@@ -34,12 +34,14 @@ Most migrations have already been applied to the project. The database is fully 
 To verify the migration status:
 
 1. **Check Applied Migrations**:
+
    ```bash
    # Use MCP list_migrations tool
    # Or check Supabase Dashboard → Database → Migrations
    ```
 
 2. **Verify Tables**:
+
    ```bash
    # Use MCP list_tables tool
    # Or run: node scripts/list-supabase-tables.js
@@ -48,7 +50,7 @@ To verify the migration status:
 3. **Check Database State**:
    ```bash
    # Use MCP execute_sql tool to query:
-   SELECT COUNT(*) FROM information_schema.tables 
+   SELECT COUNT(*) FROM information_schema.tables
    WHERE table_schema = 'public';
    ```
 
@@ -57,6 +59,7 @@ To verify the migration status:
 If you need to migrate data from the old project (`pvzicicwxgftcielnm`):
 
 1. **Set Environment Variables**:
+
    ```bash
    export OLD_SUPABASE_URL="https://pvzicicwxgftcielnm.supabase.co"
    export OLD_SUPABASE_SERVICE_KEY="your_old_service_key"

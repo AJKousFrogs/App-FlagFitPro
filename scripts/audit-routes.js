@@ -35,10 +35,14 @@ function parseRouteObjects(source) {
 
     if (source.startsWith("path", i)) {
       const pathMatch = source.slice(i).match(/^path\s*:\s*["']([^"']+)["']/);
-      if (!pathMatch) continue;
+      if (!pathMatch) {
+        continue;
+      }
       const pathValue = pathMatch[1];
       const start = stack[stack.length - 1];
-      if (typeof start !== "number") continue;
+      if (typeof start !== "number") {
+        continue;
+      }
       if (!routes.has(start)) {
         routes.set(start, { path: pathValue, start });
       }
@@ -48,7 +52,9 @@ function parseRouteObjects(source) {
   const routeObjects = [];
   for (const [start, route] of routes.entries()) {
     const end = endByStart.get(start);
-    if (typeof end !== "number") continue;
+    if (typeof end !== "number") {
+      continue;
+    }
     routeObjects.push({ ...route, end, source: source.slice(start, end + 1) });
   }
 
@@ -60,8 +66,12 @@ function auditEntryClassification(routes) {
   const invalid = [];
 
   for (const route of routes) {
-    if (route.path === "**") continue;
-    const match = route.source.match(/\bentry\s*:\s*["'](deeplink|hub|internal)["']/);
+    if (route.path === "**") {
+      continue;
+    }
+    const match = route.source.match(
+      /\bentry\s*:\s*["'](deeplink|hub|internal)["']/,
+    );
     if (!match) {
       missing.push(route.path);
       continue;

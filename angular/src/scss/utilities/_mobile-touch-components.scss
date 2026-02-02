@@ -1,0 +1,531 @@
+@use "./mixins" as *;
+
+/**
+ * Mobile Touch-Friendly Components
+ * ================================================================
+ * Global touch-friendly button and form input styles
+ * Optimized for Chrome Mobile & Safari iOS
+ * Apple HIG & Material Design Guidelines compliant
+ * 
+ * UPDATED January 2026:
+ * - Migrated to @layer mobile for proper cascade
+ * - CSS layers handle specificity properly
+ * 
+ * Key Requirements:
+ * - Minimum 44x44px touch targets (Apple HIG)
+ * - 16px font size to prevent iOS zoom
+ * - Proper spacing between interactive elements
+ * - Clear visual feedback for touch
+ * ================================================================
+ */
+
+// ================================================================
+// TOUCH-FRIENDLY COMPONENTS (within mobile layer)
+// ================================================================
+
+@layer mobile {
+  // ================================================================
+  // TOUCH-FRIENDLY BUTTONS
+  // ================================================================
+
+  @include respond-to(md) {
+    // All buttons (including PrimeNG)
+    button,
+    [role="button"],
+    .p-button,
+    .action-btn,
+    .btn {
+      min-height: var(--ds-button-height-md);
+      min-width: var(--ds-button-height-md);
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--ds-font-size-md);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+
+      // CRITICAL: Ensure buttons receive touch events
+      pointer-events: auto;
+      position: relative;
+      z-index: var(--z-index-base, 1);
+
+      // Prevent accidental double-tap zoom
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: var(--state-layer-primary);
+
+      // Active state feedback for touch
+      &:active {
+        transform: scale(0.98);
+        transition: transform var(--transition-fast) var(--ease-standard);
+      }
+
+      // Ensure proper spacing between buttons
+      & + button,
+      & + .p-button {
+        margin-left: var(--space-2);
+      }
+    }
+
+    // Icon-only buttons - ensure square
+    button.icon-only,
+    .p-button.p-button-icon-only {
+      width: var(--ds-button-height-md);
+      height: var(--ds-button-height-md);
+      padding: var(--space-2);
+
+      i {
+        font-size: var(--ds-font-size-xl);
+      }
+    }
+
+    // Small buttons still need minimum touch target
+    button.small,
+    .p-button.p-button-sm {
+      min-height: var(--space-10);
+      min-width: var(--space-10);
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--ds-font-size-xs);
+    }
+
+    // Full-width buttons on mobile (common pattern)
+    button.full-width,
+    .p-button.full-width {
+      width: 100%;
+      justify-content: center;
+    }
+
+    // Floating action button (FAB) - ensure proper size
+    .fab,
+    .floating-action-button {
+      width: var(--space-9);
+      height: var(--space-9);
+      border-radius: var(--radius-full);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-2);
+
+      i {
+        font-size: var(--ds-font-size-2xl);
+      }
+
+      &:active {
+        box-shadow: var(--shadow-1);
+      }
+    }
+  }
+
+  // ================================================================
+  // TOUCH-FRIENDLY FORM INPUTS
+  // ================================================================
+
+  @include respond-to(md) {
+    // All text inputs
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="search"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    textarea,
+    select,
+    .p-inputtext,
+    .p-select,
+    .p-textarea,
+    .p-inputnumber-input {
+      min-height: 44px;
+      font-size: var(--ds-font-size-md); // CRITICAL: Prevents iOS zoom
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      border: var(--border-1) solid var(--surface-border);
+      background: var(--surface-card);
+      color: var(--text-color);
+
+      // Smooth transitions
+      transition:
+        border-color var(--transition-normal) var(--ease-standard),
+        box-shadow var(--transition-normal) var(--ease-standard);
+
+      // Focus state - clear visual feedback
+      &:focus-visible {
+        outline: none;
+        border-color: var(--ds-primary-green);
+        box-shadow: 0 0 0 3px rgba(var(--ds-primary-green-rgb), 0.15);
+      }
+
+      // Disabled state
+      &:disabled {
+        opacity: var(--opacity-dimmed);
+        cursor: not-allowed;
+        background: var(--surface-ground);
+      }
+
+      // Placeholder
+      &::placeholder {
+        color: var(--text-color-secondary);
+        opacity: var(--opacity-subtle);
+      }
+    }
+
+    // Textarea specific
+    textarea,
+    .p-textarea {
+      min-height: 88px; // 2x button height
+      resize: vertical;
+      line-height: var(--ds-line-height-body);
+    }
+
+    // Select dropdowns
+    select,
+    .p-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right var(--space-3) center;
+      padding-right: var(--space-8); // Space for dropdown arrow
+    }
+
+    // Number input - hide spinners (too small for touch)
+    input[type="number"] {
+      -moz-appearance: textfield;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+
+    // Search input - clear button
+    input[type="search"] {
+      -webkit-appearance: none;
+
+      &::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath fill='%23666' d='M10 8.586L14.95 3.636 16.364 5.05 11.414 10l4.95 4.95-1.414 1.414L10 11.414l-4.95 4.95-1.414-1.414L8.586 10 3.636 5.05 5.05 3.636z'/%3E%3C/svg%3E");
+        cursor: pointer;
+      }
+    }
+
+    // Date/Time inputs
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"] {
+      position: relative;
+
+      // Larger touch target for calendar icon
+      &::-webkit-calendar-picker-indicator {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  // ================================================================
+  // TOUCH-FRIENDLY CHECKBOXES & RADIOS
+  // ================================================================
+
+  @include respond-to(md) {
+    // Native checkboxes and radios
+    input[type="checkbox"],
+    input[type="radio"] {
+      min-width: 24px;
+      min-height: 24px;
+      width: 24px;
+      height: 24px;
+      margin: var(--space-2);
+      cursor: pointer;
+      accent-color: var(--ds-primary-green);
+
+      // Ensure proper spacing with label
+      & + label {
+        margin-left: var(--space-2);
+        cursor: pointer;
+        user-select: none;
+      }
+    }
+
+    // PrimeNG checkboxes
+    .p-checkbox {
+      width: 24px;
+      height: 24px;
+
+      .p-checkbox-box {
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
+      }
+
+      .p-checkbox-icon {
+        font-size: var(--ds-font-size-md);
+      }
+    }
+
+    // PrimeNG radio buttons
+    .p-radiobutton {
+      width: 24px;
+      height: 24px;
+
+      .p-radiobutton-box {
+        width: 24px;
+        height: 24px;
+        border-width: 2px;
+      }
+
+      .p-radiobutton-icon {
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    // Checkbox/Radio groups - ensure proper spacing
+    .p-checkbox-group,
+    .p-radiobutton-group,
+    .form-check-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+
+      .p-field-checkbox,
+      .p-field-radiobutton,
+      .form-check {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        min-height: 44px; // Touch target
+        padding: var(--space-2);
+        border-radius: var(--radius-md);
+        transition: background 0.2s ease;
+
+        &:active {
+          background: var(--surface-ground);
+        }
+      }
+    }
+  }
+
+  // ================================================================
+  // TOUCH-FRIENDLY TOGGLES / SWITCHES
+  // ================================================================
+
+  @include respond-to(md) {
+    .p-toggleswitch,
+    .toggle-switch {
+      width: 48px;
+      height: 28px;
+
+      .p-toggleswitch-slider,
+      .toggle-slider {
+        border-radius: var(--radius-full);
+      }
+
+      .p-toggleswitch-handle,
+      .toggle-handle {
+        width: 24px;
+        height: 24px;
+      }
+
+      // Increase touch area
+      &::before {
+        content: "";
+        position: absolute;
+        inset: -8px;
+      }
+    }
+  }
+
+  // ================================================================
+  // TOUCH-FRIENDLY SLIDERS
+  // ================================================================
+
+  @include respond-to(md) {
+    .p-slider,
+    input[type="range"] {
+      height: 8px;
+
+      // Larger thumb for touch
+      .p-slider-handle,
+      &::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-full);
+        cursor: pointer;
+      }
+
+      &::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-full);
+        cursor: pointer;
+      }
+
+      // Increase touch area
+      &::before {
+        content: "";
+        position: absolute;
+        top: -12px;
+        bottom: -12px;
+        left: 0;
+        right: 0;
+      }
+    }
+  }
+
+  // ================================================================
+  // TOUCH-FRIENDLY FORM LABELS
+  // ================================================================
+
+  @include respond-to(md) {
+    label,
+    .p-field-label,
+    .form-label {
+      font-size: var(--ds-font-size-md);
+      font-weight: var(--ds-font-weight-medium);
+      color: var(--text-color-secondary);
+      margin-bottom: var(--space-2);
+      display: block;
+      cursor: pointer;
+
+      // Required indicator
+      &.required::after,
+      &[required]::after {
+        content: " *";
+        color: var(--primitive-error-500);
+      }
+    }
+  }
+
+  // ================================================================
+  // TOUCH-FRIENDLY FORM GROUPS
+  // ================================================================
+
+  @include respond-to(md) {
+    .p-field,
+    .form-field,
+    .form-group {
+      margin-bottom: var(--space-4);
+
+      // Stack labels above inputs
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    // Form rows - stack on mobile
+    .form-row,
+    .p-formgroup-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    // Helper text
+    .p-field-helper,
+    .form-helper,
+    small.helper-text {
+      font-size: var(--ds-font-size-xs);
+      color: var(--text-color-secondary);
+      margin-top: var(--space-1);
+    }
+
+    // Error messages
+    .p-error,
+    .form-error,
+    small.error-text {
+      font-size: var(--ds-font-size-xs);
+      color: var(--primitive-error-500);
+      margin-top: var(--space-1);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+
+      &::before {
+        content: "⚠";
+        font-size: var(--ds-font-size-md);
+      }
+    }
+  }
+
+  // ================================================================
+  // TOUCH-FRIENDLY LINKS
+  // ================================================================
+
+  @include respond-to(md) {
+    a {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-1) 0;
+      touch-action: manipulation;
+
+      // Active state
+      &:active {
+        opacity: 0.7;
+      }
+    }
+
+    // Text links (not buttons)
+    a:not(.btn):not(.p-button) {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  // ================================================================
+  // MOBILE FORM VALIDATION
+  // ================================================================
+
+  @include respond-to(md) {
+    // Invalid state
+    .p-invalid,
+    .form-control.invalid,
+    input:invalid,
+    textarea:invalid,
+    select:invalid {
+      border-color: var(--primitive-error-500);
+
+      &:focus-visible {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+      }
+    }
+
+    // Valid state
+    .p-valid,
+    .form-control.valid,
+    input:valid:not(:placeholder-shown),
+    textarea:valid:not(:placeholder-shown),
+    select:valid:not(:placeholder-shown) {
+      border-color: var(--primitive-success-500);
+
+      &:focus-visible {
+        box-shadow: 0 0 0 3px rgba(99, 173, 14, 0.15);
+      }
+    }
+  }
+
+  // ================================================================
+  // PREVENT IOS ZOOM ON INPUT FOCUS
+  // ================================================================
+
+  @include respond-to(md) {
+    // This is the most important rule for iOS Safari
+    input,
+    select,
+    textarea {
+      font-size: var(--ds-font-size-md); // Prevents iOS zoom
+    }
+
+    // Prevent viewport zoom
+    :root {
+      touch-action: pan-x pan-y;
+    }
+  }
+}

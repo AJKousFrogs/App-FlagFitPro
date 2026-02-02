@@ -1,5 +1,4 @@
 @use "styles/mixins" as *;
-
 @include stat-block;
 
 .nutritionist-dashboard {
@@ -389,16 +388,6 @@
       .need-item {
         display: flex;
         flex-direction: column;
-
-        .need-value {
-          font-weight: var(--ds-font-weight-bold);
-          color: var(--primary-color);
-        }
-
-        .need-label {
-          font-size: var(--ds-font-size-xs);
-          color: var(--text-color-secondary);
-        }
       }
     }
   }
@@ -480,6 +469,16 @@
       }
     }
   }
+
+
+.nutrition-needs .need-value {
+  font-weight: var(--ds-font-weight-bold);
+  color: var(--primary-color);
+}
+
+.nutrition-needs .need-label {
+  font-size: var(--ds-font-size-xs);
+  color: var(--text-color-secondary);
 }
 
 // Forms
@@ -529,4 +528,5 @@
     grid-template-columns: 1fr;
   }
 }
+
 // Dialog sizing

@@ -18,17 +18,10 @@
 // 1. IMPORTS (MUST BE AT TOP)
 // ============================================
 
-@import "design-system-tokens";
-@import "primeng/token-mapping";
-@import "primeng/brand-overrides";
-@import "primitives/typography";
-@import "primitives/layout";
-@import "primitives/cards";
-@import "primitives/forms";
-@import "primitives/tables";
-@import "primitives/feedback";
-@import "primitives/dialogs";
-@import "overrides/exceptions";
+@import "../scss/tokens/design-system-tokens";
+
+/* PrimeNG token mapping and primitives now live under angular/src/scss/components. */
+/* This stub exists for tooling that expects assets/styles/index.scss. */
 
 // ============================================
 // 2. LAYER ORDER DECLARATION
@@ -152,27 +145,5 @@ body {
 
   *:focus-visible {
     outline: 3px solid CanvasText;
-  }
-}
-
-// ============================================
-// 6. REDUCED MOTION (in overrides layer)
-// ============================================
-
-@layer overrides {
-  // exception: reduced-motion
-  // Ticket: DS-SYSTEM
-  // Owner: @system
-  // Scope: global accessibility
-  // Remove by: never (permanent accessibility feature)
-  // Reason: Required for WCAG compliance
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms;
-      animation-iteration-count: 1;
-      transition-duration: 0.01ms;
-    }
   }
 }

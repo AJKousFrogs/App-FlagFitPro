@@ -31,7 +31,6 @@ stub("get", "/dashboard/wearables", "dashboard.wearables");
 // Training
 stub("post", "/training/generate-substitute", "training.generateSubstitute");
 
-
 // Analytics (missing sub-features)
 stub("get", "/analytics/injury-risk", "analytics.injuryRisk");
 stub("get", "/analytics/user-engagement", "analytics.userEngagement");
@@ -63,7 +62,11 @@ stub("post", "/recovery/complete-session", "recovery.completeSession");
 stub("post", "/recovery/stop-session", "recovery.stopSession");
 stub("get", "/recovery/research-insights", "recovery.researchInsights");
 stub("get", "/recovery/weekly-trends", "recovery.weeklyTrends");
-stub("get", "/recovery/protocol-effectiveness", "recovery.protocolEffectiveness");
+stub(
+  "get",
+  "/recovery/protocol-effectiveness",
+  "recovery.protocolEffectiveness",
+);
 
 // Admin
 stub("get", "/admin/health-metrics", "admin.healthMetrics");
@@ -94,12 +97,19 @@ stub("get", "/api-docs", "apiDocs");
 // AI feedback
 stub("post", "/ai/feedback", "ai.feedback");
 
-
 // Depth chart
 stub("get", "/depth-chart/templates", "depthChart.templates.list");
 stub("get", "/depth-chart/templates/:id", "depthChart.templates.details");
-stub("get", "/depth-chart/templates/:id/history", "depthChart.templates.history");
-stub("get", "/depth-chart/templates/:id/unassigned", "depthChart.templates.unassigned");
+stub(
+  "get",
+  "/depth-chart/templates/:id/history",
+  "depthChart.templates.history",
+);
+stub(
+  "get",
+  "/depth-chart/templates/:id/unassigned",
+  "depthChart.templates.unassigned",
+);
 stub("get", "/depth-chart/entries", "depthChart.entries.list");
 stub("get", "/depth-chart/entries/:id", "depthChart.entries.details");
 stub("post", "/depth-chart/entries/swap", "depthChart.entries.swap");
@@ -110,7 +120,11 @@ stub("get", "/equipment/items", "equipment.items.list");
 stub("get", "/equipment/items/:id", "equipment.items.details");
 stub("get", "/equipment/items/:id/history", "equipment.items.history");
 stub("get", "/equipment/assignments", "equipment.assignments.list");
-stub("get", "/equipment/player/:playerId/assignments", "equipment.player.assignments");
+stub(
+  "get",
+  "/equipment/player/:playerId/assignments",
+  "equipment.player.assignments",
+);
 stub("post", "/equipment/checkout", "equipment.checkout");
 stub("post", "/equipment/checkout/bulk", "equipment.checkout.bulk");
 stub("post", "/equipment/return", "equipment.return");
@@ -125,7 +139,11 @@ stub("get", "/officials/:id/availability", "officials.availability");
 stub("get", "/officials/available", "officials.available");
 stub("post", "/officials/schedule", "officials.schedule");
 stub("get", "/officials/game/:gameId", "officials.gameOfficials");
-stub("put", "/officials/assignments/:assignmentId", "officials.assignments.update");
+stub(
+  "put",
+  "/officials/assignments/:assignmentId",
+  "officials.assignments.update",
+);
 stub("get", "/officials/payments/summary", "officials.payments.summary");
 
 // Push
@@ -165,7 +183,11 @@ stub(
   "staffPhysiotherapist.updateRtp",
 );
 stub("get", "/staff-physiotherapist/summary", "staffPhysiotherapist.summary");
-stub("post", "/staff-physiotherapist/injuries", "staffPhysiotherapist.logInjury");
+stub(
+  "post",
+  "/staff-physiotherapist/injuries",
+  "staffPhysiotherapist.logInjury",
+);
 
 stub("get", "/staff-psychology/my-data", "staffPsychology.myData");
 stub("post", "/staff-psychology/my-data/log", "staffPsychology.logEntry");
@@ -185,7 +207,11 @@ stub(
   "/staff-psychology/athletes/:athleteId",
   "staffPsychology.athleteData",
 );
-stub("post", "/staff-psychology/assessments", "staffPsychology.createAssessment");
+stub(
+  "post",
+  "/staff-psychology/assessments",
+  "staffPsychology.createAssessment",
+);
 
 // Scouting
 stub("get", "/scouting/reports", "scouting.reports");

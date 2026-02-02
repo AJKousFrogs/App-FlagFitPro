@@ -141,9 +141,10 @@ function calculateMeasurementsSummary(measurements) {
   if (measurements.length > 1) {
     const previous = measurements[1];
     summary.changes = {
-      weight: latest.weight !== undefined && previous.weight !== undefined
-        ? latest.weight - previous.weight
-        : undefined,
+      weight:
+        latest.weight !== undefined && previous.weight !== undefined
+          ? latest.weight - previous.weight
+          : undefined,
       bodyFat:
         latest.bodyFat !== undefined && previous.bodyFat !== undefined
           ? latest.bodyFat - previous.bodyFat
@@ -186,7 +187,8 @@ function calculatePerformanceTrends(tests) {
 
   Object.entries(grouped).forEach(([type, items]) => {
     const sorted = [...items].sort(
-      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
     const latest = sorted[0];
     const previous = sorted[1];
@@ -372,7 +374,10 @@ router.get(
         },
       });
     } catch (error) {
-      const errorMessage = getErrorMessage(error, "Failed to load measurements");
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to load measurements",
+      );
       serverLogger.error(
         `[${ROUTE_NAME}] Measurements error: ${errorMessage}`,
         error,
@@ -400,7 +405,10 @@ router.post(
     try {
       const measurement = req.body || {};
 
-      if (measurement.weight === undefined || measurement.height === undefined) {
+      if (
+        measurement.weight === undefined ||
+        measurement.height === undefined
+      ) {
         return sendError(
           res,
           "Weight and height are required",
@@ -486,7 +494,7 @@ router.get(
         });
       }
 
-      const testType = req.query.testType;
+      const { testType } = req.query;
       const timeframe = req.query.timeframe || "12m";
       const page = Math.max(1, parseInt(req.query.page, 10) || 1);
       const limit = Math.min(parseInt(req.query.limit, 10) || 50, 100);
@@ -537,10 +545,7 @@ router.get(
       });
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to load tests");
-      serverLogger.error(
-        `[${ROUTE_NAME}] Tests error: ${errorMessage}`,
-        error,
-      );
+      serverLogger.error(`[${ROUTE_NAME}] Tests error: ${errorMessage}`, error);
       return sendErrorResponse(
         res,
         error,
@@ -597,7 +602,10 @@ router.post(
         .json(createSuccessResponse(mapTest(data), "Test recorded"));
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to save test");
-      serverLogger.error(`[${ROUTE_NAME}] Save test error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Save test error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -882,7 +890,10 @@ router.get(
       return sendSuccess(res, (data || []).map(mapInjury));
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to load injuries");
-      serverLogger.error(`[${ROUTE_NAME}] Injuries error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Injuries error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -939,7 +950,10 @@ router.post(
         .json(createSuccessResponse(mapInjury(data), "Logged"));
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to save injury");
-      serverLogger.error(`[${ROUTE_NAME}] Injury save error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Injury save error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -1035,7 +1049,10 @@ router.get(
       });
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to load trends");
-      serverLogger.error(`[${ROUTE_NAME}] Trends error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Trends error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -1067,39 +1084,44 @@ router.get(
       const hasSupplements = await tableExists("supplement_logs");
       const hasInjuries = await tableExists("injuries");
 
-      const [measurementsResult, testsResult, wellnessResult, supplementsResult, injuriesResult] =
-        await Promise.all([
-          hasMeasurements
-            ? supabase
-                .from("physical_measurements")
+      const [
+        measurementsResult,
+        testsResult,
+        wellnessResult,
+        supplementsResult,
+        injuriesResult,
+      ] = await Promise.all([
+        hasMeasurements
+          ? supabase
+              .from("physical_measurements")
+              .select("*")
+              .eq("user_id", req.userId)
+          : Promise.resolve({ data: [] }),
+        hasTests
+          ? supabase
+              .from("performance_tests")
+              .select("*")
+              .eq("user_id", req.userId)
+          : Promise.resolve({ data: [] }),
+        hasWellness
+          ? (async () => {
+              const userColumn = await getWellnessUserColumn();
+              return supabase
+                .from("wellness_entries")
                 .select("*")
-                .eq("user_id", req.userId)
-            : Promise.resolve({ data: [] }),
-          hasTests
-            ? supabase
-                .from("performance_tests")
-                .select("*")
-                .eq("user_id", req.userId)
-            : Promise.resolve({ data: [] }),
-          hasWellness
-            ? (async () => {
-                const userColumn = await getWellnessUserColumn();
-                return supabase
-                  .from("wellness_entries")
-                  .select("*")
-                  .eq(userColumn, req.userId);
-              })()
-            : Promise.resolve({ data: [] }),
-          hasSupplements
-            ? supabase
-                .from("supplement_logs")
-                .select("*")
-                .eq("user_id", req.userId)
-            : Promise.resolve({ data: [] }),
-          hasInjuries
-            ? supabase.from("injuries").select("*").eq("user_id", req.userId)
-            : Promise.resolve({ data: [] }),
-        ]);
+                .eq(userColumn, req.userId);
+            })()
+          : Promise.resolve({ data: [] }),
+        hasSupplements
+          ? supabase
+              .from("supplement_logs")
+              .select("*")
+              .eq("user_id", req.userId)
+          : Promise.resolve({ data: [] }),
+        hasInjuries
+          ? supabase.from("injuries").select("*").eq("user_id", req.userId)
+          : Promise.resolve({ data: [] }),
+      ]);
 
       const exportData = {
         measurements: (measurementsResult.data || []).map(mapMeasurement),
@@ -1114,7 +1136,10 @@ router.get(
       return res.json(createSuccessResponse(exportData));
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to export data");
-      serverLogger.error(`[${ROUTE_NAME}] Export error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Export error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,

@@ -16,11 +16,7 @@ import { supabase } from "./utils/database.js";
 import { createHealthCheckHandler } from "./utils/health-check.js";
 import { rateLimit } from "./utils/rate-limiter.js";
 import { serverLogger } from "./utils/server-logger.js";
-import {
-  resolveUserId,
-  sendError,
-  sendSuccess,
-} from "./utils/validation.js";
+import { resolveUserId, sendError, sendSuccess } from "./utils/validation.js";
 
 const router = express.Router();
 const ROUTE_NAME = "dashboard";
@@ -350,40 +346,45 @@ router.get(
  * GET /daily-quote
  * Get daily motivational quote
  */
-router.get("/daily-quote", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    // Get a random quote using the day of year as seed
-    const dayOfYear = Math.floor(
-      (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000,
-    );
-
-    const { data: quotes } = await supabase
-      .from("daily_quotes")
-      .select("*")
-      .limit(100);
-
-    if (quotes && quotes.length > 0) {
-      const quote = quotes[dayOfYear % quotes.length];
-      return sendSuccess(res, quote);
+router.get(
+  "/daily-quote",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    return sendSuccess(res, {
-      quote:
-        "Success is not final, failure is not fatal: it is the courage to continue that counts.",
-      author: "Winston Churchill",
-    });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Daily quote error:`, error);
-    return sendSuccess(res, {
-      quote: "The only way to do great work is to love what you do.",
-      author: "Steve Jobs",
-    });
-  }
-});
+    try {
+      // Get a random quote using the day of year as seed
+      const dayOfYear = Math.floor(
+        (Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000,
+      );
+
+      const { data: quotes } = await supabase
+        .from("daily_quotes")
+        .select("*")
+        .limit(100);
+
+      if (quotes && quotes.length > 0) {
+        const quote = quotes[dayOfYear % quotes.length];
+        return sendSuccess(res, quote);
+      }
+
+      return sendSuccess(res, {
+        quote:
+          "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+        author: "Winston Churchill",
+      });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Daily quote error:`, error);
+      return sendSuccess(res, {
+        quote: "The only way to do great work is to love what you do.",
+        author: "Steve Jobs",
+      });
+    }
+  },
+);
 
 // =============================================================================
 // NOTIFICATIONS - DEPRECATED

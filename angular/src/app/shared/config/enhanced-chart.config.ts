@@ -10,6 +10,7 @@
  */
 
 import { isDevMode } from "@angular/core";
+import { LoggerService } from "@core/services/logger.service";
 import {
   ChartOptions,
   TooltipItem,
@@ -65,6 +66,8 @@ function getResponsiveFontSize(baseSize: number): number {
 /**
  * Custom tooltip with trend data
  */
+const chartLogger = new LoggerService();
+
 export const CUSTOM_TOOLTIP_CALLBACKS = {
   title: (tooltipItems: TooltipItem<ChartType>[]) => {
     return tooltipItems[0]?.label || "";
@@ -580,8 +583,7 @@ export function exportChartAsPNG(
     // Note: LoggerService not available in utility function context
     // Dev mode warning is acceptable for debugging
     if (isDevMode()) {
-      // eslint-disable-next-line no-console
-      console.warn("[exportChartAsPNG] Chart or canvas not available");
+      chartLogger.warn("[exportChartAsPNG] Chart or canvas not available");
     }
     return;
   }
@@ -613,7 +615,9 @@ export function toggleDataset(chart: Chart, datasetIndex: number): void {
   // Defensive guard: ensure chart methods exist
   if (!chart || typeof chart.isDatasetVisible !== "function") {
     if (isDevMode()) {
-      console.warn("[toggleDataset] Chart instance not properly initialized");
+      chartLogger.warn(
+        "[toggleDataset] Chart instance not properly initialized",
+      );
     }
     return;
   }
@@ -634,8 +638,7 @@ export function updateChartFontSizes(chart: Chart): void {
   // This prevents "t.clear is not a function" when chart isn't fully initialized
   if (!chart || typeof chart.update !== "function") {
     if (isDevMode()) {
-      // eslint-disable-next-line no-console
-      console.warn(
+      chartLogger.warn(
         "[updateChartFontSizes] Chart instance not properly initialized",
       );
     }

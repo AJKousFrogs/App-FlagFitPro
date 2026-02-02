@@ -1,5 +1,4 @@
 @use "styles/mixins" as *;
-
 @include stat-block;
 
 .psychology-reports {
@@ -569,4 +568,5 @@
     grid-template-columns: 1fr;
   }
 }
+
 // Dialog sizing

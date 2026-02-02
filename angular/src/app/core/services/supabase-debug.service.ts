@@ -4,6 +4,8 @@ import { SupabaseClient } from "@supabase/supabase-js";
 /**
  * Supabase Debugging Service
  * Comprehensive debugging toolkit for backend issues
+ * Console output is intentionally verbose for diagnostics and relies on legacy
+ * console.group/log/error behavior until a LoggerService-based refactor occurs.
  */
 @Injectable({
   providedIn: "root",

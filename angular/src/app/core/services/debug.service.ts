@@ -86,20 +86,11 @@ export class DebugService {
         getConfig: () => this.config,
       };
 
-      console.log(
-        "%c🔧 Angular Debug Mode Enabled",
-        "color: #00ff00; font-weight: var(--ds-font-weight-bold); font-size: var(--ds-font-size-sm);",
+      this.logger.info("🔧 Angular Debug Mode Enabled");
+      this.logger.info("Access debug utilities via window.angularDebug");
+      this.logger.info(
+        "Available commands: getSignalLogs, getEffectLogs, getApiLogs, clearLogs, setConfig",
       );
-      console.log(
-        "%cAccess debug utilities via window.angularDebug",
-        "color: #00aaff; font-size: var(--ds-font-size-xs);",
-      );
-      console.log("Available commands:");
-      console.log("  - window.angularDebug.getSignalLogs()");
-      console.log("  - window.angularDebug.getEffectLogs()");
-      console.log("  - window.angularDebug.getApiLogs()");
-      console.log("  - window.angularDebug.clearLogs()");
-      console.log("  - window.angularDebug.setConfig({ ... })");
     }
   }
 
@@ -125,14 +116,14 @@ export class DebugService {
       this.addSignalLog(entry);
 
       const componentPrefix = componentName ? `[${componentName}]` : "";
-      console.log(
-        `%c📊 Signal Update ${componentPrefix} ${signalName}`,
-        "color: #ff9800; font-weight: var(--ds-font-weight-bold);",
+      this.logger.debug(`📊 Signal Update ${componentPrefix} ${signalName}`, {
         value,
-      );
+        componentName,
+        signalName,
+      });
 
       if (this.config.logStackTraces) {
-        console.trace("Signal update stack trace");
+        this.logStackTrace("Signal update stack trace");
       }
     });
   }
@@ -163,14 +154,14 @@ export class DebugService {
       this.addEffectLog(entry);
 
       const componentPrefix = componentName ? `[${componentName}]` : "";
-      console.log(
-        `%c⚡ Effect Executed ${componentPrefix} ${effectName}`,
-        "color: #9c27b0; font-weight: var(--ds-font-weight-bold);",
-        `(${duration.toFixed(2)}ms)`,
-      );
+      this.logger.debug(`⚡ Effect Executed ${componentPrefix} ${effectName}`, {
+        duration: `${duration.toFixed(2)}ms`,
+        componentName,
+        effectName,
+      });
 
       if (this.config.logStackTraces) {
-        console.trace("Effect execution stack trace");
+        this.logStackTrace("Effect execution stack trace");
       }
     });
   }
@@ -202,18 +193,14 @@ export class DebugService {
       status && status >= 200 && status < 300 ? "#4caf50" : "#f44336";
     const statusText = status ? `[${status}]` : error ? "[ERROR]" : "[PENDING]";
 
-    console.log(
-      `%c🌐 API Call ${method} ${statusText}`,
-      `color: ${statusColor}; font-weight: var(--ds-font-weight-bold);`,
-      {
-        url,
-        duration: duration ? `${duration.toFixed(2)}ms` : "N/A",
-        error,
-      },
-    );
+    this.logger.debug(`🌐 API Call ${method} ${statusText}`, {
+      url,
+      duration: duration ? `${duration.toFixed(2)}ms` : "N/A",
+      error,
+    });
 
     if (error && this.config.logStackTraces) {
-      console.trace("API error stack trace");
+      this.logStackTrace("API error stack trace");
     }
   }
 
@@ -223,11 +210,9 @@ export class DebugService {
   logLifecycle(componentName: string, event: string, data?: any): void {
     if (!this.config.enableSignalLogging) return;
 
-    console.log(
-      `%c🔄 Lifecycle [${componentName}] ${event}`,
-      "color: #2196f3; font-weight: var(--ds-font-weight-bold);",
-      data || "",
-    );
+    this.logger.debug(`🔄 Lifecycle [${componentName}] ${event}`, {
+      data: data || "",
+    });
   }
 
   /**
@@ -240,14 +225,13 @@ export class DebugService {
     const color = isWarning ? "#ff9800" : "#4caf50";
     const prefix = isWarning ? "⚠️" : "⏱️";
 
-    console.log(
-      `%c${prefix} Performance: ${label}`,
-      `color: ${color}; font-weight: var(--ds-font-weight-bold);`,
-      `${duration.toFixed(2)}ms`,
-    );
+    this.logger.debug(`${prefix} Performance: ${label}`, {
+      duration: `${duration.toFixed(2)}ms`,
+      isWarning,
+    });
 
     if (isWarning) {
-      console.warn(`Performance threshold exceeded for: ${label}`);
+      this.logger.warn(`Performance threshold exceeded for: ${label}`);
     }
   }
 
@@ -286,7 +270,7 @@ export class DebugService {
    */
   updateConfig(config: Partial<DebugConfig>): void {
     this.config = { ...this.config, ...config };
-    console.log("Debug config updated:", this.config);
+    this.logger.info("Debug config updated", this.config);
   }
 
   /**
@@ -317,7 +301,7 @@ export class DebugService {
     this.signalLogs = [];
     this.effectLogs = [];
     this.apiLogs = [];
-    console.log("All debug logs cleared");
+    this.logger.info("All debug logs cleared");
   }
 
   /**
@@ -384,6 +368,11 @@ export class DebugService {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    console.log("Debug logs downloaded");
+    this.logger.info("Debug logs downloaded");
+  }
+
+  private logStackTrace(label: string): void {
+    const stack = new Error(label).stack;
+    this.logger.debug("Stack trace", { label, stack });
   }
 }

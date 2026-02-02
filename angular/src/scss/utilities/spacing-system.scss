@@ -25,7 +25,7 @@
    - Input padding: space-3 to space-4 (12-16px)
    ================================================================ */
 
-@use "./design-system-tokens.scss" as *;
+@use "../tokens/design-system-tokens" as *;
 
 /* ================================================================
    CARD & PANEL SPACING

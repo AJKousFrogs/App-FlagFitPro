@@ -17,7 +17,7 @@
    5. Enterprise aesthetic: calm, clinical, professional
    
    USAGE:
-   Import this file AFTER primeng-theme.scss in styles.scss
+   Import this file AFTER `angular/src/scss/components/primeng-theme.scss` in styles.scss
    ================================================================ */
 
 /* ================================================================
@@ -718,8 +718,8 @@
     min-width: var(--p-checkbox-width);
     min-height: var(--p-checkbox-height);
     border-radius: var(--p-checkbox-border-radius);
-    border: 2px solid var(--color-border-default, #d1d5db);
-    background: var(--color-surface-primary, white);
+    border: 2px solid var(--color-border-default);
+    background: var(--color-surface-primary);
     transition:
       background-color 200ms ease,
       border-color 200ms ease,
@@ -727,12 +727,12 @@
   }
 
   .p-checkbox .p-checkbox-box.p-highlight {
-    background: var(--ds-primary-green, #089949);
-    border-color: var(--ds-primary-green, #089949);
+    background: var(--ds-primary-green);
+    border-color: var(--ds-primary-green);
   }
 
   .p-checkbox .p-checkbox-box .p-checkbox-icon {
-    color: white;
+    color: var(--color-text-on-primary);
   }
 
   .p-checkbox.p-disabled {

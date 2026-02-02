@@ -4,7 +4,6 @@
 // ============================================================================
 
 @use "styles/mixins" as *;
-
 @include stat-block;
 
 .roadmap-panel {
@@ -341,18 +340,18 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-
-        .number {
-          font-size: var(--ds-font-size-3xl);
-          font-weight: var(--ds-font-weight-bold);
-          text-shadow: var(--shadow-text-sm);
-        }
-
-        .label {
-          font-size: var(--ds-font-size-md);
-          opacity: 0.9;
-        }
       }
+    }
+
+    .countdown-item .number {
+      font-size: var(--ds-font-size-3xl);
+      font-weight: var(--ds-font-weight-bold);
+      text-shadow: var(--shadow-text-sm);
+    }
+
+    .countdown-item .label {
+      font-size: var(--ds-font-size-md);
+      opacity: 0.9;
     }
   }
 }

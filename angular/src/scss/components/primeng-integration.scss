@@ -1,4 +1,4 @@
-@use "styles/mixins" as *;
+@use "../../styles/mixins" as *;
 
 /**
  * ================================================================
@@ -688,43 +688,6 @@
    MOBILE TOUCH FIXES - CRITICAL for button clicks on mobile
    ================================================================ */
 
-@include respond-to(md) {
-  // Ensure all PrimeNG buttons work on mobile
-  .p-button,
-  .p-button-label,
-  .p-button-icon {
-    pointer-events: auto !important;
-    touch-action: manipulation !important;
-  }
-
-  // Ensure dialog components receive touch events
-  .p-dialog,
-  .p-dialog-content,
-  .p-dialog-footer,
-  .p-dialog-header {
-    pointer-events: auto !important;
-  }
-
-  // Ensure form components work in dialogs
-  .p-inputtext,
-  .p-textarea,
-  .p-select,
-  .p-dropdown,
-  .p-checkbox,
-  .p-radiobutton,
-  .p-toggleswitch,
-  .p-inputnumber {
-    pointer-events: auto !important;
-    touch-action: manipulation !important;
-  }
-
-  // Active state for all buttons on touch devices
-  .p-button:active:not(:disabled):not(.p-disabled) {
-    transform: scale(0.98) !important;
-    transition: transform 0.1s ease !important;
-  }
-}
-
 /* 3. This eliminates the need for encapsulation hacks
  * 4. Color inheritance works properly through the cascade
  */
@@ -888,7 +851,6 @@
   --p-button-raised-shadow:
     0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.05);
   --p-button-gap: var(--space-2);
-
   --p-button-font-weight: var(--font-weight-medium, 500);
   --p-button-sm-font-size: var(--font-body-sm-size, 0.875rem);
   --p-button-sm-padding-y: var(--space-2, 0.5rem);
@@ -898,7 +860,6 @@
   --p-button-lg-padding-x: var(--space-8, 2rem);
 
   /* Card - Typography aligned to unified system */
-  --p-card-background: var(--surface-card, var(--color-text-on-primary));
   --p-card-border-color: var(
     --color-border-secondary,
     var(--primitive-neutral-200)
@@ -921,6 +882,7 @@
   --p-card-title-font-weight: var(
     --font-weight-semibold
   ); /* semibold for card headers */
+
   --p-card-subtitle-font-size: var(--font-body-sm-size, 0.875rem); /* 14px */
   --p-card-subtitle-font-weight: var(--font-body-sm-weight, 400);
   --p-card-subtitle-color: var(
@@ -1045,7 +1007,6 @@
   --p-checkbox-checked-background: var(--ds-primary-green);
   --p-checkbox-checked-border-color: var(--ds-primary-green);
   --p-checkbox-icon-checked-color: var(--color-text-on-primary);
-
   --p-toggleswitch-width: 44px;
   --p-toggleswitch-height: 24px;
   --p-toggleswitch-focus-ring: 0 0 0 3px rgba(8, 153, 73, 0.15);
@@ -1199,6 +1160,7 @@
   --p-tabview-tab-font-weight: var(
     --font-weight-semibold
   ); /* semibold for tab labels */
+
   --p-tabview-tab-line-height: var(--font-body-sm-line-height, 1.45);
   --p-tabview-tab-active-border-color: var(--ds-primary-green);
   --p-tabview-tab-active-color: var(--ds-primary-green);

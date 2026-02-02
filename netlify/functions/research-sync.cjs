@@ -661,7 +661,6 @@ async function syncResearchForTopic(topic, _supabase) {
     const pubmedResults = await searchPubMed(topic.pubmed_query, 10);
     allArticles.push(...pubmedResults);
     // Rate limiting - wait 400ms between API calls
-    // eslint-disable-next-line no-promise-executor-return
     await new Promise((resolve) => setTimeout(resolve, 400));
   }
 
@@ -669,7 +668,6 @@ async function syncResearchForTopic(topic, _supabase) {
   if (topic.europe_pmc_query) {
     const europePmcResults = await searchEuropePMC(topic.europe_pmc_query, 10);
     allArticles.push(...europePmcResults);
-    // eslint-disable-next-line no-promise-executor-return
     await new Promise((resolve) => setTimeout(resolve, 400));
   }
 
@@ -683,7 +681,6 @@ async function syncResearchForTopic(topic, _supabase) {
     topic.keywords?.includes("AIS") ||
     topic.keywords?.includes("Australian Institute of Sport")
   ) {
-    // eslint-disable-next-line no-promise-executor-return
     await new Promise((resolve) => setTimeout(resolve, 400));
     const aisResults = await searchOpenAlexByInstitution(
       "Australian Institute of Sport",
@@ -772,7 +769,6 @@ async function syncFromTopInstitutions(topic = null) {
       }
 
       // Rate limiting
-      // eslint-disable-next-line no-promise-executor-return
       await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (e) {
       console.error(
@@ -860,7 +856,6 @@ async function getTopInstitutionResearch(topic, limitPerInstitution = 5) {
     });
 
     // Rate limiting
-    // eslint-disable-next-line no-promise-executor-return
     await new Promise((resolve) => setTimeout(resolve, 300));
   }
 
@@ -923,7 +918,6 @@ async function syncAllResearch() {
       }
 
       // Rate limiting between topics
-      // eslint-disable-next-line no-promise-executor-return
       await new Promise((resolve) => setTimeout(resolve, 1000));
     } catch (e) {
       console.error(`Error syncing topic ${topic.topic_name}: ${e.message}`);

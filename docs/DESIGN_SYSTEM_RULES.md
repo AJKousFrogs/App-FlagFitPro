@@ -2130,8 +2130,8 @@ The typography system has been **unified** with predictable hierarchy across all
 
 ### Unified Typography Tokens (SINGLE SOURCE OF TRUTH)
 
-**Source file:** `angular/src/assets/styles/design-system-tokens.scss`  
-**Implementation:** `angular/src/assets/styles/typography-system.scss`
+**Source file:** `angular/src/scss/tokens/design-system-tokens.scss`  
+**Implementation:** `angular/src/scss/utilities/typography-system.scss`
 
 ```scss
 /* Font Families */
@@ -4428,9 +4428,9 @@ Without a defined output contract, refactors accidentally change token availabil
 ### Output Structure
 
 ```
-assets/styles/tokens/
+angular/src/scss/tokens/
 ├── design-system-tokens.scss    # Source (authored here)
-├── tokens.css                   # Generated output (consumed by app)
+├── tokens.css                   # Generated via npm run sass:compile
 └── changelog.md                 # Version history
 ```
 

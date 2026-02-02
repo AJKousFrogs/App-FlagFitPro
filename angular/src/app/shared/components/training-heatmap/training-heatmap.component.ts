@@ -35,6 +35,10 @@ interface HeatmapApiCell {
   duration: number;
 }
 
+interface HeatmapApiResponse {
+  cells?: HeatmapApiCell[];
+}
+
 @Component({
   selector: "app-training-heatmap",
   standalone: true,
@@ -176,7 +180,9 @@ export class TrainingHeatmapComponent {
 
   updateHeatmap() {
     this.apiService
-      .get("/api/performance/heatmap", { timeRange: this.selectedTimeRange })
+      .get<HeatmapApiResponse>("/api/performance/heatmap", {
+        timeRange: this.selectedTimeRange,
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
@@ -223,7 +229,9 @@ export class TrainingHeatmapComponent {
 
         const intensity = Math.max(0, Math.min(7, Number(cell.intensity || 0)));
         const duration = Math.max(0, Number(cell.duration || 0));
-        const value = this.showIntensity ? Math.round(intensity * 10) : duration;
+        const value = this.showIntensity
+          ? Math.round(intensity * 10)
+          : duration;
 
         return {
           date,

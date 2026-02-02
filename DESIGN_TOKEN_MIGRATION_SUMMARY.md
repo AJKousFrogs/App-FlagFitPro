@@ -18,7 +18,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 - `angular/src/app/features/profile/profile.component.scss` - Fixed 5 line-height instances
 - `angular/src/app/features/analytics/analytics.component.scss` - Fixed line-height
 - `angular/src/app/features/community/community.component.scss` - Fixed line-height
-- `angular/src/assets/styles/typography-system.scss` - Fixed 5 font-weight instances
+- `angular/src/scss/utilities/typography-system.scss` - Fixed 5 font-weight instances
 
 **Changes Made:**
 
@@ -37,7 +37,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 
 ### ✅ 2. Created Missing Design Tokens
 
-**Added to `angular/src/assets/styles/design-system-tokens.scss`:**
+**Added to `angular/src/scss/tokens/design-system-tokens.scss`:**
 
 #### Opacity Tokens
 
@@ -175,7 +175,7 @@ Completed comprehensive design token audit and migration across the entire codeb
 
 ### Core Files
 
-1. `angular/src/assets/styles/design-system-tokens.scss` - Added new tokens
+1. `angular/src/scss/tokens/design-system-tokens.scss` - Added new tokens
 2. `.stylelintrc.cjs` - Enhanced linting rules
 
 ### High-Traffic Components
@@ -185,9 +185,9 @@ Completed comprehensive design token audit and migration across the entire codeb
 5. `angular/src/app/features/profile/profile.component.scss` - Typography, opacity, transitions
 6. `angular/src/app/features/analytics/analytics.component.scss` - Typography, opacity, z-index
 7. `angular/src/app/features/community/community.component.scss` - Typography, transitions
-8. `angular/src/assets/styles/typography-system.scss` - Typography fixes
-9. `angular/src/assets/styles/primeng-integration.scss` - Font-weight fixes
-10. `angular/src/assets/styles/primeng-theme.scss` - Font-size, transitions
+8. `angular/src/scss/utilities/typography-system.scss` - Typography fixes
+9. `angular/src/scss/components/primeng-integration.scss` - Font-weight fixes
+10. `angular/src/scss/components/primeng-theme.scss` - Font-size, transitions
 
 ### Feature Components
 

@@ -27,6 +27,7 @@ npm run verify:supabase
 ```
 
 Expected output:
+
 - ✅ Connection successful
 - ⚠️ Tables don't exist yet (this is expected)
 
@@ -41,6 +42,7 @@ The new Supabase project needs all database migrations applied. Choose one metho
 ```
 
 This will:
+
 - Connect to the new Supabase project
 - Run all migration files in order
 - Save results to `database/migration_results/`
@@ -73,6 +75,7 @@ npm run verify:supabase
 ```
 
 You should now see:
+
 - ✅ Connection successful
 - ✅ Core tables exist (6/6)
 
@@ -106,6 +109,7 @@ node scripts/migrate-supabase-data.js
 ```
 
 The script will:
+
 - Export all data from old project
 - Import to new project in correct order
 - Handle duplicates gracefully
@@ -124,9 +128,11 @@ Update environment variables in Netlify Dashboard:
 ## ✅ Step 7: Test Application
 
 1. **Local Testing:**
+
    ```bash
    npm run dev
    ```
+
    - Verify authentication works
    - Check data loads correctly
    - Test key features
@@ -189,6 +195,7 @@ If something goes wrong:
 ## Support
 
 For issues:
+
 - Check migration logs
 - Review Supabase dashboard logs
 - Verify environment variables

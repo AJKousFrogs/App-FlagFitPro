@@ -6,7 +6,6 @@
 
 // Grid layout - matches Dashboard .stats-overview EXACTLY
 @use "styles/mixins" as *;
-
 @include stat-block;
 
 .stats-overview {

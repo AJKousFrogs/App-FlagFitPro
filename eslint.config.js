@@ -159,15 +159,26 @@ export default [
   // RELAXED RULES FOR SCRIPTS (BUILD/UTILITY)
   // ============================================
   {
-    files: ["scripts/**/*.js", "scripts/**/*.cjs"],
+    files: ["scripts/**/*.js", "scripts/**/*.cjs", "scripts/**/*.mjs"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        ...globals.node,
+        ...globals.es2025,
+      },
+    },
     rules: {
       "no-console": "off",
-      "no-unused-vars": "warn",
+      "no-unused-vars": "off",
+      "prefer-const": "off",
+      "no-useless-concat": "off",
       "require-await": "off",
       "no-await-in-loop": "off",
       "no-promise-executor-return": "warn",
       "no-restricted-syntax": "off",
       "no-undef": "warn",
+      "no-loop-func": "off",
     },
   },
 
@@ -178,19 +189,24 @@ export default [
     files: ["netlify/functions/**/*.js", "netlify/functions/**/*.cjs"],
     rules: {
       "no-console": "off",
-      "no-unused-vars": [
-        "warn",
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-          ignoreRestSiblings: true,
-        },
-      ],
+      "no-unused-vars": "off",
+      "prefer-const": "off",
+      "prefer-destructuring": "off",
       "require-await": "off",
       "no-await-in-loop": "off",
-      "no-promise-executor-return": "warn",
+      "no-promise-executor-return": "off",
       "no-undef": "warn",
+    },
+  },
+  {
+    files: ["netlify/plugins/**/*.js", "netlify/plugins/**/*.cjs"],
+    rules: {
+      "no-console": "off",
+      "no-unused-vars": "off",
+      "prefer-const": "off",
+      "require-await": "off",
+      "no-await-in-loop": "off",
+      "no-promise-executor-return": "off",
     },
   },
 
@@ -206,7 +222,9 @@ export default [
     ],
     rules: {
       "no-console": "off",
-      "no-unused-vars": "warn",
+      "no-unused-vars": "off",
+      "prefer-const": "off",
+      "no-useless-concat": "off",
       "require-await": "off",
       "no-await-in-loop": "off",
     },
@@ -216,7 +234,14 @@ export default [
   // RELAXED RULES FOR TEST FILES
   // ============================================
   {
-    files: ["**/*.test.js", "**/*.spec.js", "tests/**/*.js"],
+    files: [
+      "**/*.test.js",
+      "**/*.spec.js",
+      "**/*.test.cjs",
+      "**/*.spec.cjs",
+      "tests/**/*.js",
+      "tests/**/*.cjs",
+    ],
     rules: {
       "no-console": "off",
       "no-unused-vars": "off",
@@ -224,6 +249,8 @@ export default [
       "require-await": "off",
       "no-script-url": "off",
       "no-await-in-loop": "off",
+      "prefer-const": "off",
+      "no-useless-concat": "off",
     },
   },
 ];

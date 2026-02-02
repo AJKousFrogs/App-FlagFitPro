@@ -127,7 +127,7 @@ async function resolveTeamId(userId, teamId) {
       return { isValid: false, error: "Access denied" };
     }
 
-    return { isValid: true, teamId: teamId, role: membership.role };
+    return { isValid: true, teamId, role: membership.role };
   }
 
   const memberships = await getUserTeams(userId);
@@ -200,10 +200,7 @@ function parseOptionalDate(dateString) {
 }
 
 function normalizeEventPayload(payload, { isUpdate = false } = {}) {
-  const hasMandatoryField = Object.prototype.hasOwnProperty.call(
-    payload,
-    "is_mandatory",
-  );
+  const hasMandatoryField = Object.hasOwn(payload, "is_mandatory");
   const isMandatory = hasMandatoryField
     ? payload.is_mandatory !== false
     : isUpdate
@@ -243,79 +240,93 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.0.0"));
 // EVENTS
 // =============================================================================
 
-router.get("/events", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const teamIdParam = req.query.team_id;
-    const { isValid, error, teamId } = await resolveTeamId(
-      req.userId,
-      typeof teamIdParam === "string" ? teamIdParam : null,
-    );
-
-    if (!isValid) {
-      return sendError(res, error, "UNAUTHORIZED_ACCESS", 403);
+router.get(
+  "/events",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    if (!teamId) {
-      return sendSuccess(res, []);
+    try {
+      const teamIdParam = req.query.team_id;
+      const { isValid, error, teamId } = await resolveTeamId(
+        req.userId,
+        typeof teamIdParam === "string" ? teamIdParam : null,
+      );
+
+      if (!isValid) {
+        return sendError(res, error, "UNAUTHORIZED_ACCESS", 403);
+      }
+
+      if (!teamId) {
+        return sendSuccess(res, []);
+      }
+
+      const eventType =
+        typeof req.query.event_type === "string" ? req.query.event_type : null;
+      if (eventType && !ALLOWED_EVENT_TYPES.has(eventType)) {
+        return sendError(res, "Invalid event type", "VALIDATION_ERROR", 400);
+      }
+
+      const startDate = parseOptionalDate(req.query.start_date);
+      const endDate = parseOptionalDate(req.query.end_date);
+      const limit = parseInt(req.query.limit, 10);
+
+      if (req.query.start_date && !startDate) {
+        return sendError(res, "Invalid start_date", "VALIDATION_ERROR", 400);
+      }
+
+      if (req.query.end_date && !endDate) {
+        return sendError(res, "Invalid end_date", "VALIDATION_ERROR", 400);
+      }
+
+      let query = supabase
+        .from("team_events")
+        .select("*")
+        .eq("team_id", teamId)
+        .order("start_time", { ascending: true });
+
+      if (eventType) {
+        query = query.eq("event_type", eventType);
+      }
+
+      if (startDate) {
+        query = query.gte("start_time", startDate);
+      }
+
+      if (endDate) {
+        query = query.lte("start_time", endDate);
+      }
+
+      if (!Number.isNaN(limit) && limit > 0 && limit <= 200) {
+        query = query.limit(limit);
+      }
+
+      const { data, error: queryError } = await query;
+
+      if (queryError) {
+        throw queryError;
+      }
+
+      return sendSuccess(res, data || []);
+    } catch (error) {
+      const errorMessage = getErrorMessage(error, "Failed to load events");
+      serverLogger.error(
+        `[${ROUTE_NAME}] Get events error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to load events",
+        "FETCH_ERROR",
+        500,
+      );
     }
-
-    const eventType =
-      typeof req.query.event_type === "string" ? req.query.event_type : null;
-    if (eventType && !ALLOWED_EVENT_TYPES.has(eventType)) {
-      return sendError(res, "Invalid event type", "VALIDATION_ERROR", 400);
-    }
-
-    const startDate = parseOptionalDate(req.query.start_date);
-    const endDate = parseOptionalDate(req.query.end_date);
-    const limit = parseInt(req.query.limit, 10);
-
-    if (req.query.start_date && !startDate) {
-      return sendError(res, "Invalid start_date", "VALIDATION_ERROR", 400);
-    }
-
-    if (req.query.end_date && !endDate) {
-      return sendError(res, "Invalid end_date", "VALIDATION_ERROR", 400);
-    }
-
-    let query = supabase
-      .from("team_events")
-      .select("*")
-      .eq("team_id", teamId)
-      .order("start_time", { ascending: true });
-
-    if (eventType) {
-      query = query.eq("event_type", eventType);
-    }
-
-    if (startDate) {
-      query = query.gte("start_time", startDate);
-    }
-
-    if (endDate) {
-      query = query.lte("start_time", endDate);
-    }
-
-    if (!Number.isNaN(limit) && limit > 0 && limit <= 200) {
-      query = query.limit(limit);
-    }
-
-    const { data, error: queryError } = await query;
-
-    if (queryError) {
-      throw queryError;
-    }
-
-    return sendSuccess(res, data || []);
-  } catch (error) {
-    const errorMessage = getErrorMessage(error, "Failed to load events");
-    serverLogger.error(`[${ROUTE_NAME}] Get events error: ${errorMessage}`, error);
-    return sendErrorResponse(res, error, "Failed to load events", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 router.post(
   "/events",
@@ -399,9 +410,7 @@ router.post(
         throw error;
       }
 
-      return res
-        .status(201)
-        .json(createSuccessResponse(data, "Event created"));
+      return res.status(201).json(createSuccessResponse(data, "Event created"));
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to create event");
       serverLogger.error(
@@ -491,12 +500,7 @@ router.put(
           filteredUpdates.start_time,
         );
         if (!normalizedStartUpdate) {
-          return sendError(
-            res,
-            "Invalid start time",
-            "VALIDATION_ERROR",
-            400,
-          );
+          return sendError(res, "Invalid start time", "VALIDATION_ERROR", 400);
         }
         filteredUpdates.start_time = normalizedStartUpdate;
       }
@@ -504,12 +508,7 @@ router.put(
       if (filteredUpdates.end_time) {
         const normalizedEndUpdate = parseOptionalDate(filteredUpdates.end_time);
         if (!normalizedEndUpdate) {
-          return sendError(
-            res,
-            "Invalid end time",
-            "VALIDATION_ERROR",
-            400,
-          );
+          return sendError(res, "Invalid end time", "VALIDATION_ERROR", 400);
         }
         filteredUpdates.end_time = normalizedEndUpdate;
       }
@@ -705,10 +704,7 @@ router.get(
 
       return sendSuccess(res, records);
     } catch (error) {
-      const errorMessage = getErrorMessage(
-        error,
-        "Failed to load attendance",
-      );
+      const errorMessage = getErrorMessage(error, "Failed to load attendance");
       serverLogger.error(
         `[${ROUTE_NAME}] Get attendance error: ${errorMessage}`,
         error,
@@ -734,8 +730,12 @@ router.post(
     }
 
     try {
-      const { event_id: eventId, player_id: playerId, status, notes } =
-        req.body || {};
+      const {
+        event_id: eventId,
+        player_id: playerId,
+        status,
+        notes,
+      } = req.body || {};
 
       if (!eventId || !isValidUUID(eventId)) {
         return sendError(res, "Invalid event ID", "VALIDATION_ERROR", 400);
@@ -823,7 +823,10 @@ router.post(
 
       return sendSuccess(res, normalizeAttendanceRecord(data, userColumn));
     } catch (error) {
-      const errorMessage = getErrorMessage(error, "Failed to record attendance");
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to record attendance",
+      );
       serverLogger.error(
         `[${ROUTE_NAME}] Record attendance error: ${errorMessage}`,
         error,
@@ -865,12 +868,7 @@ router.post(
       }
 
       if (records.length > 200) {
-        return sendError(
-          res,
-          "Too many records",
-          "VALIDATION_ERROR",
-          400,
-        );
+        return sendError(res, "Too many records", "VALIDATION_ERROR", 400);
       }
 
       const { data: event, error: eventError } = await supabase
@@ -925,7 +923,9 @@ router.post(
         throw membersError;
       }
 
-      const memberSet = new Set((members || []).map((member) => member.user_id));
+      const memberSet = new Set(
+        (members || []).map((member) => member.user_id),
+      );
       const missingPlayers = uniquePlayerIds.filter((id) => !memberSet.has(id));
 
       if (missingPlayers.length > 0) {
@@ -986,7 +986,10 @@ router.post(
 
       return sendSuccess(res, normalized);
     } catch (error) {
-      const errorMessage = getErrorMessage(error, "Failed to record attendance");
+      const errorMessage = getErrorMessage(
+        error,
+        "Failed to record attendance",
+      );
       serverLogger.error(
         `[${ROUTE_NAME}] Bulk attendance error: ${errorMessage}`,
         error,
@@ -1266,9 +1269,8 @@ router.post(
         status: "pending",
       };
 
-      const requestUserColumn = await getAttendanceUserColumn(
-        "absence_requests",
-      );
+      const requestUserColumn =
+        await getAttendanceUserColumn("absence_requests");
 
       if (requestUserColumn === "user_id") {
         requestPayload.user_id = req.userId;
@@ -1318,7 +1320,7 @@ router.get(
 
     try {
       const teamId = req.query.team_id;
-      const status = req.query.status;
+      const { status } = req.query;
 
       if (!teamId || typeof teamId !== "string" || !isValidUUID(teamId)) {
         return sendError(res, "Invalid team ID", "VALIDATION_ERROR", 400);
@@ -1335,9 +1337,8 @@ router.get(
         );
       }
 
-      const requestUserColumn = await getAttendanceUserColumn(
-        "absence_requests",
-      );
+      const requestUserColumn =
+        await getAttendanceUserColumn("absence_requests");
       let query = supabase.from("absence_requests").select(
         `
         *,

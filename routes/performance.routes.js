@@ -123,7 +123,10 @@ async function getTrainingUserFilter(userId) {
   const hasAthleteId = await tableHasColumn("training_sessions", "athlete_id");
 
   if (hasUserId && hasAthleteId) {
-    return { filter: `user_id.eq.${userId},athlete_id.eq.${userId}`, mode: "or" };
+    return {
+      filter: `user_id.eq.${userId},athlete_id.eq.${userId}`,
+      mode: "or",
+    };
   }
 
   if (hasUserId) {
@@ -165,7 +168,10 @@ async function getPerformanceTests(userId, { limit = 50, type } = {}) {
   return data || [];
 }
 
-async function getTrainingSessions(userId, { limit = 30, startDate, endDate } = {}) {
+async function getTrainingSessions(
+  userId,
+  { limit = 30, startDate, endDate } = {},
+) {
   const exists = await tableExists("training_sessions");
   if (!exists) {
     return [];
@@ -203,8 +209,14 @@ async function getTrainingSessions(userId, { limit = 30, startDate, endDate } = 
     query = query.eq(userFilter.column, userFilter.value);
   }
 
-  const hasSessionDate = await tableHasColumn("training_sessions", "session_date");
-  const hasCompletedAt = await tableHasColumn("training_sessions", "completed_at");
+  const hasSessionDate = await tableHasColumn(
+    "training_sessions",
+    "session_date",
+  );
+  const hasCompletedAt = await tableHasColumn(
+    "training_sessions",
+    "completed_at",
+  );
 
   if (startDate && hasSessionDate) {
     query = query.gte("session_date", startDate);
@@ -318,281 +330,316 @@ router.get("/health", createHealthCheckHandler(ROUTE_NAME, "1.1.0"));
 // PERFORMANCE ENDPOINTS
 // =============================================================================
 
-router.get("/metrics", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  const athleteId = resolveAthleteId(req, res);
-  if (!athleteId) {
-    return;
-  }
-
-  try {
-    const sessions = await getTrainingSessions(athleteId, { limit: 30 });
-    const tests = await getPerformanceTests(athleteId, { limit: 50 });
-
-    const metrics = [];
-
-    // Speed metric from sprint tests (time -> mph)
-    const speedTests = tests
-      .map((test) => ({
-        ...test,
-        speedMeta: parseSpeedTestType(test.test_type),
-      }))
-      .filter((test) => test.speedMeta && Number(test.result_value) > 0)
-      .map((test) => ({
-        ...test,
-        mph: secondsToMph(Number(test.result_value), test.speedMeta.distanceMeters),
-      }))
-      .filter((test) => test.mph !== null);
-
-    if (speedTests.length > 0) {
-      const sortedByDate = [...speedTests].sort(
-        (a, b) => new Date(b.test_date).getTime() - new Date(a.test_date).getTime(),
-      );
-      const sortedBySpeed = [...speedTests].sort((a, b) => b.mph - a.mph);
-      const current = sortedByDate[0];
-      const previous = sortedByDate[1];
-      const trend = calculateTrend(current.mph, previous?.mph || 0);
-
-      metrics.push({
-        id: "speed",
-        label: "Top Speed",
-        value: Math.round(current.mph * 10) / 10,
-        unit: "mph",
-        trend: trend.trend,
-        trendValue: Math.round(trend.trendValue * 10) / 10,
-        target: Math.round(sortedBySpeed[0].mph * 10) / 10,
-        color: "#10c96b",
-        icon: "pi pi-bolt",
-      });
+router.get(
+  "/metrics",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    // Accuracy metric from accuracy tests
-    const accuracyTests = tests.filter((test) =>
-      ACCURACY_TEST_TYPES.has((test.test_type || "").toLowerCase()),
-    );
-
-    if (accuracyTests.length > 0) {
-      const sortedAccuracy = [...accuracyTests].sort(
-        (a, b) => new Date(b.test_date).getTime() - new Date(a.test_date).getTime(),
-      );
-      const current = sortedAccuracy[0];
-      const previous = sortedAccuracy[1];
-      const currentValue = Number(current.result_value);
-      const normalizedValue =
-        currentValue <= 1 ? currentValue * 100 : currentValue;
-      const previousValue = previous ? Number(previous.result_value) : 0;
-      const normalizedPrevious =
-        previousValue <= 1 ? previousValue * 100 : previousValue;
-      const trend = calculateTrend(normalizedValue, normalizedPrevious);
-
-      metrics.push({
-        id: "accuracy",
-        label: "Pass Accuracy",
-        value: Math.round(normalizedValue * 10) / 10,
-        unit: "%",
-        trend: trend.trend,
-        trendValue: Math.round(trend.trendValue * 10) / 10,
-        target: Math.round(normalizedValue * 10) / 10,
-        color: "#f1c40f",
-        icon: "pi pi-target",
-      });
-    }
-
-    // Endurance metric from recent training sessions
-    const enduranceSessions = sessions.filter(
-      (session) => Number(session.duration_minutes) > 0,
-    );
-
-    if (enduranceSessions.length > 0) {
-      const recentSessions = enduranceSessions.slice(0, 5);
-      const avgDuration =
-        recentSessions.reduce(
-          (sum, session) => sum + Number(session.duration_minutes || 0),
-          0,
-        ) / recentSessions.length;
-      const currentDuration = Number(recentSessions[0]?.duration_minutes || 0);
-      const previousDuration = Number(recentSessions[1]?.duration_minutes || 0);
-      const trend = calculateTrend(currentDuration, previousDuration);
-
-      metrics.push({
-        id: "endurance",
-        label: "Endurance",
-        value: Math.round(avgDuration),
-        unit: "min",
-        trend: trend.trend,
-        trendValue: Math.round(trend.trendValue),
-        target: Math.round(avgDuration),
-        color: "#ef4444",
-        icon: "pi pi-heart",
-      });
-    }
-
-    const response = {
-      metrics,
-      hasData: metrics.length > 0,
-      message:
-        metrics.length > 0
-          ? null
-          : "No performance data available yet. Log training sessions or tests to see metrics.",
-    };
-
-    return res.json(createSuccessResponse(response));
-  } catch (error) {
-    const errorMessage = getErrorMessage(error, "Failed to fetch metrics");
-    serverLogger.error(`[${ROUTE_NAME}] Metrics error: ${errorMessage}`, error);
-    return sendErrorResponse(
-      res,
-      error,
-      "Failed to fetch metrics",
-      "FETCH_ERROR",
-      500,
-    );
-  }
-});
-
-router.get("/heatmap", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
     const athleteId = resolveAthleteId(req, res);
     if (!athleteId) {
       return;
     }
 
-    const timeRange =
-      typeof req.query.timeRange === "string" ? req.query.timeRange : "6months";
+    try {
+      const sessions = await getTrainingSessions(athleteId, { limit: 30 });
+      const tests = await getPerformanceTests(athleteId, { limit: 50 });
 
-    const endDate = new Date();
-    const startDate = new Date();
+      const metrics = [];
 
-    if (timeRange === "3months") {
-      startDate.setMonth(endDate.getMonth() - 3);
-    } else if (timeRange === "1year") {
-      startDate.setFullYear(endDate.getFullYear() - 1);
-    } else {
-      startDate.setMonth(endDate.getMonth() - 6);
+      // Speed metric from sprint tests (time -> mph)
+      const speedTests = tests
+        .map((test) => ({
+          ...test,
+          speedMeta: parseSpeedTestType(test.test_type),
+        }))
+        .filter((test) => test.speedMeta && Number(test.result_value) > 0)
+        .map((test) => ({
+          ...test,
+          mph: secondsToMph(
+            Number(test.result_value),
+            test.speedMeta.distanceMeters,
+          ),
+        }))
+        .filter((test) => test.mph !== null);
+
+      if (speedTests.length > 0) {
+        const sortedByDate = [...speedTests].sort(
+          (a, b) =>
+            new Date(b.test_date).getTime() - new Date(a.test_date).getTime(),
+        );
+        const sortedBySpeed = [...speedTests].sort((a, b) => b.mph - a.mph);
+        const current = sortedByDate[0];
+        const previous = sortedByDate[1];
+        const trend = calculateTrend(current.mph, previous?.mph || 0);
+
+        metrics.push({
+          id: "speed",
+          label: "Top Speed",
+          value: Math.round(current.mph * 10) / 10,
+          unit: "mph",
+          trend: trend.trend,
+          trendValue: Math.round(trend.trendValue * 10) / 10,
+          target: Math.round(sortedBySpeed[0].mph * 10) / 10,
+          color: "#10c96b",
+          icon: "pi pi-bolt",
+        });
+      }
+
+      // Accuracy metric from accuracy tests
+      const accuracyTests = tests.filter((test) =>
+        ACCURACY_TEST_TYPES.has((test.test_type || "").toLowerCase()),
+      );
+
+      if (accuracyTests.length > 0) {
+        const sortedAccuracy = [...accuracyTests].sort(
+          (a, b) =>
+            new Date(b.test_date).getTime() - new Date(a.test_date).getTime(),
+        );
+        const current = sortedAccuracy[0];
+        const previous = sortedAccuracy[1];
+        const currentValue = Number(current.result_value);
+        const normalizedValue =
+          currentValue <= 1 ? currentValue * 100 : currentValue;
+        const previousValue = previous ? Number(previous.result_value) : 0;
+        const normalizedPrevious =
+          previousValue <= 1 ? previousValue * 100 : previousValue;
+        const trend = calculateTrend(normalizedValue, normalizedPrevious);
+
+        metrics.push({
+          id: "accuracy",
+          label: "Pass Accuracy",
+          value: Math.round(normalizedValue * 10) / 10,
+          unit: "%",
+          trend: trend.trend,
+          trendValue: Math.round(trend.trendValue * 10) / 10,
+          target: Math.round(normalizedValue * 10) / 10,
+          color: "#f1c40f",
+          icon: "pi pi-target",
+        });
+      }
+
+      // Endurance metric from recent training sessions
+      const enduranceSessions = sessions.filter(
+        (session) => Number(session.duration_minutes) > 0,
+      );
+
+      if (enduranceSessions.length > 0) {
+        const recentSessions = enduranceSessions.slice(0, 5);
+        const avgDuration =
+          recentSessions.reduce(
+            (sum, session) => sum + Number(session.duration_minutes || 0),
+            0,
+          ) / recentSessions.length;
+        const currentDuration = Number(
+          recentSessions[0]?.duration_minutes || 0,
+        );
+        const previousDuration = Number(
+          recentSessions[1]?.duration_minutes || 0,
+        );
+        const trend = calculateTrend(currentDuration, previousDuration);
+
+        metrics.push({
+          id: "endurance",
+          label: "Endurance",
+          value: Math.round(avgDuration),
+          unit: "min",
+          trend: trend.trend,
+          trendValue: Math.round(trend.trendValue),
+          target: Math.round(avgDuration),
+          color: "#ef4444",
+          icon: "pi pi-heart",
+        });
+      }
+
+      const response = {
+        metrics,
+        hasData: metrics.length > 0,
+        message:
+          metrics.length > 0
+            ? null
+            : "No performance data available yet. Log training sessions or tests to see metrics.",
+      };
+
+      return res.json(createSuccessResponse(response));
+    } catch (error) {
+      const errorMessage = getErrorMessage(error, "Failed to fetch metrics");
+      serverLogger.error(
+        `[${ROUTE_NAME}] Metrics error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch metrics",
+        "FETCH_ERROR",
+        500,
+      );
+    }
+  },
+);
+
+router.get(
+  "/heatmap",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const sessions = await getTrainingSessions(athleteId, {
-      startDate: startDate.toISOString().split("T")[0],
-      endDate: endDate.toISOString().split("T")[0],
-      limit: 500,
-    });
-
-    const sessionsByDate = {};
-    sessions.forEach((session) => {
-      const date = getSessionDate(session);
-      if (!date) {
+    try {
+      const athleteId = resolveAthleteId(req, res);
+      if (!athleteId) {
         return;
       }
-      if (!sessionsByDate[date]) {
-        sessionsByDate[date] = [];
-      }
-      sessionsByDate[date].push(session);
-    });
 
-    const cells = [];
-    const currentDate = new Date(startDate);
+      const timeRange =
+        typeof req.query.timeRange === "string"
+          ? req.query.timeRange
+          : "6months";
 
-    while (currentDate <= endDate) {
-      const dateStr = currentDate.toISOString().split("T")[0];
-      const daySessions = sessionsByDate[dateStr] || [];
+      const endDate = new Date();
+      const startDate = new Date();
 
-      if (daySessions.length > 0) {
-        const totalDuration = daySessions.reduce(
-          (sum, session) => sum + Number(session.duration_minutes || 0),
-          0,
-        );
-        const avgIntensity =
-          daySessions.reduce(
-            (sum, session) => sum + Number(session.intensity_level || 0),
-            0,
-          ) / daySessions.length;
-        const intensity = Math.min(
-          7,
-          Math.max(0, Math.round(avgIntensity || totalDuration / 15)),
-        );
-
-        cells.push({
-          date: dateStr,
-          value: Math.round(intensity * 10),
-          intensity,
-          sessions: daySessions.length,
-          duration: Math.round(totalDuration),
-        });
+      if (timeRange === "3months") {
+        startDate.setMonth(endDate.getMonth() - 3);
+      } else if (timeRange === "1year") {
+        startDate.setFullYear(endDate.getFullYear() - 1);
       } else {
-        cells.push({
-          date: dateStr,
-          value: 0,
-          intensity: 0,
-          sessions: 0,
-          duration: 0,
-        });
+        startDate.setMonth(endDate.getMonth() - 6);
       }
 
-      currentDate.setDate(currentDate.getDate() + 1);
+      const sessions = await getTrainingSessions(athleteId, {
+        startDate: startDate.toISOString().split("T")[0],
+        endDate: endDate.toISOString().split("T")[0],
+        limit: 500,
+      });
+
+      const sessionsByDate = {};
+      sessions.forEach((session) => {
+        const date = getSessionDate(session);
+        if (!date) {
+          return;
+        }
+        if (!sessionsByDate[date]) {
+          sessionsByDate[date] = [];
+        }
+        sessionsByDate[date].push(session);
+      });
+
+      const cells = [];
+      const currentDate = new Date(startDate);
+
+      while (currentDate <= endDate) {
+        const dateStr = currentDate.toISOString().split("T")[0];
+        const daySessions = sessionsByDate[dateStr] || [];
+
+        if (daySessions.length > 0) {
+          const totalDuration = daySessions.reduce(
+            (sum, session) => sum + Number(session.duration_minutes || 0),
+            0,
+          );
+          const avgIntensity =
+            daySessions.reduce(
+              (sum, session) => sum + Number(session.intensity_level || 0),
+              0,
+            ) / daySessions.length;
+          const intensity = Math.min(
+            7,
+            Math.max(0, Math.round(avgIntensity || totalDuration / 15)),
+          );
+
+          cells.push({
+            date: dateStr,
+            value: Math.round(intensity * 10),
+            intensity,
+            sessions: daySessions.length,
+            duration: Math.round(totalDuration),
+          });
+        } else {
+          cells.push({
+            date: dateStr,
+            value: 0,
+            intensity: 0,
+            sessions: 0,
+            duration: 0,
+          });
+        }
+
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      const hasTrainingData = cells.some((cell) => cell.sessions > 0);
+
+      return res.json(
+        createSuccessResponse({
+          cells,
+          timeRange,
+          hasData: hasTrainingData,
+          totalSessions: cells.reduce((sum, cell) => sum + cell.sessions, 0),
+          message: hasTrainingData
+            ? null
+            : "No training sessions found for this period.",
+        }),
+      );
+    } catch (error) {
+      const errorMessage = getErrorMessage(error, "Failed to fetch heatmap");
+      serverLogger.error(
+        `[${ROUTE_NAME}] Heatmap error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch heatmap",
+        "FETCH_ERROR",
+        500,
+      );
+    }
+  },
+);
+
+router.get(
+  "/records",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const hasTrainingData = cells.some((cell) => cell.sessions > 0);
+    try {
+      const athleteId = resolveAthleteId(req, res);
+      if (!athleteId) {
+        return;
+      }
 
-    return res.json(
-      createSuccessResponse({
-        cells,
-        timeRange,
-        hasData: hasTrainingData,
-        totalSessions: cells.reduce((sum, cell) => sum + cell.sessions, 0),
-        message: hasTrainingData
-          ? null
-          : "No training sessions found for this period.",
-      }),
-    );
-  } catch (error) {
-    const errorMessage = getErrorMessage(error, "Failed to fetch heatmap");
-    serverLogger.error(`[${ROUTE_NAME}] Heatmap error: ${errorMessage}`, error);
-    return sendErrorResponse(
-      res,
-      error,
-      "Failed to fetch heatmap",
-      "FETCH_ERROR",
-      500,
-    );
-  }
-});
+      const limit = Math.min(parseInt(req.query.limit, 10) || 50, 200);
+      const type = typeof req.query.type === "string" ? req.query.type : null;
 
-router.get("/records", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
+      const records = await getPerformanceTests(athleteId, { limit, type });
 
-  try {
-    const athleteId = resolveAthleteId(req, res);
-    if (!athleteId) {
-      return;
+      return sendSuccess(res, records);
+    } catch (error) {
+      const errorMessage = getErrorMessage(error, "Failed to fetch records");
+      serverLogger.error(
+        `[${ROUTE_NAME}] Records error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch records",
+        "FETCH_ERROR",
+        500,
+      );
     }
-
-    const limit = Math.min(parseInt(req.query.limit, 10) || 50, 200);
-    const type = typeof req.query.type === "string" ? req.query.type : null;
-
-    const records = await getPerformanceTests(athleteId, { limit, type });
-
-    return sendSuccess(res, records);
-  } catch (error) {
-    const errorMessage = getErrorMessage(error, "Failed to fetch records");
-    serverLogger.error(`[${ROUTE_NAME}] Records error: ${errorMessage}`, error);
-    return sendErrorResponse(
-      res,
-      error,
-      "Failed to fetch records",
-      "FETCH_ERROR",
-      500,
-    );
-  }
-});
+  },
+);
 
 router.get(
   "/records/latest",
@@ -618,7 +665,10 @@ router.get(
       return sendSuccess(res, records[0] || null);
     } catch (error) {
       const errorMessage = getErrorMessage(error, "Failed to fetch record");
-      serverLogger.error(`[${ROUTE_NAME}] Latest record error: ${errorMessage}`, error);
+      serverLogger.error(
+        `[${ROUTE_NAME}] Latest record error: ${errorMessage}`,
+        error,
+      );
       return sendErrorResponse(
         res,
         error,
@@ -630,79 +680,90 @@ router.get(
   },
 );
 
-router.get("/trends", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const athleteId = resolveAthleteId(req, res);
-    if (!athleteId) {
-      return;
+router.get(
+  "/trends",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const days = Math.min(parseInt(req.query.days, 10) || 30, 365);
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(endDate.getDate() - days);
-
-    const sessions = await getTrainingSessions(athleteId, {
-      startDate: startDate.toISOString().split("T")[0],
-      endDate: endDate.toISOString().split("T")[0],
-      limit: 365,
-    });
-
-    const dailyScores = new Map();
-    sessions.forEach((session) => {
-      const date = getSessionDate(session);
-      if (!date || session.performance_score === undefined) {
+    try {
+      const athleteId = resolveAthleteId(req, res);
+      if (!athleteId) {
         return;
       }
-      if (!dailyScores.has(date)) {
-        dailyScores.set(date, []);
-      }
-      dailyScores.get(date).push(Number(session.performance_score || 0));
-    });
 
-    const points = [...dailyScores.entries()]
-      .map(([date, scores]) => ({
-        date,
-        score:
-          scores.length > 0
-            ? Math.round(
-                (scores.reduce((sum, value) => sum + value, 0) / scores.length) *
-                  10,
-              ) / 10
-            : 0,
-      }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      const days = Math.min(parseInt(req.query.days, 10) || 30, 365);
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - days);
 
-    const average =
-      points.length > 0
-        ? Math.round(
-            (points.reduce((sum, point) => sum + point.score, 0) /
-              points.length) *
-              10,
-          ) / 10
-        : 0;
+      const sessions = await getTrainingSessions(athleteId, {
+        startDate: startDate.toISOString().split("T")[0],
+        endDate: endDate.toISOString().split("T")[0],
+        limit: 365,
+      });
 
-    return sendSuccess(res, {
-      points,
-      average,
-      totalSessions: sessions.length,
-    });
-  } catch (error) {
-    const errorMessage = getErrorMessage(error, "Failed to fetch trends");
-    serverLogger.error(`[${ROUTE_NAME}] Trends error: ${errorMessage}`, error);
-    return sendErrorResponse(
-      res,
-      error,
-      "Failed to fetch trends",
-      "FETCH_ERROR",
-      500,
-    );
-  }
-});
+      const dailyScores = new Map();
+      sessions.forEach((session) => {
+        const date = getSessionDate(session);
+        if (!date || session.performance_score === undefined) {
+          return;
+        }
+        if (!dailyScores.has(date)) {
+          dailyScores.set(date, []);
+        }
+        dailyScores.get(date).push(Number(session.performance_score || 0));
+      });
+
+      const points = [...dailyScores.entries()]
+        .map(([date, scores]) => ({
+          date,
+          score:
+            scores.length > 0
+              ? Math.round(
+                  (scores.reduce((sum, value) => sum + value, 0) /
+                    scores.length) *
+                    10,
+                ) / 10
+              : 0,
+        }))
+        .sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+        );
+
+      const average =
+        points.length > 0
+          ? Math.round(
+              (points.reduce((sum, point) => sum + point.score, 0) /
+                points.length) *
+                10,
+            ) / 10
+          : 0;
+
+      return sendSuccess(res, {
+        points,
+        average,
+        totalSessions: sessions.length,
+      });
+    } catch (error) {
+      const errorMessage = getErrorMessage(error, "Failed to fetch trends");
+      serverLogger.error(
+        `[${ROUTE_NAME}] Trends error: ${errorMessage}`,
+        error,
+      );
+      return sendErrorResponse(
+        res,
+        error,
+        "Failed to fetch trends",
+        "FETCH_ERROR",
+        500,
+      );
+    }
+  },
+);
 
 router.get(
   "/speed-insights",
@@ -745,7 +806,8 @@ router.get(
       }
 
       const latest = [...speedTests].sort(
-        (a, b) => new Date(b.test_date).getTime() - new Date(a.test_date).getTime(),
+        (a, b) =>
+          new Date(b.test_date).getTime() - new Date(a.test_date).getTime(),
       )[0];
       const best = [...speedTests].sort((a, b) => b.mph - a.mph)[0];
 

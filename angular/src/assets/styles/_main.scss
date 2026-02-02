@@ -30,7 +30,7 @@
 // ============================================
 
 @layer tokens {
-  @import "design-system-tokens";
+  @import "../scss/tokens/design-system-tokens";
 }
 
 // ============================================
@@ -47,7 +47,7 @@
 // 5. PRIMITIVES LAYER
 // ============================================
 
-@use "primitives/index" as primitives;
+/* Primitives now live under angular/src/scss/components/standardized-components.scss */
 
 // ============================================
 // 6. OVERRIDES LAYER
@@ -87,18 +87,6 @@ body {
 // ============================================
 // 9. HIGH CONTRAST MODE SUPPORT (Decision 51)
 // ============================================
-
-@media (forced-colors: active) {
-  .p-button,
-  .card,
-  .p-card {
-    border: 2px solid currentColor;
-  }
-
-  *:focus-visible {
-    outline: 3px solid CanvasText !important;
-  }
-}
 
 // ============================================
 // 10. CROSS-BROWSER FIXES

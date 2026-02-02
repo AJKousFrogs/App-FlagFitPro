@@ -1,4 +1,4 @@
-@use "styles/mixins" as *;
+@use "../../styles/mixins" as *;
 
 /* ================================================================
    FLAGFIT PRO - PRIMENG 21 THEME CONFIGURATION
@@ -2629,9 +2629,11 @@
       }
 
       /* Cell content alignment */
-      .p-datatable-tbody > tr > td > * {
+      /* stylelint-disable selector-max-compound-selectors */
+      @at-root .p-datatable td > * {
         text-align: right;
       }
+      /* stylelint-enable selector-max-compound-selectors */
 
       /* Action buttons in stacked layout */
       .p-datatable-tbody > tr > td:has(.p-button) {
@@ -4005,25 +4007,32 @@ p-button .p-button,
   color: var(--primitive-neutral-500);
 }
 
-[data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > span,
-[data-theme="dark"] .p-datepicker-panel .p-datepicker-calendar td > button,
-.dark-theme .p-datepicker-panel .p-datepicker-calendar td > span,
-.dark-theme .p-datepicker-panel .p-datepicker-calendar td > button {
+:is(.dark-theme, [data-theme="dark"])
+  .p-datepicker-calendar
+  span,
+:is(.dark-theme, [data-theme="dark"])
+  .p-datepicker-calendar
+  button {
   color: var(--primitive-neutral-200);
 }
 
-[data-theme="dark"]
-  .p-datepicker-panel
+/* stylelint-disable selector-max-compound-selectors */
+:is(.dark-theme, [data-theme="dark"])
   .p-datepicker-calendar
-  td.p-datepicker-other-month
-  > span,
-.dark-theme
-  .p-datepicker-panel
-  .p-datepicker-calendar
-  td.p-datepicker-other-month
-  > span {
+  .p-datepicker-other-month
+  span {
   color: var(--primitive-neutral-600);
 }
+/* stylelint-enable selector-max-compound-selectors */
+
+/* stylelint-disable selector-max-compound-selectors */
+:is(.dark-theme, [data-theme="dark"])
+  .p-datepicker-calendar
+  .p-datepicker-other-month
+  span {
+  color: var(--primitive-neutral-600);
+}
+/* stylelint-enable selector-max-compound-selectors */
 
 /* Input wrapper positioning fix */
 .p-datepicker,

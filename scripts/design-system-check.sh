@@ -17,9 +17,9 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 # Paths (relative to angular/ directory)
-TOKENS="src/assets/styles/design-system-tokens.scss"
+TOKENS="src/scss/tokens/design-system-tokens.scss"
 OVERRIDES_DIR="src/assets/styles/overrides"
-PRIMENG_DIR="src/assets/styles/primeng"
+PRIMENG_DIR="src/scss/components/primeng"
 
 # Change to angular directory
 cd "$(dirname "$0")/../angular"

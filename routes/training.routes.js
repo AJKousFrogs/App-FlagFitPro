@@ -817,45 +817,46 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const { id } = req.params;
-
-    if (!isValidUUID(id)) {
-      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const { data: program, error } = await supabase
-      .from("training_programs")
-      .select(
-        `
+    try {
+      const { id } = req.params;
+
+      if (!isValidUUID(id)) {
+        return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+      }
+
+      const { data: program, error } = await supabase
+        .from("training_programs")
+        .select(
+          `
         *,
         positions(name, display_name),
         training_phases(
           id, name, description, start_date, end_date, phase_order, focus_areas
         )
       `,
-      )
-      .eq("id", id)
-      .single();
+        )
+        .eq("id", id)
+        .single();
 
-    if (error) {
-      throw error;
+      if (error) {
+        throw error;
+      }
+
+      if (!program) {
+        return sendError(res, "Program not found", "NOT_FOUND", 404);
+      }
+
+      return sendSuccess(res, { program });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Get program error:`, error);
+      return sendError(res, "Failed to load program", "FETCH_ERROR", 500);
     }
-
-    if (!program) {
-      return sendError(res, "Program not found", "NOT_FOUND", 404);
-    }
-
-    return sendSuccess(res, { program });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get program error:`, error);
-    return sendError(res, "Failed to load program", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 /**
  * GET /programs/:id/phases
@@ -866,33 +867,34 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const { id } = req.params;
-
-    if (!isValidUUID(id)) {
-      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const { data: phases, error } = await supabase
-      .from("training_phases")
-      .select("*")
-      .eq("program_id", id)
-      .order("phase_order", { ascending: true });
+    try {
+      const { id } = req.params;
 
-    if (error) {
-      throw error;
+      if (!isValidUUID(id)) {
+        return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+      }
+
+      const { data: phases, error } = await supabase
+        .from("training_phases")
+        .select("*")
+        .eq("program_id", id)
+        .order("phase_order", { ascending: true });
+
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, { phases: phases || [] });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Get phases error:`, error);
+      return sendError(res, "Failed to load phases", "FETCH_ERROR", 500);
     }
-
-    return sendSuccess(res, { phases: phases || [] });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get phases error:`, error);
-    return sendError(res, "Failed to load phases", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 /**
  * GET /programs/:id/weeks
@@ -903,56 +905,57 @@ router.get(
   rateLimit("READ"),
   authenticateToken,
   async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const { id } = req.params;
-    const { phase_id } = req.query;
-
-    if (!isValidUUID(id)) {
-      return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    // First get phases for this program
-    let phasesQuery = supabase
-      .from("training_phases")
-      .select("id")
-      .eq("program_id", id);
+    try {
+      const { id } = req.params;
+      const { phase_id } = req.query;
 
-    if (phase_id && isValidUUID(phase_id)) {
-      phasesQuery = phasesQuery.eq("id", phase_id);
-    }
+      if (!isValidUUID(id)) {
+        return sendError(res, "Invalid program ID", "INVALID_ID", 400);
+      }
 
-    const { data: phases } = await phasesQuery;
-    const phaseIds = phases?.map((p) => p.id) || [];
+      // First get phases for this program
+      let phasesQuery = supabase
+        .from("training_phases")
+        .select("id")
+        .eq("program_id", id);
 
-    if (phaseIds.length === 0) {
-      return sendSuccess(res, { weeks: [] });
-    }
+      if (phase_id && isValidUUID(phase_id)) {
+        phasesQuery = phasesQuery.eq("id", phase_id);
+      }
 
-    const { data: weeks, error } = await supabase
-      .from("training_weeks")
-      .select(
-        `
+      const { data: phases } = await phasesQuery;
+      const phaseIds = phases?.map((p) => p.id) || [];
+
+      if (phaseIds.length === 0) {
+        return sendSuccess(res, { weeks: [] });
+      }
+
+      const { data: weeks, error } = await supabase
+        .from("training_weeks")
+        .select(
+          `
         *,
         training_phases(name, phase_order)
       `,
-      )
-      .in("phase_id", phaseIds)
-      .order("start_date", { ascending: true });
+        )
+        .in("phase_id", phaseIds)
+        .order("start_date", { ascending: true });
 
-    if (error) {
-      throw error;
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, { weeks: weeks || [] });
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Get weeks error:`, error);
+      return sendError(res, "Failed to load weeks", "FETCH_ERROR", 500);
     }
-
-    return sendSuccess(res, { weeks: weeks || [] });
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Get weeks error:`, error);
-    return sendError(res, "Failed to load weeks", "FETCH_ERROR", 500);
-  }
-});
+  },
+);
 
 /**
  * GET /programs/current-week
@@ -1190,37 +1193,42 @@ router.get(
  * GET /exercises
  * Get exercise library with optional filtering
  */
-router.get("/exercises", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
-
-  try {
-    const { category, position, search } = req.query;
-
-    let query = supabase.from("exercises").select("*").eq("active", true);
-
-    if (category && category !== "all") {
-      query = query.eq("category", category);
-    }
-    if (position) {
-      query = query.contains("position_specific", [position]);
-    }
-    if (search) {
-      query = query.ilike("name", `%${search}%`);
+router.get(
+  "/exercises",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
     }
 
-    const { data: exercises, error } = await query.order("name").limit(200);
-    if (error) {
-      throw error;
-    }
+    try {
+      const { category, position, search } = req.query;
 
-    return sendSuccess(res, exercises || []);
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Exercises error:`, error);
-    return sendError(res, "Failed to load exercises", "FETCH_ERROR", 500);
-  }
-});
+      let query = supabase.from("exercises").select("*").eq("active", true);
+
+      if (category && category !== "all") {
+        query = query.eq("category", category);
+      }
+      if (position) {
+        query = query.contains("position_specific", [position]);
+      }
+      if (search) {
+        query = query.ilike("name", `%${search}%`);
+      }
+
+      const { data: exercises, error } = await query.order("name").limit(200);
+      if (error) {
+        throw error;
+      }
+
+      return sendSuccess(res, exercises || []);
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Exercises error:`, error);
+      return sendError(res, "Failed to load exercises", "FETCH_ERROR", 500);
+    }
+  },
+);
 
 // =============================================================================
 // ERROR HANDLING

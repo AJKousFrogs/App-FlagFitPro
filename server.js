@@ -794,9 +794,7 @@ app.get("/api/load-management/acwr", async (req, res) => {
         .json({ success: false, error: "User ID required" });
     }
     if (!isValidUUID(userId)) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Invalid user ID" });
+      return res.status(400).json({ success: false, error: "Invalid user ID" });
     }
     if (requestedUserId && requestedUserId !== req.userId) {
       return res

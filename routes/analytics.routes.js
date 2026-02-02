@@ -536,7 +536,9 @@ router.get(
         .select("performance_score");
 
       if (hasUserId && hasAthleteId) {
-        query = query.or(`user_id.eq.${req.userId},athlete_id.eq.${req.userId}`);
+        query = query.or(
+          `user_id.eq.${req.userId},athlete_id.eq.${req.userId}`,
+        );
       } else if (hasUserId) {
         query = query.eq("user_id", req.userId);
       } else {
@@ -631,9 +633,7 @@ router.get(
 
       const dates = [
         ...new Set(
-          tests
-            .map((t) => t.test_date?.split("T")[0])
-            .filter((date) => date),
+          tests.map((t) => t.test_date?.split("T")[0]).filter((date) => date),
         ),
       ].sort();
 

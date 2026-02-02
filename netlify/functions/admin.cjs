@@ -310,7 +310,6 @@ async function syncUSDAData(options = {}) {
 
       // Rate limiting
       if (page < maxPages) {
-        // eslint-disable-next-line no-promise-executor-return
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }

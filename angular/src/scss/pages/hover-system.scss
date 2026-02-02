@@ -13,7 +13,7 @@
    5. All transitions: Use cubic-bezier for premium feel
    
    USAGE:
-   @use './assets/styles/hover-system.scss' as *;
+   Import this file directly where hover utilities are needed (e.g., `styles.scss` already loads it via `scss/pages/index.scss`).
    
    Or apply utility classes directly:
    - .hover-primary    - Primary button hover effect

@@ -80,73 +80,78 @@ router.get("/", rateLimit("READ"), authenticateToken, async (req, res) => {
  * GET /players
  * Get roster players with formatted data
  */
-router.get("/players", rateLimit("READ"), authenticateToken, async (req, res) => {
-  if (!supabase) {
-    return sendError(res, "Database not configured", "DB_ERROR", 503);
-  }
+router.get(
+  "/players",
+  rateLimit("READ"),
+  authenticateToken,
+  async (req, res) => {
+    if (!supabase) {
+      return sendError(res, "Database not configured", "DB_ERROR", 503);
+    }
 
-  try {
-    const staffRoles = new Set([
-      "coach",
-      "head_coach",
-      "assistant_coach",
-      "offense_coordinator",
-      "defense_coordinator",
-      "admin",
-      "owner",
-    ]);
-    const isStaff = staffRoles.has(req.user?.role || "");
+    try {
+      const staffRoles = new Set([
+        "coach",
+        "head_coach",
+        "assistant_coach",
+        "offense_coordinator",
+        "defense_coordinator",
+        "admin",
+        "owner",
+      ]);
+      const isStaff = staffRoles.has(req.user?.role || "");
 
-    let query = supabase
-      .from("team_members")
-      .select(
-        `
+      let query = supabase
+        .from("team_members")
+        .select(
+          `
           id, role, jersey_number, position, status, joined_at,
           user:user_id (id, email, full_name, first_name, last_name)
         `,
-      )
-      .eq("status", "active")
-      .order("jersey_number");
+        )
+        .eq("status", "active")
+        .order("jersey_number");
 
-    if (!isStaff) {
-      query = query.eq("user_id", req.userId);
+      if (!isStaff) {
+        query = query.eq("user_id", req.userId);
+      }
+
+      const { data: players, error } = await query;
+
+      if (error) {
+        throw error;
+      }
+
+      // Transform to expected format
+      const formattedPlayers = (players || []).map((p) => {
+        // Normalize player name
+        const name =
+          p.user?.full_name ||
+          [p.user?.first_name, p.user?.last_name]
+            .filter(Boolean)
+            .join(" ")
+            .trim() ||
+          "Unknown";
+
+        return {
+          id: p.id,
+          userId: p.user?.id,
+          name,
+          email: p.user?.email,
+          position: p.position,
+          jerseyNumber: p.jersey_number,
+          role: p.role,
+          status: p.status,
+          joinedAt: p.joined_at,
+        };
+      });
+
+      return sendSuccess(res, formattedPlayers);
+    } catch (error) {
+      serverLogger.error(`[${ROUTE_NAME}] Players error:`, error);
+      return sendSuccess(res, [], "No data available");
     }
-
-    const { data: players, error } = await query;
-
-    if (error) {
-      throw error;
-    }
-
-    // Transform to expected format
-    const formattedPlayers = (players || []).map((p) => {
-      // Normalize player name
-      const name =
-        p.user?.full_name ||
-        [p.user?.first_name, p.user?.last_name]
-          .filter(Boolean)
-          .join(" ")
-          .trim() ||
-        "Unknown";
-
-      return {
-        id: p.id,
-        userId: p.user?.id,
-        name,
-        email: p.user?.email,
-        position: p.position,
-        jerseyNumber: p.jersey_number,
-        role: p.role,
-        status: p.status,
-        joinedAt: p.joined_at,
-      };
-    });
-
-    return sendSuccess(res, formattedPlayers);
-  } catch (error) {
-    serverLogger.error(`[${ROUTE_NAME}] Players error:`, error);
-    return sendSuccess(res, [], "No data available");
-  }
-});
+  },
+);
 
 export default router;

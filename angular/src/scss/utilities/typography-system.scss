@@ -31,7 +31,7 @@
    - Metrics have no margin by default
    ================================================================ */
 
-@use "./design-system-tokens.scss" as *;
+@use "../tokens/design-system-tokens" as *;
 
 /* ================================================================
    BASE ELEMENT DEFAULTS

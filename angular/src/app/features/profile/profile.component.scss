@@ -1097,7 +1097,8 @@
   /* Ensure text doesn't overflow on mobile */
   .profile-page .profile-display-name {
     font-size: var(--ds-font-size-xl);
-    word-break: break-word;
+    overflow-wrap: anywhere;
+    word-break: normal;
     hyphens: auto;
     padding: 0 var(--space-2);
   }
@@ -1174,7 +1175,7 @@
   .profile-page .profile-display-name {
     font-size: var(--ds-font-size-md);
     overflow-wrap: anywhere;
-    word-break: break-word;
+    word-break: normal;
     padding: 0 var(--space-2);
   }
 

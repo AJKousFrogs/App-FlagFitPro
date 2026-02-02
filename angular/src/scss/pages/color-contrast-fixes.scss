@@ -41,38 +41,8 @@
   // FIXED CONTRAST VALUES - Light Mode
   // ============================================================================
 
-  // Secondary text: Darkened from #64748b to #475569 for 7:1 contrast
-  --color-text-secondary-accessible: #475569;
-
-  // Muted text: Darkened from #94a3b8 to #64748b for 4.5:1 contrast
-  --color-text-muted-accessible: #64748b;
-
-  // Placeholder text: Darkened for accessibility
-  --color-placeholder-accessible: #6b7280;
-
-  // Border colors: Darkened for 3:1 UI contrast
-  --color-border-accessible: #94a3b8;
-
-  // Warning text on warning background: Darkened
-  --color-warning-text-accessible: #92400e;
-
-  // Info text on info background: Darkened
-  --color-info-text-accessible: #1e40af;
-
-  // Success text on success background: Darkened
-  --color-success-text-accessible: #065f46;
-
-  // Error text on error background: Darkened
-  --color-error-text-accessible: #991b1b;
-
-  // ============================================================================
-  // OVERRIDE PROBLEMATIC DEFAULTS
-  // ============================================================================
-
-  // Override secondary text color globally
+  // Fixed contrast defaults
   --text-secondary: var(--color-text-secondary-accessible);
-
-  // Override muted text color globally
   --text-muted: var(--color-text-muted-accessible);
 }
 
@@ -273,15 +243,16 @@ small:not(.p-error) {
 [data-theme="dark"],
 .dark-theme {
   // Ensure light text has sufficient contrast on dark backgrounds
-  --color-text-secondary-accessible: #a1a1aa;
-  --color-text-muted-accessible: #71717a;
-  --color-placeholder-accessible: #71717a;
+  --color-text-secondary-accessible: var(--color-text-secondary-accessible-dark);
+  --color-text-muted-accessible: var(--color-text-muted-accessible-dark);
+  --color-placeholder-accessible: var(--color-placeholder-accessible-dark);
+  --color-border-accessible: var(--color-border-accessible-dark);
 
   // Status colors on dark backgrounds
-  --color-warning-text-accessible: #fbbf24;
-  --color-info-text-accessible: #60a5fa;
-  --color-success-text-accessible: #34d399;
-  --color-error-text-accessible: #f87171;
+  --color-warning-text-accessible: var(--color-warning-text-accessible-dark);
+  --color-info-text-accessible: var(--color-info-text-accessible-dark);
+  --color-success-text-accessible: var(--color-success-text-accessible-dark);
+  --color-error-text-accessible: var(--color-error-text-accessible-dark);
 
   // Override PrimeNG dark mode issues
   .p-message {
@@ -340,9 +311,11 @@ small:not(.p-error) {
 @media (prefers-contrast: more) {
   :root {
     // Maximum contrast values
-    --color-text-secondary-accessible: #1e293b;
-    --color-text-muted-accessible: #334155;
-    --color-border-accessible: #475569;
+    --color-text-secondary-accessible: var(
+      --color-text-secondary-accessible-hc
+    );
+    --color-text-muted-accessible: var(--color-text-muted-accessible-hc);
+    --color-border-accessible: var(--color-border-accessible-hc);
 
     // Increase border widths
     --input-border-width: 2px;

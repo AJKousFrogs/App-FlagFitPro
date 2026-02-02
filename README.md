@@ -157,6 +157,20 @@ npm run dev
 
 # ❌ WRONG - Angular only (no data!)
 npm run dev:angular-only
+
+## 🧱 CSS Build Pipeline
+
+- **SCSS entrypoints**
+  - `angular/src/styles.scss` (main entrypoint that brings together `styles/`, `assets/styles/`, and `scss/tokens/` layers).
+  - `angular/src/scss/tokens/design-system-tokens.scss` (isolated tokens entry used for tooling that only needs CSS variables).
+  - `angular/src/scss/components/index.scss`, `angular/src/scss/pages/index.scss`, and `angular/src/scss/utilities/index.scss` (each generates a dedicated CSS file that keeps component/page/utility selectors deterministic).
+- **Compiled outputs**
+  - `npm run sass:compile` emits `src/css/main.css`, `src/css/tokens.css`, `src/css/components/index.css`, `src/css/pages/index.css`, and `src/css/utilities/index.css`.
+  - `npm run build:css` runs `node scripts/build-css.js`, which minifies those CSS files and produces the bundle set under `dist/css/` (`main-bundle.css`, `components-bundle.css`, `pages-bundle.css`, `utilities-bundle.css`).
+  - Keeping `src/css` deterministic prevents duplicate selectors and keeps the generated bundles stable for CI/deploy.
+- **Script dependencies**
+  - Because `build:css` reads the files output by `sass:compile`, always run `npm run sass:compile && npm run build:css` from the repo root when validating or regenerating CSS bundles; skipping the compilation step leaves `dist/css/` stale and may break deployments.
+  - For local iteration, run `npm run sass:watch`: the wrapper automatically enables polling on macOS while compiling the same five entrypoints before bundling.
 ```
 
 The app will be available at `http://localhost:4200`

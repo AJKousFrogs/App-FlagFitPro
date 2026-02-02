@@ -109,6 +109,161 @@
   // }
 
   /* ------------------------------------------------
+   * EXCEPTION: responsive visibility helpers
+   * Ticket: DS-EXC-RESP-001
+   * Owner: @design-system-team
+   * Scope: .hide-on-*, .show-on-*
+   * Remove by: 2026-07-01
+   * Reason: These helpers require !important to override competing layout
+   *         display rules across breakpoints and cannot rely on token swaps yet.
+   * ------------------------------------------------ */
+  .hide-on-mobile {
+    @include respond-to(sm) {
+      display: none !important;
+    }
+  }
+
+  .hide-on-tablet {
+    @include tablet-layout {
+      display: none !important;
+    }
+  }
+
+  .hide-on-desktop {
+    @include respond-above(lg) {
+      display: none !important;
+    }
+  }
+
+  .show-on-mobile {
+    display: none !important;
+
+    @include respond-to(sm) {
+      display: block !important;
+    }
+  }
+
+  .show-on-tablet {
+    display: none !important;
+
+    @include tablet-layout {
+      display: block !important;
+    }
+  }
+
+  .show-on-touch {
+    display: none !important;
+
+    @include touch-device {
+      display: block !important;
+    }
+  }
+
+  /* ------------------------------------------------
+   * EXCEPTION: high contrast focus outline
+   * Ticket: DS-EXC-HC-001
+   * Owner: @design-system-team
+   * Scope: Global forced-colors mode
+   * Remove by: 2026-07-01
+   * Reason: Forced-colors focus outline must remain visible on all coordinates.
+   * ------------------------------------------------ */
+  @media (forced-colors: active) {
+    .p-button,
+    .card,
+    .p-card {
+      border: 2px solid currentColor;
+    }
+
+    *:focus-visible {
+      outline: 3px solid CanvasText !important;
+    }
+  }
+
+  /* ------------------------------------------------
+   * EXCEPTION: cascade button color overrides
+   * Ticket: DS-EXC-BTN-002
+   * Owner: @design-system-team
+   * Scope: PrimeNG buttons with brand backgrounds
+   * Remove by: 2026-07-01
+   * Reason: Keeps white text on brand-green buttons when PrimeNG theme forces resets.
+   * ------------------------------------------------ */
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-secondary)
+    * {
+    color: var(--color-text-on-primary) !important;
+  }
+
+  .bg-primary-green,
+  .p-button-primary {
+    color: var(--color-text-on-primary) !important;
+
+    * {
+      color: var(--color-text-on-primary) !important;
+    }
+  }
+
+  /* ------------------------------------------------
+   * EXCEPTION: mobile pointer/touch overrides
+   * Ticket: DS-LEGACY-004
+   * Owner: @design-system-team
+   * Scope: PrimeNG mobile interactions
+   * Remove by: 2026-07-01
+   * Reason: Ensures PrimeNG components remain tappable on small screens.
+   *         Requires pointer-events/touch-action overrides to work around
+   *         platform-specific deficiencies before full migration to tokens.
+   * ------------------------------------------------ */
+  @include respond-to(md) {
+    .p-button,
+    .p-button-label,
+    .p-button-icon {
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
+    }
+
+    .p-dialog,
+    .p-dialog-content,
+    .p-dialog-footer,
+    .p-dialog-header {
+      pointer-events: auto !important;
+    }
+
+    .p-inputtext,
+    .p-textarea,
+    .p-select,
+    .p-dropdown,
+    .p-checkbox,
+    .p-radiobutton,
+    .p-toggleswitch,
+    .p-inputnumber {
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
+    }
+
+    .p-button:active:not(:disabled):not(.p-disabled) {
+      transform: scale(0.98) !important;
+      transition: transform 0.1s ease !important;
+    }
+  }
+
+  /* ------------------------------------------------
+   * EXCEPTION: reduced motion overrides
+   * Ticket: DS-EXC-MOTION-001
+   * Owner: @design-system-team
+   * Scope: Global reduced motion
+   * Remove by: 2026-07-01
+   * Reason: Forces transitions/animations off for reduced-motion mode.
+   * ------------------------------------------------ */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ------------------------------------------------
    * COMPONENT: acwr-baseline.component
    * Ticket: DS-EXC-001
    * Owner: @design-system-team
@@ -772,7 +927,7 @@
    * ------------------------------------------------ */
   .rpe-slider {
     .p-slider {
-      background: var(--primitive-neutral-200, #e5e5e5);
+      background: var(--primitive-neutral-200);
       height: 10px;
       border-radius: var(--radius-sm);
     }
@@ -872,14 +1027,14 @@
         width: 24px;
         height: 24px;
         border-radius: var(--radius-sm);
-        border: 2px solid var(--primitive-neutral-300, #d4d4d4);
-        background: var(--surface-primary, #fff);
+        border: 2px solid var(--primitive-neutral-300);
+        background: var(--surface-primary);
         transition:
           background-color 150ms ease,
           border-color 150ms ease;
 
         &:hover {
-          border-color: var(--ds-primary-green, #089949);
+          border-color: var(--ds-primary-green);
         }
 
         &.p-highlight {
@@ -892,7 +1047,7 @@
         }
 
         &:focus-visible {
-          outline: 2px solid var(--ds-primary-green, #089949);
+          outline: 2px solid var(--ds-primary-green);
           outline-offset: 2px;
         }
       }
@@ -910,7 +1065,7 @@
 
       .p-dialog-footer {
         padding: var(--space-4, 16px) var(--space-5, 20px);
-        border-top: 1px solid var(--primitive-neutral-100, #f0f0f0);
+        border-top: 1px solid var(--primitive-neutral-100);
       }
     }
   }
@@ -1448,7 +1603,8 @@
           max-width: 100%;
           overflow: visible;
           white-space: normal;
-          word-break: break-word;
+          overflow-wrap: anywhere;
+          word-break: normal;
           transition:
             opacity 0.2s ease,
             transform 0.2s ease,
@@ -2189,7 +2345,7 @@
 
   .p-breadcrumb-separator {
     margin: 0 0.75rem;
-    color: var(--text-tertiary, #64748b);
+    color: var(--text-tertiary);
     font-size: var(--font-size-badge);
 
     .p-icon {
@@ -2382,10 +2538,10 @@
       flex-shrink: 0;
       position: sticky;
       bottom: 0;
-      background: var(--surface-primary, #fff);
+      background: var(--surface-primary);
       padding: var(--space-3) var(--space-4);
       padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
-      border-top: 1px solid var(--color-border-muted, #e5e7eb);
+      border-top: 1px solid var(--color-border-muted);
       z-index: 10;
     }
   }
@@ -2428,10 +2584,10 @@
       flex-shrink: 0;
       position: sticky;
       bottom: 0;
-      background: var(--surface-primary, #fff);
+      background: var(--surface-primary);
       padding: var(--space-3) var(--space-4);
       padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
-      border-top: 1px solid var(--color-border-muted, #e5e7eb);
+      border-top: 1px solid var(--color-border-muted);
       z-index: 10;
     }
   }
@@ -2469,9 +2625,9 @@
     border-radius: var(--radius-sm);
   }
 
-  .p-progressbar-value {
-    background: var(--ds-primary-green, #089949);
-  }
+    .p-progressbar-value {
+      background: var(--ds-primary-green);
+    }
 }
 
 .step-bar {
@@ -2481,24 +2637,24 @@
   }
 
   .p-progressbar-value {
-    background: linear-gradient(
-      90deg,
-      var(--ds-primary-green),
-      var(--ds-primary-green-light)
-    );
+      background: linear-gradient(
+        90deg,
+        var(--ds-primary-green),
+        var(--ds-primary-green-light)
+      );
   }
 }
 
 .micro-session {
-  .p-slider {
-    .p-slider-range {
-      background: var(--ds-primary-green, #089949);
-    }
+      .p-slider {
+        .p-slider-range {
+          background: var(--ds-primary-green);
+        }
 
-    .p-slider-handle {
-      border-color: var(--ds-primary-green, #089949);
-    }
-  }
+        .p-slider-handle {
+          border-color: var(--ds-primary-green);
+        }
+      }
 }
 
 /* ------------------------------------------------

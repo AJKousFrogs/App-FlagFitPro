@@ -4,8 +4,8 @@
  * Utility classes for common styling patterns
  */
 
-@use "variables" as *;
-@use "mixins" as *;
+@use "./variables" as *;
+@use "./mixins" as *;
 
 // ================================
 // SPACING UTILITIES
@@ -407,7 +407,7 @@
 
 @each $key, $value in $z-index {
   .z-#{$key} {
-    z-index: $value;
+    z-index: var(--z-index-#{$key}, #{$value});
   }
 }
 
@@ -419,13 +419,13 @@
   opacity: 0;
 }
 .opacity-25 {
-  opacity: 0.25;
+  opacity: var(--opacity-quarter);
 }
 .opacity-50 {
-  opacity: 0.5;
+  opacity: var(--opacity-half);
 }
 .opacity-75 {
-  opacity: 0.75;
+  opacity: var(--opacity-three-quarters);
 }
 .opacity-100 {
   opacity: 1;

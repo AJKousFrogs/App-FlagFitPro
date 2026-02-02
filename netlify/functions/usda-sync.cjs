@@ -311,7 +311,6 @@ async function handleSync(event) {
 
         // Rate limiting - USDA API has limits
         if (page < maxPages) {
-          // eslint-disable-next-line no-promise-executor-return
           await new Promise((resolve) => setTimeout(resolve, 100));
         }
       }

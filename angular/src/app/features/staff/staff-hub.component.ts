@@ -8,7 +8,12 @@ import { CardShellComponent } from "../../shared/components/card-shell/card-shel
   selector: "app-staff-hub",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, MainLayoutComponent, PageHeaderComponent, CardShellComponent],
+  imports: [
+    RouterModule,
+    MainLayoutComponent,
+    PageHeaderComponent,
+    CardShellComponent,
+  ],
   template: `
     <app-main-layout>
       <div class="staff-hub-page">

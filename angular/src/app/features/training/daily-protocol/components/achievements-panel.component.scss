@@ -4,7 +4,6 @@
 // ============================================================================
 
 @use "styles/mixins" as *;
-
 @include stat-block;
 
 .achievements-panel {
@@ -114,18 +113,18 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-
-        .next-name {
-          font-weight: var(--ds-font-weight-medium);
-          font-size: var(--ds-font-size-md);
-        }
-
-        .next-progress {
-          font-size: var(--ds-font-size-xs);
-          color: var(--color-text-secondary);
-        }
       }
     }
+  }
+
+  .next-info .next-name {
+    font-weight: var(--ds-font-weight-medium);
+    font-size: var(--ds-font-size-md);
+  }
+
+  .next-info .next-progress {
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
   }
 
   .recent-achievements {
@@ -209,10 +208,6 @@
         align-items: center;
         gap: var(--space-2);
         margin-bottom: var(--space-1);
-
-        .ach-name {
-          font-weight: var(--ds-font-weight-semibold);
-        }
       }
 
       .ach-desc {
@@ -226,11 +221,6 @@
         display: flex;
         align-items: center;
         gap: var(--space-2);
-
-        .progress-text {
-          font-size: var(--ds-font-size-xs);
-          color: var(--color-text-secondary);
-        }
       }
 
       .earned-date {
@@ -246,6 +236,15 @@
       color: var(--color-text-secondary);
       white-space: nowrap;
     }
+  }
+
+  .achievement-card .ach-header .ach-name {
+    font-weight: var(--ds-font-weight-semibold);
+  }
+
+  .achievement-card .ach-progress .progress-text {
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
   }
 }
 
@@ -296,16 +295,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-
-        .streak-value {
-          font-size: var(--ds-font-size-2xl);
-          font-weight: var(--ds-font-weight-bold);
-        }
-
-        .streak-label {
-          font-size: var(--ds-font-size-xs);
-          color: var(--color-text-secondary);
-        }
       }
     }
 
@@ -321,6 +310,16 @@
       font-size: var(--ds-font-size-md);
       color: var(--color-text-secondary);
     }
+  }
+
+  .streak-card .streak-value {
+    font-size: var(--ds-font-size-2xl);
+    font-weight: var(--ds-font-weight-bold);
+  }
+
+  .streak-card .streak-label {
+    font-size: var(--ds-font-size-xs);
+    color: var(--color-text-secondary);
   }
 }
 
